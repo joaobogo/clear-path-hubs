@@ -1715,7 +1715,44 @@ function ClientLayout() {
         Done when: Submitting an invalid timezone shows a sentence inline against the field, no raw code appears, and
         the error clears when the field is corrected without resubmitting.
 
+        P6-03 Confirm single CV downloads and CSV exports
+        Candidate detail / Approvals
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Clicking "Download CV" in the CV preview modal produces no toast, no message and no state change
+        beyond a focus ring. Clicking "Export CSV" on the Approvals page behaves the same. The comparison
+        modal's "Export PDF" on the same site DOES confirm, with a progress modal and a "Comparison PDF
+        downloaded" toast.
+        DO THIS
+        Reuse the Export PDF confirmation pattern for the single CV download, the bulk CV ZIP and the Approvals
+        CSV export.
+        Done when: Clicking "Download CV" produces a visible confirmation naming the file.
+        P6-04 Print the full value in the notification save toast
+        Account → Notifications
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Changing "New shortlist delivered" to Off produces the toast "Saved — off". Changing it back to "As it
+        happens" produces "Saved — as". The value is truncated to its first word and lower-cased.
+        DO THIS
+        Print the selected option's full label, in its own casing.
+        Done when: Selecting "As it happens" produces the toast "Saved — As it happens".
+        P6-05 Give "Save and continue" feedback on an unchanged form
+        Setup wizard
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Clicking "Save and continue" twice on an unedited step 1 does nothing at all — no toast, no error, no
+        advance. It works immediately once a field has been edited.
+        DO THIS
+        Allow the button to advance on a clean form, or disable it with a tooltip explaining why. Do not leave the
+        wizard's only forward control silently inert.
+        Done when: Clicking "Save and continue" on an unchanged step either advances the wizard or explains why it
+        cannot.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
