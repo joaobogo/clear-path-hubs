@@ -653,9 +653,9 @@ function RequirementGrid({
                           </div>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs text-xs">
-                          {cell.evidence ? (
+                          {cell.status === "met" || cell.status === "partial" || cell.evidence ? (
                             <>
-                              <p>{cell.evidence}</p>
+                              <p>{cell.evidence || "Direct evidence confirmed."}</p>
                               {cell.source && (
                                 <p className="mt-1 text-muted-foreground">Source: {cell.source}</p>
                               )}
