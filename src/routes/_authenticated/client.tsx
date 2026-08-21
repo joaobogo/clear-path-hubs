@@ -505,6 +505,17 @@ function ClientLayout() {
         Report any group where the numbers still differ. Do not change anything — just report.
         Done when: Every group returns one value.
 
+        P95 Check the mobile layout at 375px VERIFY WHOLE APP
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        Set the viewport to 375px wide and check every client page: /client, /client/roles, /client/candidates, a
+        candidate detail page, /client/interviews, /client/offers, /client/conversations, /client/account.
+        For each one report: any clipped panel, any horizontal scrolling of the whole page, any overlapping text,
+        any control that becomes unreachable, and any tap target smaller than 44x44px.
+        Pay particular attention to the offers kanban, which already wraps its seventh column at 1456px.
+        Report first, then fix what you find.
+        Done when: Every client page is usable at 375px wide
+
+
 
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
