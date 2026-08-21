@@ -15965,7 +15965,7 @@ export type Database = {
         | "ready_for_review"
         | "withdrawn"
         | "rejected"
-        | "archived" | "cancelled"
+        | "archived"
       canonical_scoring_state:
         | "ingestion"
         | "evidence_extraction"
@@ -15976,6 +15976,7 @@ export type Database = {
         | "returned_for_correction"
         | "superseded"
         | "failed"
+        | "cancelled"
       client_decision_type:
         | "shortlist"
         | "request_interview"
@@ -15993,7 +15994,7 @@ export type Database = {
         | "manage_jobs"
         | "invite_members"
         | "view_reports"
-      client_visibility: "hidden" | "visible" | "archived" | "cancelled"
+      client_visibility: "hidden" | "visible" | "archived"
       delivery_channel: "in_app" | "email" | "sms" | "teams"
       delivery_status:
         | "created"
@@ -16001,6 +16002,7 @@ export type Database = {
         | "provider_accepted"
         | "delivered"
         | "failed"
+        | "cancelled"
         | "bounced"
         | "suppressed"
       eligibility_status:
@@ -16064,6 +16066,7 @@ export type Database = {
         | "sync_completed"
         | "scheduled_run_completed"
       file_status: "uploading" | "ready" | "failed" | "deleted"
+        | "cancelled"
       hire_close_reason:
         | "candidate_declined"
         | "counter_offer"
@@ -16099,6 +16102,7 @@ export type Database = {
         | "running"
         | "completed"
         | "failed"
+        | "cancelled"
         | "superseded"
       match_stage:
         | "new"
@@ -16109,7 +16113,7 @@ export type Database = {
         | "offer"
         | "hired"
         | "not_moving_forward"
-        | "archived" | "cancelled"
+        | "archived"
       membership_role:
         | "platform_admin"
         | "operations"
@@ -16130,16 +16134,18 @@ export type Database = {
         | "running"
         | "completed"
         | "failed"
+        | "cancelled"
         | "aborted"
       migration_validation_status: "not_run" | "passed" | "warned" | "failed"
+        | "cancelled"
       notification_audience: "admin" | "client" | "candidate"
-      org_status: "prospect" | "active" | "paused" | "archived" | "cancelled"
+      org_status: "prospect" | "active" | "paused" | "archived"
       outreach_campaign_status:
         | "draft"
         | "active"
         | "paused"
         | "completed"
-        | "archived" | "cancelled"
+        | "archived"
       outreach_channel:
         | "email"
         | "linkedin"
@@ -16172,6 +16178,7 @@ export type Database = {
         | "replied"
         | "opted_out"
         | "failed"
+        | "cancelled"
       payment_status:
         | "unpaid"
         | "pending"
@@ -16189,7 +16196,7 @@ export type Database = {
         | "paused"
         | "filled"
         | "closed"
-        | "archived" | "cancelled"
+        | "archived"
       position_visibility: "public" | "private" | "internal"
       processing_state:
         | "queued"
@@ -16203,9 +16210,10 @@ export type Database = {
         | "manual_review_required"
         | "provider_blocked"
         | "failed"
+        | "cancelled"
       profile_status: "active" | "suspended" | "deleted"
       recommendation_status:
-        | "cancelled"
+       
         | "pending"
         | "shortlist"
         | "review"
@@ -16219,7 +16227,7 @@ export type Database = {
         | "candidate_reasoning"
         | "decision"
         | "risk"
-        | "cancelled"
+       
         | "next_step"
       rubric_version_status:
         | "draft"
@@ -16241,6 +16249,7 @@ export type Database = {
         | "reject"
         | "request_recompute"
       score_status: "queued" | "running" | "completed" | "failed"
+        | "cancelled"
       shortlist_share_mode: "review" | "presentation" | "compare"
       silver_consent: "granted" | "pending" | "declined" | "withdrawn"
       silver_reason:
@@ -16399,7 +16408,7 @@ export const Constants = {
         "ready_for_review",
         "withdrawn",
         "rejected",
-        "archived" | "cancelled",
+        "archived",
       canonical_scoring_state: [
         "ingestion",
         "evidence_extraction",
@@ -16410,6 +16419,8 @@ export const Constants = {
         "returned_for_correction",
         "superseded",
         "failed",
+        "cancelled",
+        | "cancelled"
       ],
         "shortlist",
         "request_interview",
@@ -16424,20 +16435,20 @@ export const Constants = {
       client_permission: [
         "view_candidates",
         "add_feedback",
-        "cancelled",
         "request_interviews",
         "manage_jobs",
         "invite_members",
         "view_reports",
       ],
-      client_visibility: ["hidden", "visible", "archived" | "cancelled"],
+      client_visibility: ["hidden", "visible", "archived"],
       delivery_channel: ["in_app", "email", "sms", "teams"],
       delivery_status: [
         "queued",
         "provider_accepted",
         "delivered",
-        "cancelled",
         "failed",
+        "cancelled",
+        | "cancelled"
         "bounced",
         "suppressed",
       ],
@@ -16504,6 +16515,8 @@ export const Constants = {
         "scheduled_run_completed",
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
+        "cancelled",
+        | "cancelled"
       hire_close_reason: [
         "candidate_declined",
         "counter_offer",
@@ -16537,7 +16550,6 @@ export const Constants = {
         "scheduling",
         "scheduled",
         "completed",
-        "cancelled",
       ],
       job_status: [
         "queued",
@@ -16545,6 +16557,7 @@ export const Constants = {
         "completed",
         "failed",
         "cancelled",
+        | "cancelled"
         "superseded",
       ],
       match_stage: [
@@ -16556,7 +16569,7 @@ export const Constants = {
         "offer",
         "hired",
         "not_moving_forward",
-        "archived" | "cancelled",
+        "archived",
       ],
       membership_role: [
         "platform_admin",
@@ -16580,17 +16593,20 @@ export const Constants = {
         "running",
         "completed",
         "failed",
+        "cancelled",
+        | "cancelled"
         "aborted",
       ],
       migration_validation_status: ["not_run", "passed", "warned", "failed"],
+        | "cancelled"
       notification_audience: ["admin", "client", "candidate"],
-      org_status: ["prospect", "active", "paused", "archived" | "cancelled"],
+      org_status: ["prospect", "active", "paused", "archived"],
       outreach_campaign_status: [
         "draft",
         "active",
         "paused",
         "completed",
-        "archived" | "cancelled",
+        "archived",
       ],
       outreach_channel: [
         "email",
@@ -16627,6 +16643,8 @@ export const Constants = {
         "replied",
         "opted_out",
         "failed",
+        "cancelled",
+        | "cancelled"
       ],
       payment_status: [
         "unpaid",
@@ -16645,7 +16663,7 @@ export const Constants = {
         "paused",
         "filled",
         "closed",
-        "archived" | "cancelled",
+        "archived",
       ],
       position_visibility: ["public", "private", "internal"],
       processing_state: [
@@ -16659,11 +16677,12 @@ export const Constants = {
         "manual_review_required",
         "provider_blocked",
         "failed",
+        "cancelled",
+        | "cancelled"
       ],
       profile_status: ["active", "suspended", "deleted"],
       recommendation_status: [
         "pending",
-        "cancelled",
         "shortlist",
         "review",
         "do_not_recommend",
@@ -16681,7 +16700,6 @@ export const Constants = {
       rubric_version_status: [
         "draft",
         "pending_approval",
-        "cancelled",
         "pending_client_approval",
         "approved",
         "active",
@@ -16694,7 +16712,6 @@ export const Constants = {
         "consider",
         "not_recommended",
         "unscored",
-        "cancelled",
       ],
       score_decision_type: [
         "approve",
@@ -16703,6 +16720,8 @@ export const Constants = {
         "request_recompute",
       ],
       score_status: ["queued", "running", "completed", "failed", "cancelled"],
+        "cancelled",
+        | "cancelled"
       shortlist_share_mode: ["review", "presentation", "compare"],
       silver_consent: ["granted", "pending", "declined", "withdrawn"],
       silver_reason: [
