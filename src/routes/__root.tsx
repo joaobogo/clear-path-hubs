@@ -145,23 +145,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Phase 4 — Admin, impersonation and
-access
-P25 is a security fix. Do it before anything else in this
-phase.
-P25 Enforce read-only on the server BLOCKER IMPERSONATION
+TEXTO DO USUÁRIO: "P26 Stop dropping the org context on click BLOCKER IMPERSONATION
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-Administrator impersonation (\"support view\") displays \"You are viewing this workspace as a TaaSFlow
-administrator. Client actions are disabled.\" and \"You are viewing as an administrator — changes are
-disabled.\" — but the guard is only in the UI.
-On the client onboarding wizard (/client/onboarding, Account → Setup), clicking \"Save and continue\" WROTE
-to the client's record: it returned a \"Role saved.\" toast, advanced the step marker and updated the
-\"Progress saved\" timestamp.
-Enforce read-only server-side for every impersonated session: reject all write requests
-(insert/update/delete/RPC) when the session is a support/preview view, not just hide the buttons.
-Return the same friendly refusal for all of them.
-Done when: No write of any kind succeeds while impersonating, including “Save and continue” on the setup
-wizard."`}
+When an administrator enters a client workspace via \"View Client Workspace\", the org is carried in the URL
+as ?org=<uuid>&preview=client_admin. Several in-app buttons navigate WITHOUT those parameters, which
+throws the admin out of the workspace and renders \"No client workspace yet — Your staff account isn't a
+member of a client organization.\"
+Confirmed on: \"Request interview\" on the client Overview's Latest candidates card, and \"New role\" on the
+Roles page. Row links (e.g. a candidate's name) do keep the parameters.
+Hold the impersonated org in session/context state instead of the query string, so no navigation can lose
+it. If you must keep the query string, append it to every client-side link and programmatic navigation.
+Done when: Clicking any button inside an impersonated client workspace keeps you in that workspace."`}
         </div>
 
         <Scripts />
