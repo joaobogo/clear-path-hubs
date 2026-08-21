@@ -17,6 +17,7 @@ import {
 } from "@/lib/interview-feedback.functions";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { getCandidateJourney } from "@/lib/journey.functions";
+import { toClientJourney } from "@/lib/client/journey-labels";
 import { reasonLabel } from "@/lib/client-decision-reasons";
 import {
   TagSilverMedalistDialog,
@@ -286,7 +287,7 @@ export function JourneySection({ matchId }: { matchId: string }) {
     );
   }
   if (query.isPending) return null;
-  const events = query.data?.events ?? [];
+  const events = toClientJourney(query.data?.events ?? []);
   if (events.length === 0) return null;
   return (
     <SectionCard title="Journey timeline" icon={<FileClock className="h-4 w-4" />}>
