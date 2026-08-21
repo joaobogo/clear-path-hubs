@@ -625,6 +625,16 @@ function ClientLayout() {
         the funnel
         Insights (/client/intelligence)
 
+        P2-09 Distinguish the two average-salary figures Offers / Executive
+        P2-10 One unread count for the bell and for Messages Header bell / Messages
+        P2-11 Make the Messages header count follow the filter Messages (/client/conversations)
+        P2-12 Fix open + filled exceeding total on the Executive
+        page
+        Executive (/client/executive)
+        P2-13 Fix the compensation band check in the
+        comparison
+        Candidate comparison modal
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
