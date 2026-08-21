@@ -365,9 +365,14 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     const otherQueueItems: QueueItem[] = openItemsResponse.items
       .filter(item => item.kind !== 'missing_feedback')
       .map((item) => {
+        let kind: QueueKind = 'decision';
+        if (item.kind === 'offer') kind = 'offer';
+        else if (item.kind === 'info_request') kind = 'info_request';
+        else if (item.kind === 'interview') kind = 'interview';
+
         return {
           key: `${item.kind}:${item.id}`,
-          kind: item.kind as any,
+          kind,
           concerns: item.label,
           role_title: item.context ?? "Your role",
           position_id: item.href.split('/').pop()?.split('#')[0] || null,
@@ -385,7 +390,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
 
     const feedbackQueueItems: QueueItem[] = interviewsAwaitingFeedback.map((iv) => ({
       key: `missing_feedback:${iv.interview_id}`,
-      kind: 'missing_feedback',
+      kind: 'feedback',
       concerns: `Give interview feedback for ${iv.candidate_name}`,
       role_title: iv.position_title,
       position_id: iv.position_id,
