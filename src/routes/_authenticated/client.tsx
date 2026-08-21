@@ -1256,6 +1256,45 @@ function ClientLayout() {
         an organisation record the client cannot open.
         Done when: Searching "Northwind" renders 'No matches for "Northwind".' rather than a blank panel.
 
+        P3-10 Index candidate headlines in global search
+        Header search
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Searching "engineer" returns the one role and zero candidates, although the word "Engineer" appears in
+        the headline of all ten candidates ("Senior Full-Stack Engineer — product-focused, TypeScript/AWS", "Full-
+        Stack Engineer — React, Node.js, PostgreSQL", and so on).
+        DO THIS
+        Include the candidate headline/title field in the search index alongside candidate name.
+        Done when: Searching "engineer" returns candidate results as well as the role.
+
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 25 of 66
+        Strip internal vocabulary and test data
+        P4-01 Rewrite the five flagged Setup wizard step titles
+        Setup wizard (/client/onboarding)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Five step titles use internal vocabulary that was flagged in the previous audit and is still on screen,
+        verbatim: "Review the compiled role blueprint" (step 4), "Configure scoring weights" (step 5), "Choose
+        agent operating level" (step 6), "Set approval and oversight gates" (step 7), "Start the first run" (step 9),
+        "Enter the Decision Workspace" (step 10).
+        DO THIS
+        Rename them to recruiter language: "Review the role brief", "Set what matters most", "Choose how much
+        we do automatically", "Choose who signs off", "Start the search", "Open your candidates".
+        Done when: None of the six original strings appears anywhere in the client workspace.
+        P4-02 Rewrite "blueprint, rubric, runs and decisions"
+        Setup wizard step 2
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Step 2 body reads: "The title, location and work model become the role record everything else attaches to
+        — blueprint, rubric, runs and decisions."
+        DO THIS
+        Replace with: "The title, location and work model anchor everything else we build for this role."
+        Done when: The strings "blueprint", "rubric" and "runs and decisions" do not appear on the setup wizard.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
