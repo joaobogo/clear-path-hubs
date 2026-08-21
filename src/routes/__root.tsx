@@ -145,15 +145,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P19 One evidence count per candidate BLOCKER CANDIDATE DETAIL
+TEXTO DO USUÁRIO: "P21 Fix “Must-haves met” percentage BLOCKER CANDIDATE COMPARISON
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-One candidate shows four different evidence figures: header chip: \"Mixed Fit · 2/10 evidenced\"
-\"Why this candidate\" panel on the same page: \"0 of 10 of your requirements evidenced\"
-the comparison grid: 2 Met, 5 Partially met, 3 Unknown
-the comparison summary row: \"Must-have coverage 0/6 · 5 partial\"
-Create ONE function that returns the evidence counts for a candidate (met, partial, unknown, total, musthave met, must-have total) and make all four places call it.
-The header chip's number (count of Met) is the correct one — match the others to that definition.
-Done when: All four places show numbers consistent with one another for the same candidate."`}
+In the candidate comparison modal, "RELATIVE STRENGTH — AXIS BY AXIS" shows "Must-haves met 0%" for all
+three candidates, while the requirement grid directly above marks 2, 3 and 3 must-haves as Met for those
+same candidates (so 33%, 50%, 50%).
+Compute the percentage from the same requirement records the grid renders. Same fix for the summary row
+"Must-have coverage 0/6 · 5 partial" — it must show the real met count and the real partial count per
+candidate, not the same values for everyone.
+Done when: For each candidate the percentage equals their Met must-haves divided by total must-haves."`}
         </div>
 
         <Scripts />

@@ -422,26 +422,35 @@ export function CompareSheet({
               ))}
             </ComparisonRow>
 
-            {/* Coverage summary */}
             <ComparisonRow
               label="Must-have coverage"
               cols={cols}
-              hide={diffOnly && allSame(candidates.map((c) => `${c.coverage.must_have_coverage ?? 0}`))}
-            >
-              {candidates.map((c) => (
-                <div key={c.match_id} className="text-xs">
-                  <span className="font-medium">{pct(c.coverage.must_have_coverage)}</span>
-                  {(() => {
+              hide={
+                diffOnly &&
+                allSame(
+                  candidates.map((c) => {
                     const counts = getEvidenceCounts(c.requirement_rows);
-                    return counts.must_total > 0 && (
+                    return counts.must_total > 0 ? counts.must_met / counts.must_total : 0;
+                  }),
+                )
+              }
+            >
+              {candidates.map((c) => {
+                const counts = getEvidenceCounts(c.requirement_rows);
+                return (
+                  <div key={c.match_id} className="text-xs">
+                    <span className="font-medium">
+                      {counts.must_total > 0 ? pct(counts.must_met / counts.must_total) : "—"}
+                    </span>
+                    {counts.must_total > 0 && (
                       <span className="text-muted-foreground">
                         {" "}
                         ({counts.must_met}/{counts.must_total})
                       </span>
-                    );
-                  })()}
-                </div>
-              ))}
+                    )}
+                  </div>
+                );
+              })}
             </ComparisonRow>
 
 
@@ -706,7 +715,10 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
     {
       key: "coverage",
       label: "Must-haves met",
-      values: candidates.map((c) => c.coverage.must_have_coverage ?? 0),
+      values: candidates.map((c) => {
+        const counts = getEvidenceCounts(c.requirement_rows);
+        return counts.must_total > 0 ? counts.must_met / counts.must_total : 0;
+      }),
       format: (n) => `${Math.round(n * 100)}%`,
     },
     {
