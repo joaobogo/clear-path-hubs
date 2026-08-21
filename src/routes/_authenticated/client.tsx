@@ -423,18 +423,19 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P80 Remove the duplicate count label LOW CLIENT CANDIDATES
+        TEXTO DO USUÁRIO: "P84 Keep focus in the search box after Retry LOW GLOBAL SEARCH
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the same fact is printed twice: \"10 of 10 shown\" at the top right and
-        \"10 of 10 candidates\" in the filter bar. Remove the top-right one and keep the filter-bar count.
-        Done when: The candidate count appears once.
+        In the global search dialog, clicking \"Retry\" moves focus out of the search input, so the next thing the
+        user types goes nowhere.
+        Return focus to the input after Retry runs.
+        Done when: After clicking Retry you can keep typing without clicking back into the box.
 
-        P81 Fix the compensation offer count LOW CANDIDATE DETAIL
+        P85 Remove trace IDs from success toasts LOW ADMIN
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the client candidate page the Compensation panel says \"€64,000 – €68,000 · 2 offers on record\"
-        while the Offers page shows three offer records for that role (one has no compensation). Change the
-        caption to state the basis: \"2 of 3 offers have compensation recorded\".
-        Done when: The caption says how many offers the range is based on and how many exist."
+        Admin success toasts include internal trace identifiers: \"Archived · trace ad_68ae4bdxmt0nb8sd\" and \"Saved
+        · ad_u7b7psjvmt0ndetn\".
+        Show only \"Archived.\" and \"Saved.\" Keep the trace ID in the console/log output.
+        Done when: No user-facing toast contains a trace identifier."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
