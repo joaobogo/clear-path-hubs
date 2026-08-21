@@ -151,7 +151,7 @@ export function WorkspaceTab() {
  canEdit={!isViewer && !readOnlySupport}
  />
 
-      {!support.isSupportView && (
+      {!support.active && (
         <>
           <SecuritySection email={settings.account.email} />
           <AccountSection
