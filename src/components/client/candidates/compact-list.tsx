@@ -1,3 +1,4 @@
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "@tanstack/react-router";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { CandidateCard } from "@/components/client/candidate-card";
