@@ -915,6 +915,38 @@ function ClientLayout() {
         track.", and the string cannot appear on a page that also renders "OVERDUE".
         Ordering: None — this is the single highest-visibility fix in the document.
 
+        P1-02 Remove the "Open roles 1 / 1 filled" fraction
+        Overview (/client)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Overview status card prints "Open roles 1 / 1 filled" in its top-right corner and "1 open role" in its
+        bottom-left corner. If 1 of 1 is filled then 0 are open. The role in question is Active with 2 offers out.
+        DO THIS
+        Delete the "Open roles N / N filled" fraction from the Overview status card. Keep "N open role(s)".
+        Done when: The Overview status card contains exactly one statement about open roles, and the string "/ 1 filled"
+        does not appear on the page.
+        PHASE 1 · 7 PROMPTS
+        Seven fixes. Every one is a place where two statements sit in the same viewport and disagree. These are the
+        cheapest serious wins in the document — most are a single conditional.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 12 of 66
+
+        P1-03 Fix "Decisions made" exceeding the number of candidates
+        Overview (/client) — This week card
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Overview "This week" card reads "0 Candidates delivered · 0 Interviews held · 22 Decisions made" for
+        13 Aug 2026 – 20 Aug 2026. The workspace contains 10 candidates in total, so 22 decisions is impossible,
+        and 22 decisions alongside 0 interviews held is internally inconsistent.
+        DO THIS
+        Scope the "Decisions made" counter to distinct candidate stage-changes inside the displayed window —
+        the same population the "Recent activity" list on this page already uses. Do not count repeated writes to
+        the same candidate.
+        Done when: The "Decisions made" figure is less than or equal to the number of candidates in the workspace, and
+        matches the number of distinct stage-change events inside the stated date range.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
