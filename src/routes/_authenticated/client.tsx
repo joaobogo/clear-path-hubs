@@ -2293,7 +2293,32 @@ function ClientLayout() {
         Default the filter to "All".
         Done when: The Approvals page opens on the All filter.
 
+        P8-26 Create conversation threads lazily
+        Messages (/client/conversations)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Three of six threads are empty auto-created records reading "No messages yet": "Diogo Silva — Senior Full
+        Stack Engineer", "History Integrity Test" and "Rui Fernandes". Half the client's inbox is empty.
+        DO THIS
+        Create a conversation record on the first message rather than on candidate or role creation, and hide
+        empty threads from the client's list.
+        Done when: No thread reading "No messages yet" appears in the client's inbox.
+        Ordering: After P0-03.
+        P8-27 Merge the two interview scheduling buttons
+        Interviews (/client/interviews)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Each pending interview card carries both "Propose times" and "Send my available times" side by side,
+        which read as the same action.
+        DO THIS
+        Keep one control. "Send my available times" describes what actually happens and the availability panel
+        already exists to feed it.
+        Done when: Each pending interview card carries one scheduling action.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
         
         
