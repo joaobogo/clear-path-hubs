@@ -2142,7 +2142,44 @@ function ClientLayout() {
         units. Also replace "parent record" with "parent organisation" in the copy.
         Done when: A single-business-unit client sees no Portfolio tab.
 
+        P8-13 Hide the "Renews" tile when there is no renewal date
+        Account (/client/account)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Workspace tab shows a headline tile reading "Renews — —" captioned "Renewal date not on file".
+        DO THIS
+        Hide the tile when no renewal date exists, or show the plan name instead.
+        Done when: No tile whose only content is an em dash appears on the Account page.
+
+        P8-14 Hide "Hires by owner" and "Close reasons" when empty
+        Offers & hires (/client/offers)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        "Hires by owner" renders "Unassigned — 1 hires — —" because no offer has an owner. "Close reasons"
+        renders only "No offers declined or closed lost in this window."
+        DO THIS
+        Hide the Hires by owner panel until at least one offer has an owner, and hide Close reasons until at least
+        one offer has been declined or closed lost.
+        Done when: Neither panel renders when it has no data.
+
+        P8-15 Collapse the empty offer board columns
+        Offers & hires (/client/offers)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Five of seven board columns are permanently empty for this client — OFFER DRAFTED, NEGOTIATING,
+        OFFER ACCEPTED, OFFER DECLINED and CLOSED LOST — and the seventh column wraps onto a second
+        row.
+        DO THIS
+        Render only the columns that contain offers, with a "show all stages" toggle to reveal the rest. This also
+        fixes the wrapping.
+        Done when: The offers board renders on one row with no empty columns by default.
+        Ordering: Run before or with P8-16.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
         
         
