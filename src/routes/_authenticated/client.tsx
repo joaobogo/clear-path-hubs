@@ -423,14 +423,15 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P71 Explain the two candidate totals MEDIUM CLIENT TALENT POOL
+        TEXTO DO USUÁRIO: "P72 Fix the badge and the dead status MEDIUM CLIENT TALENT MEMORY
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        /client/talent-pool shows \"20 candidates\" while /client/candidates shows \"10 of 10 candidates\" for the
-        same client, with no explanation of the difference.
-        After the visibility filter is applied (see the earlier talent pool prompt), relabel the count so it is
-        unambiguous, e.g. \"10 delivered to you\". If a broader screened figure is genuinely meaningful, show it as
-        a separate labelled number rather than an unexplained larger total.
-        Done when: The two pages either show the same number or explain the difference in the label."
+        In the client Talent memory view, a card badge reads \"silver\" in lower case while the candidate page calls
+        the same thing \"Silver medalist\". The card also shows a status \"Consent Pending\" with no explanation and
+        nothing to click.
+        1. Use one label for the badge everywhere (see the vocabulary prompt — \"Runner-up\").
+        2. Either explain what \"Consent Pending\" means with a tooltip and an action to resolve it, or remove the
+        status.
+        Done when: One label for the badge, and no unexplained blocking status."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
