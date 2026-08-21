@@ -218,6 +218,8 @@ export type CompensationInputs = {
   location: string | null;
   /** Real offers recorded for this role + location. Never modelled. */
   offerAmounts: Array<{ amount: number; currency: string | null; period: string | null }>;
+  /** Total number of offer records for this role, including those without compensation data. */
+  totalOfferCount?: number;
 };
 
 export function buildCompensationSignal(input: CompensationInputs): CompensationSignal {

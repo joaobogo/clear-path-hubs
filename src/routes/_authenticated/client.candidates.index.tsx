@@ -451,10 +451,6 @@ function CandidatesPage() {
         label={`Download ${plural(cvTargets.length, "CV", "CVs")} (ZIP)`}
       />
       <div className="text-xs text-muted-foreground sm:text-right">
-        <div>
-          <span className="tabular-nums text-foreground font-medium">{filtered.length}</span> of{" "}
-          {(rowsRaw as ClientCandidateDTO[]).length} shown
-        </div>
         {overview?.last_updated && (
           <div>Updated {formatDate((overview.last_updated))}</div>
         )}
