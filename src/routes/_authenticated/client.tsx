@@ -423,16 +423,15 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P56 Fix the interview guide question grammar MEDIUM CANDIDATE DETAIL
+        TEXTO DO USUÁRIO: "P57 De-duplicate journey timeline events MEDIUM CANDIDATE DETAIL
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The \"Personalised interview guide\" builds questions by pasting the requirement string into a template,
-        producing broken sentences like:
-        \"Can you elaborate on your experience with Experience owning features end to end, from schema design to
-        shipped UI?\"
-        {"The \"Why:\" lines also read \"Only partial evidence for required: <requirement>\"."}
-        {"Fix the template so it reads naturally — e.g. \"Tell me about <requirement, lowercased first letter>.\" —"}
-        and never doubles a word. Change the Why prefix to \"We could only partly evidence this: \".
-        Done when: No generated question contains a doubled word or reads ungrammatically."
+        On the client candidate Activity tab, the Journey timeline shows two identical \"Ranked — Score 58 ·
+        consider\" rows at the exact same timestamp, and shows the score changing from 60 to 58 with no
+        explanation.
+        1. De-duplicate identical events that share a type and timestamp.
+        2. Either explain a score change (\"Score updated after the role brief was edited\") or do not show
+        intermediate scores to the client at all.
+        Done when: No two identical events appear at the same timestamp."
         {/* vocabulary-allow: rubric, run, run-as-noun */}
       </div>
   </WorkspaceShell>
