@@ -106,6 +106,7 @@ const DICTIONARY: Record<string, string> = {
   running: "Running",
   claimed: "Picked up by worker",
   permanently_failed: "Permanently failed",
+  cancelled: "Cancelled",
 
   // Job names (worker queue)
   parse: "Parse CV",
