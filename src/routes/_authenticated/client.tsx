@@ -423,16 +423,18 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P79 Fix or remove the two empty charts MEDIUM CLIENT EXECUTIVE
+        TEXTO DO USUÁRIO: "P80 Remove the duplicate count label LOW CLIENT CANDIDATES
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/executive:
-        - \"CANDIDATES DELIVERED PER WEEK (LAST 8)\" renders eight week labels, seven flat 1px stubs and one bar,
-        with no axis and no numbers anywhere.
-        - \"TYPICAL SHORTLIST FIT PER WEEK (APPROVED)\" renders eight boxes, seven reading \"—\" and one reading
-        \"Mixed Fit\".
-        Either print the numeric value on or beside every bar and add a y-axis, or delete both charts. Do not ship
-        a chart a reader cannot read a value off.
-        Done when: Every chart on the page either shows its values or has been removed."
+        On /client/candidates the same fact is printed twice: \"10 of 10 shown\" at the top right and
+        \"10 of 10 candidates\" in the filter bar. Remove the top-right one and keep the filter-bar count.
+        Done when: The candidate count appears once.
+
+        P81 Fix the compensation offer count LOW CANDIDATE DETAIL
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On the client candidate page the Compensation panel says \"€64,000 – €68,000 · 2 offers on record\"
+        while the Offers page shows three offer records for that role (one has no compensation). Change the
+        caption to state the basis: \"2 of 3 offers have compensation recorded\".
+        Done when: The caption says how many offers the range is based on and how many exist."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
