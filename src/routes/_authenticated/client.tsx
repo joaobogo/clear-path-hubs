@@ -1009,6 +1009,47 @@ function ClientLayout() {
         text on the card.
         Ordering: None. Run before P2-01.
 
+        P2-03 One number for interviews awaiting your feedback
+        Interviews / Overview / Approvals
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Interviews page states "3 interviews are waiting on your feedback." and renders three named rows
+        (Beatriz Costa, Carla Nunes, Inês Lopes). The Overview queue and the Approvals page each render exactly
+        one row reading "Give interview feedback".
+        DO THIS
+        Create one query for interviews awaiting client feedback and have the Interviews page, the Overview
+        queue and the Approvals page all consume it. Exclude candidates whose stage is Hired (see P2-04).
+        Done when: All three surfaces show the same number of interviews awaiting feedback.
+        Ordering: Run P2-04 first.
+
+        P2-04 Stop asking for interview feedback on hired candidates
+        Interviews (/client/interviews)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The "Interviews to review" list includes "Beatriz Costa — Senior Full-Stack Engineer · video · Interviewed 12
+        Aug 2026" with a "Submit feedback" button. Beatriz Costa is hired — her Activity tab reads "Hired 13 Aug
+        2026, 00:16 — Offer accepted — start date agreed."
+        DO THIS
+        Exclude candidates at the Hired stage from the awaiting-feedback query.
+        Done when: Beatriz Costa does not appear in "Interviews to review", and the count on that panel drops
+        accordingly.
+        Ordering: None. Run before P2-03.
+
+        P2-05 One number for seats in use
+        Account (/client/account)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Two tabs of the same page disagree. Account → Workspace tile reads "Seats in use 2 / 4" captioned "1
+        invitation pending · 1 free". Account → Team & roles reads "3 of 4 seats in use · 1 pending" and "3 of 4 used
+        · 1 seat available · 1 pending invitation holding a seat". 2 used + 1 pending = 3, so the tile's own caption
+        contradicts its number.
+        DO THIS
+        Make the Workspace tile use the same pending-inclusive seat count as the Team & roles list.
+        Done when: Both tabs show the same seats-in-use figure with a pending invitation outstanding.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
