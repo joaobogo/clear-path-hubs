@@ -164,7 +164,9 @@ export function FilterBar({
     <div className="mb-4 flex flex-wrap items-center gap-2">
       <Button asChild size="sm">
         {/* Signed in, so the role is created inside this workspace — never the public signup wizard. */}
-        <Link to="/client/positions/new">New role</Link>
+        <Link to="/client/positions/new" search={(prev: any) => ({ ...prev })}>
+          New role
+        </Link>
       </Button>
       <SavedViewsBar
         surface="client_positions"

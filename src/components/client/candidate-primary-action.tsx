@@ -107,7 +107,14 @@ export function CandidatePrimaryAction({
 
   async function run(action: PrimaryActionKey, done: string) {
     if (action === "request_interview") {
-      window.location.href = `/client/candidates/${matchId}`;
+      const search = new URLSearchParams(window.location.search);
+      const org = search.get("org");
+      const preview = search.get("preview");
+      const params = new URLSearchParams();
+      if (org) params.set("org", org);
+      if (preview) params.set("preview", preview);
+      const query = params.toString();
+      window.location.href = `/client/candidates/${matchId}${query ? `?${query}` : ""}`;
       return;
     }
     setPending(action);
