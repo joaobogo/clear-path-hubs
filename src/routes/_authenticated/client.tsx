@@ -582,6 +582,28 @@ function ClientLayout() {
         contact details
         Candidate detail + CV document
 
+        Phase 1 · Stop the product contradicting itself on screen (7 prompts)
+        ID Fix Page
+        P1-01 Stop showing "Hiring is on track." while items are
+        overdue
+        Overview (/client)
+        P1-02 Remove the "Open roles 1 / 1 filled" fraction Overview (/client)
+        P1-03 Fix "Decisions made" exceeding the number of
+        candidates
+        Overview (/client) — This week card
+        P1-04 Fix the acceptance rate contradicting the board
+        beneath it
+        Offers & hires (/client/offers)
+        P1-05 Fix "Role risk — 0 of 1 open roles flagged" while its
+        own criteria are met
+        Insights (/client/intelligence)
+        P1-06 Fix "0 of 10 of your requirements evidenced" — it
+        is a constant
+        Candidate detail (/client/candidates/{'<id>'})
+        P1-07 Stop showing one candidate's CV passage under
+        another candidate's name
+        Candidate comparison modal
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
