@@ -189,7 +189,7 @@ function AccountPage() {
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-8 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
               <WorkspaceRolesAndStarts orgId={orgId} />
-              <EmailChangeCard focus={focus === "email"} />
+              {!support.active && <EmailChangeCard focus={focus === "email"} />}
               <WorkspaceTab />
             </CollapsibleContent>
           </Collapsible>
