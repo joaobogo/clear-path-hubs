@@ -1297,7 +1297,50 @@ function ClientLayout() {
         Replace with: "The title, location and work model anchor everything else we build for this role."
         Done when: The strings "blueprint", "rubric" and "runs and decisions" do not appear on the setup wizard.
 
-        {/* vocabulary-allow: blueprint, rubric, runs and decisions, run, run-as-noun, position */}
+        P4-03 Remove "isolated to it at the database level"
+        Setup wizard step 1
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Step 1 body reads: "Your workspace scopes every record. Roles, candidates, evidence and audit history are
+        isolated to it at the database level."
+        DO THIS
+        Replace with: "Everything in this workspace — roles, candidates, evidence and history — is kept separate
+        from every other client."
+        Done when: The string "at the database level" does not appear in the client workspace.
+
+        PHASE 4 · 18 PROMPTS
+        The cheapest phase in the document and the one a prospect notices rst. Nothing here needs new logic.
+
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 26 of 66
+
+        P4-04 Rewrite "Nothing goes live until it passes the publish gate"
+        New role (/client/positions/new)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The New role page's second sentence reads: "Creates a draft in Northwind Talent (Demo) and opens the
+        role wizard. Nothing goes live until it passes the publish gate." {/* vocabulary-allow: publish gate */}
+        The role wizard's own step 2 is titled "Candidate profile & gates". {/* vocabulary-allow: & gates */}
+        DO THIS
+        Replace "Nothing goes live until it passes the publish gate." with "Nothing goes live until you approve it." {/* vocabulary-allow: publish gate */}
+        Rename the wizard step "Candidate profile & gates" to "Candidate profile and approvals". {/* vocabulary-allow: & gates */}
+        Done when: The strings "publish gate" and "& gates" do not appear in the client workspace.
+
+        P4-05 Replace "Only partial evidence for required:"
+        Candidate detail + comparison
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The string "Only partial evidence for required: <requirement>" appears four or more times per candidate
+        page in the "What holds it back" list, again in every Interview tab question rationale, and throughout the
+        comparison modal's "Concerns" rows.
+        DO THIS
+        Replace the phrase with "Partly evidenced — worth probing at interview:" everywhere it is generated.
+        Done when: The string "Only partial evidence for required" does not appear anywhere in the client workspace.
+
+        {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
