@@ -16,7 +16,7 @@ export type OfferHolder = "you" | "candidate" | "taasflow" | "none";
 export const HOLDER_LABEL: Record<OfferHolder, string> = {
   you: "You",
   candidate: "Candidate",
-  taasflow: "TaaSFlow",
+  taasflow: "TaaSFlow team",
   none: "Closed",
 };
 
