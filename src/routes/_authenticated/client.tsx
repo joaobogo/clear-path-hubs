@@ -491,6 +491,21 @@ function ClientLayout() {
         Change it to "Roles / New role".
         Done when: The breadcrumb reads in title case and in English.
 
+        P94 Prove the numbers agree VERIFY WHOLE APP
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        For one client workspace, print the values these surfaces currently return, side by side, so I can confirm
+        they now match:
+        1. Open roles and total roles: the Overview card, the Roles page, the Account tile, the Account "Roles and
+        where they are" panel, the Executive page.
+        2. Hires: the Candidates tile, the Offers tile, the Offers board HIRE CONFIRMED column, "Hires by owner",
+        the Account "Hires closed" tile, the admin work-queue tile.
+        3. Candidates delivered: the Candidates page and the Talent pool page.
+        4. Interviews awaiting confirmation: the Roles page banner, the Overview list, the Interviews page.
+        5. Interviews awaiting feedback: the Overview list and the Interviews page.
+        Report any group where the numbers still differ. Do not change anything — just report.
+        Done when: Every group returns one value.
+
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
