@@ -65,7 +65,9 @@ export function LifecycleBar({
     setBusy(true);
     try {
       await fn();
-      toast.success(label);
+      // P85: Standardize success labels.
+      const cleaned = label.endsWith(".") ? label : `${label}.`;
+      toast.success(cleaned);
       await onDone();
     } catch (e) {
       const msg = (e as Error).message || "";

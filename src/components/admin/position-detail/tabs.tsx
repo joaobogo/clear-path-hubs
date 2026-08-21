@@ -255,7 +255,7 @@ export function ScreeningEditor({ positionId, questions }: { positionId: string;
         },
       }),
     onSuccess: async (r) => {
-      toast.success(`Saved ${r.count} question${r.count === 1 ? "" : "s"} · trace ${r.trace_id}`);
+      toast.success(`Saved ${r.count} question${r.count === 1 ? "" : "s"}.`);
       await qc.invalidateQueries({ queryKey: ["admin-position", positionId] });
     },
     onError: (e: Error) => toastError(e),
@@ -639,7 +639,7 @@ export function SettingsTab({ position, onDone }: { position: Any; onDone: () =>
     setBusy(true);
     try {
       const r = await statusFn({ data: { id: position.id, action: "archive" } });
-      toast.success(`Archived · trace ${r.trace_id}`);
+      toast.success("Archived.");
       await onDone();
     } catch (e) {
       toast.error((e as Error).message);

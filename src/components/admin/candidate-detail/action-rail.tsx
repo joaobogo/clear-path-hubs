@@ -69,7 +69,7 @@ export function ActionRail({
     mutationFn: (visibility: "visible" | "hidden") =>
       setVisFn({ data: { match_id: m.id, visibility } }),
     onSuccess: async (r) => {
-      toast.success(`Visibility updated · ${r.trace_id ?? ""}`);
+      toast.success("Visibility updated");
       await onDone();
     },
     onError: (e: Error) => toastError(e),

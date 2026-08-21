@@ -76,7 +76,7 @@ export function OverviewTab({
         },
       }),
     onSuccess: async (r) => {
-      toast.success(`Saved · trace ${r.trace_id}`);
+      toast.success("Saved.");
       setDirty(false);
       await qc.invalidateQueries({ queryKey: ["admin-position", position.id] });
     },

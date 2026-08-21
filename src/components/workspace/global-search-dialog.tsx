@@ -211,7 +211,13 @@ export function GlobalSearchDialog({
                 </p>
                 <button
                   type="button"
-                  onClick={() => void refetch()}
+                  onClick={() => {
+                    void refetch();
+                    // P84: Return focus to the input after Retry runs.
+                    // The CommandInput is an input element.
+                    const input = document.querySelector('[data-command-input="true"]') as HTMLInputElement;
+                    if (input) input.focus();
+                  }}
                   className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"
                 >
                   <RotateCw className="h-3.5 w-3.5" /> Retry
