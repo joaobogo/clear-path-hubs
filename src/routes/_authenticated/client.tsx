@@ -423,12 +423,15 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P74 Remove the duplicate tab bar MEDIUM ADMIN
+        TEXTO DO USUÁRIO: "P75 Fix the hires tile and the activity panel MEDIUM ADMIN OVERVIEW
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /admin/clients/new the tab strip \"Intake · Clients · Positions · Candidates · Publish desk · Decision
-        backlog\" is rendered twice on the same page — once at the top and once again inside the content card.
-        Remove the inner duplicate.
-        Done when: The tab strip appears once."
+        On /admin the work-queue tile reads \"Hires confirmed (Total) 1\" while the \"Offers and hires\" panel on the
+        same page reads \"0 Hires confirmed\".
+        1. Point both at the same hires query (the same one used by the client Offers fix).
+        2. The \"LATEST ACTIVITY — LAST 25 EVENTS\" panel showed \"Activity is unavailable right now.\" on one load
+        and \"No activity yet.\" on another, on a desk with 39 queue items. Fix the query, and make sure a failed
+        call shows an error state — never fall back to \"No activity yet.\"\"
+        Done when: Both hires figures match, and the activity panel shows events."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
