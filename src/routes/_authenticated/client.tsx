@@ -2095,7 +2095,29 @@ function ClientLayout() {
         Done when: The Executive time-in-stage average for a stage is consistent with the oldest stalled candidate
         Insights reports for that stage.
 
+        P8-07 Collapse the three identical hires tiles
+        Executive (/client/executive)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Three tiles read "HIRES · 30D 1", "HIRES · 90D 1" and "HIRES · YTD 1" — one fact rendered three times.
+        DO THIS
+        Replace with a single Hires tile and a period selector.
+        Done when: One hires tile appears on the Executive page.
+
+        P8-08 Remove the "PROJECTED HIRES · NEXT 30D" tile
+        Executive (/client/executive)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The tile reads "PROJECTED HIRES · NEXT 30D 1" — a projection of one, from a sample of one, with no action
+        attached to it.
+        DO THIS
+        Remove the tile.
+        Done when: The string "PROJECTED HIRES" does not appear in the client workspace
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
         
 
