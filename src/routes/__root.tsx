@@ -145,14 +145,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P14 Show every interview awaiting feedback BLOCKER CLIENT HOME
+TEXTO DO USUÁRIO: "P15 Fix the region role arithmetic BLOCKER CLIENT EXECUTIVE
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-/client/interviews says "3 interviews are waiting on your feedback." and lists three candidates. The home
-page "WHAT NEEDS YOU" list shows only ONE "Give interview feedback" item.
-Rebuild the WHAT NEEDS YOU feedback items from the same query the Interviews page uses, so all pending
-feedback requests appear on the home page.
-Do not change the sorting or the overdue banner logic — only the source of the feedback rows.
-Done when: The number of “Give interview feedback” rows on /client equals the count on /client/interviews."`}
+On /client/executive the "Open roles by region" panel shows "Portugal — 1 open · 1 filled · 1 total" and
+"Unspecified — 0 open · 0 filled · 1 total". 1 open plus 1 filled cannot equal 1 total.
+Fix the counts so open + filled never exceeds total. A role that has been filled must not also be counted
+as open.
+Use the same roles query as the Roles page.
+Done when: For every region row, open + filled is less than or equal to total."`}
         </div>
 
         <Scripts />

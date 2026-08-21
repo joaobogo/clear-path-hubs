@@ -12,6 +12,7 @@ import { laneFor } from "@/lib/client-pipeline-lane";
 import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
+import { selectClientRoles } from "@/lib/client/role-counts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -132,15 +133,22 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         .filter((m) => laneFor({ stage: String(m.stage) }) === "hired")
         .map((m) => String(m.position_id)),
     );
+    
+    // P15: Use the same roles filter as the Roles page to exclude drafts/archived/tests.
+    const clientPositions = selectClientRoles(posRows);
+    
     const regionMap = new Map<string, { open: number; filled: number; total: number }>();
-    for (const p of posRows) {
+    for (const p of clientPositions) {
       const region = normalizeRegion(p.location);
       const bucket = regionMap.get(region) ?? { open: 0, filled: 0, total: 0 };
+      
+      const isFilled = isFilledRole({ id: String(p.id), status: p.status }, hiredPositionIds);
+      const isOpen = !isFilled && isOpenRoleStatus(p.status);
+
       bucket.total += 1;
-      if (isOpenRoleStatus(p.status)) bucket.open += 1;
-      if (isFilledRole({ id: String(p.id), status: p.status }, hiredPositionIds)) {
-        bucket.filled += 1;
-      }
+      if (isOpen) bucket.open += 1;
+      if (isFilled) bucket.filled += 1;
+      
       regionMap.set(region, bucket);
     }
     const open_by_region = Array.from(regionMap.entries())
