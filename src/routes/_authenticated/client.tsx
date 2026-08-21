@@ -1963,7 +1963,30 @@ function ClientLayout() {
         workspace's country.
         Done when: Creating a role in Northwind Talent (Demo) defaults to EUR with plausible EUR placeholders.
 
+        P7-14 Remove the fourth recommendation vocabulary from the comparison
+        Candidate comparison modal
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The comparison introduces a "Recommendation" row reading "Review before deciding" and "Worth a
+        conversation", alongside the fit labels Top / Strong / Consider / Not recommended used everywhere else.
+        DO THIS
+        Delete the Recommendation row and rely on the fit label, which is already in the same table.
+        Done when: The comparison uses only the product's four fit labels.
+        P7-15 Fix the "Requirement" row-header label in the comparison
+        Candidate comparison modal
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The row-header cell of the lower comparison table reads "Requirement", but the rows beneath it are
+        Recommendation, Stage, Availability, Logistics, Compensation and Experience — none of which is a
+        requirement.
+        DO THIS
+        Change the header to "Attribute", or leave the cell blank.
+        Done when: No table renders the word "Requirement" above rows that are not requirements.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
