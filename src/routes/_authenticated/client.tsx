@@ -423,14 +423,13 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P64 Build the availability panel or remove it MEDIUM CLIENT INTERVIEWS
+        TEXTO DO USUÁRIO: "P65 Stop the offers board wrapping MEDIUM CLIENT OFFERS
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/interviews the panel \"Your interview availability — Set your windows once — candidates then
-        pick from them, no back-and-forth.\" contains a heading and a sentence and nothing else. No control, no
-        link, no empty state — even though the page subtitle instructs the client to set their availability.
-        Either add a working availability editor (days, time windows, timezone, save), or delete the panel and the
-        instruction in the page subtitle.
-        Done when: The panel either works or is gone."
+        On /client/offers the kanban has seven columns. At 1456px wide, six fit and the seventh (\"CLOSED LOST\")
+        drops onto a second row underneath the first column, which looks broken.
+        Make the board scroll horizontally in a single row instead of wrapping. Add a visible horizontal scroll
+        affordance.
+        Done when: All seven columns sit in one row at any window width, with horizontal scroll."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
