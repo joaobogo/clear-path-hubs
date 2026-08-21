@@ -531,6 +531,16 @@ function ClientLayout() {
         P3-01 to P3-06 Six controls swallow their first activation. It is very likely one root cause. Fixing it
         individually six times wastes five fixes.
 
+        P1-06 the
+        evidencedcount constant
+        all of phase 5 Several phase 5 prompts assume there is one evidenced-count to read. Fix the source
+        first or you will fix the same thing three times.
+        P1-07
+        evidence
+        attribution
+        P5-09 The Unknown-cells-with-evidence defect may disappear once the evidence join is
+        constrained to the right candidate.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
