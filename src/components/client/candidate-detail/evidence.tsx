@@ -525,26 +525,28 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
         </p>
       )}
 
-      {evidenced.length > 0 && (
+      {rows.length > 0 && (
         <ul className="mt-4 space-y-3">
-          {evidenced.map((line) => (
+          {rows.map((line) => (
             <li
               key={line.id}
               className={cn(
                 "rounded-md border p-3",
                 line.verdict === "met"
                   ? "taas-bd-success taas-bg-success-soft"
-                  : "taas-bd-warning taas-bg-warning-soft",
+                  : line.verdict === "partial"
+                    ? "taas-bd-warning taas-bg-warning-soft"
+                    : "bg-muted/30",
               )}
             >
               <div className="flex items-start gap-2">
-                <CheckCircle2
-                  className={cn(
-                    "mt-0.5 h-4 w-4 shrink-0",
-                    line.verdict === "met" ? "taas-fg-success" : "taas-fg-warning",
-                  )}
-                  aria-hidden
-                />
+                {line.verdict === "met" ? (
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 taas-fg-success" aria-hidden />
+                ) : line.verdict === "partial" ? (
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning" aria-hidden />
+                ) : (
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                )}
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-medium">{line.requirement}</span>
@@ -561,11 +563,14 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
                       Confirmed with the candidate; a direct quote is still being pulled.
                     </p>
                   )}
-                  {line.sources.length > 0 && (
-                    <div className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
-                      {line.sources.join(" · ")}
-                    </div>
+                  {!line.claim && !line.underReview && (
+                    <p className="mt-1 text-sm italic text-muted-foreground">
+                      Nothing shown for this yet — worth confirming in the interview.
+                    </p>
                   )}
+                  <div className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+                    {line.sources.length > 0 ? line.sources.join(" · ") : "No source yet"}
+                  </div>
                 </div>
               </div>
             </li>
@@ -588,20 +593,6 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
         </div>
       )}
 
-      {gaps.length > 0 && (
-        <div className="mt-4">
-          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            Not evidenced yet
-          </div>
-          <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-            {gaps.map((line) => (
-              <li key={line.id}>
-                {line.requirement} — worth confirming in the interview.
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </SectionCard>
   );
 });
