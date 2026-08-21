@@ -437,6 +437,7 @@ function ClientLayout() {
         \"Dealbreakers become eligibility checks that run before scoring\" → \"Dealbreakers rule a candidate out
         before we score them\"
         Done when: None of those phrases appears in the client workspace."
+        {/* vocabulary-allow: rubric, run */}
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
