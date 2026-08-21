@@ -142,7 +142,7 @@ function IntelligencePage() {
             <MetricCardSkeleton key={i} />
           ))}
         </div>
-      ) : !intel.data ? (
+      ) : !intel.data || intel.data.metrics.length === 0 ? (
         <EmptyState
           title="Nothing to measure yet"
           description="Once a role is live and candidates are released to you, every measure on this screen fills in from your own records."
