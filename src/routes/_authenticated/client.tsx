@@ -1149,6 +1149,45 @@ function ClientLayout() {
         count to its previous value, verified after a refresh.
         Ordering: None. Note: have a human click it once first to confirm it is genuinely dead.
 
+        P3-02 Fix the dead "New role" link
+        Roles (/client/positions)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The "New role" link on /client/positions does not navigate. It was clicked three times with eight-second
+        waits between clicks; location.pathname stayed "/client/positions" every time. The destination renders
+        correctly when /client/positions/new is typed into the address bar. The same link appears twice on the page
+        (a desktop and a mobile-only copy) and neither works.
+        DO THIS
+        Fix the anchor so it navigates on the first click. It is likely preventing its default without issuing a router
+        push.
+        Done when: Clicking "New role" once on /client/positions navigates to /client/positions/new.
+        Ordering: See P3-00.
+
+        P3-03 Fix "Compare 3 side by side" needing two clicks
+        Candidates (/client/candidates)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The first click on "Compare 3 side by side" does nothing — verified with a five-second wait and a
+        screenshot showing an unchanged page. The second click opens the comparison modal.
+        DO THIS
+        Fix the button so the modal opens on the first click.
+        Done when: One click on a freshly loaded Candidates page opens the comparison modal.
+        Ordering: See P3-00.
+
+        P3-04 Fix the Messages "Roles" filter needing two clicks
+        Messages (/client/conversations)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The first click on the "Roles" filter tab does nothing — verified with a four-second wait and a screenshot
+        showing "All" still active and all six threads still listed. The second click applies the filter.
+        DO THIS
+        Fix the filter tab so it applies on the first click.
+        Done when: One click on "Roles" filters the list to role threads.
+        Ordering: See P3-00.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
