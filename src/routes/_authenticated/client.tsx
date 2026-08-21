@@ -423,14 +423,12 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P59 Label interviews in the Activity list MEDIUM CANDIDATE DETAIL
+        TEXTO DO USUÁRIO: "P60 Rename the Export PDF button MEDIUM CANDIDATE COMPARISON
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the client candidate Activity tab, the INTERVIEWS list shows \"Requested 19 Aug 2026, 12:32\" above
-        \"Closed 18 Aug 2026, 20:16\" — an interview closed before it was requested, because these are two different
-        interviews shown as one list.
-        Group the rows by interview and label each group, so a request and its outcome sit together and the order
-        is chronological within each interview.
-        Done when: No event list shows a closure timestamp earlier than the request above it."
+        In the candidate comparison modal, \"Export PDF\" calls the browser print dialog. It produces no file and it
+        freezes the page until the user presses Escape.
+        Rename the button to \"Print / Save as PDF\" so the behaviour matches the label. Keep the print behaviour.
+        Done when: The button label matches what happens when it is clicked."
         {/* vocabulary-allow: rubric, run, run-as-noun */}
       </div>
   </WorkspaceShell>
