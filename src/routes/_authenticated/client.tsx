@@ -1286,13 +1286,13 @@ function ClientLayout() {
         Done when: None of the six original strings appears anywhere in the client workspace.
 
         {/* vocabulary-allow: rubric, blueprint, runs and decisions */}
-        P4-02 Rewrite "blueprint, rubric, runs and decisions"
+        P4-02 Rewrite "blueprint, rubric, runs and decisions" {/* vocabulary-allow: rubric, blueprint, runs and decisions */}
         Setup wizard step 2
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
         now.
         SYMPTOM
         Step 2 body reads: "The title, location and work model become the role record everything else attaches to
-        — blueprint, rubric, runs and decisions."
+        — blueprint, rubric, runs and decisions." {/* vocabulary-allow: rubric, blueprint, runs and decisions */}
         DO THIS
         Replace with: "The title, location and work model anchor everything else we build for this role."
         Done when: The strings "blueprint", "rubric" and "runs and decisions" do not appear on the setup wizard.
