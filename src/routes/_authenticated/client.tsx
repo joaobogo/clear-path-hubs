@@ -423,12 +423,14 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P68 Point the step marker at the first incomplete step MEDIUM CLIENT ONBOARDING
+        TEXTO DO USUÁRIO: "P69 Clear the form for a new role MEDIUM CLIENT ONBOARDING
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/onboarding the left rail reads \"Step 2 of 10\" while steps 1, 2, 3 and 5 all carry a Done tick
-        and step 4 is the first incomplete one.
-        Compute the current step as the first step that is not Done, and highlight that step in the rail.
-        Done when: The step marker always names the first incomplete step."
+        On /client/onboarding, choosing \"Add a new role\" in the \"Which role are we configuring?\" dropdown leaves
+        every field populated with the previous role's data — title, location, seniority and the entire job
+        description.
+        Reset all role fields to empty when \"Add a new role\" is selected, so the user cannot accidentally save a
+        duplicate.
+        Done when: Selecting “Add a new role” leaves every field blank."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
