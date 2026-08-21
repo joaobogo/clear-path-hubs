@@ -2235,7 +2235,42 @@ function ClientLayout() {
         Remove the line, or reduce it to "Updated just now".
         Done when: The string "newest activity" does not appear in the client workspace.
 
+        P8-21 Remove "Every open is logged." from the CV modal
+        Candidate detail
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The CV preview modal is captioned "Read it here, or download a copy. Every open is logged."
+        DO THIS
+        Remove "Every open is logged."
+        Done when: The string "Every open is logged" does not appear in the client workspace.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 58 of 66
+        P8-22 Explain the pre-selected candidates
+        Candidates (/client/candidates)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Three candidates are silently pre-selected on page load — driving the buttons "Compare 3 side by side"
+        and "Download 3 CVs (ZIP)" — with no explanation of why they are ticked.
+        DO THIS
+        Add a line beside the selection reading "3 shortlisted candidates selected — clear", or start with nothing
+        selected.
+        Done when: The reason for any pre-selection is stated on screen.
+        P8-23 Drop the type badge duplicated in every Approvals row
+        Approvals (/client/approvals)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Each row prints its type twice: the title reads "Offer response — Offer — waiting on Candidate" and a badge
+        beside it reads "Offer response"; the title reads "Confirm time — Confirm an interview time" and a badge
+        reads "Confirm time".
+        DO THIS
+        Remove the badge and keep the title, or shorten the title to remove the duplicated prefix.
+        Done when: No Approvals row states its type twice.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
         
         
