@@ -599,7 +599,7 @@ function ClientLayout() {
         Insights (/client/intelligence)
         P1-06 Fix "0 of 10 of your requirements evidenced" — it
         is a constant
-        Candidate detail (/client/candidates/<id>)
+        Candidate detail (/client/candidates/{'<id>'})
         P1-07 Stop showing one candidate's CV passage under
         another candidate's name
         Candidate comparison modal
