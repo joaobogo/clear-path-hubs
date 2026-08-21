@@ -635,6 +635,24 @@ function ClientLayout() {
         comparison
         Candidate comparison modal
 
+        Phase 3 · Fix the dead and half-dead controls (11 prompts)
+        ID Fix Page
+        P3-00 Investigate the swallowed first click as ONE bug Global
+        P3-01 Fix "Cancel invitation" doing nothing Account → Team & roles
+        P3-02 Fix the dead "New role" link Roles (/client/positions)
+        P3-03 Fix "Compare 3 side by side" needing two clicks Candidates (/client/candidates)
+        P3-04 Fix the Messages "Roles" filter needing two clicks Messages (/client/conversations)
+        P3-05 Fix "Invite team member" needing two clicks Account → Team & roles
+        P3-06 Fix the "Workspace details" accordion opening
+        unreliably
+        Account (/client/account)
+        P3-07 Make the Setup tab open the Setup panel Account (/client/account)
+        P3-08 Focus the search input when the palette opens by
+        click
+        Header search
+        P3-09 Show an empty state for every empty search result Header search
+        P3-10 Index candidate headlines in global search Header search
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
