@@ -4,7 +4,7 @@ CANDIDATES = [
     # ---------------- Client Success Manager — EMEA ----------------
     {
         "position": "csm", "stage": "shortlisted", "recommendation": "shortlist",
-        "name": "Marta Oliveira", "email": "marta.oliveira@demo.taasflow.com",
+        "name": "Marta Oliveira", "email": "marta.oliveira@example.com",
         "phone": "+351 912 000 201", "city": "Lisbon", "country": "Portugal",
         "headline": "Client Success Manager — mid-market SaaS, EMEA book",
         "yoe": 6, "notice_weeks": 4, "earliest_start": "2026-09-28",
@@ -36,7 +36,7 @@ CANDIDATES = [
     },
     {
         "position": "csm", "stage": "interview_process", "recommendation": "shortlist",
-        "name": "Hugo Antunes", "email": "hugo.antunes@demo.taasflow.com",
+        "name": "Hugo Antunes", "email": "hugo.antunes@example.com",
         "phone": "+351 912 000 202", "city": "Cascais", "country": "Portugal",
         "headline": "Client Success Manager — HR tech and recruiting platforms",
         "yoe": 5, "notice_weeks": 6, "earliest_start": "2026-10-12",
@@ -68,7 +68,7 @@ CANDIDATES = [
     },
     {
         "position": "csm", "stage": "delivered", "recommendation": "review",
-        "name": "Rita Salgado", "email": "rita.salgado@demo.taasflow.com",
+        "name": "Rita Salgado", "email": "rita.salgado@example.com",
         "phone": "+351 912 000 203", "city": "Porto", "country": "Portugal",
         "headline": "Customer Success Manager — SMB portfolio, moving to mid-market",
         "yoe": 4, "notice_weeks": 4, "earliest_start": "2026-09-28",
@@ -100,7 +100,7 @@ CANDIDATES = [
     },
     {
         "position": "csm", "stage": "not_moving_forward", "recommendation": "do_not_recommend",
-        "name": "Nuno Vasques", "email": "nuno.vasques@demo.taasflow.com",
+        "name": "Nuno Vasques", "email": "nuno.vasques@example.com",
         "phone": "+351 912 000 204", "city": "Lisbon", "country": "Portugal",
         "headline": "Technical Support Manager — B2B SaaS",
         "yoe": 7, "notice_weeks": 8, "earliest_start": "2026-11-02",
@@ -134,7 +134,7 @@ CANDIDATES = [
     # ---------------- Revenue Operations Analyst ----------------
     {
         "position": "revops", "stage": "shortlisted", "recommendation": "shortlist",
-        "name": "Filipa Andrade", "email": "filipa.andrade@demo.taasflow.com",
+        "name": "Filipa Andrade", "email": "filipa.andrade@example.com",
         "phone": "+351 912 000 205", "city": "Lisbon", "country": "Portugal",
         "headline": "Revenue Operations Analyst — SQL, dbt, Looker",
         "yoe": 5, "notice_weeks": 4, "earliest_start": "2026-10-19",
@@ -166,7 +166,7 @@ CANDIDATES = [
     },
     {
         "position": "revops", "stage": "interview_process", "recommendation": "shortlist",
-        "name": "Joana Rocha", "email": "joana.rocha@demo.taasflow.com",
+        "name": "Joana Rocha", "email": "joana.rocha@example.com",
         "phone": "+351 912 000 206", "city": "Braga", "country": "Portugal",
         "headline": "Business Analyst — SQL and Python, moving into RevOps",
         "yoe": 4, "notice_weeks": 2, "earliest_start": "2026-09-21",
@@ -198,7 +198,7 @@ CANDIDATES = [
     },
     {
         "position": "revops", "stage": "delivered", "recommendation": "review",
-        "name": "André Pinto", "email": "andre.pinto@demo.taasflow.com",
+        "name": "André Pinto", "email": "andre.pinto@example.com",
         "phone": "+351 912 000 207", "city": "Lisbon", "country": "Portugal",
         "headline": "Sales Operations Analyst — Salesforce and Power BI",
         "yoe": 3, "notice_weeks": 4, "earliest_start": "2026-10-19",
@@ -230,7 +230,7 @@ CANDIDATES = [
     },
     {
         "position": "revops", "stage": "not_moving_forward", "recommendation": "do_not_recommend",
-        "name": "Bruno Teles", "email": "bruno.teles@demo.taasflow.com",
+        "name": "Bruno Teles", "email": "bruno.teles@example.com",
         "phone": "+351 912 000 208", "city": "Setúbal", "country": "Portugal",
         "headline": "Financial Controller — reporting and budgeting",
         "yoe": 8, "notice_weeks": 8, "earliest_start": "2026-11-16",
@@ -264,7 +264,7 @@ CANDIDATES = [
     # ---------------- Head of Operations (filled) ----------------
     {
         "position": "ops", "stage": "hired", "recommendation": "shortlist",
-        "name": "Cláudia Ferreira", "email": "claudia.ferreira@demo.taasflow.com",
+        "name": "Cláudia Ferreira", "email": "claudia.ferreira@example.com",
         "phone": "+351 912 000 209", "city": "Lisbon", "country": "Portugal",
         "headline": "Head of Operations — staffing and delivery, multi-site",
         "yoe": 12, "notice_weeks": 8, "earliest_start": "2026-09-01",
@@ -296,7 +296,7 @@ CANDIDATES = [
     },
     {
         "position": "ops", "stage": "not_moving_forward", "recommendation": "review",
-        "name": "Vasco Lima", "email": "vasco.lima@demo.taasflow.com",
+        "name": "Vasco Lima", "email": "vasco.lima@example.com",
         "phone": "+351 912 000 210", "city": "Porto", "country": "Portugal",
         "headline": "Operations Manager — logistics and shared services",
         "yoe": 9, "notice_weeks": 8, "earliest_start": "2026-10-01",
@@ -328,7 +328,7 @@ CANDIDATES = [
     },
     {
         "position": "ops", "stage": "not_moving_forward", "recommendation": "do_not_recommend",
-        "name": "Sara Melo", "email": "sara.melo@demo.taasflow.com",
+        "name": "Sara Melo", "email": "sara.melo@example.com",
         "phone": "+351 912 000 211", "city": "Lisbon", "country": "Portugal",
         "headline": "Senior Project Manager — professional services",
         "yoe": 7, "notice_weeks": 4, "earliest_start": "2026-09-15",
