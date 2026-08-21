@@ -423,13 +423,14 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P62 Fix the interview count in the role row MEDIUM CLIENT ROLES
+        TEXTO DO USUÁRIO: "P63 Move cancelled-but-pending interviews out of the past MEDIUM CLIENT INTERVIEWS
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/positions the role row summary says \"… 5 interviews to confirm, 2 interviews booked.\" next to a
-        table column headed INTERVIEW showing 3.
-        Make the column header say what it counts — rename it to \"IN INTERVIEW\" (candidates currently
-        interviewing) — so it no longer looks like it disagrees with the sentence beside it.
-        Done when: The column header and the row sentence can no longer be read as the same figure."
+        On /client/interviews, the \"Already happened\" section contains an entry reading \"Cancelled · Video Call ·
+        <candidate> · 2 times with the candidate — first option in 2 days\" — a future slot filed under a past
+        heading.
+        Move any interview with a future proposed time into \"Coming up\" or into the new \"Waiting on you to confirm
+        a time\" section, regardless of its cancelled status.
+        Done when: Nothing with a future date appears under “Already happened”."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
