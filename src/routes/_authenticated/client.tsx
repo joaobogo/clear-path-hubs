@@ -677,6 +677,22 @@ function ClientLayout() {
         P4-17 Remove the "(Client)" role tag from display names Messages / Account
         P4-18 Use the team name consistently instead of individual recruiters Messages / notifications
 
+        Phase 5 · Fix the candidate page and the comparison (19 prompts)
+        ID Fix Page
+        P5-01 Show evidence and a source on every requirement row
+           Candidate detail — Requirement coverage
+        P5-02 Make the score breakdown sum to the displayed score
+           Candidate detail — score breakdown
+        P5-03 Stop one requirement having two opposite verdicts on one page
+           Candidate detail
+        P5-04 De-duplicate the "What holds it back" list Candidate detail
+        P5-05 Fix "Areas to validate" reading 5 for every candidate
+           Candidate comparison modal
+        P5-06 Fix the "Concerns" cells being identical across candidates
+           Candidate comparison modal
+        P5-07 Fix "Verified strengths" not matching the Strengths bullets
+           Candidate comparison modal
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
