@@ -141,7 +141,6 @@ export function CompactList({
             ))}
           </tbody>
         </table>
-      </div>
-    </>
+    </div>
   );
 }
