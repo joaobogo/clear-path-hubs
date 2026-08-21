@@ -16066,7 +16066,6 @@ export type Database = {
         | "sync_completed"
         | "scheduled_run_completed"
       file_status: "uploading" | "ready" | "failed" | "deleted"
-        | "cancelled"
       hire_close_reason:
         | "candidate_declined"
         | "counter_offer"
@@ -16213,7 +16212,6 @@ export type Database = {
         | "cancelled"
       profile_status: "active" | "suspended" | "deleted"
       recommendation_status:
-       
         | "pending"
         | "shortlist"
         | "review"
@@ -16227,7 +16225,6 @@ export type Database = {
         | "candidate_reasoning"
         | "decision"
         | "risk"
-       
         | "next_step"
       rubric_version_status:
         | "draft"
@@ -16420,7 +16417,6 @@ export const Constants = {
         "superseded",
         "failed",
         "cancelled",
-        | "cancelled"
       ],
         "shortlist",
         "request_interview",
@@ -16448,7 +16444,6 @@ export const Constants = {
         "delivered",
         "failed",
         "cancelled",
-        | "cancelled"
         "bounced",
         "suppressed",
       ],
@@ -16516,7 +16511,6 @@ export const Constants = {
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
         "cancelled",
-        | "cancelled"
       hire_close_reason: [
         "candidate_declined",
         "counter_offer",
@@ -16557,7 +16551,6 @@ export const Constants = {
         "completed",
         "failed",
         "cancelled",
-        | "cancelled"
         "superseded",
       ],
       match_stage: [
@@ -16594,11 +16587,9 @@ export const Constants = {
         "completed",
         "failed",
         "cancelled",
-        | "cancelled"
         "aborted",
       ],
       migration_validation_status: ["not_run", "passed", "warned", "failed"],
-        | "cancelled"
       notification_audience: ["admin", "client", "candidate"],
       org_status: ["prospect", "active", "paused", "archived"],
       outreach_campaign_status: [
@@ -16644,7 +16635,6 @@ export const Constants = {
         "opted_out",
         "failed",
         "cancelled",
-        | "cancelled"
       ],
       payment_status: [
         "unpaid",
@@ -16678,7 +16668,6 @@ export const Constants = {
         "provider_blocked",
         "failed",
         "cancelled",
-        | "cancelled"
       ],
       profile_status: ["active", "suspended", "deleted"],
       recommendation_status: [
@@ -16721,7 +16710,6 @@ export const Constants = {
       ],
       score_status: ["queued", "running", "completed", "failed", "cancelled"],
         "cancelled",
-        | "cancelled"
       shortlist_share_mode: ["review", "presentation", "compare"],
       silver_consent: ["granted", "pending", "declined", "withdrawn"],
       silver_reason: [
