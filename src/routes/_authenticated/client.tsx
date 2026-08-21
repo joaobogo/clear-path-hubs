@@ -423,12 +423,14 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P63 Move cancelled-but-pending interviews out of the past MEDIUM CLIENT INTERVIEWS
+        TEXTO DO USUÁRIO: "P64 Build the availability panel or remove it MEDIUM CLIENT INTERVIEWS
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        {"On /client/interviews, the \"Already happened\" section contains an entry reading \"Cancelled · Video Call · <candidate> · 2 times with the candidate — first option in 2 days\" — a future slot filed under a past heading."}
-        Move any interview with a future proposed time into \"Coming up\" or into the new \"Waiting on you to confirm
-        a time\" section, regardless of its cancelled status.
-        Done when: Nothing with a future date appears under “Already happened”."
+        On /client/interviews the panel \"Your interview availability — Set your windows once — candidates then
+        pick from them, no back-and-forth.\" contains a heading and a sentence and nothing else. No control, no
+        link, no empty state — even though the page subtitle instructs the client to set their availability.
+        Either add a working availability editor (days, time windows, timezone, save), or delete the panel and the
+        instruction in the page subtitle.
+        Done when: The panel either works or is gone."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
