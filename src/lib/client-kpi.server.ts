@@ -8,6 +8,7 @@ import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/band
 import { displayScore } from "@/config/scoring-bands";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
+import { countRowsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
 import { cleanQuote, renderQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
 
 import {
