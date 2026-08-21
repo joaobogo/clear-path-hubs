@@ -2021,7 +2021,45 @@ function ClientLayout() {
         Done when: Visiting an arbitrary /client/ path shows page-not-found copy that does not claim the item was
         removed
 
+        P8-01 Replace the Overview queue with a summary that links to Approvals
+        Overview / Approvals
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Approvals page reproduces the Overview "WHAT NEEDS YOU" queue item for item — the same seven
+        rows, in the same order, with the same wording and the same action buttons. Approvals additionally has
+        real filters (Assigned to me, Team, Overdue, Waiting, Completed) and takes 8.6 seconds to load.
+        DO THIS
+        Replace the Overview's full queue with a three-line summary — overdue count, waiting count, and the
+        single most urgent item — linking into Approvals. Keep Approvals as the full list.
+        Done when: The Overview shows a summary rather than the full seven rows, and the full list exists in exactly
+        one place.
+        Ordering: Do this before P9-01 — it removes the reason to load the queue twice.
+
+        P8-02 Delete the duplicate List | Board toggle
+        Candidates (/client/candidates)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Candidates page renders TWO separate control groups both with the accessible name "Result view" —
+        one directly under the tiles and one inside the filter row — plus a third "Board" in the top tab bar. The word
+        "Board" appears three times on one screen.
+        DO THIS
+        Delete the lower toggle inside the filter row. Keep the one under the tiles.
+        Done when: Exactly one List | Board toggle exists on the Candidates page.
+
+        P8-03 Delete the duplicate result count
+        Candidates (/client/candidates)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The page renders "10 of 10 shown" top-right and "10 of 10 candidates" in the filter row.
+        DO THIS
+        Delete the header count and keep the filter-row count.
+        Done when: Exactly one result count appears on the Candidates page.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
 
 
 
