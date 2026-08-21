@@ -87,6 +87,10 @@ export const loadClientOverview = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const s = context.supabase as AnyRow;
+
+    const { getInterviewsAwaitingFeedback } = await import("./client/interviews-awaiting-feedback.server");
+    const interviewsAwaitingFeedback = await getInterviewsAwaitingFeedback(context.supabase, data.orgId);
+
     // 1. Fetch the unified open items and blocked roles.
     const openItemsResponse = await loadClientOpenItems(
       context.supabase,
@@ -155,7 +159,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       interviews_to_confirm: openItemsResponse.items.filter(i => i.kind === 'interview').length,
       offers: openItemsResponse.items.filter(i => i.kind === 'offer').length,
       hires: laneCounts.hired,
-      missing_feedback: openItemsResponse.items.filter(i => i.kind === 'missing_feedback').length,
+      missing_feedback: interviewsAwaitingFeedback.length,
     };
 
 
@@ -356,32 +360,48 @@ export const loadClientOverview = createServerFn({ method: "GET" })
 
     // ── Decision queue ──────────────────────────────────────────────────────
     // Unified source: the decision queue now reads from the same open items list
-    // used by the headers and the "Your open items" strip.
-    const queueItems: QueueItem[] = openItemsResponse.items.map((item) => {
-      return {
-        key: `${item.kind}:${item.id}`,
-        kind: item.kind as any,
-        concerns: item.label,
-        role_title: item.context ?? "Your role",
-        position_id: item.href.split('/').pop()?.split('#')[0] || null, // Best effort extraction
-        subject_id: item.subject_id,
-        due_at: item.due_at,
-        overdue: item.overdue,
-        due_label: openItemDueLabel(item, nowMs),
-        waiting_since: item.waiting_since ?? null,
-        action: item.kind === "info_request" ? "Answer" : 
-                item.kind === "pending_decision" ? "Review" :
-                item.kind === "missing_feedback" ? "Feedback" :
-                item.kind === "offer" ? "View" : "Confirm",
+    // used by the headers and the "Your open items" strip, EXCEPT for feedback
+    // which now uses the shared canonical query to ensure counts match exactly.
+    const otherQueueItems: QueueItem[] = openItemsResponse.items
+      .filter(item => item.kind !== 'missing_feedback')
+      .map((item) => {
+        return {
+          key: `${item.kind}:${item.id}`,
+          kind: item.kind as any,
+          concerns: item.label,
+          role_title: item.context ?? "Your role",
+          position_id: item.href.split('/').pop()?.split('#')[0] || null,
+          subject_id: item.subject_id,
+          due_at: item.due_at,
+          overdue: item.overdue,
+          due_label: openItemDueLabel(item, nowMs),
+          waiting_since: item.waiting_since ?? null,
+          action: item.kind === "info_request" ? "Answer" : 
+                  item.kind === "pending_decision" ? "Review" :
+                  item.kind === "offer" ? "View" : "Confirm",
+          to: item.href,
+        };
+      });
 
-        to: item.href,
-      };
-    });
+    const feedbackQueueItems: QueueItem[] = interviewsAwaitingFeedback.map((iv) => ({
+      key: `missing_feedback:${iv.interview_id}`,
+      kind: 'missing_feedback',
+      concerns: `Give interview feedback for ${iv.candidate_name}`,
+      role_title: iv.position_title,
+      position_id: iv.position_id,
+      subject_id: iv.interview_id,
+      due_at: iv.prompt_from,
+      overdue: !!iv.prompt_from && new Date(iv.prompt_from).getTime() < nowMs,
+      due_label: iv.prompt_from ? openItemDueLabel({ due_at: iv.prompt_from } as any, nowMs) : "Due soon",
+      waiting_since: iv.happened_at,
+      action: "Feedback",
+      to: `/client/interviews?interview=${iv.interview_id}&feedback=1`,
+    }));
 
-    const queueGroups = buildQueue(queueItems);
+    const queueGroups = buildQueue([...otherQueueItems, ...feedbackQueueItems]);
     const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming].slice(0, 10);
     const decision_queue_meta = {
-      checked: openItemsResponse.items.length,
+      checked: otherQueueItems.length + feedbackQueueItems.length,
       overdue: queueGroups.overdue.length,
       next_expected_at:
         Array.from(promisedByPosition.values())

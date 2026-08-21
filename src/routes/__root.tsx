@@ -145,14 +145,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P12 Fix the “Open roles 1 / 1 filled” label BLOCKER CLIENT HOME
+TEXTO DO USUÁRIO: "P14 Show every interview awaiting feedback BLOCKER CLIENT HOME
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-On /client the status card shows \"Open roles 1 / 1 filled\" next to a counter reading \"1 open role\". If 1
-of 1 is filled then 0 are open, so the two contradict each other.
-Replace the fraction label with an unambiguous one built from the same roles query used everywhere else,
-e.g. \"1 of 2 roles filled\".
-If the fraction cannot be made unambiguous, remove it and keep only the three counters.
-Done when: The fraction and the counters beside it cannot contradict each other."`}
+/client/interviews says "3 interviews are waiting on your feedback." and lists three candidates. The home
+page "WHAT NEEDS YOU" list shows only ONE "Give interview feedback" item.
+Rebuild the WHAT NEEDS YOU feedback items from the same query the Interviews page uses, so all pending
+feedback requests appear on the home page.
+Do not change the sorting or the overdue banner logic — only the source of the feedback rows.
+Done when: The number of “Give interview feedback” rows on /client equals the count on /client/interviews."`}
         </div>
 
         <Scripts />
