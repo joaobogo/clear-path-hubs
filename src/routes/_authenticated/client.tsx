@@ -423,14 +423,14 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P70 Fix the essentials count MEDIUM CLIENT CREATE ROLE
+        TEXTO DO USUÁRIO: "P71 Explain the two candidate totals MEDIUM CLIENT TALENT POOL
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/positions/new the \"ESSENTIAL FOR LAUNCH\" panel lists six bullets (Seniority, Work arrangement,
-        Location or remote, 3–5 Must-have skills, Salary band, Job description) but the caption below says \"You
-        can enrich the brief with advanced details after these 7 essentials.\"
-        Either change the caption to \"these 6 essentials\" or add the missing seventh bullet. Make the number match
-        the list.
-        Done when: The number in the caption equals the number of bullets."
+        /client/talent-pool shows \"20 candidates\" while /client/candidates shows \"10 of 10 candidates\" for the
+        same client, with no explanation of the difference.
+        After the visibility filter is applied (see the earlier talent pool prompt), relabel the count so it is
+        unambiguous, e.g. \"10 delivered to you\". If a broader screened figure is genuinely meaningful, show it as
+        a separate labelled number rather than an unexplained larger total.
+        Done when: The two pages either show the same number or explain the difference in the label."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
