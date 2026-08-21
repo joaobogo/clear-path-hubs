@@ -1994,7 +1994,7 @@ function ClientLayout() {
         — 1 candidates".
         DO THIS
         Pluralise conditionally wherever a count is rendered with a noun.
-        Done when: No "1 <plural noun>" string appears in the client workspace.
+        Done when: No "1 {'<plural noun>'}" string appears in the client workspace.
         P7-17 Fix the broken chart caption template on Insights
         Insights (/client/intelligence)
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
