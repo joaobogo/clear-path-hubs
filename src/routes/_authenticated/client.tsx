@@ -2058,7 +2058,45 @@ function ClientLayout() {
         Delete the header count and keep the filter-row count.
         Done when: Exactly one result count appears on the Candidates page.
 
+        P8-04 Remove the empty Executive charts
+        Executive (/client/executive)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        "CANDIDATES DELIVERED PER WEEK (LAST 8)" renders eight axis labels and no values at all. "TYPICAL
+        SHORTLIST FIT PER WEEK (APPROVED)" renders "—" for seven of its eight points; the only value is
+        "Consider" at 08/10.
+        DO THIS
+        Hide each chart when it has fewer than three data points, and show a one-line empty state explaining what
+        will fill it.
+        Done when: Neither chart renders with a majority of empty points.
+
+        P8-05 Remove or fix the p90 column
+        Executive (/client/executive)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        In "Time in stage", p90 equals the mean on every row: 4.8/4.8, 0.8/0.8, 0.8/0.8, 0.8/0.8. Four different
+        populations cannot all produce a 90th percentile identical to their mean.
+        DO THIS
+        Compute the 90th percentile properly from the stage-duration list, or remove the column.
+        Done when: Either p90 differs from the mean on at least one row, or the column is gone.
+
+        P8-06 Fix "Time in stage" averages that contradict the stalled measure
+        Executive (/client/executive)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Executive page reads "Shortlisted By Your Team — 3 candidates · avg 0.8d", while Insights reads
+        "Oldest has waited 8 days. Sitting at 'shortlisted'" and counts one shortlisted candidate stalled 7+ days. A
+        mean of 0.8 days cannot describe a three-person set containing an 8-day member.
+        DO THIS
+        Have both measures read the same stage-history table.
+        Done when: The Executive time-in-stage average for a stage is consistent with the oldest stalled candidate
+        Insights reports for that stage.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
 
 
