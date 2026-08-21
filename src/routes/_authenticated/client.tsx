@@ -1548,7 +1548,36 @@ function ClientLayout() {
         the cells that are not Met.
         Done when: The three candidates show 8, 4 and 6, and the ● / ◐ / ○ ranking follows those values.
 
+        P5-06 Fix the "Concerns" cells being identical across candidates
+        Candidate comparison modal
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Tiago Almeida's and Sofia Marques' "Concerns" cells are character-identical for their first 300 characters —
+        the same four "Only partial evidence for required: …" lines in the same order. Sofia's grid cell for
+        "Experience owning features end to end" reads "Met" while her own Concerns cell lists it as only partly
+        evidenced.
+        DO THIS
+        Generate each candidate's Concerns list from that candidate's own non-Met requirements, not from the
+        role's requirement list.
+        Done when: No two candidates in a comparison show the same Concerns text, and no requirement appears in a
+        candidate's Concerns while their grid cell for it reads Met.
+        P5-07 Fix "Verified strengths" not matching the Strengths bullets
+        Candidate comparison modal
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The axis reads "Verified strengths — Tiago Almeida 1 · Sofia Marques 0 · Miguel Torres 3". The Strengths
+        row beneath renders: Tiago "None recorded." (0 bullets), Sofia 1 bullet, Miguel 1 bullet. All three disagree.
+        Sofia is simultaneously "● STRONGEST" on must-haves met and "○ WEAKEST" on verified strengths, while
+        the OBSERVATIONS panel calls her "the highest coverage (67%)".
+        DO THIS
+        Make the Verified strengths axis count the same array the Strengths row renders.
+        Done when: For each candidate the Verified strengths number equals the number of bullets in their Strengths
+        cell.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
