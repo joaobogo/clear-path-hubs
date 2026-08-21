@@ -1477,7 +1477,40 @@ function ClientLayout() {
         Pick one convention and apply it to both. The safer choice is the team name.
         Done when: A message and its notification attribute the sender identically
 
+        P5-01 Show evidence and a source on every requirement row
+        Candidate detail — Requirement coverage
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Requirement coverage panel is captioned "Every declared role requirement, mapped to the evidence
+        we found" and renders all ten requirements, but only ONE row ("Experience in an early-stage or founder-led
+        team") carries a "Show evidence (1)" control. The other nine show a bare Met or Partial chip with no quote,
+        no source and no tooltip — hovering a "Met" chip produces nothing.
+        DO THIS
+        Render the evidence expander on every requirement row. Where a requirement genuinely has no passage,
+        render the expander disabled with the text "No passage found — status inferred from the application".
+        Done when: Every one of the ten requirement rows on a candidate page either shows an expandable passage
+        with its source, or explicitly states that no passage was found.
+        Ordering: Run P1-06 first.
+
+        P5-02 Make the score breakdown sum to the displayed score
+        Candidate detail — score breakdown
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The breakdown reads "Must-have coverage (60% of the score) 91.7% × 60% = 55 points", "Nice-to-have
+        signal (20% of the score) 62.5% × 20% = 12.5 points", "Screening alignment (20% of the score) 100% ×
+        20% = 20 points", "Total 87.5 points" — captioned "The three parts add up to the score shown above." The
+        score shown above is 88. 55 + 12.5 + 20 = 87.5.
+        DO THIS
+        Display the candidate score as 87.5 rather than 88, or change the caption to "The three parts add up to the
+        score shown above, before rounding." Do not leave a caption that asserts an identity the numbers do not
+        satisfy.
+        Done when: The score breakdown's stated total and the headline score are either equal, or the caption
+        acknowledges rounding.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
