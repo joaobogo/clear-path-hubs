@@ -210,15 +210,28 @@ function AccountPage() {
  */
 export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
   const overviewFn = useServerFn(getAccountOverview);
+  const positionsFn = useServerFn(getClientPositions);
 
   const overview = useQuery({
     queryKey: ["client-account", orgId],
     queryFn: () => overviewFn({ data: { orgId } }),
     placeholderData: (prev) => prev,
   });
+  // The role figures come from the same roles query the Roles page and the
+  // "Roles and where they are" panel use, so the two counts on this page can
+  // never disagree.
+  const positions = useQuery({
+    queryKey: ["client-positions", orgId, "account"],
+    queryFn: () => positionsFn({ data: { orgId } }),
+    placeholderData: (prev) => prev,
+  });
 
   const overviewState = useQueryState(overview);
   const data = overview.data;
+  const roleCounts = useMemo(
+    () => countClientRoles((positions.data as AnyRow[]) ?? []),
+    [positions.data],
+  );
 
   if (overviewState.isError) {
     return (
@@ -239,9 +252,14 @@ export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
       <Tile
         icon={<Briefcase className="h-4 w-4" />}
         label="Open roles"
-        value={String(data?.roles_open ?? 0)}
-        note={`${data?.roles_total ?? 0} total in the account`}
+        value={positions.isLoading && !positions.data ? "—" : String(roleCounts.open)}
+        note={
+          positions.isLoading && !positions.data
+            ? "Counting roles…"
+            : `${roleCounts.total} total in the account`
+        }
       />
+
       <Tile
         icon={<CheckCircle2 className="h-4 w-4" />}
         label="Hires closed"
