@@ -653,6 +653,18 @@ function ClientLayout() {
         P3-09 Show an empty state for every empty search result Header search
         P3-10 Index candidate headlines in global search Header search
 
+        Phase 4 · Strip internal vocabulary and test data (18 prompts)
+        ID Fix Page
+        P4-01 Rewrite the five flagged Setup wizard step titles Setup wizard (/client/onboarding)
+        P4-02 Rewrite "blueprint, rubric, runs and decisions" Setup wizard step 2 {/* vocabulary-allow */}
+        P4-03 Remove "isolated to it at the database level" Setup wizard step 1
+        P4-04 Rewrite "Nothing goes live until it passes the publish gate" New role (/client/positions/new)
+        P4-05 Replace "Only partial evidence for required:" Candidate detail + comparison
+        P4-06 Replace "Silver medalist" and "silver" Candidate detail / Talent memory
+        P4-07 Remove the "Unicorn only (95+)" filter Candidates (/client/candidates)
+        P4-08 Remove the "Agent run outcomes" measure Insights (/client/intelligence) {/* vocabulary-allow */}
+        P4-09 Remove "against your role's rubric" and the run counts Insights (/client/intelligence) {/* vocabulary-allow */}
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
