@@ -1985,7 +1985,44 @@ function ClientLayout() {
         Change the header to "Attribute", or leave the cell blank.
         Done when: No table renders the word "Requirement" above rows that are not requirements.
 
+        P7-16 Fix the plural on counts of one
+        Offers / Executive
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Offers footer reads "Unassigned — 1 hires" and the Executive Time in stage reads "Not Moving Forward
+        — 1 candidates".
+        DO THIS
+        Pluralise conditionally wherever a count is rendered with a noun.
+        Done when: No "1 <plural noun>" string appears in the client workspace.
+        P7-17 Fix the broken chart caption template on Insights
+        Insights (/client/intelligence)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Three captions render an unfinished template: "Actual (days) across days" (Time to full shortlist), "Median
+        coverage across %" (Requirement coverage), and "Stalled candidates across candidates" (Stalled stages).
+        DO THIS
+        Fix the caption template so it reads naturally — for example "Actual days per role", "Median coverage per
+        candidate", "Stalled candidates by stage".
+        Done when: The word "across" does not appear followed by the unit it just used.
+        P7-18 Fix the not-found page copy
+        Global
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Every unknown route — /client/deliveries, /client/talent-pool, /client/shares, /client/overview and any
+        arbitrary path — renders "We couldn't find that / This item is no longer available in your workspace." That
+        copy asserts the item once existed and was removed, which is wrong for a route that never existed. The
+        page's browser title is also the generic "Client workspace".
+        DO THIS
+        Change the copy to "We couldn't find that page." and set the document title to "Not found · Client
+        workspace".
+        Done when: Visiting an arbitrary /client/ path shows page-not-found copy that does not claim the item was
+        removed
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
