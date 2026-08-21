@@ -47,6 +47,7 @@ import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { RequestInterviewDialog } from "@/components/client/interviews/request-interview-dialog";
 import { InterviewDetailDialog } from "@/components/client/interviews/interview-detail-dialog";
 import { detectTimezone } from "@/components/client/interviews/helpers";
+import { AwaitingConfirmationSection } from "@/components/client/interviews/awaiting-confirmation";
 
 const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/interviews")({
@@ -284,6 +285,12 @@ function InterviewsPage() {
         {isViewer && !support.readOnly && (
           <ViewerReadOnlyNotice area="requesting and rescheduling interviews" />
         )}
+        <AwaitingConfirmationSection
+          interviews={interviews}
+          readOnly={readOnly}
+          onConfirm={(iv) => setDetail(iv)}
+        />
+
         {org ? (
           <InterviewFeedbackQueue
             orgId={org}
