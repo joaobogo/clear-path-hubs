@@ -1684,7 +1684,39 @@ function ClientLayout() {
         Done when: Step 4 displays the content the user is being asked to approve, or the step no longer exists.
         Ordering: Run P4-01 first so the title is already fixed.
 
+        P6-01 Fix saves that report success without persisting
+        Account → Company profile / Setup wizard step 1
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Clearing the Headquarters field and saving returns the success toast "Workspace confirmed." (wizard) and
+        does not persist. Verified five times across both forms with a full page reload after each — the field still
+        reads its previous value every time. Setting the field to a non-empty value persists correctly.
+        DO THIS
+        The update payload is dropping empty strings, almost certainly via a falsy check before assignment. Send
+        explicit nulls for cleared fields, and only show the success toast after a confirmed 2xx that includes the
+        updated record.
+        Done when: Clearing Headquarters, saving, and reloading leaves the field empty; and if the write fails, an error is
+        shown rather than a success toast.
+        Ordering: None. This is why P0-02 is needed.
+        P6-02 Replace the raw "invalid_timezone" error
+        Interviews → Set availability
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Typing "Not/A/Timezone" into the Timezone field and pressing "Update availability" produces a red toast
+        reading exactly: invalid_timezone. There is no inline field error, no red border and no message under the
+        field. While the invalid value is in the field the modal subtitle echoes it back as valid: "Weekly windows in
+        Not/A/Timezone."
+        DO THIS
+        Map server error codes to sentences and render the error inline against the field, matching the pattern
+        already used by the invite modal ("That doesn't look like an email address."). For this case: "That isn't a
+        timezone we recognise. Try Europe/Lisbon." Also stop the subtitle echoing an unvalidated value.
+        Done when: Submitting an invalid timezone shows a sentence inline against the field, no raw code appears, and
+        the error clears when the field is corrected without resubmitting.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
