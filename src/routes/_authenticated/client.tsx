@@ -1340,7 +1340,31 @@ function ClientLayout() {
         Replace the phrase with "Partly evidenced — worth probing at interview:" everywhere it is generated.
         Done when: The string "Only partial evidence for required" does not appear anywhere in the client workspace.
 
-        {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position */}
+        P4-06 Replace "Silver medalist" and "silver"
+        Candidate detail / Talent memory
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The candidate page's Talent memory panel renders a button labelled "Silver medalist". The /client/talentmemory page renders the same concept as a lower-case badge reading "silver".
+        DO THIS
+        Replace both with "Runner-up" (title case in both places).
+        Done when: The strings "Silver medalist" and the standalone badge "silver" do not appear in the client
+        workspace.
+
+        P4-07 Remove the "Unicorn only (95+)" filter
+        Candidates (/client/candidates)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Candidates page carries a filter chip reading "Unicorn only (95+)". It is internal vocabulary, and it is
+        mathematically unreachable — the highest score in the workspace is 88. The Insights page calls the same
+        band "Exceptional".
+        DO THIS
+        Delete the "Unicorn only (95+)" filter chip. Where the 95+ band is named elsewhere, call it "Exceptional".
+        Done when: The string "Unicorn" does not appear in the client workspace, and the score distribution's top band
+        is labelled "Exceptional".
+
+        {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn */}
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
