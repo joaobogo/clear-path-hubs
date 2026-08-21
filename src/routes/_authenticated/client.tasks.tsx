@@ -7,7 +7,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/_authenticated/client/tasks")({
   beforeLoad: ({ search }) => {
     throw redirect({
-      to: "/client/approvals",
+      to: "/client",
       search: ((s: Record<string, unknown>) => ({
         ...s,
         view: typeof s.view === "string" ? s.view : undefined,

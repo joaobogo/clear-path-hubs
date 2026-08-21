@@ -105,7 +105,14 @@ const TABS: NavDef[] = [
     label: "Candidates",
     icon: Users,
     everyone: true,
-    hint: "Shortlist, talent memory",
+    hint: "Shortlist, pipeline",
+  },
+  {
+    to: "/client/talent-pool",
+    label: "Talent pool",
+    icon: Dna,
+    everyone: true,
+    hint: "Your talent network",
   },
 
   {
@@ -116,7 +123,7 @@ const TABS: NavDef[] = [
     hint: "Threads, inbox, all messages",
   },
   {
-    to: "/client/intelligence",
+    to: "/client/executive",
     label: "Insights",
     icon: BarChart3,
     everyone: true,

@@ -16,7 +16,7 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
       { to: "/client/positions", label: "Roles" },
       { to: "/client/interviews", label: "Interviews" },
       { to: "/client/offers", label: "Offers" },
-      { to: "/client/approvals", label: "Approvals" },
+      
     ],
   },
   {
@@ -26,7 +26,7 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
       { to: "/client/candidates", label: "Shortlist" },
       // Same route, same query — the board is a view, told apart by search.
       { to: "/client/candidates", label: "Board", search: { view: "board" } },
-      { to: "/client/talent-memory", label: "Talent memory" },
+      { to: "/client/talent-pool", label: "Talent pool" },
     ],
   },
   {
@@ -56,10 +56,6 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
     id: "insights",
     label: "Insights",
     tabs: [
-      { to: "/client/intelligence", label: "Hiring Intelligence" },
-      // { to: "/client/analytics", label: "Questions" },
-      // { to: "/client/dashboards", label: "Dashboards" },
-      // { to: "/client/data", label: "Your data" },
       { to: "/client/executive", label: "Executive" },
       { to: "/client/portfolio", label: "Portfolio" },
     ],

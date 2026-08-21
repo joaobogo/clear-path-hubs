@@ -105,6 +105,7 @@ import { Route as AuthenticatedMeCvRouteImport } from './routes/_authenticated/m
 import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authenticated/me.applications'
 import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authenticated/client.team'
 import { Route as AuthenticatedClientTasksRouteImport } from './routes/_authenticated/client.tasks'
+import { Route as AuthenticatedClientTalentPoolRouteImport } from './routes/_authenticated/client.talent-pool'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientRolesRouteImport } from './routes/_authenticated/client.roles'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
@@ -692,6 +693,12 @@ const AuthenticatedClientTasksRoute =
   AuthenticatedClientTasksRouteImport.update({
     id: '/tasks',
     path: '/tasks',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
+const AuthenticatedClientTalentPoolRoute =
+  AuthenticatedClientTalentPoolRouteImport.update({
+    id: '/talent-pool',
+    path: '/talent-pool',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
 const AuthenticatedClientSettingsRoute =
@@ -1419,6 +1426,7 @@ export interface FileRoutesByFullPath {
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
+  '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/tasks': typeof AuthenticatedClientTasksRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
   '/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
@@ -1609,6 +1617,7 @@ export interface FileRoutesByTo {
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
+  '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/tasks': typeof AuthenticatedClientTasksRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
   '/me/cv': typeof AuthenticatedMeCvRoute
@@ -1809,6 +1818,7 @@ export interface FileRoutesById {
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/roles': typeof AuthenticatedClientRolesRoute
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
+  '/_authenticated/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/_authenticated/client/tasks': typeof AuthenticatedClientTasksRoute
   '/_authenticated/client/team': typeof AuthenticatedClientTeamRoute
   '/_authenticated/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
@@ -2010,6 +2020,7 @@ export interface FileRouteTypes {
     | '/client/positions'
     | '/client/roles'
     | '/client/settings'
+    | '/client/talent-pool'
     | '/client/tasks'
     | '/client/team'
     | '/me/applications'
@@ -2200,6 +2211,7 @@ export interface FileRouteTypes {
     | '/client/portfolio'
     | '/client/roles'
     | '/client/settings'
+    | '/client/talent-pool'
     | '/client/tasks'
     | '/client/team'
     | '/me/cv'
@@ -2399,6 +2411,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions'
     | '/_authenticated/client/roles'
     | '/_authenticated/client/settings'
+    | '/_authenticated/client/talent-pool'
     | '/_authenticated/client/tasks'
     | '/_authenticated/client/team'
     | '/_authenticated/me/applications'
@@ -3246,6 +3259,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/client/tasks'
       preLoaderRoute: typeof AuthenticatedClientTasksRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
+    '/_authenticated/client/talent-pool': {
+      id: '/_authenticated/client/talent-pool'
+      path: '/talent-pool'
+      fullPath: '/client/talent-pool'
+      preLoaderRoute: typeof AuthenticatedClientTalentPoolRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
     '/_authenticated/client/settings': {
@@ -4201,6 +4221,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientRolesRoute: typeof AuthenticatedClientRolesRoute
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
+  AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
   AuthenticatedClientTasksRoute: typeof AuthenticatedClientTasksRoute
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
   AuthenticatedClientIndexRoute: typeof AuthenticatedClientIndexRoute
@@ -4231,6 +4252,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
     AuthenticatedClientPositionsRouteWithChildren,
   AuthenticatedClientRolesRoute: AuthenticatedClientRolesRoute,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
+  AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
   AuthenticatedClientTasksRoute: AuthenticatedClientTasksRoute,
   AuthenticatedClientTeamRoute: AuthenticatedClientTeamRoute,
   AuthenticatedClientIndexRoute: AuthenticatedClientIndexRoute,

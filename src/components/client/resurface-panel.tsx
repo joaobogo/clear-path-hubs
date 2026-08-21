@@ -80,7 +80,7 @@ export function ResurfacePanel({
           </p>
         </div>
         <Link
-          to="/client/talent-memory"
+          to="/client/talent-pool"
           className="text-xs text-primary hover:underline whitespace-nowrap"
         >
           View all
@@ -164,8 +164,8 @@ export function ResurfacePanel({
                     </Button>
                   )}
                   <Link
-                    to="/client/talent-memory"
-                    search={{ id: m.id }}
+                    to="/client/candidates/$id"
+                    params={{ id: m.candidate.match_id }}
                     className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
                   >
                     Open <ArrowRight className="h-3 w-3" />
