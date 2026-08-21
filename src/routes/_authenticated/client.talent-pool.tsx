@@ -60,7 +60,7 @@ function TalentPoolPage() {
       <div className="mt-12">
         <EmptyState
           title="Building your talent pool"
-          description="As you close roles and release candidates, your talent pool fills automatically. We surface relevant alumni when you open new positions."
+          description="As you close roles and release candidates, your talent pool fills automatically. We surface relevant alumni when you open new roles."
         />
       </div>
     </div>
