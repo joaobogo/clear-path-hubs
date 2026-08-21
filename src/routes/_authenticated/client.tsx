@@ -454,10 +454,20 @@ function ClientLayout() {
 
         P88 Add the missing board column LOW CLIENT CANDIDATES BOARD
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the summary tile \"STRONGEST CANDIDATES 3\" has no corresponding column in the board
+        On /client/candidates the summary tile "STRONGEST CANDIDATES 3" has no corresponding column in the board
         below it, so the board cannot be used to find the three candidates the tile counts.
         Either make that tile clickable so it filters the board to those candidates, or remove the tile.
-        Done when: Every summary tile on the page leads somewhere on the board."
+        Done when: Every summary tile on the page leads somewhere on the board.
+
+        P89 Remove the duplicate Notifications heading POLISH CLIENT ACCOUNT
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/account?tab=notifications there are two headings for one feature: "Notifications / Choose how
+        you'd like to be notified for each workspace event." immediately followed by a card headed "Notifications
+        / Choose how each update reaches you…". Every row also prints "Default: As it happens" beside a control
+        already reading "As it happens".
+        Delete the outer heading and subtitle. Show the "Default:" line only when the current value differs from
+        the default.
+        Done when: One heading, and no row repeats its own value as a default."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
