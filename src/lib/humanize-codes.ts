@@ -122,6 +122,7 @@ const DICTIONARY: Record<string, string> = {
   application: "Application",
   position: "Role",
   support_view_read_only: "You can't create roles while previewing a client workspace.",
+  support_view_denied: "You are viewing this workspace as a TaaSFlow administrator. Client actions are disabled.",
 };
 
 /**
