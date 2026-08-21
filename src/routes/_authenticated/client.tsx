@@ -2203,7 +2203,40 @@ function ClientLayout() {
         "Record outcome" control. Make Edit terms a button like the rest.
         Done when: Each offer card renders at most three visible controls.
 
+        P8-18 Name the person in the Upcoming start dates row
+        Account (/client/account)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The row reads "Senior Full-Stack Engineer — 1 Sept 2026". It names the role, not the person starting.
+        DO THIS
+        Render the candidate's name as the primary text with the role beneath it.
+        Done when: The Upcoming start dates row names the person who is starting.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 57 of 66
+        P8-19 Name the candidate in the Overview activity feed
+        Overview (/client)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The "Recent activity" panel renders six rows with no candidate names, in duplicated pairs: "A candidate
+        moved forward" twice, "You shortlisted a candidate" twice, "A candidate was declined" twice.
+        DO THIS
+        Render each row with the candidate's name and link it to their page — for example "Ines Lopes moved to
+        interviews". Show three rows rather than six.
+        Done when: Every activity row names a candidate and links to their record.
+        P8-20 Remove the internal telemetry line from the Overview footer
+        Overview (/client)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The page ends with "Read 1 minute ago · 20 Aug 2026, 20:20 · newest activity 19 Aug 2026, 14:31".
+        DO THIS
+        Remove the line, or reduce it to "Updated just now".
+        Done when: The string "newest activity" does not appear in the client workspace.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
         
         
