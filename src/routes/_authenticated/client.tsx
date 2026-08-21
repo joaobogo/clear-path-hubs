@@ -1648,7 +1648,44 @@ function ClientLayout() {
         action, or show the onboarding next step.
         Done when: No candidate at the Hired stage shows "Recommend interview"
 
+        P5-17 Use one set of status words for requirements
+        Candidate detail / comparison
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The candidate page uses "Met / Partial / Not evidenced". The comparison modal uses "Met / Partially met /
+        Unknown" for the same three states.
+        DO THIS
+        Use "Met / Partly met / No evidence" in both places, with the same ✓ / ◐ / ○ glyphs.
+        Done when: The same three words appear on the candidate page and in the comparison.
+        P5-18 Fix the duplicated city in the compensation panel
+        Candidate detail
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The compensation panel header renders "Lisbon, Lisbon, Portugal" and the role range label renders "ROLE
+        RANGE — LISBON, LISBON, PORTUGAL".
+        DO THIS
+        De-duplicate the location parts before rendering: when the city equals the region, print the city once.
+        Done when: The panel reads "Lisbon, Portugal".
+        P5-19 Render the compiled brief on setup step 4
+        Setup wizard step 4
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Step 4 is titled "Review the compiled role blueprint" and captioned "Check what the system understood
+        before it acts on it", with the body "Your inputs and the job description compile into a versioned blueprint:
+        requirements, rubric shape and a sourcing plan. Nothing sources until you confirm it." The panel then
+        renders NOTHING — no requirements, no scoring shape, no sourcing plan. The primary button reads "This
+        looks right — continue".
+        DO THIS
+        Render the compiled brief the step asks the user to approve: the requirement list, the weighting, and the
+        planned sourcing. If that content does not exist yet, remove the step.
+        Done when: Step 4 displays the content the user is being asked to approve, or the step no longer exists.
+        Ordering: Run P4-01 first so the title is already fixed.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
