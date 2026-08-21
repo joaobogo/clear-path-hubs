@@ -1882,7 +1882,50 @@ function ClientLayout() {
         not appear anywhere in the client workspace.
         Ordering: Run before P7-05.
 
+        P7-05 Fix the month/day dates on the Executive charts
+        Executive (/client/executive)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Both chart x-axes read "06/29 · 07/06 · 07/13 · 07/20 · 07/27 · 08/03 · 08/10 · 08/17". This is ambiguous for
+        a Portugal-based client and is the exact string the previous audit named.
+        DO THIS
+        Format the axis ticks with the shared date helper as "d MMM" — "29 Jun", "6 Jul", and so on.
+        Done when: No MM/DD date appears anywhere in the client workspace.
+        Ordering: After P7-04.
+        P7-06 Use one relative-time format
+        Global
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Four relative formats are in use: "yesterday" and "2 days ago" (Overview activity); "1 d ago" (bell panel —
+        abbreviated where everything else is spelled out); "1 minute ago" (Overview footer); and "Waiting 7 days",
+        "8 hours ago", "20 hours ago", "Last updated 3 days ago". Two adjacent pages also use different
+        conventions for the same stamp: Candidates shows "Updated 19 Aug 2026" while Roles shows "Last
+        updated 3 days ago".
+        DO THIS
+        Use the shared formatRelative helper everywhere, spelled out ("1 day ago", never "1 d ago"), and pick one
+        convention for the "last updated" stamp across Candidates and Roles.
+        Done when: The string "1 d ago" does not appear, and the Candidates and Roles pages use the same convention
+        for their last-updated stamp.
+        Ordering: After P7-04.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 47 of 66
+        P7-07 Fix the relative age being off by one on the Interviews page
+        Interviews (/client/interviews)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Two entries show a relative age that disagrees with the date printed beside it: "Thu, 13 Aug 2026, 03:16
+        (Europe/Lisbon, GMT+1) (8 days ago)" — 20 Aug minus 13 Aug is 7 — and "Mon, 10 Aug 2026, 22:03
+        (Europe/Lisbon, GMT+1) (11 days ago)" — 20 Aug minus 10 Aug is 10. Both are entries rendered in Lisbon
+        time; the relative appears to be computed from the viewer's local date instead.
+        DO THIS
+        Compute the relative age from the same instant and in the same timezone you render the absolute date in.
+        Done when: Every relative age on the Interviews page is consistent with the date printed beside it.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
