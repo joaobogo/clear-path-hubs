@@ -1295,7 +1295,7 @@ function ClientLayout() {
         Replace with: "The title, location and work model anchor everything else we build for this role."
         Done when: The strings "blueprint", "rubric" and "runs and decisions" do not appear on the setup wizard.
 
-        {/* vocabulary-allow: rubric, run, run-as-noun, position */}
+        {/* vocabulary-allow: blueprint, rubric, runs and decisions, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
