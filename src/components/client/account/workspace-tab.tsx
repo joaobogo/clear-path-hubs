@@ -151,13 +151,16 @@ export function WorkspaceTab() {
  canEdit={!isViewer && !readOnlySupport}
  />
 
- <SecuritySection email={settings.account.email} />
-
- <AccountSection
- email={settings.account.email}
- fullName={settings.account.full_name}
- role={role ?? "client_viewer"}
- />
+      {!support.isSupportView && (
+        <>
+          <SecuritySection email={settings.account.email} />
+          <AccountSection
+            email={settings.account.email}
+            fullName={settings.account.full_name}
+            role={role ?? "client_viewer"}
+          />
+        </>
+      )}
  </div>
  );
 }
