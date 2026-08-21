@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { getAccountOverview } from "@/lib/account.functions";
+import { countClientRoles, selectClientRoles, selectOpenClientRoles } from "@/lib/client/role-counts";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { formatStageDate } from "@/lib/client-role-progress";
