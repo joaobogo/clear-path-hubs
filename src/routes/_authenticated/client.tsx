@@ -475,7 +475,15 @@ function ClientLayout() {
         the "ACCOUNT" block heading, and again as the "WORKSPACE ACCESS" heading.
         Keep it in the sidebar and the page heading. Remove it from the breadcrumb and the WORKSPACE ACCESS
         heading.
-        Done when: The workspace name appears at most twice per screen."
+        Done when: The workspace name appears at most twice per screen.
+
+        P91 Show one read-only notice, not four POLISH IMPERSONATION
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        While impersonating, a client page can show four separate read-only notices at once: the blue banner, the
+        "Preview permission level" strip, "You are viewing as an administrator — changes are disabled." and "…
+        team changes are disabled."
+        Keep the blue top banner only. Remove the inline per-section notices.
+        Done when: One read-only notice per pag"
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
