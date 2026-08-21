@@ -1924,7 +1924,47 @@ function ClientLayout() {
         Compute the relative age from the same instant and in the same timezone you render the absolute date in.
         Done when: Every relative age on the Interviews page is consistent with the date printed beside it.
 
+        P7-08 Use one primary timezone on the Interviews page
+        Interviews (/client/interviews)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Within one list, two entries render in "(UTC, GMT+0)" and two in "(Europe/Lisbon, GMT+1)". Meanwhile the
+        Account page states "Interview times, digests, and activity timestamps use this timezone" for
+        America/Sao_Paulo.
+        DO THIS
+        Render every interview in one primary timezone with the viewer's own time beneath it, and make that
+        primary timezone match what the Account page promises.
+        Done when: Every interview on the page uses the same primary timezone, and it is the one the Account page
+        names.
+        P7-09 Use one currency format
+        Global
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        One cell in the comparison renders "EUR 70,000 base, annual" directly above "Role: €55,000 – €75,000".
+        The message composer says "Up to 4.000 characters." — a decimal-point thousands separator — while
+        every currency uses commas.
+        DO THIS
+        Use the € symbol with comma thousands separators everywhere, and fix "4.000 characters" to "4,000
+        characters".
+        Done when: The string "EUR " and the string "4.000" do not appear in the client workspace.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 48 of 66
+        P7-10 Default the new role currency from the workspace
+        New role wizard
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The role wizard defaults Currency to "USD" with salary placeholders 80000 and 120000, for a client whose
+        existing role range is €55,000–€75,000 and whose every offer is in EUR.
+        DO THIS
+        Default the currency and the salary placeholders from the organisation's existing roles, falling back to the
+        workspace's country.
+        Done when: Creating a role in Northwind Talent (Demo) defaults to EUR with plausible EUR placeholders.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
