@@ -15965,7 +15965,7 @@ export type Database = {
         | "ready_for_review"
         | "withdrawn"
         | "rejected"
-        | "archived"
+        | "archived" | "cancelled"
       canonical_scoring_state:
         | "ingestion"
         | "evidence_extraction"
@@ -15993,7 +15993,7 @@ export type Database = {
         | "manage_jobs"
         | "invite_members"
         | "view_reports"
-      client_visibility: "hidden" | "visible" | "archived"
+      client_visibility: "hidden" | "visible" | "archived" | "cancelled"
       delivery_channel: "in_app" | "email" | "sms" | "teams"
       delivery_status:
         | "created"
@@ -16109,7 +16109,7 @@ export type Database = {
         | "offer"
         | "hired"
         | "not_moving_forward"
-        | "archived"
+        | "archived" | "cancelled"
       membership_role:
         | "platform_admin"
         | "operations"
@@ -16133,13 +16133,13 @@ export type Database = {
         | "aborted"
       migration_validation_status: "not_run" | "passed" | "warned" | "failed"
       notification_audience: "admin" | "client" | "candidate"
-      org_status: "prospect" | "active" | "paused" | "archived"
+      org_status: "prospect" | "active" | "paused" | "archived" | "cancelled"
       outreach_campaign_status:
         | "draft"
         | "active"
         | "paused"
         | "completed"
-        | "archived"
+        | "archived" | "cancelled"
       outreach_channel:
         | "email"
         | "linkedin"
@@ -16189,7 +16189,7 @@ export type Database = {
         | "paused"
         | "filled"
         | "closed"
-        | "archived"
+        | "archived" | "cancelled"
       position_visibility: "public" | "private" | "internal"
       processing_state:
         | "queued"
@@ -16205,6 +16205,7 @@ export type Database = {
         | "failed"
       profile_status: "active" | "suspended" | "deleted"
       recommendation_status:
+        | "cancelled"
         | "pending"
         | "shortlist"
         | "review"
@@ -16218,6 +16219,7 @@ export type Database = {
         | "candidate_reasoning"
         | "decision"
         | "risk"
+        | "cancelled"
         | "next_step"
       rubric_version_status:
         | "draft"
@@ -16397,7 +16399,7 @@ export const Constants = {
         "ready_for_review",
         "withdrawn",
         "rejected",
-        "archived",
+        "archived" | "cancelled",
       canonical_scoring_state: [
         "ingestion",
         "evidence_extraction",
@@ -16422,17 +16424,19 @@ export const Constants = {
       client_permission: [
         "view_candidates",
         "add_feedback",
+        "cancelled",
         "request_interviews",
         "manage_jobs",
         "invite_members",
         "view_reports",
       ],
-      client_visibility: ["hidden", "visible", "archived"],
+      client_visibility: ["hidden", "visible", "archived" | "cancelled"],
       delivery_channel: ["in_app", "email", "sms", "teams"],
       delivery_status: [
         "queued",
         "provider_accepted",
         "delivered",
+        "cancelled",
         "failed",
         "bounced",
         "suppressed",
@@ -16552,7 +16556,7 @@ export const Constants = {
         "offer",
         "hired",
         "not_moving_forward",
-        "archived",
+        "archived" | "cancelled",
       ],
       membership_role: [
         "platform_admin",
@@ -16580,13 +16584,13 @@ export const Constants = {
       ],
       migration_validation_status: ["not_run", "passed", "warned", "failed"],
       notification_audience: ["admin", "client", "candidate"],
-      org_status: ["prospect", "active", "paused", "archived"],
+      org_status: ["prospect", "active", "paused", "archived" | "cancelled"],
       outreach_campaign_status: [
         "draft",
         "active",
         "paused",
         "completed",
-        "archived",
+        "archived" | "cancelled",
       ],
       outreach_channel: [
         "email",
@@ -16641,7 +16645,7 @@ export const Constants = {
         "paused",
         "filled",
         "closed",
-        "archived",
+        "archived" | "cancelled",
       ],
       position_visibility: ["public", "private", "internal"],
       processing_state: [
@@ -16659,6 +16663,7 @@ export const Constants = {
       profile_status: ["active", "suspended", "deleted"],
       recommendation_status: [
         "pending",
+        "cancelled",
         "shortlist",
         "review",
         "do_not_recommend",
@@ -16676,6 +16681,7 @@ export const Constants = {
       rubric_version_status: [
         "draft",
         "pending_approval",
+        "cancelled",
         "pending_client_approval",
         "approved",
         "active",
@@ -16688,6 +16694,7 @@ export const Constants = {
         "consider",
         "not_recommended",
         "unscored",
+        "cancelled",
       ],
       score_decision_type: [
         "approve",
