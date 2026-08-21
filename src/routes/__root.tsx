@@ -145,14 +145,12 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P22 One status per requirement cell BLOCKER CANDIDATE COMPARISON
+TEXTO DO USUÁRIO: "P23 Fix “Areas to validate” HIGH CANDIDATE COMPARISON
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-In the comparison requirement grid, a cell reads "✓ Met" but hovering it shows the tooltip "No direct
-evidence found for this requirement.", and the Concerns row for the same candidate says "Only partial
-evidence for required: <same requirement>". Three different states for one requirement.
-Drive the cell status, the tooltip text and the Concerns list from ONE status field per (candidate,
-requirement) pair. If there is no direct evidence, the cell must not say Met.
-Done when: No cell says Met while its tooltip or Concerns row says evidence is missing or partial"`}
+In the comparison modal the \"Areas to validate\" axis shows 5 for every candidate, but the real \"Partially
+met\" counts are 5, 3 and 3.
+Compute it as the count of requirements with status \"Partially met\" for that specific candidate.
+Done when: The three candidates show three different numbers matching their grid."`}
         </div>
 
         <Scripts />
