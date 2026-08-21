@@ -268,9 +268,14 @@ export function buildCompensationSignal(input: CompensationInputs): Compensation
             )}`
         : null,
       source: "offers_on_record",
-      sourceLabel: offersOnRecord
-        ? `${offersOnRecord.count} offer${offersOnRecord.count === 1 ? "" : "s"} on record`
-        : "No offers on record",
+      sourceLabel:
+        input.totalOfferCount != null && input.totalOfferCount > 0
+          ? `${offersOnRecord?.count ?? 0} of ${input.totalOfferCount} offer${
+              input.totalOfferCount === 1 ? "" : "s"
+            } have compensation recorded`
+          : offersOnRecord
+            ? `${offersOnRecord.count} offer${offersOnRecord.count === 1 ? "" : "s"} on record`
+            : "No offers on record",
       sampleSize: offersOnRecord?.count ?? 0,
       thin: (offersOnRecord?.count ?? 0) > 0 && (offersOnRecord?.count ?? 0) < MIN_SAMPLE,
       note: offersOnRecord
