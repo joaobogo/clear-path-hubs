@@ -145,16 +145,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P27 Scope the setup wizard to the current organisation BLOCKER CLIENT ONBOARDING
+TEXTO DO USUÁRIO: "P29 Delete test messages from client-visible threads HIGH DATA CLEANUP
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-On /client/onboarding (Account → Setup) for one client, the "Which role are we configuring?" dropdown
-offers only "Sales Manager" — a role that belongs to a DIFFERENT organisation. The form is pre-filled with
-Role title "Sales Manager", Location "Chicago, IL, United States", Seniority "Senior", and a full US sales
-job description.
-Add an organisation filter to the onboarding role query so it only ever returns roles belonging to the
-current org.
-Then check every other query in the onboarding flow for the same missing org filter and add it.
-Done when: The setup wizard for a client only ever lists that client's own roles."`}
+The client-visible "Senior Full-Stack Engineer" conversation thread contains five leftover test messages:
+- "BROWSER-TEST-R3 admin reply 2026-08-15 15:31 BRT - automated QA re-audit, please disregard"
+- "[QA test - ignore] client window check"
+- "[QA test - ignore] admin reply"
+- "MVP verification test message"
+- "[QA test - ignore] client window check v2"
+Delete these message rows from the database. Then search all conversation messages for the strings "QA
+test", "BROWSER-TEST", "MVP verification" and "please disregard" and delete those too.
+Done when: No message containing those strings exists in any conversation"`}
         </div>
 
         <Scripts />
