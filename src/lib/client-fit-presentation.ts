@@ -266,10 +266,6 @@ export function evidenceSupport(
   };
 
   const declared = listed.find(sameRequirement) ?? assessed.find(sameRequirement);
-  let isMet = matched.some(sameRequirement) || declared?.status === "met";
-  let isPartial = partial.some(sameRequirement) || declared?.status === "partial";
-  const isContradicted = contradicts.some(sameRequirement) || declared?.status === "contradicted";
-
 
   const rawEvidence = Array.isArray(evidenceItems) ? evidenceItems : [];
   const mine = rawEvidence.filter((e: any) => evidenceMatchesRequirement(e, r));
@@ -291,11 +287,17 @@ export function evidenceSupport(
       source: e.source || e.source_kind || null,
     }));
 
+  // HONESTY GATE: A requirement is only MET if there is direct evidence.
+  // If the engine claimed it but found no snippets, downgrade to PARTIAL.
+  let isMet = (matched.some(sameRequirement) || declared?.status === "met") && evidence.length > 0;
+  let isPartial = partial.some(sameRequirement) || declared?.status === "partial" || (matched.some(sameRequirement) && evidence.length === 0);
+  const isContradicted = contradicts.some(sameRequirement) || declared?.status === "contradicted" || contradictions.length > 0;
+
   // With no coverage record, the candidate's own evidence decides the status.
   if (!declared && !isMet && !isPartial && !isContradicted && mine.length > 0) {
     const results = mine.map((e: any) => String(e.result ?? "").toLowerCase());
-    if (results.some((v) => v === "strong" || v === "met" || v === "full")) isMet = true;
-    else if (results.some((v) => v === "partial" || v === "weak")) isPartial = true;
+    if (results.some((v) => v === "strong" || v === "met" || v === "full") && evidence.length > 0) isMet = true;
+    else if (results.some((v) => v === "partial" || v === "weak") || evidence.length === 0) isPartial = true;
   }
 
   let status: RequirementStatus = "not_evidenced";
