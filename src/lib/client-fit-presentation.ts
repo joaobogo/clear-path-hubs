@@ -320,6 +320,7 @@ export type CoverageSummary = {
   must_met: number;
   must_partial: number;
   must_total: number;
+  total: number;
   /** Weighted must-have coverage (0-1) from the scoring run, when the run stored it. */
   must_have_coverage?: number;
   /** Weighted preferred coverage (0-1) from the scoring run, when the run stored it. */
@@ -365,6 +366,7 @@ export function summariseCoverage(
     must_met,
     must_partial,
     must_total: must.length,
+    total: rows.filter(r => r.status !== 'not_applicable').length,
     must_have_coverage: runCoverage?.must_have_coverage,
     preferred_coverage: runCoverage?.preferred_coverage,
     fit_score: score ?? Math.round(coveragePct * 100),

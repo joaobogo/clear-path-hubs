@@ -1,5 +1,6 @@
 import { formatEnumLabel } from "@/lib/human-labels";
 import { useMemo, useState } from "react";
+import { getEvidenceCounts } from "@/lib/client/evidence-counts";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
@@ -430,12 +431,15 @@ export function CompareSheet({
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
                   <span className="font-medium">{pct(c.coverage.must_have_coverage)}</span>
-                  {c.coverage.must_total > 0 && (
-                    <span className="text-muted-foreground">
-                      {" "}
-                      ({c.coverage.must_met}/{c.coverage.must_total})
-                    </span>
-                  )}
+                  {(() => {
+                    const counts = getEvidenceCounts(c.requirement_rows);
+                    return counts.must_total > 0 && (
+                      <span className="text-muted-foreground">
+                        {" "}
+                        ({counts.must_met}/{counts.must_total})
+                      </span>
+                    );
+                  })()}
                 </div>
               ))}
             </ComparisonRow>

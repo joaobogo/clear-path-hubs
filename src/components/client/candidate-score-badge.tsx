@@ -14,6 +14,7 @@
  * hire, so the marker means outcome-verified fit.
  */
 import { toFitPresentation, type FitPresentation } from "@/lib/client-fit-presentation";
+import { getEvidenceCounts } from "@/lib/client/evidence-counts";
 
 type Props = {
   /** Fit score, 0-100. Optional: the evidenced ring carries the figure now. */
@@ -93,10 +94,13 @@ export function CandidateScoreBadge({
   const hasBand = fitLabel != null || score != null;
   if (!hasBand && !unicorn) return null;
   const fit = hasBand ? toFitPresentation(fitLabel, score) : null;
+  const counts = evidence && (evidence as any).rows ? getEvidenceCounts((evidence as any).rows) : null;
   const support =
-    evidence && evidence.total > 0 && !hideEvidenceChip
-      ? `${evidence.supported}/${evidence.total} evidenced`
-      : null;
+    counts
+      ? `${counts.met}/${counts.total} evidenced`
+      : evidence && evidence.total > 0 && !hideEvidenceChip
+        ? `${evidence.supported}/${evidence.total} evidenced`
+        : null;
   const recheckNote =
     "This assessment is being re-checked because the role details or the candidate's CV changed after it was produced.";
   return (

@@ -145,15 +145,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P18 Fix the search endpoint BLOCKER GLOBAL SEARCH
+TEXTO DO USUÁRIO: "P19 One evidence count per candidate BLOCKER CANDIDATE DETAIL
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-Global search (the top-bar Search / ⌘K) fails for every query. It returns: \"Search unavailable — We could
-not reach search. Your results are not empty — they did not load.\" with a Retry button that does not help.
-Tested with \"engineer\", a candidate's full name, a role title and the company name.
-Find the search endpoint or edge function it calls, fix the failure, and make sure results render for
-candidates, roles and conversations.
-Keep the existing error copy exactly as it is — it is good. Only fix the underlying call.
-Done when: Searching a candidate's full name returns that candidate."`}
+One candidate shows four different evidence figures: header chip: \"Mixed Fit · 2/10 evidenced\"
+\"Why this candidate\" panel on the same page: \"0 of 10 of your requirements evidenced\"
+the comparison grid: 2 Met, 5 Partially met, 3 Unknown
+the comparison summary row: \"Must-have coverage 0/6 · 5 partial\"
+Create ONE function that returns the evidence counts for a candidate (met, partial, unknown, total, musthave met, must-have total) and make all four places call it.
+The header chip's number (count of Met) is the correct one — match the others to that definition.
+Done when: All four places show numbers consistent with one another for the same candidate."`}
         </div>
 
         <Scripts />
