@@ -1855,7 +1855,35 @@ function ClientLayout() {
         Done when: The string "Shortlisted By Your Team" does not appear anywhere in the client workspace.
         Ordering: After P7-01.
 
+        P7-03 Replace "Shortlisted by your team" in the candidates list
+        Candidates (/client/candidates)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The list's stage cell renders "Shortlisted by your team" where the tile above it says "SHORTLISTED" and the
+        board column says "SHORTLISTED".
+        DO THIS
+        Replace with the shared "Shortlisted" constant from P7-01.
+        Done when: The Candidates tile, list cell and board column all read the same word for this stage.
+        Ordering: After P7-01.
+        P7-04 Use one date format across the product
+        Global
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Seven date formats are in use: "15 Aug 2026" (the dominant and correct one); "13 Aug 2026, 00:16"; zero-padded "09 Aug 2026, 17:38"; four-letter month "15 Sept 2026" and "1 Sept 2026"; year-less "Offer since
+        12 Aug"; "2020-06 to present" inside the CV document; and MM/DD "08/03" on the Executive chart axes.
+        DO THIS
+        Create one date helper with three exported functions — formatDate (d MMM yyyy), formatDateTime (d
+        MMM yyyy, HH:mm) and formatRelative — and use them everywhere a date is rendered, including inside
+        generated CV documents and on chart axes. Use three-letter month abbreviations ("Sep", not "Sept") and
+        no zero-padding on the day.
+        Done when: Searching the client bundle finds one date-formatting module, and "Sept", "08/03" and "2020-06" do
+        not appear anywhere in the client workspace.
+        Ordering: Run before P7-05.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
