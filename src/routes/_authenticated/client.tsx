@@ -2116,7 +2116,34 @@ function ClientLayout() {
         Remove the tile.
         Done when: The string "PROJECTED HIRES" does not appear in the client workspace
 
+        P8-11 Remove the "General practice" panel
+        Insights (/client/intelligence)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The page ends with "General practice — Standing guidance — not detected from your records" and four
+        generic tips, on a page whose own subtitle promises "Every figure comes from your own records — nothing
+        is estimated, benchmarked or filled in."
+        DO THIS
+        Remove the panel from the Insights page. Move the guidance into help documentation if it is worth
+        keeping.
+        Done when: The string "Standing guidance" does not appear on /client/intelligence.
+
+        P8-12 Hide the Portfolio tab until a parent exists
+        Portfolio (/client/portfolio)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Portfolio tab renders only "This organization isn't linked to a parent portfolio yet. Portfolio rollups
+        become available when two or more business units share a parent record." It cannot fill for a single
+        business-unit client.
+        DO THIS
+        Hide the Portfolio tab from the navigation unless the organisation has a parent with two or more business
+        units. Also replace "parent record" with "parent organisation" in the copy.
+        Done when: A single-business-unit client sees no Portfolio tab.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
         
         
