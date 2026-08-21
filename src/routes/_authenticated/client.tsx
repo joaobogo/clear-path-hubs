@@ -38,7 +38,8 @@ import {
  Building2,
  	Gauge,
   BarChart3,
-  	Plus,
+  Dna,
+  Plus,
 } from "lucide-react";
 import {
  WorkspaceShell,
