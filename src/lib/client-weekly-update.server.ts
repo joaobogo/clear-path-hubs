@@ -74,10 +74,12 @@ export async function buildWeeklyUpdate(
 
       // Client decisions that stuck (a reversed decision is not a decision).
       // Decisions hang off the match, so the role comes through that join.
+      // P40: We count distinct candidates decided upon in the window to prevent
+      // double-counting multiple updates/history rows as separate decisions.
       client
         .from("client_decisions")
         .select(
-          "id, decision, created_at, reversed_at, candidate_matches(position_id, positions(title))",
+          "candidate_match_id, created_at, reversed_at, candidate_matches(position_id, positions(title))",
         )
         .eq("organization_id", orgId)
         .is("reversed_at", null)
@@ -124,7 +126,11 @@ export async function buildWeeklyUpdate(
 
   const delivered = (deliveredRes.data ?? []) as Row[];
   const held = (interviewsRes.data ?? []) as Row[];
-  const decisions = (decisionsRes.data ?? []) as Row[];
+  const decisionRows = (decisionsRes.data ?? []) as Row[];
+  // Deduplicate by match_id to count one decision event per candidate.
+  const decisions = Array.from(
+    new Map(decisionRows.map((d) => [d.candidate_match_id, d])).values(),
+  );
   const awaitingMatches = (awaitingRes.data ?? []) as Row[];
   const infoRequests = (infoRes.data ?? []) as Row[];
   const upcoming = (upcomingRes.data ?? []) as Row[];
