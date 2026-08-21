@@ -2178,7 +2178,33 @@ function ClientLayout() {
         Done when: The offers board renders on one row with no empty columns by default.
         Ordering: Run before or with P8-16.
 
+        P8-16 Stop the offers board wrapping its last column
+        Offers & hires (/client/offers)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Six columns render in row one and the seventh, "CLOSED LOST (0)", drops onto a second row on its own,
+        left-aligned under column one.
+        DO THIS
+        Make the board a horizontally scrolling flex row with nowrap and its own overflow-x container, so columns
+        never wrap.
+        Done when: All columns render on one row at 1456 px wide, scrolling horizontally if needed.
+        Ordering: See P8-15 — that fix may make this unnecessary.
+
+        P8-17 Reduce the controls on each offer card
+        Offers & hires (/client/offers)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Each offer card carries six controls: Nudge, Edit terms, Redraft, Accepted, Declined, Close lost. "Edit terms"
+        renders as plain text among four buttons.
+        DO THIS
+        Keep Nudge and Edit terms as buttons, and put Redraft, Accepted, Declined and Close lost behind one
+        "Record outcome" control. Make Edit terms a button like the rest.
+        Done when: Each offer card renders at most three visible controls.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
         
         
