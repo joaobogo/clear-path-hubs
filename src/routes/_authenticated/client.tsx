@@ -484,6 +484,13 @@ function ClientLayout() {
         team changes are disabled."
         Keep the blue top banner only. Remove the inline per-section notices.
         Done when: One read-only notice per pag"
+
+        P92 Fix the breadcrumb POLISH CLIENT CREATE ROLE
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/positions/new the breadcrumb reads "Roles / new" — the raw lower-case URL segment.
+        Change it to "Roles / New role".
+        Done when: The breadcrumb reads in title case and in English.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
