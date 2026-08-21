@@ -160,7 +160,7 @@ function Block({ name, children }: { name: string; children: React.ReactNode }) 
     <ComponentErrorBoundary
       boundary={`admin.clients.detail.${name}`}
       tone="admin"
-      fallback={(retry, error) => {
+      fallback={({ retry, error }) => {
         const isPositions = name.includes("positions");
         const message = isPositions ? "Couldn't load positions — retry" : "Something went wrong";
         
