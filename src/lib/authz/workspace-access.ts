@@ -142,7 +142,7 @@ export async function assertWorkspaceWrite(
 ): Promise<WorkspaceAccess> {
   const access = await assertWorkspaceAccess(supabase, userId, orgId);
   if (!access.canWrite) {
-    throw new WorkspaceAccessError("Your role in this workspace is read-only.");
+    throw new WorkspaceAccessError("support_view_denied");
   }
   return access;
 }
