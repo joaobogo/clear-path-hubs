@@ -423,13 +423,18 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P65 Stop the offers board wrapping MEDIUM CLIENT OFFERS
+        TEXTO DO USUÁRIO: "P66 Use one date format everywhere MEDIUM GLOBAL
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/offers the kanban has seven columns. At 1456px wide, six fit and the seventh (\"CLOSED LOST\")
-        drops onto a second row underneath the first column, which looks broken.
-        Make the board scroll horizontally in a single row instead of wrapping. Add a visible horizontal scroll
-        affordance.
-        Done when: All seven columns sit in one row at any window width, with horizontal scroll."
+        The app currently renders 6 different absolute date formats, 4 date-time formats and 5 relative formats.
+        Examples found on client screens: \"12 Aug 2026\", \"13/08/2026\", \"15 Aug\", \"1 Sept 2026\", \"Monday 10 Aug\",
+        \"06/29\".
+        Create one shared date utility and use it everywhere:
+        - Absolute date: \"12 Aug 2026\" (always include the year, always use the 3-letter month, so \"Sep\" not
+        \"Sept\")
+        - Date and time: \"12 Aug 2026, 14:30\"
+        - Relative: \"4 hours ago\" / \"3 days ago\"
+        Replace every ad-hoc date format call with these three functions.
+        Done when: Only three date formats exist in the codebase."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
