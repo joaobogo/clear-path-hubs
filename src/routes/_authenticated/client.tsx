@@ -756,6 +756,23 @@ function ClientLayout() {
         P7-08 Use one primary timezone on the Interviews page
            Interviews (/client/interviews)
 
+        P7-09 Use one currency format Global
+        P7-10 Default the new role currency from the workspace New role wizard
+        P7-11 Fix the "dd/mm/aaaa" date placeholder New role wizard
+        P7-12 Use one name for the Insights page Global
+        P7-13 Use one phrase for a missing work authorisation
+           Candidate detail / comparison
+        P7-14 Remove the fourth recommendation vocabulary from the comparison
+           Candidate comparison modal
+        P7-15 Fix the "Requirement" row-header label in the comparison
+           Candidate comparison modal
+        P7-16 Fix the plural on counts of one Offers / Executive
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 6 of 66
+        P7-17 Fix the broken chart caption template on Insights
+           Insights (/client/intelligence)
+        P7-18 Fix the not-found page copy Global
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
