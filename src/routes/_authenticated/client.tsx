@@ -570,6 +570,18 @@ function ClientLayout() {
         measures
         P9-02 Removing two of the eleven Insights measures is itself part of the speed fix.
 
+        Phase 0 · Clean up what the audit left behind (5 prompts)
+        ID Fix Page
+        P0-01 Revoke the pending seat invitation left by the audit Account → Team & roles
+        P0-02 Clear the Headquarters field left by the audit Account → Company profile / Setup wizard step 1
+        P0-03 Delete the test messages and the test
+        conversation
+        Messages
+        P0-04 Stop test-named records reaching client queries Messages / Candidates / Roles
+        P0-05 Replace demo email addresses on candidate
+        contact details
+        Candidate detail + CV document
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
