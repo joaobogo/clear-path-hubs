@@ -1453,7 +1453,32 @@ function ClientLayout() {
         permission to keep their details" — or hide the chip from the client view.
         Done when: No unexplained "Consent Pending" chip appears in the client workspace.
 
+        P4-17 Remove the "(Client)" role tag from display names
+        Messages / Account
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        A person's display name renders as "James Cameron (Client)" in the conversation thread, in the thread
+        preview line and in the Account seat list.
+        DO THIS
+        Render the person's name without the parenthetical role tag. If the role matters in context, show it as a
+        separate chip.
+        Done when: The string "(Client)" does not appear inside a person's name anywhere in the client workspace.
+
+        P4-18 Use the team name consistently instead of individual recruiters
+        Messages / notifications
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The conversation thread attributes a message to the individual recruiter "Alex Rivera", while the
+        notification about the same activity reads "New message from TaaSFlow team" and "TaaSFlow team · 1 d
+        ago".
+        DO THIS
+        Pick one convention and apply it to both. The safer choice is the team name.
+        Done when: A message and its notification attribute the sender identically
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
       </div>
