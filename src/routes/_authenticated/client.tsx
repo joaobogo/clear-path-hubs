@@ -467,7 +467,15 @@ function ClientLayout() {
         already reading "As it happens".
         Delete the outer heading and subtitle. Show the "Default:" line only when the current value differs from
         the default.
-        Done when: One heading, and no row repeats its own value as a default."
+        Done when: One heading, and no row repeats its own value as a default.
+
+        P90 Stop repeating the workspace name POLISH CLIENT ACCOUNT
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/account the workspace name appears four times on one screen: in the sidebar, the breadcrumb,
+        the "ACCOUNT" block heading, and again as the "WORKSPACE ACCESS" heading.
+        Keep it in the sidebar and the page heading. Remove it from the breadcrumb and the WORKSPACE ACCESS
+        heading.
+        Done when: The workspace name appears at most twice per screen."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
