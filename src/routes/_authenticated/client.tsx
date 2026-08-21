@@ -1397,7 +1397,38 @@ function ClientLayout() {
         Done when: The strings "rubric", "scoring run" and "runs" do not appear on /client/intelligence. {/* vocabulary-allow: rubric, score-run, run-as-noun */}
         Ordering: After P4-08.
 
+        P4-10 Remove "33 findings flagged for checking"
+        Insights (/client/intelligence)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Evidence completeness measure renders "33 findings flagged for checking — These were extracted
+        but the system could not fully verify them. They are marked in the candidate record so you never act on an
+        unchecked claim unknowingly."
+        DO THIS
+        Remove this block from the client view. If the intent is to warn the client, surface the uncertainty on the
+        specific requirement row on the candidate page instead — where they can act on it — not as an aggregate
+        confession.
+        Done when: The strings "flagged for checking" and "could not fully verify" do not appear on /client/intelligence.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 29 of 66
+
+        P4-11 Remove "Record incomplete" warnings from the client view
+        Offers & hires (/client/offers)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Three offer cards render internal data-quality warnings: "Record incomplete: compensation and owner
+        missing" (Rui Fernandes), "Record incomplete: owner missing" (Ana Ribeiro), and "Record incomplete:
+        owner missing" on Beatriz Costa — a completed hire. The stalled-offers banner adds "owner unassigned"
+        twice.
+        DO THIS
+        Hide the "Record incomplete" chip from all client-facing views. Remove "owner unassigned" from the
+        stalled-offers banner text. Keep both for admin.
+        Done when: The strings "Record incomplete" and "owner unassigned" do not appear in the client workspace.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
