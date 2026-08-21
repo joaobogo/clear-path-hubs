@@ -423,18 +423,14 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P76 Merge the redundant admin surfaces MEDIUM ADMIN
+        TEXTO DO USUÁRIO: "P77 Map raw enum values to readable labels MEDIUM ADMIN
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Three redundancies in admin:
-        1. The client record's \"Messages\" tab contains no messages — only a paragraph and an \"Open Comms center\"
-        button. Remove the tab and put the Comms link in the client record header.
-        2. /admin/decision-backlog reproduces the \"Awaiting client decision\" panel from /admin verbatim. Remove
-        the page and add a \"See all\" link on the Overview panel.
-        3. The Overview says \"Delivery failures to retry (7d) 13\" while /admin/operations says \"Delivery failures
-        (7d) 86\". Make the labels say what each counts, e.g. \"Retryable delivery failures (7d)\" vs \"All delivery
-        failures (7d)\".
-        Done when: The Messages tab and the decision-backlog page are gone, and the two failure labels are
-        distinguishable."
+        Admin renders raw database values as badges and cell values: \"needs_clarification\", \"Ocr_required\", and
+        lower-case \"draft\" / \"active\" / \"archived\".
+        Add a display map for admin: needs_clarification → \"Needs clarification\", Ocr_required → \"OCR required\",
+        draft → \"Draft\", active → \"Active\", archived → \"Archived\".
+        Do not change the stored values.
+        Done when: No badge or cell in admin shows an underscore or a lower-case enum."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
