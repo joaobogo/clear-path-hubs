@@ -1427,7 +1427,34 @@ function ClientLayout() {
         stalled-offers banner text. Keep both for admin.
         Done when: The strings "Record incomplete" and "owner unassigned" do not appear in the client workspace.
 
+        P4-15 Rename the search palette quick actions
+        Header search palette
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The command palette's default "Quick actions" list reads: "Create new role", "View overdue approvals",
+        "View blocking approvals", "Change search intensity", "Set outreach rules", "Open analytics", "Open inbox".
+        "Open analytics" is the page the nav calls "Insights" and "Open inbox" is the page the nav calls
+        "Messages".
+        DO THIS
+        Cut the list to three: "Create a role", "Open Insights", "Open Messages". Delete "Change search intensity"
+        and "Set outreach rules" from the client palette.
+        Done when: The quick-actions list contains three entries whose labels match the left navigation exactly.
+
+        P4-16 Explain or remove "Consent Pending"
+        Talent memory (/client/talent-memory)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The single talent memory entry renders a chip reading "Consent Pending" with no explanation of what
+        consent, from whom, or what the client should do about it.
+        DO THIS
+        Either replace it with a sentence the client can act on — for example "We are asking this candidate for
+        permission to keep their details" — or hide the chip from the client view.
+        Done when: No unexplained "Consent Pending" chip appears in the client workspace.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
       </div>
   </WorkspaceShell>
