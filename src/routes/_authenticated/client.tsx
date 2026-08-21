@@ -423,15 +423,14 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P61 Use the word “role” everywhere MEDIUM CLIENT ROLES
+        TEXTO DO USUÁRIO: "P62 Fix the interview count in the role row MEDIUM CLIENT ROLES
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/positions the page says \"1 role\" at the top right and \"Action required · 1 position\" in the
-        banner. The route itself is /client/positions while the nav item and page title say Roles.
-        Replace every client-facing occurrence of \"position\" with \"role\". Change the client route from
-        /client/roles and add a redirect from the old path. Do not rename database tables or
-        columns.
-        Done when: The word “position” does not appear in the client workspace."
-        {/* vocabulary-allow: rubric, run, run-as-noun */}
+        On /client/positions the role row summary says \"… 5 interviews to confirm, 2 interviews booked.\" next to a
+        table column headed INTERVIEW showing 3.
+        Make the column header say what it counts — rename it to \"IN INTERVIEW\" (candidates currently
+        interviewing) — so it no longer looks like it disagrees with the sentence beside it.
+        Done when: The column header and the row sentence can no longer be read as the same figure."
+        {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
