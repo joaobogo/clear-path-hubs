@@ -693,6 +693,25 @@ function ClientLayout() {
         P5-07 Fix "Verified strengths" not matching the Strengths bullets
            Candidate comparison modal
 
+        P5-08 Fix "58% (2/6)" — the percentage and the fraction disagree
+           Candidate comparison modal
+        P5-09 Stop cells marked "Unknown" from displaying evidence
+           Candidate comparison modal
+        P5-10 Show the numeric score in the comparison Candidate comparison modal
+        P5-11 Move the evidence above the fold on the candidate page
+           Candidate detail
+        P5-12 Make the score the most prominent thing on the candidate page
+           Candidate detail
+        P5-13 Fix the interview guide's ungrammatical questions
+           Candidate detail — Interview tab
+        P5-14 Fix "Recommend interview" on a hired candidate Candidate detail
+        P5-15 Demote the advancing action on notrecommended candidates
+           Candidates list / board / Overview
+        P5-16 Use one name for the evidence source Candidate detail
+        P5-17 Use one set of status words for requirements Candidate detail / comparison
+        P5-18 Fix the duplicated city in the compensation panel Candidate detail
+        P5-19 Render the compiled brief on setup step 4 Setup wizard step 4
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
