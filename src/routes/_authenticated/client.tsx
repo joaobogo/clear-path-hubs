@@ -425,9 +425,7 @@ function ClientLayout() {
         {"\n\n"}
         TEXTO DO USUÁRIO: "P63 Move cancelled-but-pending interviews out of the past MEDIUM CLIENT INTERVIEWS
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/interviews, the \"Already happened\" section contains an entry reading \"Cancelled · Video Call ·
-        <candidate> · 2 times with the candidate — first option in 2 days\" — a future slot filed under a past
-        heading.
+        {"On /client/interviews, the \"Already happened\" section contains an entry reading \"Cancelled · Video Call · <candidate> · 2 times with the candidate — first option in 2 days\" — a future slot filed under a past heading."}
         Move any interview with a future proposed time into \"Coming up\" or into the new \"Waiting on you to confirm
         a time\" section, regardless of its cancelled status.
         Done when: Nothing with a future date appears under “Already happened”."
