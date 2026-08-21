@@ -740,6 +740,22 @@ function ClientLayout() {
         P6-13 Remove the empty badge on the Approvals feedback row
            Approvals (/client/approvals)
 
+        Phase 7 · Make the words and formats consistent (18 prompts)
+        ID Fix Page
+        P7-01 Define the pipeline stage labels once Global
+        P7-02 Remove "Shortlisted By Your Team" from the Executive page
+           Executive (/client/executive)
+        P7-03 Replace "Shortlisted by your team" in the candidates list
+           Candidates (/client/candidates)
+        P7-04 Use one date format across the product Global
+        P7-05 Fix the month/day dates on the Executive charts
+           Executive (/client/executive)
+        P7-06 Use one relative-time format Global
+        P7-07 Fix the relative age being off by one on the Interviews page
+           Interviews (/client/interviews)
+        P7-08 Use one primary timezone on the Interviews page
+           Interviews (/client/interviews)
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
