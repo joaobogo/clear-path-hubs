@@ -1,4 +1,4 @@
-import type { RequirementRow } from "./client-fit-presentation";
+import type { RequirementRow } from "../client-fit-presentation";
 
 export interface EvidenceCounts {
   met: number;
