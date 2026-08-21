@@ -2317,6 +2317,25 @@ function ClientLayout() {
         already exists to feed it.
         Done when: Each pending interview card carries one scheduling action.
 
+        P8-28 Print "Cancelled" once on cancelled interview cards
+        Interviews (/client/interviews)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The cancelled card renders the word "Cancelled" twice — once as the status label and once as a badge.
+        DO THIS
+        Render it once.
+        Done when: The word Cancelled appears once per cancelled card.
+        P8-29 Split the FIT column into Score and Fit
+        Candidates (/client/candidates)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The list column is headed "FIT" and contains both the 0–100 score chip and the word label, so the score
+        itself has no header.
+        DO THIS
+        Split into two columns headed "Score" and "Fit".
+        Done when: The score sits under a column headed Score.
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
         
         
