@@ -3,6 +3,9 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertWorkspaceArea } from "@/lib/collaborator-roles.server";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
 /**
  * Seat usage for one workspace. Admin-only, enforced through the same area map
  * the /client/team page renders from. Invited seats count against the cap
