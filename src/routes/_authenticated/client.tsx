@@ -423,14 +423,16 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P77 Map raw enum values to readable labels MEDIUM ADMIN
+        TEXTO DO USUÁRIO: "P79 Fix or remove the two empty charts MEDIUM CLIENT EXECUTIVE
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Admin renders raw database values as badges and cell values: \"needs_clarification\", \"Ocr_required\", and
-        lower-case \"draft\" / \"active\" / \"archived\".
-        Add a display map for admin: needs_clarification → \"Needs clarification\", Ocr_required → \"OCR required\",
-        draft → \"Draft\", active → \"Active\", archived → \"Archived\".
-        Do not change the stored values.
-        Done when: No badge or cell in admin shows an underscore or a lower-case enum."
+        On /client/executive:
+        - \"CANDIDATES DELIVERED PER WEEK (LAST 8)\" renders eight week labels, seven flat 1px stubs and one bar,
+        with no axis and no numbers anywhere.
+        - \"TYPICAL SHORTLIST FIT PER WEEK (APPROVED)\" renders eight boxes, seven reading \"—\" and one reading
+        \"Mixed Fit\".
+        Either print the numeric value on or beside every bar and add a y-axis, or delete both charts. Do not ship
+        a chart a reader cannot read a value off.
+        Done when: Every chart on the page either shows its values or has been removed."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
