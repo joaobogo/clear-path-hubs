@@ -1,3 +1,4 @@
+import { useIsMobile } from "@/hooks/use-mobile";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { pluralize } from "@/lib/format/datetime";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
@@ -159,6 +160,7 @@ function orgType(row: ClientRow): string {
 
 function ClientsPage() {
   const search = Route.useSearch();
+  const isMobile = useIsMobile();
   const navigate = Route.useNavigate();
   const queryClient = useQueryClient();
   const includeTest = useIncludeTestRecords();
