@@ -1613,7 +1613,43 @@ function ClientLayout() {
         Done when: The score is the largest number on the candidate page's first screen and reads as a value out of
         100.
 
+        P5-13 Fix the interview guide's ungrammatical questions
+        Candidate detail — Interview tab
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        All ten questions use one template: "Can you elaborate on your experience with {'<requirement verbatim>'}?" Six are ungrammatical, including "Can you elaborate on your experience with Experience
+        owning features end to end, from schema design to shipped UI?" (doubled word) and "…with Practical
+        experience with row-level security or another multi-tenant isolation model?" (doubled phrase), plus "…with
+        Comfortable writing and maintaining automated tests", "…with Fluent written and spoken English", "…with
+        Worked on multi-tenant SaaS", "…with Strong SQL and relational data modelling". Every question carries
+        the same three generic bullets, and one rationale reads "Verify missing or partial evidence."
+        DO THIS
+        Use two or three question templates chosen by the shape of the requirement — for example "Tell me about
+        a time you {'<requirement lower-cased>'}." for verb-led requirements and "How would you describe your
+        experience with {'<noun phrase>'}?" for noun-led ones. Strip a leading "Experience", "Practical experience
+        with", "Comfortable", "Fluent", "Strong" or "Worked on" from the requirement before splicing. Replace the
+        rationale "Verify missing or partial evidence." with the requirement's actual status in plain words.
+
+
+        Done when: No generated interview question contains a doubled word or a capitalised word mid-sentence, and
+        reading all ten aloud produces ten grammatical questions.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 37 of 66
+        P5-14 Fix "Recommend interview" on a hired candidate
+        Candidate detail
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Beatriz Costa carries the "Hired" badge twice on her page, and the fit card's call to action still reads
+        "Recommend interview".
+        DO THIS
+        Make the fit card's call to action depend on the candidate's current stage. For a hired candidate show no
+        action, or show the onboarding next step.
+        Done when: No candidate at the Hired stage shows "Recommend interview"
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
