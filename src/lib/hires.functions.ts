@@ -307,7 +307,7 @@ export const listHires = createServerFn({ method: "POST" })
       ownerMap = Object.fromEntries(
         (profs ?? []).map((p: AnyRow) => [
           p.auth_user_id,
-          p.full_name || p.email || "Unassigned",
+          p.email?.endsWith("@taasflow.com") ? "TaaSFlow team" : (p.full_name || p.email || "Unassigned"),
         ]),
       );
     }
@@ -375,7 +375,7 @@ export const getHireByMatch = createServerFn({ method: "POST" })
         .eq("auth_user_id", r.owner_user_id)
         .maybeSingle();
       const p = prof as AnyRow | null;
-      owner_name = p?.full_name || p?.email || null;
+      owner_name = p?.email?.endsWith("@taasflow.com") ? "TaaSFlow team" : (p?.full_name || p?.email || null);
     }
     const { resolveMatchCandidateNames } = await import("@/lib/client-candidate-hydrate.server");
     const nameByMatch = r.candidate_match_id
