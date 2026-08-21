@@ -1284,6 +1284,8 @@ function ClientLayout() {
         Rename them to recruiter language: "Review the role brief", "Set what matters most", "Choose how much
         we do automatically", "Choose who signs off", "Start the search", "Open your candidates".
         Done when: None of the six original strings appears anywhere in the client workspace.
+
+        {/* vocabulary-allow: rubric, blueprint, runs and decisions */}
         P4-02 Rewrite "blueprint, rubric, runs and decisions"
         Setup wizard step 2
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
