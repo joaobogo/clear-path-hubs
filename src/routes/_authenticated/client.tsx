@@ -1751,7 +1751,45 @@ function ClientLayout() {
         Done when: Clicking "Save and continue" on an unchanged step either advances the wizard or explains why it
         cannot.
 
+        P6-06 Add a way to clear interview availability
+        Interviews (/client/interviews)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Once availability is set there is no way to unset it. The modal offers Cancel and per-row delete icons but no
+        clear-all or "I have no availability" action. The panel also opens PRE-FILLED with Monday–Friday 09:00–
+        17:00 while its empty state reads "Set your windows once", so pressing Update without editing commits
+        five windows the user never chose.
+        DO THIS
+        Open the modal empty when no availability is set, and add a "Clear availability" action that returns the
+        panel to its empty state.
+        Done when: Availability can be set and then fully cleared through the UI, and the modal does not pre-fill windows
+        the user has not chosen.
+        P6-07 Refresh the role page after archiving
+        Role detail (/client/positions/{'<id>'})
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Archiving a role produces the toast "Role archived" with an Undo action, but the page continues to show
+        the badge "Under review" and the card "Sourcing is running — last update 20 Aug".
+        DO THIS
+        Refetch or optimistically update the role after the archive mutation so the badge and the status card reflect
+        the archived state.
+        Done when: Archiving a role changes its badge on the same screen without a manual refresh.
+        P6-08 Show archived roles under the Archived tab
+        Roles (/client/positions)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        After archiving a role the Roles page status tabs read "Active(1) · Under review(0) · Paused(0) ·
+        Archived(0)". The archived role appears in no tab. The archive confirmation modal promises "you can undo
+        this straight away, or bring the role back later from your Roles list."
+        DO THIS
+        Include archived roles in the Archived tab's query and count.
+        Done when: Archiving a role makes the Archived tab read (1) and list that role.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
