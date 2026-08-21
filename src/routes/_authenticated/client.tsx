@@ -1217,6 +1217,45 @@ function ClientLayout() {
         aria-expanded matches the visible state.
         Ordering: See P3-00.
 
+        P3-07 Make the Setup tab open the Setup panel
+        Account (/client/account)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Account page's "Setup" tab is an anchor whose href is exactly "/client/onboarding" — 18 characters, no
+        query string, so no org and no preview parameter. Clicking it twice never changed the panel. Navigating to
+        /client/account?tab=setup is silently rewritten to ?tab=workspace.
+        DO THIS
+        Either make Setup a real tab that renders the onboarding panel in place, or move it out of the tab bar and
+        present it as a link. Whichever you choose, append the workspace query parameters to the link, and make
+        ?tab=setup resolve rather than silently rewriting to ?tab=workspace.
+        Done when: Clicking "Setup" once opens the setup content, and /client/account?tab=setup loads it directly
+        without rewriting the URL.
+
+        P3-08 Focus the search input when the palette opens by click
+        Header search
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Clicking the header "Search" box opens the command palette but does not focus its input. After the click,
+        document.activeElement is BODY and typing "Rui" leaves the input's value as "". Ctrl+K focuses it correctly.
+        DO THIS
+        Focus the palette's input whenever the palette opens, regardless of how it was opened.
+        Done when: Clicking the header search box and immediately typing puts the typed text into the search field.
+
+        P3-09 Show an empty state for every empty search result
+        Header search
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Searching for the client's own company name — "Northwind" or "Northwind Talent" — renders a completely
+        blank palette: no results and no empty state. A nonsense query ("zzzznotfound") does correctly render 'No
+        matches for "zzzznotfound".'
+        DO THIS
+        Always render the empty state when the result set is empty, for every query, including queries that match
+        an organisation record the client cannot open.
+        Done when: Searching "Northwind" renders 'No matches for "Northwind".' rather than a blank panel.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
