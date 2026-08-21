@@ -515,7 +515,21 @@ function ClientLayout() {
         Report first, then fix what you find.
         Done when: Every client page is usable at 375px wide
 
-
+        Run this first Before this Why
+        P0-03 delete
+        test messages
+        any demo or
+        prospect
+        walkthrough
+        A conversation titled "History Integrity Test" and a message reading "MVP verification
+        test message" are visible in the client's inbox right now. This is the one item with a
+        deadline.
+        P3-00
+        investigate the
+        shared click
+        bug
+        P3-01 to P3-06 Six controls swallow their first activation. It is very likely one root cause. Fixing it
+        individually six times wastes five fixes.
 
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
