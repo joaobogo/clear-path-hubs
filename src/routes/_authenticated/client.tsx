@@ -712,6 +712,21 @@ function ClientLayout() {
         P5-18 Fix the duplicated city in the compensation panel Candidate detail
         P5-19 Render the compiled brief on setup step 4 Setup wizard step 4
 
+        Phase 6 · Forms, saves and confirmations (13 prompts)
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 5 of 66
+        ID Fix Page
+        P6-01 Fix saves that report success without persisting
+           Account → Company profile / Setup wizard step 1
+        P6-02 Replace the raw "invalid_timezone" error
+           Interviews → Set availability
+        P6-03 Confirm single CV downloads and CSV exports
+           Candidate detail / Approvals
+        P6-04 Print the full value in the notification save toast
+           Account → Notifications
+        P6-05 Give "Save and continue" feedback on an unchanged form
+           Setup wizard
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
