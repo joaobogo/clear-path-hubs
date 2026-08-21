@@ -622,6 +622,7 @@ function ClientsPage() {
               </li>
             )}
           </ul>
+          ) : null}
         </div>
 
         {total > 0 && (
