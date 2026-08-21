@@ -2269,7 +2269,32 @@ function ClientLayout() {
         Remove the badge and keep the title, or shorten the title to remove the duplicated prefix.
         Done when: No Approvals row states its type twice.
 
+        P8-24 Rename the Approvals page
+        Approvals (/client/approvals)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The page is titled "Approvals" and its own subtitle reads "Every next action for this workspace in one
+        inbox." Nothing on it is an approval — the items are tasks and reminders.
+        DO THIS
+        Rename the page and its navigation entry to "To do".
+        Done when: The word "Approvals" does not appear as a page name in the client workspace.
+        Ordering: Do this alongside P4-01, which removes the other approval/gate vocabulary.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 59 of 66
+        P8-25 Default the Approvals filter to "All"
+        Approvals (/client/approvals)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The "Assigned to me" filter is selected by default and returns all seven items, while every offer in the
+        product reads "owner unassigned" and "Hires by owner" shows "Unassigned".
+        DO THIS
+        Default the filter to "All".
+        Done when: The Approvals page opens on the All filter.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        
         
         
         
