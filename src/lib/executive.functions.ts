@@ -192,10 +192,18 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       const bu = ((p?.department as string | null) ?? "").trim() || "Unassigned";
       const v = ensureBu(bu);
       const stage = String(m.stage ?? "");
-      if (!["rejected", "hired", "withdrawn"].includes(stage)) v.active_candidates += 1;
-      if (m.delivered_at) v.delivered += 1;
+      
+      // P16: Active means candidate is delivered but not yet hired, rejected or withdrawn.
+      // We must not double-count by summing stages.
+      const isDelivered = !!m.delivered_at;
+      const isHired = stage === "hired";
+      const isTerminal = ["rejected", "withdrawn", "not_moving_forward"].includes(stage);
+      const isActive = isDelivered && !isHired && !isTerminal;
+
+      if (isActive) v.active_candidates += 1;
+      if (isDelivered) v.delivered += 1;
       if (stage === "shortlisted") v.shortlisted += 1;
-      if (stage === "hired") v.hired += 1;
+      if (isHired) v.hired += 1;
       if (["failed", "error"].includes(String(m.processing_state ?? ""))) v.blocked += 1;
     }
     const pipeline_by_bu = Array.from(buMap.entries())
@@ -214,7 +222,9 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const stageBuckets = new Map<string, number[]>();
     for (const m of matchRows) {
       const stage = String(m.stage ?? "unassigned");
-      if (["hired", "rejected", "withdrawn"].includes(stage)) continue;
+      // P16: Exclude terminal stages from "Time in stage" buckets so the sum 
+      // matches the active population and avoids double-counting.
+      if (["hired", "rejected", "withdrawn", "not_moving_forward"].includes(stage)) continue;
       const updated = m.updated_at ? new Date(m.updated_at) : null;
       if (!updated) continue;
       const dts = (now.getTime() - updated.getTime()) / 86_400_000;

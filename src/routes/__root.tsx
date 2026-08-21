@@ -145,14 +145,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P15 Fix the region role arithmetic BLOCKER CLIENT EXECUTIVE
+TEXTO DO USUÁRIO: "P16 Stop counting every candidate twice BLOCKER CLIENT EXECUTIVE
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-On /client/executive the "Open roles by region" panel shows "Portugal — 1 open · 1 filled · 1 total" and
-"Unspecified — 0 open · 0 filled · 1 total". 1 open plus 1 filled cannot equal 1 total.
-Fix the counts so open + filled never exceeds total. A role that has been filled must not also be counted
-as open.
-Use the same roles query as the Roles page.
-Done when: For every region row, open + filled is less than or equal to total."`}
+On /client/executive the "Pipeline health by business unit" table shows ACTIVE 19 while DELIVERED is 10,
+and the workspace contains only 10 candidates.
+"Time in stage" lists In Interviews 3, At Offer 2, Shortlisted By Your Team 3, Being Screened 10, Not
+Moving Forward 1 — which sums to 19 because the same 10 candidates appear in "Being Screened" as well as
+in their real stage.
+Fix it so each candidate is counted exactly once, in its current stage only. ACTIVE must never exceed
+DELIVERED.
+Done when: The Time in stage rows sum to the number of candidates that exist, and ACTIVE ≤ DELIVERED."`}
         </div>
 
         <Scripts />
