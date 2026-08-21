@@ -1188,6 +1188,35 @@ function ClientLayout() {
         Done when: One click on "Roles" filters the list to role threads.
         Ordering: See P3-00.
 
+        P3-05 Fix "Invite team member" needing two clicks
+        Account → Team & roles
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The first click on "Invite team member" produces no modal. The second click opens it. The row-level "…"
+        menu on the same page needed three clicks.
+        DO THIS
+        Fix both controls so they respond to the first click.
+        Done when: One click opens the invite modal, and one click opens a member's actions menu.
+        Ordering: See P3-00.
+
+        P3-06 Fix the "Workspace details" accordion opening unreliably
+        Account (/client/account)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The "Workspace details" accordion is the only route to company profile, sign-in email, timezone, security
+        and account details. Across three page loads it opened roughly three times out of a dozen interactions —
+        element-reference clicks, coordinate clicks on the header, the chevron and the row body, Enter and Space
+        were all tried. When it was opened by keyboard the button still reported aria-expanded="false" while its
+        content was on screen.
+        DO THIS
+        Fix the trigger's event binding and hit area so the whole row opens it on the first click, and keep aria-
+        expanded synchronised with the real open state.
+        Done when: One click anywhere on the Workspace details row opens it, on ten consecutive fresh page loads, and
+        aria-expanded matches the visible state.
+        Ordering: See P3-00.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
