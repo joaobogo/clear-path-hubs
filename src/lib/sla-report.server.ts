@@ -116,11 +116,12 @@ export function summarise(roles: RoleSla[]): SlaSummary {
   for (const role of roles) {
     for (const m of role.metrics) {
       total += 1;
+      // P39 Fix: Include every measured commitment (met OR missed) in the population
+      // for average variance.
       if (m.state === "met" || m.state === "missed") {
         measured += 1;
         if (m.state === "met") met += 1;
-        // Include every measured row in the average variance. Hours are
-        // converted to days so the headline is one comparable number.
+
         if (m.varianceValue !== null && Number.isFinite(m.varianceValue)) {
           const inDays = m.varianceUnit === "hours" ? m.varianceValue / 24 : m.varianceValue;
           variances.push(inDays);
