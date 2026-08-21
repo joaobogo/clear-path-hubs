@@ -46,10 +46,13 @@ export function CompactList({
   compareIds: string[];
   onToggleCompare: (id: string) => void;
 }) {
-  return (
-    <>
-      {/* Mobile: stacked cards */}
-      <div className="grid gap-3 md:hidden">
+  // Render exactly one layout for the current breakpoint. Rendering both and
+  // hiding one with CSS put every row in the DOM (and the tab order) twice.
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div className="grid gap-3">
         {rows.map((c) => (
           <CandidateCard
             key={c.match_id}
