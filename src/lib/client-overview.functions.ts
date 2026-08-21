@@ -162,8 +162,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     
     // Summary of activity for the header
     const totalOpenings = activePositionsList.reduce((acc, p) => acc + (Number(p.openings) || 1), 0);
-    const totalFilled = kpis.hires;
-    const activity_summary = `Open roles ${activePositions} / ${totalFilled} filled`;
+    const activity_summary = `${laneCounts.hired} of ${totalOpenings} roles filled`;
 
     const blocksCount = openItemsResponse.blockedRoles.length;
     const firstBlock = openItemsResponse.blockedRoles[0];
