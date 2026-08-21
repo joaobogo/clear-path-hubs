@@ -450,7 +450,14 @@ function ClientLayout() {
         the old position until the page is reloaded.
         Update the thread list optimistically when a message is sent, so the thread moves to the top and shows the
         new preview immediately.
-        Done when: A sent message appears in the list preview without a reload."
+        Done when: A sent message appears in the list preview without a reload.
+
+        P88 Add the missing board column LOW CLIENT CANDIDATES BOARD
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/candidates the summary tile \"STRONGEST CANDIDATES 3\" has no corresponding column in the board
+        below it, so the board cannot be used to find the three candidates the tile counts.
+        Either make that tile clickable so it filters the board to those candidates, or remove the tile.
+        Done when: Every summary tile on the page leads somewhere on the board."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
