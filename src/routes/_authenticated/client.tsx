@@ -1111,8 +1111,8 @@ function ClientLayout() {
         Miguel Torres' compensation cell reads "In range — EUR 78,000 base, annual — Role: €55,000 – €75,000".
         €78,000 is outside €55,000–€75,000. Sofia Marques at €85,000 is correctly labelled "Above range".
         DO THIS
-        The band comparison is using a tolerance or the wrong bound. Compare strictly: value > ceiling is "Above
-        range", value < floor is "Below range", otherwise "In range".
+        The band comparison is using a tolerance or the wrong bound. Compare strictly: value &gt; ceiling is "Above
+        range", value &lt; floor is "Below range", otherwise "In range".
         Done when: Miguel Torres' cell reads "Above range", and a candidate at exactly €75,000 reads "In range".
 
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
