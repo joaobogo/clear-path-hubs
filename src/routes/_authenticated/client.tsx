@@ -1826,7 +1826,37 @@ function ClientLayout() {
         Anchor the popover to its trigger element.
         Done when: Opening the menu from any row renders it adjacent to that row.
 
+        P7-01 Define the pipeline stage labels once
+        Global
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        One stage is currently rendered six ways: the Candidates tile says "INTERVIEWING", the list cell says "In
+        interviews", the board column says "INTERVIEW PROCESS", Insights says "In interview", the Executive page
+        says "In Interviews", and the Stalled stages measure says "interview process". The same is true of offers
+        ("OFFERS" / "At offer" / "OFFER" / "At Offer") and shortlisted ("SHORTLISTED" / "Shortlisted by your team" /
+        "Shortlisted By Your Team" / "shortlisted").
+        DO THIS
+        Create one exported constant mapping each stage id to one display label, and import it everywhere a
+        stage is rendered — tiles, list cells, board columns, filters, Insights, Executive, comparison and stalled-stage rows. Use: Delivered · Shortlisted · Interviewing · Offer · Hired · Not moving forward. Apply casing at
+        the component, never in the data.
+        Done when: Searching the client bundle finds exactly one definition of each stage label, and one stage never
+        renders under two different words anywhere in the workspace.
+        Ordering: RUN THIS BEFORE P7-02 AND P7-03, or you will change the same labels twice.
+        P7-02 Remove "Shortlisted By Your Team" from the Executive page
+        Executive (/client/executive)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The "Time in stage" section uses Title Case row labels: "At Offer", "Shortlisted By Your Team", "In
+        Interviews", "Not Moving Forward". "Shortlisted By Your Team" was named explicitly in the previous audit.
+        DO THIS
+        Replace these row labels with the shared stage constants from P7-01.
+        Done when: The string "Shortlisted By Your Team" does not appear anywhere in the client workspace.
+        Ordering: After P7-01.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
