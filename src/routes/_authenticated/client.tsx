@@ -978,6 +978,37 @@ function ClientLayout() {
         reason that flagged it.
         Done when: With current data the Role risk measure reads "1 of 1 open roles flagged" and names the reason.
 
+        P2-01 One number for interviews awaiting a confirmed time
+        Roles / Overview / Interviews
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Three screens count the same fact and give three answers. The Roles page banner reads "5 to confirm"
+        and its table row reads "5 interviews to confirm". The Overview "WHAT NEEDS YOU" queue renders four
+        rows reading "Confirm an interview time". The Interviews page "Coming up / Needs times" section shows
+        two (Tiago Almeida, Miguel Torres).
+        DO THIS
+        Create one query for "interviews belonging to this org with no confirmed time" and have the Roles banner,
+        the Roles table row, the Account role panel, the Overview queue and the Interviews page all consume it.
+        Exclude cancelled interviews from it (see P2-02).
+        Done when: All five surfaces show the same number for interviews awaiting a confirmed time.
+        Ordering: Run P2-02 first, or the cancelled interview will keep the counts apart.
+
+        P2-02 Exclude cancelled interviews from the needs-times list
+        Interviews (/client/interviews)
+        Do not use plan plan. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Tiago Almeida appears in the "Coming up / Needs times" section with "Propose times" and "Send my
+        available times" buttons, AND again under "Cancelled" on the same page. His cancelled card still reads "2
+        times with the candidate — first option tomorrow".
+        DO THIS
+        Exclude interviews with a cancelled status from the needs-times query, and suppress the proposed-times
+        sentence on cancelled cards.
+        Done when: Tiago Almeida appears exactly once on the Interviews page, under Cancelled, with no future-time
+        text on the card.
+        Ordering: None. Run before P2-01.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
