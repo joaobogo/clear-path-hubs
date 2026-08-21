@@ -665,6 +665,18 @@ function ClientLayout() {
         P4-08 Remove the "Agent run outcomes" measure Insights (/client/intelligence) {/* vocabulary-allow */}
         P4-09 Remove "against your role's rubric" and the run counts Insights (/client/intelligence) {/* vocabulary-allow */}
 
+        P4-10 Remove "33 findings flagged for checking" Insights (/client/intelligence)
+        P4-11 Remove "Record incomplete" warnings from the client view Offers & hires (/client/offers)
+        P4-12 Remove "Thin data" and "Captured at intake" Candidate detail — Compensation panel
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 4 of 66
+        P4-13 Rewrite "evidence extraction" and "enrich matching" New role wizard
+        P4-14 Rewrite "A rescore appends a new run" Candidate detail — score breakdown {/* vocabulary-allow */}
+        P4-15 Rename the search palette quick actions Header search palette
+        P4-16 Explain or remove "Consent Pending" Talent memory (/client/talent-memory)
+        P4-17 Remove the "(Client)" role tag from display names Messages / Account
+        P4-18 Use the team name consistently instead of individual recruiters Messages / notifications
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
