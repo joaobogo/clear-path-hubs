@@ -522,7 +522,10 @@ function ClientsPage() {
 
       <div className="px-6 pb-8">
         <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
-          <div className="hidden md:block">
+          {/* One layout per breakpoint: rendering both put every row in the DOM
+              and the tab order twice. */}
+          {isMobile ? null : (
+          <div>
             <table className="w-full min-w-[1000px] text-sm">
               <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr className="whitespace-nowrap">
