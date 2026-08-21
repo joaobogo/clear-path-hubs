@@ -1,5 +1,6 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
+import { getEvidenceCounts } from "./client/evidence-counts";
 
 export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 4;
@@ -244,16 +245,11 @@ export function buildRoleComparison(input: ClientCandidateDTO[]): RoleComparison
       key: "must_met",
       label: "Must-haves met",
       get: (c) => {
-        const v = mustHaveLabels(c, true);
-        return v.length ? v : ["None evidenced yet"];
-      },
-    },
-    {
-      key: "must_missing",
-      label: "Must-haves missing",
-      get: (c) => {
-        const v = mustHaveLabels(c, false);
-        return v.length ? v : ["None"];
+        const counts = getEvidenceCounts(c.requirement_rows);
+        const labels = c.requirement_rows
+          .filter((r) => r.importance === "must_have" && r.status === "met")
+          .map((r) => r.label);
+        return labels.length ? labels : [`${counts.must_met} of ${counts.must_total} evidenced`];
       },
     },
     {
