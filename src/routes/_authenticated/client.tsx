@@ -849,6 +849,37 @@ function ClientLayout() {
         Done when: Account → Company profile → Headquarters and Setup wizard step 1 → Headquarters both render
         empty after a refresh
 
+        P0-03 Delete the test messages and the test conversation
+        Messages
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The client's inbox contains a conversation titled "History Integrity Test" with no messages, and the only
+        message in their only role conversation reads "MVP verification test message". The audit also added one
+        message reading "[QA test — ignore] Automated QA audit message, 21 Aug 2026. No action needed.
+        Please disregard." There is no client-side delete for any of them.
+        DO THIS
+        Delete the conversation titled "History Integrity Test", and delete both messages described above from the
+        "Senior Full-Stack Engineer" role thread.
+        Done when: Messages shows 5 conversations, none titled "History Integrity Test", and the "Senior Full-Stack
+        Engineer" thread contains no message matching /MVP verification|QA test/.
+        Ordering: RUN THIS BEFORE ANY DEMO OR PROSPECT WALKTHROUGH.
+
+        P0-04 Stop test-named records reaching client queries
+        Messages / Candidates / Roles
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Test artefacts have twice now reached a client workspace: a conversation named "History Integrity Test"
+        and a message reading "MVP verification test message".
+        DO THIS
+        Add a guard that excludes records whose title or body matches /QA test|BROWSER-TEST|MVP
+        verification|Integrity Test|please disregard/i from every client-facing query (conversations, messages,
+        candidates, roles).
+        Done when: Seeding a conversation titled "QA test thread" makes it invisible in the client workspace while
+        remaining visible to admin.
+        Ordering: After P0-03.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
