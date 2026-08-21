@@ -423,14 +423,14 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P69 Clear the form for a new role MEDIUM CLIENT ONBOARDING
+        TEXTO DO USUÁRIO: "P70 Fix the essentials count MEDIUM CLIENT CREATE ROLE
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/onboarding, choosing \"Add a new role\" in the \"Which role are we configuring?\" dropdown leaves
-        every field populated with the previous role's data — title, location, seniority and the entire job
-        description.
-        Reset all role fields to empty when \"Add a new role\" is selected, so the user cannot accidentally save a
-        duplicate.
-        Done when: Selecting “Add a new role” leaves every field blank."
+        On /client/positions/new the \"ESSENTIAL FOR LAUNCH\" panel lists six bullets (Seniority, Work arrangement,
+        Location or remote, 3–5 Must-have skills, Salary band, Job description) but the caption below says \"You
+        can enrich the brief with advanced details after these 7 essentials.\"
+        Either change the caption to \"these 6 essentials\" or add the missing seventh bullet. Make the number match
+        the list.
+        Done when: The number in the caption equals the number of bullets."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
