@@ -121,60 +121,8 @@ export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }): Promise<FeedbackQueueItem[]> => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
-    const sel = (s: string): string => s;
-    const nowIso = new Date().toISOString();
-    const { data: rows, error } = await context.supabase
-      .from("interviews")
-      .select(
-        sel(
-          "id, candidate_match_id, position_id, status, scheduled_at, completed_at, interview_type, candidate_matches:candidate_match_id(candidate_profiles:candidate_profile_id(full_name)), positions:position_id(title)",
-        ),
-      )
-      .eq("organization_id", data.orgId)
-      .in("status", ["scheduled", "completed"])
-      .order("scheduled_at", { ascending: true })
-      .limit(100);
-    if (error) throw new Error(error.message);
-
-    const list = ((rows as AnyRow[] | null) ?? []).filter((iv) => {
-      const happened = happenedAt(iv);
-      return !!happened && happened < nowIso;
-    });
-    if (list.length === 0) return [];
-
-    const { data: cards } = await context.supabase
-      .from("interview_scorecards")
-      .select(sel("interview_id"))
-      .eq("organization_id", data.orgId)
-      .in(
-        "interview_id",
-        list.map((i) => i.id as string),
-      );
-    const done = new Set(((cards as AnyRow[] | null) ?? []).map((c) => c.interview_id as string));
-
-    const queueNames = await nameByMatch(
-      context.supabase,
-      list.map((iv) => iv.candidate_match_id as string),
-    );
-
-    return list
-      .filter((iv) => !done.has(iv.id as string))
-      .map((iv) => {
-        const happened = happenedAt(iv);
-        return {
-          interview_id: iv.id as string,
-          candidate_match_id: iv.candidate_match_id as string,
-          candidate_name:
-            queueNames.get(iv.candidate_match_id as string) ?? nameOf(iv.candidate_matches),
-          position_id: (iv.position_id as string) ?? null,
-          position_title: iv.positions?.title ?? "Your role",
-          interview_type: (iv.interview_type as string) ?? null,
-          happened_at: happened,
-          prompt_from: happened ? new Date(new Date(happened).getTime() + DAY).toISOString() : null,
-          status: iv.status as string,
-        };
-      })
-      .sort((a, b) => (a.happened_at ?? "").localeCompare(b.happened_at ?? ""));
+    const { getInterviewsAwaitingFeedback } = await import("./client/interviews-awaiting-feedback.server");
+    return getInterviewsAwaitingFeedback(context.supabase, data.orgId);
   });
 
 /** Everything the candidate page needs: what is open, and what was already said. */
