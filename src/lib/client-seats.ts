@@ -33,8 +33,12 @@ export type SeatCount = {
   pendingInvites: number;
 };
 
-export function holdsSeat(row: SeatMembershipRow): boolean {
+export function holdsSeat(row: SeatMembershipRow & { profiles?: { email?: string | null } | null }): boolean {
+  const email = row.profiles?.email?.toLowerCase() ?? "";
+  const isInternal = email.endsWith("@taasflow.com");
+  
   return (
+    !isInternal &&
     (SEAT_ROLES as readonly string[]).includes(String(row.role ?? "")) &&
     (SEAT_STATUSES as readonly string[]).includes(String(row.status ?? ""))
   );

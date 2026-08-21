@@ -118,7 +118,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
       await Promise.all([
         supabase
           .from("memberships")
-          .select("user_id, role, status")
+          .select("user_id, role, status, profiles:user_id(email)")
           .eq("organization_id", data.orgId),
         supabase
           .from("positions")
