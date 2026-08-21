@@ -423,18 +423,13 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P66 Use one date format everywhere MEDIUM GLOBAL
+        TEXTO DO USUÁRIO: "P67 Fix the workspace timezone MEDIUM CLIENT ACCOUNT
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The app currently renders 6 different absolute date formats, 4 date-time formats and 5 relative formats.
-        Examples found on client screens: \"12 Aug 2026\", \"13/08/2026\", \"15 Aug\", \"1 Sept 2026\", \"Monday 10 Aug\",
-        \"06/29\".
-        Create one shared date utility and use it everywhere:
-        - Absolute date: \"12 Aug 2026\" (always include the year, always use the 3-letter month, so \"Sep\" not
-        \"Sept\")
-        - Date and time: \"12 Aug 2026, 14:30\"
-        - Relative: \"4 hours ago\" / \"3 days ago\"
-        Replace every ad-hoc date format call with these three functions.
-        Done when: Only three date formats exist in the codebase."
+        On /client/account the Timezone panel shows \"Your timezone: UTC\" while the Interviews page renders every
+        time as \"Your time: … (America/Sao_Paulo, GMT-3)\".
+        Make both read from one stored workspace timezone value. Whatever the interviews page uses to localise
+        times is the correct source — point the Account panel at it.
+        Done when: The timezone shown on the Account page matches the one used to render interview times."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
