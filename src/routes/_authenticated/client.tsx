@@ -727,6 +727,19 @@ function ClientLayout() {
         P6-05 Give "Save and continue" feedback on an unchanged form
            Setup wizard
 
+        P6-06 Add a way to clear interview availability Interviews (/client/interviews)
+        P6-07 Refresh the role page after archiving Role detail (/client/positions/{'<id>'})
+        P6-08 Show archived roles under the Archived tab Roles (/client/positions)
+        P6-09 Stop a new role claiming that sourcing is running
+           Role detail (/client/positions/{'<id>'})
+        P6-10 Use one status vocabulary for a new role Role wizard / role detail
+        P6-11 Anchor the member actions menu to the row it was opened from
+           Account → Team & roles
+        P6-12 Stop showing a start date for an unaccepted offer
+           Offers & hires
+        P6-13 Remove the empty badge on the Approvals feedback row
+           Approvals (/client/approvals)
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
