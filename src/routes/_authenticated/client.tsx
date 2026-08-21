@@ -1509,7 +1509,47 @@ function ClientLayout() {
         Done when: The score breakdown's stated total and the headline score are either equal, or the caption
         acknowledges rounding.
 
+        P5-03 Stop one requirement having two opposite verdicts on one page
+        Candidate detail
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        On Beatriz Costa's page, "5+ years building production React and TypeScript applications" is
+        simultaneously: grid status "Met"; listed under "What lifts the score" as 'Meets the must-have "5+ years
+        building production React and TypeScript applications", quoted from the application'; and listed under
+        "What holds it back" as "Only partial evidence for required: 5+ years building production React and
+        TypeScript applications". The same contradiction exists for "Strong SQL and relational data modelling in
+        Postgres, including migrations".
+        DO THIS
+        Have both the "What lifts the score" and "What holds it back" lists read the same per-requirement status
+        object the grid uses. A requirement marked Met must not appear in "What holds it back".
+        Done when: No requirement appears in both lists on the same candidate page.
+        Ordering: Run P1-06 first.
+        P5-04 De-duplicate the "What holds it back" list
+        Candidate detail
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        On Beatriz Costa's page, "Only partial evidence for required: Practical experience with row-level security or
+        another multi-tenant isolation model" is listed TWICE, identically, in "What holds it back".
+        DO THIS
+        De-duplicate the holds-it-back array by requirement id before rendering.
+        Done when: No requirement appears more than once in the What holds it back list.
+        P5-05 Fix "Areas to validate" reading 5 for every candidate
+        Candidate comparison modal
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The "RELATIVE STRENGTH — AXIS BY AXIS" panel reads "Areas to validate — Tiago Almeida 5 · Sofia
+        Marques 5 · Miguel Torres 5", all three marked "◐ MID". Hand-counting the non-Met cells in the grid directly
+        above gives Tiago 8, Sofia 4, Miguel 6.
+        DO THIS
+        Compute the Areas to validate axis from the same per-candidate cell statuses that render the grid: count
+        the cells that are not Met.
+        Done when: The three candidates show 8, 4 and 6, and the ● / ◐ / ○ ranking follows those values.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
