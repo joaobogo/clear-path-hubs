@@ -64,6 +64,7 @@ export type TalentMemoryDTO = {
     headline: string | null;
     seniority: string | null;
     location: string | null;
+    match_id: string | null;
   };
 };
 
@@ -190,6 +191,7 @@ async function decorateMemories(
         headline: p.headline ?? r.headline_snapshot ?? null,
         seniority: r.seniority_snapshot ?? null,
         location: p.location ?? null,
+        match_id: r.source_match_id ?? null,
       },
     };
   });

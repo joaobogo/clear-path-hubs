@@ -102,7 +102,7 @@ function AnalyticsPage() {
             what you spent per hire. Every number comes from your own records.
           </p>
           <Link
-            to="/client/intelligence"
+            to="/client/executive"
             className="mt-2 inline-flex text-sm underline underline-offset-4"
           >
             See what these numbers suggest doing next
