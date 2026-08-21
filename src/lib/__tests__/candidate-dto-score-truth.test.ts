@@ -18,12 +18,12 @@ function row(over: Record<string, unknown> = {}) {
       evidence: [
         {
           label: "Contact",
-          snippet: "rques@demo.taasflow.com · +351 912 000 103",
+          snippet: "rques@example.com · +351 912 000 103",
         },
         {
           label: "Stack",
           snippet:
-            "ada@demo.taasflow.com · +351 912 000 104 Core stack: TypeScript, React, Node.js and Postgres.",
+            "ada@example.com · +351 912 000 104 Core stack: TypeScript, React, Node.js and Postgres.",
         },
       ],
     },
@@ -53,7 +53,7 @@ describe("client candidate DTO score truth", () => {
       evidence?: Array<{ snippet: string }>;
     };
     const all = JSON.stringify(dto);
-    expect(all).not.toContain("demo.taasflow.com");
+    expect(all).not.toContain("example.com");
     expect(all).not.toContain("912 000 103");
   });
 
