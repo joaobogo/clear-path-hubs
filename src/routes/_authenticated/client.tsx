@@ -435,7 +435,22 @@ function ClientLayout() {
         Admin success toasts include internal trace identifiers: \"Archived · trace ad_68ae4bdxmt0nb8sd\" and \"Saved
         · ad_u7b7psjvmt0ndetn\".
         Show only \"Archived.\" and \"Saved.\" Keep the trace ID in the console/log output.
-        Done when: No user-facing toast contains a trace identifier."
+        Done when: No user-facing toast contains a trace identifier.
+
+        P86 Separate the name from the role key LOW ADMIN TEAM
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /admin/team the owner column renders \"Alex Rivera (Staff)platform_admin\" and \"Master
+        Adminplatform_admin\" — the role key is concatenated with no space or separator.
+        Put the role on its own line in muted type, and use the display label \"Platform admin\" instead of the raw
+        key.
+        Done when: Names and roles are visually separated and the role reads as English.
+        P87 Update the thread list after sending LOW ADMIN COMMS
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        In the admin Comms centre, after sending a message the conversation list keeps the old preview text and
+        the old position until the page is reloaded.
+        Update the thread list optimistically when a message is sent, so the thread moves to the top and shows the
+        new preview immediately.
+        Done when: A sent message appears in the list preview without a reload."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
