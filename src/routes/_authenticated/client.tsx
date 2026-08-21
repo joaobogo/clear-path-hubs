@@ -541,6 +541,35 @@ function ClientLayout() {
         P5-09 The Unknown-cells-with-evidence defect may disappear once the evidence join is
         constrained to the right candidate.
 
+        P7-01 the
+        stage label
+        constant
+        P7-02, P7-03 Define the labels once, then the two specific label fixes become imports rather than
+        edits.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 1 of 66
+        P7-04 the
+        date helper
+        P7-05, P7-06 Same reason — build the helper, then point the chart axes and the relative formats at
+        it.
+        P2-02 exclude
+        cancelled
+        interviews
+        P2-01 The cancelled interview is part of why the three interview counts differ. Remove it
+        before unifying them.
+        P2-04 exclude
+        hired from
+        feedback
+        P2-03 Same pattern.
+        P8-01 replace
+        the Overview
+        queue
+        P9-01, P9-03 Both speed fixes get much simpler once the queue is computed once instead of twice.
+        P4-08 / P8-10
+        remove
+        measures
+        P9-02 Removing two of the eleven Insights measures is itself part of the speed fix.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
