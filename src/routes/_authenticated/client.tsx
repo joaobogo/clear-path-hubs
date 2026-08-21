@@ -423,15 +423,18 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P75 Fix the hires tile and the activity panel MEDIUM ADMIN OVERVIEW
+        TEXTO DO USUÁRIO: "P76 Merge the redundant admin surfaces MEDIUM ADMIN
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /admin the work-queue tile reads \"Hires confirmed (Total) 1\" while the \"Offers and hires\" panel on the
-        same page reads \"0 Hires confirmed\".
-        1. Point both at the same hires query (the same one used by the client Offers fix).
-        2. The \"LATEST ACTIVITY — LAST 25 EVENTS\" panel showed \"Activity is unavailable right now.\" on one load
-        and \"No activity yet.\" on another, on a desk with 39 queue items. Fix the query, and make sure a failed
-        call shows an error state — never fall back to \"No activity yet.\"\"
-        Done when: Both hires figures match, and the activity panel shows events."
+        Three redundancies in admin:
+        1. The client record's \"Messages\" tab contains no messages — only a paragraph and an \"Open Comms center\"
+        button. Remove the tab and put the Comms link in the client record header.
+        2. /admin/decision-backlog reproduces the \"Awaiting client decision\" panel from /admin verbatim. Remove
+        the page and add a \"See all\" link on the Overview panel.
+        3. The Overview says \"Delivery failures to retry (7d) 13\" while /admin/operations says \"Delivery failures
+        (7d) 86\". Make the labels say what each counts, e.g. \"Retryable delivery failures (7d)\" vs \"All delivery
+        failures (7d)\".
+        Done when: The Messages tab and the decision-backlog page are gone, and the two failure labels are
+        distinguishable."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
