@@ -30,6 +30,7 @@ import type {
 } from "@/lib/client-fit-presentation";
 import { SectionCard, Metric } from "./shared";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
+import { getEvidenceCounts } from "@/lib/client/evidence-counts";
 
 export function statusBadge(status: RequirementStatus) {
   switch (status) {
@@ -450,17 +451,18 @@ export const RequirementCoverage = memo(function RequirementCoverage({
       )}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 
-        <Metric label="Must-have met" value={requirement_rows.filter(r => r.importance === 'must_have' && r.status === 'met').length} tone="emerald" />
-        <Metric label="Partially met" value={requirement_rows.filter(r => r.status === 'partial').length} tone="amber" />
-        <Metric label="Not evidenced" value={requirement_rows.filter(r => r.status === 'not_evidenced').length} tone="slate" />
+        <Metric label="Must-have met" value={getEvidenceCounts(requirement_rows).must_met} tone="emerald" />
+        <Metric label="Partially met" value={getEvidenceCounts(requirement_rows).partial} tone="amber" />
+        <Metric label="Not evidenced" value={getEvidenceCounts(requirement_rows).unknown} tone="slate" />
         <Metric label="Preferred met" value={requirement_rows.filter(r => r.importance === 'preferred' && r.status === 'met').length} tone="sky" />
       </div>
       <div className="mt-4">
         {(() => {
           // Coverage shown here is what this list can back: requirements with a
           // quoted passage, over all declared requirements.
-          const total = requirement_rows.length;
-          const evidenced = requirement_rows.filter((r) => r.evidence.length > 0).length;
+          const counts = getEvidenceCounts(requirement_rows);
+          const total = counts.total;
+          const evidenced = counts.met;
           const pct = total > 0 ? Math.round((evidenced / total) * 100) : 0;
           return (
             <>

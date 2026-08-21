@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { formatEnumLabel } from "@/lib/human-labels";
 import { formatDateTime } from "@/lib/format/datetime";
+import { getEvidenceCounts } from "@/lib/client/evidence-counts";
 
 export function BackLink() {
   return (
@@ -51,7 +52,11 @@ export function CandidateHeader({
           <CandidateScoreBadge
             score={candidate.score}
             fitLabel={candidate.fit_label}
-            evidence={candidate.evidence_support}
+            evidence={{ 
+              supported: candidate.coverage.met, 
+              total: candidate.coverage.total,
+              rows: candidate.requirement_rows 
+            } as any}
             rechecking={candidate.freshness?.state === "stale"}
             humanReviewed={candidate.human_review?.reviewed === true}
             evidencePending={candidate.explanation?.kind === "evidence_pending"}
