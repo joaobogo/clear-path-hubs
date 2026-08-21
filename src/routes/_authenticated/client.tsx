@@ -1576,7 +1576,32 @@ function ClientLayout() {
         Done when: For each candidate the Verified strengths number equals the number of bullets in their Strengths
         cell.
 
+        P5-10 Show the numeric score in the comparison
+        Candidate comparison modal
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The comparison shows the three candidates as "Consider", "Strong" and "Consider" with no numeric score
+        anywhere in the modal. The same candidates show 60, 78 and 68 on the Candidates list, on the board and
+        on their own pages.
+        DO THIS
+        Add the numeric score beside the fit label in each candidate column header, formatted as it is elsewhere.
+        Done when: The comparison shows the same score for each candidate as the Candidates list does.
+        P5-11 Move the evidence above the fold on the candidate page
+        Candidate detail
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        On the candidate page the score sits at 228 px and the "Requirement coverage" heading — where the
+        evidence begins — sits at 987 px, in an 861 px viewport, on a 4,909 px page. A recruiter must scroll past
+        the contact details and the CV buttons to reach the reason the candidate is there.
+        DO THIS
+        Reorder the candidate page so that the fit card is followed immediately by Requirement coverage and then
+        the score breakdown. Move Contact, Preview CV and Download CV below them.
+        Done when: The first requirement row is visible without scrolling in an 861 px viewport.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
