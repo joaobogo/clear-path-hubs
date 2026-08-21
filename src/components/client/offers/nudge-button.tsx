@@ -12,7 +12,7 @@ export function NudgeButton({ orgId, hire }: { orgId: string; hire: HireRecordDT
   const nudge = useMutation({
     mutationFn: () => nudgeFn({ data: { orgId, id: hire.id } }),
     onSuccess: () => {
-      toast.success(`Nudge sent to ${hire.owner_name ?? "the offer owner"}`, {
+      toast.success(`Nudge sent to ${hire.owner_name?.includes("TaaSFlow") ? "the TaaSFlow team" : (hire.owner_name ?? "the offer owner")}`, {
         description: "We'll chase the candidate and update this record.",
       });
       qc.invalidateQueries({ queryKey: ["hires", orgId] });
