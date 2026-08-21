@@ -1364,7 +1364,40 @@ function ClientLayout() {
         Done when: The string "Unicorn" does not appear in the client workspace, and the score distribution's top band
         is labelled "Exceptional".
 
-        {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn */}
+        P4-08 Remove the "Agent run outcomes" measure
+        Insights (/client/intelligence)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Insights page renders a client-facing measure titled "Agent run outcomes" reading "123 processing
+        steps · 1 failed", with bands "completed 112 / superseded 10 / failed 1", captioned "Outcomes are recorded
+        by the agent itself". The same failure is also reported at the top of the page as "1 automated run failed in
+        this period" with "Failed runs 1", "Suggested action. Open the processing history to see which step failed",
+        and 'From "agent run outcomes"'.
+        DO THIS
+        Remove the "Agent run outcomes" measure and the "1 automated run failed in this period"
+        recommendation from the CLIENT view entirely. These are internal ops metrics. Keep them for admin.
+        Done when: The strings "agent", "run", "runs" and "Processing history" do not appear on /client/intelligence.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 28 of 66
+
+        P4-09 Remove "against your role's rubric" and the run counts
+        Insights (/client/intelligence)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The score distribution measure is captioned "Scores come from completed scoring runs against your role's
+        rubric — every point is backed by evidence in the candidate record. Distribution over 10 runs in this
+        window." The requirement coverage measure is captioned "…taken from the scoring run" and "10 scoring
+        runs with coverage recorded".
+        DO THIS
+        Rewrite these captions without "rubric", "run" or "scoring runs". For example: "Scores come from our
+        review of each candidate against your requirements — every point is backed by evidence in the candidate
+        record. Based on 10 candidates."
+        Done when: The strings "rubric", "scoring run" and "runs" do not appear on /client/intelligence.
+        Ordering: After P4-08.
+
+        {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
