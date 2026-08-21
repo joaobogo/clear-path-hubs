@@ -1091,6 +1091,30 @@ function ClientLayout() {
         Done when: No unqualified stage word on the Insights funnel carries a different value from the same word on the
         Candidates page.
 
+        P2-12 Fix open + filled exceeding total on the Executive page
+        Executive (/client/executive)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The "Open roles by region" row reads "Portugal — 1 open · 1 filled · 1 total". 1 + 1 = 2, which exceeds the
+        total of 1. The single role is Active and has one hire against it.
+        DO THIS
+        Stop counting a hire as a filled role while the role remains open. Render "1 total · 1 open · 1 hire made", or
+        count filled only when the role's status becomes closed.
+        Done when: No region row can render open + filled greater than total.
+
+        P2-13 Fix the compensation band check in the comparison
+        Candidate comparison modal
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Miguel Torres' compensation cell reads "In range — EUR 78,000 base, annual — Role: €55,000 – €75,000".
+        €78,000 is outside €55,000–€75,000. Sofia Marques at €85,000 is correctly labelled "Above range".
+        DO THIS
+        The band comparison is using a tolerance or the wrong bound. Compare strictly: value &gt; ceiling is "Above
+        range", value &lt; floor is "Below range", otherwise "In range".
+        Done when: Miguel Torres' cell reads "Above range", and a candidate at exactly €75,000 reads "In range".
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
