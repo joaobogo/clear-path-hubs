@@ -1600,7 +1600,21 @@ function ClientLayout() {
         the score breakdown. Move Contact, Preview CV and Download CV below them.
         Done when: The first requirement row is visible without scrolling in an 861 px viewport.
 
+        P5-12 Make the score the most prominent thing on the candidate page
+        Candidate detail
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The score renders at 12 px — the smallest text on the first screen — against a 30 px candidate name and a
+        24 px fit word "Top".
+        DO THIS
+        Render the score at roughly 28 px with "/100" beside it, directly under or next to the name, and reduce the
+        fit word to a chip at the score's side.
+        Done when: The score is the largest number on the candidate page's first screen and reads as a value out of
+        100.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
