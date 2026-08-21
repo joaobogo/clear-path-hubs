@@ -166,7 +166,7 @@ export const globalSearch = createServerFn({ method: "POST" })
           .order("updated_at", { ascending: false })
           .limit(LIMIT);
         if (scope === "client") query = query.in("organization_id", orgIds);
-        else query = excludeTestOrgs(query, testScope).eq("is_test_record", false);
+        else query = excludeTestOrgs(query, testScope);
         const { data: positions, error } = await query;
         if (error) throw new Error(error.message);
         groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
@@ -229,7 +229,7 @@ export const globalSearch = createServerFn({ method: "POST" })
           if (scope === "client") {
             mq = mq.in("organization_id", orgIds).eq("client_visibility", "visible");
           } else {
-            mq = excludeTestOrgs(mq, testScope).eq("is_test_record", false);
+            mq = excludeTestOrgs(mq, testScope);
           }
           const { data: matches, error } = await mq;
           if (error) throw new Error(error.message);
