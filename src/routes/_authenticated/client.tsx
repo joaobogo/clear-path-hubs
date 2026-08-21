@@ -430,7 +430,7 @@ function ClientLayout() {
         Make the column header say what it counts — rename it to \"IN INTERVIEW\" (candidates currently
         interviewing) — so it no longer looks like it disagrees with the sentence beside it.
         Done when: The column header and the row sentence can no longer be read as the same figure."
-        {/* vocabulary-allow: rubric, run, run-as-noun */}
+        {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
