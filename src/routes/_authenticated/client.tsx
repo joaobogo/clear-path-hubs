@@ -429,7 +429,7 @@ function ClientLayout() {
         Always render a COUNT for shortlist-size commitments (\"2 of 4 so far\"), and a DURATION only for time-based
         commitments. A shortlist commitment must never be marked Met while the count is 0.
         Done when: Every shortlist row shows a count, and none is marked Met with zero candidates delivered."
-        {/* vocabulary-allow: rubric, run */}
+        {/* vocabulary-allow: rubric, run, run-as-noun */}
       </div>
   </WorkspaceShell>
   </SupportViewContext.Provider>
