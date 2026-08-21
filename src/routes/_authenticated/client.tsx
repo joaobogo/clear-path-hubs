@@ -1333,7 +1333,7 @@ function ClientLayout() {
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
         now.
         SYMPTOM
-        The string "Only partial evidence for required: <requirement>" appears four or more times per candidate
+        The string "Only partial evidence for required: {'<requirement>'}" appears four or more times per candidate
         page in the "What holds it back" list, again in every Interview tab question rationale, and throughout the
         comparison modal's "Concerns" rows.
         DO THIS
