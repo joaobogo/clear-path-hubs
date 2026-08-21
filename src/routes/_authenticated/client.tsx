@@ -604,6 +604,27 @@ function ClientLayout() {
         another candidate's name
         Candidate comparison modal
 
+        Phase 2 · Make one fact have one answer (13 prompts)
+        ID Fix Page
+        P2-01 One number for interviews awaiting a confirmed
+        time
+        Roles / Overview / Interviews
+        P2-02 Exclude cancelled interviews from the needs-times
+        list
+        Interviews (/client/interviews)
+        P2-03 One number for interviews awaiting your feedback Interviews / Overview / Approvals
+        P2-04 Stop asking for interview feedback on hired
+        candidates
+        Interviews (/client/interviews)
+        P2-05 One number for seats in use Account (/client/account)
+        P2-06 Fix the Candidates board "DELIVERED" column
+        reading 0
+        Candidates (/client/candidates)
+        P2-07 One definition of an active candidate Executive / Insights
+        P2-08 Distinguish "ever reached" from "currently at" in
+        the funnel
+        Insights (/client/intelligence)
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
