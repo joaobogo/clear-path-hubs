@@ -780,6 +780,15 @@ function ClientLayout() {
         P8-02 Delete the duplicate List | Board toggle Candidates (/client/candidates)
         P8-03 Delete the duplicate result count Candidates (/client/candidates)
 
+        P8-04 Remove the empty Executive charts Executive (/client/executive)
+        P8-05 Remove or fix the p90 column Executive (/client/executive)
+        P8-06 Fix "Time in stage" averages that contradict the stalled measure
+           Executive (/client/executive)
+        P8-07 Collapse the three identical hires tiles Executive (/client/executive)
+        P8-08 Remove the "PROJECTED HIRES · NEXT 30D" tile Executive (/client/executive)
+        P8-09 Define or remove the "BLOCKED" column Executive (/client/executive)
+        P8-10 Remove the empty Talent availability measure Insights (/client/intelligence)
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
