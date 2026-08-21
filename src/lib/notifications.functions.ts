@@ -181,14 +181,16 @@ export async function emitEventFromServer(args: {
             ? `New message from ${actorName}` 
             : actorName && r.audience === "client" && args.event === "candidate_stage_changed"
               ? `Status changed by ${actorName}`
-              : copy.title,
+              : r.audience === "client" && args.event === "interview_requested"
+                ? "Your interview request is waiting on a time"
+                : copy.title,
         // A clarification request is worthless without the question itself, so
         // the typed question travels as the notification body.
         body:
           typeof args.payload?.["note"] === "string" && (args.payload["note"] as string).trim()
             ? (args.payload["note"] as string).trim()
             : copy.body ?? null,
-        link_path: r.link_path ?? args.link_path ?? (args.candidate_match_id ? `/admin/review/${args.candidate_match_id}` : null),
+        link_path: r.link_path ?? args.link_path ?? (r.audience === "client" && args.candidate_match_id ? `/client/candidates/${args.candidate_match_id}` : args.candidate_match_id ? `/admin/review/${args.candidate_match_id}` : null),
         // Point every notification at the exact record it is about.
         entity_type: args.candidate_match_id
           ? "candidate_match"
@@ -330,11 +332,34 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       }
     }
 
-    const { data, error } = await context.supabase
+    let query = context.supabase
       .from("notifications")
       .select("id, event_type, audience:audience::text, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id, event_id")
       .eq("recipient_user_id", context.userId)
-      .is("resolved_at", null)
+      .is("resolved_at", null);
+
+    // 1. Resolve organization context from the caller's active membership if we can
+    const { data: membership } = await context.supabase
+      .from("memberships")
+      .select("organization_id, role")
+      .eq("user_id", context.userId)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (membership) {
+      const role = membership.role as string;
+      const isClient = role.startsWith("client_");
+      
+      if (isClient) {
+        // Scope to the current organization and filter out internal admin-only noise
+        query = query
+          .eq("organization_id", membership.organization_id)
+          .eq("audience", "client")
+          .not("event_type", "in", '("cv_parse_failed", "screening_needs_review", "intake_submitted")');
+      }
+    }
+
+    const { data, error } = await query
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) throw error;

@@ -71,7 +71,7 @@ export const ADMIN_COPY: Partial<Record<EventType, CopyEntry>> = {
   candidate_processing_completed: { title: "Processing finished", body: "Candidate processing pipeline finished." },
   client_shortlisted: { title: "Client shortlisted a candidate", body: "A client just moved a candidate to shortlist." },
   client_feedback_submitted: { title: "Client feedback received" },
-  interview_requested: { title: "Client requested an interview" },
+  interview_requested: { title: "Your interview request is waiting on a time" },
   message_sent: { title: "New client message" },
   cv_parse_failed: { title: "CV parsing failed", body: "A CV could not be parsed and needs attention." },
   screening_needs_review: { title: "Screening needs review", body: "A screening result requires a human decision." },
