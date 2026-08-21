@@ -107,6 +107,9 @@ export async function readWorkspaceAccess(
   }
 
   const isMember = Boolean(role);
+  // P25: Impersonation sessions (staff viewing a client org they are not a member of) 
+  // are strictly read-only server-side.
+  const isImpersonating = isStaff && !isMember;
 
   return {
     allowed: isMember || isStaff,
@@ -114,14 +117,12 @@ export async function readWorkspaceAccess(
     isStaff,
     isMember,
     isAdmin: role === "client_admin" || role === "platform_admin" || role === "operations" || isStaff,
-    canWrite: isStaff || (isMember && role !== "client_viewer"),
+    canWrite: !isImpersonating && (isStaff || (isMember && role !== "client_viewer")),
     // Team and invitations are Admin-only, matching AREA_ROLES.team and the
     // published role card ("an editor cannot manage the team").
-    canManageTeam: isStaff || role === "client_admin",
-
+    canManageTeam: !isImpersonating && (isStaff || role === "client_admin"),
   };
 }
-
 
 /** Throws a consistent, plain-language error when the caller has no access. */
 export async function assertWorkspaceAccess(
