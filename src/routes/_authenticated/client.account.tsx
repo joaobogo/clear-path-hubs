@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { getAccountOverview } from "@/lib/account.functions";
+import { countClientRoles, selectClientRoles, selectOpenClientRoles } from "@/lib/client/role-counts";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { formatStageDate } from "@/lib/client-role-progress";
@@ -209,15 +210,28 @@ function AccountPage() {
  */
 export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
   const overviewFn = useServerFn(getAccountOverview);
+  const positionsFn = useServerFn(getClientPositions);
 
   const overview = useQuery({
     queryKey: ["client-account", orgId],
     queryFn: () => overviewFn({ data: { orgId } }),
     placeholderData: (prev) => prev,
   });
+  // The role figures come from the same roles query the Roles page and the
+  // "Roles and where they are" panel use, so the two counts on this page can
+  // never disagree.
+  const positions = useQuery({
+    queryKey: ["client-positions", orgId, "account"],
+    queryFn: () => positionsFn({ data: { orgId } }),
+    placeholderData: (prev) => prev,
+  });
 
   const overviewState = useQueryState(overview);
   const data = overview.data;
+  const roleCounts = useMemo(
+    () => countClientRoles((positions.data as AnyRow[]) ?? []),
+    [positions.data],
+  );
 
   if (overviewState.isError) {
     return (
@@ -238,9 +252,14 @@ export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
       <Tile
         icon={<Briefcase className="h-4 w-4" />}
         label="Open roles"
-        value={String(data?.roles_open ?? 0)}
-        note={`${data?.roles_total ?? 0} total in the account`}
+        value={positions.isLoading && !positions.data ? "—" : String(roleCounts.open)}
+        note={
+          positions.isLoading && !positions.data
+            ? "Counting roles…"
+            : `${roleCounts.total} total in the account`
+        }
       />
+
       <Tile
         icon={<CheckCircle2 className="h-4 w-4" />}
         label="Hires closed"
@@ -302,13 +321,13 @@ export function WorkspaceRolesAndStarts({ orgId }: { orgId: string }) {
   const overviewState = useQueryState(overview);
 
   const data = overview.data;
-  const roles = ((positions.data as AnyRow[]) ?? []).filter(
-    (p) => !["archived"].includes(String(p.status)),
+  // Same shared rule as the Account tile and the Roles page: drafts, archived
+  // roles and test records are not part of the client's account.
+  const roles = useMemo(
+    () => selectClientRoles(((positions.data as AnyRow[]) ?? [])),
+    [positions.data],
   );
-  const openRoles = useMemo(
-    () => roles.filter((p) => ["active", "approved", "paused"].includes(String(p.status))),
-    [roles],
-  );
+  const openRoles = useMemo(() => selectOpenClientRoles(roles), [roles]);
 
   return (
     <div className="space-y-8">

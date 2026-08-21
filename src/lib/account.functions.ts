@@ -8,6 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { computeSeatCount } from "@/lib/client-seats";
+import { countClientRoles } from "@/lib/client/role-counts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -121,7 +122,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
           .eq("organization_id", data.orgId),
         supabase
           .from("positions")
-          .select("id, status")
+          .select("id, status, title, is_test_record")
           .eq("organization_id", data.orgId),
         supabase
           .from("hire_records")
@@ -137,10 +138,10 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     const invitedSeats = seatCount.pendingInvites;
     const limit = seatCount.seatLimit;
 
-    const positionRows = (positions as AnyRow[]) ?? [];
-    const rolesOpen = positionRows.filter((p) =>
-      ["active", "approved", "paused"].includes(String(p.status)),
-    ).length;
+    // Same rule as the Roles page and the "Roles and where they are" panel:
+    // drafts, archived roles and test records are not part of the account.
+    const positionRows = countClientRoles((positions as AnyRow[]) ?? []);
+    const rolesOpen = positionRows.open;
 
     const hireRows = ((hires as AnyRow[]) ?? []).filter(
       (h) =>
@@ -206,7 +207,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
         upcoming_starts: upcoming,
       },
       roles_open: rolesOpen,
-      roles_total: positionRows.length,
+      roles_total: positionRows.total,
       generated_at: nowIso,
     };
 
