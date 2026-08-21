@@ -160,13 +160,10 @@ function Block({ name, children }: { name: string; children: React.ReactNode }) 
     <ComponentErrorBoundary
       boundary={`admin.clients.detail.${name}`}
       tone="admin"
-      fallback={(retry, error) => {
+      fallback={(retry) => {
         const isPositions = name.includes("positions");
         const message = isPositions ? "Couldn't load positions — retry" : "Something went wrong";
         
-        // Log error internally if needed, but never show raw Postgres enum errors to staff
-        console.error(`Block ${name} failed:`, error);
-
         return (
           <div className="flex flex-col items-center justify-center rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center h-40">
             <p className="text-sm font-medium text-destructive">

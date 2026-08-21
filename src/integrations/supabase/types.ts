@@ -5,6 +5,7 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
+
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -15976,7 +15977,6 @@ export type Database = {
         | "returned_for_correction"
         | "superseded"
         | "failed"
-        | "cancelled"
       client_decision_type:
         | "shortlist"
         | "request_interview"
@@ -16002,7 +16002,6 @@ export type Database = {
         | "provider_accepted"
         | "delivered"
         | "failed"
-        | "cancelled"
         | "bounced"
         | "suppressed"
       eligibility_status:
@@ -16096,6 +16095,7 @@ export type Database = {
         | "scheduling"
         | "scheduled"
         | "completed"
+        | "cancelled"
       job_status:
         | "queued"
         | "running"
@@ -16133,10 +16133,8 @@ export type Database = {
         | "running"
         | "completed"
         | "failed"
-        | "cancelled"
         | "aborted"
       migration_validation_status: "not_run" | "passed" | "warned" | "failed"
-        | "cancelled"
       notification_audience: "admin" | "client" | "candidate"
       org_status: "prospect" | "active" | "paused" | "archived"
       outreach_campaign_status:
@@ -16177,7 +16175,6 @@ export type Database = {
         | "replied"
         | "opted_out"
         | "failed"
-        | "cancelled"
       payment_status:
         | "unpaid"
         | "pending"
@@ -16209,7 +16206,6 @@ export type Database = {
         | "manual_review_required"
         | "provider_blocked"
         | "failed"
-        | "cancelled"
       profile_status: "active" | "suspended" | "deleted"
       recommendation_status:
         | "pending"
@@ -16245,8 +16241,7 @@ export type Database = {
         | "override"
         | "reject"
         | "request_recompute"
-      score_status: "queued" | "running" | "completed" | "failed"
-        | "cancelled"
+      score_status: "queued" | "running" | "completed" | "failed" | "cancelled"
       shortlist_share_mode: "review" | "presentation" | "compare"
       silver_consent: "granted" | "pending" | "declined" | "withdrawn"
       silver_reason:
@@ -16267,7 +16262,7 @@ export type Database = {
         | "event"
         | "other"
       task_priority: "low" | "normal" | "high" | "urgent"
-      task_status: "open" | "in_progress" | "done"
+      task_status: "open" | "in_progress" | "done" | "cancelled"
       work_model: "remote" | "hybrid" | "onsite"
     }
     CompositeTypes: {
@@ -16275,8 +16270,11 @@ export type Database = {
     }
   }
 }
+
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
@@ -16305,6 +16303,7 @@ export type Tables<
       ? R
       : never
     : never
+
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
@@ -16329,6 +16328,7 @@ export type TablesInsert<
       ? I
       : never
     : never
+
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
@@ -16353,6 +16353,7 @@ export type TablesUpdate<
       ? U
       : never
     : never
+
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
@@ -16369,6 +16370,7 @@ export type Enums<
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
+
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
@@ -16385,6 +16387,7 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
 export const Constants = {
   public: {
     Enums: {
@@ -16406,6 +16409,7 @@ export const Constants = {
         "withdrawn",
         "rejected",
         "archived",
+      ],
       canonical_scoring_state: [
         "ingestion",
         "evidence_extraction",
@@ -16416,8 +16420,8 @@ export const Constants = {
         "returned_for_correction",
         "superseded",
         "failed",
-        "cancelled",
       ],
+      client_decision_type: [
         "shortlist",
         "request_interview",
         "request_information",
@@ -16439,14 +16443,15 @@ export const Constants = {
       client_visibility: ["hidden", "visible", "archived"],
       delivery_channel: ["in_app", "email", "sms", "teams"],
       delivery_status: [
+        "created",
         "queued",
         "provider_accepted",
         "delivered",
         "failed",
-        "cancelled",
         "bounced",
         "suppressed",
       ],
+      eligibility_status: [
         "not_evaluated",
         "eligible",
         "not_eligible",
@@ -16510,7 +16515,6 @@ export const Constants = {
         "scheduled_run_completed",
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
-        "cancelled",
       hire_close_reason: [
         "candidate_declined",
         "counter_offer",
@@ -16544,6 +16548,7 @@ export const Constants = {
         "scheduling",
         "scheduled",
         "completed",
+        "cancelled",
       ],
       job_status: [
         "queued",
@@ -16586,7 +16591,6 @@ export const Constants = {
         "running",
         "completed",
         "failed",
-        "cancelled",
         "aborted",
       ],
       migration_validation_status: ["not_run", "passed", "warned", "failed"],
@@ -16634,11 +16638,11 @@ export const Constants = {
         "replied",
         "opted_out",
         "failed",
-        "cancelled",
       ],
       payment_status: [
         "unpaid",
         "pending",
+        "paid",
         "refunded",
         "exempt",
         "covered",
@@ -16659,6 +16663,7 @@ export const Constants = {
       processing_state: [
         "queued",
         "parsing",
+        "ocr_required",
         "parsed",
         "enriching",
         "ready_to_score",
@@ -16667,13 +16672,13 @@ export const Constants = {
         "manual_review_required",
         "provider_blocked",
         "failed",
-        "cancelled",
       ],
       profile_status: ["active", "suspended", "deleted"],
       recommendation_status: [
         "pending",
         "shortlist",
         "review",
+        "hold_for_validation",
         "do_not_recommend",
       ],
       role_intensity: ["steady", "standard", "aggressive"],
@@ -16709,7 +16714,6 @@ export const Constants = {
         "request_recompute",
       ],
       score_status: ["queued", "running", "completed", "failed", "cancelled"],
-        "cancelled",
       shortlist_share_mode: ["review", "presentation", "compare"],
       silver_consent: ["granted", "pending", "declined", "withdrawn"],
       silver_reason: [

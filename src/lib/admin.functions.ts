@@ -987,6 +987,7 @@ const statusTransition = z.object({
     "close",
     "reopen",
     "archive",
+    "unarchive",
   ]),
   reason: z.string().max(500).optional(),
 });
@@ -1002,6 +1003,7 @@ const STATUS_MAP: Record<string, string> = {
   close: "closed",
   reopen: "active",
   archive: "archived",
+  unarchive: "closed",
 };
 
 
@@ -1080,7 +1082,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
     if (data.action === "submit") patch.submitted_at = new Date().toISOString();
     if (data.action === "approve") patch.approved_at = new Date().toISOString();
     if (data.action === "activate" || data.action === "reopen") patch.published_at = new Date().toISOString();
-    if (data.action === "close" || data.action === "mark_filled") patch.closed_at = new Date().toISOString();
+    if (data.action === "close" || data.action === "mark_filled" || data.action === "unarchive") patch.closed_at = new Date().toISOString();
     if (data.action === "archive") patch.closed_at = before.closed_at ?? new Date().toISOString();
     const { data: after, error } = await s
       .from("positions")

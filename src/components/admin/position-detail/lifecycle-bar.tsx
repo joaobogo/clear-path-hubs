@@ -34,7 +34,7 @@ const CLARIFICATION_COPY = CLIENT_COPY["clarification_requested"] ?? {
   body: "Please review the open question on your role.",
 };
 
-// ── Lifecycle action bar (approve / activate / publish / pause / close / archive)
+// ── Lifecycle action bar (approve / activate / publish / pause / close / archive / unarchive)
 export function LifecycleBar({
   position,
   onDone,
@@ -50,8 +50,6 @@ export function LifecycleBar({
   const [busy, setBusy] = useState(false);
   const { confirm, confirmDialog } = useConfirmAction();
 
-  // Same query key and same pure assessment the readiness panel on this page
-  // uses, so the bar can never disagree with the checklist above it.
   const loadQuality = useServerFn(getRequisitionQuality);
   const { data: quality } = useQuery({
     queryKey: ["requisition-quality", position.id],
@@ -88,19 +86,15 @@ export function LifecycleBar({
 
   const roleName = position.title?.trim() || "This role";
 
-  // ── Guarded actions ────────────────────────────────────────────────────────
-
   async function confirmStartReview() {
     const r = await confirm({
       title: "Start review",
       object: roleName,
-      description:
-        "This moves the requisition into review and tells the client their role is being looked at.",
+      description: "This moves the requisition into review and tells the client their role is being looked at.",
       impact: [
         "Audience: everyone with access to this client workspace.",
         "This is a real notification, sent immediately.",
         "The role status changes from submitted to under review.",
-        "You can move it back to review or request clarification afterwards.",
       ],
       confirmLabel: "Start review",
     });
@@ -109,29 +103,17 @@ export function LifecycleBar({
 
   async function confirmApprove() {
     if (blockers.length > 0) {
-      toast.error(
-        `Cannot approve yet — ${blockers.length} decision-critical item${blockers.length === 1 ? "" : "s"} missing: ${blockers
-          .map((b) => b.label)
-          .join(", ")}.`,
-      );
+      toast.error(`Cannot approve yet — ${blockers.length} decision-critical items missing.`);
       return;
     }
     const r = await confirm({
       title: "Approve this requisition",
       object: roleName,
-      description:
-        "Approving confirms the requisition is complete and ready to be activated.",
-      impact: [
-        "Audience: everyone with access to this client workspace.",
-        "This is a real notification, sent immediately.",
-        `Message title: “${APPROVED_COPY.title}”`,
-        `Message body: “${APPROVED_COPY.body ?? ""}”`,
-        "Approval is not final: you can send it back to review from the actions menu.",
-      ],
+      description: "Approving confirms the requisition is complete and ready to be activated.",
       confirmLabel: "Approve role",
       reason: {
         label: "Approval note (kept on the audit trail)",
-        placeholder: "Checked requirements, locations and seniority with the client.",
+        placeholder: "Checked requirements and locations.",
       },
     });
     if (r.confirmed) await doStatus("approve", "Approved", r.reason || undefined);
@@ -141,19 +123,11 @@ export function LifecycleBar({
     const r = await confirm({
       title: "Request clarification",
       object: roleName,
-      description:
-        "Your question is sent to the client and becomes the body of the notification they receive.",
-      impact: [
-        "Audience: everyone with access to this client workspace.",
-        "This is a real notification, sent immediately.",
-        `Message title: “${CLARIFICATION_COPY.title}”`,
-        "Message body: the question you write below.",
-        "The role moves to needs clarification until you move it back to review.",
-      ],
+      description: "Your question is sent to the client.",
       confirmLabel: "Send question",
       reason: {
         label: "What do you need the client to clarify?",
-        placeholder: "Which seniority band is this role budgeted for, and is the location on-site?",
+        placeholder: "budget, location...",
         required: true,
       },
     });
@@ -164,18 +138,11 @@ export function LifecycleBar({
     const r = await confirm({
       title: "Return to review",
       object: roleName,
-      description:
-        "This removes the approval and puts the requisition back under review.",
-      impact: [
-        "The role status changes from approved back to under review.",
-        "It cannot be activated or published until it is approved again.",
-        "The client sees the role return to review in their workspace.",
-      ],
+      description: "This removes the approval and puts the requisition back under review.",
       confirmLabel: "Return to review",
       tone: "destructive",
       reason: {
         label: "Why is the approval being withdrawn?",
-        placeholder: "Approved before the location was confirmed.",
         required: true,
       },
     });
@@ -195,6 +162,20 @@ export function LifecycleBar({
       tone: "destructive",
     });
     if (r.confirmed) await doStatus("archive", "Archived", r.reason || undefined);
+  }
+
+  async function confirmUnarchive() {
+    const r = await confirm({
+      title: "Unarchive this role",
+      object: roleName,
+      description: "Unarchiving returns the role to its previous state (closed).",
+      impact: [
+        "The role status will be set back to closed.",
+        "It will appear in work queues and reports again.",
+      ],
+      confirmLabel: "Unarchive role",
+    });
+    if (r.confirmed) await doStatus("unarchive", "Unarchived");
   }
 
   const s = position.status as string;
@@ -222,12 +203,7 @@ export function LifecycleBar({
     secondary.push({ key: "unapprove", label: "Return to review (un-approve)", onClick: confirmReturnToReview });
   } else if (s === "active") {
     primary = isPublic
-      ? {
-          key: "unpublish",
-          label: "Unpublish",
-          variant: "outline",
-          onClick: () => doVis("private", "Removed from job board"),
-        }
+      ? { key: "unpublish", label: "Unpublish", variant: "outline", onClick: () => doVis("private", "Removed from job board") }
       : {
           key: "publish",
           label: "Publish",
@@ -266,9 +242,11 @@ export function LifecycleBar({
   } else if (s === "closed") {
     primary = { key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") };
     secondary.push({ key: "archive", label: "Archive", onClick: confirmArchive });
+  } else if (s === "archived") {
+    primary = { key: "unarchive", label: "Unarchive", onClick: confirmUnarchive };
   }
 
-  if (s !== "archived" && s !== "closed") {
+  if (s !== "archived") {
     if (!secondary.some((b) => b.key === "archive")) {
       secondary.push({ key: "archive", label: "Archive", onClick: confirmArchive });
     }
@@ -283,11 +261,6 @@ export function LifecycleBar({
           size="sm"
           variant={primary.variant}
           disabled={busy || (primary.key === "approve" && approveBlocked)}
-          title={
-            primary.key === "approve" && approveBlocked
-              ? `Cannot approve yet — missing: ${blockers.map((b) => b.label).join(", ")}`
-              : undefined
-          }
           onClick={primary.onClick}
           data-qa-action={`position-${primary.key}`}
         >
@@ -303,7 +276,6 @@ export function LifecycleBar({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {secondary.map((b, i) => (
-              // Keyed fragment: a bare <> here triggers React's missing-key warning.
               <Fragment key={b.key}>
                 {i > 0 && b.key === "archive" && <DropdownMenuSeparator />}
                 <DropdownMenuItem

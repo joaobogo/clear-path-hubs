@@ -7,7 +7,8 @@ export type LifecycleAction =
   | "resume"
   | "close"
   | "reopen"
-  | "archive";
+  | "archive"
+  | "unarchive";
 
 export const LIFECYCLE_ACTIONS: Record<
   LifecycleAction,
@@ -47,6 +48,12 @@ export const LIFECYCLE_ACTIONS: Record<
     label: "Archived",
     verb: "Archive position",
     destructive: true,
+  },
+  unarchive: {
+    from: ["archived"],
+    to: "closed",
+    label: "Unarchived",
+    verb: "Unarchive position",
   },
 };
 
