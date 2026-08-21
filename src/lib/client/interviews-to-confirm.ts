@@ -26,9 +26,3 @@ export function countRowsAwaitingConfirmation(
 ): number {
   return rows.filter((row) => row.interview_needs_confirmation).length;
 }
-
-export function awaitingConfirmationHeading(count: number): string {
-  return count === 1
-    ? "Waiting on you to confirm a time"
-    : "Waiting on you to confirm a time";
-}
