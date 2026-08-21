@@ -1050,6 +1050,47 @@ function ClientLayout() {
         Make the Workspace tile use the same pending-inclusive seat count as the Team & roles list.
         Done when: Both tabs show the same seats-in-use figure with a pending invitation outstanding.
 
+        P2-06 Fix the Candidates board "DELIVERED" column reading 0
+        Candidates (/client/candidates)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Candidates page tile reads "DELIVERED 10" and, in the same viewport, the board column reads
+        "DELIVERED 0" with "No candidates here". All ten candidates have moved past the delivered stage, so the
+        column is structurally always zero.
+        DO THIS
+        Remove the DELIVERED column from the candidates board. It duplicates the tile above it and can only ever
+        read 0 once candidates have progressed.
+        Done when: The candidates board renders five columns and no column reading "DELIVERED 0 / No candidates
+        here" appears anywhere beneath a tile reading "DELIVERED 10".
+
+        P2-07 One definition of an active candidate
+        Executive / Insights
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Executive page's "Candidates in play by team" table reads "ACTIVE 9" (10 candidates minus 1 hired).
+        The Insights page reads "Live — 8 candidates still in play" and explicitly states "'In play' excludes hired and
+        not-moving-forward".
+        DO THIS
+        Adopt the Insights definition — exclude both hired and not-moving-forward — in the Executive table, and
+        label the column "In play" to match.
+        Done when: The Executive table and the Insights page report the same number of active candidates.
+
+        P2-08 Distinguish "ever reached" from "currently at" in the funnel
+        Insights (/client/intelligence)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Funnel conversion measure reads "Shown to you 10 · Shortlisted 9 · Interviewed 8 · Offered 3 · Hired
+        1". The Candidates tiles, the Candidates board, the Roles table and the Executive page all read 3 for
+        shortlisted and 3 for interviewing. The funnel's caption explains it counts "if their record ever passed
+        through it", but the labels themselves are identical and unqualified.
+        DO THIS
+        Rename the funnel stage labels to "Ever shortlisted", "Ever interviewed", "Ever offered".
+        Done when: No unqualified stage word on the Insights funnel carries a different value from the same word on the
+        Candidates page.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
