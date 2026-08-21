@@ -813,6 +813,14 @@ function ClientLayout() {
         P8-34 Fix the truncated tile caption on the Overview Overview (/client)
         P8-35 Stop the year wrapping in the offer card Offers & hires (/client/offers)
 
+        Phase 9 · Speed (5 prompts)
+        ID Fix Page
+        P9-01 Speed up the Approvals page Approvals (/client/approvals)
+        P9-02 Speed up the Insights page Insights (/client/intelligence)
+        P9-03 Speed up the Overview Overview (/client)
+        P9-04 Speed up the Messages list Messages (/client/conversations)
+        P9-05 Speed up the Roles page Roles (/client/positions)
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
