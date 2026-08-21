@@ -585,9 +585,11 @@ function ClientsPage() {
               </tbody>
             </table>
           </div>
+          )}
 
           {/* Mobile: stacked cards */}
-          <ul className="divide-y md:hidden">
+          {isMobile ? (
+          <ul className="divide-y">
             {rows.map((r) => (
               <li key={r.id} className="p-3">
                 <ClientCard row={r} onArchive={() => setArchiveTarget(r)} />
