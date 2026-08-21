@@ -1,3 +1,4 @@
+import { useIsMobile } from "@/hooks/use-mobile";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { pluralize } from "@/lib/format/datetime";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
@@ -159,6 +160,7 @@ function orgType(row: ClientRow): string {
 
 function ClientsPage() {
   const search = Route.useSearch();
+  const isMobile = useIsMobile();
   const navigate = Route.useNavigate();
   const queryClient = useQueryClient();
   const includeTest = useIncludeTestRecords();
@@ -522,7 +524,10 @@ function ClientsPage() {
 
       <div className="px-6 pb-8">
         <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
-          <div className="hidden md:block">
+          {/* One layout per breakpoint: rendering both put every row in the DOM
+              and the tab order twice. */}
+          {isMobile ? null : (
+          <div>
             <table className="w-full min-w-[1000px] text-sm">
               <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr className="whitespace-nowrap">
@@ -582,9 +587,11 @@ function ClientsPage() {
               </tbody>
             </table>
           </div>
+          )}
 
           {/* Mobile: stacked cards */}
-          <ul className="divide-y md:hidden">
+          {isMobile ? (
+          <ul className="divide-y">
             {rows.map((r) => (
               <li key={r.id} className="p-3">
                 <ClientCard row={r} onArchive={() => setArchiveTarget(r)} />
@@ -617,6 +624,7 @@ function ClientsPage() {
               </li>
             )}
           </ul>
+          ) : null}
         </div>
 
         {total > 0 && (

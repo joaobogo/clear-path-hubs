@@ -1,3 +1,4 @@
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "@tanstack/react-router";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { CandidateCard } from "@/components/client/candidate-card";
@@ -46,10 +47,13 @@ export function CompactList({
   compareIds: string[];
   onToggleCompare: (id: string) => void;
 }) {
-  return (
-    <>
-      {/* Mobile: stacked cards */}
-      <div className="grid gap-3 md:hidden">
+  // Render exactly one layout for the current breakpoint. Rendering both and
+  // hiding one with CSS put every row in the DOM (and the tab order) twice.
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div className="grid gap-3">
         {rows.map((c) => (
           <CandidateCard
             key={c.match_id}
@@ -61,9 +65,11 @@ export function CompactList({
           />
         ))}
       </div>
+    );
+  }
 
-      {/* Desktop: decision-first table */}
-      <div className="hidden min-w-0 max-w-full overflow-hidden rounded-xl border bg-card md:block mb-16">
+  return (
+    <div className="min-w-0 max-w-full overflow-hidden rounded-xl border bg-card mb-16">
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
@@ -136,7 +142,6 @@ export function CompactList({
             ))}
           </tbody>
         </table>
-      </div>
-    </>
+    </div>
   );
 }

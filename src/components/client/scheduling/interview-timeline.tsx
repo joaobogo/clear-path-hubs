@@ -210,7 +210,12 @@ function TimelineItem({
   const m = marker(iv);
   const Icon = m.icon;
   const slots = liveSlots(iv.proposed_times, iv.availability_expires_at);
-  const when = dualZone(iv.scheduled_at, iv.timezone, viewerTz);
+  // Every card leads with the workspace timezone (the same value the Account
+  // page shows). The interview's own zone — or the viewer's browser zone when
+  // they match — goes on the secondary line.
+  const secondaryTz = iv.timezone || viewerTz;
+  const when = dualZone(iv.scheduled_at, timezone, secondaryTz);
+  const secondaryLabel = iv.timezone && iv.timezone !== timezone ? "Interview timezone" : "Your time";
   const title = `Interview — ${iv.position?.title ?? "Role"}`;
   // Action labels name the candidate and role so they stay unambiguous for
   // screen readers and stable as Playwright selectors.
@@ -258,10 +263,10 @@ function TimelineItem({
               <div className="inline-flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="font-medium">{when.primary}</span>
-                <span className="text-muted-foreground">({relativeDay(iv.scheduled_at, iv.timezone)})</span>
+                <span className="text-muted-foreground">({relativeDay(iv.scheduled_at, timezone)})</span>
               </div>
               {when.viewer ? (
-                <div className="text-xs text-muted-foreground">Your time: {when.viewer}</div>
+                <div className="text-xs text-muted-foreground">{secondaryLabel}: {when.viewer}</div>
               ) : null}
             </>
           ) : slots.length > 0 ? (
