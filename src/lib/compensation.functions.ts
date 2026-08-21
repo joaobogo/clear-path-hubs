@@ -50,6 +50,7 @@ export const getCompensationSignal = createServerFn({ method: "POST" })
     }
 
     let offerAmounts: Array<{ amount: number; currency: string | null; period: string | null }> = [];
+    let totalOfferCount = 0;
     if (m.position_id) {
       const { data: hires } = await context.supabase
         .from("hire_records")
@@ -64,6 +65,13 @@ export const getCompensationSignal = createServerFn({ method: "POST" })
           period: h.salary_period ?? null,
         }))
         .filter((h) => Number.isFinite(h.amount) && h.amount > 0);
+
+      const { count } = await context.supabase
+        .from("hire_records")
+        .select("*", { count: "exact", head: true })
+        .eq("organization_id", data.orgId)
+        .eq("position_id", m.position_id);
+      totalOfferCount = count ?? 0;
     }
 
     return buildCompensationSignal({
@@ -71,5 +79,6 @@ export const getCompensationSignal = createServerFn({ method: "POST" })
       candidateCompensation: m.candidate_profiles?.compensation_preferences ?? null,
       location,
       offerAmounts,
+      totalOfferCount,
     });
   });
