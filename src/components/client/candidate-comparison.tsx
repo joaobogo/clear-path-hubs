@@ -736,7 +736,10 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
     {
       key: "validation",
       label: "Areas to validate",
-      values: candidates.map((c) => -c.concerns.length), // inverse: fewer concerns = stronger
+      values: candidates.map((c) => {
+        const counts = getEvidenceCounts(c.requirement_rows);
+        return -counts.partial; // inverse: fewer partial matches = stronger
+      }),
       format: (n) => `${Math.abs(n)}`,
     },
   ];
