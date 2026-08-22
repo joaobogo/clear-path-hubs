@@ -2342,33 +2342,36 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P3-5  \"Must-haves met\" must use the same coverage figure
+        TEXTO DO USUÁRIO: "P3-7  De-duplicate \"What holds it back\"
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison view, the \"RELATIVE STRENGTH — AXIS BY AXIS\"
-        section shows a \"Must-haves met\" axis reading:
-            Tiago Almeida 0%   Sofia Marques 0%   Miguel Torres 0%   Beatriz Costa 0%
-        Eight lines below, the OBSERVATIONS section on the same screen reads:
-            Requirement coverage differs — Beatriz Costa has the highest coverage (92%).
-        Two definitions of coverage on one screen, and the axis is useless because every
-        candidate is identical. The 92% figure is the correct one (it matches the
-        \"Must-have coverage\" percentage on the candidate's own Score breakdown).
-        Change the \"Must-haves met\" axis to use the same coverage calculation the
-        observation uses.
-        Done when: the \"Must-haves met\" axis shows different percentages per candidate,
-        and Beatriz Costa's value on that axis matches the percentage quoted in the
-        Observations line.
-        P3-6  \"Verified strengths\" must match the profile's strengths list
+        On the candidate profile, the \"What holds it back\" list under Score breakdown
+        renders six bullets containing only three unique reasons. For Beatriz Costa:
+            Only partial evidence for required: 5+ years building production React and TypeScript applications
+            Only partial evidence for required: Strong SQL and relational data modelling in Postgres, including migrations
+            Only partial evidence for required: 5+ years building production React and TypeScript applications
+            Only partial evidence for required: Strong SQL and relational data modelling in Postgres, including migrations
+            Only partial evidence for required: Practical experience with row-level security or another multi-tenant isolation 
+        model
+            Only partial evidence for required: 5+ years building production React and TypeScript applications
+        The React/TypeScript reason appears three times and the Postgres one twice.
+        De-duplicate the list by requirement before rendering.
+        Done when: \"What holds it back\" lists each requirement at most once.
+        P3-8  A cell with evidence cannot read \"Unknown\"
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison view, the \"Verified strengths\" axis reports
-        \"Sofia Marques — 0\".
-        But on Sofia Marques' own profile
-        (/client/candidates/449f7f61-d367-4919-a382-2017df43076c), the
-        \"What lifts the score\" panel contains one bullet:
-            Demonstrated: Experience in an early-stage or founder-led team
-        0 and 1 cannot both be right. Make the comparison's \"Verified strengths\" axis
-        count the same list the profile's \"What lifts the score\" panel renders.
-        Done when: the \"Verified strengths\" number for a candidate in the comparison
-        equals the number of bullets in that candidate's \"What lifts the score\" panel"
+        In the candidate comparison grid, cells whose status reads \"Unknown\" are
+        rendering evidence text underneath them.
+        Two examples on screen at once:
+        Row \"Experience in an early-stage or founder-led team\", column Tiago Almeida:
+        status \"○ Unknown\", with a quoted passage rendered below it.
+        Row \"Practical experience with row-level security or another multi-tenant
+        isolation model\", column Miguel Torres:
+        status \"○ Unknown\", with \"Introduced Terraform for all AWS infrastructure.\"
+        rendered below it.
+        The legend on the same screen defines \"○ Unknown\" as no evidence. If a cell has
+        any evidence attached it must not render as Unknown — promote it to
+        \"Partially met\".
+        Done when: no cell in the comparison grid shows both the \"Unknown\" status and
+        evidence text"
         
         
         
