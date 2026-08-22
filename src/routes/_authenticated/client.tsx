@@ -2342,17 +2342,13 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.12   Deduplicate the \"What holds it back\" bullets
+        TEXTO DO USUÁRIO: "2.13   Stop listing a declared requirement under BEYOND YOUR REQUIREMENTS
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate page the \"What holds it back\" panel renders duplicate bullets. On
-        Beatriz Costa's page it prints six bullets containing three distinct statements —
-        \"Only partial evidence for required: 5+ years building production React and TypeScript
-        applications\" appears three times and the Strong SQL line twice.
-        On Sofia Marques's page the last bullet is a bare requirement string with no sentence:
-        \"Practical experience with row-level security or another multi-tenant isolation model\".
-        Deduplicate the array by requirement id before rendering, and drop any entry that has no
-        sentence template.
-        Done when: No requirement appears more than once under \"What holds it back\", and every bullet is a full sentence."
+        On the candidate page the section \"BEYOND YOUR REQUIREMENTS\" lists
+        \"Demonstrated: Experience owning features end to end, from schema design to shipped UI\"
+        which is must-have requirement #3 in the same page's own requirement grid.
+        Exclude anything that matches a declared role requirement from this section.
+        Done when: No item under \"BEYOND YOUR REQUIREMENTS\" also appears in the requirement grid above it"
         
         
         
