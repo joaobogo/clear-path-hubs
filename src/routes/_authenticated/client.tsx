@@ -2342,15 +2342,13 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "4.13   Rename the Roles and Account message filters
-        MEDIUM
+        TEXTO DO USUÁRIO: "4.14   Remove the snake_case stage value from candidate URLs
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/conversations the filter anchors use internal values in their URLs:
-        Roles   -{"->"} ?filter=position
-        Account -{"->"} ?filter=organization
-        Rename the query values to ?filter=role and ?filter=account so the URL matches the label the
-        client sees. Keep the old values working as aliases so existing links do not break.
-        Done when: Clicking \"Roles\" produces ?filter=role, and ?filter=position still resolves to the same view"
+        On /client/candidates the stage filter writes an internal enum into the URL:
+        ?stage=interview_process
+        Clients see this in the address bar and in shared links.
+        Use hyphenated, human values: ?stage=in-interviews. Keep the old values working as aliases.
+        Done when: Filtering to the interview stage produces ?stage=in-interviews in the address bar"
         
         
         
