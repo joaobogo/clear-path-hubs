@@ -151,11 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Six date formats are in use across the client workspace: "12 Aug 2026", "09 Aug 2026" with a leading zero, "12 Aug" with no year, "1 Sept 2026" with a four-letter month, "08/03" on the Insights chart axes, and "2018-09 to 2021-04" inside comparison evidence text.
+          Four things are rendered twice on one screen:
+          {"\n"}
+            1. /client/candidates renders two identical "List | Board" button pairs, plus a third "Board" entry in the Shortlist / Board / Talent pool tab bar. Keep only the pair inside the filter bar.
+          {"\n"}
+            2. /client/account?tab=notifications renders the heading "Notifications" and its subtitle twice in a row. Keep the card's own heading.
+          {"\n"}
+            3. The candidate compensation panel prints "Lisbon, Lisbon, Portugal" — the city is concatenated with a value that already contains it. Build it from city plus country once.
+          {"\n"}
+            4. A candidate row for Beatriz Costa carries both a name link and a separate "View" link. Remove the "View" link.
           {"\n\n"}
-          Create one date helper formatting as "D MMM YYYY" with three-letter months and no leading zero, one date-time helper as "D MMM YYYY, HH:mm", and one relative helper. Replace every call site, including the Insights chart axis labels.
-          {"\n\n"}
-          PROVE IT: open /client, /client/positions, /client/offers and /client/executive and paste one date from each. All four must use the same format, and no month/day date may remain."
+          PROVE IT: reload each of those screens and confirm the element now appears once. Tell me what each now shows."
         </div>
         {children}
         <Scripts />
