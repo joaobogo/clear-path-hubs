@@ -2342,15 +2342,27 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.10   Merge Edit terms and Redraft on offer cards
+        TEXTO DO USUÁRIO: "5.11   Merge the duplicate comparison header row
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/offers each offer card renders both \"Edit terms\" and \"Redraft\", which do the same
-        thing. The cards also expose \"Accepted\", \"Declined\" and \"Close lost\" — outcomes only the
-        candidate or the recruiting team can set.
-        Keep \"Nudge\" and \"Edit terms\". Remove \"Redraft\", \"Accepted\", \"Declined\" and \"Close lost\" from
-        the client view.
-        Done when: A client-side offer card shows only \"Nudge\" and \"Edit terms\""
+        In the candidate comparison modal the candidate header row is rendered twice: once at the
+        top of the requirement grid with a link labelled \"Review -{"->"} \", and again above the summary rows
+        with a link labelled \"Open profile -{"->"} \". Both do the same thing, and the lower sticky header
+        overlaps the row beneath it (the text \"Senior Full-Stack Engineer · Lumen Travel\" is partly
+        hidden behind it).
+        Keep one sticky header, label the link \"Open profile\", and give the scroll container enough
+        top padding that the header never covers a row.
+        Done when: The comparison modal shows one candidate header row, with one link label, and no row is obscured by it.
+        5.12   Delete the duplicate Notifications heading
+        MEDIUM
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/account > Notifications the word \"Notifications\" is rendered twice with two
+        different subtitles:
+        \"Notifications — Choose how you'd like to be notified for each workspace event.\"
+        \"Notifications — Choose how each update reaches you. Everything stays visible in the
+        workspace and in Messages either way.\"
+        Delete the outer heading and keep the card with the second subtitle.
+        Done when: The Notifications settings page shows the word \"Notifications\" once as a section heading"
         
         
         
