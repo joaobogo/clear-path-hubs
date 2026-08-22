@@ -2348,11 +2348,11 @@ function ClientLayout() {
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
         On /client/conversations the filter bar renders five anchors:
-        All        -> /client/conversations?filter=all
-        Unread     -> /client/conversations?filter=unread
-        Roles      -> /client/conversations?filter=position
-        Candidates -> /client/conversations?filter=candidate
-        Account    -> /client/conversations?filter=organization
+        All        -{'->'} /client/conversations?filter=all
+        Unread     -{'->'} /client/conversations?filter=unread
+        Roles      -{'->'} /client/conversations?filter=position
+        Candidates -{'->'} /client/conversations?filter=candidate
+        Account    -{'->'} /client/conversations?filter=organization
         Clicking any of them does nothing: the URL does not change and the list does not change.
         Verified with a click on the element reference and with a raw click at the anchor's exact
         centre coordinate. Nothing overlays them — document.elementFromPoint at the centre returns
