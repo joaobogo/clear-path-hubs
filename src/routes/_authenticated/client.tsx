@@ -2342,17 +2342,14 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.6   Validate the Phone field
+        TEXTO DO USUÁRIO: "3.7   Validate the invite email before enabling Send
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account -{'->'} Company profile the Phone field is an input[type=tel] that accepts
-        anything. Typing \"not-a-phone!!!\" and clicking \"Save changes\" produced no error at all.
-        The panel states this profile is \"used across communications\".
-        Validate the shape on blur and show an inline sentence beneath the field, such as
-        \"That doesn't look like a phone number.\" The message must clear as soon as the field is
-        corrected, without resubmitting.
-        HIGH
-        Done when: Entering \"not-a-phone!!!\" shows an inline sentence under the Phone field, and correcting it clears the message
-        without pressing Save"
+        On /client/team the \"Invite team member\" dialog enables its \"Send invitation\" button as
+        soon as any text is present. Typing \"notanemail\" into the \"Work email\" field leaves the
+        button enabled (verified: disabled === false).
+        Enable \"Send invitation\" only when the field contains a plausible email address, and show
+        an inline sentence beneath the field when it does not.
+        Done when: With \"notanemail\" in the Work email field, \"Send invitation\" is disabled and an inline message explains why."
         
         
         
