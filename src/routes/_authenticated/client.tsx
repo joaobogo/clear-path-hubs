@@ -2350,7 +2350,7 @@ function ClientLayout() {
         Done when: The Insights page shows one hires tile.
         6.8   Fix the thousands separator in the composer hint
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/conversations/{id} the composer hint reads, verbatim:
+        On /client/conversations/{"{id}"} the composer hint reads, verbatim:
         \"Attach PDF, Word, Excel, PowerPoint, CSV or plain text, up to 10 MB each. Up to 4.000
         characters.\"
         \"4.000\" uses a European decimal point as a thousands separator in an English interface that
