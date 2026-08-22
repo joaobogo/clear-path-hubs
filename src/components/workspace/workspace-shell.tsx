@@ -145,7 +145,18 @@ function buildBreadcrumbs(
 
   // A raw uuid with no published label means the record is still loading.
   // Show a skeleton crumb rather than a generic entity-type literal.
-  const readable = detailLabel ?? (
+  // Verb segments like /new are URL grammar, not record names: read them as
+  // English against the section they sit under ("Roles / New role").
+  const singular = (label: string) =>
+    label.replace(/ies$/i, "y").replace(/s$/i, "");
+  const verbLabel =
+    last === "new"
+      ? `New ${singular(section.label).toLowerCase()}`
+      : last === "edit"
+        ? `Edit ${singular(section.label).toLowerCase()}`
+        : null;
+
+  const readable = detailLabel ?? verbLabel ?? (
     isUuid ? (
       <span aria-busy="true" className="inline-block h-3.5 w-20 animate-pulse rounded bg-muted" />
     ) : (

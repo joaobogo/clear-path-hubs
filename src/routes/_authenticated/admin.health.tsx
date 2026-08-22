@@ -67,7 +67,8 @@ function HealthPage() {
         : await advanceFn({ data: { match_id: id } });
     },
     onSuccess: async (r) => {
-      setFeedback(`Repair → ${humanizeCode(r.state).toLowerCase()} · trace ${r.trace_id}`);
+      console.info("[admin] repair", r.state, r.trace_id);
+      setFeedback(`Repair ${humanizeCode(r.state).toLowerCase()}.`);
       await qc.invalidateQueries({ queryKey: ["pipeline-health"] });
     },
     onError: (e: Error) => setFeedback(`Failed: ${e.message}`),

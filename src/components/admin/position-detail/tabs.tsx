@@ -155,7 +155,8 @@ export function RequirementsEditor({
         },
       }),
     onSuccess: async (r) => {
-      toast.success(`${title} saved · trace ${r.trace_id}`);
+      console.info("[admin] position saved", r.trace_id);
+      toast.success(`${title} saved.`);
       await qc.invalidateQueries({ queryKey: ["admin-position", positionId] });
     },
     onError: (e: Error) => toastError(e),
@@ -616,7 +617,8 @@ export function SettingsTab({ position, onDone }: { position: Any; onDone: () =>
   const setVis = async (v: Any) => {
     try {
       const r = await visibilityFn({ data: { id: position.id, visibility: v } });
-      toast.success(`Visibility → ${v} · trace ${r.trace_id}`);
+      console.info("[admin] visibility change", v, r.trace_id);
+      toast.success("Visibility updated.");
       await onDone();
     } catch (e) {
       toast.error((e as Error).message);
@@ -670,7 +672,8 @@ export function SettingsTab({ position, onDone }: { position: Any; onDone: () =>
       const r = await deleteFn({
         data: { id: position.id, reason: result.reason || "admin_hard_delete" },
       });
-      toast.success(`Position deleted · trace ${r.trace_id}`);
+      console.info("[admin] position deleted", r.trace_id);
+      toast.success("Role deleted.");
       router.navigate({ to: "/admin/positions" });
     } catch (e) {
       toast.error((e as Error).message);
