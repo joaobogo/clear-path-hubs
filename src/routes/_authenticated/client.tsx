@@ -2445,7 +2445,7 @@ function ClientLayout() {
         and tabbing through the list stops once per row.
         P6-8  Show the timezone actually in use
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account under Workspace details > Timezone, the field reads:
+        On /client/account under Workspace details {" > "} Timezone, the field reads:
             Your timezone    UTC
         with the caption \"Interview times, digests, and activity timestamps use this
         timezone.\"
@@ -2472,7 +2472,7 @@ function ClientLayout() {
         (Candidates)
         (Account)
         (Account, again)
-        (Account > Team)
+        (Account {" > "} Team)
         (a message thread)
         Keep the top banner only. Delete the in-page notices on Candidates, Account and
         the conversation view — the banner is fixed at the top of every page and already
