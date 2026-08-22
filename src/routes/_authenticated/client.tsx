@@ -2342,21 +2342,22 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "6.9   Use one spelling convention
+        TEXTO DO USUÁRIO: "6.11   Name the candidate in Recent activity rows
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        /client/talent-pool uses US spelling — \"Your organization's private network of candidates.\"
-        and \"high-potential for future organizational needs.\" — while the rest of the product uses
-        British spelling: \"Assessment being finalised\", \"Personalised interview guide\", \"relational
-        data modelling\".
-        Change \"organization's\" to \"organisation's\" and \"organizational\" to \"organisational\".
-        Done when: No client-facing screen mixes -ize and -ise spellings.
-        6.10   Remove the stray TaaSFlow token on Overview
+        On /client the \"Recent activity\" panel renders six near-identical rows with no name:
+        \"A candidate moved forward\", \"You shortlisted a candidate\", \"A candidate was declined\",
+        each twice.
+        Include the candidate's name, e.g. \"You shortlisted Sofia Marques\".
+        Done when: Each Recent activity row names the candidate it refers to.
+        6.12   Hide the start date on a declined offer
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client, inside the expanded \"Detail\" section, the word \"TaaSFlow\" renders on its own
-        immediately after the sentence \"Next: We'll keep adding candidates as they clear screening.\"
-        with no label or context.
-        Remove it, or render it as an attribution such as \"— your TaaSFlow team\".
-        Done when: The Overview detail panel contains no stray \"TaaSFlow\" token."
+        On /client/offers the CLOSED LOST card for Beatriz Costa renders:
+        \"Closed lost  15 Aug 2026\"
+        \"Candidate declined\"
+        \"Start  1 Sept 2026\"
+        A declined offer has no start date.
+        Hide the Start row when the offer state is declined or closed lost.
+        Done when: An offer in CLOSED LOST or OFFER DECLINED shows no start date"
         
         
         
