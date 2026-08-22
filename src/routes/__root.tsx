@@ -147,21 +147,15 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and the changed lines. If your reply contains no file paths, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Four things are rendered twice on one screen:
-          {"\n"}
-            1. /client/candidates renders two identical "List | Board" button pairs, plus a third "Board" entry in the Shortlist / Board / Talent pool tab bar. Keep only the pair inside the filter bar.
-          {"\n"}
-            2. /client/account?tab=notifications renders the heading "Notifications" and its subtitle twice in a row. Keep the card's own heading.
-          {"\n"}
-            3. The candidate compensation panel prints "Lisbon, Lisbon, Portugal" — the city is concatenated with a value that already contains it. Build it from city plus country once.
-          {"\n"}
-            4. A candidate row for Beatriz Costa carries both a name link and a separate "View" link. Remove the "View" link.
+          On /client/interviews, interview times render at impossible hours: Inês Lopes at "Wed, 19 Aug 2026, 00:16", Carla Nunes at "Mon, 17 Aug 2026, 00:16", and Beatriz Costa at "Wed, 12 Aug 2026, 23:16" which converts to 03:16 Lisbon time.
           {"\n\n"}
-          PROVE IT: reload each of those screens and confirm the element now appears once. Tell me what each now shows."
+          These look like record-creation timestamps being rendered in place of the scheduled time. Render the interview's scheduled time field instead.
+          {"\n\n"}
+          PROVE IT: reload /client/interviews and paste the times now shown for those three interviews."
         </div>
         {children}
         <Scripts />
