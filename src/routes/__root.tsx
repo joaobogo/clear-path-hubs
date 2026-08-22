@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The Overview "This week" panel reads "0 Interviews held" for 15-22 Aug, while the Interviews page lists interviews on 17 Aug and 19 Aug inside that window.
+Account says "Your timezone: UTC". The Interviews page renders every time as "(America/Sao_Paulo, GMT-3)", which is the viewer's browser timezone. The client is in Lisbon. Confirmed interviews display as 00:16 as a result.
 
-Count an interview as held when its scheduled time is inside the window and in the past, instead of requiring a separate held event.
+Render every date and time in the client workspace from the organisation timezone setting. Remove the browser-timezone fallback.
 
-Done when: The Overview "This week" panel shows 2 interviews held for that window."`}</div>
+Done when: With the account timezone set to Europe/Lisbon the Interviews page shows Lisbon times and no interview starts at midnight."`}</div>
         <Scripts />
       </body>
     </html>
