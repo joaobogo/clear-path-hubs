@@ -114,21 +114,34 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     const o = resolved as AnyRow;
 
 
-    const [{ data: members }, { data: positions }, { data: hires }] =
-      await Promise.all([
-        supabase
-          .from("memberships")
-          .select("user_id, role, status, profiles:user_id(email)")
-          .eq("organization_id", data.orgId),
-        supabase
-          .from("positions")
-          .select("id, status, title, is_test_record")
-          .eq("organization_id", data.orgId),
-        supabase
-          .from("hire_records")
-          .select("id, status, hired_at, start_date, position_id, positions:position_id(title)")
-          .eq("organization_id", data.orgId),
-      ]);
+    const [
+      { data: members },
+      { data: positions },
+      { data: kpiData },
+      { data: hires },
+    ] = await Promise.all([
+      supabase
+        .from("memberships")
+        .select("user_id, role, status, profiles:user_id(email)")
+        .eq("organization_id", data.orgId),
+      supabase
+        .from("positions")
+        .select("id, status, title, is_test_record")
+        .eq("organization_id", data.orgId),
+      supabase
+        .from("client_dashboard_kpis")
+        .select("hires")
+        .eq("organization_id", data.orgId)
+        .maybeSingle(),
+      supabase
+        .from("hire_records")
+        .select(
+          "id, status, hired_at, start_date, position_id, positions:position_id(title)",
+        )
+        .eq("organization_id", data.orgId),
+    ]);
+
+    const viewHiresCount = (kpiData as AnyRow)?.hires ?? 0;
 
     const memberRows = (members as AnyRow[]) ?? [];
     // Shared seat derivation: seat-holding roles only, owner seat included, so
@@ -197,7 +210,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
         remaining: seatCount.seatsLeft,
       },
       hires: {
-        total: hireRows.length,
+        total: viewHiresCount || hireRows.length,
         this_period: hireRows.filter((h) => inPeriod(h.hired_at as string | null)).length,
         last_90_days: hireRows.filter(
           (h) =>
