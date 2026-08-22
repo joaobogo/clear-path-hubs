@@ -2342,13 +2342,17 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.8   Fix the Hires by owner panel repeating its own title
+        TEXTO DO USUÁRIO: "5.9   Delete the duplicate interview entry on the Interviews page
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/offers the footer panel is titled \"Hires by owner\" and its body reads, verbatim:
-        \"Hires by owner: No hires yet.\"
-        Remove the \"Hires by owner: \" prefix from the body so it reads \"No hires yet.\"
-        Done when: The panel shows its title once and a body reading \"No hires yet.\""
+        On /client/interviews the same interview for Miguel Torres appears twice with two different
+        framings and two different next actions:
+        top panel   — \"Waiting on you to confirm a time\", \"2 proposed times · earliest
+        22 Aug 2026, 11:00\", button \"Confirm a time\"
+        \"Coming up\" — \"Needs times\", \"2 times with the candidate — first option tomorrow\",
+        buttons \"Propose times\" and \"Send my available times\"
+        Keep the top panel. Remove interviews that appear there from the \"Coming up\" list.
+        Done when: An interview awaiting confirmation appears exactly once on /client/interviews."
         
         
         
