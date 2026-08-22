@@ -2342,15 +2342,24 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "4.7   Make the suggested interview focus candidate-specific
+        TEXTO DO USUÁRIO: "4.8   Give every pipeline stage one name
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison modal the \"SUGGESTED INTERVIEW FOCUS\" row renders the same
-        three questions, character for character, for all three candidates. Miguel Torres is
-        suggested \"Experience owning features end to end\" although that requirement does not appear
-        in his own Concerns list.
-        Derive each column's suggested focus from that candidate's own weakest requirements.
-        Done when: Opening a comparison of three candidates shows a different set of suggested questions in each column"
+        The same stage is named differently across the product:
+        interview stage — tile \"INTERVIEWING\", list cell \"In interviews\", board column
+        \"INTERVIEW PROCESS\", Insights row \"In Interviews\"
+        offer stage
+        — tile \"OFFERS\", list cell \"At offer\", board column \"OFFER\",
+        Insights row \"At Offer\"
+        hire stage
+        — tile \"HIRES\", list cell \"Hired\", board column \"HIRED\"
+        shortlist stage — tile \"SHORTLISTED\", list cell \"Shortlisted by your team\", board column
+        \"SHORTLISTED\", Insights row \"Shortlisted By Your Team\"
+        Define one label per stage in a single map and use it in tiles, list cells, board columns,
+        filters and Insights. Suggested: Shortlisted / In interviews / At offer / Hired /
+        Not moving forward / Awaiting your review.
+        Done when: Every surface uses the same word for the same stage; the strings \"INTERVIEW PROCESS\" and \"Shortlisted By
+        Your Team\" no longer exist."
         
         
         
