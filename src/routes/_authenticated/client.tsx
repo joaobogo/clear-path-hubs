@@ -2342,16 +2342,16 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.8   Start the candidates list with nothing selected
+        TEXTO DO USUÁRIO: "3.9   Only notify about a message when a message exists
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates three of the ten row checkboxes are already checked on a fresh page
-        load, with no user action (verified: 10 checkboxes in the DOM, 3 checked). The action
-        buttons then read \"Compare 3 side by side\" and \"Download 3 CVs (ZIP)\" as though the client
-        had chosen those people.
-        Initialise the selection as empty. When nothing is selected, show the buttons disabled with
-        the hint \"Select 2–4 candidates on one role\".
-        HIGH
-        Done when: A fresh load of /client/candidates has no checkbox ticked and the compare and download buttons are disabled"
+        The single notification in the bell reads \"New message from TaaSFlow team\" with
+        \"+2 more in messages\" and \"Why: Replies are expected within your service commitment.\"
+        Clicking \"Open the conversation\" navigates correctly to
+        /client/conversations/1f5bdceb-3c8d-4577-9eb3-6f2913a5ad5b — and that thread reads
+        \"No messages yet\".
+        The notification is firing on thread creation rather than on message insert. Raise a
+        message notification only when a message row is actually created.
+        Done when: Every \"New message\" notification opens a conversation that contains at least one message"
         
         
         
