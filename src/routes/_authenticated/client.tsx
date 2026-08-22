@@ -2342,17 +2342,15 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.9   Delete the duplicate interview entry on the Interviews page
+        TEXTO DO USUÁRIO: "5.10   Merge Edit terms and Redraft on offer cards
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/interviews the same interview for Miguel Torres appears twice with two different
-        framings and two different next actions:
-        top panel   — \"Waiting on you to confirm a time\", \"2 proposed times · earliest
-        22 Aug 2026, 11:00\", button \"Confirm a time\"
-        \"Coming up\" — \"Needs times\", \"2 times with the candidate — first option tomorrow\",
-        buttons \"Propose times\" and \"Send my available times\"
-        Keep the top panel. Remove interviews that appear there from the \"Coming up\" list.
-        Done when: An interview awaiting confirmation appears exactly once on /client/interviews."
+        On /client/offers each offer card renders both \"Edit terms\" and \"Redraft\", which do the same
+        thing. The cards also expose \"Accepted\", \"Declined\" and \"Close lost\" — outcomes only the
+        candidate or the recruiting team can set.
+        Keep \"Nudge\" and \"Edit terms\". Remove \"Redraft\", \"Accepted\", \"Declined\" and \"Close lost\" from
+        the client view.
+        Done when: A client-side offer card shows only \"Nudge\" and \"Edit terms\""
         
         
         
