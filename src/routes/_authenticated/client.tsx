@@ -2342,34 +2342,20 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P7-1  Hide contentless audit trail rows
+        TEXTO DO USUÁRIO: "P7-3  Merge the three requirement panels into one
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate profile Activity tab, the \"Audit trail\" section renders 20
-        identical rows, each reading:
-            Role activity recorded    RECRUITING TEAM    21 AUG 2026 • 02:19
-        Only the date and time differ; the text never does. Several share a timestamp
-        (two at 20 AUG 20:37, two at 19 AUG 12:12).
-        Either render the actual event description for each audit row, or hide rows
-        whose description is empty. Do not show a row that says only that something
-        happened.
-        Done when: the Audit trail either describes each event, or shows nothing when
-        there is nothing to describe.
-        P7-2  Make the Talent pool earn its page
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        /client/talent-pool currently contains three cards — \"Silver medalists\",
-        \"Direct applications\", \"Passive network\" — each a heading and one sentence with
-        no data, no count and no control. Below them is a fourth empty state,
-        \"Building your talent pool\", reading:
-            As you close roles and release candidates, your talent pool fills
-            automatically. We surface relevant alumni when you open new roles.
-        That is not true for this client: two candidates are already closed
-        (Pedro Matos \"Not moving forward\", Beatriz Costa declined) and the pool is
-        empty.
-        Populate the pool from candidates whose role has closed or who were passed on,
-        so those two appear. If the feature is not ready, delete the three cards and
-        leave one honest empty state saying the pool opens when a role closes.
-        Done when: /client/talent-pool either lists the closed candidates, or shows a
-        single empty state whose promise matches what actually happens"
+        The candidate profile renders the same ten requirements three times:
+            \"Requirement coverage\"                     (status only)
+            \"Must-have evidence\" + \"Preferred evidence\" (inside Score breakdown)
+            \"Why this candidate for {"<role>"} \"            (status, evidence and source)
+        That is roughly 2,400 pixels of one page spent restating one list.
+        Keep \"Why this candidate for {"<role>"} \" — it is the only one that shows where the
+        evidence came from. Move the four coverage tiles (MUST-HAVE MET / PARTIALLY MET
+        / NOT EVIDENCED / PREFERRED MET) to sit as its header. Delete the \"Requirement
+        coverage\" list and the two evidence lists inside Score breakdown, keeping the
+        Score breakdown's arithmetic panel.
+        Done when: the candidate profile lists the role's requirements exactly once,
+        under a single heading, with each requirement's status, evidence and source"
         
         
         
