@@ -147,13 +147,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
+TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
 
-Global search returns nothing for every query. "engineer", a candidate's full name, the role title and the client's own company name all return "No matches". The in-page Candidates filter works: typing "Sofia" there returns 1 of 10.
+Do not write this message into any file.
 
-Point the global search at the same candidate, role and conversation queries the in-page filters use, scoped to the current organisation.
+Searching the global search for "Northwind Talent" — the client's own company name — returns nothing at all: no results and no message, just a bare input. A user cannot tell whether search is broken or empty.
 
-Done when: Searching a candidate name, a role title, the word engineer and the client company name each return results."`}</div>
+Separately, searching "engineer" returns only the role and none of the ten candidates, although nine of them have "Engineer" in their title.
+
+Render "No results for {query}" when a query returns zero matches, and add the candidate title and headline fields to the search index alongside the candidate name.
+
+PROVE IT: search for "Northwind Talent" and paste what now appears. Then search "engineer" and tell me how many candidates come back."`}</div>
         <Scripts />
       </body>
     </html>
