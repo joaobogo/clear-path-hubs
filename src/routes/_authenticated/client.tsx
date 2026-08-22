@@ -2345,7 +2345,7 @@ function ClientLayout() {
         TEXTO DO USUÁRIO: "0.2   Revoke the QA invitation holding a client seat
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/team (Account > Team & roles) the WORKSPACE ACCESS list contains a pending
+        On /client/team (Account {" > "} Team & roles) the WORKSPACE ACCESS list contains a pending
         invitation to exactly:
         qa-test-ignore@demo.taasflow.com
         shown with role \"Hiring manager\" and status \"Invitation sent\". The header above reads
