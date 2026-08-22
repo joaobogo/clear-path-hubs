@@ -2342,14 +2342,17 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "1.10   Base the Messages list timestamp on the newest message
-        MEDIUM
+        TEXTO DO USUÁRIO: "0.2   Revoke the QA invitation holding a client seat
+        BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/conversations the thread \"Beatriz Costa — interview scheduling\" is listed
-        as \"2 days ago\". Opening it shows its newest message is dated 12 Aug 2026, 15:06 — nine
-        days before the current date of 21 Aug 2026.
-        Use the newest message's timestamp for the list, not the conversation row's updated_at.
-        Done when: A thread whose newest message is dated 12 Aug 2026 reads \"9 days ago\" on 21 Aug 2026"
+        On /client/team (Account > Team & roles) the WORKSPACE ACCESS list contains a pending
+        invitation to exactly:
+        qa-test-ignore@demo.taasflow.com
+        shown with role \"Hiring manager\" and status \"Invitation sent\". The header above reads
+        \"0 of 4 seats in use · 1 pending\" and \"1 pending invitation holding a seat\".
+        Delete this invitation record. It is left over from an internal test and is consuming
+        one of the client's four plan seats.
+        Done when: The Team & roles list shows only James Cameron, and the seats line no longer mentions a pending invitation"
         
         
         
