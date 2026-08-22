@@ -2342,14 +2342,24 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.4   Give the Sort control a visible label
+        TEXTO DO USUÁRIO: "5.6   Collapse empty offer board columns
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the sort dropdown renders with no visible text — an empty 176px-wide
-        button with aria-label=\"Sort\", although the URL carries sort=score. At 375px it is a
-        completely blank full-width control.
-        Render the current sort value as the button's label, e.g. \"Sort: Score (high to low)\".
-        Done when: The sort control on /client/candidates displays its current value as text"
+        On /client/offers five of the seven board columns are empty and each renders as a solid
+        colour block 1,130px tall containing only the text \"Nothing here\".
+        Size empty columns to their header plus a short empty state — no more than 120px tall — and
+        do not paint the full-height colour fill on an empty column.
+        Done when: An empty offer column occupies roughly the height of its header, not the height of the tallest column.
+        5.7   Delete the Who owes what panel on the offers page
+        MEDIUM
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/offers the same two open offers (Rui Fernandes and Ana Ribeiro) are listed three
+        times on one screen: in \"Who owes what\", in the amber \"2 offers stalled over 48h\" banner, and
+        in the OFFER SENT board column.
+        Delete the \"Who owes what\" panel. The board already shows status and the stalled banner
+        already shows what needs chasing.
+        Done when: /client/offers lists each open offer at most twice: once in the stalled banner and once on the board.
+        5.8   Fix the Hires by owner panel repeating its own title"
         
         
         
