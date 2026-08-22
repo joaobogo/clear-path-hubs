@@ -2342,23 +2342,15 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.2   Move the evidence panel above the fold
+        TEXTO DO USUÁRIO: "5.3   Delete the duplicated List | Board toggles
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Depends on 5.1. After merging, reorder the candidate page's left column so a recruiter
-        reaches the evidence without four screens of scrolling. Target order:
-        1 header (name, score/100, fit, stage)
-        2 fit panel with the recommended next action
-        3 the merged evidence panel
-        4 score breakdown
-        5 compensation
-        6 contact and CV
-        7 availability
-        8 career experience
-        9 skills, education, languages, links
-        Done when: On a candidate page the evidence panel heading is visible within the first two screens at a 900px viewport.
-        5.3   Delete the duplicated List | Board toggles
-        MEDIUM"
+        On /client/candidates the List/Board view switch is rendered twice — once above the filter
+        card and once beside the \"10 of 10 candidates\" label (4 such buttons exist in the DOM). The
+        page tab bar above already has a \"Board\" tab pointing at /client/candidates?view=board, the
+        identical destination.
+        Delete both inline toggles. Keep the tab bar as the only way to switch view.
+        Done when: /client/candidates contains exactly one control for switching between list and board"
         
         
         
