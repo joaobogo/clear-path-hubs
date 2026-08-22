@@ -2342,31 +2342,35 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "6.15   Demote the primary action on a not-recommended candidate
+        TEXTO DO USUÁRIO: "6.18   Widen the compare checkbox hit area on mobile
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the primary blue button ignores the fit label:
-        Diogo Silva, score 42, fit \"Not recommended\", stage \"In interviews\" -{"->"} \"Make offer\"
-        Rui Fernandes, score 47, fit \"Not recommended\", stage \"At offer\"   -{"->"} \"Mark hired\"
-        Keep the stage logic but render the button in the secondary style when fit is
-        \"Not recommended\", so the product does not urge an action it has argued against.
-        Done when: No row whose fit reads \"Not recommended\" shows a primary-styled \"Make offer\" or \"Mark hired\" button.
-        6.16   Fix the Show evidence toggle label
+        At a 375px viewport the per-row \"Compare {"<name>"} \" checkboxes on /client/candidates measure
+        16px wide by 44px tall. Twenty of them fall below the 44px minimum touch target on the
+        horizontal axis.
+        Give the checkbox a 44x44px hit area at viewports below 640px.
+        Done when: Every row checkbox on /client/candidates measures at least 44px in both dimensions at 375px.
+        6.19   Stop toasts and menus covering the content beneath them
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate page the evidence expander keeps the label \"Show evidence (1)\" after it has
-        been expanded — aria-expanded flips to true but the text does not change.
-        Swap the label to \"Hide evidence\" when expanded.
-        Done when: Expanding an evidence row changes its button label to \"Hide evidence\".
-        TaaSFlow fix prompts · 21 August 2026
+        Three overlay elements render on top of content the user still needs to read:
+        the \"...\" menu on a candidate's STAGE ACTIONS panel covers the \"Add to comparison\" button
+        the \"Company profile saved\" toast covers the \"Company profile / Shown to the TaaSFlow team\"
+        heading
+        the notifications panel covers the page heading behind it
+        Offset toasts below the header bar and give popover menus enough offset that they open clear
+        of the control beneath them.
+        Done when: Opening the stage-actions menu, saving the company profile, or opening the notifications panel leaves the
+        content beneath fully readable6.20   Drive the Export PDF progress bar to completion
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        In the candidate comparison, clicking \"Export PDF\" opens a modal titled \"Exporting comparison
+        PDF\" whose subtitle already reads \"Your PDF is ready in your downloads.\" while the progress bar
+        is only about a quarter filled.
+        Drive the bar to 100% and change the title to \"Comparison PDF ready\" when the export
+        completes.
         LOW
         LOW
-        LOW
-        Page 31 of 32
-        6.17   Use one name for the CV source
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate page the same evidence source is labelled \"Curriculum Vitae\" in the expanded
-        evidence row and \"CV\" in the \"Why this candidate\" grid.
-        Use \"CV\" in both.
-        Done when: No candidate page contains the string \"Curriculum Vitae\""
+        POLISH
+        POLISH
+        Done when: When the export modal says the PDF is ready, the progress bar is full and the title no longer says \"Exporting\""
         
         
         
