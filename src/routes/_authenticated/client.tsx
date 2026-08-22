@@ -2342,14 +2342,15 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "1.8   Include archived roles in the Roles status tab counts
+        TEXTO DO USUÁRIO: "1.9   Make the Messages count follow the active filter
+        HIGH
+        MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/positions the status tabs read:
-        \"Active (1)  Under review (0)  Paused (0)  Archived (0)\"
-        but an archived role exists in this workspace — global search returns
-        \"[QA test - ignore] Audit Role - delete me — ROLE — Archived\".
-        Make the Archived tab count and list archived roles.
-        Done when: With one archived role in the organisation the Archived tab reads \"Archived (1)\" and lists it."
+        On /client/conversations the subtitle reads \"6 conversations\". Navigating to
+        /client/conversations?filter=position shows exactly 1 thread while the subtitle still
+        reads \"6 conversations\".
+        Compute that count from the filtered result set, not the unfiltered one.
+        Done when: With ?filter=position applied and one thread listed, the subtitle reads \"1 conversation\""
         
         
         
