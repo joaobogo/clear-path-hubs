@@ -2342,50 +2342,37 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "Phase 4 — Controls that do not work
-        Dead ends, missing buttons, and actions that fail without saying anything useful.
-        P4-1  Delete the dead \"Portfolio\" tab
+        TEXTO DO USUÁRIO: "P4-4  Replace support_view_denied with a sentence
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/executive (the Insights page) the sub-navigation shows two tabs:
-        \"Executive\" and \"Portfolio\". The Portfolio tab links to /client/portfolio.
-        Clicking it does nothing. Typing /client/portfolio directly renders the
-        not-found page: \"We couldn't find that — This item is no longer available in
-        your workspace.\"
-        There is no portfolio page. Delete the \"Portfolio\" tab from the Insights
-        sub-navigation. If that leaves a single tab, remove the tab bar entirely.
-        Done when: /client/executive shows no \"Portfolio\" tab, and no link anywhere in
-        the client workspace points at /client/portfolio.
-        P4-2  Add a confirm control to the awaiting-time card
+        On /client/positions/new, entering a role title and clicking \"Create role\"
+        while the workspace is under support impersonation shows a red error toast
+        containing exactly this text and nothing else:
+            support_view_denied
+        That is a raw internal error code shown to the user.
+        Replace it with: \"You're viewing this workspace as an administrator, so new
+        roles can't be created here.\"
+        Then audit for any other place a raw error code reaches a client-facing toast
+        and give it a sentence too.
+        Done when: clicking \"Create role\" under ?preview=client_admin shows the plain
+        sentence, and the string \"support_view_denied\" never appears in the UI.
+        P4-5  Fix global search, or fail honestly
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/interviews the first section is \"Waiting on you to confirm a time\",
-        showing one card:
-            Miguel Torres
-            Senior Full-Stack Engineer
-            2 proposed times · earliest 22 Aug 2026, 11:00
-        The card has no button and is not clickable — clicking it twice does nothing.
-        Its \"Details\" modal (reached from the \"Coming up\" section below) offers only a
-        \"Close\" button. Meanwhile the Overview and the Roles page both send the client
-        here to confirm a time.
-        Add a \"Confirm a time\" button to this card that opens the time-selection flow.
-        Under support impersonation render it disabled, the same way the \"Submit
-        feedback\" buttons on the same page already do.
-        Done when: the \"Waiting on you to confirm a time\" card shows a \"Confirm a time\"
-        button, disabled with the other controls under ?preview=client_admin.
-        P4-3  Add a control to \"Your interview availability\"
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The /client/interviews page subtitle promises:
-            Set your availability once — everything else happens on this one timeline.
-        At the foot of that page the \"Your interview availability\" panel shows a
-        heading, the sentence \"Candidates choose from these windows
-        (America/Sao_Paulo).\" and five static chips reading \"Monday 09:00–17:00\"
-        through \"Friday 09:00–17:00\".
-        The panel contains zero interactive elements — the last button on the page sits
-        above it. There is no way to set the availability the page promises.
-        Add an \"Edit availability\" button to that panel opening a windows editor.
-        Disable it under support impersonation.
-        Done when: the \"Your interview availability\" panel contains a working
-        \"Edit availability\" control that opens an editor, disabled under
-        ?preview=client_admin."
+        Global search in the client workspace (the header search box, or Ctrl+K)
+        returns no results for anything.
+        Tested with four queries while the matching records were visible on screen:
+            \"engineer\"                    → No matches for “engineer”.
+            \"Beatriz Costa\"               → No matches for “Beatriz Costa”.
+            \"Senior Full-Stack Engineer\"  → No matches for “Senior Full-Stack Engineer”.
+            \"Northwind Talent\"            → No matches for “Northwind Talent”.
+        All four are exact names of records in the workspace. The search endpoint is not
+        returning results, and the UI is reporting that as an empty result set rather
+        than as a failure.
+        Wire the search to query candidates, roles and conversations for the current
+        organisation. If the search request fails, show \"Search is unavailable right
+        now.\" rather than \"No matches\" — a false negative is worse than an honest error.
+        Done when: searching \"Beatriz\" returns her candidate record, searching
+        \"Senior Full-Stack\" returns the role, and a failed search request shows
+        \"Search is unavailable right now.\" instead of \"No matches\""
         
         
         
