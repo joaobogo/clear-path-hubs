@@ -151,11 +151,11 @@ TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the chan
 
 Do not write this message into any file.
 
-On /client/interviews, interview times render at impossible hours: Inês Lopes at \"Wed, 19 Aug 2026, 00:16\", Carla Nunes at \"Mon, 17 Aug 2026, 00:16\", and Beatriz Costa at \"Wed, 12 Aug 2026, 23:16\" which converts to 03:16 Lisbon time.
+Every candidate page tells the client that TaaSFlow is late. The Next panel reads \"Next: We'll confirm the start date and handle onboarding paperwork. Recruiting team · Overdue by 6 days — we're on it.\" On another candidate it reads \"Overdue by 7 days\".
 
-These look like record-creation timestamps being rendered in place of the scheduled time. Render the interview's scheduled time field instead.
+Search the source for \"Overdue by\". Keep the next step and the owning team, and remove the overdue fragment from the client view. Keep it in internal views.
 
-PROVE IT: reload /client/interviews and paste the times now shown for those three interviews."`}</div>
+PROVE IT: open two candidate pages and paste the Next panel text from each. Neither may contain an overdue figure."`}</div>
         <Scripts />
       </body>
     </html>
