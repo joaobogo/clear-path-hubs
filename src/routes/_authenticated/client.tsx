@@ -2342,22 +2342,36 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P0-2  Remove QA attendees and the admin email from interview participants
+        TEXTO DO USUÁRIO: "P0-3  Delete the \"History Integrity Test\" conversation
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the client workspace at /client/interviews, opening the \"Details\" modal on
-        an interview shows a PARTICIPANTS row. For organisation
-        0c86fa1b-94ee-46b8-9a11-a42cee39bfed two of these read:
-            [QA test - ignore] QA Attendee · qa-ignore@example.com
-            [QA test - ignore] Demo Client Admin · joaoluciano9812@gmail.com
-        The second is the TaaSFlow administrator's own personal email address, shown to
-        the client. The Miguel Torres interview also has NOTES reading:
-            [QA test - ignore] QA certification pass — disregard.
-        Delete those participant records and clear that note for this organisation.
-        Then make the interview participant renderer skip any participant whose display
-        name starts with \"[QA test\".
-        Done when: every Details modal on /client/interviews shows either real
-        interviewers or \"No interviewers added yet\", and no modal contains the strings
-        \"[QA test\" or \"joaoluciano9812@gmail.com\""
+        In the client workspace at /client/conversations there is a conversation
+        thread titled exactly:
+            History Integrity Test
+        It has no messages, no subtitle, and it is the only thread that appears under
+        the \"Account\" filter tab — so a client clicking \"Account\" sees nothing but this
+        QA artefact. It belongs to organisation 0c86fa1b-94ee-46b8-9a11-a42cee39bfed.
+        Delete that conversation.
+        Separately, three other threads for this organisation have no messages at all
+        (\"Senior Full-Stack Engineer\", \"Diogo Silva — Senior Full-Stack Engineer\",
+        \"Rui Fernandes\"). Do not delete those — instead, stop auto-creating a thread
+        until the first message is sent.
+        Done when: /client/conversations shows no thread called \"History Integrity
+        Test\", and no new empty thread is created when a candidate or role is added.
+        P0-4  Delete the orphaned \"Guard Probe\" role and fix Archive
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        Two things.
+        1. A position exists with id c1af1e88-5bd0-45c6-93d3-7e2dd67d09e7 titled:
+               [QA test - ignore] Guard Probe 21Aug - delete me
+           It is attached to the client \"TaaSFlow Platform\", status draft, private,
+           owner \"Master Admin\". It was created accidentally during a QA audit.
+           Delete it.
+        2. On /admin/positions/{"<id>"} the \"...\" menu offers an \"Archive\" action. Clicking
+           it closes the menu and does nothing — the status badge stays \"draft\" and the
+           row stays in the Positions list. Fix the Archive action so it actually sets
+           the position's status to archived and shows a confirmation.
+        Done when: searching /admin/positions for \"Guard Probe\" returns no results,
+        and clicking \"...\" {" > "} Archive on any draft position changes its badge to
+        \"archived\" and shows a confirmation toast\""
         
         
         
