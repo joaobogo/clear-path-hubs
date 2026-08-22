@@ -2342,17 +2342,18 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.7   Fix the compensation in-range test in the comparison
-        BLOCKER
+        TEXTO DO USUÁRIO: "2.8   Build strengths only from requirements that have a source
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison modal, Miguel Torres's Compensation cell reads:
-        chip  \"In range\"
-        value \"EUR 78,000 base, annual\"
-        band  \"Role: €55,000 – €75,000\"
-        78,000 is above 75,000. Sofia Marques at €85,000 is correctly labelled \"Above range\".
-        Use the same range comparison the candidate page's Compensation panel uses — that one is
-        correct.
-        Done when: A candidate expecting €78,000 against a €55,000–€75,000 band is labelled \"Above range\" in the comparison."
+        On the candidate page the panel \"What lifts the score\" reads
+        \"Demonstrated: Experience owning features end to end, from schema design to shipped UI\"
+        while that same requirement's row in the evidence grid on the same page reads
+        \"Nothing shown for this yet — worth confirming in the interview.\"  /  \"NO SOURCE YET\"
+        The identical string is also rendered in \"Why — and what to check\" at the top of the page.
+        On Sofia Marques's page a strength is claimed although she has zero quoted evidence
+        anywhere.
+        Build the strengths list only from requirement rows that have a non-empty evidence quote
+        and a source. If there are none, render the panel's empty state.
+        Done when: No requirement appears under \"What lifts the score\" while its own grid row reads \"NO SOURCE YET\""
         
         
         
