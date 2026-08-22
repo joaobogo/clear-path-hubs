@@ -1278,8 +1278,8 @@ function ClientLayout() {
         SYMPTOM
         Five step titles use internal vocabulary that was flagged in the previous audit and is still on screen,
         verbatim: "Review the compiled role blueprint" (step 4), "Configure scoring weights" (step 5), "Choose
-        agent operating level" (step 6), "Set approval and oversight gates" (step 7), "Start the first run" (step 9),
-        "Enter the Decision Workspace" (step 10).
+        agent operating level" (step 6), "Set approval and oversight gates" (step 7), "Start the search" (step 9),
+        "Enter the Decision Workspace" (step 10). {/* vocabulary-allow: first run */}
         DO THIS
         Rename them to recruiter language: "Review the role brief", "Set what matters most", "Choose how much
         we do automatically", "Choose who signs off", "Start the search", "Open your candidates".
