@@ -2347,7 +2347,7 @@ function ClientLayout() {
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
         On /client/account the tile reads:
         \"Hires closed  0   0 in the last 90 days\"
-        and roughly 400px below it, inside \"Workspace details\" > \"Roles and where they are\", the
+        and roughly 400px below it, inside \"Workspace details\" {'>'} \"Roles and where they are\", the
         same role reads \"1 hire confirmed, 2 offers out, 3 candidates shortlisted, ...\" with a
         chip reading \"1 hired\".
         Point the \"Hires closed\" tile at the same query the panel below it uses.
