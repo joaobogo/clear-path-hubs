@@ -165,8 +165,9 @@ export const loadClientOverview = createServerFn({ method: "GET" })
 
     
     // Summary of activity for the header
-    const totalOpenings = activePositionsList.reduce((acc, p) => acc + (Number(p.openings) || 1), 0);
-    const activity_summary = `${laneCounts.hired} of ${totalOpenings} roles filled`;
+    // P-02: Removed "roles filled" count to avoid confusion with "open roles".
+    const activity_summary = null;
+
 
     const blocksCount = openItemsResponse.blockedRoles.length;
     const firstBlock = openItemsResponse.blockedRoles[0];
