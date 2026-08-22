@@ -2342,39 +2342,43 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P7-4  Move career history above the evidence panels
+        TEXTO DO USUÁRIO: "P7-6  Give the Sort control a Score option and a visible value
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate profile the panels currently appear in this order, measured
-        from the top of a 6,145px page:
-            Score and fit             314px
-            Contact                   866px
-            Talent memory             945px
-            Requirement coverage    1,171px
-            Score breakdown         2,070px
-            Why this candidate      3,582px
-            Compensation            4,852px
-            Career experience       5,270px
-        A recruiter must scroll six screens to reach the candidate's work history.
-        Reorder to: score and fit {"->"} career experience {"->"} why this candidate (evidence) {"->"}
-        compensation {"->"} contact {"->"} skills, education and languages {"->"} activity.
-        Done when: \"Career experience\" appears above the evidence panel on the
-        candidate profile, and the evidence panel is reachable within two screens of the
-        top.
-        P7-5  Demote the advance button on \"Not recommended\" candidates
+        On /client/candidates the sort dropdown in the filter bar (aria-label \"Sort\")
+        renders completely blank — no selected value — while the URL carries sort=score
+        and the list is in descending score order.
+        Opening it shows four options: \"Recently delivered\", \"Must-have coverage\",
+        \"Stage\", \"Candidate name\". There is no \"Score\" option, so the control cannot
+        represent the state it is in, and once a recruiter changes it there is no way
+        back to score order from the interface.
+        Add \"Highest score first\" as the first option and make it the default so the
+        control always shows its current value.
+        Separately, the existing \"Must-have coverage\" sort produces a wrong order:
+        Pedro Matos (score 35, \"Not recommended\") ranks 2nd while Beatriz Costa — whom
+        the comparison view calls the highest-coverage candidate at 92% — ranks 9th.
+        Sort that option descending on the same coverage figure the comparison uses.
+        Done when: the Sort control shows \"Highest score first\" on load, and choosing
+        \"Must-have coverage\" puts the highest-coverage candidate first.
+        P7-7  Trim the Insights page
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the ACTION column gives the strongest visual affordance
-        to advancing a candidate the product has just recommended against.
-            Rui Fernandes   47   Not recommended   At offer       {"->"} blue primary \"Mark hired\"
-            Diogo Silva     42   Not recommended   In interviews  {"->"} blue primary \"Make offer\"
-        On the candidate profile the same conflict appears: Beatriz Costa's stage is
-        \"Hired\" and the fit panel still recommends \"Recommend interview\".
-        When a candidate's fit label is \"Not recommended\", render the advance action as
-        a secondary (outline) button and make \"Not moving forward\" the primary action.
-        Also suppress the \"Recommend interview\" line once a candidate has reached the
-        hired or closed stage.
-        Done when: no candidate labelled \"Not recommended\" shows a filled primary
-        button that advances them, and no hired or closed candidate shows a
-        \"Recommend interview\" recommendation"
+        /client/executive carries several elements that cannot be acted on. Remove or
+        merge them.
+        Remove:
+        \"PROJECTED HIRES · NEXT 30D\"     
+        — no basis shown, nothing to do about it
+        the \"p90\" figure in \"Time in stage\"  — identical to the average in all three rows
+        the \"Unassigned\" row in \"Candidates in play by team\" — six zeros, will never fill
+        the \"TYPICAL SHORTLIST FIT PER WEEK (APPROVED)\" grid — seven of eight cells are \"—\"
+        Merge:
+        \"OPEN OFFER VALUE\" and \"AVG SALARY (OFFERED)\" both read €64,000 from the
+        same single offer. Keep OPEN OFFER VALUE.
+        \"HIRES · 30D\", \"HIRES · 90D\" and \"HIRES · YTD\" all read 1. Keep one tile
+        with a period selector.
+        Also let the finance tiles size to their content — each currently has roughly
+        90px of empty space beneath its value.
+        medium
+        Done when: /client/executive shows no p90 column, no Unassigned row, no
+        projected-hires tile, one hires tile and one salary tile"
         
         
         
