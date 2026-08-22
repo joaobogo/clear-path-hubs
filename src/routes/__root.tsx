@@ -153,39 +153,39 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Replace these client-facing strings across the whole client workspace. Search for each one literally:
           {"\n\n"}
-            "Review the compiled role blueprint"      -> "Review your role brief"
+            "Review the compiled role blueprint"      -{'>'} "Review your role brief"
           {"\n"}
-            "Configure scoring weights"               -> "Set what matters most"
+            "Configure scoring weights"               -{'>'} "Set what matters most"
           {"\n"}
-            "Choose agent operating level"            -> "Choose how much we do for you"
+            "Choose agent operating level"            -{'>'} "Choose how much we do for you"
           {"\n"}
-            "Set approval and oversight gates"        -> "Set who approves what"
+            "Set approval and oversight gates"        -{'>'} "Set who approves what"
           {"\n"}
-            "Start the first run"                     -> "Start the search"
+            "Start the first run"                     -{'>'} "Start the search"
           {"\n"}
-            "Enter the Decision Workspace"            -> "Go to your candidates"
+            "Enter the Decision Workspace"            -{'>'} "Go to your candidates"
           {"\n"}
-            "blueprint, rubric, runs and decisions"   -> "everything else attaches to"
+            "blueprint, rubric, runs and decisions"   -{'>'} "everything else attaches to"
           {"\n"}
-            "Only partial evidence for required:"     -> "We found partial evidence for this — worth confirming."
+            "Only partial evidence for required:"     -{'>'} "We found partial evidence for this — worth confirming."
           {"\n"}
-            "Verify missing or partial evidence."     -> "We found no direct evidence for this."
+            "Verify missing or partial evidence."     -{'>'} "We found no direct evidence for this."
           {"\n"}
-            "Unicorn only (95+)"                      -> remove the control entirely
+            "Unicorn only (95+)"                      -{'>'} remove the control entirely
           {"\n"}
-            "Silver medalist" / "Silver medalists"    -> "Strong runners-up from past roles"
+            "Silver medalist" / "Silver medalists"    -{'>'} "Strong runners-up from past roles"
           {"\n"}
-            "Talent memory" / "TALENT MEMORY"         -> "Keep for future roles"
+            "Talent memory" / "TALENT MEMORY"         -{'>'} "Keep for future roles"
           {"\n"}
-            "publish gate"                            -> "review"
+            "publish gate"                            -{'>'} "review"
           {"\n"}
-            "Candidate profile & gates"               -> "Candidate profile & requirements"
+            "Candidate profile & gates"               -{'>'} "Candidate profile & requirements"
           {"\n"}
-            "Disqualifiers / critical gates"          -> "Dealbreakers"
+            "Disqualifiers / critical gates"          -{'>'} "Dealbreakers"
           {"\n"}
-            "Captured at intake"                      -> "From your role brief"
+            "Captured at intake"                      -{'>'} "From your role brief"
           {"\n"}
-            "Shortlisted By Your Team"                -> "Shortlisted"
+            "Shortlisted By Your Team"                -{'>'} "Shortlisted"
           {"\n\n"}
           PROVE IT: search the repository for each original string and confirm zero hits in client-facing code. Paste the search output."
         </div>
