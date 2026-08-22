@@ -2342,17 +2342,15 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.2   Remove the Portfolio tab that opens a dead page
-        BLOCKER
+        TEXTO DO USUÁRIO: "3.3   Fix the swallowed first click on Compare 3 side by side
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/executive the sub-tab bar renders two tabs:
-        \"Executive\"  -{'->'} /client/executive
-        \"Portfolio\"  -{'->'} /client/portfolio
-        Navigating to /client/portfolio renders the not-found page:
-        \"We couldn't find that — This item is no longer available in your workspace.\"
-        Remove the \"Portfolio\" tab. If only one tab remains, remove the tab bar too.
-        Done when: /client/executive renders no \"Portfolio\" tab, and no navigation element in the client workspace links to
-        /client/portfolio"
+        On /client/candidates the button \"Compare 3 side by side\" does nothing on the first
+        click — the page and URL are unchanged. The second click opens the comparison modal.
+        This is the same swallowed-first-click pattern already fixed on other controls in this
+        codebase.
+        Make the first click open the modal. The handler is almost certainly gated on a state
+        value that is still hydrating on first paint.
+        Done when: A single click on \"Compare 3 side by side\" opens the comparison modal."
         
         
         
