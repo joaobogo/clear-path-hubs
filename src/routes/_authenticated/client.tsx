@@ -2342,21 +2342,21 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "1.1   One candidate must not be both Hired and Closed lost
+        TEXTO DO USUÁRIO: "1.2   Single-source the hire count across all ten surfaces
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Beatriz Costa appears with two opposite outcomes.
-        On /client/candidates her STAGE cell reads \"Hired\"; the board places her in the HIRED
-        column; her profile chip reads \"Hired\"; her STAGE ACTIONS panel reads \"Candidate marked
-        as hired.\"; her Activity tab reads \"Offer accepted — start date agreed.\" dated
-        13 Aug 2026.
-        On /client/offers the same person reads \"Offer closed · 15 Aug 2026\", \"Closed lost\",
-        \"Candidate declined\", and sits in the CLOSED LOST board column.
-        Make the offer record the single source of truth for a candidate's outcome. Derive the
-        candidate stage from the offer state instead of storing a separate stage value, and
-        remove the write path that set her stage to Hired independently.
-        Done when: Beatriz Costa reads the same outcome on /client/candidates, the candidates board, her profile, her Activity tab
-        and /client/offers."
+        The number of hires is stated as 1 in six places and 0 in four.
+        Says 1: Roles page HIRES tile; Roles table HIRES column; the Roles row subtitle
+        \"1 hire confirmed, 2 offers out, ...\"; Candidates page HIRES tile; the candidates board
+        HIRED column; /client/executive tiles \"HIRES · 30D\", \"HIRES · 90D\", \"HIRES · YTD\";
+        and /client/account \"Roles and where they are\" which shows \"1 hire confirmed\" and a
+        chip reading \"1 hired\".
+        Says 0: /client/offers tile \"HIRES CONFIRMED 0\"; the offers board column
+        \"HIRE CONFIRMED 0\"; the footer panel \"Hires by owner: No hires yet.\"; and the
+        /client/account tile \"Hires closed 0 — 0 in the last 90 days\".
+        Create one server function that returns the confirmed-hire count for an organisation and
+        have all ten surfaces call it. Do not compute hires in more than one place.
+        Done when: Every one of those ten labels shows the same hire number."
         
         
         
