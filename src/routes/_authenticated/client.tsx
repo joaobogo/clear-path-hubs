@@ -2342,16 +2342,18 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "0.5   Block test-named records from rendering client-side
+        TEXTO DO USUÁRIO: "1.4   Remove the self-contradicting roles-filled line on Overview
+        BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Add a guard so leftover test data can never reach a client screen again. Anywhere the
-        client workspace lists roles, candidates, conversations or team members, filter out any
-        record whose display name matches, case-insensitively:
-        /\b(qa[ -]?test|browser[- ]test|audit role|integrity test|delete me|disregard)\b/
-        Apply it at the query layer used by /client/*, not in individual components.
-        HIGH
-        Done when: A role, conversation or invite named "[QA test - ignore] anything" exists in the database but does not appear
-        anywhere under /client."
+        On /client the amber at-risk banner contains both of these strings inside one box:
+        left:  \"1 open role\"
+        right: \"1 of 1 roles filled\"
+        above the headline \"2 items overdue, 1 role at risk.\"
+        If the only role were filled there would be no open role and it could not be at risk.
+        Delete the \"X of Y roles filled\" line from this banner entirely. Keep \"1 open role\",
+        \"0 awaiting your decision\" and \"0 roles with no shortlist yet\".
+        Done when: The Overview at-risk banner no longer contains the words \"roles filled\".
+        1.5   Make the three interview-confirmation counts agree"
         
         
         
