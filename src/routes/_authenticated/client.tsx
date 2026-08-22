@@ -2342,21 +2342,17 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "4.3   Remove Talent memory and Silver medalist from candidate pages
+        TEXTO DO USUÁRIO: "4.5   Rewrite the internal evidence phrasing
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On every candidate page the right column renders a panel titled \"TALENT MEMORY\" with the
-        body \"Keep this candidate accessible for future roles, even after this search closes.\" and
-        a button labelled \"Silver medalist\".
-        Both terms are internal. Worse, the button is offered on Beatriz Costa, whose stage is
-        \"Hired\" — while /client/talent-pool defines a silver medalist as someone who \"reached the
-        final stages of previous roles but were not hired\".
-        Rename the panel to \"Keep for future roles\" and the button to \"Save as a strong runner-up\".
-        Hide the panel entirely when the candidate's stage is Hired.
-        HIGH
-        HIGH
-        HIGH
-        Done when: No candidate page contains \"TALENT MEMORY\" or \"Silver medalist\", and the panel does not render on a hired
-        candidate\""
+        The string \"Only partial evidence for required:\" is rendered to clients in three places:
+        the candidate page \"What holds it back\" panel, the Interview tab's \"Why:\" lines, and the
+        comparison modal's \"Concerns\" rows. The Interview tab also renders \"Verify missing or
+        partial evidence.\"
+        Replace \"Only partial evidence for required: {"<"}requirement{">"}\" with
+        \"Worth confirming in the interview: {"<"}requirement{">"}\", and replace \"Verify missing or partial
+        evidence.\" with \"Worth confirming in the interview.\"
+        Done when: No client-facing screen contains the string \"Only partial evidence for required\" or \"Verify missing or partial
+        evidence\""
         
         
         
