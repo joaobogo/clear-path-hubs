@@ -2342,17 +2342,24 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.11   Fix the Workspace details accordion hit area
-        HIGH
-        HIGH
+        TEXTO DO USUÁRIO: "3.12   Add a no-results state to global search, and index headlines
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account the \"Workspace details\" accordion did not respond to two clicks placed
-        on its label text; it opened on a click at the centre of the row. The clickable region does
-        not cover the whole header row.
-        Make the entire accordion header row the trigger, with the chevron and both text elements
-        inside it.
-        Done when: Clicking anywhere on the \"Workspace details\" row — label, description or chevron — toggles the section"
+        In global search (Ctrl+K):
+        \"Beatriz Costa\"              
+        returns 1 candidate  — correct
+        \"Senior Full-Stack Engineer\" returns 1 role       
+        — correct
+        \"Northwind\" (the client's own company name) returns nothing, with no message at all
+        \"developer\" returns nothing, although Diogo Silva's headline is
+        \"Full-Stack Developer — React and Node.js\" and Pedro Matos's is
+        \"Web Developer — WordPress and PHP\"
+        When there are no results the panel simply renders nothing, so the user cannot tell a
+        failure from an empty result.
+        Add an explicit empty state reading \"No results for \\\"<query>\\\"\", and include the candidate
+        headline field in the search index.
+        Done when: Searching \"developer\" returns Diogo Silva and Pedro Matos, and searching a nonsense string shows \"No results
+        for …\""
         
         
         
