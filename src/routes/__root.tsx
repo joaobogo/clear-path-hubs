@@ -151,11 +151,13 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          After creating a role, the editor at /client/positions/{"{"}id{"}"}/edit offers only a "Cancel" control. There is no delete, archive or undo, so a role created by mistake can never be removed.
+          Searching the global search for "Northwind Talent" — the client's own company name — returns nothing at all: no results and no message, just a bare input. A user cannot tell whether search is broken or empty.
           {"\n\n"}
-          Add Delete and Archive controls to the role editor header, with a confirmation step on Delete.
+          Separately, searching "engineer" returns only the role and none of the ten candidates, although nine of them have "Engineer" in their title.
           {"\n\n"}
-          PROVE IT: create a throwaway role, delete it from the editor, and confirm it no longer appears in global search or on /client/positions."
+          Render "No results for {"{"}query{"}"}" when a query returns zero matches, and add the candidate title and headline fields to the search index alongside the candidate name.
+          {"\n\n"}
+          PROVE IT: search for "Northwind Talent" and paste what now appears. Then search "engineer" and tell me how many candidates come back."
         </div>
         {children}
         <Scripts />
