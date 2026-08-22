@@ -2342,13 +2342,17 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.10   State the scale next to the score
+        TEXTO DO USUÁRIO: "2.12   Deduplicate the \"What holds it back\" bullets
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate page the header shows the score as a bare number, e.g. \"88\", followed
-        by \"Top · 0/10 evidenced\". The scale is never stated there — \"88/100\" only appears about
-        3,500px down inside the \"Why this candidate\" panel.
-        Render the score as \"88/100\" in the header chip.
-        Done when: The candidate page header shows the score out of 100 without scrolling"
+        On the candidate page the \"What holds it back\" panel renders duplicate bullets. On
+        Beatriz Costa's page it prints six bullets containing three distinct statements —
+        \"Only partial evidence for required: 5+ years building production React and TypeScript
+        applications\" appears three times and the Strong SQL line twice.
+        On Sofia Marques's page the last bullet is a bare requirement string with no sentence:
+        \"Practical experience with row-level security or another multi-tenant isolation model\".
+        Deduplicate the array by requirement id before rendering, and drop any entry that has no
+        sentence template.
+        Done when: No requirement appears more than once under \"What holds it back\", and every bullet is a full sentence."
         
         
         
