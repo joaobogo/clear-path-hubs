@@ -2342,18 +2342,26 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.14   Fix the wrong and duplicated city in the compensation panel
+        TEXTO DO USUÁRIO: "Phase 3 — Broken and silent controls
+        Thirteen prompts covering controls that do nothing, report false success, or say nothing at all.
+        3.1   Make the Messages filter tabs respond to clicks
+        BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates/449f7f61-d367-4919-a382-2017df43076c (Sofia Marques) the
-        Compensation panel is headed
-        \"Lisbon, Lisbon, Portugal\"
-        and the band is labelled
-        \"ROLE RANGE — LISBON, LISBON, PORTUGAL\"
-        Sofia is based in Porto — her page header and Contact panel both read \"Porto, Portugal\".
-        Two bugs: the city is concatenated twice, and the panel labels the role's location as
-        though it were the candidate's. Print the city once, and label it explicitly as the role
-        location, e.g. \"Role range — Lisbon, Portugal\".
-        Done when: Sofia Marques's compensation panel names each city once and does not present Lisbon as her location"
+        On /client/conversations the filter bar renders five anchors:
+        All        -{'->'} /client/conversations?filter=all
+        Unread     -{'->'} /client/conversations?filter=unread
+        Roles      -{'->'} /client/conversations?filter=position
+        Candidates -{'->'} /client/conversations?filter=candidate
+        Account    -{'->'} /client/conversations?filter=organization
+        Clicking any of them does nothing: the URL does not change and the list does not change.
+        Verified with a click on the element reference and with a raw click at the anchor's exact
+        centre coordinate. Nothing overlays them — document.elementFromPoint at the centre returns
+        the anchor itself and its computed pointer-events is \"auto\".
+        Navigating to /client/conversations?filter=position directly DOES filter correctly, so the
+        filtering logic works and only the click is broken.
+        Wire these anchors to the router so a click navigates. Most likely a preventDefault with no
+        corresponding navigate call.
+        Done when: Clicking \"Roles\" on /client/conversations changes the URL to ?filter=position and shows only the role thread."
         
         
         
