@@ -2342,17 +2342,17 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.10   Reject messages with no meaningful content
+        TEXTO DO USUÁRIO: "3.11   Fix the Workspace details accordion hit area
+        HIGH
+        HIGH
+        MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The message composer on /client/conversations/{'{'}id{'}'} accepted and permanently stored a
-        message whose entire body was the two characters \"——\". It survived a full page reload,
-        produced no confirmation, and there is no delete, edit or undo control anywhere on the
-        conversation page (verified: no button or link matching delete/remove/undo/edit).
-        The composer states \"everyone on this thread is notified by email\".
-        Require at least one alphanumeric character before enabling \"Send\", and add a \"Delete\"
-        action on the author's own messages.
-        Done when: \"Send\" stays disabled for a body of only punctuation or whitespace, and the author can delete their own
-        message."
+        On /client/account the \"Workspace details\" accordion did not respond to two clicks placed
+        on its label text; it opened on a click at the centre of the row. The clickable region does
+        not cover the whole header row.
+        Make the entire accordion header row the trigger, with the chevron and both text elements
+        inside it.
+        Done when: Clicking anywhere on the \"Workspace details\" row — label, description or chevron — toggles the section"
         
         
         
