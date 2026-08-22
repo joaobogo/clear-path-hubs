@@ -147,17 +147,15 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and the changed lines. If your reply contains no file paths, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Two forms keep their validation error on screen after the field is corrected:
-          - Account company profile keeps "Website must start with http:// or https://." after a valid https:// URL is typed in.
-          - The message composer keeps "Write a message before sending. Retry" after text is typed in.
+          After creating a role, the editor at /client/positions/{id}/edit offers only a "Cancel" control. There is no delete, archive or undo, so a role created by mistake can never be removed.
           {"\n\n"}
-          The invite modal on /client/account?tab=team already clears its error correctly. Copy that pattern into both broken forms: revalidate on change and clear the error as soon as the field is valid. Also remove the word "Retry" from the composer error and keep the attachment helper text visible.
+          Add Delete and Archive controls to the role editor header, with a confirmation step on Delete.
           {"\n\n"}
-          PROVE IT: trigger each error, then type a valid value, and tell me whether the error is still on screen."
+          PROVE IT: create a throwaway role, delete it from the editor, and confirm it no longer appears in global search or on /client/positions."
         </div>
         {children}
         <Scripts />
