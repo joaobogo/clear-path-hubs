@@ -2342,39 +2342,33 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P3-3  Make the score breakdown add up to the score
+        TEXTO DO USUÁRIO: "P3-5  \"Must-haves met\" must use the same coverage figure
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate profile, the \"Score breakdown\" panel shows a component
-        breakdown and then claims the parts add up to the score. They do not.
-        Beatriz Costa (score shown: 88):
-            Must-have coverage (60% of the score)   91.7% × 60% = 55 points
-            Nice-to-have signal (20% of the score)  62.5% × 20% = 12.5 points
-            Screening alignment (20% of the score)  100% × 20% = 20 points
-            Total                                   87.5 points
-            \"The three parts add up to the score shown above.\"
-        Sofia Marques (score shown: 78) totals 77.5 the same way.
-        Round the component points and the total with the same rule used for the
-        headline score, so the total equals the score exactly. Do not change the
-        caption — make it true.
-        Done when: the Total line on the Score breakdown equals the score in the header
-        chip for both Beatriz Costa and Sofia Marques.
-        P3-4  Scope evidence lookup by candidate id
+        In the candidate comparison view, the \"RELATIVE STRENGTH — AXIS BY AXIS\"
+        section shows a \"Must-haves met\" axis reading:
+            Tiago Almeida 0%   Sofia Marques 0%   Miguel Torres 0%   Beatriz Costa 0%
+        Eight lines below, the OBSERVATIONS section on the same screen reads:
+            Requirement coverage differs — Beatriz Costa has the highest coverage (92%).
+        Two definitions of coverage on one screen, and the axis is useless because every
+        candidate is identical. The 92% figure is the correct one (it matches the
+        \"Must-have coverage\" percentage on the candidate's own Score breakdown).
+        Change the \"Must-haves met\" axis to use the same coverage calculation the
+        observation uses.
+        Done when: the \"Must-haves met\" axis shows different percentages per candidate,
+        and Beatriz Costa's value on that axis matches the percentage quoted in the
+        Observations line.
+        P3-6  \"Verified strengths\" must match the profile's strengths list
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        One candidate's CV text is being shown as evidence for other candidates.
-        In the candidate comparison view (/client/candidates {" > "} \"Compare N side by side\"),
-        the requirement row \"Experience in an early-stage or founder-led team\" shows this
-        passage under Tiago Almeida, Miguel Torres AND Beatriz Costa:
-            …from database schema through API to interface, and working in a hybrid
-            team based in Lisbon.
-        That sentence is from Beatriz Costa's CV. Her CV profile paragraph reads
-        \"Comfortable owning features end to end, from database schema through API to
-        interface, and working in a hybrid team based in Lisbon.\"
-        The evidence query in the comparison grid is not filtering by candidate. Scope
-        the evidence lookup by candidate id so each cell can only show evidence attached
-        to that candidate.
-        Done when: no evidence passage appears under more than one candidate in the
-        comparison grid unless that passage genuinely exists in each of their own
-        documents"
+        In the candidate comparison view, the \"Verified strengths\" axis reports
+        \"Sofia Marques — 0\".
+        But on Sofia Marques' own profile
+        (/client/candidates/449f7f61-d367-4919-a382-2017df43076c), the
+        \"What lifts the score\" panel contains one bullet:
+            Demonstrated: Experience in an early-stage or founder-led team
+        0 and 1 cannot both be right. Make the comparison's \"Verified strengths\" axis
+        count the same list the profile's \"What lifts the score\" panel renders.
+        Done when: the \"Verified strengths\" number for a candidate in the comparison
+        equals the number of bullets in that candidate's \"What lifts the score\" panel"
         
         
         
