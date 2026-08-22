@@ -147,15 +147,13 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
+          TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
           {"\n\n"}
-          Do not write this message into any file.
+          For Miguel Torres, the requirement about row-level security shows "Running..." in the coverage panel, "Not evidenced yet" in the Why panel while displaying a quoted CV passage, and "Unknown" in the comparison grid while displaying that same evidence.
           {"\n\n"}
-          On /client, the at-risk banner prints "1 of 1 roles filled" and "1 open role" on the same line. A role cannot be both.
+          Store one status per requirement and render it from that field everywhere. Derive it from whether evidence exists, so a requirement with a quoted passage never reads Unknown or Not evidenced.
           {"\n\n"}
-          Search the source for the string "roles filled". Define open as: role status is active and the role is not filled, so a role counts as exactly one of the two. Then remove the "roles filled" figure from this banner entirely and keep only the open-roles count and the at-risk count.
-          {"\n\n"}
-          PROVE IT: reload /client and paste the full text of the banner as it now reads."
+          Done when: The same requirement shows the same status on the profile, in the breakdown and in the comparison, and no cell shows evidence while claiming there is none."
         </div>
         {children}
         <Scripts />
