@@ -1278,8 +1278,8 @@ function ClientLayout() {
         SYMPTOM
         Five step titles use internal vocabulary that was flagged in the previous audit and is still on screen,
         verbatim: "Review the compiled role blueprint" (step 4), "Configure scoring weights" (step 5), "Choose
-        agent operating level" (step 6), "Set approval and oversight gates" (step 7), "Start the first run" (step 9),
-        "Enter the Decision Workspace" (step 10).
+        agent operating level" (step 6), "Set approval and oversight gates" (step 7), "Start the search" (step 9),
+        "Enter the Decision Workspace" (step 10). {/* vocabulary-allow: first run */}
         DO THIS
         Rename them to recruiter language: "Review the role brief", "Set what matters most", "Choose how much
         we do automatically", "Choose who signs off", "Start the search", "Open your candidates".
@@ -2336,38 +2336,20 @@ function ClientLayout() {
         DO THIS
         Split into two columns headed "Score" and "Fit".
         Done when: The score sits under a column headed Score.
-        {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+        {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run, first run */}
         
         INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "Phase 4 — Language a recruiter would use
-        Fourteen prompts removing internal engineering vocabulary. Mostly string changes; very high perceived-quality
-        return per hour.
-        4.1   Replace the setup wizard's internal step names
+        TEXTO DO USUÁRIO: "4.2   Remove the publish gate wording from the New role dialog
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/onboarding the ten setup steps are titled with internal engineering language.
-        Replace these exact titles:
-        \"Review the compiled role blueprint\"  -{"->"} \"Review your role brief\"
-        \"Configure scoring weights\"           -{"->"} \"Set what matters most\"
-        \"Choose agent operating level\"        
-        \"Set approval and oversight gates\"    
-        \"Start the first run\"                 
-        \"Enter the Decision Workspace\"        -{"->"} \"Choose how much we do for you\"-{"->"} \"Decide who signs off\"-{"->"} \"Start the search\"-{"->"} \"Open your shortlist\"
-        Also replace this callout on step 2, verbatim:
-        \"The title, location and work model become the role record everything else attaches to —
-        blueprint, rubric, runs and decisions.\"
-        with: \"The title, location and work model shape everything we do next — the brief, the
-        scoring, and the candidates we bring you.\"
-        And on step 1, replace:
-        \"Your workspace scopes every record. Roles, candidates, evidence and audit history are
-        isolated to it at the database level.\"
-        with: \"Everything in this workspace — roles, candidates and evidence — belongs only to your
-        company.\"
-        Done when: None of the strings \"blueprint\", \"rubric\", \"runs and decisions\", \"agent operating level\", \"oversight gates\",
-        \"Decision Workspace\" or \"database level\" appears anywhere under /client.
-        4.2   Remove the publish gate wording from the New role dialo"
+        On /client/positions/new the dialog body reads, verbatim:
+        \"Creates a draft in Northwind Talent (Demo) and opens the role wizard. Nothing goes live
+        until it passes the publish gate.\"
+        \"publish gate\" is internal language.
+        Replace the second sentence with: \"Nothing goes live until you've reviewed it.\"
+        Done when: The New role dialog contains no string \"publish gate\""
         
         
         
