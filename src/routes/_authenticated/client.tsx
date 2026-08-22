@@ -2346,7 +2346,7 @@ function ClientLayout() {
         HIGH
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account > Workspace details > Company profile, saving can report success while
+        On /client/account -{'->'} Workspace details -{'->'} Company profile, saving can report success while
         discarding the edit and clearing an unrelated field.
         Reproduced: typed \"not-a-phone!!!\" into Phone while Industry held a value, clicked
         \"Save changes\", saw the green toast \"Company profile saved\". After a full page reload both
