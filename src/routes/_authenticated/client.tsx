@@ -2342,20 +2342,143 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P4-8  Regenerate demo CVs with the profile's email address
+        TEXTO DO USUÁRIO: "Phase 6 — Consistency
+        One concept, one name. Thirteen date formats, four names for the interview stage, six wordings for the impersonation
+        notice.
+        P6-1  One date format, one date-time format, one relative format
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The CV document for a candidate shows a different email address from the
-        profile page beside it, on a TaaSFlow-owned domain.
-        Open /client/candidates/fe0e24c0-b551-4762-b9dd-cc53381beb50 and click
-        \"Preview CV\". The CV header reads:
-            Lisbon, Portugal · beatriz.costa@demo.taasflow.com · +351 912 000 105
-        The Contact panel on the same screen reads:
-            Email  beatriz.costa@example.com
-        Regenerate the demo CV documents for this organisation so the address in each
-        CV matches the address on the candidate's profile. Then add a check that refuses
-        to publish a CV containing \"@taasflow.com\" or \"@demo.taasflow.com\".
-        Done when: the CV preview for Beatriz Costa shows beatriz.costa@example.com,
-        and no CV in the workspace contains a taasflow.com address."
+        The client workspace renders dates in thirteen different formats. Standardise
+        on three.
+        Keep:
+            Date        21 Aug 2026
+            Date-time   21 Aug 2026, 16:55
+            Relative    2 days ago
+        Replace these, at the locations given:
+            \"Offer since 12 Aug\"                    Roles table, Account panel — add the year
+            \"1 Sept 2026\" / \"15 Sept 2026\"          Offers board cards — use \"Sept\" → \"Sep\"
+            \"09 Aug 2026, 17:38\"                    Candidate Activity — drop the leading zero
+            \"21 AUG 2026 • 02:19\"                   Candidate Activity audit trail — sentence case
+            \"Wed, 19 Aug 2026, 00:16 (America/Sao_Paulo, GMT-3)\"   Interviews — drop the weekday
+            \"2020-06 to present\"                    CVs and comparison snippets — use \"Jun 2020\"
+            \"yesterday\" / \"tomorrow\"                Messages, Interviews — use \"1 day ago\" / \"in 1 day\"
+            \"2 d ago\"                               Notification cards — use \"2 days ago\"
+            \"waiting 2 days\" / \"Waiting 4 days\"     Interviews, Overview — one capitalisation
+        Add a single date formatting helper and route every client-facing date through it.
+        Done when: every date in the client workspace matches one of the three kept
+        formats, and none of the nine listed variants remains.
+        P6-2  Remove month/day chart labels
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/executive the \"CANDIDATES DELIVERED PER WEEK (LAST 8)\" chart and the
+        \"TYPICAL SHORTLIST FIT PER WEEK (APPROVED)\" grid label their columns:
+            06/29  07/06  07/13  07/20  07/27  08/03  08/10  08/17
+        That is US month/day format, which is ambiguous everywhere else and matches
+        nothing else in the product. Replace with \"29 Jun\", \"6 Jul\", \"13 Jul\" and so on.
+        While you are in this chart: it currently prints no values at all — one bar has
+        height and seven are flat lines, with no y-axis and no data labels. Print the
+        value above each bar.
+        Done when: the chart axis reads \"29 Jun … 17 Aug\", and each bar shows its
+        value.
+        P6-3  One name per pipeline stage
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        The same pipeline stage is given four different names across the client
+        workspace.
+        Interview stage:
+            \"INTERVIEWING\"       Candidates tile
+            \"INTERVIEW PROCESS\"  Candidates board column
+            \"Interview process\"  Candidates stage filter option
+            \"In interviews\"      Candidates list cell, Overview
+            \"In Interviews\"      Insights \"Time in stage\"
+        Offer stage:
+            \"OFFERS\"    tile     \"OFFER\"  board column
+            \"Offer\"     filter   \"At offer\"  list cell
+        Also on Insights: \"Shortlisted By Your Team\" (title case) where every other
+        surface says \"Shortlisted by your team\".
+        Pick one label per stage and use it in the tile, the board column, the filter
+        option, the list cell and the Insights table. Suggested set: \"New\",
+        \"Shortlisted\", \"Interviewing\", \"At offer\", \"Hired\", \"Not moving forward\".
+        Done when: searching the codebase for \"Interview process\" and \"At offer\"
+        returns one label constant each, used by every surface.
+        P6-4  Remove the duplicated List | Board toggle
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/candidates in list view, the \"List | Board\" toggle is rendered
+        twice on the same screen: once directly under the metric tiles, and again inside
+        the filter bar next to the text \"10 of 10 candidates\".
+        There is also a \"Board\" tab in the page's sub-navigation above
+        (\"Shortlist | Board | Talent pool\"), so there are three ways to reach the same
+        view on one screen.
+        Delete both List | Board toggles and keep the sub-navigation tab.
+        Done when: /client/candidates shows exactly one control that switches between
+        list and board, and it is the sub-navigation tab.
+        P6-5  ESSENTIAL FOR LAUNCH: 6 bullets vs \"7 essentials\"
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/positions/new the \"ESSENTIAL FOR LAUNCH\" box lists six bullets:
+            • Seniority          • Work arrangement
+            • Location or remote  • 3–5 Must-have skills
+            • Salary band         • Job description
+        The caption below reads:
+            You can enrich the brief with advanced details after these 7 essentials.
+        Six bullets, caption says seven. Change the caption to say \"6 essentials\", or
+        add the missing seventh bullet if one was intended.
+        Done when: the number in the caption equals the number of bullets in the box.
+        P6-6  Stop the offers board wrapping its last column
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/offers the board has seven columns: OFFER DRAFTED, OFFER SENT,
+        NEGOTIATING, OFFER ACCEPTED, HIRE CONFIRMED, OFFER DECLINED, CLOSED LOST.
+        At normal desktop width only six fit on one row and CLOSED LOST wraps onto a
+        second row below, left-aligned and visually orphaned from the board.
+        Make the board a single horizontally-scrolling row with a fixed minimum column
+        width, so all seven columns stay on one line and the board scrolls sideways when
+        the window is narrow. Do not let it wrap.
+        Done when: all seven columns sit on one row at every window width, and the
+        board scrolls horizontally inside its own container rather than wrapping.
+        P6-7  One link per task row
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client (the Overview), each of the eight rows in the \"What needs you\" list
+        renders two anchor elements pointing at the same destination — the row itself is
+        a link, and the button on its right (\"Feedback\", \"View\", \"Confirm\") is a second
+        link to the same href.
+        Keyboard users tab through every destination twice, and screen readers announce
+        each one twice.
+        Make the row the only link, and render the right-hand element as a visual
+        affordance inside it rather than as a separate anchor.
+        Done when: each task row on the Overview contains exactly one anchor element,
+        and tabbing through the list stops once per row.
+        P6-8  Show the timezone actually in use
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/account under Workspace details > Timezone, the field reads:
+            Your timezone    UTC
+        with the caption \"Interview times, digests, and activity timestamps use this
+        timezone.\"
+        That is false. /client/interviews renders times as
+        \"Wed, 19 Aug 2026, 00:16 (America/Sao_Paulo, GMT-3)\" and the availability panel
+        says \"Candidates choose from these windows (America/Sao_Paulo).\"
+        A client reading \"UTC\" and booking against it will be three hours out. Make the
+        Timezone field show the timezone actually used for rendering, and if a stored
+        value exists make the renderers use it.
+        Done when: the timezone shown on /client/account is the same one shown in the
+        interview timestamps on /client/interviews
+        P6-9  One wording for the impersonation notice
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        The client workspace tells an impersonating administrator that actions are
+        disabled in six different wordings, sometimes three on one page:
+        \"You are viewing this workspace as a TaaSFlow administrator. Client actions are disabled.\"   (top banner)
+        \"Preview permission level: Admin | Editor | Viewer\"                                          
+        (second row)
+        \"Support view · Northwind Talent (Demo). Read-only mirror of the client experience.\"         
+        \"You are viewing as an administrator — changes are disabled.\"                                
+        \"You are viewing as an administrator — settings changes are disabled.\"                       
+        \"You are viewing as an administrator — team changes are disabled.\"                           
+        \"You have view-only access to this conversation.\"                                            
+        (Candidates)
+        (Account)
+        (Account, again)
+        (Account > Team)
+        (a message thread)
+        Keep the top banner only. Delete the in-page notices on Candidates, Account and
+        the conversation view — the banner is fixed at the top of every page and already
+        says it.
+        Done when: the impersonation notice appears once per page, at the top, in one
+        wording"
         
         
         
