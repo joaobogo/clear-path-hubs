@@ -2344,7 +2344,7 @@ function ClientLayout() {
 
         TEXTO DO USUÁRIO: "3.10   Reject messages with no meaningful content
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The message composer on /client/conversations/{id} accepted and permanently stored a
+        The message composer on /client/conversations/{'{'}id{'}'} accepted and permanently stored a
         message whose entire body was the two characters \"——\". It survived a full page reload,
         produced no confirmation, and there is no delete, edit or undo control anywhere on the
         conversation page (verified: no button or link matching delete/remove/undo/edit).
