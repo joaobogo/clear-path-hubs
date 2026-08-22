@@ -2342,18 +2342,19 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "1.4   Remove the self-contradicting roles-filled line on Overview
+        TEXTO DO USUÁRIO: "1.7   Count seats as used when a member or invitation holds one
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client the amber at-risk banner contains both of these strings inside one box:
-        left:  \"1 open role\"
-        right: \"1 of 1 roles filled\"
-        above the headline \"2 items overdue, 1 role at risk.\"
-        If the only role were filled there would be no open role and it could not be at risk.
-        Delete the \"X of Y roles filled\" line from this banner entirely. Keep \"1 open role\",
-        \"0 awaiting your decision\" and \"0 roles with no shortlist yet\".
-        Done when: The Overview at-risk banner no longer contains the words \"roles filled\".
-        1.5   Make the three interview-confirmation counts agree"
+        On /client/team the header reads:
+        \"0 of 4 seats in use · 1 pending\"
+        \"0 of 4 used · 4 seats available · 1 pending invitation holding a seat\"
+        and the /client/account tile reads \"Seats in use 0 / 4 — 4 seats free\".
+        The list below shows James Cameron as \"Active\" plus one pending invitation. The sentence
+        says a seat is held and that 4 of 4 are available, which cannot both be true.
+        Count seats used = active members + pending invitations. Derive \"available\" as
+        total minus used. Use that single value in both the Team page header and the Account tile.
+        Done when: With one active member and one pending invitation the page reads \"2 of 4 used · 2 seats available\", and the
+        Account tile matches"
         
         
         
