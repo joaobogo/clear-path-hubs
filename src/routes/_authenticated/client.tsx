@@ -2342,20 +2342,39 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P7-3  Merge the three requirement panels into one
+        TEXTO DO USUÁRIO: "P7-4  Move career history above the evidence panels
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The candidate profile renders the same ten requirements three times:
-            \"Requirement coverage\"                     (status only)
-            \"Must-have evidence\" + \"Preferred evidence\" (inside Score breakdown)
-            \"Why this candidate for {"<role>"} \"            (status, evidence and source)
-        That is roughly 2,400 pixels of one page spent restating one list.
-        Keep \"Why this candidate for {"<role>"} \" — it is the only one that shows where the
-        evidence came from. Move the four coverage tiles (MUST-HAVE MET / PARTIALLY MET
-        / NOT EVIDENCED / PREFERRED MET) to sit as its header. Delete the \"Requirement
-        coverage\" list and the two evidence lists inside Score breakdown, keeping the
-        Score breakdown's arithmetic panel.
-        Done when: the candidate profile lists the role's requirements exactly once,
-        under a single heading, with each requirement's status, evidence and source"
+        On the candidate profile the panels currently appear in this order, measured
+        from the top of a 6,145px page:
+            Score and fit             314px
+            Contact                   866px
+            Talent memory             945px
+            Requirement coverage    1,171px
+            Score breakdown         2,070px
+            Why this candidate      3,582px
+            Compensation            4,852px
+            Career experience       5,270px
+        A recruiter must scroll six screens to reach the candidate's work history.
+        Reorder to: score and fit {"->"} career experience {"->"} why this candidate (evidence) {"->"}
+        compensation {"->"} contact {"->"} skills, education and languages {"->"} activity.
+        Done when: \"Career experience\" appears above the evidence panel on the
+        candidate profile, and the evidence panel is reachable within two screens of the
+        top.
+        P7-5  Demote the advance button on \"Not recommended\" candidates
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/candidates the ACTION column gives the strongest visual affordance
+        to advancing a candidate the product has just recommended against.
+            Rui Fernandes   47   Not recommended   At offer       {"->"} blue primary \"Mark hired\"
+            Diogo Silva     42   Not recommended   In interviews  {"->"} blue primary \"Make offer\"
+        On the candidate profile the same conflict appears: Beatriz Costa's stage is
+        \"Hired\" and the fit panel still recommends \"Recommend interview\".
+        When a candidate's fit label is \"Not recommended\", render the advance action as
+        a secondary (outline) button and make \"Not moving forward\" the primary action.
+        Also suppress the \"Recommend interview\" line once a candidate has reached the
+        hired or closed stage.
+        Done when: no candidate labelled \"Not recommended\" shows a filled primary
+        button that advances them, and no hired or closed candidate shows a
+        \"Recommend interview\" recommendation"
         
         
         
