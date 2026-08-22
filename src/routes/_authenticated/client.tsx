@@ -2342,14 +2342,16 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.7   Validate the invite email before enabling Send
+        TEXTO DO USUÁRIO: "3.8   Start the candidates list with nothing selected
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/team the \"Invite team member\" dialog enables its \"Send invitation\" button as
-        soon as any text is present. Typing \"notanemail\" into the \"Work email\" field leaves the
-        button enabled (verified: disabled === false).
-        Enable \"Send invitation\" only when the field contains a plausible email address, and show
-        an inline sentence beneath the field when it does not.
-        Done when: With \"notanemail\" in the Work email field, \"Send invitation\" is disabled and an inline message explains why."
+        On /client/candidates three of the ten row checkboxes are already checked on a fresh page
+        load, with no user action (verified: 10 checkboxes in the DOM, 3 checked). The action
+        buttons then read \"Compare 3 side by side\" and \"Download 3 CVs (ZIP)\" as though the client
+        had chosen those people.
+        Initialise the selection as empty. When nothing is selected, show the buttons disabled with
+        the hint \"Select 2–4 candidates on one role\".
+        HIGH
+        Done when: A fresh load of /client/candidates has no checkbox ticked and the compare and download buttons are disabled"
         
         
         
