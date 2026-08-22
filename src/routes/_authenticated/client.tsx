@@ -2342,35 +2342,20 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "6.18   Widen the compare checkbox hit area on mobile
+        TEXTO DO USUÁRIO: "P0-1  Clear the QA string from Northwind's Headquarters
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        At a 375px viewport the per-row \"Compare {"<name>"} \" checkboxes on /client/candidates measure
-        16px wide by 44px tall. Twenty of them fall below the 44px minimum touch target on the
-        horizontal axis.
-        Give the checkbox a 44x44px hit area at viewports below 640px.
-        Done when: Every row checkbox on /client/candidates measures at least 44px in both dimensions at 375px.
-        6.19   Stop toasts and menus covering the content beneath them
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Three overlay elements render on top of content the user still needs to read:
-        the \"...\" menu on a candidate's STAGE ACTIONS panel covers the \"Add to comparison\" button
-        the \"Company profile saved\" toast covers the \"Company profile / Shown to the TaaSFlow team\"
-        heading
-        the notifications panel covers the page heading behind it
-        Offset toasts below the header bar and give popover menus enough offset that they open clear
-        of the control beneath them.
-        Done when: Opening the stage-actions menu, saving the company profile, or opening the notifications panel leaves the
-        content beneath fully readable6.20   Drive the Export PDF progress bar to completion
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison, clicking \"Export PDF\" opens a modal titled \"Exporting comparison
-        PDF\" whose subtitle already reads \"Your PDF is ready in your downloads.\" while the progress bar
-        is only about a quarter filled.
-        Drive the bar to 100% and change the title to \"Comparison PDF ready\" when the export
-        completes.
-        LOW
-        LOW
-        POLISH
-        POLISH
-        Done when: When the export modal says the PDF is ready, the progress bar is full and the title no longer says \"Exporting\""
+        In the TaaSFlow admin app, the client record for \"Northwind Talent (Demo)\"
+        (organisation id 0c86fa1b-94ee-46b8-9a11-a42cee39bfed) has its Headquarters
+        field set to the literal string:
+            [QA test - ignore] Lisbon
+        That value is rendered to the client on /client/account under
+        Workspace details {" > "} Company profile {" > "} Headquarters, and in the admin client
+        header. Set the Headquarters field for this organisation to \"Lisbon\".
+        Then add a guard: when saving an organisation record, reject any value that
+        starts with \"[QA test\" and show the message \"That looks like test data.\"
+        Done when: /client/account {" > "} Workspace details {" > "} Company profile shows
+        Headquarters = \"Lisbon\", and saving a Headquarters value beginning \"[QA test\"
+        is refused"
         
         
         
