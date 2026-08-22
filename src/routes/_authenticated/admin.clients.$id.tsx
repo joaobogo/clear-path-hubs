@@ -441,7 +441,8 @@ function CompanyTab({ org }: { org: any }) {
         },
       }),
     onSuccess: async (res) => {
-      toast.success(`Saved · ${res.trace_id}`);
+      console.info("[admin] client saved", res.trace_id);
+      toast.success("Saved.");
       await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
       await qc.invalidateQueries({ queryKey: ["admin-clients"] });
     },
@@ -732,7 +733,8 @@ function SettingsTab({ org }: { org: any }) {
     mutationFn: () =>
       archiveOrganization({ data: { id: org.id, confirm_name: confirm } }),
     onSuccess: async (res) => {
-      toast.success(`Client archived · ${res.trace_id}`);
+      console.info("[admin] client archived", res.trace_id);
+      toast.success("Client archived.");
       setOpen(false);
       setConfirm("");
       await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
@@ -745,7 +747,8 @@ function SettingsTab({ org }: { org: any }) {
   const restore = useMutation({
     mutationFn: () => restoreOrganization({ data: { id: org.id } }),
     onSuccess: async (res) => {
-      toast.success(`Client restored · ${res.trace_id ?? "ok"}`);
+      console.info("[admin] client restored", res.trace_id);
+      toast.success("Client restored.");
       await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
       await qc.invalidateQueries({ queryKey: ["admin-clients"] });
       router.invalidate();
