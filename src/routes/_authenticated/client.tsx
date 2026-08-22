@@ -2342,35 +2342,39 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P3-1  One evidence count per candidate
+        TEXTO DO USUÁRIO: "P3-3  Make the score breakdown add up to the score
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        A candidate profile page states the evidence count in five places and gives
-        four different answers. On /client/candidates/fe0e24c0-b551-4762-b9dd-cc53381beb50
-        the page shows all of these at once:
-            \"0/10 evidenced\"                              (chip beside the name)
-            \"0 of 10 of your requirements evidenced\"      (Requirement coverage panel)
-            \"Requirements with a quoted passage  0 of 10 · 0%\"
-            \"1 of 10 of your requirements evidenced\"      (Score breakdown)
-            \"Must-have evidence  6 of 6 evidenced\"        (Score breakdown)
-            \"Preferred evidence  4 of 4 evidenced\"        (Score breakdown)
-            \"0 of 10 of your requirements evidenced\"      (\"Why this candidate\" panel)
-        Counting the grid by hand, exactly one of the ten requirements has a quoted
-        passage — so \"1 of 10\" is correct and everything else is wrong.
-        Compute the evidence count once, in one function, defined as \"requirements with
-        at least one attached evidence record\", and read all seven displays from it.
-        Done when: all seven figures on the candidate page read the same number, and
-        that number equals the count of requirement rows that actually render evidence.
-        P3-2  Fix the evidence bar drawn full at 0%
+        On the candidate profile, the \"Score breakdown\" panel shows a component
+        breakdown and then claims the parts add up to the score. They do not.
+        Beatriz Costa (score shown: 88):
+            Must-have coverage (60% of the score)   91.7% × 60% = 55 points
+            Nice-to-have signal (20% of the score)  62.5% × 20% = 12.5 points
+            Screening alignment (20% of the score)  100% × 20% = 20 points
+            Total                                   87.5 points
+            \"The three parts add up to the score shown above.\"
+        Sofia Marques (score shown: 78) totals 77.5 the same way.
+        Round the component points and the total with the same rule used for the
+        headline score, so the total equals the score exactly. Do not change the
+        caption — make it true.
+        Done when: the Total line on the Score breakdown equals the score in the header
+        chip for both Beatriz Costa and Sofia Marques.
+        P3-4  Scope evidence lookup by candidate id
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate profile, in the \"Requirement coverage\" panel, the row
-        \"Requirements with a quoted passage\" shows the label \"0 of 10 · 0%\" above a
-        progress bar that is drawn completely full in solid blue.
-        Measured in the DOM: the element with role=\"progressbar\" has a track 1109px wide
-        and its filled child element is also 1109px wide. It also has no aria-valuenow.
-        Bind the fill element's width to the percentage, and add
-        aria-valuenow / aria-valuemin / aria-valuemax.
-        Done when: at \"0 of 10 · 0%\" the bar renders empty, at 50% it renders half
-        full, and the progressbar element reports aria-valuenow"
+        One candidate's CV text is being shown as evidence for other candidates.
+        In the candidate comparison view (/client/candidates {" > "} \"Compare N side by side\"),
+        the requirement row \"Experience in an early-stage or founder-led team\" shows this
+        passage under Tiago Almeida, Miguel Torres AND Beatriz Costa:
+            …from database schema through API to interface, and working in a hybrid
+            team based in Lisbon.
+        That sentence is from Beatriz Costa's CV. Her CV profile paragraph reads
+        \"Comfortable owning features end to end, from database schema through API to
+        interface, and working in a hybrid team based in Lisbon.\"
+        The evidence query in the comparison grid is not filtering by candidate. Scope
+        the evidence lookup by candidate id so each cell can only show evidence attached
+        to that candidate.
+        Done when: no evidence passage appears under more than one candidate in the
+        comparison grid unless that passage genuinely exists in each of their own
+        documents"
         
         
         
