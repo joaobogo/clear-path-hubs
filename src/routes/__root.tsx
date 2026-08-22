@@ -151,11 +151,19 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          The notifications bell shows "New message from TaaSFlow team", flagged "Important update", with the reason "Replies are expected within your service commitment." It links to a conversation that renders "No messages yet".
+          Four controls do nothing on the first click after a fresh page load, and work on the second:
+          {"\n"}
+          - the "New role" button on /client/positions
+          {"\n"}
+          - the Sort combobox on /client/candidates
+          {"\n"}
+          - the close (X) on the candidate comparison modal
+          {"\n"}
+          - the notification delivery dropdown on /client/account?tab=notifications
           {"\n\n"}
-          Only emit a new-message notification when the target conversation has at least one message. Then delete or suppress any existing notification whose conversation is empty.
+          They render before their handlers attach. Either attach the handlers before the control becomes interactive, or render the control disabled until hydration completes.
           {"\n\n"}
-          PROVE IT: open the bell and confirm every "New message" notification links to a conversation that contains at least one message. Tell me how many notifications remain."
+          PROVE IT: hard-refresh each of the four pages, click each control exactly once, and tell me what happened on that single click."
         </div>
         {children}
         <Scripts />
