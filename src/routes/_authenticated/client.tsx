@@ -2342,16 +2342,17 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.9   Only notify about a message when a message exists
+        TEXTO DO USUÁRIO: "3.10   Reject messages with no meaningful content
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The single notification in the bell reads \"New message from TaaSFlow team\" with
-        \"+2 more in messages\" and \"Why: Replies are expected within your service commitment.\"
-        Clicking \"Open the conversation\" navigates correctly to
-        /client/conversations/1f5bdceb-3c8d-4577-9eb3-6f2913a5ad5b — and that thread reads
-        \"No messages yet\".
-        The notification is firing on thread creation rather than on message insert. Raise a
-        message notification only when a message row is actually created.
-        Done when: Every \"New message\" notification opens a conversation that contains at least one message"
+        The message composer on /client/conversations/{id} accepted and permanently stored a
+        message whose entire body was the two characters \"——\". It survived a full page reload,
+        produced no confirmation, and there is no delete, edit or undo control anywhere on the
+        conversation page (verified: no button or link matching delete/remove/undo/edit).
+        The composer states \"everyone on this thread is notified by email\".
+        Require at least one alphanumeric character before enabling \"Send\", and add a \"Delete\"
+        action on the author's own messages.
+        Done when: \"Send\" stays disabled for a body of only punctuation or whitespace, and the author can delete their own
+        message."
         
         
         
