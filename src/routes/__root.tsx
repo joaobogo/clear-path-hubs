@@ -147,15 +147,17 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and the changed lines. If your reply contains no file paths, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Clicking "Preview CV" on a candidate page leaves the tab unresponsive to all interaction until the user navigates away.
+          Two forms keep their validation error on screen after the field is corrected:
+          - Account company profile keeps "Website must start with http:// or https://." after a valid https:// URL is typed in.
+          - The message composer keeps "Write a message before sending. Retry" after text is typed in.
           {"\n\n"}
-          Render the CV preview in an in-page modal with an explicit close button, instead of whatever native dialog the button currently opens.
+          The invite modal on /client/account?tab=team already clears its error correctly. Copy that pattern into both broken forms: revalidate on change and clear the error as soon as the field is valid. Also remove the word "Retry" from the composer error and keep the attachment helper text visible.
           {"\n\n"}
-          PROVE IT: click Preview CV, confirm the page is still interactive behind the preview, and close it with the close button."
+          PROVE IT: trigger each error, then type a valid value, and tell me whether the error is still on screen."
         </div>
         {children}
         <Scripts />
