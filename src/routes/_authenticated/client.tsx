@@ -2342,36 +2342,50 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P3-7  De-duplicate \"What holds it back\"
+        TEXTO DO USUÁRIO: "Phase 4 — Controls that do not work
+        Dead ends, missing buttons, and actions that fail without saying anything useful.
+        P4-1  Delete the dead \"Portfolio\" tab
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate profile, the \"What holds it back\" list under Score breakdown
-        renders six bullets containing only three unique reasons. For Beatriz Costa:
-            Only partial evidence for required: 5+ years building production React and TypeScript applications
-            Only partial evidence for required: Strong SQL and relational data modelling in Postgres, including migrations
-            Only partial evidence for required: 5+ years building production React and TypeScript applications
-            Only partial evidence for required: Strong SQL and relational data modelling in Postgres, including migrations
-            Only partial evidence for required: Practical experience with row-level security or another multi-tenant isolation 
-        model
-            Only partial evidence for required: 5+ years building production React and TypeScript applications
-        The React/TypeScript reason appears three times and the Postgres one twice.
-        De-duplicate the list by requirement before rendering.
-        Done when: \"What holds it back\" lists each requirement at most once.
-        P3-8  A cell with evidence cannot read \"Unknown\"
+        On /client/executive (the Insights page) the sub-navigation shows two tabs:
+        \"Executive\" and \"Portfolio\". The Portfolio tab links to /client/portfolio.
+        Clicking it does nothing. Typing /client/portfolio directly renders the
+        not-found page: \"We couldn't find that — This item is no longer available in
+        your workspace.\"
+        There is no portfolio page. Delete the \"Portfolio\" tab from the Insights
+        sub-navigation. If that leaves a single tab, remove the tab bar entirely.
+        Done when: /client/executive shows no \"Portfolio\" tab, and no link anywhere in
+        the client workspace points at /client/portfolio.
+        P4-2  Add a confirm control to the awaiting-time card
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison grid, cells whose status reads \"Unknown\" are
-        rendering evidence text underneath them.
-        Two examples on screen at once:
-        Row \"Experience in an early-stage or founder-led team\", column Tiago Almeida:
-        status \"○ Unknown\", with a quoted passage rendered below it.
-        Row \"Practical experience with row-level security or another multi-tenant
-        isolation model\", column Miguel Torres:
-        status \"○ Unknown\", with \"Introduced Terraform for all AWS infrastructure.\"
-        rendered below it.
-        The legend on the same screen defines \"○ Unknown\" as no evidence. If a cell has
-        any evidence attached it must not render as Unknown — promote it to
-        \"Partially met\".
-        Done when: no cell in the comparison grid shows both the \"Unknown\" status and
-        evidence text"
+        On /client/interviews the first section is \"Waiting on you to confirm a time\",
+        showing one card:
+            Miguel Torres
+            Senior Full-Stack Engineer
+            2 proposed times · earliest 22 Aug 2026, 11:00
+        The card has no button and is not clickable — clicking it twice does nothing.
+        Its \"Details\" modal (reached from the \"Coming up\" section below) offers only a
+        \"Close\" button. Meanwhile the Overview and the Roles page both send the client
+        here to confirm a time.
+        Add a \"Confirm a time\" button to this card that opens the time-selection flow.
+        Under support impersonation render it disabled, the same way the \"Submit
+        feedback\" buttons on the same page already do.
+        Done when: the \"Waiting on you to confirm a time\" card shows a \"Confirm a time\"
+        button, disabled with the other controls under ?preview=client_admin.
+        P4-3  Add a control to \"Your interview availability\"
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        The /client/interviews page subtitle promises:
+            Set your availability once — everything else happens on this one timeline.
+        At the foot of that page the \"Your interview availability\" panel shows a
+        heading, the sentence \"Candidates choose from these windows
+        (America/Sao_Paulo).\" and five static chips reading \"Monday 09:00–17:00\"
+        through \"Friday 09:00–17:00\".
+        The panel contains zero interactive elements — the last button on the page sits
+        above it. There is no way to set the availability the page promises.
+        Add an \"Edit availability\" button to that panel opening a windows editor.
+        Disable it under support impersonation.
+        Done when: the \"Your interview availability\" panel contains a working
+        \"Edit availability\" control that opens an editor, disabled under
+        ?preview=client_admin."
         
         
         
