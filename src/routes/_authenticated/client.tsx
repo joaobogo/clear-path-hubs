@@ -2342,20 +2342,35 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P2-7  Bell badge must show the needs-attention count
+        TEXTO DO USUÁRIO: "P3-1  One evidence count per candidate
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The notification bell gives four different numbers for one question.
-        The badge on the bell reads 29. Its accessible name reads \"Notifications,
-        29 unread, 9 need attention\". The panel header reads \"9 items need your
-        attention.\" The filter tabs read \"All (29) · Unread (28) · Action required (9)
-        · Important update (7) · Informational (13)\". The Overview's \"What needs you\"
-        list says \"8 items\".
-        The tabs are internally consistent (9 + 7 + 13 = 29). The problem is that the
-        badge counts unread while the panel and the dashboard count what needs action.
-        Change the bell badge to show the \"action required\" count, and set its
-        accessible name to \"Notifications, N need your attention\".
-        Done when: the bell badge, the panel header \"N items need your attention\" and
-        the \"Action required (N)\" tab all show the same number"
+        A candidate profile page states the evidence count in five places and gives
+        four different answers. On /client/candidates/fe0e24c0-b551-4762-b9dd-cc53381beb50
+        the page shows all of these at once:
+            \"0/10 evidenced\"                              (chip beside the name)
+            \"0 of 10 of your requirements evidenced\"      (Requirement coverage panel)
+            \"Requirements with a quoted passage  0 of 10 · 0%\"
+            \"1 of 10 of your requirements evidenced\"      (Score breakdown)
+            \"Must-have evidence  6 of 6 evidenced\"        (Score breakdown)
+            \"Preferred evidence  4 of 4 evidenced\"        (Score breakdown)
+            \"0 of 10 of your requirements evidenced\"      (\"Why this candidate\" panel)
+        Counting the grid by hand, exactly one of the ten requirements has a quoted
+        passage — so \"1 of 10\" is correct and everything else is wrong.
+        Compute the evidence count once, in one function, defined as \"requirements with
+        at least one attached evidence record\", and read all seven displays from it.
+        Done when: all seven figures on the candidate page read the same number, and
+        that number equals the count of requirement rows that actually render evidence.
+        P3-2  Fix the evidence bar drawn full at 0%
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On the candidate profile, in the \"Requirement coverage\" panel, the row
+        \"Requirements with a quoted passage\" shows the label \"0 of 10 · 0%\" above a
+        progress bar that is drawn completely full in solid blue.
+        Measured in the DOM: the element with role=\"progressbar\" has a track 1109px wide
+        and its filled child element is also 1109px wide. It also has no aria-valuenow.
+        Bind the fill element's width to the percentage, and add
+        aria-valuenow / aria-valuemin / aria-valuemax.
+        Done when: at \"0 of 10 · 0%\" the bar renders empty, at 50% it renders half
+        full, and the progressbar element reports aria-valuenow"
         
         
         
