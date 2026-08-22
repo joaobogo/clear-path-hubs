@@ -2342,24 +2342,22 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.13   Reduce the five printed role counts on the Roles page
+        TEXTO DO USUÁRIO: "5.15   Point the setup step marker at the first incomplete step
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/positions the number of roles is printed five times on one screen: \"1 role\" top
-        right, the \"ACTIVE 1\" tile, \"Action required — 1 role\", the tab \"Active (1)\", and \"1 result\".
-        Keep the status tabs as the only count. Delete the \"1 role\" header count, the ACTIVE tile and
-        the \"1 result\" line. Keep the Action required banner, which names what needs doing.
-        Done when: The Roles page states the number of active roles once, in the tab.
-        5.14   Remove the Talent pool page from the navigation
+        On /client/onboarding the step marker reads \"Step 1 of 10\" on load, and the detail panel
+        shows step 1 — but steps 1, 2, 3 and 9 are all marked \"Done\". The first incomplete step is
+        step 4, \"Review the compiled role blueprint\".
+        On load, select the first step whose status is not Done.
+        Done when: Loading /client/onboarding with steps 1–3 complete opens step 4 and the marker reads \"Step 4 of 10\" 5.16   Make the ESSENTIAL FOR LAUNCH caption count its own list
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        /client/talent-pool contains no functionality: three descriptive cards (\"Silver medalists\",
-        \"Direct applications\", \"Passive network\") and one empty state. None of the three cards is a
-        link or a button — verified in the DOM. It is also reachable from two places: the left nav and
-        the Candidates sub-tab bar, both pointing at /client/talent-pool.
-        Remove it from the left nav and from the Candidates sub-tab bar until it holds data. Keep the
-        route so existing links resolve.
-        Done when: Talent pool does not appear in the left nav or the Candidates tab bar"
+        In the New role dialog at /client/positions/new the \"ESSENTIAL FOR LAUNCH\" box lists six
+        bullets — Seniority, Work arrangement, Location or remote, 3–5 Must-have skills, Salary band,
+        Job description — beneath a caption reading, verbatim:
+        \"You can enrich the brief with advanced details after these 7 essentials.\"
+        Either add the missing seventh item or make the caption interpolate the array length.
+        Done when: The number in the caption equals the number of bullets rendered above it"
         
         
         
