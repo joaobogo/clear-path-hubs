@@ -2342,43 +2342,7 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P7-6  Give the Sort control a Score option and a visible value
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the sort dropdown in the filter bar (aria-label \"Sort\")
-        renders completely blank — no selected value — while the URL carries sort=score
-        and the list is in descending score order.
-        Opening it shows four options: \"Recently delivered\", \"Must-have coverage\",
-        \"Stage\", \"Candidate name\". There is no \"Score\" option, so the control cannot
-        represent the state it is in, and once a recruiter changes it there is no way
-        back to score order from the interface.
-        Add \"Highest score first\" as the first option and make it the default so the
-        control always shows its current value.
-        Separately, the existing \"Must-have coverage\" sort produces a wrong order:
-        Pedro Matos (score 35, \"Not recommended\") ranks 2nd while Beatriz Costa — whom
-        the comparison view calls the highest-coverage candidate at 92% — ranks 9th.
-        Sort that option descending on the same coverage figure the comparison uses.
-        Done when: the Sort control shows \"Highest score first\" on load, and choosing
-        \"Must-have coverage\" puts the highest-coverage candidate first.
-        P7-7  Trim the Insights page
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        /client/executive carries several elements that cannot be acted on. Remove or
-        merge them.
-        Remove:
-        \"PROJECTED HIRES · NEXT 30D\"     
-        — no basis shown, nothing to do about it
-        the \"p90\" figure in \"Time in stage\"  — identical to the average in all three rows
-        the \"Unassigned\" row in \"Candidates in play by team\" — six zeros, will never fill
-        the \"TYPICAL SHORTLIST FIT PER WEEK (APPROVED)\" grid — seven of eight cells are \"—\"
-        Merge:
-        \"OPEN OFFER VALUE\" and \"AVG SALARY (OFFERED)\" both read €64,000 from the
-        same single offer. Keep OPEN OFFER VALUE.
-        \"HIRES · 30D\", \"HIRES · 90D\" and \"HIRES · YTD\" all read 1. Keep one tile
-        with a period selector.
-        Also let the finance tiles size to their content — each currently has roughly
-        90px of empty space beneath its value.
-        medium
-        Done when: /client/executive shows no p90 column, no Unassigned row, no
-        projected-hires tile, one hires tile and one salary tile"
+        TEXTO DO USUÁRIO: "these two cards are redudant, this are should be asy and quick for the recruiter to understand, because of the amount of information it becomes confused and there are too equal lists, we need to fix this to make sure there is absolutely no issues in the uxer experience, i think the score breakdown is the only list we actually need, and not both"
         
         
         
