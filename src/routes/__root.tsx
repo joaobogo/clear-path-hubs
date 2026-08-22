@@ -147,47 +147,21 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and every string you replaced. If your reply contains no file paths, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and the changed lines. If your reply contains no file paths, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Replace these client-facing strings across the whole client workspace. Search for each one literally:
+          One pipeline stage carries up to five different names across the client workspace:
+          {"\n"}
+            Interviewing: "INTERVIEWING" (tile), "In interviews" (list cell), "INTERVIEW PROCESS" (board column), "Interview process" (filter), "In Interviews" (Insights)
+          {"\n"}
+            Offer:        "OFFERS", "At offer", "OFFER", "Offer", "At Offer"
+          {"\n"}
+            New:          "AWAITING YOUR REVIEW", "New — awaiting review"
           {"\n\n"}
-            "Review the compiled role blueprint"      -{'>'} "Review your role brief"
-          {"\n"}
-            "Configure scoring weights"               -{'>'} "Set what matters most"
-          {"\n"}
-            "Choose agent operating level"            -{'>'} "Choose how much we do for you"
-          {"\n"}
-            "Set approval and oversight gates"        -{'>'} "Set who approves what"
-          {"\n"}
-            "Start the first run"                     -{'>'} "Start the search"
-          {"\n"}
-            "Enter the Decision Workspace"            -{'>'} "Go to your candidates"
-          {"\n"}
-            "blueprint, rubric, runs and decisions"   -{'>'} "everything else attaches to"
-          {"\n"}
-            "Only partial evidence for required:"     -{'>'} "We found partial evidence for this — worth confirming."
-          {"\n"}
-            "Verify missing or partial evidence."     -{'>'} "We found no direct evidence for this."
-          {"\n"}
-            "Unicorn only (95+)"                      -{'>'} remove the control entirely
-          {"\n"}
-            "Silver medalist" / "Silver medalists"    -{'>'} "Strong runners-up from past roles"
-          {"\n"}
-            "Talent memory" / "TALENT MEMORY"         -{'>'} "Keep for future roles"
-          {"\n"}
-            "publish gate"                            -{'>'} "review"
-          {"\n"}
-            "Candidate profile & gates"               -{'>'} "Candidate profile & requirements"
-          {"\n"}
-            "Disqualifiers / critical gates"          -{'>'} "Dealbreakers"
-          {"\n"}
-            "Captured at intake"                      -{'>'} "From your role brief"
-          {"\n"}
-            "Shortlisted By Your Team"                -{'>'} "Shortlisted"
+          Create one label constant per stage and import it into the Candidates tiles, the list cells, the board columns, the stage filter and the Insights time-in-stage panel. Use sentence case in the constant and let CSS handle any uppercase display.
           {"\n\n"}
-          PROVE IT: search the repository for each original string and confirm zero hits in client-facing code. Paste the search output."
+          PROVE IT: open /client/candidates in both list and board view, the stage filter, and /client/executive, and tell me the label used for the interviewing stage in each. All must be identical."
         </div>
         {children}
         <Scripts />
