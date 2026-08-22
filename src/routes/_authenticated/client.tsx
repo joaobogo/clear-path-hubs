@@ -2342,17 +2342,27 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "4.5   Rewrite the internal evidence phrasing
+        TEXTO DO USUÁRIO: "4.6   Write interview questions that read like English
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The string \"Only partial evidence for required:\" is rendered to clients in three places:
-        the candidate page \"What holds it back\" panel, the Interview tab's \"Why:\" lines, and the
-        comparison modal's \"Concerns\" rows. The Interview tab also renders \"Verify missing or
-        partial evidence.\"
-        Replace \"Only partial evidence for required: {"<"}requirement{">"}\" with
-        \"Worth confirming in the interview: {"<"}requirement{">"}\", and replace \"Verify missing or partial
-        evidence.\" with \"Worth confirming in the interview.\"
-        Done when: No client-facing screen contains the string \"Only partial evidence for required\" or \"Verify missing or partial
-        evidence\""
+        On the candidate page Interview tab, headed \"Personalised interview guide — Grounded in
+        this candidate's evidence\", all ten questions use one template:
+        \"Can you elaborate on your experience with {"<"}requirement text verbatim{">"}?\"
+        This produces, verbatim:
+        \"Can you elaborate on your experience with 5+ years building production React and
+        TypeScript applications?\"
+        \"Can you elaborate on your experience with Experience owning features end to end, from
+        schema design to shipped UI?\"
+        \"Can you elaborate on your experience with Familiarity with TanStack Start, Remix or a
+        similar full-stack React framework?\"
+        Vary the stem by requirement shape:
+        starts with a number/duration -{"->"} \"How many years have you spent {"<"}requirement, lowercased{">"}?\"
+        starts with \"Experience\"/\"Familiarity\"/\"Exposure\" -{"->"} strip that leading noun and use
+        \"Tell me about your experience {"<"}rest of requirement{">"}.\"
+        starts with an adjective such as \"Comfortable\"/\"Fluent\" -{"->"} \"How would you rate yourself on
+        {"<"}rest of requirement{">"}?\"
+        otherwise -{"->"} \"Walk me through {"<"}requirement, lowercased{">"}.\"
+        Done when: No question on the Interview tab contains \"experience with Experience\", \"experience with Familiarity\" or
+        \"experience with 5+ years\"."
         
         
         
