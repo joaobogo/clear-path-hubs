@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-Three pages disagree. The Roles banner says "5 to confirm", the Overview queue shows 4 rows titled "Confirm an interview time", and the Interviews page says "1 interview". The Roles banner is correct.
+On one screen, "Open roles by region" says "Portugal 0 open / 1 filled / 1 total" while "Candidates in play by team" says "Engineering OPEN ROLES 1".
 
-Make the Overview queue and the Interviews page use the query behind the Roles banner.
+Have both panels read the same open-roles selector the Roles page uses. Do not count a role as filled while it has an active search and open offers.
 
-Done when: The Roles banner, the Overview queue and the Interviews page heading all show the same number."`}</div>
+Done when: Both Insights panels show 1 open role."`}</div>
         <Scripts />
       </body>
     </html>
