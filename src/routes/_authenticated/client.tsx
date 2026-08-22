@@ -2342,19 +2342,19 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.3   Scope evidence lookups by candidate
+        TEXTO DO USUÁRIO: "2.4   A cell showing evidence must not be marked Unknown
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The same evidence quotation is attributed to three different candidates. The passage:
-        \"…from database schema through API to interface, and working in a hybrid team based in
-        Lisbon.\"
-        appears as Beatriz Costa's evidence for \"Experience in an early-stage or founder-led team\"
-        on her profile, and as both Tiago Almeida's and Miguel Torres's evidence for the same
-        requirement in the candidate comparison modal.
-        The evidence lookup is resolving by requirement instead of by candidate. Scope it to the
-        candidate id so each candidate only ever shows quotations extracted from their own CV.
-        Done when: Opening the comparison for three candidates shows a different quotation, or none, in each column for the same
-        requirement"
+        In the candidate comparison modal, cells marked \"Unknown\" are rendering evidence text.
+        Miguel Torres against \"Practical experience with row-level security or another
+        multi-tenant isolation model\" shows status \"Unknown\" with the cell body
+        \"Introduced Terraform for all AWS infrastructure.\"
+        Tiago Almeida against \"Experience in an early-stage or founder-led team\" shows status
+        \"Unknown\" with a quotation in the cell.
+        Derive the status from whether evidence exists, in the same pass that renders it:
+        evidence present and requirement satisfied = \"Met\"; evidence present but partial =
+        \"Partially met\"; no evidence = \"Unknown\" and render no body text.
+        Done when: No cell in the comparison grid displays evidence text while labelled \"Unknown\"."
         
         
         
