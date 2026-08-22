@@ -2342,16 +2342,21 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.4   Make Download CV confirm itself
+        TEXTO DO USUÁRIO: "3.5   Stop the company profile save from reporting false success
+        HIGH
+        BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On a candidate page the \"Download CV\" button produces no feedback at all — no toast, no
-        message, no state change (verified by querying every [role=status], [role=alert] and toast
-        container after clicking).
-        The bulk equivalent on /client/candidates does this correctly: \"Download 3 CVs (ZIP)\"
-        opens a modal reading \"3 of 3 CVs are in your ZIP\", ticks each candidate with its filename,
-        and fires a toast \"3 CVs downloaded as one ZIP\".
-        Fire the same toast pattern for the single download, e.g. \"CV downloaded — sofia-marques.pdf\".
-        Done when: Clicking \"Download CV\" shows a toast naming the downloaded file"
+        On /client/account > Workspace details > Company profile, saving can report success while
+        discarding the edit and clearing an unrelated field.
+        Reproduced: typed \"not-a-phone!!!\" into Phone while Industry held a value, clicked
+        \"Save changes\", saw the green toast \"Company profile saved\". After a full page reload both
+        Phone AND Industry were empty — Industry had not been edited. A second run editing only
+        Industry saved and persisted correctly.
+        Two fixes: (1) fire the toast from the server response, not optimistically, and surface a
+        real error message when the write fails; (2) stop the update from nulling columns that were
+        not included in the request — use a partial update, not a full row replace.
+        Done when: Saving a change to Phone persists it through a reload, leaves every other field untouched, and shows an error
+        instead of a success toast if the write fails"
         
         
         
