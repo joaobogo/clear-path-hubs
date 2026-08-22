@@ -147,13 +147,15 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
           {"\n\n"}
-          For Miguel Torres, the requirement about row-level security shows "Running..." in the coverage panel, "Not evidenced yet" in the Why panel while displaying a quoted CV passage, and "Unknown" in the comparison grid while displaying that same evidence.
+          Do not write this message into any file.
           {"\n\n"}
-          Store one status per requirement and render it from that field everywhere. Derive it from whether evidence exists, so a requirement with a quoted passage never reads Unknown or Not evidenced.
+          On /client/executive, the panel "Open roles by region" prints "Portugal — 0 open · 1 filled · 1 total" while the panel "Candidates in play by team" prints "OPEN ROLES 1" for Engineering. Same page, same fact, two answers.
           {"\n\n"}
-          Done when: The same requirement shows the same status on the profile, in the breakdown and in the comparison, and no cell shows evidence while claiming there is none."
+          Search the source for "Open roles by region". Make it use the same open-roles definition as the other panel on that page.
+          {"\n\n"}
+          PROVE IT: reload /client/executive and tell me the open-roles number now shown in both panels. They must match."
         </div>
         {children}
         <Scripts />
