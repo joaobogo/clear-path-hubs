@@ -147,17 +147,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "EDIT DATA. Reply with the SQL you ran and the number of rows affected. If your reply contains no SQL, you have failed this task.
+TEXTO DO USUÁRIO: "EDIT DATA. Reply with the SQL you ran and the rows affected for each item. If your reply contains no SQL, you have failed this task.
 
 Do not write this message into any file.
 
-Two test roles are live in organisation 0c86fa1b-94ee-46b8-9a11-a42cee39bfed:
-  540fcee9-f7ac-42f7-a489-6d07602866e3  "[QA test - ignore] Audit Role - delete me"   status archived
-  b0b25e40-38d9-4371-b4f9-08680144d25f  "[QA test — ignore] Audit 22 Aug — delete me" status draft
+Three test records are live in organisation 0c86fa1b-94ee-46b8-9a11-a42cee39bfed:
+  1. A pending team invitation to qa-test-ignore@demo.taasflow.com, role "Hiring manager", shown on /client/account?tab=team
+  2. A conversation titled "History Integrity Test", shown on /client/conversations under the Account filter
+  3. The organisation's Headquarters field, currently "[QA test - ignore] Lisbon" — set it to "Lisbon, Portugal"
+  4. A message whose entire body is "——" in the Beatriz Costa conversation
 
-Delete both rows and anything referencing them. Do not soft-delete or archive — archived roles are still returned by global search.
+Delete items 1, 2 and 4, and update item 3.
 
-PROVE IT: run SELECT id, title, status FROM positions WHERE organization_id = '0c86fa1b-94ee-46b8-9a11-a42cee39bfed' and paste the result. Only "Senior Full-Stack Engineer" may remain."`}</div>
+PROVE IT: reload /client/account?tab=team, /client/conversations and the company profile, and tell me what each now shows."`}</div>
         <Scripts />
       </body>
     </html>
