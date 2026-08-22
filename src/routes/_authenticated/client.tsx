@@ -2342,8 +2342,19 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "i need to make sure all pixels are firing and are as sensitive as possible
-        ]"
+        TEXTO DO USUÁRIO: "0.1   Delete the test role from the client workspace
+        BLOCKER
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        In the TaaSFlow client workspace there is a role record titled exactly:
+        "[QA test - ignore] Audit Role - delete me"
+        It is status Archived. It appears in two client-facing places: the setup wizard at
+        /client/onboarding, step 2, in the dropdown labelled "Which role are we configuring?";
+        and in the global search results (Ctrl+K) when searching "QA", shown as ROLE / Archived.
+        Delete this role record from the database. Then, separately, change the setup wizard's
+        role picker so it only lists roles whose status is active, under review or paused —
+        archived roles must never appear as a choice.
+        Done when: Searching "QA" in global search returns no results, and the step-2 role picker lists only "Senior Full-Stack
+        Engineer" and "Add a new role"."
         
         
         
