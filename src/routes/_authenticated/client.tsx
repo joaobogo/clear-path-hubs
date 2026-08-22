@@ -2342,36 +2342,41 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P0-3  Delete the \"History Integrity Test\" conversation
+        TEXTO DO USUÁRIO: "P1-1  Guard the onboarding step-save endpoint
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the client workspace at /client/conversations there is a conversation
-        thread titled exactly:
-            History Integrity Test
-        It has no messages, no subtitle, and it is the only thread that appears under
-        the \"Account\" filter tab — so a client clicking \"Account\" sees nothing but this
-        QA artefact. It belongs to organisation 0c86fa1b-94ee-46b8-9a11-a42cee39bfed.
-        Delete that conversation.
-        Separately, three other threads for this organisation have no messages at all
-        (\"Senior Full-Stack Engineer\", \"Diogo Silva — Senior Full-Stack Engineer\",
-        \"Rui Fernandes\"). Do not delete those — instead, stop auto-creating a thread
-        until the first message is sent.
-        Done when: /client/conversations shows no thread called \"History Integrity
-        Test\", and no new empty thread is created when a candidate or role is added.
-        P0-4  Delete the orphaned \"Guard Probe\" role and fix Archive
+        On /client/onboarding (the client Setup wizard) the button \"Save and continue\"
+        on Step 2, \"Define the first role\", writes to the database even when the
+        workspace is being viewed under support impersonation.
+        To reproduce: open the client workspace with ?preview=client_admin. Both banners
+        read \"You are viewing this workspace as a TaaSFlow administrator. Client actions
+        are disabled.\" and \"You are viewing as an administrator\". Type any role title
+        and click \"Save and continue\". A toast reads \"Role saved.\", the step marker
+        advances to \"Step 3 of 10\", Step 2 is marked \"Done\", and the \"Progress saved\"
+        timestamp updates. All of it survives a full page reload.
+        The route /client/positions/new already refuses correctly with the error
+        \"support_view_denied\". Apply that same server-side support-view check to the
+        onboarding step-save endpoint.
+        Done when: clicking \"Save and continue\" under ?preview=client_admin leaves the
+        step marker on \"Step 2 of 10\", leaves \"Progress saved\" unchanged after a reload,
+        and shows a refusal message instead of \"Role saved.\".
+        P1-2  Scope role creation to the previewed organisation
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Two things.
-        1. A position exists with id c1af1e88-5bd0-45c6-93d3-7e2dd67d09e7 titled:
-               [QA test - ignore] Guard Probe 21Aug - delete me
-           It is attached to the client \"TaaSFlow Platform\", status draft, private,
-           owner \"Master Admin\". It was created accidentally during a QA audit.
-           Delete it.
-        2. On /admin/positions/{"<id>"} the \"...\" menu offers an \"Archive\" action. Clicking
-           it closes the menu and does nothing — the status badge stays \"draft\" and the
-           row stays in the Positions list. Fix the Archive action so it actually sets
-           the position's status to archived and shows a confirmation.
-        Done when: searching /admin/positions for \"Guard Probe\" returns no results,
-        and clicking \"...\" {" > "} Archive on any draft position changes its badge to
-        \"archived\" and shows a confirmation toast\""
+        A role created from inside one client's workspace is being written to a
+        different organisation.
+        To reproduce: open the client workspace for \"Northwind Talent (Demo)\"
+        (?org=0c86fa1b-94ee-46b8-9a11-a42cee39bfed), go to /client/onboarding, complete
+        Step 2 with a role title, and click \"Save and continue\". The role is created —
+        but it does not appear on Northwind's Positions tab. It appears in
+        /admin/positions attached to the client \"TaaSFlow Platform\" with owner
+        \"Master Admin\".
+        The role-creation code is taking the organisation from the signed-in session
+        rather than from the workspace being viewed. Change it to take the organisation
+        id from the workspace context (the \"org\" query parameter that scopes the whole
+        client workspace), and reject the request if that organisation is missing rather
+        than falling back to the session's organisation.
+        Done when: a role created from a client workspace appears on that client's own
+        Positions tab in admin, and a role-creation request with no organisation context
+        is rejected rather than silently attached to the caller's organisation."
         
         
         
