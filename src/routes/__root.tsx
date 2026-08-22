@@ -147,15 +147,31 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
+TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and every string you replaced. If your reply contains no file paths, you have failed this task.
 
 Do not write this message into any file.
 
-Test records have twice reached a client-facing workspace and survived an audit each time.
+Replace these client-facing strings across the whole client workspace. Search for each one literally:
 
-Add a validation guard on role, conversation, candidate and invitation creation that rejects any record whose name, title or email matches /\\b(qa|test|ignore|browser-test|disregard)\\b/i, unless the organisation is explicitly flagged as a seed or fixture organisation. Log every rejection.
+  \"Review the compiled role blueprint\"      -> \"Review your role brief\"
+  \"Configure scoring weights\"               -> \"Set what matters most\"
+  \"Choose agent operating level\"            -> \"Choose how much we do for you\"
+  \"Set approval and oversight gates\"        -> \"Set who approves what\"
+  \"Start the first run\"                     -> \"Start the search\"
+  \"Enter the Decision Workspace\"            -> \"Go to your candidates\"
+  \"blueprint, rubric, runs and decisions\"   -> \"everything else attaches to\"
+  \"Only partial evidence for required:\"     -> \"We found partial evidence for this — worth confirming.\"
+  \"Verify missing or partial evidence.\"     -> \"We found no direct evidence for this.\"
+  \"Unicorn only (95+)\"                      -> remove the control entirely
+  \"Silver medalist\" / \"Silver medalists\"    -> \"Strong runners-up from past roles\"
+  \"Talent memory\" / \"TALENT MEMORY\"         -> \"Keep for future roles\"
+  \"publish gate\"                            -> \"review\"
+  \"Candidate profile & gates\"               -> \"Candidate profile & requirements\"
+  \"Disqualifiers / critical gates\"          -> \"Dealbreakers\"
+  \"Captured at intake\"                      -> \"From your role brief\"
+  \"Shortlisted By Your Team\"                -> \"Shortlisted\"
 
-PROVE IT: try to create a role titled \"QA test role\" in the Northwind organisation and paste the error. Then confirm the same title still succeeds in a fixture organisation."`}</div>
+PROVE IT: search the repository for each original string and confirm zero hits in client-facing code. Paste the search output."`}</div>
         <Scripts />
       </body>
     </html>
