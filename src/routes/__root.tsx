@@ -147,15 +147,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
+TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-Do not write this message into any file.
+Six controls do nothing on the first click and work on the second: New role, the Insights Portfolio tab, the header search box, the Candidates search input, candidate row links, and the Account \"Workspace details\" accordion. The accordion does not open at all when clicked at its centre but does open from a scripted click, so the handler works and the pointer target does not.
 
-Every candidate page tells the client that TaaSFlow is late. The Next panel reads \"Next: We'll confirm the start date and handle onboarding paperwork. Recruiting team · Overdue by 6 days — we're on it.\" On another candidate it reads \"Overdue by 7 days\".
+Find the shared wrapper or focus-then-activate pattern that consumes the first pointer event and fix it once. Make the whole Workspace details header row the click target.
 
-Search the source for \"Overdue by\". Keep the next step and the owning team, and remove the overdue fragment from the client view. Keep it in internal views.
-
-PROVE IT: open two candidate pages and paste the Next panel text from each. Neither may contain an overdue figure."`}</div>
+Done when: Each of those six controls responds to a single click and the Workspace details panel opens when its header is clicked."`}</div>
         <Scripts />
       </body>
     </html>
