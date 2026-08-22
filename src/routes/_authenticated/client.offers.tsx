@@ -169,7 +169,7 @@ function OffersPage() {
               />
               <Kpi
                 label="Hires confirmed"
-                value={isPending ? "—" : hiresCount}
+                value={isPending ? "—" : (report?.totals?.hires_confirmed ?? hiresCount)}
                 hint="Last 180 days"
               />
               <Kpi
