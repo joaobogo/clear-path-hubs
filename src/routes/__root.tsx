@@ -151,19 +151,11 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Four controls do nothing on the first click after a fresh page load, and work on the second:
-          {"\n"}
-          - the "New role" button on /client/positions
-          {"\n"}
-          - the Sort combobox on /client/candidates
-          {"\n"}
-          - the close (X) on the candidate comparison modal
-          {"\n"}
-          - the notification delivery dropdown on /client/account?tab=notifications
+          The Sort control on /client/candidates renders completely blank on load. The active sort is sort=score, but "score" is not one of the four options it offers: Recently delivered, Must-have coverage, Stage, Candidate name. Once a user changes the sort there is no way to get back to score order.
           {"\n\n"}
-          They render before their handlers attach. Either attach the handlers before the control becomes interactive, or render the control disabled until hydration completes.
+          Add "Best fit first" as the first option, mapped to sort=score, and make it the selected value when sort=score.
           {"\n\n"}
-          PROVE IT: hard-refresh each of the four pages, click each control exactly once, and tell me what happened on that single click."
+          PROVE IT: hard-refresh /client/candidates and tell me the text now shown in the Sort control. Then change the sort, select "Best fit first", and confirm the list returns to 88, 79, 78 at the top."
         </div>
         {children}
         <Scripts />
