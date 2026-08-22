@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-A candidate page states its evidence count three ways: the header chip says "0/10 evidenced", the Structured criteria check says "1 of 10", and the breakdown says "6 of 6" plus "4 of 4".
+The panel "Why - and what to check" is the first evidence a recruiter sees and renders exactly one requirement of ten. The full Requirement coverage panel sits further down, and the same sentence appears a third time under "BEYOND YOUR REQUIREMENTS".
 
-Compute one total from the requirement array and use it in the header chip, the coverage panel, the criteria line and the "Why this candidate" panel. Show quoted and related evidence as separate labelled columns, not as competing totals.
+Delete the "Why - and what to check" panel and the "BEYOND YOUR REQUIREMENTS" block, and move Requirement coverage up into that position.
 
-Done when: Every figure on a candidate page that states how many requirements are evidenced shows the same number."`}</div>
+Done when: The first evidence panel on a candidate page lists all ten requirements, and no sentence appears twice on the page."`}</div>
         <Scripts />
       </body>
     </html>
