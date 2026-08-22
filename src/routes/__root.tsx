@@ -151,11 +151,13 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          On /client, the banner reads "At risk — An interview requested 8 days ago still has no confirmed time." The queue directly above it shows the oldest unconfirmed interview as "Waiting 6 days". The only 8-day item on the page is an offer, not an interview.
+          /client/positions shows status tabs reading "Active(1) Under review(0) Paused(0) Archived(0)" and the Account tile reads "1 total in the account".
           {"\n\n"}
-          Search the source for "still has no confirmed time". Make it select the oldest interview whose status is awaiting confirmation and print that interview's real age. If no interview qualifies, say so instead of falling through to offers.
+          That is false. This organisation holds three roles — one active, one draft, one archived — and global search returns all three.
           {"\n\n"}
-          PROVE IT: reload /client and paste the banner text, plus the waiting time of the oldest "Confirm an interview time" row above it. They must match."
+          Search the source for "Archived" in the roles status tabs. Add a "Draft" tab, populate the Archived count from real data instead of returning 0, and make "total in the account" count roles of every status.
+          {"\n\n"}
+          PROVE IT: reload /client/positions and paste the four tab labels with their counts. Archived must not be 0, and a Draft tab must exist."
         </div>
         {children}
         <Scripts />
