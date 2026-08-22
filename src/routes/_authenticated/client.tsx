@@ -2347,9 +2347,9 @@ function ClientLayout() {
         The candidate profile renders the same ten requirements three times:
             \"Requirement coverage\"                     (status only)
             \"Must-have evidence\" + \"Preferred evidence\" (inside Score breakdown)
-            \"Why this candidate for <role>\"            (status, evidence and source)
+            \"Why this candidate for {"<role>"} \"            (status, evidence and source)
         That is roughly 2,400 pixels of one page spent restating one list.
-        Keep \"Why this candidate for <role>\" — it is the only one that shows where the
+        Keep \"Why this candidate for {"<role>"} \" — it is the only one that shows where the
         evidence came from. Move the four coverage tiles (MUST-HAVE MET / PARTIALLY MET
         / NOT EVIDENCED / PREFERRED MET) to sit as its header. Delete the \"Requirement
         coverage\" list and the two evidence lists inside Score breakdown, keeping the
