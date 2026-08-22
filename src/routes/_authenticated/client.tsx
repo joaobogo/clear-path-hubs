@@ -2344,7 +2344,7 @@ function ClientLayout() {
 
         TEXTO DO USUÁRIO: "6.18   Widen the compare checkbox hit area on mobile
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        At a 375px viewport the per-row \"Compare <name>\" checkboxes on /client/candidates measure
+        At a 375px viewport the per-row \"Compare {"<name>"} \" checkboxes on /client/candidates measure
         16px wide by 44px tall. Twenty of them fall below the 44px minimum touch target on the
         horizontal axis.
         Give the checkbox a 44x44px hit area at viewports below 640px.
