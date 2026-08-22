@@ -2342,14 +2342,21 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "4.2   Remove the publish gate wording from the New role dialog
+        TEXTO DO USUÁRIO: "4.3   Remove Talent memory and Silver medalist from candidate pages
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/positions/new the dialog body reads, verbatim:
-        \"Creates a draft in Northwind Talent (Demo) and opens the role wizard. Nothing goes live
-        until it passes the publish gate.\"
-        \"publish gate\" is internal language.
-        Replace the second sentence with: \"Nothing goes live until you've reviewed it.\"
-        Done when: The New role dialog contains no string \"publish gate\""
+        On every candidate page the right column renders a panel titled \"TALENT MEMORY\" with the
+        body \"Keep this candidate accessible for future roles, even after this search closes.\" and
+        a button labelled \"Silver medalist\".
+        Both terms are internal. Worse, the button is offered on Beatriz Costa, whose stage is
+        \"Hired\" — while /client/talent-pool defines a silver medalist as someone who \"reached the
+        final stages of previous roles but were not hired\".
+        Rename the panel to \"Keep for future roles\" and the button to \"Save as a strong runner-up\".
+        Hide the panel entirely when the candidate's stage is Hired.
+        HIGH
+        HIGH
+        HIGH
+        Done when: No candidate page contains \"TALENT MEMORY\" or \"Silver medalist\", and the panel does not render on a hired
+        candidate\""
         
         
         
