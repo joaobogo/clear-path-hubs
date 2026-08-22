@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The panel "Why - and what to check" is the first evidence a recruiter sees and renders exactly one requirement of ten. The full Requirement coverage panel sits further down, and the same sentence appears a third time under "BEYOND YOUR REQUIREMENTS".
+The comparison summary row reads "Must-have coverage 0% (0/6)" for all four candidates while the Observations block on the same screen reads "Beatriz Costa has the highest coverage (92%)". Her profile says 91.7%.
 
-Delete the "Why - and what to check" panel and the "BEYOND YOUR REQUIREMENTS" block, and move Requirement coverage up into that position.
+Make the comparison use the same weighted calculation the profile uses, so partially met requirements contribute. Run R11 first.
 
-Done when: The first evidence panel on a candidate page lists all ten requirements, and no sentence appears twice on the page."`}</div>
+Done when: Each candidate shows a different coverage percentage and Beatriz Costa's matches her profile."`}</div>
         <Scripts />
       </body>
     </html>
