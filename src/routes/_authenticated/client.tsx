@@ -2342,31 +2342,22 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.1   Publish one evidence count, computed from the grid
+        TEXTO DO USUÁRIO: "2.2   Make the score breakdown reproduce the score
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On a candidate page such as
-        /client/candidates/fe0e24c0-b551-4762-b9dd-cc53381beb50 (Beatriz Costa) the number of
-        evidenced requirements is published six different ways on one page:
-        header chip                 
-        \"· 0/10 evidenced\"
-        Requirement coverage        
-        coverage progress line      
-        Score breakdown             
-        Must-have evidence panel    
-        Preferred evidence panel    
-        \"0 of 10 of your requirements evidenced\"
-        \"Requirements with a quoted passage   0 of 10 · 0%\"
-        \"1 of 10 of your requirements evidenced\"
-        \"6 of 6 evidenced\"
-        \"4 of 4 evidenced\"
-        Counting the grid by hand, exactly 1 of the 10 rows carries a quoted passage and a source;
-        the other 9 read \"Nothing shown for this yet — worth confirming in the interview.\" with
-        the tag \"NO SOURCE YET\".
-        Compute \"evidenced\" once as the number of requirement rows that have a non-empty evidence
-        quote AND a source, and feed that single value to all six labels.
-        Done when: All six labels on one candidate page state the same number, and it equals the number of grid rows showing a
-        quote and a source"
+        On the candidate page the \"How the number is made up\" panel publishes percentages that
+        cannot be derived from anything shown, and are inconsistent between candidates.
+        Beatriz Costa: 4 preferred requirements, all marked \"Partial\" → \"Nice-to-have signal 62.5%\".
+        Sofia Marques: 4 preferred requirements, all marked \"Partial\" → \"Nice-to-have signal 87.5%\".
+        Identical displayed inputs, different published outputs. Beatriz's \"Must-have coverage
+        91.7%\" is claimed from 6 requirements all marked \"Partial\" with zero sources.
+        The panel also totals to \"87.5 points\" directly beneath a score of 88, under the sentence
+        \"The three parts add up to the score shown above.\"
+        Publish the actual per-requirement weight the scorer used for each row so the components
+        sum to the displayed score, and print the total unrounded or round it the same way as the
+        score.
+        Done when: Adding the three published components on any candidate gives exactly the score shown above them, and two
+        candidates with the same statuses show the same percentages."
         
         
         
