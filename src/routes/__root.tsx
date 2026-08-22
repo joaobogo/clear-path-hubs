@@ -147,23 +147,15 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT DATA. Reply with the SQL you ran and the rows affected for each item. If your reply contains no SQL, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Three test records are live in organisation 0c86fa1b-94ee-46b8-9a11-a42cee39bfed:
-          {"\n"}
-            1. A pending team invitation to qa-test-ignore@demo.taasflow.com, role "Hiring manager", shown on /client/account?tab=team
-          {"\n"}
-            2. A conversation titled "History Integrity Test", shown on /client/conversations under the Account filter
-          {"\n"}
-            3. The organisation's Headquarters field, currently "[QA test - ignore] Lisbon" — set it to "Lisbon, Portugal"
-          {"\n"}
-            4. A message whose entire body is "——" in the Beatriz Costa conversation
+          Test records have twice reached a client-facing workspace and survived an audit each time.
           {"\n\n"}
-          Delete items 1, 2 and 4, and update item 3.
+          Add a validation guard on role, conversation, candidate and invitation creation that rejects any record whose name, title or email matches /\b(qa|test|ignore|browser-test|disregard)\b/i, unless the organisation is explicitly flagged as a seed or fixture organisation. Log every rejection.
           {"\n\n"}
-          PROVE IT: reload /client/account?tab=team, /client/conversations and the company profile, and tell me what each now shows."
+          PROVE IT: try to create a role titled "QA test role" in the Northwind organisation and paste the error. Then confirm the same title still succeeds in a fixture organisation."
         </div>
         {children}
         <Scripts />
