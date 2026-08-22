@@ -151,11 +151,11 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          The Sort control on /client/candidates renders completely blank on load. The active sort is sort=score, but "score" is not one of the four options it offers: Recently delivered, Must-have coverage, Stage, Candidate name. Once a user changes the sort there is no way to get back to score order.
+          Clicking "Download CV" on a candidate page produces no toast, no modal and no visible change. "Download 3 CVs (ZIP)" on the same product shows a modal listing each filename plus a toast.
           {"\n\n"}
-          Add "Best fit first" as the first option, mapped to sort=score, and make it the selected value when sort=score.
+          Reuse the confirmation component from the ZIP download flow for the single CV download.
           {"\n\n"}
-          PROVE IT: hard-refresh /client/candidates and tell me the text now shown in the Sort control. Then change the sort, select "Best fit first", and confirm the list returns to 88, 79, 78 at the top."
+          PROVE IT: click Download CV on a candidate page and paste the confirmation text that now appears."
         </div>
         {children}
         <Scripts />
