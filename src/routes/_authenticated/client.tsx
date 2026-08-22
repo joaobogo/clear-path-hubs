@@ -2342,19 +2342,17 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.5   Fix comparison must-have coverage reading 0% for everyone
+        TEXTO DO USUÁRIO: "2.6   Derive Verified strengths from the strengths list
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison modal the \"Must-have coverage\" row reads \"0% (0/6)\" for all
-        three candidates, and the \"Must-haves met\" ranking axis reads 0% for all three — yet the
-        OBSERVATIONS panel in the same modal reads
-        \"Requirement coverage differs — Sofia Marques has the highest coverage (67%).\"
-        and Sofia's own profile shows \"Must-have coverage (60% of the score) 66.7%\".
-        The comparison row counts only fully \"Met\" requirements while the breakdown gives partial
-        credit. Make the comparison use the same calculation as the candidate page, so the axis
-        can actually rank the candidates.
-        Done when: Must-have coverage differs between candidates in the comparison and matches the figure on each candidate's
-        own page"
+        In the candidate comparison modal the \"Verified strengths\" ranking axis and the
+        \"Strengths\" summary row disagree for all three candidates:
+        Tiago Almeida  — axis \"1\", Strengths row \"None recorded.\"   (0 bullets)
+        Sofia Marques  — axis \"0\", Strengths row has 1 bullet
+        Miguel Torres  — axis \"3\", Strengths row has 1 bullet
+        Compute the axis number as the length of the same array that renders the Strengths
+        bullets.
+        Done when: For every candidate, the \"Verified strengths\" number equals the number of bullets in their Strengths row"
         
         
         
