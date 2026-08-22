@@ -2342,19 +2342,16 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "1.5   Make the three interview-confirmation counts agree
+        TEXTO DO USUÁRIO: "1.6   Fix the Account page contradicting itself on hires
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The number of interviews awaiting a confirmed time is stated three ways:
-        /client/positions — the amber \"Action required\" banner and the role row both read
-        \"5 to confirm\", and the row subtitle reads \"... 5 interviews to confirm ...\"
-        /client — the \"What needs you\" queue contains 4 rows reading \"Confirm an interview time\"
-        /client/interviews — the heading reads \"Waiting on you to confirm a time\" with
-        \"1 interview\" (Miguel Torres only)
-        Create one query for interviews that have no confirmed slot and have all three surfaces
-        use it. The Interviews page is the correct definition — match the other two to it.
-        Done when: The Roles banner, the Overview queue and the Interviews page all state the same number of interviews awaiting
-        confirmation."
+        On /client/account the tile reads:
+        \"Hires closed  0   0 in the last 90 days\"
+        and roughly 400px below it, inside \"Workspace details\" > \"Roles and where they are\", the
+        same role reads \"1 hire confirmed, 2 offers out, 3 candidates shortlisted, ...\" with a
+        chip reading \"1 hired\".
+        Point the \"Hires closed\" tile at the same query the panel below it uses.
+        Done when: The \"Hires closed\" tile and the \"Roles and where they are\" panel state the same number on one screen."
         
         
         
