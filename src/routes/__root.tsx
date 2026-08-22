@@ -151,17 +151,11 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          One pipeline stage carries up to five different names across the client workspace:
-          {"\n"}
-            Interviewing: "INTERVIEWING" (tile), "In interviews" (list cell), "INTERVIEW PROCESS" (board column), "Interview process" (filter), "In Interviews" (Insights)
-          {"\n"}
-            Offer:        "OFFERS", "At offer", "OFFER", "Offer", "At Offer"
-          {"\n"}
-            New:          "AWAITING YOUR REVIEW", "New — awaiting review"
+          Six date formats are in use across the client workspace: "12 Aug 2026", "09 Aug 2026" with a leading zero, "12 Aug" with no year, "1 Sept 2026" with a four-letter month, "08/03" on the Insights chart axes, and "2018-09 to 2021-04" inside comparison evidence text.
           {"\n\n"}
-          Create one label constant per stage and import it into the Candidates tiles, the list cells, the board columns, the stage filter and the Insights time-in-stage panel. Use sentence case in the constant and let CSS handle any uppercase display.
+          Create one date helper formatting as "D MMM YYYY" with three-letter months and no leading zero, one date-time helper as "D MMM YYYY, HH:mm", and one relative helper. Replace every call site, including the Insights chart axis labels.
           {"\n\n"}
-          PROVE IT: open /client/candidates in both list and board view, the stage filter, and /client/executive, and tell me the label used for the interviewing stage in each. All must be identical."
+          PROVE IT: open /client, /client/positions, /client/offers and /client/executive and paste one date from each. All four must use the same format, and no month/day date may remain."
         </div>
         {children}
         <Scripts />
