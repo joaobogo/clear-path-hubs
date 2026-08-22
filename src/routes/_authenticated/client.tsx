@@ -2342,32 +2342,33 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P2-3  Remove \"1 of 1 roles filled\" from the Overview banner
+        TEXTO DO USUÁRIO: "P2-5  One query for interviews awaiting a confirmed time
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client (the client Overview) the amber banner at the foot of the
-        \"What needs you\" list contains, in a single row:
-            2 items overdue, 1 role at risk.        1 of 1 roles filled
-            1 open role    0 awaiting your decision    0 roles with no shortlist yet
-        \"1 of 1 roles filled\" and \"1 open role\" contradict each other: if the only role
-        is filled, none are open.
-        Delete the \"1 of 1 roles filled\" label. The three counts beside it already carry
-        the meaning and are correct.
-        Done when: the Overview banner no longer contains the text \"roles filled\", and
-        still shows \"1 open role\", \"0 awaiting your decision\" and
-        \"0 roles with no shortlist yet\".
-        P2-4  Open roles by region must use the open-roles query
+        Three pages give three different counts of interviews awaiting a confirmed
+        time, for the same client.
+        /client/positions shows an \"Action required\" banner reading \"5 to confirm\" and a
+        table summary reading \"5 interviews to confirm\". /client/account repeats
+        \"5 interviews to confirm\". /client (Overview) lists four rows reading
+        \"Confirm an interview time\". /client/interviews shows
+        \"Waiting on you to confirm a time\" with a right-aligned count of \"1 interview\"
+        and a single card for Miguel Torres.
+        The Interviews page is correct — it lists the actual interview records. Point the
+        Roles banner, the Roles table summary, the Account panel and the Overview task
+        list at the same query the Interviews page uses.
+        Done when: the Roles banner, the Roles summary sentence, the Account panel, the
+        Overview task list and the Interviews page all show the same number.
+        P2-6  Message count must follow the active filter
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/executive (the Insights page) two panels on the same screen
-        disagree about how many roles are open.
-        The \"Open roles by region\" panel shows:
-            Portugal        0 open · 1 filled · 1 total
-        The \"Candidates in play by team\" table directly below it shows an Engineering
-        row with OPEN ROLES = 1. The Roles page, the Overview and the Account page all
-        say 1 open role as well.
-        The region panel is the outlier. Point it at the same open-roles query the
-        \"Candidates in play by team\" table uses.
-        Done when: \"Open roles by region\" reads \"1 open · 0 filled · 1 total\" for
-        Portugal, matching the table below it and the Roles page"
+        On /client/conversations the subtitle reads \"6 conversations\". It stays at
+        \"6 conversations\" no matter which filter tab is active:
+            Roles filter    — 1 thread listed, subtitle still \"6 conversations\"
+            Account filter  — 1 thread listed, subtitle still \"6 conversations\"
+            Unread filter   — 0 threads and \"You're all caught up\", still \"6 conversations\"
+        Bind the subtitle to the filtered result length. The Candidates page already
+        does this correctly — it reads \"3 of 10 candidates\" when a stage filter is on —
+        so match that pattern: \"1 of 6 conversations\".
+        Done when: clicking the Roles filter changes the subtitle to
+        \"1 of 6 conversations\", and clicking All returns it to \"6 conversations\""
         
         
         
