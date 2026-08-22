@@ -2342,41 +2342,32 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "Phase 2 — Give every number one answer
-        Six of twelve tracked facts currently have more than one answer. P2-1 is the root cause of four of them — do it first.
-        Ordering dependency. P2-1 must run before P2-2, P2-3 and P2-4. Fixing the underlying hire record first means the count fixes
-        have correct data to read.
-        P2-1  A declined offer must not leave the candidate \"Hired\"
+        TEXTO DO USUÁRIO: "P2-3  Remove \"1 of 1 roles filled\" from the Overview banner
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Candidate Beatriz Costa (id fe0e24c0-b551-4762-b9dd-cc53381beb50) shows
-        contradictory outcomes.
-        On /client/candidates her STAGE cell reads \"Hired\". On /client/offers she is in
-        the CLOSED LOST column with \"Closed lost 15 Aug 2026\" and the close reason
-        \"Candidate declined\". On her own Activity tab a single timeline row reads:
-            Hired · 13 Aug 2026, 00:16 · Closed lost
-        Make the offer outcome the single source of truth for candidate stage: when an
-        offer is closed lost or declined, the candidate's stage must become
-        \"Not moving forward\", not \"Hired\". Then correct the existing record for
-        Beatriz Costa.
-        Done when: Beatriz Costa reads \"Not moving forward\" on /client/candidates, sits
-        in the NOT MOVING FORWARD board column, and her Activity timeline no longer
-        contains a row saying both \"Hired\" and \"Closed lost\".
-        P2-2  Derive every hire count from confirmed offers
+        On /client (the client Overview) the amber banner at the foot of the
+        \"What needs you\" list contains, in a single row:
+            2 items overdue, 1 role at risk.        1 of 1 roles filled
+            1 open role    0 awaiting your decision    0 roles with no shortlist yet
+        \"1 of 1 roles filled\" and \"1 open role\" contradict each other: if the only role
+        is filled, none are open.
+        Delete the \"1 of 1 roles filled\" label. The three counts beside it already carry
+        the meaning and are correct.
+        Done when: the Overview banner no longer contains the text \"roles filled\", and
+        still shows \"1 open role\", \"0 awaiting your decision\" and
+        \"0 roles with no shortlist yet\".
+        P2-4  Open roles by region must use the open-roles query
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        \"Number of hires\" currently has two answers depending on which page you open.
-        Reads 1: the Candidates HIRES tile, the Candidates board HIRED column, the Roles
-        HIRES tile, the Roles table HIRES column, the Roles summary sentence
-        \"1 hire confirmed, 2 offers out...\", the Overview \"1 of 1 roles filled\" label,
-        the Account panel badge \"1 hired\", the Insights tiles \"HIRES · 30D / 90D / YTD\",
-        and the Insights table HIRED column.
-        Reads 0: the Offers tile \"HIRES CONFIRMED\", the Offers board \"HIRE CONFIRMED\"
-        column, the Offers footer \"Hires by owner: No hires yet.\", and the Account tile
-        \"Hires closed\".
-        The Offers figures are the correct ones. Make every hire count in the client
-        workspace read from the same source the Offers page uses — confirmed offers —
-        and delete the separate candidate-stage hire counter.
-        Done when: every one of the fourteen places listed above shows the same number,
-        and changing an offer to hire-confirmed moves all of them together"
+        On /client/executive (the Insights page) two panels on the same screen
+        disagree about how many roles are open.
+        The \"Open roles by region\" panel shows:
+            Portugal        0 open · 1 filled · 1 total
+        The \"Candidates in play by team\" table directly below it shows an Engineering
+        row with OPEN ROLES = 1. The Roles page, the Overview and the Account page all
+        say 1 open role as well.
+        The region panel is the outlier. Point it at the same open-roles query the
+        \"Candidates in play by team\" table uses.
+        Done when: \"Open roles by region\" reads \"1 open · 0 filled · 1 total\" for
+        Portugal, matching the table below it and the Roles page"
         
         
         
