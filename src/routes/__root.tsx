@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-In the comparison, Tiago Almeida shows "Verified strengths 1" while his Strengths row reads "None recorded." Sofia Marques shows 0 with one bullet listed. Miguel Torres shows 3 with one bullet.
+The list repeats itself. On one candidate, "Only partial evidence for required: 5+ years building production React and TypeScript applications" appears three times. On another, two bullets repeat and the final bullet is just a requirement name with no sentence.
 
-Render the number as the length of the same strengths array the row prints.
+De-duplicate by requirement id before rendering and drop entries where the sentence template was not applied.
 
-Done when: For every candidate the Verified strengths number equals the number of bullets in that candidate's Strengths row."`}</div>
+Done when: Each reason appears once and every bullet is a complete sentence."`}</div>
         <Scripts />
       </body>
     </html>
