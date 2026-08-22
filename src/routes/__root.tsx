@@ -147,17 +147,19 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT DATA. Reply with the SQL you ran and the number of rows affected. If your reply contains no SQL, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Searching the global search for "Northwind Talent" — the client's own company name — returns nothing at all: no results and no message, just a bare input. A user cannot tell whether search is broken or empty.
+          Two test roles are live in organisation 0c86fa1b-94ee-46b8-9a11-a42cee39bfed:
+          {"\n"}
+            540fcee9-f7ac-42f7-a489-6d07602866e3  "[QA test - ignore] Audit Role - delete me"   status archived
+          {"\n"}
+            b0b25e40-38d9-4371-b4f9-08680144d25f  "[QA test — ignore] Audit 22 Aug — delete me" status draft
           {"\n\n"}
-          Separately, searching "engineer" returns only the role and none of the ten candidates, although nine of them have "Engineer" in their title.
+          Delete both rows and anything referencing them. Do not soft-delete or archive — archived roles are still returned by global search.
           {"\n\n"}
-          Render "No results for {"{"}query{"}"}" when a query returns zero matches, and add the candidate title and headline fields to the search index alongside the candidate name.
-          {"\n\n"}
-          PROVE IT: search for "Northwind Talent" and paste what now appears. Then search "engineer" and tell me how many candidates come back."
+          PROVE IT: run SELECT id, title, status FROM positions WHERE organization_id = '0c86fa1b-94ee-46b8-9a11-a42cee39bfed' and paste the result. Only "Senior Full-Stack Engineer" may remain."
         </div>
         {children}
         <Scripts />
