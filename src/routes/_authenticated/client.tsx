@@ -2342,17 +2342,32 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.13   Show a skeleton, not an em-dash, while the Offers tiles load
-        MEDIUM
+        TEXTO DO USUÁRIO: "Phase 4 — Language a recruiter would use
+        Fourteen prompts removing internal engineering vocabulary. Mostly string changes; very high perceived-quality
+        return per hour.
+        4.1   Replace the setup wizard's internal step names
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/offers the four headline tiles (OPEN OFFERS, HIRES CONFIRMED, ACCEPTANCE RATE,
-        AVG SALARY) render as \"—\" for more than five seconds after the page opens, then resolve to
-        2 / 0 / 0% / Not enough data. The em-dash is this product's own symbol for \"no data\", so
-        during those five seconds the page states something false.
-        Render a loading skeleton for the tile values while the query is in flight, and reserve
-        \"—\" for genuinely absent data.
-        Done when: Opening /client/offers shows skeleton placeholders until the values arrive; no tile ever displays \"—\" while data is
-        loading"
+        On /client/onboarding the ten setup steps are titled with internal engineering language.
+        Replace these exact titles:
+        \"Review the compiled role blueprint\"  -> \"Review your role brief\"
+        \"Configure scoring weights\"           -> \"Set what matters most\"
+        \"Choose agent operating level\"        
+        \"Set approval and oversight gates\"    
+        \"Start the first run\"                 
+        \"Enter the Decision Workspace\"        -> \"Choose how much we do for you\"-> \"Decide who signs off\"-> \"Start the search\"-> \"Open your shortlist\"
+        Also replace this callout on step 2, verbatim:
+        \"The title, location and work model become the role record everything else attaches to —
+        blueprint, rubric, runs and decisions.\"
+        with: \"The title, location and work model shape everything we do next — the brief, the
+        scoring, and the candidates we bring you.\"
+        And on step 1, replace:
+        \"Your workspace scopes every record. Roles, candidates, evidence and audit history are
+        isolated to it at the database level.\"
+        with: \"Everything in this workspace — roles, candidates and evidence — belongs only to your
+        company.\"
+        Done when: None of the strings \"blueprint\", \"rubric\", \"runs and decisions\", \"agent operating level\", \"oversight gates\",
+        \"Decision Workspace\" or \"database level\" appears anywhere under /client.
+        4.2   Remove the publish gate wording from the New role dialo"
         
         
         
