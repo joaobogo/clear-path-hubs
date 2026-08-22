@@ -151,7 +151,7 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          After creating a role, the editor at /client/positions/{id}/edit offers only a "Cancel" control. There is no delete, archive or undo, so a role created by mistake can never be removed.
+          After creating a role, the editor at /client/positions/{"{"}id{"}"}/edit offers only a "Cancel" control. There is no delete, archive or undo, so a role created by mistake can never be removed.
           {"\n\n"}
           Add Delete and Archive controls to the role editor header, with a confirmation step on Delete.
           {"\n\n"}
