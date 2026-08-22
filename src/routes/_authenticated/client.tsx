@@ -2342,25 +2342,31 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "6.13   Stop showing record timestamps as interview times
+        TEXTO DO USUÁRIO: "6.15   Demote the primary action on a not-recommended candidate
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/interviews two confirmed interviews render at 00:16:
-        \"Confirmed  Inês Lopes  Wed, 19 Aug 2026, 00:16 (America/Sao_Paulo, GMT-3)\"
-        \"Confirmed  Carla Nunes  Mon, 17 Aug 2026, 00:16 (America/Sao_Paulo, GMT-3)\"
-        The candidate page also shows \"Last updated 13 Aug 2026, 00:16\". These are record-creation
-        timestamps being displayed as meeting times.
-        Display the interview's scheduled slot. If no slot is stored, show \"Time not recorded\" rather
-        than falling back to created_at.
+        On /client/candidates the primary blue button ignores the fit label:
+        Diogo Silva, score 42, fit \"Not recommended\", stage \"In interviews\" -{"->"} \"Make offer\"
+        Rui Fernandes, score 47, fit \"Not recommended\", stage \"At offer\"   -{"->"} \"Mark hired\"
+        Keep the stage logic but render the button in the secondary style when fit is
+        \"Not recommended\", so the product does not urge an action it has argued against.
+        Done when: No row whose fit reads \"Not recommended\" shows a primary-styled \"Make offer\" or \"Mark hired\" button.
+        6.16   Fix the Show evidence toggle label
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On the candidate page the evidence expander keeps the label \"Show evidence (1)\" after it has
+        been expanded — aria-expanded flips to true but the text does not change.
+        Swap the label to \"Hide evidence\" when expanded.
+        Done when: Expanding an evidence row changes its button label to \"Hide evidence\".
+        TaaSFlow fix prompts · 21 August 2026
         LOW
-        Done when: No interview on /client/interviews displays a time between 00:00 and 06:00 unless it was genuinely scheduled
-        then.
-        6.14   Fix the cancelled interview still advertising a slot
+        LOW
+        LOW
+        Page 31 of 32
+        6.17   Use one name for the CV source
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/interviews the Tiago Almeida row renders the status chip \"Cancelled\" twice, and
-        beneath it the line \"1 time with the candidate — first option tomorrow\".
-        Render the status chip once, and suppress the proposed-slot line when the status is
-        cancelled.
-        Done when: A cancelled interview shows one \"Cancelled\" chip and no upcoming slot text"
+        On the candidate page the same evidence source is labelled \"Curriculum Vitae\" in the expanded
+        evidence row and \"CV\" in the \"Why this candidate\" grid.
+        Use \"CV\" in both.
+        Done when: No candidate page contains the string \"Curriculum Vitae\""
         
         
         
