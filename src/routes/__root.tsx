@@ -147,15 +147,47 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and every string you replaced. If your reply contains no file paths, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          Test records have twice reached a client-facing workspace and survived an audit each time.
+          Replace these client-facing strings across the whole client workspace. Search for each one literally:
           {"\n\n"}
-          Add a validation guard on role, conversation, candidate and invitation creation that rejects any record whose name, title or email matches /\b(qa|test|ignore|browser-test|disregard)\b/i, unless the organisation is explicitly flagged as a seed or fixture organisation. Log every rejection.
+            "Review the compiled role blueprint"      -> "Review your role brief"
+          {"\n"}
+            "Configure scoring weights"               -> "Set what matters most"
+          {"\n"}
+            "Choose agent operating level"            -> "Choose how much we do for you"
+          {"\n"}
+            "Set approval and oversight gates"        -> "Set who approves what"
+          {"\n"}
+            "Start the first run"                     -> "Start the search"
+          {"\n"}
+            "Enter the Decision Workspace"            -> "Go to your candidates"
+          {"\n"}
+            "blueprint, rubric, runs and decisions"   -> "everything else attaches to"
+          {"\n"}
+            "Only partial evidence for required:"     -> "We found partial evidence for this — worth confirming."
+          {"\n"}
+            "Verify missing or partial evidence."     -> "We found no direct evidence for this."
+          {"\n"}
+            "Unicorn only (95+)"                      -> remove the control entirely
+          {"\n"}
+            "Silver medalist" / "Silver medalists"    -> "Strong runners-up from past roles"
+          {"\n"}
+            "Talent memory" / "TALENT MEMORY"         -> "Keep for future roles"
+          {"\n"}
+            "publish gate"                            -> "review"
+          {"\n"}
+            "Candidate profile & gates"               -> "Candidate profile & requirements"
+          {"\n"}
+            "Disqualifiers / critical gates"          -> "Dealbreakers"
+          {"\n"}
+            "Captured at intake"                      -> "From your role brief"
+          {"\n"}
+            "Shortlisted By Your Team"                -> "Shortlisted"
           {"\n\n"}
-          PROVE IT: try to create a role titled "QA test role" in the Northwind organisation and paste the error. Then confirm the same title still succeeds in a fixture organisation."
+          PROVE IT: search the repository for each original string and confirm zero hits in client-facing code. Paste the search output."
         </div>
         {children}
         <Scripts />
