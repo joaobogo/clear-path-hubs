@@ -2342,20 +2342,13 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.9   Show the score in the candidate page header for every candidate
+        TEXTO DO USUÁRIO: "2.10   State the scale next to the score
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates/449f7f61-d367-4919-a382-2017df43076c (Sofia Marques) the header
-        reads \"Sofia Marques   Strong   · 0/10 evidenced\" with no numeric score at all. Her score
-        of 78 is shown on the /client/candidates list, but on her own page the number first
-        appears about 2,000px down inside \"Score breakdown\".
-        On Beatriz Costa's page the header does show \"88\".
-        The difference is that Sofia carries the banner \"Assessment being finalised — evidence
-        pending\".
-        Always render the numeric score in the header. If the assessment is still being reviewed,
-        show the number with a \"provisional\" qualifier rather than hiding it.
-        HIGH
-        Done when: Every candidate profile shows a numeric score beside the name on the first screen, matching the score on the
-        candidates list"
+        On the candidate page the header shows the score as a bare number, e.g. \"88\", followed
+        by \"Top · 0/10 evidenced\". The scale is never stated there — \"88/100\" only appears about
+        3,500px down inside the \"Why this candidate\" panel.
+        Render the score as \"88/100\" in the header chip.
+        Done when: The candidate page header shows the score out of 100 without scrolling"
         
         
         
