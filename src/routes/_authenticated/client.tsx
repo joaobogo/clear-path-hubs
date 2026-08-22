@@ -2342,14 +2342,21 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "0.6   Remove the junk message left in the Beatriz Costa thread
+        TEXTO DO USUÁRIO: "1.1   One candidate must not be both Hired and Closed lost
+        BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In conversation 7c1f0a10-0000-4000-8000-000000000001 (\"Beatriz Costa — interview
-        scheduling\") the newest message is from the client user and its entire body is the two
-        characters:
-        ——
-        Delete that single message row.
-        Done when: The Beatriz Costa thread's newest message is the one dated 12 Aug 2026 from James Cameron"
+        Beatriz Costa appears with two opposite outcomes.
+        On /client/candidates her STAGE cell reads \"Hired\"; the board places her in the HIRED
+        column; her profile chip reads \"Hired\"; her STAGE ACTIONS panel reads \"Candidate marked
+        as hired.\"; her Activity tab reads \"Offer accepted — start date agreed.\" dated
+        13 Aug 2026.
+        On /client/offers the same person reads \"Offer closed · 15 Aug 2026\", \"Closed lost\",
+        \"Candidate declined\", and sits in the CLOSED LOST board column.
+        Make the offer record the single source of truth for a candidate's outcome. Derive the
+        candidate stage from the offer state instead of storing a separate stage value, and
+        remove the write path that set her stage to Hired independently.
+        Done when: Beatriz Costa reads the same outcome on /client/candidates, the candidates board, her profile, her Activity tab
+        and /client/offers."
         
         
         
