@@ -2342,35 +2342,20 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P4-6  Confirm both CV downloads
+        TEXTO DO USUÁRIO: "P4-8  Regenerate demo CVs with the profile's email address
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate profile the \"Download CV\" button, and on /client/candidates
-        the \"Download N CVs (ZIP)\" button, produce no feedback at all when clicked —
-        no toast, no spinner, no change of label.
-        The same page already has the right pattern: \"Export PDF\" in the candidate
-        comparison shows a toast reading \"Comparison PDF downloaded\" plus a modal
-        listing each candidate as \"Added to PDF\" and a count reading \"4 added\".
-        Apply that confirmation pattern to both CV download buttons.
-        Done when: clicking \"Download CV\" shows a confirmation naming the file, and
-        clicking \"Download N CVs (ZIP)\" shows a confirmation naming the number of CVs
-        included.
-        P4-7  Fix the impossible order in the activity timeline
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate profile Activity tab, the journey timeline lists events in an
-        impossible order. For Beatriz Costa:
-            Applied                    12 Aug 2026, 17:32
-            Hired                      13 Aug 2026, 00:16
-            Shortlisted by your team   16 Aug 2026, 02:16
-            Interviewed                16 Aug 2026, 02:16
-        She is shown as hired three days before she was shortlisted and interviewed.
-        Separately the \"Your team's decisions and feedback\" section records
-        \"Shortlisted · 09 Aug 2026, 17:38\" — three days before she applied. And the
-        row \"Scored · 13 Aug 2026, 00:16 · Score 88 · top\" is printed twice.
-        Sort the timeline strictly ascending by event timestamp, de-duplicate identical
-        (event type, timestamp) pairs, and correct the seeded event dates so decisions
-        come after the application.
-        Done when: every event on the Activity tab is in ascending time order, no event
-        appears twice at the same timestamp, and no decision predates the application"
+        The CV document for a candidate shows a different email address from the
+        profile page beside it, on a TaaSFlow-owned domain.
+        Open /client/candidates/fe0e24c0-b551-4762-b9dd-cc53381beb50 and click
+        \"Preview CV\". The CV header reads:
+            Lisbon, Portugal · beatriz.costa@demo.taasflow.com · +351 912 000 105
+        The Contact panel on the same screen reads:
+            Email  beatriz.costa@example.com
+        Regenerate the demo CV documents for this organisation so the address in each
+        CV matches the address on the candidate's profile. Then add a check that refuses
+        to publish a CV containing \"@taasflow.com\" or \"@demo.taasflow.com\".
+        Done when: the CV preview for Beatriz Costa shows beatriz.costa@example.com,
+        and no CV in the workspace contains a taasflow.com address."
         
         
         
