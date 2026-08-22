@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The comparison summary row reads "Must-have coverage 0% (0/6)" for all four candidates while the Observations block on the same screen reads "Beatriz Costa has the highest coverage (92%)". Her profile says 91.7%.
+The breakdown says "Must-have coverage 91.7% x 60% = 55 points". Nothing on the page produces 91.7%: it states 6 must-haves, 0 met, 10 partial, and "6 of 6 evidenced".
 
-Make the comparison use the same weighted calculation the profile uses, so partially met requirements contribute. Run R11 first.
+Render each percentage with the counts it comes from, as "91.7% (11 of 12 weighted points)", using the numbers the requirement panel shows.
 
-Done when: Each candidate shows a different coverage percentage and Beatriz Costa's matches her profile."`}</div>
+Done when: Every percentage in the score breakdown is followed by the counts that produce it, and those counts appear elsewhere on the same page."`}</div>
         <Scripts />
       </body>
     </html>
