@@ -2342,39 +2342,41 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P1-3  Guard the offer expected-response-date endpoint
+        TEXTO DO USUÁRIO: "Phase 2 — Give every number one answer
+        Six of twelve tracked facts currently have more than one answer. P2-1 is the root cause of four of them — do it first.
+        Ordering dependency. P2-1 must run before P2-2, P2-3 and P2-4. Fixing the underlying hire record first means the count fixes
+        have correct data to read.
+        P2-1  A declined offer must not leave the candidate \"Hired\"
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/offers, in the \"Who owes what\" panel, each open offer has a
-        \"Set a date\" control that opens a modal titled \"Expected response date\" with a
-        \"Save date\" button.
-        Under support impersonation (?preview=client_admin), with the banner reading
-        \"Client actions are disabled.\", clicking \"Save date\" writes successfully: a
-        toast reads \"Response date recorded\", the row changes to
-        \"25 Aug 2026 — Response expected in 4 days\", and the value survives a full
-        page reload.
-        Apply the same server-side support-view check that /client/positions/new uses
-        to the offer expected-response-date endpoint.
-        Done when: \"Save date\" under ?preview=client_admin leaves the row reading
-        \"No response date agreed\" after a reload, and shows a refusal message instead of
-        \"Response date recorded\".
-        P1-4  Keep admin notifications out of the client bell
+        Candidate Beatriz Costa (id fe0e24c0-b551-4762-b9dd-cc53381beb50) shows
+        contradictory outcomes.
+        On /client/candidates her STAGE cell reads \"Hired\". On /client/offers she is in
+        the CLOSED LOST column with \"Closed lost 15 Aug 2026\" and the close reason
+        \"Candidate declined\". On her own Activity tab a single timeline row reads:
+            Hired · 13 Aug 2026, 00:16 · Closed lost
+        Make the offer outcome the single source of truth for candidate stage: when an
+        offer is closed lost or declined, the candidate's stage must become
+        \"Not moving forward\", not \"Hired\". Then correct the existing record for
+        Beatriz Costa.
+        Done when: Beatriz Costa reads \"Not moving forward\" on /client/candidates, sits
+        in the NOT MOVING FORWARD board column, and her Activity timeline no longer
+        contains a row saying both \"Hired\" and \"Closed lost\".
+        P2-2  Derive every hire count from confirmed offers
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The notification bell inside the client workspace is rendering TaaSFlow's
-        internal staff notification feed.
-        Open any client page with ?preview=client_admin and click the bell. The panel
-        contains 26 notification cards whose links point at /admin routes — 21 to
-        /admin/candidates, one to /admin/interviews, and three to specific admin records
-        such as /admin/candidates/8a11cbe5-d916-487f-a804-863a6dc57c94. Card titles
-        include:
-            CV parsing failed — A CV could not be parsed and needs...
-            +2 more in approvals
-        and the actor line on every card reads \"Demo Client Admin\".
-        Filter the client notification query by audience so only client-facing
-        notifications are returned, and as a backstop drop any notification whose target
-        route starts with \"/admin\".
-        Done when: no notification card in the client workspace links to a /admin
-        route, and the strings \"CV parsing failed\" and \"in approvals\" do not appear in
-        the client bell"
+        \"Number of hires\" currently has two answers depending on which page you open.
+        Reads 1: the Candidates HIRES tile, the Candidates board HIRED column, the Roles
+        HIRES tile, the Roles table HIRES column, the Roles summary sentence
+        \"1 hire confirmed, 2 offers out...\", the Overview \"1 of 1 roles filled\" label,
+        the Account panel badge \"1 hired\", the Insights tiles \"HIRES · 30D / 90D / YTD\",
+        and the Insights table HIRED column.
+        Reads 0: the Offers tile \"HIRES CONFIRMED\", the Offers board \"HIRE CONFIRMED\"
+        column, the Offers footer \"Hires by owner: No hires yet.\", and the Account tile
+        \"Hires closed\".
+        The Offers figures are the correct ones. Make every hire count in the client
+        workspace read from the same source the Offers page uses — confirmed offers —
+        and delete the separate candidate-stage hire counter.
+        Done when: every one of the fourteen places listed above shows the same number,
+        and changing an offer to hire-confirmed moves all of them together"
         
         
         
