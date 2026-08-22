@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The candidate Compensation panel says "Offers you've made for this role: EUR 64,000 - EUR 68,000". The 68,000 belongs to an offer marked Closed lost. The Insights page already excludes closed-lost offers from the same figure.
+Global search returns nothing for every query. "engineer", a candidate's full name, the role title and the client's own company name all return "No matches". The in-page Candidates filter works: typing "Sofia" there returns 1 of 10.
 
-Filter this panel to open offers only and say how many open offers it is based on.
+Point the global search at the same candidate, role and conversation queries the in-page filters use, scoped to the current organisation.
 
-Done when: The panel shows a range built only from open offers and its caption names the number used."`}</div>
+Done when: Searching a candidate name, a role title, the word engineer and the client company name each return results."`}</div>
         <Scripts />
       </body>
     </html>
