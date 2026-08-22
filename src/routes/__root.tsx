@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The Account tile reads "Hires closed 0" while the panel directly below reads "1 hire confirmed" with a badge "1 hired".
+The Overview "This week" panel reads "0 Interviews held" for 15-22 Aug, while the Interviews page lists interviews on 17 Aug and 19 Aug inside that window.
 
-Have both read the hires selector from R02. Run R02 first.
+Count an interview as held when its scheduled time is inside the window and in the past, instead of requiring a separate held event.
 
-Done when: The Account tile figure and the badge in the panel below it show the same number."`}</div>
+Done when: The Overview "This week" panel shows 2 interviews held for that window."`}</div>
         <Scripts />
       </body>
     </html>
