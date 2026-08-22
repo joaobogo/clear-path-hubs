@@ -2342,22 +2342,21 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "6.5   Remove p90 from Time in stage
+        TEXTO DO USUÁRIO: "6.7   Show one hires tile, not three
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/executive the \"Time in stage\" panel prints p90 alongside the average, and on all
-        three stages they are identical: \"At Offer 2 candidates · avg 5.7d · p90 5.7d\",
-        \"Shortlisted By Your Team 3 candidates · avg 1.7d · p90 1.7d\", \"In Interviews 3 candidates ·
-        avg 1.7d · p90 1.7d\". A 90th percentile over two or three candidates carries no information.
-        Hide p90 unless the stage has at least ten candidates.
-        Done when: Time in stage shows only the average when a stage has fewer than ten candidates.
-        6.6   Hide the Unassigned row and explain the BLOCKED badge
+        On /client/executive three tiles render the same number: \"HIRES · 30D 1\", \"HIRES · 90D 1\",
+        \"HIRES · YTD 1\".
+        Replace them with a single \"Hires\" tile and a period selector defaulting to 90 days.
+        Done when: The Insights page shows one hires tile.
+        6.8   Fix the thousands separator in the composer hint
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/executive the \"Candidates in play by team\" table renders an \"Unassigned\" row that
-        is all zeros and can never fill in a single-team workspace. The \"Engineering\" row shows a red
-        badge reading \"1\" in the BLOCKED column with no explanation of what is blocked.
-        Hide rows where every value is zero, and make the BLOCKED badge link to the blocked item with
-        a tooltip naming the reason.
-        Done when: The table renders only rows with data, and hovering the BLOCKED badge explains what it counts."
+        On /client/conversations/{"{id}"} the composer hint reads, verbatim:
+        \"Attach PDF, Word, Excel, PowerPoint, CSV or plain text, up to 10 MB each. Up to 4.000
+        characters.\"
+        \"4.000\" uses a European decimal point as a thousands separator in an English interface that
+        writes \"€64,000\" elsewhere.
+        Change it to \"4,000 characters\".
+        Done when: The composer hint reads \"Up to 4,000 characters.\""
         
         
         
