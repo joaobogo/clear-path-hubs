@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The list repeats itself. On one candidate, "Only partial evidence for required: 5+ years building production React and TypeScript applications" appears three times. On another, two bullets repeat and the final bullet is just a requirement name with no sentence.
+The candidate Compensation panel says "Offers you've made for this role: EUR 64,000 - EUR 68,000". The 68,000 belongs to an offer marked Closed lost. The Insights page already excludes closed-lost offers from the same figure.
 
-De-duplicate by requirement id before rendering and drop entries where the sentence template was not applied.
+Filter this panel to open offers only and say how many open offers it is based on.
 
-Done when: Each reason appears once and every bullet is a complete sentence."`}</div>
+Done when: The panel shows a range built only from open offers and its caption names the number used."`}</div>
         <Scripts />
       </body>
     </html>
