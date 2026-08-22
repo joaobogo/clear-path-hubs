@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The breakdown says "Must-have coverage 91.7% x 60% = 55 points". Nothing on the page produces 91.7%: it states 6 must-haves, 0 met, 10 partial, and "6 of 6 evidenced".
+The breakdown totals 87.5 points and then says "The three parts add up to the score shown above." The score shown is 88.
 
-Render each percentage with the counts it comes from, as "91.7% (11 of 12 weighted points)", using the numbers the requirement panel shows.
+Change it to name the rounding: "The three parts total 87.5, rounded to 88."
 
-Done when: Every percentage in the score breakdown is followed by the counts that produce it, and those counts appear elsewhere on the same page."`}</div>
+Done when: The sentence states the unrounded total and the rounded score, and is true for any candidate."`}</div>
         <Scripts />
       </body>
     </html>
