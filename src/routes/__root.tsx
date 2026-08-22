@@ -151,14 +151,11 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          The candidate score breakdown prints "The three parts add up to the score shown above." They do not.
+          In the candidate comparison modal, cells marked "Unknown" contain evidence text. Miguel Torres against "Practical experience with row-level security" shows "Unknown" with the body text "Introduced Terraform for all AWS infrastructure." Tiago Almeida against "Experience in an early-stage or founder-led team" shows "Unknown" with a quoted CV passage.
           {"\n\n"}
-          Beatriz Costa: 91.7% x 60% = 55, plus 62.5% x 20% = 12.5, plus 100% x 20% = 20. Total prints 87.5. Score prints 88.
-          Ana Ribeiro: 50 + 10 + 20 = 80. Score prints 79.
+          Derive the cell status from whether the cell has evidence: evidence present and satisfied means Met, evidence present but partial means Partially met, no evidence means Unknown. Never render Unknown on a cell that has body text.
           {"\n\n"}
-          Search the source for "add up to the score shown above". Round once, at the end: publish round(sum of the three weighted terms) as the score, and print the terms at a precision whose sum equals that published number.
-          {"\n\n"}
-          PROVE IT: open both candidates, add the three printed terms yourself, and tell me the sum and the published score for each. They must be identical."
+          PROVE IT: open the comparison for those three candidates and confirm no cell shows "Unknown" alongside evidence text."
         </div>
         {children}
         <Scripts />
