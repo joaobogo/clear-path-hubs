@@ -151,11 +151,14 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          The score breakdown prints "Must-have evidence — 6 of 6 evidenced" with the sub-label "0 quoted, 6 related", while all six of those requirements render lower on the same page as "NO SOURCE YET".
+          The candidate score breakdown prints "The three parts add up to the score shown above." They do not.
           {"\n\n"}
-          Search the source for "of 6 must-haves are quoted directly". Count a requirement as evidenced only when it has a source. Render "related" matches under a separate heading reading "Possible signals (not quoted)" with its own count.
+          Beatriz Costa: 91.7% x 60% = 55, plus 62.5% x 20% = 12.5, plus 100% x 20% = 20. Total prints 87.5. Score prints 88.
+          Ana Ribeiro: 50 + 10 + 20 = 80. Score prints 79.
           {"\n\n"}
-          PROVE IT: reload the candidate page and confirm that no requirement showing "NO SOURCE YET" is included in any count labelled "evidenced". Paste the new must-have evidence line."
+          Search the source for "add up to the score shown above". Round once, at the end: publish round(sum of the three weighted terms) as the score, and print the terms at a precision whose sum equals that published number.
+          {"\n\n"}
+          PROVE IT: open both candidates, add the three printed terms yourself, and tell me the sum and the published score for each. They must be identical."
         </div>
         {children}
         <Scripts />
