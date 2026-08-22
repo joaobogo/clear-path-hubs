@@ -2342,18 +2342,20 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.8   Build strengths only from requirements that have a source
+        TEXTO DO USUÁRIO: "2.9   Show the score in the candidate page header for every candidate
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the candidate page the panel \"What lifts the score\" reads
-        \"Demonstrated: Experience owning features end to end, from schema design to shipped UI\"
-        while that same requirement's row in the evidence grid on the same page reads
-        \"Nothing shown for this yet — worth confirming in the interview.\"  /  \"NO SOURCE YET\"
-        The identical string is also rendered in \"Why — and what to check\" at the top of the page.
-        On Sofia Marques's page a strength is claimed although she has zero quoted evidence
-        anywhere.
-        Build the strengths list only from requirement rows that have a non-empty evidence quote
-        and a source. If there are none, render the panel's empty state.
-        Done when: No requirement appears under \"What lifts the score\" while its own grid row reads \"NO SOURCE YET\""
+        On /client/candidates/449f7f61-d367-4919-a382-2017df43076c (Sofia Marques) the header
+        reads \"Sofia Marques   Strong   · 0/10 evidenced\" with no numeric score at all. Her score
+        of 78 is shown on the /client/candidates list, but on her own page the number first
+        appears about 2,000px down inside \"Score breakdown\".
+        On Beatriz Costa's page the header does show \"88\".
+        The difference is that Sofia carries the banner \"Assessment being finalised — evidence
+        pending\".
+        Always render the numeric score in the header. If the assessment is still being reviewed,
+        show the number with a \"provisional\" qualifier rather than hiding it.
+        HIGH
+        Done when: Every candidate profile shows a numeric score beside the name on the first screen, matching the score on the
+        candidates list"
         
         
         
