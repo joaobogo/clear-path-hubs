@@ -2356,7 +2356,7 @@ function ClientLayout() {
         5.12   Delete the duplicate Notifications heading
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account > Notifications the word \"Notifications\" is rendered twice with two
+        On /client/account {" > "} Notifications the word \"Notifications\" is rendered twice with two
         different subtitles:
         \"Notifications — Choose how you'd like to be notified for each workspace event.\"
         \"Notifications — Choose how each update reaches you. Everything stays visible in the
