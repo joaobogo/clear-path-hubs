@@ -151,11 +151,19 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          In the candidate comparison modal, cells marked "Unknown" contain evidence text. Miguel Torres against "Practical experience with row-level security" shows "Unknown" with the body text "Introduced Terraform for all AWS infrastructure." Tiago Almeida against "Experience in an early-stage or founder-led team" shows "Unknown" with a quoted CV passage.
+          In the comparison modal, three figures disagree about the same candidate:
+          {"\n"}
+          - "Must-haves met" axis reads 0% for Sofia Marques
+          {"\n"}
+          - "Must-have coverage" row reads "0% (0/6)" for Sofia Marques
+          {"\n"}
+          - The OBSERVATIONS block reads "Requirement coverage differs — Sofia Marques has the highest coverage (67%)."
           {"\n\n"}
-          Derive the cell status from whether the cell has evidence: evidence present and satisfied means Met, evidence present but partial means Partially met, no evidence means Unknown. Never render Unknown on a cell that has body text.
+          Also, "Verified strengths" reads 1 / 0 / 3 for Tiago / Sofia / Miguel while their Strengths rows contain 0 / 1 / 1 bullets — the counts for the first two are inverted.
           {"\n\n"}
-          PROVE IT: open the comparison for those three candidates and confirm no cell shows "Unknown" alongside evidence text."
+          Compute the observation text from the same coverage value the axes render. Set the Verified strengths number to the length of the strengths array the Strengths row renders. Suppress any "differs" sentence when the values are equal across candidates.
+          {"\n\n"}
+          PROVE IT: open the comparison and tell me the coverage percentage in all three places, and the strengths count next to the number of bullets for each candidate. They must agree."
         </div>
         {children}
         <Scripts />
