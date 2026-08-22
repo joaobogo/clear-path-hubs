@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-Three requirements on a delivered candidate read "Running..." with the body "Evidence extraction pending." That candidate was scored nine days earlier.
+In the comparison, Tiago Almeida shows "Verified strengths 1" while his Strengths row reads "None recorded." Sofia Marques shows 0 with one bullet listed. Miguel Torres shows 3 with one bullet.
 
-Block delivery while any requirement is non-terminal. If one is still unresolved at render time, show it as "Not evidenced".
+Render the number as the length of the same strengths array the row prints.
 
-Done when: No client-facing screen contains "Running..." or "Evidence extraction pending.""`}</div>
+Done when: For every candidate the Verified strengths number equals the number of bullets in that candidate's Strengths row."`}</div>
         <Scripts />
       </body>
     </html>
