@@ -147,25 +147,15 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and the changed lines. If your reply contains no file paths, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          The same fact renders four ways:
-          {"\n"}
-          - /client/positions banner: "5 to confirm"
-          {"\n"}
-          - /client/positions row: "5 interviews to confirm, 2 interviews booked."
-          {"\n"}
-          - /client/account role card: "5 interviews to confirm"
-          {"\n"}
-          - /client/interviews heading: "Waiting on you to confirm a time — 1 interview"
+          On /client, the banner reads "At risk — An interview requested 8 days ago still has no confirmed time." The queue directly above it shows the oldest unconfirmed interview as "Waiting 6 days". The only 8-day item on the page is an offer, not an interview.
           {"\n\n"}
-          The Interviews page is the one that lists the actual records, so its count is the correct one.
+          Search the source for "still has no confirmed time". Make it select the oldest interview whose status is awaiting confirmation and print that interview's real age. If no interview qualifies, say so instead of falling through to offers.
           {"\n\n"}
-          Write one function that returns interviews for an organisation whose status is awaiting client confirmation. Use it in all four places above.
-          {"\n\n"}
-          PROVE IT: reload all four pages and tell me the number each now shows. All four must be the same, and must equal the number of interview cards rendered on /client/interviews."
+          PROVE IT: reload /client and paste the banner text, plus the waiting time of the oldest "Confirm an interview time" row above it. They must match."
         </div>
         {children}
         <Scripts />
