@@ -117,6 +117,7 @@ export function buildNextStep(
   stage: MatchStage,
   stageEnteredAt: string | null,
   now = new Date(),
+  options?: { clientView?: boolean },
 ): NextStepView {
   const step = nextStepForStage(stage);
   if (step.owner === "client" || step.withinHours === null) {
@@ -131,7 +132,19 @@ export function buildNextStep(
   const deadline = dueAt(stageEnteredAt, step.withinHours, now);
   const isOverdue = deadline.getTime() < now.getTime();
 
-  // When overdue, we drop the "within X days" SLA clause and state the elapsed time instead.
+  // Client-facing view should never tell the user we are late; keep the commitment
+  // window and owning team, but drop the overdue fragment.
+  if (isOverdue && options?.clientView) {
+    return {
+      headline: step.headline,
+      sentence: `${step.headline} ${withinLabel(step.withinHours)}.`,
+      due: null,
+      owner: step.owner,
+      overdue: false,
+    };
+  }
+
+  // When overdue internally, we drop the "within X days" SLA clause and state the elapsed time instead.
   let sentence = `${step.headline} ${withinLabel(step.withinHours)}.`;
   let due = dueLabel(deadline, now);
 
