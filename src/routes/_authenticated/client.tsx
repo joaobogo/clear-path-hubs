@@ -2342,19 +2342,19 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.4   A cell showing evidence must not be marked Unknown
+        TEXTO DO USUÁRIO: "2.5   Fix comparison must-have coverage reading 0% for everyone
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison modal, cells marked \"Unknown\" are rendering evidence text.
-        Miguel Torres against \"Practical experience with row-level security or another
-        multi-tenant isolation model\" shows status \"Unknown\" with the cell body
-        \"Introduced Terraform for all AWS infrastructure.\"
-        Tiago Almeida against \"Experience in an early-stage or founder-led team\" shows status
-        \"Unknown\" with a quotation in the cell.
-        Derive the status from whether evidence exists, in the same pass that renders it:
-        evidence present and requirement satisfied = \"Met\"; evidence present but partial =
-        \"Partially met\"; no evidence = \"Unknown\" and render no body text.
-        Done when: No cell in the comparison grid displays evidence text while labelled \"Unknown\"."
+        In the candidate comparison modal the \"Must-have coverage\" row reads \"0% (0/6)\" for all
+        three candidates, and the \"Must-haves met\" ranking axis reads 0% for all three — yet the
+        OBSERVATIONS panel in the same modal reads
+        \"Requirement coverage differs — Sofia Marques has the highest coverage (67%).\"
+        and Sofia's own profile shows \"Must-have coverage (60% of the score) 66.7%\".
+        The comparison row counts only fully \"Met\" requirements while the breakdown gives partial
+        credit. Make the comparison use the same calculation as the candidate page, so the axis
+        can actually rank the candidates.
+        Done when: Must-have coverage differs between candidates in the comparison and matches the figure on each candidate's
+        own page"
         
         
         
