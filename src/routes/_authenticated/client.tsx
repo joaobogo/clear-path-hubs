@@ -2342,14 +2342,45 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "4.9   Give Insights one name
+        TEXTO DO USUÁRIO: "4.10   Remove internal data-quality wording from offer cards
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        The same destination is called four things: the left nav says \"Insights\", the page title
-        says \"Executive portfolio\", the eyebrow above it says \"LEADERSHIP VIEW\", and the sub-tab
-        says \"Executive\".
-        Use \"Insights\" in all four places, and delete the \"LEADERSHIP VIEW\" eyebrow.
-        Done when: The nav item, page title and tab all read \"Insights\", and no \"LEADERSHIP VIEW\" eyebrow renders."
+        On /client/offers, cards and banners render internal record-keeping language to the client:
+        \"owner unassigned\"  (in \"Ana Ribeiro — Offer sent · no movement for 8 days · owner unassigned\")
+        \"not on record\"
+        (the Comp value on Rui Fernandes's card)
+        Also on the candidate page: \"Captured at intake\" and \"A rescore appends a new run rather than
+        editing this one.\"
+        Replace: drop \"· owner unassigned\" entirely; render Comp as \"Not shared yet\"; replace
+        \"Captured at intake\" with \"From your brief\"; and delete the rescore sentence.
+        Done when: No client-facing screen contains \"owner unassigned\", \"not on record\", \"Captured at intake\" or \"appends a new
+        run\".
+        TaaSFlow fix prompts · 21 August 2026
+        Page 22 of 32
+        4.11   Remove the internal SLA notes from candidate pages
+        MEDIUM
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On candidate pages the \"Next:\" panel renders internal service-level notes to the client:
+        \"Next: We'll confirm the start date and handle onboarding paperwork Recruiting team ·
+        Overdue by 6 days — we're on it.\"
+        \"Next: We'll propose interview slots Recruiting team · Overdue by 8 days — we're on it.\"
+        The notification bell also renders \"Why: Replies are expected within your service commitment.\"
+        Keep the \"Next:\" sentence and remove the \"Recruiting team · Overdue by N days — we're on it\"
+        suffix. Replace the notification's Why line with \"Your recruiter is waiting on a reply.\"
+        Done when: No candidate page contains the string \"Overdue by\" and the notification panel contains no \"service
+        commitment\".
+        4.12   Remove the word published from the contact notice
+        MEDIUM
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client and /client/candidates and every candidate page this line renders:
+        \"Contact details and CV are available from the moment a candidate is published.\"
+        The comparison modal renders a longer variant:
+        \"Full contact details and the CV file are released as soon as a candidate is published to
+        you. No extra step is needed.\"
+        \"published\" is internal.
+        Replace both with: \"Contact details and the CV are available as soon as we deliver a
+        candidate to you.\" Render this once per page, not three times.
+        Done when: No client-facing screen contains the word \"published\""
         
         
         
