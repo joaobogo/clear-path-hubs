@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The breakdown totals 87.5 points and then says "The three parts add up to the score shown above." The score shown is 88.
+Three requirements on a delivered candidate read "Running..." with the body "Evidence extraction pending." That candidate was scored nine days earlier.
 
-Change it to name the rounding: "The three parts total 87.5, rounded to 88."
+Block delivery while any requirement is non-terminal. If one is still unresolved at render time, show it as "Not evidenced".
 
-Done when: The sentence states the unrounded total and the rounded score, and is true for any candidate."`}</div>
+Done when: No client-facing screen contains "Running..." or "Evidence extraction pending.""`}</div>
         <Scripts />
       </body>
     </html>
