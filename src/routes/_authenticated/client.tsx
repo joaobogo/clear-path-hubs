@@ -2342,37 +2342,35 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P4-4  Replace support_view_denied with a sentence
+        TEXTO DO USUÁRIO: "P4-6  Confirm both CV downloads
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/positions/new, entering a role title and clicking \"Create role\"
-        while the workspace is under support impersonation shows a red error toast
-        containing exactly this text and nothing else:
-            support_view_denied
-        That is a raw internal error code shown to the user.
-        Replace it with: \"You're viewing this workspace as an administrator, so new
-        roles can't be created here.\"
-        Then audit for any other place a raw error code reaches a client-facing toast
-        and give it a sentence too.
-        Done when: clicking \"Create role\" under ?preview=client_admin shows the plain
-        sentence, and the string \"support_view_denied\" never appears in the UI.
-        P4-5  Fix global search, or fail honestly
+        On the candidate profile the \"Download CV\" button, and on /client/candidates
+        the \"Download N CVs (ZIP)\" button, produce no feedback at all when clicked —
+        no toast, no spinner, no change of label.
+        The same page already has the right pattern: \"Export PDF\" in the candidate
+        comparison shows a toast reading \"Comparison PDF downloaded\" plus a modal
+        listing each candidate as \"Added to PDF\" and a count reading \"4 added\".
+        Apply that confirmation pattern to both CV download buttons.
+        Done when: clicking \"Download CV\" shows a confirmation naming the file, and
+        clicking \"Download N CVs (ZIP)\" shows a confirmation naming the number of CVs
+        included.
+        P4-7  Fix the impossible order in the activity timeline
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Global search in the client workspace (the header search box, or Ctrl+K)
-        returns no results for anything.
-        Tested with four queries while the matching records were visible on screen:
-            \"engineer\"                    → No matches for “engineer”.
-            \"Beatriz Costa\"               → No matches for “Beatriz Costa”.
-            \"Senior Full-Stack Engineer\"  → No matches for “Senior Full-Stack Engineer”.
-            \"Northwind Talent\"            → No matches for “Northwind Talent”.
-        All four are exact names of records in the workspace. The search endpoint is not
-        returning results, and the UI is reporting that as an empty result set rather
-        than as a failure.
-        Wire the search to query candidates, roles and conversations for the current
-        organisation. If the search request fails, show \"Search is unavailable right
-        now.\" rather than \"No matches\" — a false negative is worse than an honest error.
-        Done when: searching \"Beatriz\" returns her candidate record, searching
-        \"Senior Full-Stack\" returns the role, and a failed search request shows
-        \"Search is unavailable right now.\" instead of \"No matches\""
+        On the candidate profile Activity tab, the journey timeline lists events in an
+        impossible order. For Beatriz Costa:
+            Applied                    12 Aug 2026, 17:32
+            Hired                      13 Aug 2026, 00:16
+            Shortlisted by your team   16 Aug 2026, 02:16
+            Interviewed                16 Aug 2026, 02:16
+        She is shown as hired three days before she was shortlisted and interviewed.
+        Separately the \"Your team's decisions and feedback\" section records
+        \"Shortlisted · 09 Aug 2026, 17:38\" — three days before she applied. And the
+        row \"Scored · 13 Aug 2026, 00:16 · Score 88 · top\" is printed twice.
+        Sort the timeline strictly ascending by event timestamp, de-duplicate identical
+        (event type, timestamp) pairs, and correct the seeded event dates so decisions
+        come after the application.
+        Done when: every event on the Activity tab is in ascending time order, no event
+        appears twice at the same timestamp, and no decision predates the application"
         
         
         
