@@ -17,7 +17,7 @@ export function NextStepNote({
   stageEnteredAt: string | null;
   className?: string;
 }) {
-  const next = buildNextStep(stage, stageEnteredAt);
+  const next = buildNextStep(stage, stageEnteredAt, undefined, { clientView: true });
   const waitingOnClient = next.owner === "client";
 
   return (
