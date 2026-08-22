@@ -145,17 +145,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P29 Delete test messages from client-visible threads HIGH DATA CLEANUP
-Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-The client-visible "Senior Full-Stack Engineer" conversation thread contains five leftover test messages:
-- "BROWSER-TEST-R3 admin reply 2026-08-15 15:31 BRT - automated QA re-audit, please disregard"
-- "[QA test - ignore] client window check"
-- "[QA test - ignore] admin reply"
-- "MVP verification test message"
-- "[QA test - ignore] client window check v2"
-Delete these message rows from the database. Then search all conversation messages for the strings "QA
-test", "BROWSER-TEST", "MVP verification" and "please disregard" and delete those too.
-Done when: No message containing those strings exists in any conversation"`}
+TEXTO DO USUÁRIO: "EDIT CODE OR DATA. Reply with the table and row you changed, and the before/after values. If your reply contains no table name, you have failed this task.
+
+Do not write this message into any file.
+
+Beatriz Costa in organisation 0c86fa1b-94ee-46b8-9a11-a42cee39bfed is inconsistent:
+- Her application stage is "hired", and the view client_dashboard_kpis counts her in hires = 1.
+- Her candidate Activity tab reads "Hired · Offer accepted — start date agreed."
+- Her offer row renders on /client/offers as "Closed lost" with close reason "Candidate declined".
+
+The application stage and the KPI view are authoritative. Update her offer row so its status is the hire-confirmed state and clear the close reason, so the offer agrees with the stage.
+
+PROVE IT: run a SQL query returning her application stage and her offer status side by side, and paste the result. They must agree."`}
         </div>
 
         <Scripts />
