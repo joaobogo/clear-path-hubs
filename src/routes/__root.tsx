@@ -151,21 +151,11 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          On a candidate page such as /client/candidates/fe0e24c0-b551-4762-b9dd-cc53381beb50, four different evidence counts render on one screen:
-          {"\n"}
-            "0/10 evidenced"                              (header chip)
-          {"\n"}
-            "0 of 10 of your requirements evidenced"      (Requirement coverage panel)
-          {"\n"}
-            "1 of 10 of your requirements evidenced"      (Structured criteria check)
-          {"\n"}
-            "6 of 6 evidenced" and "4 of 4 evidenced"     (Score breakdown)
+          The score breakdown prints "Must-have evidence — 6 of 6 evidenced" with the sub-label "0 quoted, 6 related", while all six of those requirements render lower on the same page as "NO SOURCE YET".
           {"\n\n"}
-          Only one requirement on that page actually shows a quoted passage. Nine show "NO SOURCE YET".
+          Search the source for "of 6 must-haves are quoted directly". Count a requirement as evidenced only when it has a source. Render "related" matches under a separate heading reading "Possible signals (not quoted)" with its own count.
           {"\n\n"}
-          Write one function that returns the number of requirements having a non-empty evidence source, and use its value in all four places. Delete the other counters.
-          {"\n\n"}
-          PROVE IT: reload that candidate page and tell me the number now shown in each of the four places, plus how many requirement rows display a quoted passage. All five numbers must be the same."
+          PROVE IT: reload the candidate page and confirm that no requirement showing "NO SOURCE YET" is included in any count labelled "evidenced". Paste the new must-have evidence line."
         </div>
         {children}
         <Scripts />
