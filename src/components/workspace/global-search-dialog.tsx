@@ -101,6 +101,7 @@ export function GlobalSearchDialog({
   const navigate = useNavigate();
   const [recent, setRecent] = useState<string[]>([]);
   const lastCommitted = useRef<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (open) setRecent(readRecent());
@@ -149,6 +150,7 @@ export function GlobalSearchDialog({
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <CommandInput
+        ref={inputRef}
         placeholder={
           scope === "admin"
             ? "Search clients, roles, candidates, messages…"
@@ -213,10 +215,9 @@ export function GlobalSearchDialog({
                   type="button"
                   onClick={() => {
                     void refetch();
-                    // P84: Return focus to the input after Retry runs.
-                    // The CommandInput is an input element.
-                    const input = document.querySelector('[data-command-input="true"]') as HTMLInputElement;
-                    if (input) input.focus();
+                    // Keep the caret in the search box so the next keystroke
+                    // after Retry lands in the query, not nowhere.
+                    inputRef.current?.focus();
                   }}
                   className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"
                 >
