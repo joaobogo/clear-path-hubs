@@ -2342,15 +2342,14 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.3   Delete the duplicated List | Board toggles
+        TEXTO DO USUÁRIO: "5.4   Give the Sort control a visible label
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the List/Board view switch is rendered twice — once above the filter
-        card and once beside the \"10 of 10 candidates\" label (4 such buttons exist in the DOM). The
-        page tab bar above already has a \"Board\" tab pointing at /client/candidates?view=board, the
-        identical destination.
-        Delete both inline toggles. Keep the tab bar as the only way to switch view.
-        Done when: /client/candidates contains exactly one control for switching between list and board"
+        On /client/candidates the sort dropdown renders with no visible text — an empty 176px-wide
+        button with aria-label=\"Sort\", although the URL carries sort=score. At 375px it is a
+        completely blank full-width control.
+        Render the current sort value as the button's label, e.g. \"Sort: Score (high to low)\".
+        Done when: The sort control on /client/candidates displays its current value as text"
         
         
         
