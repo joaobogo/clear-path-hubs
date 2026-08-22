@@ -151,19 +151,11 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          In the comparison modal, three figures disagree about the same candidate:
-          {"\n"}
-          - "Must-haves met" axis reads 0% for Sofia Marques
-          {"\n"}
-          - "Must-have coverage" row reads "0% (0/6)" for Sofia Marques
-          {"\n"}
-          - The OBSERVATIONS block reads "Requirement coverage differs — Sofia Marques has the highest coverage (67%)."
+          On a candidate page, the fit score renders at font-size 12px — the smallest text on the page — while its label ("Top") renders at 24px in the large fit panel. The panel shows the word but never the number.
           {"\n\n"}
-          Also, "Verified strengths" reads 1 / 0 / 3 for Tiago / Sofia / Miguel while their Strengths rows contain 0 / 1 / 1 bullets — the counts for the first two are inverted.
+          In the fit panel, render the score number at 24px or larger with the label beneath it at 12 to 14px, and add one line stating the scale and the action, for example: "88 out of 100 — Top. Strong enough to interview now."
           {"\n\n"}
-          Compute the observation text from the same coverage value the axes render. Set the Verified strengths number to the length of the strengths array the Strengths row renders. Suppress any "differs" sentence when the values are equal across candidates.
-          {"\n\n"}
-          PROVE IT: open the comparison and tell me the coverage percentage in all three places, and the strengths count next to the number of bullets for each candidate. They must agree."
+          PROVE IT: open a candidate page and tell me the computed font-size of the score and of the label. The score must be the larger of the two."
         </div>
         {children}
         <Scripts />
