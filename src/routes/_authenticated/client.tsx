@@ -2342,15 +2342,14 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "0.4   Delete the History Integrity Test conversation
-        BLOCKER
+        TEXTO DO USUÁRIO: "0.6   Remove the junk message left in the Beatriz Costa thread
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/conversations the thread list contains a conversation titled exactly:
-        \"History Integrity Test\"
-        It has no subtitle (every other thread shows a candidate or role subtitle) and its
-        preview reads \"No messages yet\".
-        Delete this conversation record.
-        Done when: /client/conversations lists five threads and none is named \"History Integrity Test\"."
+        In conversation 7c1f0a10-0000-4000-8000-000000000001 (\"Beatriz Costa — interview
+        scheduling\") the newest message is from the client user and its entire body is the two
+        characters:
+        ——
+        Delete that single message row.
+        Done when: The Beatriz Costa thread's newest message is the one dated 12 Aug 2026 from James Cameron"
         
         
         
