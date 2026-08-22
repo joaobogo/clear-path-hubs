@@ -2342,16 +2342,14 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "1.6   Fix the Account page contradicting itself on hires
-        BLOCKER
+        TEXTO DO USUÁRIO: "1.8   Include archived roles in the Roles status tab counts
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account the tile reads:
-        \"Hires closed  0   0 in the last 90 days\"
-        and roughly 400px below it, inside \"Workspace details\" {'>'} \"Roles and where they are\", the
-        same role reads \"1 hire confirmed, 2 offers out, 3 candidates shortlisted, ...\" with a
-        chip reading \"1 hired\".
-        Point the \"Hires closed\" tile at the same query the panel below it uses.
-        Done when: The \"Hires closed\" tile and the \"Roles and where they are\" panel state the same number on one screen."
+        On /client/positions the status tabs read:
+        \"Active (1)  Under review (0)  Paused (0)  Archived (0)\"
+        but an archived role exists in this workspace — global search returns
+        \"[QA test - ignore] Audit Role - delete me — ROLE — Archived\".
+        Make the Archived tab count and list archived roles.
+        Done when: With one archived role in the organisation the Archived tab reads \"Archived (1)\" and lists it."
         
         
         
