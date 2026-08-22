@@ -2342,41 +2342,39 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P1-1  Guard the onboarding step-save endpoint
+        TEXTO DO USUÁRIO: "P1-3  Guard the offer expected-response-date endpoint
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/onboarding (the client Setup wizard) the button \"Save and continue\"
-        on Step 2, \"Define the first role\", writes to the database even when the
-        workspace is being viewed under support impersonation.
-        To reproduce: open the client workspace with ?preview=client_admin. Both banners
-        read \"You are viewing this workspace as a TaaSFlow administrator. Client actions
-        are disabled.\" and \"You are viewing as an administrator\". Type any role title
-        and click \"Save and continue\". A toast reads \"Role saved.\", the step marker
-        advances to \"Step 3 of 10\", Step 2 is marked \"Done\", and the \"Progress saved\"
-        timestamp updates. All of it survives a full page reload.
-        The route /client/positions/new already refuses correctly with the error
-        \"support_view_denied\". Apply that same server-side support-view check to the
-        onboarding step-save endpoint.
-        Done when: clicking \"Save and continue\" under ?preview=client_admin leaves the
-        step marker on \"Step 2 of 10\", leaves \"Progress saved\" unchanged after a reload,
-        and shows a refusal message instead of \"Role saved.\".
-        P1-2  Scope role creation to the previewed organisation
+        On /client/offers, in the \"Who owes what\" panel, each open offer has a
+        \"Set a date\" control that opens a modal titled \"Expected response date\" with a
+        \"Save date\" button.
+        Under support impersonation (?preview=client_admin), with the banner reading
+        \"Client actions are disabled.\", clicking \"Save date\" writes successfully: a
+        toast reads \"Response date recorded\", the row changes to
+        \"25 Aug 2026 — Response expected in 4 days\", and the value survives a full
+        page reload.
+        Apply the same server-side support-view check that /client/positions/new uses
+        to the offer expected-response-date endpoint.
+        Done when: \"Save date\" under ?preview=client_admin leaves the row reading
+        \"No response date agreed\" after a reload, and shows a refusal message instead of
+        \"Response date recorded\".
+        P1-4  Keep admin notifications out of the client bell
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        A role created from inside one client's workspace is being written to a
-        different organisation.
-        To reproduce: open the client workspace for \"Northwind Talent (Demo)\"
-        (?org=0c86fa1b-94ee-46b8-9a11-a42cee39bfed), go to /client/onboarding, complete
-        Step 2 with a role title, and click \"Save and continue\". The role is created —
-        but it does not appear on Northwind's Positions tab. It appears in
-        /admin/positions attached to the client \"TaaSFlow Platform\" with owner
-        \"Master Admin\".
-        The role-creation code is taking the organisation from the signed-in session
-        rather than from the workspace being viewed. Change it to take the organisation
-        id from the workspace context (the \"org\" query parameter that scopes the whole
-        client workspace), and reject the request if that organisation is missing rather
-        than falling back to the session's organisation.
-        Done when: a role created from a client workspace appears on that client's own
-        Positions tab in admin, and a role-creation request with no organisation context
-        is rejected rather than silently attached to the caller's organisation."
+        The notification bell inside the client workspace is rendering TaaSFlow's
+        internal staff notification feed.
+        Open any client page with ?preview=client_admin and click the bell. The panel
+        contains 26 notification cards whose links point at /admin routes — 21 to
+        /admin/candidates, one to /admin/interviews, and three to specific admin records
+        such as /admin/candidates/8a11cbe5-d916-487f-a804-863a6dc57c94. Card titles
+        include:
+            CV parsing failed — A CV could not be parsed and needs...
+            +2 more in approvals
+        and the actor line on every card reads \"Demo Client Admin\".
+        Filter the client notification query by audience so only client-facing
+        notifications are returned, and as a backstop drop any notification whose target
+        route starts with \"/admin\".
+        Done when: no notification card in the client workspace links to a /admin
+        route, and the strings \"CV parsing failed\" and \"in approvals\" do not appear in
+        the client bell"
         
         
         
