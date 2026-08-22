@@ -143,9 +143,12 @@ export function NotificationPreferences({
                         {spec.label}
                       </Label>
                       <p className="mt-0.5 text-xs text-muted-foreground">{spec.description}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Default: {modeLabelFor(spec, spec.defaultMode)}
-                      </p>
+                      {row[spec.key] !== spec.defaultMode && (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Default: {modeLabelFor(spec, spec.defaultMode)}
+                        </p>
+                      )}
+
                       {locked && (
                         <p className="mt-1 flex items-start gap-1.5 text-xs text-muted-foreground">
                           <Lock className="mt-0.5 h-3 w-3 shrink-0" />
