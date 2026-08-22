@@ -147,15 +147,25 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with the file you changed and the changed lines. If your reply contains no file path, you have failed this task.
+          TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and the changed lines. If your reply contains no file paths, you have failed this task.
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          On /client/executive, the panel "Open roles by region" prints "Portugal — 0 open · 1 filled · 1 total" while the panel "Candidates in play by team" prints "OPEN ROLES 1" for Engineering. Same page, same fact, two answers.
+          The same fact renders four ways:
+          {"\n"}
+          - /client/positions banner: "5 to confirm"
+          {"\n"}
+          - /client/positions row: "5 interviews to confirm, 2 interviews booked."
+          {"\n"}
+          - /client/account role card: "5 interviews to confirm"
+          {"\n"}
+          - /client/interviews heading: "Waiting on you to confirm a time — 1 interview"
           {"\n\n"}
-          Search the source for "Open roles by region". Make it use the same open-roles definition as the other panel on that page.
+          The Interviews page is the one that lists the actual records, so its count is the correct one.
           {"\n\n"}
-          PROVE IT: reload /client/executive and tell me the open-roles number now shown in both panels. They must match."
+          Write one function that returns interviews for an organisation whose status is awaiting client confirmation. Use it in all four places above.
+          {"\n\n"}
+          PROVE IT: reload all four pages and tell me the number each now shows. All four must be the same, and must equal the number of interview cards rendered on /client/interviews."
         </div>
         {children}
         <Scripts />
