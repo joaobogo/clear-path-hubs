@@ -2349,11 +2349,11 @@ function ClientLayout() {
         field set to the literal string:
             [QA test - ignore] Lisbon
         That value is rendered to the client on /client/account under
-        Workspace details > Company profile > Headquarters, and in the admin client
+        Workspace details {" > "} Company profile {" > "} Headquarters, and in the admin client
         header. Set the Headquarters field for this organisation to \"Lisbon\".
         Then add a guard: when saving an organisation record, reject any value that
         starts with \"[QA test\" and show the message \"That looks like test data.\"
-        Done when: /client/account > Workspace details > Company profile shows
+        Done when: /client/account {" > "} Workspace details {" > "} Company profile shows
         Headquarters = \"Lisbon\", and saving a Headquarters value beginning \"[QA test\"
         is refused"
         
