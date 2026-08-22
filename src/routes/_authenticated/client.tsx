@@ -2342,13 +2342,23 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "4.14   Remove the snake_case stage value from candidate URLs
+        TEXTO DO USUÁRIO: "5.2   Move the evidence panel above the fold
+        MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the stage filter writes an internal enum into the URL:
-        ?stage=interview_process
-        Clients see this in the address bar and in shared links.
-        Use hyphenated, human values: ?stage=in-interviews. Keep the old values working as aliases.
-        Done when: Filtering to the interview stage produces ?stage=in-interviews in the address bar"
+        Depends on 5.1. After merging, reorder the candidate page's left column so a recruiter
+        reaches the evidence without four screens of scrolling. Target order:
+        1 header (name, score/100, fit, stage)
+        2 fit panel with the recommended next action
+        3 the merged evidence panel
+        4 score breakdown
+        5 compensation
+        6 contact and CV
+        7 availability
+        8 career experience
+        9 skills, education, languages, links
+        Done when: On a candidate page the evidence panel heading is visible within the first two screens at a 900px viewport.
+        5.3   Delete the duplicated List | Board toggles
+        MEDIUM"
         
         
         
