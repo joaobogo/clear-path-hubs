@@ -2342,19 +2342,14 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "1.7   Count seats as used when a member or invitation holds one
-        BLOCKER
+        TEXTO DO USUÁRIO: "1.10   Base the Messages list timestamp on the newest message
+        MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/team the header reads:
-        \"0 of 4 seats in use · 1 pending\"
-        \"0 of 4 used · 4 seats available · 1 pending invitation holding a seat\"
-        and the /client/account tile reads \"Seats in use 0 / 4 — 4 seats free\".
-        The list below shows James Cameron as \"Active\" plus one pending invitation. The sentence
-        says a seat is held and that 4 of 4 are available, which cannot both be true.
-        Count seats used = active members + pending invitations. Derive \"available\" as
-        total minus used. Use that single value in both the Team page header and the Account tile.
-        Done when: With one active member and one pending invitation the page reads \"2 of 4 used · 2 seats available\", and the
-        Account tile matches"
+        On /client/conversations the thread \"Beatriz Costa — interview scheduling\" is listed
+        as \"2 days ago\". Opening it shows its newest message is dated 12 Aug 2026, 15:06 — nine
+        days before the current date of 21 Aug 2026.
+        Use the newest message's timestamp for the list, not the conversation row's updated_at.
+        Done when: A thread whose newest message is dated 12 Aug 2026 reads \"9 days ago\" on 21 Aug 2026"
         
         
         
