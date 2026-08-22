@@ -2342,22 +2342,44 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.15   Point the setup step marker at the first incomplete step
-        MEDIUM
+        TEXTO DO USUÁRIO: "6.1   Use one date format everywhere
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/onboarding the step marker reads \"Step 1 of 10\" on load, and the detail panel
-        shows step 1 — but steps 1, 2, 3 and 9 are all marked \"Done\". The first incomplete step is
-        step 4, \"Review the compiled role blueprint\".
-        On load, select the first step whose status is not Done.
-        Done when: Loading /client/onboarding with steps 1–3 complete opens step 4 and the marker reads \"Step 4 of 10\" 5.16   Make the ESSENTIAL FOR LAUNCH caption count its own list
-        MEDIUM
+        Six different date formats are rendered in the client workspace:
+        \"21 Aug 2026\"    
+        (most pages)
+        \"12 Aug\"         
+        \"09 Aug 2026\"    
+        (Roles row \"Offer since 12 Aug\"; Account role panel)
+        (candidate Activity tab — leading zero)
+        \"15 Sept 2026\"   (Offers board — four-letter month)
+        \"08/03\"          
+        (Insights charts — month/day)
+        \"Jun 2020\"       
+        (candidate career history)
+        Route every date through one formatter producing \"D MMM YYYY\" with a three-letter month and
+        no leading zero. Career history may keep \"MMM YYYY\" as it has no day.
+        Done when: No client-facing screen renders a date as \"08/03\", \"15 Sept 2026\", \"09 Aug 2026\" or a bare \"12 Aug\".6.2   Use one relative-time format everywhere
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the New role dialog at /client/positions/new the \"ESSENTIAL FOR LAUNCH\" box lists six
-        bullets — Seniority, Work arrangement, Location or remote, 3–5 Must-have skills, Salary band,
-        Job description — beneath a caption reading, verbatim:
-        \"You can enrich the brief with advanced details after these 7 essentials.\"
-        Either add the missing seventh item or make the caption interpolate the array length.
-        Done when: The number in the caption equals the number of bullets rendered above it"
+        Five different relative formats are rendered:
+        \"2 days ago\"   \"yesterday\"   \"21 hours ago\"   \"2 d ago\" (notification panel)
+        \"1 minute ago\" (Overview footer)
+        Route them all through one formatter. Suggested: under an hour \"N minutes ago\"; under a day
+        \"N hours ago\"; otherwise \"N days ago\". Do not use \"yesterday\" or the abbreviated \"2 d ago\".
+        Done when: No client-facing screen renders \"2 d ago\" or \"yesterday\".
+        6.3   Print numbers on the delivery velocity chart
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/executive the chart \"CANDIDATES DELIVERED PER WEEK (LAST 8)\" renders eight bars —
+        seven flat at zero and one tall bar at 08/10 — with no numeric labels, no axis and no tooltip.
+        There is nothing to read the bar against.
+        Print the count above each non-zero bar.
+        Done when: Each bar on the delivery velocity chart displays its value.
+        6.4   Remove the shortlist-fit chart until it has data
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+        On /client/executive the panel \"TYPICAL SHORTLIST FIT PER WEEK (APPROVED)\" renders eight
+        cells of which seven read \"—\". The one populated cell reads \"Consider\" and wraps mid-word as
+        \"Consid / er\". The word \"APPROVED\" is also internal.
+        Remove this chart. Restore it when at least four of the eight weeks carry a value.
+        Done when: /client/executive renders no shortlist-fit chart while fewer than four weeks have data"
         
         
         
