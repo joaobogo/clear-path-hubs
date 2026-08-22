@@ -147,31 +147,26 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and every string you replaced. If your reply contains no file paths, you have failed this task.
+TEXTO DO USUÁRIO: "EDIT CODE ONLY. Reply with every file you changed and the changed lines. If your reply contains no file paths, you have failed this task.
 
 Do not write this message into any file.
 
-Replace these client-facing strings across the whole client workspace. Search for each one literally:
+One pipeline stage carries up to five different names across the client workspace:
+  Interviewing: \"INTERVIEWING\" (tile), \"In interviews\" (list cell), \"INTERVIEW PROCESS\" (board column), \"Interview process\" (filter), \"In Interviews\" (Insights)
+  Offer:        \"OFFERS\", \"At offer\", \"OFFER\", \"Offer\", \"At Offer\"
+  New:          \"AWAITING YOUR REVIEW\", \"New — awaiting review\"
 
-  \"Review the compiled role blueprint\"      -> \"Review your role brief\"
-  \"Configure scoring weights\"               -> \"Set what matters most\"
-  \"Choose agent operating level\"            -> \"Choose how much we do for you\"
-  \"Set approval and oversight gates\"        -> \"Set who approves what\"
-  \"Start the first run\"                     -> \"Start the search\"
-  \"Enter the Decision Workspace\"            -> \"Go to your candidates\"
-  \"blueprint, rubric, runs and decisions\"   -> \"everything else attaches to\"
-  \"Only partial evidence for required:\"     -> \"We found partial evidence for this — worth confirming.\"
-  \"Verify missing or partial evidence.\"     -> \"We found no direct evidence for this.\"
-  \"Unicorn only (95+)\"                      -> remove the control entirely
-  \"Silver medalist\" / \"Silver medalists\"    -> \"Strong runners-up from past roles\"
-  \"Talent memory\" / \"TALENT MEMORY\"         -> \"Keep for future roles\"
-  \"publish gate\"                            -> \"review\"
-  \"Candidate profile & gates\"               -> \"Candidate profile & requirements\"
-  \"Disqualifiers / critical gates\"          -> \"Dealbreakers\"
-  \"Captured at intake\"                      -> \"From your role brief\"
-  \"Shortlisted By Your Team\"                -> \"Shortlisted\"
+Create one label constant per stage and import it into the Candidates tiles, the list cells, the board columns, the stage filter and the Insights time-in-stage panel. Use sentence case in the constant and let CSS handle any uppercase display.
 
-PROVE IT: search the repository for each original string and confirm zero hits in client-facing code. Paste the search output."`}</div>
+PROVE IT: open /client/candidates in both list and board view, the stage filter, and /client/executive, and tell me the label used for the interviewing stage in each. All must be identical.EDIT CODE ONLY. Reply with every file you changed and the changed lines. If your reply contains no file paths, you have failed this task.
+
+Do not write this message into any file.
+
+Six date formats are in use across the client workspace: \"12 Aug 2026\", \"09 Aug 2026\" with a leading zero, \"12 Aug\" with no year, \"1 Sept 2026\" with a four-letter month, \"08/03\" on the Insights chart axes, and \"2018-09 to 2021-04\" inside comparison evidence text.
+
+Create one date helper formatting as \"D MMM YYYY\" with three-letter months and no leading zero, one date-time helper as \"D MMM YYYY, HH:mm\", and one relative helper. Replace every call site, including the Insights chart axis labels.
+
+PROVE IT: open /client, /client/positions, /client/offers and /client/executive and paste one date from each. All four must use the same format, and no month/day date may remain."`}</div>
         <Scripts />
       </body>
     </html>
