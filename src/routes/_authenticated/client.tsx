@@ -2342,19 +2342,15 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "0.3   Clear QA test strings from the client company profile
+        TEXTO DO USUÁRIO: "0.4   Delete the History Integrity Test conversation
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account, expand \"Workspace details\" {" > "} \"Company profile\". Two saved fields
-        contain test data, verbatim:
-        Industry     
-        = \"[QA test - ignore] Round trip\"   (may already be empty)
-        Headquarters = \"[QA test - ignore] Lisbon\"
-        The same panel states \"Shown to the TaaSFlow team on your account and used across
-        communications\" and displays \"Company details approved by TaaSFlow.\" beneath them.
-        Clear both fields to empty on the Northwind Talent (Demo) organisation record.
-        Done when: Both Industry and Headquarters render empty, and no string containing \"[QA test\" exists on the company
-        profile."
+        On /client/conversations the thread list contains a conversation titled exactly:
+        \"History Integrity Test\"
+        It has no subtitle (every other thread shows a candidate or role subtitle) and its
+        preview reads \"No messages yet\".
+        Delete this conversation record.
+        Done when: /client/conversations lists five threads and none is named \"History Integrity Test\"."
         
         
         
