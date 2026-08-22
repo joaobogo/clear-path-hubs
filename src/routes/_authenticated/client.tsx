@@ -2342,22 +2342,25 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "6.11   Name the candidate in Recent activity rows
+        TEXTO DO USUÁRIO: "6.13   Stop showing record timestamps as interview times
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client the \"Recent activity\" panel renders six near-identical rows with no name:
-        \"A candidate moved forward\", \"You shortlisted a candidate\", \"A candidate was declined\",
-        each twice.
-        Include the candidate's name, e.g. \"You shortlisted Sofia Marques\".
-        Done when: Each Recent activity row names the candidate it refers to.
-        6.12   Hide the start date on a declined offer
+        On /client/interviews two confirmed interviews render at 00:16:
+        \"Confirmed  Inês Lopes  Wed, 19 Aug 2026, 00:16 (America/Sao_Paulo, GMT-3)\"
+        \"Confirmed  Carla Nunes  Mon, 17 Aug 2026, 00:16 (America/Sao_Paulo, GMT-3)\"
+        The candidate page also shows \"Last updated 13 Aug 2026, 00:16\". These are record-creation
+        timestamps being displayed as meeting times.
+        Display the interview's scheduled slot. If no slot is stored, show \"Time not recorded\" rather
+        than falling back to created_at.
+        LOW
+        Done when: No interview on /client/interviews displays a time between 00:00 and 06:00 unless it was genuinely scheduled
+        then.
+        6.14   Fix the cancelled interview still advertising a slot
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/offers the CLOSED LOST card for Beatriz Costa renders:
-        \"Closed lost  15 Aug 2026\"
-        \"Candidate declined\"
-        \"Start  1 Sept 2026\"
-        A declined offer has no start date.
-        Hide the Start row when the offer state is declined or closed lost.
-        Done when: An offer in CLOSED LOST or OFFER DECLINED shows no start date"
+        On /client/interviews the Tiago Almeida row renders the status chip \"Cancelled\" twice, and
+        beneath it the line \"1 time with the candidate — first option tomorrow\".
+        Render the status chip once, and suppress the proposed-slot line when the status is
+        cancelled.
+        Done when: A cancelled interview shows one \"Cancelled\" chip and no upcoming slot text"
         
         
         
