@@ -151,13 +151,21 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Do not write this message into any file.
           {"\n\n"}
-          /client/positions shows status tabs reading "Active(1) Under review(0) Paused(0) Archived(0)" and the Account tile reads "1 total in the account".
+          On a candidate page such as /client/candidates/fe0e24c0-b551-4762-b9dd-cc53381beb50, four different evidence counts render on one screen:
+          {"\n"}
+            "0/10 evidenced"                              (header chip)
+          {"\n"}
+            "0 of 10 of your requirements evidenced"      (Requirement coverage panel)
+          {"\n"}
+            "1 of 10 of your requirements evidenced"      (Structured criteria check)
+          {"\n"}
+            "6 of 6 evidenced" and "4 of 4 evidenced"     (Score breakdown)
           {"\n\n"}
-          That is false. This organisation holds three roles — one active, one draft, one archived — and global search returns all three.
+          Only one requirement on that page actually shows a quoted passage. Nine show "NO SOURCE YET".
           {"\n\n"}
-          Search the source for "Archived" in the roles status tabs. Add a "Draft" tab, populate the Archived count from real data instead of returning 0, and make "total in the account" count roles of every status.
+          Write one function that returns the number of requirements having a non-empty evidence source, and use its value in all four places. Delete the other counters.
           {"\n\n"}
-          PROVE IT: reload /client/positions and paste the four tab labels with their counts. Archived must not be 0, and a Draft tab must exist."
+          PROVE IT: reload that candidate page and tell me the number now shown in each of the four places, plus how many requirement rows display a quoted passage. All five numbers must be the same."
         </div>
         {children}
         <Scripts />
