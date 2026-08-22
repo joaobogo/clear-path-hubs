@@ -2342,27 +2342,24 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "5.11   Merge the duplicate comparison header row
+        TEXTO DO USUÁRIO: "5.13   Reduce the five printed role counts on the Roles page
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison modal the candidate header row is rendered twice: once at the
-        top of the requirement grid with a link labelled \"Review -{"->"} \", and again above the summary rows
-        with a link labelled \"Open profile -{"->"} \". Both do the same thing, and the lower sticky header
-        overlaps the row beneath it (the text \"Senior Full-Stack Engineer · Lumen Travel\" is partly
-        hidden behind it).
-        Keep one sticky header, label the link \"Open profile\", and give the scroll container enough
-        top padding that the header never covers a row.
-        Done when: The comparison modal shows one candidate header row, with one link label, and no row is obscured by it.
-        5.12   Delete the duplicate Notifications heading
+        On /client/positions the number of roles is printed five times on one screen: \"1 role\" top
+        right, the \"ACTIVE 1\" tile, \"Action required — 1 role\", the tab \"Active (1)\", and \"1 result\".
+        Keep the status tabs as the only count. Delete the \"1 role\" header count, the ACTIVE tile and
+        the \"1 result\" line. Keep the Action required banner, which names what needs doing.
+        Done when: The Roles page states the number of active roles once, in the tab.
+        5.14   Remove the Talent pool page from the navigation
         MEDIUM
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account {" > "} Notifications the word \"Notifications\" is rendered twice with two
-        different subtitles:
-        \"Notifications — Choose how you'd like to be notified for each workspace event.\"
-        \"Notifications — Choose how each update reaches you. Everything stays visible in the
-        workspace and in Messages either way.\"
-        Delete the outer heading and keep the card with the second subtitle.
-        Done when: The Notifications settings page shows the word \"Notifications\" once as a section heading"
+        /client/talent-pool contains no functionality: three descriptive cards (\"Silver medalists\",
+        \"Direct applications\", \"Passive network\") and one empty state. None of the three cards is a
+        link or a button — verified in the DOM. It is also reachable from two places: the left nav and
+        the Candidates sub-tab bar, both pointing at /client/talent-pool.
+        Remove it from the left nav and from the Candidates sub-tab bar until it holds data. Keep the
+        route so existing links resolve.
+        Done when: Talent pool does not appear in the left nav or the Candidates tab bar"
         
         
         
