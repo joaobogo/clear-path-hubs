@@ -2342,15 +2342,16 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "3.3   Fix the swallowed first click on Compare 3 side by side
+        TEXTO DO USUÁRIO: "3.4   Make Download CV confirm itself
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/candidates the button \"Compare 3 side by side\" does nothing on the first
-        click — the page and URL are unchanged. The second click opens the comparison modal.
-        This is the same swallowed-first-click pattern already fixed on other controls in this
-        codebase.
-        Make the first click open the modal. The handler is almost certainly gated on a state
-        value that is still hydrating on first paint.
-        Done when: A single click on \"Compare 3 side by side\" opens the comparison modal."
+        On a candidate page the \"Download CV\" button produces no feedback at all — no toast, no
+        message, no state change (verified by querying every [role=status], [role=alert] and toast
+        container after clicking).
+        The bulk equivalent on /client/candidates does this correctly: \"Download 3 CVs (ZIP)\"
+        opens a modal reading \"3 of 3 CVs are in your ZIP\", ticks each candidate with its filename,
+        and fires a toast \"3 CVs downloaded as one ZIP\".
+        Fire the same toast pattern for the single download, e.g. \"CV downloaded — sofia-marques.pdf\".
+        Done when: Clicking \"Download CV\" shows a toast naming the downloaded file"
         
         
         
