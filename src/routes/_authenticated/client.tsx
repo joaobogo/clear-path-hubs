@@ -2342,33 +2342,20 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "P2-5  One query for interviews awaiting a confirmed time
+        TEXTO DO USUÁRIO: "P2-7  Bell badge must show the needs-attention count
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        Three pages give three different counts of interviews awaiting a confirmed
-        time, for the same client.
-        /client/positions shows an \"Action required\" banner reading \"5 to confirm\" and a
-        table summary reading \"5 interviews to confirm\". /client/account repeats
-        \"5 interviews to confirm\". /client (Overview) lists four rows reading
-        \"Confirm an interview time\". /client/interviews shows
-        \"Waiting on you to confirm a time\" with a right-aligned count of \"1 interview\"
-        and a single card for Miguel Torres.
-        The Interviews page is correct — it lists the actual interview records. Point the
-        Roles banner, the Roles table summary, the Account panel and the Overview task
-        list at the same query the Interviews page uses.
-        Done when: the Roles banner, the Roles summary sentence, the Account panel, the
-        Overview task list and the Interviews page all show the same number.
-        P2-6  Message count must follow the active filter
-        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/conversations the subtitle reads \"6 conversations\". It stays at
-        \"6 conversations\" no matter which filter tab is active:
-            Roles filter    — 1 thread listed, subtitle still \"6 conversations\"
-            Account filter  — 1 thread listed, subtitle still \"6 conversations\"
-            Unread filter   — 0 threads and \"You're all caught up\", still \"6 conversations\"
-        Bind the subtitle to the filtered result length. The Candidates page already
-        does this correctly — it reads \"3 of 10 candidates\" when a stage filter is on —
-        so match that pattern: \"1 of 6 conversations\".
-        Done when: clicking the Roles filter changes the subtitle to
-        \"1 of 6 conversations\", and clicking All returns it to \"6 conversations\""
+        The notification bell gives four different numbers for one question.
+        The badge on the bell reads 29. Its accessible name reads \"Notifications,
+        29 unread, 9 need attention\". The panel header reads \"9 items need your
+        attention.\" The filter tabs read \"All (29) · Unread (28) · Action required (9)
+        · Important update (7) · Informational (13)\". The Overview's \"What needs you\"
+        list says \"8 items\".
+        The tabs are internally consistent (9 + 7 + 13 = 29). The problem is that the
+        badge counts unread while the panel and the dashboard count what needs action.
+        Change the bell badge to show the \"action required\" count, and set its
+        accessible name to \"Notifications, N need your attention\".
+        Done when: the bell badge, the panel header \"N items need your attention\" and
+        the \"Action required (N)\" tab all show the same number"
         
         
         
