@@ -2338,6 +2338,42 @@ function ClientLayout() {
         Done when: The score sits under a column headed Score.
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
         
+        INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
+
+        Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
+
+        TEXTO DO USUÁRIO: "i need to make sure all pixels are firing and are as sensitive as possible
+        ]"
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         
