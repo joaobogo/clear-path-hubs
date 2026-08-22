@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-On one screen, "Open roles by region" says "Portugal 0 open / 1 filled / 1 total" while "Candidates in play by team" says "Engineering OPEN ROLES 1".
+The Account tile reads "Hires closed 0" while the panel directly below reads "1 hire confirmed" with a badge "1 hired".
 
-Have both panels read the same open-roles selector the Roles page uses. Do not count a role as filled while it has an active search and open offers.
+Have both read the hires selector from R02. Run R02 first.
 
-Done when: Both Insights panels show 1 open role."`}</div>
+Done when: The Account tile figure and the badge in the panel below it show the same number."`}</div>
         <Scripts />
       </body>
     </html>
