@@ -2342,17 +2342,17 @@ function ClientLayout() {
 
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "2.6   Derive Verified strengths from the strengths list
+        TEXTO DO USUÁRIO: "2.7   Fix the compensation in-range test in the comparison
         BLOCKER
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the candidate comparison modal the \"Verified strengths\" ranking axis and the
-        \"Strengths\" summary row disagree for all three candidates:
-        Tiago Almeida  — axis \"1\", Strengths row \"None recorded.\"   (0 bullets)
-        Sofia Marques  — axis \"0\", Strengths row has 1 bullet
-        Miguel Torres  — axis \"3\", Strengths row has 1 bullet
-        Compute the axis number as the length of the same array that renders the Strengths
-        bullets.
-        Done when: For every candidate, the \"Verified strengths\" number equals the number of bullets in their Strengths row"
+        In the candidate comparison modal, Miguel Torres's Compensation cell reads:
+        chip  \"In range\"
+        value \"EUR 78,000 base, annual\"
+        band  \"Role: €55,000 – €75,000\"
+        78,000 is above 75,000. Sofia Marques at €85,000 is correctly labelled \"Above range\".
+        Use the same range comparison the candidate page's Compensation panel uses — that one is
+        correct.
+        Done when: A candidate expecting €78,000 against a €55,000–€75,000 band is labelled \"Above range\" in the comparison."
         
         
         
