@@ -2356,7 +2356,7 @@ function ClientLayout() {
         \"Web Developer — WordPress and PHP\"
         When there are no results the panel simply renders nothing, so the user cannot tell a
         failure from an empty result.
-        Add an explicit empty state reading \"No results for \\\"<{"<"}query{">"}\\\"\", and include the candidate
+        Add an explicit empty state reading \"No results for \\\"{"<"}query{">"}\\\"\", and include the candidate
         headline field in the search index.
         Done when: Searching \"developer\" returns Diogo Silva and Pedro Matos, and searching a nonsense string shows \"No results
         for …\""
