@@ -2349,12 +2349,12 @@ function ClientLayout() {
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
         On /client/onboarding the ten setup steps are titled with internal engineering language.
         Replace these exact titles:
-        \"Review the compiled role blueprint\"  -> \"Review your role brief\"
-        \"Configure scoring weights\"           -> \"Set what matters most\"
+        \"Review the compiled role blueprint\"  -{"->"} \"Review your role brief\"
+        \"Configure scoring weights\"           -{"->"} \"Set what matters most\"
         \"Choose agent operating level\"        
         \"Set approval and oversight gates\"    
         \"Start the first run\"                 
-        \"Enter the Decision Workspace\"        -> \"Choose how much we do for you\"-> \"Decide who signs off\"-> \"Start the search\"-> \"Open your shortlist\"
+        \"Enter the Decision Workspace\"        -{"->"} \"Choose how much we do for you\"-{"->"} \"Decide who signs off\"-{"->"} \"Start the search\"-{"->"} \"Open your shortlist\"
         Also replace this callout on step 2, verbatim:
         \"The title, location and work model become the role record everything else attaches to —
         blueprint, rubric, runs and decisions.\"
