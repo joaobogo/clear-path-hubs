@@ -62,7 +62,7 @@ export async function loadClientWeekActivity(
 
     (auditDb as AnyClient)
       .from("audit_events")
-      .select("id, action, entity_id, entity_type, position_id, created_at")
+      .select("id, action, entity_id, entity_type, created_at")
       .eq("organization_id", orgId)
       .in("action", [...CLIENT_DECISION_ACTIONS])
       .gte("created_at", startIso)
