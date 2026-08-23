@@ -172,13 +172,13 @@ export async function loadKpiRows(
   supabase: AnyRow,
   orgId: string,
 ): Promise<KpiRow[]> {
-  // P-02: Hire count must reconcile with the database view client_dashboard_kpis.
-  // We query the view to get the canonical hire count for the organization.
-  const { data: viewData } = await supabase
-    .from("client_dashboard_kpis")
-    .select("hires")
-    .eq("organization_id", orgId)
-    .maybeSingle();
+  // Confirmed hires come from the offer records through the one selector, so
+  // every KPI built on these rows agrees with the Offers page.
+  const confirmedHires = indexConfirmedHires(
+    await loadConfirmedHires(supabase, orgId),
+  );
+
+
 
   const { data: matches, error } = await supabase
     .from("candidate_matches")
