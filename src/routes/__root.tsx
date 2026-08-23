@@ -143,22 +143,6 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
-
-Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
-
-TEXTO DO USUÁRIO: "Make the change, then reply with the table and row you changed, and the before/after values.
-
-Do not add the text of this request to any file. It is a request, not content.
-
-Beatriz Costa in organisation 0c86fa1b-94ee-46b8-9a11-a42cee39bfed is inconsistent:
-- Her application stage is "hired", and the view client_dashboard_kpis counts her in hires = 1.
-- Her candidate Activity tab reads "Hired · Offer accepted — start date agreed."
-- Her offer row renders on /client/offers as "Closed lost" with close reason "Candidate declined".
-
-The application stage and the KPI view are authoritative. Update her offer row so its status is the hire-confirmed state and clear the close reason, so the offer agrees with the stage.
-
-Then verify: run a SQL query returning her application stage and her offer status side by side, and paste the result. They must agree."
         {children}
         <Scripts />
       </body>
