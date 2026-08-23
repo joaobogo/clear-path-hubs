@@ -150,11 +150,13 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-/client/portfolio, /client/intelligence and /client/shares render the not-found message with no sidebar, header or banner. /client/deliveries, /client/approvals, /client/talent-memory and any invented path render the same message correctly inside the layout.
+The step list reads: Review the compiled role blueprint, Configure scoring weights, Choose agent operating level, Set approval and oversight gates, Start the first run, Enter the Decision Workspace. Step 2 body text says the role record is what "blueprint, rubric, runs and decisions" attach to.
 
-Those three are registered routes whose component renders outside the client shell. Remove the three registrations so they fall through to the handler the others use.
+Rename them to: Check the role summary we built, Decide what matters most, Choose how much we do for you, Decide what needs your sign-off, Start the search, Go to your candidates. Rewrite the step 2 sentence without blueprint, rubric, runs or decisions.
 
-Done when: Those three paths show the not-found message with the sidebar, header and banner present."`}</div>
+Run R01 first so the vocabulary check catches anything you miss.
+
+Done when: The Setup wizard contains none of the words blueprint, rubric, agent, gates, run or Decision Workspace."`}</div>
         <Scripts />
       </body>
     </html>
