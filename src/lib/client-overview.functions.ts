@@ -562,18 +562,6 @@ export const loadClientOverview = createServerFn({ method: "GET" })
 
     // "What changed" — filter to client-relevant events only (never internal
     // processing chatter). Whitelist the actions we surface.
-    const CLIENT_RELEVANT_ACTIONS = [
-      "candidate_match.stage_changed",
-      "client.shortlist",
-      "client.request_interview",
-      "client.offer",
-      "client.hire",
-      "client.not_moving_forward",
-      "client.submit_feedback",
-      "position.approved",
-      "position.activated",
-      "position.paused",
-    ];
     // audit_events is staff-only under RLS; read the whitelisted client-facing
     // actions with the admin client, still scoped to this organization.
     const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
