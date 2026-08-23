@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The Interviews page says \"Set your availability once\" and the panel below renders a heading, a sentence and five static chips reading Monday 09:00-17:00 through Friday. A DOM query inside that panel finds zero interactive elements.
+The Insights page shows a Portfolio tab. It navigates to /client/portfolio, which renders "We couldn't find that" with no sidebar, no header and no banner.
 
-Make the day chips editable time-range controls that save the client's availability windows.
+Delete the Portfolio tab and remove the /client/portfolio route registration so the path falls through to the normal not-found handler.
 
-Done when: Clicking a day chip opens a time-range editor and the change survives a page refresh."`}</div>
+Done when: The Insights page shows no Portfolio tab and no navigation element leads to a not-found page."`}</div>
         <Scripts />
       </body>
     </html>
