@@ -46,6 +46,10 @@ import {
   buildScoreComposition,
   type ScoreComposition,
 } from "@/lib/scoring/score-composition";
+import {
+  indexConfirmedHires,
+  loadConfirmedHires,
+} from "@/lib/hires/confirmed.server";
 
 /**
  * Quoted passages stored per requirement by the scoring run. These are the
@@ -294,6 +298,10 @@ export async function loadKpiRows(
     recommendation: m.recommendation ?? null,
     contact_released_at: m.contact_released_at ?? null,
     client_decided: decidedMatches.has(m.id),
+    // Offer records decide hires — never the pipeline stage.
+    hire_confirmed:
+      confirmedHires.matchIds.has(String(m.id)) ||
+      confirmedHires.pairs.has(`${m.position_id}:${m.candidate_profile_id}`),
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
     interview_id: unconfirmedInterviewId.get(m.id) ?? null,
     evidence_items: (evidenceByMatch.get(String(m.id)) as unknown as AnyRow[]) ?? [],
@@ -365,9 +373,8 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
 
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
     offers: counts.offer,
-    // P-02: Hire count is single-sourced from the client_dashboard_kpis view.
-    // This ensures the "HIRES CONFIRMED" tile matches the database's truth.
-    hires: (rows as any)._canonical_hires ?? (counts.hired || 0) + ((counts as any).filled || 0),
+    // One definition of a hire: a confirmed offer record, carried on the row.
+    hires: rows.filter((r) => r.hire_confirmed).length,
     active_positions: activePositions,
     oldest_awaiting_decision_at: oldest(
       rows
