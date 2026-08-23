@@ -39,12 +39,17 @@ export async function buildWeeklyUpdate(
   orgId: string,
   now: Date = new Date(),
 ): Promise<WeeklyUpdate> {
+  // audit_events is staff-only under RLS, so decision events are read with the
+  // admin client, scoped to this organization — the same source the Recent
+  // activity feed on /client renders.
+  const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
+
   const windowEnd = now;
   const windowStart = new Date(now.getTime() - WEEKLY_WINDOW_DAYS * 86_400_000);
   const startIso = windowStart.toISOString();
   const endIso = windowEnd.toISOString();
 
-  const [positionsRes, deliveredRes, interviewsRes, decisionsRes, awaitingRes, infoRes, upcomingRes] =
+  const [positionsRes, deliveredRes, interviewsRes, awaitingRes, infoRes, upcomingRes, decisionsRes] =
     await Promise.all([
       // Live roles, for titles and for the blocker reason on a quiet week.
       client
@@ -73,19 +78,6 @@ export async function buildWeeklyUpdate(
         .lte("completed_at", endIso)
         .order("completed_at", { ascending: true }),
 
-      // Client decisions in the window, read from the same audit events the
-      // Recent activity feed on /client renders, so the tile and the list
-      // cannot disagree. audit_events is staff-only under RLS, so this read
-      // uses the caller's client and is scoped to the organization.
-      client
-        .from("audit_events")
-        .select("id, action, entity_id, created_at")
-        .eq("organization_id", orgId)
-        .in("action", [...CLIENT_DECISION_ACTIONS])
-        .gte("created_at", startIso)
-        .lte("created_at", endIso)
-        .order("created_at", { ascending: true }),
-
       // Candidates sitting with the client right now.
       client
         .from("candidate_matches")
@@ -108,6 +100,16 @@ export async function buildWeeklyUpdate(
         .not("scheduled_at", "is", null)
         .gte("scheduled_at", endIso)
         .lte("scheduled_at", new Date(windowEnd.getTime() + 7 * 86_400_000).toISOString()),
+
+      // Decisions counted from the same audit events Recent activity lists.
+      (auditDb as AnyClient)
+        .from("audit_events")
+        .select("id, action, entity_id, created_at")
+        .eq("organization_id", orgId)
+        .in("action", [...CLIENT_DECISION_ACTIONS])
+        .gte("created_at", startIso)
+        .lte("created_at", endIso)
+        .order("created_at", { ascending: true }),
     ]);
 
   const positions = (positionsRes.data ?? []) as Row[];
