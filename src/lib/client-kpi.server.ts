@@ -133,9 +133,12 @@ export type KpiRow = {
   client_decision_due_at: string | null;
   /** The client's recorded decision, or null/"pending" when none was made. */
   recommendation: string | null;
+  /** True when a confirmed hire record exists for this candidate. */
+  hire_confirmed: boolean;
   /** True when a `client_decisions` row exists for this match. */
   client_decided: boolean;
 };
+
 
 
 
