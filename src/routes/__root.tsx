@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The third filter control on Candidates renders completely blank. Its options are Recently delivered, Must-have coverage, Stage and Candidate name. The list is actually sorted by score descending, and score is not one of the options, so nothing renders.
+/client/portfolio, /client/intelligence and /client/shares render the not-found message with no sidebar, header or banner. /client/deliveries, /client/approvals, /client/talent-memory and any invented path render the same message correctly inside the layout.
 
-Add "Best match (score)" as the first option, select it by default, and give the control a visible Sort label.
+Those three are registered routes whose component renders outside the client shell. Remove the three registrations so they fall through to the handler the others use.
 
-Done when: The Candidates sort control displays Best match (score) on load and never renders blank."`}</div>
+Done when: Those three paths show the not-found message with the sidebar, header and banner present."`}</div>
         <Scripts />
       </body>
     </html>
