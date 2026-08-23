@@ -150,11 +150,17 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The client Setup wizard shows Step 3 of 10 with a recent \"Progress saved\" timestamp. The admin client record for the same organisation shows \"Onboarding: Not started\".
+All ten rows show a dash in the STAGE, SCORE and FIT columns, while the client workspace shows real values for the same people.
 
-Write the wizard's current step index to the organisation's onboarding status field on every save.
+Populate those three columns from the same fields the client workspace reads.
 
-Done when: Advancing a step in the client wizard changes the Onboarding value on the admin client record."`}</div>
+Done when: The admin client Candidates tab shows a stage, score and fit for every candidate, matching the client workspace. Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
+
+The Account page shows four at once: the global blue banner, the preview permission bar, and \"You are viewing as an administrator - changes are disabled.\" twice on one tab. The Candidates page adds a fifth, the Support view banner.
+
+Keep the global banner and the preview permission bar. Delete the per-page and per-panel notices.
+
+Done when: No client page shows more than the global banner and the preview permission bar."`}</div>
         <Scripts />
       </body>
     </html>
