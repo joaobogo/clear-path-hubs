@@ -7,7 +7,7 @@ import {
   type WeeklyNextStep,
   type WeeklyUpdate,
 } from "@/lib/client-weekly-update";
-import { CLIENT_DECISION_ACTIONS } from "@/lib/client-activity-actions";
+import { loadClientWeekActivity } from "@/lib/client/week-activity.server";
 
 /**
  * Builds the weekly client update from stored events only.
@@ -39,17 +39,17 @@ export async function buildWeeklyUpdate(
   orgId: string,
   now: Date = new Date(),
 ): Promise<WeeklyUpdate> {
-  // audit_events is staff-only under RLS, so decision events are read with the
-  // admin client, scoped to this organization — the same source the Recent
-  // activity feed on /client renders.
-  const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
+  // Interviews held and decisions made come from the shared selector, so this
+  // card, the /client tiles and the Recent activity feed count the same window
+  // from the same records.
+  const week = await loadClientWeekActivity(client, orgId, now);
 
   const windowEnd = now;
   const windowStart = new Date(now.getTime() - WEEKLY_WINDOW_DAYS * 86_400_000);
   const startIso = windowStart.toISOString();
   const endIso = windowEnd.toISOString();
 
-  const [positionsRes, deliveredRes, interviewsRes, awaitingRes, infoRes, upcomingRes, decisionsRes] =
+  const [positionsRes, deliveredRes, awaitingRes, infoRes, upcomingRes] =
     await Promise.all([
       // Live roles, for titles and for the blocker reason on a quiet week.
       client
@@ -67,16 +67,6 @@ export async function buildWeeklyUpdate(
         .gte("delivered_at", startIso)
         .lte("delivered_at", endIso)
         .order("delivered_at", { ascending: true }),
-
-      // Interviews actually held — completed, not merely booked.
-      client
-        .from("interviews")
-        .select("id, position_id, completed_at, positions(title)")
-        .eq("organization_id", orgId)
-        .not("completed_at", "is", null)
-        .gte("completed_at", startIso)
-        .lte("completed_at", endIso)
-        .order("completed_at", { ascending: true }),
 
       // Candidates sitting with the client right now.
       client
@@ -100,16 +90,6 @@ export async function buildWeeklyUpdate(
         .not("scheduled_at", "is", null)
         .gte("scheduled_at", endIso)
         .lte("scheduled_at", new Date(windowEnd.getTime() + 7 * 86_400_000).toISOString()),
-
-      // Decisions counted from the same audit events Recent activity lists.
-      (auditDb as AnyClient)
-        .from("audit_events")
-        .select("id, action, entity_id, created_at")
-        .eq("organization_id", orgId)
-        .in("action", [...CLIENT_DECISION_ACTIONS])
-        .gte("created_at", startIso)
-        .lte("created_at", endIso)
-        .order("created_at", { ascending: true }),
     ]);
 
   const positions = (positionsRes.data ?? []) as Row[];
@@ -126,11 +106,8 @@ export async function buildWeeklyUpdate(
   };
 
   const delivered = (deliveredRes.data ?? []) as Row[];
-  const held = (interviewsRes.data ?? []) as Row[];
-  // One counted decision per audit event, exactly as Recent activity lists them.
-  const decisions = ((decisionsRes.data ?? []) as Row[]).filter(
-    (d, i, all) => all.findIndex((o) => o.id === d.id) === i,
-  );
+  const held = week.interviewsHeld as Row[];
+  const decisions = week.decisions as Row[];
   const awaitingMatches = (awaitingRes.data ?? []) as Row[];
   const infoRequests = (infoRes.data ?? []) as Row[];
   const upcoming = (upcomingRes.data ?? []) as Row[];
