@@ -193,12 +193,8 @@ export async function loadKpiRows(
     .eq("is_test_record" as any, false);
   if (error) throw new Error(error.message);
 
-  // We inject the view's hire count into the result context by tagging rows
-  // or passing it through. However, the standard computeKpis below counts 
-  // matches with stage='hired'. To ensure P-02 reconciliation, we override
-  // the stage filter in computeKpis if we have a view count, or ensure
-  // the matches loaded here include all candidates contributing to the view.
-  (matches as any)._canonical_hires = viewData?.hires ?? 0;
+
+
 
   const matchIds = (matches as AnyRow[]).map((m) => m.id);
   const activeInterviews = new Set<string>();
