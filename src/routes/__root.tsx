@@ -150,17 +150,17 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The CLOSED LOST card shows \"Start 1 Sept 2026\" beside \"Candidate declined\".
+A panel headed \"Screening answers\" renders near the bottom of the candidate page with no content, no control and no empty state.
 
-Do not render a start date on an offer whose stage is closed lost or declined.
+Hide it when the candidate has no screening answers.
 
-Done when: No card in the CLOSED LOST or OFFER DECLINED columns shows a start date.Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
+Done when: The heading does not appear on a candidate with no screening answers. Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The Offers page shows \"owner unassigned\" and \"Comp not on record\". The comparison shows \"Auth: not confirmed\". A candidate's education shows \"Date not confirmed\".
+The candidate Compensation panel heading reads \"Lisbon, Lisbon, Portugal\" and the range label repeats it in caps. This appears on every candidate.
 
-Omit the clause when there is nothing to show. Where a missing value must appear, use \"Not provided\" everywhere.
+De-duplicate city and region before joining the location string.
 
-Done when: The Offers page shows no unassigned or not-on-record text, and every missing value reads Not provided."`}</div>
+Done when: The panel shows Lisbon, Portugal with no repeated segment."`}</div>
         <Scripts />
       </body>
     </html>
