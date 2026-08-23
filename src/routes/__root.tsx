@@ -148,7 +148,15 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
           {"\n\n"}
-          TEXTO DO USUÁRIO: "Analise o código e identifique todos os bugs, erros e falhas. Corrija cada um deles explicando o problema e a solução aplicada."
+          TEXTO DO USUÁRIO: "Please change the code, then tell me which files you changed.
+          {"\n\n"}
+          Look at the Offers page first. On 22 Aug it showed Beatriz Costa's offer as \"Closed lost — Candidate declined\" while her candidate record said \"Hired\". If it reads correctly now, tick this off.
+          {"\n\n"}
+          The database says she was hired. Her hire_records row 738ec9ba-a937-48ad-ad12-a6546a1050ab has status hire_confirmed, close_reason empty, declined_at empty, and hired_at set. Her stage history goes new, delivered, shortlisted, interview_process, offer, hired. Nothing was reversed.
+          {"\n\n"}
+          So the data is right and the label is wrong. Find where the Offers page turns a hire_records row into the status it displays. Fix it so a hire_confirmed row with no close reason can never show as closed or declined. Do not change her row.
+          {"\n\n"}
+          Done when: The Offers page shows her offer as confirmed with no close reason, and her stage, timeline and offer label agree."
         </div>
         {children}
         <Scripts />
