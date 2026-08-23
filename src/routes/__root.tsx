@@ -148,11 +148,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-          TEXTO DO USUÁRIO: "The number of hires shows as 1 on Candidates, Roles, the Account panel and Insights. It shows as 0 on Offers and the Account tile.
+          TEXTO DO USUÁRIO: "The Offers page shows Beatriz Costa’s offer as \"Closed lost\" with the close reason \"Candidate declined\". Her candidate record shows her stage as Hired. Both cannot be true.
 
-          Make one function that counts confirmed hires from the offer records. Have every page read that one function. Delete the other versions.
+          The database says she was hired. Her hire_records row 738ec9ba-a937-48ad-ad12-a6546a1050ab has status hire_confirmed, an empty close_reason, an empty declined_at, and hired_at set. Her stage history runs new, delivered, shortlisted, interview_process, offer, hired, with nothing reversed.
 
-          Once this is right: Offers, Roles, Candidates, Account and Insights all show the same hire number."
+          So the stored data is correct and the displayed label is wrong. The place to look is wherever the Offers page turns a hire_records row into the status text and close reason it shows. A row with status hire_confirmed and no close reason should never appear as closed, lost or declined. Her row itself is fine and does not need changing.
+
+          Once this is right: The Offers page shows her offer as confirmed with no close reason, and her stage, her timeline and the offer label all agree."
         </div>
         {children}
         <Scripts />
