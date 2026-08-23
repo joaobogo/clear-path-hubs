@@ -2,6 +2,7 @@
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
 import { excludeTestRecords } from "@/lib/client/test-record-filter";
+import { CLIENT_RELEVANT_ACTIONS } from "@/lib/client-activity-actions";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
