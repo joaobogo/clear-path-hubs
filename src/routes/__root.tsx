@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-Diogo Silva shows 42, Not recommended, In interviews, and his only button is a solid blue \"Make offer\". Rui Fernandes shows 47, Not recommended, At offer, with a primary \"Mark hired\".
+The candidate audit trail shows 20 identical rows reading \"Role activity recorded\" and \"RECRUITING TEAM\", differing only by timestamp. The newest appeared when an unrelated Headquarters field was saved in admin.
 
-When the fit label is Not recommended, render the advance action as a secondary text link and make the primary button \"Review evidence\", linking to the requirement coverage panel.
+Write the actual event name into each row, and stop emitting a candidate audit row when an organisation profile field is edited.
 
-Done when: No candidate labelled Not recommended shows Make offer or Mark hired as a filled primary button."`}</div>
+Done when: No two audit rows have identical text, and editing a company field in admin adds no row to any candidate."`}</div>
         <Scripts />
       </body>
     </html>
