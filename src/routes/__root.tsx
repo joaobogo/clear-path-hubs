@@ -150,13 +150,11 @@ function RootShell({ children }: { children: ReactNode }) {
           {"\n\n"}
           TEXTO DO USUÁRIO: "Please change the code, then tell me which files you changed.
           {"\n\n"}
-          Look at the Offers page first. On 22 Aug it showed Beatriz Costa's offer as \"Closed lost — Candidate declined\" while her candidate record said \"Hired\". If it reads correctly now, tick this off.
+          The Overview says \"1 of 1 roles filled\" next to \"1 open role\". The role is active and has an open offer, so it is not filled.
           {"\n\n"}
-          The database says she was hired. Her hire_records row 738ec9ba-a937-48ad-ad12-a6546a1050ab has status hire_confirmed, close_reason empty, declined_at empty, and hired_at set. Her stage history goes new, delivered, shortlisted, interview_process, offer, hired. Nothing was reversed.
+          Delete the \"N of N roles filled\" tile.
           {"\n\n"}
-          So the data is right and the label is wrong. Find where the Offers page turns a hire_records row into the status it displays. Fix it so a hire_confirmed row with no close reason can never show as closed or declined. Do not change her row.
-          {"\n\n"}
-          Done when: The Offers page shows her offer as confirmed with no close reason, and her stage, timeline and offer label agree."
+          Done when: The Overview summary shows open roles, awaiting decision and no-shortlist tiles, and no roles-filled tile."
         </div>
         {children}
         <Scripts />
