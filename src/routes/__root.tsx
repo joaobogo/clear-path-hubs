@@ -150,11 +150,17 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The timeline shows Hired on 13 Aug above Shortlisted and Interviewed on 16 Aug, so the candidate is hired three days before being shortlisted. Two Scored rows at the same timestamp are exact duplicates. The Activity list dates the same candidate's Shortlisted decision three days before Applied. The interview is dated 16 Aug here and 12 Aug on the Interviews page.
+The ESSENTIAL FOR LAUNCH panel lists six bullets and the caption reads \"after these 7 essentials\".
 
-Sort by timestamp, de-duplicate rows with the same event type and timestamp, and source the interview date from the interview record.
+Derive the number in the caption from the length of the bullet list.
 
-Done when: The timeline is chronological with no duplicate rows and the interview date matches the Interviews page."`}</div>
+Done when: The number in the caption always equals the number of bullets above it.Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
+
+Four of six threads read \"No messages yet\". The admin Comms centre hides exactly these, showing \"4 empty threads hidden\".
+
+Apply the same hide-empty-threads default to the client Messages page, with a toggle to show them.
+
+Done when: The client Messages page lists only threads with at least one message by default."`}</div>
         <Scripts />
       </body>
     </html>
