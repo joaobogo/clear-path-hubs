@@ -148,11 +148,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-          TEXTO DO USUÁRIO: "On Insights, \"Open roles by region\" says Portugal has 0 open and 1 filled. \"Candidates in play by team\" says Engineering has 1 open role.
+          TEXTO DO USUÁRIO: "The Account tile says \"Hires closed 0\". The panel right below it says \"1 hire confirmed\" with a \"1 hired\" badge.
 
-          Make both panels use the same open-roles query the Roles page uses. A role with an active search and an open offer is not filled.
+          Make both read the hires function from R02. Do R02 first.
 
-          Once this is right: Both Insights panels show 1 open role."
+          Once this is right: The tile and the badge below it show the same number."
         </div>
         {children}
         <Scripts />
