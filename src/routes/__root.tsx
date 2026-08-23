@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-In the Candidates stage filter, pressing Down three times moves the highlight one position, to item 2. Enter then selects item 2. The expected landing is item 4.
+The CV preview modal shows an empty dark rectangle for 14 to 20 seconds with no spinner before the PDF appears. Scrolling over the preview scrolls the page behind the modal.
 
-Stop intercepting arrow keys on this listbox and let native keyboard behaviour handle navigation.
+Show a skeleton while the PDF loads and add overscroll-behavior: contain to the modal body.
 
-Done when: Opening the stage filter and pressing Down three times then Enter selects the fourth option."`}</div>
+Done when: Opening a CV preview shows a loading indicator until the document renders, and scrolling over it moves the document."`}</div>
         <Scripts />
       </body>
     </html>
