@@ -570,7 +570,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       .from("audit_events")
       .select("id, action, entity_type, created_at")
       .eq("organization_id", data.orgId)
-      .in("action", CLIENT_RELEVANT_ACTIONS)
+      .in("action", [...CLIENT_RELEVANT_ACTIONS])
       .order("created_at", { ascending: false })
       .limit(6);
 
