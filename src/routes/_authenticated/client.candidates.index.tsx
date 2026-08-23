@@ -142,8 +142,11 @@ function CandidatesPage() {
   // the moment a candidate is moved — including the optimistic board update.
   const rowKpis = useMemo(() => {
     if (rowsStatus !== "success") return undefined;
-    return computeCandidateKpis(rowsRaw as ClientCandidateDTO[]);
-  }, [rowsRaw, rowsStatus]);
+    return computeCandidateKpis(
+      rowsRaw as ClientCandidateDTO[],
+      overview?.kpis?.hires ?? 0,
+    );
+  }, [rowsRaw, rowsStatus, overview?.kpis?.hires]);
 
   // The overview query is still used for the workspace timestamp and as a fallback
   // while the candidate list is in its first load.

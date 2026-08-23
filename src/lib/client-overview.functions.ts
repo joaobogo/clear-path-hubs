@@ -150,15 +150,13 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     const activePositionsList = (positions as AnyRow[]) ?? [];
     const activePositions = activePositionsList.length;
 
-    // Reconciliation (B4/B3): ensure KPI counts use the same positions we just loaded
-    // and derive hires from stage counts for consistency across surfaces.
-    const { counts: laneCounts } = countLanes(rows);
+    // Reconciliation (B4/B3): ensure KPI counts use the same positions we just loaded.
+    // Hires come from computeKpis, which reads the confirmed offer records.
     const kpis = {
       ...computeKpis(rows, activePositions),
       awaiting_decision: openItemsResponse.items.filter(i => i.kind === 'pending_decision').length,
       interviews_to_confirm: openItemsResponse.items.filter(i => i.kind === 'interview').length,
       offers: openItemsResponse.items.filter(i => i.kind === 'offer').length,
-      hires: laneCounts.hired,
       missing_feedback: interviewsAwaitingFeedback.length,
     };
 
@@ -344,7 +342,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         client_status: computeClientRoleStatus({
           status: p.status as string,
           // Canonical lane counts — identical to the Roles list and role page.
-          hires: countLanes(posRows).counts.hired,
+          hires: posRows.filter((r) => r.hire_confirmed).length,
           offers: countLanes(posRows).counts.offer,
           interviewing: countLanes(posRows).counts.interview_process,
           shortlisted: countLanes(posRows).counts.shortlisted,

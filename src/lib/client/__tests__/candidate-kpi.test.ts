@@ -29,7 +29,9 @@ describe("computeCandidateKpis", () => {
       candidate("hired", "top"),
     ];
 
-    expect(computeCandidateKpis(rows)).toEqual({
+    // Hires are passed in from the confirmed offer records, never inferred
+    // from the "hired" stage.
+    expect(computeCandidateKpis(rows, 1)).toEqual({
       delivered: 10,
       top: 6, // exceptional + top + strong
       shortlisted: 3,

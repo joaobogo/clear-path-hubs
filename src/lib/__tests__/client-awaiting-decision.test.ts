@@ -4,6 +4,7 @@ import { isAwaitingClientDecision, type KpiRow } from "@/lib/client-kpi.server";
 const row = (over: Partial<KpiRow> = {}): KpiRow => ({
   id: "m1",
   candidate_profile_id: "c1",
+  hire_confirmed: false,
   position_id: "p1",
   stage: "delivered",
   approved_score_run_id: "r1",

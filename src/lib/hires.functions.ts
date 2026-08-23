@@ -8,6 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
+import { countConfirmedHires } from "@/lib/hires/confirmed";
 import { isConfirmedHire, selectConfirmedHires } from "@/lib/hires/confirmed";
 
 
@@ -844,18 +845,11 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       .map(([reason, count]) => ({ reason, count }))
       .sort((a, b) => b.count - a.count);
 
-    // P-02: Reconcile hire count with the canonical client_dashboard_kpis view.
-    const { data: kpi } = await context.supabase
-      .from("client_dashboard_kpis")
-      .select("hires")
-      .eq("organization_id", data.orgId)
-      .maybeSingle();
-
     const report: TimeToHireReport = {
       totals: {
         open_offers: openOffers,
-        // Counted from the database view to ensure reconciliation.
-        hires_confirmed: (kpi as AnyRow)?.hires ?? hires.length,
+        // The one selector: confirmed offer records.
+        hires_confirmed: countConfirmedHires(scoped as { status: string }[]),
 
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
