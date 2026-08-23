@@ -60,14 +60,12 @@ type WeekCounts = {
 /** Reads a tile's number by its label inside the "This week" card. */
 async function readTile(page: Page, label: RegExp) {
   const card = page.locator('section[aria-label="This week"]');
-  const tile = card.locator("div", { has: card.locator("dt", { hasText: label }) });
-  const dt = card.getByRole("term").filter({ hasText: label }).first();
+  const dt = card.locator("dt").filter({ hasText: label }).first();
   if (!(await dt.count())) return { count: null as number | null, roles: 0 };
   const block = dt.locator("xpath=..");
   const countText = (await block.locator("dd").first().innerText()).trim();
   const roleLine = block.locator("p");
   const rolesText = (await roleLine.count()) ? (await roleLine.first().innerText()).trim() : "";
-  void tile;
   return {
     count: Number.parseInt(countText.replace(/[^\d-]/g, ""), 10),
     roles: rolesText ? rolesText.split(",").filter((s) => s.trim().length > 0).length : 0,
