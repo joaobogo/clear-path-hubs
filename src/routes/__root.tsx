@@ -150,13 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The step list reads: Review the compiled role blueprint, Configure scoring weights, Choose agent operating level, Set approval and oversight gates, Start the first run, Enter the Decision Workspace. Step 2 body text says the role record is what "blueprint, rubric, runs and decisions" attach to.
+Every question uses one template: "Can you elaborate on your experience with <requirement>?" That produces "...your experience with Experience owning features end to end..." and "...your experience with Fluent written and spoken English?"
 
-Rename them to: Check the role summary we built, Decide what matters most, Choose how much we do for you, Decide what needs your sign-off, Start the search, Go to your candidates. Rewrite the step 2 sentence without blueprint, rubric, runs or decisions.
+Change the template to "Tell me about your work on: <requirement>." and render the three checkboxes once at the top of the guide instead of under every question.
 
-Run R01 first so the vocabulary check catches anything you miss.
-
-Done when: The Setup wizard contains none of the words blueprint, rubric, agent, gates, run or Decision Workspace."`}</div>
+Done when: No generated question contains "experience with Experience" and every question reads as grammatical English."`}</div>
         <Scripts />
       </body>
     </html>
