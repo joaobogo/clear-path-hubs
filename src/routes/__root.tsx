@@ -150,17 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-All ten rows show a dash in the STAGE, SCORE and FIT columns, while the client workspace shows real values for the same people.
+Two identical List | Board toggles are visible in one screenshot of the Candidates list, one above the filter row and one inside it, plus a Board sub-tab at the top of the page.
 
-Populate those three columns from the same fields the client workspace reads.
+Keep the toggle inside the filter row. Delete the one above it and remove the Board sub-tab.
 
-Done when: The admin client Candidates tab shows a stage, score and fit for every candidate, matching the client workspace. Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
-
-The Account page shows four at once: the global blue banner, the preview permission bar, and \"You are viewing as an administrator - changes are disabled.\" twice on one tab. The Candidates page adds a fifth, the Support view banner.
-
-Keep the global banner and the preview permission bar. Delete the per-page and per-panel notices.
-
-Done when: No client page shows more than the global banner and the preview permission bar."`}</div>
+Done when: The Candidates page shows exactly one List | Board control."`}</div>
         <Scripts />
       </body>
     </html>
