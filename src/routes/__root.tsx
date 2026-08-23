@@ -150,11 +150,17 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-Two identical List | Board toggles are visible in one screenshot of the Candidates list, one above the filter row and one inside it, plus a Board sub-tab at the top of the page.
+The CLOSED LOST card shows \"Start 1 Sept 2026\" beside \"Candidate declined\".
 
-Keep the toggle inside the filter row. Delete the one above it and remove the Board sub-tab.
+Do not render a start date on an offer whose stage is closed lost or declined.
 
-Done when: The Candidates page shows exactly one List | Board control."`}</div>
+Done when: No card in the CLOSED LOST or OFFER DECLINED columns shows a start date.Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
+
+The Offers page shows \"owner unassigned\" and \"Comp not on record\". The comparison shows \"Auth: not confirmed\". A candidate's education shows \"Date not confirmed\".
+
+Omit the clause when there is nothing to show. Where a missing value must appear, use \"Not provided\" everywhere.
+
+Done when: The Offers page shows no unassigned or not-on-record text, and every missing value reads Not provided."`}</div>
         <Scripts />
       </body>
     </html>
