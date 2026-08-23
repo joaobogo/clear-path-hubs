@@ -13,6 +13,7 @@ import { resetStaleBrowserStorage } from "@/lib/storage-epoch";
 import { captureFirstTouch } from "@/lib/crm/attribution";
 import { GlobalRouteError } from "@/components/global-error";
 import { PublicNotFound } from "@/components/marketing/site-shell";
+import "@/styles.css";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
