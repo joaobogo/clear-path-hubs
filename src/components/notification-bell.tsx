@@ -292,6 +292,7 @@ export function NotificationBell({ role = "client" }: { role?: "admin" | "client
                 <NotificationRow
                   key={group.key}
                   group={group}
+                  role={role}
                   isNew={group.items.some((n) => arrivals.has(n.id))}
                   showTierBadge={showTierBadge}
                   index={i}
@@ -335,6 +336,7 @@ function FilterChip({
 
 function NotificationRow({
   group,
+  role,
   onRead,
   onDismiss,
   busy,
@@ -343,6 +345,7 @@ function NotificationRow({
   showTierBadge = true,
 }: {
   group: NotificationGroup;
+  role?: "admin" | "client" | "candidate";
   onRead: (ids: string[]) => void;
   onDismiss: (ids: string[]) => void;
   busy: boolean;
@@ -462,6 +465,13 @@ function NotificationRow({
 
   const unreadIds = items.filter((i) => !i.read_at).map((i) => i.id);
 
+  // Client workspace must never deep-link into admin routes. Render the row
+  // without a clickable href rather than expose an unauthorized path.
+  const isAdminLinkInClientWorkspace =
+    role === "client" && lead.link_path?.startsWith("/admin/");
+  const link =
+    lead.link_path && !isAdminLinkInClientWorkspace ? parseLinkPath(lead.link_path) : null;
+
   return (
     <li
       style={isNew ? staggerStyle(index) : undefined}
@@ -469,9 +479,10 @@ function NotificationRow({
         isNew ? "motion-arrive" : ""
       }`}
     >
-      {lead.link_path ? (
+      {link ? (
         <Link
-          to={lead.link_path}
+          to={link.to}
+          search={link.search}
           onClick={() => unreadIds.length > 0 && onRead(unreadIds)}
           className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
@@ -482,6 +493,18 @@ function NotificationRow({
       )}
     </li>
   );
+}
+
+function parseLinkPath(path: string): { to: string; search?: Record<string, string> } {
+  const q = path.indexOf("?");
+  if (q === -1) return { to: path };
+  const to = path.slice(0, q);
+  const search: Record<string, string> = {};
+  const params = new URLSearchParams(path.slice(q + 1));
+  params.forEach((value, key) => {
+    search[key] = value;
+  });
+  return { to, search };
 }
 
 const DELIVERY_SEVERITY: DeliveryState[] = ["bounced", "suppressed", "failed", "pending", "sent"];
