@@ -7,6 +7,7 @@ import {
   type WeeklyNextStep,
   type WeeklyUpdate,
 } from "@/lib/client-weekly-update";
+import { CLIENT_DECISION_ACTIONS } from "@/lib/client-activity-actions";
 
 /**
  * Builds the weekly client update from stored events only.
@@ -72,17 +73,15 @@ export async function buildWeeklyUpdate(
         .lte("completed_at", endIso)
         .order("completed_at", { ascending: true }),
 
-      // Client decisions that stuck (a reversed decision is not a decision).
-      // Decisions hang off the match, so the role comes through that join.
-      // P40: We count distinct candidates decided upon in the window to prevent
-      // double-counting multiple updates/history rows as separate decisions.
+      // Client decisions in the window, read from the same audit events the
+      // Recent activity feed on /client renders, so the tile and the list
+      // cannot disagree. audit_events is staff-only under RLS, so this read
+      // uses the caller's client and is scoped to the organization.
       client
-        .from("client_decisions")
-        .select(
-          "candidate_match_id, created_at, reversed_at, candidate_matches(position_id, positions(title))",
-        )
+        .from("audit_events")
+        .select("id, action, entity_id, created_at")
         .eq("organization_id", orgId)
-        .is("reversed_at", null)
+        .in("action", [...CLIENT_DECISION_ACTIONS])
         .gte("created_at", startIso)
         .lte("created_at", endIso)
         .order("created_at", { ascending: true }),
@@ -126,10 +125,9 @@ export async function buildWeeklyUpdate(
 
   const delivered = (deliveredRes.data ?? []) as Row[];
   const held = (interviewsRes.data ?? []) as Row[];
-  const decisionRows = (decisionsRes.data ?? []) as Row[];
-  // Deduplicate by match_id to count one decision event per candidate.
-  const decisions = Array.from(
-    new Map(decisionRows.map((d) => [d.candidate_match_id, d])).values(),
+  // One counted decision per audit event, exactly as Recent activity lists them.
+  const decisions = ((decisionsRes.data ?? []) as Row[]).filter(
+    (d, i, all) => all.findIndex((o) => o.id === d.id) === i,
   );
   const awaitingMatches = (awaitingRes.data ?? []) as Row[];
   const infoRequests = (infoRes.data ?? []) as Row[];
