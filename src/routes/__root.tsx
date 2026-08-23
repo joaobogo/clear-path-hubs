@@ -150,17 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-A panel headed \"Screening answers\" renders near the bottom of the candidate page with no content, no control and no empty state.
+The Compact mode button toggles its own pressed state but changes the page height from 1,217px to 1,197px, which nobody can perceive.
 
-Hide it when the candidate has no screening answers.
+Either remove the button or make it collapse the queue rows to single lines.
 
-Done when: The heading does not appear on a candidate with no screening answers. Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
-
-The candidate Compensation panel heading reads \"Lisbon, Lisbon, Portugal\" and the range label repeats it in caps. This appears on every candidate.
-
-De-duplicate city and region before joining the location string.
-
-Done when: The panel shows Lisbon, Portugal with no repeated segment."`}</div>
+Done when: Either the button is gone, or toggling it visibly shortens the queue rows."`}</div>
         <Scripts />
       </body>
     </html>
