@@ -1,18 +1,20 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { computeKpis, type KpiRow } from "@/lib/client-kpi.server";
-import { countLanes } from "@/lib/client-pipeline-lane";
 
 /**
- * The hire number must be identical on the three client surfaces that print it:
- *  - Account → "Roles and where they are" row badge ("N hired")
+ * The hire number must be identical on every client surface that prints it:
+ *  - Account → hires total and the "N hired" row badge
  *  - Roles list (/client/positions) → HIRES
+ *  - Candidates → Hiring Snapshot "Hires"
  *  - Offers board (/client/offers) → HIRES CONFIRMED
- *  - Executive → "Finance-ready hiring summary" tiles ("Hires · 30d/90d/YTD")
- * All four must resolve to the single lane derivation (countLanes → hired).
+ *  - Insights → "Hires · 30d/90d/YTD"
+ * All of them resolve to one selector over the confirmed offer records.
  */
 
-function row(over: Partial<KpiRow> & { id: string; stage: KpiRow["stage"] }): KpiRow {
+function row(
+  over: Partial<KpiRow> & { id: string; stage: KpiRow["stage"] },
+): KpiRow {
   return {
     candidate_profile_id: `p-${over.id}`,
     position_id: "pos-1",
@@ -29,38 +31,60 @@ function row(over: Partial<KpiRow> & { id: string; stage: KpiRow["stage"] }): Kp
     stage_entered_at: "2026-08-13T00:00:00Z",
     client_decision_due_at: null,
     recommendation: null,
+    hire_confirmed: false,
     ...(over as Partial<KpiRow>),
   } as KpiRow;
 }
 
 describe("hire count consistency across client surfaces", () => {
   const rows: KpiRow[] = [
-    row({ id: "beatriz", stage: "hired" as KpiRow["stage"] }),
-    row({ id: "ana", stage: "offer" as KpiRow["stage"] }),
-    row({ id: "rui", stage: "interview_process" as KpiRow["stage"] }),
+    row({ id: "beatriz", stage: "hired", hire_confirmed: true }),
+    row({ id: "ana", stage: "offer" }),
+    row({ id: "rui", stage: "interview_process" }),
   ];
 
-  it("roles list KPI hires equals the lane derivation", () => {
-    expect(computeKpis(rows, 0).hires).toBe(countLanes(rows).counts.hired);
+  it("counts confirmed hire records, not the pipeline stage", () => {
     expect(computeKpis(rows, 0).hires).toBe(1);
+    // A candidate parked in the hired stage without a confirmed offer record
+    // is not a hire on any surface.
+    expect(
+      computeKpis([row({ id: "no-record", stage: "hired" })], 0).hires,
+    ).toBe(0);
   });
 
   it("account row badge reads the same KPI key as the roles list", () => {
-    const src = readFileSync("src/routes/_authenticated/client.account.tsx", "utf8");
-    // The old `kpis?.hired` key does not exist on ClientKpis and always printed 0.
+    const src = readFileSync(
+      "src/routes/_authenticated/client.account.tsx",
+      "utf8",
+    );
     expect(src).not.toMatch(/kpis\?\.hired\b/);
     expect(src).toMatch(/kpis\?\.hires\b/);
   });
 
-  it("offers board hire totals count confirmed hires, not a separate field", () => {
-    const src = readFileSync("src/lib/hires.functions.ts", "utf8");
-    expect(src).toContain("hire_confirmed");
+  it("every hire surface reads the one selector", () => {
+    for (const file of [
+      "src/lib/client-kpi.server.ts",
+      "src/lib/account.functions.ts",
+      "src/lib/hires.functions.ts",
+      "src/lib/executive.functions.ts",
+    ]) {
+      expect(readFileSync(file, "utf8")).toMatch(/hires\/confirmed/);
+    }
   });
 
-  it("executive report uses the canonical KPI rows and hired stage", () => {
-    const src = readFileSync("src/lib/executive.functions.ts", "utf8");
-    expect(src).toContain("loadKpiRows(s, orgId)");
-    expect(src).toContain("computeKpis(kpiRows, 0)");
-    expect(src).toContain("r.stage === 'hired'");
+  it("no surface re-derives hires from the view or the stage", () => {
+    for (const file of [
+      "src/lib/client-kpi.server.ts",
+      "src/lib/client-overview.functions.ts",
+      "src/lib/account.functions.ts",
+      "src/lib/hires.functions.ts",
+      "src/lib/executive.functions.ts",
+      "src/lib/client/candidate-kpi.ts",
+    ]) {
+      const src = readFileSync(file, "utf8");
+      expect(src).not.toContain('.select("hires")');
+      expect(src).not.toMatch(/hires:\s*(laneCounts|counts)\.hired/);
+      expect(src).not.toMatch(/stage === "hired"\) hires/);
+    }
   });
 });
