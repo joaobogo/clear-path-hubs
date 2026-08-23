@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The candidate audit trail shows 20 identical rows reading \"Role activity recorded\" and \"RECRUITING TEAM\", differing only by timestamp. The newest appeared when an unrelated Headquarters field was saved in admin.
+The timeline shows Hired on 13 Aug above Shortlisted and Interviewed on 16 Aug, so the candidate is hired three days before being shortlisted. Two Scored rows at the same timestamp are exact duplicates. The Activity list dates the same candidate's Shortlisted decision three days before Applied. The interview is dated 16 Aug here and 12 Aug on the Interviews page.
 
-Write the actual event name into each row, and stop emitting a candidate audit row when an organisation profile field is edited.
+Sort by timestamp, de-duplicate rows with the same event type and timestamp, and source the interview date from the interview record.
 
-Done when: No two audit rows have identical text, and editing a company field in admin adds no row to any candidate."`}</div>
+Done when: The timeline is chronological with no duplicate rows and the interview date matches the Interviews page."`}</div>
         <Scripts />
       </body>
     </html>
