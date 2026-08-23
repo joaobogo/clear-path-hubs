@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The Insights page shows a Portfolio tab. It navigates to /client/portfolio, which renders "We couldn't find that" with no sidebar, no header and no banner.
+A notification in the client workspace has the href /admin/candidates. Clicking it loads the admin Candidate database listing submissions across all clients. Two others link to /client/interviews, a generic list rather than the specific interview.
 
-Delete the Portfolio tab and remove the /client/portfolio route registration so the path falls through to the normal not-found handler.
+Point the interview notification at the specific client-side interview record, and add a guard that refuses to render any href starting with /admin/ inside the client workspace.
 
-Done when: The Insights page shows no Portfolio tab and no navigation element leads to a not-found page."`}</div>
+Done when: Every notification in the client workspace opens a client-side URL and no href starts with /admin/."`}</div>
         <Scripts />
       </body>
     </html>
