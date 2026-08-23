@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-A notification in the client workspace has the href /admin/candidates. Clicking it loads the admin Candidate database listing submissions across all clients. Two others link to /client/interviews, a generic list rather than the specific interview.
+In the Candidates stage filter, pressing Down three times moves the highlight one position, to item 2. Enter then selects item 2. The expected landing is item 4.
 
-Point the interview notification at the specific client-side interview record, and add a guard that refuses to render any href starting with /admin/ inside the client workspace.
+Stop intercepting arrow keys on this listbox and let native keyboard behaviour handle navigation.
 
-Done when: Every notification in the client workspace opens a client-side URL and no href starts with /admin/."`}</div>
+Done when: Opening the stage filter and pressing Down three times then Enter selects the fourth option."`}</div>
         <Scripts />
       </body>
     </html>
