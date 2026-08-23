@@ -148,11 +148,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-          TEXTO DO USUÁRIO: "Three pages give three numbers for interviews that need a time. The Roles banner says 5. The Overview queue shows 4 rows. The Interviews page says 1. The Roles banner is right.
+          TEXTO DO USUÁRIO: "On Insights, \"Open roles by region\" says Portugal has 0 open and 1 filled. \"Candidates in play by team\" says Engineering has 1 open role.
 
-          Make the Overview queue and the Interviews page use the same query as the Roles banner.
+          Make both panels use the same open-roles query the Roles page uses. A role with an active search and an open offer is not filled.
 
-          Once this is right: All three show the same number."
+          Once this is right: Both Insights panels show 1 open role."
         </div>
         {children}
         <Scripts />
