@@ -150,17 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The ESSENTIAL FOR LAUNCH panel lists six bullets and the caption reads \"after these 7 essentials\".
+The client Setup wizard shows Step 3 of 10 with a recent \"Progress saved\" timestamp. The admin client record for the same organisation shows \"Onboarding: Not started\".
 
-Derive the number in the caption from the length of the bullet list.
+Write the wizard's current step index to the organisation's onboarding status field on every save.
 
-Done when: The number in the caption always equals the number of bullets above it.Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
-
-Four of six threads read \"No messages yet\". The admin Comms centre hides exactly these, showing \"4 empty threads hidden\".
-
-Apply the same hide-empty-threads default to the client Messages page, with a toggle to show them.
-
-Done when: The client Messages page lists only threads with at least one message by default."`}</div>
+Done when: Advancing a step in the client wizard changes the Onboarding value on the admin client record."`}</div>
         <Scripts />
       </body>
     </html>
