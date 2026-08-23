@@ -7,6 +7,7 @@ import {
   type WeeklyNextStep,
   type WeeklyUpdate,
 } from "@/lib/client-weekly-update";
+import { CLIENT_DECISION_ACTIONS } from "@/lib/client-activity-actions";
 
 /**
  * Builds the weekly client update from stored events only.
@@ -38,12 +39,17 @@ export async function buildWeeklyUpdate(
   orgId: string,
   now: Date = new Date(),
 ): Promise<WeeklyUpdate> {
+  // audit_events is staff-only under RLS, so decision events are read with the
+  // admin client, scoped to this organization — the same source the Recent
+  // activity feed on /client renders.
+  const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
+
   const windowEnd = now;
   const windowStart = new Date(now.getTime() - WEEKLY_WINDOW_DAYS * 86_400_000);
   const startIso = windowStart.toISOString();
   const endIso = windowEnd.toISOString();
 
-  const [positionsRes, deliveredRes, interviewsRes, decisionsRes, awaitingRes, infoRes, upcomingRes] =
+  const [positionsRes, deliveredRes, interviewsRes, awaitingRes, infoRes, upcomingRes, decisionsRes] =
     await Promise.all([
       // Live roles, for titles and for the blocker reason on a quiet week.
       client
@@ -72,21 +78,6 @@ export async function buildWeeklyUpdate(
         .lte("completed_at", endIso)
         .order("completed_at", { ascending: true }),
 
-      // Client decisions that stuck (a reversed decision is not a decision).
-      // Decisions hang off the match, so the role comes through that join.
-      // P40: We count distinct candidates decided upon in the window to prevent
-      // double-counting multiple updates/history rows as separate decisions.
-      client
-        .from("client_decisions")
-        .select(
-          "candidate_match_id, created_at, reversed_at, candidate_matches(position_id, positions(title))",
-        )
-        .eq("organization_id", orgId)
-        .is("reversed_at", null)
-        .gte("created_at", startIso)
-        .lte("created_at", endIso)
-        .order("created_at", { ascending: true }),
-
       // Candidates sitting with the client right now.
       client
         .from("candidate_matches")
@@ -109,6 +100,16 @@ export async function buildWeeklyUpdate(
         .not("scheduled_at", "is", null)
         .gte("scheduled_at", endIso)
         .lte("scheduled_at", new Date(windowEnd.getTime() + 7 * 86_400_000).toISOString()),
+
+      // Decisions counted from the same audit events Recent activity lists.
+      (auditDb as AnyClient)
+        .from("audit_events")
+        .select("id, action, entity_id, created_at")
+        .eq("organization_id", orgId)
+        .in("action", [...CLIENT_DECISION_ACTIONS])
+        .gte("created_at", startIso)
+        .lte("created_at", endIso)
+        .order("created_at", { ascending: true }),
     ]);
 
   const positions = (positionsRes.data ?? []) as Row[];
@@ -126,10 +127,9 @@ export async function buildWeeklyUpdate(
 
   const delivered = (deliveredRes.data ?? []) as Row[];
   const held = (interviewsRes.data ?? []) as Row[];
-  const decisionRows = (decisionsRes.data ?? []) as Row[];
-  // Deduplicate by match_id to count one decision event per candidate.
-  const decisions = Array.from(
-    new Map(decisionRows.map((d) => [d.candidate_match_id, d])).values(),
+  // One counted decision per audit event, exactly as Recent activity lists them.
+  const decisions = ((decisionsRes.data ?? []) as Row[]).filter(
+    (d, i, all) => all.findIndex((o) => o.id === d.id) === i,
   );
   const awaitingMatches = (awaitingRes.data ?? []) as Row[];
   const infoRequests = (infoRes.data ?? []) as Row[];

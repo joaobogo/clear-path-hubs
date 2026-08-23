@@ -2,6 +2,7 @@
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
 import { excludeTestRecords } from "@/lib/client/test-record-filter";
+import { CLIENT_RELEVANT_ACTIONS } from "@/lib/client-activity-actions";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -562,18 +563,6 @@ export const loadClientOverview = createServerFn({ method: "GET" })
 
     // "What changed" — filter to client-relevant events only (never internal
     // processing chatter). Whitelist the actions we surface.
-    const CLIENT_RELEVANT_ACTIONS = [
-      "candidate_match.stage_changed",
-      "client.shortlist",
-      "client.request_interview",
-      "client.offer",
-      "client.hire",
-      "client.not_moving_forward",
-      "client.submit_feedback",
-      "position.approved",
-      "position.activated",
-      "position.paused",
-    ];
     // audit_events is staff-only under RLS; read the whitelisted client-facing
     // actions with the admin client, still scoped to this organization.
     const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
@@ -581,7 +570,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       .from("audit_events")
       .select("id, action, entity_type, created_at")
       .eq("organization_id", data.orgId)
-      .in("action", CLIENT_RELEVANT_ACTIONS)
+      .in("action", [...CLIENT_RELEVANT_ACTIONS])
       .order("created_at", { ascending: false })
       .limit(6);
 
