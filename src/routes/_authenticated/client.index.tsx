@@ -406,6 +406,7 @@ function OverviewPage() {
                     fallback={activity}
                     lastSeen={lastSeen}
                     loading={overviewPanel.loading}
+                    weekActivity={(data as Any)?.week_activity ?? null}
                   />
                 </div>
                 <div className="lg:col-span-2">

@@ -118,6 +118,11 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       );
     })();
 
+    // "This week" interview and decision counts come from the shared selector,
+    // the same one the weekly update card reads.
+    const { loadClientWeekActivity } = await import("./client/week-activity.server");
+    const weekActivity = await loadClientWeekActivity(context.supabase, data.orgId);
+
     const interviewsRes = await s
       .from("interviews")
       .select("id, candidate_match_id, position_id, completed_at, status")
@@ -599,6 +604,12 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       latest_candidates,
       recent_messages,
       recent_activity: (events as AnyRow[]) ?? [],
+      week_activity: {
+        window_start: weekActivity.windowStart,
+        window_end: weekActivity.windowEnd,
+        interviews_held: weekActivity.interviewsHeldCount,
+        decisions_made: weekActivity.decisionsCount,
+      },
       last_updated,
     };
 
