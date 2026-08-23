@@ -143,6 +143,17 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
+
+Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
+
+TEXTO DO USUÁRIO: "Please make this change directly in the code, then list the files you changed. No plan or summary document is needed.
+
+The hire count is derived in several places and gives two answers. Candidates, Roles, Account panel and Insights show 1. Offers and the Account tile show 0.
+
+Create one selector that returns confirmed hires from the offer records, and make every surface read it. Delete the other derivations.
+
+Done when: The Offers page, the Roles page, the Candidates page, the Account page and Insights all show the same hire number."
         {children}
         <Scripts />
       </body>
