@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-A timeline row reads \"Scored - Score 65 - Mixed Fit\". Mixed Fit is not one of the four labels the product uses. A later row reads \"Score 88 - top\" in lower case.
+Diogo Silva shows 42, Not recommended, In interviews, and his only button is a solid blue \"Make offer\". Rui Fernandes shows 47, Not recommended, At offer, with a primary \"Mark hired\".
 
-Map historical fit labels onto the current four-label scale when rendering the timeline and apply the same casing used elsewhere.
+When the fit label is Not recommended, render the advance action as a secondary text link and make the primary button \"Review evidence\", linking to the requirement coverage panel.
 
-Done when: Every fit label in the timeline is Top, Strong, Consider or Not recommended, with consistent casing."`}</div>
+Done when: No candidate labelled Not recommended shows Make offer or Mark hired as a filled primary button."`}</div>
         <Scripts />
       </body>
     </html>
