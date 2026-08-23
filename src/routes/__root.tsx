@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The CV preview modal shows an empty dark rectangle for 14 to 20 seconds with no spinner before the PDF appears. Scrolling over the preview scrolls the page behind the modal.
+The third filter control on Candidates renders completely blank. Its options are Recently delivered, Must-have coverage, Stage and Candidate name. The list is actually sorted by score descending, and score is not one of the options, so nothing renders.
 
-Show a skeleton while the PDF loads and add overscroll-behavior: contain to the modal body.
+Add "Best match (score)" as the first option, select it by default, and give the control a visible Sort label.
 
-Done when: Opening a CV preview shows a loading indicator until the document renders, and scrolling over it moves the document."`}</div>
+Done when: The Candidates sort control displays Best match (score) on load and never renders blank."`}</div>
         <Scripts />
       </body>
     </html>
