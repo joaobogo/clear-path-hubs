@@ -149,11 +149,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-Six controls do nothing on the first click and work on the second: New role, the Insights Portfolio tab, the header search box, the Candidates search input, candidate row links, and the Account \"Workspace details\" accordion. The accordion does not open at all when clicked at its centre but does open from a scripted click, so the handler works and the pointer target does not.
+The Interviews page says \"Set your availability once\" and the panel below renders a heading, a sentence and five static chips reading Monday 09:00-17:00 through Friday. A DOM query inside that panel finds zero interactive elements.
 
-Find the shared wrapper or focus-then-activate pattern that consumes the first pointer event and fix it once. Make the whole Workspace details header row the click target.
+Make the day chips editable time-range controls that save the client's availability windows.
 
-Done when: Each of those six controls responds to a single click and the Workspace details panel opens when its header is clicked."`}</div>
+Done when: Clicking a day chip opens a time-range editor and the change survives a page refresh."`}</div>
         <Scripts />
       </body>
     </html>
