@@ -12,11 +12,14 @@ export function SinceLastVisit({
   fallback,
   lastSeen,
   loading,
+  weekActivity,
 }: {
   events: Any[];
   fallback: Any[];
   lastSeen: number | null;
   loading?: boolean;
+  /** Shared "this week" counts — same selector as the weekly update card. */
+  weekActivity?: { interviews_held: number; decisions_made: number } | null;
 }) {
   const list = events.length ? events : fallback.slice(0, 6);
   const isNew = (e: Any) => lastSeen != null && new Date(e.created_at).getTime() > lastSeen;
@@ -27,6 +30,14 @@ export function SinceLastVisit({
   return (
     <div className="rounded-xl border bg-card p-4 sm:p-5">
       <SectionHeader icon={<RefreshCw className="h-4 w-4" />} title={heading} size="sm" />
+      {weekActivity && !loading ? (
+        <p className="mt-1 text-xs text-muted-foreground">
+          This week: {weekActivity.interviews_held} interview
+          {weekActivity.interviews_held === 1 ? "" : "s"} held ·{" "}
+          {weekActivity.decisions_made} decision
+          {weekActivity.decisions_made === 1 ? "" : "s"} recorded
+        </p>
+      ) : null}
       {loading ? (
         <div className="mt-3 space-y-2.5">
           {Array.from({ length: 4 }).map((_, i) => (
