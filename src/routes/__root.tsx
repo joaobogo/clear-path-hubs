@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-A notification shown to the client reads \"Client requested an interview\" and offers the action \"Propose times\". Proposing times is your job; the client's job is to confirm one.
+A timeline row reads \"Scored - Score 65 - Mixed Fit\". Mixed Fit is not one of the four labels the product uses. A later row reads \"Score 88 - top\" in lower case.
 
-Rewrite the title as \"You requested an interview\", the body as \"This interview still needs a confirmed time\", and change the action to \"Confirm a time\".
+Map historical fit labels onto the current four-label scale when rendering the timeline and apply the same casing used elsewhere.
 
-Done when: No notification refers to the reader as Client or offers Propose times."`}</div>
+Done when: Every fit label in the timeline is Top, Strong, Consider or Not recommended, with consistent casing."`}</div>
         <Scripts />
       </body>
     </html>
