@@ -148,11 +148,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-          TEXTO DO USUÁRIO: "The Offers page shows \"HIRES CONFIRMED 0\", the board column \"HIRE CONFIRMED\" shows 0, and the footer says \"Hires by owner: No hires yet.\" The Account page tile \"Hires closed\" also shows 0.
+          TEXTO DO USUÁRIO: "The Overview says \"1 of 1 roles filled\" next to \"1 open role\". The role is active and has an open offer, so it is not filled.
 
-          The Candidates page, the Roles page and Insights all show 1 hire for the same organisation, and that is the correct number.
+          Delete the \"N of N roles filled\" tile.
 
-          countConfirmedHiresForOrg in src/lib/hires/confirmed.server.ts already returns the right value from the hire record. Those four places should read that same function instead of counting hires their own way."
+          Once this is right: The Overview summary shows open roles, awaiting decision and no-shortlist tiles, and no roles-filled tile."
         </div>
         {children}
         <Scripts />
