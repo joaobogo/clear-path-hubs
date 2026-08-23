@@ -150,11 +150,19 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-The Compact mode button toggles its own pressed state but changes the page height from 1,217px to 1,197px, which nobody can perceive.
+The Overview "5 Decisions made" tile shows its caption cut to "Senior Full-S...". On Insights, the one populated cell of the shortlist-fit chart wraps the word Consider mid-word.
 
-Either remove the button or make it collapse the queue rows to single lines.
+Widen both containers or drop the caption on the decisions tile, and prevent mid-word wrapping in chart cells.
 
-Done when: Either the button is gone, or toggling it visibly shortens the queue rows."`}</div>
+Done when: No caption or chart label is cut off or wrapped mid-word.Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
+
+The candidate Talent Memory panel prints "Silver medalist" twice, once as a badge and once as a button. The Talent pool page shows three cards, each a heading and one sentence with no data, no control and no empty state.
+
+Show the label once. Hide the three category cards while the pool is empty, leaving only the "Building your talent pool" message.
+
+Run R37 first.
+
+Done when: The panel shows the label once and the Talent pool shows no empty category cards."`}</div>
         <Scripts />
       </body>
     </html>
