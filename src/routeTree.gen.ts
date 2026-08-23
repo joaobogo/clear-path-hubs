@@ -110,7 +110,6 @@ import { Route as AuthenticatedClientSharesRouteImport } from './routes/_authent
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientRolesRouteImport } from './routes/_authenticated/client.roles'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
-import { Route as AuthenticatedClientPortfolioRouteImport } from './routes/_authenticated/client.portfolio'
 import { Route as AuthenticatedClientPlanRouteImport } from './routes/_authenticated/client.plan'
 import { Route as AuthenticatedClientOutreachRouteImport } from './routes/_authenticated/client.outreach'
 import { Route as AuthenticatedClientOnboardingRouteImport } from './routes/_authenticated/client.onboarding'
@@ -724,12 +723,6 @@ const AuthenticatedClientPositionsRoute =
   AuthenticatedClientPositionsRouteImport.update({
     id: '/positions',
     path: '/positions',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
-const AuthenticatedClientPortfolioRoute =
-  AuthenticatedClientPortfolioRouteImport.update({
-    id: '/portfolio',
-    path: '/portfolio',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
 const AuthenticatedClientPlanRoute = AuthenticatedClientPlanRouteImport.update({
@@ -1429,7 +1422,6 @@ export interface FileRoutesByFullPath {
   '/client/onboarding': typeof AuthenticatedClientOnboardingRoute
   '/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/client/plan': typeof AuthenticatedClientPlanRoute
-  '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
@@ -1622,7 +1614,6 @@ export interface FileRoutesByTo {
   '/client/onboarding': typeof AuthenticatedClientOnboardingRoute
   '/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/client/plan': typeof AuthenticatedClientPlanRoute
-  '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/shares': typeof AuthenticatedClientSharesRoute
@@ -1823,7 +1814,6 @@ export interface FileRoutesById {
   '/_authenticated/client/onboarding': typeof AuthenticatedClientOnboardingRoute
   '/_authenticated/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/_authenticated/client/plan': typeof AuthenticatedClientPlanRoute
-  '/_authenticated/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/roles': typeof AuthenticatedClientRolesRoute
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
@@ -2026,7 +2016,6 @@ export interface FileRouteTypes {
     | '/client/onboarding'
     | '/client/outreach'
     | '/client/plan'
-    | '/client/portfolio'
     | '/client/positions'
     | '/client/roles'
     | '/client/settings'
@@ -2219,7 +2208,6 @@ export interface FileRouteTypes {
     | '/client/onboarding'
     | '/client/outreach'
     | '/client/plan'
-    | '/client/portfolio'
     | '/client/roles'
     | '/client/settings'
     | '/client/shares'
@@ -2419,7 +2407,6 @@ export interface FileRouteTypes {
     | '/_authenticated/client/onboarding'
     | '/_authenticated/client/outreach'
     | '/_authenticated/client/plan'
-    | '/_authenticated/client/portfolio'
     | '/_authenticated/client/positions'
     | '/_authenticated/client/roles'
     | '/_authenticated/client/settings'
@@ -3307,13 +3294,6 @@ declare module '@tanstack/react-router' {
       path: '/positions'
       fullPath: '/client/positions'
       preLoaderRoute: typeof AuthenticatedClientPositionsRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
-    '/_authenticated/client/portfolio': {
-      id: '/_authenticated/client/portfolio'
-      path: '/portfolio'
-      fullPath: '/client/portfolio'
-      preLoaderRoute: typeof AuthenticatedClientPortfolioRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
     '/_authenticated/client/plan': {
@@ -4237,7 +4217,6 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientOnboardingRoute: typeof AuthenticatedClientOnboardingRoute
   AuthenticatedClientOutreachRoute: typeof AuthenticatedClientOutreachRoute
   AuthenticatedClientPlanRoute: typeof AuthenticatedClientPlanRoute
-  AuthenticatedClientPortfolioRoute: typeof AuthenticatedClientPortfolioRoute
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientRolesRoute: typeof AuthenticatedClientRolesRoute
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
@@ -4268,7 +4247,6 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientOnboardingRoute: AuthenticatedClientOnboardingRoute,
   AuthenticatedClientOutreachRoute: AuthenticatedClientOutreachRoute,
   AuthenticatedClientPlanRoute: AuthenticatedClientPlanRoute,
-  AuthenticatedClientPortfolioRoute: AuthenticatedClientPortfolioRoute,
   AuthenticatedClientPositionsRoute:
     AuthenticatedClientPositionsRouteWithChildren,
   AuthenticatedClientRolesRoute: AuthenticatedClientRolesRoute,
