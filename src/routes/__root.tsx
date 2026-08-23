@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-Still visible to clients: Unicorn only (95+), Silver medalist, Talent memory, Captured at intake, \"A rescore appends a new run rather than editing this one.\", Audit trail, BUSINESS UNIT, BLOCKED, p90, drill-through, publish gate, on publish, Support view.
+A notification shown to the client reads \"Client requested an interview\" and offers the action \"Propose times\". Proposing times is your job; the client's job is to confirm one.
 
-Replace with: remove the Unicorn filter; Previously shortlisted; Keep for future roles; From your role brief; \"Re-scoring adds a new result; the old one is kept.\"; Full history; Team; Needs your input; remove the p90 column; for the detail; \"Nothing goes live until we've reviewed it.\"; when the role goes live; remove the Support view banner.
+Rewrite the title as \"You requested an interview\", the body as \"This interview still needs a confirmed time\", and change the action to \"Confirm a time\".
 
-Done when: None of those strings appears anywhere in the client workspace."`}</div>
+Done when: No notification refers to the reader as Client or offers Propose times."`}</div>
         <Scripts />
       </body>
     </html>
