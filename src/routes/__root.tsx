@@ -148,11 +148,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-          TEXTO DO USUÁRIO: "The Overview says \"1 of 1 roles filled\" next to \"1 open role\". The role is active and has an open offer, so it is not filled.
+          TEXTO DO USUÁRIO: "Three pages give three numbers for interviews that need a time. The Roles banner says 5. The Overview queue shows 4 rows. The Interviews page says 1. The Roles banner is right.
 
-          Delete the \"N of N roles filled\" tile.
+          Make the Overview queue and the Interviews page use the same query as the Roles banner.
 
-          Once this is right: The Overview summary shows open roles, awaiting decision and no-shortlist tiles, and no roles-filled tile."
+          Once this is right: All three show the same number."
         </div>
         {children}
         <Scripts />
