@@ -9,6 +9,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { computeSeatCount } from "@/lib/client-seats";
 import { countClientRoles } from "@/lib/client/role-counts";
+import { selectConfirmedHires } from "@/lib/hires/confirmed";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;

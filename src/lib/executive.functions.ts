@@ -10,6 +10,7 @@ import { z } from "zod";
 import { isOpenRoleStatus, isFilledRole } from "@/lib/client-role-open";
 import { laneFor } from "@/lib/client-pipeline-lane";
 import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
+import { loadConfirmedHires } from "@/lib/hires/confirmed.server";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 import { selectClientRoles } from "@/lib/client/role-counts";
@@ -376,18 +377,23 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const kpiRows = await loadKpiRows(s, orgId);
     const kpis = computeKpis(kpiRows, 0);
 
-    // Filter hires by window using their confirmed hired_at timestamp
-    const hiredMatches = kpiRows.filter(r => r.stage === 'hired' && r.stage_entered_at);
-    
-    const hires_30d = hiredMatches.filter(
-      (h) => new Date(h.stage_entered_at!) >= days(30),
-    ).length;
-    const hires_90d = hiredMatches.filter(
-      (h) => new Date(h.stage_entered_at!) >= days(90),
-    ).length;
-    const hires_ytd = hiredMatches.filter(
-      (h) => new Date(h.stage_entered_at!) >= yearStart,
-    ).length;
+    // Hires come from the one selector: confirmed offer records, windowed on
+    // the recorded confirmation date.
+    const confirmedHireRows = await loadConfirmedHires(s, orgId);
+    const hireDate = (h: { hired_at: string | null; start_date: string | null }) =>
+      h.hired_at ? new Date(h.hired_at) : null;
+    const hires_30d = confirmedHireRows.filter((h) => {
+      const d = hireDate(h);
+      return d != null && d >= days(30);
+    }).length;
+    const hires_90d = confirmedHireRows.filter((h) => {
+      const d = hireDate(h);
+      return d != null && d >= days(90);
+    }).length;
+    const hires_ytd = confirmedHireRows.filter((h) => {
+      const d = hireDate(h);
+      return d != null && d >= yearStart;
+    }).length;
 
     const { data: allOffers } = await s
       .from("hire_records")

@@ -8,6 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
+import { countConfirmedHires } from "@/lib/hires/confirmed";
 import { isConfirmedHire, selectConfirmedHires } from "@/lib/hires/confirmed";
 
 
