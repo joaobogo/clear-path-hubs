@@ -150,11 +150,11 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Edit code only. Do not write a plan, do not create or edit any .md file, and do not add any text to a JSX element. Make the change now, then reply with only the list of files you changed.
 
-Every question uses one template: "Can you elaborate on your experience with <requirement>?" That produces "...your experience with Experience owning features end to end..." and "...your experience with Fluent written and spoken English?"
+One stage has five names: INTERVIEWING on the tile, Interview process in the filter, INTERVIEW PROCESS on the board, In interviews in the list, In Interviews on Insights. Shortlisted has four and Offer has five.
 
-Change the template to "Tell me about your work on: <requirement>." and render the three checkboxes once at the top of the guide instead of under every question.
+Define one display label per stage in a single map and read it in the tiles, filter options, board headers, list cells and Insights. Apply casing with CSS, not by storing different strings.
 
-Done when: No generated question contains "experience with Experience" and every question reads as grammatical English."`}</div>
+Done when: Each stage appears under one identical label in all five places."`}</div>
         <Scripts />
       </body>
     </html>
