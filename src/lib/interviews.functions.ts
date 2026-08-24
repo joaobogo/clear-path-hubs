@@ -15,6 +15,7 @@ import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { assertEditor } from "@/lib/client-shared.server";
 import { resolveNotificationsForUser } from "@/lib/notifications-resolver.server";
 import { isActiveInterview } from "@/lib/interview-state";
+import { interviewNeedsTimeConfirmed } from "@/lib/client/interviews-to-confirm";
 
 
 
@@ -234,8 +235,15 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     // Do not surface abandoned legacy rows that never received a usable slot.
     // These are not active and must not block a fresh request in the picker.
+    // Anything still waiting on the client to confirm a time stays in the list,
+    // even without usable slots — otherwise this page undercounts against the
+    // Roles banner and the Overview queue, which read the status alone.
     const list = ((rows as AnyRow[]) ?? []).filter(
-      (row) => row.status === "completed" || row.status === "cancelled" || isActiveInterview(row),
+      (row) =>
+        row.status === "completed" ||
+        row.status === "cancelled" ||
+        interviewNeedsTimeConfirmed(row.status) ||
+        isActiveInterview(row),
     );
     if (list.length === 0) return { interviews: [] as InterviewDTO[] };
 

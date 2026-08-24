@@ -18,7 +18,15 @@ export function AwaitingConfirmationSection({
   readOnly: boolean;
   onConfirm: (interview: InterviewDTO) => void;
 }) {
-  const pending = interviewsAwaitingConfirmation(interviews);
+  // One row per candidate match — the same shape the Roles banner and the
+  // Overview queue count, so all three show the same number.
+  const seen = new Set<string>();
+  const pending = interviewsAwaitingConfirmation(interviews).filter((iv) => {
+    const key = iv.candidate_match_id ?? iv.id;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
   if (pending.length === 0) return null;
 
   return (
