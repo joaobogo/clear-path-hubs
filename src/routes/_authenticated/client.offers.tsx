@@ -154,9 +154,10 @@ function OffersPage() {
           const num = (v: number | null | undefined) =>
             pendingReport ? "—" : (v ?? 0);
           const reportIncomplete = report?.totals?.salary_report_incomplete;
-          // One source of truth: the offer records themselves, counted with the
-          // same selector the board column and the by-owner footer use.
-          const hiresCount = countConfirmedHires(hires);
+          // One source of truth: the shared confirmed-hires selector over the
+          // offer records, the same number Roles, Candidates, Account and
+          // Insights print.
+          const hiresCount = report?.totals?.hires_confirmed;
           const openCount = report?.totals?.open_offers;
           const acceptanceRate = report?.totals?.acceptance_rate;
 
@@ -169,8 +170,8 @@ function OffersPage() {
               />
               <Kpi
                 label="Hires confirmed"
-                value={isPending ? "—" : (report?.totals?.hires_confirmed ?? hiresCount)}
-                hint="Last 180 days"
+                value={num(hiresCount)}
+                hint="Confirmed on an offer record"
               />
               <Kpi
                 label="Acceptance rate"
