@@ -5,7 +5,7 @@
  * and Insights — reads this. The offer record is the only evidence of a hire:
  * pipeline stage, KPI view aggregates and lane counts never decide it.
  */
-import { selectConfirmedHires } from "@/lib/hires/confirmed";
+import { normalizeOfferRecords, selectConfirmedHires } from "@/lib/hires/confirmed";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -51,14 +51,14 @@ export async function loadOfferRecords(
       .from("hire_records")
       .select(select as never)
       .eq("organization_id", orgId);
-    return ((data as AnyRow[]) ?? []) as AnyRow[];
+    return normalizeOfferRecords(((data as AnyRow[]) ?? []) as AnyRow[]);
   }
   // Platform staff hold no membership row; their own read is already org-wide.
   const { data } = await supabase
     .from("hire_records")
     .select(select)
     .eq("organization_id", orgId);
-  return ((data as AnyRow[]) ?? []) as AnyRow[];
+  return normalizeOfferRecords(((data as AnyRow[]) ?? []) as AnyRow[]);
 }
 
 /** Confirmed hire records for one organization. */
