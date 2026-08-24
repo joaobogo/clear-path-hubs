@@ -7,13 +7,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { isOpenRoleStatus, isFilledRole } from "@/lib/client-role-open";
-import { laneFor } from "@/lib/client-pipeline-lane";
 import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 import { loadConfirmedHires } from "@/lib/hires/confirmed.server";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
-import { selectClientRoles } from "@/lib/client/role-counts";
+import {
+  selectClientRoles,
+  selectOpenClientRoles,
+} from "@/lib/client/role-counts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -108,7 +109,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     // ── Positions (open by region + pipeline by BU counts) ────────────────
     const { data: positions } = await s
       .from("positions")
-      .select("id, department, location, status")
+      .select("id, department, location, status, title, is_test_record")
       .eq("organization_id", orgId)
       .or(NOT_TEST_RECORD);
     const posRows: AnyRow[] = positions ?? [];
@@ -125,31 +126,26 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const matchRows: AnyRow[] = matches ?? [];
     const posById = new Map<string, AnyRow>(posRows.map((p) => [p.id, p]));
 
-    // Open / filled by region, using the shared role derivations so this strip
-    // agrees with Overview, the Roles list and the KPI tiles. A role counts as
-    // filled once its pipeline holds a hire, not only when someone manually
-    // flipped the position status.
-    const hiredPositionIds = new Set<string>(
-      matchRows
-        .filter((m) => laneFor({ stage: String(m.stage) }) === "hired")
-        .map((m) => String(m.position_id)),
-    );
-    
-    // P15: Use the same roles filter as the Roles page to exclude drafts/archived/tests.
+    // Open / filled by region. Both Insights panels read the same open-roles
+    // rule as the Roles page (selectOpenClientRoles), so a role with an active
+    // search and a live offer is never reported as filled.
     const clientPositions = selectClientRoles(posRows);
-    
+    const openPositionIds = new Set<string>(
+      selectOpenClientRoles(clientPositions).map((p) => String(p.id)),
+    );
+
     const regionMap = new Map<string, { open: number; filled: number; total: number }>();
     for (const p of clientPositions) {
       const region = normalizeRegion(p.location);
       const bucket = regionMap.get(region) ?? { open: 0, filled: 0, total: 0 };
-      
-      const isFilled = isFilledRole({ id: String(p.id), status: p.status }, hiredPositionIds);
-      const isOpen = !isFilled && isOpenRoleStatus(p.status);
+
+      const isOpen = openPositionIds.has(String(p.id));
+      const isFilled = !isOpen && String(p.status) === "filled";
 
       bucket.total += 1;
       if (isOpen) bucket.open += 1;
       if (isFilled) bucket.filled += 1;
-      
+
       regionMap.set(region, bucket);
     }
     const open_by_region = Array.from(regionMap.entries())
@@ -183,10 +179,10 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       }
       return v;
     };
-    for (const p of posRows) {
+    for (const p of clientPositions) {
       const bu = (p.department as string | null)?.trim() || "Unassigned";
       const v = ensureBu(bu);
-      if (isOpenRoleStatus(p.status)) v.open_roles.add(p.id);
+      if (openPositionIds.has(String(p.id))) v.open_roles.add(String(p.id));
     }
     for (const m of matchRows) {
       const p = posById.get(m.position_id);
