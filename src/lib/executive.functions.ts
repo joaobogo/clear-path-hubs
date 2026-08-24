@@ -15,7 +15,6 @@ import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 import {
   selectClientRoles,
   selectOpenClientRoles,
-  CLIENT_OPEN_ROLE_STATUSES,
 } from "@/lib/client/role-counts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
