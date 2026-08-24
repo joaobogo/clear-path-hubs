@@ -283,21 +283,22 @@ export const listHires = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const sel = (s: string): string => s;
-    let q = context.supabase
-      .from("hire_records")
-      .select(
-        sel(
-          "*, positions:position_id(title), candidate_profiles:candidate_profile_id(full_name), applications:application_id(applied_at)",
-        ),
+    // One org-wide read of the offer records — the same one the KPI strip and
+    // every other hire number uses — then filtered and sorted in memory.
+    const all = await loadOfferRecords(
+      context.supabase,
+      data.orgId,
+      "*, positions:position_id(title), candidate_profiles:candidate_profile_id(full_name), applications:application_id(applied_at)",
+    );
+    const rows = all
+      .filter((r: AnyRow) =>
+        data.positionId ? r.position_id === data.positionId : true,
       )
-      .eq("organization_id", data.orgId)
-      .order("updated_at", { ascending: false })
-      .limit(500);
-    if (data.positionId) q = q.eq("position_id", data.positionId);
-    if (data.status) q = q.eq("status", data.status);
-    const { data: rows, error } = await q;
-    if (error) throw new Error(error.message);
+      .filter((r: AnyRow) => (data.status ? r.status === data.status : true))
+      .sort((a: AnyRow, b: AnyRow) =>
+        String(b.updated_at ?? "").localeCompare(String(a.updated_at ?? "")),
+      )
+      .slice(0, 500);
 
     // Enrich owner names in one round-trip
     const ownerIds = Array.from(
