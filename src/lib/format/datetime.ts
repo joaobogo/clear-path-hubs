@@ -7,8 +7,37 @@
  * the same instant always renders identically across surfaces.
  */
 
-/** Workspace display timezone. */
-export const WORKSPACE_TIMEZONE = "America/Sao_Paulo";
+/**
+ * Workspace display timezone.
+ *
+ * This is the organisation's configured zone, not the viewer's browser zone:
+ * a Lisbon workspace read from a Brazilian laptop must still show Lisbon
+ * times, otherwise a 09:00 interview reads as 05:00 (or worse, the previous
+ * midnight). It starts at UTC and is set once the workspace timezone setting
+ * loads; there is deliberately no browser fallback.
+ */
+export let WORKSPACE_TIMEZONE = "UTC";
+
+function isValidZone(zone: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en-GB", { timeZone: zone }).format(new Date());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Point every formatter at the organisation's zone. */
+export function setWorkspaceTimezone(zone: string | null | undefined): void {
+  const candidate = (zone ?? "").trim();
+  if (!candidate || candidate === WORKSPACE_TIMEZONE) return;
+  if (!isValidZone(candidate)) return;
+  WORKSPACE_TIMEZONE = candidate;
+}
+
+export function getWorkspaceTimezone(): string {
+  return WORKSPACE_TIMEZONE;
+}
 
 /**
  * The app UI is written in English, so every date fragment is pinned to one
@@ -25,36 +54,35 @@ function normalizeMonth(s: string): string {
   return s.replace(SHORT_MONTH_FIX, "Sep");
 }
 
+// Formatters are cached per zone because the workspace zone is only known
+// after settings load, so they cannot be built at module scope.
+const FORMATTER_CACHE = new Map<string, Intl.DateTimeFormat>();
+
+function formatter(zone: string, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  const key = `${zone}|${JSON.stringify(options)}`;
+  const cached = FORMATTER_CACHE.get(key);
+  if (cached) return cached;
+  const fmt = new Intl.DateTimeFormat(APP_LOCALE, { ...options, timeZone: zone });
+  FORMATTER_CACHE.set(key, fmt);
+  return fmt;
+}
+
 /** F4: Standardised on 05 Aug 2026 */
-const DATE_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  timeZone: WORKSPACE_TIMEZONE,
-});
+const DATE_ONLY_OPTS = { day: "2-digit", month: "short", year: "numeric" } as const;
 
 /** Standardised date-time for audit logs and lists. */
-const DATE_TIME = new Intl.DateTimeFormat(APP_LOCALE, {
+const DATE_TIME_OPTS = {
   day: "2-digit",
   month: "short",
   year: "numeric",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
-  timeZone: WORKSPACE_TIMEZONE,
-});
+} as const;
 
-const TIME_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-  timeZone: WORKSPACE_TIMEZONE,
-});
+const TIME_ONLY_OPTS = { hour: "2-digit", minute: "2-digit", hour12: false } as const;
 
-const WEEKDAY_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
-  weekday: "short",
-  timeZone: WORKSPACE_TIMEZONE,
-});
+const WEEKDAY_ONLY_OPTS = { weekday: "short" } as const;
 
 const MONTH_YEAR_UTC = new Intl.DateTimeFormat(APP_LOCALE, {
   month: "short",
