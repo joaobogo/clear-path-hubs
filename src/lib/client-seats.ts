@@ -33,12 +33,11 @@ export type SeatCount = {
   pendingInvites: number;
 };
 
-export function holdsSeat(row: SeatMembershipRow & { profiles?: { email?: string | null } | null }): boolean {
-  const email = row.profiles?.email?.toLowerCase() ?? "";
-  const isInternal = email.endsWith("@taasflow.com");
-  
+export function holdsSeat(row: SeatMembershipRow): boolean {
+  // Seats are counted from the organisation membership table only. Email
+  // domains are never inspected here: filtering internal addresses made the
+  // client Account tile read 0 while staff surfaces read the real count.
   return (
-    !isInternal &&
     (SEAT_ROLES as readonly string[]).includes(String(row.role ?? "")) &&
     (SEAT_STATUSES as readonly string[]).includes(String(row.status ?? ""))
   );

@@ -199,7 +199,8 @@ function ClientDetail() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const positions = data.positions as any[];
 
-  const activeMemberCount = members.filter(m => m.status === "active" && ["client_admin", "client_editor", "client_viewer"].includes(m.role)).length;
+  // Seat/member counts are not derived here: the account summary reads them
+  // from the organisation membership table (see client-seats.ts).
   // C10 reconcile: count matches count in the documents tab.
   const parsedCvCount = org.parsed_cv_count?.[0]?.count ?? 0;
 

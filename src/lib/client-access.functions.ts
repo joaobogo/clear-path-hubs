@@ -10,6 +10,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { assertPlatformStaff } from "@/lib/authz.server";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
+import { computeSeatCount } from "@/lib/client-seats";
 
 const uuid = z.string().uuid();
 
@@ -146,16 +147,18 @@ export const inspectClientAccess = createServerFn({ method: "GET" })
       }),
     );
 
-    const seatLimit =
-      (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? 3;
-    // Owner seat plus recruiter seats; invited seats are already reserved.
-    const seatsUsed = seats.filter((s) => s.status === "active" || s.status === "invited").length;
+    // Same membership-table derivation as the client Account tile and the
+    // staff account summary (`client-seats.ts`).
+    const { seatLimit, seatsUsed, seatsLeft } = computeSeatCount(
+      seats,
+      (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? null,
+    );
 
     return {
       organization_id: data.organization_id,
       seat_limit: seatLimit,
       seats_used: seatsUsed,
-      seats_remaining: Math.max(0, seatLimit + 1 - seatsUsed),
+      seats_remaining: seatsLeft,
       members: members.filter((m) => m.status !== "invited"),
       pending: members.filter((m) => m.status === "invited"),
     };

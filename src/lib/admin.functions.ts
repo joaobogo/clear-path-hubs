@@ -625,9 +625,13 @@ export const getClient = createServerFn({ method: "GET" })
     // for every client. Count candidates through candidate_matches instead.
     const [orgRes, membersRes, positionsRes, candidateCountRes] = await Promise.all([
       s.from("organizations").select("*, memberships(count)").eq("id", data.id).maybeSingle(),
+      // No FK exists between memberships and profiles, so a PostgREST embed
+      // (`profiles(...)`) fails and used to make the Team tab read "No users
+      // yet" while the seat summary counted the same rows. Identities are
+      // joined in a second query instead.
       s
         .from("memberships")
-        .select("id,role,status,created_at,profiles(auth_user_id,full_name,email)")
+        .select("id,user_id,role,status,created_at")
         .eq("organization_id", data.id)
         .in("role", ["client_admin", "client_editor", "client_viewer"])
         .neq("status", "removed")
@@ -645,13 +649,32 @@ export const getClient = createServerFn({ method: "GET" })
         .eq("organization_id", data.id),
     ]);
     if (orgRes.error) throw new Error(orgRes.error.message);
+    if (membersRes.error) throw new Error(membersRes.error.message);
     if (!orgRes.data) return null;
+
+    const memberRows = (membersRes.data ?? []) as AnyRow[];
+    const memberUserIds = memberRows.map((m) => m.user_id).filter(Boolean);
+    const profileByUser = new Map<string, AnyRow>();
+    if (memberUserIds.length > 0) {
+      const { data: profileRows } = await s
+        .from("profiles")
+        .select("auth_user_id,full_name,email")
+        .in("auth_user_id", memberUserIds);
+      for (const p of (profileRows ?? []) as AnyRow[]) {
+        profileByUser.set(String(p.auth_user_id), p);
+      }
+    }
+    const members = memberRows.map((m) => ({
+      ...m,
+      profiles: profileByUser.get(String(m.user_id)) ?? null,
+    }));
+
     return {
       organization: {
         ...(orgRes.data as AnyRow),
         parsed_cv_count: [{ count: candidateCountRes.count ?? 0 }],
       },
-      members: (membersRes.data ?? []) as AnyRow[],
+      members: members as AnyRow[],
       positions: (positionsRes.data ?? []) as AnyRow[],
     };
   });
