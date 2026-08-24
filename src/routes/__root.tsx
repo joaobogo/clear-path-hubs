@@ -148,11 +148,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
           Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-          TEXTO DO USUÁRIO: "The Account tile says \"Hires closed 0\". The panel right below it says \"1 hire confirmed\" with a \"1 hired\" badge.
+          TEXTO DO USUÁRIO: "The Offers page shows \"HIRES CONFIRMED 0\", the board column \"HIRE CONFIRMED\" shows 0, and the footer says \"Hires by owner: No hires yet.\" The Account page tile \"Hires closed\" also shows 0.
 
-          Make both read the hires function from R02. Do R02 first.
+          The Candidates page, the Roles page and Insights all show 1 hire for the same organisation, and that is the correct number.
 
-          Once this is right: The tile and the badge below it show the same number."
+          countConfirmedHiresForOrg in src/lib/hires/confirmed.server.ts already returns the right value from the hire record. Those four places should read that same function instead of counting hires their own way."
         </div>
         {children}
         <Scripts />
