@@ -5,8 +5,11 @@ import { WEEKLY_WINDOW_DAYS } from "@/lib/client-weekly-update";
  * Single source of truth for the "This week" interview and decision counts on
  * the client workspace.
  *
- * Interviews come from recorded completions (`interviews.completed_at`),
- * decisions from the same whitelisted `audit_events` rows the Recent activity
+ * An interview counts as held when it was recorded complete in the window, or
+ * when its scheduled time falls in the window and is already in the past and
+ * the interview was not cancelled. A separate "held" event is never required.
+ * Decisions come from the same whitelisted `audit_events` rows the Recent activity
+
  * feed lists — so the tiles, the weekly card and the activity list cannot
  * disagree about the same window.
  */
@@ -20,7 +23,7 @@ export interface ClientWeekActivity {
   /** Inclusive window start / end, ISO. */
   windowStart: string;
   windowEnd: string;
-  /** Interviews actually held in the window (completed, not merely booked). */
+  /** Interviews held in the window: completed, or scheduled in the past. */
   interviewsHeld: WeekActivityRow[];
   /** One row per recorded decision event, de-duplicated by event id. */
   decisions: WeekActivityRow[];
@@ -53,12 +56,14 @@ export async function loadClientWeekActivity(
   const [interviewsRes, decisionsRes] = await Promise.all([
     client
       .from("interviews")
-      .select("id, position_id, candidate_match_id, completed_at, positions(title)")
+      .select(
+        "id, position_id, candidate_match_id, status, scheduled_at, completed_at, cancelled_at, positions(title)",
+      )
       .eq("organization_id", orgId)
-      .not("completed_at", "is", null)
-      .gte("completed_at", startIso)
-      .lte("completed_at", endIso)
-      .order("completed_at", { ascending: true }),
+      .or(
+        `and(completed_at.gte.${startIso},completed_at.lte.${endIso}),and(scheduled_at.gte.${startIso},scheduled_at.lte.${endIso})`,
+      )
+      .order("scheduled_at", { ascending: true }),
 
     (auditDb as AnyClient)
       .from("audit_events")
@@ -70,7 +75,16 @@ export async function loadClientWeekActivity(
       .order("created_at", { ascending: true }),
   ]);
 
-  const interviewsHeld = (interviewsRes.data ?? []) as WeekActivityRow[];
+  const nowIso = now.toISOString();
+  const interviewsHeld = ((interviewsRes.data ?? []) as WeekActivityRow[]).filter((i) => {
+    if (String(i.status ?? "") === "cancelled" || i.cancelled_at) return false;
+    const completed = i.completed_at ? String(i.completed_at) : null;
+    if (completed && completed >= startIso && completed <= endIso) return true;
+    const scheduled = i.scheduled_at ? String(i.scheduled_at) : null;
+    return Boolean(
+      scheduled && scheduled >= startIso && scheduled <= endIso && scheduled <= nowIso,
+    );
+  });
   const decisions = ((decisionsRes.data ?? []) as WeekActivityRow[]).filter(
     (d, i, all) => all.findIndex((o) => o.id === d.id) === i,
   );
