@@ -9,8 +9,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { computeSeatCount } from "@/lib/client-seats";
 import { countClientRoles } from "@/lib/client/role-counts";
-import { selectConfirmedHires } from "@/lib/hires/confirmed";
-import { loadOfferRecords } from "@/lib/hires/confirmed.server";
+import { loadConfirmedHires } from "@/lib/hires/confirmed.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -129,11 +128,10 @@ export const getAccountOverview = createServerFn({ method: "GET" })
         .from("positions")
         .select("id, status, title, is_test_record")
         .eq("organization_id", data.orgId),
-      loadOfferRecords(
-        supabase,
-        data.orgId,
-        "id, status, hired_at, start_date, position_id, positions:position_id(title)",
-      ).then((rows) => ({ data: rows })),
+      // R02: the canonical confirmed-hire selector, read exactly the way the
+      // per-role "N hired" badge reads it, so the tile and the badge below it
+      // can never print different numbers.
+      loadConfirmedHires(supabase, data.orgId).then((rows) => ({ data: rows })),
     ]);
 
     const memberRows = (members as AnyRow[]) ?? [];
@@ -149,10 +147,14 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     const positionRows = countClientRoles((positions as AnyRow[]) ?? []);
     const rolesOpen = positionRows.open;
 
-    // One selector decides who is a confirmed hire.
-    const hireRows = selectConfirmedHires(
-      ((hires as AnyRow[]) ?? []) as { status: string }[],
-    ) as AnyRow[];
+    // One selector decides who is a confirmed hire (R02).
+    const hireRows = ((hires as AnyRow[]) ?? []) as AnyRow[];
+    const positionTitleById = new Map<string, string | null>(
+      (((positions as AnyRow[]) ?? []) as AnyRow[]).map((p) => [
+        String(p.id),
+        (p.title as string | null) ?? null,
+      ]),
+    );
     const now = new Date();
     const nowIso = now.toISOString();
     const periodStart = o.billing_period_start as string | null;
@@ -172,7 +174,9 @@ export const getAccountOverview = createServerFn({ method: "GET" })
       .slice(0, 5)
       .map((h) => ({
         id: String(h.id),
-        position_title: (h.positions?.title as string | null) ?? null,
+        position_title: h.position_id
+          ? (positionTitleById.get(String(h.position_id)) ?? null)
+          : null,
         start_date: String(h.start_date),
       }));
 
