@@ -8,7 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
-import { countConfirmedHires } from "@/lib/hires/confirmed";
+import { countConfirmedHires, normalizeOfferRecord } from "@/lib/hires/confirmed";
 import { isConfirmedHire, selectConfirmedHires } from "@/lib/hires/confirmed";
 import {
   countConfirmedHiresForOrg,
@@ -222,7 +222,9 @@ async function loadMatchForHire(supabase: AnyRow, orgId: string, matchId: string
   return data as AnyRow;
 }
 
-function toDTO(row: AnyRow): HireRecordDTO {
+function toDTO(input: AnyRow): HireRecordDTO {
+  // A confirmed hire can never reach the screen labelled closed or declined.
+  const row = normalizeOfferRecord(input as AnyRow) as AnyRow;
   return {
     id: row.id,
     candidate_match_id: row.candidate_match_id,
