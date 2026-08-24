@@ -263,7 +263,7 @@ function OffersPage() {
       </section>
 
       {/* Reporting: by owner + close reasons */}
-      {!reportQuery.isError && report && countConfirmedHires(hires) + report.totals.closed_lost > 0 && (
+      {!reportQuery.isError && report && report.totals.hires_confirmed + report.totals.closed_lost > 0 && (
         <section className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="rounded-xl border bg-card p-4">
             <h2 className="text-sm font-semibold">Hires by owner</h2>
