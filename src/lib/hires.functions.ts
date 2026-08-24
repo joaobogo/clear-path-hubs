@@ -847,8 +847,13 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const report: TimeToHireReport = {
       totals: {
         open_offers: openOffers,
-        // The one selector: confirmed offer records.
-        hires_confirmed: countConfirmedHires(scoped as { status: string }[]),
+        // The one selector, over every offer record in the account. Windowing
+        // the hire number here is what made this strip disagree with Roles,
+        // Candidates, Account and Insights.
+        hires_confirmed: await countConfirmedHiresForOrg(
+          context.supabase,
+          data.orgId,
+        ),
 
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
