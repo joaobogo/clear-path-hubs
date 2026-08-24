@@ -25,7 +25,6 @@ import { Badge } from "@/components/ui/badge";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
-import { countConfirmedHires } from "@/lib/hires/confirmed";
 import { COLUMN_ORDER } from "@/components/client/offers/helpers";
 import { Column } from "@/components/client/offers/column";
 import { Kpi } from "@/components/client/offers/kpi";
