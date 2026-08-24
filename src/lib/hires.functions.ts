@@ -648,20 +648,14 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const sel = (s: string): string => s;
     // Read the offer records themselves rather than the reporting view: the
     // view carries neither the offer compensation nor the candidate match, and
     // both are needed to keep this strip honest and stage-aligned.
-    const { data: rows, error } = await context.supabase
-      .from("hire_records")
-      .select(
-        sel(
-          "id, organization_id, position_id, candidate_match_id, candidate_profile_id, owner_user_id, status, close_reason, salary_amount, sent_at, accepted_at, hired_at, positions:position_id(title), applications:application_id(applied_at)",
-        ),
-      )
-      .eq("organization_id", data.orgId)
-      .limit(2000);
-    if (error) throw new Error(error.message);
+    const rows = await loadOfferRecords(
+      context.supabase,
+      data.orgId,
+      "id, organization_id, position_id, candidate_match_id, candidate_profile_id, owner_user_id, status, close_reason, salary_amount, sent_at, accepted_at, hired_at, positions:position_id(title), applications:application_id(applied_at)",
+    );
 
     const days = (from: unknown, to: unknown): number | null => {
       if (!from || !to) return null;
