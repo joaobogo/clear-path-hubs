@@ -10,6 +10,7 @@ import { z } from "zod";
 import { computeSeatCount } from "@/lib/client-seats";
 import { countClientRoles } from "@/lib/client/role-counts";
 import { selectConfirmedHires } from "@/lib/hires/confirmed";
+import { loadOfferRecords } from "@/lib/hires/confirmed.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -128,12 +129,11 @@ export const getAccountOverview = createServerFn({ method: "GET" })
         .from("positions")
         .select("id, status, title, is_test_record")
         .eq("organization_id", data.orgId),
-      supabase
-        .from("hire_records")
-        .select(
-          "id, status, hired_at, start_date, position_id, positions:position_id(title)",
-        )
-        .eq("organization_id", data.orgId),
+      loadOfferRecords(
+        supabase,
+        data.orgId,
+        "id, status, hired_at, start_date, position_id, positions:position_id(title)",
+      ).then((rows) => ({ data: rows })),
     ]);
 
     const memberRows = (members as AnyRow[]) ?? [];

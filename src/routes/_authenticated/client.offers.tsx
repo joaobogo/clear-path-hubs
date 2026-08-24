@@ -25,7 +25,6 @@ import { Badge } from "@/components/ui/badge";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
-import { countConfirmedHires } from "@/lib/hires/confirmed";
 import { COLUMN_ORDER } from "@/components/client/offers/helpers";
 import { Column } from "@/components/client/offers/column";
 import { Kpi } from "@/components/client/offers/kpi";
@@ -154,9 +153,10 @@ function OffersPage() {
           const num = (v: number | null | undefined) =>
             pendingReport ? "—" : (v ?? 0);
           const reportIncomplete = report?.totals?.salary_report_incomplete;
-          // One source of truth: the offer records themselves, counted with the
-          // same selector the board column and the by-owner footer use.
-          const hiresCount = countConfirmedHires(hires);
+          // One source of truth: the shared confirmed-hires selector over the
+          // offer records, the same number Roles, Candidates, Account and
+          // Insights print.
+          const hiresCount = report?.totals?.hires_confirmed;
           const openCount = report?.totals?.open_offers;
           const acceptanceRate = report?.totals?.acceptance_rate;
 
@@ -169,8 +169,8 @@ function OffersPage() {
               />
               <Kpi
                 label="Hires confirmed"
-                value={isPending ? "—" : (report?.totals?.hires_confirmed ?? hiresCount)}
-                hint="Last 180 days"
+                value={num(hiresCount)}
+                hint="Confirmed on an offer record"
               />
               <Kpi
                 label="Acceptance rate"
@@ -262,7 +262,7 @@ function OffersPage() {
       </section>
 
       {/* Reporting: by owner + close reasons */}
-      {!reportQuery.isError && report && countConfirmedHires(hires) + report.totals.closed_lost > 0 && (
+      {!reportQuery.isError && report && report.totals.hires_confirmed + report.totals.closed_lost > 0 && (
         <section className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="rounded-xl border bg-card p-4">
             <h2 className="text-sm font-semibold">Hires by owner</h2>

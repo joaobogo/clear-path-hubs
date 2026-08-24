@@ -24,16 +24,50 @@ export type ConfirmedHireRow = {
 const SELECT =
   "id, status, organization_id, position_id, candidate_match_id, candidate_profile_id, hired_at, start_date";
 
+/**
+ * Every offer record for one organization, read the same way for every surface.
+ *
+ * Row-level visibility on an individual candidate match decides what a client
+ * may open, never how many hires their account has closed. Reading the offer
+ * records once, scoped strictly to the organization the caller is a member of,
+ * is what keeps Offers, Roles, Candidates, Account and Insights on one number.
+ */
+export async function loadOfferRecords(
+  supabase: AnyRow,
+  orgId: string,
+  select: string = SELECT,
+): Promise<AnyRow[]> {
+  const { data: membership } = await supabase
+    .from("memberships")
+    .select("organization_id")
+    .eq("organization_id", orgId)
+    .limit(1);
+  const isMember = (((membership as AnyRow[]) ?? []).length ?? 0) > 0;
+  if (isMember) {
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+    const { data } = await supabaseAdmin
+      .from("hire_records")
+      .select(select as never)
+      .eq("organization_id", orgId);
+    return ((data as AnyRow[]) ?? []) as AnyRow[];
+  }
+  // Platform staff hold no membership row; their own read is already org-wide.
+  const { data } = await supabase
+    .from("hire_records")
+    .select(select)
+    .eq("organization_id", orgId);
+  return ((data as AnyRow[]) ?? []) as AnyRow[];
+}
+
 /** Confirmed hire records for one organization. */
 export async function loadConfirmedHires(
   supabase: AnyRow,
   orgId: string,
 ): Promise<ConfirmedHireRow[]> {
-  const { data } = await supabase
-    .from("hire_records")
-    .select(SELECT)
-    .eq("organization_id", orgId);
-  return selectConfirmedHires(((data as AnyRow[]) ?? []) as ConfirmedHireRow[]);
+  const rows = await loadOfferRecords(supabase, orgId);
+  return selectConfirmedHires(rows as ConfirmedHireRow[]);
 }
 
 /** How many confirmed hires the organization has. */

@@ -10,6 +10,10 @@ import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 import { countConfirmedHires } from "@/lib/hires/confirmed";
 import { isConfirmedHire, selectConfirmedHires } from "@/lib/hires/confirmed";
+import {
+  countConfirmedHiresForOrg,
+  loadOfferRecords,
+} from "@/lib/hires/confirmed.server";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -279,21 +283,22 @@ export const listHires = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const sel = (s: string): string => s;
-    let q = context.supabase
-      .from("hire_records")
-      .select(
-        sel(
-          "*, positions:position_id(title), candidate_profiles:candidate_profile_id(full_name), applications:application_id(applied_at)",
-        ),
+    // One org-wide read of the offer records — the same one the KPI strip and
+    // every other hire number uses — then filtered and sorted in memory.
+    const all = await loadOfferRecords(
+      context.supabase,
+      data.orgId,
+      "*, positions:position_id(title), candidate_profiles:candidate_profile_id(full_name), applications:application_id(applied_at)",
+    );
+    const rows = all
+      .filter((r: AnyRow) =>
+        data.positionId ? r.position_id === data.positionId : true,
       )
-      .eq("organization_id", data.orgId)
-      .order("updated_at", { ascending: false })
-      .limit(500);
-    if (data.positionId) q = q.eq("position_id", data.positionId);
-    if (data.status) q = q.eq("status", data.status);
-    const { data: rows, error } = await q;
-    if (error) throw new Error(error.message);
+      .filter((r: AnyRow) => (data.status ? r.status === data.status : true))
+      .sort((a: AnyRow, b: AnyRow) =>
+        String(b.updated_at ?? "").localeCompare(String(a.updated_at ?? "")),
+      )
+      .slice(0, 500);
 
     // Enrich owner names in one round-trip
     const ownerIds = Array.from(
@@ -643,20 +648,14 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const sel = (s: string): string => s;
     // Read the offer records themselves rather than the reporting view: the
     // view carries neither the offer compensation nor the candidate match, and
     // both are needed to keep this strip honest and stage-aligned.
-    const { data: rows, error } = await context.supabase
-      .from("hire_records")
-      .select(
-        sel(
-          "id, organization_id, position_id, candidate_match_id, candidate_profile_id, owner_user_id, status, close_reason, salary_amount, sent_at, accepted_at, hired_at, positions:position_id(title), applications:application_id(applied_at)",
-        ),
-      )
-      .eq("organization_id", data.orgId)
-      .limit(2000);
-    if (error) throw new Error(error.message);
+    const rows = await loadOfferRecords(
+      context.supabase,
+      data.orgId,
+      "id, organization_id, position_id, candidate_match_id, candidate_profile_id, owner_user_id, status, close_reason, salary_amount, sent_at, accepted_at, hired_at, positions:position_id(title), applications:application_id(applied_at)",
+    );
 
     const days = (from: unknown, to: unknown): number | null => {
       if (!from || !to) return null;
@@ -848,8 +847,13 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const report: TimeToHireReport = {
       totals: {
         open_offers: openOffers,
-        // The one selector: confirmed offer records.
-        hires_confirmed: countConfirmedHires(scoped as { status: string }[]),
+        // The one selector, over every offer record in the account. Windowing
+        // the hire number here is what made this strip disagree with Roles,
+        // Candidates, Account and Insights.
+        hires_confirmed: await countConfirmedHiresForOrg(
+          context.supabase,
+          data.orgId,
+        ),
 
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
