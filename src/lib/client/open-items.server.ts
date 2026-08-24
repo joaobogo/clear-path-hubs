@@ -4,6 +4,7 @@ import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { loadKpiRows, isAwaitingClientDecision } from "@/lib/client-kpi.server";
 import { buildOfferRow } from "@/lib/client-offer-holder";
 import { roleGaps } from "@/lib/position-readiness";
+import { loadInterviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm.server";
 
 export type BlockedRole = {
   position_id: string;
@@ -183,18 +184,21 @@ export async function loadClientOpenItems(
     });
   }
 
-  for (const row of kpiRows) {
-    if (!row.interview_needs_confirmation) continue;
+  // Interviews that still need a time come from the one shared query the Roles
+  // banner uses. The subject key is namespaced so an offer or decision on the
+  // same candidate can never collapse this row away and shrink the count.
+  const pendingConfirmations = await loadInterviewsAwaitingConfirmation(supabase, orgId);
+  for (const pending of pendingConfirmations) {
     items.push({
       kind: "interview",
-      id: row.id,
-      subject_id: row.id,
+      id: pending.interview_id,
+      subject_id: `interview:${pending.candidate_match_id}`,
       label: "Confirm an interview time",
-      context: roleLine(row.position_id),
-      href: row.interview_id ? `/client/interviews?interview=${row.interview_id}` : "/client/interviews",
-      due_at: row.next_interview_at,
-      overdue: isOverdue(row.next_interview_at, now),
-      waiting_since: row.interview_requested_at ?? row.stage_entered_at,
+      context: roleLine(pending.position_id),
+      href: `/client/interviews?interview=${pending.interview_id}`,
+      due_at: null,
+      overdue: false,
+      waiting_since: pending.requested_at,
     });
   }
 
