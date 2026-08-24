@@ -143,17 +143,6 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <div hidden>
-          INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
-
-          Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
-
-          TEXTO DO USUÁRIO: "The Offers page shows \"HIRES CONFIRMED 0\", the board column \"HIRE CONFIRMED\" shows 0, and the footer says \"Hires by owner: No hires yet.\" The Account page tile \"Hires closed\" also shows 0.
-
-          The Candidates page, the Roles page and Insights all show 1 hire for the same organisation, and that is the correct number.
-
-          countConfirmedHiresForOrg in src/lib/hires/confirmed.server.ts already returns the right value from the hire record. Those four places should read that same function instead of counting hires their own way."
-        </div>
         {children}
         <Scripts />
       </body>
