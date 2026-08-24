@@ -8,8 +8,8 @@ import { WEEKLY_WINDOW_DAYS } from "@/lib/client-weekly-update";
  * An interview counts as held when it was recorded complete in the window, or
  * when its scheduled time falls in the window and is already in the past and
  * the interview was not cancelled. A separate "held" event is never required.
- * Decisions come
- from the same whitelisted `audit_events` rows the Recent activity
+ * Decisions come from the same whitelisted `audit_events` rows the Recent activity
+
  * feed lists — so the tiles, the weekly card and the activity list cannot
  * disagree about the same window.
  */
