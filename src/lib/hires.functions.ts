@@ -10,6 +10,10 @@ import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 import { countConfirmedHires } from "@/lib/hires/confirmed";
 import { isConfirmedHire, selectConfirmedHires } from "@/lib/hires/confirmed";
+import {
+  countConfirmedHiresForOrg,
+  loadOfferRecords,
+} from "@/lib/hires/confirmed.server";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
