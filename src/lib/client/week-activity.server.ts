@@ -23,7 +23,7 @@ export interface ClientWeekActivity {
   /** Inclusive window start / end, ISO. */
   windowStart: string;
   windowEnd: string;
-  /** Interviews actually held in the window (completed, not merely booked). */
+  /** Interviews held in the window: completed, or scheduled in the past. */
   interviewsHeld: WeekActivityRow[];
   /** One row per recorded decision event, de-duplicated by event id. */
   decisions: WeekActivityRow[];
