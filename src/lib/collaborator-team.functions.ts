@@ -17,29 +17,8 @@ export const getWorkspaceSeatUsage = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     await assertWorkspaceArea(context.supabase, context.userId, data.orgId, "team");
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ data: org }, { data: seats }] = await Promise.all([
-      supabaseAdmin
-        .from("organizations")
-        .select("client_seat_limit")
-        .eq("id", data.orgId)
-        .maybeSingle(),
-      supabaseAdmin
-        .from("memberships")
-        .select("id, profiles:user_id(email)")
-        .eq("organization_id", data.orgId)
-        .in("role", ["client_admin", "client_editor", "client_viewer"])
-        .in("status", ["active", "invited"]),
-    ]);
-
-    const recruiterSeats =
-      (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? 3;
-    // The owner seat sits on top of the recruiter seat allowance.
-    const seatLimit = recruiterSeats + 1;
-    const seatsUsed = ((seats as AnyRow[] | null) ?? []).filter(s => {
-      const email = s.profiles?.email?.toLowerCase() ?? "";
-      return !email.endsWith("@taasflow.com");
-    }).length;
-
-    return { seatLimit, seatsUsed, seatsLeft: Math.max(0, seatLimit - seatsUsed) };
+    const { readSeatUsage } = await import("@/lib/client-team-seats.server");
+    // One derivation, shared with the staff-side account summary: seats come
+    // from the organisation membership table.
+    return await readSeatUsage(data.orgId);
   });
