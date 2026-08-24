@@ -10,6 +10,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { assertPlatformStaff } from "@/lib/authz.server";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
+import { computeSeatCount } from "@/lib/client-seats";
 
 const uuid = z.string().uuid();
 

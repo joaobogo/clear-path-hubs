@@ -208,7 +208,8 @@ function ClientAccessBody({
   revoke: ReturnType<typeof useMutation<unknown, Error, { membershipId: string; reason: string }>>;
   resend: ReturnType<typeof useMutation<unknown, Error, string>>;
 }) {
-  const totalSeats = d.seat_limit + 1;
+  // seat_limit already includes the owner seat (see client-seats.ts).
+  const totalSeats = d.seat_limit;
   const atCap = d.seats_remaining === 0;
   const { confirm, confirmDialog } = useConfirmAction();
 
@@ -237,7 +238,7 @@ function ClientAccessBody({
             <span className="text-base font-normal text-muted-foreground"> / {totalSeats}</span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Owner seat plus {d.seat_limit} recruiter seat{d.seat_limit === 1 ? "" : "s"} on the
+            Owner seat plus {Math.max(0, d.seat_limit - 1)} recruiter seat{d.seat_limit - 1 === 1 ? "" : "s"} on the
             current plan. Pending invitations hold a seat.
           </p>
         </div>
