@@ -44,22 +44,12 @@ export function isQaSafeOrg(org: QaSafeOrg): boolean {
  * Load the QA-relevant flags for an organization. The caller passes any
  * Supabase client that can read organizations (supabaseAdmin or context.supabase).
  */
-type DbClient = {
-  from: (table: string) => {
-    select: (cols: string) => {
-      eq: (col: string, value: string) => Promise<{
-        data: unknown[] | null;
-        error: { message: string } | null;
-      }>;
-    };
-  };
-};
-
 export async function loadOrgQaFlags(
-  db: DbClient,
+  db: { from: (table: string) => unknown },
   orgId: string,
 ): Promise<{ ok: false; reason: string } | { ok: true; org: QaSafeOrg }> {
-  const res = await db.from("organizations").select("id,is_demo,is_test_record").eq("id", orgId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const res: any = await db.from("organizations").select("id,is_demo,is_test_record").eq("id", orgId);
   if (res.error) return { ok: false, reason: res.error.message };
   const org = (res.data ?? [])[0] as QaSafeOrg | undefined;
   if (!org) return { ok: false, reason: "Organization not found" };
