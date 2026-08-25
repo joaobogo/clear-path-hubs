@@ -128,7 +128,7 @@ const TABS: NavDef[] = [
     label: "Insights",
     icon: BarChart3,
     everyone: true,
-    hint: "Hiring intelligence and executive reports",
+    hint: "Hiring intelligence and reports",
   },
   {
     to: "/client/account",

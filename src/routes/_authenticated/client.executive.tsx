@@ -23,11 +23,11 @@ import {
 export const Route = createFileRoute("/_authenticated/client/executive")({
   head: () => ({
     meta: [
-      { title: "Executive portfolio · Client workspace" },
+      { title: "Insights · Client workspace" },
       {
         name: "description",
         content:
-          "Enterprise leadership view: open roles by region, hiring health by business unit, time-in-stage, bottlenecks, delivery velocity, shortlist quality, and finance-ready hiring summary.",
+          "Hiring intelligence: open roles by region, hiring health by business unit, time-in-stage, bottlenecks, delivery velocity, shortlist quality, and finance-ready hiring summary.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -103,9 +103,9 @@ function ExecutivePage() {
     <div className="mx-auto max-w-7xl space-y-8 p-6 md:p-8">
       <header className="space-y-2">
         <p className="text-xs uppercase tracking-wide text-muted-foreground">
-          Leadership view
+          Insights
         </p>
-        <h1 className="text-3xl font-semibold tracking-tight">Executive portfolio</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Insights</h1>
         <p className="max-w-3xl text-sm text-muted-foreground">
           One glance at the whole hiring system: where roles are open, where pipeline is
           flowing, where it&apos;s stuck, and what&apos;s about to close. Everything below is
