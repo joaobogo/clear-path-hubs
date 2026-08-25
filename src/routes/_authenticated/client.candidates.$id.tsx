@@ -45,6 +45,7 @@ import { ScoreBreakdown } from "@/components/client/candidate-detail/score-break
 import {
   FitHero,
   WhyThisCandidate,
+  WhatNeedsValidation,
 } from "@/components/client/candidate-detail/evidence";
 import {
   AvailabilityPanel,
@@ -197,7 +198,8 @@ function CandidateDetailPage() {
  // Stage captured at mutate time so the toast's Undo knows where to return to.
  const stageBeforeRef = useRef<MatchStage | null>(null);
  // Consequence line for the stage the decision moves the candidate into.
- const nextStepAfterRef = useRef<string | null>(null);
+  const nextStepAfterRef = useRef<string | null>(null);
+  const [activeTab, setActiveTab] = useState("summary");
  const undoFn = useServerFn(undoClientDecision);
 
  // Exact cache key of the detail query. Optimistic writes and rollbacks must
@@ -444,11 +446,17 @@ function CandidateDetailPage() {
 
  )}
 
- {/* 3 — THE EVIDENCE: requirements listed once, with coverage folded in */}
- <div id="sec-evidence" className="scroll-mt-24 space-y-4">
- <WhyThisCandidate candidate={candidate} withCoverage />
- <ScoreBreakdown candidate={candidate} hideRequirementRows />
- </div>
+  {/* 3 — THE EVIDENCE: requirements listed once, with coverage folded in */}
+  <div id="sec-evidence" className="scroll-mt-24 space-y-4">
+  <WhyThisCandidate candidate={candidate} withCoverage />
+  <WhatNeedsValidation
+    candidate={candidate}
+    title="To confirm in the interview"
+    preferredLimit={2}
+    onInterviewGuideClick={() => setActiveTab("interview")}
+  />
+  <ScoreBreakdown candidate={candidate} hideRequirementRows />
+  </div>
 
  {/* 4 — CONTACT (mobile keeps it in the main flow, after the evidence) */}
  <ContactBlock
@@ -529,7 +537,7 @@ function CandidateDetailPage() {
  </div>
 
  {/* BELOW THE FOLD — three tabs, everything else lives inside them. */}
- <Tabs defaultValue="summary" className="mt-8">
+ <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
   <TabsList className="flex w-full flex-wrap justify-start">
   <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
   <TabsTrigger value="interview">Interview</TabsTrigger>
