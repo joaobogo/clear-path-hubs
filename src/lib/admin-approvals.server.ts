@@ -380,6 +380,18 @@ async function publishMatch(admin: Admin, matchId: string, actorUserId: string, 
   const gate = await assertPublishGate(matchId, runId);
   if (!gate.ok) throw new Error(`publish_blocked:${gate.reason}`);
 
+  // A candidate is never delivered while its assessment is still in progress:
+  // an unfinished run is what produces requirement rows with no resolved state.
+  const { data: run } = await admin
+    .from("score_runs")
+    .select("id, status")
+    .eq("id", runId)
+    .maybeSingle();
+  const runStatus = String((run as Any)?.status ?? "");
+  if (runStatus && runStatus !== "completed") {
+    throw new Error("publish_blocked:assessment_in_progress");
+  }
+
   const { evidenceGateBlockers } = await import("@/lib/evidence/completeness.server");
   const blockers = await evidenceGateBlockers(admin as never, matchId);
   if (blockers.length > 0) throw new Error(`publish_blocked:evidence_incomplete`);
