@@ -390,9 +390,19 @@ export function PositionEditWizard({
             {initial.organization_name} · Status: {initial.status}
           </p>
         </div>
-        <Button variant="ghost" onClick={() => navigate({ to: returnTo })}>
-          Cancel
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="ghost" onClick={() => navigate({ to: returnTo })}>
+            Cancel
+          </Button>
+          {audience === "client" && (
+            <RoleEditorLifecycleActions
+              orgId={initial.organization_id}
+              positionId={initial.id}
+              title={state.title || initial.title}
+              status={String(initial.status)}
+            />
+          )}
+        </div>
       </header>
 
       {draftFound && (
