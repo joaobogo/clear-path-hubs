@@ -684,17 +684,26 @@ async function main() {
     });
 
 
-    const { error: publishError } = await sb
-      .from("candidate_matches")
-      .update({
-        current_score_run_id: finalRunId,
-        approved_score_run_id: finalRunId,
-        stage: "delivered",
-        client_visibility: "visible",
-        canonical_state: "published_to_client",
-      })
-      .eq("id", match.id);
-    if (publishError) throw new Error(`publish failed for ${seed.name}: ${publishError.message}`);
+    // The canonical state machine only allows one step at a time.
+    for (const state of ["human_review", "approved", "published_to_client"] as const) {
+      const { error } = await sb
+        .from("candidate_matches")
+        .update(
+          state === "published_to_client"
+            ? {
+                canonical_state: state,
+                current_score_run_id: finalRunId,
+                approved_score_run_id: finalRunId,
+                stage: "delivered",
+                client_visibility: "visible",
+              }
+            : state === "approved"
+              ? { canonical_state: state, current_score_run_id: finalRunId, approved_score_run_id: finalRunId }
+              : { canonical_state: state, current_score_run_id: finalRunId },
+        )
+        .eq("id", match.id);
+      if (error) throw new Error(`publish (${state}) failed for ${seed.name}: ${error.message}`);
+    }
 
 
     // --- Interview (completed, recorded and scored) -----------------------
