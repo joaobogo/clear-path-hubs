@@ -1,6 +1,12 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { evaluatePublishGate } from "@/lib/publish-gate";
 
+/**
+ * Reconciled privileged-access baseline: exactly one active platform_admin
+ * membership, held by the master admin.
+ */
+export const EXPECTED_ACTIVE_PLATFORM_ADMINS = 1;
+
 export const runConsistencyCheck = async () => {
   const results: Record<string, any> = {};
   
@@ -113,6 +119,26 @@ export const runConsistencyCheck = async () => {
   results.support_expiry = {
     abandoned_active_count: abandonedSessions ?? 0,
     consistent: (abandonedSessions ?? 0) === 0
+  };
+
+  // 8. Privileged access reconciliation
+  // The reconciled state is ONE active platform_admin membership (the master
+  // admin). The check states the number it expects instead of accepting
+  // whatever it finds.
+  const { data: platformAdmins } = await supabaseAdmin
+    .from('memberships')
+    .select('id, user_id, is_master_admin')
+    .eq('role', 'platform_admin')
+    .eq('status', 'active');
+
+  const activeAdmins = platformAdmins ?? [];
+  results.privileged_access = {
+    expected_active_platform_admins: EXPECTED_ACTIVE_PLATFORM_ADMINS,
+    active_platform_admins: activeAdmins.length,
+    master_admins: activeAdmins.filter((m) => m.is_master_admin === true).length,
+    consistent:
+      activeAdmins.length === EXPECTED_ACTIVE_PLATFORM_ADMINS &&
+      activeAdmins.filter((m) => m.is_master_admin === true).length === 1
   };
 
   return results;
