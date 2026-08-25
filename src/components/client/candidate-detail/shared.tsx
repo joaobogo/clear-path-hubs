@@ -65,7 +65,7 @@ export function CandidateHeader({
             } as any}
             rechecking={candidate.freshness?.state === "stale"}
             humanReviewed={candidate.human_review?.reviewed === true}
-            evidencePending={candidate.explanation?.kind === "evidence_pending"}
+            evidencePending={false}
             unicorn={candidate.unicorn}
             hideScore
             hideBand
@@ -73,17 +73,31 @@ export function CandidateHeader({
           <Badge variant="outline" className="capitalize">
             {formatEnumLabel(candidate.stage)}
           </Badge>
+          {candidate.explanation?.kind === "evidence_pending" && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant="outline"
+                    className="border-current/30 taas-bg-warning-soft taas-fg-warning text-[10px] font-medium"
+                  >
+                    Evidence check in progress
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs">
+                    We&apos;re verifying quotes from this candidate&apos;s background — statuses can only improve.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
         {c.headline && (
           <p className="mt-1 text-base text-muted-foreground">
             {c.headline}
           </p>
         )}
-        {candidate.explanation?.kind === "evidence_pending" ? (
-          <p className="mt-1 text-sm text-muted-foreground italic">
-            {candidate.explanation.headline} — {candidate.explanation.summary}
-          </p>
-        ) : null}
         {candidate.human_review?.statement && (
           <p className="mt-1 text-sm text-primary">{candidate.human_review.statement}</p>
         )}
