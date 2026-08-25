@@ -207,7 +207,7 @@ const RULES: Partial<Record<EventType, NotificationRule>> = {
     tier: "action_required",
     affects: "An interview that still needs a time",
     why: "Good candidates lose interest while scheduling drags.",
-    action: "Review request",
+    action: "Confirm a time",
     dismissal: "on_action",
     group: "Interviews",
     candidateSensitive: true,

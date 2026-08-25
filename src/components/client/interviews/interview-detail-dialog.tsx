@@ -267,7 +267,7 @@ export function InterviewDetailDialog({
               )}
               {shownStatus === "requested" ? (
                 <Button variant="outline" onClick={() => setMode("propose")}>
-                  Propose times
+                  Confirm a time
                 </Button>
               ) : null}
               {shownStatus === "requested" || shownStatus === "scheduling" ? (

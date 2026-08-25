@@ -182,7 +182,7 @@ export async function emitEventFromServer(args: {
             : actorName && r.audience === "client" && args.event === "candidate_stage_changed"
               ? `Status changed by ${actorName}`
               : r.audience === "client" && args.event === "interview_requested"
-                ? "Your interview request is waiting on a time"
+                ? "You requested an interview"
                 : copy.title,
         // A clarification request is worthless without the question itself, so
         // the typed question travels as the notification body.

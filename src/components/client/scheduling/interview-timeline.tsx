@@ -317,9 +317,9 @@ function TimelineItem({
               className="min-h-11 sm:min-h-9"
               disabled={busy}
               onClick={onStartPropose}
-              aria-label={`Propose interview times for ${subject}`}
+              aria-label={`Confirm a time for ${subject}`}
             >
-              <Clock className="mr-1.5 h-4 w-4" /> Propose times
+              <Clock className="mr-1.5 h-4 w-4" /> Confirm a time
             </Button>
           ) : null}
           {!readOnly && !proposing && iv.status === "requested" ? (

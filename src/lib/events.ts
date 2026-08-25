@@ -97,6 +97,7 @@ export const CLIENT_COPY: Partial<Record<EventType, CopyEntry>> = {
   position_activated: { title: "Your role is live", body: "Candidates can now apply." },
   position_reopened: { title: "Your role is open again", body: "We resumed sourcing for this position." },
   candidate_published: { title: "New candidate delivered", body: "A vetted candidate is available in your workspace." },
+  interview_requested: { title: "You requested an interview", body: "This interview still needs a confirmed time" },
   interview_scheduled: { title: "Interview scheduled" },
   interview_rescheduled: { title: "Interview being rescheduled", body: "New times have gone out to the candidate." },
   interview_completed: { title: "Interview completed" },
