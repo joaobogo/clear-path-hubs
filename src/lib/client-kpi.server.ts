@@ -674,7 +674,7 @@ function normCandidateExpectation(raw: unknown): { text: string | null; amount: 
   return { text, amount: target, currency };
 }
 
-function classifyCompensation(
+export function classifyCompensation(
   role: { min: number | null; max: number | null },
   cand: { amount: number | null },
 ): "aligned" | "over" | "under" | "unknown" {
@@ -682,8 +682,8 @@ function classifyCompensation(
   const a = cand.amount;
   const lo = role.min ?? -Infinity;
   const hi = role.max ?? Infinity;
-  if (a < lo * 0.95) return "under";
-  if (a > hi * 1.05) return "over";
+  if (a < lo) return "under";
+  if (a > hi) return "over";
   return "aligned";
 }
 
