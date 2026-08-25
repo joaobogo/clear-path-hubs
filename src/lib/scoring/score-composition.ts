@@ -44,6 +44,8 @@ export type ScoreComposition = {
 };
 
 const LABELS: Record<ScoreComponentKey, string> = {
+  // Weighted coverage: a partly evidenced must-have is worth half a point. This
+  // is a different measurement from "Must-haves fully met" and keeps its own name.
   must_have: "Must-have coverage",
   preferred: "Nice-to-have signal",
   screening_alignment: "Screening alignment",
