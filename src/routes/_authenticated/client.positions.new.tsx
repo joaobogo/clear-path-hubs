@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
