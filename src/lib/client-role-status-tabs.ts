@@ -11,7 +11,8 @@
 
 export const ROLE_STATUS_TABS = [
   { key: "active", label: "Active" },
-  { key: "draft", label: "Under review" },
+  { key: "draft", label: "Draft" },
+  { key: "review", label: "Under review" },
   { key: "paused", label: "Paused" },
   { key: "closed", label: "Archived" },
 ] as const;
@@ -22,9 +23,9 @@ const STATUS_TO_TAB: Record<string, RoleStatusTabKey> = {
   active: "active",
   approved: "active",
   draft: "draft",
-  submitted: "draft",
-  under_review: "draft",
-  needs_clarification: "draft",
+  submitted: "review",
+  under_review: "review",
+  needs_clarification: "review",
   paused: "paused",
   filled: "closed",
   closed: "closed",
@@ -43,7 +44,7 @@ export function roleStatusTab(status: string | null | undefined): RoleStatusTabK
       `[roles] unmapped position status "${key}" — showing it under "Under review". Add it to STATUS_TO_TAB.`,
     );
   }
-  return "draft";
+  return "review";
 }
 
 
@@ -59,19 +60,36 @@ export function roleStatusTabLabel(tab: string): string {
 }
 
 /** Per-tab counts across every role in the workspace. */
+/**
+ * Per-tab counts across every role in the workspace.
+ *
+ * Placement follows the role's own lifecycle status, not the derived client
+ * status: the derived value collapses draft/submitted/under_review into one
+ * bucket and re-reads an archived role with live candidates as Active, which is
+ * why Draft and Archived could sit at 0 while those roles existed.
+ */
 export function countRolesByTab(
-  rows: Array<{ client_status?: { key?: string } | null }>,
+  rows: Array<{ status?: unknown; client_status?: { key?: string } | null }>,
 ): Record<RoleStatusTabKey, number> {
   const counts: Record<RoleStatusTabKey, number> = {
     active: 0,
     draft: 0,
+    review: 0,
     paused: 0,
     closed: 0,
   };
   for (const r of rows) {
-    const key = r.client_status?.key;
-    const tab: RoleStatusTabKey = roleStatusTab(key);
-    counts[tab] += 1;
+    counts[roleTabForRow(r)] += 1;
   }
   return counts;
+}
+
+/** The one tab a role belongs to, preferring its real lifecycle status. */
+export function roleTabForRow(row: {
+  status?: unknown;
+  client_status?: { key?: string } | null;
+}): RoleStatusTabKey {
+  const raw = String(row.status ?? "").trim();
+  if (raw && STATUS_TO_TAB[raw]) return STATUS_TO_TAB[raw];
+  return roleStatusTab(row.client_status?.key);
 }
