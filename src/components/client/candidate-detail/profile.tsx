@@ -33,13 +33,16 @@ export const InterviewGuide = memo(function InterviewGuide({
   const guide = candidate.interview_guide;
   const [copied, setCopied] = useState(false);
   const copy = () => {
-    const text = guide
-      .map(
-        (q) =>
-          `• ${q.question}\n  Why: ${q.why}\n  Look for: ${q.indicators.join("; ")}` +
-          (q.followUp ? `\n  Follow-up: ${q.followUp}` : ""),
-      )
-      .join("\n\n");
+    const header = "Look for in every answer: Specific project examples; Quantifiable results; Duration of experience.\n\n";
+    const text =
+      header +
+      guide
+        .map(
+          (q) =>
+            `• ${q.question}\n  Why: ${q.why}` +
+            (q.followUp ? `\n  Follow-up: ${q.followUp}` : ""),
+        )
+        .join("\n\n");
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       toast.success("Interview guide copied");
