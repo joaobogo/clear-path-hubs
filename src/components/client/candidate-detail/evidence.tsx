@@ -397,7 +397,7 @@ export const RequirementRowView = memo(function RequirementRowView({
               )}
               {row.evidence.length === 0 && row.status === "not_evidenced" && (
                 <p className="text-sm text-muted-foreground italic">
-                  Evidence extraction pending.
+                  Not evidenced in this candidate's record.
                 </p>
               )}
               {row.context.length > 0 && (
@@ -425,7 +425,7 @@ export const RequirementRowView = memo(function RequirementRowView({
       )}
       {row.evidence.length === 0 && row.context.length === 0 && row.status === "not_evidenced" && (
         <p className="mt-2 text-sm text-muted-foreground italic">
-          Evidence extraction pending.
+          Not evidenced in this candidate's record.
         </p>
       )}
     </li>
