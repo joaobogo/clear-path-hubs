@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDebouncedTextInput } from "@/hooks/use-debounced-text-input";
+import { useHydrated } from "@/hooks/use-hydrated";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -116,7 +117,7 @@ export function CandidatesFiltersPanel({
         <div className="flex flex-col gap-1">
           <label htmlFor="candidates-sort" className="text-[11px] font-medium text-muted-foreground">Sort</label>
           <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
-            <SelectTrigger id="candidates-sort" className="md:w-44"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="candidates-sort" className="md:w-44" disabled={!hydrated}><SelectValue /></SelectTrigger>
             <SelectContent>
               {SORT_OPTIONS.map((o) => (
                 <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>

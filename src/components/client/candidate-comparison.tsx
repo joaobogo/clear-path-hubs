@@ -192,6 +192,13 @@ export function CompareSheet({
         <SheetHeader>
           <SheetTitle>Candidate comparison</SheetTitle>
         </SheetHeader>
+        {/* Explicit close, wired to the same handler the sheet uses, so the
+            first click always registers. */}
+        <div className="mt-2 flex justify-end">
+          <Button size="sm" variant="ghost" onClick={() => onOpenChange(false)}>
+            Close
+          </Button>
+        </div>
 
         <VisibilityNote className="mt-3" variant="card" />
 

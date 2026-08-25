@@ -9,6 +9,7 @@
  * switched off, and the row states the reason rather than hiding the control.
  */
 import { useEffect, useMemo, useState } from "react";
+import { useHydrated } from "@/hooks/use-hydrated";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -159,7 +160,7 @@ export function NotificationPreferences({
                     <Select
                       value={row[spec.key]}
                       onValueChange={(v) => commit(spec.key, v as DeliveryMode)}
-                      disabled={!canEdit || savingKey === spec.key}
+                      disabled={!hydrated || !canEdit || savingKey === spec.key}
                     >
                       <SelectTrigger
                         id={`np-${spec.key}`}

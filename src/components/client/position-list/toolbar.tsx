@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useHydrated } from "@/hooks/use-hydrated";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -160,14 +161,22 @@ export function FilterBar({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   navigate: (opts: any) => void;
 }) {
+  const hydrated = useHydrated();
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2">
-      <Button asChild size="sm">
-        {/* Signed in, so the role is created inside this workspace — never the public signup wizard. */}
-        <Link to="/client/positions/new" search={(prev: any) => ({ ...prev })}>
+      {/* Disabled until the click handlers are live, so the first click never falls through. */}
+      {hydrated ? (
+        <Button asChild size="sm">
+          {/* Signed in, so the role is created inside this workspace — never the public signup wizard. */}
+          <Link to="/client/positions/new" search={(prev: any) => ({ ...prev })}>
+            New role
+          </Link>
+        </Button>
+      ) : (
+        <Button size="sm" disabled>
           New role
-        </Link>
-      </Button>
+        </Button>
+      )}
       <SavedViewsBar
         surface="client_positions"
         organizationId={orgId ?? undefined}
