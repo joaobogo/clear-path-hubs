@@ -23,10 +23,6 @@ export const getRouter = () => {
         // cursor between mousedown and mouseup, so the first click was lost.
         // Panels that genuinely need focus revalidation opt in locally.
         refetchOnWindowFocus: false,
-        // Keep the previous result on screen while a new key loads, so a
-        // search field or filter never unmounts mid-keystroke.
-        placeholderData: <T,>(prev: T) => prev,
-
       },
       mutations: {
         // Mutations never silently retry — surface the failure so the UI can rollback.
