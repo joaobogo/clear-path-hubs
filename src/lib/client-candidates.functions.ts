@@ -246,6 +246,14 @@ export const getClientCandidate = createServerFn({ method: "GET" })
             )
             .eq("organization_id", data.orgId)
             .in("entity_id", auditIds)
+            // Candidate history only — organisation-profile edits never qualify.
+            .in("entity_type", [
+              "candidate_matches",
+              "applications",
+              "candidate_profiles",
+              "interviews",
+              "client_decisions",
+            ])
             .order("created_at", { ascending: false })
             .limit(30)
         : Promise.resolve({ data: [] as AnyRow[] }),
