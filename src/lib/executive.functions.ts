@@ -306,9 +306,6 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       m.updated_at &&
       now.getTime() - new Date(m.updated_at).getTime() > 24 * 3600_000,
     ).length;
-    const blockedMatches = matchRows.filter((m) =>
-      ["failed", "error"].includes(String(m.processing_state ?? "")),
-    ).length;
     const draftPositions = posRows.filter(
       (p) => ["draft", "needs_clarification"].includes(String(p.status)),
     ).length;
