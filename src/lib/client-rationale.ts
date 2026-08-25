@@ -190,14 +190,14 @@ export function buildShortlistRationale(
   const evidenced = lines.filter((l) => l.claim !== null && l.verdict !== "gap");
   const gaps = lines.filter((l) => l.verdict === "gap" && l.importance === "must_have");
 
-  const counted = lines.filter((l) => l.verdict !== "not_applicable");
-  const evidencedCount = lines.filter(
-    (l) => l.verdict === "met" || l.verdict === "partial",
-  ).length;
+  // The summary sentence must be the same number the header chip, the coverage
+  // bar and the score breakdown show, so it comes from the canonical counter.
+  const canonical = getEvidenceCounts((c.requirement_rows ?? []).filter((r) => clean(r.label)));
   const summary =
-    counted.length === 0
+    canonical.total === 0
       ? "0 of 0 requirements evidenced"
-      : `${evidencedCount} of ${counted.length} of your requirements evidenced`;
+      : `${canonical.evidenced} of ${canonical.total} of your requirements evidenced`;
+
 
   return { lines, evidenced, gaps, summary };
 }
