@@ -73,6 +73,7 @@ export function CandidatesFiltersPanel({
   resultCount?: number;
   totalCount?: number;
 }) {
+  const hydrated = useHydrated();
   const [open, setOpen] = useState(false);
   // Keystrokes stay local; only the applied filter is debounced (see hook docs).
   const qInput = useDebouncedTextInput(search.q, (q) => setF({ q }));
