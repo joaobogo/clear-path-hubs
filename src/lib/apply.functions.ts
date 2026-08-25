@@ -113,19 +113,6 @@ export const submitApplication = createServerFn({ method: "POST" })
         };
       }
 
-      const qa = await assertNoQaContamination(supabaseAdmin, pos.organization_id, [
-        data.full_name,
-        emailLower,
-      ]);
-      if (!qa.ok) {
-        return {
-          ok: false,
-          trace_id,
-          code: "qa_fixture_blocked",
-          message: qa.reason ?? "Invalid input",
-        };
-      }
-
       // 2. Validate screening answers reference this position's questions and cover all required.
       const { data: questions, error: qErr } = await supabaseAdmin
         .from("screening_questions")
