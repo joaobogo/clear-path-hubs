@@ -131,7 +131,7 @@ export function HandoffView({
       <div className="grid gap-4 sm:grid-cols-3">
         <Fact
           label="Confirmed start date"
-          value={start ?? "Not confirmed yet"}
+          value={start ?? "Not provided"}
           {...(start
             ? handoff.start_date_confirmed
               ? {}

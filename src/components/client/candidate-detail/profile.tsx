@@ -206,7 +206,7 @@ export const SkillsAndEducation = memo(function SkillsAndEducation({
             <ul className="space-y-2 text-sm">
               {candidate.education.map((e, i) => (
                 <li key={i}>
-                  <div className="font-medium">{e.degree ?? "Not specified"}</div>
+                  <div className="font-medium">{e.degree ?? "Not provided"}</div>
                   <div className="text-xs text-muted-foreground">
                     {[e.institution, formatPeriod(e.period)].filter(Boolean).join(" · ")}
                   </div>

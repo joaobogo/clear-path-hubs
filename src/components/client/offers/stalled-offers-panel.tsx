@@ -22,28 +22,37 @@ export function StalledOffersPanel({
         {STALL_HOURS}h
       </h2>
       <ul className="mt-3 space-y-2">
-        {stalled.map((h) => (
-          <li
-            key={h.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-background/80 px-3 py-2"
-          >
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">
-                {h.candidate_name}{" "}
-                <span className="font-normal text-muted-foreground">
-                  · {h.position_title}
-                </span>
-              </p>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">
-                {HIRE_STATUS_LABEL[h.status]} · {stallLabel(h)} · owner{" "}
-                {h.owner_name ?? "unassigned"}
-                {h.nudge_count > 0 &&
-                  ` · nudged ${h.nudge_count}× (last ${formatAge(h.last_nudged_at)} ago)`}
-              </p>
-            </div>
-            {!readOnly && <NudgeButton orgId={orgId} hire={h} />}
-          </li>
-        ))}
+        {stalled.map((h) => {
+          const meta = [
+            HIRE_STATUS_LABEL[h.status],
+            stallLabel(h),
+            h.owner_name && h.owner_name !== "Unassigned"
+              ? `owner ${h.owner_name}`
+              : null,
+            h.nudge_count > 0
+              ? `nudged ${h.nudge_count}× (last ${formatAge(h.last_nudged_at)} ago)`
+              : null,
+          ].filter(Boolean);
+          return (
+            <li
+              key={h.id}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-background/80 px-3 py-2"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium">
+                  {h.candidate_name}{" "}
+                  <span className="font-normal text-muted-foreground">
+                    · {h.position_title}
+                  </span>
+                </p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  {meta.join(" · ")}
+                </p>
+              </div>
+              {!readOnly && <NudgeButton orgId={orgId} hire={h} />}
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

@@ -344,12 +344,16 @@ export function CompareSheet({
             >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
-                  <div>{c.candidate.location ?? <span className="text-muted-foreground">Location N/A</span>}</div>
+                  <div>
+                    {c.candidate.location ?? (
+                      <span className="text-muted-foreground">Not provided</span>
+                    )}
+                  </div>
                   {c.candidate.timezone && (
                     <div className="text-muted-foreground">TZ {c.candidate.timezone}</div>
                   )}
                   <div className="text-muted-foreground">
-                    Auth: {c.work_authorization ?? "not confirmed"}
+                    Auth: {c.work_authorization ?? "Not provided"}
                   </div>
                 </div>
               ))}
@@ -381,14 +385,18 @@ export function CompareSheet({
                   aligned: "In range",
                   over: "Above range",
                   under: "Below range",
-                  unknown: "Not confirmed",
+                  unknown: "Not provided",
                 };
                 return (
                   <div key={c.match_id} className="text-xs space-y-1">
                     <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${tone[comp.verdict]}`}>
                       {labels[comp.verdict]}
                     </span>
-                    <div>{comp.candidate_expectation ?? <span className="text-muted-foreground">Not shared</span>}</div>
+                    <div>
+                      {comp.candidate_expectation ?? (
+                        <span className="text-muted-foreground">Not provided</span>
+                      )}
+                    </div>
                     {comp.role_range && (
                       <div className="text-muted-foreground">Role: {comp.role_range}</div>
                     )}
@@ -499,7 +507,7 @@ export function CompareSheet({
                 <ul key={c.match_id} className="text-xs space-y-1">
                   {c.education.slice(0, 3).map((e, i) => (
                     <li key={i}>
-                      <div className="font-medium">{e.degree ?? "Not specified"}</div>
+                      <div className="font-medium">{e.degree ?? "Not provided"}</div>
                       {e.institution && (
                         <div className="text-muted-foreground truncate">{e.institution}</div>
                       )}
