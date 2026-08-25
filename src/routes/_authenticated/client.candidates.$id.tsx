@@ -37,7 +37,6 @@ import {
 } from "@/lib/client/action-timeout";
 
 import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock } from "@/components/client/candidate-detail/shared";
-import { TopSignals } from "@/components/client/candidate-detail/top-signals";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";

@@ -502,8 +502,7 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
   const roleTitle = candidate.position?.title ?? null;
   // Every declared requirement gets its own row — same source as the comparison grid.
   const rows = rationale.lines.filter((l) => l.verdict !== "not_applicable");
-  const strengths = candidate.strengths ?? [];
-  if (rows.length === 0 && strengths.length === 0) return null;
+  if (rows.length === 0) return null;
 
   const bandLine = candidate.fit?.headline
     ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
