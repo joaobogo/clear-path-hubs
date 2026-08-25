@@ -411,6 +411,16 @@ async function main() {
   const now = Date.now();
   const day = 24 * 60 * 60 * 1000;
   let created = 0;
+  const createdRows: {
+    name: string;
+    score: number;
+    matchId: string;
+    profileId: string;
+    salary: number;
+    quoted: number;
+    deliveredAt: string;
+  }[] = [];
+
 
   for (const [index, seed] of SEEDS.entries()) {
     const email = `${slug(seed.name)}@demo.taasflow.com`;
