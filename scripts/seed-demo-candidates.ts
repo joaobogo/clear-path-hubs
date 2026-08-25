@@ -645,19 +645,22 @@ async function main() {
       return run.id as string;
     };
 
-    await makeRun({
+    // Only one completed run may stay current per submission, so each earlier
+    // run in the trail is superseded by the one that follows it.
+    const cvRunId = await makeRun({
       score: Math.max(50, seed.score - 8),
       completedAt: new Date(appliedAt.getTime() + day),
       method: "deterministic",
       label: "CV only",
       sources: ["cv"],
     });
-    await makeRun({
+    const interviewRunId = await makeRun({
       score: Math.max(55, seed.score - 3),
       completedAt: new Date(interviewAt.getTime() + 2 * 60 * 60 * 1000),
       method: "deterministic",
       label: "CV and interview recording",
       sources: ["cv", "interview"],
+      supersedes: { runId: cvRunId, reason: "Interview recording scored" },
     });
     const finalRunId = await makeRun({
       score: seed.score,
@@ -665,7 +668,9 @@ async function main() {
       method: "deterministic",
       label: "CV, interview recording and assessment",
       sources: ["cv", "interview", "assessment"],
+      supersedes: { runId: interviewRunId, reason: "Assessment submission scored" },
     });
+
 
     const { error: publishError } = await sb
       .from("candidate_matches")
