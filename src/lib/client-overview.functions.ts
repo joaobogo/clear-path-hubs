@@ -346,8 +346,8 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         lastMovementAt,
         awaitingDecision: awaiting.length,
         oldestAwaitingDecisionAt: minIso(awaiting.map((r) => r.delivered_at ?? r.stage_entered_at)),
-        interviewsToConfirm: toConfirm.length,
-        oldestInterviewToConfirmAt: minIso(toConfirm.map((r) => r.interview_requested_at)),
+        interviewsToConfirm: pendingInterviewRequests.length,
+        oldestInterviewToConfirmAt: minIso(pendingInterviewRequests),
 
         promisedShortlistBy,
         shortlistDeliveredAt: dates.shortlist,
