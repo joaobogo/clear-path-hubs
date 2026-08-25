@@ -120,7 +120,16 @@ export function candidateLifecycleFacts(
     applicationStatus: app.status ?? "submitted",
     withdrawnAt: app.withdrawn_at ?? null,
     positionStatus: app.positions?.status ?? null,
-    matchStage: visible?.stage ?? matches[0]?.stage ?? null,
+    // Progress a candidate can read comes only from a published match: an
+    // unpublished row has not been shared, whatever stage staff parked it at.
+    // A terminal stage still closes the application either way.
+    matchStage:
+      visible?.stage ??
+      (matches.some((m) => m.stage === "not_moving_forward")
+        ? "not_moving_forward"
+        : matches.some((m) => m.stage === "archived")
+          ? "archived"
+          : null),
     matchVisible: Boolean(visible),
     interviewState: candidateInterviewState(interviews),
     hasOpenInfoRequest: Boolean(extras.hasOpenInfoRequest),
