@@ -382,7 +382,6 @@ function CandidatesPage() {
  search.minExp && { key: "minExp", label: `${search.minExp}+ years experience` },
  search.location && { key: "location", label: `Location: ${search.location}` },
  search.q && { key: "q", label: `Search: ${search.q}` },
- search.unicorn === "1" && { key: "unicorn", label: `Unicorn only (${UNICORN_SCORE}+)` },
  ].filter(Boolean) as { key: string; label: string }[];
 
  const clearFilters = () =>
@@ -420,12 +419,6 @@ function CandidatesPage() {
 
  return (
   <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-6 sm:py-8 pb-24 sm:pb-28">
- {/* Support-mode banner */}
- {isSupportView && (
- <div className="mb-4 rounded-lg border taas-bd-warning taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning ">
- Support view · {ctx?.active?.name}. Read-only mirror of the client experience.
- </div>
- )}
 
   {/* Header */}
   <header className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">

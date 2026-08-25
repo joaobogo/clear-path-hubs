@@ -230,7 +230,7 @@ export function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"]
 // ── Time in stage ──────────────────────────────────────────────────────────
 
 export function TimeInStageCard({ rows }: { rows: ExecutiveReport["time_in_stage"] }) {
-  const maxP90 = Math.max(1, ...rows.map((r) => r.p90_days));
+  const maxDays = Math.max(1, ...rows.map((r) => r.avg_days));
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -257,8 +257,8 @@ export function TimeInStageCard({ rows }: { rows: ExecutiveReport["time_in_stage
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                   <div
-                    className={`h-full ${r.p90_days > 14 ? "bg-destructive" : r.p90_days > 7 ? "bg-warning" : "bg-primary"}`}
-                    style={{ width: `${(r.p90_days / maxP90) * 100}%` }}
+                    className={`h-full ${r.avg_days > 14 ? "bg-destructive" : r.avg_days > 7 ? "bg-warning" : "bg-primary"}`}
+                    style={{ width: `${(r.avg_days / maxDays) * 100}%` }}
                   />
                 </div>
               </li>

@@ -89,7 +89,7 @@ export function PositionLifecycleMenu({
             : ["No further status changes are possible", "The record stays available for reporting"],
         tone: "destructive",
         confirmLabel: rule.verb,
-        reason: { label: "Reason (recorded in the audit trail)", required: action === "archive" },
+        reason: { label: "Reason (recorded in the full history)", required: action === "archive" },
       });
       if (!result.confirmed) return;
       transition.mutate({ action, reason: result.reason || undefined });
