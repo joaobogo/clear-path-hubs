@@ -20,6 +20,15 @@ import { toastError } from "@/lib/toast-error";
  * straight to the same edit wizard they use for any other role, so the draft
  * belongs to this workspace only.
  */
+const ESSENTIALS = [
+  "Seniority",
+  "Work arrangement",
+  "Location or remote",
+  "3–5 Must-have skills",
+  "Salary band",
+  "Job description",
+];
+
 export const Route = createFileRoute("/_authenticated/client/positions/new")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.new.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
