@@ -155,7 +155,7 @@ function ConversationsPage() {
       ) : null}
 
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-3">
           <div className="flex rounded-md border p-0.5">
             {FILTERS.map((f) => (
               <Link
@@ -181,6 +181,16 @@ function ConversationsPage() {
               placeholder="Search conversations"
               className="pl-9"
             />
+          </div>
+          <div className="flex items-center gap-2 rounded-md border px-3 py-2">
+            <Switch
+              id="hide-empty"
+              checked={hideEmpty}
+              onCheckedChange={setHideEmpty}
+            />
+            <Label htmlFor="hide-empty" className="cursor-pointer text-sm">
+              Hide empty threads
+            </Label>
           </div>
       </div>
 
