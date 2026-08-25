@@ -906,13 +906,171 @@ async function main() {
     if (hireError) throw new Error(`offer insert failed for ${seed.name}: ${hireError.message}`);
 
     created += 1;
+    createdRows.push({
+      name: seed.name,
+      score: seed.score,
+      matchId: match.id,
+      profileId: profile.id,
+      salary,
+      quoted,
+      deliveredAt: deliveredAt.toISOString(),
+    });
     console.log(
-      `  ${seed.name.padEnd(20)} score ${seed.score}  ${quoted}/${requirements.length} quoted  offer EUR ${salary.toLocaleString("en-GB")}`,
+      `  ${seed.name.padEnd(20)} score ${seed.score}  ${quoted}/${requirements.length} quoted  offer EUR ${salary.toLocaleString("en-GB")}  match ${match.id}`,
     );
   }
 
   console.log(`\nSeeded ${created} candidates into "${org.name}" for "${position.title}".`);
+
+  // --- Candidate IDs ------------------------------------------------------
+  console.log("\nCandidate IDs (candidate_match_id / candidate_profile_id):");
+  for (const row of createdRows) {
+    console.log(`  ${row.name.padEnd(20)} ${row.matchId}  ${row.profileId}`);
+  }
+
+  // --- Verification: what the Candidates page will show -------------------
+  await verify(sb, org.id, position.id, requirements.length, createdRows);
 }
+
+/**
+ * Reads back exactly what the client Candidates page reads, and reports any
+ * candidate that is missing, in the wrong stage, outside the 70–91 score
+ * band, delivered outside the 3–5 day window, missing evidence, or missing an
+ * open offer. Problems are logged with the candidate id.
+ */
+async function verify(
+  sb: SupabaseClient<Database>,
+  organizationId: string,
+  positionId: string,
+  requirementCount: number,
+  expected: { name: string; score: number; matchId: string; profileId: string; quoted: number; deliveredAt: string }[],
+): Promise<void> {
+  const day = 24 * 60 * 60 * 1000;
+  const problems: string[] = [];
+
+  const { data: matches, error: matchError } = await sb
+    .from("candidate_matches")
+    .select(
+      "id, stage, delivered_at, canonical_state, client_visibility, approved_score_run_id, candidate_profile_id",
+    )
+    .eq("organization_id", organizationId)
+    .eq("position_id", positionId)
+    .in(
+      "id",
+      expected.map((row) => row.matchId),
+    );
+  if (matchError) throw new Error(`verification read failed: ${matchError.message}`);
+
+  const byId = new Map((matches ?? []).map((row) => [row.id, row]));
+
+  for (const row of expected) {
+    const match = byId.get(row.matchId);
+    if (!match) {
+      problems.push(`${row.name} (${row.matchId}): missing — no candidate_matches row was found after seeding.`);
+      continue;
+    }
+
+    if (match.stage !== "delivered") {
+      problems.push(`${row.name} (${row.matchId}): wrong stage — expected "delivered", found "${match.stage}".`);
+    }
+    if (match.client_visibility !== "visible" || match.canonical_state !== "published_to_client") {
+      problems.push(
+        `${row.name} (${row.matchId}): not released to the client — visibility "${match.client_visibility}", state "${match.canonical_state}"; the row will not appear on /client/candidates.`,
+      );
+    }
+
+    const deliveredAt = match.delivered_at ? new Date(match.delivered_at).getTime() : null;
+    if (deliveredAt === null) {
+      problems.push(`${row.name} (${row.matchId}): no delivery date — the Delivered column will be blank.`);
+    } else {
+      const ageDays = (Date.now() - deliveredAt) / day;
+      if (ageDays < 2.9 || ageDays > 5.1) {
+        problems.push(
+          `${row.name} (${row.matchId}): delivered ${ageDays.toFixed(1)} days ago, outside the intended 3–5 day window.`,
+        );
+      }
+    }
+
+    if (!match.approved_score_run_id) {
+      problems.push(
+        `${row.name} (${row.matchId}): no approved score run — the score column and evidence indicator will read 0%.`,
+      );
+      continue;
+    }
+
+    const { data: run, error: runError } = await sb
+      .from("score_runs")
+      .select("final_score, status, must_have_coverage, superseded_at")
+      .eq("id", match.approved_score_run_id)
+      .maybeSingle();
+    if (runError) throw new Error(`verification score read failed: ${runError.message}`);
+    if (!run) {
+      problems.push(`${row.name} (${row.matchId}): approved score run ${match.approved_score_run_id} is missing.`);
+    } else {
+      const score = Number(run.final_score ?? 0);
+      if (run.status !== "completed") {
+        problems.push(`${row.name} (${row.matchId}): score run status is "${run.status}", not "completed".`);
+      }
+      if (run.superseded_at) {
+        problems.push(`${row.name} (${row.matchId}): the approved score run is superseded, so no score will render.`);
+      }
+      if (score < 70 || score > 91) {
+        problems.push(`${row.name} (${row.matchId}): score ${score} is outside the intended 70–91 band.`);
+      }
+      if (Math.round(score) !== row.score) {
+        problems.push(`${row.name} (${row.matchId}): stored score ${score} does not match the seed value ${row.score}.`);
+      }
+    }
+
+    const { data: items, error: itemsError } = await sb
+      .from("candidate_evidence_items")
+      .select("source_kind, source_passage")
+      .eq("candidate_match_id", row.matchId);
+    if (itemsError) throw new Error(`verification evidence read failed: ${itemsError.message}`);
+    const withPassage = (items ?? []).filter((item) => (item.source_passage ?? "").trim().length > 0);
+    const sources = new Set(withPassage.map((item) => item.source_kind));
+    if (withPassage.length === 0) {
+      problems.push(
+        `${row.name} (${row.matchId}): 0% evidence — ${items?.length ?? 0} evidence rows exist but none carry a passage.`,
+      );
+    } else if (sources.size < 3) {
+      problems.push(
+        `${row.name} (${row.matchId}): evidence is incomplete — passages found for ${[...sources].join(", ") || "no source"} only; CV, interview and assessment are all required for a full evidence indicator.`,
+      );
+    }
+    if (withPassage.filter((item) => item.source_kind === "cv").length !== row.quoted) {
+      problems.push(
+        `${row.name} (${row.matchId}): ${withPassage.filter((i) => i.source_kind === "cv").length} quoted CV passages, expected ${row.quoted} of ${requirementCount}.`,
+      );
+    }
+
+    const { data: offers, error: offerError } = await sb
+      .from("hire_records")
+      .select("id, status, salary_amount")
+      .eq("candidate_match_id", row.matchId);
+    if (offerError) throw new Error(`verification offer read failed: ${offerError.message}`);
+    const open = (offers ?? []).filter((offer) =>
+      ["offer_drafted", "offer_sent", "offer_negotiating"].includes(offer.status),
+    );
+    if (open.length === 0) {
+      problems.push(
+        `${row.name} (${row.matchId}): no open offer — ${offers?.length ?? 0} offer rows found, statuses: ${(offers ?? []).map((o) => o.status).join(", ") || "none"}.`,
+      );
+    }
+  }
+
+  console.log("\nVerification");
+  if (problems.length === 0) {
+    console.log(
+      `  All ${expected.length} candidates are delivered 3–5 days ago, scored 70–91, carry CV + interview + assessment evidence, and have an open offer.`,
+    );
+    return;
+  }
+  console.log(`  ${problems.length} problem(s) found:`);
+  for (const problem of problems) console.log(`  - ${problem}`);
+  process.exitCode = 1;
+}
+
 
 main().catch((error) => {
   console.error(error instanceof Error ? error.message : error);
