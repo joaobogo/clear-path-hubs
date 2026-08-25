@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Building2, Briefcase, Users, MessageSquare, Loader2, Clock, CheckSquare, Zap, LineChart, PlusCircle, Gauge, Send, ClipboardList, AlertTriangle, RotateCw } from "lucide-react";
 import {
   CommandDialog,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,

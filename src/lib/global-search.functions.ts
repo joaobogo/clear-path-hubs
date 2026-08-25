@@ -225,7 +225,7 @@ export const globalSearch = createServerFn({ method: "POST" })
 
     // Candidates via candidate_matches (never expose hidden matches to clients).
     {
-      const profileFilter = orIlike(["full_name", "email", "headline"], term);
+      const profileFilter = orIlike(["full_name", "email", "headline", "summary"], term);
       if (profileFilter) {
         // Two-step: find matching candidate_profile ids, then look up matches
         // Candidate profiles are not readable through client RLS (names are
