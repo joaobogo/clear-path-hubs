@@ -565,9 +565,9 @@ function CandidateDetailPage() {
   </dl>
   </CollapsibleSection>
   )}
-  <div className="grid gap-4 sm:grid-cols-2">
-    <LinksPanel candidate={candidate} />
-  </div>
+   {/* Links live in the Contact card only. */}
+
+
 
  </TabsContent>
 
