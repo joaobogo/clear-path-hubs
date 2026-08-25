@@ -59,6 +59,7 @@ export function CvPreviewDialog({
       setLoading(true);
       setFailure(null);
       setRenderFailed(false);
+      setIframeLoaded(false);
       if (fresh) invalidateCvLink(matchId);
       try {
         const res = await fetchCvDownloadLink({
