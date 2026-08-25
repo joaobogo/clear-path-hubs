@@ -72,16 +72,25 @@ function buildObservations(cands: ClientCandidateDTO[]): string[] {
   if (cands.length < 2) return [];
   const notes: string[] = [];
 
-  const cover = [...cands].sort(
-    (a, b) => (getCoverageRatio(b.requirement_rows) ?? 0) - (getCoverageRatio(a.requirement_rows) ?? 0),
-  );
-  const bestCover = getCoverageRatio(cover[0].requirement_rows) ?? 0;
-  const worstCover = getCoverageRatio(cover[cover.length - 1].requirement_rows) ?? 0;
-  if (bestCover !== worstCover) {
+  // Coverage observation reads the exact strings the "Requirement coverage" row
+  // above prints, so the note can never quote a different figure — and it only
+  // fires when those displayed figures actually differ.
+  const coverShown = cands.map((c) => ({
+    name: c.candidate.display_name,
+    ratio: getCoverageRatio(c.requirement_rows),
+    shown: formatCoveragePct(getCoverageRatio(c.requirement_rows)),
+  }));
+  const distinctShown = new Set(coverShown.map((x) => x.shown));
+  if (distinctShown.size > 1) {
+    const ranked = [...coverShown].sort((a, b) => (b.ratio ?? -1) - (a.ratio ?? -1));
+    const leaders = ranked.filter((x) => x.shown === ranked[0].shown);
     notes.push(
-      `Requirement coverage differs — ${cover[0].candidate.display_name} has the highest coverage (${formatCoveragePct(bestCover)}).`,
+      leaders.length === 1
+        ? `Requirement coverage differs — ${leaders[0].name} has the highest coverage (${leaders[0].shown}).`
+        : `Requirement coverage differs — ${leaders.map((l) => l.name).join(" and ")} share the highest coverage (${ranked[0].shown}).`,
     );
   }
+
 
   const exp = [...cands]
     .filter((c) => c.candidate.years_experience != null)
