@@ -106,6 +106,8 @@ function ConversationsPage() {
     const allItems = threadData?.items ?? [];
 
     return allItems.filter((c) => {
+      const empty = (c.message_count ?? 0) === 0;
+      if (hideEmpty && empty) return false;
       if (box === "unread" && c.unread <= 0) return false;
       if (filter !== "all" && c.scope !== filter) return false;
       if (!needle) return true;
@@ -115,10 +117,10 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [threadData, box, filter, q]);
+  }, [threadData, box, filter, q, hideEmpty]);
 
   const unreadCount = (threadData?.items ?? []).filter((c) => c.unread > 0).length;
-
+  const emptyCount = (threadData?.items ?? []).filter((c) => (c.message_count ?? 0) === 0).length;
 
   const totalCount = threadData?.items?.length ?? 0;
 
