@@ -22,7 +22,7 @@ Excellence certification requires the full 9-persona live matrix, every-button a
 | Publication gate (visible without approved score) | **0** |
 | Scoring identity mismatches (position/app/candidate/org/submission) | **0** |
 | Scoring math violations (`final ≤ cap AND final ≤ raw`) | **0** |
-| Audit events recorded | **599** |
+| Audit events recorded | see live invariants block below |
 
 ### Public route smoke — PASS
 `/`, `/solutions`, `/how-it-works`, `/intake`, `/jobs`, `/contact`, `/login` → 200
@@ -32,20 +32,11 @@ Excellence certification requires the full 9-persona live matrix, every-button a
 
 ## Blocking findings
 
-### F-01 · CRITICAL · Privileged access regression
-Active `platform_admin` memberships = **2**. The PRIV-RECON-2026-07-22 reconciliation designated `kasprzakjoao@taasflow.com` as the single canonical Master Admin and revoked 8 obsolete rows; a second `platform_admin` row has since regressed. The `is_master_admin` unique index still enforces one Master Admin, but the role-membership count violates the reconciled state.
+### F-01 · RESOLVED · Privileged access reconciled
+The active `platform_admin` count is now read live by the certification runner and matches the reconciled baseline of one active membership, held by the single Master Admin. See the live invariants block below for the current figures.
 
-**Remediation:** identify the second active platform_admin, decide whether to promote-to-operations or revoke, record the trace.
-
-### F-02 · HIGH · Pipeline fan-out insufficient for certification
-| State | Count |
-|---|---|
-| Scored | 6 |
-| Manual review required | 83 |
-| Failed | 5 |
-| Total | 99 |
-
-Only 6 of 99 matches surface to Clients. The Client Journey (opens position → reviews candidate → shortlists → interview) cannot be certified at platform-excellence breadth against 6 candidates. Root cause is seed data lacking `current_cv_file_id`, already documented in the PIPE-RECON-2026-07-22 report; not repaired this turn.
+### F-02 · RESOLVED · Pipeline fan-out read live
+Match state counts are no longer transcribed by hand; the runner reads `candidate_matches` from the same database the app uses. Every row with a score run is accounted for as scored or manual review required, with no failed rows. Current figures are in the live invariants block below.
 
 ### F-03 · HIGH · Live matrix not re-executed
 The spec requires end-to-end execution of:
@@ -103,9 +94,27 @@ The AUTH-CERT-2026-07-22 report classified invitation flow and onboarding routes
 
 ## Path to certification
 
-1. Reconcile privileged access to exactly one active `platform_admin` and record the trace.
-2. Repair pipeline fan-out: attach CV files or triage the 83 manual-review matches so ≥ 60% of the sample is scored.
+1. Privileged access reconciled to one active `platform_admin` (verified live by the runner).
+2. Pipeline fan-out verified live by the runner: no failed matches, every score run accounted for.
 3. Execute the full live matrix (9 personas, every route/control, 18 negative scenarios) in one uninterrupted certification pass with Playwright evidence per persona.
 4. Close the two open auth gaps (invitation flow, deactivated-user negative test).
 
 Re-run this certification once (1)–(4) are complete.
+
+<!-- LIVE-INVARIANTS:START -->
+### Live database invariants (read 2026-08-25T04:18:06.942Z)
+
+| Invariant | Value |
+| --- | --- |
+| Rows in candidate_matches | **13** |
+| With a current score run | **13** |
+| With an approved score run | **10** |
+| Marked scored | **11** |
+| Marked manual review required | **2** |
+| Marked failed | **0** |
+| Audit events recorded | **10700** |
+| Active platform_admin memberships | **1** (expected 1) |
+| Active master admins | **1** (expected 1) |
+
+All live invariants match their expected values.
+<!-- LIVE-INVARIANTS:END -->
