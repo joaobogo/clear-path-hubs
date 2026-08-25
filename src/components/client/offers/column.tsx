@@ -17,8 +17,13 @@ export function Column({
   onChanged: () => void;
 }) {
   const Icon = COLUMN_ICON[status];
+  const isEmpty = items.length === 0;
   return (
-    <div className={`rounded-xl border p-3 ${COLUMN_TONE[status]}`}>
+    // One row that scrolls sideways: every column keeps a fixed width, and an
+    // empty column collapses to its header instead of a tall block of colour.
+    <div
+      className={`shrink-0 self-start rounded-xl border p-3 sm:w-[200px] ${COLUMN_TONE[status]}`}
+    >
       <div className="flex items-center justify-between">
         <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide">
           <Icon className="h-3.5 w-3.5" />
@@ -28,22 +33,19 @@ export function Column({
           {items.length}
         </Badge>
       </div>
-      <ul className="mt-3 space-y-2">
-        {items.length === 0 && (
-          <li className="rounded-md border border-dashed border-border/60 bg-background/30 p-3 text-[11px] text-muted-foreground">
-            Nothing here
-          </li>
-        )}
-        {items.map((h) => (
-          <HireCard
-            key={h.id}
-            hire={h}
-            orgId={orgId}
-            readOnly={readOnly}
-            onChanged={onChanged}
-          />
-        ))}
-      </ul>
+      {!isEmpty && (
+        <ul className="mt-3 space-y-2">
+          {items.map((h) => (
+            <HireCard
+              key={h.id}
+              hire={h}
+              orgId={orgId}
+              readOnly={readOnly}
+              onChanged={onChanged}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

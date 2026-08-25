@@ -242,11 +242,11 @@ function OffersPage() {
             retrying={isFetching}
           />
         ) : isPending ? (
-          <SkeletonBoard columns={6} />
+          <SkeletonBoard columns={7} />
         ) : hires.length === 0 ? (
           <OffersEmptyState orgId={orgId} />
         ) : (
-          <div className="grid grid-cols-1 gap-3 sm:min-w-[1100px] sm:grid-cols-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-nowrap sm:items-start">
             {COLUMN_ORDER.map((status) => (
               <Column
                 key={status}
