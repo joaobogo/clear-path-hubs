@@ -13,6 +13,7 @@ import {
   countryName,
   normalizeTravelExpectation,
   normalizeTimezoneAnchor,
+  normalizeCountryCode,
   type RequisitionLocation,
 } from "@/lib/requisition-schema";
 import { dedupeLocationParts } from "@/lib/jobs/location-format";
@@ -45,7 +46,7 @@ const traceId = () => `rq_${Math.random().toString(36).slice(2, 10)}${Date.now()
 function rowsToLocations(rows: AnyRow[]): RequisitionLocation[] {
   return (rows ?? []).map((r) => ({
     id: r.id,
-    country_code: r.country_code,
+    country_code: normalizeCountryCode(r.country_code) || normalizeCountryCode(r.country) || "",
     region: r.region ?? "",
     city: r.city ?? "",
     work_model: r.work_model,

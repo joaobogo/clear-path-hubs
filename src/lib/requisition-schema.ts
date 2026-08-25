@@ -76,7 +76,21 @@ export const COUNTRIES: ReadonlyArray<{ code: string; name: string }> = [
 ];
 
 const COUNTRY_BY_CODE = new Map(COUNTRIES.map((c) => [c.code, c.name]));
+const COUNTRY_CODE_BY_NAME = new Map(COUNTRIES.map((c) => [c.name.trim().toLowerCase(), c.code]));
+COUNTRY_CODE_BY_NAME.set("brasil", "BR");
+COUNTRY_CODE_BY_NAME.set("united states of america", "US");
+COUNTRY_CODE_BY_NAME.set("usa", "US");
+COUNTRY_CODE_BY_NAME.set("uk", "GB");
+
 export const countryName = (code: string) => COUNTRY_BY_CODE.get(code) ?? code;
+
+export function normalizeCountryCode(raw: unknown): string {
+  const v = typeof raw === "string" ? raw.trim() : "";
+  if (!v) return "";
+  const upper = v.toUpperCase();
+  if (COUNTRY_BY_CODE.has(upper)) return upper;
+  return COUNTRY_CODE_BY_NAME.get(v.toLowerCase()) ?? "";
+}
 
 export const TRAVEL_EXPECTATIONS = [
   { value: "none", label: "No travel" },
@@ -224,7 +238,7 @@ export function explainWeights(w: EvaluationWeights): string {
 
 export const locationSchema = z.object({
   id: z.string().uuid().optional(),
-  country_code: z.string().trim().length(2).toUpperCase(),
+  country_code: z.preprocess(normalizeCountryCode, z.string().trim().length(2, "Choose a country.").toUpperCase()),
   region: z.string().trim().max(120).default(""),
   city: z.string().trim().max(120).default(""),
   work_model: z.enum(["remote", "hybrid", "onsite"]),
@@ -256,9 +270,10 @@ export const requisitionMetaSchema = z
       .or(z.literal(""))
       .default(""),
     owner_user_id: z.string().uuid().nullable().default(null),
-    travel_expectation: z
-      .enum(["none", "occasional", "regular", "frequent", "extensive", ""])
-      .default(""),
+    travel_expectation: z.preprocess(
+      normalizeTravelExpectation,
+      z.enum(["none", "occasional", "regular", "frequent", "extensive", ""]),
+    ).default(""),
     primary_timezone: z.string().trim().max(80).default(""),
     timezone_overlap_hours: z.number().int().min(0).max(12).nullable().default(null),
     target_start_date: z.string().trim().max(20).default(""),
