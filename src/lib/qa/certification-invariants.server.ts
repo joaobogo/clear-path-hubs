@@ -58,6 +58,7 @@ export async function collectCertificationInvariants(): Promise<CertificationInv
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sb = supabaseAdmin as any;
+  const generatedAt = new Date().toISOString();
 
   const countMatches = async (filter?: (q: any) => any) => {
     let query = sb.from("candidate_matches").select("*", { count: "exact", head: true });
@@ -132,7 +133,7 @@ export async function collectCertificationInvariants(): Promise<CertificationInv
   }
 
   return {
-    generated_at: new Date().toISOString(),
+    generated_at: generatedAt,
     supabase_project: process.env["SUPABASE_PROJECT_ID"] ?? "unknown",
     database_invariants: {
       total_matches: totalMatches,
@@ -150,7 +151,7 @@ export async function collectCertificationInvariants(): Promise<CertificationInv
       master_admins_active: masterAdmins ?? 0,
     },
     query_provenance: {
-      ran_at: new Date().toISOString(),
+      ran_at: generatedAt,
       queries: [
         {
           id: "Q1",
