@@ -70,7 +70,13 @@ export function parseJobDescription(description: string): JobBlock[] {
     flushList();
   };
 
-  for (const raw of (description ?? "").replace(/\r\n/g, "\n").split("\n")) {
+  // Some descriptions arrive as a single pasted line. Markdown headings then
+  // need a line of their own before anything can be read as hierarchy.
+  const normalized = (description ?? "")
+    .replace(/\r\n/g, "\n")
+    .replace(/(\S)\s+(#{1,6}\s+)/g, "$1\n$2");
+
+  for (const raw of normalized.split("\n")) {
     const line = raw.trim();
     if (!line) {
       flush();
@@ -83,12 +89,13 @@ export function parseJobDescription(description: string): JobBlock[] {
     }
     if (BULLET.test(raw)) {
       flushParagraph();
-      list.push(line.replace(BULLET, "").trim());
+      list.push(stripJobMarkdown(line.replace(BULLET, "")));
       continue;
     }
     flushList();
-    paragraph.push(line);
+    paragraph.push(stripJobMarkdown(line));
   }
+
   flush();
 
   return blocks.filter(
