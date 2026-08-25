@@ -34,16 +34,32 @@ const DETAIL_LABEL: Record<string, string> = {
   email: "Contacted by email",
 };
 
-/** Fit bands, in the workspace's own fit vocabulary. */
+/**
+ * Fit bands, in the workspace's own four-label fit vocabulary.
+ * Legacy band words (exceptional, good, mixed, weak, …) collapse onto the
+ * current four: Top, Strong, Consider, Not recommended.
+ */
 const BAND_LABEL: Record<string, string> = {
-  exceptional: "Exceptional Fit",
-  strong: "Strong Fit",
-  good: "Good Fit",
-  consider: "Mixed Fit",
-  mixed: "Mixed Fit",
+  exceptional: "Top",
+  unicorn: "Top",
+  top: "Top",
+  top_fit: "Top",
+  strong: "Strong",
+  strong_fit: "Strong",
+  good: "Strong",
+  good_fit: "Strong",
+  consider: "Consider",
+  mixed: "Consider",
+  moderate: "Consider",
+  worth_considering: "Consider",
   weak: "Not recommended",
+  poor: "Not recommended",
+  not_a_fit: "Not recommended",
   not_recommended: "Not recommended",
 };
+
+/** Band words that may arrive followed by the noun "fit" / "match". */
+const BAND_NOUNS = new Set(["fit", "match"]);
 
 /** Detail lines that describe internal machinery — never shown to clients. */
 const HIDDEN_DETAILS = new Set([
@@ -60,7 +76,17 @@ function humanizeKey(value: string): string {
 }
 
 function mapBands(text: string): string {
-  return text.replace(/\b[a-z][a-z_]*\b/g, (word) => BAND_LABEL[word] ?? word);
+  // Case-insensitive so legacy rows ("Mixed Fit", "top", "STRONG") normalise
+  // to the same four labels with the same capitals as the rest of the app.
+  return text.replace(
+    /\b([A-Za-z][A-Za-z_]*)(\s+(fit|match))?\b/gi,
+    (whole, word: string, _tail: string | undefined, noun: string | undefined) => {
+      const mapped = BAND_LABEL[word.toLowerCase()];
+      if (!mapped) return whole;
+      if (noun && !BAND_NOUNS.has(noun.toLowerCase())) return whole;
+      return mapped;
+    },
+  );
 }
 
 /** One detail line, client-safe. Returns null when the line must be dropped. */
