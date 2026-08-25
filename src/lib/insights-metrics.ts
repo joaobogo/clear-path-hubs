@@ -1,3 +1,5 @@
+import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
+
 /**
  * Pure metric computation for the client analytics page.
  *
@@ -60,11 +62,11 @@ export type SpendRecord = {
 export type HireRecord = { id: string; hired_at: string | null };
 
 export const STEPS: { key: string; label: string }[] = [
-  { key: "delivered", label: "Shown to you" },
-  { key: "shortlisted", label: "Shortlisted" },
-  { key: "interview_process", label: "Interviewed" },
-  { key: "offer", label: "Offered" },
-  { key: "hired", label: "Hired" },
+  { key: "delivered", label: PIPELINE_STAGE_DISPLAY.delivered },
+  { key: "shortlisted", label: PIPELINE_STAGE_DISPLAY.shortlisted },
+  { key: "interview_process", label: PIPELINE_STAGE_DISPLAY.interview_process },
+  { key: "offer", label: PIPELINE_STAGE_DISPLAY.offer },
+  { key: "hired", label: PIPELINE_STAGE_DISPLAY.hired },
 ];
 
 export function median(values: number[]): number | null {

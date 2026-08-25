@@ -1,3 +1,4 @@
+import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
 /**
  * One shared formatter for machine enum values that reach the UI.
  *
@@ -56,12 +57,12 @@ const LABELS: Record<string, string> = {
   requisition: "Role",
   job: "Role",
   record: "Candidate",
-  delivered: "New — awaiting your review",
-  shortlisted: "Shortlisted",
-  interview_process: "Interview process",
-  offer: "Offer",
-  hired: "Hired",
-  not_moving_forward: "Not moving forward",
+  delivered: PIPELINE_STAGE_DISPLAY.delivered,
+  shortlisted: PIPELINE_STAGE_DISPLAY.shortlisted,
+  interview_process: PIPELINE_STAGE_DISPLAY.interview_process,
+  offer: PIPELINE_STAGE_DISPLAY.offer,
+  hired: PIPELINE_STAGE_DISPLAY.hired,
+  not_moving_forward: PIPELINE_STAGE_DISPLAY.not_moving_forward,
   consent_pending: "Consent pending",
 };
 

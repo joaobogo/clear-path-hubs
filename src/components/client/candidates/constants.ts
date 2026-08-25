@@ -1,11 +1,13 @@
+import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
+
 export const STAGE_OPTIONS = [
  { key: "all", label: "All stages" },
- { key: "delivered", label: "New — awaiting review" },
- { key: "shortlisted", label: "Shortlisted" },
- { key: "interview_process", label: "Interview process" },
- { key: "offer", label: "Offer" },
- { key: "hired", label: "Hired" },
- { key: "not_moving_forward", label: "Not moving forward" },
+ { key: "delivered", label: PIPELINE_STAGE_DISPLAY.delivered },
+ { key: "shortlisted", label: PIPELINE_STAGE_DISPLAY.shortlisted },
+ { key: "interview_process", label: PIPELINE_STAGE_DISPLAY.interview_process },
+ { key: "offer", label: PIPELINE_STAGE_DISPLAY.offer },
+ { key: "hired", label: PIPELINE_STAGE_DISPLAY.hired },
+ { key: "not_moving_forward", label: PIPELINE_STAGE_DISPLAY.not_moving_forward },
 ] as const;
 
 export const FIT_OPTIONS = [

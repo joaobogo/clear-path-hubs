@@ -1,3 +1,4 @@
+import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
 /**
  * Hiring Intelligence — pure metric builder.
  *
@@ -70,20 +71,20 @@ export type IntelligenceResult = {
 
 
 const FUNNEL_STEPS = [
-  { key: "delivered", label: "Shown to you" },
-  { key: "shortlisted", label: "Shortlisted" },
-  { key: "interview_process", label: "Interviewed" },
-  { key: "offer", label: "Offered" },
-  { key: "hired", label: "Hired" },
+  { key: "delivered", label: PIPELINE_STAGE_DISPLAY.delivered },
+  { key: "shortlisted", label: PIPELINE_STAGE_DISPLAY.shortlisted },
+  { key: "interview_process", label: PIPELINE_STAGE_DISPLAY.interview_process },
+  { key: "offer", label: PIPELINE_STAGE_DISPLAY.offer },
+  { key: "hired", label: PIPELINE_STAGE_DISPLAY.hired },
 ];
 
 const PIPELINE_STAGES = [
-  { key: "delivered", label: "Awaiting your decision", tone: "warn" as const },
-  { key: "shortlisted", label: "Shortlisted", tone: "good" as const },
-  { key: "interview_process", label: "In interview", tone: "good" as const },
-  { key: "offer", label: "At offer", tone: "good" as const },
-  { key: "hired", label: "Hired", tone: "good" as const },
-  { key: "not_moving_forward", label: "Not moving forward", tone: "neutral" as const },
+  { key: "delivered", label: PIPELINE_STAGE_DISPLAY.delivered, tone: "warn" as const },
+  { key: "shortlisted", label: PIPELINE_STAGE_DISPLAY.shortlisted, tone: "good" as const },
+  { key: "interview_process", label: PIPELINE_STAGE_DISPLAY.interview_process, tone: "good" as const },
+  { key: "offer", label: PIPELINE_STAGE_DISPLAY.offer, tone: "good" as const },
+  { key: "hired", label: PIPELINE_STAGE_DISPLAY.hired, tone: "good" as const },
+  { key: "not_moving_forward", label: PIPELINE_STAGE_DISPLAY.not_moving_forward, tone: "neutral" as const },
 ];
 
 function iso(v: unknown): string | null {
