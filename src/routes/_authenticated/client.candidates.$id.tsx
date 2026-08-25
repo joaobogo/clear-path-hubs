@@ -544,40 +544,52 @@ function CandidateDetailPage() {
   <TabsTrigger value="activity">Activity</TabsTrigger>
   </TabsList>
 
- <TabsContent value="summary" className="mt-4 space-y-4">
- {compQuery.isError ? (
- <QueryErrorCard
- compact
- title="We couldn't load compensation figures"
- error={compQuery.error}
- onRetry={() => void compQuery.refetch()}
- retrying={compQuery.isFetching}
- />
- ) : (
- <CompensationPanel signal={compSignal} loading={compPending} />
- )}
- <AvailabilityPanel candidate={candidate} />
- <ExperienceTimeline candidate={candidate} />
- <SkillsAndEducation candidate={candidate} />
-  {candidate.screening_answers.some((a) => (a.answer ?? "").trim().length > 0) && (
-  <CollapsibleSection title="Screening answers">
-  <dl className="space-y-3 text-sm">
-  {candidate.screening_answers.map((a, i) => (
-  <div key={i}>
-  <dt className="text-xs font-medium text-muted-foreground">
-  {a.question}
-  </dt>
-  <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
-  </div>
-  ))}
-  </dl>
-  </CollapsibleSection>
-  )}
-   {/* Links live in the Contact card only. */}
+<TabsContent value="summary" className="mt-4 space-y-4">
+{/* Row 1 — Compensation beside Availability */}
+<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+{compQuery.isError ? (
+<QueryErrorCard
+compact
+title="We couldn't load compensation figures"
+error={compQuery.error}
+onRetry={() => void compQuery.refetch()}
+retrying={compQuery.isFetching}
+/>
+) : (
+<CompensationPanel signal={compSignal} loading={compPending} />
+)}
+<AvailabilityPanel candidate={candidate} />
+</div>
+
+{/* Row 2 — Career experience (wider) beside Skills, education and languages */}
+<div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+<div className="lg:col-span-3">
+<ExperienceTimeline candidate={candidate} />
+</div>
+<div className="lg:col-span-2">
+<SkillsAndEducation candidate={candidate} />
+</div>
+</div>
+
+{candidate.screening_answers.some((a) => (a.answer ?? "").trim().length > 0) && (
+<CollapsibleSection title="Screening answers">
+<dl className="space-y-3 text-sm">
+{candidate.screening_answers.map((a, i) => (
+<div key={i}>
+<dt className="text-xs font-medium text-muted-foreground">
+{a.question}
+</dt>
+<dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
+</div>
+))}
+</dl>
+</CollapsibleSection>
+)}
+{/* Links live in the Contact card only. */}
 
 
 
- </TabsContent>
+</TabsContent>
 
  <TabsContent value="interview" className="mt-4 space-y-4">
  <InterviewGuide candidate={candidate} />
