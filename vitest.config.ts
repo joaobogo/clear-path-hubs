@@ -11,5 +11,6 @@ export default defineConfig({
     // Playwright specs under tests/e2e are run by playwright.config.ts, not vitest.
     include: ["tests/**/*.{test,spec}.{ts,tsx}", "src/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["tests/e2e/**", "node_modules/**", "dist/**", ".output/**"],
+    setupFiles: ["tests/setup-workspace-timezone.ts"],
   },
 });

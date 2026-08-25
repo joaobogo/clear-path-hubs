@@ -55,12 +55,13 @@ describe("buildRoleComparison", () => {
     expect(c.identical.map((r) => r.key)).toContain("availability");
   });
 
-  it("splits must-haves into met and missing without any score", () => {
+  it("lists the must-haves fully met, without any score", () => {
     const c = buildRoleComparison([candidate({ match_id: "m1" }), candidate({ match_id: "m2" })]);
-    const met = c.identical.concat(c.differing).find((r) => r.key === "must_met");
-    const missing = c.identical.concat(c.differing).find((r) => r.key === "must_missing");
+    const rows = c.identical.concat(c.differing);
+    const met = rows.find((r) => r.key === "must_met");
     expect(met?.values[0].lines).toEqual(["Payroll systems"]);
-    expect(missing?.values[0].lines).toEqual(["Multi-site"]);
+    // Unmet must-haves are read from the coverage bar, not a second row.
+    expect(rows.find((r) => r.key === "must_missing")).toBeUndefined();
     const serialized = JSON.stringify(c);
     expect(serialized).not.toMatch(/score|percentile|rank/i);
   });
@@ -71,7 +72,7 @@ describe("buildRoleComparison", () => {
       candidate({ match_id: "m2" }),
     ]);
     const auth = c.differing.find((r) => r.key === "work_auth");
-    expect(auth?.values[0].lines).toEqual(["Not recorded"]);
+    expect(auth?.values[0].lines).toEqual(["Not provided"]);
   });
 
   it("explains why compare is disabled", () => {

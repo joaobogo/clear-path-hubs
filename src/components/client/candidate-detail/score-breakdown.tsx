@@ -71,7 +71,8 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
     <div className="mt-4 rounded-lg border p-3">
       <h3 className="text-sm font-semibold">How the number is made up</h3>
       <TooltipProvider>
-      <table className="mt-2 w-full text-sm">
+      {/* taas-stack-table: the three columns stack on a phone. */}
+      <table className="taas-stack-table mt-2 w-full text-sm">
         <thead>
           <tr className="text-left text-[11px] uppercase tracking-wide text-muted-foreground">
             <th className="font-medium">Component</th>
@@ -82,11 +83,11 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
         <tbody>
           {lines.map((k) => (
             <tr key={k.key} className="border-t align-baseline">
-              <td className="py-1.5 pr-2">{k.label}</td>
-              <td className="py-1.5 pr-2 text-muted-foreground">
+              <td data-label="Component" className="py-1.5 pr-2">{k.label}</td>
+              <td data-label="How it did" className="py-1.5 pr-2 text-muted-foreground">
                 {k.basisLabel ?? `${k.valuePct}%`}
               </td>
-              <td className="py-1.5 text-right tabular-nums">
+              <td data-label="Points" className="py-1.5 text-right tabular-nums">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button

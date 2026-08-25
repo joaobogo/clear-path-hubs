@@ -143,7 +143,13 @@ export async function assertWorkspaceWrite(
 ): Promise<WorkspaceAccess> {
   const access = await assertWorkspaceAccess(supabase, userId, orgId);
   if (!access.canWrite) {
-    throw new WorkspaceAccessError("support_view_denied");
+    // Two different reasons, two different sentences: a viewer seat is
+    // read-only, while staff looking at a client workspace are in support view.
+    throw new WorkspaceAccessError(
+      access.role === "client_viewer"
+        ? "Your seat in this workspace is read-only, so this change was not made."
+        : "support_view_denied",
+    );
   }
   return access;
 }

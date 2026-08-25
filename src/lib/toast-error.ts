@@ -44,7 +44,10 @@ export function toastError(error: unknown, opts: { tone?: AudienceTone; fallback
 		}
 	}
 
-	const intentional = raw.length > 0 && raw.length < 200 && !looksTechnical(raw);
+	// A thrown non-Error value is never a sentence we wrote for the reader, so it
+	// goes down the graceful path with a reference instead of being shown as-is.
+	const intentional =
+		error instanceof Error && raw.length > 0 && raw.length < 200 && !looksTechnical(raw);
 	const human = intentional ? humanizePublishBlockedMessage(raw) : null;
 
 	if (intentional && human) {

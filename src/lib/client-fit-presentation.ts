@@ -327,7 +327,7 @@ export function evidenceSupport(
   else if (isPartial) rawStatus = "partial";
 
   // One canonical status per requirement, derived from the evidence that exists.
-  const status = resolveRequirementStatus({ status: rawStatus, evidence, contradictions });
+  const status = resolveRequirementStatus({ status: rawStatus, evidence, contradictions, label: r.label });
 
 
   return {

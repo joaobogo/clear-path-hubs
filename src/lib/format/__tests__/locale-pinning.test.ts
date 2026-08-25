@@ -16,8 +16,9 @@ describe("date locale pinning", () => {
 
   it("normalises September to the three-letter 'Sep' standard", () => {
     // en-GB shortens September as "Sept"; the UI standard is "Sep".
-    expect(formatDate("2026-09-15T00:00:00Z")).toBe("15 Sep 2026");
-    expect(formatDateTime("2026-09-15T00:00:00Z")).toBe("15 Sep 2026, 21:00");
+    // Read in workspace time (UTC-3), so midnight UTC is still the 14th.
+    expect(formatDate("2026-09-15T00:00:00Z")).toBe("14 Sep 2026");
+    expect(formatDateTime("2026-09-15T00:00:00Z")).toBe("14 Sep 2026, 21:00");
   });
 
   it("has no browser-locale date formatting left in src", () => {
