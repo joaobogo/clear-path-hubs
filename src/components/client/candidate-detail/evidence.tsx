@@ -219,12 +219,31 @@ export const FitHero = memo(function FitHero({
             <Sparkles className="h-3.5 w-3.5" aria-hidden />
             Fit for {candidate.position?.title ?? "this role"}
           </div>
-          <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
-            {fit.headline}
-          </h2>
-          <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
-            {fit.recommendation}
-          </p>
+          {candidate.score != null ? (
+            <div className="mt-3">
+              <div className="text-5xl font-semibold tracking-tight tabular-nums">
+                {Math.round(candidate.score)}
+                <span className="ml-1.5 text-lg font-medium text-muted-foreground">
+                  out of 100
+                </span>
+              </div>
+              <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
+                {fit.headline}
+              </h2>
+              <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
+                {fit.recommendation}
+              </p>
+            </div>
+          ) : (
+            <>
+              <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
+                {fit.headline}
+              </h2>
+              <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
+                {fit.recommendation}
+              </p>
+            </>
+          )}
           <p className="mt-1 text-[11px] text-muted-foreground">
             Role-specific fit. This candidate carries no global rating.
           </p>
