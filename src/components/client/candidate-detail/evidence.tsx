@@ -573,14 +573,9 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
             />
           </div>
           <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-            <span>
-              Requirements evidenced
-              <span className="ml-2 tabular-nums">
-                quoted {counts.quoted} · related {counts.related}
-              </span>
-            </span>
+            <span>Requirements with a quoted passage</span>
             <span className="tabular-nums">
-              {counts.evidenced} of {counts.total} · {coveragePct}%
+              {counts.quoted} of {counts.total} · {coveragePct}%
             </span>
           </div>
           <Progress value={coveragePct} className="mt-1" />
