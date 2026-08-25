@@ -179,13 +179,8 @@ export function CandidatePrimaryAction({
   }
 
   if (!advance) {
-    return (
-      <Button asChild size={size} variant="secondary">
-        <Link to="/client/candidates/$id" params={{ id: matchId }}>
-          View
-        </Link>
-      </Button>
-    );
+    // The candidate name already links to the profile; no extra action needed.
+    return null;
   }
 
   const advanceButton = (
