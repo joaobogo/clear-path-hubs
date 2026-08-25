@@ -233,7 +233,7 @@ function OffersPage() {
       <StalledOffersPanel stalled={stalled} orgId={orgId} readOnly={!!readOnly} />
 
       {/* Board */}
-      <section className="mt-6 overflow-x-auto max-sm:overflow-x-visible">
+      <section className="mt-6 overflow-x-auto pb-2">
         {isError ? (
           <QueryErrorCard
             title="We couldn't load your offers"
@@ -246,7 +246,7 @@ function OffersPage() {
         ) : hires.length === 0 ? (
           <OffersEmptyState orgId={orgId} />
         ) : (
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-nowrap sm:items-start">
+          <div className="flex flex-nowrap items-start gap-3">
             {COLUMN_ORDER.map((status) => (
               <Column
                 key={status}
