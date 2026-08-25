@@ -326,6 +326,9 @@ async function main() {
         .maybeSingle();
       if (!staff?.user_id) throw new Error("No active platform admin found to authorise cleanup.");
 
+      // Hide first: the publish gate blocks clearing an approved run while visible.
+      await sb.from("candidate_matches").update({ client_visibility: "hidden" }).in("id", matchIds);
+
       for (const matchId of matchIds) {
         const { error } = await sb.rpc("hard_delete_candidate_match", {
           _match_id: matchId,
