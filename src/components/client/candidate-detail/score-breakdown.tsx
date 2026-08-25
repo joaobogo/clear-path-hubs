@@ -1,8 +1,8 @@
-import { memo, useState } from "react";
+import { memo, useState, type ReactNode } from "react";
 import { CheckCircle2, Gauge, Info, ListChecks, ShieldAlert, TrendingDown, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { buildScoreBreakdown, type BreakdownGroup, type BreakdownReason } from "@/lib/client/score-breakdown";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -70,6 +70,7 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
   return (
     <div className="mt-4 rounded-lg border p-3">
       <h3 className="text-sm font-semibold">How the number is made up</h3>
+      <TooltipProvider>
       <table className="mt-2 w-full text-sm">
         <thead>
           <tr className="text-left text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -106,6 +107,7 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
           ))}
         </tbody>
       </table>
+      </TooltipProvider>
       <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t pt-2 text-sm font-medium">
         <span>Total</span>
         <span className="tabular-nums">
@@ -135,8 +137,8 @@ function ReasonColumn({
   className,
 }: {
   title: string;
-  icon: React.ReactNode;
-  bullet: React.ReactNode;
+  icon: ReactNode;
+  bullet: ReactNode;
   reasons: BreakdownReason[];
   emptyText: string;
   className?: string;
