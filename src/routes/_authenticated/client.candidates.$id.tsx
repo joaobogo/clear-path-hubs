@@ -7,7 +7,7 @@ import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ShieldAlert } from "lucide-react";
+
 import { clientAction, undoClientDecision } from "@/lib/client-decisions.functions";
 import { ACTION_TO_STAGE as RESULT_STAGE } from "@/lib/client-shared.server";
 import { getClientCandidate } from "@/lib/client-candidates.functions";

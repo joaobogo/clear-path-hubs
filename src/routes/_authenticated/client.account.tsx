@@ -38,7 +38,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Briefcase, CalendarClock, CheckCircle2, ChevronDown, Info, Users } from "lucide-react";
+import { Briefcase, CalendarClock, CheckCircle2, ChevronDown, Users } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
