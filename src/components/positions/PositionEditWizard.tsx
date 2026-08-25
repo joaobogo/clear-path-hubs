@@ -48,10 +48,11 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import type { QualityInput } from "@/lib/requisition-schema";
 
+/** Same three steps, same words, as the client intake form. */
 const STEPS = [
-  { id: 1, label: "Role" },
-  { id: 2, label: "Candidate profile & gates" },
-  { id: 3, label: "Locations" },
+  { id: 1, label: "The role" },
+  { id: 2, label: "Requirements" },
+  { id: 3, label: "Details and confirm" },
 ];
 const LAST_STEP = STEPS.length;
 
@@ -116,7 +117,7 @@ function validateStep(step: number, s: State): Record<string, string> {
       e.must_have_skills =
         "Add at least 3 must-have skills or a job description of 40+ characters on Step 1";
     }
-    if (s.target_titles.length === 0) e.target_titles = "Add at least one target job title";
+    // Target titles are optional: we can source from the role title alone.
   }
   return e;
 }
@@ -586,6 +587,7 @@ export function PositionEditWizard({
                     </p>
                   </Field>
 
+                  <AdvancedSection label="Pay and timing">
                   <SectionHeader
                     title="Compensation"
                     subtitle="Budget range and structure. Used to filter and set expectations."
@@ -688,6 +690,7 @@ export function PositionEditWizard({
                       />
                     </Field>
                   </div>
+                  </AdvancedSection>
                 </div>
               )}
 
@@ -710,6 +713,7 @@ export function PositionEditWizard({
                     onChange={(v) => set("nice_to_have_skills", v)}
                     placeholder="e.g. GraphQL, Terraform"
                   />
+                  <AdvancedSection label="More about the ideal candidate">
                   <ChipInput
                     label="Required Certifications"
                     values={state.certifications_list}
@@ -745,6 +749,7 @@ export function PositionEditWizard({
                       />
                     </Field>
                   </div>
+                  </AdvancedSection>
                   <Field label="Core Responsibilities" hint="Top outcomes and day-to-day scope.">
                     <Textarea
                       rows={4}
@@ -753,6 +758,7 @@ export function PositionEditWizard({
                       placeholder="Own X. Lead Y. Deliver Z."
                     />
                   </Field>
+                  <AdvancedSection label="Sourcing rules and deal-breakers">
                   <Field
                     label="Additional Requirements"
                     hint="Anything else the candidate must have."
@@ -770,12 +776,10 @@ export function PositionEditWizard({
                   />
                   <ChipInput
                     label="Target Job Titles"
-                    hint="Titles to source from (current or previous roles)."
-                    error={errors.target_titles}
+                    hint="Optional. Titles to source from (current or previous roles)."
                     values={state.target_titles}
                     onChange={(v) => set("target_titles", v)}
                     placeholder="e.g. Senior Software Engineer, Staff Engineer"
-                    required
                     dataField="target_titles"
                   />
                   <Field
@@ -897,7 +901,9 @@ export function PositionEditWizard({
                       onChange={(e) => set("additional_context", e.target.value)}
                     />
                   </Field>
+                  </AdvancedSection>
 
+                  <AdvancedSection label="Screening questions">
                   <SectionHeader
                     title="Screening Questions"
                     subtitle={`Ask only what changes the outcome: up to ${SCREENING_MAX_QUESTIONS} questions, max ${SCREENING_MAX_REQUIRED} mandatory. Each one must map to a must-have and carry a one-line reason the candidate reads.`}
@@ -1057,6 +1063,7 @@ export function PositionEditWizard({
                       </>
                     );
                   })()}
+                  </AdvancedSection>
                 </div>
               )}
 
@@ -1172,6 +1179,38 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
       <div className="text-sm font-semibold">{title}</div>
       {subtitle && <div className="mt-0.5 text-xs text-muted-foreground">{subtitle}</div>}
     </div>
+  );
+}
+
+/**
+ * Optional detail, folded away by default. Keeps each step to the handful of
+ * answers we actually need, the way the client intake form does.
+ */
+function AdvancedSection({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Collapsible className="rounded-xl border bg-card/50">
+      <CollapsibleTrigger asChild>
+        <button
+          type="button"
+          className="group flex w-full items-center justify-between gap-3 px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <span className="text-sm font-medium">{label}</span>
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            Optional
+            <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+          </span>
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="space-y-6 border-t px-4 pb-4 pt-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+        {children}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
