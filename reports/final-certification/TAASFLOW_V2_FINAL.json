@@ -27,12 +27,15 @@
   },
   "database_invariants": {
     "total_matches": 13,
+    "score_runs_total": 42,
+    "completed_score_runs_total": 42,
+    "matches_with_completed_score_runs": 13,
     "matches_with_score_run": 13,
     "matches_with_approved_score_run": 10,
     "matches_scored": 11,
     "matches_manual_review_required": 2,
     "matches_failed": 0,
-    "audit_events_total": 10700,
+    "audit_events_total": 10762,
     "active_platform_admin_memberships": 1,
     "expected_active_platform_admin_memberships": 1,
     "master_admins_active": 1
@@ -70,26 +73,6 @@
   },
   "blocking_findings": [
     {
-      "id": "F-01",
-      "severity": "CRITICAL",
-      "area": "privileged_access",
-      "detail": "2 active platform_admin memberships. Master Admin uniqueness enforced by unique index on is_master_admin=true, but duplicate active platform_admin role rows regressed the earlier PRIV-RECON-2026-07-22 reconciliation to a single canonical admin.",
-      "expected": 1,
-      "actual": 2
-    },
-    {
-      "id": "F-02",
-      "severity": "HIGH",
-      "area": "pipeline_fanout",
-      "detail": "83 of 99 matches sit in manual_review_required; only 6 scored, 5 failed. Publication surface has effectively 6 candidates available to Clients, insufficient for excellence certification of Client journey breadth.",
-      "expected": "majority scored or explicitly triaged",
-      "actual": {
-        "scored": 6,
-        "manual_review": 83,
-        "failed": 5
-      }
-    },
-    {
       "id": "F-03",
       "severity": "HIGH",
       "area": "certification_scope_not_executed",
@@ -106,13 +89,37 @@
       "actual": "gaps persist"
     }
   ],
+  "resolved_findings": [
+    {
+      "id": "F-01",
+      "area": "privileged_access",
+      "detail": "The live certification query shows 1 active platform_admin membership and 1 active master admin membership.",
+      "query": "Q1"
+    },
+    {
+      "id": "F-02",
+      "area": "pipeline_fanout",
+      "detail": "The live certification query shows 13 candidate matches, 42 completed score runs, 13 matches with at least one completed score run, 11 matches marked scored, 2 marked manual review required, and 0 failed matches.",
+      "query": "Q1"
+    }
+  ],
   "invariant_pass": [
     "publication gate: 0 visible without approved score run",
     "scoring identity: 0 mismatches between score_runs and candidate_matches (position/application/candidate/organization/submission)",
     "scoring math: 0 rows violate final <= cap AND final <= raw",
-    "audit trail: 599 audit_events recorded",
+    "audit trail: 10762 audit_events recorded",
     "public routes: all critical marketing/apply routes return 200; /auth 307 is expected pre-auth redirect"
   ],
-  "verdict_reason": "Excellence certification requires 0 blocked critical tests and re-execution of every persona, route, control, and negative scenario in a single verified pass, plus 0 privileged-access regressions. The single-Master-Admin invariant regressed (F-01), pipeline fan-out leaves only 6 scored candidates (F-02), and the full live matrix was not executed this turn (F-03). Core invariants (identity, math, publication gate, audit) remain PASS from prior certifications.",
-  "invariants_read_at": "2026-08-25T04:18:06.942Z"
+  "verdict_reason": "Excellence certification requires 0 blocked critical tests and re-execution of every persona, route, control, and negative scenario in a single verified pass. Privileged access and pipeline fan-out now pass live-count checks; the remaining blocker is the full live matrix and auth-completeness verification not being re-executed in this pass.",
+  "invariants_read_at": "2026-08-25T18:22:56.795Z",
+  "query_provenance": {
+    "ran_at": "2026-08-25T18:22:56.795Z",
+    "queries": [
+      {
+        "id": "Q1",
+        "description": "Live certification counts",
+        "sql": "select now() as query_ran_at_utc,\n  (select count(*) from public.candidate_matches) as candidate_matches_total,\n  (select count(*) from public.score_runs) as score_runs_total,\n  (select count(*) from public.score_runs where status = 'completed') as completed_score_runs_total,\n  (select count(distinct candidate_match_id) from public.score_runs where status = 'completed' and candidate_match_id is not null) as matches_with_completed_score_runs,\n  (select count(*) from public.candidate_matches where current_score_run_id is not null) as matches_with_current_score_run,\n  (select count(*) from public.candidate_matches where approved_score_run_id is not null) as matches_with_approved_score_run,\n  (select count(*) from public.candidate_matches where processing_state = 'scored') as matches_marked_scored,\n  (select count(*) from public.candidate_matches where processing_state = 'manual_review_required') as matches_manual_review_required,\n  (select count(*) from public.candidate_matches where processing_state = 'failed') as matches_failed,\n  (select count(*) from public.audit_events) as audit_events_total,\n  (select count(*) from public.memberships where role = 'platform_admin' and status = 'active') as active_platform_admin_memberships,\n  (select count(*) from public.memberships where role = 'platform_admin' and status = 'active' and is_master_admin is true) as active_master_admin_memberships;"
+      }
+    ]
+  }
 }

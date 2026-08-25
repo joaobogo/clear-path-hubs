@@ -102,19 +102,43 @@ The AUTH-CERT-2026-07-22 report classified invitation flow and onboarding routes
 Re-run this certification once (1)–(4) are complete.
 
 <!-- LIVE-INVARIANTS:START -->
-### Live database invariants (read 2026-08-25T04:18:06.942Z)
+### Live database invariants (read 2026-08-25T18:22:56.795Z)
 
-| Invariant | Value |
-| --- | --- |
-| Rows in candidate_matches | **13** |
-| With a current score run | **13** |
-| With an approved score run | **10** |
-| Marked scored | **11** |
-| Marked manual review required | **2** |
-| Marked failed | **0** |
-| Audit events recorded | **10700** |
-| Active platform_admin memberships | **1** (expected 1) |
-| Active master admins | **1** (expected 1) |
+| Invariant | Value | Query | Read at |
+| --- | --- | --- | --- |
+| Rows in candidate_matches | **13** | Q1 | 2026-08-25T18:22:56.795Z |
+| Rows in score_runs | **42** | Q1 | 2026-08-25T18:22:56.795Z |
+| Completed score runs | **42** | Q1 | 2026-08-25T18:22:56.795Z |
+| Matches with a completed score run | **13** | Q1 | 2026-08-25T18:22:56.795Z |
+| With a current score run | **13** | Q1 | 2026-08-25T18:22:56.795Z |
+| With an approved score run | **10** | Q1 | 2026-08-25T18:22:56.795Z |
+| Marked scored | **11** | Q1 | 2026-08-25T18:22:56.795Z |
+| Marked manual review required | **2** | Q1 | 2026-08-25T18:22:56.795Z |
+| Marked failed | **0** | Q1 | 2026-08-25T18:22:56.795Z |
+| Audit events recorded | **10762** | Q1 | 2026-08-25T18:22:56.795Z |
+| Active platform_admin memberships | **1** (expected 1) | Q1 | 2026-08-25T18:22:56.795Z |
+| Active master admins | **1** (expected 1) | Q1 | 2026-08-25T18:22:56.795Z |
 
 All live invariants match their expected values.
+
+#### Query provenance
+
+**Q1 — Live certification counts**
+
+```sql
+select now() as query_ran_at_utc,
+  (select count(*) from public.candidate_matches) as candidate_matches_total,
+  (select count(*) from public.score_runs) as score_runs_total,
+  (select count(*) from public.score_runs where status = 'completed') as completed_score_runs_total,
+  (select count(distinct candidate_match_id) from public.score_runs where status = 'completed' and candidate_match_id is not null) as matches_with_completed_score_runs,
+  (select count(*) from public.candidate_matches where current_score_run_id is not null) as matches_with_current_score_run,
+  (select count(*) from public.candidate_matches where approved_score_run_id is not null) as matches_with_approved_score_run,
+  (select count(*) from public.candidate_matches where processing_state = 'scored') as matches_marked_scored,
+  (select count(*) from public.candidate_matches where processing_state = 'manual_review_required') as matches_manual_review_required,
+  (select count(*) from public.candidate_matches where processing_state = 'failed') as matches_failed,
+  (select count(*) from public.audit_events) as audit_events_total,
+  (select count(*) from public.memberships where role = 'platform_admin' and status = 'active') as active_platform_admin_memberships,
+  (select count(*) from public.memberships where role = 'platform_admin' and status = 'active' and is_master_admin is true) as active_master_admin_memberships;
+```
+
 <!-- LIVE-INVARIANTS:END -->

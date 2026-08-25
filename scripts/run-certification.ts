@@ -22,21 +22,35 @@ function markdownBlock(inv: Awaited<ReturnType<typeof collectCertificationInvari
     MARKER_START,
     `### Live database invariants (read ${inv.generated_at})`,
     "",
-    "| Invariant | Value |",
-    "| --- | --- |",
-    `| Rows in candidate_matches | **${d.total_matches}** |`,
-    `| With a current score run | **${d.matches_with_score_run}** |`,
-    `| With an approved score run | **${d.matches_with_approved_score_run}** |`,
-    `| Marked scored | **${d.matches_scored}** |`,
-    `| Marked manual review required | **${d.matches_manual_review_required}** |`,
-    `| Marked failed | **${d.matches_failed}** |`,
-    `| Audit events recorded | **${d.audit_events_total}** |`,
-    `| Active platform_admin memberships | **${d.active_platform_admin_memberships}** (expected ${d.expected_active_platform_admin_memberships}) |`,
-    `| Active master admins | **${d.master_admins_active}** (expected 1) |`,
+    "| Invariant | Value | Query | Read at |",
+    "| --- | --- | --- | --- |",
+    `| Rows in candidate_matches | **${d.total_matches}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Rows in score_runs | **${d.score_runs_total}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Completed score runs | **${d.completed_score_runs_total}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Matches with a completed score run | **${d.matches_with_completed_score_runs}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| With a current score run | **${d.matches_with_score_run}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| With an approved score run | **${d.matches_with_approved_score_run}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Marked scored | **${d.matches_scored}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Marked manual review required | **${d.matches_manual_review_required}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Marked failed | **${d.matches_failed}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Audit events recorded | **${d.audit_events_total}** | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Active platform_admin memberships | **${d.active_platform_admin_memberships}** (expected ${d.expected_active_platform_admin_memberships}) | Q1 | ${inv.query_provenance.ran_at} |`,
+    `| Active master admins | **${d.master_admins_active}** (expected 1) | Q1 | ${inv.query_provenance.ran_at} |`,
     "",
     inv.consistent
       ? "All live invariants match their expected values."
       : `Mismatches: ${inv.mismatches.join("; ")}`,
+    "",
+    "#### Query provenance",
+    "",
+    ...inv.query_provenance.queries.flatMap((query) => [
+      `**${query.id} — ${query.description}**`,
+      "",
+      "```sql",
+      query.sql,
+      "```",
+      "",
+    ]),
     MARKER_END,
   ].join("\n");
 }
@@ -49,6 +63,7 @@ async function main() {
     const report = JSON.parse(readFileSync(JSON_PATH, "utf8"));
     report.database_invariants = inv.database_invariants;
     report.invariants_read_at = inv.generated_at;
+    report.query_provenance = inv.query_provenance;
     writeFileSync(JSON_PATH, `${JSON.stringify(report, null, 2)}\n`);
   }
 

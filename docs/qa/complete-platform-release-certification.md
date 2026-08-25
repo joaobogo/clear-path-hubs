@@ -5,6 +5,11 @@ security / permission / tenant certification under `docs/security/`.
 
 ## Required gates
 
+This file is no longer a standalone release sign-off. The current controlling
+verdict for MVP readiness is `docs/qa/MVP_READINESS_SIGNOFF.md`, which remains
+**NOT READY** until the signed-in verification and listed security follow-ups
+are complete.
+
 | Gate | Threshold | Observed | Source |
 |---|---|---|---|
 | Broken critical routes | 0 | 0 | `end-to-end-journey-matrix-certification.md` |
@@ -15,7 +20,7 @@ security / permission / tenant certification under `docs/security/`.
 | Wrong-record openings | 0 | 0 | `canonical-identity-reconciliation-certification.md` |
 | Scoring identity errors | 0 | 0 | `role-specific-scoring-certification.md`, `enrichment-evidence-integrity-certification.md` |
 | Client Preview mismatches | 0 | 0 | `client-preview-parity-certification.md` |
-| KPI mismatches | 0 | 0 | `client-kpi-certification.md`, `admin-overview-certification.md` |
+| KPI mismatches | 0 | NOT CERTIFIED in current MVP sign-off | `docs/qa/MVP_READINESS_SIGNOFF.md` |
 | Duplicate business records | 0 | 0 | `concurrency-idempotency-certification.md` |
 | Critical accessibility failures | 0 | 0 | `candidate-experience-responsive-certification.md` |
 | Critical security findings | 0 | 0 | `security-and-abuse-certification.md` |
@@ -43,8 +48,31 @@ These are logged and tracked but do not block release:
 1. **Transactional email flows not yet scaffolded** (`transactional-email-certification.md`). The 12 email flows are outside the required-gates list above; in-app notifications and audit remain fully functional. Sender-domain provisioning is the next step.
 2. Three backend-scanner **warn-level** advisories (SECURITY DEFINER helpers used by RLS, `contact_messages` INSERT policy audit, `retention_policies` staff-only read) documented in `security-and-abuse-certification.md`.
 
-Neither item breaches a required gate above.
+The MVP readiness blockers do breach release sign-off and supersede the older
+"certified" language below.
+
+## Live count provenance
+
+| Figure | Value | Query | Ran at |
+|---|---:|---|---|
+| Candidate matches | 13 | Q1 | 2026-08-25 18:21 UTC |
+| Score runs | 42 | Q1 | 2026-08-25 18:21 UTC |
+| Completed score runs | 42 | Q1 | 2026-08-25 18:21 UTC |
+| Matches with a completed score run | 13 | Q1 | 2026-08-25 18:21 UTC |
+
+**Q1**
+
+```sql
+select now() as query_ran_at_utc,
+  (select count(*) from public.candidate_matches) as candidate_matches_total,
+  (select count(*) from public.score_runs) as score_runs_total,
+  (select count(*) from public.score_runs where status = 'completed') as completed_score_runs_total,
+  (select count(distinct candidate_match_id)
+     from public.score_runs
+    where status = 'completed'
+      and candidate_match_id is not null) as matches_with_completed_score_runs;
+```
 
 ## Final verdict
 
-TAASFLOW_PLATFORM_RELEASE_CERTIFIED
+TAASFLOW_PLATFORM_RELEASE_NOT_CERTIFIED — see the current MVP readiness sign-off.
