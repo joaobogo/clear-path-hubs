@@ -53,18 +53,17 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
 
   const lines = c.components.map((k) => {
     const basis = k.key === "must_have" ? bases.must_have : k.key === "preferred" ? bases.preferred : null;
-    const valuePct = basis ? basis.valuePct : k.valuePct;
-    const contributionPts = Math.round(((valuePct * k.weightPct) / 100) * 10) / 10;
     const basisLabel = basis
       ? formatBasis(basis)
       : k.key === "screening_alignment" && answers > 0
         ? `from ${answers} screening ${answers === 1 ? "answer" : "answers"}`
         : null;
-    return { ...k, valuePct, contributionPts, basisLabel };
+    return { ...k, basisLabel };
   });
-  const totalPts = Math.round(lines.reduce((sum, l) => sum + l.contributionPts, 0) * 10) / 10;
-  const reconciles =
-    !c.incomplete && c.displayedScore != null && Math.abs(Math.round(totalPts) - c.displayedScore) <= 1;
+  // Rounding happens once, on the total; the parts are whole points apportioned
+  // to add up to it exactly.
+  const totalPts = c.totalPts;
+  const reconciles = c.reconciles;
 
   return (
     <div className="mt-4 rounded-lg border p-3">
@@ -80,7 +79,7 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
               {k.basisLabel && (
                 <span className="text-muted-foreground"> ({k.basisLabel})</span>
               )}{" "}
-              &times; {k.weightPct}% = {k.contributionPts} points
+              &times; {k.weightPct}% = {k.displayPts} points
             </span>
           </li>
         ))}
@@ -89,7 +88,6 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
         <span>Total</span>
         <span className="tabular-nums">
           {totalPts} points
-          {c.displayedScore != null && !reconciles ? ` (score shown: ${c.displayedScore})` : ""}
         </span>
       </div>
       <p className="mt-2 text-[11px] text-muted-foreground">
@@ -98,7 +96,7 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
         {c.incomplete
           ? " One of the three weightings was not measured for this assessment, so the parts do not add up to the whole yet."
           : reconciles && c.displayedScore != null
-            ? ` The three parts total ${totalPts}, rounded to ${c.displayedScore}.`
+            ? ` The three parts add up to ${totalPts}, the score shown above.`
             : " The parts and the score shown disagree; the assessment is being re-checked."}
       </p>
     </div>

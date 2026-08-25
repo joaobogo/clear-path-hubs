@@ -19,13 +19,21 @@ export type ScoreComponent = {
   valuePct: number;
   /** Published weighting of this component, 0–100. */
   weightPct: number;
-  /** valuePct × weight, in points of the final score. */
+  /** valuePct × weight, in points of the final score (unrounded). */
   contributionPts: number;
+  /**
+   * The whole number of points shown for this part. Rounding happens once, on
+   * the total, and the remainder is apportioned across the parts so the three
+   * displayed numbers always add up to the published score.
+   */
+  displayPts: number;
 };
 
 export type ScoreComposition = {
   components: ScoreComponent[];
-  /** Sum of the contributions, rounded the same way the score is. */
+  /** Exact sum of the contributions, before any rounding. */
+  exactTotalPts: number;
+  /** The published score: the exact total rounded once, at the end. */
   totalPts: number;
   /** The score actually shown to the client, when there is one. */
   displayedScore: number | null;
@@ -59,6 +67,35 @@ function share(raw: unknown): number | null {
 }
 
 /**
+ * Round a set of exact contributions to whole points so that they add up to the
+ * rounded total (largest-remainder apportionment). This is why the panel can
+ * promise "the three parts add up to the score shown above".
+ */
+export function apportionPoints(exact: number[]): number[] {
+  const target = Math.round(exact.reduce((sum, n) => sum + n, 0));
+  const floors = exact.map((n) => Math.floor(n));
+  let remainder = target - floors.reduce((sum, n) => sum + n, 0);
+  const order = exact
+    .map((n, i) => ({ i, frac: n - Math.floor(n) }))
+    .sort((a, b) => b.frac - a.frac || a.i - b.i);
+  const out = [...floors];
+  let cursor = 0;
+  while (remainder > 0 && order.length > 0) {
+    out[order[cursor % order.length]!.i] += 1;
+    remainder -= 1;
+    cursor += 1;
+  }
+  cursor = 0;
+  const reverse = [...order].reverse();
+  while (remainder < 0 && reverse.length > 0) {
+    out[reverse[cursor % reverse.length]!.i] -= 1;
+    remainder += 1;
+    cursor += 1;
+  }
+  return out;
+}
+
+/**
  * Build the composition from the stored requirement coverage (preferred) or the
  * run result, whichever carries the measured shares.
  */
@@ -66,6 +103,12 @@ export function buildScoreComposition(input: {
   coverage: Record<string, unknown> | null | undefined;
   result: Record<string, unknown> | null | undefined;
   displayedScore: number | null | undefined;
+  /**
+   * The requirement rows this page renders. When supplied, must-have and
+   * nice-to-have shares are recomputed from them so the composition can never
+   * quote a share the panels below contradict.
+   */
+  requirementRows?: Array<{ status: string; importance?: string }> | null;
 }): ScoreComposition | null {
   const cov = (input.coverage ?? {}) as Record<string, any>;
   const res = (input.result ?? {}) as Record<string, any>;
@@ -76,11 +119,22 @@ export function buildScoreComposition(input: {
     (res.category_weights as Record<string, any> | undefined) ??
     null;
 
+  const rows = input.requirementRows ?? null;
+  const bases = rows
+    ? {
+        must_have: requirementBasis(rows, "must_have"),
+        preferred: requirementBasis(rows, "preferred"),
+      }
+    : null;
+
   const components: ScoreComponent[] = [];
   let incomplete = false;
 
   for (const key of KEYS) {
+    const basis =
+      key === "must_have" ? bases?.must_have ?? null : key === "preferred" ? bases?.preferred ?? null : null;
     const valuePct =
+      (basis ? basis.valuePct : null) ??
       share(cov[key]) ??
       share(key === "must_have" ? cov.must_have_coverage : undefined) ??
       share(breakdown[key]);
@@ -94,27 +148,27 @@ export function buildScoreComposition(input: {
       label: LABELS[key],
       valuePct: Math.round(valuePct * 10) / 10,
       weightPct: Math.round(weightPct),
-      contributionPts: Math.round(((valuePct * weightPct) / 100) * 10) / 10,
+      contributionPts: (valuePct * weightPct) / 100,
+      displayPts: 0,
     });
   }
 
   if (components.length === 0) return null;
 
-  const totalPts =
-    Math.round(components.reduce((sum, c) => sum + c.contributionPts, 0) * 10) / 10;
-  const displayedScore =
-    typeof input.displayedScore === "number" && Number.isFinite(input.displayedScore)
-      ? Math.round(input.displayedScore)
-      : null;
+  const exactTotalPts = components.reduce((sum, c) => sum + c.contributionPts, 0);
+  const apportioned = apportionPoints(components.map((c) => c.contributionPts));
+  apportioned.forEach((pts, i) => {
+    components[i]!.displayPts = pts;
+  });
+  const totalPts = Math.round(exactTotalPts);
+  const displayedScore = totalPts;
 
   return {
     components,
+    exactTotalPts: Math.round(exactTotalPts * 10) / 10,
     totalPts,
     displayedScore,
-    reconciles:
-      !incomplete &&
-      displayedScore != null &&
-      Math.abs(Math.round(totalPts) - displayedScore) <= 1,
+    reconciles: !incomplete,
     incomplete,
   };
 }

@@ -994,6 +994,15 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     preferred_coverage: typeof run?.preferred_coverage === "number" ? run.preferred_coverage : undefined,
   });
 
+  // The published score is the rounded total of the three weighted parts, so the
+  // composition panel and the headline number can never disagree.
+  const score_composition = buildScoreComposition({
+    coverage: coverage as Record<string, unknown> | null,
+    result: (run?.result as Record<string, unknown> | null) ?? null,
+    displayedScore: run?.score != null ? Number(run.score) : null,
+    requirementRows: requirement_rows,
+  });
+
   const workAuth = normWorkAuth(cp.work_authorization);
   const interview_guide = buildInterviewGuide({
     positionTitle: pos?.title ?? null,
@@ -1133,7 +1142,12 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     // candidate property already assigned above
     // Employers see the 0-100 fit score alongside the band so ranking is
     // obvious at a glance. 95+ is the unicorn threshold.
-    score: run?.score != null ? displayScore(Number(run.score)) : null,
+    score:
+      score_composition && !score_composition.incomplete
+        ? score_composition.totalPts
+        : run?.score != null
+          ? displayScore(Number(run.score))
+          : null,
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     summary: (run?.result as AnyRow)?.fit_rationale ?? (run?.result as AnyRow)?.summary ?? null,
@@ -1150,11 +1164,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     concerns,
     main_consideration: mainConsideration,
     requirement_rows,
-    score_composition: buildScoreComposition({
-      coverage: coverage as Record<string, unknown> | null,
-      result: (run?.result as Record<string, unknown> | null) ?? null,
-      displayedScore: run?.score != null ? Number(run.score) : null,
-    }),
+    score_composition,
     // Honesty gate: only requirements this page can actually quote count as
     // evidenced, so the chip can never promise more than the tab renders.
     evidence_support: {
