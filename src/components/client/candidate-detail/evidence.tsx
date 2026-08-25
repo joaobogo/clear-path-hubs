@@ -31,7 +31,7 @@ import type {
 import { SectionCard, Metric } from "./shared";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 import { getEvidenceCounts } from "@/lib/client/evidence-counts";
-import { requirementStatusLabel } from "@/lib/client/requirement-status";
+import { requirementStatusLabel, resolveRequirementStatus } from "@/lib/client/requirement-status";
 
 
 export function statusBadge(status: RequirementStatus) {
@@ -342,7 +342,10 @@ export const RequirementRowView = memo(function RequirementRowView({
 }: {
   row: RequirementRow;
 }) {
-  const badge = statusBadge(row.status);
+  // Render-time safety: an unresolved requirement reads as "Not evidenced",
+  // never as work in progress.
+  const status = resolveRequirementStatus(row);
+  const badge = statusBadge(status);
   return (
     <li className="rounded-md border bg-background/40 p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -395,9 +398,9 @@ export const RequirementRowView = memo(function RequirementRowView({
                   ))}
                 </ul>
               )}
-              {row.evidence.length === 0 && row.status === "not_evidenced" && (
+              {row.evidence.length === 0 && status === "not_evidenced" && (
                 <p className="text-sm text-muted-foreground italic">
-                  Evidence extraction pending.
+                  Not evidenced in this candidate's record.
                 </p>
               )}
               {row.context.length > 0 && (
@@ -423,9 +426,9 @@ export const RequirementRowView = memo(function RequirementRowView({
           </AccordionItem>
         </Accordion>
       )}
-      {row.evidence.length === 0 && row.context.length === 0 && row.status === "not_evidenced" && (
+      {row.evidence.length === 0 && row.context.length === 0 && status === "not_evidenced" && (
         <p className="mt-2 text-sm text-muted-foreground italic">
-          Evidence extraction pending.
+          Not evidenced in this candidate's record.
         </p>
       )}
     </li>

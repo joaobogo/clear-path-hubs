@@ -1,3 +1,4 @@
+import { STATUS_LABEL } from "@/lib/client-compare";
 import { getEvidenceCounts, getCoverageRatio, formatCoveragePct } from "@/lib/client/evidence-counts";
 import { useCallback, useRef, useState } from "react";
 import { formatDateTime } from "@/lib/format/datetime";
@@ -125,16 +126,7 @@ export function useComparisonPdfExport() {
           const requirementBody = matrix.map((row) => [
             `${row.label} (${row.importance === "must_have" ? "Must-have" : "Preferred"})`,
             ...row.cells.map((cell) => {
-              const label =
-                cell.status === "met"
-                  ? "Met"
-                  : cell.status === "partial"
-                    ? "Partially met"
-                    : cell.status === "contradicted"
-                      ? "Contradicted"
-                      : cell.status === "not_applicable"
-                        ? "Not applicable"
-                        : "Unknown";
+              const label = STATUS_LABEL[cell.status];
               return cell.evidence ? `${label}: ${cell.evidence}` : label;
             }),
           ]);
