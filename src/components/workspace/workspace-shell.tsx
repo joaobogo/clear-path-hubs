@@ -581,6 +581,9 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           <button
             type="button"
             className="h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground inline-flex cursor-pointer"
+            // Open on pointer-down: a click that lands while the shell is
+            // re-rendering used to be dropped before the click event fired.
+            onPointerDown={() => setSearchOpen(true)}
             onClick={() => setSearchOpen(true)}
             aria-label="Open global search"
             aria-keyshortcuts="Meta+K Control+K"
