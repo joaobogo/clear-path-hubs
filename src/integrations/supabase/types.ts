@@ -15666,6 +15666,10 @@ export type Database = {
         Args: { _filter: string; _table: string; _user: string }
         Returns: number
       }
+      _authz_probe_view_visible: {
+        Args: { _filter?: string; _role?: string; _user: string; _view: string }
+        Returns: number
+      }
       _authz_probe_visible: {
         Args: { _filter: string; _table: string; _user: string }
         Returns: number
@@ -15920,6 +15924,7 @@ export type Database = {
       run_authz_tests: { Args: never; Returns: string[] }
       run_collaborator_role_tests: { Args: never; Returns: string[] }
       run_scoring_authz_tests: { Args: never; Returns: string[] }
+      run_talent_pool_rls_proof: { Args: never; Returns: string[] }
       run_tenant_isolation_proof: { Args: never; Returns: string[] }
       score_band: {
         Args: { _score: number }
