@@ -541,8 +541,9 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
     ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
     : null;
   const counts = getEvidenceCounts(candidate.requirement_rows);
+  // The progress bar must match the label: only direct quoted passages count.
   const coveragePct =
-    counts.total > 0 ? Math.round((counts.evidenced / counts.total) * 100) : 0;
+    counts.total > 0 ? Math.round((counts.quoted / counts.total) * 100) : 0;
 
   return (
     <SectionCard
