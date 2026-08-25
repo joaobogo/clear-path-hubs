@@ -42,6 +42,7 @@ import {
 } from "@/lib/position-edit.functions";
 import { checkRequisitionDuplicate } from "@/lib/requisition.functions";
 import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
+import { RoleEditorLifecycleActions } from "@/components/positions/RoleEditorLifecycleActions";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
