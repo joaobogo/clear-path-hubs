@@ -21,8 +21,11 @@
  * legacy_source_system = 'seed-demo-candidates').
  */
 
+import { readFileSync } from "node:fs";
+
 const SEED_MARKER = "seed-demo-candidates";
 const ENGINE_VERSION = "taasflow-scoring-v1.2.0";
+
 
 type Seed = {
   name: string;
