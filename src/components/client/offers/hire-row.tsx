@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
-import { CalendarClock, User2, ArrowRight, RotateCcw, AlertTriangle } from "lucide-react";
+import { CalendarClock, User2, ArrowRight, RotateCcw, AlertTriangle, ChevronDown } from "lucide-react";
 import {
   transitionHire,
   HIRE_STATUS_LABEL,
@@ -15,7 +15,13 @@ import {
 import { guaranteeLine } from "@/lib/interview-scorecard";
 import { isStalled, stallLabel, stageEnteredAt } from "@/lib/offer-stall";
 import { Button } from "@/components/ui/button";
-import { NEXT_STEPS, nextStepLabel, formatSalary } from "./helpers";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { NEXT_STEPS, nextStepLabel, formatSalary, COLUMN_ICON } from "./helpers";
 import { NudgeButton } from "./nudge-button";
 import { OfferTermsDialog } from "./offer-terms-dialog";
 import { CloseReasonDialog } from "./close-reason-dialog";
@@ -147,45 +153,54 @@ function HireCardImpl({
         </div>
       )}
 
-      {!readOnly && isStalled(hire) && (
-        <div className="mt-2">
-          <NudgeButton orgId={orgId} hire={hire} />
-        </div>
-      )}
-
       {!readOnly && (
-        <div className="mt-2.5 flex flex-wrap items-center gap-1">
+        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+          {isStalled(hire) && <NudgeButton orgId={orgId} hire={hire} />}
           <Button
             size="sm"
-            variant="ghost"
-            className="h-6 px-2 text-[11px]"
+            variant="outline"
+            className="h-7 px-2 text-[11px]"
             onClick={() => setEditOpen(true)}
           >
             Edit terms
           </Button>
-          {NEXT_STEPS[hire.status].map((to) => {
-            const needsReason = to === "offer_declined" || to === "closed_lost";
-            const label = nextStepLabel(to);
-            return (
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button
-                key={to}
                 size="sm"
-                variant={to === "hire_confirmed" ? "default" : "outline"}
-                className="h-6 gap-1 px-2 text-[11px]"
+                variant="outline"
+                className="h-7 gap-1 px-2 text-[11px]"
                 disabled={doTransition.isPending}
-                onClick={() =>
-                  needsReason ? setCloseOpen(to) : doTransition.mutate(to)
-                }
               >
-                {to === "offer_drafted" && hire.status !== "offer_drafted" ? (
-                  <RotateCcw className="h-3 w-3" />
-                ) : (
-                  <ArrowRight className="h-3 w-3" />
-                )}
-                {label}
+                Update status
+                <ChevronDown className="h-3 w-3" />
               </Button>
-            );
-          })}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {NEXT_STEPS[hire.status].map((to) => {
+                const needsReason = to === "offer_declined" || to === "closed_lost";
+                const label = nextStepLabel(to);
+                const Icon =
+                  to === "offer_drafted" && hire.status !== "offer_drafted"
+                    ? RotateCcw
+                    : COLUMN_ICON[to] ?? ArrowRight;
+                return (
+                  <DropdownMenuItem
+                    key={to}
+                    className="gap-2 text-[11px]"
+                    disabled={doTransition.isPending}
+                    onSelect={() =>
+                      needsReason ? setCloseOpen(to) : doTransition.mutate(to)
+                    }
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {label}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
 
