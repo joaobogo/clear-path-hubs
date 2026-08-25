@@ -502,8 +502,7 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
   const roleTitle = candidate.position?.title ?? null;
   // Every declared requirement gets its own row — same source as the comparison grid.
   const rows = rationale.lines.filter((l) => l.verdict !== "not_applicable");
-  const strengths = candidate.strengths ?? [];
-  if (rows.length === 0 && strengths.length === 0) return null;
+  if (rows.length === 0) return null;
 
   const bandLine = candidate.fit?.headline
     ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
@@ -581,21 +580,6 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
             </li>
           ))}
         </ul>
-      )}
-
-      {strengths.length > 0 && (
-        <div className="mt-4">
-          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            Beyond your requirements
-          </div>
-          <ul className="mt-2 grid gap-2 sm:grid-cols-2">
-            {strengths.map((s, i) => (
-              <li key={i} className="rounded-md border bg-muted/30 p-3 text-sm">
-                {sanitizeInternalMarkers(s)}
-              </li>
-            ))}
-          </ul>
-        </div>
       )}
 
     </SectionCard>

@@ -37,7 +37,6 @@ import {
 } from "@/lib/client/action-timeout";
 
 import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock } from "@/components/client/candidate-detail/shared";
-import { TopSignals } from "@/components/client/candidate-detail/top-signals";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
@@ -455,8 +454,8 @@ function CandidateDetailPage() {
 
  )}
 
- {/* 3 — WHY, AND WHAT TO CHECK */}
- <TopSignals candidate={candidate} />
+ {/* 3 — REQUIREMENT COVERAGE (first evidence panel) */}
+ <RequirementCoverage candidate={candidate} withRationale />
 
  {/* 4 — CONTACT (one preview, one download) */}
  <ContactBlock candidate={candidate} />
