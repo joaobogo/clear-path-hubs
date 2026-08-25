@@ -1,5 +1,6 @@
 import { SnapshotTile } from "@/components/client/candidates/snapshot-tile";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { stageDisplayName } from "@/lib/client/stage-display";
 
 export type HiringSnapshotKpis = {
   delivered?: number;
@@ -48,14 +49,14 @@ export function HiringSnapshot({
   // A tile never holds a skeleton once the figures arrived, and never invents a
   // zero when they didn't: a missing figure reads as a dash plus a short reason.
   const tiles = [
-    { label: "Delivered", value: kpis?.delivered, filter: undefined },
+    { label: stageDisplayName("delivered"), value: kpis?.delivered, filter: undefined },
     // Links through the KPI drill-through key, not a single band, so the tile
     // and the list it opens always count the same candidates.
     { label: "Strongest candidates", value: kpis?.top, filter: { filter: "top" } },
-    { label: "Shortlisted", value: kpis?.shortlisted, filter: { stage: "shortlisted" } },
-    { label: "Interviewing", value: kpis?.interviewing, filter: { stage: "interview_process" } },
-    { label: "Offers", value: kpis?.offers, filter: { stage: "offer" } },
-    { label: "Hires", value: kpis?.hires, filter: { stage: "hired" } },
+    { label: stageDisplayName("shortlisted"), value: kpis?.shortlisted, filter: { stage: "shortlisted" } },
+    { label: stageDisplayName("interview_process"), value: kpis?.interviewing, filter: { stage: "interview_process" } },
+    { label: stageDisplayName("offer"), value: kpis?.offers, filter: { stage: "offer" } },
+    { label: stageDisplayName("hired"), value: kpis?.hires, filter: { stage: "hired" } },
   ] as const;
 
   return (

@@ -1,3 +1,4 @@
+import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
 /**
  * Concurrency guard for candidate decisions.
  *
@@ -13,12 +14,12 @@ export const STALE_PREFIX = "candidate_moved:";
 export const STAGE_LABELS: Record<string, string> = {
 	sourced: "Sourced",
 	screened: "In screening",
-	delivered: "Delivered to you",
-	shortlisted: "Shortlisted",
-	interview_process: "In interviews",
-	offer: "At offer",
-	hired: "Hired",
-	not_moving_forward: "Not moving forward",
+	delivered: PIPELINE_STAGE_DISPLAY.delivered,
+	shortlisted: PIPELINE_STAGE_DISPLAY.shortlisted,
+	interview_process: PIPELINE_STAGE_DISPLAY.interview_process,
+	offer: PIPELINE_STAGE_DISPLAY.offer,
+	hired: PIPELINE_STAGE_DISPLAY.hired,
+	not_moving_forward: PIPELINE_STAGE_DISPLAY.not_moving_forward,
 };
 
 export function stageLabel(stage: string | null | undefined) {

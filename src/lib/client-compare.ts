@@ -1,3 +1,4 @@
+import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
 import { getEvidenceCounts } from "./client/evidence-counts";
@@ -196,12 +197,12 @@ export type RoleComparison = {
 };
 
 const ROLE_STAGE_LABELS: Record<string, string> = {
-  delivered: "Awaiting your review",
-  shortlisted: "Shortlisted",
-  interview_process: "Interviewing",
-  offer: "Offer out",
-  hired: "Hired",
-  not_moving_forward: "Not moving forward",
+  delivered: PIPELINE_STAGE_DISPLAY.delivered,
+  shortlisted: PIPELINE_STAGE_DISPLAY.shortlisted,
+  interview_process: PIPELINE_STAGE_DISPLAY.interview_process,
+  offer: PIPELINE_STAGE_DISPLAY.offer,
+  hired: PIPELINE_STAGE_DISPLAY.hired,
+  not_moving_forward: PIPELINE_STAGE_DISPLAY.not_moving_forward,
 };
 
 function txt(v: unknown): string {
