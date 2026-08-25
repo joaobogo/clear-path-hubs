@@ -2,7 +2,7 @@
 type Any = any;
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, Briefcase, ChevronRight } from "lucide-react";
-import { formatStageDate } from "@/lib/client-role-progress";
+
 import { shortlistCommitment, formatCommitmentDate } from "@/lib/client-commitment";
 import { roleNextStep } from "@/lib/client-role-next-step";
 import { clientRoleStatusLabel } from "@/lib/client-role-status";
@@ -36,10 +36,8 @@ export function RoleStatusList({
     );
   }
   return (
-    <ul className="grid gap-2 group-data-[density=compact]/container:gap-1.5">
+    <ul className="grid gap-2">
       {roles.map((r) => {
-        const since = formatStageDate(r.stage_entered_at);
-        const days = r.days_in_stage as number | null;
         const commitment = shortlistCommitment({
           promisedShortlistBy: r.promised_shortlist_by,
           shortlistDeliveredAt: r.shortlist_delivered_at,
@@ -55,100 +53,105 @@ export function RoleStatusList({
               <Link
                 to="/client/positions/$id"
                 params={{ id: r.position_id }}
-                className="group flex flex-col gap-2 hover:bg-muted/30 px-4 py-3.5 group-data-[density=compact]/container:py-2.5"
+                className={
+                  compact
+                    ? "group flex items-center justify-between gap-3 hover:bg-muted/30 px-4 py-2.5"
+                    : "group flex flex-col gap-2 hover:bg-muted/30 px-4 py-3.5"
+                }
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                      <span className="truncate text-sm font-semibold group-hover:text-primary">
-                        {r.title}
-                      </span>
-                      <span className="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                        {clientRoleStatusLabel(r.client_status)}
-                      </span>
-                    </div>
-                    {/* Stage tiles hidden until H1 lands to resolve data inconsistency */}
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    {r.delivered_pending > 0 && (
-                      <span className="rounded-full taas-bg-warning-soft px-2 py-0.5 text-[11px] font-semibold taas-fg-warning">
-                        {r.delivered_pending} to review
-                      </span>
-                    )}
-                    <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
-                  </div>
+                <div className="flex min-w-0 items-center gap-2">
+                  <Briefcase className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <span className="truncate text-sm font-semibold group-hover:text-primary">
+                    {r.title}
+                  </span>
+                  <span className="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                    {clientRoleStatusLabel(r.client_status)}
+                  </span>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  {r.delivered_pending > 0 && (
+                    <span className="rounded-full taas-bg-warning-soft px-2 py-0.5 text-[11px] font-semibold taas-fg-warning">
+                      {r.delivered_pending} to review
+                    </span>
+                  )}
+                  <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
                 </div>
 
-                {/* Our promise, next to what actually happened. Misses shown plainly. */}
-                <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs group-data-[density=compact]/container:hidden">
-                    <div className="min-w-0">
-                      <div className="text-muted-foreground">First shortlist promised</div>
-                      <div className="truncate font-medium text-foreground">
-                        {commitment.promisedAt
-                          ? formatCommitmentDate(commitment.promisedAt)
-                          : "Not committed"}
+                {!compact && (
+                  <>
+                    {/* Our promise, next to what actually happened. Misses shown plainly. */}
+                    <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs">
+                      <div className="min-w-0">
+                        <div className="text-muted-foreground">First shortlist promised</div>
+                        <div className="truncate font-medium text-foreground">
+                          {commitment.promisedAt
+                            ? formatCommitmentDate(commitment.promisedAt)
+                            : "Not committed"}
+                        </div>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-muted-foreground">Actual</div>
+                        <div className="truncate font-medium text-foreground">
+                          {commitment.actualAt
+                            ? formatCommitmentDate(commitment.actualAt)
+                            : "Not yet"}
+                        </div>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-muted-foreground">Variance</div>
+                        <div
+                          className={`truncate font-medium ${
+                            commitment.state === "missed" || commitment.state === "overdue"
+                              ? "taas-fg-danger"
+                              : commitment.state === "met"
+                                ? "taas-fg-success"
+                                : "text-foreground"
+                          }`}
+                        >
+                          {commitment.varianceLabel}
+                        </div>
                       </div>
                     </div>
-                    <div className="min-w-0">
-                      <div className="text-muted-foreground">Actual</div>
-                      <div className="truncate font-medium text-foreground">
-                        {commitment.actualAt
-                          ? formatCommitmentDate(commitment.actualAt)
-                          : "Not yet"}
-                      </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-muted-foreground">Variance</div>
-                      <div
-                        className={`truncate font-medium ${
-                          commitment.state === "missed" || commitment.state === "overdue"
-                            ? "taas-fg-danger"
-                            : commitment.state === "met"
-                              ? "taas-fg-success"
-                              : "text-foreground"
-                        }`}
-                      >
-                        {commitment.varianceLabel}
-                      </div>
-                    </div>
-                  </div>
 
-                {/* What happens next: owner and date, always stated. */}
-                <p
-                  className={`flex items-start gap-2 rounded-lg border border-dashed px-3 py-1.5 text-[11px] sm:text-xs ${
-                    next.overdue
-                      ? "taas-bd-warning taas-bg-warning-soft taas-fg-warning"
-                      : "bg-muted/30 text-muted-foreground"
-                  }`}
-                >
-                  <span>
-                    <span className="font-semibold text-foreground">Next: </span>
-                    {next.sentence}{" "}
-                    <span className="font-medium text-foreground">{next.ownerLabel}</span>
-                    {next.dateLabel ? ` · by ${next.dateLabel}` : ""}
-                  </span>
-                </p>
+                    {/* What happens next: owner and date, always stated. */}
+                    <p
+                      className={`flex items-start gap-2 rounded-lg border border-dashed px-3 py-1.5 text-[11px] sm:text-xs ${
+                        next.overdue
+                          ? "taas-bd-warning taas-bg-warning-soft taas-fg-warning"
+                          : "bg-muted/30 text-muted-foreground"
+                      }`}
+                    >
+                      <span>
+                        <span className="font-semibold text-foreground">Next: </span>
+                        {next.sentence}{" "}
+                        <span className="font-medium text-foreground">{next.ownerLabel}</span>
+                        {next.dateLabel ? ` · by ${next.dateLabel}` : ""}
+                      </span>
+                    </p>
 
-                {r.at_risk && r.risk_reason && (
-                  <p className="flex items-start gap-2 rounded-lg taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning sm:text-sm">
-                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    <span>
-                      <span className="font-semibold">At risk — </span>
-                      {r.risk_reason}
-                    </span>
-                  </p>
+                    {r.at_risk && r.risk_reason && (
+                      <p className="flex items-start gap-2 rounded-lg taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning sm:text-sm">
+                        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                        <span>
+                          <span className="font-semibold">At risk — </span>
+                          {r.risk_reason}
+                        </span>
+                      </p>
+                    )}
+                  </>
                 )}
               </Link>
-              <div className="border-t px-4 py-2">
-                <Link
-                  to="/client/candidates"
-                  search={{ position: r.position_id, view: "compare" } as never}
-                  className="text-xs font-medium text-primary hover:underline"
-                >
-                  Compare shortlist side by side →
-                </Link>
-              </div>
+              {!compact && (
+                <div className="border-t px-4 py-2">
+                  <Link
+                    to="/client/candidates"
+                    search={{ position: r.position_id, view: "compare" } as never}
+                    className="text-xs font-medium text-primary hover:underline"
+                  >
+                    Compare shortlist side by side →
+                  </Link>
+                </div>
+              )}
             </div>
           </li>
         );
