@@ -324,7 +324,7 @@ export function VelocityCard({
                 title={`${q.count} candidate${q.count === 1 ? "" : "s"} delivered`}
               >
                 <div className="text-[10px] text-muted-foreground">{q.label}</div>
-                <div className="text-[11px] font-semibold leading-tight">
+                <div className="text-[11px] font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
                   {q.avg_score == null
                     ? "—"
                     : toFitPresentation(null, Number(q.avg_score)).headline}

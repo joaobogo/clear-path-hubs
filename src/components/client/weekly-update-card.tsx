@@ -84,7 +84,7 @@ export function WeeklyUpdateCard({ orgId }: { orgId: string }) {
             <div key={m.key} className="rounded-lg border p-3">
               <dd className="text-2xl font-semibold tabular-nums">{m.count}</dd>
               <dt className="mt-0.5 text-sm text-muted-foreground">{m.label}</dt>
-              {m.roles.length > 0 && (
+              {m.key !== "decisions_made" && m.roles.length > 0 && (
                 <p className="mt-1 truncate text-xs text-muted-foreground" title={m.roles.join(", ")}>
                   {m.roles.join(", ")}
                 </p>
