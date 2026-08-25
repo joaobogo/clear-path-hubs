@@ -445,8 +445,11 @@ function CandidateDetailPage() {
 
  )}
 
- {/* 3 — REQUIREMENT COVERAGE (first evidence panel) */}
- <RequirementCoverage candidate={candidate} withRationale />
+ {/* 3 — THE EVIDENCE: requirements listed once, with coverage folded in */}
+ <div id="sec-evidence" className="scroll-mt-24 space-y-4">
+ <WhyThisCandidate candidate={candidate} withCoverage />
+ <ScoreBreakdown candidate={candidate} hideRequirementRows />
+ </div>
 
  {/* 4 — CONTACT (one preview, one download) */}
  <ContactBlock candidate={candidate} />
