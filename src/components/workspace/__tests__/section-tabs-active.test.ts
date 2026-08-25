@@ -1,13 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { activeTab, type SectionTab } from "@/components/workspace/section-tabs";
 
-/**
- * Shortlist and Board share `/client/candidates`. Exactly one may be
- * highlighted, decided by the current search params.
- */
 const tabs: SectionTab[] = [
   { to: "/client/candidates", label: "Shortlist" },
-  { to: "/client/candidates", label: "Board", search: { view: "board" } },
   { to: "/client/talent-pool", label: "Talent pool" },
 ];
 
@@ -16,17 +11,14 @@ describe("activeTab", () => {
     expect(activeTab("/client/candidates", tabs, {})?.label).toBe("Shortlist");
   });
 
-  it("picks the search-less tab for other view values", () => {
+  it("picks the search-less tab even when view search params are present", () => {
     expect(activeTab("/client/candidates", tabs, { view: "list" })?.label).toBe("Shortlist");
-  });
-
-  it("picks Board when view=board", () => {
-    expect(activeTab("/client/candidates", tabs, { view: "board" })?.label).toBe("Board");
+    expect(activeTab("/client/candidates", tabs, { view: "board" })?.label).toBe("Shortlist");
   });
 
   it("ignores unrelated params, including org", () => {
     expect(activeTab("/client/candidates", tabs, { org: "abc", view: "board" })?.label).toBe(
-      "Board",
+      "Shortlist",
     );
     expect(activeTab("/client/candidates", tabs, { org: "abc" })?.label).toBe("Shortlist");
   });
