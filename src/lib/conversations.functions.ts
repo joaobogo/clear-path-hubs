@@ -342,6 +342,7 @@ export const listConversations = createServerFn({ method: "GET" })
             ? (names[lastMsg.sender_user_id as string]?.name ?? null)
             : null,
           unread: unread[c.id as string] ?? 0,
+          message_count: counts[c.id as string] ?? 0,
         };
       });
 
