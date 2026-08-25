@@ -300,10 +300,14 @@ export function evidenceSupport(
     else if (results.some((v) => v === "partial" || v === "weak") || evidence.length === 0) isPartial = true;
   }
 
-  let status: RequirementStatus = "not_evidenced";
-  if (isContradicted) status = "contradicted";
-  else if (isMet) status = "met";
-  else if (isPartial) status = "partial";
+  let rawStatus: RequirementStatus = "not_evidenced";
+  if (isContradicted) rawStatus = "contradicted";
+  else if (isMet) rawStatus = "met";
+  else if (isPartial) rawStatus = "partial";
+
+  // One canonical status per requirement, derived from the evidence that exists.
+  const status = resolveRequirementStatus({ status: rawStatus, evidence, contradictions });
+
 
   return {
     status,
