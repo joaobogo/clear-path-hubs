@@ -151,7 +151,6 @@ export function CvPreviewDialog({
         {label}
       </Button>
       <Dialog
-        modal={false}
         open={open}
         onOpenChange={(next) => {
           setOpen(next);
@@ -162,6 +161,7 @@ export function CvPreviewDialog({
         }}
       >
         <DialogContent className="max-w-4xl" data-qa="cv-preview-dialog">
+
 
           <DialogHeader>
             <DialogTitle>
