@@ -216,7 +216,20 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         hired: v.hired,
         blocked: v.blocked,
       }))
+      // A "Not assigned to a team" row with nothing in it never fills — drop it.
+      .filter(
+        (r) =>
+          r.business_unit !== "Unassigned" ||
+          r.open_roles + r.active_candidates + r.delivered + r.shortlisted + r.hired + r.blocked >
+            0,
+      )
+      .map((r) =>
+        r.business_unit === "Unassigned"
+          ? { ...r, business_unit: "Not assigned to a team" }
+          : r,
+      )
       .sort((a, b) => b.active_candidates - a.active_candidates);
+
 
     // Time in stage — measured from the stage-entry timestamp the Offers page
     // and the client KPIs read (`candidate_stage_history`, falling back to the
@@ -293,9 +306,6 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       m.updated_at &&
       now.getTime() - new Date(m.updated_at).getTime() > 24 * 3600_000,
     ).length;
-    const blockedMatches = matchRows.filter((m) =>
-      ["failed", "error"].includes(String(m.processing_state ?? "")),
-    ).length;
     const draftPositions = posRows.filter(
       (p) => ["draft", "needs_clarification"].includes(String(p.status)),
     ).length;
@@ -329,13 +339,10 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         severity: (stuckProcessing > 0 ? "crit" : "info") as "info" | "crit",
         hint: "TaaSFlow is reprocessing these — no action needed on your side",
       },
-      {
-        key: "blocked_matches",
-        label: "CVs needing evidence review",
-        count: blockedMatches,
-        severity: (blockedMatches > 0 ? "warn" : "info") as "info" | "warn",
-        hint: "TaaSFlow is running evidence review before delivery",
-      },
+      // Internal evidence-review queue is deliberately not surfaced to clients:
+      // it describes our processing, not anything they can act on, and it implies
+      // candidates they cannot see.
+
       {
         key: "draft_positions",
         label: "Roles waiting on intake",
