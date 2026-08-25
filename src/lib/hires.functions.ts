@@ -698,8 +698,9 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
 
     // Open offers come from the canonical KPI service so this strip can never
     // contradict the board underneath it, the Roles list, or the Candidates page.
-    const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
-    const openOffers = canonical.offers;
+    // Open offers: the one reader.
+    const { countOpenOffers } = await import("@/lib/kpis/candidates-in-play.server");
+    const openOffers = await countOpenOffers(context.supabase, data.orgId);
     // Confirmed hires come from the shared selector over the offer records
     // themselves — the same function the board column and footer use.
     const hires: AnyRow[] = selectConfirmedHires(scoped as Array<{ status: string }>) as AnyRow[];

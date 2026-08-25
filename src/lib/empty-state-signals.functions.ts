@@ -130,8 +130,9 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
             .eq("organization_id", org)
             .in("status", ["offer_drafted", "offer_sent", "offer_negotiating"]),
         ),
-        countRows(
-          sb.from("hire_records").select("id", head).eq("organization_id", org).eq("status", "hire_confirmed"),
+        (await import("@/lib/kpis/confirmed-hires.server")).countConfirmedHiresForOrg(
+          sb,
+          org,
         ),
         countRows(
           sb

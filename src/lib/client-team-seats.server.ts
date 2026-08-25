@@ -7,29 +7,16 @@
 // teammate) refuses identically instead of one path leaking trigger text.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { seatBlockCode, type SeatBlock } from "@/lib/seat-limit";
-import { SEAT_ROLES, SEAT_STATUSES, computeSeatCount } from "@/lib/client-seats";
+import { readSeatsForOrg } from "@/lib/kpis/seats.server";
 
 export async function readSeatUsage(
   orgId: string,
 ): Promise<{ seatLimit: number; seatsUsed: number; seatsLeft: number }> {
-  const [{ data: org }, { data: rows }] = await Promise.all([
-    supabaseAdmin
-      .from("organizations")
-      .select("client_seat_limit")
-      .eq("id", orgId)
-      .maybeSingle(),
-    supabaseAdmin
-      .from("memberships")
-      .select("id, role, status")
-      .eq("organization_id", orgId)
-      .in("role", [...SEAT_ROLES])
-      .in("status", [...SEAT_STATUSES]),
-  ]);
-  // One shared derivation (`client-seats.ts`) — the Account page, the authz
-  // endpoint and this helper must never produce different seat totals.
-  const { seatLimit, seatsUsed, seatsLeft } = computeSeatCount(
-    ((rows as { role: string; status: string }[] | null) ?? []),
-    (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? null,
+  // One reader for seats (src/lib/kpis/seats.server.ts) — the Account page, the
+  // authz endpoint and this guard must never produce different seat totals.
+  const { seatLimit, seatsUsed, seatsLeft } = await readSeatsForOrg(
+    supabaseAdmin,
+    orgId,
   );
   return { seatLimit, seatsUsed, seatsLeft };
 }
@@ -57,23 +44,10 @@ export async function assertSeatAvailable(orgId: string): Promise<void> {
 export async function evaluateSeatBlock(
   orgId: string,
 ): Promise<SeatBlock | null> {
-  const [{ seatLimit, seatsUsed }, { data: rows }] = await Promise.all([
-    readSeatUsage(orgId),
-    supabaseAdmin
-      .from("memberships")
-      .select("status")
-      .eq("organization_id", orgId)
-      .in("role", [...SEAT_ROLES])
-      .in("status", [...SEAT_STATUSES]),
-  ]);
-  if (seatsUsed < seatLimit) return null;
-  const statuses = ((rows as { status: string }[] | null) ?? []).map((r) => r.status);
-  const usage = {
-    seatLimit,
-    seatsUsed,
-    pendingInvites: statuses.filter((s) => s === "invited").length,
-    activeMembers: statuses.filter((s) => s === "active").length,
-  };
+  // Limit, usage and the invited/active split all come from the one seat
+  // reader, so a refusal explains itself with the same numbers the screens show.
+  const usage = await readSeatsForOrg(supabaseAdmin, orgId);
+  if (usage.seatsUsed < usage.seatLimit) return null;
   return { code: seatBlockCode(usage), usage };
 }
 

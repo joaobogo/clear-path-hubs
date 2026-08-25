@@ -7,9 +7,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { computeSeatCount } from "@/lib/client-seats";
-import { countClientRoles } from "@/lib/client/role-counts";
-import { loadConfirmedHires } from "@/lib/hires/confirmed.server";
+import { readSeatsForOrg } from "@/lib/kpis/seats.server";
+import { countRolesForOrg } from "@/lib/kpis/open-roles.server";
+import { loadConfirmedHires } from "@/lib/kpis/confirmed-hires.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -135,16 +135,15 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     ]);
 
     const memberRows = (members as AnyRow[]) ?? [];
-    // Shared seat derivation: seat-holding roles only, owner seat included, so
-    // Account and Team & roles can never print different seat totals.
-    const seatCount = computeSeatCount(memberRows, o.client_seat_limit as number | null);
+    // One seat reader for the whole platform.
+    const seatCount = await readSeatsForOrg(supabase, data.orgId);
     const activeSeats = seatCount.activeMembers;
     const invitedSeats = seatCount.pendingInvites;
     const limit = seatCount.seatLimit;
 
-    // Same rule as the Roles page and the "Roles and where they are" panel:
-    // drafts, archived roles and test records are not part of the account.
-    const positionRows = countClientRoles((positions as AnyRow[]) ?? []);
+    // One roles reader: drafts, archived roles and test records are not part of
+    // the account, and the Roles page counts them the same way.
+    const positionRows = await countRolesForOrg(supabase, data.orgId);
     const rolesOpen = positionRows.open;
 
     // One selector decides who is a confirmed hire (R02).

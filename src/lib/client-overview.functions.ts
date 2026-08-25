@@ -118,23 +118,10 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       pendingByPosition.set(pending.position_id, list);
     }
     
-    // Seat count reconciliation (B4 fix): Fetch memberships to get real-time seat counts.
-    const { activeMembers } = await (async () => {
-      const { data: members } = await s
-        .from("memberships")
-        .select("user_id, role, status")
-        .eq("organization_id", data.orgId);
-      const { data: orgForSeats } = await s
-        .from("organizations")
-        .select("client_seat_limit")
-        .eq("id", data.orgId)
-        .maybeSingle();
-      const { computeSeatCount } = await import("@/lib/client-seats");
-      return computeSeatCount(
-        (members as AnyRow[]) ?? [],
-        (orgForSeats as AnyRow)?.client_seat_limit ?? null
-      );
-    })();
+    // Seats come from the one reader, so Overview, Account, Team & roles and
+    // the staff account summary print the same figure.
+    const { readSeatsForOrg } = await import("@/lib/kpis/seats.server");
+    const { activeMembers } = await readSeatsForOrg(context.supabase, data.orgId);
 
     // "This week" interview and decision counts come from the shared selector,
     // the same one the weekly update card reads.
@@ -172,15 +159,23 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       .in("status", ["active", "approved"]))
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
-    const activePositions = activePositionsList.length;
+    // Open roles: the one reader decides the number, whatever this page's own
+    // query happened to return.
+    const { countOpenRolesForOrg } = await import("@/lib/kpis/open-roles.server");
+    const activePositions = await countOpenRolesForOrg(context.supabase, data.orgId);
 
     // Reconciliation (B4/B3): ensure KPI counts use the same positions we just loaded.
     // Hires come from computeKpis, which reads the confirmed offer records.
     const kpis = {
       ...computeKpis(rows, activePositions),
       awaiting_decision: openItemsResponse.items.filter(i => i.kind === 'pending_decision').length,
-      interviews_to_confirm: openItemsResponse.items.filter(i => i.kind === 'interview').length,
-      offers: openItemsResponse.items.filter(i => i.kind === 'offer').length,
+      // Interviews awaiting a time and open offers come from their one reader,
+      // never from the length of a queue list on this page.
+      interviews_to_confirm: pendingConfirmations.length,
+      offers: await (await import("@/lib/kpis/candidates-in-play.server")).countOpenOffers(
+        context.supabase,
+        data.orgId,
+      ),
       missing_feedback: interviewsAwaitingFeedback.length,
     };
 

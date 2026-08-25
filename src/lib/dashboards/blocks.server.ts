@@ -282,15 +282,16 @@ async function outreachConversion(sb: AnySupabase, org: string): Promise<BlockDa
 }
 
 async function spendPerHire(sb: AnySupabase, org: string): Promise<BlockData | null> {
-  const [{ data: payments }, { data: hires }] = await Promise.all([
+  const { countConfirmedHiresForOrg } = await import("@/lib/kpis/confirmed-hires.server");
+  const [{ data: payments }, confirmedHires] = await Promise.all([
     sb.from("payments").select("amount_cents, currency, status").eq("organization_id", org),
-    sb.from("hire_records").select("id").eq("organization_id", org).eq("status", "hire_confirmed"),
+    countConfirmedHiresForOrg(sb, org),
   ]);
   const paid = ((payments ?? []) as Array<Record<string, any>>).filter((p) => p.status === "paid");
   if (paid.length === 0) return null;
   const total = paid.reduce((sum, p) => sum + Number(p.amount_cents ?? 0), 0) / 100;
   const currency = String(paid[0].currency ?? "gbp").toUpperCase();
-  const hireCount = ((hires ?? []) as unknown[]).length;
+  const hireCount = confirmedHires;
   const fmt = (n: number) =>
     `${currency === "GBP" ? "£" : currency === "USD" ? "$" : `${currency} `}${Math.round(n).toLocaleString()}`;
   if (hireCount === 0) {

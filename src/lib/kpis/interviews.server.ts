@@ -1,0 +1,123 @@
+/**
+ * Interview figures — the one reader each.
+ *
+ *  - "awaiting a time": an interview record whose status still asks the client
+ *    to pick a slot. One entry per candidate match, earliest request wins.
+ *  - "held in a window": recorded complete inside the window, or scheduled
+ *    inside the window at a time already past and not cancelled.
+ *
+ * Interview-level visibility narrows rows to assigned interviewers, which is
+ * why both figures read through the organization-scoped reader — otherwise a
+ * client's own interviews silently vanish from their own count.
+ */
+import { readOrgRows } from "@/lib/kpis/org-read.server";
+import { CONFIRMATION_PENDING_STATUSES } from "@/lib/client/interviews-to-confirm";
+import { WEEKLY_WINDOW_DAYS } from "@/lib/client-weekly-update";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
+export type PendingConfirmationInterview = {
+  interview_id: string;
+  candidate_match_id: string;
+  position_id: string | null;
+  status: string;
+  requested_at: string | null;
+  proposed_times: string[];
+};
+
+export async function loadInterviewsAwaitingTime(
+  supabase: AnyRow,
+  orgId: string,
+): Promise<PendingConfirmationInterview[]> {
+  const rows = await readOrgRows(
+    supabase,
+    orgId,
+    "interviews",
+    "id, candidate_match_id, position_id, status, requested_at, created_at, proposed_times",
+    (q) => q.in("status", CONFIRMATION_PENDING_STATUSES as unknown as string[]),
+  );
+
+  const byMatch = new Map<string, PendingConfirmationInterview>();
+  for (const row of rows) {
+    const matchId = row.candidate_match_id as string | null;
+    if (!matchId) continue;
+    const requested = (row.requested_at ?? row.created_at ?? null) as string | null;
+    const entry: PendingConfirmationInterview = {
+      interview_id: row.id as string,
+      candidate_match_id: matchId,
+      position_id: (row.position_id as string | null) ?? null,
+      status: String(row.status),
+      requested_at: requested,
+      proposed_times: Array.isArray(row.proposed_times)
+        ? (row.proposed_times as string[])
+        : [],
+    };
+    const prev = byMatch.get(matchId);
+    if (
+      !prev ||
+      (entry.requested_at && prev.requested_at && entry.requested_at < prev.requested_at)
+    ) {
+      byMatch.set(matchId, entry);
+    }
+  }
+  return [...byMatch.values()];
+}
+
+export async function countInterviewsAwaitingTime(
+  supabase: AnyRow,
+  orgId: string,
+): Promise<number> {
+  return (await loadInterviewsAwaitingTime(supabase, orgId)).length;
+}
+
+export function interviewWindow(
+  now: Date = new Date(),
+  days: number = WEEKLY_WINDOW_DAYS,
+): { startIso: string; endIso: string } {
+  return {
+    startIso: new Date(now.getTime() - days * 86_400_000).toISOString(),
+    endIso: now.toISOString(),
+  };
+}
+
+/** Interviews held inside a window, one row per interview. */
+export async function loadInterviewsHeld(
+  supabase: AnyRow,
+  orgId: string,
+  window: { startIso: string; endIso: string },
+  now: Date = new Date(),
+): Promise<AnyRow[]> {
+  const { startIso, endIso } = window;
+  const rows = await readOrgRows(
+    supabase,
+    orgId,
+    "interviews",
+    "id, position_id, candidate_match_id, status, scheduled_at, completed_at, cancelled_at, positions(title)",
+    (q) =>
+      q
+        .or(
+          `and(completed_at.gte.${startIso},completed_at.lte.${endIso}),and(scheduled_at.gte.${startIso},scheduled_at.lte.${endIso})`,
+        )
+        .order("scheduled_at", { ascending: true }),
+  );
+  const nowIso = now.toISOString();
+  return rows.filter((i) => {
+    if (String(i.status ?? "") === "cancelled" || i.cancelled_at) return false;
+    const completed = i.completed_at ? String(i.completed_at) : null;
+    if (completed && completed >= startIso && completed <= endIso) return true;
+    const scheduled = i.scheduled_at ? String(i.scheduled_at) : null;
+    return Boolean(
+      scheduled && scheduled >= startIso && scheduled <= endIso && scheduled <= nowIso,
+    );
+  });
+}
+
+export async function countInterviewsHeld(
+  supabase: AnyRow,
+  orgId: string,
+  window: { startIso: string; endIso: string },
+  now: Date = new Date(),
+): Promise<number> {
+  return (await loadInterviewsHeld(supabase, orgId, window, now)).length;
+}

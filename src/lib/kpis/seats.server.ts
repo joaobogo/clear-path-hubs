@@ -1,0 +1,47 @@
+/**
+ * Seats in use — the one reader.
+ *
+ * Membership visibility is not the seat count: a viewer who cannot list their
+ * colleagues still has to see the same "2 of 4" the owner and staff see. Rows
+ * come through the organization-scoped reader and the totals through the one
+ * derivation in `client-seats.ts`, which mirrors the database seat guard.
+ */
+import { readOrgRows, isOrgMember } from "@/lib/kpis/org-read.server";
+import { computeSeatCount, type SeatCount } from "@/lib/client-seats";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
+export type { SeatCount };
+
+async function readSeatLimit(supabase: AnyRow, orgId: string): Promise<number | null> {
+  let db: AnyRow = supabase;
+  if (await isOrgMember(supabase, orgId)) {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    db = supabaseAdmin;
+  }
+  const { data } = await db
+    .from("organizations")
+    .select("client_seat_limit")
+    .eq("id", orgId)
+    .maybeSingle();
+  return ((data as AnyRow)?.client_seat_limit as number | null) ?? null;
+}
+
+export async function readSeatsForOrg(
+  supabase: AnyRow,
+  orgId: string,
+): Promise<SeatCount> {
+  const [members, seatLimit] = await Promise.all([
+    readOrgRows(supabase, orgId, "memberships", "id, role, status"),
+    readSeatLimit(supabase, orgId),
+  ]);
+  return computeSeatCount(members as AnyRow[], seatLimit);
+}
+
+export async function countSeatsInUse(
+  supabase: AnyRow,
+  orgId: string,
+): Promise<number> {
+  return (await readSeatsForOrg(supabase, orgId)).seatsUsed;
+}

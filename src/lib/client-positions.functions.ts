@@ -130,6 +130,14 @@ export const getClientPositions = createServerFn({ method: "GET" })
     );
 
     const rows = await loadKpiRows(context.supabase, data.orgId);
+    // Interviews awaiting a time: the one reader, indexed by role, so the Roles
+    // list banner and the Overview queue can never print different numbers.
+    const { loadInterviewsAwaitingTime } = await import("@/lib/kpis/interviews.server");
+    const pendingByRole = new Map<string, number>();
+    for (const iv of await loadInterviewsAwaitingTime(context.supabase, data.orgId)) {
+      if (!iv.position_id) continue;
+      pendingByRole.set(iv.position_id, (pendingByRole.get(iv.position_id) ?? 0) + 1);
+    }
     const stageDates = await loadRoleStageDates(
       context.supabase,
       data.orgId,
@@ -142,8 +150,12 @@ export const getClientPositions = createServerFn({ method: "GET" })
     }
     return visiblePositions.map((p) => {
       const posRows = byPosition.get(p.id) ?? [];
-      const kpi = computeKpis(posRows, 0);
-      const language = pipelineLanguageInput(posRows, p.status);
+      const awaitingTime = pendingByRole.get(String(p.id)) ?? 0;
+      const kpi = computeKpis(posRows, 0, { interviews_to_confirm: awaitingTime });
+      const language = {
+        ...pipelineLanguageInput(posRows, p.status),
+        interviewsToConfirm: awaitingTime,
+      };
       return {
         ...p,
 
@@ -241,7 +253,15 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const roleKpiRows = (await loadKpiRows(context.supabase, data.orgId)).filter(
       (r) => r.position_id === data.positionId,
     );
-    const roleKpis = computeKpis(roleKpiRows, 0);
+    const { loadInterviewsAwaitingTime: loadAwaitingTime } = await import(
+      "@/lib/kpis/interviews.server"
+    );
+    const awaitingTimeForRole = (
+      await loadAwaitingTime(context.supabase, data.orgId)
+    ).filter((iv: AnyRow) => String(iv.position_id ?? "") === data.positionId).length;
+    const roleKpis = computeKpis(roleKpiRows, 0, {
+      interviews_to_confirm: awaitingTimeForRole,
+    });
     const laneCounts = countLanes(roleKpiRows).counts;
     const stageCounts: Record<string, number> = {
       delivered: laneCounts.delivered,
@@ -258,34 +278,33 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
 
     // Interview state for the plain-language status line.
     const matchIdList = ((matches as AnyRow[]) ?? []).map((m) => m.id as string);
-    let interviewsToConfirm = 0;
+    let interviewsToConfirm = awaitingTimeForRole;
     let interviewsScheduled = 0;
     let nextInterviewAt: string | null = null;
     if (matchIdList.length > 0) {
+      // Scheduled interviews and the next confirmed time only. The count of
+      // interviews still awaiting a time comes from its one reader above.
       const { data: ivs } = await context.supabase
         .from("interviews")
         .select("candidate_match_id, status, scheduled_at")
         .in("candidate_match_id", matchIdList)
-        .in("status", ["requested", "scheduling", "scheduled"]);
-      const confirmSet = new Set<string>();
+        .eq("status", "scheduled");
       const scheduledSet = new Set<string>();
       for (const iv of (ivs as AnyRow[]) ?? []) {
-        if (iv.status === "scheduled") {
-          scheduledSet.add(iv.candidate_match_id);
-          const at = iv.scheduled_at as string | null;
-          if (at && (!nextInterviewAt || at < nextInterviewAt)) nextInterviewAt = at;
-        } else {
-          confirmSet.add(iv.candidate_match_id);
-        }
+        scheduledSet.add(iv.candidate_match_id);
+        const at = iv.scheduled_at as string | null;
+        if (at && (!nextInterviewAt || at < nextInterviewAt)) nextInterviewAt = at;
       }
-      interviewsToConfirm = confirmSet.size;
       interviewsScheduled = scheduledSet.size;
     }
     // Same vocabulary mapper the Roles list and Overview use, fed the same
     // canonical rows — one sentence, one set of numbers.
-    const pipelineLine = buildPipelineStatusLine(
-      pipelineLanguageInput(roleKpiRows, String(position.status)),
-    );
+    const pipelineLine = buildPipelineStatusLine({
+      ...pipelineLanguageInput(roleKpiRows, String(position.status)),
+      interviewsToConfirm,
+      interviewsScheduled,
+      nextInterviewAt,
+    });
 
     const positionStageDates = (
       await loadRoleStageDates(context.supabase, data.orgId, [data.positionId])

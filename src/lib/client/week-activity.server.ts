@@ -49,26 +49,14 @@ export async function loadClientWeekActivity(
 ): Promise<ClientWeekActivity> {
   const { startIso, endIso } = clientWeekWindow(now);
 
-  // audit_events is staff-only under RLS, so decision events are read with the
-  // admin client, still scoped to this organization. Interviews are read the
-  // same way: interview-level RLS narrows rows to assigned interviewers, which
-  // would silently drop the organization's own interviews from this count.
+  // Interviews held come from the one reader in src/lib/kpis; audit_events is
+  // staff-only under RLS, so decision events are read with the service client,
+  // still scoped to this organization.
   const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
-  void client;
+  const { loadInterviewsHeld } = await import("@/lib/kpis/interviews.server");
 
-  const [interviewsRes, decisionsRes] = await Promise.all([
-    (auditDb as AnyClient)
-      .from("interviews")
-      .select(
-        "id, position_id, candidate_match_id, status, scheduled_at, completed_at, cancelled_at, positions(title)",
-      )
-      .eq("organization_id", orgId)
-      .or(
-        `and(completed_at.gte.${startIso},completed_at.lte.${endIso}),and(scheduled_at.gte.${startIso},scheduled_at.lte.${endIso})`,
-      )
-      .order("scheduled_at", { ascending: true }),
-
-
+  const [interviewsHeld, decisionsRes] = await Promise.all([
+    loadInterviewsHeld(client, orgId, { startIso, endIso }, now),
     (auditDb as AnyClient)
       .from("audit_events")
       .select("id, action, entity_id, entity_type, created_at")
@@ -79,16 +67,6 @@ export async function loadClientWeekActivity(
       .order("created_at", { ascending: true }),
   ]);
 
-  const nowIso = now.toISOString();
-  const interviewsHeld = ((interviewsRes.data ?? []) as WeekActivityRow[]).filter((i) => {
-    if (String(i.status ?? "") === "cancelled" || i.cancelled_at) return false;
-    const completed = i.completed_at ? String(i.completed_at) : null;
-    if (completed && completed >= startIso && completed <= endIso) return true;
-    const scheduled = i.scheduled_at ? String(i.scheduled_at) : null;
-    return Boolean(
-      scheduled && scheduled >= startIso && scheduled <= endIso && scheduled <= nowIso,
-    );
-  });
   const decisions = ((decisionsRes.data ?? []) as WeekActivityRow[]).filter(
     (d, i, all) => all.findIndex((o) => o.id === d.id) === i,
   );

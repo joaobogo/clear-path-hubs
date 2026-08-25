@@ -9,7 +9,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { computeSeatCount } from "@/lib/client-seats";
 import {
   assertPlatformStaff,
   assertOrgMember,
@@ -327,25 +326,20 @@ export const getSeatUsage = createServerFn({ method: "GET" })
   .inputValidator((i: unknown) => z.object({ organization_id: uuid }).parse(i))
   .handler(async ({ data, context }) => {
     await assertOrgMember(context.supabase, context.userId, data.organization_id);
-    const { data: org } = await context.supabase
-      .from("organizations")
-      .select("client_seat_limit")
-      .eq("id", data.organization_id)
-      .maybeSingle();
+    // One seat reader (src/lib/kpis/seats.server.ts) — same totals as the
+    // Account page, the team tab and the database seat guard.
+    const { readSeatsForOrg } = await import("@/lib/kpis/seats.server");
+    const { SEAT_ROLES, SEAT_STATUSES } = await import("@/lib/client-seats");
+    const count = await readSeatsForOrg(context.supabase, data.organization_id);
     const { data: rows } = await context.supabase
       .from("memberships")
-      .select("id, role, status")
+      .select("role, status")
       .eq("organization_id", data.organization_id)
-      .in("role", ["client_admin", "client_editor", "client_viewer"])
-      .in("status", ["active", "invited"]);
+      .in("role", [...SEAT_ROLES])
+      .in("status", [...SEAT_STATUSES]);
     const seats = (rows ?? []) as { role: string; status: string }[];
     const owners = seats.filter((s) => s.role === "client_admin").length;
-    const recruiters = seats.length - owners;
-    // Shared seat derivation — same totals as the Account page and team tab.
-    const count = computeSeatCount(
-      seats,
-      (org as { client_seat_limit?: number } | null)?.client_seat_limit ?? null,
-    );
+    const recruiters = Math.max(0, count.seatsUsed - owners);
     return {
       seat_limit: count.seatLimit,
       seats_used: count.seatsUsed,

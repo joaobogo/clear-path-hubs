@@ -7,10 +7,10 @@
  *   - delivery    → positions, candidate_matches, decision backlog, SLA breaches
  *   - engagement  → audit_events (client_update.sent), support_sessions
  */
-import { computeSeatCount } from "@/lib/client-seats";
+import { readSeatsForOrg } from "@/lib/kpis/seats.server";
+import { countRolesForOrg, loadOrgRoles } from "@/lib/kpis/open-roles.server";
+import { countCandidatesInPlay } from "@/lib/kpis/candidates-in-play.server";
 import {
-  ACCOUNT_OPEN_POSITION_STATUSES,
-  ACCOUNT_TERMINAL_MATCH_STAGES,
   type AccountCommercial,
   type AccountDelivery,
   type AccountEngagement,
@@ -71,9 +71,10 @@ export async function loadAccountCommercial(
   const seats = (seatRes.data ?? []) as Array<{ role: string; status: string }>;
 
   // Shared seat derivation — staff see exactly what the client sees.
-  const { seatLimit: seatsLimit, seatsUsed } = computeSeatCount(
-    seats,
-    org?.client_seat_limit ?? null,
+  void seats;
+  const { seatLimit: seatsLimit, seatsUsed } = await readSeatsForOrg(
+    admin,
+    organizationId,
   );
 
   return {
@@ -107,30 +108,19 @@ export async function loadAccountDelivery(
 ): Promise<AccountDelivery> {
   const a = admin as { from: (t: string) => Any };
 
-  const posRes = await a
-    .from("positions")
-    .select("id, status")
-    .eq("organization_id", organizationId)
-    .not("status", "eq", "archived");
-  if (posRes.error) throw new Error(posRes.error.message);
-  const positions = (posRes.data ?? []) as Array<{ id: string; status: string }>;
-  const openRoles = positions.filter((p) =>
-    (ACCOUNT_OPEN_POSITION_STATUSES as readonly string[]).includes(p.status) || p.status === "active"
-  ).length;
+  // Open roles come from the one reader, so staff read exactly the figure the
+  // client's own Roles page and Account tile print.
+  const positions = (await loadOrgRoles(admin, organizationId)) as Array<{
+    id: string;
+    status: string;
+  }>;
+  const openRoles = (await countRolesForOrg(admin, organizationId)).open;
   // Unified definition of filled roles (C7)
   // We count both 'filled' and 'hired' matches to ensure hiring numbers are accurate.
   const filledRoles = positions.filter((p) => p.status === "filled" || p.status === "hired").length;
 
-  const matchRes = await a
-    .from("candidate_matches")
-    .select("id, stage")
-    .eq("organization_id", organizationId)
-    .not("processing_state", "in", "(failed,cancelled)");
-  if (matchRes.error) throw new Error(matchRes.error.message);
-  const matches = (matchRes.data ?? []) as Array<{ stage: string }>;
-  const inPipeline = matches.filter(
-    (m) => !(ACCOUNT_TERMINAL_MATCH_STAGES as readonly string[]).includes(m.stage),
-  ).length;
+  // Candidates in play: the one reader again.
+  const inPipeline = await countCandidatesInPlay(admin, organizationId);
 
   const [{ loadDecisionBacklog }, { loadSlaBreaches }] = await Promise.all([
     import("./admin-decision-backlog.server"),
