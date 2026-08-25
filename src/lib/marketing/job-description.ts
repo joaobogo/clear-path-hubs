@@ -105,10 +105,16 @@ export function parseJobDescription(description: string): JobBlock[] {
 
 /** Short plain-text summary for meta descriptions and previews. */
 export function jobDescriptionSummary(description: string, max = 155): string {
-  const firstParagraph = parseJobDescription(description).find((b) => b.kind === "paragraph");
-  const text = firstParagraph && firstParagraph.kind === "paragraph"
-    ? firstParagraph.text
-    : stripJobMarkdown((description ?? "").trim());
+  const paragraphs = parseJobDescription(description).flatMap((b) =>
+    b.kind === "paragraph" ? [b.text] : [],
+  );
+  // Skip label lines like "Junior to Mid-Level | Brazil | Full-Time" — a card
+  // should open on a real sentence about the work.
+  const sentence =
+    paragraphs.find((t) => /[.!?]/.test(t) && t.length > 60 && !t.includes("|")) ??
+    paragraphs[0];
+  const text = sentence ?? stripJobMarkdown((description ?? "").trim());
+
 
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
 }
