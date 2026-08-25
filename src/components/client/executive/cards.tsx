@@ -55,7 +55,11 @@ export function FinanceStrip({
       label: "Projected hires · next 30d",
       value: String(fin.projected_hires_next_30d),
       icon: TrendingUp,
+      caption: `Recent hiring pace applied to your ${fin.open_offers} open ${
+        fin.open_offers === 1 ? "offer" : "offers"
+      } — it can never exceed offers already out`,
     },
+
   ];
 
   return (
