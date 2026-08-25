@@ -450,24 +450,18 @@ export const listClients = createServerFn({ method: "GET" })
 
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
 
+    // Roles, candidates, hires and seats come from the one rollup reader, never
+    // from a count stored on the organization row: a stored copy is how this
+    // card once showed a seat total nobody could reconcile.
+    const { readOrgRollups } = await import("@/lib/kpis/org-rollups.server");
+    const rollups = await readOrgRollups(s, orgIds);
+
     const stats: Record<
       string,
-      {
-        positions: number;
-        active: number;
-        candidates_delivered: number;
-        last_activity_at: string | null;
-        actions_required: number;
-      }
+      { last_activity_at: string | null; actions_required: number }
     > = {};
     for (const id of orgIds) {
-      stats[id] = {
-        positions: 0,
-        active: 0,
-        candidates_delivered: 0,
-        last_activity_at: null,
-        actions_required: 0,
-      };
+      stats[id] = { last_activity_at: null, actions_required: 0 };
     }
 
     if (orgIds.length) {
@@ -487,18 +481,13 @@ export const listClients = createServerFn({ method: "GET" })
       for (const p of (pos ?? []) as AnyRow[]) {
         const c = stats[p.organization_id];
         if (!c) continue;
-        c.positions += 1;
-        if (p.status === "active") c.active += 1;
         if (p.status === "review" || p.status === "pending_approval") c.actions_required += 1;
       }
       for (const m of (matches ?? []) as AnyRow[]) {
         const c = stats[m.organization_id];
         if (!c) continue;
-        if (m.client_visibility === "visible") {
-          c.candidates_delivered += 1;
-          if (m.stage === "delivered") {
-            c.actions_required += 1;
-          }
+        if (m.client_visibility === "visible" && m.stage === "delivered") {
+          c.actions_required += 1;
         }
       }
       for (const a of (activity ?? []) as AnyRow[]) {
@@ -509,15 +498,19 @@ export const listClients = createServerFn({ method: "GET" })
 
     const merged = (rows ?? []).map((r: AnyRow) => {
       const st = stats[r.id]!;
+      const roll = rollups[String(r.id)];
       return {
         ...r,
-        positions_total: st.positions,
-        positions_active: st.active,
-        candidates_delivered: st.candidates_delivered,
+        positions_total: roll?.roles_total ?? 0,
+        positions_active: roll?.roles_open ?? 0,
+        candidates_delivered: roll?.candidates_delivered ?? 0,
+        confirmed_hires: roll?.confirmed_hires ?? 0,
+        seats_used: roll?.seats.seatsUsed ?? 0,
         actions_required: st.actions_required,
         last_activity_at: st.last_activity_at ?? r.updated_at,
       };
     }).filter((r: AnyRow) => {
+
       const { status, industry } = data;
       if (industry && r.industry !== industry) return false;
       // C4: An organization is "active" if it is not archived OR it has active positions.
