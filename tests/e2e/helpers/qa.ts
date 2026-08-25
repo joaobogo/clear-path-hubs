@@ -113,6 +113,7 @@ export type CandidateTruth = {
     status: string;
     withdrawn_at: string | null;
     cv_file_id: string | null;
+    positions?: { status: string | null } | null;
   }>;
   matches: Array<{
     id: string;
@@ -121,7 +122,9 @@ export type CandidateTruth = {
     admin_status: string;
     client_visibility: string;
     processing_state: string;
+    interviews?: Array<{ id: string; status: string; scheduled_at: string | null }> | null;
   }>;
+  open_info_requests?: Array<{ id: string; application_id: string }>;
   files: Array<{
     id: string;
     filename: string;

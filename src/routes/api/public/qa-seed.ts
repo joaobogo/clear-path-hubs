@@ -1790,13 +1790,15 @@ async function handle(request: Request): Promise<Response> {
       const [apps, matches, files] = await Promise.all([
         sb
           .from("applications")
-          .select("id, position_id, status, withdrawn_at, cv_file_id, applied_at")
+          .select(
+            "id, position_id, status, withdrawn_at, cv_file_id, applied_at, positions:position_id ( status )",
+          )
           .eq("candidate_profile_id", cpId)
           .order("applied_at", { ascending: false }),
         sb
           .from("candidate_matches")
           .select(
-            "id, application_id, stage, admin_status, client_visibility, processing_state, updated_at",
+            "id, application_id, stage, admin_status, client_visibility, processing_state, updated_at, interviews ( id, status, scheduled_at )",
           )
           .eq("candidate_profile_id", cpId),
         sb
@@ -1805,6 +1807,13 @@ async function handle(request: Request): Promise<Response> {
           .eq("candidate_profile_id", cpId)
           .order("created_at", { ascending: false }),
       ]);
+      // Open information requests are part of the raw truth a candidate status
+      // is derived from, so the suite can derive the expected status itself.
+      const { data: openInfo } = await sb
+        .from("candidate_info_requests")
+        .select("id, application_id")
+        .eq("candidate_profile_id", cpId)
+        .eq("status", "open");
       const userId = profile.user_id as string | null;
       const messages = userId
         ? (
@@ -1821,6 +1830,7 @@ async function handle(request: Request): Promise<Response> {
         profile,
         applications: apps.data ?? [],
         matches: matches.data ?? [],
+        open_info_requests: openInfo ?? [],
         files: files.data ?? [],
         messages,
       });

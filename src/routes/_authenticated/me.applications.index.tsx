@@ -147,7 +147,7 @@ function MyApplicationsPage() {
  next_interview_at: string | null;
  }>).map((a) => (
 
- <Card key={a.id}>
+ <Card key={a.id} data-application-id={a.id}>
  <CardHeader className="pb-3">
  <div className="flex items-start justify-between gap-4">
  <div className="min-w-0">

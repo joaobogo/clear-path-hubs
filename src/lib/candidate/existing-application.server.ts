@@ -6,6 +6,7 @@
  * another candidate's data, never internal scores or notes.
  */
 import { resolveCandidateState, type StatusInputs } from "./apply-status-model";
+import { toCandidateStatusDTO } from "./status-projection";
 import { CANDIDATE_STATES, type CandidateStateKey } from "./candidate-transparency";
 
 export interface ExistingApplicationSummary {
@@ -87,14 +88,25 @@ export async function loadExistingApplicationSummary(
   };
   const state = resolveCandidateState(inputs);
   const copy = CANDIDATE_STATES[state];
+  // The word and its meaning come from the one candidate projection, so this
+  // card, the portal and the emails say the same thing about the same rows.
+  const projection = toCandidateStatusDTO(
+    {
+      status: app.status as string,
+      withdrawn_at: (app.withdrawn_at as string | null) ?? null,
+      positions: { status: pos?.status ?? null },
+      candidate_matches: matches,
+    },
+    { hasOpenInfoRequest: inputs.hasOpenInfoRequest },
+  );
 
   return {
     application_id: app.id as string,
     reference: ref6(app.id as string),
     applied_at: (app.applied_at as string | null) ?? (app.created_at as string),
     state,
-    status_label: copy.label,
-    status_meaning: copy.meaning,
+    status_label: projection.status,
+    status_meaning: projection.meaning,
     status_happening: copy.happening,
     position_title: pos?.title ?? null,
     organization_name: pos?.organizations?.name ?? null,

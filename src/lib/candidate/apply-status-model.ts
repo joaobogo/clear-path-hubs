@@ -4,6 +4,11 @@
  * the server functions and the UI.
  */
 import type { CandidateStateKey } from "./candidate-transparency";
+import {
+  candidateStateKey,
+  candidateStatusFromFacts,
+  type CandidateLifecycleFacts,
+} from "./status-projection";
 
 export interface StatusInputs {
   applicationStatus: string;
@@ -48,21 +53,23 @@ const JOURNEY: Array<{ key: JourneyKey; label: string; detail: string }> = [
 ];
 
 export function resolveCandidateState(i: StatusInputs): CandidateStateKey {
-  if (i.withdrawnAt) return "withdrawn";
-  if (i.applicationStatus === "rejected" || i.matchStage === "not_moving_forward") {
-    return "decision_made";
-  }
-  if (i.positionStatus === "closed" || i.positionStatus === "filled") return "role_closed";
-  if (i.hasOpenInfoRequest) return "information_required";
-  if (i.needsSupport) return "support_required";
-  if (i.interviewScheduled || i.interviewRequested) return "interview_stage";
-  if (i.matchStage === "offer" || i.matchStage === "hired") return "decision_made";
-  if (i.matchStage === "interview_process") return "interview_stage";
-  if (i.applicationStatus === "processing" || i.applicationStatus === "ready_for_review") {
-    return "under_review";
-  }
-  if (i.matchVisible) return "under_review";
-  return "application_received";
+  // Derived from the one projection of applications + candidate_matches, so the
+  // reference lookup, the receipt and the portal cannot disagree.
+  const facts: CandidateLifecycleFacts = {
+    applicationStatus: i.applicationStatus,
+    withdrawnAt: i.withdrawnAt,
+    positionStatus: i.positionStatus,
+    matchStage: i.matchStage,
+    matchVisible: i.matchVisible,
+    interviewState: i.interviewScheduled
+      ? "scheduled"
+      : i.interviewRequested
+        ? "requested"
+        : "none",
+    hasOpenInfoRequest: i.hasOpenInfoRequest,
+    needsSupport: i.needsSupport,
+  };
+  return candidateStateKey(candidateStatusFromFacts(facts), facts);
 }
 
 function reachedKey(state: CandidateStateKey, i: StatusInputs): JourneyKey {

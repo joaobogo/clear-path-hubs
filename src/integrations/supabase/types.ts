@@ -244,13 +244,6 @@ export type Database = {
             foreignKeyName: "agent_activity_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "agent_activity_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -437,13 +430,6 @@ export type Database = {
             foreignKeyName: "application_answers_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "application_answers_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -612,13 +598,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "applications_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "applications_position_id_fkey"
@@ -1591,13 +1570,6 @@ export type Database = {
             foreignKeyName: "candidate_info_requests_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "candidate_info_requests_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -1795,13 +1767,6 @@ export type Database = {
             foreignKeyName: "candidate_interviewer_assignments_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "candidate_interviewer_assignments_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -1987,13 +1952,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: true
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: true
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -2087,13 +2045,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -2582,13 +2533,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_stage_history_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "candidate_stage_history_position_id_fkey"
@@ -3192,13 +3136,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversations_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "conversations_position_id_fkey"
@@ -4065,13 +4002,6 @@ export type Database = {
             foreignKeyName: "eligibility_checks_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "eligibility_checks_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -4710,13 +4640,6 @@ export type Database = {
             foreignKeyName: "hire_handoff_steps_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "hire_handoff_steps_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -4878,13 +4801,6 @@ export type Database = {
             foreignKeyName: "hire_records_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "hire_records_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -5006,13 +4922,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hire_records_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "hire_records_position_id_fkey"
@@ -5202,13 +5111,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "intake_submissions_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "intake_submissions_position_id_fkey"
@@ -5597,13 +5499,6 @@ export type Database = {
             foreignKeyName: "interview_scorecards_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "interview_scorecards_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -5927,13 +5822,6 @@ export type Database = {
             foreignKeyName: "interviews_candidate_submission_id_fkey"
             columns: ["candidate_submission_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "interviews_candidate_submission_id_fkey"
-            columns: ["candidate_submission_id"]
-            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -5971,13 +5859,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "interviews_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "interviews_position_id_fkey"
@@ -6134,13 +6015,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "lead_notifications_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "lead_notifications_position_id_fkey"
@@ -7265,13 +7139,6 @@ export type Database = {
             foreignKeyName: "notification_events_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "notification_events_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -7393,13 +7260,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "notification_events_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "notification_events_position_id_fkey"
@@ -7999,13 +7859,6 @@ export type Database = {
             foreignKeyName: "outreach_campaigns_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "outreach_campaigns_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -8238,13 +8091,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "applications"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "outreach_touches_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
           },
           {
             foreignKeyName: "outreach_touches_application_id_fkey"
@@ -8566,13 +8412,6 @@ export type Database = {
             foreignKeyName: "payments_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "payments_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -8711,13 +8550,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pilot_claims_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "pilot_claims_position_id_fkey"
@@ -8908,13 +8740,6 @@ export type Database = {
             foreignKeyName: "position_commitments_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: true
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "position_commitments_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: true
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -9018,13 +8843,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "position_info_requests_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "position_info_requests_position_id_fkey"
@@ -9144,13 +8962,6 @@ export type Database = {
             foreignKeyName: "position_locations_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "position_locations_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -9259,13 +9070,6 @@ export type Database = {
             foreignKeyName: "position_sourcing_plans_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: true
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "position_sourcing_plans_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: true
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -9369,13 +9173,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "position_versions_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "position_versions_position_id_fkey"
@@ -10164,13 +9961,6 @@ export type Database = {
             foreignKeyName: "role_memory_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "role_memory_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -10339,13 +10129,6 @@ export type Database = {
             foreignKeyName: "rubric_versions_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "rubric_versions_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -10465,13 +10248,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sales_calls_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "sales_calls_position_id_fkey"
@@ -10881,13 +10657,6 @@ export type Database = {
             foreignKeyName: "score_runs_application_fk"
             columns: ["application_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "score_runs_application_fk"
-            columns: ["application_id"]
-            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -11009,13 +10778,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_runs_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "score_runs_position_id_fkey"
@@ -11544,13 +11306,6 @@ export type Database = {
             foreignKeyName: "screening_questions_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "screening_questions_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -11681,13 +11436,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "search_signals_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "search_signals_position_id_fkey"
@@ -11843,13 +11591,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shortlist_shares_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "shortlist_shares_position_id_fkey"
@@ -12355,13 +12096,6 @@ export type Database = {
             foreignKeyName: "talent_graph_edges_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "talent_graph_edges_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -12581,13 +12315,6 @@ export type Database = {
             foreignKeyName: "talent_memory_source_position_id_fkey"
             columns: ["source_position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "talent_memory_source_position_id_fkey"
-            columns: ["source_position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -12676,13 +12403,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "talent_memory_events_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "talent_memory_events_position_id_fkey"
@@ -13130,13 +12850,6 @@ export type Database = {
             foreignKeyName: "tasks_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "tasks_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -13537,13 +13250,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: true
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: true
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -13595,13 +13301,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -13764,13 +13463,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: true
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: true
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -13808,13 +13500,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -14025,22 +13710,6 @@ export type Database = {
         }
         Relationships: []
       }
-      candidate_my_applications: {
-        Row: {
-          application_id: string | null
-          applied_at: string | null
-          candidate_status: string | null
-          employment_type: Database["public"]["Enums"]["employment_type"] | null
-          location: string | null
-          organization_name: string | null
-          position_id: string | null
-          status: Database["public"]["Enums"]["application_status"] | null
-          title: string | null
-          withdrawn_at: string | null
-          work_model: Database["public"]["Enums"]["work_model"] | null
-        }
-        Relationships: []
-      }
       candidate_profile_view: {
         Row: {
           availability: Json | null
@@ -14165,13 +13834,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -14268,13 +13930,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -14424,13 +14079,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: true
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: true
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -14503,13 +14151,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -14593,13 +14234,6 @@ export type Database = {
             foreignKeyName: "outreach_campaigns_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "outreach_campaigns_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -14663,13 +14297,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "applications"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "notification_events_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
           },
           {
             foreignKeyName: "notification_events_application_id_fkey"
@@ -14801,13 +14428,6 @@ export type Database = {
             foreignKeyName: "notification_events_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "notification_events_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -14889,13 +14509,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: true
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: true
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -14947,13 +14560,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -15036,13 +14642,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
             referencedRelation: "client_positions_view"
             referencedColumns: ["id"]
           },
@@ -15118,13 +14717,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "outreach_campaigns_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "outreach_campaigns_position_id_fkey"
@@ -15331,13 +14923,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: true
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["application_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: true
             referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
@@ -15389,13 +14974,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -15466,13 +15044,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "applications_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "applications_position_id_fkey"
@@ -15625,13 +15196,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_positions_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hire_records_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
           },
           {
             foreignKeyName: "hire_records_position_id_fkey"
