@@ -18,6 +18,11 @@ export const getRouter = () => {
         },
         retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
         staleTime: 30_000,
+        // Clicking back into the workspace must never refetch every mounted
+        // query at once: the resulting render swapped the element under the
+        // cursor between mousedown and mouseup, so the first click was lost.
+        // Panels that genuinely need focus revalidation opt in locally.
+        refetchOnWindowFocus: false,
       },
       mutations: {
         // Mutations never silently retry — surface the failure so the UI can rollback.
@@ -35,7 +40,10 @@ export const getRouter = () => {
     // Stale content from the previous route must never render under a new URL:
     // show the destination's skeleton the instant navigation starts.
     defaultPendingComponent: RoutePendingSkeleton,
-    defaultPendingMs: 0,
+    // A skeleton that appears on the very first frame of a transition replaces
+    // the control the pointer is on, which swallowed the click that started
+    // the transition. Fast transitions now finish without any swap.
+    defaultPendingMs: 350,
     defaultPendingMinMs: 0,
     // Any route without its own 404 surface still gets a designed page.
     defaultNotFoundComponent: PublicNotFound,

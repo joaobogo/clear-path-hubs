@@ -178,7 +178,10 @@ function AccountPage() {
             <CollapsibleTrigger asChild>
               <button
                 type="button"
-                className="group flex w-full items-center justify-between gap-3 rounded-xl border border-dashed bg-muted/30 px-4 py-3 text-left hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                aria-label="Workspace details"
+                /* The whole header row is the target: the label, the hint and
+                   the chevron are inert so no inner span can absorb a click. */
+                className="group flex min-h-12 w-full cursor-pointer select-none items-center justify-between gap-3 rounded-xl border border-dashed bg-muted/30 px-4 py-3 text-left hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&>*]:pointer-events-none"
               >
                 <span className="text-sm font-medium text-foreground">Workspace details</span>
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">

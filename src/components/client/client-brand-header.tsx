@@ -55,13 +55,13 @@ export function ClientBrandHeader({
       {/* Brand accent stripe */}
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 h-1"
+        className="pointer-events-none absolute inset-x-0 top-0 h-1"
         style={{ background: gradient }}
       />
       {/* Soft tint wash */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-0"
+        className="pointer-events-none absolute inset-0 -z-0"
         style={{ background: softTint }}
       />
       <div className="relative flex flex-wrap items-center gap-4 px-5 py-4 sm:px-6">
