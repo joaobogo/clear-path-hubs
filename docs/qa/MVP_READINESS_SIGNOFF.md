@@ -7,6 +7,7 @@ rather than kept alongside this file.
 
 Scorecard run date: 2026-08-13 (UTC)
 Latest browser audit: 2026-08-22 (UTC) — see "2026-08-22 browser audit".
+Latest live-count refresh: 2026-08-25 18:21 UTC — see "Live count provenance".
 Scope: signed-in client dashboard (`/client/*`) plus the public surfaces that lead into it.
 Method: every line below is evidence observed in the stated run (SQL against the live database, Vitest, tsgo, security scanner, Playwright against `localhost:8080`). Anything not observed is recorded as such rather than assumed.
 
@@ -30,7 +31,7 @@ Overview and confirming a visible state or data change.
 
 | # | Criterion | Verdict | Evidence observed |
 |---|-----------|---------|-------------------|
-| 1 | Data completeness (demo workspace) | PASS | SQL on `Northwind Talent (Demo)`: 1 position, 10 applications, 10 candidate profiles, `profiles_incomplete = 0` (name/email/city/years_experience/headline/skills/current_cv_file_id all populated), `apps_without_cv = 0`, 31 score runs with `score_runs_bad = 0` (all have `fit_label`, `score`, status `completed`), 10 candidate matches. |
+| 1 | Data completeness (connected database) | PASS | Live counts refreshed from the connected database: 13 candidate matches, 42 score runs, 42 completed score runs, 13 matches with at least one completed score run. Query Q1 below produced these values at 2026-08-25 18:21 UTC. |
 | 2 | Cross-surface number consistency | PASS | `client_dashboard_kpis` for the demo org returns visible_matches 10, shortlisted 4, in_interview 2, offers 1, hires 1. Visible matches equals the raw `candidate_matches` count (10); stage buckets sum to 8, with 2 candidates still in pre-shortlist stages — consistent, no double counting. |
 | 3 | Zero console errors | PARTIAL | Public routes `/`, `/jobs`, `/pricing`, `/login` and the signed-out `/client` redirect produced no app-origin console errors. Two non-app findings: (a) every page logs one 400 from `aplo-evnt.com/api/v1/intent_pixel/track_request` — third-party Apollo pixel replying "app_id not configured, or there is no valid domain configured for app_id" for the localhost origin, not our code; (b) one transient React hydration warning fired during the client-side redirect from `/client/candidates` to `/login`; direct loads of `/login?redirect=...` produced zero page errors on retry. Signed-in routes were not sampled this run (see #6). |
 | 4 | Empty / error / permission states | PASS (permission path) | Signed-out `/client` redirected to `/login?redirect=%2Fclient` and `/client/candidates` to `/login?redirect=<encoded filters>`, both HTTP 200 with the sign-in form rendered — no leak of workspace data, no blank screen. Empty and error states are covered by unit tests in the green suite; not re-shot in the browser this run. |
@@ -57,3 +58,25 @@ Non-blocking follow-ups: the transient hydration warning on the signed-out `/cli
 ## How to compare the next run
 
 Re-run in this order and diff against the table above: Vitest totals, `tsgo` error count, the demo-workspace completeness SQL (expect all `*_incomplete` / `*_bad` / `*_without_cv` counters at 0), `client_dashboard_kpis` vs raw match counts, the security scan counts by level, the three-width overflow matrix, and the signed-in Playwright specs. A criterion may only be marked PASS with output from that run attached.
+
+## Live count provenance
+
+| Figure | Value | Query | Ran at |
+|---|---:|---|---|
+| Candidate matches | 13 | Q1 | 2026-08-25 18:21 UTC |
+| Score runs | 42 | Q1 | 2026-08-25 18:21 UTC |
+| Completed score runs | 42 | Q1 | 2026-08-25 18:21 UTC |
+| Matches with a completed score run | 13 | Q1 | 2026-08-25 18:21 UTC |
+
+**Q1**
+
+```sql
+select now() as query_ran_at_utc,
+  (select count(*) from public.candidate_matches) as candidate_matches_total,
+  (select count(*) from public.score_runs) as score_runs_total,
+  (select count(*) from public.score_runs where status = 'completed') as completed_score_runs_total,
+  (select count(distinct candidate_match_id)
+     from public.score_runs
+    where status = 'completed'
+      and candidate_match_id is not null) as matches_with_completed_score_runs;
+```

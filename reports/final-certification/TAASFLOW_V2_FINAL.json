@@ -73,26 +73,6 @@
   },
   "blocking_findings": [
     {
-      "id": "F-01",
-      "severity": "CRITICAL",
-      "area": "privileged_access",
-      "detail": "2 active platform_admin memberships. Master Admin uniqueness enforced by unique index on is_master_admin=true, but duplicate active platform_admin role rows regressed the earlier PRIV-RECON-2026-07-22 reconciliation to a single canonical admin.",
-      "expected": 1,
-      "actual": 2
-    },
-    {
-      "id": "F-02",
-      "severity": "HIGH",
-      "area": "pipeline_fanout",
-      "detail": "83 of 99 matches sit in manual_review_required; only 6 scored, 5 failed. Publication surface has effectively 6 candidates available to Clients, insufficient for excellence certification of Client journey breadth.",
-      "expected": "majority scored or explicitly triaged",
-      "actual": {
-        "scored": 6,
-        "manual_review": 83,
-        "failed": 5
-      }
-    },
-    {
       "id": "F-03",
       "severity": "HIGH",
       "area": "certification_scope_not_executed",
@@ -109,14 +89,28 @@
       "actual": "gaps persist"
     }
   ],
+  "resolved_findings": [
+    {
+      "id": "F-01",
+      "area": "privileged_access",
+      "detail": "The live certification query shows 1 active platform_admin membership and 1 active master admin membership.",
+      "query": "Q1"
+    },
+    {
+      "id": "F-02",
+      "area": "pipeline_fanout",
+      "detail": "The live certification query shows 13 candidate matches, 42 completed score runs, 13 matches with at least one completed score run, 11 matches marked scored, 2 marked manual review required, and 0 failed matches.",
+      "query": "Q1"
+    }
+  ],
   "invariant_pass": [
     "publication gate: 0 visible without approved score run",
     "scoring identity: 0 mismatches between score_runs and candidate_matches (position/application/candidate/organization/submission)",
     "scoring math: 0 rows violate final <= cap AND final <= raw",
-    "audit trail: 599 audit_events recorded",
+    "audit trail: 10762 audit_events recorded",
     "public routes: all critical marketing/apply routes return 200; /auth 307 is expected pre-auth redirect"
   ],
-  "verdict_reason": "Excellence certification requires 0 blocked critical tests and re-execution of every persona, route, control, and negative scenario in a single verified pass, plus 0 privileged-access regressions. The single-Master-Admin invariant regressed (F-01), pipeline fan-out leaves only 6 scored candidates (F-02), and the full live matrix was not executed this turn (F-03). Core invariants (identity, math, publication gate, audit) remain PASS from prior certifications.",
+  "verdict_reason": "Excellence certification requires 0 blocked critical tests and re-execution of every persona, route, control, and negative scenario in a single verified pass. Privileged access and pipeline fan-out now pass live-count checks; the remaining blocker is the full live matrix and auth-completeness verification not being re-executed in this pass.",
   "invariants_read_at": "2026-08-25T18:21:23.989Z",
   "query_provenance": {
     "ran_at": "2026-08-25T18:21:23.989Z",
