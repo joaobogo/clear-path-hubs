@@ -70,7 +70,7 @@ export async function loadOrgQaFlags(
  * Convenience helper: load flags and run the guard in one call.
  */
 export async function assertNoQaContamination(
-  db: { from: (table: string) => unknown },
+  db: DbClient,
   orgId: string,
   fields: Array<string | null | undefined>,
 ): Promise<{ ok: boolean; reason: string | null }> {
