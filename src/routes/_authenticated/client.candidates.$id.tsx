@@ -473,6 +473,7 @@ function CandidateDetailPage() {
           matchId={candidate.match_id}
           subject={actionSubject}
           activeInterviewId={activeInterview?.id ?? null}
+          notRecommended={isNotRecommendedFit(candidate.fit_label, candidate.score)}
         />
 
         {dialogAction === "request_interview" && orgId && (

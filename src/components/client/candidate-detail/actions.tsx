@@ -76,6 +76,7 @@ export function ActionArea({
   pendingKey,
   subject,
   activeInterviewId,
+  notRecommended = false,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
   readOnly: boolean;
@@ -87,6 +88,8 @@ export function ActionArea({
   /** Who/what the actions apply to, e.g. "Maria Santos for Front Desk Lead". */
   subject?: string;
   activeInterviewId?: string | null;
+  /** True when the fit band is "Not recommended": evidence leads, not advancing. */
+  notRecommended?: boolean;
 }) {
   const forSubject = subject ? ` for ${subject}` : "";
   return (
@@ -111,6 +114,20 @@ export function ActionArea({
               View interview
             </Link>
           </Button>
+        ) : actions.primary && notRecommended ? (
+          <>
+            <Button asChild className="flex-1 min-h-11">
+              <a href="#requirement-coverage">Review evidence</a>
+            </Button>
+            <Button
+              variant="link"
+              className="h-auto p-0 text-sm"
+              disabled={readOnly || pending}
+              onClick={() => onAct(actions.primary!.key)}
+            >
+              {pendingKey === actions.primary.key ? "Saving…" : actions.primary.label}
+            </Button>
+          </>
         ) : actions.primary ? (
           <Button
             className="flex-1 min-h-11"
