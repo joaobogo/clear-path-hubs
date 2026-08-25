@@ -280,7 +280,7 @@ export function ConversationThread({
       const msg = e instanceof Error ? e.message : "";
       restore(
         msg.includes("SUPPORT_VIEW_READ_ONLY")
-          ? "Support view is read-only — start an interactive session to reply."
+          ? "This session is read-only — start an interactive session to reply."
           : msg.includes("forbidden")
             ? "You do not have permission to post in this thread."
             : "That message was not sent. Your text is still here — try again.",

@@ -192,25 +192,25 @@ export function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"]
           <table className="taas-stack-table w-full text-sm">
             <thead>
               <tr className="border-b text-[11px] uppercase tracking-wide text-muted-foreground">
-                <th className="py-2 text-left font-medium">Business unit</th>
+                <th className="py-2 text-left font-medium">Team</th>
                 <th className="py-2 text-right font-medium">Open roles</th>
                 <th className="py-2 text-right font-medium">Active</th>
                 <th className="py-2 text-right font-medium">Delivered</th>
                 <th className="py-2 text-right font-medium">Shortlisted</th>
                 <th className="py-2 text-right font-medium">Hired</th>
-                <th className="py-2 text-right font-medium">Blocked</th>
+                <th className="py-2 text-right font-medium">Needs your input</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
                 <tr key={r.business_unit} className="border-b last:border-0">
-                  <td data-label="Business unit" className="py-2 font-medium">{r.business_unit}</td>
+                  <td data-label="Team" className="py-2 font-medium">{r.business_unit}</td>
                   <td data-label="Open roles" className="py-2 text-right tabular-nums max-sm:text-left">{r.open_roles}</td>
                   <td data-label="Active" className="py-2 text-right tabular-nums max-sm:text-left">{r.active_candidates}</td>
                   <td data-label="Delivered" className="py-2 text-right tabular-nums max-sm:text-left">{r.delivered}</td>
                   <td data-label="Shortlisted" className="py-2 text-right tabular-nums max-sm:text-left">{r.shortlisted}</td>
                   <td data-label="Hired" className="py-2 text-right tabular-nums max-sm:text-left">{r.hired}</td>
-                  <td data-label="Blocked" className="py-2 text-right tabular-nums max-sm:text-left">
+                  <td data-label="Needs your input" className="py-2 text-right tabular-nums max-sm:text-left">
                     {r.blocked > 0 ? (
                       <Badge variant="destructive">{r.blocked}</Badge>
                     ) : (
@@ -252,7 +252,7 @@ export function TimeInStageCard({ rows }: { rows: ExecutiveReport["time_in_stage
                     {clientStageLabel(r.stage)}
                   </span>
                   <span className="tabular-nums text-muted-foreground">
-                    {r.count} candidates · avg <span className="text-foreground">{r.avg_days}d</span> · p90 <span className="text-foreground">{r.p90_days}d</span>
+                    {r.count} candidates · avg <span className="text-foreground">{r.avg_days}d</span>
                   </span>
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-muted">
@@ -344,7 +344,7 @@ export function FooterLine({ generated_at }: { generated_at: string }) {
       Generated {formatDateTime(generated_at)} · Numbers are live from your
       workspace. See <Link to="/client/offers" className="underline">Offers</Link>,{" "}
       <Link to="/client/positions" className="underline">Roles</Link>, and{" "}
-      <Link to="/client/candidates" className="underline">Candidates</Link> for drill-through.
+      <Link to="/client/candidates" className="underline">Candidates</Link> for the detail.
     </p>
   );
 }

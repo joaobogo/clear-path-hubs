@@ -255,8 +255,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
       )}
 
       <p className="mt-4 text-[11px] text-muted-foreground">
-        Figures above are counts of quoted evidence from the background review. A
-        rescore appends a new run rather than editing this one.
+        Figures above are counts of quoted evidence from the background review. Re-scoring adds a new result; the old one is kept.
       </p>
     </SectionCard>
   );

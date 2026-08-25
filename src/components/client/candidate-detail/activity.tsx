@@ -190,7 +190,7 @@ export function AuditTrailSection({ candidate }: { candidate: ClientCandidateDTO
   if (rows.length === 0) return null;
   return (
     <SectionCard
-      title="Audit trail"
+      title="Full history"
       icon={<FileClock className="h-4 w-4" />}
       description="Timeline of candidate status and actions."
     >
@@ -239,7 +239,7 @@ export function TalentMemoryAction({
       <div className="mb-2 flex items-center justify-between gap-2">
         <h2 className="flex items-center gap-1.5 text-sm font-semibold uppercase tracking-[0.08em]">
           <Award className="h-4 w-4 text-warning-strong" aria-hidden />
-          Talent memory
+          Keep for future roles
         </h2>
         <SilverMedalistBadge orgId={orgId} matchId={matchId} />
       </div>
@@ -253,7 +253,7 @@ export function TalentMemoryAction({
         disabled={readOnly}
         onClick={() => setOpen(true)}
       >
-        Silver medalist
+        Previously shortlisted
       </Button>
       <TagSilverMedalistDialog
         open={open}

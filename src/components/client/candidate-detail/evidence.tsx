@@ -132,7 +132,7 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
       <p className="mt-1 text-xs text-muted-foreground">
         Every category is grounded in verbatim CV evidence and screening
         answers. Nothing is inferred. Each evaluation is versioned and
-        preserved — a rescore appends a new run, never edits the old one.
+        preserved — Re-scoring adds a new result; the old one is kept.
       </p>
 
       {ev.contradiction && (

@@ -86,7 +86,7 @@ function NewRolePage() {
           <CardTitle>New role</CardTitle>
           <CardDescription>
             {orgName
-              ? `Creates a draft in ${orgName} and opens the role wizard. Nothing goes live until it passes the publish gate.`
+              ? `Creates a draft in ${orgName} and opens the role wizard. Nothing goes live until we've reviewed it.`
               : "Creates a draft in your workspace and opens the role wizard."}
           </CardDescription>
         </CardHeader>
