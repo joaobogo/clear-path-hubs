@@ -66,13 +66,7 @@ async function loadByIds(
 
 type Admin = any;
 
-const STAGE_LABEL: Record<string, string> = {
-  screening: "Screening",
-  shortlisted: "Shortlisted",
-  interview_process: "Interviewing",
-  offer: "Offer",
-  not_moving_forward: "Not moving forward",
-};
+
 
 export type BulkParams =
   | { kind: "candidate_stage"; match_ids: string[]; to_stage: BulkStage }
@@ -119,13 +113,13 @@ async function planCandidateStage(
         : [
             {
               field: "stage",
-              from: STAGE_LABEL[row.stage as string] ?? (row.stage as string),
-              to: STAGE_LABEL[toStage] ?? toStage,
+              from: statusLabel(row.stage as string] ?? (row.stage as string),
+              to: statusLabel(toStage] ?? toStage,
             },
           ],
     };
   });
-  return { summary: `Move stage to ${STAGE_LABEL[toStage] ?? toStage}`, rows };
+  return { summary: `Move stage to ${statusLabel(toStage] ?? toStage}`, rows };
 }
 
 async function planCandidateAssign(
@@ -184,7 +178,7 @@ async function planCandidateAssign(
         ? []
         : [
             { field: "application", from: "none", to: "submitted" },
-            { field: "stage", from: "none", to: STAGE_LABEL["screening"]! },
+            { field: "stage", from: "none", to: statusLabel("screening"]! },
             { field: "client_visibility", from: "none", to: "hidden" },
           ],
     };

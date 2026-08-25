@@ -91,15 +91,7 @@ export async function resolveDashboardEntitlement(
 
 // ─── Block loaders ──────────────────────────────────────────────────────────
 
-const STAGE_LABEL: Record<string, string> = {
-  reviewing: "In review",
-  delivered: "With you",
-  shortlisted: "Shortlisted",
-  interview_process: "Interviewing",
-  offer: "Offer",
-  hired: "Hired",
-  not_moving_forward: "Not moving forward",
-};
+
 
 function days(from: string, to: string) {
   return (new Date(to).getTime() - new Date(from).getTime()) / 86_400_000;
