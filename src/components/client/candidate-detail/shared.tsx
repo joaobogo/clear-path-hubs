@@ -115,21 +115,12 @@ export function CandidateHeader({
               {c.location}
             </span>
           )}
-          {(c.timezone || c.availability || candidate.work_authorization || c.email || c.phone || candidate.languages.length > 0) && (
+          {/* Email, phone, LinkedIn, timezone, work authorization and languages
+              live only in the Contact card — never repeated here. */}
+          {c.availability && (
             <span className="inline-flex items-center gap-1">
               <CalendarClock className="h-3.5 w-3.5" aria-hidden />
-              {[
-                c.email,
-                c.phone,
-                c.timezone,
-                c.availability,
-                candidate.work_authorization,
-                candidate.languages.length > 0
-                  ? `Languages: ${candidate.languages.map((l) => (l.level ? `${l.name} (${l.level})` : l.name)).join(", ")}`
-                  : null,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
+              {c.availability}
             </span>
           )}
 
