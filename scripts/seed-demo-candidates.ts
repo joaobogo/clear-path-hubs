@@ -593,6 +593,9 @@ async function main() {
         .from("score_runs")
         .insert({
           candidate_match_id: match.id,
+          application_id: application.id,
+          candidate_profile_id: profile.id,
+          organization_id: org.id,
           position_id: position.id,
           rubric_version_id: rubric.id,
           engine_version: ENGINE_VERSION,
