@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
+import { useHydrated } from "@/hooks/use-hydrated";
 import {
   PILOT_INELIGIBLE_CLIENT_MESSAGE,
   PILOT_ONE_PER_COMPANY,
@@ -331,6 +332,9 @@ function mergeCarry(base: CarryForward | null, extra: CarryForward | null): Carr
 
 function ExpressIntakePage() {
   const navigate = useNavigate();
+  // Until React has taken over the page, typing into these fields would be
+  // wiped by hydration and taps would do nothing. Show a placeholder instead.
+  const hydrated = useHydrated();
   const [state, setState] = useState<FormState>(EMPTY);
   const [jdFile, setJdFile] = useState<JdFile | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -1746,6 +1750,30 @@ function ExpressIntakePage() {
       trackEvent("job_description_pasted", { flow: "express_onboarding" });
     }
   }, [jdChars]);
+
+  if (!hydrated) {
+    return (
+      <FormShell
+        width="lg"
+        eyebrow="Start hiring"
+        title="Launch a role in minutes."
+        description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
+      >
+        <div className="space-y-4" aria-busy="true" data-testid="intake-loading">
+          <p className="flex items-center gap-2 text-sm text-[color:var(--brand-navy)]/75">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            Opening your form…
+          </p>
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-24 animate-pulse rounded-xl bg-[color:var(--brand-navy)]/8"
+            />
+          ))}
+        </div>
+      </FormShell>
+    );
+  }
 
   return (
     <FormShell
