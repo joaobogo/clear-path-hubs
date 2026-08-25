@@ -319,7 +319,9 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       });
 
       const awaiting = posRows.filter(isAwaitingClientDecision);
-      const toConfirm = posRows.filter((r) => r.interview_needs_confirmation);
+      // Ages come from the interview requests themselves, so the banner and the
+      // queue above it always name the same interview.
+      const pendingInterviewRequests = pendingByPosition.get(p.id as string) ?? [];
       const commitment = commitmentByPosition.get(p.id as string);
       const promisedShortlistBy =
         commitment?.baseline_at && commitment?.first_shortlist_days != null
