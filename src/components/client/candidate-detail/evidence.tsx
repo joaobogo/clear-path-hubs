@@ -28,9 +28,9 @@ import type {
   RequirementRow,
   RequirementStatus,
 } from "@/lib/client-fit-presentation";
-import { SectionCard, Metric } from "./shared";
+import { SectionCard } from "./shared";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
-import { getEvidenceCounts, MUST_HAVE_MEASURE_LABELS } from "@/lib/client/evidence-counts";
+import { getEvidenceCounts } from "@/lib/client/evidence-counts";
 import { requirementStatusLabel, resolveRequirementStatus } from "@/lib/client/requirement-status";
 
 
@@ -489,13 +489,6 @@ export const RequirementCoverage = memo(function RequirementCoverage({
       {rationale && rationale.lines.length > 0 && (
         <p className="mb-3 text-xs text-muted-foreground">{rationale.summary}</p>
       )}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-
-        <Metric label={MUST_HAVE_MEASURE_LABELS.fully_met} value={getEvidenceCounts(requirement_rows).must_met} tone="emerald" />
-        <Metric label="Partially met" value={getEvidenceCounts(requirement_rows).partial} tone="amber" />
-        <Metric label="Not evidenced" value={getEvidenceCounts(requirement_rows).unknown} tone="slate" />
-        <Metric label="Preferred met" value={requirement_rows.filter(r => r.importance === 'preferred' && r.status === 'met').length} tone="sky" />
-      </div>
       <div className="mt-4">
         {(() => {
           // The progress bar and the label must share the same percentage:
@@ -558,9 +551,6 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
     ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
     : null;
   const counts = getEvidenceCounts(candidate.requirement_rows);
-  // The progress bar must match the label: only direct quoted passages count.
-  const coveragePct =
-    counts.total > 0 ? Math.round((counts.quoted / counts.total) * 100) : 0;
 
   return (
     <SectionCard
@@ -579,23 +569,39 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
 
       {withCoverage && counts.total > 0 && (
         <div className="mt-4">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Metric label={MUST_HAVE_MEASURE_LABELS.fully_met} value={counts.must_met} tone="emerald" />
-            <Metric label="Partially met" value={counts.partial} tone="amber" />
-            <Metric label="Not evidenced" value={counts.unknown} tone="slate" />
-            <Metric
-              label="Preferred met"
-              value={candidate.requirement_rows.filter((r) => r.importance === "preferred" && r.status === "met").length}
-              tone="sky"
-            />
+          <div
+            className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted"
+            role="img"
+            aria-label={`Requirement coverage: ${counts.met} fully met, ${counts.partial} partly evidenced, ${counts.unknown} not evidenced`}
+          >
+            {counts.met > 0 && (
+              <div
+                className="h-full taas-bg-success-solid"
+                style={{ width: `${(counts.met / counts.total) * 100}%` }}
+              />
+            )}
+            {counts.partial > 0 && (
+              <div
+                className="h-full taas-bg-warning-solid"
+                style={{ width: `${(counts.partial / counts.total) * 100}%` }}
+              />
+            )}
+            {counts.unknown > 0 && (
+              <div
+                className="h-full taas-bg-neutral-solid"
+                style={{ width: `${(counts.unknown / counts.total) * 100}%` }}
+              />
+            )}
           </div>
-          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-            <span>Requirements with a quoted passage</span>
-            <span className="tabular-nums">
-              {counts.quoted} of {counts.total} · {coveragePct}%
-            </span>
-          </div>
-          <Progress value={coveragePct} className="mt-1" />
+          <p className="mt-2 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">{counts.total} requirements</span>
+            {" — "}
+            {counts.met} fully met · {counts.partial} partly evidenced · {counts.unknown} not evidenced
+          </p>
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Direct quotes on record: {counts.quoted} of {counts.total}
+            {counts.partial > 0 && " — partial rows are backed by related signals"}
+          </p>
           <Separator className="mt-4" />
         </div>
       )}
