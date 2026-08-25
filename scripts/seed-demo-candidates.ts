@@ -556,10 +556,17 @@ async function main() {
     if (evidenceError) throw new Error(`evidence insert failed for ${seed.name}: ${evidenceError.message}`);
 
     // --- Evidence items: CV, interview recording, assessment --------------
+    const candidateTurns = transcript.turns.filter((turn) => turn.speaker === "Candidate");
+    const interviewText = interviewNotes(transcript, seed);
+    const assessmentText = assessmentNotes(assessment, seed);
+
     const items = requirements.flatMap((requirement, reqIndex) => {
       const isQuoted = reqIndex < quoted;
-      const cvSnippetStart = Math.max(0, cv.indexOf("Experience"));
-      const cvSnippet = cv.slice(cvSnippetStart, cvSnippetStart + 220).replace(/\n/g, " ").trim();
+      const isPartiallyCredited = !isQuoted && reqIndex < quoted + partiallyCredited;
+      const cvSnippetStart = Math.max(0, cv.search(/EXPERIENCE|EXPERI[ÊE]NCIA/));
+      const cvSnippet = cv.slice(cvSnippetStart, cvSnippetStart + 320).replace(/\n/g, " ").trim();
+      const turn = candidateTurns[reqIndex % Math.max(1, candidateTurns.length)];
+      const question = assessment.questions[reqIndex % assessment.questions.length]!;
       const rows: Record<string, unknown>[] = [];
 
       rows.push({
@@ -571,7 +578,12 @@ async function main() {
         match_type: isQuoted ? "direct" : "missing",
         confidence: isQuoted ? Number((0.78 + (seed.score - 70) / 200).toFixed(2)) : 0.25,
         source_passage: isQuoted ? cvSnippet : "",
-        source_location: { source: "cv", range: `cv:${cvSnippetStart}-${cvSnippetStart + 220}` },
+        source_location: {
+          source: "cv",
+          template: cvTemplate.id,
+          language: cvTemplate.language,
+          range: `cv:${cvSnippetStart}-${cvSnippetStart + 320}`,
+        },
         normalized_meaning: requirement,
         reviewer_status: "accepted",
         engine_version: ENGINE_VERSION,
@@ -581,7 +593,7 @@ async function main() {
         created_at: appliedAt.toISOString(),
       });
 
-      if (isQuoted || reqIndex < quoted + Math.ceil(partial / 2)) {
+      if ((isQuoted || isPartiallyCredited) && turn) {
         rows.push({
           candidate_evidence_id: evidence.id,
           candidate_match_id: match.id,
@@ -590,10 +602,13 @@ async function main() {
           rubric_dimension_key: `req-${reqIndex}`,
           match_type: isQuoted ? "direct" : "transferable",
           confidence: isQuoted ? 0.9 : 0.5,
-          source_passage: isQuoted
-            ? `Interview recording (${interviewAt.toISOString().slice(0, 10)}): walked through "${requirement}" with a worked example from ${seed.stack[reqIndex % seed.stack.length]} work.`
-            : `Interview recording (${interviewAt.toISOString().slice(0, 10)}): touched on "${requirement}" without a concrete example.`,
-          source_location: { source: "interview", timestamp: `00:${String(8 + reqIndex * 6).padStart(2, "0")}:00` },
+          source_passage: turn.text,
+          source_location: {
+            source: "interview",
+            transcript: transcript.id,
+            depth: transcript.depth,
+            timestamp: `00:${String(8 + reqIndex * 6).padStart(2, "0")}:00`,
+          },
           normalized_meaning: requirement,
           reviewer_status: "accepted",
           engine_version: ENGINE_VERSION,
@@ -610,23 +625,29 @@ async function main() {
         organization_id: org.id,
         rubric_criterion_key: `req-${reqIndex}`,
         rubric_dimension_key: `req-${reqIndex}`,
-        match_type: isQuoted ? "direct" : "transferable",
-        confidence: isQuoted ? 0.85 : 0.45,
-        source_passage: isQuoted
-          ? `Assessment submission: the delivered slice covers "${requirement}" — reviewer marked it fully met.`
-          : `Assessment submission: "${requirement}" was addressed but shallow — partial credit awarded.`,
-        source_location: { source: "assessment", section: `requirement-${reqIndex + 1}` },
+        match_type: question.verdict === "correct" ? "direct" : question.verdict === "partial" ? "transferable" : "missing",
+        confidence: question.verdict === "correct" ? 0.85 : question.verdict === "partial" ? 0.45 : 0.2,
+        source_passage:
+          question.verdict === "incorrect" ? "" : `${question.prompt} — ${question.note}`,
+        source_location: {
+          source: "assessment",
+          submission: assessment.id,
+          accuracy: assessment.accuracy,
+          section: `question-${reqIndex + 1}`,
+        },
         normalized_meaning: requirement,
         reviewer_status: "accepted",
         engine_version: ENGINE_VERSION,
-        result: isQuoted ? "strong" : "partial",
-        validation_need: null,
+        result:
+          question.verdict === "correct" ? "strong" : question.verdict === "partial" ? "partial" : "missing",
+        validation_need: question.verdict === "correct" ? null : "confirm_in_interview",
         source_kind: "application_answer",
         created_at: assessmentAt.toISOString(),
       });
 
       return rows;
     });
+
 
     const { error: itemsError } = await sb.from("candidate_evidence_items").insert(items);
     if (itemsError) throw new Error(`evidence items insert failed for ${seed.name}: ${itemsError.message}`);
