@@ -226,6 +226,13 @@ export function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"]
             </tbody>
           </table>
         )}
+        {rows.length > 0 && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            &ldquo;Needs your input&rdquo; counts candidates waiting on a decision
+            or interview confirmation from your team.
+          </p>
+        )}
+
       </CardContent>
     </Card>
   );
