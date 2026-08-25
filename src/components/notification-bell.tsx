@@ -31,6 +31,7 @@ import { staggerStyle, useArrivals, useJustChanged } from "@/lib/motion/use-moti
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toastError } from "@/lib/toast-error";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { isAdminPath, resolveClientNotificationLink } from "@/lib/notifications/client-link";
 
 export const NOTIFICATIONS_QUERY_KEY = ["notifications", "mine"] as const;
 
