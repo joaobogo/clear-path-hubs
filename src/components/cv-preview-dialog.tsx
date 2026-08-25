@@ -230,9 +230,23 @@ export function CvPreviewDialog({
               )
             ) : null}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
             <DownloadCvButton matchId={matchId} mode="download" />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              data-qa-action="close-cv-preview"
+              onClick={() => {
+                setOpen(false);
+                clearTimer();
+                releasePageInteraction();
+              }}
+            >
+              Close
+            </Button>
           </div>
+
         </DialogContent>
       </Dialog>
     </>
