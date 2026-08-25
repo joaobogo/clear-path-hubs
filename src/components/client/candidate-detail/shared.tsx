@@ -61,6 +61,8 @@ export function CandidateHeader({
             humanReviewed={candidate.human_review?.reviewed === true}
             evidencePending={candidate.explanation?.kind === "evidence_pending"}
             unicorn={candidate.unicorn}
+            hideScore
+            hideBand
           />
           <Badge variant="outline" className="capitalize">
             {formatEnumLabel(candidate.stage)}
