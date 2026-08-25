@@ -447,6 +447,9 @@ export const savePositionEdit = createServerFn({ method: "POST" })
         posting: {
           ...((priorCtx.posting ?? {}) as AnyRow),
           company_intro: data.company_intro || "",
+          // The public listing reads its sections from posting.*, so anything
+          // marked public in the field registry must be written here too.
+          responsibilities: data.responsibilities || "",
           benefits: data.benefits || "",
           languages: data.languages || "",
           travel: data.travel || "",
