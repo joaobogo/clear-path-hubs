@@ -16,6 +16,12 @@ import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { formatEnumLabel } from "@/lib/human-labels";
