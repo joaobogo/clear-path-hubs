@@ -50,7 +50,7 @@ import {
   AvailabilityPanel,
   ExperienceTimeline,
   InterviewGuide,
-  LinksPanel,
+  
   SkillsAndEducation,
 } from "@/components/client/candidate-detail/profile";
 
