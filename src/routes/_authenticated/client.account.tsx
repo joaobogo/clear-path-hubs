@@ -277,7 +277,7 @@ export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
             : `${data?.seats.remaining ?? 0} seat${data?.seats.remaining === 1 ? "" : "s"} free`
         }
       />
-      {data?.subscription.renewal_date ? (
+      {data?.subscription.renewal_date && fmtDate(data.subscription.renewal_date) ? (
         <Tile
           icon={<CalendarClock className="h-4 w-4" />}
           label="Renews"
