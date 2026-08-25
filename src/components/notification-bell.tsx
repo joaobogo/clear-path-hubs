@@ -188,15 +188,22 @@ export function NotificationBell({ role = "client" }: { role?: "admin" | "client
             <div>
               <div className="text-sm font-semibold">Notifications</div>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {needsAttention > 0
-                  ? `${needsAttention} ${needsAttention === 1 ? "item needs" : "items need"} your attention.`
+                {/* The headline reads from the SAME unread count as the bell
+                    badge, so a bell with no badge can never sit above a panel
+                    announcing unread updates. Read rows are described as
+                    earlier updates, not as things waiting on you. */}
+                {unreadRows > 0
+                  ? `${unreadRows} ${unreadRows === 1 ? "unread update" : "unread updates"}${
+                      needsAttention > 0
+                        ? `, ${needsAttention} ${needsAttention === 1 ? "needs" : "need"} your attention`
+                        : ""
+                    }.`
                   : totalRows > 0
-                    ? `${totalRows} ${totalRows === 1 ? "update" : "updates"} for you${
-                        unreadRows > 0 ? `, ${unreadRows} unread` : ""
-                      }.`
+                    ? `You're up to date. ${totalRows} ${totalRows === 1 ? "earlier update" : "earlier updates"} below.`
                     : "Nothing is waiting on you."}
               </p>
             </div>
+
             <Button
               variant="ghost"
               size="sm"
