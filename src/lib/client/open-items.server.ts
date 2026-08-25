@@ -208,11 +208,13 @@ export async function loadClientOpenItems(
     if (row.stage !== "offer") continue;
     const offer = offerMap.get(row.id);
     const due = offer?.due ?? row.client_decision_due_at;
+    const name = matchNames.get(row.id);
+    const holder = offer ? `waiting on ${offer.holder}` : "awaiting response";
     items.push({
       kind: "offer",
       id: row.id,
       subject_id: row.id,
-      label: offer ? `Offer — waiting on ${offer.holder}` : "Offer awaiting response",
+      label: name ? `Offer for ${name} — ${holder}` : `Offer — ${holder}`,
       context: roleLine(row.position_id),
       href: "/client/offers",
       due_at: due,
@@ -221,16 +223,15 @@ export async function loadClientOpenItems(
     });
   }
 
-  // Interviews that still need a time come from the one shared query the Roles
-  // banner uses. The subject key is namespaced so an offer or decision on the
-  // same candidate can never collapse this row away and shrink the count.
-  const pendingConfirmations = await loadInterviewsAwaitingConfirmation(supabase, orgId);
+  // The subject key is namespaced so an offer or decision on the same candidate
+  // can never collapse this row away and shrink the count.
   for (const pending of pendingConfirmations) {
+    const name = matchNames.get(pending.candidate_match_id);
     items.push({
       kind: "interview",
       id: pending.interview_id,
       subject_id: `interview:${pending.candidate_match_id}`,
-      label: "Confirm an interview time",
+      label: name ? `Confirm an interview time for ${name}` : "Confirm an interview time",
       context: roleLine(pending.position_id),
       href: `/client/interviews?interview=${pending.interview_id}`,
       due_at: null,
@@ -238,6 +239,7 @@ export async function loadClientOpenItems(
       waiting_since: pending.requested_at,
     });
   }
+
 
   return { items: sortOpenItems(dedupeOpenItems(items)), blockedRoles };
 }
