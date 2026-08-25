@@ -18,6 +18,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { formatPeriod } from "@/lib/format/datetime";
@@ -32,13 +33,16 @@ export const InterviewGuide = memo(function InterviewGuide({
   const guide = candidate.interview_guide;
   const [copied, setCopied] = useState(false);
   const copy = () => {
-    const text = guide
-      .map(
-        (q) =>
-          `• ${q.question}\n  Why: ${q.why}\n  Look for: ${q.indicators.join("; ")}` +
-          (q.followUp ? `\n  Follow-up: ${q.followUp}` : ""),
-      )
-      .join("\n\n");
+    const header = "Look for in every answer: Specific project examples; Quantifiable results; Duration of experience.\n\n";
+    const text =
+      header +
+      guide
+        .map(
+          (q) =>
+            `• ${q.question}\n  Why: ${q.why}` +
+            (q.followUp ? `\n  Follow-up: ${q.followUp}` : ""),
+        )
+        .join("\n\n");
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       toast.success("Interview guide copied");
@@ -74,6 +78,20 @@ export const InterviewGuide = memo(function InterviewGuide({
       }
     >
       <div className="space-y-4">
+        <div className="rounded-md border bg-background/40 p-3">
+          <p className="mb-2 text-xs font-medium text-muted-foreground">
+            Look for in every answer:
+          </p>
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
+            {["Specific project examples", "Quantifiable results", "Duration of experience"].map((label) => (
+              <label key={label} className="flex items-center gap-2 text-sm">
+                <Checkbox defaultChecked={false} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
         {Object.entries(groups).map(([group, qs]) => (
           <div key={group}>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -90,16 +108,6 @@ export const InterviewGuide = memo(function InterviewGuide({
                     <span className="font-medium text-foreground/70">Why: </span>
                     {q.why}
                   </p>
-                  {q.indicators.length > 0 && (
-                    <ul className="mt-2 space-y-0.5 text-xs text-foreground/80">
-                      {q.indicators.map((ind, j) => (
-                        <li key={j} className="flex gap-1.5">
-                          <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 taas-fg-success" aria-hidden />
-                          <span>{ind}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                   {q.followUp && (
                     <p className="mt-2 text-xs text-muted-foreground">
                       Follow-up: {q.followUp}
