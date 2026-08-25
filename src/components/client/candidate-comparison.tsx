@@ -507,7 +507,7 @@ export function CompareSheet({
                 <ul key={c.match_id} className="text-xs space-y-1">
                   {c.education.slice(0, 3).map((e, i) => (
                     <li key={i}>
-                      <div className="font-medium">{e.degree ?? "Not specified"}</div>
+                      <div className="font-medium">{e.degree ?? "Not provided"}</div>
                       {e.institution && (
                         <div className="text-muted-foreground truncate">{e.institution}</div>
                       )}
