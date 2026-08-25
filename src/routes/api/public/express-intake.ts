@@ -27,6 +27,7 @@ import {
 import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import { readJsonWithLimit } from "@/lib/public-api/body-limit";
 import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
+import { assertNoQaContamination, qaGuardValues } from "@/lib/qa-guard";
 
 
 /**
@@ -293,6 +294,51 @@ export const Route = createFileRoute("/api/public/express-intake")({
             }
           }
         }
+        const qaFields = [
+          data.companyName,
+          data.workEmail,
+          data.firstName,
+          data.lastName,
+          data.contactTitle,
+          data.roleTitle,
+          data.team,
+          data.location,
+          data.decisionMaker,
+          data.decisionMakerEmail,
+          ...(data.requirements ?? []).map((r) => r.text),
+          ...collaboratorCandidates(data.interviewStages ?? [], {
+            name: data.decisionMaker,
+            email: data.decisionMakerEmail,
+          }).flatMap((c) => [c.name, c.email]),
+        ];
+        if (organizationId) {
+          const qa = await assertNoQaContamination(admin, organizationId, qaFields);
+          if (!qa.ok) {
+            return Response.json(
+              {
+                ok: false,
+                trace_id: traceId,
+                error: "qa_fixture_blocked",
+                message: qa.reason ?? "Invalid input",
+              },
+              { status: 400 },
+            );
+          }
+        } else {
+          const qa = qaGuardValues(qaFields);
+          if (!qa.ok) {
+            return Response.json(
+              {
+                ok: false,
+                trace_id: traceId,
+                error: "qa_fixture_blocked",
+                message: qa.reason ?? "Invalid input",
+              },
+              { status: 400 },
+            );
+          }
+        }
+
         if (!organizationId && claimedExistingOrgId) {
           await auditConflict({
             scope: "express_intake",

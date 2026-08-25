@@ -14,6 +14,7 @@ import {
 import { auditConflict, auditRateLimited } from "@/lib/public-api/outcome-audit";
 import { readJsonWithLimit } from "@/lib/public-api/body-limit";
 import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
+import { assertNoQaContamination, qaGuardValues } from "@/lib/qa-guard";
 
 // ---------- Canonical intake payload contract ----------
 const workModel = z.enum(["remote", "hybrid", "onsite"]);
@@ -300,6 +301,54 @@ export const Route = createFileRoute("/api/public/intake")({
             }
           }
         }
+        if (organizationId) {
+          const qa = await assertNoQaContamination(supabaseAdmin, organizationId, [
+            data.companyName,
+            data.workEmail,
+            data.firstName,
+            data.lastName,
+            data.currentTitle,
+            data.headquarters,
+            data.roleTitle,
+            data.location,
+            ...data.targetTitles,
+          ]);
+          if (!qa.ok) {
+            return Response.json(
+              {
+                ok: false,
+                trace_id: traceId,
+                error: "qa_fixture_blocked",
+                message: qa.reason ?? "Invalid input",
+              },
+              { status: 400 },
+            );
+          }
+        } else {
+          const qa = qaGuardValues([
+            data.companyName,
+            data.workEmail,
+            data.firstName,
+            data.lastName,
+            data.currentTitle,
+            data.headquarters,
+            data.roleTitle,
+            data.location,
+            ...data.targetTitles,
+          ]);
+          if (!qa.ok) {
+            return Response.json(
+              {
+                ok: false,
+                trace_id: traceId,
+                error: "qa_fixture_blocked",
+                message: qa.reason ?? "Invalid input",
+              },
+              { status: 400 },
+            );
+          }
+        }
+
         if (!organizationId && claimedExistingOrgId) {
           await auditConflict({
             scope: "intake",

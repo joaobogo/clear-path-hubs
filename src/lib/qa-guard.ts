@@ -30,6 +30,7 @@ export function qaGuardValues(values: Array<string | null | undefined>): {
 export type QaSafeOrg = {
   is_demo?: boolean | null;
   is_test_record?: boolean | null;
+  is_qa?: boolean | null;
 };
 
 /**
@@ -37,7 +38,7 @@ export type QaSafeOrg = {
  * Allowed when is_demo or is_test_record is true.
  */
 export function isQaSafeOrg(org: QaSafeOrg): boolean {
-  return Boolean(org.is_demo) || Boolean(org.is_test_record);
+  return Boolean(org.is_demo) || Boolean(org.is_test_record) || Boolean(org.is_qa);
 }
 
 /**
@@ -50,7 +51,7 @@ export async function loadOrgQaFlags(
   orgId: string,
 ): Promise<{ ok: false; reason: string } | { ok: true; org: QaSafeOrg }> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const res: any = await db.from("organizations").select("id,is_demo,is_test_record").eq("id", orgId);
+  const res: any = await db.from("organizations").select("id,is_demo,is_test_record,is_qa").eq("id", orgId);
   if (res.error) return { ok: false, reason: res.error.message };
   const org = (res.data ?? [])[0] as QaSafeOrg | undefined;
   if (!org) return { ok: false, reason: "Organization not found" };
