@@ -99,6 +99,24 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       data.orgId,
     );
     const rows = await loadKpiRows(s, data.orgId);
+
+    // Interviews still waiting on a confirmed time — the one shared query the
+    // Overview queue and the Interviews page read. The "at risk" line must age
+    // a real interview request, never an offer's stage date.
+    const { loadInterviewsAwaitingConfirmation } = await import(
+      "./client/interviews-to-confirm.server"
+    );
+    const pendingConfirmations = await loadInterviewsAwaitingConfirmation(
+      context.supabase,
+      data.orgId,
+    );
+    const pendingByPosition = new Map<string, string[]>();
+    for (const pending of pendingConfirmations) {
+      if (!pending.position_id) continue;
+      const list = pendingByPosition.get(pending.position_id) ?? [];
+      if (pending.requested_at) list.push(pending.requested_at);
+      pendingByPosition.set(pending.position_id, list);
+    }
     
     // Seat count reconciliation (B4 fix): Fetch memberships to get real-time seat counts.
     const { activeMembers } = await (async () => {
