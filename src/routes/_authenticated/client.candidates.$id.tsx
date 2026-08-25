@@ -524,10 +524,6 @@ function CandidateDetailPage() {
   </TabsList>
 
  <TabsContent value="summary" className="mt-4 space-y-4">
-  <RequirementCoverage candidate={candidate} withRationale />
-  <ScoreBreakdown candidate={candidate} />
-
- <WhyThisCandidate candidate={candidate} />
  {compQuery.isError ? (
  <QueryErrorCard
  compact
