@@ -61,13 +61,15 @@ export type ScoreBreakdown = {
 };
 
 function countRows(rows: RequirementRow[]) {
-  const met = rows.filter((r) => r.status === "met").length;
-  const partial = rows.filter((r) => r.status === "partial").length;
-  const missing = rows.filter(
-    (r) => r.status === "not_evidenced" || r.status === "contradicted",
-  ).length;
+  // Same resolution the coverage panel and the header chip use, so the group
+  // captions cannot claim evidence the requirement list does not show.
+  const statuses = rows.map((r) => resolveRequirementStatus(r));
+  const met = statuses.filter((s) => s === "met").length;
+  const partial = statuses.filter((s) => s === "partial").length;
+  const missing = statuses.filter((s) => s === "not_evidenced" || s === "contradicted").length;
   return { met, partial, missing };
 }
+
 
 function mustTakeaway(c: { met: number; partial: number; missing: number; total: number }) {
   if (c.total === 0) return "No must-haves were declared for this role.";
