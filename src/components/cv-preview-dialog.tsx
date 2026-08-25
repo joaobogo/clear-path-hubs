@@ -151,13 +151,18 @@ export function CvPreviewDialog({
         {label}
       </Button>
       <Dialog
+        modal={false}
         open={open}
         onOpenChange={(next) => {
           setOpen(next);
-          if (!next) clearTimer();
+          if (!next) {
+            clearTimer();
+            releasePageInteraction();
+          }
         }}
       >
         <DialogContent className="max-w-4xl" data-qa="cv-preview-dialog">
+
           <DialogHeader>
             <DialogTitle>
               CV{candidateName ? ` — ${candidateName}` : ""}
