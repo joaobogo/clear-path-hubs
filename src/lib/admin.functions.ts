@@ -6,6 +6,7 @@ import { pilotEndsAt } from "@/lib/pilot-state";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import type { EventType } from "./events";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -2116,12 +2117,28 @@ export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
     const { data: rows } = await s
       .from("candidate_matches")
       .select(
-        "id,stage,processing_state,recommendation,canonical_state,admin_status,client_visibility,updated_at,candidate_profiles(id,full_name,email),positions(id,title),score_runs:approved_score_run_id(score,fit_label,fit_band)",
+        "id,stage,processing_state,recommendation,canonical_state,admin_status,client_visibility,updated_at,candidate_profiles(id,full_name,email),positions(id,title),approved_run:approved_score_run_id(score,fit_label,fit_band),current_run:current_score_run_id(score,fit_label,fit_band)",
       )
       .eq("organization_id", data.id)
       .order("updated_at", { ascending: false })
       .limit(data.limit);
-    return (rows ?? []) as AnyRow[];
+    // Stage, score and fit come from the same records the client workspace
+    // reads: the pipeline stage on the match and the approved score run (the
+    // in-flight run only as a fallback for candidates not yet approved).
+    return ((rows ?? []) as AnyRow[]).map((r) => {
+      const run = (r.approved_run ?? r.current_run ?? null) as AnyRow | null;
+      const score = typeof run?.score === "number" ? run.score : null;
+      const fit = toFitPresentation(
+        (run?.fit_label ?? run?.fit_band ?? null) as string | null,
+        score,
+      );
+      return {
+        ...r,
+        current_stage: r.stage ?? null,
+        fit_score_final: score,
+        fit_band: score === null && !run ? null : fit.headline,
+      };
+    }) as AnyRow[];
   });
 
 export const getClientDocuments = createServerFn({ method: "GET" })

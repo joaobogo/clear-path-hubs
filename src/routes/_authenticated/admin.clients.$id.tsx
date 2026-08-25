@@ -29,6 +29,7 @@ import {
   updateClientNotes,
   restoreOrganization,
 } from "@/lib/admin.functions";
+import { stageDisplayName } from "@/lib/client/stage-display";
 import { humanizeCode } from "@/lib/humanize-codes";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -694,10 +695,10 @@ function CandidatesTab({ id }: { id: string }) {
                 </Link>
               </td>
               <td className="min-w-[10rem] px-3 py-2 text-muted-foreground">{r.positions?.title ?? "—"}</td>
-              <td className="whitespace-nowrap px-3 py-2 capitalize">{r.current_stage ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2">{stageDisplayName(r.current_stage)}</td>
               <td className="whitespace-nowrap px-3 py-2 text-xs">{r.processing_state ? humanizeCode(r.processing_state) : "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 tabular-nums">{r.fit_score_final ?? "—"}</td>
-              <td className="whitespace-nowrap px-3 py-2 capitalize">{r.fit_band ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2">{r.fit_band ?? "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 text-xs">{r.admin_status ? humanizeCode(r.admin_status) : "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 capitalize text-xs">{r.client_visibility ?? "—"}</td>
             </tr>
