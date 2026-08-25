@@ -493,7 +493,7 @@ async function main() {
           organization_id: org.id,
           rubric_criterion_key: `req-${reqIndex}`,
           rubric_dimension_key: `req-${reqIndex}`,
-          match_type: isQuoted ? "direct" : "related",
+          match_type: isQuoted ? "direct" : "transferable",
           confidence: isQuoted ? 0.9 : 0.5,
           source_passage: isQuoted
             ? `Interview recording (${interviewAt.toISOString().slice(0, 10)}): walked through "${requirement}" with a worked example from ${seed.stack[reqIndex % seed.stack.length]} work.`
@@ -515,7 +515,7 @@ async function main() {
         organization_id: org.id,
         rubric_criterion_key: `req-${reqIndex}`,
         rubric_dimension_key: `req-${reqIndex}`,
-        match_type: isQuoted ? "direct" : "related",
+        match_type: isQuoted ? "direct" : "transferable",
         confidence: isQuoted ? 0.85 : 0.45,
         source_passage: isQuoted
           ? `Assessment submission: the delivered slice covers "${requirement}" — reviewer marked it fully met.`
@@ -526,7 +526,7 @@ async function main() {
         engine_version: ENGINE_VERSION,
         result: isQuoted ? "strong" : "partial",
         validation_need: null,
-        source_kind: "assessment",
+        source_kind: "application_answer",
         created_at: assessmentAt.toISOString(),
       });
 
