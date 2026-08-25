@@ -52,7 +52,7 @@ export function BulkOpsBar({
           <SelectContent>
             {BULK_STAGES.map((s) => (
               <SelectItem key={s} value={s}>
-                {statusLabel[s]}
+                {statusLabel(s)}
               </SelectItem>
             ))}
           </SelectContent>
