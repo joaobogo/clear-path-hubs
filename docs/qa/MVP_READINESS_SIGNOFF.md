@@ -1,8 +1,30 @@
 # MVP Readiness Sign-Off — Client Dashboard
 
-Run date: 2026-08-13 (UTC)
+This is the single current MVP verdict document for this scope. An earlier
+`docs/qa/mvp-final-verdict.md` claimed "MVP READY, KPI mismatches 0, dead
+actions 0"; it was contradicted by the browser audit below and has been deleted
+rather than kept alongside this file.
+
+Scorecard run date: 2026-08-13 (UTC)
+Latest browser audit: 2026-08-22 (UTC) — see "2026-08-22 browser audit".
 Scope: signed-in client dashboard (`/client/*`) plus the public surfaces that lead into it.
-Method: every line below is evidence observed in this run (SQL against the live database, Vitest, tsgo, security scanner, Playwright against `localhost:8080`). Anything not observed is recorded as such rather than assumed.
+Method: every line below is evidence observed in the stated run (SQL against the live database, Vitest, tsgo, security scanner, Playwright against `localhost:8080`). Anything not observed is recorded as such rather than assumed.
+
+## 2026-08-22 browser audit (supersedes any "zero mismatch" claim)
+
+Observed against the live client dashboard:
+
+| Finding | Status |
+|---|---|
+| KPI mismatch — hires count | OPEN |
+| KPI mismatch — open roles count | OPEN |
+| KPI mismatch — interviews awaiting a time | OPEN |
+| Dead controls (change own pressed state, no visible effect) | OPEN, several |
+
+KPI mismatches are therefore **not zero**. Re-check by loading `/client`
+signed in and comparing each tile against the SQL in
+`docs/qa/client-kpi-reconciliation.md`, then clicking every control on the
+Overview and confirming a visible state or data change.
 
 ## Scorecard
 
