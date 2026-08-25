@@ -109,3 +109,21 @@ The AUTH-CERT-2026-07-22 report classified invitation flow and onboarding routes
 4. Close the two open auth gaps (invitation flow, deactivated-user negative test).
 
 Re-run this certification once (1)–(4) are complete.
+
+<!-- LIVE-INVARIANTS:START -->
+### Live database invariants (read 2026-08-25T04:16:56.298Z)
+
+| Invariant | Value |
+| --- | --- |
+| Rows in candidate_matches | **13** |
+| With a current score run | **13** |
+| With an approved score run | **10** |
+| Marked scored | **11** |
+| Marked manual review required | **2** |
+| Marked failed | **0** |
+| Audit events recorded | **10700** |
+| Active platform_admin memberships | **1** (expected 1) |
+| Active master admins | **1** (expected 1) |
+
+All live invariants match their expected values.
+<!-- LIVE-INVARIANTS:END -->
