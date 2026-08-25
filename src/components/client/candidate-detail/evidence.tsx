@@ -31,6 +31,8 @@ import type {
 import { SectionCard, Metric } from "./shared";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 import { getEvidenceCounts } from "@/lib/client/evidence-counts";
+import { requirementStatusLabel } from "@/lib/client/requirement-status";
+
 
 export function statusBadge(status: RequirementStatus) {
   switch (status) {
