@@ -253,15 +253,18 @@ export function PlanPanel({
                   : `${allowance.rolesRemaining} of ${allowance.rolesTotal}`}
             </div>
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground">
-              {sub ? (sub.cancelAtPeriodEnd ? "Access until" : "Renews") : "Allowance valid until"}
+          {fmtDate(sub?.currentPeriodEnd ?? allowance?.expiresAt) ? (
+            <div>
+              <div className="text-xs text-muted-foreground">
+                {sub ? (sub.cancelAtPeriodEnd ? "Access until" : "Renews") : "Allowance valid until"}
+              </div>
+              <div className="mt-1 text-sm font-medium">
+                {fmtDate(sub?.currentPeriodEnd ?? allowance?.expiresAt)}
+              </div>
             </div>
-            <div className="mt-1 text-sm font-medium">
-              {fmtDate(sub?.currentPeriodEnd ?? allowance?.expiresAt) ?? "—"}
-            </div>
-          </div>
+          ) : null}
         </div>
+
       )}
 
       {sub?.pendingPriceId && (
