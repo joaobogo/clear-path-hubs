@@ -15,7 +15,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { SlidersHorizontal, Sparkles, X } from "lucide-react";
-import { UNICORN_SCORE } from "@/lib/scoring/bands";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import {
   STAGE_OPTIONS,

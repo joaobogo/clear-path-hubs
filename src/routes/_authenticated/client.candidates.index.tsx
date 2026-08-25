@@ -26,7 +26,6 @@ import {
 import { QueryErrorCard } from "@/components/client/query-error";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { filterAndSortCandidates } from "@/lib/client-candidate-list-filter";
-import { UNICORN_SCORE } from "@/lib/scoring/bands";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { STAGE_OPTIONS, FIT_OPTIONS, CRITICAL_OPTIONS, REVIEW_OPTIONS } from "@/components/client/candidates/constants";
 import { HiringSnapshot } from "@/components/client/candidates/hiring-snapshot";
