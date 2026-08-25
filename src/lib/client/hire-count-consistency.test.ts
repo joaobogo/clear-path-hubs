@@ -68,7 +68,10 @@ describe("hire count consistency across client surfaces", () => {
       "src/lib/hires.functions.ts",
       "src/lib/executive.functions.ts",
     ]) {
-      expect(readFileSync(file, "utf8")).toMatch(/hires\/confirmed/);
+      // Either the selector itself or the KPI library that re-exports it.
+      expect(readFileSync(file, "utf8")).toMatch(
+        /hires\/confirmed|kpis\/confirmed-hires/,
+      );
     }
   });
 
