@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Building2, Briefcase, Users, MessageSquare, Loader2, Clock, CheckSquare, Zap, LineChart, PlusCircle, Gauge, Send, ClipboardList, AlertTriangle, RotateCw } from "lucide-react";
 import {
   CommandDialog,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -233,10 +232,18 @@ export function GlobalSearchDialog({
               </div>
             )}
             {!isError && !isFetching && data && allResults.length === 0 && (
-              <CommandEmpty>
-                No matches for &ldquo;{debounced}&rdquo;.
-              </CommandEmpty>
+              // Plain node, not CommandEmpty: cmdk only renders its empty slot
+              // while its own filtering is on, so with server-side results the
+              // palette showed an empty box and no explanation.
+              <div className="px-4 py-6 text-center text-sm" data-qa="search-no-results">
+                <p className="font-medium">No results for &ldquo;{debounced}&rdquo;</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Search covers names, job titles, roles, clients and messages. Try a shorter
+                  term or a different spelling.
+                </p>
+              </div>
             )}
+
 
             {groups &&
               !isError &&
