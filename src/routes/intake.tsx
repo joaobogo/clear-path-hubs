@@ -26,6 +26,14 @@ import {
   normalizeDealBreakers,
   validateDealBreakers,
 } from "@/lib/client-deal-breakers";
+import { positionFieldByIntakeKey } from "@/lib/positions/field-registry";
+
+/**
+ * Labels and hints for the questions intake shares with the role editors come
+ * from the position field registry, so the three forms cannot drift apart.
+ */
+const intakeFieldLabel = (key: string) => positionFieldByIntakeKey(key)?.label ?? key;
+const intakeFieldHint = (key: string) => positionFieldByIntakeKey(key)?.hint;
 import {
   ALLOWED_JD_EXT,
   COMP_CURRENCIES,
@@ -2198,14 +2206,14 @@ function ExpressIntakePage() {
         {step === 2 && (
         <Section id="section-role" title="The role" step={2}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Job title" error={errors.roleTitle} required={req["roleTitle"]}>
+            <Field label={intakeFieldLabel("roleTitle")} error={errors.roleTitle} required={req["roleTitle"]}>
               <Input
                 value={state.roleTitle}
                 onChange={(e) => set("roleTitle", e.target.value)}
                 placeholder="Clinical Operations Manager"
               />
             </Field>
-            <Field label="Team" error={errors.team} required={req["team"]} hint="Which team it sits in.">
+            <Field label={intakeFieldLabel("team")} error={errors.team} required={req["team"]} hint={intakeFieldHint("team")}>
               <Input
                 value={state.team}
                 onChange={(e) => set("team", e.target.value)}
@@ -2380,7 +2388,7 @@ function ExpressIntakePage() {
           <div className="grid gap-4 sm:grid-cols-2">
 
             <Field
-              label="Where is the role based?" carried={isCarried("location")}
+              label={intakeFieldLabel("location")} carried={isCarried("location")}
               error={errors.location}
               required={req["location"]}
               hint="City and country, or the region candidates must live in."
@@ -2391,7 +2399,7 @@ function ExpressIntakePage() {
                 placeholder="Manchester, United Kingdom"
               />
             </Field>
-            <Field label="How does it work?" carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
+            <Field label={intakeFieldLabel("workModel")} carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
               <select
                 id="work-model"
                 value={state.workModel}
@@ -2544,7 +2552,7 @@ function ExpressIntakePage() {
             <p className="text-sm font-semibold">Compensation range</p>
             <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
             <div className="grid gap-3 sm:grid-cols-4">
-              <Field label="Currency" carried={isCarried("currency")} htmlFor="currency">
+              <Field label={intakeFieldLabel("currency")} carried={isCarried("currency")} htmlFor="currency">
                 <select
                   id="currency"
                   value={state.currency}
@@ -2558,7 +2566,7 @@ function ExpressIntakePage() {
                   ))}
                 </select>
               </Field>
-              <Field label="From" error={errors.salaryMin} required={req["salaryMin"]}>
+              <Field label={intakeFieldLabel("salaryMin")} error={errors.salaryMin} required={req["salaryMin"]}>
                 <Input
                   value={state.salaryMin}
                   disabled={state.compensationUndecided}
@@ -2567,7 +2575,7 @@ function ExpressIntakePage() {
                   placeholder="70000"
                 />
               </Field>
-              <Field label="To" error={errors.salaryMax} required={req["salaryMax"]}>
+              <Field label={intakeFieldLabel("salaryMax")} error={errors.salaryMax} required={req["salaryMax"]}>
                 <Input
                   value={state.salaryMax}
                   disabled={state.compensationUndecided}
@@ -2576,7 +2584,7 @@ function ExpressIntakePage() {
                   placeholder="85000"
                 />
               </Field>
-              <Field label="Period" carried={isCarried("compensationPeriod")} htmlFor="comp-period">
+              <Field label={intakeFieldLabel("compensationPeriod")} carried={isCarried("compensationPeriod")} htmlFor="comp-period">
                 <select
                   id="comp-period"
                   value={state.compensationPeriod}
@@ -2700,7 +2708,7 @@ function ExpressIntakePage() {
 
 
           <Field
-            label="Ideal start date"
+            label={intakeFieldLabel("startDate")}
             error={errors.targetStartDate}
             required={req["targetStartDate"]}
             hint="We will tell you honestly if it is achievable."
@@ -2939,7 +2947,7 @@ function ExpressIntakePage() {
           </fieldset>
 
           <Field
-            label="Target days from shortlist to offer" carried={isCarried("targetDaysToOffer")}
+            label={intakeFieldLabel("targetDaysToOffer")} carried={isCarried("targetDaysToOffer")}
             error={errors.targetDaysToOffer}
             required={req["targetDaysToOffer"]}
             hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}

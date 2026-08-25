@@ -6,6 +6,7 @@ import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-route
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getPositionClosure, getPublicPosition, listPublicPositions } from "@/lib/jobs.functions";
 import { buildJobPostingJsonLd } from "@/lib/marketing/job-posting-schema";
+import { PUBLIC_FIELD_NAMES, publicHeading } from "@/lib/positions/field-registry";
 import { buildJobSlug, extractJobUuid } from "@/lib/marketing/job-slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -491,27 +492,38 @@ function JobDetail() {
 
             {pos.requirements.length > 0 && (
               <section className="mt-10 rounded-xl border p-6">
-                <h2 className="text-xl font-semibold tracking-tight">What you need</h2>
+                <h2 className="text-xl font-semibold tracking-tight">
+                  {publicHeading("must_have_skills")}
+                </h2>
                 <BulletList items={pos.requirements} />
               </section>
             )}
 
             {pos.preferred_requirements.length > 0 && (
               <section className="mt-6 rounded-xl border bg-muted/30 p-6">
-                <h2 className="text-xl font-semibold tracking-tight">Nice to have</h2>
+                <h2 className="text-xl font-semibold tracking-tight">
+                  {publicHeading("nice_to_have_skills")}
+                </h2>
                 <BulletList items={pos.preferred_requirements} />
               </section>
             )}
 
-            {[
-              { title: "Responsibilities", body: pos.responsibilities },
-              { title: "Benefits", body: pos.benefits },
-              { title: "Languages", body: pos.languages },
-              { title: "Travel", body: pos.travel },
-              { title: "Work authorization", body: pos.work_authorization_note },
-              { title: "Accessibility and accommodations", body: pos.accessibility_note },
-              { title: "Equal opportunity", body: pos.eeo_statement },
-            ]
+            {/* Which prose sections a listing may show, and their headings, come
+                from the position field registry — the same definition the intake
+                wizard and both editors render. */}
+            {(
+              [
+                ["responsibilities", pos.responsibilities],
+                ["benefits", pos.benefits],
+                ["languages", pos.languages],
+                ["travel", pos.travel],
+                ["work_authorization_note", pos.work_authorization_note],
+                ["accessibility_note", pos.accessibility_note],
+                ["eeo_statement", pos.eeo_statement],
+              ] as const
+            )
+              .filter(([name]) => PUBLIC_FIELD_NAMES.includes(name))
+              .map(([name, body]) => ({ title: publicHeading(name), body }))
               .filter((sec) => sec.body)
               .map((sec) => (
                 <section key={sec.title} className="mt-6">

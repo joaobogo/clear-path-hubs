@@ -47,6 +47,12 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import type { QualityInput } from "@/lib/requisition-schema";
+import {
+  editableFieldNames,
+  fieldHint,
+  fieldLabel,
+  fieldOptions,
+} from "@/lib/positions/field-registry";
 
 /** Same three steps, same words, as the client intake form. */
 const STEPS = [
@@ -137,6 +143,9 @@ export function PositionEditWizard({
 }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  // Which fields this role may edit is a schema fact, not a form decision.
+  const editable = useMemo(() => new Set(editableFieldNames(audience)), [audience]);
+  const shows = (name: string) => editable.has(name);
   const save = useServerFn(savePositionEdit);
 
   const [step, setStep] = useState(() =>
@@ -490,7 +499,7 @@ export function PositionEditWizard({
                     </div>
                   )}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Field label="Role Title" error={errors.title} required className="sm:col-span-2">
+                    <Field label={fieldLabel("title")} error={errors.title} required className="sm:col-span-2">
                       <Input
                         data-field="title"
                         value={state.title}
@@ -498,16 +507,16 @@ export function PositionEditWizard({
                         placeholder="e.g. Senior Backend Engineer"
                       />
                     </Field>
-                    <Field label="Department">
+                    <Field label={fieldLabel("department")}>
                       <Input
                         value={state.department}
                         onChange={(e) => set("department", e.target.value)}
                       />
                     </Field>
-                    <Field label="Location">
+                    <Field label={fieldLabel("location")}>
                       <Input value={state.location} onChange={(e) => set("location", e.target.value)} />
                     </Field>
-                    <Field label="Employment Type" error={errors.employment_type} required>
+                    <Field label={fieldLabel("employment_type")} error={errors.employment_type} required>
                       <Select
                         value={state.employment_type}
                         onValueChange={(v) => set("employment_type", v as State["employment_type"])}
@@ -516,15 +525,15 @@ export function PositionEditWizard({
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="full_time">Full time</SelectItem>
-                          <SelectItem value="part_time">Part time</SelectItem>
-                          <SelectItem value="contract">Contract</SelectItem>
-                          <SelectItem value="temporary">Temporary</SelectItem>
-                          <SelectItem value="internship">Internship</SelectItem>
+                          {fieldOptions("employment_type").map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Field label="Work Arrangement" error={errors.work_model} required>
+                    <Field label={fieldLabel("work_model")} error={errors.work_model} required>
                       <Select
                         value={state.work_model}
                         onValueChange={(v) => set("work_model", v as State["work_model"])}
@@ -533,32 +542,29 @@ export function PositionEditWizard({
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="remote">Remote</SelectItem>
-                          <SelectItem value="hybrid">Hybrid</SelectItem>
-                          <SelectItem value="onsite">Onsite</SelectItem>
+                          {fieldOptions("work_model").map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Field label="Seniority Level" error={errors.seniority} required>
+                    <Field label={fieldLabel("seniority")} error={errors.seniority} required>
                       <Select value={state.seniority} onValueChange={(v) => set("seniority", v)}>
                         <SelectTrigger data-field="seniority">
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Intern">Intern</SelectItem>
-                          <SelectItem value="Junior">Junior</SelectItem>
-                          <SelectItem value="Mid">Mid</SelectItem>
-                          <SelectItem value="Senior">Senior</SelectItem>
-                          <SelectItem value="Lead">Lead</SelectItem>
-                          <SelectItem value="Staff">Staff</SelectItem>
-                          <SelectItem value="Principal">Principal</SelectItem>
-                          <SelectItem value="Director">Director</SelectItem>
-                          <SelectItem value="VP">VP</SelectItem>
-                          <SelectItem value="C-Level">C-Level</SelectItem>
+                          {fieldOptions("seniority").map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Field label="Positions to Fill" error={errors.headcount} required>
+                    <Field label={fieldLabel("headcount")} error={errors.headcount} required>
                       <Input
                         data-field="headcount"
                         type="number"
@@ -573,8 +579,8 @@ export function PositionEditWizard({
                   </div>
 
                   <Field
-                    label="Job Description"
-                    hint="Paste the JD or write it here. We use this to enrich matching."
+                    label={fieldLabel("description")}
+                    hint={fieldHint("description")}
                   >
                     <Textarea
                       rows={6}
@@ -593,23 +599,21 @@ export function PositionEditWizard({
                     subtitle="Budget range and structure. Used to filter and set expectations."
                   />
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <Field label="Currency">
+                    <Field label={fieldLabel("currency")}>
                       <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
                         <SelectTrigger aria-label="Currency" data-field="currency">
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="EUR">EUR</SelectItem>
-                          <SelectItem value="GBP">GBP</SelectItem>
-                          <SelectItem value="CAD">CAD</SelectItem>
-                          <SelectItem value="AUD">AUD</SelectItem>
-                          <SelectItem value="BRL">BRL</SelectItem>
-                          <SelectItem value="INR">INR</SelectItem>
+                          {fieldOptions("currency").map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Field label="Period">
+                    <Field label={fieldLabel("budget_period")}>
                       <Select
                         value={state.budget_period || "year"}
                         onValueChange={(v) => set("budget_period", v)}
@@ -618,13 +622,15 @@ export function PositionEditWizard({
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="year">Per year</SelectItem>
-                          <SelectItem value="month">Per month</SelectItem>
-                          <SelectItem value="hour">Per hour</SelectItem>
+                          {fieldOptions("budget_period").map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Field label="Minimum" hint="Base salary or contract rate.">
+                    <Field label={fieldLabel("budget_min")} hint={fieldHint("budget_min")}>
                       <Input
                         type="number"
                         min={0}
@@ -635,7 +641,7 @@ export function PositionEditWizard({
                         data-field="budget_min"
                       />
                     </Field>
-                    <Field label="Maximum" error={errors.budget_max}>
+                    <Field label={fieldLabel("budget_max")} error={errors.budget_max}>
                       <Input
                         type="number"
                         min={0}
@@ -647,7 +653,7 @@ export function PositionEditWizard({
                       />
                     </Field>
                   </div>
-                  <Field label="Notes" hint="Bonus, equity, benefits, structure — anything relevant.">
+                  <Field label={fieldLabel("compensation")} hint={fieldHint("compensation")}>
                     <Textarea
                       rows={3}
                       value={state.compensation}
@@ -658,7 +664,7 @@ export function PositionEditWizard({
 
                   <SectionHeader title="Timeline & Availability" subtitle="Optional." />
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <Field label="Hiring Timeline">
+                    <Field label={fieldLabel("hiring_urgency")}>
                       <Select
                         value={state.hiring_urgency}
                         onValueChange={(v) => set("hiring_urgency", v)}
@@ -675,14 +681,14 @@ export function PositionEditWizard({
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Field label="Target Start Date">
+                    <Field label={fieldLabel("target_start_date")}>
                       <Input
                         type="date"
                         value={state.target_start_date}
                         onChange={(e) => set("target_start_date", e.target.value)}
                       />
                     </Field>
-                    <Field label="Time to Hire" hint="How fast do you need to close?">
+                    <Field label={fieldLabel("time_to_hire")} hint="How fast do you need to close?">
                       <Input
                         value={state.time_to_hire}
                         onChange={(e) => set("time_to_hire", e.target.value)}
@@ -698,7 +704,7 @@ export function PositionEditWizard({
               {step === 2 && (
                 <div className="space-y-6">
                   <ChipInput
-                    label="Must-have skills"
+                    label={fieldLabel("must_have_skills")}
                     hint="Add at least 3 or provide a job description of at least 40 characters on Step 1."
                     error={errors.must_have_skills}
                     values={state.must_have_skills}
@@ -707,7 +713,7 @@ export function PositionEditWizard({
                     dataField="must_have_skills"
                   />
                   <ChipInput
-                    label="Nice-to-have skills"
+                    label={fieldLabel("nice_to_have_skills")}
                     hint="Bonus skills that strengthen a candidate."
                     values={state.nice_to_have_skills}
                     onChange={(v) => set("nice_to_have_skills", v)}
@@ -715,33 +721,33 @@ export function PositionEditWizard({
                   />
                   <AdvancedSection label="More about the ideal candidate">
                   <ChipInput
-                    label="Required Certifications"
+                    label={fieldLabel("certifications_list")}
                     values={state.certifications_list}
                     onChange={(v) => set("certifications_list", v)}
                     placeholder="e.g. AWS SA, PMP, CFA"
                   />
                   <ChipInput
-                    label="Required Tools & Platforms"
+                    label={fieldLabel("tools_platforms")}
                     values={state.tools_platforms}
                     onChange={(v) => set("tools_platforms", v)}
                     placeholder="e.g. Salesforce, Snowflake, Figma"
                   />
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Field label="Minimum Experience" hint="Years of relevant experience.">
+                    <Field label={fieldLabel("experience")} hint={fieldHint("experience")}>
                       <Input
                         value={state.experience}
                         onChange={(e) => set("experience", e.target.value)}
                         placeholder="e.g. 5+ years"
                       />
                     </Field>
-                    <Field label="Education Requirement">
+                    <Field label={fieldLabel("education")}>
                       <Input
                         value={state.education}
                         onChange={(e) => set("education", e.target.value)}
                         placeholder="e.g. BSc CS or equivalent"
                       />
                     </Field>
-                    <Field label="Required Timezone Coverage" className="sm:col-span-2">
+                    <Field label={fieldLabel("timezone_requirements")} className="sm:col-span-2">
                       <Input
                         value={state.timezone_requirements}
                         onChange={(e) => set("timezone_requirements", e.target.value)}
@@ -750,7 +756,7 @@ export function PositionEditWizard({
                     </Field>
                   </div>
                   </AdvancedSection>
-                  <Field label="Core Responsibilities" hint="Top outcomes and day-to-day scope.">
+                  <Field label={fieldLabel("responsibilities")} hint={fieldHint("responsibilities")}>
                     <Textarea
                       rows={4}
                       value={state.responsibilities}
@@ -760,7 +766,7 @@ export function PositionEditWizard({
                   </Field>
                   <AdvancedSection label="Sourcing rules and deal-breakers">
                   <Field
-                    label="Additional Requirements"
+                    label={fieldLabel("additional_requirements")}
                     hint="Anything else the candidate must have."
                   >
                     <Textarea
@@ -770,12 +776,14 @@ export function PositionEditWizard({
                     />
                   </Field>
 
+{shows("target_titles") && (
+                  <>
                   <SectionHeader
                     title="Search criteria"
                     subtitle="Titles, keywords, and the rules that keep bad fits out."
                   />
                   <ChipInput
-                    label="Target Job Titles"
+                    label={fieldLabel("target_titles")}
                     hint="Optional. Titles to source from (current or previous roles)."
                     values={state.target_titles}
                     onChange={(v) => set("target_titles", v)}
@@ -783,7 +791,7 @@ export function PositionEditWizard({
                     dataField="target_titles"
                   />
                   <Field
-                    label="Title Match Timing"
+                    label={fieldLabel("title_match_timing")}
                     hint="Should the target title be their current, previous, or either role?"
                   >
                     <Select
@@ -796,15 +804,17 @@ export function PositionEditWizard({
                         <SelectValue placeholder="Select…" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="current">Current role only</SelectItem>
-                        <SelectItem value="previous">Previous role only</SelectItem>
-                        <SelectItem value="either">Either — current or previous</SelectItem>
+                        {fieldOptions("title_match_timing").map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </Field>
 
                   <div>
-                    <Label className="mb-2 block text-sm">Target Company Types</Label>
+                    <Label className="mb-2 block text-sm">{fieldLabel("target_company_types")}</Label>
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       {COMPANY_TYPE_OPTIONS.map((opt) => (
                         <label key={opt} className="flex items-center gap-2 text-sm">
@@ -819,24 +829,26 @@ export function PositionEditWizard({
                   </div>
 
                   <ChipInput
-                    label="Include Keywords"
+                    label={fieldLabel("include_keywords")}
                     hint="Boost candidates whose profiles contain these terms."
                     values={state.include_keywords}
                     onChange={(v) => set("include_keywords", v)}
                     placeholder="e.g. Kubernetes, distributed systems"
                   />
                   <ChipInput
-                    label="Exclude Keywords"
+                    label={fieldLabel("exclude_keywords")}
                     hint="Filter out candidates whose profiles contain these terms."
                     values={state.exclude_keywords}
                     onChange={(v) => set("exclude_keywords", v)}
                     placeholder="e.g. bootcamp only, agency"
                   />
+                  </>
+                  )}
 
                   {/* Free-text deal-breakers, in the client's own words, as captured
                       at intake — editable here so a rule learned later can be added. */}
                   <ChipInput
-                    label="Your deal-breakers"
+                    label={fieldLabel("disqualifier_tags")}
                     hint="Short rules that rule someone out, e.g. no hands-on Postgres experience."
                     values={state.disqualifier_tags.filter(
                       (t) => !(DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
@@ -886,7 +898,7 @@ export function PositionEditWizard({
                     </CollapsibleContent>
                   </Collapsible>
 
-                  <Field label="Interview Process" hint="Number of rounds, format, panel.">
+                  <Field label={fieldLabel("interview_process")} hint={fieldHint("interview_process")}>
                     <Textarea
                       rows={3}
                       value={state.interview_process}
@@ -894,7 +906,7 @@ export function PositionEditWizard({
                       placeholder="Screen → Technical → Panel → Offer"
                     />
                   </Field>
-                  <Field label="Additional Context" hint="Anything else we should know?">
+                  <Field label={fieldLabel("additional_context")} hint={fieldHint("additional_context")}>
                     <Textarea
                       rows={3}
                       value={state.additional_context}
