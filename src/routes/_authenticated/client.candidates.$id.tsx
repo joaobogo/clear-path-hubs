@@ -95,7 +95,7 @@ import {
   type SchedulableCandidate,
 } from "@/lib/interviews.functions";
 import { RequestInterviewDialog } from "@/components/client/interviews/request-interview-dialog";
-import { detectTimezone } from "@/components/client/interviews/helpers";
+import { getWorkspaceTimezone } from "@/lib/format/datetime";
 import { useAvailability } from "@/components/client/scheduling/availability-manager";
 import { proposalErrorMessage } from "@/lib/interview-proposal";
 import { isActiveInterview } from "@/lib/interview-state";
@@ -156,7 +156,7 @@ function CandidateDetailPage() {
 
   const requestInterviewFn = useServerFn(requestInterview);
   const availability = useAvailability(orgId);
-  const orgTimezone = (availability.data?.timezone as string | null | undefined) || detectTimezone();
+  const orgTimezone = (availability.data?.timezone as string | null | undefined) || getWorkspaceTimezone();
   const [requestFailed, setRequestFailed] = useState<string | null>(null);
 
   const requestMut = useMutation({

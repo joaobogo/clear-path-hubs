@@ -1,6 +1,6 @@
 import { formatZonedTime } from "@/lib/time/zone-label";
 import type { InterviewStatus, InterviewType } from "@/lib/interviews.functions";
-import { formatDateTime } from "@/lib/format/datetime";
+import { formatDateTime, getWorkspaceTimezone } from "@/lib/format/datetime";
 
 export const TYPE_OPTIONS: { value: InterviewType; label: string }[] = [
   { value: "phone_screen", label: "Phone screen" },
@@ -12,19 +12,19 @@ export const TYPE_OPTIONS: { value: InterviewType; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
-export function detectTimezone(): string {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  } catch {
-    return "UTC";
-  }
+/**
+ * The workspace zone, never the browser zone: the client's configured
+ * timezone is the only correct frame for an interview time.
+ */
+export function workspaceTimezone(): string {
+  return getWorkspaceTimezone();
 }
 
 export function formatWhen(iso: string | null, tz: string | null): string {
   if (!iso) return "—";
   // Never show a bare clock time: the zone and its offset on that date are part
   // of the answer, not decoration.
-  const zoned = formatZonedTime(iso, tz || detectTimezone());
+  const zoned = formatZonedTime(iso, tz || getWorkspaceTimezone());
   if (!zoned) return formatDateTime(iso);
   return `${zoned.timeLabel} (${zoned.zoneLabel})`;
 }

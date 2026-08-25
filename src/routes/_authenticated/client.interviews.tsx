@@ -46,7 +46,7 @@ import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { RequestInterviewDialog } from "@/components/client/interviews/request-interview-dialog";
 import { InterviewDetailDialog } from "@/components/client/interviews/interview-detail-dialog";
-import { detectTimezone } from "@/components/client/interviews/helpers";
+import { getWorkspaceTimezone } from "@/lib/format/datetime";
 import { AwaitingConfirmationSection } from "@/components/client/interviews/awaiting-confirmation";
 
 const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "6xl" });
@@ -116,7 +116,7 @@ function InterviewsPage() {
   const hasWindows = ((availability.data?.windows ?? []) as unknown[]).length > 0;
   // The client's stored timezone wins; the browser is only a fallback.
   const orgTimezone =
-    (availability.data?.timezone as string | null | undefined) || detectTimezone();
+    (availability.data?.timezone as string | null | undefined) || getWorkspaceTimezone();
 
   const interviews = (listQuery.data?.interviews as InterviewDTO[] | undefined) ?? [];
 
