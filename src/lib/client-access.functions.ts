@@ -10,7 +10,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { assertPlatformStaff } from "@/lib/authz.server";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
-import { computeSeatCount } from "@/lib/client-seats";
+import { readSeatsForOrg } from "@/lib/kpis/seats.server";
 
 const uuid = z.string().uuid();
 
@@ -149,9 +149,9 @@ export const inspectClientAccess = createServerFn({ method: "GET" })
 
     // Same membership-table derivation as the client Account tile and the
     // staff account summary (`client-seats.ts`).
-    const { seatLimit, seatsUsed, seatsLeft } = computeSeatCount(
-      seats,
-      (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? null,
+    const { seatLimit, seatsUsed, seatsLeft } = await readSeatsForOrg(
+      context.supabase,
+      data.organization_id,
     );
 
     return {

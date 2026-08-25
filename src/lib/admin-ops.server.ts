@@ -178,10 +178,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   const overdue = (delivered.data ?? []) as any[];
 
   // 11. Reconciliation: Identify hired candidates to ensure rollup agreement.
-  const hiredCount = (await s
-    .from("hire_records")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "hire_confirmed")).count ?? 0;
+  const { countConfirmedHiresPlatformWide } = await import(
+    "@/lib/kpis/confirmed-hires.server"
+  );
+  const hiredCount = await countConfirmedHiresPlatformWide(s);
 
 
 

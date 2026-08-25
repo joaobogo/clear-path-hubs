@@ -10,6 +10,7 @@
  *  - This function derives a *view* over existing records. It writes nothing
  *    and introduces no new status field.
  */
+import { interviewNeedsTimeConfirmed } from "@/lib/client/interviews-to-confirm";
 
 import {
   computeRoleLifecycle,
@@ -160,7 +161,7 @@ export async function loadRoleLifecycle(
         lastInterviewCompletedAt = max(lastInterviewCompletedAt, iv.completed_at);
       } else if (status === "scheduled") {
         scheduledSet.add(iv.candidate_match_id);
-      } else if (["requested", "scheduling"].includes(status)) {
+      } else if (interviewNeedsTimeConfirmed(status)) {
         toConfirmSet.add(iv.candidate_match_id);
       }
     }

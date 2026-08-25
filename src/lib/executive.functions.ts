@@ -9,13 +9,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
-import { loadConfirmedHires } from "@/lib/hires/confirmed.server";
+import { loadConfirmedHires } from "@/lib/kpis/confirmed-hires.server";
+import { loadOpenRoles, loadOrgRoles } from "@/lib/kpis/open-roles.server";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
-import {
-  selectClientRoles,
-  selectOpenClientRoles,
-} from "@/lib/client/role-counts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -132,9 +129,16 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     // Open / filled by region. Both Insights panels read the same open-roles
     // rule as the Roles page (selectOpenClientRoles), so a role with an active
     // search and a live offer is never reported as filled.
-    const clientPositions = selectClientRoles(posRows);
+    // Roles come from the one reader; the local rows carry the extra columns
+    // Insights needs (location), so they are narrowed by the reader's ids.
+    const accountRoleIds = new Set<string>(
+      (await loadOrgRoles(s, orgId)).map((p: AnyRow) => String(p.id)),
+    );
+    const clientPositions = posRows.filter((p: AnyRow) =>
+      accountRoleIds.has(String(p.id)),
+    );
     const openPositionIds = new Set<string>(
-      selectOpenClientRoles(clientPositions).map((p) => String(p.id)),
+      (await loadOpenRoles(s, orgId)).map((p: AnyRow) => String(p.id)),
     );
 
     const regionMap = new Map<string, { open: number; filled: number; total: number }>();

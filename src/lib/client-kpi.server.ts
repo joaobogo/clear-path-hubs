@@ -357,7 +357,17 @@ function oldest(values: Array<string | null | undefined>): string | null {
   return values.filter((v): v is string => Boolean(v)).sort()[0] ?? null;
 }
 
-export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
+export function computeKpis(
+  rows: KpiRow[],
+  activePositions = 0,
+  /**
+   * Figures that have their own reader in `src/lib/kpis/`. When supplied they
+   * win: the KPI view is narrowed by row-level visibility, so counting these
+   * from rows is how the same figure came to read 5 on one page and 1 on the
+   * next. Pass them wherever an organization-scoped reader is available.
+   */
+  canonical: { interviews_to_confirm?: number; offers?: number } = {},
+): ClientKpis {
   // Every stage-shaped count comes from the one lane derivation, so the tiles,
   // the board columns and the per-role roll-ups are literally the same numbers.
   const { counts } = countLanes(rows);
@@ -369,10 +379,11 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     interview_scheduled: rows.filter((r) => r.stage === "interview_process" && r.interview_scheduled).length,
     // Canonical: every interview still awaiting a confirmed time, whatever
     // lane the candidate sits in (shared with the home page and Interviews page).
-    interviews_to_confirm: countRowsAwaitingConfirmation(rows),
+    interviews_to_confirm:
+      canonical.interviews_to_confirm ?? countRowsAwaitingConfirmation(rows),
 
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
-    offers: counts.offer,
+    offers: canonical.offers ?? counts.offer,
     // One definition of a hire: a confirmed offer record, carried on the row.
     hires: rows.filter((r) => r.hire_confirmed).length,
     active_positions: activePositions,
