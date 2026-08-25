@@ -44,7 +44,7 @@ describe("client comparison", () => {
     const a = cand("Ana", {
       rows: [
         ["Kubernetes", "must_have", "met", "Ran 40-node EKS clusters"],
-        ["Terraform", "must_have", "partial"],
+        ["Terraform", "must_have", "partial", "Wrote Terraform modules for staging"],
       ],
     });
     const b = cand("Ben", {
