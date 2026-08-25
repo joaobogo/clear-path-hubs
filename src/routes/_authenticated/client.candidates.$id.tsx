@@ -446,11 +446,17 @@ function CandidateDetailPage() {
 
  )}
 
- {/* 3 — THE EVIDENCE: requirements listed once, with coverage folded in */}
- <div id="sec-evidence" className="scroll-mt-24 space-y-4">
- <WhyThisCandidate candidate={candidate} withCoverage />
- <ScoreBreakdown candidate={candidate} hideRequirementRows />
- </div>
+  {/* 3 — THE EVIDENCE: requirements listed once, with coverage folded in */}
+  <div id="sec-evidence" className="scroll-mt-24 space-y-4">
+  <WhyThisCandidate candidate={candidate} withCoverage />
+  <WhatNeedsValidation
+    candidate={candidate}
+    title="To confirm in the interview"
+    preferredLimit={2}
+    onInterviewGuideClick={() => setActiveTab("interview")}
+  />
+  <ScoreBreakdown candidate={candidate} hideRequirementRows />
+  </div>
 
  {/* 4 — CONTACT (mobile keeps it in the main flow, after the evidence) */}
  <ContactBlock
