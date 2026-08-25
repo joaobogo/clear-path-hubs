@@ -39,7 +39,10 @@ export function hasQuotedEvidence(
  * as evidence.
  */
 export function hasRelatedSignal(
-  row: Pick<RequirementRow, "evidence"> & { context?: RequirementRow["context"] },
+  row: Pick<RequirementRow, "evidence"> & {
+    context?: RequirementRow["context"];
+    label?: string | null;
+  },
 ): boolean {
   if (hasQuotedEvidence(row)) return false;
   return (row.context ?? []).some((e) => (e.snippet ?? "").trim().length > 0);
@@ -47,7 +50,10 @@ export function hasRelatedSignal(
 
 /** True when the requirement carries any source at all, quoted or related. */
 export function hasEvidenceSource(
-  row: Pick<RequirementRow, "evidence"> & { context?: RequirementRow["context"] },
+  row: Pick<RequirementRow, "evidence"> & {
+    context?: RequirementRow["context"];
+    label?: string | null;
+  },
 ): boolean {
   return hasQuotedEvidence(row) || hasRelatedSignal(row);
 }
@@ -55,6 +61,7 @@ export function hasEvidenceSource(
 export function resolveRequirementStatus(
   row: Pick<RequirementRow, "status" | "evidence" | "contradictions"> & {
     context?: RequirementRow["context"];
+    label?: string | null;
   },
 ): RequirementStatus {
   if (row.status === "contradicted") return "contradicted";
