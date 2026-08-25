@@ -668,11 +668,12 @@ export const WhatNeedsValidation = memo(function WhatNeedsValidation({
   const [showAll, setShowAll] = useState(false);
   const rowById = new Map(candidate.requirement_rows.map((r) => [r.id, r]));
   const isMustHave = (item: ValidationItem) => {
-    if (!item.label) return false;
+    const label = item.label;
+    if (!label) return false;
     const row =
       rowById.get(item.id) ??
       candidate.requirement_rows.find(
-        (r) => r.label.trim().toLowerCase() === item.label.trim().toLowerCase(),
+        (r) => r.label.trim().toLowerCase() === label.trim().toLowerCase(),
       );
     return row?.importance === "must_have";
   };
