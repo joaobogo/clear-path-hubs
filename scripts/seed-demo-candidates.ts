@@ -315,20 +315,37 @@ async function main() {
     };
 
     if (matchIds.length > 0) {
-      await sb
-        .from("candidate_matches")
-        .update({ current_score_run_id: null, approved_score_run_id: null })
-        .in("id", matchIds);
-      await wipe("hire_records", "candidate_match_id", matchIds);
-      await wipe("interviews", "candidate_match_id", matchIds);
-      await wipe("candidate_evidence_items", "candidate_match_id", matchIds);
-      await wipe("candidate_evidence", "candidate_match_id", matchIds);
-      await wipe("score_runs", "candidate_match_id", matchIds);
-      await wipe("candidate_matches", "id", matchIds);
+      // Stage history is append-only, so matches are removed through the
+      // audited hard-delete routine rather than a plain delete.
+      const { data: staff } = await sb
+        .from("memberships")
+        .select("user_id")
+        .eq("role", "platform_admin")
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle();
+      if (!staff?.user_id) throw new Error("No active platform admin found to authorise cleanup.");
+
+      for (const matchId of matchIds) {
+        const { error } = await sb.rpc("hard_delete_candidate_match", {
+          _match_id: matchId,
+          _actor_user_id: staff.user_id,
+          _reason: "Demo candidate seed refresh",
+        });
+        if (error) throw new Error(`cleanup of match ${matchId} failed: ${error.message}`);
+      }
     }
-    await wipe("applications", "candidate_profile_id", priorProfileIds);
-    await wipe("candidate_profiles", "id", priorProfileIds);
+    const { data: stillThere } = await sb
+      .from("candidate_profiles")
+      .select("id")
+      .eq("legacy_source_system", SEED_MARKER);
+    const leftoverIds = (stillThere ?? []).map((p: any) => p.id);
+    if (leftoverIds.length > 0) {
+      await wipe("applications", "candidate_profile_id", leftoverIds);
+      await wipe("candidate_profiles", "id", leftoverIds);
+    }
     console.log(`Removed ${priorProfileIds.length} candidate(s) from a previous seed run.`);
+
 
   }
 
