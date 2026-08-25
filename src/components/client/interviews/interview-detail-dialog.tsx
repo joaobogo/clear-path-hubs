@@ -25,7 +25,7 @@ import {
 import { DetailRow } from "./detail-row";
 import { ProposeForm } from "./propose-form";
 import { ConfirmForm } from "./confirm-form";
-import { detectTimezone, formatWhen, statusBadgeClass } from "./helpers";
+import { formatWhen, statusBadgeClass, workspaceTimezone } from "./helpers";
 import {
   displayInterviewStatus,
   hasInterviewHappened,
@@ -71,7 +71,7 @@ export function InterviewDetailDialog({
   const [scheduledAt, setScheduledAt] = useState<string>(
     interview.scheduled_at ? interview.scheduled_at.slice(0, 16) : "",
   );
-  const [tz, setTz] = useState<string>(interview.timezone || detectTimezone());
+  const [tz, setTz] = useState<string>(interview.timezone || workspaceTimezone());
   const [duration, setDuration] = useState<number>(interview.duration_minutes ?? 45);
   const [meetingUrl, setMeetingUrl] = useState<string>(interview.meeting_url ?? "");
   const [location, setLocation] = useState<string>(interview.location ?? "");

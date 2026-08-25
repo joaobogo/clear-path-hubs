@@ -15,6 +15,7 @@ import { SYSTEM_HEALTH_QUERY_KEY } from "@/components/client/system-health-strip
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
+import { getWorkspaceTimezone, setWorkspaceTimezone } from "@/lib/format/datetime";
 import { z } from "zod";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getActiveSupportSession } from "@/lib/support-audit.functions";
@@ -174,6 +175,19 @@ function ClientLayout() {
   // `candidate_matches` (previously here) were silently no-ops.
 
   const active = data?.active;
+
+  // Every date and time in the client workspace renders in the organisation's
+  // configured zone. The viewer's browser zone is deliberately never consulted:
+  // a Lisbon workspace opened from Brazil must still read as Lisbon, otherwise
+  // a 09:00 interview shows as 05:00 or slips to the previous midnight.
+  const workspaceTimezone = data?.onboarding?.timezone ?? null;
+  const [appliedTimezone, setAppliedTimezone] = useState(getWorkspaceTimezone());
+  useEffect(() => {
+    if (!workspaceTimezone) return;
+    setWorkspaceTimezone(workspaceTimezone);
+    setAppliedTimezone(getWorkspaceTimezone());
+  }, [workspaceTimezone]);
+  void appliedTimezone; // re-renders the workspace once the zone is applied
 
  const staffMembershipsElsewhere =
  (data?.isStaff ?? false) &&
