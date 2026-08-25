@@ -708,9 +708,24 @@ function ComparisonRow({
 }
 
 
-/** Strengths bullets shown in the comparison — single source for list and count. */
+/**
+ * Strengths bullets shown in the comparison — the single list behind both the
+ * "Strengths" row and the "Verified strengths" number. Blank and duplicate
+ * entries are dropped here so the number can never exceed the bullets shown.
+ */
 function strengthBullets(c: ClientCandidateDTO): string[] {
-  return (c.strengths ?? []).slice(0, 4);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of c.strengths ?? []) {
+    const text = typeof raw === "string" ? raw.trim() : String(raw ?? "").trim();
+    if (!text) continue;
+    const key = text.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(text);
+    if (out.length === 4) break;
+  }
+  return out;
 }
 
 /**
