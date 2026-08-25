@@ -85,11 +85,6 @@ export function BrandingTab() {
 
  return (
  <div className="space-y-6">
- {readOnlySupport && (
- <BannerAmber>
- You are viewing as an administrator — settings changes are disabled.
- </BannerAmber>
- )}
  {isViewer && !readOnlySupport && (
  <BannerAmber>
  You have viewer access — ask a workspace admin to change these settings.

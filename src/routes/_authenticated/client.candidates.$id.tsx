@@ -7,7 +7,7 @@ import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ShieldAlert } from "lucide-react";
+
 import { clientAction, undoClientDecision } from "@/lib/client-decisions.functions";
 import { ACTION_TO_STAGE as RESULT_STAGE } from "@/lib/client-shared.server";
 import { getClientCandidate } from "@/lib/client-candidates.functions";
@@ -423,16 +423,6 @@ function CandidateDetailPage() {
  readOnly={readOnly}
  />
 
- {readOnly && support.readOnly && (
- <div
- role="status"
- className="mt-4 flex items-center gap-2 rounded-md border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-xs text-muted-foreground"
- >
- <ShieldAlert className="h-3.5 w-3.5 shrink-0" aria-hidden />
- You are viewing this candidate as the Client. Actions are disabled in
- read-only preview.
- </div>
- )}
 
  {isViewer && !support.readOnly && (
  <ViewerReadOnlyNotice
