@@ -18,6 +18,7 @@ import {
 import { classifyBand, type ScoreBandKey, isTopBand } from "@/lib/scoring/bands";
 import { passageSupportsRequirement } from "./client/evidence-relevance";
 import { resolveRequirementStatus } from "@/lib/client/requirement-status";
+import { phraseInterviewQuestion } from "@/lib/client/interview-question-phrasing";
 
 
 
