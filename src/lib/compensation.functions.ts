@@ -7,6 +7,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { buildCompensationSignal, type CompensationSignal } from "@/lib/compensation-signal";
+import { isLiveOffer } from "@/lib/offer-hire";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
