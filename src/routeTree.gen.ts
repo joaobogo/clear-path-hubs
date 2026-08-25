@@ -106,7 +106,6 @@ import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authe
 import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authenticated/client.team'
 import { Route as AuthenticatedClientTasksRouteImport } from './routes/_authenticated/client.tasks'
 import { Route as AuthenticatedClientTalentPoolRouteImport } from './routes/_authenticated/client.talent-pool'
-import { Route as AuthenticatedClientSharesRouteImport } from './routes/_authenticated/client.shares'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientRolesRouteImport } from './routes/_authenticated/client.roles'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
@@ -116,7 +115,6 @@ import { Route as AuthenticatedClientOnboardingRouteImport } from './routes/_aut
 import { Route as AuthenticatedClientOffersRouteImport } from './routes/_authenticated/client.offers'
 import { Route as AuthenticatedClientMessagesRouteImport } from './routes/_authenticated/client.messages'
 import { Route as AuthenticatedClientInterviewsRouteImport } from './routes/_authenticated/client.interviews'
-import { Route as AuthenticatedClientIntelligenceRouteImport } from './routes/_authenticated/client.intelligence'
 import { Route as AuthenticatedClientInboxRouteImport } from './routes/_authenticated/client.inbox'
 import { Route as AuthenticatedClientExecutiveRouteImport } from './routes/_authenticated/client.executive'
 import { Route as AuthenticatedClientDataRouteImport } from './routes/_authenticated/client.data'
@@ -701,12 +699,6 @@ const AuthenticatedClientTalentPoolRoute =
     path: '/talent-pool',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
-const AuthenticatedClientSharesRoute =
-  AuthenticatedClientSharesRouteImport.update({
-    id: '/shares',
-    path: '/shares',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
 const AuthenticatedClientSettingsRoute =
   AuthenticatedClientSettingsRouteImport.update({
     id: '/settings',
@@ -758,12 +750,6 @@ const AuthenticatedClientInterviewsRoute =
   AuthenticatedClientInterviewsRouteImport.update({
     id: '/interviews',
     path: '/interviews',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
-const AuthenticatedClientIntelligenceRoute =
-  AuthenticatedClientIntelligenceRouteImport.update({
-    id: '/intelligence',
-    path: '/intelligence',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
 const AuthenticatedClientInboxRoute =
@@ -1415,7 +1401,6 @@ export interface FileRoutesByFullPath {
   '/client/data': typeof AuthenticatedClientDataRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/client/inbox': typeof AuthenticatedClientInboxRoute
-  '/client/intelligence': typeof AuthenticatedClientIntelligenceRoute
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
@@ -1425,7 +1410,6 @@ export interface FileRoutesByFullPath {
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
-  '/client/shares': typeof AuthenticatedClientSharesRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/tasks': typeof AuthenticatedClientTasksRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
@@ -1607,7 +1591,6 @@ export interface FileRoutesByTo {
   '/client/data': typeof AuthenticatedClientDataRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/client/inbox': typeof AuthenticatedClientInboxRoute
-  '/client/intelligence': typeof AuthenticatedClientIntelligenceRoute
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
@@ -1616,7 +1599,6 @@ export interface FileRoutesByTo {
   '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
-  '/client/shares': typeof AuthenticatedClientSharesRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/tasks': typeof AuthenticatedClientTasksRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
@@ -1807,7 +1789,6 @@ export interface FileRoutesById {
   '/_authenticated/client/data': typeof AuthenticatedClientDataRoute
   '/_authenticated/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/_authenticated/client/inbox': typeof AuthenticatedClientInboxRoute
-  '/_authenticated/client/intelligence': typeof AuthenticatedClientIntelligenceRoute
   '/_authenticated/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/_authenticated/client/messages': typeof AuthenticatedClientMessagesRoute
   '/_authenticated/client/offers': typeof AuthenticatedClientOffersRoute
@@ -1817,7 +1798,6 @@ export interface FileRoutesById {
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/roles': typeof AuthenticatedClientRolesRoute
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
-  '/_authenticated/client/shares': typeof AuthenticatedClientSharesRoute
   '/_authenticated/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/_authenticated/client/tasks': typeof AuthenticatedClientTasksRoute
   '/_authenticated/client/team': typeof AuthenticatedClientTeamRoute
@@ -2009,7 +1989,6 @@ export interface FileRouteTypes {
     | '/client/data'
     | '/client/executive'
     | '/client/inbox'
-    | '/client/intelligence'
     | '/client/interviews'
     | '/client/messages'
     | '/client/offers'
@@ -2019,7 +1998,6 @@ export interface FileRouteTypes {
     | '/client/positions'
     | '/client/roles'
     | '/client/settings'
-    | '/client/shares'
     | '/client/talent-pool'
     | '/client/tasks'
     | '/client/team'
@@ -2201,7 +2179,6 @@ export interface FileRouteTypes {
     | '/client/data'
     | '/client/executive'
     | '/client/inbox'
-    | '/client/intelligence'
     | '/client/interviews'
     | '/client/messages'
     | '/client/offers'
@@ -2210,7 +2187,6 @@ export interface FileRouteTypes {
     | '/client/plan'
     | '/client/roles'
     | '/client/settings'
-    | '/client/shares'
     | '/client/talent-pool'
     | '/client/tasks'
     | '/client/team'
@@ -2400,7 +2376,6 @@ export interface FileRouteTypes {
     | '/_authenticated/client/data'
     | '/_authenticated/client/executive'
     | '/_authenticated/client/inbox'
-    | '/_authenticated/client/intelligence'
     | '/_authenticated/client/interviews'
     | '/_authenticated/client/messages'
     | '/_authenticated/client/offers'
@@ -2410,7 +2385,6 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions'
     | '/_authenticated/client/roles'
     | '/_authenticated/client/settings'
-    | '/_authenticated/client/shares'
     | '/_authenticated/client/talent-pool'
     | '/_authenticated/client/tasks'
     | '/_authenticated/client/team'
@@ -3268,13 +3242,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientTalentPoolRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
-    '/_authenticated/client/shares': {
-      id: '/_authenticated/client/shares'
-      path: '/shares'
-      fullPath: '/client/shares'
-      preLoaderRoute: typeof AuthenticatedClientSharesRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
     '/_authenticated/client/settings': {
       id: '/_authenticated/client/settings'
       path: '/settings'
@@ -3336,13 +3303,6 @@ declare module '@tanstack/react-router' {
       path: '/interviews'
       fullPath: '/client/interviews'
       preLoaderRoute: typeof AuthenticatedClientInterviewsRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
-    '/_authenticated/client/intelligence': {
-      id: '/_authenticated/client/intelligence'
-      path: '/intelligence'
-      fullPath: '/client/intelligence'
-      preLoaderRoute: typeof AuthenticatedClientIntelligenceRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
     '/_authenticated/client/inbox': {
@@ -4210,7 +4170,6 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientDataRoute: typeof AuthenticatedClientDataRoute
   AuthenticatedClientExecutiveRoute: typeof AuthenticatedClientExecutiveRoute
   AuthenticatedClientInboxRoute: typeof AuthenticatedClientInboxRoute
-  AuthenticatedClientIntelligenceRoute: typeof AuthenticatedClientIntelligenceRoute
   AuthenticatedClientInterviewsRoute: typeof AuthenticatedClientInterviewsRoute
   AuthenticatedClientMessagesRoute: typeof AuthenticatedClientMessagesRoute
   AuthenticatedClientOffersRoute: typeof AuthenticatedClientOffersRoute
@@ -4220,7 +4179,6 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientRolesRoute: typeof AuthenticatedClientRolesRoute
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
-  AuthenticatedClientSharesRoute: typeof AuthenticatedClientSharesRoute
   AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
   AuthenticatedClientTasksRoute: typeof AuthenticatedClientTasksRoute
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
@@ -4240,7 +4198,6 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientDataRoute: AuthenticatedClientDataRoute,
   AuthenticatedClientExecutiveRoute: AuthenticatedClientExecutiveRoute,
   AuthenticatedClientInboxRoute: AuthenticatedClientInboxRoute,
-  AuthenticatedClientIntelligenceRoute: AuthenticatedClientIntelligenceRoute,
   AuthenticatedClientInterviewsRoute: AuthenticatedClientInterviewsRoute,
   AuthenticatedClientMessagesRoute: AuthenticatedClientMessagesRoute,
   AuthenticatedClientOffersRoute: AuthenticatedClientOffersRoute,
@@ -4251,7 +4208,6 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
     AuthenticatedClientPositionsRouteWithChildren,
   AuthenticatedClientRolesRoute: AuthenticatedClientRolesRoute,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
-  AuthenticatedClientSharesRoute: AuthenticatedClientSharesRoute,
   AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
   AuthenticatedClientTasksRoute: AuthenticatedClientTasksRoute,
   AuthenticatedClientTeamRoute: AuthenticatedClientTeamRoute,
