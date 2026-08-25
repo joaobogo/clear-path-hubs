@@ -645,7 +645,6 @@ export const archiveWorkspacePosition = createServerFn({ method: "POST" })
     z.object({ orgId: z.string().uuid(), positionId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    assertNotSupportViewReadOnly();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const trace_id = crypto.randomUUID();
     const { data: before } = await context.supabase
@@ -687,7 +686,6 @@ export const deleteWorkspacePosition = createServerFn({ method: "POST" })
     z.object({ orgId: z.string().uuid(), positionId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    assertNotSupportViewReadOnly();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const trace_id = crypto.randomUUID();
     const { data: before } = await context.supabase
