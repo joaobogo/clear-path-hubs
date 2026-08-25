@@ -42,3 +42,4 @@ export {
   countCandidatesInPlay,
   countOpenOffers,
 } from "@/lib/kpis/candidates-in-play.server";
+export { readOrgRollups, type OrgRollup } from "@/lib/kpis/org-rollups.server";
