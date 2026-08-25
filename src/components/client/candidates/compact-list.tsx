@@ -84,7 +84,7 @@ export function CompactList({
           <tbody className="divide-y">
             {rows.map((c) => (
               <tr key={c.match_id} className="hover:bg-muted/20">
-                <td className="py-3 px-3 align-middle">
+                <td data-label="Compare" className="py-3 px-3 align-middle">
                   <input
                     type="checkbox"
                     checked={compareIds.includes(c.match_id)}
@@ -94,7 +94,7 @@ export function CompactList({
                     className="h-4 w-4 cursor-pointer"
                   />
                 </td>
-                <td className="py-3 px-3 align-middle">
+                <td data-label="Candidate" className="py-3 px-3 align-middle">
                   <Link
                     to="/client/candidates/$id"
                     preload="intent"
@@ -108,7 +108,7 @@ export function CompactList({
                     {candidateHeadline(c)}
                   </div>
                 </td>
-                <td className="py-3 px-3 align-middle">
+                <td data-label="Fit" className="py-3 px-3 align-middle">
                   <CandidateScoreBadge
                     score={c.score}
                     fitLabel={c.fit_label}
@@ -117,10 +117,10 @@ export function CompactList({
                     hideEvidenceChip
                   />
                 </td>
-                <td className="py-3 px-3 text-muted-foreground align-middle whitespace-nowrap">
+                <td data-label="Stage" className="py-3 px-3 text-muted-foreground align-middle whitespace-nowrap">
                   {clientStageLabel(c.stage)}
                 </td>
-                <td className="py-3 px-3 text-right align-middle">
+                <td data-label="Action" className="py-3 px-3 text-right align-middle">
                   {orgId ? (
                     <CandidatePrimaryAction
                       orgId={orgId}
