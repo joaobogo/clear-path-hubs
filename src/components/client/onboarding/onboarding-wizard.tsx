@@ -90,7 +90,13 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
 
   const goTo = (next: OnboardingStepId) => {
     setStep(next);
-    void savePlace({ data: { current_step: next, position_id: state?.position?.id ?? null } });
+    void savePlace({
+      data: {
+        current_step: next,
+        position_id: state?.position?.id ?? null,
+        organization_id: state?.organization_id ?? null,
+      },
+    });
   };
 
   const markConfirmed = useMutation({
@@ -112,7 +118,13 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
     if (next) goTo(next.id);
   };
   const saveForLater = () => {
-    void savePlace({ data: { current_step: active, position_id: state?.position?.id ?? null } });
+    void savePlace({
+      data: {
+        current_step: active,
+        position_id: state?.position?.id ?? null,
+        organization_id: state?.organization_id ?? null,
+      },
+    });
     toast.success("Saved. You can pick this up from where you left off.");
     void navigate({ to: "/client" });
   };

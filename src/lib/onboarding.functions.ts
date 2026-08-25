@@ -68,6 +68,33 @@ async function assertOrgAdmin(supabase: Db, userId: string, org: string) {
   }
 }
 
+
+/* ------------------------------------------------------------------ */
+/* Onboarding status on the organisation record                        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The admin client record reads organizations.onboarding_status. Any wizard
+ * save moves a client off "not_started" so both surfaces agree.
+ */
+async function markOnboardingProgress(
+  supabase: Db,
+  org: string,
+  next: "in_progress" | "live" = "in_progress",
+) {
+  const { data: row } = await supabase
+    .from("organizations")
+    .select("onboarding_status")
+    .eq("id", org)
+    .maybeSingle();
+  const current = ((row as { onboarding_status?: string | null } | null)?.onboarding_status ??
+    "not_started") as string;
+  if (current === next) return;
+  // Never walk a finished or paused onboarding backwards.
+  if (next === "in_progress" && current !== "not_started") return;
+  await supabase.from("organizations").update({ onboarding_status: next }).eq("id", org);
+}
+
 /* ------------------------------------------------------------------ */
 /* Draft persistence — namespaced inside the existing intake draft row */
 /* ------------------------------------------------------------------ */
@@ -435,6 +462,7 @@ export const saveOnboardingPlace = createServerFn({ method: "POST" })
       .object({
         current_step: z.enum(ONBOARDING_STEP_IDS as unknown as [string, ...string[]]),
         position_id: z.string().uuid().nullable().optional(),
+        organization_id: z.string().uuid().nullable().optional(),
       })
       .parse(raw),
   )
@@ -446,6 +474,10 @@ export const saveOnboardingPlace = createServerFn({ method: "POST" })
       current_step: data.current_step as OnboardingStepId,
       position_id: data.position_id ?? draft.position_id ?? null,
     });
+    if (data.organization_id) {
+      await assertMember(supabase, userId, data.organization_id);
+      await markOnboardingProgress(supabase, data.organization_id);
+    }
     return { savedAt };
   });
 
@@ -477,12 +509,10 @@ export const confirmOnboardingStep = createServerFn({ method: "POST" })
         _org: data.organization_id,
       });
       if (admin === true) {
-        await supabase
-          .from("organizations")
-          .update({ onboarding_status: "active" })
-          .eq("id", data.organization_id)
-          .eq("onboarding_status", "pending");
+        await markOnboardingProgress(supabase, data.organization_id, "live");
       }
+    } else {
+      await markOnboardingProgress(supabase, data.organization_id);
     }
     return { savedAt };
   });
@@ -522,6 +552,7 @@ export const saveOnboardingWorkspace = createServerFn({ method: "POST" })
       ...draft,
       confirmed: { ...(draft.confirmed ?? {}), workspace: new Date().toISOString() },
     });
+    await markOnboardingProgress(supabase, data.organization_id);
     return { ok: true as const };
   });
 
@@ -612,6 +643,7 @@ export const saveOnboardingRole = createServerFn({ method: "POST" })
 
     const { draft } = await readDraft(supabase, userId);
     await writeDraft(supabase, userId, { ...draft, position_id: positionId });
+    await markOnboardingProgress(supabase, data.organization_id);
     return { position_id: positionId };
   });
 
@@ -657,6 +689,7 @@ export const saveOnboardingRequirements = createServerFn({ method: "POST" })
       .eq("id", data.position_id)
       .eq("organization_id", data.organization_id);
     if (error) throw new Error(error.message);
+    await markOnboardingProgress(supabase, data.organization_id);
     return { ok: true as const };
   });
 
@@ -686,6 +719,7 @@ export const confirmOnboardingBlueprint = createServerFn({ method: "POST" })
       .eq("id", data.position_id)
       .eq("organization_id", data.organization_id);
     if (error) throw new Error(error.message);
+    await markOnboardingProgress(supabase, data.organization_id);
     return { ok: true as const, reason: null };
   });
 
@@ -710,6 +744,7 @@ export const saveOnboardingWeights = createServerFn({ method: "POST" })
       .eq("id", data.position_id)
       .eq("organization_id", data.organization_id);
     if (error) throw new Error(error.message);
+    await markOnboardingProgress(supabase, data.organization_id);
     return { weights };
   });
 
@@ -751,5 +786,6 @@ export const saveOnboardingOversight = createServerFn({ method: "POST" })
       .eq("id", data.position_id)
       .eq("organization_id", data.organization_id);
     if (error) throw new Error(error.message);
+    await markOnboardingProgress(supabase, data.organization_id);
     return { ok: true as const };
   });
