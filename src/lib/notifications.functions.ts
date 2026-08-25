@@ -32,6 +32,24 @@ export async function emitEventFromServer(args: {
 }) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+  // A "new message" notification that opens an empty thread is a dead end for
+  // the reader, so a message event that points at a conversation with no
+  // messages is dropped instead of stored.
+  if (args.event === "message_sent") {
+    const conversationId = (args.link_path ?? "").match(
+      /\/conversations\/([0-9a-fA-F-]{36})\b/,
+    )?.[1];
+    if (conversationId) {
+      const { count } = await supabaseAdmin
+        .from("messages")
+        .select("id", { count: "exact", head: true })
+        .eq("conversation_id", conversationId);
+      if (!count) return { event_id: null, delivered: 0 };
+    }
+  }
+
+
+
   const key = eventKey(args.event, args.scope);
   // Idempotent insert of the event
   const { data: existing } = await supabaseAdmin
