@@ -210,6 +210,7 @@ export function CandidatePrimaryAction({
           <Link
             to="/client/candidates/$id"
             params={{ id: matchId }}
+            search={search.org ? { org: search.org } : undefined}
             hash="sec-evidence"
             preload="intent"
           >
