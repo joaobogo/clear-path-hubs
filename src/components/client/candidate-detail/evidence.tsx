@@ -192,6 +192,25 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
   );
 });
 
+function coverageVerdictLine(counts: EvidenceCounts): string | null {
+  if (counts.total === 0) return null;
+  const { met, partial, unknown, total } = counts;
+  if (met === total) {
+    return `Scored against your ${total} requirements — all are fully evidenced.`;
+  }
+  if (partial === total) {
+    return `Scored against your ${total} requirements — every one shows supporting signals; direct quotes are still being attached.`;
+  }
+  if (unknown === total) {
+    return `Scored against your ${total} requirements — none show evidence yet.`;
+  }
+  const chunks: string[] = [];
+  if (met > 0) chunks.push(`${met} fully met`);
+  if (partial > 0) chunks.push(`${partial} partly evidenced`);
+  if (unknown > 0) chunks.push(`${unknown} not evidenced`);
+  return `Scored against your ${total} requirements — ${chunks.join(" · ")}.`;
+}
+
 export const FitHero = memo(function FitHero({
   candidate,
 }: {
