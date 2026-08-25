@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { isQaFixtureTitle } from "./client/test-record-filter";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertNoQaContamination } from "@/lib/qa-guard";
 import {
   MAX_ATTACHMENTS_PER_MESSAGE,
   MAX_ATTACHMENT_BYTES,
@@ -407,6 +408,11 @@ export const ensureConversation = createServerFn({ method: "POST" })
       existingQ = existingQ.eq("candidate_match_id", data.candidateMatchId!);
     const { data: existing } = await existingQ.maybeSingle();
     if (existing) return { id: (existing as Row).id as string };
+
+    const qa = await assertNoQaContamination(supabase, data.orgId, [
+      data.subject,
+    ]);
+    if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
 
     const { data: created, error } = await supabase
       .from("conversations")

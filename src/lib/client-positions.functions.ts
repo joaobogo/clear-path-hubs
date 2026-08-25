@@ -5,6 +5,7 @@ import { isQaFixtureTitle } from "@/lib/client/test-record-filter";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { assertNoQaContamination } from "@/lib/qa-guard";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
@@ -609,6 +610,10 @@ export const createWorkspacePosition = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await assertEditor(context.supabase, context.userId, data.orgId);
+    const qa = await assertNoQaContamination(context.supabase, data.orgId, [
+      data.title,
+    ]);
+    if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
     const trace_id = crypto.randomUUID();
     const { data: created, error } = await context.supabase
       .from("positions")

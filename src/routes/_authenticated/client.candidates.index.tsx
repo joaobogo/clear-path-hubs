@@ -20,8 +20,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CompareTray, CompareSheet } from "@/components/client/candidate-comparison";
 import {
   compareEligibility,
-  defaultCompareSelection,
   COMPARE_MAX,
+  COMPARE_MIN,
 } from "@/lib/client-compare";
 import { QueryErrorCard } from "@/components/client/query-error";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -222,6 +222,8 @@ function CandidatesPage() {
  );
 
   // Comparison state — seed from ?compare= (highest priority) or local storage.
+  // Nothing is pre-selected: the client must tick candidates before Compare or
+  // Bulk CV download become active.
   const initialCompare = useMemo(() => {
     if (search.compare) {
       return search.compare
@@ -233,52 +235,29 @@ function CandidatesPage() {
   }, [search.compare, orgId]);
 
   const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
-  const [compareOpen, setCompareOpen] = useState(false); // Controlled by compareIds length/explicit action
+  const [compareOpen, setCompareOpen] = useState(false);
 
-  // Sync state to local storage when it changes
+  // Hydrate URL/storage selection once, and open the comparison drawer only when
+  // the user explicitly asked for it.
+  const didHydrate = useRef(false);
   useEffect(() => {
-    if (!orgId) return;
-    
-    // Always sync non-empty selections
-    if (compareIds.length > 0) {
-      saveCompareSelection(orgId, compareIds);
-      return;
-    }
-
-    // Only clear storage if we have data (prevents clearing during initial mount/loading)
-    // AND it wasn't a seeded default we just haven't confirmed yet.
-    const rows = rowsRaw as ClientCandidateDTO[];
-    if (rows && rows.length > 0 && seededDefault.current) {
-      clearCompareSelection(orgId);
-    }
-  }, [compareIds, orgId, rowsRaw]);
-
-  const seededDefault = useRef(false);
-  useEffect(() => {
-    // Pre-select a sensible shortlist for comparison, but never open the grid on
-    // its own — the drawer only opens on an explicit ?view=compare or a click.
-    if (seededDefault.current) return;
-    const rows = rowsRaw as ClientCandidateDTO[];
-    if (rows.length === 0) return;
-    seededDefault.current = true;
-
-    // If we have an initial selection (from URL or storage), keep it.
+    if (didHydrate.current) return;
+    didHydrate.current = true;
     if (initialCompare.length > 0) {
       setCompareIds(initialCompare);
       if (search.view === "compare") setCompareOpen(true);
-      return;
     }
+  }, [initialCompare, search.view]);
 
-    // Only auto-select if no selection exists.
-    const scoped = search.position
-      ? rows.filter((r) => r.position?.id === search.position)
-      : rows;
-    const preset = defaultCompareSelection(scoped);
-    if (preset.length > 0) {
-      setCompareIds(preset);
-      if (search.view === "compare") setCompareOpen(true);
+  // Sync state to local storage when it changes.
+  useEffect(() => {
+    if (!orgId) return;
+    if (compareIds.length > 0) {
+      saveCompareSelection(orgId, compareIds);
+    } else {
+      clearCompareSelection(orgId);
     }
-  }, [rowsRaw, initialCompare, search.position, search.view]);
+  }, [compareIds, orgId]);
 
 
 
@@ -311,8 +290,6 @@ function CandidatesPage() {
     if (orgId) {
       clearCompareSelection(orgId);
     }
-    // Also clear from local state to ensure it doesn't re-seed
-    seededDefault.current = true;
   }, [orgId]);
 
 
@@ -325,15 +302,26 @@ function CandidatesPage() {
  [compareIds, rowsRaw],
  );
 
-  // Bulk CV download targets — selection first, else the filtered list.
-  // We include all candidates the client can see; the backend enforces staged 
-  // redaction (PII stripped) for pre-interview candidates.
-  const cvTargets = useMemo(() => {
-    const pool =
-      selectedCandidates.length > 0 ? selectedCandidates : (filtered as ClientCandidateDTO[]);
-    return pool
-      .map((c) => ({ matchId: c.match_id, name: c.candidate.display_name }));
-  }, [selectedCandidates, filtered]);
+  // Bulk CV download targets — only the ticked candidates. Both Compare and
+  // Download stay disabled until 2–4 candidates are selected.
+  const cvTargets = useMemo(
+    () =>
+      selectedCandidates.map((c) => ({
+        matchId: c.match_id,
+        name: c.candidate.display_name,
+      })),
+    [selectedCandidates],
+  );
+
+  const bulkDownloadDisabledReason = useMemo(() => {
+    if (selectedCandidates.length < COMPARE_MIN) {
+      return `Select at least ${COMPARE_MIN} candidates to download`;
+    }
+    if (selectedCandidates.length > COMPARE_MAX) {
+      return `Download up to ${COMPARE_MAX} CVs at a time`;
+    }
+    return null;
+  }, [selectedCandidates.length]);
 
  const compareCheck = compareEligibility(selectedCandidates);
  const crossPosition = !compareCheck.ok && selectedCandidates.length >= 2;
@@ -439,17 +427,20 @@ function CandidatesPage() {
       >
         Compare {selectedCandidates.length > 0 ? `${selectedCandidates.length} ` : ""}side by side
       </Button>
-      {/* Bulk CV download: the ticked candidates when any are selected, else
-      every candidate currently shown whose CV has been released. */}
       <BulkCvDownloadButton
         targets={cvTargets}
-        label={`Download ${plural(cvTargets.length, "CV", "CVs")} (ZIP)`}
+        label={
+          selectedCandidates.length > 0
+            ? `Download ${plural(selectedCandidates.length, "CV", "CVs")} (ZIP)`
+            : "Download CVs (ZIP)"
+        }
+        disabledReason={bulkDownloadDisabledReason}
       />
       <div className="text-xs text-muted-foreground sm:text-right">
         {overview?.last_updated && (
           <div>Updated {formatDate((overview.last_updated))}</div>
         )}
-        <div>Select {2}–{COMPARE_MAX} candidates on one role</div>
+        <div>Select {COMPARE_MIN}–{COMPARE_MAX} candidates on one role</div>
       </div>
     </div>
   </header>

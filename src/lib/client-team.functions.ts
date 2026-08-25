@@ -1,6 +1,7 @@
 // Team roster and membership mutations.
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
+import { assertNoQaContamination } from "@/lib/qa-guard";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -152,6 +153,11 @@ export const inviteClientMember = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     await assertOrgAdmin(context.supabase, context.userId, data.orgId);
     await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
+
+    const qa = await assertNoQaContamination(context.supabase, data.orgId, [
+      data.email,
+    ]);
+    if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
