@@ -42,14 +42,45 @@ export function titleCaseLocation(input: string): string {
 }
 
 /**
+ * Remove redundant location pieces. A part is dropped when it is empty, an
+ * exact duplicate, or a substring of a part already kept (e.g. "Lisbon"
+ * inside "Lisbon Metropolitan Area"). Order is preserved.
+ */
+export function dedupeLocationParts(parts: (string | null | undefined)[]): string[] {
+  const kept: string[] = [];
+  for (const raw of parts) {
+    const part = raw?.trim();
+    if (!part) continue;
+    const lower = part.toLowerCase();
+    if (kept.some((k) => k.toLowerCase() === lower || k.toLowerCase().includes(lower))) continue;
+    kept.push(part);
+  }
+  return kept;
+}
+
+/**
+ * Normalise an already-joined location string by splitting on commas (or dashes
+ * used as separators) and removing duplicate pieces. Returns null when nothing
+ * useful remains.
+ */
+export function normalizeLocationString(input: string | null | undefined): string | null {
+  if (!input) return null;
+  const parts = input
+    .split(/\s*[,\-]\s*/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const deduped = dedupeLocationParts(parts);
+  return deduped.join(", ") || null;
+}
+
+/**
  * Format a single location line from city/region/country pieces.
  * Handles missing pieces and preserves acronyms.
  */
 export function formatLocationLine(parts: (string | null | undefined)[]): string {
-  return parts
-    .filter((p): p is string => !!p)
-    .map((p) => titleCaseLocation(p.trim()))
-    .join(", ");
+  return dedupeLocationParts(
+    parts.filter((p): p is string => !!p).map((p) => titleCaseLocation(p.trim())),
+  ).join(", ");
 }
 
 const COUNTRY_NAMES: Record<string, string> = {
