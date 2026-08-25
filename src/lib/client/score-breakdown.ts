@@ -164,7 +164,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
         reasonsByRequirement.set(id, {
           id,
           tone: "watch",
-          text: `Only partial evidence for required: ${r.label}`,
+          text: `Only partial evidence for the must-have "${r.label}" — this holds the score down.`,
         });
       }
     });
@@ -210,8 +210,37 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
     scoredAt: candidate.evaluation?.completed_at ?? candidate.last_updated ?? null,
     groups,
     rubric,
-    reasons: reasons.slice(0, 8),
+    reasons: cleanReasons(reasons).slice(0, 8),
     evidenceHash: "#sec-coverage",
     empty: rows.length === 0 && rubric.length === 0 && reasons.length === 0,
   };
+}
+
+/**
+ * One reason per requirement, one line per sentence.
+ * Drops entries whose sentence template was never filled in (a bare
+ * requirement name, an empty label, or a fragment), and removes repeats
+ * by requirement id and by wording.
+ */
+function cleanReasons(reasons: BreakdownReason[]): BreakdownReason[] {
+  const seenIds = new Set<string>();
+  const seenText = new Set<string>();
+  const out: BreakdownReason[] = [];
+  for (const r of reasons) {
+    const text = (r.text ?? "").trim();
+    if (!text) continue;
+    // An unfilled template leaves empty quotes or a dangling dash.
+    if (/""|“”|—\s*$|:\s*$/.test(text)) continue;
+    // A complete sentence: several words and terminal punctuation.
+    const words = text.split(/\s+/).filter(Boolean);
+    if (words.length < 4) continue;
+    const sentence = /[.!?]$/.test(text) ? text : `${text}.`;
+    const key = sentence.toLowerCase();
+    const idKey = r.id ?? key;
+    if (seenIds.has(idKey) || seenText.has(key)) continue;
+    seenIds.add(idKey);
+    seenText.add(key);
+    out.push({ ...r, text: sentence });
+  }
+  return out;
 }
