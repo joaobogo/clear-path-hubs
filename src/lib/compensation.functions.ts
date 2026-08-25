@@ -55,11 +55,14 @@ export const getCompensationSignal = createServerFn({ method: "POST" })
     if (m.position_id) {
       const { data: hires } = await context.supabase
         .from("hire_records")
-        .select(sel("salary_amount, salary_currency, salary_period"))
+        .select(sel("status, salary_amount, salary_currency, salary_period"))
         .eq("organization_id", data.orgId)
         .eq("position_id", m.position_id)
         .not("salary_amount", "is", null);
-      offerAmounts = ((hires as AnyRow[] | null) ?? [])
+      const liveOffers = ((hires as AnyRow[] | null) ?? []).filter((h) =>
+        isLiveOffer(String(h.status ?? "")),
+      );
+      offerAmounts = liveOffers
         .map((h) => ({
           amount: Number(h.salary_amount),
           currency: h.salary_currency ?? null,
@@ -71,7 +74,8 @@ export const getCompensationSignal = createServerFn({ method: "POST" })
         .from("hire_records")
         .select("*", { count: "exact", head: true })
         .eq("organization_id", data.orgId)
-        .eq("position_id", m.position_id);
+        .eq("position_id", m.position_id)
+        .not("status", "in", `("offer_declined","closed_lost")`);
       totalOfferCount = count ?? 0;
     }
 
