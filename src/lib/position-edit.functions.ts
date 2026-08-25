@@ -16,6 +16,7 @@ type AnyRow = any;
 
 import { assertWorkspaceAccess, assertWorkspaceWrite } from "@/lib/authz/workspace-access";
 import { normalizeSeniority } from "@/lib/position-seniority";
+import { normalizeTravelExpectation } from "@/lib/requisition-schema";
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -443,7 +444,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
           confidentiality: data.confidentiality || "public",
         },
       },
-      travel_expectation: data.travel || null,
+      travel_expectation: normalizeTravelExpectation(data.travel) || null,
       openings: typeof data.headcount === "number" ? data.headcount : 1,
       updated_at: new Date().toISOString(),
     };
@@ -559,7 +560,7 @@ export const publishPosition = createServerFn({ method: "POST" })
           confidentiality: data.confidentiality || "public",
         },
       },
-      travel_expectation: data.travel || null,
+      travel_expectation: normalizeTravelExpectation(data.travel) || null,
       updated_at: new Date().toISOString(),
     };
     if (data.visibility) {
