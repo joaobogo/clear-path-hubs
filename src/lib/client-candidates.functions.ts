@@ -120,10 +120,26 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     );
 
     if (data.positionId) q = q.eq("position_id", data.positionId);
-    if (data.q) {
-      const ts = data.q.trim().split(/\s+/).join(" & ");
-      if (ts) q = q.textSearch("candidate_profiles.search_vector", ts, { config: "english" });
+    if (data.q && data.q.trim()) {
+      // Names, titles and headlines, not a tsvector: candidate_profiles has no
+      // search column, so the old text search matched nothing at all. Profile
+      // rows are resolved privileged (client RLS hides them until release) and
+      // used only to intersect matches this caller can already see.
+      const { orIlike } = await import("@/lib/search/postgrest-filter");
+      const filter = orIlike(["full_name", "email", "headline", "summary"], data.q);
+      if (filter) {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: profiles } = await supabaseAdmin
+          .from("candidate_profiles")
+          .select("id")
+          .or(filter)
+          .limit(500);
+        const ids = ((profiles as AnyRow[]) ?? []).map((p) => p.id as string);
+        if (ids.length === 0) return { rows: [], counts: {} as Record<string, number> } as never;
+        q = q.in("candidate_profile_id", ids);
+      }
     }
+
 
     const { data: rawRows, error } = await q.order("delivered_at", { ascending: false });
     if (error) throw new Error(error.message);
