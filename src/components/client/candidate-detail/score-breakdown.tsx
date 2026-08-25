@@ -71,7 +71,8 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
     <div className="mt-4 rounded-lg border p-3">
       <h3 className="text-sm font-semibold">How the number is made up</h3>
       <TooltipProvider>
-      <table className="mt-2 w-full text-sm">
+      {/* taas-stack-table: the three columns stack on a phone. */}
+      <table className="taas-stack-table mt-2 w-full text-sm">
         <thead>
           <tr className="text-left text-[11px] uppercase tracking-wide text-muted-foreground">
             <th className="font-medium">Component</th>

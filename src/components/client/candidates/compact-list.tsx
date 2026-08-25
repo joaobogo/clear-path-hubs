@@ -70,7 +70,8 @@ export function CompactList({
 
   return (
     <div className="min-w-0 max-w-full overflow-hidden rounded-xl border bg-card mb-16">
-        <table className="w-full text-sm">
+        {/* taas-stack-table: rows stack into labelled blocks below 640px. */}
+        <table className="taas-stack-table w-full text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
               <th className="w-10 py-2 px-3"></th>
