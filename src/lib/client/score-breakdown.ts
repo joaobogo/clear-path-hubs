@@ -44,6 +44,11 @@ export type BreakdownReason = {
   id: string;
   tone: "positive" | "watch";
   text: string;
+  /**
+   * Normalised requirement this line talks about, when it talks about one.
+   * A requirement may appear once across both columns, in one phrasing.
+   */
+  requirementKey?: string;
 };
 
 export type ScoreBreakdown = {
@@ -108,6 +113,37 @@ function preferredTakeaway(c: { met: number; partial: number; related: number; t
 }
 
 
+/** Comparable form of a requirement label: lowercase words only. */
+function normalizeLabel(label: string): string {
+  return label
+    .toLowerCase()
+    .replace(/^(required|preferred|must[- ]have|nice[- ]to[- ]have)\s*[:\-–]\s*/i, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function requirementKey(row: RequirementRow): string | undefined {
+  const key = normalizeLabel(row.label ?? "");
+  return key.length > 2 ? key : undefined;
+}
+
+/**
+ * Free-text strengths and concerns often restate a requirement in other words.
+ * When one names a requirement, it carries that requirement's key so the
+ * requirement cannot appear a second time in the other column.
+ */
+function matchRequirementKey(text: string, rows: RequirementRow[]): string | undefined {
+  const haystack = normalizeLabel(text ?? "");
+  if (!haystack) return undefined;
+  let best: string | undefined;
+  for (const row of rows) {
+    const key = requirementKey(row);
+    if (!key) continue;
+    if (haystack.includes(key) && (best == null || key.length > best.length)) best = key;
+  }
+  return best;
+}
+
 export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdown {
   const rows = candidate.requirement_rows ?? [];
   const must = rows.filter((r: RequirementRow) => r.importance === "must_have");
@@ -148,6 +184,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
       const id = r.id || `must-met-${i}`;
       reasonsByRequirement.set(id, {
         id,
+        requirementKey: requirementKey(r),
         tone: "positive",
         text: `Meets the must-have "${r.label}", quoted from ${
           r.evidence?.[0]?.source ?? "the application"
@@ -156,7 +193,12 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
     });
 
   (candidate.strengths ?? []).slice(0, 3).forEach((s: string, i: number) =>
-    reasons.push({ id: `strength-${i}`, tone: "positive", text: s }),
+    reasons.push({
+      id: `strength-${i}`,
+      tone: "positive",
+      text: s,
+      requirementKey: matchRequirementKey(s, rows),
+    }),
   );
 
   must
@@ -172,6 +214,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
       if (!reasonsByRequirement.has(id)) {
         reasonsByRequirement.set(id, {
           id,
+          requirementKey: requirementKey(r),
           tone: "watch",
           text: `We found no direct evidence for "${r.label}". This holds the score down.`,
         });
@@ -187,6 +230,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
       if (!reasonsByRequirement.has(id)) {
         reasonsByRequirement.set(id, {
           id,
+          requirementKey: requirementKey(r),
           tone: "watch",
           text: `We found partial evidence for "${r.label}" — worth confirming. This holds the score down.`,
         });
@@ -199,7 +243,12 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
   }
 
   (candidate.concerns ?? []).slice(0, 3).forEach((c: string, i: number) =>
-    reasons.push({ id: `concern-${i}`, tone: "watch", text: humanizeConcernSentence(c) }),
+    reasons.push({
+      id: `concern-${i}`,
+      tone: "watch",
+      text: humanizeConcernSentence(c),
+      requirementKey: matchRequirementKey(c, rows),
+    }),
   );
   if (candidate.main_consideration) {
     reasons.push({
@@ -236,7 +285,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
     scoredAt: candidate.evaluation?.completed_at ?? candidate.last_updated ?? null,
     groups,
     rubric,
-    reasons: cleanReasons(reasons).slice(0, 8),
+    reasons: cleanReasons(reasons).slice(0, 12),
     evidenceHash: "#sec-coverage",
     empty: rows.length === 0 && rubric.length === 0 && reasons.length === 0,
   };
@@ -251,6 +300,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
 function cleanReasons(reasons: BreakdownReason[]): BreakdownReason[] {
   const seenIds = new Set<string>();
   const seenText = new Set<string>();
+  const seenRequirements = new Set<string>();
   const out: BreakdownReason[] = [];
   for (const r of reasons) {
     const text = (r.text ?? "").trim();
@@ -264,6 +314,11 @@ function cleanReasons(reasons: BreakdownReason[]): BreakdownReason[] {
     const key = sentence.toLowerCase();
     const idKey = r.id ?? key;
     if (seenIds.has(idKey) || seenText.has(key)) continue;
+    // One entry per requirement across both columns, whichever phrasing came first.
+    if (r.requirementKey) {
+      if (seenRequirements.has(r.requirementKey)) continue;
+      seenRequirements.add(r.requirementKey);
+    }
     seenIds.add(idKey);
     seenText.add(key);
     out.push({ ...r, text: sentence });
