@@ -539,9 +539,20 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
 }) {
   const rationale = buildShortlistRationale(candidate);
   const roleTitle = candidate.position?.title ?? null;
-  // Every declared requirement gets its own row — same source as the comparison grid.
-  const rows = rationale.lines.filter((l) => l.verdict !== "not_applicable");
+  // One row per declared requirement, must-haves first — the same rows the
+  // comparison grid and score breakdown read.
+  const rows = [...candidate.requirement_rows].sort((a, b) =>
+    a.importance === b.importance ? 0 : a.importance === "must_have" ? -1 : 1,
+  );
   if (rows.length === 0) return null;
+  // A rationale claim, where one exists, is shown inside its requirement's row.
+  const claimByKey = new Map<string, string>();
+  for (const l of rationale.lines) {
+    if (!l.claim) continue;
+    claimByKey.set(l.id, l.claim);
+    claimByKey.set(l.requirement.trim().toLowerCase(), l.claim);
+  }
+
 
   const bandLine = candidate.fit?.headline
     ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
