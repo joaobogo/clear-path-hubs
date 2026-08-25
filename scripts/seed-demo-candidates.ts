@@ -180,67 +180,120 @@ function offerSalary(score: number): number {
   return Math.round(raw / 500) * 500;
 }
 
-function cvText(seed: Seed, quoted: number, total: number): string {
-  const lines = [
-    seed.name,
-    `${seed.headline} — ${seed.city}, ${seed.country}`,
-    `${slug(seed.name)}@demo.taasflow.com · ${seed.timezone}`,
-    "",
-    "Profile",
-    seed.summary,
-    "",
-    "Core stack",
-    seed.stack.join(", "),
-    "",
-    "Experience",
-  ];
-  for (let i = 0; i < Math.max(2, Math.round(seed.years / 3)); i += 1) {
-    lines.push(
-      `${2026 - (i + 1) * 3}–${2026 - i * 3} · Product engineer · Built and shipped ${seed.stack[i % seed.stack.length]} features end to end, from Postgres schema and migrations through the shipped interface, with automated tests kept green.`,
-    );
-  }
-  lines.push(
-    "",
-    "Languages",
-    "Portuguese (native), English (fluent, written and spoken)",
-    "",
-    `Evidence depth: ${quoted} of ${total} role requirements are supported by a quoted passage in this CV.`,
-  );
-  return lines.join("\n");
+// --- Evidence library ------------------------------------------------------
+// CV templates, assessment submissions and interview transcripts live in
+// scripts/demo-evidence.json so the text can be reviewed without reading code.
+
+type CvTemplate = {
+  id: string;
+  language: string;
+  seniority: string;
+  years_range: [number, number];
+  score_range: [number, number];
+  expected_must_have_ratio: number;
+  body: string;
+};
+
+type AssessmentQuestion = { prompt: string; verdict: "correct" | "partial" | "incorrect"; note: string };
+
+type AssessmentSubmission = {
+  id: string;
+  accuracy: string;
+  score_range: [number, number];
+  questions_total: number;
+  questions_correct: number;
+  questions_partial: number;
+  questions_incorrect: number;
+  headline: string;
+  summary: string;
+  questions: AssessmentQuestion[];
+};
+
+type InterviewTranscript = {
+  id: string;
+  depth: string;
+  score_range: [number, number];
+  duration_minutes: number;
+  assessor_note: string;
+  turns: { speaker: string; text: string }[];
+};
+
+type EvidenceLibrary = {
+  cv_templates: CvTemplate[];
+  assessment_submissions: AssessmentSubmission[];
+  interview_transcripts: InterviewTranscript[];
+};
+
+const LIBRARY: EvidenceLibrary = JSON.parse(
+  readFileSync(new URL("./demo-evidence.json", import.meta.url), "utf8"),
+) as EvidenceLibrary;
+
+/** Picks the entry whose score band contains the score, else the nearest band. */
+function pickByScore<T extends { score_range: [number, number] }>(items: T[], score: number): T {
+  const inBand = items.find((item) => score >= item.score_range[0] && score < item.score_range[1]);
+  if (inBand) return inBand;
+  return items.reduce((best, item) => {
+    const distance = Math.min(Math.abs(score - item.score_range[0]), Math.abs(score - item.score_range[1]));
+    const bestDistance = Math.min(Math.abs(score - best.score_range[0]), Math.abs(score - best.score_range[1]));
+    return distance < bestDistance ? item : best;
+  }, items[0]!);
 }
 
-function interviewNotes(seed: Seed, quoted: number, total: number): string {
-  const alignment = quoted / total;
-  const closing =
-    alignment >= 0.85
-      ? "Answers tracked the role requirements closely, with concrete examples and trade-offs for each."
-      : alignment >= 0.65
-        ? "Answers covered most requirements with concrete examples; a couple stayed general."
-        : "Answers covered the core requirements; several examples stayed at a high level.";
+function fillTemplate(body: string, seed: Seed, email: string): string {
+  const currentYear = 2026;
+  const values: Record<string, string> = {
+    name: seed.name,
+    city: seed.city,
+    country: seed.country,
+    years: String(seed.years),
+    email,
+    stack: seed.stack.join(" · "),
+    primary: seed.stack[0] ?? "TypeScript",
+    secondary: seed.stack[1] ?? "PostgreSQL",
+    startYear: String(currentYear - Math.max(2, Math.round(seed.years / 2))),
+    endYear: String(currentYear - seed.years),
+  };
+  return body.replace(/\{\{(\w+)\}\}/g, (_all, key: string) => values[key] ?? "");
+}
+
+function cvText(seed: Seed, email: string, quoted: number, total: number): string {
+  const template = pickByScore(LIBRARY.cv_templates, seed.score);
   return [
-    `Technical interview (recorded, 60 minutes) — ${seed.name}`,
+    fillTemplate(template.body, seed, email),
     "",
-    `Walked through a feature owned end to end: ${seed.stack.slice(0, 3).join(", ")}, including the data model and the migration path.`,
-    `Explained ${seed.stack.includes("row-level security") ? "the tenant isolation model in detail, including row-level security policy design and its failure modes" : "tenant separation at application level, with limited hands-on row-level security work"}.`,
-    `Testing: ${seed.stack.some((s) => s === "Playwright" || s === "Vitest") ? "described unit and end-to-end suites they own and keep green" : "writes unit tests, end-to-end coverage still growing"}.`,
-    "English: fluent throughout, no comprehension gaps.",
-    "",
-    closing,
+    `Screening note: ${quoted} of ${total} role requirements are supported by a quoted passage in this CV.`,
   ].join("\n");
 }
 
-function assessmentNotes(seed: Seed, quoted: number, total: number): string {
-  const partial = total - quoted;
+function interviewNotes(transcript: InterviewTranscript, seed: Seed): string {
+  return [
+    `Technical interview (recorded, ${transcript.duration_minutes} minutes) — ${seed.name}`,
+    "",
+    ...transcript.turns.map((turn) => `${turn.speaker}: ${turn.text}`),
+    "",
+    `Assessor note: ${transcript.assessor_note}`,
+  ].join("\n");
+}
+
+function assessmentNotes(assessment: AssessmentSubmission, seed: Seed): string {
   return [
     `Take-home assessment submission — ${seed.name}`,
     "",
-    "Delivered a working feature slice: Postgres migration, typed data access, and a React interface with tests.",
-    partial > 0
-      ? `Partial credit awarded on ${partial} requirement${partial === 1 ? "" : "s"}: the submission addressed them, but without enough depth to call them fully met.`
-      : "Every requirement in the brief was fully addressed, including the isolation and test-coverage sections.",
-    "Submission reviewed and scored; the score is reflected in the final combined run.",
+    assessment.headline,
+    assessment.summary,
+    "",
+    ...assessment.questions.map((question, index) => {
+      const verdict =
+        question.verdict === "correct"
+          ? "Correct"
+          : question.verdict === "partial"
+            ? "Partial credit"
+            : "Incorrect";
+      return `${index + 1}. ${question.prompt} — ${verdict}. ${question.note}`;
+    }),
   ].join("\n");
 }
+
 
 async function main() {
   const { supabaseAdmin } = await import("../src/integrations/supabase/client.server");
