@@ -216,6 +216,10 @@ function NavList({
                   <Link
                     to={item.to}
                     search={hasSearch ? (search as never) : undefined}
+                    // Warm the destination on hover/focus so the click that
+                    // follows navigates instantly instead of being spent on a
+                    // pending skeleton that replaces the link.
+                    preload="intent"
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
                     title={
@@ -394,6 +398,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
         onMouseLeave={() => setRailHover(false)}
       >
         <div
+          onMouseEnter={() => collapsed && setRailHover(true)}
           onFocus={() => collapsed && setRailHover(true)}
           onBlur={(e) => {
             if (!e.currentTarget.contains(e.relatedTarget as Node)) setRailHover(false);
@@ -591,6 +596,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
             <Link
               to={primaryAction.to}
               search={primaryAction.search ? (primaryAction.search as never) : undefined}
+              preload="intent"
               className="hidden h-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-sm hover:opacity-90 md:inline-flex"
               aria-label={primaryAction.label}
               title={primaryAction.label}
@@ -693,6 +699,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
             <Link
               to={primaryAction.to}
               search={primaryAction.search ? (primaryAction.search as never) : undefined}
+              preload="intent"
               className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow"
             >
               {primaryAction.icon && <primaryAction.icon className="h-4 w-4" />}
