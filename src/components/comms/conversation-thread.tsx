@@ -427,7 +427,7 @@ export function ConversationThread({
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                  <span className="sr-only">{sendError ? "Retry sending" : "Send"}</span>
+                  <span className="sr-only">Send</span>
                 </Button>
               </div>
             </div>
