@@ -34,11 +34,9 @@ const traceId = () =>
   `cd_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 import {
   CANDIDATE_STATUSES,
-  CANDIDATE_STATUS_COPY,
-  canWithdrawFrom,
-  toCandidateStatus,
   type CandidateStatus,
 } from "@/lib/candidate/status-vocabulary";
+import { toCandidateStatusDTO } from "@/lib/candidate/status-projection";
 
 // ─── Candidate-safe status vocabulary ───────────────────────────────────────
 // One vocabulary, defined in @/lib/candidate/status-vocabulary and shared with
@@ -148,21 +146,6 @@ export const getMyContext = createServerFn({ method: "GET" })
 
 // ─── Applications list + detail ─────────────────────────────────────────────
 
-type InterviewState = "none" | "requested" | "scheduled";
-
-function interviewStateOf(rows: AnyRow[]): InterviewState {
-  const live = rows.filter(
-    (i) => i.status !== "cancelled" && i.status !== "declined",
-  );
-  if (live.some((i) => i.scheduled_at)) return "scheduled";
-  if (live.length > 0) return "requested";
-  return "none";
-}
-
-function canWithdraw(status: CandidateSafeStatus): boolean {
-  return canWithdrawFrom(status);
-}
-
 async function myProfileId(supabase: AnyRow, userId: string): Promise<string | null> {
   const { data } = await supabase
     .from("candidate_profiles")
@@ -205,16 +188,10 @@ export const listMyApplications = createServerFn({ method: "GET" })
       const matches = asArray(a.candidate_matches);
       const visibleMatch = matches.find((m: AnyRow) => m.client_visibility === "visible");
       const interviews = matches.flatMap((m: AnyRow) => asArray(m.interviews));
-      const interviewState = interviewStateOf(interviews);
       const infoRequested = openByApp.has(a.id);
-      const status = toCandidateStatus({
-        applicationStatus: a.status,
-        positionStatus: pos.status ?? "active",
-        matchStage: visibleMatch?.stage ?? null,
-        matchVisible: Boolean(visibleMatch),
-        interviewState,
-        withdrawnAt: a.withdrawn_at ?? null,
-      });
+      // One projection of the raw application + match rows.
+      const view = toCandidateStatusDTO(a, { hasOpenInfoRequest: infoRequested });
+      const status = view.status;
       const nextInterview = interviews
         .filter((i: AnyRow) => i.scheduled_at && i.status !== "cancelled")
         .sort((x: AnyRow, y: AnyRow) => String(x.scheduled_at).localeCompare(String(y.scheduled_at)))[0];
@@ -229,20 +206,16 @@ export const listMyApplications = createServerFn({ method: "GET" })
         applied_at: a.applied_at,
         last_update: visibleMatch?.updated_at ?? a.updated_at ?? a.applied_at,
         status,
-        role_closed: (pos.status ?? "active") === "closed" || (pos.status ?? "") === "filled",
+        role_closed: view.role_closed,
         info_requested: infoRequested,
         next_interview_at: nextInterview?.scheduled_at ?? null,
         has_document: !!a.cv_file_id,
-        can_withdraw: canWithdraw(status),
-        next_step: nextStepHint(status),
+        can_withdraw: view.can_withdraw,
+        next_step: view.next_step,
       };
     });
     return { applications: shaped };
   });
-
-function nextStepHint(status: CandidateSafeStatus): string {
-  return CANDIDATE_STATUS_COPY[status].nextStep;
-}
 
 export const getMyApplication = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -313,14 +286,11 @@ export const getMyApplication = createServerFn({ method: "GET" })
     }>;
     const infoRequested = infoRequests.some((r) => r.status === "open");
 
-    const status = toCandidateStatus({
-      applicationStatus: a.status,
-      positionStatus: pos.status ?? "active",
-      matchStage: visibleMatch?.stage ?? null,
-      matchVisible: Boolean(visibleMatch),
-      interviewState: interviewStateOf(interviews),
-      withdrawnAt: a.withdrawn_at ?? null,
+    const view = toCandidateStatusDTO(a, {
+      hasOpenInfoRequest: infoRequested,
+      interviews,
     });
+    const status = view.status;
 
     // Recorded stage history only. Candidates cannot read this table under RLS,
     // so it is loaded privileged *after* the application was proven to be
@@ -393,7 +363,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
           }
         : null,
       status,
-      next_step: nextStepHint(status),
+      next_step: view.next_step,
       // Derived from real pending rows only — never from the stage.
       pending_action: computePendingAction({
         infoRequests: infoRequests,
@@ -407,7 +377,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
           : null,
         closed: status === "Closed",
       }),
-      can_withdraw: canWithdraw(status),
+      can_withdraw: view.can_withdraw,
       info_requests: infoRequests,
       interviews,
       events,
