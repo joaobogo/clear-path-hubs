@@ -1140,14 +1140,11 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     ),
 
     // candidate property already assigned above
-    // Employers see the 0-100 fit score alongside the band so ranking is
-    // obvious at a glance. 95+ is the unicorn threshold.
-    score:
-      score_composition && !score_composition.incomplete
-        ? score_composition.totalPts
-        : run?.score != null
-          ? displayScore(Number(run.score))
-          : null,
+    // ONE published score for every surface: the approved score run. Admin lists,
+    // client lists and this page all read the same number, so the composition
+    // panel explains the score and never replaces it.
+    score: run?.score != null ? displayScore(Number(run.score)) : null,
+
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     summary: (run?.result as AnyRow)?.fit_rationale ?? (run?.result as AnyRow)?.summary ?? null,
