@@ -662,14 +662,21 @@ export const getClient = createServerFn({ method: "GET" })
       profiles: profileByUser.get(String(m.user_id)) ?? null,
     }));
 
+    const roll = rollups[String(data.id)];
     return {
       organization: {
         ...(orgRes.data as AnyRow),
-        parsed_cv_count: [{ count: candidateCountRes.count ?? 0 }],
+        parsed_cv_count: [{ count: roll?.candidates_total ?? 0 }],
+        seats_used: roll?.seats.seatsUsed ?? 0,
+        seats_limit: roll?.seats.seatLimit ?? null,
+        roles_open: roll?.roles_open ?? 0,
+        roles_total: roll?.roles_total ?? 0,
+        confirmed_hires: roll?.confirmed_hires ?? 0,
       },
       members: members as AnyRow[],
       positions: (positionsRes.data ?? []) as AnyRow[],
     };
+
   });
 
 
