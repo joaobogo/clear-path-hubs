@@ -64,12 +64,13 @@ export function statusBadge(status: RequirementStatus) {
       };
     default:
       return {
-        label: "Running...",
-        aria: "Evidence extraction running",
+        label: requirementStatusLabel(status),
+        aria: requirementStatusLabel(status),
         icon: <Info className="h-3 w-3" aria-hidden />,
         className: "taas-bg-neutral-soft taas-fg-neutral ",
       };
   }
+
 }
 
 export function accentToRing(accent: FitPresentation["accent"]) {
