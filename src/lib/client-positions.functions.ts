@@ -634,3 +634,95 @@ export const createWorkspacePosition = createServerFn({ method: "POST" })
     });
     return { ok: true as const, id: (created as AnyRow).id as string, trace_id };
   });
+
+/**
+ * Archive a role from the workspace: keeps the record readable under the
+ * "Closed" tab but takes it out of every active surface.
+ */
+export const archiveWorkspacePosition = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; positionId: string }) =>
+    z.object({ orgId: z.string().uuid(), positionId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const trace_id = crypto.randomUUID();
+    const { data: before } = await context.supabase
+      .from("positions")
+      .select("id, title, status")
+      .eq("id", data.positionId)
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    if (!before) throw new Error("We couldn't find that role in your workspace.");
+    if ((before as AnyRow).status === "archived")
+      return { ok: true as const, already: true as const, trace_id };
+    const { error } = await context.supabase
+      .from("positions")
+      .update({ status: "archived" } as never)
+      .eq("id", data.positionId)
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "client.position.archive",
+      entity_type: "positions",
+      entity_id: data.positionId,
+      organization_id: data.orgId,
+      before,
+      after: { id: data.positionId, status: "archived" },
+      trace_id,
+    });
+    return { ok: true as const, already: false as const, trace_id };
+  });
+
+/**
+ * Permanently delete a role. Only allowed while the role is still a draft that
+ * has never been submitted and has no candidates attached, so nothing a
+ * recruiter or candidate has seen can disappear.
+ */
+export const deleteWorkspacePosition = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; positionId: string }) =>
+    z.object({ orgId: z.string().uuid(), positionId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const trace_id = crypto.randomUUID();
+    const { data: before } = await context.supabase
+      .from("positions")
+      .select("id, title, status")
+      .eq("id", data.positionId)
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    if (!before) throw new Error("We couldn't find that role in your workspace.");
+    if ((before as AnyRow).status !== "draft")
+      throw new Error(
+        "This role has already been submitted, so it can only be archived — not deleted.",
+      );
+    const { count } = await context.supabase
+      .from("candidate_matches")
+      .select("id", { count: "exact", head: true })
+      .eq("position_id", data.positionId);
+    if ((count ?? 0) > 0)
+      throw new Error(
+        "This role already has candidates attached, so it can only be archived — not deleted.",
+      );
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.rpc("hard_delete_position", {
+      _position_id: data.positionId,
+      _actor_user_id: context.userId,
+      _reason: "Deleted by the workspace from the role editor",
+    } as never);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "client.position.delete",
+      entity_type: "positions",
+      entity_id: data.positionId,
+      organization_id: data.orgId,
+      before,
+      after: null,
+      trace_id,
+    });
+    return { ok: true as const, trace_id };
+  });

@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -55,10 +55,14 @@ function NewRolePage() {
   const orgId = ctxQuery.data?.active?.organization_id;
   const orgName = ctxQuery.data?.active?.name;
 
+  const queryClient = useQueryClient();
   const create = useMutation({
     mutationFn: (input: { orgId: string; title: string }) => createFn({ data: input }),
     onSuccess: (res) => {
-      toast.success("Draft role created");
+      // The Roles list is cached for a minute; without this the new draft is
+      // missing from the Draft tab until the cache expires.
+      void queryClient.invalidateQueries({ queryKey: ["client-positions"] });
+      toast.success("Draft role created — you'll find it on the Draft tab of Roles");
       void router.navigate({
         to: "/client/positions/$id/edit",
         params: { id: res.id },
