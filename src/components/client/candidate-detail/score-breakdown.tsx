@@ -1,6 +1,8 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { CheckCircle2, Gauge, Info, ListChecks, ShieldAlert, TrendingDown, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { buildScoreBreakdown, type BreakdownGroup, type BreakdownReason } from "@/lib/client/score-breakdown";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -68,22 +70,42 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
   return (
     <div className="mt-4 rounded-lg border p-3">
       <h3 className="text-sm font-semibold">How the number is made up</h3>
-      <ul className="mt-2 space-y-1.5 text-sm">
-        {lines.map((k) => (
-          <li key={k.key} className="flex flex-wrap items-baseline justify-between gap-2">
-            <span className="text-muted-foreground">
-              {k.label} <span className="tabular-nums">({k.weightPct}% of the score)</span>
-            </span>
-            <span className="tabular-nums">
-              {k.valuePct}%
-              {k.basisLabel && (
-                <span className="text-muted-foreground"> ({k.basisLabel})</span>
-              )}{" "}
-              &times; {k.weightPct}% = {k.displayPts} points
-            </span>
-          </li>
-        ))}
-      </ul>
+      <table className="mt-2 w-full text-sm">
+        <thead>
+          <tr className="text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+            <th className="font-medium">Component</th>
+            <th className="font-medium">How it did</th>
+            <th className="text-right font-medium">Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          {lines.map((k) => (
+            <tr key={k.key} className="border-t align-baseline">
+              <td className="py-1.5 pr-2">{k.label}</td>
+              <td className="py-1.5 pr-2 text-muted-foreground">
+                {k.basisLabel ?? `${k.valuePct}%`}
+              </td>
+              <td className="py-1.5 text-right tabular-nums">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="cursor-help underline decoration-dotted underline-offset-2"
+                    >
+                      {k.displayPts} pts
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {k.valuePct}%
+                    {k.basisLabel ? ` (${k.basisLabel})` : ""} &times; {k.weightPct}% ={" "}
+                    {k.displayPts} points
+                  </TooltipContent>
+                </Tooltip>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t pt-2 text-sm font-medium">
         <span>Total</span>
         <span className="tabular-nums">
@@ -99,6 +121,60 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
             ? ` The three parts add up to ${totalPts}, the score shown above.`
             : " The parts and the score shown disagree; the assessment is being re-checked."}
       </p>
+    </div>
+  );
+}
+
+/** A column of reasons, capped at three until the reader asks for the rest. */
+function ReasonColumn({
+  title,
+  icon,
+  bullet,
+  reasons,
+  emptyText,
+  className,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  bullet: React.ReactNode;
+  reasons: BreakdownReason[];
+  emptyText: string;
+  className?: string;
+}) {
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? reasons : reasons.slice(0, 3);
+  const hidden = reasons.length - visible.length;
+  return (
+    <div className={cn("rounded-lg border p-3", className)}>
+      <h3 className="flex items-center gap-1.5 text-sm font-semibold">
+        {icon}
+        {title}
+      </h3>
+      {reasons.length > 0 ? (
+        <>
+          <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+            {visible.map((r) => (
+              <li key={r.id} className="flex gap-2">
+                <span className="mt-0.5 shrink-0">{bullet}</span>
+                <span>{r.text}</span>
+              </li>
+            ))}
+          </ul>
+          {hidden > 0 && (
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              className="mt-1 h-auto p-0 text-xs"
+              onClick={() => setShowAll(true)}
+            >
+              Show all ({reasons.length})
+            </Button>
+          )}
+        </>
+      ) : (
+        <p className="mt-2 text-sm text-muted-foreground">{emptyText}</p>
+      )}
     </div>
   );
 }
@@ -184,7 +260,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
               </span>
               {g.total > 0 && (
                 <span className="flex flex-wrap gap-1.5">
-                  <CountChip label="quoted" value={g.met + g.partial} tone="success" />
+                  <CountChip label="evidenced" value={g.met + g.partial} tone="success" />
                   {g.missing > 0 && (
                     <CountChip label="no evidence" value={g.missing} tone="neutral" />
                   )}
@@ -215,46 +291,22 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
       {/* The short answer: what lifted the score, and what holds it back. */}
       {(positives.length > 0 || watch.length > 0) && (
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border border-success/30 bg-success/5 p-3">
-            <h3 className="flex items-center gap-1.5 text-sm font-semibold">
-              <TrendingUp className="h-3.5 w-3.5" aria-hidden />
-              What lifts the score
-            </h3>
-            {positives.length > 0 ? (
-              <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                {positives.map((r: BreakdownReason) => (
-                  <li key={r.id} className="flex gap-2">
-                    <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 taas-fg-success" aria-hidden />
-                    <span>{r.text}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-2 text-sm text-muted-foreground">
-                No evidenced strengths recorded yet.
-              </p>
-            )}
-          </div>
-          <div className="rounded-lg border bg-muted/30 p-3">
-            <h3 className="flex items-center gap-1.5 text-sm font-semibold">
-              <TrendingDown className="h-3.5 w-3.5" aria-hidden />
-              What holds it back
-            </h3>
-            {watch.length > 0 ? (
-              <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                {watch.map((r: BreakdownReason) => (
-                  <li key={r.id} className="flex gap-2">
-                    <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-                    <span>{r.text}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-2 text-sm text-muted-foreground">
-                Nothing outstanding — every requirement carries evidence.
-              </p>
-            )}
-          </div>
+          <ReasonColumn
+            title="What lifts the score"
+            icon={<TrendingUp className="h-3.5 w-3.5" aria-hidden />}
+            bullet={<CheckCircle2 className="h-3.5 w-3.5 taas-fg-success" aria-hidden />}
+            reasons={positives}
+            emptyText="No evidenced strengths recorded yet."
+            className="border-success/30 bg-success/5"
+          />
+          <ReasonColumn
+            title="What holds it back"
+            icon={<TrendingDown className="h-3.5 w-3.5" aria-hidden />}
+            bullet={<Info className="h-3.5 w-3.5" aria-hidden />}
+            reasons={watch}
+            emptyText="Nothing outstanding — every requirement carries evidence."
+            className="bg-muted/30"
+          />
         </div>
       )}
 
