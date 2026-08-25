@@ -26,14 +26,20 @@ export interface EvidenceCounts {
  * - Role Comparison summary row
  */
 export function getEvidenceCounts(rows: RequirementRow[]): EvidenceCounts {
-  const met = rows.filter((r) => r.status === "met").length;
-  const partial = rows.filter((r) => r.status === "partial").length;
-  const unknown = rows.filter((r) => r.status === "not_evidenced" || r.status === "missing").length;
-  const total = rows.filter((r) => r.status !== "not_applicable").length;
+  // One resolution pass, shared with every other surface: a requirement only
+  // counts as evidenced when a real passage backs it.
+  const resolved = rows.map((r) => ({ row: r, status: resolveRequirementStatus(r) }));
+  const met = resolved.filter((r) => r.status === "met").length;
+  const partial = resolved.filter((r) => r.status === "partial").length;
+  const unknown = resolved.filter(
+    (r) => r.status === "not_evidenced" || r.status === "missing",
+  ).length;
+  const total = resolved.filter((r) => r.status !== "not_applicable").length;
 
-  const mustHaves = rows.filter((r) => r.importance === "must_have");
+  const mustHaves = resolved.filter((r) => r.row.importance === "must_have");
   const must_met = mustHaves.filter((r) => r.status === "met").length;
   const must_total = mustHaves.length;
+
 
   return {
     quoted: met,
