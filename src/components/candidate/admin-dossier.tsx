@@ -148,7 +148,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
           <Field
             label="Location"
             value={
-              [profile?.city, profile?.region, profile?.country].filter(Boolean).join(", ") ||
+              dedupeLocationParts([profile?.city, profile?.region, profile?.country]).join(", ") ||
               profile?.location
             }
           />
