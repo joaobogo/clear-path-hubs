@@ -156,44 +156,41 @@ export const POSITION_FIELDS: readonly PositionField[] = [
   },
   {
     name: "employment_type",
-    intakeKey: "employmentType",
     label: "Employment type",
     type: "select",
     options: EMPLOYMENT_TYPE_OPTIONS,
     schema: z
       .enum(["full_time", "part_time", "contract", "temporary", "internship", ""])
       .default(""),
-    requiredAtIntake: true,
+    requiredAtIntake: false,
     clientEditable: true,
     adminEditable: true,
     publicListing: true,
   },
   {
     name: "seniority",
-    intakeKey: "seniority",
     label: "Seniority level",
     type: "select",
     options: SENIORITY_OPTIONS,
     schema: text(60),
-    requiredAtIntake: true,
+    requiredAtIntake: false,
     clientEditable: true,
     adminEditable: true,
     publicListing: true,
   },
   {
     name: "headcount",
-    intakeKey: "openings",
     label: "Positions to fill",
     type: "number",
     schema: z.number().int().min(1).max(999).nullable(),
-    requiredAtIntake: true,
+    requiredAtIntake: false,
     clientEditable: true,
     adminEditable: true,
     publicListing: true,
   },
   {
     name: "description",
-    intakeKey: "jobDescription",
+    intakeKey: "jobDescriptionText",
     label: "Job description",
     hint: "Paste the JD or write it here. We use this to enrich matching.",
     type: "textarea",
@@ -260,7 +257,6 @@ export const POSITION_FIELDS: readonly PositionField[] = [
   /* ---- Timing ------------------------------------------------------- */
   {
     name: "hiring_urgency",
-    intakeKey: "hiringUrgency",
     label: "Hiring timeline",
     type: "text",
     schema: text(80),
@@ -339,7 +335,6 @@ export const POSITION_FIELDS: readonly PositionField[] = [
   },
   {
     name: "experience",
-    intakeKey: "experience",
     label: "Minimum experience",
     hint: "Years of relevant experience.",
     type: "text",
@@ -371,7 +366,6 @@ export const POSITION_FIELDS: readonly PositionField[] = [
   },
   {
     name: "responsibilities",
-    intakeKey: "responsibilities",
     label: "Core responsibilities",
     hint: "Top outcomes and day-to-day scope.",
     type: "textarea",
@@ -443,7 +437,6 @@ export const POSITION_FIELDS: readonly PositionField[] = [
   },
   {
     name: "compensation",
-    intakeKey: "compensationNotes",
     label: "Anything else about the package",
     hint: "Bonus, equity, benefits, structure — anything relevant.",
     type: "textarea",
@@ -509,7 +502,7 @@ export const POSITION_FIELDS: readonly PositionField[] = [
   },
   {
     name: "disqualifier_tags",
-    intakeKey: "dealbreakers",
+    intakeKey: "dealBreakers",
     label: "Your deal-breakers",
     type: "list",
     schema: list(30, 200),
