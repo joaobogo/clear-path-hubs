@@ -16,7 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { getAccountOverview } from "@/lib/account.functions";
-import { countClientRoles, selectClientRoles, selectOpenClientRoles } from "@/lib/client/role-counts";
+import { selectClientRoles } from "@/lib/client/role-counts";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { formatStageDate } from "@/lib/client-role-progress";
@@ -225,10 +225,12 @@ export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
 
   const overviewState = useQueryState(overview);
   const data = overview.data;
-  const roleCounts = useMemo(
-    () => countClientRoles((positions.data as AnyRow[]) ?? []),
-    [positions.data],
-  );
+  // Role figures come from the one server-side reader, carried on the account
+  // overview, so this tile cannot drift from the Roles page or the panel below.
+  const roleCounts = {
+    open: data?.roles_open ?? 0,
+    total: data?.roles_total ?? 0,
+  };
 
   if (overviewState.isError) {
     return (
@@ -249,9 +251,9 @@ export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
       <Tile
         icon={<Briefcase className="h-4 w-4" />}
         label="Open roles"
-        value={positions.isLoading && !positions.data ? "—" : String(roleCounts.open)}
+        value={overview.isLoading && !data ? "—" : String(roleCounts.open)}
         note={
-          positions.isLoading && !positions.data
+          overview.isLoading && !data
             ? "Counting roles…"
             : `${roleCounts.total} total in the account`
         }
@@ -319,7 +321,9 @@ export function WorkspaceRolesAndStarts({ orgId }: { orgId: string }) {
     () => selectClientRoles(((positions.data as AnyRow[]) ?? [])),
     [positions.data],
   );
-  const openRoles = useMemo(() => selectOpenClientRoles(roles), [roles]);
+  // The panel prints the reader's figures; the rows below are only the detail.
+  const openRolesCount = data?.roles_open ?? 0;
+  const totalRolesCount = data?.roles_total ?? roles.length;
 
   return (
     <div className="space-y-8">
@@ -339,7 +343,7 @@ export function WorkspaceRolesAndStarts({ orgId }: { orgId: string }) {
             <p className="text-xs text-muted-foreground">
               {positionsState.isError
                 ? "Couldn't load counts"
-                : `${openRoles.length} open · ${roles.length} total`}
+                : `${openRolesCount} open · ${totalRolesCount} total`}
             </p>
           </div>
           <Button asChild variant="ghost" size="sm">
