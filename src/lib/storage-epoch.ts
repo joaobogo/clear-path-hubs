@@ -13,7 +13,7 @@
  */
 
 /** Bump this on any release that should reset stored visitor state. */
-export const STORAGE_EPOCH = "2026-08-20";
+export const STORAGE_EPOCH = "2026-08-25";
 
 const EPOCH_KEY = "taasflow.storage.epoch";
 
