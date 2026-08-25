@@ -41,13 +41,18 @@ export function selectOpenClientRoles<T extends RoleLike>(rows: readonly T[]): T
   );
 }
 
+/**
+ * `total` counts every role in the account whatever its status — a draft or an
+ * archived role still belongs to the client and must stay findable. Only test
+ * fixtures are excluded. `open` keeps the narrower active/approved/paused rule.
+ */
 export function countClientRoles(rows: readonly RoleLike[] | null | undefined): {
   open: number;
   total: number;
 } {
-  const scoped = selectClientRoles(rows ?? []);
+  const real = (rows ?? []).filter((r) => !isTestRole(r));
   return {
-    open: selectOpenClientRoles(scoped).length,
-    total: scoped.length,
+    open: selectOpenClientRoles(real).length,
+    total: real.length,
   };
 }

@@ -55,8 +55,10 @@ describe("Role State Coherence", () => {
       { client_status: computeClientRoleStatus({ status: "filled", hires: 1, offers: 1 }) },
       { client_status: computeClientRoleStatus({ status: "paused" }) },
       { client_status: computeClientRoleStatus({ status: "under_review" }) },
+      { status: "draft" },
+      { status: "archived" },
     ]);
 
-    expect(counts).toEqual({ active: 1, draft: 1, paused: 1, closed: 1 });
+    expect(counts).toEqual({ active: 1, draft: 1, review: 1, paused: 1, closed: 2 });
   });
 });
