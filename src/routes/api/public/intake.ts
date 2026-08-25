@@ -310,7 +310,6 @@ export const Route = createFileRoute("/api/public/intake")({
             data.currentTitle,
             data.headquarters,
             data.roleTitle,
-            data.location,
             ...data.targetTitles,
           ]);
           if (!qa.ok) {
@@ -333,7 +332,6 @@ export const Route = createFileRoute("/api/public/intake")({
             data.currentTitle,
             data.headquarters,
             data.roleTitle,
-            data.location,
             ...data.targetTitles,
           ]);
           if (!qa.ok) {

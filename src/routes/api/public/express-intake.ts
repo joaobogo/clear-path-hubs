@@ -301,11 +301,8 @@ export const Route = createFileRoute("/api/public/express-intake")({
           data.lastName,
           data.contactTitle,
           data.roleTitle,
-          data.team,
-          data.location,
           data.decisionMaker,
           data.decisionMakerEmail,
-          ...(data.requirements ?? []).map((r) => r.text),
           ...collaboratorCandidates(data.interviewStages ?? [], {
             name: data.decisionMaker,
             email: data.decisionMakerEmail,

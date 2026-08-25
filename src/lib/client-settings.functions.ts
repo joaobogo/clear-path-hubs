@@ -49,6 +49,7 @@ import {
   evaluateAdvanceGate,
 } from "@/lib/client/advance-gate";
 import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+import { assertNoQaContamination } from "@/lib/qa-guard";
 
 import {
   type AnyRow,
@@ -163,6 +164,11 @@ export const updateClientCompanyProfile = createServerFn({ method: "POST" })
       headquarters: data.headquarters,
       phone: data.phone,
     };
+    const qa = await assertNoQaContamination(context.supabase, data.orgId, [
+      data.name,
+      data.headquarters,
+    ]);
+    if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
     const { data: updated, error } = await context.supabase
       .from("organizations")
       .update(patch)

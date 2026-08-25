@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type { SessionContext, SessionMembership, MembershipRole } from "./roles";
+import { assertNoQaContamination, qaGuardValues } from "@/lib/qa-guard";
 
 const DEMO_CLIENT_EMAIL = "demo@taasflow.com";
 const NORTHWIND_ORG_ID = "0c86fa1b-94ee-46b8-9a11-a42cee39bfed";
@@ -193,6 +194,14 @@ export const createUserByAdmin = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const tempPassword = data.temporary_password?.trim() || generatePassword(16);
 
+    if (data.organization_id) {
+      const qa = await assertNoQaContamination(supabaseAdmin, data.organization_id, [
+        data.full_name,
+        data.email,
+      ]);
+      if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
+    }
+
     // Find or create auth user. email_confirm=true bypasses email verification.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let authUserId: string | null = null;
@@ -316,6 +325,16 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
       .eq("name_normalized", normalized)
       .maybeSingle();
     let orgId = existingOrg?.id as string | undefined;
+    const qaFields = [
+      data.company_name,
+      data.primary_contact_name,
+      data.primary_contact_email,
+      data.headquarters,
+    ];
+    const qa = orgId
+      ? await assertNoQaContamination(supabaseAdmin, orgId, qaFields)
+      : qaGuardValues(qaFields);
+    if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
     // The contact details typed here are what staff expect to see on the client
     // record and in the clients list afterwards, so they are stored on the
     // organization too — not only on the primary user's profile.
