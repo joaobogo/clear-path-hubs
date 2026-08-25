@@ -262,41 +262,36 @@ function OffersPage() {
       </section>
 
       {/* Reporting: by owner + close reasons */}
-      {!reportQuery.isError && report && report.totals.hires_confirmed + report.totals.closed_lost > 0 && (
+      {!reportQuery.isError && report && (report.by_owner.length > 0 || report.close_reasons.length > 0) && (
         <section className="mt-8 grid gap-4 md:grid-cols-2">
-          <div className="rounded-xl border bg-card p-4">
-            <h2 className="text-sm font-semibold">Hires by owner</h2>
-            <ul className="mt-3 space-y-2 text-sm">
-              {report.by_owner.slice(0, 8).map((o) => (
-                <li
-                  key={o.owner_user_id ?? "unassigned"}
-                  className="flex items-center justify-between gap-3"
-                >
-                  <span className="truncate">{o.owner_name}</span>
-                  <span className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span>
-                      <strong className="text-foreground">{o.hires}</strong> hires
+          {report.by_owner.length > 0 && (
+            <div className="rounded-xl border bg-card p-4">
+              <h2 className="text-sm font-semibold">Hires by owner</h2>
+              <ul className="mt-3 space-y-2 text-sm">
+                {report.by_owner.slice(0, 8).map((o) => (
+                  <li
+                    key={o.owner_user_id ?? "unassigned"}
+                    className="flex items-center justify-between gap-3"
+                  >
+                    <span className="truncate">{o.owner_name}</span>
+                    <span className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>
+                        <strong className="text-foreground">{o.hires}</strong> hires
+                      </span>
+                      <span>
+                        {o.avg_days_to_hire == null
+                          ? "—"
+                          : `${Math.round(o.avg_days_to_hire)}d avg`}
+                      </span>
                     </span>
-                    <span>
-                      {o.avg_days_to_hire == null
-                        ? "—"
-                        : `${Math.round(o.avg_days_to_hire)}d avg`}
-                    </span>
-                  </span>
-                </li>
-              ))}
-              {report.by_owner.length === 0 && (
-                <li className="text-xs text-muted-foreground">Hires by owner: No hires yet.</li>
-              )}
-            </ul>
-          </div>
-          <div className="rounded-xl border bg-card p-4">
-            <h2 className="text-sm font-semibold">Close reasons</h2>
-            {report.close_reasons.length === 0 ? (
-              <p className="mt-2 text-xs text-muted-foreground">
-                No offers declined or closed lost in this window.
-              </p>
-            ) : (
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {report.close_reasons.length > 0 && (
+            <div className="rounded-xl border bg-card p-4">
+              <h2 className="text-sm font-semibold">Close reasons</h2>
               <ul className="mt-3 space-y-2 text-sm">
                 {report.close_reasons.map((r) => (
                   <li key={r.reason} className="flex items-center justify-between">
@@ -307,8 +302,8 @@ function OffersPage() {
                   </li>
                 ))}
               </ul>
-            )}
-          </div>
+            </div>
+          )}
         </section>
       )}
     </div>
