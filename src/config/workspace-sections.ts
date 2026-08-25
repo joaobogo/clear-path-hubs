@@ -53,7 +53,7 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
   {
     id: "insights",
     label: "Insights",
-    tabs: [{ to: "/client/executive", label: "Executive" }],
+    tabs: [{ to: "/client/executive", label: "Insights" }],
   },
 ];
 
