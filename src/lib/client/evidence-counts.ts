@@ -1,6 +1,12 @@
 import type { RequirementRow } from "../client-fit-presentation";
 
 export interface EvidenceCounts {
+  /** Requirements backed by a direct quote. */
+  quoted: number;
+  /** Requirements backed by related, non-quoted evidence. */
+  related: number;
+  /** The single canonical evidenced total: quoted + related. */
+  evidenced: number;
   met: number;
   partial: number;
   unknown: number;
@@ -28,6 +34,9 @@ export function getEvidenceCounts(rows: RequirementRow[]): EvidenceCounts {
   const must_total = mustHaves.length;
 
   return {
+    quoted: met,
+    related: partial,
+    evidenced: met + partial,
     met,
     partial,
     unknown,
