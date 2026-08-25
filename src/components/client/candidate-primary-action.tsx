@@ -190,8 +190,7 @@ export function CandidatePrimaryAction({
   const advanceButton = (
     <Button
       size={size}
-      variant={notRecommended ? "link" : "default"}
-      className={notRecommended ? "h-auto p-0 text-xs font-medium" : undefined}
+      variant={notRecommended ? "outline" : "default"}
       disabled={pending !== null}
       onClick={() => void run(advance.action, advance.done)}
     >
@@ -207,21 +206,22 @@ export function CandidatePrimaryAction({
   );
 
   // Not recommended: evidence first. The advance move stays available, but as a
-  // plain text link, never a filled primary button.
+  // quiet secondary button carrying the recommendation beside it.
   if (notRecommended) {
     return (
-      <div className="inline-flex items-center gap-3">
+      <div className="inline-flex flex-wrap items-center justify-end gap-2">
         <Button asChild size={size}>
           <Link
             to="/client/candidates/$id"
             params={{ id: matchId }}
-            hash="requirement-coverage"
+            hash="sec-evidence"
             preload="intent"
           >
             Review evidence
           </Link>
         </Button>
         {advanceButton}
+        <span className="text-xs text-muted-foreground">Not recommended</span>
       </div>
     );
   }
