@@ -10,6 +10,7 @@
  * No numbers are invented here. Anything the run did not store comes back as
  * an empty list so the surface can say so plainly.
  */
+import { getEvidenceCounts } from "./evidence-counts";
 import { bandRange, classifyBand } from "@/lib/scoring/bands";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
@@ -188,10 +189,16 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
   const range = band === "unscored" ? null : bandRange(band);
 
   const explanation = candidate.explanation;
+  // The criteria line must never contradict the header chip or the coverage
+  // panel: it reads the same canonical evidenced total from the requirement
+  // list, with quoted/related shown as separate labelled figures.
+  const canonical = getEvidenceCounts(rows);
   const criteriaSummary =
-    explanation && explanation.kind === "explained"
-      ? explanation.criteria_summary
-      : null;
+    rows.length > 0
+      ? `${canonical.evidenced} of ${canonical.total} requirements evidenced — ${canonical.quoted} quoted, ${canonical.related} related`
+      : explanation && explanation.kind === "explained"
+        ? explanation.criteria_summary
+        : null;
 
   return {
     score: candidate.score ?? null,
