@@ -655,23 +655,44 @@ async function main() {
     // --- Score runs: CV, interview-informed, approved final ---------------
     const requirementAssessment = requirements.map((requirement, reqIndex) => {
       const isQuoted = reqIndex < quoted;
+      const isPartiallyCredited = !isQuoted && reqIndex < quoted + partiallyCredited;
+      const question = assessment.questions[reqIndex % assessment.questions.length]!;
+      const cvStart = Math.max(0, cv.search(/EXPERIENCE|EXPERI[ÊE]NCIA/));
+      const turn = candidateTurns[reqIndex % Math.max(1, candidateTurns.length)];
+      const evidence = [
+        {
+          source: "cv",
+          snippet: isQuoted ? cv.slice(cvStart, cvStart + 320).replace(/\n/g, " ").trim() : "",
+          location: `cv:${cvStart}-${cvStart + 320}`,
+          requirement_id: `req-${reqIndex}`,
+          requirement_text: requirement,
+        },
+        {
+          source: "interview",
+          snippet: (isQuoted || isPartiallyCredited) && turn ? turn.text : "",
+          location: `interview:${transcript.id}`,
+          requirement_id: `req-${reqIndex}`,
+          requirement_text: requirement,
+        },
+        {
+          source: "assessment",
+          snippet: question.verdict === "incorrect" ? "" : `${question.prompt} — ${question.note}`,
+          location: `assessment:${assessment.id}:question-${reqIndex + 1}`,
+          requirement_id: `req-${reqIndex}`,
+          requirement_text: requirement,
+        },
+      ].filter((e) => e.snippet.length > 0);
+
       return {
         id: `req-${reqIndex}`,
         text: requirement,
-        status: isQuoted ? "met" : "partial",
+        status: isQuoted ? "met" : evidence.length > 0 ? "partial" : "unknown",
         required: true,
         needs_validation: !isQuoted,
-        evidence: [
-          {
-            source: "cv",
-            snippet: isQuoted ? cv.slice(0, 140).replace(/\n/g, " ") : "",
-            location: "cv:0-140",
-            requirement_id: `req-${reqIndex}`,
-            requirement_text: requirement,
-          },
-        ].filter((e) => e.snippet.length > 0),
+        evidence,
       };
     });
+
 
     const makeRun = async (opts: {
       score: number;
