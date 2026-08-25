@@ -252,7 +252,7 @@ export function TalentMemoryAction({
         disabled={readOnly}
         onClick={() => setOpen(true)}
       >
-        Previously shortlisted
+        Manage
       </Button>
       <TagSilverMedalistDialog
         open={open}
