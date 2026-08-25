@@ -13,6 +13,10 @@ async function main() {
     if (!results.b_exception_digest.consistent) failures.push("Exception digest inconsistency");
     if (!results.c_public_board.ruleAsserted) failures.push("Public board rule not asserted");
     if (!results.d_scoring_vs_publish.consistent) failures.push("Scoring vs Publish inconsistency");
+    if (!results.privileged_access?.consistent)
+      failures.push(
+        `Privileged access: expected ${results.privileged_access?.expected_active_platform_admins} active platform_admin membership, found ${results.privileged_access?.active_platform_admins}`
+      );
     
     if (failures.length > 0) {
       console.error("CONSISTENCY CHECK FAILED:", failures.join(", "));
