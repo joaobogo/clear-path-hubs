@@ -409,6 +409,11 @@ export const ensureConversation = createServerFn({ method: "POST" })
     const { data: existing } = await existingQ.maybeSingle();
     if (existing) return { id: (existing as Row).id as string };
 
+    const qa = await assertNoQaContamination(supabase, data.orgId, [
+      data.subject,
+    ]);
+    if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
+
     const { data: created, error } = await supabase
       .from("conversations")
       .insert({
