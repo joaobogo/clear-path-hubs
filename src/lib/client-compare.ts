@@ -27,7 +27,10 @@ export type CompareMatrixRow = {
   uniform: boolean;
 };
 
-function toStatus(s: RequirementRow["status"] | undefined): CompareStatus {
+function toStatus(row: RequirementRow | undefined): CompareStatus {
+  if (!row) return "unknown";
+  // One canonical status per requirement — the same one the profile renders.
+  const s = resolveRequirementStatus(row);
   if (s === "met") return "met";
   if (s === "partial") return "partial";
   if (s === "contradicted") return "contradicted";
@@ -38,7 +41,7 @@ function toStatus(s: RequirementRow["status"] | undefined): CompareStatus {
 export const STATUS_LABEL: Record<CompareStatus, string> = {
   met: "Met",
   partial: "Partially met",
-  unknown: "Unknown",
+  unknown: "Not evidenced",
   contradicted: "Contradicted",
   not_applicable: "Not applicable",
 };
@@ -69,7 +72,7 @@ export function buildCompareMatrix(candidates: ClientCandidateDTO[]): CompareMat
       
       return {
         match_id: c.match_id,
-        status: toStatus(row?.status),
+        status: toStatus(row),
         evidence: ev ? ev.snippet.trim() : null,
         source: ev?.source ?? null,
         verbatim: !!ev,
