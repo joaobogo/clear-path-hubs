@@ -283,63 +283,68 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
     return initial;
   });
 
+/**
+ * Field rules are not restated here: every position field's type, limits and
+ * enum values come from the shared registry, so the intake wizard, the client
+ * editor and the admin editor validate identically.
+ */
+type SaveInputData = {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  work_model: "remote" | "hybrid" | "onsite";
+  employment_type: "" | "full_time" | "part_time" | "contract" | "temporary" | "internship";
+  seniority: string;
+  headcount: number | null;
+  description: string;
+  open_worldwide: boolean;
+  target_countries: string[];
+  states_regions: string[];
+  metro_areas: string[];
+  search_radius: string;
+  hiring_urgency: string;
+  target_start_date: string;
+  time_to_hire: string;
+  must_have_skills: string[];
+  nice_to_have_skills: string[];
+  certifications_list: string[];
+  tools_platforms: string[];
+  experience: string;
+  education: string;
+  timezone_requirements: string;
+  responsibilities: string;
+  additional_requirements: string;
+  currency: string;
+  budget_period: "year" | "month" | "hour";
+  budget_min: string;
+  budget_max: string;
+  compensation: string;
+  target_titles: string[];
+  title_match_timing: "" | "current" | "previous" | "either";
+  target_company_types: string[];
+  include_keywords: string[];
+  exclude_keywords: string[];
+  disqualifier_tags: string[];
+  interview_process: string;
+  additional_context: string;
+  company_intro: string;
+  benefits: string;
+  languages: string;
+  travel: string;
+  work_authorization_note: string;
+  accessibility_note: string;
+  eeo_statement: string;
+  brand_tone: string;
+  application_deadline: string;
+  confidentiality: "" | "public" | "confidential";
+  screening_questions: ScreeningInput[];
+};
+
 const saveInput = z.object({
   id: z.string().uuid(),
+  ...positionShapeFor("admin"),
 
-  title: z.string().trim().min(3).max(200),
-  department: z.string().trim().max(200).default(""),
-  location: z.string().trim().max(200).default(""),
-  work_model: z.enum(["remote", "hybrid", "onsite"]),
-  employment_type: z
-    .enum(["full_time", "part_time", "contract", "temporary", "internship", ""])
-    .default(""),
-  seniority: z.string().trim().max(60).default(""),
-  headcount: z.number().int().min(1).max(999).nullable(),
-  description: z.string().trim().max(20_000).default(""),
-
-  open_worldwide: z.boolean().default(false),
-  target_countries: z.array(z.string().trim().min(1).max(80)).max(60).default([]),
-  states_regions: z.array(z.string().trim().min(1).max(120)).max(60).default([]),
-  metro_areas: z.array(z.string().trim().min(1).max(120)).max(60).default([]),
-  search_radius: z.string().trim().max(80).default(""),
-  hiring_urgency: z.string().trim().max(80).default(""),
-  target_start_date: z.string().trim().max(40).default(""),
-  time_to_hire: z.string().trim().max(80).default(""),
-
-  must_have_skills: z.array(z.string().trim().min(1).max(80)).max(30).default([]),
-  nice_to_have_skills: z.array(z.string().trim().min(1).max(80)).max(30).default([]),
-  certifications_list: z.array(z.string().trim().min(1).max(120)).max(30).default([]),
-  tools_platforms: z.array(z.string().trim().min(1).max(120)).max(30).default([]),
-  experience: z.string().trim().max(200).default(""),
-  education: z.string().trim().max(400).default(""),
-  timezone_requirements: z.string().trim().max(200).default(""),
-  responsibilities: z.string().max(6000).default(""),
-  additional_requirements: z.string().max(4000).default(""),
-
-  currency: z.string().trim().max(8).default("USD"),
-  budget_period: z.enum(["year", "month", "hour"]).default("year"),
-  budget_min: z.string().trim().max(20).default(""),
-  budget_max: z.string().trim().max(20).default(""),
-  compensation: z.string().trim().max(2000).default(""),
-
-  target_titles: z.array(z.string().trim().min(1).max(160)).max(30).default([]),
-  title_match_timing: z.enum(["current", "previous", "either", ""]).default(""),
-  target_company_types: z.array(z.string().trim().min(1).max(120)).max(20).default([]),
-  include_keywords: z.array(z.string().trim().min(1).max(120)).max(60).default([]),
-  exclude_keywords: z.array(z.string().trim().min(1).max(120)).max(60).default([]),
-  disqualifier_tags: z.array(z.string().trim().min(1).max(200)).max(30).default([]),
-  interview_process: z.string().max(2000).default(""),
-  additional_context: z.string().max(4000).default(""),
-  company_intro: z.string().max(4000).default(""),
-  benefits: z.string().max(4000).default(""),
-  languages: z.string().max(500).default(""),
-  travel: z.string().max(300).default(""),
-  work_authorization_note: z.string().max(600).default(""),
-  accessibility_note: z.string().max(1500).default(""),
-  eeo_statement: z.string().max(3000).default(""),
-  brand_tone: z.string().max(60).default(""),
-  application_deadline: z.string().max(40).default(""),
-  confidentiality: z.enum(["public", "confidential", ""]).default("public"),
   screening_questions: z
     .array(
       z.object({
