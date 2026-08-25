@@ -19,7 +19,11 @@ function normalizeText(s: string): string {
 export function isEvidenceEcho(requirement: string, snippet: string): boolean {
   const req = normalizeText(requirement ?? "");
   const snip = normalizeText(snippet ?? "");
-  return !req || !snip || req === snip;
+  // With no requirement text to compare against there is nothing to echo, so
+  // the snippet stands as evidence; an empty snippet never does.
+  if (!snip) return true;
+  if (!req) return false;
+  return req === snip;
 }
 
 /** True when the requirement carries a quoted passage from the candidate's record. */
