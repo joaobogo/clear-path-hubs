@@ -381,10 +381,12 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
         .filter(isAwaitingClientDecision)
         .map((r) => r.delivered_at ?? r.stage_entered_at),
     ),
+    // Only real interview request dates age this figure. Falling back to the
+    // candidate's stage date would let an offer masquerade as an interview.
     oldest_interview_to_confirm_at: oldest(
       rows
         .filter((r) => r.interview_needs_confirmation)
-        .map((r) => r.interview_requested_at ?? r.stage_entered_at),
+        .map((r) => r.interview_requested_at),
     ),
     oldest_offer_at: oldest(
       rowsInLane(rows, "offer").map((r) => r.stage_entered_at),
