@@ -45,7 +45,6 @@ import {
   CheckCircle2,
   ChevronDown,
   MinusCircle,
-  Info,
   Mail,
   MoreHorizontal,
   Shield,
