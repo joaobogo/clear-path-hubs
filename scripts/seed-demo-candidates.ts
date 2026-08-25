@@ -323,7 +323,6 @@ async function main() {
       await wipe("interviews", "candidate_match_id", matchIds);
       await wipe("candidate_evidence_items", "candidate_match_id", matchIds);
       await wipe("candidate_evidence", "candidate_match_id", matchIds);
-      await wipe("candidate_stage_history", "candidate_match_id", matchIds);
       await wipe("score_runs", "candidate_match_id", matchIds);
       await wipe("candidate_matches", "id", matchIds);
     }
