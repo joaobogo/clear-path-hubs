@@ -1253,20 +1253,37 @@ function ApplyPage() {
                 </div>
 
                 <Label htmlFor="cv" className="mt-4 block">CV file (PDF, max 10 MB) *</Label>
-                <Input
+                {/* The native control is kept for the file picker and validation
+                    but hidden, so no browser-locale chrome ("Escolher arquivo /
+                    Nenhum arquivo escolhido") appears in the form. */}
+                <input
                   id="cv"
                   ref={cvInputRef}
                   type="file"
                   data-field="cv"
                   accept="application/pdf,.pdf"
                   aria-describedby="cv-help"
-                  className="h-auto py-2 file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-primary-foreground"
+                  className="sr-only"
                   disabled={cvChecking}
                   onChange={(e) => onFile(e.target.files?.[0] ?? null)}
                 />
+                <div className="mt-2 flex flex-wrap items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={cvChecking}
+                    onClick={() => cvInputRef.current?.click()}
+                  >
+                    {cvFile ? "Choose a different PDF" : "Choose your CV"}
+                  </Button>
+                  <span className="min-w-0 truncate text-sm text-muted-foreground">
+                    {cvFile ? cvFile.name : "No file chosen yet"}
+                  </span>
+                </div>
                 <p id="cv-help" className="mt-1 text-xs text-muted-foreground">
                   Opens your phone's file picker — Files, Drive and iCloud all work.
                 </p>
+
 
                 {/* Screen-reader announcements: filename, outcome, cancellation. */}
                 <p className="sr-only" role="status" aria-live="polite">{cvStatus}</p>
