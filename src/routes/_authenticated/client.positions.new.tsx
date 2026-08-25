@@ -113,14 +113,15 @@ function NewRolePage() {
           <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Essential for launch</h4>
             <ul className="grid grid-cols-1 gap-2 text-xs text-foreground/80 sm:grid-cols-2">
-              <li className="flex items-center gap-2">• Seniority</li>
-              <li className="flex items-center gap-2">• Work arrangement</li>
-              <li className="flex items-center gap-2">• Location or remote</li>
-              <li className="flex items-center gap-2">• 3–5 Must-have skills</li>
-              <li className="flex items-center gap-2">• Salary band</li>
-              <li className="flex items-center gap-2">• Job description</li>
+              {ESSENTIALS.map((item) => (
+                <li key={item} className="flex items-center gap-2">
+                  • {item}
+                </li>
+              ))}
             </ul>
-            <p className="mt-2 text-[11px] text-muted-foreground italic">You can enrich the brief with advanced details after these 7 essentials.</p>
+            <p className="mt-2 text-[11px] text-muted-foreground italic">
+              You can enrich the brief with advanced details after these {ESSENTIALS.length} essentials.
+            </p>
           </div>
 
           <div className="flex items-center justify-end gap-2">
