@@ -417,8 +417,11 @@ async function main() {
     const appliedAt = new Date(now - (28 - index) * day);
     const interviewAt = new Date(now - (16 - index) * day);
     const assessmentAt = new Date(now - (10 - index) * day);
-    const deliveredAt = new Date(now - (7 - index * 0.5) * day);
-    const offerSentAt = new Date(now - (4 - index * 0.3) * day);
+    // Delivery must land 3–5 days ago so the Candidates page shows a fresh,
+    // in-window delivery date for every seeded candidate.
+    const deliveredAt = new Date(now - (3 + (index % 5) * 0.5) * day);
+    const offerSentAt = new Date(Math.min(now - 0.5 * day, deliveredAt.getTime() + 1.5 * day));
+
 
     // Evidence depth comes from the library entries for this score band: the
     // CV template's expected coverage and the assessment's accuracy, averaged.
