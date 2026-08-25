@@ -11,7 +11,7 @@
  * an empty list so the surface can say so plainly.
  */
 import { getEvidenceCounts } from "./evidence-counts";
-import { resolveRequirementStatus } from "./requirement-status";
+import { hasRelatedSignal, resolveRequirementStatus } from "./requirement-status";
 import { bandRange, classifyBand } from "@/lib/scoring/bands";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
@@ -24,6 +24,8 @@ export type BreakdownGroup = {
   met: number;
   partial: number;
   missing: number;
+  /** Requirements with a related passage but no quote: possible signals. */
+  related: number;
   total: number;
   /** One line a hiring manager can read on its own. */
   takeaway: string;
@@ -64,31 +66,46 @@ export type ScoreBreakdown = {
 function countRows(rows: RequirementRow[]) {
   // Same resolution the coverage panel and the header chip use, so the group
   // captions cannot claim evidence the requirement list does not show.
-  const statuses = rows.map((r) => resolveRequirementStatus(r));
-  const met = statuses.filter((s) => s === "met").length;
-  const partial = statuses.filter((s) => s === "partial").length;
-  const missing = statuses.filter((s) => s === "not_evidenced" || s === "contradicted").length;
-  return { met, partial, missing };
+  const resolved = rows.map((r) => ({ row: r, status: resolveRequirementStatus(r) }));
+  const met = resolved.filter((r) => r.status === "met").length;
+  const partial = resolved.filter((r) => r.status === "partial").length;
+  const missing = resolved.filter(
+    (r) => r.status === "not_evidenced" || r.status === "contradicted",
+  ).length;
+  // Related-only rows carry no quote, so they are possible signals, not evidence.
+  const related = resolved.filter((r) => hasRelatedSignal(r.row)).length;
+  return { met, partial, missing, related };
 }
 
 
-function mustTakeaway(c: { met: number; partial: number; missing: number; total: number }) {
+function mustTakeaway(c: {
+  met: number;
+  partial: number;
+  missing: number;
+  related: number;
+  total: number;
+}) {
   if (c.total === 0) return "No must-haves were declared for this role.";
+  const evidenced = c.met + c.partial;
+  const signals = c.related > 0 ? ` ${plural(c.related, "possible signal")} not quoted.` : "";
+  if (evidenced === 0) {
+    return `None of the ${c.total} must-haves are quoted from the record yet.${signals}`;
+  }
   if (c.missing > 0) {
-    return `${plural(c.met, "must-have")} of ${c.total} are quoted from evidence; ${c.partial > 0 ? `${c.partial} are partial, ` : ""}${c.missing} ${pluralWord(c.missing, "carries", "carry")} none yet.`;
+    return `${plural(evidenced, "must-have")} of ${c.total} are quoted from the record; ${c.missing} ${pluralWord(c.missing, "carries", "carry")} no quote yet.${signals}`;
   }
-  if (c.partial > 0) {
-    return `${c.met} of ${c.total} must-haves are quoted directly, ${c.partial} only related.`;
-  }
-  return `All ${c.total} must-haves are quoted directly from the CV or screening answers.`;
+  return `All ${c.total} must-haves are quoted directly from the CV or screening answers.${signals}`;
 }
 
-function preferredTakeaway(c: { met: number; partial: number; total: number }) {
+function preferredTakeaway(c: { met: number; partial: number; related: number; total: number }) {
   if (c.total === 0) return "No preferred requirements were declared for this role.";
   const evidenced = c.met + c.partial;
-  if (evidenced === 0) return `None of the ${c.total} preferred requirements are evidenced yet.`;
-  return `${evidenced} of ${c.total} preferred requirements add to the ranking.`;
+  const signals = c.related > 0 ? ` ${plural(c.related, "possible signal")} not quoted.` : "";
+  if (evidenced === 0)
+    return `None of the ${c.total} preferred requirements are quoted yet.${signals}`;
+  return `${evidenced} of ${c.total} preferred requirements add to the ranking.${signals}`;
 }
+
 
 export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdown {
   const rows = candidate.requirement_rows ?? [];
@@ -201,7 +218,9 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
   const canonical = getEvidenceCounts(rows);
   const criteriaSummary =
     rows.length > 0
-      ? `${canonical.evidenced} of ${canonical.total} requirements evidenced — ${canonical.quoted} quoted, ${canonical.related} related`
+      ? `${canonical.evidenced} of ${canonical.total} requirements evidenced (quoted)${
+          canonical.related > 0 ? ` — ${canonical.related} possible signals, not quoted` : ""
+        }`
       : explanation && explanation.kind === "explained"
         ? explanation.criteria_summary
         : null;
