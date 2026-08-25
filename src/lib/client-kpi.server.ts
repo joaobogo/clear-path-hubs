@@ -1286,15 +1286,27 @@ export async function loadRoleStageDates(
       .eq("organization_id", orgId)
       .eq("client_visibility", "visible"),
   );
+  // Shortlist / Offer come from the recorded stage entry — the same timestamp
+  // the Offers page and the client KPIs age. A delivery date is only used when
+  // no stage entry was ever recorded, otherwise the Roles caption would report
+  // an older date than the Offers page for the same candidate.
+  const fallbackShortlist = new Map<string, string | null>();
+  const fallbackOffer = new Map<string, string | null>();
   for (const m of ((matches as AnyRow[]) ?? [])) {
     if (!m.position_id) continue;
     const row = take(m.position_id);
     row.screening = min(row.screening, m.created_at ?? m.delivered_at);
     if (m.stage === "shortlisted" || m.stage === "interview_process") {
-      row.shortlist = min(row.shortlist, m.delivered_at ?? m.created_at);
+      fallbackShortlist.set(
+        m.position_id,
+        min(fallbackShortlist.get(m.position_id) ?? null, m.delivered_at ?? m.created_at),
+      );
     }
     if (m.stage === "offer" || m.stage === "hired") {
-      row.offer = min(row.offer, m.delivered_at ?? m.created_at);
+      fallbackOffer.set(
+        m.position_id,
+        min(fallbackOffer.get(m.position_id) ?? null, m.delivered_at ?? m.created_at),
+      );
     }
   }
 
@@ -1316,6 +1328,16 @@ export async function loadRoleStageDates(
       row.shortlist = min(row.shortlist, h.created_at);
     }
   }
+
+  for (const [pid, at] of fallbackShortlist) {
+    const row = take(pid);
+    if (!row.shortlist) row.shortlist = at;
+  }
+  for (const [pid, at] of fallbackOffer) {
+    const row = take(pid);
+    if (!row.offer) row.offer = at;
+  }
+
 
   return out;
 }

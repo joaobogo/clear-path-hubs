@@ -66,7 +66,9 @@ export type ExecutiveReport = {
     hired: number;
     blocked: number;
   }>;
-  time_in_stage: Array<{ stage: string; count: number; avg_days: number; p90_days: number }>;
+  /** p90 is null under five candidates, where it only repeats the average. */
+  time_in_stage: Array<{ stage: string; count: number; avg_days: number; p90_days: number | null }>;
+
   bottlenecks: Array<{
     key: string;
     label: string;
@@ -216,16 +218,46 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       }))
       .sort((a, b) => b.active_candidates - a.active_candidates);
 
-    // Time in stage — days since last updated per stage
+    // Time in stage — measured from the stage-entry timestamp the Offers page
+    // and the client KPIs read (`candidate_stage_history`, falling back to the
+    // delivery date), never from `updated_at`, which any edit resets.
+    const activeMatchIds = matchRows
+      .filter(
+        (m) =>
+          !["hired", "rejected", "withdrawn", "not_moving_forward"].includes(
+            String(m.stage ?? ""),
+          ),
+      )
+      .map((m) => String(m.id));
+    const stageEnteredAt = new Map<string, string>();
+    if (activeMatchIds.length > 0) {
+      const { data: history } = await s
+        .from("candidate_stage_history")
+        .select("candidate_match_id, to_stage, created_at")
+        .in("candidate_match_id", activeMatchIds);
+      const stageByMatch = new Map<string, string>(
+        matchRows.map((m) => [String(m.id), String(m.stage)]),
+      );
+      for (const h of ((history as AnyRow[]) ?? [])) {
+        const mid = String(h.candidate_match_id);
+        if (stageByMatch.get(mid) !== h.to_stage) continue;
+        const at = h.created_at as string | null;
+        if (!at) continue;
+        const prev = stageEnteredAt.get(mid);
+        if (!prev || at > prev) stageEnteredAt.set(mid, at);
+      }
+    }
+
     const stageBuckets = new Map<string, number[]>();
     for (const m of matchRows) {
       const stage = String(m.stage ?? "unassigned");
       // P16: Exclude terminal stages from "Time in stage" buckets so the sum 
       // matches the active population and avoids double-counting.
       if (["hired", "rejected", "withdrawn", "not_moving_forward"].includes(stage)) continue;
-      const updated = m.updated_at ? new Date(m.updated_at) : null;
-      if (!updated) continue;
-      const dts = (now.getTime() - updated.getTime()) / 86_400_000;
+      const enteredIso = stageEnteredAt.get(String(m.id)) ?? (m.delivered_at as string | null);
+      const entered = enteredIso ? new Date(enteredIso) : null;
+      if (!entered || Number.isNaN(entered.getTime())) continue;
+      const dts = (now.getTime() - entered.getTime()) / 86_400_000;
       const arr = stageBuckets.get(stage) ?? [];
       arr.push(dts);
       stageBuckets.set(stage, arr);
@@ -239,10 +271,14 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
           stage,
           count: arr.length,
           avg_days: Math.round(avg * 10) / 10,
-          p90_days: Math.round(sorted[p90Idx] * 10) / 10,
+          // A percentile needs a real spread behind it. Under five candidates
+          // it just repeats the average, so it is withheld.
+          p90_days:
+            arr.length >= 5 ? Math.round(sorted[p90Idx] * 10) / 10 : null,
         };
       })
-      .sort((a, b) => b.p90_days - a.p90_days);
+      .sort((a, b) => b.avg_days - a.avg_days);
+
 
     // ── Bottlenecks ───────────────────────────────────────────────────────
     const pendingPublish = matchRows.filter(
