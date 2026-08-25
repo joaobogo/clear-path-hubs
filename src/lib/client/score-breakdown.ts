@@ -172,7 +172,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
         reasonsByRequirement.set(id, {
           id,
           tone: "watch",
-          text: `No evidence yet for the must-have "${r.label}" — this holds the score down.`,
+          text: `We found no direct evidence for "${r.label}". This holds the score down.`,
         });
       }
     });
@@ -187,7 +187,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
         reasonsByRequirement.set(id, {
           id,
           tone: "watch",
-          text: `Only partial evidence for the must-have "${r.label}" — this holds the score down.`,
+          text: `We found partial evidence for "${r.label}" — worth confirming. This holds the score down.`,
         });
       }
     });
@@ -198,7 +198,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
   }
 
   (candidate.concerns ?? []).slice(0, 3).forEach((c: string, i: number) =>
-    reasons.push({ id: `concern-${i}`, tone: "watch", text: c }),
+    reasons.push({ id: `concern-${i}`, tone: "watch", text: humanizeConcernSentence(c) }),
   );
   if (candidate.main_consideration) {
     reasons.push({

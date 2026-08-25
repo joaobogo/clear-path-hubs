@@ -92,7 +92,7 @@ export function buildValidationList(
       id: `note-${i}`,
       label: null,
       status: null,
-      sentence: c.trim(),
+      sentence: humanizeConcernSentence(c),
       tone: "warning" as const,
     }));
 

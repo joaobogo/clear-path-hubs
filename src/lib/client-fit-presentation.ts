@@ -436,8 +436,13 @@ export function buildInterviewGuide(args: {
       requirement_label: r.label,
       importance: r.importance,
       question: phraseInterviewQuestion(r.label),
-      why: concerns.find(c => c.toLowerCase().includes(r.label.toLowerCase())) || 
-           (r.status === "contradicted" ? "Address identified contradictions." : "Verify missing or partial evidence."),
+      why: (() => {
+        const match = concerns.find((c) => c.toLowerCase().includes(r.label.toLowerCase()));
+        if (match) return humanizeConcernSentence(match);
+        if (r.status === "contradicted") return "The evidence here conflicts — worth clarifying.";
+        if (r.status === "partial") return "We found partial evidence for this — worth confirming.";
+        return "We found no direct evidence for this.";
+      })(),
       indicators: ["Specific project examples", "Quantifiable results", "Duration of experience"],
       followUp: null,
       group: r.importance === "must_have" ? "Core Requirements" : "Preferred Skills",
