@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useState } from "react";
-import { EmptyState } from "@/components/client/states";
+import { EmptyState, ErrorState } from "@/components/client/states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getClientContext } from "@/lib/client-context.functions";
@@ -25,14 +25,24 @@ export const Route = createFileRoute("/_authenticated/client/talent-pool")({
 function TalentPoolPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const ctxFn = useServerFn(getClientContext);
-  const { data: ctx, isLoading: ctxLoading } = useQuery({
+  const {
+    data: ctx,
+    isLoading: ctxLoading,
+    isError: ctxError,
+    refetch: refetchCtx,
+  } = useQuery({
     queryKey: ["client-context"],
     queryFn: () => ctxFn({ data: {} }),
   });
   const orgId = ctx?.active?.organization_id;
 
   const poolFn = useServerFn(listSilverMedalists);
-  const { data: pool, isLoading: poolLoading } = useQuery({
+  const {
+    data: pool,
+    isLoading: poolLoading,
+    isError: poolError,
+    refetch: refetchPool,
+  } = useQuery({
     queryKey: ["talent-pool-count", orgId],
     queryFn: () => poolFn({ data: { orgId: orgId!, status: "all" } }),
     enabled: !!orgId,
@@ -51,7 +61,15 @@ function TalentPoolPage() {
         </p>
       </header>
 
-      {loading ? (
+      {ctxError || poolError ? (
+        <ErrorState
+          title="We couldn't load your talent pool"
+          onRetry={() => {
+            if (ctxError) void refetchCtx();
+            if (poolError) void refetchPool();
+          }}
+        />
+      ) : loading ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[0, 1, 2].map((i) => (
             <div key={i} className="rounded-xl border bg-card p-6 shadow-sm">
