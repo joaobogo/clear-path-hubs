@@ -664,7 +664,7 @@ export function scoreCandidate(input: {
           ? `No evidence of required: ${a.text}`
           : a.status === "contradicted"
             ? `Contradicting evidence for required: ${a.text}`
-            : `Only partial evidence for required: ${a.text}`,
+            : `Partly evidenced — worth confirming: ${a.text}`,
     );
   if (contradiction_status !== "none") {
     concerns.unshift(`Screening/CV contradiction (${contradiction_status.replace(/_/g, " ")}).`);
