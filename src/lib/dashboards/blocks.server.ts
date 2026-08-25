@@ -7,6 +7,7 @@
  *  2. Loading each block from the records that already exist. Blocks return
  *     null when there is genuinely nothing yet; they never invent a zero.
  */
+import { clientStatusLabel } from "@/lib/vocabulary";
 import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { findPlan } from "@/lib/payments-catalog";
 import {
@@ -121,7 +122,7 @@ async function pipelineByStage(sb: AnySupabase, org: string): Promise<BlockData 
     points: order
       .filter((s) => counts.has(s))
       .map((s) => ({
-        label: STAGE_LABEL[s] ?? s,
+        label: clientStatusLabel(s),
         value: counts.get(s) ?? 0,
         href: "/client/candidates",
       })),

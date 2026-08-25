@@ -10,6 +10,7 @@
  * through approvals).
  */
 
+import { clientStatusLabel } from "@/lib/vocabulary";
 import { BULK_STAGES, type BulkStage } from "./admin-bulk-constants";
 
 export type { FieldChange, PlanRow, BulkKind, BulkPreview, ExecResult } from "./bulk-actions.types";
@@ -113,13 +114,13 @@ async function planCandidateStage(
         : [
             {
               field: "stage",
-              from: statusLabel(row.stage as string] ?? (row.stage as string),
-              to: statusLabel(toStage] ?? toStage,
+              from: clientStatusLabel(row.stage as string),
+              to: clientStatusLabel(toStage),
             },
           ],
     };
   });
-  return { summary: `Move stage to ${statusLabel(toStage] ?? toStage}`, rows };
+  return { summary: `Move stage to ${clientStatusLabel(toStage)}`, rows };
 }
 
 async function planCandidateAssign(
@@ -178,7 +179,7 @@ async function planCandidateAssign(
         ? []
         : [
             { field: "application", from: "none", to: "submitted" },
-            { field: "stage", from: "none", to: statusLabel("screening"]! },
+            { field: "stage", from: "none", to: clientStatusLabel("screening") },
             { field: "client_visibility", from: "none", to: "hidden" },
           ],
     };
