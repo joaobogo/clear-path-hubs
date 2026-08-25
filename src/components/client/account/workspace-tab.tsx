@@ -280,19 +280,29 @@ function CompanyProfileSection({
     },
   });
 
+  const getErrors = useCallback(
+    (draft: Company): Partial<Record<keyof Company, string>> => {
+      const next: Partial<Record<keyof Company, string>> = {};
+      const name = draft.name.trim();
+      if (!name || name.length < 2)
+        next.name = "Company name must be at least 2 characters.";
+      if (name.length > 200) next.name = "Company name must be under 200 characters.";
+      const website = draft.website.trim();
+      const normalized = normalizeWebsite(website);
+      if (website && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(normalized))
+        next.website = "Website must start with http:// or https://.";
+      return next;
+    },
+    [],
+  );
+
   const validate = (): { ok: boolean; errors: Partial<Record<keyof Company, string>> } => {
-    const next: Partial<Record<keyof Company, string>> = {};
-    const name = form.name.trim();
-    if (!name || name.length < 2)
-      next.name = "Company name must be at least 2 characters.";
-    if (name.length > 200) next.name = "Company name must be under 200 characters.";
-    const website = form.website.trim();
-    const normalized = normalizeWebsite(website);
-    if (website && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(normalized))
-      next.website = "Website must start with http:// or https://.";
+    const next = getErrors(form);
     setErrors(next);
     return { ok: Object.keys(next).length === 0, errors: next };
   };
+
+  useClearResolvedErrors(errors, setErrors, () => getErrors(form), [form]);
 
   const handleSave = () => {
     const { ok, errors: validationErrors } = validate();
