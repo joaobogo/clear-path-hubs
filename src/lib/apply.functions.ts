@@ -164,6 +164,20 @@ export const submitApplication = createServerFn({ method: "POST" })
 
       // 3. Find or create candidate profile by lower(email).
       const emailLower = data.email.trim().toLowerCase();
+
+      const qa = await assertNoQaContamination(supabaseAdmin, pos.organization_id, [
+        data.full_name,
+        emailLower,
+      ]);
+      if (!qa.ok) {
+        return {
+          ok: false,
+          trace_id,
+          code: "qa_fixture_blocked",
+          message: qa.reason ?? "Invalid input",
+        };
+      }
+
       const { data: existingCp, error: cpFindErr } = await supabaseAdmin
         .from("candidate_profiles")
         .select("id,current_cv_file_id,user_id")
