@@ -22,6 +22,7 @@ import {
 } from "@/lib/client-positions.functions";
 import { toastError } from "@/lib/toast-error";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 export function RoleEditorLifecycleActions({
   orgId,
@@ -43,8 +44,9 @@ export function RoleEditorLifecycleActions({
   const isDraft = status === "draft";
 
   const invalidate = () => {
-    void queryClient.invalidateQueries({ queryKey: ["client-positions"] });
-    void queryClient.invalidateQueries({ queryKey: ["client-position", positionId] });
+    void queryClient.invalidateQueries({ queryKey: kpiCacheKeys.client.positions(orgId) });
+    void queryClient.invalidateQueries({ queryKey: kpiCacheKeys.client.position(positionId) });
+    void queryClient.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
   };
 
   const archive = useMutation({

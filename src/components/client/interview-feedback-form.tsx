@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import {
   DECLINE_CONCERN_MIN,
@@ -150,11 +151,11 @@ export function InterviewFeedbackForm({
       // Only clear the typed text once it is safely stored.
       clearLocalDraft(item.interview_id);
       setSaveFailed(false);
-      void qc.invalidateQueries({ queryKey: ["interviews-awaiting-feedback"] });
-      void qc.invalidateQueries({ queryKey: ["match-feedback"] });
-      void qc.invalidateQueries({ queryKey: ["client-interviews"] });
-      void qc.invalidateQueries({ queryKey: ["client-candidates"] });
-      void qc.invalidateQueries({ queryKey: ["client-overview"] });
+       void qc.invalidateQueries({ queryKey: kpiCacheKeys.client.feedbackQueue });
+       void qc.invalidateQueries({ queryKey: kpiCacheKeys.client.matchFeedback });
+       void qc.invalidateQueries({ queryKey: kpiCacheKeys.client.interviews(orgId) });
+       void qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidates(orgId) });
+       void qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
       onSubmitted?.((res as { moved_to: string | null }).moved_to ?? null);
     },
     onError: () => setSaveFailed(true),

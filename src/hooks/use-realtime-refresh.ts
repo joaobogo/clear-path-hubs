@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Audience } from "@/lib/events";
@@ -25,19 +25,25 @@ export function useDashboardRealtime(opts: {
   userId: string | null | undefined;
   audience: Audience;
   invalidateKeys: readonly (readonly unknown[])[];
+  orgId?: string | null;
+  staffAllOrgs?: boolean;
 }) {
   const qc = useQueryClient();
-  const { userId, audience, invalidateKeys } = opts;
+  const { userId, audience, invalidateKeys, orgId, staffAllOrgs = false } = opts;
   const lastInvalidate = useRef(0);
+  const keysRef = useRef(invalidateKeys);
+  keysRef.current = invalidateKeys;
+  const [updatedAt, setUpdatedAt] = useState<number | null>(null);
 
   useEffect(() => {
     if (!userId) return;
 
     const invalidateAll = () => {
       lastInvalidate.current = Date.now();
-      for (const key of invalidateKeys) {
+      for (const key of keysRef.current) {
         qc.invalidateQueries({ queryKey: key as unknown[] });
       }
+      setUpdatedAt(lastInvalidate.current);
     };
 
     // Coalesce a burst of realtime events into one invalidation per 500 ms.
@@ -49,6 +55,13 @@ export function useDashboardRealtime(opts: {
         invalidateAll();
       }, 500);
     };
+
+    const orgConfig = (table: "candidate_matches" | "positions" | "interviews" | "memberships" | "hire_records" | "client_decisions") => ({
+      event: "*" as const,
+      schema: "public" as const,
+      table,
+      ...(orgId ? { filter: `organization_id=eq.${orgId}` } : {}),
+    });
 
     const channel = supabase
       .channel(`dashboard:${audience}:${userId}`)
@@ -62,6 +75,12 @@ export function useDashboardRealtime(opts: {
         },
         () => scheduleInvalidate(),
       )
+      .on("postgres_changes", orgConfig("candidate_matches"), scheduleInvalidate)
+      .on("postgres_changes", orgConfig("positions"), scheduleInvalidate)
+      .on("postgres_changes", orgConfig("interviews"), scheduleInvalidate)
+      .on("postgres_changes", orgConfig("memberships"), scheduleInvalidate)
+      .on("postgres_changes", orgConfig("hire_records"), scheduleInvalidate)
+      .on("postgres_changes", orgConfig("client_decisions"), scheduleInvalidate)
       .subscribe();
 
     // The first click inside the app also focuses the window, and `focus` fires
@@ -105,5 +124,7 @@ export function useDashboardRealtime(opts: {
     };
     // invalidateKeys is expected to be stable per dashboard (defined at module scope)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, audience]);
+  }, [userId, audience, orgId, staffAllOrgs, qc]);
+
+  return { updatedAt };
 }

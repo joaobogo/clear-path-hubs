@@ -1,6 +1,5 @@
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
 import { proposalErrorMessage } from "@/lib/interview-proposal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -49,6 +48,7 @@ import { InterviewDetailDialog } from "@/components/client/interviews/interview-
 import { getWorkspaceTimezone } from "@/lib/format/datetime";
 import { resolveRecipientZone } from "@/lib/time/zone-label";
 import { AwaitingConfirmationSection } from "@/components/client/interviews/awaiting-confirmation";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/interviews")({
@@ -112,7 +112,13 @@ function InterviewsPage() {
   const live = useRouteRealtime({
     scope: "client-interviews",
     orgId: org ?? null,
-    invalidateKeys: [["client-interviews"], ["client-schedulable", org], ["client-kpis"]],
+    invalidateKeys: [
+      kpiCacheKeys.client.interviews(org),
+      kpiCacheKeys.client.schedulable(org),
+      kpiCacheKeys.client.kpis,
+      kpiCacheKeys.client.overview(org),
+      kpiCacheKeys.client.candidates(org),
+    ],
   });
   const hasWindows = ((availability.data?.windows ?? []) as unknown[]).length > 0;
   // The organisation's timezone setting wins, then the zone on its availability
@@ -125,32 +131,11 @@ function InterviewsPage() {
   const interviews = (listQuery.data?.interviews as InterviewDTO[] | undefined) ?? [];
 
   const invalidate = () => {
-    qc.invalidateQueries({ queryKey: ["client-interviews"] });
-    qc.invalidateQueries({ queryKey: ["client-kpis"] });
-    qc.invalidateQueries({ queryKey: ["client-candidates"] });
+    qc.invalidateQueries({ queryKey: kpiCacheKeys.client.interviews(org) });
+    qc.invalidateQueries({ queryKey: kpiCacheKeys.client.kpis });
+    qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidates(org) });
+    qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(org) });
   };
-
-  // A confirmation from the recruiting team updates the same card, no refresh.
-  useEffect(() => {
-    if (!org) return;
-    const channel = supabase
-      .channel(`client-interviews-${org}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "interviews",
-          filter: `organization_id=eq.${org}`,
-        },
-        () => invalidate(),
-      )
-      .subscribe();
-    return () => {
-      void supabase.removeChannel(channel);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [org]);
 
   // Deep-link: ?interview=<id> opens that interview; ?feedback=1 also opens the
   // feedback form for it. We scroll the timeline item into view so the user

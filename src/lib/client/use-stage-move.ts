@@ -18,6 +18,7 @@ import { moveMatchStage } from "@/lib/client-decisions.functions";
 import { readAdvanceGateError } from "@/lib/client/advance-gate";
 import { readStaleStateError } from "@/lib/decision-concurrency";
 import type { MatchStage } from "@/lib/client-match-stage";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type AnyRow = any;
@@ -44,7 +45,7 @@ export interface UseStageMoveOptions {
   /** Refetch the owning surface after a stale-state conflict. */
   refetch?: () => unknown;
   /** Extra caches invalidated on success (overview, lists, counters). */
-  invalidateKeys?: QueryKey[];
+  invalidateKeys?: readonly QueryKey[];
 }
 
 export function useStageMove({
@@ -116,7 +117,7 @@ export function useStageMove({
     onSettled: () => {
       qc.invalidateQueries({ queryKey });
       // Also invalidate overview to update tiles
-      qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
+      qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
     },
   });
 }

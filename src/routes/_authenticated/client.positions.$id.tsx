@@ -43,6 +43,7 @@ import { RoleStatusSection } from "@/components/client/position-detail/role-stat
 import { EvidencePanels } from "@/components/client/position-detail/evidence-panels";
 import { RoleStoryPanel } from "@/components/client/position-detail/role-story";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 import { positionDetailQuery } from "@/lib/client-position-detail-query";
 
 
@@ -154,9 +155,10 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
     getMatches: (cached: AnyRow) => (cached?.matches as AnyRow[] | undefined) ?? [],
     refetch,
     invalidateKeys: [
-      ["client-overview", orgId],
-      ["client-positions", orgId],
-      ["client-candidates", orgId],
+      kpiCacheKeys.client.overview(orgId),
+      kpiCacheKeys.client.positions(orgId),
+      kpiCacheKeys.client.candidates(orgId),
+      kpiCacheKeys.client.interviews(orgId),
     ],
   });
 
@@ -316,7 +318,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
           heading="Information needed to keep sourcing"
           onAnswered={() => {
             void refetch();
-            qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
+            qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
           }}
         />
       </div>

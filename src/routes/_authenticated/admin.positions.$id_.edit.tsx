@@ -3,6 +3,7 @@ import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PositionEditWizard } from "@/components/positions/PositionEditWizard";
 import { getPositionForEdit } from "@/lib/position-edit.functions";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 export const Route = createFileRoute("/_authenticated/admin/positions/$id_/edit")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -35,7 +36,12 @@ function Page() {
       initialStep={step}
       audience="admin"
       returnTo={`/admin/positions/${initial.id}`}
-      invalidateKeys={[["admin-position", initial.id], ["admin-positions"], ["position-edit", initial.id]]}
+      invalidateKeys={[
+        kpiCacheKeys.admin.position(initial.id),
+        kpiCacheKeys.admin.positionList,
+        kpiCacheKeys.admin.positionEdit(initial.id),
+        kpiCacheKeys.admin.overview,
+      ]}
     />
   );
 }

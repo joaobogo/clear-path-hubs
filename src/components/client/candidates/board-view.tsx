@@ -14,6 +14,7 @@ import { DeclineReasonDialog } from "@/components/client/decline-reason-dialog";
 import { useStageMove } from "@/lib/client/use-stage-move";
 import type { MatchStage } from "@/lib/client-match-stage";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type AnyRow = any;
@@ -62,7 +63,11 @@ export function CandidatesBoardView({
       ((cached as ClientCandidateDTO[] | undefined) ?? []).map((r) => ({ ...r, id: r.match_id })),
     setMatches: (_cached: AnyRow, next: AnyRow[]) => next,
     refetch,
-    invalidateKeys: [["client-overview", orgId], ["client-positions", orgId]],
+    invalidateKeys: [
+      kpiCacheKeys.client.overview(orgId),
+      kpiCacheKeys.client.positions(orgId),
+      kpiCacheKeys.client.interviews(orgId),
+    ],
   });
 
   const boardRows = rows.map(toBoardRow);

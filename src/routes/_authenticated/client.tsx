@@ -22,6 +22,8 @@ import { getActiveSupportSession } from "@/lib/support-audit.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
+import { clientBusinessRefreshKeys } from "@/lib/kpis/cache-keys";
+import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { SupportViewBanner } from "@/components/support-view-banner";
 import { DegradedModeBanner } from "@/components/client/degraded-mode-banner";
 
@@ -381,7 +383,7 @@ function ClientLayout() {
 
  return (
  <SupportViewContext.Provider value={supportView}>
- <ClientCoordinator />
+ <ClientCoordinator orgId={active.organization_id} />
     <WorkspaceShell
   role="client"
   contextKicker="Workspace"
@@ -441,7 +443,7 @@ const CLIENT_REFRESH_KEYS = [
   ACTIVITY_QUERY_KEY,
   AGENT_RAIL_QUERY_KEY,
   SYSTEM_HEALTH_QUERY_KEY,
-  ["client-context"],
+  ...clientBusinessRefreshKeys(),
   ["client", "kpis"],
   ["client", "positions"],
   ["client", "candidates"],
@@ -450,12 +452,17 @@ const CLIENT_REFRESH_KEYS = [
 ] as const;
 
 
-function ClientCoordinator() {
+function ClientCoordinator({ orgId }: { orgId: string }) {
  const [userId, setUserId] = useState<string | null>(null);
  useEffect(() => {
  supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
  }, []);
- useDashboardRealtime({ userId, audience: "client", invalidateKeys: CLIENT_REFRESH_KEYS });
- return null;
+ const live = useDashboardRealtime({
+   userId,
+   audience: "client",
+   orgId,
+   invalidateKeys: CLIENT_REFRESH_KEYS,
+ });
+ return <LiveUpdatedChip updatedAt={live.updatedAt} className="fixed bottom-4 right-4 z-40 shadow-sm" />;
 }
 

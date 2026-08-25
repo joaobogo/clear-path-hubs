@@ -21,6 +21,7 @@ import { AdminTestScopeProvider } from "@/components/admin/admin-test-scope";
 import { DeferredBlock } from "@/components/ds/deferred-block";
 import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
+import { adminBusinessRefreshKeys } from "@/lib/kpis/cache-keys";
 
 
 const STAFF_GATE_TIMEOUT_MS = 3_000;
@@ -72,7 +73,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 const ADMIN_REFRESH_KEYS = [
   ACTIVITY_QUERY_KEY,
-  ["admin-overview"],
+  ...adminBusinessRefreshKeys,
   ["admin", "intakes"],
   ["admin", "matches"],
   ["admin", "positions"],
@@ -110,7 +111,12 @@ function AdminLayout() {
       setEmail(data.user?.email ?? null);
     });
   }, []);
-  useDashboardRealtime({ userId, audience: "admin", invalidateKeys: ADMIN_REFRESH_KEYS });
+  useDashboardRealtime({
+    userId,
+    audience: "admin",
+    invalidateKeys: ADMIN_REFRESH_KEYS,
+    staffAllOrgs: true,
+  });
 
   return (
     <AdminTestScopeProvider>
