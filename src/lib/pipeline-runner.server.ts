@@ -33,12 +33,8 @@ async function setState(
   s: Any, matchId: string, state: State,
   opts: { trace_id?: string; code?: string | null; message?: string | null } = {},
 ) {
-  await s.from("candidate_matches").update({
-    processing_state: state,
-    last_processing_trace_id: opts.trace_id ?? null,
-    processing_error_code: opts.code ?? null,
-    processing_error_message: opts.message ?? null,
-  }).eq("id", matchId);
+  const { writeProcessingState } = await import("./processing-state.server");
+  await writeProcessingState(s, matchId, state, opts);
 }
 
 async function recordJob(
