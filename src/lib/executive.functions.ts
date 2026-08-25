@@ -4,6 +4,7 @@
 // Supabase client so RLS applies as the caller. Staff can pass any org they have
 // visibility into via the standard client-context path.
 
+import { formatShortDayMonth } from "@/lib/format/datetime";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";

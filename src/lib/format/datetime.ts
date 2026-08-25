@@ -163,6 +163,21 @@ export function formatRelativeSigned(value: string | number | Date | null | unde
   return formatDate(date);
 }
 
+/**
+ * "29 Jun" — a day and month with no year, for compact chart axes. Same month
+ * spelling as `formatDate`, so a bucket label and a full date never disagree.
+ */
+export function formatShortDayMonth(
+  value: string | number | Date | null | undefined,
+  fallback = "",
+  zone = "UTC",
+): string {
+  const date = toDate(value);
+  if (!date) return fallback;
+  const fmt = formatter(zone, { day: "numeric", month: "short" });
+  return normalizeMonth(fmt.format(date));
+}
+
 /** "14:30" — workspace timezone. Only for rows that already carry the date. */
 export function formatTime(
   value: string | number | Date | null | undefined,
