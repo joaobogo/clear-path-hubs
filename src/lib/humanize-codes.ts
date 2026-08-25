@@ -53,7 +53,10 @@ const DICTIONARY: Record<string, string> = {
   scored: "Scored",
 
   // D5: Additional error codes
-  position_screening_limit_exceeded: "Screening limit reached",
+  position_screening_limit_exceeded:
+    "Trim the posting to five screening questions before publishing.",
+  position_screening_unmapped:
+    "Every screening question needs the must-have it tests and a one-line reason for asking, on step 2 of the role editor.",
   match_not_found: "Candidate record not found",
 
   // Integration health probe outcomes

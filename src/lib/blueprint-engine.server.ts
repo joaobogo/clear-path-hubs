@@ -33,6 +33,8 @@ export interface BlueprintScreeningQuestion {
   required: boolean;
   dealbreaker: boolean;
   rationale?: string;
+  /** The must-have requirement this question tests, worded as on the brief. */
+  must_have?: string;
 }
 
 export interface RoleBlueprint {
@@ -298,6 +300,7 @@ function shapeHint(): string {
           required: true,
           dealbreaker: false,
           rationale: "string",
+          must_have: "the must-have requirement this question tests",
         },
       ],
       sourcing_plan: {
@@ -384,6 +387,7 @@ function normalizeScreening(raw: unknown): BlueprintScreeningQuestion[] {
       required: isRequired,
       dealbreaker: q.dealbreaker === true,
       rationale: str(q.rationale, 300) || undefined,
+      must_have: str(q.must_have, 300) || undefined,
     });
     if (out.length >= SCREENING_MAX_QUESTIONS) break;
   }

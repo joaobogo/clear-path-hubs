@@ -86,6 +86,40 @@ export const TRAVEL_EXPECTATIONS = [
   { value: "extensive", label: "Extensive (50%+)" },
 ] as const;
 
+/**
+ * Briefs generated from a job description arrive as free text ("None",
+ * "Not required", "Minimal travel"). The editor stores an enum, so anything
+ * that is not one of the five values is normalised here rather than blocking
+ * the save with a validation error nobody can act on.
+ */
+export function normalizeTravelExpectation(raw: unknown): "" | (typeof TRAVEL_EXPECTATIONS)[number]["value"] {
+  const v = typeof raw === "string" ? raw.trim().toLowerCase() : "";
+  if (!v) return "";
+  const exact = TRAVEL_EXPECTATIONS.find((t) => t.value === v);
+  if (exact) return exact.value;
+  if (/(^|\b)(no|none|not required|not expected|zero)\b/.test(v)) return "none";
+  if (/minimal|rare|occasion|ad hoc|sometimes/.test(v)) return "occasional";
+  if (/regular|monthly|quarterly/.test(v)) return "regular";
+  if (/frequent|often|weekly/.test(v)) return "frequent";
+  if (/extensive|heavy|constant/.test(v)) return "extensive";
+  return "";
+}
+
+/**
+ * Timezone fields are machine-read for overlap checks, so only an IANA zone or
+ * a UTC offset is kept. Prose such as "Not specified, but likely Brazil time
+ * zones." is dropped instead of being shown as an anchor.
+ */
+export function normalizeTimezoneAnchor(raw: unknown): string {
+  const v = typeof raw === "string" ? raw.trim() : "";
+  if (!v || v.length > 80) return "";
+  if (/^[A-Za-z]+\/[A-Za-z0-9_+\-/]+$/.test(v)) return v;
+  if (/^(UTC|GMT)([+-]\d{1,2}(:\d{2})?)?$/i.test(v)) return v.toUpperCase();
+  return "";
+}
+
+
+
 export const COMPENSATION_VISIBILITY = [
   { value: "internal", label: "TaaSFlow team only" },
   { value: "client", label: "Client hiring team" },
@@ -332,7 +366,7 @@ export type QualityInput = {
   responsibilities: string;
   experience: string;
   interview_process: string;
-  screening_questions: unknown[];
+  screening_questions: { must_have?: string | null; why_asked?: string | null }[];
   locations: RequisitionLocation[];
   travel_expectation: string;
   primary_timezone: string;
@@ -394,6 +428,23 @@ export function assessJobQuality(i: QualityInput): {
     add({ id: "interview_process", severity: "optional", label: "Interview process", why: "Candidates convert better when the process is known upfront.", step: 2 });
   if (i.screening_questions.length === 0)
     add({ id: "screening", severity: "optional", label: "Screening questions", why: "Role-specific questions capture evidence a CV never contains.", step: 2 });
+  // A published question must state the must-have it maps to and why it is
+  // asked — the database refuses to activate the role otherwise, so this is a
+  // blocker the checklist has to name before anyone clicks Activate.
+  const unmappedScreening = i.screening_questions.filter(
+    (q) => !String(q?.must_have ?? "").trim() || !String(q?.why_asked ?? "").trim(),
+  ).length;
+  if (unmappedScreening > 0)
+    add({
+      id: "screening_mapping",
+      severity: "blocking",
+      label:
+        unmappedScreening === 1
+          ? "1 screening question is not linked to a must-have"
+          : `${unmappedScreening} screening questions are not linked to a must-have`,
+      why: "Each question needs the must-have it tests and a one-line reason candidates can read before the role can go live.",
+      step: 2,
+    });
   if (!i.department.trim())
     add({ id: "department", severity: "optional", label: "Department / function", why: "Used to group and report on your roles.", step: 1 });
   if (i.nice_to_have_skills.length === 0)

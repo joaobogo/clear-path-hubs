@@ -13,6 +13,8 @@ import {
   type CompanyResearch,
   type RoleBlueprint,
 } from "./blueprint-engine.server";
+import { normalizeTravelExpectation, normalizeTimezoneAnchor } from "@/lib/requisition-schema";
+
 
 type Stage =
   | "queued"
@@ -201,8 +203,8 @@ async function applyBlueprintToPosition(
     employment_type: bp.role.employment_type || null,
     seniority: bp.role.seniority || null,
     openings: bp.role.headcount,
-    travel_expectation: bp.geography.travel_expectation || null,
-    primary_timezone: bp.geography.timezone_requirements || null,
+    travel_expectation: normalizeTravelExpectation(bp.geography.travel_expectation) || null,
+    primary_timezone: normalizeTimezoneAnchor(bp.geography.timezone_requirements) || null,
     requirements,
     preferred_requirements: preferred,
     dealbreakers,
@@ -271,6 +273,17 @@ async function applyScreeningQuestions(admin: Admin, positionId: string, bp: Rol
     .eq("position_id", positionId);
   if ((count ?? 0) > 0) return; // never overwrite questions a human already set
 
+  // A question can only be published when it names the must-have it tests and
+  // the reason it is asked. Store both now: a question saved without them
+  // blocks activation later with nothing on screen explaining why.
+  const mustHaves = bp.must_have_skills ?? [];
+  const pickMustHave = (q: { question: string; must_have?: string }) => {
+    const stated = (q.must_have ?? "").trim();
+    if (stated) return stated;
+    const words = q.question.toLowerCase();
+    const matched = mustHaves.find((m) => m && words.includes(m.toLowerCase().slice(0, 18)));
+    return (matched ?? mustHaves[0] ?? "").trim();
+  };
   const rows = bp.screening_questions.map((q, i) => ({
     position_id: positionId,
     question: q.question,
@@ -278,6 +291,10 @@ async function applyScreeningQuestions(admin: Admin, positionId: string, bp: Rol
     required: q.required,
     dealbreaker: q.dealbreaker,
     display_order: i,
+    must_have: pickMustHave(q) || null,
+    why_asked:
+      (q.rationale ?? "").trim() ||
+      (pickMustHave(q) ? `We ask this to check ${pickMustHave(q)} before the interview.` : null),
   }));
   await admin.from("screening_questions").insert(rows);
 }
