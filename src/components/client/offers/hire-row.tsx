@@ -72,12 +72,12 @@ function HireCardImpl({
       )}
 
       <dl className="mt-2 space-y-0.5 text-[11px] text-muted-foreground">
-        <div className="flex justify-between">
-          <dt>Comp</dt>
-          <dd className={salary ? "text-foreground" : "italic"}>
-            {salary ?? "not on record"}
-          </dd>
-        </div>
+        {salary && (
+          <div className="flex justify-between">
+            <dt>Comp</dt>
+            <dd className="text-foreground">{salary}</dd>
+          </div>
+        )}
         <div className="flex justify-between">
           <dt>{HIRE_STATUS_LABEL[hire.status]}</dt>
           <dd className="text-foreground">
@@ -98,7 +98,7 @@ function HireCardImpl({
               </dd>
             </div>
           )}
-        {hire.owner_name && (
+        {hire.owner_name && hire.owner_name !== "Unassigned" && (
           <div className="flex items-center justify-between">
             <dt className="inline-flex items-center gap-1">
               <User2 className="h-3 w-3" /> Owner

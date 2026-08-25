@@ -227,7 +227,7 @@ export function pluralize(count: number, singular: string, plural?: string): str
  * Formats a period string (e.g. "2021-05 – 2024-01") into human-friendly
  * month-year ranges ("May 2021 – Jan 2024").
  */
-export function formatPeriod(period: string | null | undefined, fallback = "Date not confirmed"): string {
+export function formatPeriod(period: string | null | undefined, fallback = "Not provided"): string {
   if (!period) return fallback;
 
   const trimmed = period.trim();
