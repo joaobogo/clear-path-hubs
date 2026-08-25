@@ -15674,6 +15674,7 @@ export type Database = {
         Args: { _filter: string; _table: string; _user: string }
         Returns: number
       }
+      _rls_proof_seed: { Args: { ids: Json }; Returns: undefined }
       admin_bulk_assign_candidates: {
         Args: {
           _actor_user_id: string
