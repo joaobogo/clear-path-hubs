@@ -65,7 +65,7 @@ export type SearchResponse = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = Record<string, any>;
 
-import { sanitizeSearchTerm, orIlike, ilikeValue, buildPositionSearchOr } from "./search/postgrest-filter";
+import { sanitizeSearchTerm, orIlike, ilikeValue, ilikePattern, buildPositionSearchOr } from "./search/postgrest-filter";
 
 export const globalSearch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -305,29 +305,45 @@ export const globalSearch = createServerFn({ method: "POST" })
     }
 
 
-    // Messages — body search. Client scope filtered by thread_id in orgIds.
+    // Messages — body search. Client scope is limited to conversations owned by
+    // the caller's organisations (messages.thread_id is not an org id).
     {
-      let mq = supabase
-        .from("messages")
-        .select("id, body, thread_id, created_at")
-        .ilike("body", ilikeValue(term)!)
-        .order("created_at", { ascending: false })
-        .limit(LIMIT);
-      if (scope === "client") mq = mq.in("thread_id", orgIds);
-      const { data: msgs, error } = await mq;
-      if (error) throw new Error(error.message);
-      groups.messages = ((msgs as AnyRow[]) ?? []).map((m) => {
-        const snippet = String(m.body ?? "").slice(0, 120);
-        const href = scope === "admin" ? "/admin/messages" : "/client/messages";
-        return {
-          type: "message",
-          id: m.id,
-          label: snippet || "Message",
-          context: formatDateTime(m.created_at),
-          href,
-          search: scope === "client" ? { org: m.thread_id as string } : undefined,
-        };
-      });
+      let conversationIds: string[] | null = null;
+      if (scope === "client") {
+        const { data: convos, error: cErr } = await supabase
+          .from("conversations")
+          .select("id, organization_id")
+          .in("organization_id", orgIds)
+          .limit(500);
+        if (cErr) throw new Error(cErr.message);
+        conversationIds = ((convos as AnyRow[]) ?? []).map((c) => c.id as string);
+      }
+      if (!(scope === "client" && (conversationIds?.length ?? 0) === 0)) {
+        let mq = supabase
+          .from("messages")
+          .select("id, body, conversation_id, created_at, conversations(organization_id)")
+          .ilike("body", ilikePattern(term))
+          .order("created_at", { ascending: false })
+          .limit(LIMIT);
+        if (scope === "client" && conversationIds) {
+          mq = mq.in("conversation_id", conversationIds);
+        }
+        const { data: msgs, error } = await mq;
+        if (error) throw new Error(error.message);
+        groups.messages = ((msgs as AnyRow[]) ?? []).map((m) => {
+          const snippet = String(m.body ?? "").slice(0, 120);
+          const href = scope === "admin" ? "/admin/messages" : "/client/messages";
+          const org = m.conversations?.organization_id as string | undefined;
+          return {
+            type: "message" as const,
+            id: m.id,
+            label: snippet || "Message",
+            context: formatDateTime(m.created_at),
+            href,
+            search: scope === "client" && org ? { org } : undefined,
+          };
+        });
+      }
     }
 
     // Tasks — title search scoped to caller's orgs (client) or all (admin).
@@ -336,7 +352,7 @@ export const globalSearch = createServerFn({ method: "POST" })
       let tq: any = supabase
         .from("tasks")
         .select("id, title, status, task_type, organization_id, due_at, blocking")
-        .ilike("title", ilikeValue(term)!)
+        .ilike("title", ilikePattern(term))
         .is("deleted_at", null)
         .neq("status", "cancelled")
         .order("updated_at", { ascending: false })
