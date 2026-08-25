@@ -613,7 +613,7 @@ export const createWorkspacePosition = createServerFn({ method: "POST" })
     const qa = await assertNoQaContamination(context.supabase, data.orgId, [
       data.title,
     ]);
-    if (!qa.ok) throw new Error(qa.reason);
+    if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
     const trace_id = crypto.randomUUID();
     const { data: created, error } = await context.supabase
       .from("positions")
