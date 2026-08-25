@@ -44,7 +44,6 @@ import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
 import {
   FitHero,
-  RequirementCoverage,
   WhyThisCandidate,
 } from "@/components/client/candidate-detail/evidence";
 import {
@@ -445,8 +444,11 @@ function CandidateDetailPage() {
 
  )}
 
- {/* 3 — REQUIREMENT COVERAGE (first evidence panel) */}
- <RequirementCoverage candidate={candidate} withRationale />
+ {/* 3 — THE EVIDENCE: requirements listed once, with coverage folded in */}
+ <div id="sec-evidence" className="scroll-mt-24 space-y-4">
+ <WhyThisCandidate candidate={candidate} withCoverage />
+ <ScoreBreakdown candidate={candidate} hideRequirementRows />
+ </div>
 
  {/* 4 — CONTACT (one preview, one download) */}
  <ContactBlock candidate={candidate} />
@@ -521,10 +523,6 @@ function CandidateDetailPage() {
   </TabsList>
 
  <TabsContent value="summary" className="mt-4 space-y-4">
-  <RequirementCoverage candidate={candidate} withRationale />
-  <ScoreBreakdown candidate={candidate} />
-
- <WhyThisCandidate candidate={candidate} />
  {compQuery.isError ? (
  <QueryErrorCard
  compact
