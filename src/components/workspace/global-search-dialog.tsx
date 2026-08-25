@@ -148,7 +148,14 @@ export function GlobalSearchDialog({
   const groups = data?.groups;
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange}>
+    <CommandDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      // Results come pre-filtered from the server. cmdk's own fuzzy filter
+      // scored them against synthetic values (type:id:label) and hid every
+      // row, so the palette said "No matches" while results had loaded.
+      commandProps={{ shouldFilter: debounced.length < 2 }}
+    >
       <CommandInput
         ref={inputRef}
         placeholder={
@@ -245,7 +252,7 @@ export function GlobalSearchDialog({
                         return (
                           <CommandItem
                             key={`${r.type}:${r.id}`}
-                            value={`${r.type}:${r.id}:${r.label}`}
+                            value={`${r.type}:${r.id}:${r.label}:${r.context ?? ""}`}
                             onSelect={() => go(r)}
                           >
                             <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
