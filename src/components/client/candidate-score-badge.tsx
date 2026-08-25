@@ -97,7 +97,7 @@ export function CandidateScoreBadge({
   const counts = evidence && (evidence as any).rows ? getEvidenceCounts((evidence as any).rows) : null;
   const support =
     counts
-      ? `${counts.met}/${counts.total} evidenced`
+      ? `${counts.evidenced}/${counts.total} evidenced`
       : evidence && evidence.total > 0 && !hideEvidenceChip
         ? `${evidence.supported}/${evidence.total} evidenced`
         : null;
