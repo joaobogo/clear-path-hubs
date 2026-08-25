@@ -115,19 +115,22 @@ export function ActionArea({
             </Link>
           </Button>
         ) : actions.primary && notRecommended ? (
-          <>
-            <Button asChild className="flex-1 min-h-11">
-              <a href="#requirement-coverage">Review evidence</a>
+          <div className="flex flex-1 flex-wrap items-center gap-2">
+            <Button asChild className="min-h-11 flex-1">
+              <a href="#sec-evidence">Review evidence</a>
             </Button>
             <Button
-              variant="link"
-              className="h-auto p-0 text-sm"
+              variant="outline"
+              className="min-h-11"
               disabled={readOnly || pending}
               onClick={() => onAct(actions.primary!.key)}
             >
               {pendingKey === actions.primary.key ? "Saving…" : actions.primary.label}
             </Button>
-          </>
+            <span className="w-full text-xs text-muted-foreground">
+              Not recommended — requirements are not evidenced.
+            </span>
+          </div>
         ) : actions.primary ? (
           <Button
             className="flex-1 min-h-11"
