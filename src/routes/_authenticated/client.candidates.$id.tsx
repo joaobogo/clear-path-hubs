@@ -471,7 +471,17 @@ function CandidateDetailPage() {
           subject={actionSubject}
           activeInterviewId={activeInterview?.id ?? null}
           notRecommended={isNotRecommendedFit(candidate.fit_label, candidate.score)}
+         />
+
+        {/* Contact and the CV controls sit right under the stage actions so
+            they are visible without scrolling on desktop. */}
+        <ContactBlock
+          candidate={candidate}
+          instanceId="contact-desktop"
+          className="hidden lg:block"
         />
+
+
 
         {dialogAction === "request_interview" && orgId && (
           <RequestInterviewDialog
