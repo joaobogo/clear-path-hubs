@@ -135,8 +135,10 @@ export const getClientCandidates = createServerFn({ method: "GET" })
           .or(filter)
           .limit(500);
         const ids = ((profiles as AnyRow[]) ?? []).map((p) => p.id as string);
-        if (ids.length === 0) return { rows: [], counts: {} as Record<string, number> } as never;
-        q = q.in("candidate_profile_id", ids);
+        // No name/title match: filter to an impossible id so the caller gets a
+        // genuine empty list rather than the unfiltered one.
+        q = q.in("candidate_profile_id", ids.length > 0 ? ids : ["00000000-0000-0000-0000-000000000000"]);
+
       }
     }
 
