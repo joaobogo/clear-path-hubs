@@ -450,8 +450,12 @@ function CandidateDetailPage() {
  <ScoreBreakdown candidate={candidate} hideRequirementRows />
  </div>
 
- {/* 4 — CONTACT (one preview, one download) */}
- <ContactBlock candidate={candidate} />
+ {/* 4 — CONTACT (mobile keeps it in the main flow, after the evidence) */}
+ <ContactBlock
+ candidate={candidate}
+ instanceId="contact-mobile"
+ className="lg:hidden"
+ />
  </div>
 
       {/* 5 — DECISION BAR */}
