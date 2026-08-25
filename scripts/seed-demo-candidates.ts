@@ -420,10 +420,21 @@ async function main() {
     const deliveredAt = new Date(now - (7 - index * 0.5) * day);
     const offerSentAt = new Date(now - (4 - index * 0.3) * day);
 
-    const quoted = Math.max(1, Math.min(requirements.length, Math.round((seed.score / 100) * requirements.length)));
+    // Evidence depth comes from the library entries for this score band: the
+    // CV template's expected coverage and the assessment's accuracy, averaged.
+    const cvTemplate = pickByScore(LIBRARY.cv_templates, seed.score);
+    const assessment = pickByScore(LIBRARY.assessment_submissions, seed.score);
+    const transcript = pickByScore(LIBRARY.interview_transcripts, seed.score);
+    const accuracyRatio = assessment.questions_correct / assessment.questions_total;
+    const partialRatio = assessment.questions_partial / assessment.questions_total;
+    const coverageRatio = (cvTemplate.expected_must_have_ratio + accuracyRatio) / 2;
+
+    const quoted = Math.max(1, Math.min(requirements.length, Math.round(coverageRatio * requirements.length)));
     const partial = requirements.length - quoted;
+    const partiallyCredited = Math.min(partial, Math.max(0, Math.round(partialRatio * requirements.length)));
     const mustHaveCoverage = Number((quoted / requirements.length).toFixed(4));
-    const cv = cvText(seed, quoted, requirements.length);
+    const cv = cvText(seed, email, quoted, requirements.length);
+
 
     // --- Profile ---------------------------------------------------------
     const { data: profile, error: profileError } = await sb
