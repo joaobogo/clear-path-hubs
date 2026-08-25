@@ -44,7 +44,10 @@ export const getRouter = () => {
     // Stale content from the previous route must never render under a new URL:
     // show the destination's skeleton the instant navigation starts.
     defaultPendingComponent: RoutePendingSkeleton,
-    defaultPendingMs: 0,
+    // A skeleton that appears on the very first frame of a transition replaces
+    // the control the pointer is on, which swallowed the click that started
+    // the transition. Fast transitions now finish without any swap.
+    defaultPendingMs: 350,
     defaultPendingMinMs: 0,
     // Any route without its own 404 surface still gets a designed page.
     defaultNotFoundComponent: PublicNotFound,
