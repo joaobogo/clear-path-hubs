@@ -1,11 +1,12 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
 import { getEvidenceCounts } from "./client/evidence-counts";
+import { resolveRequirementStatus } from "./client/requirement-status";
 
 export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 4;
 
-/** Client-facing status vocabulary: met / partially met / unknown. */
+/** Client-facing status vocabulary: met / partially met / not evidenced. */
 export type CompareStatus = "met" | "partial" | "unknown" | "contradicted" | "not_applicable";
 
 export type CompareCell = {
