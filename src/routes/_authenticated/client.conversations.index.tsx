@@ -131,7 +131,10 @@ function ConversationsPage() {
           <MessageSquare className="h-6 w-6 text-primary" />
           Messages
           <span className="text-sm font-normal text-muted-foreground" data-testid="conversation-count">
-            {totalCount} conversation{totalCount === 1 ? "" : "s"}
+            {items.length} of {totalCount} conversation{totalCount === 1 ? "" : "s"}
+            {emptyCount > 0 && hideEmpty
+              ? ` — ${emptyCount} empty ${emptyCount === 1 ? "thread" : "threads"} hidden`
+              : ""}
           </span>
           {unreadCount > 0 && (
             <Badge variant="secondary" className="text-xs">
