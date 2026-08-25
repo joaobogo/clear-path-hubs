@@ -1,3 +1,4 @@
+import { getEvidenceCounts, getCoverageRatio, formatCoveragePct } from "@/lib/client/evidence-counts";
 import { useCallback, useRef, useState } from "react";
 import { formatDateTime } from "@/lib/format/datetime";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -87,13 +88,13 @@ export function useComparisonPdfExport() {
         const candidateRows = candidates.map((c) => [
           c.candidate.display_name,
           c.candidate.headline ?? "—",
-          `${c.coverage.must_met}/${c.coverage.must_total} must-haves`,
+          `${formatCoveragePct(getCoverageRatio(c.requirement_rows))} (${getEvidenceCounts(c.requirement_rows).evidenced}/${getEvidenceCounts(c.requirement_rows).total})`,
           c.stage,
         ]);
 
         autoTable(doc, {
           startY: y,
-          head: [["Candidate", "Headline", "Must-have coverage", "Stage"]],
+          head: [["Candidate", "Headline", "Requirement coverage", "Stage"]],
           body: candidateRows,
           margin: { left: margin, right: margin },
           styles: { fontSize: 9, cellPadding: 2, overflow: "linebreak" },

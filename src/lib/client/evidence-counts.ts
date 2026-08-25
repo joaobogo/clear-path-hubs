@@ -45,3 +45,23 @@ export function getEvidenceCounts(rows: RequirementRow[]): EvidenceCounts {
     must_total,
   };
 }
+
+/**
+ * The single canonical requirement-coverage ratio (0..1), identical to the one
+ * the candidate profile renders: every declared requirement counts, and partly
+ * met requirements count as evidenced. Comparison surfaces MUST use this so
+ * they can never contradict the profile.
+ */
+export function getCoverageRatio(rows: RequirementRow[]): number | null {
+  const counts = getEvidenceCounts(rows);
+  if (counts.total === 0) return null;
+  return counts.evidenced / counts.total;
+}
+
+/** Percentage string for a coverage ratio, one decimal only when needed. */
+export function formatCoveragePct(ratio: number | null | undefined): string {
+  if (ratio == null) return "—";
+  const v = ratio * 100;
+  const rounded = Math.round(v * 10) / 10;
+  return `${Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(1)}%`;
+}

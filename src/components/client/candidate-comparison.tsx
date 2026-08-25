@@ -1,6 +1,6 @@
 import { formatEnumLabel } from "@/lib/human-labels";
 import { useMemo, useState } from "react";
-import { getEvidenceCounts } from "@/lib/client/evidence-counts";
+import { getEvidenceCounts, getCoverageRatio, formatCoveragePct } from "@/lib/client/evidence-counts";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
@@ -25,10 +25,6 @@ import {
 
 
 
-function pct(n: number | undefined | null): string {
-  if (n == null) return "—";
-  return `${Math.round(n * 100)}%`;
-}
 
 const STATUS_META: Record<
   CompareStatus,
@@ -77,11 +73,13 @@ function buildObservations(cands: ClientCandidateDTO[]): string[] {
   const notes: string[] = [];
 
   const cover = [...cands].sort(
-    (a, b) => (b.coverage.must_have_coverage ?? 0) - (a.coverage.must_have_coverage ?? 0),
+    (a, b) => (getCoverageRatio(b.requirement_rows) ?? 0) - (getCoverageRatio(a.requirement_rows) ?? 0),
   );
-  if ((cover[0].coverage.must_have_coverage ?? 0) !== (cover[cover.length - 1].coverage.must_have_coverage ?? 0)) {
+  const bestCover = getCoverageRatio(cover[0].requirement_rows) ?? 0;
+  const worstCover = getCoverageRatio(cover[cover.length - 1].requirement_rows) ?? 0;
+  if (bestCover !== worstCover) {
     notes.push(
-      `Requirement coverage differs — ${cover[0].candidate.display_name} has the highest coverage (${pct(cover[0].coverage.must_have_coverage)}).`,
+      `Requirement coverage differs — ${cover[0].candidate.display_name} has the highest coverage (${formatCoveragePct(bestCover)}).`,
     );
   }
 
@@ -423,29 +421,20 @@ export function CompareSheet({
             </ComparisonRow>
 
             <ComparisonRow
-              label="Must-have coverage"
+              label="Requirement coverage"
               cols={cols}
-              hide={
-                diffOnly &&
-                allSame(
-                  candidates.map((c) => {
-                    const counts = getEvidenceCounts(c.requirement_rows);
-                    return counts.must_total > 0 ? counts.must_met / counts.must_total : 0;
-                  }),
-                )
-              }
+              hide={diffOnly && allSame(candidates.map((c) => getCoverageRatio(c.requirement_rows) ?? -1))}
             >
               {candidates.map((c) => {
                 const counts = getEvidenceCounts(c.requirement_rows);
+                const ratio = getCoverageRatio(c.requirement_rows);
                 return (
                   <div key={c.match_id} className="text-xs">
-                    <span className="font-medium">
-                      {counts.must_total > 0 ? pct(counts.must_met / counts.must_total) : "—"}
-                    </span>
-                    {counts.must_total > 0 && (
+                    <span className="font-medium">{formatCoveragePct(ratio)}</span>
+                    {counts.total > 0 && (
                       <span className="text-muted-foreground">
                         {" "}
-                        ({counts.must_met}/{counts.must_total})
+                        ({counts.evidenced}/{counts.total})
                       </span>
                     )}
                   </div>
@@ -714,12 +703,9 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
   const axes: Axis[] = [
     {
       key: "coverage",
-      label: "Must-haves met",
-      values: candidates.map((c) => {
-        const counts = getEvidenceCounts(c.requirement_rows);
-        return counts.must_total > 0 ? counts.must_met / counts.must_total : 0;
-      }),
-      format: (n) => `${Math.round(n * 100)}%`,
+      label: "Requirements evidenced",
+      values: candidates.map((c) => getCoverageRatio(c.requirement_rows) ?? 0),
+      format: (n) => formatCoveragePct(n),
     },
     {
       key: "experience",
