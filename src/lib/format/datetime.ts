@@ -142,6 +142,27 @@ export function formatRelative(iso: string | number | Date | null | undefined): 
   return formatDate(date);
 }
 
+/**
+ * The same relative wording as `formatRelative`, but able to look forward:
+ * "in 3 days", "in 2 hours". Past instants read exactly like
+ * `formatRelative` ("3 days ago"), and anything beyond a month falls back to
+ * the absolute date. No abbreviations, no "yesterday"/"tomorrow" variants.
+ */
+export function formatRelativeSigned(value: string | number | Date | null | undefined): string {
+  const date = toDate(value);
+  if (!date) return "";
+  const diff = date.getTime() - Date.now();
+  if (diff <= 0) return formatRelative(date);
+  const minutes = Math.round(diff / 60_000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `in ${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `in ${hours} ${hours === 1 ? "hour" : "hours"}`;
+  const days = Math.round(hours / 24);
+  if (days <= 30) return `in ${days} ${days === 1 ? "day" : "days"}`;
+  return formatDate(date);
+}
+
 /** "14:30" — workspace timezone. Only for rows that already carry the date. */
 export function formatTime(
   value: string | number | Date | null | undefined,
