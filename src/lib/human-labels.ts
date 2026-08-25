@@ -1,4 +1,4 @@
-import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
+import { vocabularyEntry } from "@/lib/vocabulary";
 /**
  * One shared formatter for machine enum values that reach the UI.
  *
@@ -57,12 +57,6 @@ const LABELS: Record<string, string> = {
   requisition: "Role",
   job: "Role",
   record: "Candidate",
-  delivered: PIPELINE_STAGE_DISPLAY.delivered,
-  shortlisted: PIPELINE_STAGE_DISPLAY.shortlisted,
-  interview_process: PIPELINE_STAGE_DISPLAY.interview_process,
-  offer: PIPELINE_STAGE_DISPLAY.offer,
-  hired: PIPELINE_STAGE_DISPLAY.hired,
-  not_moving_forward: PIPELINE_STAGE_DISPLAY.not_moving_forward,
   consent_pending: "Consent pending",
 };
 
@@ -103,6 +97,9 @@ export function formatEnumLabel(
   const key = sanitized.toLowerCase();
   const mapped = LABELS[key];
   if (mapped) return mapped;
+  // Stage/status enums are owned by the vocabulary module.
+  const vocab = vocabularyEntry(key);
+  if (vocab) return vocab.label;
   const words = key.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
   if (!words) return fallback;
   return words.charAt(0).toUpperCase() + words.slice(1);

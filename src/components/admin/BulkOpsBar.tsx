@@ -15,14 +15,9 @@ import {
   type PreviewInput,
 } from "@/components/admin/bulk-confirm-dialog";
 import { toast } from "sonner";
+import { statusLabel } from "@/lib/vocabulary";
 
-const STAGE_LABEL: Record<string, string> = {
-  screening: "Screening",
-  shortlisted: "Shortlisted",
-  interview_process: "Interviewing",
-  offer: "Offer",
-  not_moving_forward: "Not moving forward",
-};
+
 
 export function BulkOpsBar({
   matchIds,
@@ -57,7 +52,7 @@ export function BulkOpsBar({
           <SelectContent>
             {BULK_STAGES.map((s) => (
               <SelectItem key={s} value={s}>
-                {STAGE_LABEL[s]}
+                {statusLabel(s)}
               </SelectItem>
             ))}
           </SelectContent>

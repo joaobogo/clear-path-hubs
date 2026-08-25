@@ -12,16 +12,18 @@
  *      carries the meaning.
  */
 
-export const CANDIDATE_STATUSES = [
-  "Received",
-  "Under review",
-  "Shared with the employer",
-  "Interviewing",
-  "Offer stage",
-  "Closed",
-] as const;
+import { CANDIDATE_SAFE_STATUSES, candidateSafeLabel } from "@/lib/vocabulary";
+
+/** Re-exported from the one vocabulary module — never redeclared here. */
+export const CANDIDATE_STATUSES = CANDIDATE_SAFE_STATUSES;
 
 export type CandidateStatus = (typeof CANDIDATE_STATUSES)[number];
+
+/**
+ * The single function the portal, emails and notifications use to turn any
+ * internal stage or status value into a candidate-facing label.
+ */
+export const candidateFacingLabel = candidateSafeLabel;
 
 export interface CandidateStatusCopy {
   status: CandidateStatus;

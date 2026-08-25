@@ -1,3 +1,4 @@
+import { statusLabel as statusLabelFromVocabulary } from "@/lib/vocabulary";
 /**
  * Stage-aging constants — single source of truth.
  *
@@ -47,20 +48,19 @@ export const STAGE_AGING_THRESHOLD_DAYS: Record<PipelineStage, number | null> = 
 };
 
 export const STAGE_LABEL: Record<PipelineStage, string> = {
-  new: "New",
-  reviewing: "Screening",
-  delivered: "Submitted",
-  shortlisted: "Shortlisted",
-  interview_process: "Interview",
-  offer: "Offer",
-  hired: "Hired",
-  not_moving_forward: "Not moving forward",
-  archived: "Archived",
+  new: statusLabelFromVocabulary("new"),
+  reviewing: statusLabelFromVocabulary("screening"),
+  delivered: statusLabelFromVocabulary("delivered"),
+  shortlisted: statusLabelFromVocabulary("shortlisted"),
+  interview_process: statusLabelFromVocabulary("interview_process"),
+  offer: statusLabelFromVocabulary("offer"),
+  hired: statusLabelFromVocabulary("hired"),
+  not_moving_forward: statusLabelFromVocabulary("not_moving_forward"),
+  archived: statusLabelFromVocabulary("archived"),
 };
 
 export function stageLabel(stage: string | null | undefined): string {
-  if (!stage) return "—";
-  return STAGE_LABEL[stage as PipelineStage] ?? stage.replace(/_/g, " ");
+  return statusLabelFromVocabulary(stage);
 }
 
 export function stageThresholdDays(stage: string | null | undefined): number | null {

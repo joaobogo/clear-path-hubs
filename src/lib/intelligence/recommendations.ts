@@ -1,3 +1,4 @@
+import { clientStatusLabel } from "@/lib/vocabulary";
 /**
  * Hiring Intelligence — recommendation derivation.
  *
@@ -134,10 +135,10 @@ function quantile(sorted: number[], q: number): number | null {
 }
 
 const STAGE_LABELS: Record<string, string> = {
-  delivered: "awaiting your decision",
-  shortlisted: "shortlisted",
-  interview_process: "in interview",
-  offer: "at offer",
+  delivered: clientStatusLabel("delivered").toLowerCase(),
+  shortlisted: clientStatusLabel("shortlisted").toLowerCase(),
+  interview_process: clientStatusLabel("interview_process").toLowerCase(),
+  offer: clientStatusLabel("offer").toLowerCase(),
 };
 
 const OPEN_STAGES = Object.keys(STAGE_LABELS);

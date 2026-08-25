@@ -7,6 +7,7 @@
  *  2. Loading each block from the records that already exist. Blocks return
  *     null when there is genuinely nothing yet; they never invent a zero.
  */
+import { clientStatusLabel } from "@/lib/vocabulary";
 import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { findPlan } from "@/lib/payments-catalog";
 import {
@@ -91,15 +92,7 @@ export async function resolveDashboardEntitlement(
 
 // ─── Block loaders ──────────────────────────────────────────────────────────
 
-const STAGE_LABEL: Record<string, string> = {
-  reviewing: "In review",
-  delivered: "With you",
-  shortlisted: "Shortlisted",
-  interview_process: "Interviewing",
-  offer: "Offer",
-  hired: "Hired",
-  not_moving_forward: "Not moving forward",
-};
+
 
 function days(from: string, to: string) {
   return (new Date(to).getTime() - new Date(from).getTime()) / 86_400_000;
@@ -129,7 +122,7 @@ async function pipelineByStage(sb: AnySupabase, org: string): Promise<BlockData 
     points: order
       .filter((s) => counts.has(s))
       .map((s) => ({
-        label: STAGE_LABEL[s] ?? s,
+        label: clientStatusLabel(s),
         value: counts.get(s) ?? 0,
         href: "/client/candidates",
       })),

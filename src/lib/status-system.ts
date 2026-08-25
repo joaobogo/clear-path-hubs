@@ -8,6 +8,7 @@
  */
 
 import { bandToTier, classifyBand } from "@/lib/scoring/bands";
+import { candidateSafeLabel, statusLabel } from "@/lib/vocabulary";
 
 export type StatusTone = "neutral" | "success" | "warning" | "danger" | "info";
 
@@ -29,52 +30,57 @@ function def(m: StatusMeaning) {
   return m;
 }
 
+/** Labels always come from the vocabulary module; here we add tone + glyph. */
+function stage(key: string, tone: StatusTone, glyph: StatusGlyph): StatusMeaning {
+  return { label: statusLabel(key), candidateLabel: candidateSafeLabel(key), tone, glyph };
+}
+
 /** Pipeline stage of a candidate match. */
 export const STAGE_STATUS = {
-  new: def({ label: "New", candidateLabel: "Received", tone: "neutral", glyph: "dot" }),
-  screening: def({ label: "Screening", candidateLabel: "In review", tone: "info", glyph: "clock" }),
-  review: def({ label: "In review", candidateLabel: "In review", tone: "info", glyph: "clock" }),
-  shortlisted: def({ label: "Shortlisted", candidateLabel: "Shortlisted", tone: "success", glyph: "arrow" }),
-  interview: def({ label: "Interview", candidateLabel: "Interviewing", tone: "info", glyph: "arrow" }),
-  offer: def({ label: "Offer", candidateLabel: "Offer stage", tone: "success", glyph: "check" }),
-  hired: def({ label: "Hired", candidateLabel: "Hired", tone: "success", glyph: "check" }),
-  rejected: def({ label: "Not moving forward", candidateLabel: "Not selected", tone: "danger", glyph: "cross" }),
-  withdrawn: def({ label: "Withdrawn", candidateLabel: "Withdrawn", tone: "neutral", glyph: "pause" }),
+  new: def(stage("new", "neutral", "dot")),
+  screening: def(stage("screening", "info", "clock")),
+  review: def(stage("in_review", "info", "clock")),
+  shortlisted: def(stage("shortlisted", "success", "arrow")),
+  interview: def(stage("interview_process", "info", "arrow")),
+  offer: def(stage("offer", "success", "check")),
+  hired: def(stage("hired", "success", "check")),
+  rejected: def(stage("not_moving_forward", "danger", "cross")),
+  withdrawn: def(stage("withdrawn", "neutral", "pause")),
 } as const;
 
 /** Processing state of an uploaded CV / screening run. */
 export const PROCESSING_STATUS = {
-  queued: def({ label: "Queued", candidateLabel: "Waiting to start", tone: "neutral", glyph: "clock" }),
-  processing: def({ label: "Processing", candidateLabel: "In progress", tone: "info", glyph: "clock" }),
-  completed: def({ label: "Complete", candidateLabel: "Complete", tone: "success", glyph: "check" }),
-  failed: def({ label: "Failed", candidateLabel: "Needs another try", tone: "danger", glyph: "alert" }),
-  skipped: def({ label: "Skipped", tone: "neutral", glyph: "pause" }),
+  queued: def(stage("queued", "neutral", "clock")),
+  processing: def(stage("processing", "info", "clock")),
+  completed: def(stage("completed", "success", "check")),
+  failed: def(stage("failed", "danger", "alert")),
+  skipped: def(stage("skipped", "neutral", "pause")),
 } as const;
 
 /** Lifecycle of a position. */
 export const POSITION_STATUS = {
-  draft: def({ label: "Draft", tone: "neutral", glyph: "dot" }),
-  intake: def({ label: "Intake", tone: "info", glyph: "clock" }),
-  open: def({ label: "Open", tone: "success", glyph: "check" }),
-  paused: def({ label: "Paused", tone: "warning", glyph: "pause" }),
-  filled: def({ label: "Filled", tone: "success", glyph: "check" }),
-  closed: def({ label: "Closed", tone: "neutral", glyph: "cross" }),
+  draft: def(stage("draft", "neutral", "dot")),
+  intake: def(stage("intake", "info", "clock")),
+  open: def(stage("open", "success", "check")),
+  paused: def(stage("paused", "warning", "pause")),
+  filled: def(stage("filled", "success", "check")),
+  closed: def(stage("closed", "neutral", "cross")),
 } as const;
 
 /** Publication state on the public job board. */
 export const PUBLISH_STATUS = {
-  unpublished: def({ label: "Not published", tone: "neutral", glyph: "dot" }),
-  pending: def({ label: "Awaiting approval", tone: "warning", glyph: "clock" }),
-  published: def({ label: "Live", tone: "success", glyph: "check" }),
+  unpublished: def(stage("unpublished", "neutral", "dot")),
+  pending: def(stage("pending", "warning", "clock")),
+  published: def(stage("live", "success", "check")),
 } as const;
 
 /** Interview scheduling state. */
 export const INTERVIEW_STATUS = {
-  proposed: def({ label: "Proposed", tone: "warning", glyph: "clock" }),
-  scheduled: def({ label: "Scheduled", tone: "info", glyph: "check" }),
-  completed: def({ label: "Completed", tone: "success", glyph: "check" }),
-  cancelled: def({ label: "Cancelled", tone: "danger", glyph: "cross" }),
-  no_show: def({ label: "No show", tone: "danger", glyph: "alert" }),
+  proposed: def(stage("proposed", "warning", "clock")),
+  scheduled: def(stage("scheduled", "info", "check")),
+  completed: def(stage("completed", "success", "check")),
+  cancelled: def(stage("cancelled", "danger", "cross")),
+  no_show: def(stage("no_show", "danger", "alert")),
 } as const;
 
 /** Confidence of an evidence-backed assessment. */
