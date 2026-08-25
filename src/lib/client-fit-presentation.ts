@@ -18,6 +18,7 @@ import {
 import { classifyBand, type ScoreBandKey, isTopBand } from "@/lib/scoring/bands";
 import { passageSupportsRequirement } from "./client/evidence-relevance";
 import { resolveRequirementStatus } from "@/lib/client/requirement-status";
+import { phraseInterviewQuestion } from "@/lib/client/interview-question-phrasing";
 
 
 
@@ -434,7 +435,7 @@ export function buildInterviewGuide(args: {
       id: r.id,
       requirement_label: r.label,
       importance: r.importance,
-      question: `Tell me about your work on: ${r.label}.`,
+      question: phraseInterviewQuestion(r.label),
       why: concerns.find(c => c.toLowerCase().includes(r.label.toLowerCase())) || 
            (r.status === "contradicted" ? "Address identified contradictions." : "Verify missing or partial evidence."),
       indicators: ["Specific project examples", "Quantifiable results", "Duration of experience"],
