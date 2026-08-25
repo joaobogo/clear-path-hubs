@@ -86,11 +86,28 @@ export function CvPreviewDialog({
     [matchId],
   );
 
-  useEffect(() => clearTimer, []);
+  /** Radix locks the page with body{pointer-events:none} while a modal is up;
+   * if the content unmounts mid-open the lock survives and the page looks
+   * frozen until a reload. Always hand interaction back ourselves. */
+  const releasePageInteraction = () => {
+    if (typeof document !== "undefined") document.body.style.pointerEvents = "";
+  };
+
+  useEffect(
+    () => () => {
+      clearTimer();
+      releasePageInteraction();
+    },
+    [],
+  );
 
   useEffect(() => {
-    if (!open) clearTimer();
+    if (!open) {
+      clearTimer();
+      releasePageInteraction();
+    }
   }, [open]);
+
 
   function handleClick() {
     const isMobile =
