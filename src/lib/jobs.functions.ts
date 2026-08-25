@@ -11,6 +11,7 @@ import {
   resolvePublicSalary,
 } from "@/lib/jobs/public-facts";
 import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
+import { jobDescriptionSummary } from "@/lib/marketing/job-description";
 
 
 
@@ -204,8 +205,9 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           compensation_line: comp.line,
 
           published_at: p.published_at,
-          description_preview:
-            desc.length > 220 ? desc.slice(0, 217).trimEnd() + "…" : desc,
+          // Markdown marks and headings never reach a card: the preview is the
+          // first real sentence of prose.
+          description_preview: jobDescriptionSummary(desc, 220),
           openings: (p as { openings?: number }).openings ?? 1,
           facts: { posted: buildPublicJobFacts({ ...p, employment_type: p.employment_type as any, published_at: p.published_at, description: desc }).posted },
         };
