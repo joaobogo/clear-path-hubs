@@ -68,18 +68,28 @@ export function buildCompareMatrix(candidates: ClientCandidateDTO[]): CompareMat
           x.importance === meta.importance &&
           x.label.toLowerCase().trim() === meta.label.toLowerCase(),
       );
-      
-      // Use the requirement's evidence snippet if available.
-      const ev = row?.evidence.find((e) => (e.snippet ?? "").trim().length > 0) ?? null;
-      
+
+      // The cell status must follow the evidence the cell actually shows.
+      const quoted = row?.evidence.find((e) => (e.snippet ?? "").trim().length > 0) ?? null;
+      const related =
+        quoted == null
+          ? ((row?.context ?? []).find((e) => (e.snippet ?? "").trim().length > 0) ?? null)
+          : null;
+      const shown = quoted ?? related;
+      let status = toStatus(row);
+      // Never print a passage next to "Not evidenced": a quoted passage is at
+      // least partly met, and a weaker related passage is partly met too.
+      if (shown && status === "unknown") status = "partial";
+
       return {
         match_id: c.match_id,
-        status: toStatus(row),
-        evidence: ev ? ev.snippet.trim() : null,
-        source: ev?.source ?? null,
-        verbatim: !!ev,
+        status,
+        evidence: shown ? shown.snippet.trim() : null,
+        source: shown?.source ?? null,
+        verbatim: !!quoted,
       };
     });
+
 
     return {
       key,
