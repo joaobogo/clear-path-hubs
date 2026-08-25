@@ -1,4 +1,4 @@
-import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
+import { formatDate } from "@/lib/format/datetime";
 /**
  * "This week" client update — shared shape for the dashboard card and the
  * weekly email.
@@ -83,10 +83,7 @@ export function formatWaitingSince(iso: string | null): string | null {
   if (!iso) return null;
   const t = Date.parse(iso);
   if (Number.isNaN(t)) return null;
-  return `Waiting on you since ${new Date(t).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    day: "numeric",
-    month: "short",
-  })}`;
+  return `Waiting on you since ${formatDate(t)}`;
 }
 
 /**

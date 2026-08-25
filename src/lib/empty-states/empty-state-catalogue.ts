@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format/datetime";
 /**
  * Canonical empty-state catalogue.
  *
@@ -274,11 +275,7 @@ export function resolveNoCandidatesState(signals: {
   // are scoped to one role we say which stage it is in and since when.
   if (runsRunning > 0 || (sourcing && !sourcing.finished)) {
     const since = sourcing?.startedAt
-      ? new Date(sourcing.startedAt).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        })
+      ? formatDate(sourcing.startedAt)
       : null;
     return {
       id: "candidates.sourcing-in-progress",
