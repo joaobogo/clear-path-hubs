@@ -24,6 +24,8 @@ export type BreakdownGroup = {
   met: number;
   partial: number;
   missing: number;
+  /** Requirements with a related passage but no quote: possible signals. */
+  related: number;
   total: number;
   /** One line a hiring manager can read on its own. */
   takeaway: string;
@@ -216,7 +218,9 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
   const canonical = getEvidenceCounts(rows);
   const criteriaSummary =
     rows.length > 0
-      ? `${canonical.evidenced} of ${canonical.total} requirements evidenced — ${canonical.quoted} quoted, ${canonical.related} related`
+      ? `${canonical.evidenced} of ${canonical.total} requirements evidenced (quoted)${
+          canonical.related > 0 ? ` — ${canonical.related} possible signals, not quoted` : ""
+        }`
       : explanation && explanation.kind === "explained"
         ? explanation.criteria_summary
         : null;
