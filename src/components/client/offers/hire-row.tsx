@@ -86,16 +86,18 @@ function HireCardImpl({
               : "—"}
           </dd>
         </div>
-        {hire.start_date && (
-          <div className="flex items-center justify-between">
-            <dt className="inline-flex items-center gap-1">
-              <CalendarClock className="h-3 w-3" /> Start
-            </dt>
-            <dd className="text-foreground">
-              {formatCalendarDate(hire.start_date)}
-            </dd>
-          </div>
-        )}
+        {hire.start_date &&
+          hire.status !== "closed_lost" &&
+          hire.status !== "offer_declined" && (
+            <div className="flex items-center justify-between">
+              <dt className="inline-flex items-center gap-1">
+                <CalendarClock className="h-3 w-3" /> Start
+              </dt>
+              <dd className="text-foreground">
+                {formatCalendarDate(hire.start_date)}
+              </dd>
+            </div>
+          )}
         {hire.owner_name && (
           <div className="flex items-center justify-between">
             <dt className="inline-flex items-center gap-1">
