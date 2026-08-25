@@ -108,6 +108,7 @@ export function jobDescriptionSummary(description: string, max = 155): string {
   const firstParagraph = parseJobDescription(description).find((b) => b.kind === "paragraph");
   const text = firstParagraph && firstParagraph.kind === "paragraph"
     ? firstParagraph.text
-    : (description ?? "").trim();
+    : stripJobMarkdown((description ?? "").trim());
+
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
 }
