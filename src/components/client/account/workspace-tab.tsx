@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useClearResolvedErrors } from "@/lib/use-live-errors";
 import { toastError } from "@/lib/toast-error";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientSettings, updateClientCompanyProfile, updateClientTimezone } from "@/lib/client-settings.functions";
