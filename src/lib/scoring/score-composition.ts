@@ -163,15 +163,23 @@ export function buildScoreComposition(input: {
     components[i]!.displayPts = pts;
   });
   const totalPts = Math.round(exactTotalPts);
-  const displayedScore = totalPts;
+  // The published score is the single source of truth (the approved run). This
+  // panel explains it; it never replaces it. When the measured parts do not add
+  // up to the published number, the panel says so instead of quietly swapping it.
+  const published =
+    input.displayedScore != null && Number.isFinite(Number(input.displayedScore))
+      ? Math.round(Number(input.displayedScore))
+      : null;
+  const displayedScore = published ?? totalPts;
 
   return {
     components,
     exactTotalPts: Math.round(exactTotalPts * 10) / 10,
     totalPts,
     displayedScore,
-    reconciles: !incomplete,
+    reconciles: !incomplete && displayedScore === totalPts,
     incomplete,
+
   };
 }
 
