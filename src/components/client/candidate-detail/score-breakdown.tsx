@@ -105,8 +105,11 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
 
 export const ScoreBreakdown = memo(function ScoreBreakdown({
   candidate,
+  hideRequirementRows = false,
 }: {
   candidate: ClientCandidateDTO;
+  /** Set when the requirements are already listed once in the evidence panel. */
+  hideRequirementRows?: boolean;
 }) {
   const b = buildScoreBreakdown(candidate);
   if (b.empty) return null;
