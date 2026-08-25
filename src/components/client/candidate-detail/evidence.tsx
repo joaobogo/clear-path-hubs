@@ -367,9 +367,12 @@ export const WhyWeShortlisted = memo(function WhyWeShortlisted({
 
 export const RequirementRowView = memo(function RequirementRowView({
   row,
+  claim = null,
 }: {
   row: RequirementRow;
-}) {
+  /** Optional shortlist-rationale claim, shown as one line inside this row. */
+  claim?: string | null;
+})  {
   // Render-time safety: an unresolved requirement reads as "Not evidenced",
   // never as work in progress.
   const status = resolveRequirementStatus(row);
