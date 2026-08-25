@@ -99,6 +99,24 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       data.orgId,
     );
     const rows = await loadKpiRows(s, data.orgId);
+
+    // Interviews still waiting on a confirmed time — the one shared query the
+    // Overview queue and the Interviews page read. The "at risk" line must age
+    // a real interview request, never an offer's stage date.
+    const { loadInterviewsAwaitingConfirmation } = await import(
+      "./client/interviews-to-confirm.server"
+    );
+    const pendingConfirmations = await loadInterviewsAwaitingConfirmation(
+      context.supabase,
+      data.orgId,
+    );
+    const pendingByPosition = new Map<string, string[]>();
+    for (const pending of pendingConfirmations) {
+      if (!pending.position_id) continue;
+      const list = pendingByPosition.get(pending.position_id) ?? [];
+      if (pending.requested_at) list.push(pending.requested_at);
+      pendingByPosition.set(pending.position_id, list);
+    }
     
     // Seat count reconciliation (B4 fix): Fetch memberships to get real-time seat counts.
     const { activeMembers } = await (async () => {
@@ -301,7 +319,9 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       });
 
       const awaiting = posRows.filter(isAwaitingClientDecision);
-      const toConfirm = posRows.filter((r) => r.interview_needs_confirmation);
+      // Ages come from the interview requests themselves, so the banner and the
+      // queue above it always name the same interview.
+      const pendingInterviewRequests = pendingByPosition.get(p.id as string) ?? [];
       const commitment = commitmentByPosition.get(p.id as string);
       const promisedShortlistBy =
         commitment?.baseline_at && commitment?.first_shortlist_days != null
@@ -326,8 +346,8 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         lastMovementAt,
         awaitingDecision: awaiting.length,
         oldestAwaitingDecisionAt: minIso(awaiting.map((r) => r.delivered_at ?? r.stage_entered_at)),
-        interviewsToConfirm: toConfirm.length,
-        oldestInterviewToConfirmAt: minIso(toConfirm.map((r) => r.interview_requested_at)),
+        interviewsToConfirm: pendingInterviewRequests.length,
+        oldestInterviewToConfirmAt: minIso(pendingInterviewRequests),
 
         promisedShortlistBy,
         shortlistDeliveredAt: dates.shortlist,
