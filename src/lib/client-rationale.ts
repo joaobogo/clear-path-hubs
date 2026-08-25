@@ -189,7 +189,11 @@ export function buildShortlistRationale(
     .sort((a, b) => order(a) - order(b));
 
   const evidenced = lines.filter((l) => l.claim !== null && l.verdict !== "gap");
-  const gaps = lines.filter((l) => l.verdict === "gap" && l.importance === "must_have");
+  // An under-review line is a quote we are still verifying, not a confirmed
+  // gap — it stays out of the gap list until the check finishes.
+  const gaps = lines.filter(
+    (l) => l.verdict === "gap" && l.importance === "must_have" && !l.underReview,
+  );
 
   // The summary sentence must be the same number the header chip, the coverage
   // bar and the score breakdown show, so it comes from the canonical counter.
