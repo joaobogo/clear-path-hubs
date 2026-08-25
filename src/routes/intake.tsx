@@ -340,6 +340,10 @@ function ExpressIntakePage() {
   const fileInput = useRef<HTMLInputElement>(null);
   const idem = useRef<string>("");
   const startedRef = useRef(false);
+  // Fields the client has already typed into. A draft lookup that lands late
+  // must never overwrite an answer that is newer than the draft.
+  const editedRef = useRef<Set<string>>(new Set<string>());
+
   const pastedRef = useRef(false);
   const [authed, setAuthed] = useState(false);
   const [accountEmail, setAccountEmail] = useState<string | null>(null);
@@ -698,9 +702,13 @@ function ExpressIntakePage() {
       return { ...carried, ...next };
     });
     if (hardFail || Object.keys(next).length > 0) {
+      // On a phone the highlighted field is usually far from the Continue
+      // button, so say something where the tap happened.
+      toast.error("Please check the highlighted fields on this step.");
       focusFirstError();
       return false;
     }
+
     return true;
   };
 
@@ -798,15 +806,19 @@ function ExpressIntakePage() {
     draftSaver;
 
   const applyDraftPayload = (payload: Record<string, unknown>) => {
+    const restored = withRequirements(payload as Partial<FormState>) as Record<string, unknown>;
+    // Keep whatever the client typed while the draft was still loading.
+    for (const key of editedRef.current) delete restored[key];
     setState((s) => ({
       ...s,
-      ...withRequirements(payload as Partial<FormState>),
+      ...(restored as Partial<FormState>),
       password: "",
       confirmPassword: "",
       consent: false,
       pilotAcknowledgement: false,
     }));
   };
+
 
   /**
    * Carried answers land as ordinary editable values. They are marked as
@@ -1237,6 +1249,7 @@ function ExpressIntakePage() {
       startedRef.current = true;
       trackEvent("express_intake_started", { flow: "express_onboarding" });
     }
+    editedRef.current.add("requirements");
     setState((s) => ({ ...s, requirements: next }));
     setErrors((e) => ({ ...e, requirements: "" }));
     setRowErrors({});
@@ -1359,6 +1372,7 @@ function ExpressIntakePage() {
       startedRef.current = true;
       trackEvent("express_intake_started", { flow: "express_onboarding" });
     }
+    editedRef.current.add(key as string);
     setState((s) => ({ ...s, [key]: value }));
     // An edited answer is this role's own answer, not an inherited one.
     setCarriedFields((prev) => {
@@ -3358,12 +3372,38 @@ function ExpressIntakePage() {
           </>
         )}
 
+        {(() => {
+
+          const blocking = STEP_FIELDS[currentStep.key]
+            .map((f) => errors[f])
+            .filter((m): m is string => Boolean(m));
+          if (blocking.length === 0) return null;
+          return (
+            <div
+              role="alert"
+              className="rounded-lg border border-[color:var(--brand-danger)]/35 bg-[color:var(--brand-danger)]/6 p-4 text-sm"
+            >
+              <p className="font-semibold text-[color:var(--brand-danger)]">
+                {blocking.length === 1
+                  ? "One thing still needs your answer:"
+                  : `${blocking.length} things still need your answer:`}
+              </p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-[color:var(--brand-navy)]/85">
+                {blocking.map((m) => (
+                  <li key={m}>{m}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })()}
+
         {/* Step navigation. Back never validates; Continue does. */}
         <div
           data-testid="intake-nav"
           data-step={String(stepIndex)}
           className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/12 pt-5"
         >
+
           <Button
             type="button"
             data-testid="step-back"
