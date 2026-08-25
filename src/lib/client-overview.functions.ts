@@ -518,7 +518,13 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       .limit(4);
     const latest_candidates = (
       await hydrateClientCandidateProfiles(latestMatches as AnyRow[])
-    ).map(toClientCandidateDTO);
+    )
+      .map(toClientCandidateDTO)
+      .sort((a: AnyRow, b: AnyRow) => {
+        const scoreOf = (c: AnyRow) =>
+          typeof c.score === "number" ? c.score : -Infinity;
+        return scoreOf(b) - scoreOf(a);
+      });
 
     // Recent messages (last 3). Attributed to the real sender: labelling a
     // client's own message "TaaSFlow" made the panel read as if we wrote it.
