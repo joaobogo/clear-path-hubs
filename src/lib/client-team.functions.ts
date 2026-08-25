@@ -154,6 +154,11 @@ export const inviteClientMember = createServerFn({ method: "POST" })
     await assertOrgAdmin(context.supabase, context.userId, data.orgId);
     await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
 
+    const qa = await assertNoQaContamination(context.supabase, data.orgId, [
+      data.email,
+    ]);
+    if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     await assertSeatAvailable(data.orgId);
