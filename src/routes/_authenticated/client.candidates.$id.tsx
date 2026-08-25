@@ -36,6 +36,7 @@ import {
   isActionTimeout,
   withActionTimeout,
 } from "@/lib/client/action-timeout";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock, JumpNav } from "@/components/client/candidate-detail/shared";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -171,9 +172,9 @@ function CandidateDetailPage() {
       setRequestFailed(null);
       setDialogAction(null);
       setPendingKey(null);
-      qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
-      qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
-      qc.invalidateQueries({ queryKey: ["client-interviews", orgId] });
+       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidate(orgId, id) });
+       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
+       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.interviews(orgId) });
     },
     onError: (e: Error) => {
       const msg = proposalErrorMessage(e.message);
@@ -269,10 +270,10 @@ function CandidateDetailPage() {
         },
       );
       setDialogAction(null);
-      qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
-      qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
-      qc.invalidateQueries({ queryKey: ["client-positions", orgId] });
-      qc.invalidateQueries({ queryKey: ["client-candidates", orgId] });
+       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidate(orgId, id) });
+       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
+       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.positions(orgId) });
+       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidates(orgId) });
     },
  onSettled: () => setPendingKey(null),
  onError: (e: Error, p, context) => {
@@ -281,7 +282,7 @@ function CandidateDetailPage() {
  const stale = readStaleStateError(e);
  if (stale) {
  setDialogAction(null);
- qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
+  qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidate(orgId, id) });
  toast.error("This candidate already moved", { description: stale.message, duration: 12_000 });
  return;
  }

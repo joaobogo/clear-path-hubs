@@ -13,6 +13,7 @@ import { createWorkspacePosition } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { toastError } from "@/lib/toast-error";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 /**
  * In-app role creation. A signed-in workspace never sees the public signup
@@ -61,7 +62,8 @@ function NewRolePage() {
     onSuccess: (res) => {
       // The Roles list is cached for a minute; without this the new draft is
       // missing from the Draft tab until the cache expires.
-      void queryClient.invalidateQueries({ queryKey: ["client-positions"] });
+      void queryClient.invalidateQueries({ queryKey: kpiCacheKeys.client.positions(orgId) });
+      void queryClient.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
       toast.success("Draft role created — you'll find it on the Draft tab of Roles");
       void router.navigate({
         to: "/client/positions/$id/edit",
