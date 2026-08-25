@@ -394,11 +394,14 @@ async function main() {
         candidate_profile_id: profile.id,
         position_id: position.id,
         organization_id: org.id,
-        stage: "delivered",
+        // Publishing is gated on an approved score run, so the match starts
+        // hidden and is delivered once the scoring trail exists below.
+        stage: "reviewing",
         admin_status: "approved",
-        client_visibility: "visible",
+        client_visibility: "hidden",
         processing_state: "scored",
-        canonical_state: "published_to_client",
+        canonical_state: "provisional_scoring",
+
         eligibility_status: "eligible",
         recommendation: seed.score >= 75 ? "shortlist" : "review",
         recommendation_reason: `Final score ${seed.score}. ${quoted} of ${requirements.length} requirements carry a quoted passage.`,
