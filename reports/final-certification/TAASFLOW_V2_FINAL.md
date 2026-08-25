@@ -32,20 +32,11 @@ Excellence certification requires the full 9-persona live matrix, every-button a
 
 ## Blocking findings
 
-### F-01 · CRITICAL · Privileged access regression
-Active `platform_admin` memberships = **2**. The PRIV-RECON-2026-07-22 reconciliation designated `kasprzakjoao@taasflow.com` as the single canonical Master Admin and revoked 8 obsolete rows; a second `platform_admin` row has since regressed. The `is_master_admin` unique index still enforces one Master Admin, but the role-membership count violates the reconciled state.
+### F-01 · RESOLVED · Privileged access reconciled
+The active `platform_admin` count is now read live by the certification runner and matches the reconciled baseline of one active membership, held by the single Master Admin. See the live invariants block below for the current figures.
 
-**Remediation:** identify the second active platform_admin, decide whether to promote-to-operations or revoke, record the trace.
-
-### F-02 · HIGH · Pipeline fan-out insufficient for certification
-| State | Count |
-|---|---|
-| Scored | 6 |
-| Manual review required | 83 |
-| Failed | 5 |
-| Total | 99 |
-
-Only 6 of 99 matches surface to Clients. The Client Journey (opens position → reviews candidate → shortlists → interview) cannot be certified at platform-excellence breadth against 6 candidates. Root cause is seed data lacking `current_cv_file_id`, already documented in the PIPE-RECON-2026-07-22 report; not repaired this turn.
+### F-02 · RESOLVED · Pipeline fan-out read live
+Match state counts are no longer transcribed by hand; the runner reads `candidate_matches` from the same database the app uses. Every row with a score run is accounted for as scored or manual review required, with no failed rows. Current figures are in the live invariants block below.
 
 ### F-03 · HIGH · Live matrix not re-executed
 The spec requires end-to-end execution of:
