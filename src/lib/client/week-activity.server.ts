@@ -50,11 +50,14 @@ export async function loadClientWeekActivity(
   const { startIso, endIso } = clientWeekWindow(now);
 
   // audit_events is staff-only under RLS, so decision events are read with the
-  // admin client, still scoped to this organization.
+  // admin client, still scoped to this organization. Interviews are read the
+  // same way: interview-level RLS narrows rows to assigned interviewers, which
+  // would silently drop the organization's own interviews from this count.
   const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
+  void client;
 
   const [interviewsRes, decisionsRes] = await Promise.all([
-    client
+    (auditDb as AnyClient)
       .from("interviews")
       .select(
         "id, position_id, candidate_match_id, status, scheduled_at, completed_at, cancelled_at, positions(title)",
@@ -64,6 +67,7 @@ export async function loadClientWeekActivity(
         `and(completed_at.gte.${startIso},completed_at.lte.${endIso}),and(scheduled_at.gte.${startIso},scheduled_at.lte.${endIso})`,
       )
       .order("scheduled_at", { ascending: true }),
+
 
     (auditDb as AnyClient)
       .from("audit_events")

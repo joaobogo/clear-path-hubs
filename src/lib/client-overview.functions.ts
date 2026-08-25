@@ -596,8 +596,13 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       .select("id, action, entity_type, created_at")
       .eq("organization_id", data.orgId)
       .in("action", [...CLIENT_RELEVANT_ACTIONS])
+      // Same window the "This week" tiles count, so the list and the counts
+      // cannot disagree about the same events.
+      .gte("created_at", weekActivity.windowStart)
+      .lte("created_at", weekActivity.windowEnd)
       .order("created_at", { ascending: false })
       .limit(6);
+
 
     const lastEvent = (events as AnyRow[] | undefined)?.[0];
     const last_updated: string | null =
