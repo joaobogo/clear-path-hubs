@@ -17,6 +17,7 @@ type AnyRow = any;
 import { assertWorkspaceAccess, assertWorkspaceWrite } from "@/lib/authz/workspace-access";
 import { normalizeSeniority } from "@/lib/position-seniority";
 import { normalizeTravelExpectation } from "@/lib/requisition-schema";
+import { positionShapeFor } from "@/lib/positions/field-registry";
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -375,7 +376,7 @@ const saveInput = z.object({
 
 export const savePositionEdit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => saveInput.parse(i))
+  .inputValidator((i: unknown) => saveInput.parse(i) as unknown as SaveInputData)
   .handler(async ({ data, context }) => {
     const before = await assertCanEdit(context.userId, data.id);
     const trace_id = traceId();
