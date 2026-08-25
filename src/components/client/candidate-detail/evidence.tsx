@@ -402,6 +402,9 @@ export const RequirementRowView = memo(function RequirementRowView({
           {badge.label}
         </span>
       </div>
+      {claim && (
+        <p className="mt-2 text-sm text-foreground/90">{claim}</p>
+      )}
       {(row.evidence.length > 0 || row.context.length > 0) && (
         <Accordion type="single" collapsible className="mt-2">
           <AccordionItem value="evidence" className="border-none">
