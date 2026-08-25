@@ -19,15 +19,25 @@ export function Column({
   const Icon = COLUMN_ICON[status];
   const isEmpty = items.length === 0;
   return (
-    // One row that scrolls sideways: every column keeps a fixed width, and an
-    // empty column collapses to its header instead of a tall block of colour.
+    // One row that scrolls sideways: populated columns keep a fixed width, and
+    // empty columns collapse to a narrow labelled strip instead of a tall block.
     <div
-      className={`shrink-0 self-start rounded-xl border p-3 sm:w-[200px] ${COLUMN_TONE[status]}`}
+      className={`shrink-0 self-start rounded-xl border ${
+        isEmpty
+          ? "w-fit min-w-[80px] max-w-[130px] border-dashed border-muted bg-transparent p-2"
+          : `w-[260px] p-3 ${COLUMN_TONE[status]}`
+      }`}
     >
-      <div className="flex items-center justify-between">
+      <div
+        className={`flex items-center ${
+          isEmpty ? "flex-col gap-1 text-center" : "justify-between gap-2"
+        }`}
+      >
         <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide">
-          <Icon className="h-3.5 w-3.5" />
-          {HIRE_STATUS_LABEL[status]}
+          <Icon className="h-3.5 w-3.5 shrink-0" />
+          <span className={isEmpty ? "leading-tight" : ""}>
+            {HIRE_STATUS_LABEL[status]}
+          </span>
         </h3>
         <Badge variant="outline" className="text-[10px]">
           {items.length}
