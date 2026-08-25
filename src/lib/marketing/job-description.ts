@@ -9,9 +9,26 @@ export type JobBlock =
   | { kind: "list"; items: string[] };
 
 const BULLET = /^\s*(?:[-*•–]|\d+[.)])\s+/;
+const MD_HEADING = /^\s{0,3}(#{1,6})\s+(.*)$/;
+
+/**
+ * Clients often paste Markdown. Raw `##` and `**` must never reach the page,
+ * so emphasis and inline heading marks are stripped as the text is read.
+ */
+export function stripJobMarkdown(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/(^|\s)\*([^*\n]+)\*(?=\s|$|[.,;:)])/g, "$1$2")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/^\s{0,3}#{1,6}\s+/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
 
 function isHeading(line: string): boolean {
   const t = line.trim();
+  if (MD_HEADING.test(t)) return true;
   if (!t || t.length > 70 || BULLET.test(line)) return false;
   // "MAIN RESPONSIBILITIES" — all caps, at least one letter, no trailing period.
   const letters = t.replace(/[^A-Za-zÀ-ÿ]/g, "");
@@ -22,13 +39,14 @@ function isHeading(line: string): boolean {
 }
 
 function titleCase(text: string): string {
-  const t = text.replace(/:\s*$/, "").trim();
+  const t = stripJobMarkdown(text).replace(/:\s*$/, "").trim();
   const letters = t.replace(/[^A-Za-zÀ-ÿ]/g, "");
   if (letters && letters === letters.toUpperCase()) {
     return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
   }
   return t;
 }
+
 
 export function parseJobDescription(description: string): JobBlock[] {
   const blocks: JobBlock[] = [];
