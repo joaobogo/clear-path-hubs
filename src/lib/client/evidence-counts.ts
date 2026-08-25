@@ -1,4 +1,6 @@
 import type { RequirementRow } from "../client-fit-presentation";
+import { resolveRequirementStatus } from "./requirement-status";
+
 
 export interface EvidenceCounts {
   /** Requirements backed by a direct quote. */
