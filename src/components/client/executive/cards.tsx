@@ -280,6 +280,11 @@ export function VelocityCard({
   quality: ExecutiveReport["shortlist_quality"];
 }) {
   const maxDeliv = Math.max(1, ...delivery.map((d) => d.delivered));
+  const activeDeliveryWeeks = delivery.filter((d) => d.delivered > 0);
+  const activeQualityWeeks = quality.filter((q) => q.avg_score != null);
+  const totalDelivered = delivery.reduce((s, d) => s + d.delivered, 0);
+  const enoughHistory = activeDeliveryWeeks.length >= 3;
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -288,55 +293,78 @@ export function VelocityCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <div className="mb-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-            Candidates delivered per week (last 8)
+        {!enoughHistory ? (
+          <div className="space-y-1 text-sm">
+            <p className="font-medium">
+              {totalDelivered === 0
+                ? "No candidates delivered yet."
+                : `${totalDelivered} candidate${totalDelivered === 1 ? "" : "s"} delivered so far, across ${activeDeliveryWeeks.length} week${activeDeliveryWeeks.length === 1 ? "" : "s"}${
+                    activeDeliveryWeeks.length === 1
+                      ? ` (week of ${activeDeliveryWeeks[0]!.label})`
+                      : ""
+                  }.`}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {activeQualityWeeks.length > 0 && activeQualityWeeks[0]!.avg_score != null
+                ? `Typical shortlist fit so far: ${toFitPresentation(null, Number(activeQualityWeeks[0]!.avg_score)).headline}. `
+                : ""}
+              Weekly trends appear once there are three weeks of deliveries to compare.
+            </p>
           </div>
-          <div className="flex items-end gap-1.5">
-            {delivery.map((d) => (
-              <div key={d.week_start} className="flex flex-1 flex-col items-center gap-1">
-                <div className="text-[10px] font-semibold leading-none tabular-nums">
-                  {d.delivered}
-                </div>
-                <div
-                  className="w-full rounded-t bg-primary/80"
-                  style={{
-                    height: `${Math.max(4, (d.delivered / maxDeliv) * 72)}px`,
-                  }}
-                  title={`${d.delivered} delivered`}
-                />
-                <div className="text-[10px] tabular-nums text-muted-foreground">
-                  {d.label}
-                </div>
+        ) : (
+          <>
+            <div>
+              <div className="mb-2 text-[11px] uppercase tracking-wide text-muted-foreground">
+                Candidates delivered per week (last 8)
               </div>
-            ))}
-          </div>
-        </div>
-        <div>
-          <div className="mb-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-            Typical shortlist fit per week (approved)
-          </div>
-          <ul className="grid grid-cols-4 gap-2 sm:grid-cols-8">
-            {quality.map((q) => (
-              <li
-                key={q.week_start}
-                className="rounded-md border bg-card/40 p-1.5 text-center"
-                title={`${q.count} candidate${q.count === 1 ? "" : "s"} delivered`}
-              >
-                <div className="text-[10px] text-muted-foreground">{q.label}</div>
-                <div className="text-[11px] font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
-                  {q.avg_score == null
-                    ? "—"
-                    : toFitPresentation(null, Number(q.avg_score)).headline}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+              <div className="flex items-end gap-1.5">
+                {delivery.map((d) => (
+                  <div key={d.week_start} className="flex flex-1 flex-col items-center gap-1">
+                    <div className="text-[10px] font-semibold leading-none tabular-nums">
+                      {d.delivered}
+                    </div>
+                    <div
+                      className="w-full rounded-t bg-primary/80"
+                      style={{
+                        height: `${Math.max(4, (d.delivered / maxDeliv) * 72)}px`,
+                      }}
+                      title={`${d.delivered} delivered`}
+                    />
+                    <div className="text-[10px] tabular-nums text-muted-foreground">
+                      {d.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="mb-2 text-[11px] uppercase tracking-wide text-muted-foreground">
+                Typical shortlist fit per week (approved)
+              </div>
+              <ul className="grid grid-cols-4 gap-2 sm:grid-cols-8">
+                {quality.map((q) => (
+                  <li
+                    key={q.week_start}
+                    className="rounded-md border bg-card/40 p-1.5 text-center"
+                    title={`${q.count} candidate${q.count === 1 ? "" : "s"} delivered`}
+                  >
+                    <div className="text-[10px] text-muted-foreground">{q.label}</div>
+                    <div className="text-[11px] font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                      {q.avg_score == null
+                        ? "—"
+                        : toFitPresentation(null, Number(q.avg_score)).headline}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
 }
+
 
 export function FooterLine({ generated_at }: { generated_at: string }) {
   return (
