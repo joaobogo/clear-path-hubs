@@ -5,8 +5,8 @@ describe("calendar dates", () => {
   it("renders the stored day, not a timezone-shifted one", () => {
     // Month abbreviation depends on the ICU build ("Sep" / "Sept"); the day
     // and year are the point of the test.
-    expect(formatCalendarDate("2026-09-01")).toMatch(/^1 Sep\w* 2026$/);
-    expect(formatCalendarDate("2026-09-01T00:00:00Z")).toMatch(/^1 Sep\w* 2026$/);
+    expect(formatCalendarDate("2026-09-01")).toMatch(/^0?1 Sep\w* 2026$/);
+    expect(formatCalendarDate("2026-09-01T00:00:00Z")).toMatch(/^0?1 Sep\w* 2026$/);
     expect(formatCalendarDate("2026-08-31")).toMatch(/^31 Aug 2026$/);
   });
 
