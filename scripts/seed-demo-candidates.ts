@@ -707,26 +707,40 @@ async function main() {
 
 
     // --- Interview (completed, recorded and scored) -----------------------
-    const { error: interviewError } = await sb.from("interviews").insert({
-      candidate_match_id: match.id,
-      organization_id: org.id,
-      position_id: position.id,
-      status: "completed",
-      interview_type: "technical",
-      duration_minutes: 60,
-      timezone: seed.timezone,
-      scheduling_method: "manual",
-      candidate_response: "accepted",
-      requested_at: new Date(interviewAt.getTime() - 4 * day).toISOString(),
-      scheduled_at: interviewAt.toISOString(),
-      confirmed_at: new Date(interviewAt.getTime() - 2 * day).toISOString(),
-      completed_at: new Date(interviewAt.getTime() + 60 * 60 * 1000).toISOString(),
-      notes: interviewNotes(seed, quoted, requirements.length),
-      feedback: assessmentNotes(seed, quoted, requirements.length),
-      participants: [{ name: "Technical panel", role: "interviewer" }],
-      proposed_times: [interviewAt.toISOString()],
-    });
+    // Interviews must be created in a pre-completion status, then completed.
+    const { data: interview, error: interviewError } = await sb
+      .from("interviews")
+      .insert({
+        candidate_match_id: match.id,
+        organization_id: org.id,
+        position_id: position.id,
+        status: "scheduled",
+        interview_type: "technical",
+        duration_minutes: 60,
+        timezone: seed.timezone,
+        scheduling_method: "manual",
+        candidate_response: "accepted",
+        requested_at: new Date(interviewAt.getTime() - 4 * day).toISOString(),
+        scheduled_at: interviewAt.toISOString(),
+        confirmed_at: new Date(interviewAt.getTime() - 2 * day).toISOString(),
+        notes: interviewNotes(seed, quoted, requirements.length),
+        participants: [{ name: "Technical panel", role: "interviewer" }],
+        proposed_times: [interviewAt.toISOString()],
+      })
+      .select("id")
+      .single();
     if (interviewError) throw new Error(`interview insert failed for ${seed.name}: ${interviewError.message}`);
+
+    const { error: interviewCompleteError } = await sb
+      .from("interviews")
+      .update({
+        status: "completed",
+        completed_at: new Date(interviewAt.getTime() + 60 * 60 * 1000).toISOString(),
+        feedback: assessmentNotes(seed, quoted, requirements.length),
+      })
+      .eq("id", interview.id);
+    if (interviewCompleteError)
+      throw new Error(`interview completion failed for ${seed.name}: ${interviewCompleteError.message}`);
 
     // --- Open offer -------------------------------------------------------
     const salary = offerSalary(seed.score);
