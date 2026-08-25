@@ -464,46 +464,19 @@ function CandidatesPage() {
     orgSearch={orgSearch}
   />
 
-  {/* List controls */}
-  <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-    <div className="flex items-center gap-2">
-      <div className="inline-flex rounded-md border p-0.5" role="group" aria-label="Result view">
-        <Button
-          size="sm"
-          variant={search.view === "board" ? "ghost" : "secondary"}
-          className="h-9 px-3 text-xs"
-          onClick={() => setF({ view: "list" } as never)}
-        >
-          List
-        </Button>
-        <Button
-          size="sm"
-          variant={search.view === "board" ? "secondary" : "ghost"}
-          className="h-9 px-3 text-xs"
-          onClick={() => setF({ view: "board" } as never)}
-        >
-          Board
-        </Button>
-      </div>
-    </div>
-  </div>
-
-
-  {search.view !== "board" && (
-    <CandidatesFiltersPanel
-      search={search}
-      setF={setF}
-      positions={positions}
-      availabilityOptions={availabilityOptions}
-      activeFilters={activeFilters}
-      clearFilters={clearFilters}
-      orgId={orgId}
-      ctxRole={ctx?.active?.role}
-      onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never })}
-      resultCount={filtered.length}
-      totalCount={(rowsRaw as ClientCandidateDTO[]).length}
-    />
-  )}
+  <CandidatesFiltersPanel
+    search={search}
+    setF={setF}
+    positions={positions}
+    availabilityOptions={availabilityOptions}
+    activeFilters={activeFilters}
+    clearFilters={clearFilters}
+    orgId={orgId}
+    ctxRole={ctx?.active?.role}
+    onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never })}
+    resultCount={filtered.length}
+    totalCount={(rowsRaw as ClientCandidateDTO[]).length}
+  />
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
   {listPanel.loading ? (
