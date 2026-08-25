@@ -1,0 +1,235 @@
+{
+  "$comment": "Evidence library for scripts/seed-demo-candidates.ts. Placeholders: {{name}}, {{city}}, {{country}}, {{years}}, {{email}}, {{stack}}, {{primary}}, {{secondary}}, {{startYear}}, {{endYear}}.",
+  "engine_version": "taasflow-scoring-v1.2.0",
+  "cv_templates": [
+    {
+      "id": "cv-mid-en",
+      "language": "en",
+      "seniority": "mid",
+      "years_range": [4, 6],
+      "score_range": [70, 76],
+      "expected_must_have_ratio": 0.6,
+      "body": "{{name}}\n{{city}}, {{country}} · {{email}}\n\nPROFILE\nProduct-focused full-stack engineer with {{years}} years across agency and in-house teams. Comfortable owning a feature from the database schema to the shipped interface, working mostly in {{primary}} and {{secondary}}.\n\nCORE STACK\n{{stack}}\n\nEXPERIENCE\n{{startYear}}–present · Full-stack engineer · SaaS product team, {{city}}\n- Built and shipped customer-facing features in {{primary}}, from Postgres schema and migrations through to the interface.\n- Wrote the data access layer for the reporting module: typed queries, indexes reviewed with the DBA.\n- Unit tests written as standard; end-to-end coverage owned by a separate QA pair.\n\n{{endYear}}–{{startYear}} · Software engineer · Digital agency\n- Delivered eight client projects on a shared {{secondary}} codebase, mostly CRUD-heavy portals.\n- Introduced code review as a team habit after two production regressions.\n\nNOTES ON DEPTH\nMulti-tenant isolation: worked inside an existing model, has not designed one.\nMigrations: has run additive migrations, no zero-downtime work yet.\n\nEDUCATION\nBSc Computer Science, University of {{city}}\n\nLANGUAGES\nPortuguese (native) · English (fluent, written and spoken)"
+    },
+    {
+      "id": "cv-mid-pt",
+      "language": "pt",
+      "seniority": "mid",
+      "years_range": [5, 7],
+      "score_range": [76, 81],
+      "expected_must_have_ratio": 0.7,
+      "body": "{{name}}\n{{city}}, {{country}} · {{email}}\n\nRESUMO\nEngenheiro full-stack com {{years}} anos de experiência em produto, com trabalho contínuo em {{primary}} e {{secondary}}. Habituado a assumir uma funcionalidade de ponta a ponta: modelo de dados, migração, API e interface.\n\nCOMPETÊNCIAS\n{{stack}}\n\nEXPERIÊNCIA\n{{startYear}}–presente · Engenheiro full-stack · Empresa de software, {{city}}\n- Responsável por funcionalidades completas, desde o esquema em PostgreSQL e respetivas migrações até à interface entregue.\n- Conduziu duas migrações de esquema em produção sem indisponibilidade, com plano de reversão escrito.\n- Mantém a suíte de testes unitários da equipa e contribuiu para os testes ponta a ponta.\n\n{{endYear}}–{{startYear}} · Engenheiro de software · Plataforma B2B\n- Trabalhou no modelo de separação entre clientes (multi-tenant) já existente, incluindo revisão de políticas de acesso.\n- Acompanhou dois engenheiros juniores em revisão de código.\n\nNOTAS\nInglês usado diariamente em documentação e reuniões com equipas remotas.\n\nFORMAÇÃO\nLicenciatura em Engenharia Informática, Universidade de {{city}}\n\nIDIOMAS\nPortuguês (nativo) · Inglês (fluente)"
+    },
+    {
+      "id": "cv-senior-en",
+      "language": "en",
+      "seniority": "senior",
+      "years_range": [7, 9],
+      "score_range": [81, 87],
+      "expected_must_have_ratio": 0.83,
+      "body": "{{name}}\n{{city}}, {{country}} · {{email}}\n\nPROFILE\nSenior full-stack engineer with {{years}} years on multi-tenant SaaS products. Designs the data model and the isolation rules alongside the feature, and keeps automated coverage a condition of merge.\n\nCORE STACK\n{{stack}}\n\nEXPERIENCE\n{{startYear}}–present · Senior full-stack engineer · Multi-tenant platform, {{city}}\n- Designed the tenant isolation model using Postgres row-level security: policy set, test matrix, and a documented review for the security questionnaire.\n- Led three zero-downtime migrations on tables above 200 million rows, each with a written rollback path.\n- Owns the end-to-end suite in {{secondary}}; release regressions dropped from roughly one per release to two in a year.\n- Mentors two engineers, including their first production migration each.\n\n{{endYear}}–{{startYear}} · Full-stack engineer · Product company\n- Rebuilt the reporting layer in {{primary}} with typed queries and cursor pagination.\n- Introduced CI gates: type check, unit, end-to-end, and a migration dry run.\n\nEDUCATION\nBSc Computer Science, University of {{city}}\n\nLANGUAGES\nPortuguese (native) · English (fluent, written and spoken)"
+    },
+    {
+      "id": "cv-senior-pt",
+      "language": "pt",
+      "seniority": "senior",
+      "years_range": [7, 9],
+      "score_range": [84, 89],
+      "expected_must_have_ratio": 0.86,
+      "body": "{{name}}\n{{city}}, {{country}} · {{email}}\n\nRESUMO\nEngenheiro sénior com {{years}} anos em produtos SaaS multi-cliente. Desenha o modelo de dados e as regras de isolamento em conjunto com a funcionalidade, e trata a cobertura automatizada como condição de integração.\n\nCOMPETÊNCIAS\n{{stack}}\n\nEXPERIÊNCIA\n{{startYear}}–presente · Engenheiro sénior · Plataforma multi-cliente, {{city}}\n- Definiu o modelo de isolamento entre clientes com row-level security em PostgreSQL, incluindo matriz de testes e documentação para auditoria.\n- Executou migrações sem indisponibilidade em tabelas com mais de 100 milhões de registos, sempre com plano de reversão.\n- Responsável pela suíte ponta a ponta em {{secondary}} e pelas verificações automáticas antes de cada lançamento.\n- Acompanha dois engenheiros, com revisão de código semanal.\n\n{{endYear}}–{{startYear}} · Engenheiro full-stack · Empresa de produto\n- Reescreveu a camada de relatórios em {{primary}}, com consultas tipadas e paginação por cursor.\n- Introduziu revisão obrigatória de migrações antes de produção.\n\nFORMAÇÃO\nLicenciatura em Engenharia Informática, Universidade de {{city}}\n\nIDIOMAS\nPortuguês (nativo) · Inglês (fluente, escrito e falado)"
+    },
+    {
+      "id": "cv-principal-en",
+      "language": "en",
+      "seniority": "principal",
+      "years_range": [9, 14],
+      "score_range": [89, 100],
+      "expected_must_have_ratio": 1.0,
+      "body": "{{name}}\n{{city}}, {{country}} · {{email}}\n\nPROFILE\nPrincipal engineer with {{years}} years of production {{primary}} and {{secondary}}. Sets the data and isolation architecture for platforms serving hundreds of tenants, and writes the documentation that survives the team.\n\nCORE STACK\n{{stack}}\n\nEXPERIENCE\n{{startYear}}–present · Principal engineer · SaaS platform (400+ tenants), {{city}}\n- Designed and documented the row-level security model for the whole platform; it has passed two customer security audits unchanged.\n- Owns the migration playbook: partitioning, backfills in batches, dual-write windows, and a rehearsed rollback for every step.\n- Built the test strategy — unit, contract and end-to-end — and the CI gates that enforce it; the suite is kept green as a standing rule.\n- Reviews every schema change across four product teams and runs the weekly architecture forum.\n\n{{endYear}}–{{startYear}} · Staff engineer · Platform group\n- Split a shared monolith database into per-domain schemas without a maintenance window.\n- Led the incident review practice: written timelines, owner per action, follow-up verified.\n\nEDUCATION\nMSc Computer Science, University of {{city}}\n\nLANGUAGES\nPortuguese (native) · English (fluent, written and spoken)"
+    }
+  ],
+  "assessment_submissions": [
+    {
+      "id": "assessment-partial-low",
+      "accuracy": "partial_low",
+      "score_range": [70, 75],
+      "questions_total": 6,
+      "questions_correct": 3,
+      "questions_partial": 2,
+      "questions_incorrect": 1,
+      "headline": "3 of 6 questions correct, two partial answers, one incorrect",
+      "summary": "The submission runs and covers the core feature slice: a migration, a typed query and a working interface. Isolation and test coverage were attempted but shallow; the pagination answer was wrong.",
+      "questions": [
+        { "prompt": "Model the schema for the feature and write the migration.", "verdict": "correct", "note": "Additive migration with sensible indexes and a reversible down step." },
+        { "prompt": "Write the typed data access for the list view.", "verdict": "correct", "note": "Typed query, no N+1." },
+        { "prompt": "Build the interface for the list and detail views.", "verdict": "correct", "note": "Both views work; loading and empty states handled." },
+        { "prompt": "Restrict rows so one tenant cannot read another's data.", "verdict": "partial", "note": "Filtering applied in application code only; no database-level policy." },
+        { "prompt": "Add automated coverage for the slice.", "verdict": "partial", "note": "Two unit tests; no end-to-end path." },
+        { "prompt": "Paginate the list efficiently at 1M rows.", "verdict": "incorrect", "note": "Offset pagination without an index on the sort column." }
+      ]
+    },
+    {
+      "id": "assessment-partial-mid",
+      "accuracy": "partial_mid",
+      "score_range": [75, 81],
+      "questions_total": 6,
+      "questions_correct": 4,
+      "questions_partial": 1,
+      "questions_incorrect": 1,
+      "headline": "4 of 6 questions correct, one partial answer, one incorrect",
+      "summary": "A clean feature slice with a reversible migration, typed access and a tested interface. Tenant isolation was handled at application level rather than in the database, and the concurrency question was missed.",
+      "questions": [
+        { "prompt": "Model the schema for the feature and write the migration.", "verdict": "correct", "note": "Reversible migration, foreign keys and indexes in place." },
+        { "prompt": "Write the typed data access for the list view.", "verdict": "correct", "note": "Cursor pagination with an index on the sort key." },
+        { "prompt": "Build the interface for the list and detail views.", "verdict": "correct", "note": "Accessible markup, error and empty states covered." },
+        { "prompt": "Add automated coverage for the slice.", "verdict": "correct", "note": "Unit tests plus one end-to-end happy path." },
+        { "prompt": "Restrict rows so one tenant cannot read another's data.", "verdict": "partial", "note": "Correct filtering everywhere it was needed, but enforced in code rather than a database policy." },
+        { "prompt": "Handle two concurrent edits to the same record.", "verdict": "incorrect", "note": "Last write wins; no version check or conflict response." }
+      ]
+    },
+    {
+      "id": "assessment-strong",
+      "accuracy": "strong",
+      "score_range": [81, 87],
+      "questions_total": 6,
+      "questions_correct": 5,
+      "questions_partial": 1,
+      "questions_incorrect": 0,
+      "headline": "5 of 6 questions correct, one partial answer",
+      "summary": "A complete slice with database-level isolation, a reversible migration and both unit and end-to-end coverage. Only the performance question stopped short of a measured result.",
+      "questions": [
+        { "prompt": "Model the schema for the feature and write the migration.", "verdict": "correct", "note": "Reversible migration with a written rollback note." },
+        { "prompt": "Restrict rows so one tenant cannot read another's data.", "verdict": "correct", "note": "Row-level security policy plus a test that proves cross-tenant reads fail." },
+        { "prompt": "Write the typed data access for the list view.", "verdict": "correct", "note": "Cursor pagination, covering index, no N+1." },
+        { "prompt": "Build the interface for the list and detail views.", "verdict": "correct", "note": "Complete states, keyboard navigable." },
+        { "prompt": "Add automated coverage for the slice.", "verdict": "correct", "note": "Unit, integration and one end-to-end path, all green." },
+        { "prompt": "Show the query plan and justify the index choice.", "verdict": "partial", "note": "Index choice explained in prose; no plan output attached." }
+      ]
+    },
+    {
+      "id": "assessment-excellent",
+      "accuracy": "excellent",
+      "score_range": [87, 92],
+      "questions_total": 6,
+      "questions_correct": 6,
+      "questions_partial": 0,
+      "questions_incorrect": 0,
+      "headline": "6 of 6 questions correct",
+      "summary": "Every part of the brief was answered fully, including database-level isolation with a proving test, a rehearsed rollback, and a query plan attached to the performance answer.",
+      "questions": [
+        { "prompt": "Model the schema for the feature and write the migration.", "verdict": "correct", "note": "Reversible migration, batched backfill, rollback rehearsed locally." },
+        { "prompt": "Restrict rows so one tenant cannot read another's data.", "verdict": "correct", "note": "Row-level security policies with a negative test per policy." },
+        { "prompt": "Write the typed data access for the list view.", "verdict": "correct", "note": "Cursor pagination with a covering index and a benchmark." },
+        { "prompt": "Build the interface for the list and detail views.", "verdict": "correct", "note": "Full states, accessible, optimistic update with rollback." },
+        { "prompt": "Add automated coverage for the slice.", "verdict": "correct", "note": "Unit, contract and end-to-end coverage wired into CI." },
+        { "prompt": "Show the query plan and justify the index choice.", "verdict": "correct", "note": "Plan output attached before and after the index." }
+      ]
+    },
+    {
+      "id": "assessment-exceptional",
+      "accuracy": "exceptional",
+      "score_range": [92, 100],
+      "questions_total": 6,
+      "questions_correct": 6,
+      "questions_partial": 0,
+      "questions_incorrect": 0,
+      "headline": "6 of 6 questions correct, with two answers going beyond the brief",
+      "summary": "Everything in the brief was answered fully, and the submission added a documented isolation test matrix and a migration runbook that were not asked for.",
+      "questions": [
+        { "prompt": "Model the schema for the feature and write the migration.", "verdict": "correct", "note": "Partitioning considered and justified; runbook included." },
+        { "prompt": "Restrict rows so one tenant cannot read another's data.", "verdict": "correct", "note": "Policy set plus a test matrix covering every role and table." },
+        { "prompt": "Write the typed data access for the list view.", "verdict": "correct", "note": "Benchmarked at 1M rows with the plan attached." },
+        { "prompt": "Build the interface for the list and detail views.", "verdict": "correct", "note": "Complete states, accessible, tested with keyboard only." },
+        { "prompt": "Add automated coverage for the slice.", "verdict": "correct", "note": "CI gates added, including a migration dry run." },
+        { "prompt": "Show the query plan and justify the index choice.", "verdict": "correct", "note": "Before and after plans, with the trade-off written out." }
+      ]
+    }
+  ],
+  "interview_transcripts": [
+    {
+      "id": "interview-surface",
+      "depth": "surface",
+      "score_range": [70, 75],
+      "duration_minutes": 60,
+      "assessor_note": "Answers covered the core requirements, but several examples stayed at a high level. Worth confirming isolation and migration experience in a follow-up.",
+      "turns": [
+        { "speaker": "Interviewer", "text": "Take a feature you owned end to end and walk me through it." },
+        { "speaker": "Candidate", "text": "We added saved views to the reporting page. I wrote the migration, the query and the interface. It went out behind a flag and we removed the flag after a week." },
+        { "speaker": "Interviewer", "text": "How did you keep one customer's data out of another's view?" },
+        { "speaker": "Candidate", "text": "The tenant id is on every table and the ORM adds the filter. I did not set that up, it was already there when I joined." },
+        { "speaker": "Interviewer", "text": "What happened the last time a migration went wrong?" },
+        { "speaker": "Candidate", "text": "I have not had one fail in production. We run them off hours, so we would just restore if needed." },
+        { "speaker": "Interviewer", "text": "How do you test that work?" },
+        { "speaker": "Candidate", "text": "Unit tests for the query layer. End-to-end is handled by our QA pair rather than by me." }
+      ]
+    },
+    {
+      "id": "interview-solid",
+      "depth": "solid",
+      "score_range": [75, 81],
+      "duration_minutes": 60,
+      "assessor_note": "Answers covered most requirements with concrete examples; database-level isolation and performance work stayed general.",
+      "turns": [
+        { "speaker": "Interviewer", "text": "Take a feature you owned end to end and walk me through it." },
+        { "speaker": "Candidate", "text": "Bulk invoicing. I designed the schema, wrote the migration in two additive steps so nothing blocked, then built the queue worker and the interface. Rollback was a single down migration we rehearsed on a copy." },
+        { "speaker": "Interviewer", "text": "How did you keep one customer's data out of another's view?" },
+        { "speaker": "Candidate", "text": "Every query goes through a repository that requires a tenant id, and there is a test that fails if a query is built without one. We discussed row-level security but did not adopt it while I was there." },
+        { "speaker": "Interviewer", "text": "The list view slows down at scale. What do you do?" },
+        { "speaker": "Candidate", "text": "Look at the slow query log first, then the plan. Usually it is a missing index or offset pagination, and I would move it to a cursor." },
+        { "speaker": "Interviewer", "text": "How do you test that work?" },
+        { "speaker": "Candidate", "text": "Unit tests as standard, and I added the first end-to-end tests on that team for the invoicing path." }
+      ]
+    },
+    {
+      "id": "interview-deep",
+      "depth": "deep",
+      "score_range": [81, 87],
+      "duration_minutes": 60,
+      "assessor_note": "Answers tracked the requirements closely, with concrete examples and stated trade-offs for each.",
+      "turns": [
+        { "speaker": "Interviewer", "text": "Take a feature you owned end to end and walk me through it." },
+        { "speaker": "Candidate", "text": "Usage-based billing. Schema first, then a batched backfill of two years of events in chunks of fifty thousand with a resume point, then the API and the interface. The migration ran during the day because every step was additive." },
+        { "speaker": "Interviewer", "text": "How did you keep one customer's data out of another's view?" },
+        { "speaker": "Candidate", "text": "Row-level security on every tenant table, with the policy taking the tenant from a session claim. The important part is the negative tests: for each table there is a test that sets a different tenant and asserts zero rows. Application filters alone drift the moment somebody writes raw SQL." },
+        { "speaker": "Interviewer", "text": "Where does that model bite you?" },
+        { "speaker": "Candidate", "text": "Admin and reporting paths. You need a deliberate, audited way to bypass it, and analytics queries get slower because the policy is applied per row." },
+        { "speaker": "Interviewer", "text": "How do you test the whole thing?" },
+        { "speaker": "Candidate", "text": "Unit for logic, integration against a real Postgres with the policies on, and one end-to-end path per feature. CI blocks the merge if any of the three go red." }
+      ]
+    },
+    {
+      "id": "interview-authoritative",
+      "depth": "authoritative",
+      "score_range": [87, 92],
+      "duration_minutes": 60,
+      "assessor_note": "Every requirement was answered with a worked example, a failure mode and a stated trade-off. No comprehension gaps in English.",
+      "turns": [
+        { "speaker": "Interviewer", "text": "Take a feature you owned end to end and walk me through it." },
+        { "speaker": "Candidate", "text": "We split a shared table used by four teams into per-domain schemas with no maintenance window. Dual write, backfill in batches with a checksum comparison per batch, read switch behind a flag per tenant, then the old write path removed a fortnight later. Each step had its own rollback, and we practised the rollback before the step." },
+        { "speaker": "Interviewer", "text": "How did you keep one customer's data out of another's view?" },
+        { "speaker": "Candidate", "text": "Row-level security with the tenant taken from a verified claim, one policy per table and per operation. There is a generated test matrix that walks every table and role and asserts the deny case; it fails the build when someone adds a table without a policy." },
+        { "speaker": "Interviewer", "text": "What is the cost of that decision?" },
+        { "speaker": "Candidate", "text": "Two things. Reporting needs an explicitly audited bypass, and plans change because the policy predicate joins into every query — we keep index coverage for the predicate itself. It is still cheaper than trusting application filters." },
+        { "speaker": "Interviewer", "text": "How do you keep the suite trustworthy?" },
+        { "speaker": "Candidate", "text": "Flaky tests are treated as broken tests: quarantined the same day with an owner, deleted if nobody fixes them in a week. A suite people ignore is worse than no suite." }
+      ]
+    },
+    {
+      "id": "interview-exceptional",
+      "depth": "exceptional",
+      "score_range": [92, 100],
+      "duration_minutes": 60,
+      "assessor_note": "Answered at architecture level throughout, with measurements, failure modes and the documentation trail behind each decision.",
+      "turns": [
+        { "speaker": "Interviewer", "text": "Take a feature you owned end to end and walk me through it." },
+        { "speaker": "Candidate", "text": "Partitioning the events table at four billion rows. I wrote the runbook, the rehearsal on a restored snapshot, and the abort criteria: if replication lag passed thirty seconds we stopped and rolled back. It shipped across three windows with no customer-visible downtime." },
+        { "speaker": "Interviewer", "text": "How do you approach tenant isolation at that size?" },
+        { "speaker": "Candidate", "text": "Row-level security as the floor, plus a generated policy audit in CI, plus a quarterly review that reads the policy set against the data map. The audit is what catches drift; a person reading policies once a year does not." },
+        { "speaker": "Interviewer", "text": "How do you decide what to document?" },
+        { "speaker": "Candidate", "text": "Anything a new engineer would otherwise have to reconstruct from the code: the isolation model, the migration playbook, and the reasons behind the two decisions we would most like to revisit." },
+        { "speaker": "Interviewer", "text": "What do you get wrong most often?" },
+        { "speaker": "Candidate", "text": "Underestimating how long a dual-write window needs to stay open. I now plan for twice the estimate and measure before removing the old path." }
+      ]
+    }
+  ]
+}
