@@ -226,6 +226,20 @@ function ConversationsPage() {
             Back to threads
           </Link>
         </div>
+      ) : items.length === 0 && hideEmpty && emptyCount === totalCount && totalCount > 0 ? (
+        <div className="rounded-lg border bg-card p-8 text-center">
+          <p className="text-sm font-medium">All threads are empty</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Turn off the filter to see {emptyCount === 1 ? "the empty thread" : "them"}.
+          </p>
+          <button
+            type="button"
+            onClick={() => setHideEmpty(false)}
+            className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
+          >
+            Show empty threads
+          </button>
+        </div>
       ) : items.length === 0 ? (
         <SurfaceState
           content={resolveNoMessagesState({
