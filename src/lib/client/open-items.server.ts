@@ -87,6 +87,32 @@ export async function loadClientOpenItems(
     }
   }
 
+  // Interviews that still need a time come from the one shared query the Roles
+  // banner uses.
+  const pendingConfirmations = await loadInterviewsAwaitingConfirmation(supabase, orgId);
+
+  // Candidate names for the rows that act on one person, so interview and offer
+  // rows read like the feedback rows ("… for Carla Nunes").
+  const namedMatchIds = [
+    ...offerMatchIds,
+    ...pendingConfirmations.map((p) => p.candidate_match_id),
+  ].filter(Boolean);
+  const matchNames = new Map<string, string>();
+  if (namedMatchIds.length > 0) {
+    const { data: matchRows } = await supabase
+      .from("candidate_matches")
+      .select("id, candidate_profiles(full_name)")
+      .eq("organization_id", orgId)
+      .in("id", Array.from(new Set(namedMatchIds)));
+    for (const row of (matchRows as AnyRow[]) ?? []) {
+      const profile = Array.isArray(row.candidate_profiles)
+        ? row.candidate_profiles[0]
+        : row.candidate_profiles;
+      const name = String(profile?.full_name ?? "").trim();
+      if (name) matchNames.set(row.id as string, name);
+    }
+  }
+
 
   const { data: positions } = await excludeTestRecords(
     supabase
