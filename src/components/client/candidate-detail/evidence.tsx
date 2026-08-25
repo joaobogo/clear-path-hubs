@@ -240,7 +240,7 @@ export const FitHero = memo(function FitHero({
                 {fit.headline}
               </h2>
               <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
-                {fit.recommendation}
+                {recommendation}
               </p>
             </div>
           ) : (
