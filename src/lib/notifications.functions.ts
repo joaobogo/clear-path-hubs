@@ -500,8 +500,18 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       if (isClientRow && isAdminPath(link_path)) {
         link_path = resolveClientNotificationLink({ ...r, link_path });
       }
+      // Legacy rows were written with staff-side phrasing that called the
+      // reader "Client". The reader's job is to confirm a time, so client rows
+      // always render the current copy regardless of what was persisted.
+      const isInterviewRequest = r.event_type === "interview_requested";
       return {
         ...r,
+        title:
+          isClientRow && isInterviewRequest ? "You requested an interview" : r.title,
+        body:
+          isClientRow && isInterviewRequest
+            ? "This interview still needs a confirmed time"
+            : r.body,
         link_path,
         actor_label: r.event_id ? (actorByEvent.get(r.event_id) ?? null) : null,
         delivery_state: deliveryByNotification.get(r.id) ?? null,
