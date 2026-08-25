@@ -16,7 +16,7 @@
  */
 
 import type { Audience, EventType } from "@/lib/events";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatRelative } from "@/lib/format/datetime";
 
 export const NOTIFICATION_TIERS = [
   "critical",
@@ -594,14 +594,7 @@ export function canDismiss(tier: NotificationTier): boolean {
 /** Relative time, stable and readable, with an absolute value in the title. */
 export function relativeTime(iso: string, now = Date.now()): string {
   const diff = now - new Date(iso).getTime();
-  const mins = Math.round(diff / 60_000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins} min ago`;
-  const hours = Math.round(mins / 60);
-  if (hours < 24) return `${hours} h ago`;
-  const days = Math.round(hours / 24);
-  if (days < 7) return `${days} d ago`;
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE });
+  return formatRelative(iso);
 }
 
 export function actorLabel(

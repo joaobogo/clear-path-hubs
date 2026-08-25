@@ -1,19 +1,7 @@
-import { APP_LOCALE, WORKSPACE_TIMEZONE, calendarDayDiff, formatDate } from "@/lib/format/datetime";
+import { calendarDayDiff, formatDate, formatRelativeSigned } from "@/lib/format/datetime";
 const RELATIVE = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 export function relTime(iso: string | null | undefined): string {
-  if (!iso) return "";
-  const then = new Date(iso);
-  const now = new Date();
-  const diff = then.getTime() - now.getTime();
-  const abs = Math.abs(diff);
-  const min = 60_000,
-    hr = 60 * min,
-    day = 24 * hr;
-  if (abs < hr) return RELATIVE.format(Math.round(diff / min), "minute");
-  if (abs < day) return RELATIVE.format(Math.round(diff / hr), "hour");
-  const days = calendarDayDiff(then, now);
-  if (Math.abs(days) < 30) return RELATIVE.format(days, "day");
-  return formatDate(then);
+  return formatRelativeSigned(iso);
 }
 
 export function daysWaiting(iso: string | null | undefined): number | null {

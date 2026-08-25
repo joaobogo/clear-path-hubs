@@ -1,3 +1,4 @@
+import { formatDateTime, formatRelative } from "@/lib/format/datetime";
 /**
  * Agent Activity rail — pure layer.
  *
@@ -363,8 +364,5 @@ export function relTime(iso: string, now: Date = new Date()): string {
 }
 
 export function absTime(iso: string): string {
-  return new Date(iso).toLocaleString("en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  return formatDateTime(iso);
 }

@@ -1,4 +1,4 @@
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatDate } from "@/lib/format/datetime";
 /**
  * Calendar dates (start date, renewal date, guarantee window, response date)
  * are stored as Postgres `date` — a day with no time and no zone. Rendering
@@ -27,12 +27,7 @@ export function formatCalendarDate(
 ): string {
   const d = toUtcDay(value);
   if (!d) return fallback;
-  return d.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  return formatDate(d, fallback, "UTC");
 }
 
 /** "1 September 2026" for headline placements. */
@@ -42,12 +37,7 @@ export function formatCalendarDateLong(
 ): string {
   const d = toUtcDay(value);
   if (!d) return fallback;
-  return d.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  return formatDate(d, fallback, "UTC");
 }
 
 /** The `YYYY-MM-DD` form, for `<input type="date">` values and comparisons. */
