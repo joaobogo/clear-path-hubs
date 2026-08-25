@@ -198,6 +198,15 @@ export const FitHero = memo(function FitHero({
   candidate: ClientCandidateDTO;
 }) {
   const fit = candidate.fit;
+  // Once a candidate is hired or no longer moving forward, a recommendation to
+  // interview is stale advice — the decision is already made.
+  const decided =
+    candidate.stage === "hired" || candidate.stage === "not_moving_forward";
+  const recommendation = decided
+    ? candidate.stage === "hired"
+      ? "Hired — no further action needed."
+      : "No longer moving forward."
+    : fit.recommendation;
   const ring = accentToRing(fit.accent);
   const bg = accentToSoftBg(fit.accent);
   const dashArray = 251.2; // 2π·40
@@ -231,7 +240,7 @@ export const FitHero = memo(function FitHero({
                 {fit.headline}
               </h2>
               <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
-                {fit.recommendation}
+                {recommendation}
               </p>
             </div>
           ) : (
@@ -240,7 +249,7 @@ export const FitHero = memo(function FitHero({
                 {fit.headline}
               </h2>
               <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
-                {fit.recommendation}
+                {recommendation}
               </p>
             </>
           )}
