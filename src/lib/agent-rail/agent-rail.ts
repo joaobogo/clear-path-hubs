@@ -351,16 +351,8 @@ export function filterGroups(
   return out;
 }
 
-export function relTime(iso: string, now: Date = new Date()): string {
-  const diff = now.getTime() - new Date(iso).getTime();
-  const min = Math.round(diff / 60000);
-  if (min < 1) return "just now";
-  if (min < 60) return `${min}m ago`;
-  const hrs = Math.round(min / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.round(hrs / 24);
-  if (days < 7) return `${days}d ago`;
-  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+export function relTime(iso: string): string {
+  return formatRelative(iso);
 }
 
 export function absTime(iso: string): string {
