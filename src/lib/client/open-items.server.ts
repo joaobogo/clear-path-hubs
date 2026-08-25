@@ -61,7 +61,7 @@ export async function loadClientOpenItems(
   }
 
   const offerMatchIds = kpiRows.filter((row) => row.stage === "offer").map((row) => row.id);
-  const offerMap = new Map<string, { due: string | null; holder: string }>();
+  const offerMap = new Map<string, { due: string | null; holder: string; movedAt: string | null }>();
   if (offerMatchIds.length > 0) {
     const { data: offerRows } = await supabase
       .from("hire_records")
@@ -70,12 +70,21 @@ export async function loadClientOpenItems(
       .in("candidate_match_id", offerMatchIds);
     for (const offer of (offerRows as AnyRow[]) ?? []) {
       const built = buildOfferRow(offer as never);
+      // The queue ages the offer from the same movement mark the Offers page
+      // reads (stage entry, or the last nudge if that is more recent), so both
+      // surfaces quote the same number of days.
+      const entered = stageEnteredAt(offer as never);
+      const marks = [entered, offer.last_nudged_at as string | null]
+        .filter((t): t is string => Boolean(t) && !Number.isNaN(Date.parse(t as string)))
+        .sort();
       offerMap.set(offer.candidate_match_id as string, {
         due: (offer.expected_response_date as string | null) ?? null,
         holder: built.holder_label,
+        movedAt: marks.length > 0 ? marks[marks.length - 1] : null,
       });
     }
   }
+
 
   const { data: positions } = await excludeTestRecords(
     supabase
