@@ -8,13 +8,29 @@ import type { RequirementRow, RequirementStatus } from "../client-fit-presentati
  * Invariant: a requirement that carries a quote is never "not evidenced".
  */
 /** True when the requirement carries a quoted passage from the candidate's record. */
+export function hasQuotedEvidence(
+  row: Pick<RequirementRow, "evidence">,
+): boolean {
+  return (row.evidence ?? []).some((e) => (e.snippet ?? "").trim().length > 0);
+}
+
+/**
+ * True when nothing is quoted for the requirement, but the run attached a
+ * weaker, related passage. These are shown as possible signals, never counted
+ * as evidence.
+ */
+export function hasRelatedSignal(
+  row: Pick<RequirementRow, "evidence"> & { context?: RequirementRow["context"] },
+): boolean {
+  if (hasQuotedEvidence(row)) return false;
+  return (row.context ?? []).some((e) => (e.snippet ?? "").trim().length > 0);
+}
+
+/** True when the requirement carries any source at all, quoted or related. */
 export function hasEvidenceSource(
   row: Pick<RequirementRow, "evidence"> & { context?: RequirementRow["context"] },
 ): boolean {
-  return (
-    (row.evidence ?? []).some((e) => (e.snippet ?? "").trim().length > 0) ||
-    (row.context ?? []).some((e) => (e.snippet ?? "").trim().length > 0)
-  );
+  return hasQuotedEvidence(row) || hasRelatedSignal(row);
 }
 
 export function resolveRequirementStatus(
@@ -22,20 +38,19 @@ export function resolveRequirementStatus(
     context?: RequirementRow["context"];
   },
 ): RequirementStatus {
-  const hasQuote = hasEvidenceSource(row);
-
   if (row.status === "contradicted") return "contradicted";
   if (row.status === "not_applicable") return "not_applicable";
-  // A verdict without a source is not evidence. Every surface counts a
-  // requirement as evidenced only when a passage backs it, so the coverage
-  // panel, the header chip and the score breakdown can never disagree.
-  if (!hasQuote) return "not_evidenced";
+  // A verdict without a quoted passage is not evidence. Related-only matches
+  // stay "not evidenced" here and are reported separately as possible signals,
+  // so no surface can count a requirement with no source as evidenced.
+  if (!hasQuotedEvidence(row)) return "not_evidenced";
   if (row.status === "met") return "met";
   if (row.status === "partial") return "partial";
-  // No verdict from the run, but the candidate's record does back the
-  // requirement: that is partly met, never unknown.
+  // No verdict from the run, but a quote does back the requirement: that is
+  // partly met, never unknown.
   return "partial";
 }
+
 
 
 /** The single wording used for a requirement status anywhere in the workspace. */
