@@ -630,13 +630,6 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
         </div>
       )}
 
-      {candidate.summary && (
-        <p className="mt-3 text-sm text-foreground/90">
-          {sanitizeInternalMarkers(candidate.summary)}
-        </p>
-      )}
-
-
       <ul className="mt-4 space-y-2">
         {rows.map((row) => (
           <RequirementRowView
