@@ -607,58 +607,19 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
       )}
 
 
-      {rows.length > 0 && (
-        <ul className="mt-4 space-y-3">
-          {rows.map((line) => (
-            <li
-              key={line.id}
-              className={cn(
-                "rounded-md border p-3",
-                line.verdict === "met"
-                  ? "taas-bd-success taas-bg-success-soft"
-                  : line.verdict === "partial"
-                    ? "taas-bd-warning taas-bg-warning-soft"
-                    : "bg-muted/30",
-              )}
-            >
-              <div className="flex items-start gap-2">
-                {line.verdict === "met" ? (
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 taas-fg-success" aria-hidden />
-                ) : line.verdict === "partial" ? (
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning" aria-hidden />
-                ) : (
-                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-                )}
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-medium">{line.requirement}</span>
-                    <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
-                      {line.importance === "must_have" ? "Must-have" : "Preferred"}
-                    </Badge>
-                    <span className="text-[11px] text-muted-foreground">{line.verdictLabel}</span>
-                  </div>
-                  {line.claim && !line.underReview && (
-                    <p className="mt-1 text-sm text-foreground/90">“{line.claim}”</p>
-                  )}
-                  {line.underReview && (
-                    <p className="mt-1 text-sm italic text-muted-foreground">
-                      Confirmed with the candidate; a direct quote is still being pulled.
-                    </p>
-                  )}
-                  {!line.claim && !line.underReview && (
-                    <p className="mt-1 text-sm italic text-muted-foreground">
-                      Nothing shown for this yet — worth confirming in the interview.
-                    </p>
-                  )}
-                  <div className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
-                    {line.sources.length > 0 ? line.sources.join(" · ") : "No source yet"}
-                  </div>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul className="mt-4 space-y-2">
+        {rows.map((row) => (
+          <RequirementRowView
+            key={row.id}
+            row={row}
+            claim={
+              claimByKey.get(row.id) ??
+              claimByKey.get(row.label.trim().toLowerCase()) ??
+              null
+            }
+          />
+        ))}
+      </ul>
 
     </SectionCard>
   );
