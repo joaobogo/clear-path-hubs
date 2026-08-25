@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { clientAction, undoClientDecision } from "@/lib/client-decisions.functions";
 import { confirmationLine } from "@/lib/client-next-step";
 import {
@@ -80,6 +80,7 @@ export function CandidatePrimaryAction({
   score?: number | null;
 }) {
   const queryClient = useQueryClient();
+  const search = useSearch({ strict: false }) as { org?: string };
   const act = useServerFn(clientAction);
   const undo = useServerFn(undoClientDecision);
   const [pending, setPending] = React.useState<PrimaryActionKey | null>(null);
@@ -178,13 +179,8 @@ export function CandidatePrimaryAction({
   }
 
   if (!advance) {
-    return (
-      <Button asChild size={size} variant="secondary">
-        <Link to="/client/candidates/$id" params={{ id: matchId }}>
-          View
-        </Link>
-      </Button>
-    );
+    // The candidate name already links to the profile; no extra action needed.
+    return null;
   }
 
   const advanceButton = (
@@ -214,6 +210,7 @@ export function CandidatePrimaryAction({
           <Link
             to="/client/candidates/$id"
             params={{ id: matchId }}
+            search={search.org ? { org: search.org } : undefined}
             hash="sec-evidence"
             preload="intent"
           >
