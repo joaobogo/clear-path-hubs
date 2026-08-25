@@ -16,6 +16,7 @@ import {
   seedFixtures,
   type SeedResult,
 } from "./helpers/qa";
+import { toCandidateStatusDTO } from "@/lib/candidate/status-projection";
 
 let fixtures: SeedResult;
 let candidateEmail: string;
@@ -60,6 +61,29 @@ test("applications list shows this candidate's real applications with candidate-
   });
   expect(await page.getByRole("link", { name: /track application/i }).count()).toBe(live.length);
   await expect(cards.first()).toBeVisible();
+
+  // The status the portal shows must equal the status derived from the raw rows
+  // by the one projection — the same applications + candidate_matches truth this
+  // helper reads. No stored candidate-facing status anywhere in between.
+  const openInfo = new Set((truth.open_info_requests ?? []).map((r) => r.application_id));
+  for (const app of live) {
+    const matches = truth.matches.filter((m) => m.application_id === app.id);
+    const expected = toCandidateStatusDTO(
+      {
+        status: app.status,
+        withdrawn_at: app.withdrawn_at,
+        positions: { status: app.positions?.status ?? null },
+        candidate_matches: matches,
+      },
+      { hasOpenInfoRequest: openInfo.has(app.id) },
+    ).status;
+    const card = page
+      .locator("[data-application-id]", { has: page.locator(`text=${expected}`) })
+      .filter({ hasText: expected });
+    const scoped = page.locator(`[data-application-id="${app.id}"]`);
+    const target = (await scoped.count()) > 0 ? scoped : card;
+    await expect(target.first()).toContainText(expected, { timeout: 30_000 });
+  }
 
   const body = (await page.locator("main").innerText()).toLowerCase();
   const allowed = [
