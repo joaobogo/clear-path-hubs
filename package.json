@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "seed:demo": "bun run scripts/seed-demo-candidates.ts",
     "generate:robots": "bun run scripts/generate-robots-txt.ts",
     "check:vocabulary": "node scripts/check-public-vocabulary.mjs && node scripts/check-client-vocabulary.mjs && node scripts/check-no-stripe.mjs",
     "check:vocabulary:client": "node scripts/check-client-vocabulary.mjs",
