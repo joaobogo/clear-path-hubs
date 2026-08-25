@@ -191,7 +191,7 @@ export async function loadClientOpenItems(
       href: "/client/offers",
       due_at: due,
       overdue: isOverdue(due, now),
-      waiting_since: row.stage_entered_at,
+      waiting_since: offer?.movedAt ?? row.stage_entered_at,
     });
   }
 
