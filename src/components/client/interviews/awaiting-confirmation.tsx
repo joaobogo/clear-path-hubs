@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { CalendarClock } from "lucide-react";
 import { formatDateTime, pluralize } from "@/lib/format/datetime";
 import { interviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
+import { liveSlots } from "@/lib/scheduling";
 import type { InterviewDTO } from "@/lib/interviews.functions";
 
 /**
@@ -41,8 +42,10 @@ export function AwaitingConfirmationSection({
       </div>
       <div className="space-y-2">
         {pending.map((iv) => {
-          const slots = iv.proposed_times ?? [];
-          const earliest = slots.slice().sort()[0] ?? null;
+          // Same list the timeline card reads: expired windows and times that
+          // have already passed are not options the client can still confirm.
+          const slots = liveSlots(iv.proposed_times ?? [], iv.availability_expires_at).slice().sort();
+          const earliest = slots[0] ?? null;
           return (
             <Card
               key={iv.id}
@@ -60,7 +63,7 @@ export function AwaitingConfirmationSection({
                   <CalendarClock className="h-3.5 w-3.5" aria-hidden="true" />
                   {slots.length > 0 && earliest
                     ? `${pluralize(slots.length, "proposed time")} · earliest ${formatDateTime(earliest)}`
-                    : "No times proposed yet"}
+                    : "No times still available — we will send new ones"}
                 </p>
               </div>
               {!readOnly ? (
