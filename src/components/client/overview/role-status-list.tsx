@@ -2,7 +2,7 @@
 type Any = any;
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, Briefcase, ChevronRight } from "lucide-react";
-import { formatStageDate } from "@/lib/client-role-progress";
+
 import { shortlistCommitment, formatCommitmentDate } from "@/lib/client-commitment";
 import { roleNextStep } from "@/lib/client-role-next-step";
 import { clientRoleStatusLabel } from "@/lib/client-role-status";
