@@ -184,6 +184,25 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
           .maybeSingle()
       : { data: null };
 
+    // Interviews — the interview record is the only source of interview dates,
+    // so the timeline and the Interviews page can never disagree.
+    const { data: interviewRows } = candidateMatchId
+      ? await supabase
+          .from("interviews")
+          .select("id, status, requested_at, scheduled_at, completed_at, cancelled_at, created_at")
+          .eq("candidate_match_id", candidateMatchId)
+          .order("created_at", { ascending: true })
+      : { data: [] as Any[] };
+
+    // Stage history — real timestamps for shortlist/interview/offer/hire moves.
+    const { data: stageHistory } = candidateMatchId
+      ? await supabase
+          .from("candidate_stage_history")
+          .select("to_stage, created_at")
+          .eq("candidate_match_id", candidateMatchId)
+          .order("created_at", { ascending: true })
+      : { data: [] as Any[] };
+
     // Outreach touches
     const { data: touches } = await supabase
       .from("outreach_touches")
@@ -256,25 +275,79 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
       auditMap.set(a.action, a.occurred_at);
     }
 
-    // Shortlisted
-    const shortlistedAt = auditMap.get("candidate_match.shortlisted") ?? 
-      (match?.stage === "shortlisted" || match?.stage === "interview_process" || match?.stage === "offer" || match?.stage === "hired" ? match.updated_at : null);
+    // First stage move of a given kind, from the stage history table.
+    const firstStageAt = (stage: string): string | null => {
+      for (const h of (stageHistory ?? []) as Any[]) {
+        if (h.to_stage === stage && h.created_at) return String(h.created_at);
+      }
+      return null;
+    };
+
+    // Interview dates come from the interview records only.
+    const interviews = ((interviewRows ?? []) as Any[]).filter((i) => i.status !== "cancelled");
+    const interviewAnchors = interviews
+      .flatMap((i) => [i.scheduled_at, i.completed_at, i.requested_at, i.created_at])
+      .filter((v): v is string => Boolean(v));
+
+    const appliedAt = String(app.applied_at ?? app.created_at ?? match?.created_at ?? "");
+    const hiredAt = hire?.hired_at ?? hire?.accepted_at ?? null;
+    const offerAt = hire?.sent_at ?? null;
+
+    /**
+     * A guessed timestamp (stage + updated_at) can land after events it must
+     * precede. Keep guesses inside the window the real events allow.
+     */
+    const laterAnchors = [
+      ...interviewAnchors,
+      offerAt,
+      hiredAt,
+      firstStageAt("offer"),
+      firstStageAt("hired"),
+    ].filter((v): v is string => Boolean(v));
+    const earliestLater = laterAnchors.length
+      ? laterAnchors.reduce((a, b) => (a < b ? a : b))
+      : null;
+    const clampGuess = (ts: string | null): string | null => {
+      if (!ts) return null;
+      let out = ts;
+      if (appliedAt && out < appliedAt) out = appliedAt;
+      if (earliestLater && out > earliestLater) out = earliestLater;
+      return out;
+    };
+
+    // Shortlisted — audit event, then stage history, then a clamped guess.
+    const shortlistedAt =
+      auditMap.get("candidate_match.shortlisted") ??
+      firstStageAt("shortlisted") ??
+      clampGuess(
+        match?.stage === "shortlisted" ||
+          match?.stage === "interview_process" ||
+          match?.stage === "offer" ||
+          match?.stage === "hired"
+          ? (match.updated_at as string | null)
+          : null,
+      );
     if (shortlistedAt) push("shortlisted", shortlistedAt);
 
-    // Interviewing - map distinct interview states
-    const interviewRequestedAt = auditMap.get("interview.requested");
-    const interviewScheduledAt = auditMap.get("interview.scheduled");
-    const interviewCompletedAt = auditMap.get("interview.completed");
+    // Interviewed — one row per real interview milestone.
+    for (const i of interviews) {
+      if (i.requested_at) push("interviewed", i.requested_at, "Interview requested");
+      if (i.scheduled_at) push("interviewed", i.scheduled_at, "Interview scheduled");
+      if (i.completed_at) push("interviewed", i.completed_at, "Interview completed");
+    }
 
-    if (interviewRequestedAt) push("interviewed", interviewRequestedAt, "Interview requested");
-    if (interviewScheduledAt) push("interviewed", interviewScheduledAt, "Interview scheduled");
-    if (interviewCompletedAt) push("interviewed", interviewCompletedAt, "Interview completed");
-
-    // Fallback for interviewed stage if no specific audit events found
-    if (!interviewRequestedAt && !interviewScheduledAt && !interviewCompletedAt) {
-      if (match?.stage === "interview_process" || match?.stage === "offer" || match?.stage === "hired") {
-        push("interviewed", match.updated_at ?? match.created_at);
-      }
+    // No interview record: fall back to the stage move, kept in order.
+    if (interviews.length === 0) {
+      const stageInterviewAt =
+        firstStageAt("interview_process") ??
+        clampGuess(
+          match?.stage === "interview_process" ||
+            match?.stage === "offer" ||
+            match?.stage === "hired"
+            ? ((match.updated_at ?? match.created_at) as string | null)
+            : null,
+        );
+      if (stageInterviewAt) push("interviewed", stageInterviewAt);
     }
 
     if (match?.stage === "not_moving_forward") {
@@ -302,6 +375,17 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
       push("rediscovered", e.created_at, e.notes ?? null);
     }
 
-    events.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
-    return { events };
+    // One row per event type + timestamp: exact copies are dropped.
+    const deduped = new Map<string, JourneyEvent>();
+    for (const e of events) {
+      const key = `${e.kind}|${new Date(e.at).getTime()}`;
+      const existing = deduped.get(key);
+      // Keep the row that carries a detail line.
+      if (!existing || (!existing.detail && e.detail)) deduped.set(key, e);
+    }
+
+    const ordered = Array.from(deduped.values()).sort(
+      (a, b) => new Date(a.at).getTime() - new Date(b.at).getTime(),
+    );
+    return { events: ordered };
   });
