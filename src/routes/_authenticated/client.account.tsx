@@ -156,12 +156,6 @@ function AccountPage() {
 
       </header>
 
-      {readOnly && (
-        <div className="flex items-center gap-2 rounded-lg border taas-bd-warning px-3 py-2 text-sm">
-          <Info className="h-4 w-4 shrink-0 taas-fg-warning" />
-          <span>You are viewing as an administrator — changes are disabled.</span>
-        </div>
-      )}
 
       {tab === "workspace" && (
         <div className="space-y-8">

@@ -423,16 +423,6 @@ function CandidateDetailPage() {
  readOnly={readOnly}
  />
 
- {readOnly && support.readOnly && (
- <div
- role="status"
- className="mt-4 flex items-center gap-2 rounded-md border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-xs text-muted-foreground"
- >
- <ShieldAlert className="h-3.5 w-3.5 shrink-0" aria-hidden />
- You are viewing this candidate as the Client. Actions are disabled in
- read-only preview.
- </div>
- )}
 
  {isViewer && !support.readOnly && (
  <ViewerReadOnlyNotice

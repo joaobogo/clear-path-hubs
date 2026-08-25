@@ -288,12 +288,6 @@ export function TeamTab() {
   </div>
   )}
 
-  {readOnly && (
-  <div className="flex items-center gap-2 rounded-lg border taas-bd-warning taas-bg-warning-solid/[0.05] px-3 py-2 text-sm">
-  <Info className="h-4 w-4 shrink-0 taas-fg-warning" />
-  <span>You are viewing as an administrator — team changes are disabled.</span>
-  </div>
-  )}
 
   {/* Seats full: say so before the admin fills in a form that cannot succeed,
       and give them the way forward instead of a dead end. */}
