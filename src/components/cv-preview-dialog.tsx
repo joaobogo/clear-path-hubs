@@ -46,6 +46,7 @@ export function CvPreviewDialog({
   const [loading, setLoading] = useState(false);
   const [failure, setFailure] = useState<CvDownloadFailure | null>(null);
   const [renderFailed, setRenderFailed] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearTimer = () => {
