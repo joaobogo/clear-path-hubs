@@ -3,6 +3,8 @@ import { isOverdue, sortOpenItems, dedupeOpenItems, type OpenItem } from "@/lib/
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { loadKpiRows, isAwaitingClientDecision } from "@/lib/client-kpi.server";
 import { buildOfferRow } from "@/lib/client-offer-holder";
+import { stageEnteredAt } from "@/lib/offer-stall";
+
 import { roleGaps } from "@/lib/position-readiness";
 import { loadInterviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm.server";
 
