@@ -651,21 +651,48 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
 
 export const WhatNeedsValidation = memo(function WhatNeedsValidation({
   candidate,
+  title = "What needs validation",
+  preferredLimit = Infinity,
+  onInterviewGuideClick,
 }: {
   candidate: ClientCandidateDTO;
+  title?: string;
+  preferredLimit?: number;
+  onInterviewGuideClick?: () => void;
 }) {
   // Derived from the same coverage statuses rendered by RequirementCoverage, so
   // a badge and its validation sentence can never disagree.
   const items = buildValidationList(candidate.requirement_rows, candidate.concerns);
   if (items.length === 0) return null;
+
+  const [showAll, setShowAll] = useState(false);
+  const rowById = new Map(candidate.requirement_rows.map((r) => [r.id, r]));
+  const isMustHave = (item: ValidationItem) => {
+    if (!item.label) return false;
+    const row =
+      rowById.get(item.id) ??
+      candidate.requirement_rows.find(
+        (r) => r.label.trim().toLowerCase() === item.label.trim().toLowerCase(),
+      );
+    return row?.importance === "must_have";
+  };
+
+  const notes = items.filter((i) => i.label == null);
+  const reqItems = items.filter((i) => i.label != null);
+  const mustItems = reqItems.filter(isMustHave);
+  const preferredItems = reqItems.filter((i) => !isMustHave(i));
+  const visiblePreferred = showAll ? preferredItems : preferredItems.slice(0, preferredLimit);
+  const hiddenPreferredCount = preferredItems.length - visiblePreferred.length;
+  const visibleItems = [...notes, ...mustItems, ...visiblePreferred];
+
   return (
     <SectionCard
-      title="What needs validation"
+      title={title}
       icon={<Info className="h-4 w-4" />}
       description="Areas to confirm during the interview before a hiring decision."
     >
       <ul className="space-y-2">
-        {items.map((item) => (
+        {visibleItems.map((item) => (
           <li
             key={item.id}
             className={cn(
@@ -694,6 +721,26 @@ export const WhatNeedsValidation = memo(function WhatNeedsValidation({
           </li>
         ))}
       </ul>
+
+      {hiddenPreferredCount > 0 && (
+        <button
+          type="button"
+          onClick={() => setShowAll(true)}
+          className="mt-3 text-xs font-medium text-muted-foreground underline-offset-2 hover:underline"
+        >
+          Show all ({preferredItems.length})
+        </button>
+      )}
+
+      {onInterviewGuideClick && (
+        <button
+          type="button"
+          onClick={onInterviewGuideClick}
+          className="mt-3 block text-xs text-muted-foreground underline-offset-2 hover:underline"
+        >
+          See interview question guide →
+        </button>
+      )}
     </SectionCard>
   );
 });
