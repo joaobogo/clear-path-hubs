@@ -86,11 +86,28 @@ export function CvPreviewDialog({
     [matchId],
   );
 
-  useEffect(() => clearTimer, []);
+  /** Radix locks the page with body{pointer-events:none} while a modal is up;
+   * if the content unmounts mid-open the lock survives and the page looks
+   * frozen until a reload. Always hand interaction back ourselves. */
+  const releasePageInteraction = () => {
+    if (typeof document !== "undefined") document.body.style.pointerEvents = "";
+  };
+
+  useEffect(
+    () => () => {
+      clearTimer();
+      releasePageInteraction();
+    },
+    [],
+  );
 
   useEffect(() => {
-    if (!open) clearTimer();
+    if (!open) {
+      clearTimer();
+      releasePageInteraction();
+    }
   }, [open]);
+
 
   function handleClick() {
     const isMobile =
@@ -137,10 +154,15 @@ export function CvPreviewDialog({
         open={open}
         onOpenChange={(next) => {
           setOpen(next);
-          if (!next) clearTimer();
+          if (!next) {
+            clearTimer();
+            releasePageInteraction();
+          }
         }}
       >
         <DialogContent className="max-w-4xl" data-qa="cv-preview-dialog">
+
+
           <DialogHeader>
             <DialogTitle>
               CV{candidateName ? ` — ${candidateName}` : ""}
@@ -208,9 +230,23 @@ export function CvPreviewDialog({
               )
             ) : null}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
             <DownloadCvButton matchId={matchId} mode="download" />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              data-qa-action="close-cv-preview"
+              onClick={() => {
+                setOpen(false);
+                clearTimer();
+                releasePageInteraction();
+              }}
+            >
+              Close
+            </Button>
           </div>
+
         </DialogContent>
       </Dialog>
     </>
