@@ -301,6 +301,12 @@ export function ConversationThread({
     return out;
   }, [data]);
 
+  useEffect(() => {
+    if (!sendError) return;
+    const check = checkMessageBody(body, files.length > 0);
+    if (check.ok) setSendError(null);
+  }, [body, files.length, sendError]);
+
   return (
     <div className={cn("flex flex-col rounded-lg border bg-card", heightClass, className)}>
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
@@ -421,7 +427,7 @@ export function ConversationThread({
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                  <span className="sr-only">{sendError ? "Retry sending" : "Send"}</span>
+                  <span className="sr-only">Send</span>
                 </Button>
               </div>
             </div>
@@ -466,7 +472,7 @@ export function ConversationThread({
               </ul>
             )}
 
-            {sendError ? (
+            {sendError && (
               <p className="text-sm text-destructive" role="alert">
                 {sendError}{" "}
                 <button
@@ -475,15 +481,14 @@ export function ConversationThread({
                   onClick={() => void send()}
                   disabled={sending}
                 >
-                  Retry
+                  Send now
                 </button>
               </p>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                Attach {ALLOWED_ATTACHMENT_HINT}. Up to {MAX_MESSAGE_CHARS.toLocaleString()}{" "}
-                characters.
-              </p>
             )}
+            <p className={cn("text-xs text-muted-foreground", sendError && "opacity-70")}>
+              Attach {ALLOWED_ATTACHMENT_HINT}. Up to {MAX_MESSAGE_CHARS.toLocaleString()}{" "}
+              characters.
+            </p>
           </form>
         ) : (
           <p className="text-sm text-muted-foreground">
