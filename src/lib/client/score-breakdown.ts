@@ -11,7 +11,7 @@
  * an empty list so the surface can say so plainly.
  */
 import { getEvidenceCounts } from "./evidence-counts";
-import { resolveRequirementStatus } from "./requirement-status";
+import { hasRelatedSignal, resolveRequirementStatus } from "./requirement-status";
 import { bandRange, classifyBand } from "@/lib/scoring/bands";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
