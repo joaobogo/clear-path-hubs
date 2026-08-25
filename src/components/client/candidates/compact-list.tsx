@@ -96,6 +96,7 @@ export function CompactList({
                 <td className="py-3 px-3 align-middle">
                   <Link
                     to="/client/candidates/$id"
+                    preload="intent"
                     params={{ id: c.match_id }}
                     search={orgSearch ? { org: orgSearch } : undefined}
                     className="font-medium hover:underline"
@@ -130,6 +131,7 @@ export function CompactList({
                   ) : (
                     <Link
                       to="/client/candidates/$id"
+                      preload="intent"
                       params={{ id: c.match_id }}
                       search={orgSearch ? { org: orgSearch } : undefined}
                       className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/80"
