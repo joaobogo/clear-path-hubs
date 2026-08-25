@@ -30,7 +30,7 @@ import type {
 } from "@/lib/client-fit-presentation";
 import { SectionCard } from "./shared";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
-import { getEvidenceCounts } from "@/lib/client/evidence-counts";
+import { getEvidenceCounts, type EvidenceCounts } from "@/lib/client/evidence-counts";
 import { requirementStatusLabel, resolveRequirementStatus } from "@/lib/client/requirement-status";
 
 
