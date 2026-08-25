@@ -68,6 +68,7 @@ function ConversationsPage() {
   const rawFilter = search.filter || (box === "unread" ? "unread" : "all");
   const filter = rawFilter === "unread" ? "all" : rawFilter;
   const [q, setQ] = useState("");
+  const [hideEmpty, setHideEmpty] = useState(true);
 
   const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
