@@ -91,7 +91,7 @@ export const getClientPositions = createServerFn({ method: "GET" })
         // Tab key, not a raw DB status: expanded below so intermediate
         // statuses (submitted, under_review, needs_clarification, approved)
         // can never fall outside every tab.
-        status: z.enum(["active", "draft", "paused", "closed"]).optional(),
+        status: z.enum(["active", "draft", "review", "paused", "closed"]).optional(),
       })
       .parse(input),
   )

@@ -57,7 +57,7 @@ import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveFilteredEmptyState } from "@/lib/empty-states/empty-state-catalogue";
 import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
 import { Skeleton } from "@/components/ui/skeleton";
-import { countRolesByTab, roleStatusTabLabel, roleStatusTab } from "@/lib/client-role-status-tabs";
+import { countRolesByTab, roleStatusTabLabel, roleTabForRow } from "@/lib/client-role-status-tabs";
 import { plural } from "@/lib/format/plural";
 
 function PositionsPage() {
@@ -108,9 +108,7 @@ function PositionsPage() {
   const statusCounts = useMemo(() => countRolesByTab(allRows), [allRows]);
   const rows = useMemo(() => {
     return allRows.filter((p) => {
-      const key = p.client_status?.key;
-      const tab = roleStatusTab(key);
-      return tab === status;
+      return roleTabForRow(p) === status;
     });
   }, [allRows, status]);
 
@@ -226,9 +224,10 @@ function PositionsPage() {
  onClear: () => setSearch({ location: "all" }),
  });
 
- const tabSubtitle: Record<typeof status, string> = {
+ const tabSubtitle: Record<string, string> = {
   active: "Roles we are actively hiring for with you.",
-  draft: "Roles under review before going live.",
+  draft: "Drafts saved but not yet submitted.",
+  review: "Roles under review before going live.",
   paused: "Roles temporarily paused.",
   closed: "Closed and archived roles.",
  };
@@ -241,7 +240,7 @@ function PositionsPage() {
   Roles
   </h1>
   <p className="text-sm text-muted-foreground mt-1">
-  {tabSubtitle[status]}
+  {tabSubtitle[status] ?? ""}
   </p>
   </div>
  <div className="text-xs text-muted-foreground text-right">
@@ -249,7 +248,7 @@ function PositionsPage() {
   {hasRoleData ? (
     <>
       {plural(rows.length, "role")}
-      {status !== "active" ? ` under review` : ""}
+      {status === "active" ? "" : ` in ${roleStatusTabLabel(status).toLowerCase()}`}
     </>
   ) : (
     /* Never a count before the roles list resolves — a zero here reads as
