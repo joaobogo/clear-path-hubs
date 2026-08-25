@@ -8,6 +8,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import type { EventType } from "./events";
+import { qaGuardValues, isQaSafeOrg } from "@/lib/qa-guard";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -2017,6 +2018,20 @@ export const updateOrganization = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!before) throw new Error(`organization_not_found [${trace}]`);
     if (before.archived_at) throw new Error(`organization_archived [${trace}]`);
+    const nextFlags = {
+      is_demo: before.is_demo,
+      is_test_record: data.patch.is_test_record ?? before.is_test_record,
+      is_qa: before.is_qa,
+    };
+    if (!isQaSafeOrg(nextFlags)) {
+      const qa = qaGuardValues([
+        data.patch.name,
+        data.patch.headquarters,
+        data.patch.primary_contact_name,
+        data.patch.primary_contact_email,
+      ]);
+      if (!qa.ok) throw new Error(`${qa.reason ?? "Invalid input"} [${trace}]`);
+    }
     const { data: after, error } = await s
       .from("organizations")
       .update({ ...data.patch, updated_at: new Date().toISOString() })
