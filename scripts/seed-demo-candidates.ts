@@ -939,7 +939,8 @@ async function main() {
  * open offer. Problems are logged with the candidate id.
  */
 async function verify(
-  sb: SupabaseClient<Database>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  sb: any,
   organizationId: string,
   positionId: string,
   requirementCount: number,
