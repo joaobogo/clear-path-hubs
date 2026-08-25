@@ -78,6 +78,7 @@ export function normaliseSource(raw: string | null | undefined): ClaimSource {
 }
 
 import { resolveRequirementStatus } from "@/lib/client/requirement-status";
+import { getEvidenceCounts } from "@/lib/client/evidence-counts";
 
 const VERDICT_LABEL: Record<RationaleVerdict, string> = {
   met: "Meets this",
