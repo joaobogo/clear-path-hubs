@@ -1,4 +1,5 @@
 import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
+import { MUST_HAVE_MEASURE_LABELS } from "@/lib/client/evidence-counts";
 
 export const STAGE_OPTIONS = [
  { key: "all", label: "All stages" },
@@ -36,7 +37,7 @@ export const REVIEW_OPTIONS = [
 export const SORT_OPTIONS = [
   { key: "score", label: "Best match (score)" },
   { key: "recent", label: "Recently delivered" },
-  { key: "must", label: "Must-have coverage" },
+  { key: "must", label: MUST_HAVE_MEASURE_LABELS.fully_met },
   { key: "stage", label: "Stage" },
   { key: "name", label: "Candidate name" },
 ] as const;

@@ -1,7 +1,7 @@
 import { PIPELINE_STAGE_DISPLAY } from "@/lib/client/stage-display";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
-import { getEvidenceCounts } from "./client/evidence-counts";
+import { getEvidenceCounts, MUST_HAVE_MEASURE_LABELS } from "./client/evidence-counts";
 import { resolveRequirementStatus } from "./client/requirement-status";
 
 export const COMPARE_MIN = 2;
@@ -248,13 +248,15 @@ export function buildRoleComparison(input: ClientCandidateDTO[]): RoleComparison
   const defs: Array<{ key: string; label: string; get: (c: ClientCandidateDTO) => string[] }> = [
     {
       key: "must_met",
-      label: "Must-haves met",
+      label: MUST_HAVE_MEASURE_LABELS.fully_met,
       get: (c) => {
         const counts = getEvidenceCounts(c.requirement_rows);
         const labels = c.requirement_rows
           .filter((r) => r.importance === "must_have" && r.status === "met")
           .map((r) => r.label);
-        return labels.length ? labels : [`${counts.must_met} of ${counts.must_total} evidenced`];
+        return labels.length
+          ? labels
+          : [`${counts.must_met} of ${counts.must_total} fully met`];
       },
     },
     {

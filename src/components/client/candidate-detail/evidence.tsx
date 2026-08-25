@@ -30,7 +30,7 @@ import type {
 } from "@/lib/client-fit-presentation";
 import { SectionCard, Metric } from "./shared";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
-import { getEvidenceCounts } from "@/lib/client/evidence-counts";
+import { getEvidenceCounts, MUST_HAVE_MEASURE_LABELS } from "@/lib/client/evidence-counts";
 import { requirementStatusLabel, resolveRequirementStatus } from "@/lib/client/requirement-status";
 
 
@@ -457,7 +457,7 @@ export const RequirementCoverage = memo(function RequirementCoverage({
       )}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 
-        <Metric label="Must-have met" value={getEvidenceCounts(requirement_rows).must_met} tone="emerald" />
+        <Metric label={MUST_HAVE_MEASURE_LABELS.fully_met} value={getEvidenceCounts(requirement_rows).must_met} tone="emerald" />
         <Metric label="Partially met" value={getEvidenceCounts(requirement_rows).partial} tone="amber" />
         <Metric label="Not evidenced" value={getEvidenceCounts(requirement_rows).unknown} tone="slate" />
         <Metric label="Preferred met" value={requirement_rows.filter(r => r.importance === 'preferred' && r.status === 'met').length} tone="sky" />

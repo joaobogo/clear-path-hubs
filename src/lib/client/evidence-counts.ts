@@ -77,3 +77,38 @@ export function formatCoveragePct(ratio: number | null | undefined): string {
   const rounded = Math.round(v * 10) / 10;
   return `${Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(1)}%`;
 }
+
+
+/**
+ * Two different measurements, two different names — never interchangeable:
+ *
+ * - "Must-have coverage" is weighted: a fully evidenced must-have scores one
+ *   point, a partly evidenced one half. This is the share the score is built
+ *   from (see scoring/score-composition).
+ * - "Must-haves fully met" counts only must-haves that are fully evidenced.
+ *
+ * Every surface that shows either number must call the matching helper here so
+ * two surfaces can never disagree about the same measurement.
+ */
+export const MUST_HAVE_MEASURE_LABELS = {
+  coverage: "Must-have coverage",
+  fully_met: "Must-haves fully met",
+} as const;
+
+/** Weighted must-have coverage as a 0..1 ratio; partly met counts as a half. */
+export function getMustHaveCoverageRatio(rows: RequirementRow[]): number | null {
+  const resolved = rows
+    .map((r) => ({ row: r, status: resolveRequirementStatus(r) }))
+    .filter((r) => r.row.importance === "must_have" && r.status !== "not_applicable");
+  if (resolved.length === 0) return null;
+  const points =
+    resolved.filter((r) => r.status === "met").length +
+    resolved.filter((r) => r.status === "partial").length * 0.5;
+  return points / resolved.length;
+}
+
+/** Must-haves that are fully evidenced — no partial credit. */
+export function getMustHavesFullyMet(rows: RequirementRow[]): { met: number; total: number } {
+  const counts = getEvidenceCounts(rows);
+  return { met: counts.must_met, total: counts.must_total };
+}
