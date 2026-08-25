@@ -520,8 +520,11 @@ export const RequirementCoverage = memo(function RequirementCoverage({
 
 export const WhyThisCandidate = memo(function WhyThisCandidate({
   candidate,
+  withCoverage = false,
 }: {
   candidate: ClientCandidateDTO;
+  /** Folds the Requirement coverage figures into this single evidence panel. */
+  withCoverage?: boolean;
 }) {
   const rationale = buildShortlistRationale(candidate);
   const roleTitle = candidate.position?.title ?? null;
@@ -532,6 +535,9 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
   const bandLine = candidate.fit?.headline
     ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
     : null;
+  const counts = getEvidenceCounts(candidate.requirement_rows);
+  const coveragePct =
+    counts.total > 0 ? Math.round((counts.evidenced / counts.total) * 100) : 0;
 
   return (
     <SectionCard
@@ -548,11 +554,40 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
         <span>{rationale.summary}</span>
       </div>
 
+      {withCoverage && counts.total > 0 && (
+        <div className="mt-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Metric label={MUST_HAVE_MEASURE_LABELS.fully_met} value={counts.must_met} tone="emerald" />
+            <Metric label="Partially met" value={counts.partial} tone="amber" />
+            <Metric label="Not evidenced" value={counts.unknown} tone="slate" />
+            <Metric
+              label="Preferred met"
+              value={candidate.requirement_rows.filter((r) => r.importance === "preferred" && r.status === "met").length}
+              tone="sky"
+            />
+          </div>
+          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+            <span>
+              Requirements evidenced
+              <span className="ml-2 tabular-nums">
+                quoted {counts.quoted} · related {counts.related}
+              </span>
+            </span>
+            <span className="tabular-nums">
+              {counts.evidenced} of {counts.total} · {coveragePct}%
+            </span>
+          </div>
+          <Progress value={coveragePct} className="mt-1" />
+          <Separator className="mt-4" />
+        </div>
+      )}
+
       {candidate.summary && (
         <p className="mt-3 text-sm text-foreground/90">
           {sanitizeInternalMarkers(candidate.summary)}
         </p>
       )}
+
 
       {rows.length > 0 && (
         <ul className="mt-4 space-y-3">
