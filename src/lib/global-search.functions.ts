@@ -153,6 +153,33 @@ export const globalSearch = createServerFn({ method: "POST" })
       }
     }
 
+    // Clients — client scope matches the caller's own organisations by name so
+    // typing the company name is not a dead end.
+    if (scope === "client") {
+      const orFilter = orIlike(["name", "industry"], term);
+      if (orFilter) {
+        const { data: orgs, error } = await supabase
+          .from("organizations")
+          .select("id, name, industry, status, archived_at")
+          .in("id", orgIds)
+          .or(orFilter)
+          .order("name")
+          .limit(LIMIT);
+        if (error) throw new Error(error.message);
+        groups.clients = ((orgs as AnyRow[]) ?? []).map((o) => ({
+          type: "client" as const,
+          id: o.id,
+          label: o.name,
+          context: o.industry ?? undefined,
+          state: o.archived_at ? "Archived" : sentenceLabel(o.status),
+          href: "/client",
+          search: { org: o.id as string },
+        }));
+      }
+    }
+
+
+
     // Positions.
     {
       const orFilter = await buildPositionSearchOr(supabase as never, term, {
