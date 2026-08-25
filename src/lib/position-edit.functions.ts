@@ -42,13 +42,21 @@ async function assertCanView(userId: string, positionId: string) {
   return pos;
 }
 
-/** Write access: editors/admins/staff — read-only viewers are refused. */
+/**
+ * Write access: editors/admins/staff — read-only viewers are refused.
+ * Platform staff working the role from the admin console are acting in their
+ * own console, not impersonating a client seat, so they may write here.
+ */
 async function assertCanEdit(userId: string, positionId: string) {
   const pos = await loadPosition(positionId);
   const s = await getAdmin();
-  await assertWorkspaceWrite(s, userId, pos.organization_id as string);
+  const access = await assertWorkspaceAccess(s, userId, pos.organization_id as string);
+  if (!access.isStaff) {
+    await assertWorkspaceWrite(s, userId, pos.organization_id as string);
+  }
   return pos;
 }
+
 
 async function writeAudit(opts: {
   actor: string;
