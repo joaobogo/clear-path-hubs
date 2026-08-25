@@ -137,7 +137,7 @@ export function PositionEditWizard({
 }: {
   initial: PositionEditInitial;
   returnTo: string;
-  invalidateKeys: string[][];
+  invalidateKeys: readonly (readonly unknown[])[];
   audience: "admin" | "client";
   initialStep?: number;
 }) {

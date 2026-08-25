@@ -8,6 +8,7 @@ import { getClientTeam, inviteClientMember, resendClientInvitation, updateClient
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { useStaleServerError } from "@/lib/use-live-errors";
+import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -154,7 +155,7 @@ export function TeamTab() {
  const canMutate = isAdmin && !readOnly;
 
  const { data: rows = [], isLoading, error, refetch } = useQuery({
- queryKey: ["client-team", orgId],
+ queryKey: kpiCacheKeys.client.team(orgId),
  queryFn: () => teamFn({ data: { orgId: orgId! } }),
  enabled: !!orgId && !!isAdmin,
  placeholderData: (prev) => prev,
@@ -168,7 +169,7 @@ export function TeamTab() {
  isFetching: seatsIsFetching,
  refetch: refetchSeats,
  } = useQuery({
- queryKey: ["client-team-seats", orgId],
+ queryKey: kpiCacheKeys.client.seats(orgId),
  queryFn: () => seatsFn({ data: { orgId: orgId! } }),
  enabled: !!orgId && !!isAdmin,
  });
@@ -552,8 +553,9 @@ function MemberRow({
  const memberMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
  const invalidate = () => {
- qc.invalidateQueries({ queryKey: ["client-team", orgId] });
- qc.invalidateQueries({ queryKey: ["client-team-seats", orgId] });
+ qc.invalidateQueries({ queryKey: kpiCacheKeys.client.team(orgId) });
+ qc.invalidateQueries({ queryKey: kpiCacheKeys.client.seats(orgId) });
+ qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
  };
  // Reactivation consumes a seat, so this can surface the database guard's
  // `seat_limit_exceeded`. Translate before it reaches a client.
