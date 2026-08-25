@@ -417,7 +417,7 @@ export function buildInterviewGuide(args: {
       id: r.id,
       requirement_label: r.label,
       importance: r.importance,
-      question: `Can you elaborate on your experience with ${r.label}?`,
+      question: `Tell me about your work on: ${r.label}.`,
       why: concerns.find(c => c.toLowerCase().includes(r.label.toLowerCase())) || 
            (r.status === "contradicted" ? "Address identified contradictions." : "Verify missing or partial evidence."),
       indicators: ["Specific project examples", "Quantifiable results", "Duration of experience"],
