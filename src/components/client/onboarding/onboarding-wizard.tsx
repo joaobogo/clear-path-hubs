@@ -485,7 +485,7 @@ function RoleStep({ state, onDone, back, saveForLater }: BodyProps) {
             id="ob-description"
             rows={6}
             value={form.description}
-            placeholder="Paste the job description. The system reads it when it compiles the blueprint."
+            placeholder="Paste the job description. The system reads it when it compiles the summary."
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
         </div>
@@ -612,7 +612,7 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
   const compile = useMutation({
     mutationFn: () => retry({ data: { positionId: pos!.id } }),
     onSuccess: async (res) => {
-      if (res?.ok) toast.success("Compiling the blueprint now.");
+      if (res?.ok) toast.success("Compiling the summary now.");
       else toast.info("The compiler is already working on this role.");
       await onDone({ advance: false });
     },
@@ -624,10 +624,10 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       confirm({ data: { organization_id: state.organization_id!, position_id: pos!.id } }),
     onSuccess: async (res) => {
       if (!res.ok) {
-        toast.error("The blueprint is not ready to confirm yet.");
+        toast.error("The summary is not ready to confirm yet.");
         return;
       }
-      toast.success("Blueprint confirmed.");
+      toast.success("Summary confirmed.");
       await onDone();
     },
     onError: (e: Error) => toastError(e),
@@ -645,7 +645,7 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
           </p>
           <Button type="button" onClick={() => compile.mutate()} disabled={compile.isPending}>
             {compile.isPending && <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />}
-            Compile the blueprint
+            Compile the summary
           </Button>
         </div>
       ) : status === "failed" ? (
@@ -828,7 +828,7 @@ function OversightStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
         data: { organization_id: state.organization_id!, position_id: pos!.id, gates },
       }),
     onSuccess: async () => {
-      toast.success("Oversight gates saved.");
+      toast.success("Oversight choices saved.");
       await onDone();
     },
     onError: (e: Error) => toastError(e),
@@ -944,7 +944,7 @@ function RunStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
   const pos = state.position;
   const blockers: string[] = [];
   if (pos && pos.must_haves.length < 3) blockers.push("Add at least three must-have requirements.");
-  if (pos && !pos.blueprint_confirmed_at) blockers.push("Confirm the compiled blueprint.");
+  if (pos && !pos.blueprint_confirmed_at) blockers.push("Confirm the compiled summary.");
   if (pos && !pos.weights_set) blockers.push("Set the scoring weights.");
   if (!state.billing.role_paid && !state.billing.entitlement_available) {
     blockers.push("Complete checkout so the role can be published.");
@@ -1075,7 +1075,7 @@ function EntryStep({ state, onDone, back, goTo }: BodyProps) {
             onEdit={() => goTo("requirements")}
           />
           <ReviewRow
-            label="Blueprint"
+            label="Role summary"
             value={pos?.blueprint_confirmed_at ? "Confirmed" : "Not confirmed"}
             done={state.complete.includes("blueprint")}
             onEdit={() => goTo("blueprint")}
@@ -1093,7 +1093,7 @@ function EntryStep({ state, onDone, back, goTo }: BodyProps) {
             onEdit={() => goTo("agents")}
           />
           <ReviewRow
-            label="Oversight gates"
+            label="Oversight choices"
             value={
               pos && Object.keys(pos.oversight).length > 0 ? "Configured" : "Not configured"
             }
@@ -1120,7 +1120,7 @@ function EntryStep({ state, onDone, back, goTo }: BodyProps) {
         onBack={back}
         onContinue={() => finish.mutate()}
         saving={finish.isPending}
-        continueLabel="Enter the Decision Workspace"
+        continueLabel="Go to your candidates"
       />
       <p className="flex items-center gap-2 text-xs text-muted-foreground">
         <ArrowRight className="size-3" aria-hidden />
