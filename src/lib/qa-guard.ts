@@ -49,7 +49,7 @@ export async function loadOrgQaFlags(
   orgId: string,
 ): Promise<{ ok: false; reason: string } | { ok: true; org: QaSafeOrg }> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const res: any = await db.from("organizations").select("id,is_demo,is_test_record").eq("id", orgId);
+  const res: any = (await db.from("organizations").select("id,is_demo,is_test_record").eq("id", orgId)) as any;
   if (res.error) return { ok: false, reason: res.error.message };
   const org = (res.data ?? [])[0] as QaSafeOrg | undefined;
   if (!org) return { ok: false, reason: "Organization not found" };
@@ -60,7 +60,7 @@ export async function loadOrgQaFlags(
  * Convenience helper: load flags and run the guard in one call.
  */
 export async function assertNoQaContamination(
-  db: DbClient,
+  db: { from: (table: string) => unknown },
   orgId: string,
   fields: Array<string | null | undefined>,
 ): Promise<{ ok: boolean; reason: string | null }> {
