@@ -2,6 +2,7 @@
 // Structured fields live here; free-text job description stays a separate field
 // and never substitutes for structured decision-critical data.
 import { z } from "zod";
+import { dedupeLocationParts } from "@/lib/jobs/location-format";
 
 /* ------------------------------------------------------------------ */
 /* Reference data                                                      */
@@ -203,7 +204,7 @@ export const locationSchema = z.object({
 export type RequisitionLocation = z.infer<typeof locationSchema>;
 
 export function locationLabel(l: Pick<RequisitionLocation, "country_code" | "region" | "city">) {
-  return [l.city, l.region, countryName(l.country_code)].filter(Boolean).join(", ");
+  return dedupeLocationParts([l.city, l.region, countryName(l.country_code)]).join(", ");
 }
 
 /* ------------------------------------------------------------------ */

@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { dedupeLocationParts } from "@/lib/jobs/location-format";
 import {
   getCandidateDossier,
   addCandidateNote,
@@ -147,7 +148,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
           <Field
             label="Location"
             value={
-              [profile?.city, profile?.region, profile?.country].filter(Boolean).join(", ") ||
+              dedupeLocationParts([profile?.city, profile?.region, profile?.country]).join(", ") ||
               profile?.location
             }
           />

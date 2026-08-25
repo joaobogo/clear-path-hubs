@@ -8,6 +8,10 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { buildCompensationSignal, type CompensationSignal } from "@/lib/compensation-signal";
 import { isLiveOffer } from "@/lib/offer-hire";
+import {
+  dedupeLocationParts,
+  normalizeLocationString,
+} from "@/lib/jobs/location-format";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -35,7 +39,7 @@ export const getCompensationSignal = createServerFn({ method: "POST" })
     const m = match as AnyRow;
     const position = m.positions ?? null;
 
-    let location: string | null = position?.location ?? null;
+    let location: string | null = normalizeLocationString(position?.location);
     if (m.position_id) {
       const { data: locs } = await context.supabase
         .from("position_locations")
@@ -46,11 +50,7 @@ export const getCompensationSignal = createServerFn({ method: "POST" })
         .limit(1);
       const l = (locs as AnyRow[] | null)?.[0];
       if (l) {
-        const parts = [l.city, l.region, l.country].filter(Boolean);
-        const unique = parts.filter((p, i) =>
-          i === 0 || String(p).trim().toLowerCase() !== String(parts[i - 1]).trim().toLowerCase()
-        );
-        location = unique.join(", ") || location;
+        location = dedupeLocationParts([l.city, l.region, l.country]).join(", ") || location;
       }
     }
 
