@@ -21,8 +21,11 @@
  * legacy_source_system = 'seed-demo-candidates').
  */
 
+import { readFileSync } from "node:fs";
+
 const SEED_MARKER = "seed-demo-candidates";
 const ENGINE_VERSION = "taasflow-scoring-v1.2.0";
+
 
 type Seed = {
   name: string;
@@ -180,67 +183,120 @@ function offerSalary(score: number): number {
   return Math.round(raw / 500) * 500;
 }
 
-function cvText(seed: Seed, quoted: number, total: number): string {
-  const lines = [
-    seed.name,
-    `${seed.headline} — ${seed.city}, ${seed.country}`,
-    `${slug(seed.name)}@demo.taasflow.com · ${seed.timezone}`,
-    "",
-    "Profile",
-    seed.summary,
-    "",
-    "Core stack",
-    seed.stack.join(", "),
-    "",
-    "Experience",
-  ];
-  for (let i = 0; i < Math.max(2, Math.round(seed.years / 3)); i += 1) {
-    lines.push(
-      `${2026 - (i + 1) * 3}–${2026 - i * 3} · Product engineer · Built and shipped ${seed.stack[i % seed.stack.length]} features end to end, from Postgres schema and migrations through the shipped interface, with automated tests kept green.`,
-    );
-  }
-  lines.push(
-    "",
-    "Languages",
-    "Portuguese (native), English (fluent, written and spoken)",
-    "",
-    `Evidence depth: ${quoted} of ${total} role requirements are supported by a quoted passage in this CV.`,
-  );
-  return lines.join("\n");
+// --- Evidence library ------------------------------------------------------
+// CV templates, assessment submissions and interview transcripts live in
+// scripts/demo-evidence.json so the text can be reviewed without reading code.
+
+type CvTemplate = {
+  id: string;
+  language: string;
+  seniority: string;
+  years_range: [number, number];
+  score_range: [number, number];
+  expected_must_have_ratio: number;
+  body: string;
+};
+
+type AssessmentQuestion = { prompt: string; verdict: "correct" | "partial" | "incorrect"; note: string };
+
+type AssessmentSubmission = {
+  id: string;
+  accuracy: string;
+  score_range: [number, number];
+  questions_total: number;
+  questions_correct: number;
+  questions_partial: number;
+  questions_incorrect: number;
+  headline: string;
+  summary: string;
+  questions: AssessmentQuestion[];
+};
+
+type InterviewTranscript = {
+  id: string;
+  depth: string;
+  score_range: [number, number];
+  duration_minutes: number;
+  assessor_note: string;
+  turns: { speaker: string; text: string }[];
+};
+
+type EvidenceLibrary = {
+  cv_templates: CvTemplate[];
+  assessment_submissions: AssessmentSubmission[];
+  interview_transcripts: InterviewTranscript[];
+};
+
+const LIBRARY: EvidenceLibrary = JSON.parse(
+  readFileSync(new URL("./demo-evidence.json", import.meta.url), "utf8"),
+) as EvidenceLibrary;
+
+/** Picks the entry whose score band contains the score, else the nearest band. */
+function pickByScore<T extends { score_range: [number, number] }>(items: T[], score: number): T {
+  const inBand = items.find((item) => score >= item.score_range[0] && score < item.score_range[1]);
+  if (inBand) return inBand;
+  return items.reduce((best, item) => {
+    const distance = Math.min(Math.abs(score - item.score_range[0]), Math.abs(score - item.score_range[1]));
+    const bestDistance = Math.min(Math.abs(score - best.score_range[0]), Math.abs(score - best.score_range[1]));
+    return distance < bestDistance ? item : best;
+  }, items[0]!);
 }
 
-function interviewNotes(seed: Seed, quoted: number, total: number): string {
-  const alignment = quoted / total;
-  const closing =
-    alignment >= 0.85
-      ? "Answers tracked the role requirements closely, with concrete examples and trade-offs for each."
-      : alignment >= 0.65
-        ? "Answers covered most requirements with concrete examples; a couple stayed general."
-        : "Answers covered the core requirements; several examples stayed at a high level.";
+function fillTemplate(body: string, seed: Seed, email: string): string {
+  const currentYear = 2026;
+  const values: Record<string, string> = {
+    name: seed.name,
+    city: seed.city,
+    country: seed.country,
+    years: String(seed.years),
+    email,
+    stack: seed.stack.join(" · "),
+    primary: seed.stack[0] ?? "TypeScript",
+    secondary: seed.stack[1] ?? "PostgreSQL",
+    startYear: String(currentYear - Math.max(2, Math.round(seed.years / 2))),
+    endYear: String(currentYear - seed.years),
+  };
+  return body.replace(/\{\{(\w+)\}\}/g, (_all, key: string) => values[key] ?? "");
+}
+
+function cvText(seed: Seed, email: string, quoted: number, total: number): string {
+  const template = pickByScore(LIBRARY.cv_templates, seed.score);
   return [
-    `Technical interview (recorded, 60 minutes) — ${seed.name}`,
+    fillTemplate(template.body, seed, email),
     "",
-    `Walked through a feature owned end to end: ${seed.stack.slice(0, 3).join(", ")}, including the data model and the migration path.`,
-    `Explained ${seed.stack.includes("row-level security") ? "the tenant isolation model in detail, including row-level security policy design and its failure modes" : "tenant separation at application level, with limited hands-on row-level security work"}.`,
-    `Testing: ${seed.stack.some((s) => s === "Playwright" || s === "Vitest") ? "described unit and end-to-end suites they own and keep green" : "writes unit tests, end-to-end coverage still growing"}.`,
-    "English: fluent throughout, no comprehension gaps.",
-    "",
-    closing,
+    `Screening note: ${quoted} of ${total} role requirements are supported by a quoted passage in this CV.`,
   ].join("\n");
 }
 
-function assessmentNotes(seed: Seed, quoted: number, total: number): string {
-  const partial = total - quoted;
+function interviewNotes(transcript: InterviewTranscript, seed: Seed): string {
+  return [
+    `Technical interview (recorded, ${transcript.duration_minutes} minutes) — ${seed.name}`,
+    "",
+    ...transcript.turns.map((turn) => `${turn.speaker}: ${turn.text}`),
+    "",
+    `Assessor note: ${transcript.assessor_note}`,
+  ].join("\n");
+}
+
+function assessmentNotes(assessment: AssessmentSubmission, seed: Seed): string {
   return [
     `Take-home assessment submission — ${seed.name}`,
     "",
-    "Delivered a working feature slice: Postgres migration, typed data access, and a React interface with tests.",
-    partial > 0
-      ? `Partial credit awarded on ${partial} requirement${partial === 1 ? "" : "s"}: the submission addressed them, but without enough depth to call them fully met.`
-      : "Every requirement in the brief was fully addressed, including the isolation and test-coverage sections.",
-    "Submission reviewed and scored; the score is reflected in the final combined run.",
+    assessment.headline,
+    assessment.summary,
+    "",
+    ...assessment.questions.map((question, index) => {
+      const verdict =
+        question.verdict === "correct"
+          ? "Correct"
+          : question.verdict === "partial"
+            ? "Partial credit"
+            : "Incorrect";
+      return `${index + 1}. ${question.prompt} — ${verdict}. ${question.note}`;
+    }),
   ].join("\n");
 }
+
 
 async function main() {
   const { supabaseAdmin } = await import("../src/integrations/supabase/client.server");
@@ -364,10 +420,21 @@ async function main() {
     const deliveredAt = new Date(now - (7 - index * 0.5) * day);
     const offerSentAt = new Date(now - (4 - index * 0.3) * day);
 
-    const quoted = Math.max(1, Math.min(requirements.length, Math.round((seed.score / 100) * requirements.length)));
+    // Evidence depth comes from the library entries for this score band: the
+    // CV template's expected coverage and the assessment's accuracy, averaged.
+    const cvTemplate = pickByScore(LIBRARY.cv_templates, seed.score);
+    const assessment = pickByScore(LIBRARY.assessment_submissions, seed.score);
+    const transcript = pickByScore(LIBRARY.interview_transcripts, seed.score);
+    const accuracyRatio = assessment.questions_correct / assessment.questions_total;
+    const partialRatio = assessment.questions_partial / assessment.questions_total;
+    const coverageRatio = (cvTemplate.expected_must_have_ratio + accuracyRatio) / 2;
+
+    const quoted = Math.max(1, Math.min(requirements.length, Math.round(coverageRatio * requirements.length)));
     const partial = requirements.length - quoted;
+    const partiallyCredited = Math.min(partial, Math.max(0, Math.round(partialRatio * requirements.length)));
     const mustHaveCoverage = Number((quoted / requirements.length).toFixed(4));
-    const cv = cvText(seed, quoted, requirements.length);
+    const cv = cvText(seed, email, quoted, requirements.length);
+
 
     // --- Profile ---------------------------------------------------------
     const { data: profile, error: profileError } = await sb
@@ -489,10 +556,17 @@ async function main() {
     if (evidenceError) throw new Error(`evidence insert failed for ${seed.name}: ${evidenceError.message}`);
 
     // --- Evidence items: CV, interview recording, assessment --------------
+    const candidateTurns = transcript.turns.filter((turn) => turn.speaker === "Candidate");
+    const interviewText = interviewNotes(transcript, seed);
+    const assessmentText = assessmentNotes(assessment, seed);
+
     const items = requirements.flatMap((requirement, reqIndex) => {
       const isQuoted = reqIndex < quoted;
-      const cvSnippetStart = Math.max(0, cv.indexOf("Experience"));
-      const cvSnippet = cv.slice(cvSnippetStart, cvSnippetStart + 220).replace(/\n/g, " ").trim();
+      const isPartiallyCredited = !isQuoted && reqIndex < quoted + partiallyCredited;
+      const cvSnippetStart = Math.max(0, cv.search(/EXPERIENCE|EXPERI[ÊE]NCIA/));
+      const cvSnippet = cv.slice(cvSnippetStart, cvSnippetStart + 320).replace(/\n/g, " ").trim();
+      const turn = candidateTurns[reqIndex % Math.max(1, candidateTurns.length)];
+      const question = assessment.questions[reqIndex % assessment.questions.length]!;
       const rows: Record<string, unknown>[] = [];
 
       rows.push({
@@ -504,7 +578,12 @@ async function main() {
         match_type: isQuoted ? "direct" : "missing",
         confidence: isQuoted ? Number((0.78 + (seed.score - 70) / 200).toFixed(2)) : 0.25,
         source_passage: isQuoted ? cvSnippet : "",
-        source_location: { source: "cv", range: `cv:${cvSnippetStart}-${cvSnippetStart + 220}` },
+        source_location: {
+          source: "cv",
+          template: cvTemplate.id,
+          language: cvTemplate.language,
+          range: `cv:${cvSnippetStart}-${cvSnippetStart + 320}`,
+        },
         normalized_meaning: requirement,
         reviewer_status: "accepted",
         engine_version: ENGINE_VERSION,
@@ -514,7 +593,7 @@ async function main() {
         created_at: appliedAt.toISOString(),
       });
 
-      if (isQuoted || reqIndex < quoted + Math.ceil(partial / 2)) {
+      if ((isQuoted || isPartiallyCredited) && turn) {
         rows.push({
           candidate_evidence_id: evidence.id,
           candidate_match_id: match.id,
@@ -523,10 +602,13 @@ async function main() {
           rubric_dimension_key: `req-${reqIndex}`,
           match_type: isQuoted ? "direct" : "transferable",
           confidence: isQuoted ? 0.9 : 0.5,
-          source_passage: isQuoted
-            ? `Interview recording (${interviewAt.toISOString().slice(0, 10)}): walked through "${requirement}" with a worked example from ${seed.stack[reqIndex % seed.stack.length]} work.`
-            : `Interview recording (${interviewAt.toISOString().slice(0, 10)}): touched on "${requirement}" without a concrete example.`,
-          source_location: { source: "interview", timestamp: `00:${String(8 + reqIndex * 6).padStart(2, "0")}:00` },
+          source_passage: turn.text,
+          source_location: {
+            source: "interview",
+            transcript: transcript.id,
+            depth: transcript.depth,
+            timestamp: `00:${String(8 + reqIndex * 6).padStart(2, "0")}:00`,
+          },
           normalized_meaning: requirement,
           reviewer_status: "accepted",
           engine_version: ENGINE_VERSION,
@@ -543,17 +625,22 @@ async function main() {
         organization_id: org.id,
         rubric_criterion_key: `req-${reqIndex}`,
         rubric_dimension_key: `req-${reqIndex}`,
-        match_type: isQuoted ? "direct" : "transferable",
-        confidence: isQuoted ? 0.85 : 0.45,
-        source_passage: isQuoted
-          ? `Assessment submission: the delivered slice covers "${requirement}" — reviewer marked it fully met.`
-          : `Assessment submission: "${requirement}" was addressed but shallow — partial credit awarded.`,
-        source_location: { source: "assessment", section: `requirement-${reqIndex + 1}` },
+        match_type: question.verdict === "correct" ? "direct" : question.verdict === "partial" ? "transferable" : "missing",
+        confidence: question.verdict === "correct" ? 0.85 : question.verdict === "partial" ? 0.45 : 0.2,
+        source_passage:
+          question.verdict === "incorrect" ? "" : `${question.prompt} — ${question.note}`,
+        source_location: {
+          source: "assessment",
+          submission: assessment.id,
+          accuracy: assessment.accuracy,
+          section: `question-${reqIndex + 1}`,
+        },
         normalized_meaning: requirement,
         reviewer_status: "accepted",
         engine_version: ENGINE_VERSION,
-        result: isQuoted ? "strong" : "partial",
-        validation_need: null,
+        result:
+          question.verdict === "correct" ? "strong" : question.verdict === "partial" ? "partial" : "missing",
+        validation_need: question.verdict === "correct" ? null : "confirm_in_interview",
         source_kind: "application_answer",
         created_at: assessmentAt.toISOString(),
       });
@@ -561,29 +648,51 @@ async function main() {
       return rows;
     });
 
+
     const { error: itemsError } = await sb.from("candidate_evidence_items").insert(items);
     if (itemsError) throw new Error(`evidence items insert failed for ${seed.name}: ${itemsError.message}`);
 
     // --- Score runs: CV, interview-informed, approved final ---------------
     const requirementAssessment = requirements.map((requirement, reqIndex) => {
       const isQuoted = reqIndex < quoted;
+      const isPartiallyCredited = !isQuoted && reqIndex < quoted + partiallyCredited;
+      const question = assessment.questions[reqIndex % assessment.questions.length]!;
+      const cvStart = Math.max(0, cv.search(/EXPERIENCE|EXPERI[ÊE]NCIA/));
+      const turn = candidateTurns[reqIndex % Math.max(1, candidateTurns.length)];
+      const evidence = [
+        {
+          source: "cv",
+          snippet: isQuoted ? cv.slice(cvStart, cvStart + 320).replace(/\n/g, " ").trim() : "",
+          location: `cv:${cvStart}-${cvStart + 320}`,
+          requirement_id: `req-${reqIndex}`,
+          requirement_text: requirement,
+        },
+        {
+          source: "interview",
+          snippet: (isQuoted || isPartiallyCredited) && turn ? turn.text : "",
+          location: `interview:${transcript.id}`,
+          requirement_id: `req-${reqIndex}`,
+          requirement_text: requirement,
+        },
+        {
+          source: "assessment",
+          snippet: question.verdict === "incorrect" ? "" : `${question.prompt} — ${question.note}`,
+          location: `assessment:${assessment.id}:question-${reqIndex + 1}`,
+          requirement_id: `req-${reqIndex}`,
+          requirement_text: requirement,
+        },
+      ].filter((e) => e.snippet.length > 0);
+
       return {
         id: `req-${reqIndex}`,
         text: requirement,
-        status: isQuoted ? "met" : "partial",
+        status: isQuoted ? "met" : evidence.length > 0 ? "partial" : "unknown",
         required: true,
         needs_validation: !isQuoted,
-        evidence: [
-          {
-            source: "cv",
-            snippet: isQuoted ? cv.slice(0, 140).replace(/\n/g, " ") : "",
-            location: "cv:0-140",
-            requirement_id: `req-${reqIndex}`,
-            requirement_text: requirement,
-          },
-        ].filter((e) => e.snippet.length > 0),
+        evidence,
       };
     });
+
 
     const makeRun = async (opts: {
       score: number;
@@ -632,7 +741,7 @@ async function main() {
           completed_at: opts.completedAt.toISOString(),
           requirement_coverage: { must_have: mustHaveCoverage, preferred: mustHaveCoverage },
           evidence: requirementAssessment.flatMap((r) => r.evidence),
-          explanation: `${opts.label}: ${quoted} of ${requirements.length} requirements carry a quoted passage.`,
+          explanation: `${opts.label}: ${quoted} of ${requirements.length} requirements carry a quoted passage. Assessment: ${assessment.headline}.`,
           result: {
             score: opts.score,
             fit_label: fitBand(opts.score),
@@ -651,7 +760,22 @@ async function main() {
             concerns: requirements
               .slice(quoted)
               .map((r) => `Partly evidenced — worth confirming: ${r}`),
-            inputs: { cv_text: cv },
+            inputs: {
+              cv_text: cv,
+              cv_template: cvTemplate.id,
+              interview_transcript: interviewText,
+              interview_depth: transcript.depth,
+              assessment_submission: assessmentText,
+              assessment_result: {
+                id: assessment.id,
+                accuracy: assessment.accuracy,
+                headline: assessment.headline,
+                questions_total: assessment.questions_total,
+                questions_correct: assessment.questions_correct,
+                questions_partial: assessment.questions_partial,
+                questions_incorrect: assessment.questions_incorrect,
+              },
+            },
           },
         })
         .select("id")
@@ -726,7 +850,7 @@ async function main() {
         requested_at: new Date(interviewAt.getTime() - 4 * day).toISOString(),
         scheduled_at: interviewAt.toISOString(),
         confirmed_at: new Date(interviewAt.getTime() - 2 * day).toISOString(),
-        notes: interviewNotes(seed, quoted, requirements.length),
+        notes: interviewText,
         participants: [{ name: "Technical panel", role: "interviewer" }],
         proposed_times: [interviewAt.toISOString()],
       })
@@ -739,7 +863,7 @@ async function main() {
       .update({
         status: "completed",
         completed_at: new Date(interviewAt.getTime() + 60 * 60 * 1000).toISOString(),
-        feedback: assessmentNotes(seed, quoted, requirements.length),
+        feedback: assessmentText,
       })
       .eq("id", interview.id);
     if (interviewCompleteError)
