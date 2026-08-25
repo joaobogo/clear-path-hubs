@@ -447,10 +447,10 @@ export function CompareSheet({
             <ComparisonRow label="Strengths" cols={cols}>
               {candidates.map((c) => (
                 <ul key={c.match_id} className="text-xs list-disc pl-4 space-y-0.5">
-                  {c.strengths.slice(0, 4).map((s, i) => (
+                  {strengthBullets(c).map((s, i) => (
                     <li key={i}>{s}</li>
                   ))}
-                  {c.strengths.length === 0 && (
+                  {strengthBullets(c).length === 0 && (
                     <li className="list-none text-muted-foreground">None recorded.</li>
                   )}
                 </ul>
@@ -691,6 +691,11 @@ function ComparisonRow({
 }
 
 
+/** Strengths bullets shown in the comparison — single source for list and count. */
+function strengthBullets(c: ClientCandidateDTO): string[] {
+  return (c.strengths ?? []).slice(0, 4);
+}
+
 /**
  * Visual ranking board — shows relative strength per axis using dots (●○○).
  * Never picks a single winner; every axis is independent, and score is only
@@ -716,7 +721,8 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
     {
       key: "strengths",
       label: "Verified strengths",
-      values: candidates.map((c) => c.evidence_support.supported),
+      // Same list the Strengths row prints, so number == bullet count.
+      values: candidates.map((c) => strengthBullets(c).length),
       format: (n) => `${n}`,
     },
     {
