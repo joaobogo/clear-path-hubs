@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -26,7 +26,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CalendarRange, Check, Plus, Trash2 } from "lucide-react";
+import { CalendarRange, Check, Pencil, Plus, Trash2 } from "lucide-react";
+
+/** Stable identity for a saved window, so a chip can point at its editor row. */
+const windowKey = (w: AvailabilityWindow) =>
+  `${w.weekday}-${w.start_minute}-${w.end_minute}`;
 
 export function useAvailability(orgId: string | undefined) {
   const fn = useServerFn(getAvailabilityWindows);
@@ -49,6 +53,10 @@ export function AvailabilityManager({
   const query = useAvailability(orgId);
   const saveFn = useServerFn(saveAvailabilityWindows);
   const [open, setOpen] = useState(false);
+  // Set when the editor is opened by clicking one day chip: that window's
+  // start time gets focus so the chip behaves like a time-range control.
+  const [focusKey, setFocusKey] = useState<string | null>(null);
+  const startRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const [timezone, setTimezone] = useState(viewerTimezone());
   const [rows, setRows] = useState<AvailabilityWindow[]>([]);
 
@@ -57,12 +65,26 @@ export function AvailabilityManager({
     [query.data],
   );
 
+  const openEditor = useCallback((key: string | null) => {
+    setFocusKey(key);
+    setOpen(true);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const tz = query.data?.timezone || viewerTimezone();
     setTimezone(tz);
     setRows(saved.length > 0 ? saved.map((w) => ({ ...w })) : defaultWindows(tz));
   }, [open, saved, query.data?.timezone]);
+
+  useEffect(() => {
+    if (!open || !focusKey) return;
+    const t = window.setTimeout(() => {
+      startRefs.current[focusKey]?.focus();
+      startRefs.current[focusKey]?.select?.();
+    }, 60);
+    return () => window.clearTimeout(t);
+  }, [open, focusKey, rows.length]);
 
   const saveMut = useMutation({
     mutationFn: () =>
@@ -80,6 +102,7 @@ export function AvailabilityManager({
     onSuccess: () => {
       toast.success("Availability updated — the TaaSFlow team has been notified.");
       qc.invalidateQueries({ queryKey: ["org-availability"] });
+      setFocusKey(null);
       setOpen(false);
     },
     onError: (e: Error) =>
@@ -112,26 +135,50 @@ export function AvailabilityManager({
 
           {saved.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {saved.map((w, i) => (
-                <Badge key={w.id ?? i} variant="outline" className="font-normal">
-                  {describeWindow(w)}
-                </Badge>
-              ))}
+              {saved.map((w, i) =>
+                readOnly ? (
+                  <Badge key={w.id ?? i} variant="outline" className="font-normal">
+                    {describeWindow(w)}
+                  </Badge>
+                ) : (
+                  <button
+                    key={w.id ?? i}
+                    type="button"
+                    onClick={() => openEditor(windowKey(w))}
+                    aria-label={`Change the time range for ${describeWindow(w)}`}
+                    className="inline-flex min-h-8 cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-normal text-foreground transition-colors hover:border-primary hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&>*]:pointer-events-none"
+                  >
+                    <span>{describeWindow(w)}</span>
+                    <Pencil className="h-3 w-3 text-muted-foreground" />
+                  </button>
+                ),
+              )}
             </div>
+          ) : null}
+          {!readOnly && saved.length > 0 ? (
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              Click a day to change its hours.
+            </p>
           ) : null}
         </div>
         {!readOnly ? (
           <Button
             variant={saved.length === 0 ? "default" : "outline"}
             disabled={query.isError || query.isPending}
-            onClick={() => setOpen(true)}
+            onClick={() => openEditor(null)}
           >
             {query.isError ? "Unavailable" : saved.length === 0 ? "Set availability" : "Edit windows"}
           </Button>
         ) : null}
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog
+        open={open}
+        onOpenChange={(v) => {
+          setOpen(v);
+          if (!v) setFocusKey(null);
+        }}
+      >
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Interview availability</DialogTitle>
@@ -176,8 +223,15 @@ export function AvailabilityManager({
                   </select>
                   <Input
                     type="time"
+                    ref={(el) => {
+                      startRefs.current[windowKey(r)] = el;
+                    }}
                     aria-label={`Start time on ${WEEKDAY_LABELS[r.weekday]}`}
-                    className="w-28"
+                    className={
+                      focusKey === windowKey(r)
+                        ? "w-28 ring-2 ring-primary ring-offset-1"
+                        : "w-28"
+                    }
                     value={minutesToLabel(r.start_minute)}
                     onChange={(e) =>
                       setRows((prev) =>
@@ -233,7 +287,13 @@ export function AvailabilityManager({
           </div>
 
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setOpen(false)}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setFocusKey(null);
+                setOpen(false);
+              }}
+            >
               Cancel
             </Button>
             <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
