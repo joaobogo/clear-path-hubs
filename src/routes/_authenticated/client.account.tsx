@@ -277,20 +277,15 @@ export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
             : `${data?.seats.remaining ?? 0} seat${data?.seats.remaining === 1 ? "" : "s"} free`
         }
       />
-      <Tile
-        icon={<CalendarClock className="h-4 w-4" />}
-        label="Renews"
-        value={
-          data?.subscription.renewal_date
-            ? fmtDate(data.subscription.renewal_date)
-            : "—"
-        }
-        note={
-          data?.subscription.renewal_date
-            ? `${Math.max(0, data.subscription.days_to_renewal ?? 0)} days away`
-            : "Renewal date not on file"
-        }
-      />
+      {data?.subscription.renewal_date ? (
+        <Tile
+          icon={<CalendarClock className="h-4 w-4" />}
+          label="Renews"
+          value={fmtDate(data.subscription.renewal_date)}
+          note={`${Math.max(0, data.subscription.days_to_renewal ?? 0)} days away`}
+        />
+      ) : null}
+
     </section>
   );
 }
