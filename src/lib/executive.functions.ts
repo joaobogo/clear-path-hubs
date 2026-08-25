@@ -216,7 +216,20 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         hired: v.hired,
         blocked: v.blocked,
       }))
+      // A "Not assigned to a team" row with nothing in it never fills — drop it.
+      .filter(
+        (r) =>
+          r.business_unit !== "Unassigned" ||
+          r.open_roles + r.active_candidates + r.delivered + r.shortlisted + r.hired + r.blocked >
+            0,
+      )
+      .map((r) =>
+        r.business_unit === "Unassigned"
+          ? { ...r, business_unit: "Not assigned to a team" }
+          : r,
+      )
       .sort((a, b) => b.active_candidates - a.active_candidates);
+
 
     // Time in stage — measured from the stage-entry timestamp the Offers page
     // and the client KPIs read (`candidate_stage_history`, falling back to the
