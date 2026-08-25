@@ -46,6 +46,7 @@ export function NotificationPreferences({
   orgId: string;
   canEdit: boolean;
 }) {
+  const hydrated = useHydrated();
   const getFn = useServerFn(getClientNotificationPreferences);
   const queryClient = useQueryClient();
   const query = useQuery({
