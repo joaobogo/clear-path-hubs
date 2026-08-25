@@ -37,7 +37,7 @@ import {
   withActionTimeout,
 } from "@/lib/client/action-timeout";
 
-import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock } from "@/components/client/candidate-detail/shared";
+import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock, JumpNav } from "@/components/client/candidate-detail/shared";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
@@ -446,15 +446,32 @@ function CandidateDetailPage() {
 
  )}
 
+  <JumpNav
+   items={[
+    { id: "sec-evidence", label: "Evidence" },
+    { id: "sec-confirm", label: "Confirm in interview" },
+    { id: "sec-score", label: "Score" },
+    { id: "sec-profile", label: "Profile" },
+   ]}
+  />
+
   {/* 3 — THE EVIDENCE: requirements listed once, with coverage folded in */}
   <div id="sec-evidence" className="scroll-mt-24 space-y-4">
   <WhyThisCandidate candidate={candidate} withCoverage />
+  </div>
+
+  {/* 4 — WHAT TO CONFIRM */}
+  <div id="sec-confirm" className="scroll-mt-24">
   <WhatNeedsValidation
     candidate={candidate}
     title="To confirm in the interview"
     preferredLimit={2}
     onInterviewGuideClick={() => setActiveTab("interview")}
   />
+  </div>
+
+  {/* 5 — THE NUMBER EXPLAINED */}
+  <div id="sec-score" className="scroll-mt-24">
   <ScoreBreakdown candidate={candidate} hideRequirementRows />
   </div>
 
@@ -466,8 +483,8 @@ function CandidateDetailPage() {
  />
  </div>
 
-      {/* 5 — DECISION BAR */}
-      <aside className="space-y-4 lg:col-span-4">
+      {/* RIGHT RAIL — stage actions, contact and next step stay in view */}
+      <aside className="space-y-4 lg:col-span-4 lg:sticky lg:top-20 lg:self-start">
         <ActionArea
           actions={actions}
           readOnly={readOnly}
@@ -537,7 +554,7 @@ function CandidateDetailPage() {
  </div>
 
  {/* BELOW THE FOLD — three tabs, everything else lives inside them. */}
- <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
+ <Tabs id="sec-profile" value={activeTab} onValueChange={setActiveTab} className="mt-8 scroll-mt-24">
   <TabsList className="flex w-full flex-wrap justify-start">
   <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
   <TabsTrigger value="interview">Interview</TabsTrigger>
