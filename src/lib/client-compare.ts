@@ -262,23 +262,23 @@ export function buildRoleComparison(input: ClientCandidateDTO[]): RoleComparison
       label: "Relevant experience",
       get: (c) => {
         const v = relevantExperienceLines(c);
-        return v.length ? v : ["Not recorded"];
+        return v.length ? v : ["Not provided"];
       },
     },
     {
       key: "availability",
       label: "Availability",
-      get: (c) => [txt(c.candidate.availability) || "Not confirmed"],
+      get: (c) => [txt(c.candidate.availability) || "Not provided"],
     },
     {
       key: "location",
       label: "Location",
-      get: (c) => [txt(c.candidate.location) || "Not recorded"],
+      get: (c) => [txt(c.candidate.location) || "Not provided"],
     },
     {
       key: "work_auth",
       label: "Work authorisation",
-      get: (c) => [txt(c.work_authorization) || "Not recorded"],
+      get: (c) => [txt(c.work_authorization) || "Not provided"],
     },
     {
       key: "stage",
