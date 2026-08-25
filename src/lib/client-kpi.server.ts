@@ -702,77 +702,155 @@ function normSourceLabel(source: unknown): { label: string | null; channel: stri
   return { label: map[key] ?? s.replace(/_/g, " "), channel: s };
 }
 
+/**
+ * Entity kinds and action prefixes that belong to the ORGANISATION record, not
+ * to a candidate. Editing a company field (headquarters, website, industry, …)
+ * must never append a row to a candidate's history.
+ */
+const NON_CANDIDATE_AUDIT_ENTITIES = new Set([
+  "organizations",
+  "memberships",
+  "org_scheduling_settings",
+  "org_availability_windows",
+  "client_notification_preferences",
+  "subscriptions",
+  "plan_entitlements",
+]);
+
+const NON_CANDIDATE_ACTION_PREFIXES = [
+  "organization.",
+  "client.settings.",
+  "membership.",
+  "org.",
+  "subscription.",
+  "plan.",
+];
+
+/** Stage keys → the sentence a client reads. */
+const STAGE_EVENT_LABEL: Record<string, string> = {
+  delivered: "Delivered to you",
+  shortlisted: "Shortlisted by your team",
+  interview_process: "Moved into interviews",
+  offer: "Offer extended",
+  hired: "Marked as hired",
+  not_moving_forward: "Declined for this role",
+};
+
+/** Explicit action keys → the sentence a client reads. */
+const AUDIT_ACTION_LABEL: Record<string, string> = {
+  "cv.download": "CV opened by your team",
+  "client.shortlist": "Shortlisted by your team",
+  "client.request_interview": "Interview requested",
+  "client.offer": "Offer extended",
+  "client.hire": "Marked as hired",
+  "client.not_moving_forward": "Declined for this role",
+  "client.hold": "Placed on hold",
+  "client.request_information": "More information requested",
+  "client.request_contact_release": "Contact details requested",
+  "client.undo_decision": "Decision undone",
+  "client.score_refresh_requested": "Re-check of the assessment requested",
+  "client.viewed_candidate": "Viewed by your team",
+  "contact_release_revoked": "Contact details access removed",
+  "contact_released": "Contact details released",
+  "candidate_match.stage_changed": "Stage changed",
+  "candidate_match.publish": "Delivered to you",
+  "interview.scheduled": "Interview scheduled",
+  "interview.requested": "Interview requested",
+  "interview.completed": "Interview completed",
+  "interview.cancelled": "Interview cancelled",
+  "interview.rescheduled": "Interview rescheduled",
+  "decision.recorded": "Decision recorded",
+};
+
+/**
+ * The candidate's own history, in client language.
+ *
+ * Rules:
+ *  - only events about THIS candidate; organisation-profile edits are dropped;
+ *  - every row carries the real event name — there is no generic
+ *    "activity recorded" filler;
+ *  - repeats of the same event collapse into one row carrying the count, so no
+ *    two rows read identically.
+ */
 function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
   if (!Array.isArray(rows)) return [];
 
-  const WHITELIST: Record<string, string> = {
-    delivered: "Delivered to you",
-    shortlisted: "Shortlisted",
-    interview_requested: "Interview requested",
-    interview_scheduled: "Interview scheduled",
-    interview_completed: "Interview completed",
-    offer: "Offer made",
-    hired: "Hired",
-    decided: "Decision recorded",
-    viewed: "Viewed by your team",
-    downloaded: "CV downloaded by your team",
-  };
-
-  const safeRows = Array.isArray(rows) ? rows : [];
-
-  return safeRows
+  const named = rows
     .map((e: AnyRow) => {
-      const action = String(e.action ?? "event");
+      const action = String(e.action ?? "").trim();
+      const normAction = action.toLowerCase();
+      const entityType = String(e.entity_type ?? "").toLowerCase();
+
+      // Organisation-level records never belong on a candidate timeline.
+      if (NON_CANDIDATE_AUDIT_ENTITIES.has(entityType)) return null;
+      if (NON_CANDIDATE_ACTION_PREFIXES.some((p) => normAction.startsWith(p))) return null;
+
       const before = e.before_state ?? null;
       const after = e.after_state ?? null;
 
-      let safeAction: string | null = null;
-      const normAction = action.toLowerCase();
+      let label: string | null = null;
 
-      // 1. Map stage transitions (even if inside UPDATE)
+      // 1. A real stage transition names itself.
       if (after && typeof after === "object" && "stage" in after) {
         const fromStage =
           before && typeof before === "object" && "stage" in before
             ? String((before as AnyRow).stage)
             : null;
         const toStage = String((after as AnyRow).stage);
-
-        // Drop no-op transitions
-        if (fromStage !== toStage) {
-          if (toStage === "delivered") safeAction = WHITELIST.delivered;
-          else if (toStage === "shortlisted") safeAction = WHITELIST.shortlisted;
-          else if (toStage === "offer") safeAction = WHITELIST.offer;
-          else if (toStage === "hired") safeAction = WHITELIST.hired;
-        }
+        if (fromStage !== toStage) label = STAGE_EVENT_LABEL[toStage] ?? null;
       }
 
-      // 2. Map explicit action keys
-      if (!safeAction) {
-        if (normAction.includes("interview.scheduled")) safeAction = WHITELIST.interview_scheduled;
-        else if (normAction.includes("interview.requested")) safeAction = WHITELIST.interview_requested;
-        else if (normAction.includes("interview.completed")) safeAction = WHITELIST.interview_completed;
-        else if (normAction.includes("decision.recorded")) safeAction = WHITELIST.decided;
-        else if (normAction.includes("viewed")) safeAction = WHITELIST.viewed;
-        else if (normAction.includes("cv.download") || normAction.includes("cv_download")) {
-          // Client-initiated downloads only
-          if (after && typeof after === "object" && (after as AnyRow).audience === "client") {
-            safeAction = WHITELIST.downloaded;
-          }
-        }
+      // 2. Otherwise the action key, matched exactly then loosely.
+      if (!label) {
+        label = AUDIT_ACTION_LABEL[normAction] ?? null;
+      }
+      if (!label) {
+        const hit = Object.keys(AUDIT_ACTION_LABEL).find((k) => normAction.includes(k));
+        if (hit) label = AUDIT_ACTION_LABEL[hit]!;
       }
 
-      if (!safeAction) return null;
+      // A client-initiated CV read only.
+      if (
+        label === AUDIT_ACTION_LABEL["cv.download"] &&
+        !(after && typeof after === "object" && (after as AnyRow).audience === "client")
+      ) {
+        return null;
+      }
+
+      // 3. No name, no row. We never print filler.
+      if (!label) return null;
 
       return {
         id: String(e.id),
-        action: safeAction,
+        action: label,
         entity_type: String(e.entity_type ?? "event"),
         actor: e.actor_user_id ? "Recruiting team" : "System",
         at: String(e.created_at ?? new Date().toISOString()),
-        summary: null,
+        summary: null as string | null,
       };
     })
-    .filter((e): e is NonNullable<typeof e> => e !== null)
+    .filter((e): e is NonNullable<typeof e> => e !== null);
+
+  // Collapse repeats of the same event so no two rows read identically.
+  const seen = new Map<string, { row: (typeof named)[number]; count: number }>();
+  for (const row of named) {
+    const existing = seen.get(row.action);
+    if (existing) {
+      existing.count += 1;
+      // Keep the most recent occurrence as the visible timestamp.
+      if (row.at > existing.row.at) existing.row = row;
+    } else {
+      seen.set(row.action, { row, count: 1 });
+    }
+  }
+
+  return Array.from(seen.values())
+    .map(({ row, count }) => ({
+      ...row,
+      action: count > 1 ? `${row.action} (${count} times)` : row.action,
+      summary: count > 1 ? `Most recent of ${count} occurrences.` : row.summary,
+    }))
+    .sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0))
     .slice(0, 20);
 }
 
