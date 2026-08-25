@@ -20,6 +20,17 @@ export function toastError(error: unknown, opts: { tone?: AudienceTone; fallback
 	const { tone = "client", fallback, surface } = opts;
 	const raw = error instanceof Error ? error.message.replace(/^Error:\s*/, "") : String(error);
 
+	// Snake_case codes raised by database gates ("position_screening_unmapped")
+	// arrive verbatim. Look them up before anything else so the person sees the
+	// sentence that tells them what to fix.
+	if (/^[a-z][a-z0-9_]{4,63}$/.test(raw)) {
+		const sentence = humanizeCode(raw);
+		if (sentence && sentence !== raw && /\s/.test(sentence)) {
+			toast.error(sentence);
+			return;
+		}
+	}
+
 	// P07: Always check for a humanized code first. If the error is a SCREAMING_SNAKE_CASE
 	// token that we have a sentence for, use it.
 	if (raw && /^[A-Z0-9_]{3,64}$/.test(raw)) {

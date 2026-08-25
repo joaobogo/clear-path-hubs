@@ -11,6 +11,8 @@ import {
   requisitionMetaSchema,
   type EvaluationWeights,
   countryName,
+  normalizeTravelExpectation,
+  normalizeTimezoneAnchor,
   type RequisitionLocation,
 } from "@/lib/requisition-schema";
 import { dedupeLocationParts } from "@/lib/jobs/location-format";
@@ -122,8 +124,8 @@ export const getRequisitionMeta = createServerFn({ method: "GET" })
       status: p.status ?? "draft",
       reference_code: p.reference_code ?? "",
       owner_user_id: p.owner_user_id ?? null,
-      travel_expectation: p.travel_expectation ?? "",
-      primary_timezone: p.primary_timezone ?? "",
+      travel_expectation: normalizeTravelExpectation(p.travel_expectation),
+      primary_timezone: normalizeTimezoneAnchor(p.primary_timezone),
       timezone_overlap_hours: p.timezone_overlap_hours ?? null,
       target_start_date: p.target_start_date ?? "",
       compensation_collected: !!p.compensation_collected,
@@ -396,7 +398,7 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
     const [posRes, locRes, sqRes] = await Promise.all([
       s.from("positions").select("*").eq("id", data.id).maybeSingle(),
       s.from("position_locations").select("*").eq("position_id", data.id),
-      s.from("screening_questions").select("id").eq("position_id", data.id),
+      s.from("screening_questions").select("id, must_have, why_asked").eq("position_id", data.id),
     ]);
     const p = posRes.data as AnyRow;
     if (!p) throw new Error("position_not_found");
@@ -420,10 +422,12 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
       interview_process: typeof ctx.interview_process === "string" ? ctx.interview_process : "",
       screening_questions: ((sqRes.data ?? []) as AnyRow[]).map((q) => ({
         id: String(q.id ?? ""),
+        must_have: q.must_have ?? "",
+        why_asked: q.why_asked ?? "",
       })),
       locations: rowsToLocations(locRes.data as AnyRow[]),
-      travel_expectation: p.travel_expectation ?? "",
-      primary_timezone: p.primary_timezone ?? "",
+      travel_expectation: normalizeTravelExpectation(p.travel_expectation),
+      primary_timezone: normalizeTimezoneAnchor(p.primary_timezone),
       timezone_overlap_hours: p.timezone_overlap_hours ?? null,
       target_start_date: p.target_start_date ?? "",
       headcount: p.openings ?? null,
