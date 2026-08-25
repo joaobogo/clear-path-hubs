@@ -18,6 +18,15 @@ export const getRouter = () => {
         },
         retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
         staleTime: 30_000,
+        // Clicking back into the workspace must never refetch every mounted
+        // query at once: the resulting render swapped the element under the
+        // cursor between mousedown and mouseup, so the first click was lost.
+        // Panels that genuinely need focus revalidation opt in locally.
+        refetchOnWindowFocus: false,
+        // Keep the previous result on screen while a new key loads, so a
+        // search field or filter never unmounts mid-keystroke.
+        placeholderData: <T,>(prev: T) => prev,
+
       },
       mutations: {
         // Mutations never silently retry — surface the failure so the UI can rollback.
