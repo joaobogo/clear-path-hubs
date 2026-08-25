@@ -114,5 +114,5 @@
     "public routes: all critical marketing/apply routes return 200; /auth 307 is expected pre-auth redirect"
   ],
   "verdict_reason": "Excellence certification requires 0 blocked critical tests and re-execution of every persona, route, control, and negative scenario in a single verified pass, plus 0 privileged-access regressions. The single-Master-Admin invariant regressed (F-01), pipeline fan-out leaves only 6 scored candidates (F-02), and the full live matrix was not executed this turn (F-03). Core invariants (identity, math, publication gate, audit) remain PASS from prior certifications.",
-  "invariants_read_at": "2026-08-25T04:16:56.298Z"
+  "invariants_read_at": "2026-08-25T04:18:06.942Z"
 }

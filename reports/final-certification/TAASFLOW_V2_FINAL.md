@@ -102,7 +102,7 @@ The AUTH-CERT-2026-07-22 report classified invitation flow and onboarding routes
 Re-run this certification once (1)–(4) are complete.
 
 <!-- LIVE-INVARIANTS:START -->
-### Live database invariants (read 2026-08-25T04:16:56.298Z)
+### Live database invariants (read 2026-08-25T04:18:06.942Z)
 
 | Invariant | Value |
 | --- | --- |
