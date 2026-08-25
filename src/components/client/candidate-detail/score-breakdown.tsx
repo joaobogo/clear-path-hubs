@@ -183,16 +183,19 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
               </span>
               {g.total > 0 && (
                 <span className="flex flex-wrap gap-1.5">
-                  <CountChip label="quoted" value={g.met} tone="success" />
-                  {g.partial > 0 && (
-                    <CountChip label="related" value={g.partial} tone="warning" />
-                  )}
+                  <CountChip label="quoted" value={g.met + g.partial} tone="success" />
                   {g.missing > 0 && (
                     <CountChip label="no evidence" value={g.missing} tone="neutral" />
                   )}
                 </span>
               )}
             </div>
+            {g.related > 0 && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Possible signals (not quoted): {g.related} of {g.total}
+              </p>
+            )}
+
             <p className="mt-1 text-xs text-muted-foreground">{g.takeaway}</p>
             {g.rows.length > 0 && (
               <ul className="mt-2 space-y-2">
