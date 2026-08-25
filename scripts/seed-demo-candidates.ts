@@ -637,10 +637,18 @@ async function main() {
       sources: ["cv", "interview", "assessment"],
     });
 
-    await sb
+    const { error: publishError } = await sb
       .from("candidate_matches")
-      .update({ current_score_run_id: finalRunId, approved_score_run_id: finalRunId })
+      .update({
+        current_score_run_id: finalRunId,
+        approved_score_run_id: finalRunId,
+        stage: "delivered",
+        client_visibility: "visible",
+        canonical_state: "published_to_client",
+      })
       .eq("id", match.id);
+    if (publishError) throw new Error(`publish failed for ${seed.name}: ${publishError.message}`);
+
 
     // --- Interview (completed, recorded and scored) -----------------------
     const { error: interviewError } = await sb.from("interviews").insert({
