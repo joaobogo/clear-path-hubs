@@ -614,11 +614,11 @@ export const getClient = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
-    // NOTE: candidate_profiles has no FK to organizations, so the old embedded
-    // `parsed_cv_count:candidate_profiles(count)` made PostgREST reject the whole
-    // organization read (PGRST200) — which surfaced as "Organization not found"
-    // for every client. Count candidates through candidate_matches instead.
-    const [orgRes, membersRes, positionsRes, candidateCountRes] = await Promise.all([
+    // Candidate, role, hire and seat figures on this card come from the one
+    // rollup reader — the card stores none of them, so suspending a membership
+    // or confirming a hire is visible on the next load.
+    const { readOrgRollups } = await import("@/lib/kpis/org-rollups.server");
+    const [orgRes, membersRes, positionsRes, rollups] = await Promise.all([
       s.from("organizations").select("*, memberships(count)").eq("id", data.id).maybeSingle(),
       // No FK exists between memberships and profiles, so a PostgREST embed
       // (`profiles(...)`) fails and used to make the Team tab read "No users
@@ -638,11 +638,9 @@ export const getClient = createServerFn({ method: "GET" })
         )
         .eq("organization_id", data.id)
         .order("updated_at", { ascending: false }),
-      s
-        .from("candidate_matches")
-        .select("id", { count: "exact", head: true })
-        .eq("organization_id", data.id),
+      readOrgRollups(s, [data.id]),
     ]);
+
     if (orgRes.error) throw new Error(orgRes.error.message);
     if (membersRes.error) throw new Error(membersRes.error.message);
     if (!orgRes.data) return null;
