@@ -46,7 +46,11 @@ export const getCompensationSignal = createServerFn({ method: "POST" })
         .limit(1);
       const l = (locs as AnyRow[] | null)?.[0];
       if (l) {
-        location = [l.city, l.region, l.country].filter(Boolean).join(", ") || location;
+        const parts = [l.city, l.region, l.country].filter(Boolean);
+        const unique = parts.filter((p, i) =>
+          i === 0 || String(p).trim().toLowerCase() !== String(parts[i - 1]).trim().toLowerCase()
+        );
+        location = unique.join(", ") || location;
       }
     }
 
