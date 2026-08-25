@@ -1,4 +1,4 @@
-import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
+import { formatDate } from "@/lib/format/datetime";
 /**
  * "This week" client update — shared shape for the dashboard card and the
  * weekly email.
