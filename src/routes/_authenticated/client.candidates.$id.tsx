@@ -45,6 +45,7 @@ import { ScoreBreakdown } from "@/components/client/candidate-detail/score-break
 import {
   FitHero,
   WhyThisCandidate,
+  WhatNeedsValidation,
 } from "@/components/client/candidate-detail/evidence";
 import {
   AvailabilityPanel,
