@@ -492,23 +492,19 @@ export const RequirementCoverage = memo(function RequirementCoverage({
       </div>
       <div className="mt-4">
         {(() => {
-          // One canonical total for the page: requirements carrying any
-          // evidence (quoted or related), over all declared requirements.
+          // The progress bar and the label must share the same percentage:
+          // requirements with a direct quoted passage, over all declared
+          // requirements. Related-only signals are shown separately.
           const counts = getEvidenceCounts(requirement_rows);
           const total = counts.total;
-          const evidenced = counts.evidenced;
-          const pct = total > 0 ? Math.round((evidenced / total) * 100) : 0;
+          const quoted = counts.quoted;
+          const pct = total > 0 ? Math.round((quoted / total) * 100) : 0;
           return (
             <>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>
-                  Requirements evidenced
-                  <span className="ml-2 tabular-nums">
-                    quoted {counts.quoted} · related {counts.related}
-                  </span>
-                </span>
+                <span>Requirements with a quoted passage</span>
                 <span className="tabular-nums">
-                  {evidenced} of {total} · {pct}%
+                  {quoted} of {total} · {pct}%
                 </span>
               </div>
               <Progress value={pct} className="mt-1" />
@@ -545,8 +541,9 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
     ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
     : null;
   const counts = getEvidenceCounts(candidate.requirement_rows);
+  // The progress bar must match the label: only direct quoted passages count.
   const coveragePct =
-    counts.total > 0 ? Math.round((counts.evidenced / counts.total) * 100) : 0;
+    counts.total > 0 ? Math.round((counts.quoted / counts.total) * 100) : 0;
 
   return (
     <SectionCard
@@ -576,14 +573,9 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
             />
           </div>
           <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-            <span>
-              Requirements evidenced
-              <span className="ml-2 tabular-nums">
-                quoted {counts.quoted} · related {counts.related}
-              </span>
-            </span>
+            <span>Requirements with a quoted passage</span>
             <span className="tabular-nums">
-              {counts.evidenced} of {counts.total} · {coveragePct}%
+              {counts.quoted} of {counts.total} · {coveragePct}%
             </span>
           </div>
           <Progress value={coveragePct} className="mt-1" />
