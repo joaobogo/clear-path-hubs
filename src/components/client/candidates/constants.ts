@@ -35,7 +35,7 @@ export const REVIEW_OPTIONS = [
 ] as const;
 
 export const SORT_OPTIONS = [
-  { key: "score", label: "Best match (score)" },
+  { key: "score", label: "Best fit first" },
   { key: "recent", label: "Recently delivered" },
   { key: "must", label: MUST_HAVE_MEASURE_LABELS.fully_met },
   { key: "stage", label: "Stage" },
