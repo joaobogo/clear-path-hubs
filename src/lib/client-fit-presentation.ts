@@ -16,6 +16,7 @@ import {
   isCandidateHeadline,
 } from "@/lib/evidence/quote-hygiene";
 import { classifyBand, type ScoreBandKey, isTopBand } from "@/lib/scoring/bands";
+import { passageSupportsRequirement } from "./client/evidence-relevance";
 import { resolveRequirementStatus } from "@/lib/client/requirement-status";
 
 
@@ -286,6 +287,10 @@ export function evidenceSupport(
 
   const evidence = mine
     .filter((e: any) => !e.contradiction && !isCandidateHeadline(evidenceSnippet(e)))
+    // A passage that says nothing about this requirement is not evidence for
+    // it — dropping it here makes the requirement read as "no direct evidence"
+    // instead of quoting an unrelated (often generic) sentence.
+    .filter((e: any) => passageSupportsRequirement(cleanQuote(evidenceSnippet(e)), r.label))
     .map((e: any) => ({
       label: e.label || "Evidence",
       snippet: cleanQuote(evidenceSnippet(e)),
