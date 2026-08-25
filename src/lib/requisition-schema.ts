@@ -2,6 +2,7 @@
 // Structured fields live here; free-text job description stays a separate field
 // and never substitutes for structured decision-critical data.
 import { z } from "zod";
+import { dedupeLocationParts } from "@/lib/jobs/location-format";
 
 /* ------------------------------------------------------------------ */
 /* Reference data                                                      */
