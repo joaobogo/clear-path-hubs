@@ -263,6 +263,12 @@ export const listConversations = createServerFn({ method: "GET" })
         unread[u.conversation_id as string] = Number(u.unread_count ?? 0);
       }
 
+      const counts: Record<string, number> = {};
+      for (const m of (msgRows as Row[]) ?? []) {
+        const cid = m.conversation_id as string;
+        counts[cid] = (counts[cid] ?? 0) + 1;
+      }
+
       const names = await nameMap(Object.values(last).map((m) => m.sender_user_id as string));
 
       // Context labels (role title / candidate reference) for scoped threads.
