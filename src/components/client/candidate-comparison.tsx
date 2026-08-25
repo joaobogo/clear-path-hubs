@@ -22,6 +22,7 @@ import {
   type CompareStatus,
   type CompareMatrixRow,
 } from "@/lib/client-compare";
+import { humanizeConcernSentence } from "@/lib/client/validation-list";
 
 
 

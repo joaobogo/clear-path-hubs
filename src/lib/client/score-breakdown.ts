@@ -16,6 +16,7 @@ import { bandRange, classifyBand } from "@/lib/scoring/bands";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
 import { plural, pluralWord } from "@/lib/format/plural";
+import { humanizeConcernSentence } from "@/lib/client/validation-list";
 
 export type BreakdownGroup = {
   kind: "must_have" | "preferred";
