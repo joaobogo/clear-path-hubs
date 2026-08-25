@@ -7,11 +7,30 @@ import type { RequirementRow, RequirementStatus } from "../client-fit-presentati
  *
  * Invariant: a requirement that carries a quote is never "not evidenced".
  */
+function normalizeText(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+/**
+ * A snippet that only restates the requirement is not evidence — it is the
+ * requirement said twice. Shared with the rationale builder so the profile,
+ * the counters and the shortlist sentence all discount the same quotes.
+ */
+export function isEvidenceEcho(requirement: string, snippet: string): boolean {
+  const req = normalizeText(requirement ?? "");
+  const snip = normalizeText(snippet ?? "");
+  return !req || !snip || req === snip;
+}
+
 /** True when the requirement carries a quoted passage from the candidate's record. */
 export function hasQuotedEvidence(
-  row: Pick<RequirementRow, "evidence">,
+  row: Pick<RequirementRow, "evidence"> & { label?: string | null },
 ): boolean {
-  return (row.evidence ?? []).some((e) => (e.snippet ?? "").trim().length > 0);
+  return (row.evidence ?? []).some((e) => {
+    const snippet = (e.snippet ?? "").trim();
+    if (!snippet) return false;
+    return !isEvidenceEcho(row.label ?? "", snippet);
+  });
 }
 
 /**
