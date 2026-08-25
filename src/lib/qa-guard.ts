@@ -45,11 +45,12 @@ export function isQaSafeOrg(org: QaSafeOrg): boolean {
  * Supabase client that can read organizations (supabaseAdmin or context.supabase).
  */
 export async function loadOrgQaFlags(
-  db: { from: (table: string) => unknown },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  db: any,
   orgId: string,
 ): Promise<{ ok: false; reason: string } | { ok: true; org: QaSafeOrg }> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const res: any = (await db.from("organizations").select("id,is_demo,is_test_record").eq("id", orgId)) as any;
+  const res: any = await db.from("organizations").select("id,is_demo,is_test_record").eq("id", orgId);
   if (res.error) return { ok: false, reason: res.error.message };
   const org = (res.data ?? [])[0] as QaSafeOrg | undefined;
   if (!org) return { ok: false, reason: "Organization not found" };
