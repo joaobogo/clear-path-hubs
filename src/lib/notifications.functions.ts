@@ -451,11 +451,62 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       }
     }
 
-    const items = rows.map((r: any) => ({
-      ...r,
-      actor_label: r.event_id ? (actorByEvent.get(r.event_id) ?? null) : null,
-      delivery_state: deliveryByNotification.get(r.id) ?? null,
-    }));
+    // Interview notifications must open the interview they are about, not the
+    // general list. The interview id is not on the notification row, so resolve
+    // it from the candidate match the event was raised for.
+    const interviewByMatch = new Map<string, string>();
+    const interviewMatchIds = [
+      ...new Set(
+        rows
+          .filter(
+            (r: any) =>
+              typeof r.event_type === "string" &&
+              r.event_type.startsWith("interview_") &&
+              r.entity_type === "candidate_match" &&
+              !!r.entity_id,
+          )
+          .map((r: any) => r.entity_id as string),
+      ),
+    ];
+    if (interviewMatchIds.length > 0) {
+      const { data: interviews } = await context.supabase
+        .from("interviews")
+        .select("id, candidate_match_id, created_at")
+        .in("candidate_match_id", interviewMatchIds)
+        .order("created_at", { ascending: true });
+      for (const iv of interviews ?? []) {
+        const matchId = iv.candidate_match_id as string | null;
+        if (matchId) interviewByMatch.set(matchId, iv.id as string);
+      }
+    }
+
+    const { isAdminPath, resolveClientNotificationLink } = await import(
+      "./notifications/client-link"
+    );
+
+    const items = rows.map((r: any) => {
+      let link_path = (r.link_path as string | null) ?? null;
+      const isClientRow = (r.audience as string | null) === "client";
+      if (
+        typeof r.event_type === "string" &&
+        r.event_type.startsWith("interview_") &&
+        r.entity_type === "candidate_match"
+      ) {
+        const interviewId = interviewByMatch.get(r.entity_id as string);
+        if (interviewId && (!link_path || !link_path.includes("interview="))) {
+          link_path = `/client/interviews?interview=${interviewId}`;
+        }
+      }
+      if (isClientRow && isAdminPath(link_path)) {
+        link_path = resolveClientNotificationLink({ ...r, link_path });
+      }
+      return {
+        ...r,
+        link_path,
+        actor_label: r.event_id ? (actorByEvent.get(r.event_id) ?? null) : null,
+        delivery_state: deliveryByNotification.get(r.id) ?? null,
+      };
+    });
     const unread = items.filter((n: any) => !n.read_at).length;
     return { items, unread };
   });
