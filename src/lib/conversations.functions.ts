@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { isQaFixtureTitle } from "./client/test-record-filter";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertNoQaContamination } from "@/lib/qa-guard";
 import {
   MAX_ATTACHMENTS_PER_MESSAGE,
   MAX_ATTACHMENT_BYTES,

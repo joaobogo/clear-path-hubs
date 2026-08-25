@@ -1,6 +1,7 @@
 // Team roster and membership mutations.
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
+import { assertNoQaContamination } from "@/lib/qa-guard";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";

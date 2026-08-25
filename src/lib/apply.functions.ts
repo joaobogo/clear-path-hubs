@@ -8,6 +8,7 @@ import { normalizeCompletionSeconds } from "./jobs/apply-effort";
 import type { ExistingApplicationSummary } from "./candidate/existing-application.server";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 import { logApplicationIncident } from "./incident-logger.server";
+import { assertNoQaContamination } from "@/lib/qa-guard";
 
 
 export type SubmitApplicationResult =
