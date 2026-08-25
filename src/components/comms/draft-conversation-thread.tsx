@@ -247,6 +247,12 @@ export function DraftConversationThread({
     }
   };
 
+  useEffect(() => {
+    if (!sendError) return;
+    const check = checkMessageBody(body, files.length > 0);
+    if (check.ok) setSendError(null);
+  }, [body, files.length, sendError]);
+
   return (
     <div className={cn("flex flex-col rounded-lg border bg-card", heightClass, className)}>
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
