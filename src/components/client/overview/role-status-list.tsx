@@ -38,8 +38,6 @@ export function RoleStatusList({
   return (
     <ul className="grid gap-2">
       {roles.map((r) => {
-        const since = formatStageDate(r.stage_entered_at);
-        const days = r.days_in_stage as number | null;
         const commitment = shortlistCommitment({
           promisedShortlistBy: r.promised_shortlist_by,
           shortlistDeliveredAt: r.shortlist_delivered_at,
