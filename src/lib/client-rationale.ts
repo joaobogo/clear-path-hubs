@@ -77,6 +77,8 @@ export function normaliseSource(raw: string | null | undefined): ClaimSource {
   return "Recruiter notes";
 }
 
+import { resolveRequirementStatus } from "@/lib/client/requirement-status";
+
 const VERDICT_LABEL: Record<RationaleVerdict, string> = {
   met: "Meets this",
   partial: "Partly meets this",
@@ -129,7 +131,7 @@ export function buildShortlistRationale(
   }
 
   const toLine = (r: RequirementRow): RationaleLine => {
-    const verdict = toVerdict(r.status);
+    const verdict = toVerdict(resolveRequirementStatus(r));
     const sources = new Set<ClaimSource>();
 
     let claim = "";
