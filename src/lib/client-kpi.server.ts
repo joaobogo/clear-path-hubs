@@ -674,7 +674,7 @@ function normCandidateExpectation(raw: unknown): { text: string | null; amount: 
   return { text, amount: target, currency };
 }
 
-function classifyCompensation(
+export function classifyCompensation(
   role: { min: number | null; max: number | null },
   cand: { amount: number | null },
 ): "aligned" | "over" | "under" | "unknown" {
