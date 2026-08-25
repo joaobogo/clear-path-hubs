@@ -720,7 +720,7 @@ async function main() {
           completed_at: opts.completedAt.toISOString(),
           requirement_coverage: { must_have: mustHaveCoverage, preferred: mustHaveCoverage },
           evidence: requirementAssessment.flatMap((r) => r.evidence),
-          explanation: `${opts.label}: ${quoted} of ${requirements.length} requirements carry a quoted passage.`,
+          explanation: `${opts.label}: ${quoted} of ${requirements.length} requirements carry a quoted passage. Assessment: ${assessment.headline}.`,
           result: {
             score: opts.score,
             fit_label: fitBand(opts.score),
@@ -739,7 +739,22 @@ async function main() {
             concerns: requirements
               .slice(quoted)
               .map((r) => `Partly evidenced — worth confirming: ${r}`),
-            inputs: { cv_text: cv },
+            inputs: {
+              cv_text: cv,
+              cv_template: cvTemplate.id,
+              interview_transcript: interviewText,
+              interview_depth: transcript.depth,
+              assessment_submission: assessmentText,
+              assessment_result: {
+                id: assessment.id,
+                accuracy: assessment.accuracy,
+                headline: assessment.headline,
+                questions_total: assessment.questions_total,
+                questions_correct: assessment.questions_correct,
+                questions_partial: assessment.questions_partial,
+                questions_incorrect: assessment.questions_incorrect,
+              },
+            },
           },
         })
         .select("id")
@@ -814,7 +829,7 @@ async function main() {
         requested_at: new Date(interviewAt.getTime() - 4 * day).toISOString(),
         scheduled_at: interviewAt.toISOString(),
         confirmed_at: new Date(interviewAt.getTime() - 2 * day).toISOString(),
-        notes: interviewNotes(seed, quoted, requirements.length),
+        notes: interviewText,
         participants: [{ name: "Technical panel", role: "interviewer" }],
         proposed_times: [interviewAt.toISOString()],
       })
@@ -827,7 +842,7 @@ async function main() {
       .update({
         status: "completed",
         completed_at: new Date(interviewAt.getTime() + 60 * 60 * 1000).toISOString(),
-        feedback: assessmentNotes(seed, quoted, requirements.length),
+        feedback: assessmentText,
       })
       .eq("id", interview.id);
     if (interviewCompleteError)
