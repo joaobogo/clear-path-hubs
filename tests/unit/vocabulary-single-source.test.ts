@@ -6,7 +6,7 @@ import {
   statusLabel,
 } from "@/lib/vocabulary";
 import { stageDisplayName } from "@/lib/client/stage-display";
-import { clientStageLabel } from "@/lib/lib-stage-shim";
+import { clientStageLabel } from "@/lib/client-stage-labels";
 
 describe("one vocabulary module", () => {
   it("renders the interview stage under one label per audience", () => {
