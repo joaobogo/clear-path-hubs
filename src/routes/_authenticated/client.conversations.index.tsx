@@ -9,6 +9,8 @@ import { listConversations } from "@/lib/conversations.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Briefcase, MessageSquare, Search, User, UserCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
