@@ -610,6 +610,10 @@ export const createWorkspacePosition = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await assertEditor(context.supabase, context.userId, data.orgId);
+    const qa = await assertNoQaContamination(context.supabase, data.orgId, [
+      data.title,
+    ]);
+    if (!qa.ok) throw new Error(qa.reason);
     const trace_id = crypto.randomUUID();
     const { data: created, error } = await context.supabase
       .from("positions")
