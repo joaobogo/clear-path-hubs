@@ -16,6 +16,8 @@ import {
   isCandidateHeadline,
 } from "@/lib/evidence/quote-hygiene";
 import { classifyBand, type ScoreBandKey, isTopBand } from "@/lib/scoring/bands";
+import { resolveRequirementStatus } from "@/lib/client/requirement-status";
+
 
 
 /**
