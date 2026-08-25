@@ -588,7 +588,19 @@ async function main() {
       method: string;
       label: string;
       sources: string[];
+      supersedes?: { runId: string; reason: string };
     }) => {
+      if (opts.supersedes) {
+        const { error } = await sb
+          .from("score_runs")
+          .update({
+            superseded_at: opts.completedAt.toISOString(),
+            superseded_reason: opts.supersedes.reason,
+          })
+          .eq("id", opts.supersedes.runId);
+        if (error) throw new Error(`superseding run failed for ${seed.name}: ${error.message}`);
+      }
+
       const { data: run, error: runError } = await sb
         .from("score_runs")
         .insert({
