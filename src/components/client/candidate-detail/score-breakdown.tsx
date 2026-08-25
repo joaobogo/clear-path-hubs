@@ -8,6 +8,7 @@ import type { RequirementRow } from "@/lib/client-fit-presentation";
 import { SectionCard } from "./shared";
 import { RequirementRowView } from "./evidence";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
+import { requirementBasis, formatBasis } from "@/lib/scoring/score-composition";
 
 function CountChip({
   label,
@@ -39,17 +40,47 @@ function CountChip({
 function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
   const c = candidate.score_composition;
   if (!c || c.components.length === 0) return null;
+
+  // Every percentage is recomputed from the requirement rows this page already
+  // renders, so the composition can never quote a share the panels below
+  // contradict. Half a point for a partly met requirement.
+  const rows = candidate.requirement_rows ?? [];
+  const bases = {
+    must_have: requirementBasis(rows, "must_have"),
+    preferred: requirementBasis(rows, "preferred"),
+  } as const;
+  const answers = candidate.screening_answers?.length ?? 0;
+
+  const lines = c.components.map((k) => {
+    const basis = k.key === "must_have" ? bases.must_have : k.key === "preferred" ? bases.preferred : null;
+    const valuePct = basis ? basis.valuePct : k.valuePct;
+    const contributionPts = Math.round(((valuePct * k.weightPct) / 100) * 10) / 10;
+    const basisLabel = basis
+      ? formatBasis(basis)
+      : k.key === "screening_alignment" && answers > 0
+        ? `from ${answers} screening ${answers === 1 ? "answer" : "answers"}`
+        : null;
+    return { ...k, valuePct, contributionPts, basisLabel };
+  });
+  const totalPts = Math.round(lines.reduce((sum, l) => sum + l.contributionPts, 0) * 10) / 10;
+  const reconciles =
+    !c.incomplete && c.displayedScore != null && Math.abs(Math.round(totalPts) - c.displayedScore) <= 1;
+
   return (
     <div className="mt-4 rounded-lg border p-3">
       <h3 className="text-sm font-semibold">How the number is made up</h3>
       <ul className="mt-2 space-y-1.5 text-sm">
-        {c.components.map((k) => (
+        {lines.map((k) => (
           <li key={k.key} className="flex flex-wrap items-baseline justify-between gap-2">
             <span className="text-muted-foreground">
               {k.label} <span className="tabular-nums">({k.weightPct}% of the score)</span>
             </span>
             <span className="tabular-nums">
-              {k.valuePct}% &times; {k.weightPct}% = {k.contributionPts} points
+              {k.valuePct}%
+              {k.basisLabel && (
+                <span className="text-muted-foreground"> ({k.basisLabel})</span>
+              )}{" "}
+              &times; {k.weightPct}% = {k.contributionPts} points
             </span>
           </li>
         ))}
@@ -57,16 +88,18 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
       <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t pt-2 text-sm font-medium">
         <span>Total</span>
         <span className="tabular-nums">
-          {c.totalPts} points
-          {c.displayedScore != null && !c.reconciles ? ` (score shown: ${c.displayedScore})` : ""}
+          {totalPts} points
+          {c.displayedScore != null && !reconciles ? ` (score shown: ${c.displayedScore})` : ""}
         </span>
       </div>
       <p className="mt-2 text-[11px] text-muted-foreground">
+        Percentages are weighted counts of the requirements listed below: a fully
+        evidenced requirement scores one point, a partly evidenced one half.
         {c.incomplete
-          ? "One of the three weightings was not measured for this assessment, so the parts do not add up to the whole yet."
-          : c.reconciles
-            ? "The three parts add up to the score shown above."
-            : "The parts and the score shown disagree; the assessment is being re-checked."}
+          ? " One of the three weightings was not measured for this assessment, so the parts do not add up to the whole yet."
+          : reconciles
+            ? " The three parts add up to the score shown above."
+            : " The parts and the score shown disagree; the assessment is being re-checked."}
       </p>
     </div>
   );

@@ -118,3 +118,54 @@ export function buildScoreComposition(input: {
     incomplete,
   };
 }
+
+/**
+ * Weighted requirement basis — the counts behind a coverage percentage.
+ *
+ * Each declared requirement is worth one point; a partly met requirement is
+ * worth half. This is the arithmetic the requirement panel already shows, so
+ * the composition panel can print "91.7% (5.5 of 6 weighted points)" without
+ * inventing a second calculation.
+ */
+export type RequirementBasis = {
+  points: number;
+  max: number;
+  met: number;
+  partial: number;
+  missing: number;
+  total: number;
+  /** points / max as a 0–100 percentage, rounded to one decimal. */
+  valuePct: number;
+};
+
+export function requirementBasis(
+  rows: Array<{ status: string; importance?: string }>,
+  importance: "must_have" | "preferred",
+): RequirementBasis | null {
+  const scoped = rows.filter((r) =>
+    importance === "must_have"
+      ? r.importance === "must_have"
+      : r.importance !== "must_have",
+  ).filter((r) => r.status !== "not_applicable");
+  const total = scoped.length;
+  if (total === 0) return null;
+  const met = scoped.filter((r) => r.status === "met").length;
+  const partial = scoped.filter((r) => r.status === "partial").length;
+  const missing = total - met - partial;
+  const points = Math.round((met + partial * 0.5) * 10) / 10;
+  return {
+    points,
+    max: total,
+    met,
+    partial,
+    missing,
+    total,
+    valuePct: Math.round((points / total) * 1000) / 10,
+  };
+}
+
+/** "5.5 of 6 weighted points" — the counts a percentage is made of. */
+export function formatBasis(b: RequirementBasis): string {
+  const pts = Number.isInteger(b.points) ? b.points.toFixed(0) : b.points.toFixed(1);
+  return `${pts} of ${b.max} weighted points`;
+}
