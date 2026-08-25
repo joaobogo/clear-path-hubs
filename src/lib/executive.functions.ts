@@ -342,13 +342,10 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         severity: (stuckProcessing > 0 ? "crit" : "info") as "info" | "crit",
         hint: "TaaSFlow is reprocessing these — no action needed on your side",
       },
-      {
-        key: "blocked_matches",
-        label: "CVs needing evidence review",
-        count: blockedMatches,
-        severity: (blockedMatches > 0 ? "warn" : "info") as "info" | "warn",
-        hint: "TaaSFlow is running evidence review before delivery",
-      },
+      // Internal evidence-review queue is deliberately not surfaced to clients:
+      // it describes our processing, not anything they can act on, and it implies
+      // candidates they cannot see.
+
       {
         key: "draft_positions",
         label: "Roles waiting on intake",
