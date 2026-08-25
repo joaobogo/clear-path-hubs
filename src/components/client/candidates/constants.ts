@@ -32,8 +32,9 @@ export const REVIEW_OPTIONS = [
 ] as const;
 
 export const SORT_OPTIONS = [
+  { key: "score", label: "Best match (score)" },
   { key: "recent", label: "Recently delivered" },
- { key: "must", label: "Must-have coverage" },
- { key: "stage", label: "Stage" },
- { key: "name", label: "Candidate name" },
+  { key: "must", label: "Must-have coverage" },
+  { key: "stage", label: "Stage" },
+  { key: "name", label: "Candidate name" },
 ] as const;
