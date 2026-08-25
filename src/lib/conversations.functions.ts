@@ -223,8 +223,7 @@ export const listConversations = createServerFn({ method: "GET" })
           "id, organization_id, scope, position_id, candidate_match_id, subject, last_message_at",
         )
         .eq("organization_id", data.orgId)
-        .not("last_message_at", "is", null)
-        .order("last_message_at", { ascending: false });
+        .order("last_message_at", { ascending: false, nullsFirst: false });
 
       if (error) throw new Error(error.message);
 
@@ -232,18 +231,27 @@ export const listConversations = createServerFn({ method: "GET" })
       if (rows.length === 0) return { items: [] };
       const ids = rows.map((c) => c.id as string);
 
-      const [{ data: latestMsgs, error: latestErr }, { data: unreadRows, error: unreadErr }] =
-        await Promise.all([
-          supabase.rpc("get_latest_conversation_messages", { conversation_ids: ids }),
-          supabase.rpc("get_conversation_unread_counts", {
-            _user_id: userId,
-            _conversation_ids: ids,
-          }),
-        ]);
+      const [
+        { data: latestMsgs, error: latestErr },
+        { data: unreadRows, error: unreadErr },
+        { data: msgRows, error: msgCountErr },
+      ] = await Promise.all([
+        supabase.rpc("get_latest_conversation_messages", { conversation_ids: ids }),
+        supabase.rpc("get_conversation_unread_counts", {
+          _user_id: userId,
+          _conversation_ids: ids,
+        }),
+        supabase
+          .from("messages")
+          .select("conversation_id")
+          .in("conversation_id", ids)
+          .limit(1000),
+      ]);
 
       const partialErrors: string[] = [];
       if (latestErr) partialErrors.push("latest messages");
       if (unreadErr) partialErrors.push("unread counts");
+      if (msgCountErr) partialErrors.push("message counts");
 
       const last: Record<string, Row> = {};
       for (const m of (latestMsgs as Row[]) ?? []) {
@@ -253,6 +261,12 @@ export const listConversations = createServerFn({ method: "GET" })
       const unread: Record<string, number> = {};
       for (const u of (unreadRows as Row[]) ?? []) {
         unread[u.conversation_id as string] = Number(u.unread_count ?? 0);
+      }
+
+      const counts: Record<string, number> = {};
+      for (const m of (msgRows as Row[]) ?? []) {
+        const cid = m.conversation_id as string;
+        counts[cid] = (counts[cid] ?? 0) + 1;
       }
 
       const names = await nameMap(Object.values(last).map((m) => m.sender_user_id as string));
@@ -328,6 +342,7 @@ export const listConversations = createServerFn({ method: "GET" })
             ? (names[lastMsg.sender_user_id as string]?.name ?? null)
             : null,
           unread: unread[c.id as string] ?? 0,
+          message_count: counts[c.id as string] ?? 0,
         };
       });
 

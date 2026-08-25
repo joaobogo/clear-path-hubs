@@ -9,6 +9,8 @@ import { listConversations } from "@/lib/conversations.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Briefcase, MessageSquare, Search, User, UserCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -66,6 +68,7 @@ function ConversationsPage() {
   const rawFilter = search.filter || (box === "unread" ? "unread" : "all");
   const filter = rawFilter === "unread" ? "all" : rawFilter;
   const [q, setQ] = useState("");
+  const [hideEmpty, setHideEmpty] = useState(true);
 
   const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
@@ -103,6 +106,8 @@ function ConversationsPage() {
     const allItems = threadData?.items ?? [];
 
     return allItems.filter((c) => {
+      const empty = (c.message_count ?? 0) === 0;
+      if (hideEmpty && empty) return false;
       if (box === "unread" && c.unread <= 0) return false;
       if (filter !== "all" && c.scope !== filter) return false;
       if (!needle) return true;
@@ -112,10 +117,10 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [threadData, box, filter, q]);
+  }, [threadData, box, filter, q, hideEmpty]);
 
   const unreadCount = (threadData?.items ?? []).filter((c) => c.unread > 0).length;
-
+  const emptyCount = (threadData?.items ?? []).filter((c) => (c.message_count ?? 0) === 0).length;
 
   const totalCount = threadData?.items?.length ?? 0;
 
@@ -126,7 +131,10 @@ function ConversationsPage() {
           <MessageSquare className="h-6 w-6 text-primary" />
           Messages
           <span className="text-sm font-normal text-muted-foreground" data-testid="conversation-count">
-            {totalCount} conversation{totalCount === 1 ? "" : "s"}
+            {items.length} of {totalCount} conversation{totalCount === 1 ? "" : "s"}
+            {emptyCount > 0 && hideEmpty
+              ? ` — ${emptyCount} empty ${emptyCount === 1 ? "thread" : "threads"} hidden`
+              : ""}
           </span>
           {unreadCount > 0 && (
             <Badge variant="secondary" className="text-xs">
@@ -147,7 +155,7 @@ function ConversationsPage() {
       ) : null}
 
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-3">
           <div className="flex rounded-md border p-0.5">
             {FILTERS.map((f) => (
               <Link
@@ -173,6 +181,16 @@ function ConversationsPage() {
               placeholder="Search conversations"
               className="pl-9"
             />
+          </div>
+          <div className="flex items-center gap-2 rounded-md border px-3 py-2">
+            <Switch
+              id="hide-empty"
+              checked={hideEmpty}
+              onCheckedChange={setHideEmpty}
+            />
+            <Label htmlFor="hide-empty" className="cursor-pointer text-sm">
+              Hide empty threads
+            </Label>
           </div>
       </div>
 
@@ -207,6 +225,20 @@ function ConversationsPage() {
           >
             Back to threads
           </Link>
+        </div>
+      ) : items.length === 0 && hideEmpty && emptyCount === totalCount && totalCount > 0 ? (
+        <div className="rounded-lg border bg-card p-8 text-center">
+          <p className="text-sm font-medium">All threads are empty</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Turn off the filter to see {emptyCount === 1 ? "the empty thread" : "them"}.
+          </p>
+          <button
+            type="button"
+            onClick={() => setHideEmpty(false)}
+            className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
+          >
+            Show empty threads
+          </button>
         </div>
       ) : items.length === 0 ? (
         <SurfaceState
