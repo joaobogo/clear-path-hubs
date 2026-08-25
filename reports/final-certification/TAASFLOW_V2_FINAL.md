@@ -102,22 +102,22 @@ The AUTH-CERT-2026-07-22 report classified invitation flow and onboarding routes
 Re-run this certification once (1)–(4) are complete.
 
 <!-- LIVE-INVARIANTS:START -->
-### Live database invariants (read 2026-08-25T18:21:23.989Z)
+### Live database invariants (read 2026-08-25T18:22:56.795Z)
 
 | Invariant | Value | Query | Read at |
 | --- | --- | --- | --- |
-| Rows in candidate_matches | **13** | Q1 | 2026-08-25T18:21:23.989Z |
-| Rows in score_runs | **42** | Q1 | 2026-08-25T18:21:23.989Z |
-| Completed score runs | **42** | Q1 | 2026-08-25T18:21:23.989Z |
-| Matches with a completed score run | **13** | Q1 | 2026-08-25T18:21:23.989Z |
-| With a current score run | **13** | Q1 | 2026-08-25T18:21:23.989Z |
-| With an approved score run | **10** | Q1 | 2026-08-25T18:21:23.989Z |
-| Marked scored | **11** | Q1 | 2026-08-25T18:21:23.989Z |
-| Marked manual review required | **2** | Q1 | 2026-08-25T18:21:23.989Z |
-| Marked failed | **0** | Q1 | 2026-08-25T18:21:23.989Z |
-| Audit events recorded | **10762** | Q1 | 2026-08-25T18:21:23.989Z |
-| Active platform_admin memberships | **1** (expected 1) | Q1 | 2026-08-25T18:21:23.989Z |
-| Active master admins | **1** (expected 1) | Q1 | 2026-08-25T18:21:23.989Z |
+| Rows in candidate_matches | **13** | Q1 | 2026-08-25T18:22:56.795Z |
+| Rows in score_runs | **42** | Q1 | 2026-08-25T18:22:56.795Z |
+| Completed score runs | **42** | Q1 | 2026-08-25T18:22:56.795Z |
+| Matches with a completed score run | **13** | Q1 | 2026-08-25T18:22:56.795Z |
+| With a current score run | **13** | Q1 | 2026-08-25T18:22:56.795Z |
+| With an approved score run | **10** | Q1 | 2026-08-25T18:22:56.795Z |
+| Marked scored | **11** | Q1 | 2026-08-25T18:22:56.795Z |
+| Marked manual review required | **2** | Q1 | 2026-08-25T18:22:56.795Z |
+| Marked failed | **0** | Q1 | 2026-08-25T18:22:56.795Z |
+| Audit events recorded | **10762** | Q1 | 2026-08-25T18:22:56.795Z |
+| Active platform_admin memberships | **1** (expected 1) | Q1 | 2026-08-25T18:22:56.795Z |
+| Active master admins | **1** (expected 1) | Q1 | 2026-08-25T18:22:56.795Z |
 
 All live invariants match their expected values.
 

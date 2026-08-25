@@ -111,9 +111,9 @@
     "public routes: all critical marketing/apply routes return 200; /auth 307 is expected pre-auth redirect"
   ],
   "verdict_reason": "Excellence certification requires 0 blocked critical tests and re-execution of every persona, route, control, and negative scenario in a single verified pass. Privileged access and pipeline fan-out now pass live-count checks; the remaining blocker is the full live matrix and auth-completeness verification not being re-executed in this pass.",
-  "invariants_read_at": "2026-08-25T18:21:23.989Z",
+  "invariants_read_at": "2026-08-25T18:22:56.795Z",
   "query_provenance": {
-    "ran_at": "2026-08-25T18:21:23.989Z",
+    "ran_at": "2026-08-25T18:22:56.795Z",
     "queries": [
       {
         "id": "Q1",
