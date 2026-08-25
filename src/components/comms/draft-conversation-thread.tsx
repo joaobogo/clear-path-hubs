@@ -378,7 +378,7 @@ export function DraftConversationThread({
             </ul>
           )}
 
-          {sendError ? (
+          {sendError && (
             <p className="text-sm text-destructive" role="alert">
               {sendError}{" "}
               <button
@@ -387,15 +387,14 @@ export function DraftConversationThread({
                 onClick={() => void send()}
                 disabled={sending}
               >
-                Retry
+                Send now
               </button>
             </p>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Attach {ALLOWED_ATTACHMENT_HINT}. Up to {MAX_MESSAGE_CHARS.toLocaleString()}{" "}
-              characters.
-            </p>
           )}
+          <p className={cn("text-xs text-muted-foreground", sendError && "opacity-70")}>
+            Attach {ALLOWED_ATTACHMENT_HINT}. Up to {MAX_MESSAGE_CHARS.toLocaleString()}{" "}
+            characters.
+          </p>
         </form>
       </div>
     </div>
