@@ -243,7 +243,7 @@ export function buildCompensationSignal(input: CompensationInputs): Compensation
       label: input.location ? `Role range — ${input.location}` : "Role range",
       display: formatRange(roleRange),
       source: "intake",
-      sourceLabel: "Captured at intake",
+      sourceLabel: "From your role brief",
       sampleSize: roleRange ? 1 : 0,
       thin: false,
       note: roleRange ? null : "No range on record for this role. We don't estimate one.",

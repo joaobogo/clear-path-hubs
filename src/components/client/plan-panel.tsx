@@ -247,7 +247,7 @@ export function PlanPanel({
             <div className="text-xs text-muted-foreground">Roles left to open</div>
             <div className="mt-1 text-sm font-medium">
               {!allowance
-                ? "None held — each role is paid for on publish"
+                ? "None held — each role is paid for when the role goes live"
                 : allowance.rolesRemaining === null
                   ? "Unlimited"
                   : `${allowance.rolesRemaining} of ${allowance.rolesTotal}`}

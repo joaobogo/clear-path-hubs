@@ -185,7 +185,7 @@ export function SilverMedalistBadge({
       }
     >
       <Award className="h-3 w-3" aria-hidden />
-      {archived ? "Silver medalist · archived" : "Silver medalist"}
+      {archived ? "Previously shortlisted · archived" : "Previously shortlisted"}
     </Badge>
   );
 }

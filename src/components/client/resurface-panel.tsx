@@ -76,7 +76,7 @@ export function ResurfacePanel({
             From your talent memory
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Silver medalists whose profile overlaps with this role.
+            Previously shortlisted candidates whose profile overlaps with this role.
           </p>
         </div>
         <Link

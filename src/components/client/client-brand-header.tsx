@@ -100,7 +100,7 @@ export function ClientBrandHeader({
             <div className="text-xs uppercase tracking-wide text-muted-foreground">
               <span>{parentName}</span>
               <span aria-hidden> · </span>
-              <span className="text-foreground/70">Business unit</span>
+              <span className="text-foreground/70">Team</span>
             </div>
           ) : (
             <div className="text-xs uppercase tracking-wide text-muted-foreground">

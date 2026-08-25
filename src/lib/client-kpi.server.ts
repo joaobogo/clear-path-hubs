@@ -694,7 +694,7 @@ function normSourceLabel(source: unknown): { label: string | null; channel: stri
     website: "Careers site",
     referral: "Referral",
     outreach: "Recruiter outreach",
-    talent_memory: "Talent memory",
+    talent_memory: "Keep for future roles",
     partner: "Partner network",
     direct: "Direct application",
     linkedin: "LinkedIn",

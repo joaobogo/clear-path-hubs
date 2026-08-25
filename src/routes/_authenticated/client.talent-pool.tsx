@@ -30,7 +30,7 @@ function TalentPoolPage() {
           <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <Users className="h-5 w-5" />
           </div>
-          <h3 className="text-lg font-medium">Silver medalists</h3>
+          <h3 className="text-lg font-medium">Previously shortlisted</h3>
           <p className="mt-2 text-sm text-muted-foreground">
             Candidates who reached the final stages of previous roles but were not hired.
           </p>

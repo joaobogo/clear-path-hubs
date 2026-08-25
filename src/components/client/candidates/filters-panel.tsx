@@ -15,7 +15,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { SlidersHorizontal, Sparkles, X } from "lucide-react";
-import { UNICORN_SCORE } from "@/lib/scoring/bands";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import {
   STAGE_OPTIONS,
@@ -127,21 +126,6 @@ export function CandidatesFiltersPanel({
         </div>
 
 
-        {/* One tap to the strongest candidates — no manual sorting. */}
-        <button
-          type="button"
-          onClick={() => setF({ unicorn: search.unicorn === "1" ? "0" : "1" })}
-          aria-pressed={search.unicorn === "1"}
-          title={`Show only candidates scoring ${UNICORN_SCORE} or above`}
-          className={`inline-flex h-12 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-medium transition-colors sm:h-10 ${
-            search.unicorn === "1"
-              ? "border-primary bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Sparkles className="h-3.5 w-3.5" aria-hidden />
-          Unicorn only ({UNICORN_SCORE}+)
-        </button>
 
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>

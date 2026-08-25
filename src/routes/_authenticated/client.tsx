@@ -386,9 +386,9 @@ function ClientLayout() {
   role="client"
   contextKicker="Workspace"
   contextLabel={active.name}
-  contextSubLabel={`${effectiveRole.replace(/_/g, " ")}${supportView.active ? " · support view" : ""}`}
+  contextSubLabel={`${effectiveRole.replace(/_/g, " ")}`}
   accountLabel={data?.onboarding?.display_name?.trim() || "My account"}
-  accountSubLabel={`${effectiveRole.replace(/_/g, " ")}${supportView.active ? " · support view" : ""}`}
+  accountSubLabel={`${effectiveRole.replace(/_/g, " ")}`}
   navItems={navItems}
   linkSearch={linkSearch}
   topBanner={topBanner}
