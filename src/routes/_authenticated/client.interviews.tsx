@@ -47,6 +47,7 @@ import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { RequestInterviewDialog } from "@/components/client/interviews/request-interview-dialog";
 import { InterviewDetailDialog } from "@/components/client/interviews/interview-detail-dialog";
 import { getWorkspaceTimezone } from "@/lib/format/datetime";
+import { resolveRecipientZone } from "@/lib/time/zone-label";
 import { AwaitingConfirmationSection } from "@/components/client/interviews/awaiting-confirmation";
 
 const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "6xl" });
@@ -114,9 +115,12 @@ function InterviewsPage() {
     invalidateKeys: [["client-interviews"], ["client-schedulable", org], ["client-kpis"]],
   });
   const hasWindows = ((availability.data?.windows ?? []) as unknown[]).length > 0;
-  // The client's stored timezone wins; the browser is only a fallback.
-  const orgTimezone =
-    (availability.data?.timezone as string | null | undefined) || getWorkspaceTimezone();
+  // The organisation's timezone setting wins, then the zone on its availability
+  // windows. The viewer's browser zone is never used.
+  const orgTimezone = resolveRecipientZone(
+    getWorkspaceTimezone(),
+    availability.data?.timezone as string | null | undefined,
+  );
 
   const interviews = (listQuery.data?.interviews as InterviewDTO[] | undefined) ?? [];
 
