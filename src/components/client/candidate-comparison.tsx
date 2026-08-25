@@ -22,6 +22,7 @@ import {
   type CompareStatus,
   type CompareMatrixRow,
 } from "@/lib/client-compare";
+import { humanizeConcernSentence } from "@/lib/client/validation-list";
 
 
 
@@ -479,7 +480,7 @@ export function CompareSheet({
               {candidates.map((c) => (
                 <ul key={c.match_id} className="text-xs list-disc pl-4 space-y-0.5">
                   {c.concerns.slice(0, 4).map((s, i) => (
-                    <li key={i}>{s}</li>
+                    <li key={i}>{humanizeConcernSentence(s)}</li>
                   ))}
                   {c.concerns.length === 0 && (
                     <li className="list-none text-muted-foreground">None flagged.</li>

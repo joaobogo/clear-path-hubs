@@ -92,9 +92,67 @@ export function buildValidationList(
       id: `note-${i}`,
       label: null,
       status: null,
-      sentence: c.trim(),
+      sentence: humanizeConcernSentence(c),
       tone: "warning" as const,
     }));
 
   return [...runNotes, ...requirementItems.slice(0, maxRequirements)];
+}
+
+/**
+ * Rewrites an engine concern sentence in plain client-facing language.
+ * Internal phrasings such as "Only partial evidence for required: X" or
+ * "Verify missing or partial evidence." never reach the UI.
+ */
+export function humanizeConcernSentence(concern: string): string {
+  const raw = (concern ?? "").trim();
+  if (!raw) return raw;
+
+  const withoutPrefix = (prefix: string) => raw.slice(prefix.length).trim().replace(/^[:\-–—]\s*/, "");
+  const lower = raw.toLowerCase();
+
+  const partialPrefixes = [
+    "only partial evidence for required:",
+    "partly evidenced — worth confirming:",
+    "partly evidenced - worth confirming:",
+  ];
+  for (const p of partialPrefixes) {
+    if (lower.startsWith(p)) {
+      const label = withoutPrefix(p);
+      return label
+        ? `We found partial evidence for "${label}" — worth confirming.`
+        : "We found partial evidence for this — worth confirming.";
+    }
+  }
+
+  const missingPrefixes = [
+    "no evidence of required:",
+    "insufficient evidence — validate:",
+    "insufficient evidence - validate:",
+  ];
+  for (const p of missingPrefixes) {
+    if (lower.startsWith(p)) {
+      const label = withoutPrefix(p);
+      return label
+        ? `We found no direct evidence for "${label}".`
+        : "We found no direct evidence for this.";
+    }
+  }
+
+  const conflictPrefix = "contradicting evidence for required:";
+  if (lower.startsWith(conflictPrefix)) {
+    const label = withoutPrefix(conflictPrefix);
+    return label
+      ? `The evidence for "${label}" conflicts — worth clarifying.`
+      : "The evidence here conflicts — worth clarifying.";
+  }
+
+  if (lower === "verify missing or partial evidence." || lower === "verify missing or partial evidence") {
+    return "We found no direct evidence for this.";
+  }
+  if (lower === "only partial evidence." || lower === "only partial evidence") {
+    return "We found partial evidence for this — worth confirming.";
+  }
+
+  return raw;
 }
