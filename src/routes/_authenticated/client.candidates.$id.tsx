@@ -537,7 +537,7 @@ function CandidateDetailPage() {
  </div>
 
  {/* BELOW THE FOLD — three tabs, everything else lives inside them. */}
- <Tabs defaultValue="summary" className="mt-8">
+ <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
   <TabsList className="flex w-full flex-wrap justify-start">
   <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
   <TabsTrigger value="interview">Interview</TabsTrigger>
