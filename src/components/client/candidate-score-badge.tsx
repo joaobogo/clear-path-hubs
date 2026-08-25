@@ -92,6 +92,8 @@ export function CandidateScoreBadge({
   unicorn = false,
   className = "",
   hideEvidenceChip = false,
+  hideScore = false,
+  hideBand = false,
 }: Props) {
   const hasBand = fitLabel != null || score != null;
   if (!hasBand && !unicorn) return null;
