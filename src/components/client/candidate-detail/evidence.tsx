@@ -272,9 +272,14 @@ export const FitHero = memo(function FitHero({
               </p>
             </>
           )}
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Role-specific fit. This candidate carries no global rating.
-          </p>
+          {(() => {
+            const line = coverageVerdictLine(getEvidenceCounts(candidate.requirement_rows));
+            return line ? (
+              <p className="mt-2 text-sm text-muted-foreground">
+                {line}
+              </p>
+            ) : null;
+          })()}
           {candidate.summary && (
             <p className="mt-3 text-sm leading-relaxed text-foreground/90">
               {candidate.summary}
