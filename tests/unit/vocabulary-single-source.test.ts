@@ -33,8 +33,10 @@ describe("one vocabulary module", () => {
   });
 
   it("has no competing stage label map left in the codebase", () => {
+    // A stage display label starts with the stage word itself; event
+    // sentences ("Moved into interviews") and action keys are not labels.
     const hits = execSync(
-      "grep -rln --include=*.ts --include=*.tsx 'interview_process: \"' src || true",
+      "grep -rln --include=*.ts --include=*.tsx 'interview_process: \"Interview' src || true",
       { encoding: "utf8" },
     )
       .split("\n")
