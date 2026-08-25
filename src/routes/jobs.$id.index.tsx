@@ -10,7 +10,7 @@ import { buildJobSlug, extractJobUuid } from "@/lib/marketing/job-slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/marketing/site-shell";
-import { parseJobDescription } from "@/lib/marketing/job-description";
+import { parseJobDescription, jobDescriptionSummary } from "@/lib/marketing/job-description";
 import {
   NOT_SPECIFIED,
   RANGE_ON_CALL,
@@ -100,7 +100,7 @@ export const Route = createFileRoute("/jobs/$id/")({
     if (!pos) return { meta: [{ title: "TaaSFlow job board" }] };
     const employer = pos.organization_name;
     const title = `${pos.title} — ${employer} · TaaSFlow`;
-    const desc = pos.description.replace(/\s+/g, " ").trim().slice(0, 155);
+    const desc = jobDescriptionSummary(pos.description, 155);
     const canonical = `https://taasflow.com/jobs/${buildJobSlug(pos)}`;
     const image = pos.organization_logo_url;
     return {
@@ -367,7 +367,17 @@ function JobDetail() {
   const pos = fetched;
   if (!pos) return null;
 
-  const blocks = parseJobDescription(pos.description);
+  // A pasted description often repeats the role title as its first heading;
+  // the page already has an h1, so that duplicate is dropped.
+  const blocks = parseJobDescription(pos.description).filter(
+    (b, i) =>
+      !(
+        i === 0 &&
+        b.kind === "heading" &&
+        b.text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() ===
+          pos.title.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim()
+      ),
+  );
   const workModel = labelWorkModel(pos.work_model);
   const employment = labelEmployment(pos.employment_type);
 
