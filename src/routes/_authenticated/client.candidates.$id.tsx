@@ -539,20 +539,20 @@ function CandidateDetailPage() {
  <AvailabilityPanel candidate={candidate} />
  <ExperienceTimeline candidate={candidate} />
  <SkillsAndEducation candidate={candidate} />
- {candidate.screening_answers.length > 0 && (
- <CollapsibleSection title="Screening answers">
- <dl className="space-y-3 text-sm">
- {candidate.screening_answers.map((a, i) => (
- <div key={i}>
- <dt className="text-xs font-medium text-muted-foreground">
- {a.question}
- </dt>
- <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
- </div>
- ))}
- </dl>
- </CollapsibleSection>
- )}
+  {candidate.screening_answers.some((a) => (a.answer ?? "").trim().length > 0) && (
+  <CollapsibleSection title="Screening answers">
+  <dl className="space-y-3 text-sm">
+  {candidate.screening_answers.map((a, i) => (
+  <div key={i}>
+  <dt className="text-xs font-medium text-muted-foreground">
+  {a.question}
+  </dt>
+  <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
+  </div>
+  ))}
+  </dl>
+  </CollapsibleSection>
+  )}
   <div className="grid gap-4 sm:grid-cols-2">
     <LinksPanel candidate={candidate} />
   </div>
