@@ -45,7 +45,7 @@ describe("computeDropout", () => {
     expect(byKey).toEqual({ delivered: 3, shortlisted: 2, interview_process: 1, offer: 1, hired: 1 });
     expect(out.steps.find((s) => s.key === "shortlisted")!.dropped).toBe(1);
     expect(out.steps.find((s) => s.key === "shortlisted")!.continued_rate).toBeCloseTo(2 / 3);
-    expect(out.biggest_drop).toEqual({ label: "Shortlisted", from: "Shown to you", dropped: 1 });
+    expect(out.biggest_drop).toEqual({ label: "Shortlisted", from: "Awaiting your review", dropped: 1 });
   });
 
   it("excludes records delivered outside the selected window", () => {
