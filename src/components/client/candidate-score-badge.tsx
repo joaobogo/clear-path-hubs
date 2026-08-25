@@ -48,6 +48,8 @@ type Props = {
   unicorn?: boolean;
   className?: string;
   hideEvidenceChip?: boolean;
+  hideScore?: boolean;
+  hideBand?: boolean;
 };
 
 
@@ -90,6 +92,8 @@ export function CandidateScoreBadge({
   unicorn = false,
   className = "",
   hideEvidenceChip = false,
+  hideScore = false,
+  hideBand = false,
 }: Props) {
   const hasBand = fitLabel != null || score != null;
   if (!hasBand && !unicorn) return null;
@@ -105,7 +109,7 @@ export function CandidateScoreBadge({
     "This assessment is being re-checked because the role details or the candidate's CV changed after it was produced.";
   return (
     <span className={`inline-flex flex-wrap items-center gap-1.5 ${className}`}>
-      {score != null && !evidencePending && (
+      {score != null && !evidencePending && !hideScore && (
         <span
           className={`inline-flex items-baseline gap-0.5 rounded-full border px-2 py-0.5 text-[12px] font-semibold tabular-nums ${fit ? ACCENT_CLASSES[fit.accent] : "border-border bg-muted text-muted-foreground"} ${rechecking ? "opacity-70" : ""}`}
           title="Fit score"
@@ -115,7 +119,7 @@ export function CandidateScoreBadge({
         </span>
       )}
 
-      {fit && (
+      {fit && !hideBand && (
         <span
           className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${ACCENT_CLASSES[fit.accent]} ${rechecking ? "opacity-70" : ""}`}
           title={

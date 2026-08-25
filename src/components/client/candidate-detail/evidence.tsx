@@ -30,7 +30,7 @@ import type {
 } from "@/lib/client-fit-presentation";
 import { SectionCard } from "./shared";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
-import { getEvidenceCounts } from "@/lib/client/evidence-counts";
+import { getEvidenceCounts, type EvidenceCounts } from "@/lib/client/evidence-counts";
 import { requirementStatusLabel, resolveRequirementStatus } from "@/lib/client/requirement-status";
 
 
@@ -192,6 +192,25 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
   );
 });
 
+function coverageVerdictLine(counts: EvidenceCounts): string | null {
+  if (counts.total === 0) return null;
+  const { met, partial, unknown, total } = counts;
+  if (met === total) {
+    return `Scored against your ${total} requirements — all are fully evidenced.`;
+  }
+  if (partial === total) {
+    return `Scored against your ${total} requirements — every one shows supporting signals; direct quotes are still being attached.`;
+  }
+  if (unknown === total) {
+    return `Scored against your ${total} requirements — none show evidence yet.`;
+  }
+  const chunks: string[] = [];
+  if (met > 0) chunks.push(`${met} fully met`);
+  if (partial > 0) chunks.push(`${partial} partly evidenced`);
+  if (unknown > 0) chunks.push(`${unknown} not evidenced`);
+  return `Scored against your ${total} requirements — ${chunks.join(" · ")}.`;
+}
+
 export const FitHero = memo(function FitHero({
   candidate,
 }: {
@@ -253,9 +272,14 @@ export const FitHero = memo(function FitHero({
               </p>
             </>
           )}
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Role-specific fit. This candidate carries no global rating.
-          </p>
+          {(() => {
+            const line = coverageVerdictLine(getEvidenceCounts(candidate.requirement_rows));
+            return line ? (
+              <p className="mt-2 text-sm text-muted-foreground">
+                {line}
+              </p>
+            ) : null;
+          })()}
           {candidate.summary && (
             <p className="mt-3 text-sm leading-relaxed text-foreground/90">
               {candidate.summary}
@@ -605,13 +629,6 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
           <Separator className="mt-4" />
         </div>
       )}
-
-      {candidate.summary && (
-        <p className="mt-3 text-sm text-foreground/90">
-          {sanitizeInternalMarkers(candidate.summary)}
-        </p>
-      )}
-
 
       <ul className="mt-4 space-y-2">
         {rows.map((row) => (
