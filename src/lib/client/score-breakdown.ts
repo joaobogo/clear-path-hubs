@@ -11,6 +11,7 @@
  * an empty list so the surface can say so plainly.
  */
 import { getEvidenceCounts } from "./evidence-counts";
+import { resolveRequirementStatus } from "./requirement-status";
 import { bandRange, classifyBand } from "@/lib/scoring/bands";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
@@ -61,13 +62,15 @@ export type ScoreBreakdown = {
 };
 
 function countRows(rows: RequirementRow[]) {
-  const met = rows.filter((r) => r.status === "met").length;
-  const partial = rows.filter((r) => r.status === "partial").length;
-  const missing = rows.filter(
-    (r) => r.status === "not_evidenced" || r.status === "contradicted",
-  ).length;
+  // Same resolution the coverage panel and the header chip use, so the group
+  // captions cannot claim evidence the requirement list does not show.
+  const statuses = rows.map((r) => resolveRequirementStatus(r));
+  const met = statuses.filter((s) => s === "met").length;
+  const partial = statuses.filter((s) => s === "partial").length;
+  const missing = statuses.filter((s) => s === "not_evidenced" || s === "contradicted").length;
   return { met, partial, missing };
 }
+
 
 function mustTakeaway(c: { met: number; partial: number; missing: number; total: number }) {
   if (c.total === 0) return "No must-haves were declared for this role.";
@@ -121,7 +124,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
   const reasonsByRequirement = new Map<string, BreakdownReason>();
   
   must
-    .filter((r: RequirementRow) => r.status === "met")
+    .filter((r: RequirementRow) => resolveRequirementStatus(r) === "met")
     .slice(0, 3)
     .forEach((r: RequirementRow, i: number) => {
       const id = r.id || `must-met-${i}`;
@@ -139,7 +142,10 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
   );
 
   must
-    .filter((r: RequirementRow) => r.status === "not_evidenced" || r.status === "contradicted")
+    .filter((r: RequirementRow) => {
+      const s = resolveRequirementStatus(r);
+      return s === "not_evidenced" || s === "contradicted";
+    })
     .slice(0, 3)
     .forEach((r: RequirementRow, i: number) => {
       const id = r.id || `must-gap-${i}`;
@@ -156,7 +162,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
 
   // Also handle partials in the watch list if they are critical must-haves
   must
-    .filter((r: RequirementRow) => r.status === "partial")
+    .filter((r: RequirementRow) => resolveRequirementStatus(r) === "partial")
     .slice(0, 2)
     .forEach((r: RequirementRow, i: number) => {
       const id = r.id || `must-partial-${i}`;

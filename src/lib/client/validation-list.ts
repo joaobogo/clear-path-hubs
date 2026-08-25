@@ -32,8 +32,11 @@ const REQUIREMENT_CONCERN_PREFIXES = [
   "no evidence of required:",
   "contradicting evidence for required:",
   "only partial evidence for required:",
+  "partly evidenced — worth confirming:",
+  "partly evidenced - worth confirming:",
   "demonstrated:",
 ];
+
 
 export function isRequirementShapedConcern(concern: string): boolean {
   const s = concern.trim().toLowerCase();
