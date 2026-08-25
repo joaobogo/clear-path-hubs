@@ -50,7 +50,7 @@ import {
   AvailabilityPanel,
   ExperienceTimeline,
   InterviewGuide,
-  LinksPanel,
+  
   SkillsAndEducation,
 } from "@/components/client/candidate-detail/profile";
 
@@ -450,8 +450,12 @@ function CandidateDetailPage() {
  <ScoreBreakdown candidate={candidate} hideRequirementRows />
  </div>
 
- {/* 4 — CONTACT (one preview, one download) */}
- <ContactBlock candidate={candidate} />
+ {/* 4 — CONTACT (mobile keeps it in the main flow, after the evidence) */}
+ <ContactBlock
+ candidate={candidate}
+ instanceId="contact-mobile"
+ className="lg:hidden"
+ />
  </div>
 
       {/* 5 — DECISION BAR */}
@@ -467,7 +471,17 @@ function CandidateDetailPage() {
           subject={actionSubject}
           activeInterviewId={activeInterview?.id ?? null}
           notRecommended={isNotRecommendedFit(candidate.fit_label, candidate.score)}
+         />
+
+        {/* Contact and the CV controls sit right under the stage actions so
+            they are visible without scrolling on desktop. */}
+        <ContactBlock
+          candidate={candidate}
+          instanceId="contact-desktop"
+          className="hidden lg:block"
         />
+
+
 
         {dialogAction === "request_interview" && orgId && (
           <RequestInterviewDialog
@@ -551,9 +565,9 @@ function CandidateDetailPage() {
   </dl>
   </CollapsibleSection>
   )}
-  <div className="grid gap-4 sm:grid-cols-2">
-    <LinksPanel candidate={candidate} />
-  </div>
+   {/* Links live in the Contact card only. */}
+
+
 
  </TabsContent>
 

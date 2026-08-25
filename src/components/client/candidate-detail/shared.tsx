@@ -115,21 +115,12 @@ export function CandidateHeader({
               {c.location}
             </span>
           )}
-          {(c.timezone || c.availability || candidate.work_authorization || c.email || c.phone || candidate.languages.length > 0) && (
+          {/* Email, phone, LinkedIn, timezone, work authorization and languages
+              live only in the Contact card — never repeated here. */}
+          {c.availability && (
             <span className="inline-flex items-center gap-1">
               <CalendarClock className="h-3.5 w-3.5" aria-hidden />
-              {[
-                c.email,
-                c.phone,
-                c.timezone,
-                c.availability,
-                candidate.work_authorization,
-                candidate.languages.length > 0
-                  ? `Languages: ${candidate.languages.map((l) => (l.level ? `${l.name} (${l.level})` : l.name)).join(", ")}`
-                  : null,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
+              {c.availability}
             </span>
           )}
 
@@ -153,11 +144,29 @@ export function CandidateHeader({
 }
 
 /**
- * The one contact surface on this page: identity contact details plus exactly
- * one CV preview and one CV download control.
+ * The one contact surface on this page: every contact detail (email, phone,
+ * LinkedIn and the other profile links, timezone, work authorization,
+ * languages) plus exactly one CV preview and one CV download control. The
+ * header identity line never repeats any of these.
  */
-export function ContactBlock({ candidate }: { candidate: ClientCandidateDTO }) {
+export function ContactBlock({
+  candidate,
+  className,
+  /** Distinguishes the desktop (right column) and mobile (main flow) instance. */
+  instanceId = "contact",
+}: {
+  candidate: ClientCandidateDTO;
+  className?: string;
+  instanceId?: string;
+}) {
   const c = candidate.candidate;
+  const headingId = `${instanceId}-heading`;
+  const otherLinks = [
+    { label: "Portfolio", url: c.links.portfolio },
+    { label: "GitHub", url: c.links.github },
+    { label: "Website", url: c.links.website },
+  ].filter((l): l is { label: string; url: string } => Boolean(l.url));
+
   const rows: Array<{ label: string; value: React.ReactNode }> = [
     { label: "Email", value: c.email ? <a className="text-primary hover:underline" href={`mailto:${c.email}`}>{c.email}</a> : null },
     { label: "Phone", value: c.phone ? <a className="text-primary hover:underline" href={`tel:${c.phone}`}>{c.phone}</a> : null },
@@ -177,16 +186,50 @@ export function ContactBlock({ candidate }: { candidate: ClientCandidateDTO }) {
         </a>
       ) : null,
     },
+    {
+      label: "Links",
+      value:
+        otherLinks.length > 0 ? (
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            {otherLinks.map((l) => (
+              <a
+                key={l.label}
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+                aria-label={`Open ${l.label} (opens in new tab)`}
+              >
+                {l.label}
+                <ExternalLink className="ml-1 inline h-3 w-3" aria-hidden />
+              </a>
+            ))}
+          </span>
+        ) : null,
+    },
     { label: "Location", value: c.location ?? null },
-    { label: "Work authorization", value: candidate.work_authorization ?? "Not provided" },
+    { label: "Timezone", value: c.timezone ?? null },
+    { label: "Work authorization", value: candidate.work_authorization ?? null },
+    {
+      label: "Languages",
+      value:
+        candidate.languages.length > 0
+          ? candidate.languages
+              .map((l) => (l.level ? `${l.name} (${l.level})` : l.name))
+              .join(", ")
+          : null,
+    },
   ];
 
   return (
-    <section aria-labelledby="contact-heading" className="rounded-xl border bg-card p-4">
-      <h2 id="contact-heading" className="text-sm font-semibold">
+    <section
+      aria-labelledby={headingId}
+      className={cn("rounded-xl border bg-card p-4", className)}
+    >
+      <h2 id={headingId} className="text-sm font-semibold">
         Contact
       </h2>
-      <dl className="mt-2 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
+      <dl className="mt-2 grid gap-x-6 gap-y-1.5 text-sm">
         {rows.map((r) => (
           <div key={r.label} className="grid grid-cols-[5.5rem_1fr] gap-2">
             <dt className="text-xs text-muted-foreground">{r.label}</dt>
