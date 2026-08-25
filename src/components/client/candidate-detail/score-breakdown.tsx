@@ -97,8 +97,8 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
         evidenced requirement scores one point, a partly evidenced one half.
         {c.incomplete
           ? " One of the three weightings was not measured for this assessment, so the parts do not add up to the whole yet."
-          : reconciles
-            ? " The three parts add up to the score shown above."
+          : reconciles && c.displayedScore != null
+            ? ` The three parts total ${totalPts}, rounded to ${c.displayedScore}.`
             : " The parts and the score shown disagree; the assessment is being re-checked."}
       </p>
     </div>
