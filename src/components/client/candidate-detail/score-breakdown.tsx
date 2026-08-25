@@ -198,7 +198,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
             )}
 
             <p className="mt-1 text-xs text-muted-foreground">{g.takeaway}</p>
-            {g.rows.length > 0 && (
+            {!hideRequirementRows && g.rows.length > 0 && (
               <ul className="mt-2 space-y-2">
                 {g.rows.map((row: RequirementRow) => (
                   <RequirementRowView key={row.id} row={row} />
