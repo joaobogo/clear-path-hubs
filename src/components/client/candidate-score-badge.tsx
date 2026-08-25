@@ -48,6 +48,8 @@ type Props = {
   unicorn?: boolean;
   className?: string;
   hideEvidenceChip?: boolean;
+  hideScore?: boolean;
+  hideBand?: boolean;
 };
 
 
