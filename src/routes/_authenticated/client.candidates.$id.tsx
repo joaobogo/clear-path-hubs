@@ -198,7 +198,8 @@ function CandidateDetailPage() {
  // Stage captured at mutate time so the toast's Undo knows where to return to.
  const stageBeforeRef = useRef<MatchStage | null>(null);
  // Consequence line for the stage the decision moves the candidate into.
- const nextStepAfterRef = useRef<string | null>(null);
+  const nextStepAfterRef = useRef<string | null>(null);
+  const [activeTab, setActiveTab] = useState("summary");
  const undoFn = useServerFn(undoClientDecision);
 
  // Exact cache key of the detail query. Optimistic writes and rollbacks must
