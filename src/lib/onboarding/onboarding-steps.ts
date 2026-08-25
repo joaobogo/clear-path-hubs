@@ -32,7 +32,7 @@ export type OnboardingStep = {
   purpose: string;
   /** Typical time, in minutes, for a prepared user. */
   minutes: number;
-  /** Required steps gate the first run. Optional steps can be skipped. */
+  /** Required steps unlock the first search. Optional steps can be skipped. */
   required: boolean;
   /** Plain description of the system work attached to this step. */
   systemWork: string;
@@ -50,7 +50,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
     required: true,
     systemWork:
       "Your workspace scopes every record. Roles, candidates, evidence and audit history are isolated to it at the database level.",
-    whatNext: "Next you name the first role we will run.",
+    whatNext: "Next you name the first role we will search for.",
   },
   {
     id: "role",
@@ -60,7 +60,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
     minutes: 4,
     required: true,
     systemWork:
-      "The title, location and work model become the role record everything else attaches to — blueprint, rubric, runs and decisions.",
+      "The title, location and work model become the role record that every later step builds on.",
     whatNext: "Next you add the requirements the role is judged against.",
   },
   {
@@ -71,35 +71,35 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
     minutes: 6,
     required: true,
     systemWork:
-      "Must-haves become scored requirements. Nice-to-haves shift ranking without excluding anyone. Dealbreakers become eligibility checks that run before scoring.",
-    whatNext: "Next the system compiles these into a role blueprint you review.",
+      "Must-haves become scored requirements. Nice-to-haves shift ranking without excluding anyone. Dealbreakers become eligibility checks that execute before scoring.",
+    whatNext: "Next the system compiles these into a role summary you review.",
   },
   {
     id: "blueprint",
     index: 4,
-    title: "Review the compiled role blueprint",
+    title: "Check the role summary we built",
     purpose: "Check what the system understood before it acts on it.",
     minutes: 5,
     required: true,
     systemWork:
-      "Your inputs and the job description compile into a versioned blueprint: requirements, rubric shape and a sourcing plan. Nothing sources until you confirm it.",
+      "Your inputs and the job description compile into a structured role summary: requirements, scoring outline and a sourcing plan. Nothing sources until you confirm it.",
     whatNext: "Next you set how much each dimension counts toward a score.",
   },
   {
     id: "weights",
     index: 5,
-    title: "Configure scoring weights",
+    title: "Decide what matters most",
     purpose: "Decide what matters most when candidates are ranked.",
     minutes: 3,
     required: true,
     systemWork:
-      "Weights are stored on the role and stamped into every score run, so any past score can be explained by the weights in force at the time.",
-    whatNext: "Next you choose how hard the agents work this role.",
+      "Weights are stored on the role and stamped into every score, so any past score can be explained by the weights in force at the time.",
+    whatNext: "Next you choose how much automation handles this role.",
   },
   {
     id: "agents",
     index: 6,
-    title: "Choose agent operating level",
+    title: "Choose how much we do for you",
     purpose: "Set the pace of sourcing, outreach and shortlisting.",
     minutes: 2,
     required: true,
@@ -110,12 +110,12 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   {
     id: "oversight",
     index: 7,
-    title: "Set approval and oversight gates",
+    title: "Decide what needs your sign-off",
     purpose: "Decide where a human must sign off.",
     minutes: 3,
     required: true,
     systemWork:
-      "Gates are enforced server-side. Candidate release always requires review; contact release is a separate permission, and neither can be turned off here.",
+      "Sign-off points are enforced server-side. Candidate release always requires review; contact release is a separate permission, and neither can be turned off here.",
     whatNext: "Next you can connect the systems you already use.",
   },
   {
@@ -126,24 +126,24 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
     minutes: 4,
     required: false,
     systemWork:
-      "Connected systems are health-checked on a schedule. Nothing is required to start a run — you can connect them later without losing progress.",
-    whatNext: "Next you start the first run.",
+      "Connected systems are health-checked on a schedule. Nothing is required to start a search — you can connect them later without losing progress.",
+    whatNext: "Next you start the first search.",
   },
   {
     id: "run",
     index: 9,
-    title: "Start the first run",
+    title: "Start the search",
     purpose: "Put the configured system to work.",
     minutes: 1,
     required: true,
     systemWork:
-      "The run compiles the blueprint, opens sourcing, and records every step with an actor, a time and a result you can audit.",
-    whatNext: "Next you enter the Decision Workspace and wait for the first evidence.",
+      "The search opens sourcing using the confirmed summary, and records every step with an actor, a time and a result you can audit.",
+    whatNext: "Next you go to your candidates and wait for the first evidence.",
   },
   {
     id: "workspace_entry",
     index: 10,
-    title: "Enter the Decision Workspace",
+    title: "Go to your candidates",
     purpose: "See where decisions will land.",
     minutes: 1,
     required: true,
@@ -180,7 +180,7 @@ export function formatMinutes(mins: number): string {
   return m ? `about ${h} hr ${m} min` : `about ${h} hr`;
 }
 
-/** The oversight gates a workspace can choose. Two are fixed by policy. */
+/** The oversight choices a workspace can choose. Two are fixed by policy. */
 export const OVERSIGHT_GATES = [
   {
     key: "candidate_release",
