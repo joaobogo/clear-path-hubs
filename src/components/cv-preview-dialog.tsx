@@ -149,7 +149,7 @@ export function CvPreviewDialog({
               Read it here, or download a copy. Every open is logged.
             </DialogDescription>
           </DialogHeader>
-          <div className="h-[70vh] overflow-hidden rounded-md border bg-muted/30">
+          <div className="h-[70vh] overflow-hidden overscroll-contain rounded-md border bg-muted/30">
             {loading ? (
               <div className="flex h-full items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -178,12 +178,21 @@ export function CvPreviewDialog({
                   <DownloadCvButton matchId={matchId} mode="download" />
                 </div>
               ) : (
-                <iframe
-                  src={url}
-                  title="Candidate CV"
-                  className="h-full w-full"
-                  onError={() => setRenderFailed(true)}
-                />
+                <>
+                  {!iframeLoaded && (
+                    <div className="flex h-full flex-col items-center justify-center gap-3 p-6">
+                      <Skeleton className="h-full w-full rounded-md" />
+                      <span className="sr-only">Loading CV preview…</span>
+                    </div>
+                  )}
+                  <iframe
+                    src={url}
+                    title="Candidate CV"
+                    className={`h-full w-full ${iframeLoaded ? "block" : "hidden"}`}
+                    onLoad={() => setIframeLoaded(true)}
+                    onError={() => setRenderFailed(true)}
+                  />
+                </>
               )
             ) : null}
           </div>
