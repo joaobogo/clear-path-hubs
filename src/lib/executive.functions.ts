@@ -4,6 +4,7 @@
 // Supabase client so RLS applies as the caller. Staff can pass any org they have
 // visibility into via the standard client-context path.
 
+import { formatShortDayMonth } from "@/lib/format/datetime";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -45,9 +46,9 @@ function isoWeekStart(d: Date): Date {
 }
 
 function weekLabel(d: Date): string {
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${m}/${day}`;
+  // "29 Jun" — the short form of the one workspace date format. Never "06/29":
+  // a slashed numeric pair reads as an American month/day to half the readers.
+  return formatShortDayMonth(d);
 }
 
 // ── Types ──────────────────────────────────────────────────────────────────

@@ -295,6 +295,9 @@ export function VelocityCard({
           <div className="flex items-end gap-1.5">
             {delivery.map((d) => (
               <div key={d.week_start} className="flex flex-1 flex-col items-center gap-1">
+                <div className="text-[10px] font-semibold leading-none tabular-nums">
+                  {d.delivered}
+                </div>
                 <div
                   className="w-full rounded-t bg-primary/80"
                   style={{
