@@ -40,7 +40,7 @@ const ANA: RequirementRow[] = [
 ];
 
 const STALE_CONCERNS = [
-  "Only partial evidence for required: 5+ years building production React and TypeScript applications",
+  "Partly evidenced — worth confirming: 5+ years building production React and TypeScript applications",
   "Insufficient evidence — validate: Fluent written and spoken English",
   "No evidence of required: Experience leading a small team",
   "Contradicting evidence for required: Fluent written and spoken English",

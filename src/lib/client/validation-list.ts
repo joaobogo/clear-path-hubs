@@ -3,7 +3,7 @@
  *
  * The engine's free-text `concerns` array is written at score time and can drift
  * from the requirement coverage statuses shown on the same page (e.g. saying
- * "Only partial evidence for required: X" while coverage marks X as Met). To
+ * "Partly evidenced — worth confirming: X" while coverage marks X as Met). To
  * guarantee the badge and the sentence never contradict each other, every
  * requirement-derived sentence is generated here from the coverage status, and
  * requirement-shaped engine concerns are discarded.
