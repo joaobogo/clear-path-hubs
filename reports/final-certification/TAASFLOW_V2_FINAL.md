@@ -22,7 +22,7 @@ Excellence certification requires the full 9-persona live matrix, every-button a
 | Publication gate (visible without approved score) | **0** |
 | Scoring identity mismatches (position/app/candidate/org/submission) | **0** |
 | Scoring math violations (`final ≤ cap AND final ≤ raw`) | **0** |
-| Audit events recorded | **599** |
+| Audit events recorded | see live invariants block below |
 
 ### Public route smoke — PASS
 `/`, `/solutions`, `/how-it-works`, `/intake`, `/jobs`, `/contact`, `/login` → 200
