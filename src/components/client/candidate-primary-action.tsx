@@ -80,6 +80,7 @@ export function CandidatePrimaryAction({
   score?: number | null;
 }) {
   const queryClient = useQueryClient();
+  const search = useSearch({ strict: false }) as { org?: string };
   const act = useServerFn(clientAction);
   const undo = useServerFn(undoClientDecision);
   const [pending, setPending] = React.useState<PrimaryActionKey | null>(null);
