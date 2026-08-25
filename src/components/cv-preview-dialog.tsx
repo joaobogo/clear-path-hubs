@@ -149,7 +149,7 @@ export function CvPreviewDialog({
               Read it here, or download a copy. Every open is logged.
             </DialogDescription>
           </DialogHeader>
-          <div className="h-[70vh] overflow-hidden overscroll-contain rounded-md border bg-muted/30">
+          <div className="relative h-[70vh] overflow-hidden overscroll-contain rounded-md border bg-muted/30">
             {loading ? (
               <div className="flex h-full items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -180,15 +180,27 @@ export function CvPreviewDialog({
               ) : (
                 <>
                   {!iframeLoaded && (
-                    <div className="flex h-full flex-col items-center justify-center gap-3 p-6">
-                      <Skeleton className="h-full w-full rounded-md" />
-                      <span className="sr-only">Loading CV preview…</span>
+                    <div
+                      className="absolute inset-0 z-10 flex flex-col gap-4 bg-background p-8"
+                      aria-busy="true"
+                      aria-label="Loading CV preview"
+                    >
+                      <Skeleton className="h-8 w-1/3" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-5/6" />
+                      <Skeleton className="h-4 w-4/5" />
+                      <div className="mt-4 grid grid-cols-2 gap-4">
+                        <Skeleton className="h-32 w-full" />
+                        <Skeleton className="h-32 w-full" />
+                      </div>
+                      <Skeleton className="mt-auto h-4 w-2/3" />
+                      <Skeleton className="h-4 w-1/2" />
                     </div>
                   )}
                   <iframe
                     src={url}
                     title="Candidate CV"
-                    className={`h-full w-full ${iframeLoaded ? "block" : "hidden"}`}
+                    className="h-full w-full"
                     onLoad={() => setIframeLoaded(true)}
                     onError={() => setRenderFailed(true)}
                   />
