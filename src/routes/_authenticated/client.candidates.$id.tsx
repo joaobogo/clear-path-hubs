@@ -455,8 +455,8 @@ function CandidateDetailPage() {
 
  )}
 
- {/* 3 — WHY, AND WHAT TO CHECK */}
- <TopSignals candidate={candidate} />
+ {/* 3 — REQUIREMENT COVERAGE (first evidence panel) */}
+ <RequirementCoverage candidate={candidate} withRationale />
 
  {/* 4 — CONTACT (one preview, one download) */}
  <ContactBlock candidate={candidate} />

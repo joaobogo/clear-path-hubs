@@ -583,21 +583,6 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
         </ul>
       )}
 
-      {strengths.length > 0 && (
-        <div className="mt-4">
-          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            Beyond your requirements
-          </div>
-          <ul className="mt-2 grid gap-2 sm:grid-cols-2">
-            {strengths.map((s, i) => (
-              <li key={i} className="rounded-md border bg-muted/30 p-3 text-sm">
-                {sanitizeInternalMarkers(s)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
     </SectionCard>
   );
 });
