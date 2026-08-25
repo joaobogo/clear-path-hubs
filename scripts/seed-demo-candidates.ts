@@ -309,19 +309,28 @@ async function main() {
       .in("candidate_profile_id", priorProfileIds);
     const matchIds = (priorMatches ?? []).map((m: any) => m.id);
 
+    const wipe = async (table: string, column: string, ids: string[]) => {
+      const { error } = await sb.from(table).delete().in(column, ids);
+      if (error) throw new Error(`cleanup of ${table} failed: ${error.message}`);
+    };
+
     if (matchIds.length > 0) {
-      await sb.from("candidate_matches").update({ current_score_run_id: null, approved_score_run_id: null }).in("id", matchIds);
-      await sb.from("hire_records").delete().in("candidate_match_id", matchIds);
-      await sb.from("interviews").delete().in("candidate_match_id", matchIds);
-      await sb.from("candidate_evidence_items").delete().in("candidate_match_id", matchIds);
-      await sb.from("candidate_evidence").delete().in("candidate_match_id", matchIds);
-      await sb.from("candidate_stage_history").delete().in("candidate_match_id", matchIds);
-      await sb.from("score_runs").delete().in("candidate_match_id", matchIds);
-      await sb.from("candidate_matches").delete().in("id", matchIds);
+      await sb
+        .from("candidate_matches")
+        .update({ current_score_run_id: null, approved_score_run_id: null })
+        .in("id", matchIds);
+      await wipe("hire_records", "candidate_match_id", matchIds);
+      await wipe("interviews", "candidate_match_id", matchIds);
+      await wipe("candidate_evidence_items", "candidate_match_id", matchIds);
+      await wipe("candidate_evidence", "candidate_match_id", matchIds);
+      await wipe("candidate_stage_history", "candidate_match_id", matchIds);
+      await wipe("score_runs", "candidate_match_id", matchIds);
+      await wipe("candidate_matches", "id", matchIds);
     }
-    await sb.from("applications").delete().in("candidate_profile_id", priorProfileIds);
-    await sb.from("candidate_profiles").delete().in("id", priorProfileIds);
+    await wipe("applications", "candidate_profile_id", priorProfileIds);
+    await wipe("candidate_profiles", "id", priorProfileIds);
     console.log(`Removed ${priorProfileIds.length} candidate(s) from a previous seed run.`);
+
   }
 
   const now = Date.now();
