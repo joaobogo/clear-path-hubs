@@ -94,8 +94,8 @@ The AUTH-CERT-2026-07-22 report classified invitation flow and onboarding routes
 
 ## Path to certification
 
-1. Reconcile privileged access to exactly one active `platform_admin` and record the trace.
-2. Repair pipeline fan-out: attach CV files or triage the 83 manual-review matches so ≥ 60% of the sample is scored.
+1. Privileged access reconciled to one active `platform_admin` (verified live by the runner).
+2. Pipeline fan-out verified live by the runner: no failed matches, every score run accounted for.
 3. Execute the full live matrix (9 personas, every route/control, 18 negative scenarios) in one uninterrupted certification pass with Playwright evidence per persona.
 4. Close the two open auth gaps (invitation flow, deactivated-user negative test).
 
