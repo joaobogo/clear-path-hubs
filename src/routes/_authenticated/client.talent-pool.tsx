@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
-import { Users, Search, GraduationCap } from "lucide-react";
+import { useState } from "react";
 import { EmptyState } from "@/components/client/states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getClientContext } from "@/lib/client-context.functions";
 import { listSilverMedalists } from "@/lib/talent-memory.functions";
+import { MemoryCard } from "@/components/client/talent-memory/memory-list";
+import { MemorySheet } from "@/components/client/talent-memory/memory-sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/client/talent-pool")({
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/_authenticated/client/talent-pool")({
 });
 
 function TalentPoolPage() {
+  const [openId, setOpenId] = useState<string | null>(null);
   const ctxFn = useServerFn(getClientContext);
   const { data: ctx, isLoading: ctxLoading } = useQuery({
     queryKey: ["client-context"],
@@ -35,7 +38,8 @@ function TalentPoolPage() {
     enabled: !!orgId,
   });
 
-  const hasPool = (pool?.memories?.length ?? 0) > 0;
+  const memories = pool?.memories ?? [];
+  const hasPool = memories.length > 0;
   const loading = ctxLoading || poolLoading;
 
   return (
@@ -48,7 +52,7 @@ function TalentPoolPage() {
       </header>
 
       {loading ? (
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[0, 1, 2].map((i) => (
             <div key={i} className="rounded-xl border bg-card p-6 shadow-sm">
               <Skeleton className="h-10 w-10 rounded-lg" />
@@ -59,45 +63,22 @@ function TalentPoolPage() {
           ))}
         </div>
       ) : hasPool ? (
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Users className="h-5 w-5" />
-            </div>
-            <h3 className="text-lg font-medium">Previously shortlisted</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Candidates who reached the final stages of previous roles but were not hired.
-            </p>
-          </div>
-
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10 text-secondary-foreground">
-              <Search className="h-5 w-5" />
-            </div>
-            <h3 className="text-lg font-medium">Direct applications</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Talent who applied directly to your company rather than a specific open role.
-            </p>
-          </div>
-
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-              <GraduationCap className="h-5 w-5" />
-            </div>
-            <h3 className="text-lg font-medium">Passive network</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Candidates mapped or identified as high-potential for future organizational needs.
-            </p>
-          </div>
-        </div>
-      ) : null}
-
-      <div className={hasPool ? "mt-12" : ""}>
+        <>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {memories.map((memory) => (
+              <MemoryCard key={memory.id} memory={memory} onOpen={() => setOpenId(memory.id)} />
+            ))}
+          </ul>
+          {orgId && (
+            <MemorySheet orgId={orgId} id={openId} readOnly={false} onClose={() => setOpenId(null)} />
+          )}
+        </>
+      ) : (
         <EmptyState
           title="Building your talent pool"
           description="As you close roles and release candidates, your talent pool fills automatically. We surface relevant alumni when you open new roles."
         />
-      </div>
+      )}
     </div>
   );
 }
