@@ -209,7 +209,7 @@ function TimelineItem({
 }) {
   const m = marker(iv);
   const Icon = m.icon;
-  const slots = liveSlots(iv.proposed_times, iv.availability_expires_at);
+  const slots = liveSlots(iv.proposed_times, iv.availability_expires_at).slice().sort();
   // Every card leads with the workspace timezone (the same value the Account
   // page shows). The interview's own zone — or the viewer's browser zone when
   // they match — goes on the secondary line.
