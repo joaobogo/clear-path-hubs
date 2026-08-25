@@ -101,6 +101,8 @@ export function CandidateCard({
             matchId={c.match_id}
             stage={c.stage}
             candidateName={c.candidate.display_name}
+            fitLabel={c.fit_label}
+            score={c.score}
           />
         ) : (
           <Link

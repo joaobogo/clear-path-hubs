@@ -13,6 +13,7 @@ import {
   ACTION_TIMEOUT_MESSAGE,
 } from "@/lib/client/action-timeout";
 import type { MatchStage } from "@/lib/client-match-stage";
+import { isNotRecommendedFit } from "@/lib/client-fit-presentation";
 
 type PrimaryActionKey = "shortlist" | "request_interview" | "offer" | "hire" | "not_moving_forward";
 
@@ -65,12 +66,18 @@ export function CandidatePrimaryAction({
   stage,
   candidateName,
   size = "sm",
+  fitLabel = null,
+  score = null,
 }: {
   orgId: string;
   matchId: string;
   stage: MatchStage;
   candidateName: string;
   size?: "sm" | "default";
+  /** Raw engine/DB fit label, when the surface has it. */
+  fitLabel?: string | null;
+  /** Fit score 0-100, when the surface has it. */
+  score?: number | null;
 }) {
   const queryClient = useQueryClient();
   const act = useServerFn(clientAction);
@@ -89,6 +96,7 @@ export function CandidatePrimaryAction({
 
   const shownStage = optimistic ?? stage;
   const advance = advanceFor(shownStage);
+  const notRecommended = isNotRecommendedFit(fitLabel, score);
 
   async function runUndo(fromStage: MatchStage) {
     toast.dismiss();
@@ -179,9 +187,11 @@ export function CandidatePrimaryAction({
     );
   }
 
-  return (
+  const advanceButton = (
     <Button
       size={size}
+      variant={notRecommended ? "link" : "default"}
+      className={notRecommended ? "h-auto p-0 text-xs font-medium" : undefined}
       disabled={pending !== null}
       onClick={() => void run(advance.action, advance.done)}
     >
@@ -195,4 +205,26 @@ export function CandidatePrimaryAction({
       )}
     </Button>
   );
+
+  // Not recommended: evidence first. The advance move stays available, but as a
+  // plain text link, never a filled primary button.
+  if (notRecommended) {
+    return (
+      <div className="inline-flex items-center gap-3">
+        <Button asChild size={size}>
+          <Link
+            to="/client/candidates/$id"
+            params={{ id: matchId }}
+            hash="requirement-coverage"
+            preload="intent"
+          >
+            Review evidence
+          </Link>
+        </Button>
+        {advanceButton}
+      </div>
+    );
+  }
+
+  return advanceButton;
 }

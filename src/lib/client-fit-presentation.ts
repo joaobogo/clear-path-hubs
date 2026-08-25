@@ -154,6 +154,18 @@ export function toFitPresentation(
   return { band: resolved, ...BAND_TABLE[resolved] };
 }
 
+/**
+ * True when the canonical fit band for this assessment is "Not recommended".
+ * Surfaces use it to demote advance actions (offer/hire) to a plain link and
+ * lead with evidence review instead of a filled primary button.
+ */
+export function isNotRecommendedFit(
+  rawLabel: string | null | undefined,
+  score: number | null | undefined,
+): boolean {
+  return toFitPresentation(rawLabel, score).band === "not_recommended";
+}
+
 
 // ── Requirement rows ─────────────────────────────────────────────────────────
 

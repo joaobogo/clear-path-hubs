@@ -18,6 +18,7 @@ import { NextStepNote } from "@/components/client/next-step-note";
 import { CompensationPanel } from "@/components/client/compensation-panel";
 import { getCompensationSignal } from "@/lib/compensation.functions";
 import { confirmationLine } from "@/lib/client-next-step";
+import { isNotRecommendedFit } from "@/lib/client-fit-presentation";
 import { useSupportView } from "@/lib/support-view";
 import {
   DecisionDialog,
@@ -473,6 +474,7 @@ function CandidateDetailPage() {
           matchId={candidate.match_id}
           subject={actionSubject}
           activeInterviewId={activeInterview?.id ?? null}
+          notRecommended={isNotRecommendedFit(candidate.fit_label, candidate.score)}
         />
 
         {dialogAction === "request_interview" && orgId && (
