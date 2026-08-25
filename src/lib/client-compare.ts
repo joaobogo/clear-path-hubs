@@ -78,8 +78,8 @@ export function buildCompareMatrix(candidates: ClientCandidateDTO[]): CompareMat
       const shown = quoted ?? related;
       let status = toStatus(row);
       // Never print a passage next to "Not evidenced": a quoted passage is at
-      // least partly met, a weaker related passage is partly met too.
-      if (shown && (status === "unknown" || status === "not_applicable")) status = "partial";
+      // least partly met, and a weaker related passage is partly met too.
+      if (shown && status === "unknown") status = "partial";
 
       return {
         match_id: c.match_id,
