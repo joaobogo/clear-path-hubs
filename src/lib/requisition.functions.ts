@@ -307,7 +307,7 @@ export const saveRequisitionMeta = createServerFn({ method: "POST" })
     // Keep the legacy single-line location readable for the job board.
     const primary = data.locations.find((l) => l.is_primary) ?? data.locations[0];
     if (primary) {
-      const label = [primary.city, primary.region].filter(Boolean).join(", ");
+      const label = dedupeLocationParts([primary.city, primary.region]).join(", ");
       const extra = data.locations.length > 1 ? ` +${data.locations.length - 1} more` : "";
       await s
         .from("positions")

@@ -203,7 +203,7 @@ export const locationSchema = z.object({
 export type RequisitionLocation = z.infer<typeof locationSchema>;
 
 export function locationLabel(l: Pick<RequisitionLocation, "country_code" | "region" | "city">) {
-  return [l.city, l.region, countryName(l.country_code)].filter(Boolean).join(", ");
+  return dedupeLocationParts([l.city, l.region, countryName(l.country_code)]).join(", ");
 }
 
 /* ------------------------------------------------------------------ */
