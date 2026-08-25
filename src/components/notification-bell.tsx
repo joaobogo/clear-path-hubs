@@ -465,12 +465,18 @@ function NotificationRow({
 
   const unreadIds = items.filter((i) => !i.read_at).map((i) => i.id);
 
-  // Client workspace must never deep-link into admin routes. Render the row
-  // without a clickable href rather than expose an unauthorized path.
-  const isAdminLinkInClientWorkspace =
-    role === "client" && lead.link_path?.startsWith("/admin/");
-  const link =
-    lead.link_path && !isAdminLinkInClientWorkspace ? parseLinkPath(lead.link_path) : null;
+  // Client workspace must never render an /admin/ href. Map it onto the
+  // client-side page for the same record; if nothing safe exists, the row
+  // renders without a link rather than pointing at an unauthorized path.
+  const safePath =
+    role === "client"
+      ? isAdminPath(lead.link_path)
+        ? resolveClientNotificationLink(lead)
+        : lead.link_path
+      : lead.link_path;
+  const link = safePath && !(role === "client" && isAdminPath(safePath))
+    ? parseLinkPath(safePath)
+    : null;
 
   return (
     <li
