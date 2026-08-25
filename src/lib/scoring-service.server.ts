@@ -339,12 +339,12 @@ async function acquireLock(s: Any, matchId: string, trace_id: string): Promise<b
 }
 
 async function releaseLock(s: Any, matchId: string, nextState: string, trace_id: string, err?: { code: string; message: string }) {
-  await s.from("candidate_matches").update({
-    processing_state: nextState,
-    last_processing_trace_id: trace_id,
-    processing_error_code: err?.code ?? null,
-    processing_error_message: err?.message ?? null,
-  }).eq("id", matchId);
+  const { writeProcessingState } = await import("./processing-state.server");
+  await writeProcessingState(s, matchId, nextState, {
+    trace_id,
+    code: err?.code ?? null,
+    message: err?.message ?? null,
+  });
 }
 
 async function recordJob(
