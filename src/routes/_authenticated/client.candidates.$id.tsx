@@ -44,7 +44,6 @@ import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
 import {
   FitHero,
-  RequirementCoverage,
   WhyThisCandidate,
 } from "@/components/client/candidate-detail/evidence";
 import {
