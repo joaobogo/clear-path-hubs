@@ -15,7 +15,13 @@ import {
 import { guaranteeLine } from "@/lib/interview-scorecard";
 import { isStalled, stallLabel, stageEnteredAt } from "@/lib/offer-stall";
 import { Button } from "@/components/ui/button";
-import { NEXT_STEPS, nextStepLabel, formatSalary } from "./helpers";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { NEXT_STEPS, nextStepLabel, formatSalary, COLUMN_ICON } from "./helpers";
 import { NudgeButton } from "./nudge-button";
 import { OfferTermsDialog } from "./offer-terms-dialog";
 import { CloseReasonDialog } from "./close-reason-dialog";
