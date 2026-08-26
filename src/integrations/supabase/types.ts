@@ -15330,6 +15330,10 @@ export type Database = {
         Args: { _role: Database["public"]["Enums"]["membership_role"] }
         Returns: Database["public"]["Enums"]["client_permission"][]
       }
+      demo_backdate: {
+        Args: { _id: string; _patch: Json; _table: string }
+        Returns: undefined
+      }
       evidence_item_in_match: {
         Args: { _item_id: string; _match_id: string; _org: string }
         Returns: boolean
