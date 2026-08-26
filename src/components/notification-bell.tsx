@@ -251,7 +251,7 @@ export function NotificationBell({ role = "client" }: { role?: "admin" | "client
                   onClick={() => setOpen(false)}
                 >
                   <Link
-                    to={role === "client" ? "/client/account" : "/me/settings"}
+                    to={role === "client" ? "/client/account" : "/me/privacy"}
                     search={role === "client" ? { tab: "workspace", focus: "email" } : { focus: "email" }}
                   >
                     Update your email

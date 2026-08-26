@@ -17,7 +17,7 @@ export function PasswordChangeCard() {
     }
 
     const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/me/settings`,
+      redirectTo: `${window.location.origin}/auth/callback?next=/me/privacy`,
     });
 
     setSending(false);

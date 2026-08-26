@@ -146,7 +146,7 @@ function SettingsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">
+    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Privacy &amp; settings</h1>
@@ -321,6 +321,6 @@ function SettingsPage() {
         </Button>
       </section>
       {confirmDialog}
-    </div>
+    </main>
   );
 }

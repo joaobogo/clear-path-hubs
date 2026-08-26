@@ -47,7 +47,7 @@ const NAV: WorkspaceNavItem[] = [
  { to: "/me/profile", label: "Profile", icon: User },
  { to: "/me/cv", label: "CV", icon: FileUp },
  { to: "/me/messages", label: "Messages", icon: MessageSquare },
- { to: "/me/settings", label: "Privacy", icon: Shield },
+ { to: "/me/privacy", label: "Privacy", icon: Shield },
 ];
 
 function MeLayout() {
@@ -90,7 +90,7 @@ function MeLayout() {
   const seat = data?.seat ?? "candidate";
   const nav = NAV.filter((item) => {
     if (seat !== "candidate") {
-      return ["/me/profile", "/me/settings"].includes(item.to);
+      return ["/me/profile", "/me/privacy"].includes(item.to);
     }
     return true;
   });

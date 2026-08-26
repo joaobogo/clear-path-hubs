@@ -279,7 +279,7 @@ function MeHome() {
         />
 
         <Tile
-          to="/me/settings"
+          to="/me/privacy"
           icon={<Shield className="h-4 w-4" />}
           eyebrow="Privacy"
           title="You control what clients see"
@@ -315,7 +315,7 @@ function Tile({
   cta,
   progress,
 }: {
-  to: "/me/messages" | "/me/profile" | "/me/cv" | "/me/settings";
+  to: "/me/messages" | "/me/profile" | "/me/cv" | "/me/privacy";
   icon: React.ReactNode;
   eyebrow: string;
   title: string;
