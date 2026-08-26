@@ -15,7 +15,7 @@ const P1 =
 const P2 =
   "Joined an early-stage, founder-led team as engineer number four and grew it to 22 people.";
 const P4 =
-  "Rebuilt the admin console on Remix, a full-stack React framework, cutting first paint to 900 ms.";
+  "Rebuilt and shipped the merchant admin console on Remix, the full-stack React framework, cutting first paint to 900 ms.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2016.";
 
