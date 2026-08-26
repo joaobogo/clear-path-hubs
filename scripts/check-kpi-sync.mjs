@@ -114,7 +114,10 @@ for (const file of walk(join(ROOT, "src"))) {
     re.lastIndex = 0;
     let match;
     while ((match = re.exec(src))) {
-      if (!ORG_SCOPED.test(match[0])) continue;
+      // The organization scope may sit just past the count in the same chain.
+      const chain = src.slice(match.index, match.index + match[0].length + 400);
+      if (!ORG_SCOPED.test(chain)) continue;
+
       const line = src.slice(0, match.index).split("\n").length;
       offenders.push({ rel, line, table: match[1], name });
     }
