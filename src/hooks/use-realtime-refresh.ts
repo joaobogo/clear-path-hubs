@@ -56,7 +56,7 @@ export function useDashboardRealtime(opts: {
       }, 500);
     };
 
-    const orgConfig = (table: "candidate_matches" | "positions" | "interviews" | "memberships" | "hire_records" | "client_decisions") => ({
+    const orgConfig = (table: "candidate_matches" | "score_runs" | "positions" | "interviews" | "memberships" | "hire_records" | "client_decisions") => ({
       event: "*" as const,
       schema: "public" as const,
       table,
@@ -76,6 +76,7 @@ export function useDashboardRealtime(opts: {
         () => scheduleInvalidate(),
       )
       .on("postgres_changes", orgConfig("candidate_matches"), scheduleInvalidate)
+      .on("postgres_changes", orgConfig("score_runs"), scheduleInvalidate)
       .on("postgres_changes", orgConfig("positions"), scheduleInvalidate)
       .on("postgres_changes", orgConfig("interviews"), scheduleInvalidate)
       .on("postgres_changes", orgConfig("memberships"), scheduleInvalidate)

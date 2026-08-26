@@ -90,6 +90,17 @@ export function useRouteRealtime(opts: {
 			table: "positions",
 			...(positionFilter ? { filter: positionFilter } : {}),
 		};
+		const scoreRunFilter = positionId
+			? `position_id=eq.${positionId}`
+			: orgId
+				? `organization_id=eq.${orgId}`
+				: undefined;
+		const scoreRunConfig = {
+			event: "*" as const,
+			schema: "public",
+			table: "score_runs",
+			...(scoreRunFilter ? { filter: scoreRunFilter } : {}),
+		};
 		const orgConfig = (table: "interviews" | "memberships" | "hire_records" | "client_decisions") => ({
 			event: "*" as const,
 			schema: "public" as const,
@@ -100,6 +111,7 @@ export function useRouteRealtime(opts: {
 		const channel = supabase
 			.channel(`route:${scope}:${positionId ?? orgId ?? "staff"}`)
 			.on("postgres_changes", matchConfig, onRemoteChange)
+			.on("postgres_changes", scoreRunConfig, onRemoteChange)
 			.on("postgres_changes", positionConfig, onRemoteChange)
 			.on("postgres_changes", orgConfig("interviews"), onRemoteChange)
 			.on("postgres_changes", orgConfig("memberships"), onRemoteChange)
