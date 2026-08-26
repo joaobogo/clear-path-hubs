@@ -186,6 +186,20 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   // One profile read for every owner id on the page, so each row can show who
   // holds it without a second click.
+  // Collapse to one pending interview per candidate — a re-request must not
+  // count the same coordination job twice.
+  const interviewsAwaitingTime: Any[] = (() => {
+    const byMatch = new Map<string, Any>();
+    for (const iv of (interviews.data ?? []) as Any[]) {
+      const key = String(iv.candidate_match_id ?? iv.id);
+      const prev = byMatch.get(key);
+      if (!prev || String(iv.requested_at ?? "") < String(prev.requested_at ?? "")) {
+        byMatch.set(key, iv);
+      }
+    }
+    return [...byMatch.values()];
+  })();
+
   const ownerIds = new Set<string>();
   const addOwner = (v: unknown) => {
     if (typeof v === "string" && v) ownerIds.add(v);
