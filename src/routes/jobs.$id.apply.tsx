@@ -337,7 +337,7 @@ function ApplyPage() {
     if (["png", "jpg", "jpeg", "heic", "webp"].includes(ext))
       return "This is an image — upload a PDF of your CV, not a photo or screenshot.";
     if (["txt", "rtf", "md"].includes(ext))
-      return "This is a text file — export or print it as a PDF and try again.";
+      return `PDF only — that file was a .${ext}. Export or print it as a PDF and try again.`;
     if (["zip", "rar", "7z"].includes(ext))
       return "This is a compressed folder — upload the CV itself as a single PDF.";
     return `We only accept PDF files${ext ? ` (this one is .${ext})` : ""} — export your CV as a PDF and try again.`;
@@ -536,7 +536,15 @@ function ApplyPage() {
   // needs something rather than showing a review of nothing.
   const clampedRef = useRef(false);
   useEffect(() => {
-    if (clampedRef.current || signedIn === null || step === 1) return;
+    if (signedIn === null || step === 1) return;
+    // No step past the CV step is reachable without a valid PDF attached —
+    // checked on every step change and whenever the file is removed.
+    if (step > 2 && (!cvFile || cvError)) {
+      setFieldErrors({ cv: cvError ?? "Attach your CV to continue" });
+      goTo({ step: 2, q: 1 }, { replace: true });
+      return;
+    }
+    if (clampedRef.current) return;
     clampedRef.current = true;
     for (let n = 1; n < step; n++) {
       if (Object.keys(stepIssues(n)).length > 0) {
@@ -545,7 +553,7 @@ function ApplyPage() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signedIn, step]);
+  }, [signedIn, step, cvFile, cvError]);
 
   // Editing from the review screen: jump to the owning step, put focus on the
   // first field of that section, and offer a one-tap way back to review so
@@ -1810,11 +1818,17 @@ function ApplyPage() {
                 onClick={returningToReview ? returnToReview : goNext}
                 data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
                 className="w-full sm:w-auto"
-                disabled={cvChecking || (step === 4 && !consent)}
+                disabled={
+                  cvChecking ||
+                  (step === 4 && !consent) ||
+                  (step === 2 && (!cvFile || !!cvError))
+                }
                 title={
                   step === 4 && !consent
                     ? "Tick the required consent box to continue"
-                    : undefined
+                    : step === 2 && (!cvFile || !!cvError)
+                      ? "Attach your CV as a PDF to continue"
+                      : undefined
                 }
               >
                 {returningToReview ? "Done — back to review" : "Continue →"}
