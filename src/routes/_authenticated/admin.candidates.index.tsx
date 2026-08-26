@@ -52,7 +52,7 @@ import {
 import { ExportControl } from "@/components/admin/export-control";
 import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
-import { publishedBand, publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
+import { publishedBand, publishedScoreDisplay } from "@/lib/scoring/published-score";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, pluralize, formatNumber } from "@/lib/format/datetime";
 
 /** Dense list label: band + confidence, no bare number (rubric lives on detail). */
