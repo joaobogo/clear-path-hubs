@@ -137,7 +137,10 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     ]);
 
     const memberRows = (members as AnyRow[]) ?? [];
-    // One seat reader for the whole platform.
+    // One account-state reader for plan and seats, so the client Account page,
+    // the admin Overview and the admin Access tab print the same figures.
+    const { readAccountState } = await import("@/lib/account-state.server");
+    const accountState = await readAccountState(supabase, data.orgId);
     const seatCount = await readSeatsForOrg(supabase, data.orgId);
     const activeSeats = seatCount.activeMembers;
     const invitedSeats = seatCount.pendingInvites;
@@ -189,7 +192,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
         created_at: (o.created_at as string | null) ?? null,
       },
       subscription: {
-        plan_name: (o.plan_name as string | null) ?? null,
+        plan_name: accountState.plan.label,
         billing_interval: (o.billing_interval as string | null) ?? null,
         billing_period_start: periodStart,
         billing_period_end: periodEnd,
