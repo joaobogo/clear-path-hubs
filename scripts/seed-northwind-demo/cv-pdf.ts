@@ -265,7 +265,6 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
     });
 
     // Rail is drawn first, top to bottom, then the main column continues.
-    const railTop = y;
     let ry = y;
     const rail = (text: string, opts: { font?: Font; size?: number; gap?: number; color?: [number, number, number] } = {}) => {
       const font = opts.font ?? regular;
@@ -303,8 +302,6 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
       railHead("Outside work");
       rail(cv.interests);
     }
-    y = railTop;
-    void railTop;
   } else {
     draw(cv.name, { font: bold, size: t.nameSize });
     draw(`${cv.title}  |  ${cv.contact}`, { size: 9, color: t.muted, gap: 4 });

@@ -16,7 +16,12 @@ export type CvExperience = {
   bullets: string[];
 };
 
+/** Visual template: Classic serif, Modern sidebar, Senior compact. */
+export type CvLayout = "T1" | "T2" | "T3";
+
 export type CvDoc = {
+  /** Which visual template renders this CV. Defaults to "T1". */
+  layout?: CvLayout;
   /** Full name, rendered as the document title. */
   name: string;
   /** One-line role title. No technology names. */
@@ -33,6 +38,8 @@ export type CvDoc = {
   certifications: string[];
   /** Language lines; the English line carries the R6 evidence sentence. */
   languages: string[];
+  /** One human line (volunteering, sport, side interest). Optional. */
+  interests?: string;
 };
 
 export type ProfileExperience = {
