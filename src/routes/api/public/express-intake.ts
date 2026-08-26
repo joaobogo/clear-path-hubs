@@ -579,6 +579,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
           .insert({
             organization_id: organizationId,
             title: data.roleTitle.trim(),
+            department: (data.team ?? "").trim() || null,
             work_model: data.workModel || null,
             location: locationText || null,
             description: (data.jobDescriptionText ?? "").trim() || null,
@@ -758,6 +759,8 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 dealBreakers: dealbreakerLines,
                 location: locationText,
                 workModel: data.workModel || "",
+                employmentType: data.employmentType ?? "",
+                seniority: data.seniority ?? "",
                 onsiteDays: data.onsiteDays ?? null,
                 remoteTimezones: data.remoteTimezones ?? [],
                 remoteAnywhereInCountry: data.remoteAnywhereInCountry === true,
