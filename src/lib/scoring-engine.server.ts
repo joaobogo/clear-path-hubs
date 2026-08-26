@@ -14,6 +14,7 @@ import { cleanQuote } from "./evidence/quote-hygiene";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
 import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
+import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
 
 export { ENGINE_VERSION, EVALUATION_METHOD };
 
@@ -104,6 +105,12 @@ export interface ScoringResult {
     aligned: "aligned" | "misaligned" | "unknown";
   }>;
   contradiction_status: "none" | "screening_contradicts_cv" | "disqualifying_answer";
+  /**
+   * How much substance sits around the matched terms — the anti keyword-echo
+   * measure. A run whose evidence is a keyword list is capped, never presented
+   * as a top band, however many rubric terms it contains.
+   */
+  evidence_substance: SubstanceMeasure;
   completed_at: string;
   input_hash: string;
 }
@@ -465,6 +472,25 @@ export function scoreCandidate(input: {
     };
   });
 
+  // Evidence substance: does anything sit AROUND the matched terms? A CV that
+  // just repeats the rubric's keywords matches every term and evidences nothing,
+  // so its "met" statuses are demoted to "partial" needing validation and the
+  // composite is capped below the top bands further down.
+  const substance = measureSubstance({
+    cv_text: cv,
+    evidence,
+    matched_terms: assessment.flatMap((a) => a.matched_terms),
+    calibration: cal,
+  });
+  if (substance.verdict === "keyword_echo") {
+    for (const a of assessment) {
+      if (a.status === "met") {
+        a.status = "partial";
+        a.needs_validation = true;
+      }
+    }
+  }
+
   // Screening evidence
   const screening_evidence = input.screening.map((s) => ({
     question_id: s.question_id,
@@ -588,16 +614,37 @@ export function scoreCandidate(input: {
     );
   }
 
+  // 4) Keyword echo: the terms are present but nothing around them is. This is
+  //    the gameability cap — a keyword list cannot reach better than mid
+  //    "Consider" no matter how complete its term coverage looks.
+  if (substance.verdict === "keyword_echo") {
+    applyCap(`keyword_echo: ${substance.reason}`, cal.keyword_echo_cap);
+  }
+  // 5) Thin substance or shallow evidence: a real but slight document. Capped at
+  //    the top of "Consider" rather than demoted, because the candidate may well
+  //    fit — we just have not read enough to say so.
+  else if (substance.verdict === "thin") {
+    applyCap(`thin_evidence: ${substance.reason}`, cal.thin_substance_cap);
+  }
+
   const score = Math.round(score01 * 1000) / 10; // 0.0-100.0
 
 
   // Confidence: based on evidence volume, CV length, and screening completeness.
   const cw = cal.confidence_weights;
-  const cvTokenBoost = Math.min(1, cv.length / cal.confidence_cv_length_target);
-  const evidenceBoost = Math.min(
-    1,
-    evidence.length / Math.max(cal.confidence_evidence_floor, requirements.length),
+  const cvTokenBoost = Math.min(
+    Math.min(1, cv.length / cal.confidence_cv_length_target),
+    substance.substance_ratio,
   );
+  // Volume alone was gameable: one sentence quoted per requirement counted as
+  // full evidence. Breadth (distinct passages) and depth (context words around
+  // each term) now scale it, so a keyword list cannot report high completeness.
+  const evidenceBoost =
+    Math.min(
+      1,
+      substance.evidence_passages /
+        Math.max(cal.confidence_evidence_floor, requirements.length),
+    ) * Math.max(substance.depth_ratio, 0);
   const screeningBoost = screeningCount
     ? alignedCount / totalScreening
     : cal.confidence_no_screening_default;
@@ -672,6 +719,13 @@ export function scoreCandidate(input: {
   if (cv.trim().length < cal.unreadable_cv_chars) {
     concerns.push("CV text could not be extracted with confidence.");
   }
+  if (substance.reason) {
+    concerns.push(
+      substance.verdict === "keyword_echo"
+        ? `Evidence looks like a keyword list — ${substance.reason}. Treat the term matches as unverified.`
+        : `Limited detail to assess — ${substance.reason}.`,
+    );
+  }
 
   return {
     engine_version,
@@ -698,6 +752,7 @@ export function scoreCandidate(input: {
     evidence: evidence.slice(0, cal.keyword_cap),
     screening_evidence,
     contradiction_status,
+    evidence_substance: substance,
     completed_at,
     input_hash,
   };
