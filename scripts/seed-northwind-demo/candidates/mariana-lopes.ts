@@ -108,7 +108,7 @@ export const dossier: Dossier = {
           R4,
           P1,
           P2,
-          "Contributed to the Playwright suite that covers the referral and consent journeys.",
+          "Contributed to the automated tests in the Playwright suite covering the referral and consent journeys.",
           "Brought referral turnaround from four days to under one across 45 clinics.",
           "Replaced a paper consent process for 12,000 patients with an auditable digital record.",
           "Kept the release notes short enough that support staff actually read them, which halved handover calls.",
