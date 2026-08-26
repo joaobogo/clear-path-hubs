@@ -82,7 +82,7 @@ function MyApplicationsPage() {
  onError: (e: Error) => toastError(e),
  });
 
- const apps = current.applications;
+ const apps = current?.applications ?? [];
 
  return (
  <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
