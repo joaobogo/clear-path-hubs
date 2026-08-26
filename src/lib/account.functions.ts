@@ -27,6 +27,8 @@ export type AccountSubscription = {
 
 export type AccountSeats = {
   limit: number;
+  /** Seats held: active members plus pending invitations. THE headline figure. */
+  used: number;
   active: number;
   invited: number;
   remaining: number;
@@ -200,6 +202,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
       },
       seats: {
         limit,
+        used: seatCount.seatsUsed,
         active: activeSeats,
         invited: invitedSeats,
         remaining: seatCount.seatsLeft,

@@ -6,7 +6,7 @@
  * come through the organization-scoped reader and the totals through the one
  * derivation in `client-seats.ts`, which mirrors the database seat guard.
  */
-import { readOrgRows, isOrgMember } from "@/lib/kpis/org-read.server";
+import { readOrgRows, isOrgMember, isPlatformStaffCaller } from "@/lib/kpis/org-read.server";
 import { computeSeatCount, type SeatCount } from "@/lib/client-seats";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,7 +16,7 @@ export type { SeatCount };
 
 async function readSeatLimit(supabase: AnyRow, orgId: string): Promise<number | null> {
   let db: AnyRow = supabase;
-  if (await isOrgMember(supabase, orgId)) {
+  if ((await isOrgMember(supabase, orgId)) || (await isPlatformStaffCaller(supabase))) {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     db = supabaseAdmin;
   }

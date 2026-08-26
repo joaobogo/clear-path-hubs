@@ -168,7 +168,10 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     // Hires come from computeKpis, which reads the confirmed offer records.
     const kpis = {
       ...computeKpis(rows, activePositions),
-      awaiting_decision: openItemsResponse.items.filter(i => i.kind === 'pending_decision').length,
+      // Awaiting a decision comes from the one predicate in computeKpis
+      // (`isAwaitingClientDecision`). Counting the open-items strip instead —
+      // which is capped and filtered for display — is how this card read 0
+      // while the Roles list, the board column and the admin backlog read 10.
       // Interviews awaiting a time and open offers come from their one reader,
       // never from the length of a queue list on this page.
       interviews_to_confirm: pendingConfirmations.length,

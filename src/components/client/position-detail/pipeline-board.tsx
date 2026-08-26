@@ -9,6 +9,7 @@ import {
 import { Users } from "lucide-react";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { isUnicornMatch } from "@/lib/scoring/bands";
+import { publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
 import { type MatchStage } from "@/lib/client-match-stage";
 import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "./constants";
 
@@ -142,10 +143,12 @@ export function PipelineBoard({
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-1.5">
                         <CandidateScoreBadge
-                          score={m.score_runs?.score ?? null}
+                          score={publishedScoreDisplay(m.score_runs)}
                           fitLabel={m.score_runs?.fit_label ?? null}
                           unicorn={isUnicornMatch({
-                            score: m.score_runs?.score ?? null,
+                            // The published number, so a human-adjusted score
+                            // reads the same here as on the candidate page.
+                            score: publishedScore(m.score_runs),
                             hired: m.stage === "hired",
                           })}
                           hideEvidenceChip

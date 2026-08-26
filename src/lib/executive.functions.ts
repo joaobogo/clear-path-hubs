@@ -11,7 +11,7 @@ import { z } from "zod";
 import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 import { loadConfirmedHires } from "@/lib/kpis/confirmed-hires.server";
 import { loadOpenRoles, loadOrgRoles } from "@/lib/kpis/open-roles.server";
-import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
+import { loadKpiRows, computeKpis, isAwaitingClientDecision } from "@/lib/client-kpi.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,6 +61,8 @@ export type ExecutiveReport = {
     delivered: number;
     shortlisted: number;
     hired: number;
+    /** Delivered candidates with no client decision recorded yet. */
+    awaiting_decision: number;
     blocked: number;
   }>;
   /** p90 is null under five candidates, where it only repeats the average. */
@@ -159,7 +161,18 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       .map(([region, v]) => ({ region, ...v }))
       .sort((a, b) => b.open - a.open || b.total - a.total);
 
-    // Pipeline by business unit (department)
+    // Pipeline by business unit (department).
+    //
+    // Hires and "needs your input" come from the same rows the Overview tiles
+    // and the client board read, so a team row can never claim a hire the
+    // Overview does not, or show nothing to decide while the board shows ten.
+    const kpiRows = await loadKpiRows(s, orgId);
+    const hiredMatchIds = new Set(
+      kpiRows.filter((r) => r.hire_confirmed).map((r) => String(r.id)),
+    );
+    const awaitingDecisionMatchIds = new Set(
+      kpiRows.filter(isAwaitingClientDecision).map((r) => String(r.id)),
+    );
     const buMap = new Map<
       string,
       {
@@ -168,6 +181,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         delivered: number;
         shortlisted: number;
         hired: number;
+        awaiting_decision: number;
         blocked: number;
       }
     >();
@@ -180,6 +194,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
           delivered: 0,
           shortlisted: 0,
           hired: 0,
+          awaiting_decision: 0,
           blocked: 0,
         };
         buMap.set(bu, v);
@@ -200,7 +215,8 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       // P16: Active means candidate is delivered but not yet hired, rejected or withdrawn.
       // We must not double-count by summing stages.
       const isDelivered = !!m.delivered_at;
-      const isHired = stage === "hired";
+      // One definition of a hire: a confirmed offer record, never the stage.
+      const isHired = hiredMatchIds.has(String(m.id));
       const isTerminal = ["rejected", "withdrawn", "not_moving_forward"].includes(stage);
       const isActive = isDelivered && !isHired && !isTerminal;
 
@@ -208,6 +224,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       if (isDelivered) v.delivered += 1;
       if (stage === "shortlisted") v.shortlisted += 1;
       if (isHired) v.hired += 1;
+      if (awaitingDecisionMatchIds.has(String(m.id))) v.awaiting_decision += 1;
       if (["failed", "error"].includes(String(m.processing_state ?? ""))) v.blocked += 1;
     }
     const pipeline_by_bu = Array.from(buMap.entries())
@@ -218,6 +235,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         delivered: v.delivered,
         shortlisted: v.shortlisted,
         hired: v.hired,
+        awaiting_decision: v.awaiting_decision,
         blocked: v.blocked,
       }))
       // A "Not assigned to a team" row with nothing in it never fills — drop it.
@@ -418,7 +436,6 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     // Unified hire definition: any candidate whose stage is 'hired' in the
     // canonical pipeline derivation. Executive, Account, Positions and Candidates
     // now all read the same KpiRow predicates.
-    const kpiRows = await loadKpiRows(s, orgId);
     const kpis = computeKpis(kpiRows, 0);
 
     // Hires come from the one selector: confirmed offer records, windowed on
