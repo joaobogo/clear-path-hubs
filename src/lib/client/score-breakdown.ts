@@ -144,6 +144,35 @@ function matchRequirementKey(text: string, rows: RequirementRow[]): string | und
   return best;
 }
 
+/**
+ * Free-text strengths, filtered against the requirement rows the page shows.
+ *
+ * A strength survives only when the evidence set agrees with it: either it
+ * names a requirement the rows resolve to met/partial, or it names none and at
+ * least one requirement is evidenced. On a profile with nothing evidenced this
+ * returns an empty list, so the narrative cannot contradict the rows.
+ */
+export function evidenceBackedStrengths(candidate: {
+  strengths?: string[] | null;
+  requirement_rows?: RequirementRow[] | null;
+}): string[] {
+  const rows = candidate.requirement_rows ?? [];
+  const evidencedKeys = new Set<string>();
+  let anyEvidenced = false;
+  for (const row of rows) {
+    const status = resolveRequirementStatus(row);
+    if (status !== "met" && status !== "partial") continue;
+    anyEvidenced = true;
+    const key = requirementKey(row);
+    if (key) evidencedKeys.add(key);
+  }
+  return (candidate.strengths ?? []).filter((s) => {
+    const matched = matchRequirementKey(s, rows);
+    if (matched) return evidencedKeys.has(matched);
+    return anyEvidenced;
+  });
+}
+
 export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdown {
   const rows = candidate.requirement_rows ?? [];
   const must = rows.filter((r: RequirementRow) => r.importance === "must_have");
@@ -192,14 +221,19 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
       });
     });
 
-  (candidate.strengths ?? []).slice(0, 3).forEach((s: string, i: number) =>
-    reasons.push({
-      id: `strength-${i}`,
-      tone: "positive",
-      text: s,
-      requirementKey: matchRequirementKey(s, rows),
-    }),
-  );
+  // Free-text strengths may only speak when the requirement rows back them up:
+  // a profile with nothing evidenced must not read "Demonstrated: …".
+  evidenceBackedStrengths(candidate)
+    .slice(0, 3)
+    .forEach((s: string, i: number) =>
+      reasons.push({
+        id: `strength-${i}`,
+        tone: "positive",
+        text: s,
+        requirementKey: matchRequirementKey(s, rows),
+      }),
+    );
+
 
   must
     .filter((r: RequirementRow) => {

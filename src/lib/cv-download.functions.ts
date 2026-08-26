@@ -83,9 +83,12 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
     //    button is never the protection.
     const redacted = false;
     if (!authorized && orgId) {
+      // A released contact is itself proof the match was published, so a stale
+      // canonical_state can never hold the CV back once contact is out.
       const isVisible =
-        match.client_visibility === "visible" &&
-        match.canonical_state === "published_to_client";
+        Boolean(match.contact_released_at) ||
+        (match.client_visibility === "visible" &&
+          match.canonical_state === "published_to_client");
 
       if (isVisible) {
         const { data: allowed } = await supabase.rpc("has_client_permission", {
@@ -109,11 +112,12 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
             contact_release_reason: match.contact_release_reason as string | null,
             has_interview: (interviewCount ?? 0) > 0,
           });
-          if (!gate.open) throw new Error("Contact details and CV are not yet available for this candidate.");
+          if (!gate.open) throw new Error("cv_gated_pre_interview: this candidate's CV unlocks at interview stage.");
           authorized = true;
         }
       }
     }
+
 
 
     if (!authorized) throw new Error("Not found");

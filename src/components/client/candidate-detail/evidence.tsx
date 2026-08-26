@@ -571,9 +571,6 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
   }
 
 
-  const bandLine = candidate.fit?.headline
-    ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
-    : null;
   const counts = getEvidenceCounts(candidate.requirement_rows);
 
   return (
@@ -582,14 +579,11 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
       icon={<Sparkles className="h-4 w-4" />}
       description="Each of your requirements, what the candidate showed for it, and where that came from."
     >
+      {/* The band and figure are stated once, in the fit hero above. */}
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-        {bandLine && (
-          <Badge variant="secondary" className="text-[11px]">
-            {bandLine}
-          </Badge>
-        )}
         <span>{rationale.summary}</span>
       </div>
+
 
       {withCoverage && counts.total > 0 && (
         <div className="mt-4">
