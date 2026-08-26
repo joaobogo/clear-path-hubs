@@ -83,7 +83,7 @@ export function parseJobDescription(description: string): JobBlock[] {
 
   for (const raw of normalized.split("\n")) {
     const line = raw.trim();
-    if (!line) {
+    if (!line || MD_RULE.test(line)) {
       flush();
       continue;
     }
