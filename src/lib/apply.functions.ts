@@ -9,6 +9,11 @@ import type { SubmitApplicationResult } from "./apply-types";
 
 export type { SubmitApplicationResult };
 
+function ref6(id: string): string {
+  return id.replace(/-/g, "").slice(0, 6).toUpperCase();
+}
+
+
 export const submitApplication = createServerFn({ method: "POST" })
   .inputValidator((input: unknown): ApplyInput => applySchema.parse(input))
   .handler(async ({ data }): Promise<SubmitApplicationResult> => {
