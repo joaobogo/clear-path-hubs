@@ -18,6 +18,11 @@ import {
   appOrigin,
   leadAlertRecipients,
 } from "@/config/lead-notifications";
+import {
+  classifyEmailError,
+  isHeldEmailCode,
+  isSandboxRecipient,
+} from "@/lib/notification-email.server";
 import { normalizeLeadEvent, type LeadEventInput, type NormalizedLeadEvent } from "./lead-event";
 
 export type LeadDispatchResult = {
@@ -106,9 +111,12 @@ async function sendEmail(event: NormalizedLeadEvent, recipients: string[]) {
           templateData,
           replyTo: event.email ?? undefined,
         });
-        if (!res.sent) failures.push(`${to}: ${res.reason}`);
+        if (!res.sent) notSent.push(`${to}: ${res.reason}`);
       } catch (err) {
-        failures.push(`${to}: ${err instanceof Error ? err.message.slice(0, 160) : "error"}`);
+        const classified = classifyEmailError(err);
+        const line = `${to}: ${classified.code}`;
+        if (isHeldEmailCode(classified.code)) notSent.push(line);
+        else failures.push(line);
       }
     }
 
@@ -126,6 +134,15 @@ async function sendEmail(event: NormalizedLeadEvent, recipients: string[]) {
   } catch (err) {
     return { ok: false, allSuppressed: false, detail: err instanceof Error ? err.message.slice(0, 400) : "throw" };
   }
+}
+
+async function isSandboxLeadEvent(admin: any, event: NormalizedLeadEvent): Promise<boolean> {
+  const recipients = leadAlertRecipients(event.leadType);
+  if (!event.organizationId) return recipients.some((address) => /@(example\.com|localhost)$/i.test(address));
+  return isSandboxRecipient(admin, {
+    orgId: event.organizationId,
+    address: recipients[0] ?? null,
+  });
 }
 
 /**
@@ -199,6 +216,26 @@ export async function processLeadEvent(input: LeadEventInput): Promise<LeadDispa
     // Still notify — losing the ledger row must not lose the lead.
   } else {
     result.leadNotificationId = row.id;
+  }
+
+  if (await isSandboxLeadEvent(admin, event)) {
+    const now = new Date().toISOString();
+    result.teams = { ok: true, detail: "suppressed_for_demo_workspace" };
+    result.email = { ok: true, detail: "suppressed_for_demo_workspace", recipients };
+    if (result.leadNotificationId) {
+      await admin
+        .from("lead_notifications")
+        .update({
+          teams_status: "suppressed",
+          teams_detail: "Recorded for a test or demo workspace instead of posting to Teams.",
+          teams_at: now,
+          email_status: "suppressed",
+          email_detail: "Recorded for a test or demo workspace instead of sending email.",
+          email_at: now,
+        })
+        .eq("id", result.leadNotificationId);
+    }
+    return result;
   }
 
   // 2 + 3) Channels, independent of one another.
@@ -280,6 +317,24 @@ export async function retryLeadNotification(
     (row.email_recipients as string[] | null)?.length
       ? (row.email_recipients as string[])
       : leadAlertRecipients(event.leadType);
+
+  if (await isSandboxLeadEvent(supabaseAdmin, event)) {
+    const now = new Date().toISOString();
+    await supabaseAdmin
+      .from("lead_notifications")
+      .update({
+        attempts: (row.attempts ?? 0) + 1,
+        last_attempt_at: now,
+        teams_status: "suppressed",
+        teams_detail: "Recorded for a test or demo workspace instead of posting to Teams.",
+        teams_at: now,
+        email_status: "suppressed",
+        email_detail: "Recorded for a test or demo workspace instead of sending email.",
+        email_at: now,
+      })
+      .eq("id", id);
+    return { ok: true, teams: null, email: null };
+  }
 
   const needsTeams = row.teams_status !== "delivered";
   const needsEmail = row.email_status !== "sent" && row.email_status !== "suppressed";

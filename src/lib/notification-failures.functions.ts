@@ -6,14 +6,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-async function assertStaff(context: {
-  supabase: { rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown }> };
-  userId: string;
-}) {
-  const { data } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
-  if (data !== true) throw new Error("Forbidden");
-}
-
 /**
  * THE delivery-failure metric. One implementation, one 7-day window; every
  * admin surface calls this and reads `summary.retryable`.
@@ -21,7 +13,8 @@ async function assertStaff(context: {
 export const getDeliveryFailureMetric = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertStaff(context as never);
+    const { assertPlatformStaff } = await import("./authz.server");
+    await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { loadDeliveryHealth } = await import("./notification-failures.server");
     return loadDeliveryHealth(supabaseAdmin);
@@ -35,17 +28,29 @@ export const retryDeliveryFailureFn = createServerFn({ method: "POST" })
   .inputValidator((raw: unknown) =>
     z
       .object({
-        ledger: z.enum(["notification", "lead"]),
+        ledger: z.enum(["notification", "lead", "application"]),
         id: z.string().uuid(),
         acknowledgeStale: z.boolean().optional(),
       })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
-    await assertStaff(context as never);
+    const { assertPlatformStaff } = await import("./authz.server");
+    await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { retryDeliveryFailure } = await import("./notification-failures.server");
     return retryDeliveryFailure(supabaseAdmin, { ledger: data.ledger, id: data.id });
+  });
+
+export const retryAllDeliveryFailuresFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw: unknown) => z.object({ limit: z.number().int().min(1).max(200).optional() }).parse(raw))
+  .handler(async ({ context, data }) => {
+    const { assertPlatformStaff } = await import("./authz.server");
+    await assertPlatformStaff(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { retryAllDeliveryFailures } = await import("./notification-failures.server");
+    return retryAllDeliveryFailures(supabaseAdmin, { limit: data.limit });
   });
 
 export const suppressNotificationRecipient = createServerFn({ method: "POST" })
@@ -59,7 +64,8 @@ export const suppressNotificationRecipient = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
-    await assertStaff(context as never);
+    const { assertPlatformStaff } = await import("./authz.server");
+    await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { suppressRecipient } = await import("./notification-suppression.server");
     return suppressRecipient(supabaseAdmin, {
@@ -73,7 +79,8 @@ export const releaseNotificationRecipient = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => z.object({ email: z.string().trim().email() }).parse(raw))
   .handler(async ({ context, data }) => {
-    await assertStaff(context as never);
+    const { assertPlatformStaff } = await import("./authz.server");
+    await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { releaseRecipient } = await import("./notification-suppression.server");
     return releaseRecipient(supabaseAdmin, { email: data.email, actorUserId: context.userId });
@@ -90,13 +97,14 @@ export const unsuppressAndRetryDelivery = createServerFn({ method: "POST" })
     z
       .object({
         email: z.string().trim().email(),
-        ledger: z.enum(["notification", "lead"]).optional(),
+        ledger: z.enum(["notification", "lead", "application"]).optional(),
         id: z.string().uuid().optional(),
       })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
-    await assertStaff(context as never);
+    const { assertPlatformStaff } = await import("./authz.server");
+    await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { unsuppressAndRetry } = await import("./notification-failures.server");
     return unsuppressAndRetry(supabaseAdmin, {
