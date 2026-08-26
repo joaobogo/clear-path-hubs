@@ -216,21 +216,15 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
           </p>
         </div>
       )}
-      {/* Headline: the figure, its band and the method that produced it. */}
-
+      {/* The verdict (figure + band) is stated once, in the fit hero above.
+          This row carries only the provenance of that figure. */}
       <div className="flex flex-wrap items-end justify-between gap-3 rounded-lg border bg-muted/30 p-3">
-        <div className="flex items-end gap-3">
-          <span className="text-3xl font-semibold tabular-nums leading-none">
-            {b.score ?? "—"}
-          </span>
-          <div className="text-xs text-muted-foreground">
-            <div className="text-sm font-medium text-foreground">{b.bandLabel}</div>
-            {b.bandFloor != null && b.bandCeiling != null && (
-              <div className="tabular-nums">
-                band range {b.bandFloor}–{b.bandCeiling}
-              </div>
-            )}
-          </div>
+        <div className="text-xs text-muted-foreground">
+          {b.bandFloor != null && b.bandCeiling != null && (
+            <div className="tabular-nums">
+              band range {b.bandFloor}–{b.bandCeiling}
+            </div>
+          )}
         </div>
         <div className="max-w-md text-right text-xs text-muted-foreground">
           {b.methodLabel && (
@@ -246,6 +240,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
           )}
         </div>
       </div>
+
 
       <ScoreComposition candidate={candidate} />
 
