@@ -161,8 +161,19 @@ test.describe("launch smoke journey", () => {
     await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
     await expect(
       page
+    await page.waitForLoadState("networkidle").catch(() => undefined);
+    // eslint-disable-next-line no-console
+    console.log(
+      "[e2e] portal",
+      page.url(),
+      JSON.stringify((await page.locator("body").innerText().catch(() => "")).slice(0, 400)),
+      JSON.stringify(errors.slice(0, 5)),
+    );
+    await expect(
+      page
         .getByText(new RegExp(fixtures.position_id.slice(0, 6), "i"))
         .or(page.getByRole("heading", { name: /applications/i }))
+
         .first(),
     ).toBeVisible({ timeout: 60_000 });
     // Best-effort sign-out: bounded so a hidden/absent control can't stall the run.
