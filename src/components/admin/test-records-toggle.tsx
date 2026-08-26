@@ -38,16 +38,18 @@ export function TestRecordsToggle() {
     mutationFn: (show: boolean) => save({ data: { show } }),
     onSuccess: async (state) => {
       queryClient.setQueryData(TEST_SCOPE_QUERY_KEY, state);
-      // P-020: Every admin count derives from the same server-side scope.
-      // We must reset the cache and re-run all route loaders to ensure the numbers
-      // next to the toggle update instantly without a manual F5.
-      await queryClient.resetQueries({
+      // P-020: Every admin count derives from the same server-side scope, so
+      // every admin query has to refetch when the scope changes. Invalidate
+      // rather than reset: resetQueries cancels queries a suspended component is
+      // already waiting on, and that CancelledError blanks the page.
+      await queryClient.invalidateQueries({
         predicate: (query) =>
           query.queryKey[0] === "admin" ||
           query.queryKey[0] === "admin-overview" ||
           String(query.queryKey[0]).startsWith("admin-"),
       });
       await router.invalidate();
+
     },
     onError: () => toast.error("Could not change the test-record setting."),
   });
