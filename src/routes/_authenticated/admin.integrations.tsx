@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
   type IntegrationId,
   type IntegrationCheckRow,
 } from "@/lib/integration-health.functions";
+import { getIntegrationStrip, type StripChip } from "@/lib/integration-strip.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { humanizeCode } from "@/lib/humanize-codes";
 
@@ -45,7 +46,7 @@ const STATUS_STYLE: Record<
   IntegrationCheckRow["status"],
   { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
 > = {
-  ok: { label: "Healthy", variant: "default", },
+  ok: { label: "Healthy", variant: "default" },
   degraded: { label: "Needs attention", variant: "secondary" },
   failed: { label: "Failing", variant: "destructive" },
   not_configured: { label: "Not configured", variant: "outline" },
@@ -80,6 +81,15 @@ function IntegrationHealthPage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [open, setOpen] = useState<IntegrationId | null>(null);
   const runFn = useServerFn(runIntegrationChecks);
+  // Same query the header strip uses, so header chips and cards below can never
+  // disagree about the same integration.
+  const strip = useQuery({
+    queryKey: ["integration-strip"],
+    queryFn: () => getIntegrationStrip(),
+    refetchInterval: 60_000,
+  });
+  const chipFor = (id: IntegrationId): StripChip | null =>
+    (strip.data?.chips ?? []).find((c) => c.key === id) ?? null;
 
   const run = useMutation({
     mutationFn: async (integrations?: IntegrationId[]) =>
@@ -99,9 +109,11 @@ function IntegrationHealthPage() {
       ),
   });
 
-  const failing = data.integrations.filter(
-    (i) => i.latest && i.latest.status !== "ok",
-  ).length;
+  const failing = data.integrations.filter((i) => {
+    const chip = (strip.data?.chips ?? []).find((c) => c.key === i.id);
+    if (chip) return chip.state === "degraded" || chip.state === "failing";
+    return !!i.latest && i.latest.status !== "ok";
+  }).length;
   const untested = data.integrations.filter((i) => !i.latest).length;
 
   return (
@@ -165,7 +177,12 @@ function IntegrationHealthPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         {data.integrations.map(({ id, latest, history }) => {
-          const style = latest ? STATUS_STYLE[latest.status] : null;
+          const chip = chipFor(id);
+          const style = chip
+            ? CHIP_STYLE[chip.state]
+            : latest
+              ? STATUS_STYLE[latest.status]
+              : null;
           const expanded = open === id;
           return (
             <section key={id} className="rounded-lg border p-5">
@@ -177,12 +194,12 @@ function IntegrationHealthPage() {
                 {style ? (
                   <Badge variant={style.variant}>{style.label}</Badge>
                 ) : (
-                  <Badge variant="outline">Never tested</Badge>
+                  <Badge variant="outline">Not checked</Badge>
                 )}
               </div>
 
               <p className="mt-3 text-sm">
-                {latest ? latest.summary : "No test result recorded yet."}
+                {chip ? chip.reason : latest ? latest.summary : "No test result recorded yet."}
               </p>
 
               {latest && (
@@ -192,7 +209,7 @@ function IntegrationHealthPage() {
                 </p>
               )}
 
-              {latest && latest.status !== "ok" && (
+              {latest && (chip ? chip.state !== "healthy" : latest.status !== "ok") && (
                 <div className="mt-3 space-y-2 rounded-md border border-destructive/30 bg-destructive/5 p-3">
                   {latest.error_code && (
                     <div className="text-xs font-medium text-destructive">
