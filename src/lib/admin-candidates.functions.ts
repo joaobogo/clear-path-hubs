@@ -52,17 +52,73 @@ export const CANDIDATE_SORTS = [
   "name_asc",
 ] as const;
 
+// Enum-typed columns can only be filtered by values the database enum actually
+// carries. A stale bookmark or hand-edited URL used to pass its value straight
+// through, and Postgres answered with a raw enum error that reached the screen.
+// Unknown values are dropped here, so the list simply ignores the filter.
+const ENUM_FILTER_VALUES = {
+  stage: [
+    "new",
+    "reviewing",
+    "delivered",
+    "shortlisted",
+    "interview_process",
+    "offer",
+    "hired",
+    "not_moving_forward",
+    "archived",
+  ],
+  admin_status: ["pending", "approved", "rejected", "on_hold"],
+  processing_state: [
+    "queued",
+    "parsing",
+    "ocr_required",
+    "parsed",
+    "enriching",
+    "ready_to_score",
+    "scoring",
+    "scored",
+    "manual_review_required",
+    "provider_blocked",
+    "failed",
+  ],
+  client_visibility: ["hidden", "visible", "archived"],
+  eligibility_status: [
+    "not_evaluated",
+    "eligible",
+    "not_eligible",
+    "needs_validation",
+    "excepted",
+  ],
+  recommendation: [
+    "pending",
+    "shortlist",
+    "review",
+    "hold_for_validation",
+    "do_not_recommend",
+  ],
+  score_band: ["exceptional", "top", "strong", "consider", "not_recommended", "unscored"],
+} as const;
+
+function enumFilter(key: keyof typeof ENUM_FILTER_VALUES) {
+  const allowed = ENUM_FILTER_VALUES[key] as readonly string[];
+  return z
+    .string()
+    .optional()
+    .transform((v) => (v && allowed.includes(v) ? v : undefined));
+}
+
 const listInput = z.object({
   q: z.string().max(200).optional(),
   organization_id: z.string().uuid().optional(),
   position_id: z.string().uuid().optional(),
-  stage: z.string().optional(),
-  admin_status: z.string().optional(),
-  processing_state: z.string().optional(),
-  client_visibility: z.string().optional(),
-  eligibility_status: z.string().optional(),
-  recommendation: z.string().optional(),
-  score_band: z.string().optional(),
+  stage: enumFilter("stage"),
+  admin_status: enumFilter("admin_status"),
+  processing_state: enumFilter("processing_state"),
+  client_visibility: enumFilter("client_visibility"),
+  eligibility_status: enumFilter("eligibility_status"),
+  recommendation: enumFilter("recommendation"),
+  score_band: enumFilter("score_band"),
   fit_label: z.string().optional(),
   confidence: z.string().optional(), // high | medium | low
   contact_released: z.string().optional(), // released | withheld
