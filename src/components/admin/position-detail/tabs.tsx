@@ -81,6 +81,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { publishedScoreDisplay } from "@/lib/scoring/published-score";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -507,8 +508,8 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                       {m.candidate_profiles?.full_name ?? "Unknown"}
                     </span>
                     <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                      {m.score_runs?.score != null
-                        ? Math.round(m.score_runs.score)
+                      {publishedScoreDisplay(m.score_runs) != null
+                        ? publishedScoreDisplay(m.score_runs)
                         : "—"}
                     </span>
                   </Link>
@@ -557,7 +558,7 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                   {(m.client_visibility ?? "—").replace(/_/g, " ")}
                 </td>
                 <td className="px-3 py-2 tabular-nums">
-                  {m.score_runs?.score != null ? Math.round(m.score_runs.score) : "—"}
+                  {publishedScoreDisplay(m.score_runs) ?? "—"}
                 </td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
                   {m.updated_at ? new Date(m.updated_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}

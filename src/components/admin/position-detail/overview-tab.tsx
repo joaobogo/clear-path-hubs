@@ -20,6 +20,7 @@ import { ExternalLink } from "lucide-react";
 import { evaluatePublishGate, PUBLISH_BLOCKER_LABEL } from "@/lib/publish-gate";
 import { updatePosition } from "@/lib/admin.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { publishedScore } from "@/lib/scoring/published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -89,7 +90,7 @@ export function OverviewTab({
   };
 
   const stats = useMemo(() => {
-    const scored = matches.filter((m) => m.score_runs?.score != null).length;
+    const scored = matches.filter((m) => publishedScore(m.score_runs) != null).length;
     const active = matches.filter(
       (m) => m.stage && !["archived", "not_moving_forward"].includes(m.stage),
     ).length;
