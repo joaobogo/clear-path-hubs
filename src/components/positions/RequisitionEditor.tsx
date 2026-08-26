@@ -612,6 +612,57 @@ export function RequisitionEditor({
   );
 }
 
+/**
+ * Searchable country picker. Options are listed A–Z by display name and
+ * type-ahead + Enter selects the highlighted match exactly (no ISO-order
+ * surprises).
+ */
+function CountryCombobox({ value, onChange }: { value: string; onChange: (code: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const selected = COUNTRIES.find((c) => c.code === value);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between font-normal"
+        >
+          <span className={cn("truncate", !selected && "text-muted-foreground")}>
+            {selected ? selected.name : "Select country…"}
+          </span>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Type a country…" />
+          <CommandList className="max-h-72">
+            <CommandEmpty>No country matches.</CommandEmpty>
+            <CommandGroup>
+              {COUNTRIES.map((c) => (
+                <CommandItem
+                  key={c.code}
+                  value={c.name}
+                  onSelect={() => {
+                    onChange(c.code);
+                    setOpen(false);
+                  }}
+                >
+                  <Check className={cn("mr-2 h-4 w-4", c.code === value ? "opacity-100" : "opacity-0")} />
+                  {c.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 /** Free-text notes stay clearly separate from structured fields. */
 export function FreeTextNote({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
