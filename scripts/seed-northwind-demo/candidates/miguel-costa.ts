@@ -69,9 +69,11 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Miguel delivers public-sector web projects in Lisbon and owns the permit request service for two municipal councils, from the request tables to the officer queue. His status history work cut average decision time from 21 days to 12. Five years with React and TypeScript, available in a month.",
 
+  cv_filename: "Miguel Costa CV.pdf",
+
   cv: {
-    layout: "T3",
-    interests: "Restores vintage bicycles; reads a lot of maritime history.",
+    layout: "T1",
+    targetPages: 1,
     name: "Miguel Costa",
     title: "Full-Stack Developer",
     contact: "Lisbon, Portugal · miguel.costa.dev@outlook.com · +351 961 224 508",

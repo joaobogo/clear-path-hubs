@@ -85,9 +85,11 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Ana Sofia manages a team of nine at an analytics platform after eight years as a hands-on engineer, and is applying to return to individual contribution. She owned scheduled reporting from the Postgres model to the analyst screen, and the metrics warehouse behind 140 client accounts. Available in two months.",
 
+  cv_filename: "ana-sofia-pinto-cv.pdf",
+
   cv: {
-    layout: "T2",
-    interests: "Choir soprano; volunteers at a food bank one Saturday a month.",
+    layout: "T3",
+    targetPages: 2,
     name: "Ana Sofia Pinto",
     title: "Engineering Manager",
     contact: "Lisbon, Portugal · anasofia.pinto@gmail.com · +351 918 330 476",

@@ -22,6 +22,14 @@ export type CvLayout = "T1" | "T2" | "T3";
 export type CvDoc = {
   /** Which visual template renders this CV. Defaults to "T1". */
   layout?: CvLayout;
+  /** Honest length: 1 page for short careers, 2 for the rest. Defaults to 2. */
+  targetPages?: 1 | 2;
+  /** "numeric" writes "03/2022 - Present" instead of "Mar 2022 - Present". */
+  dateStyle?: "numeric" | "month";
+  /** Puts education (and certifications) before experience. */
+  educationFirst?: boolean;
+  /** Heading over the summary; defaults to "Summary". */
+  summaryLabel?: string;
   /** Full name, rendered as the document title. */
   name: string;
   /** One-line role title. No technology names. */
@@ -93,6 +101,9 @@ export type Dossier = {
   experience: ProfileExperience[];
   /** 2-3 sentence recruiter summary; restates CV facts only. */
   recruiter_summary: string;
+
+  /** The candidate's own file name, as a person would save it. */
+  cv_filename: string;
 
   cv: CvDoc;
   /**

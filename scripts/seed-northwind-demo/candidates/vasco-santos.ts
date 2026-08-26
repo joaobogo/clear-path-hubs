@@ -75,9 +75,12 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Vasco owns claims intake at an insurtech, from the Postgres policy model and its migrations to the screen 90 branches use with customers on the phone. His evidence checklist cut time to a first decision from eleven days to four. Seven years with React and TypeScript, available in a month.",
 
+  cv_filename: "CV_VascoSantos.pdf",
+
   cv: {
-    layout: "T3",
-    interests: "Climbs indoors twice a week; writes short reviews of Portuguese cinema.",
+    layout: "T1",
+    targetPages: 2,
+    dateStyle: "numeric",
     name: "Vasco Santos",
     title: "Senior Full-Stack Engineer",
     contact:

@@ -94,9 +94,11 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Filipe was an early engineer at an adtech platform and owns campaign budgeting from the Postgres spend model to the screen 400 media buyers use. He wrote the row-level security model separating 210 advertiser accounts and keeps a 2,100-test suite green. Eight years with React and TypeScript; his expectation of EUR 92,000 sits above the role's band.",
 
+  cv_filename: "FilipeRocha-CV.pdf",
+
   cv: {
-    layout: "T1",
-    interests: "Plays five-a-side football; slowly learning classical guitar.",
+    layout: "T2",
+    targetPages: 2,
     name: "Filipe Rocha",
     title: "Senior Software Engineer",
     contact:

@@ -78,8 +78,11 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Diogo was the seventh employee at a founder-led proptech, where he owns the listing pipeline from the Postgres model to the editor 300 agents use. He shipped a generated listing-description feature that raised complete listings from 54% to 91%. Six years with React and TypeScript, available in a month.",
 
+  cv_filename: "diogo_martins_cv.pdf",
+
   cv: {
-    layout: "T1",
+    layout: "T3",
+    targetPages: 2,
     interests: "Amateur astronomer; coaches a junior futsal team in Aveiro.",
     name: "Diogo Martins",
     title: "Senior Engineer",
