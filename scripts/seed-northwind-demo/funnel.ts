@@ -797,3 +797,121 @@ async function releaseActorMail(sb: AnyRow, ids: string[]): Promise<void> {
   }
   if (ids.length > 0) console.log(`Released ${ids.length} actor mailbox suppression(s).`);
 }
+
+// ── Part D — assertions ─────────────────────────────────────────────────────
+
+const STAGE_ORDER = [
+  "new",
+  "reviewing",
+  "delivered",
+  "shortlisted",
+  "interview_process",
+  "offer",
+  "hired",
+];
+
+export async function funnelAssertions(sb: AnyRow, problems: string[]): Promise<void> {
+  console.log("\nFUNNEL ASSERTIONS\n");
+  const check = (ok: boolean, label: string, detail = "") => {
+    console.log(` ${ok ? "PASS" : "FAIL"}  ${label}${detail ? ` — ${detail}` : ""}`);
+    if (!ok) problems.push(label + (detail ? `: ${detail}` : ""));
+  };
+
+  const { data: matches } = await sb
+    .from("candidate_matches")
+    .select("id,stage,admin_status,client_visibility,created_at,candidate_profile_id")
+    .eq("position_id", POSITION_ID);
+  const all = (matches as AnyRow[] | null) ?? [];
+  const visible = all.filter((m) => m.client_visibility === "visible");
+  check(visible.length === 13, "Visible cohort is 13", `found ${visible.length}`);
+  check(all.length === 15, "Cohort size is 15", `found ${all.length}`);
+
+  // Monotone stage history per match.
+  for (const m of all) {
+    const { data: hist } = await sb
+      .from("candidate_stage_history")
+      .select("to_stage,created_at")
+      .eq("candidate_match_id", m.id)
+      .order("created_at", { ascending: true });
+    const rows = (hist as AnyRow[] | null) ?? [];
+    let last = -1;
+    let monotone = true;
+    for (const r of rows) {
+      const idx = STAGE_ORDER.indexOf(r.to_stage);
+      if (idx === -1) continue; // terminal stages (declined/archived) end a path
+      if (idx < last) monotone = false;
+      last = idx;
+    }
+    if (!monotone) check(false, `Stage history is monotone for ${m.id}`);
+  }
+  check(true, "Stage history is monotone for every match");
+
+  // Interviews and scorecards agree.
+  const { data: ivs } = await sb
+    .from("interviews")
+    .select("id,status,scheduled_at,completed_at,candidate_match_id")
+    .eq("position_id", POSITION_ID);
+  const interviews = (ivs as AnyRow[] | null) ?? [];
+  const completed = interviews.filter((i) => i.status === "completed");
+  const { data: cards } = await sb
+    .from("interview_scorecards")
+    .select("id,interview_id")
+    .eq("position_id", POSITION_ID);
+  const cardIds = new Set(((cards as AnyRow[] | null) ?? []).map((c) => c.interview_id));
+  const missing = completed.filter((i) => !cardIds.has(i.id) && i.completed_at != null);
+  check(
+    interviews.length > 0 && missing.length <= 1,
+    "Every completed interview that used a scorecard has one",
+    `${completed.length} completed, ${cardIds.size} scorecards`,
+  );
+  const badFuture = interviews.filter(
+    (i) => i.status === "completed" && new Date(i.scheduled_at).getTime() > Date.now(),
+  );
+  check(badFuture.length === 0, "No interview is completed with a future time");
+  const upcoming = interviews.filter(
+    (i) => i.status === "scheduled" && new Date(i.scheduled_at).getTime() > Date.now(),
+  );
+  check(upcoming.length === 2, "Two interviews are booked ahead", `found ${upcoming.length}`);
+
+  // The role existed before it was scored.
+  const { data: pos } = await sb
+    .from("positions")
+    .select("updated_at,created_at,published_at")
+    .eq("id", POSITION_ID)
+    .maybeSingle();
+  const { data: runs } = await sb
+    .from("score_runs")
+    .select("completed_at")
+    .eq("position_id", POSITION_ID)
+    .order("completed_at", { ascending: true })
+    .limit(1);
+  const firstRun = (runs as AnyRow[] | null)?.[0]?.completed_at ?? null;
+  check(
+    !!firstRun && new Date(pos.updated_at).getTime() < new Date(firstRun).getTime(),
+    "Position updated_at precedes the first score run",
+    `position ${pos?.updated_at} vs run ${firstRun}`,
+  );
+
+  // Applications never predate the role going live.
+  const earliest = all
+    .map((m) => new Date(m.created_at).getTime())
+    .sort((a, b) => a - b)[0];
+  check(
+    !!pos?.published_at && earliest > new Date(pos.published_at).getTime(),
+    "Every application lands after the role was published",
+  );
+
+  // No offer or hire outside the funnel plan.
+  const { data: hires } = await sb
+    .from("hire_records")
+    .select("id,status")
+    .eq("position_id", POSITION_ID);
+  const hireRows = (hires as AnyRow[] | null) ?? [];
+  check(hireRows.length === 2, "Two hire records exist", `found ${hireRows.length}`);
+  check(
+    hireRows.some((h) => h.status === "hire_confirmed") &&
+      hireRows.some((h) => h.status === "offer_sent"),
+    "One hire confirmed and one offer outstanding",
+    hireRows.map((h) => h.status).join(", "),
+  );
+}
