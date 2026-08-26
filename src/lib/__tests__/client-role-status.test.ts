@@ -27,8 +27,9 @@ describe("computeClientRoleStatus", () => {
     expect(label({ status: "active" })).toBe("Active");
   });
 
-  it("shows Under review before the search goes live", () => {
-    for (const s of ["draft", "submitted", "under_review", "needs_clarification"]) {
+  it("keeps Draft and Under review distinct before the search goes live", () => {
+    expect(label({ status: "draft" })).toBe("Draft");
+    for (const s of ["submitted", "under_review", "needs_clarification"]) {
       expect(label({ status: s })).toBe("Under review");
     }
   });
