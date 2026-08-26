@@ -596,10 +596,10 @@ export function RequisitionEditor({
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
-          {dirty ? "Unsaved changes to locations or priorities." : "All role details saved."}
+          {dirty ? "Unsaved changes to locations or priorities." : "Locations and priorities saved."}
         </p>
         <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-          {saveMutation.isPending ? "Saving…" : "Save role details"}
+          {saveMutation.isPending ? "Saving…" : "Save locations and priorities"}
         </Button>
       </div>
     </div>

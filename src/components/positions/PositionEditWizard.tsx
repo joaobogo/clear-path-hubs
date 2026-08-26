@@ -1116,7 +1116,7 @@ export function PositionEditWizard({
                 onClick={() => saveMutation.mutate()}
                 disabled={saveMutation.isPending}
               >
-                {saveMutation.isPending ? "Saving…" : "Save changes"}
+                {saveMutation.isPending ? "Saving…" : "Save role brief"}
               </Button>
             )}
           </div>

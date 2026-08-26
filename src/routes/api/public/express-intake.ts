@@ -579,6 +579,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
           .insert({
             organization_id: organizationId,
             title: data.roleTitle.trim(),
+            department: (data.team ?? "").trim() || null,
             work_model: data.workModel || null,
             location: locationText || null,
             description: (data.jobDescriptionText ?? "").trim() || null,

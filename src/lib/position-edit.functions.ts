@@ -178,7 +178,9 @@ function fromJsonArray(v: unknown): string[] {
 }
 
 function asStr(v: unknown): string {
-  return typeof v === "string" ? v : "";
+  if (typeof v === "string") return v;
+  if (typeof v === "number" && Number.isFinite(v)) return String(v);
+  return "";
 }
 function asStrArr(v: unknown): string[] {
   return Array.isArray(v) ? v.filter((x) => typeof x === "string") : [];
@@ -207,7 +209,10 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
     const comp = (p.compensation ?? {}) as AnyRow;
     const wa = (p.work_authorization ?? {}) as AnyRow;
     const ctx = (p.intake_context ?? {}) as AnyRow;
+    const brief = (ctx.brief ?? {}) as AnyRow;
     const posting = (ctx.posting ?? {}) as AnyRow;
+    const workModel = (p.work_model ?? brief.workModel ?? "") as PositionEditInitial["work_model"];
+    const employmentType = (p.employment_type ?? brief.employmentType ?? "") as PositionEditInitial["employment_type"];
 
     const initial: PositionEditInitial = {
       id: p.id,
@@ -217,22 +222,22 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       visibility: p.visibility ?? "private",
 
       title: p.title ?? "",
-      department: p.department ?? "",
-      location: p.location ?? "",
-      work_model: (p.work_model ?? "") as PositionEditInitial["work_model"],
-      employment_type: (p.employment_type ?? "") as PositionEditInitial["employment_type"],
+      department: p.department ?? ctx.team ?? brief.team ?? "",
+      location: p.location ?? brief.location ?? "",
+      work_model: workModel,
+      employment_type: employmentType,
       // Stored briefs use mixed casing; the picker only matches its own labels.
-      seniority: normalizeSeniority(p.seniority),
+      seniority: normalizeSeniority(p.seniority ?? brief.seniority),
       headcount: typeof p.openings === "number" ? p.openings : "",
       description: p.description ?? "",
 
-      open_worldwide: Boolean(ctx.open_worldwide),
+      open_worldwide: Boolean(ctx.open_worldwide ?? brief.openWorldwide),
       target_countries: fromJsonArray(wa.countries),
       states_regions: asStrArr(ctx.states_regions),
       metro_areas: asStrArr(ctx.metro_areas),
       search_radius: asStr(ctx.search_radius),
-      hiring_urgency: asStr(comp.urgency),
-      target_start_date: asStr(ctx.target_start_date),
+      hiring_urgency: asStr(comp.urgency) || asStr(ctx.hiring_urgency) || asStr(ctx.hiring_timeline),
+      target_start_date: asStr(ctx.target_start_date) || asStr(brief.targetStartDate),
       time_to_hire: asStr(ctx.time_to_hire),
 
       must_have_skills: fromJsonArray(p.requirements),
@@ -245,10 +250,10 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       responsibilities: asStr(ctx.responsibilities),
       additional_requirements: asStr(ctx.additional_requirements),
 
-      currency: asStr(comp.currency) || "USD",
-      budget_period: asStr(comp.budget_period) || "year",
-      budget_min: asStr(comp.budget_min),
-      budget_max: asStr(comp.budget_max),
+      currency: asStr(comp.currency) || asStr(ctx.currency) || "USD",
+      budget_period: asStr(comp.budget_period) || asStr(comp.period) || asStr(ctx.budget_period) || "year",
+      budget_min: asStr(comp.budget_min) || asStr(comp.min) || asStr(ctx.budget_min),
+      budget_max: asStr(comp.budget_max) || asStr(comp.max) || asStr(ctx.budget_max),
       compensation: asStr(comp.summary) || asStr(comp.text) || asStr(comp.note),
 
       target_titles: fromJsonArray(wa.target_titles),
@@ -262,7 +267,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       company_intro: asStr(posting.company_intro),
       benefits: asStr(posting.benefits),
       languages: asStr(posting.languages),
-      travel: asStr(posting.travel) || asStr(p.travel_expectation),
+      travel: asStr(posting.travel) || asStr(p.travel_expectation) || asStr(brief.travelExpectation),
       work_authorization_note: asStr(posting.work_authorization_note),
       accessibility_note: asStr(posting.accessibility_note),
       eeo_statement: asStr(posting.eeo_statement),
@@ -415,8 +420,11 @@ export const savePositionEdit = createServerFn({ method: "POST" })
         urgency: data.hiring_urgency || null,
         currency: data.currency || null,
         budget_period: data.budget_period || null,
+        period: data.budget_period || null,
         budget_min: data.budget_min || null,
+        min: data.budget_min || null,
         budget_max: data.budget_max || null,
+        max: data.budget_max || null,
       },
       work_authorization: {
         ...priorWA,

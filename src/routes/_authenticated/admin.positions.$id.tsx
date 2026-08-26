@@ -205,7 +205,11 @@ function PositionWorkspace() {
   const tab: TabId = tabParam ?? "overview";
   const navigate = Route.useNavigate();
   const setTab = (next: TabId) =>
-    navigate({ search: (prev: { tab?: TabId }) => ({ ...prev, tab: next }), replace: true });
+    navigate({
+      search: (prev: { tab?: TabId }) => ({ ...prev, tab: next }),
+      replace: true,
+      resetScroll: false,
+    });
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: ["admin-position", id] });
