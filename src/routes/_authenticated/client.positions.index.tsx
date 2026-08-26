@@ -230,7 +230,9 @@ function PositionsPage() {
  });
 
  const tabSubtitle: Record<string, string> = {
+  all: "Every role in this workspace, including drafts and roles under review.",
   active: "Roles we are actively hiring for with you.",
+
   draft: "Drafts saved but not yet submitted.",
   review: "Roles under review before going live.",
   paused: "Roles temporarily paused.",
