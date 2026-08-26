@@ -50,6 +50,23 @@ export async function mintActor(sb: AnyRow, userId: string): Promise<Actor> {
   return { userId, email, token: verified.data.session.access_token };
 }
 
+
+/**
+ * The dev server only knows a server-function id once the module that declares
+ * it has been transformed for the browser. Requesting the module the way the
+ * browser would registers every id it exports, so the call below resolves.
+ */
+const warmed = new Set<string>();
+async function warmModule(file: string): Promise<void> {
+  if (warmed.has(file)) return;
+  warmed.add(file);
+  try {
+    await fetch(`${BASE}/src/lib/${file}`);
+  } catch {
+    // A cold-start failure is not fatal: the call itself reports the problem.
+  }
+}
+
 export type CallOpts = { method?: "GET" | "POST" };
 
 export async function callFn<T = unknown>(
@@ -79,6 +96,7 @@ export async function callFn<T = unknown>(
     headers["content-type"] = "application/json";
     init.body = encoded ?? JSON.stringify(await toJSONAsync({ data: {} }));
   }
+  await warmModule(file);
   let res = await fetch(url, init);
   let text = await res.text();
   if (res.status >= 400) {
