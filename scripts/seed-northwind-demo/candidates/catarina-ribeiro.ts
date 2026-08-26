@@ -72,8 +72,12 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Catarina builds e-commerce products for eleven retail clients from Braga, owning checkout from the Postgres order model to the shipped page. Her stock reservation work lifted completed orders 17% and cut oversold items from about 40 a week to under 5. Six years with React and TypeScript, available in three weeks.",
 
+  cv_filename: "catarina-ribeiro-curriculo.pdf",
+
   cv: {
-    layout: "T2",
+    layout: "T1",
+    targetPages: 2,
+    educationFirst: true,
     interests: "Board-games club organiser; open-water swimming most weekends.",
     name: "Catarina Ribeiro",
     title: "Full-Stack Developer",

@@ -91,9 +91,12 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Mariana is the sixth engineer at an early-stage healthtech in Lisbon, where she owns referrals and consent from the Postgres model to the screen two hospitals signed off. She introduced the row-level security model that keeps 45 clinics apart. Seven years with React and TypeScript, available in a month.",
 
+  cv_filename: "CV Mariana Lopes.pdf",
+
   cv: {
-    layout: "T2",
-    interests: "Bread baker at home; helps run a neighbourhood book exchange.",
+    layout: "T3",
+    targetPages: 2,
+    educationFirst: true,
     name: "Mariana Lopes",
     title: "Senior Full-Stack Engineer",
     contact:
@@ -129,6 +132,10 @@ export const dossier: Dossier = {
           "Tuned the PostgreSQL reporting views behind a dashboard used by 400 administrative staff.",
           "Mentored two graduate engineers through their first year of production work.",
           "Helped a colleague move the patient portal to Next.js during a two-week spike.",
+          "Took the billing module through two external audits with no findings raised against it.",
+          "Rewrote the shift handover screen after watching a night team use it, cutting missed notes to none.",
+          "Ran the fortnightly release for two years, moving it from a manual evening job to a 20-minute routine.",
+          "Wrote the onboarding notes new engineers still follow in their first week on the reporting layer.",
         ],
       },
     ],

@@ -19,7 +19,7 @@
  *   - blocks outbound e-mail/Teams HTTP for the seed process only.
  */
 
-import { renderCvPdf } from "./seed-northwind-demo/cv-pdf";
+import { cvReadingOrder, renderCvPdf } from "./seed-northwind-demo/cv-pdf";
 import type { Dossier } from "./seed-northwind-demo/types";
 import { TARGETS, bandOf } from "./seed-northwind-demo/targets";
 
@@ -183,14 +183,15 @@ async function main() {
   for (const d of dossiers) {
     console.log(`\n── ${d.full_name} (${d.slug})`);
 
-    // 1. CV → real 2-page A4 PDF, verified by the product's own extractor.
+    // 1. CV → real A4 PDF (one or two pages, per the dossier), verified by the
+    //    product's own extractor: verbatim evidence, reading order, size.
     const pdf = await renderCvPdf(d.cv);
     const { extractCvText } = await import("../src/lib/cv-extractor.server");
     // The extractor detaches the buffer it is handed, so verify on a copy.
     const extracted = await extractCvText(
       new Uint8Array(pdf),
       "application/pdf",
-      `${d.slug}.pdf`,
+      d.cv_filename,
     );
     const flat = norm(extracted.text);
     const missing = d.evidence_sentences.filter((s) => !flat.includes(norm(s)));
@@ -199,7 +200,37 @@ async function main() {
       console.log(`   ! evidence sentences missing from extraction:\n     - ${missing.join("\n     - ")}`);
       continue;
     }
-    console.log(`   CV: ${extracted.page_count} pages, ${extracted.chars} chars, all ${d.evidence_sentences.length} evidence sentences verbatim`);
+    // Reading order: the sentences must come out in the order the CV lays them
+    // down, not in the order the requirement list happens to name them.
+    const source = norm(cvReadingOrder(d.cv).join(" "));
+    const inSourceOrder = [...d.evidence_sentences].sort(
+      (a, b) => source.indexOf(norm(a)) - source.indexOf(norm(b)),
+    );
+    let cursor = -1;
+    const outOfOrder: string[] = [];
+    for (const s of inSourceOrder) {
+      const at = flat.indexOf(norm(s));
+      if (at < cursor) outOfOrder.push(s);
+      cursor = Math.max(cursor, at);
+    }
+    if (outOfOrder.length > 0) {
+      problems.push(`${d.slug}: ${outOfOrder.length} evidence sentence(s) extracted out of order`);
+    }
+    const expectedPages = d.cv.targetPages ?? 2;
+    const minChars = expectedPages === 1 ? 1800 : 3000;
+    const kb = pdf.byteLength / 1024;
+    if (extracted.page_count !== expectedPages) {
+      problems.push(`${d.slug}: CV is ${extracted.page_count} page(s), expected ${expectedPages}`);
+    }
+    if (extracted.chars < minChars) {
+      problems.push(`${d.slug}: CV has ${extracted.chars} chars, expected >= ${minChars}`);
+    }
+    if (kb < 30 || kb > 120) {
+      problems.push(`${d.slug}: CV file is ${kb.toFixed(0)} KB, expected 30-120 KB`);
+    }
+    console.log(
+      `   CV: ${d.cv.layout ?? "T1"}, ${extracted.page_count} page(s), ${extracted.chars} chars, ${kb.toFixed(0)} KB, all ${d.evidence_sentences.length} evidence sentences verbatim and in order`,
+    );
 
     // 2. Submit through the product's application write path.
     const submitted = await submitApplicationImpl({
@@ -211,7 +242,8 @@ async function main() {
       region: d.region,
       city: d.city,
       cv: {
-        filename: `${d.full_name.replace(/\s+/g, "-").toLowerCase()}-cv.pdf`,
+        filename: d.cv_filename,
+
         mime: "application/pdf",
         base64: Buffer.from(pdf).toString("base64"),
       },
@@ -272,6 +304,13 @@ async function main() {
     await sb.from("applications").update({ legacy_source_system: SEED_MARKER, is_test_record: false }).eq("id", applicationId);
     await sb.from("candidate_matches").update({ legacy_source_system: SEED_MARKER, is_test_record: false }).eq("id", matchId);
     await sb.from("files").update({ legacy_source_system: SEED_MARKER }).eq("candidate_profile_id", profileId);
+    // Storage paths stay sanitised; the displayed name stays the person's own.
+    await sb
+      .from("files")
+      .update({ filename: d.cv_filename })
+      .eq("candidate_profile_id", profileId)
+      .eq("upload_source", "candidate_application");
+
 
     if (args.stage === "apply") {
       rows.push({ candidate: d.full_name, match: matchId, state: "applied (stage=apply)", score: "—", band: "—" });
@@ -446,7 +485,9 @@ async function applyCandidateFacts(sb: any, profileId: string, d: Dossier) {
       timezone: d.timezone,
       years_experience: d.years_experience,
       linkedin_url: d.linkedin_url,
-      portfolio_url: d.portfolio_url,
+      // Personal site / portfolio stay NULL: a 404 on a prospect's click is a tell.
+      portfolio_url: null,
+      website_url: null,
       city: d.city,
       region: d.region || null,
       country: d.country,

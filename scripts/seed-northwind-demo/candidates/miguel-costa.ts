@@ -69,9 +69,11 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Miguel delivers public-sector web projects in Lisbon and owns the permit request service for two municipal councils, from the request tables to the officer queue. His status history work cut average decision time from 21 days to 12. Five years with React and TypeScript, available in a month.",
 
+  cv_filename: "Miguel Costa CV.pdf",
+
   cv: {
-    layout: "T3",
-    interests: "Restores vintage bicycles; reads a lot of maritime history.",
+    layout: "T1",
+    targetPages: 1,
     name: "Miguel Costa",
     title: "Full-Stack Developer",
     contact: "Lisbon, Portugal · miguel.costa.dev@outlook.com · +351 961 224 508",
@@ -90,14 +92,6 @@ export const dossier: Dossier = {
           "Added the status history residents asked for, which removed roughly 250 phone enquiries a month.",
           "Wrote a few Playwright checks around the request form during a quiet sprint.",
           "Tuned the slowest queries behind the officer queue with SQL a colleague reviewed with me.",
-          "Cut the release pipeline from 16 minutes to 8 by removing duplicated checks.",
-          "Ran a monthly review with support that closed 22 ageing tickets in a quarter.",
-          "Wrote the runbook that let a colleague cover on-call for the first time.",
-          "Paired with a new joiner for three months; he shipped his first change in week three.",
-          "Reduced repeat support questions by rewriting the two screens people misread most often.",
-          "Rebuilt a licensing form that had a 45% abandonment rate, bringing it under 20%.",
-          "Cut a monthly report from a full day of manual work to a scheduled job.",
-          "Wrote the handover notes that let a colleague take the project over in a week.",
         ],
       },
       {
@@ -107,10 +101,7 @@ export const dossier: Dossier = {
           "Shipped seven client sites, including a newsroom template still in use across four titles.",
           "Rebuilt an events calendar in Next.js that handled 40,000 visitors on launch day.",
           "Automated a weekly content report that had taken an editor three hours by hand.",
-          "Shipped six internal tools for public-sector clients, two still in daily use.",
-          "Reduced a manual typing task from three hours a day to about 20 minutes.",
           "Added the first automated checks on a legacy project after a release broke payroll exports.",
-          "Wrote the deployment notes that ended the practice of one person shipping everything.",
         ],
       },
     ],

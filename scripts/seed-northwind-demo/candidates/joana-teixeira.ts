@@ -65,9 +65,11 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Joana is a front-end developer at a Lisbon agency, where she built a landing page editor that now produces around 20 marketing pages a month without developer help. Three years of experience, mostly interface work with React. Available in a month.",
 
+  cv_filename: "joana-teixeira-cv.pdf",
+
   cv: {
     layout: "T3",
-    interests: "Sings in a fado group; volunteers at an animal shelter in Braga.",
+    targetPages: 1,
     name: "Joana Teixeira",
     title: "Front-end Developer",
     contact: "Lisbon, Portugal · joana.teixeira.web@gmail.com · +351 921 704 358",
@@ -87,17 +89,6 @@ export const dossier: Dossier = {
           "Cut the largest client site's mobile load time from 4.2 s to 1.8 s.",
           "Rebuilt the enquiry form after 300 abandoned submissions, halving drop-off.",
           "Added a few Playwright checks to the editor after a bad release.",
-          "Delivered 14 campaign pages across four client accounts in the last year.",
-          "Kept the client handover notes short enough to be read, which cut follow-up emails in half.",
-          "Reduced image weight on six sites by about 70% without visible quality loss.",
-          "Ran the monthly review of open client bugs and closed 45 small tickets in a quarter.",
-          "Wrote the checklist that took a new colleague from first commit in a week to two days.",
-          "Fixed the eight most-reported layout problems on mobile after reading a month of support emails.",
-          "Rewrote the form error messages that support quoted most, which cut those emails to almost none.",
-          "Paired weekly with an intern for three months; she shipped two pages on her own by the end.",
-          "Rebuilt a client's newsletter sign-up, which doubled monthly subscriptions.",
-          "Cut a landing page from 4.6 s to 1.7 s on a mid-range phone.",
-          "Wrote the editor guide that marketing staff use without asking for help.",
         ],
       },
       {
@@ -107,11 +98,6 @@ export const dossier: Dossier = {
           "Shipped six client websites, three of them still unchanged two years later.",
           "Maintained the agency component library and wrote its usage notes.",
           "Fixed the accessibility findings that took two client sites through review.",
-          "Delivered six client websites with no missed launch dates.",
-          "Cut the studio's average page weight by about half by introducing an image build step.",
-          "Wrote the component usage notes that let two colleagues build pages without asking questions.",
-          "Fixed the accessibility issues that took two client sites through their review first time.",
-          "Trained a client's marketing colleagues to edit their own copy, removing about 15 tickets a month.",
         ],
       },
     ],

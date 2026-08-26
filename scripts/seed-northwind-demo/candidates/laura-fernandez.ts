@@ -92,9 +92,12 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Laura owns seller payouts and search at a Madrid marketplace with 5,000 seller accounts, from the Postgres order model to the statement a seller reconciles alone. Her payout breakdown cut support queries by about 60%, and she shipped the marketplace's language-model search to production. Seven years with React and TypeScript, looking for fully remote work in the same time zone.",
 
+  cv_filename: "laura_fernandez_resume.pdf",
+
   cv: {
     layout: "T2",
-    interests: "Flamenco guitar student; hikes the Camino stretches near home.",
+    targetPages: 2,
+    dateStyle: "numeric",
     name: "Laura Fernández",
     title: "Senior Full-Stack Engineer",
     contact:

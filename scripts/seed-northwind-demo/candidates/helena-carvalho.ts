@@ -105,9 +105,12 @@ export const dossier: Dossier = {
   recruiter_summary:
     "Helena leads engineering on a founder-led HR SaaS in Lisbon, where she owns billing and payroll from the data model to the reviewed screen for 620 client workspaces. She designed the tenant isolation model behind row-level security and keeps a 1,900-test suite green across Vitest and Playwright. Nine years with React and TypeScript, available on four weeks' notice.",
 
+  cv_filename: "helena-carvalho-cv.pdf",
+
   cv: {
-    layout: "T3",
-    interests: "Volunteers as a mentor for the Lisbon chapter of Rails Girls; runs half marathons.",
+    layout: "T2",
+    targetPages: 2,
+    summaryLabel: "Professional summary",
     name: "Helena Carvalho",
     title: "Lead Full-Stack Engineer",
     contact:
