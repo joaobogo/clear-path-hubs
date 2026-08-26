@@ -650,10 +650,23 @@ export async function loginAs(
 ): Promise<void> {
   // One sign-in surface for every persona, candidates included.
   const route = "/login";
+  // Switching personas mid-spec must start from a clean session: with a session
+  // still in storage, /login routes the *previous* user to their landing page
+  // before the form is ever submitted, and the rest of the spec runs as them.
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.evaluate(() => {
+    try {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    } catch {
+      /* storage unavailable — the login below still applies */
+    }
+  });
   await page.goto(route, { waitUntil: "domcontentloaded" });
   await page.locator("#email").fill(email);
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: /^sign in$/i }).click();
+
   await expect
     .poll(() => new URL(page.url()).pathname, { timeout: 30_000 })
     .not.toMatch(/login/);
