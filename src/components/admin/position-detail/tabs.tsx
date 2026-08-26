@@ -5,6 +5,7 @@
  * all off-screen at first paint. Keeping them here means opening a role loads the
  * overview immediately and pulls each panel in only when it is opened.
  */
+import { humanizeAuditAction } from "@/lib/humanize-codes";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
@@ -813,7 +814,7 @@ export function AuditTab({ id }: { id: string }) {
             return (
               <li key={r.id} className="px-4 py-3 text-sm">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <div className="font-medium">{r.action.replace(/_/g, " ")}</div>
+                  <div className="font-medium">{humanizeAuditAction(r.action)}</div>
                   <div className="text-xs text-muted-foreground">
                     {new Date(r.created_at).toLocaleString(APP_LOCALE, {
                       day: "2-digit",
@@ -828,10 +829,7 @@ export function AuditTab({ id }: { id: string }) {
                 </div>
                 <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
                   <span>
-                    Actor{" "}
-                    <span className="font-mono">
-                      {r.actor_user_id ? String(r.actor_user_id).slice(0, 8) : "system"}
-                    </span>
+                    {r.actor_name ?? (r.actor_user_id ? "Unknown user" : "System")}
                   </span>
                   {r.trace_id && (
                     <Button
