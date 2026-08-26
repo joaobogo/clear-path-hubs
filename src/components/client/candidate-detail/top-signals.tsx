@@ -1,6 +1,8 @@
 import { memo } from "react";
 import { CheckCircle2, Info } from "lucide-react";
 import { buildValidationList } from "@/lib/client/validation-list";
+import { evidenceBackedStrengths } from "@/lib/client/score-breakdown";
+
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 /**
