@@ -238,13 +238,26 @@ async function main() {
       continue;
     }
     const applicationId = submitted.application_id;
-    const { data: appRow } = await sb
+    const { data: appRow, error: appErr } = await sb
       .from("applications")
-      .select("id,candidate_profile_id,candidate_match_id")
+      .select("id,candidate_profile_id")
       .eq("id", applicationId)
       .maybeSingle();
+    if (appErr || !appRow) {
+      throw new Error(`application ${applicationId} not readable: ${appErr?.message ?? "not found"}`);
+    }
     const profileId: string = appRow.candidate_profile_id;
-    const matchId: string = submitted.match_id ?? appRow.candidate_match_id;
+    let matchId: string | undefined = submitted.match_id;
+    if (!matchId) {
+      const { data: m } = await sb
+        .from("candidate_matches")
+        .select("id")
+        .eq("candidate_profile_id", profileId)
+        .eq("position_id", POSITION_ID)
+        .maybeSingle();
+      matchId = m?.id;
+    }
+    if (!matchId) throw new Error(`no match created for ${d.slug}`);
     console.log(`   application ${applicationId} · match ${matchId}`);
 
     // Tag everything this seed created.
