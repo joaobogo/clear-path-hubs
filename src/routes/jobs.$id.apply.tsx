@@ -1130,7 +1130,7 @@ function ApplyPage() {
                     type="tel"
                     autoComplete="tel" inputMode="tel"
                     data-field="phone"
-                    placeholder="+1 555 123 4567"
+                    placeholder={phonePlaceholder(pos.country_code)}
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   />
