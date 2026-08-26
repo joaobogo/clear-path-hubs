@@ -78,8 +78,8 @@ export const dossier: Dossier = {
         heading: "Front-end Developer - Chiado Interactive, Lisbon",
         dates: "Apr 2023 - Present",
         bullets: [
-          "No relational data modelling or SQL migrations of my own yet - a senior colleague owns the Postgres schema.",
-          "No row-level security or multi-tenant isolation model work so far; every client site is separate.",
+          "No hands-on relational data modelling or SQL migrations of my own yet, that work sits with a senior colleague.",
+          "No hands-on row-level security or multi-tenant isolation model work so far; every client site is separate.",
           "Added a couple of automated tests around the editor, nothing broader than that.",
           "Built the landing page editor that now produces about 20 pages a month without a developer.",
           "Cut the largest client site's mobile load time from 4.2 s to 1.8 s.",

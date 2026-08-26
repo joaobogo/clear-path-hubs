@@ -97,7 +97,7 @@ export const dossier: Dossier = {
         heading: "Engineering Manager - Beacon Analytics, Lisbon",
         dates: "Jun 2024 - Present",
         bullets: [
-          "No automated tests, unit or end-to-end, written by me since 2023 - our QA engineer owns those suites.",
+          "No hands-on automated tests, unit or end-to-end, since 2023 - our QA engineer owns those suites.",
           P1,
           "Grew the team from five to nine and kept quarterly delivery commitments in all four quarters.",
           "Cut time from first commit to production for a new joiner from six weeks to nine days.",

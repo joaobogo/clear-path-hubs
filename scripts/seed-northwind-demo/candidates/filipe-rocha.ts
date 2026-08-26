@@ -131,7 +131,7 @@ export const dossier: Dossier = {
           "Introduced release tagging and rollbacks after an outage that took three hours to undo.",
           "Delivered an advertiser reporting tool used by 900 accounts in its first year.",
           "Cut a daily aggregation job from three hours to 25 minutes by restructuring its writes.",
-          "Introduced the team's first automated checks, covering the two flows that caused most incidents.",
+          "Introduced our first automated checks, covering the two flows that caused most incidents.",
           "Wrote the release guide that took deployments from weekly to daily without extra incidents.",
         ],
       },
