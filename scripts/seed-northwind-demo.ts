@@ -73,7 +73,7 @@ function installOutboundBlock() {
   }) as typeof fetch;
 }
 
-type Args = { reset: boolean; only: string | null; stage: "apply" | "score" };
+type Args = { reset: boolean; only: string | null; stage: "apply" | "score" | "funnel" };
 
 function parseArgs(): Args {
   const argv = process.argv.slice(2);
@@ -81,9 +81,9 @@ function parseArgs(): Args {
     const i = argv.indexOf(flag);
     return i === -1 ? null : (argv[i + 1] ?? null);
   };
-  const stage = (valueOf("--stage") ?? "score") as Args["stage"];
-  if (stage !== "apply" && stage !== "score") {
-    throw new Error(`--stage must be "apply" or "score" (got "${stage}")`);
+  const stage = (valueOf("--stage") ?? "funnel") as Args["stage"];
+  if (stage !== "apply" && stage !== "score" && stage !== "funnel") {
+    throw new Error(`--stage must be "apply", "score" or "funnel" (got "${stage}")`);
   }
   return { reset: argv.includes("--reset"), only: valueOf("--only"), stage };
 }
