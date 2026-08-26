@@ -66,6 +66,8 @@ export const dossier: Dossier = {
     "Joana is a front-end developer at a Lisbon agency, where she built a landing page editor that now produces around 20 marketing pages a month without developer help. Three years of experience, mostly interface work with React. Available in a month.",
 
   cv: {
+    layout: "T3",
+    interests: 'Sings in a fado group; volunteers at an animal shelter in Braga.'.replace(/^/, ""),
     name: "Joana Teixeira",
     title: "Front-end Developer",
     contact: "Lisbon, Portugal · joana.teixeira.web@gmail.com · +351 921 704 358",

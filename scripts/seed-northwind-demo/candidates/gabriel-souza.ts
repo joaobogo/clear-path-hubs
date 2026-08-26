@@ -75,6 +75,8 @@ export const dossier: Dossier = {
     "Gabriel owns the merchant dashboard at a São Paulo payments company, from the Postgres settlement model to the screen 1,200 merchants use daily. His dispute panel raised on-time dispute responses from 58% to 86%. Six years with React and TypeScript; he is based in Brazil and would need a work visa for Portugal.",
 
   cv: {
+    layout: "T1",
+    interests: 'Capoeira since childhood; cooks for a Brazilian supper club in Lisbon.'.replace(/^/, ""),
     name: "Gabriel Souza",
     title: "Full-Stack Engineer",
     contact: "São Paulo, Brazil · gabriel.souza.dev@gmail.com · +55 11 98442-7130",

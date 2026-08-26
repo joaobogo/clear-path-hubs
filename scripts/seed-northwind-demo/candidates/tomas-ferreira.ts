@@ -103,6 +103,8 @@ export const dossier: Dossier = {
     "Tomás owns the ledger and reconciliation surface at a payments scale-up, where he modelled the double-entry data in Postgres and shipped the screen operations analysts use to close the month. He wrote the row-level security policies separating 180 merchant books and keeps 1,400 tests green in Vitest and Playwright. Eight years with React and TypeScript, six weeks' notice.",
 
   cv: {
+    layout: "T1",
+    interests: 'Surfs at Carcavelos before work; teaches a weekend coding club for teenagers.'.replace(/^/, ""),
     name: "Tomás Ferreira",
     title: "Senior Software Engineer",
     contact:

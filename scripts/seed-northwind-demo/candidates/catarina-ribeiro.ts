@@ -73,6 +73,8 @@ export const dossier: Dossier = {
     "Catarina builds e-commerce products for eleven retail clients from Braga, owning checkout from the Postgres order model to the shipped page. Her stock reservation work lifted completed orders 17% and cut oversold items from about 40 a week to under 5. Six years with React and TypeScript, available in three weeks.",
 
   cv: {
+    layout: "T2",
+    interests: 'Board-games club organiser; open-water swimming most weekends.'.replace(/^/, ""),
     name: "Catarina Ribeiro",
     title: "Full-Stack Developer",
     contact: "Braga, Portugal · catarina.ribeiro.dev@gmail.com · +351 925 887 316",

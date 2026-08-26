@@ -78,6 +78,8 @@ export const dossier: Dossier = {
     "Rui owns carrier onboarding and booking at a Lisbon logistics marketplace, from the Postgres shipment model through the migrations to the wizard 900 hauliers use. He wrote the Vitest and Playwright suites that gate each release. Six years with React and TypeScript, available in a month.",
 
   cv: {
+    layout: "T1",
+    interests: 'Plays bass in a covers band; keeps a small allotment outside Porto.'.replace(/^/, ""),
     name: "Rui Almeida",
     title: "Full-Stack Engineer",
     contact: "Lisbon, Portugal · rui.almeida.eng@outlook.com · +351 913 668 245",
