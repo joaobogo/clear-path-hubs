@@ -86,7 +86,9 @@ export function CandidateNextActionBar({
         return;
       }
       if (action.action.kind === "approve_score") {
-        await approveFn({ data: { match_id: matchId, action: "approve_for_client" } });
+        await approveFn({
+          data: { match_id: matchId, action: "approve_for_client", publish: false },
+        });
         return;
       }
       if (action.action.kind === "publish_to_client") {
