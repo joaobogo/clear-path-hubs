@@ -325,7 +325,12 @@ test.describe("launch smoke journey", () => {
     await page.goto(`/client/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByText(fullName).first()).toBeVisible({ timeout: 90_000 });
 
-    const advance = page.getByRole("button", { name: /advance to (shortlist|interview)/i }).first();
+    // The forward move is stage-labelled: "Shortlist" on a delivered candidate,
+    // "Advance to …" once they are further along.
+    const advance = page
+      .getByRole("button", { name: /^(shortlist|advance to (shortlist|interview)|request interview)$/i })
+      .first();
+
     await expect(advance, "client sees a forward decision on an approved candidate").toBeVisible({
       timeout: 60_000,
     });
