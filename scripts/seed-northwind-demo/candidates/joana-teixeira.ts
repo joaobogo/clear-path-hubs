@@ -90,6 +90,9 @@ export const dossier: Dossier = {
           "Fixed the eight most-reported layout problems on mobile after reading a month of support emails.",
           "Rewrote the form error messages that support quoted most, which cut those emails to almost none.",
           "Paired weekly with an intern for three months; she shipped two pages on her own by the end.",
+          "Rebuilt a client's newsletter sign-up, which doubled monthly subscriptions.",
+          "Cut a landing page from 4.6 s to 1.7 s on a mid-range phone.",
+          "Wrote the editor guide that marketing staff use without asking for help.",
         ],
       },
       {

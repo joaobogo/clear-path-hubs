@@ -92,6 +92,11 @@ export const dossier: Dossier = {
           "Built the settlement view that removed about 500 support calls a month.",
           "Cut dashboard load time from 3.8 s to 1.1 s for 1,200 merchants.",
           "Helped scope a partner sandbox with some exposure to multi-tenant setups.",
+          "Rebuilt the payout timeline so merchants could see each step of a transfer without calling support.",
+          "Reduced duplicate transaction reports by a third by matching on the acquirer reference.",
+          "Wrote the reconciliation checklist the finance team still uses at month end.",
+          "Trained two support agents to read the settlement logs, which removed most escalations to engineering.",
+          "Cut the dispute export from 40 minutes to under 2 by streaming the file instead of building it in memory.",
         ],
       },
       {

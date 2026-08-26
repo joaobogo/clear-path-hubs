@@ -92,6 +92,9 @@ export const dossier: Dossier = {
           "Wrote the runbook that let a colleague cover on-call for the first time.",
           "Paired with a new joiner for three months; he shipped his first change in week three.",
           "Reduced repeat support questions by rewriting the two screens people misread most often.",
+          "Rebuilt a licensing form that had a 45% abandonment rate, bringing it under 20%.",
+          "Cut a monthly report from a full day of manual work to a scheduled job.",
+          "Wrote the handover notes that let a colleague take the project over in a week.",
         ],
       },
       {

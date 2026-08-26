@@ -95,6 +95,9 @@ export const dossier: Dossier = {
           "Wrote the handover notes that let two colleagues cover the area during holidays.",
           "Mentored a junior developer for seven months; she now reviews changes on her own.",
           "Halved rework on tickets by agreeing acceptance notes with the product lead before starting.",
+          "Rebuilt a client's checkout, which lifted completed orders by about a fifth.",
+          "Cut a shop's page load from 5.1 s to 1.9 s on mobile connections.",
+          "Wrote the release checklist the studio still follows before every client launch.",
         ],
       },
       {
