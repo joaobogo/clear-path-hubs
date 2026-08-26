@@ -19,12 +19,24 @@ export function RoleStatusSection({
   const lastUpdate = formatStageDate(progress?.lastUpdateAt ?? null);
   const engineLine = (() => {
     if (!progress) return null;
+    // Driven by the tracker's own current stage, so this line can never claim
+    // sourcing is running while the stepper shows sourcing completed.
+    const sourcing = progress.steps.find((s) => s.key === "sourcing");
+    const state = sourcing?.state ?? "upcoming";
     if (progress.inactive) {
       return lastUpdate ? `Sourcing is paused — last update ${lastUpdate}` : "Sourcing is paused";
     }
-    if (!lastUpdate) return "Sourcing hasn't started yet";
+    if (state === "upcoming") return "Sourcing hasn't started yet";
+    if (state === "done") {
+      const stage = progress.currentLabel.toLowerCase();
+      return lastUpdate
+        ? `Sourcing complete — now at ${stage}, last update ${lastUpdate}`
+        : `Sourcing complete — now at ${stage}`;
+    }
+    if (!lastUpdate) return "Sourcing is running";
     return `Sourcing is running — last update ${lastUpdate}`;
   })();
+
 
   return (
     <section className="rounded-xl border bg-card px-4 py-4">

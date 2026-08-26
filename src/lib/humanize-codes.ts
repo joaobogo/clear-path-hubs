@@ -68,6 +68,8 @@ const DICTIONARY: Record<string, string> = {
   calendly_page_unreachable: "Scheduling page unreachable",
   email_logs_unreachable: "Email history unavailable",
   email_no_history: "No email sent yet",
+  email_history_empty: "Provider reported no recent events",
+
   email_deliverability_signal: "Delivery problems detected",
   probe_exception: "Health check failed to run",
 
