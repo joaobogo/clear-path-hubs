@@ -121,6 +121,7 @@ export const dossier: Dossier = {
           "Wrote the billing export that reconciled 98% of claims automatically, up from 71%.",
           "Tuned the PostgreSQL reporting views behind a dashboard used by 400 administrative staff.",
           "Mentored two graduate engineers through their first year of production work.",
+          "Helped a colleague move the patient portal to Next.js during a two-week spike.",
         ],
       },
     ],
