@@ -7,7 +7,7 @@ const R3 =
 const R2 =
   "Handle the SQL and relational data modelling for the ledger in Postgres, with 60 forward-only migrations in two years.";
 const R4 =
-  "Wrote the row-level security policies that hold 180 multi-tenant merchant books in isolation.";
+  "Practical row-level security work, with another isolation model holding 180 multi-tenant merchant books apart.";
 const R5 =
   "Keep maintaining 1,400 automated tests green: unit suites in Vitest and end-to-end journeys in Playwright.";
 const P1 =
