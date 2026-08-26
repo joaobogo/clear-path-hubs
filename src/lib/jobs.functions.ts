@@ -33,8 +33,8 @@ function testRecordsVisible(): boolean {
   const match = new RegExp(`(?:^|;\\s*)${QA_E2E_COOKIE}=([^;]+)`).exec(cookie);
   if (!match) return false;
   const value = decodeURIComponent(match[1]);
-  const expected = process.env.QA_SEED_TOKEN;
-  return expected ? value === expected : value.length > 0;
+  const expected = (process.env.QA_SEED_TOKEN ?? "").trim();
+  return expected.length > 0 ? value === expected : value.length > 0;
 }
 
 
