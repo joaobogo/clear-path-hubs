@@ -193,6 +193,10 @@ function ApplyPage() {
   // Ticks so "Saved just now" ages into "Saved 3 minutes ago" on its own.
   const [savedTick, setSavedTick] = useState(0);
   const submittingRef = useRef(false);
+  // When Review became visible. Submits fired in the same instant belong to the
+  // click that got here, not to a decision to send.
+  const reviewEnteredAtRef = useRef(0);
+
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   // When this form first became usable. The gap to a successful submit is the
   // only honest source for the time we quote to the next candidate.
