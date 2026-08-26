@@ -1,3 +1,4 @@
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
@@ -119,7 +120,9 @@ function provenance(item: Any) {
 
 function fmt(v: unknown) {
   if (v == null || v === "") return "—";
-  return String(v);
+  const s = String(v);
+  // Stored enum tokens ("provisional_scoring") read as a label, never as a key.
+  return /^[a-z0-9]+([_.][a-z0-9]+)+$/.test(s) ? humanizeCode(s) : s;
 }
 
 function ReviewWorkspace() {
@@ -339,7 +342,7 @@ function ReviewWorkspace() {
           {/* Staff view: the number never travels without its confidence pair
               and the rubric version it was scored against. */}
           <AdminScoreNumber run={currentRun as never} />
-          <Badge variant="secondary">Fit {fmt(currentRun?.fit_label ?? currentRun?.fit_band)}</Badge>
+          <Badge variant="secondary">Fit {toFitPresentation((currentRun?.fit_label ?? currentRun?.fit_band ?? null) as string | null, (currentRun?.final_score ?? currentRun?.score ?? null) as number | null).headline}</Badge>
           <Badge variant="secondary">Eligibility {fmt(match.eligibility_status)}</Badge>
           <Badge variant={match.contact_released_at ? "default" : "outline"}>
             <Lock className="mr-1 size-3" />

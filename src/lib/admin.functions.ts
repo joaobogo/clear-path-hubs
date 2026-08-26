@@ -664,10 +664,33 @@ export const getClient = createServerFn({ method: "GET" })
     }));
 
     const roll = rollups[String(data.id)];
+
+    // Documents and the "parsed CVs" headline read the same rows, so the two
+    // counts can never disagree on screen.
+    const { data: docMatchRows } = await s
+      .from("candidate_matches")
+      .select("candidate_profile_id")
+      .eq("organization_id", data.id);
+    const docProfileIds = Array.from(
+      new Set(
+        ((docMatchRows ?? []) as AnyRow[])
+          .map((m) => m.candidate_profile_id)
+          .filter(Boolean) as string[],
+      ),
+    );
+    let parsedCvCount = 0;
+    if (docProfileIds.length > 0) {
+      const { count } = await s
+        .from("files")
+        .select("id", { count: "exact", head: true })
+        .in("candidate_profile_id", docProfileIds);
+      parsedCvCount = count ?? 0;
+    }
+
     return {
       organization: {
         ...(orgRes.data as AnyRow),
-        parsed_cv_count: [{ count: roll?.candidates_total ?? 0 }],
+        parsed_cv_count: [{ count: parsedCvCount }],
         seats_used: roll?.seats.seatsUsed ?? 0,
         seats_limit: roll?.seats.seatLimit ?? null,
         roles_open: roll?.roles_open ?? 0,
@@ -2319,7 +2342,30 @@ export const getPositionActivity = createServerFn({ method: "GET" })
       )
       .order("created_at", { ascending: false })
       .limit(data.limit);
-    return (rows ?? []) as AnyRow[];
+    // Actors are resolved to names here so no surface has to print a bare id.
+    const auditRows = (rows ?? []) as AnyRow[];
+    const actorIds = Array.from(
+      new Set(auditRows.map((r) => r.actor_user_id).filter(Boolean) as string[]),
+    );
+    const actorNames = new Map<string, string>();
+    if (actorIds.length > 0) {
+      const { data: profileRows } = await s
+        .from("profiles")
+        .select("auth_user_id,full_name,email")
+        .in("auth_user_id", actorIds);
+      for (const p of (profileRows ?? []) as AnyRow[]) {
+        actorNames.set(
+          String(p.auth_user_id),
+          (p.full_name as string | null) || (p.email as string | null) || "Unknown user",
+        );
+      }
+    }
+    return auditRows.map((r) => ({
+      ...r,
+      actor_name: r.actor_user_id
+        ? actorNames.get(String(r.actor_user_id)) ?? "Unknown user"
+        : "System",
+    })) as AnyRow[];
   });
 
 // ─── Publish Desk — grouped, single source of truth ─────────────────────────

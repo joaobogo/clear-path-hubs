@@ -158,15 +158,86 @@ export function humanizeCode(code: string | null | undefined): string {
     return "Something went wrong. Please try again.";
   }
 
-  // Fallback: simple snake_case to Space Case
+  // Fallback: simple snake_case (or dotted namespace) to Space Case
   return code
-    .replace(/[_-]/g, " ")
+    .replace(/[_\-.]/g, " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2") // camelCase to Space Case
+    .replace(/\s+/g, " ")
     .trim()
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 }
+
+/**
+ * Audit and activity rows store machine actions ("candidate_funnel.job_viewed",
+ * "UPDATE"). Staff read a sentence, never the key.
+ */
+const AUDIT_ACTIONS: Record<string, string> = {
+  insert: "Record created",
+  update: "Record updated",
+  delete: "Record deleted",
+  "candidate_funnel.job_viewed": "Candidate opened the role posting",
+  "candidate_funnel.apply_submitted": "Candidate submitted an application",
+  "match.visibility.visible": "Candidate made visible to the client",
+  "match.visibility.hidden": "Candidate hidden from the client",
+  "client.shortlist": "Client shortlisted a candidate",
+  "client.request_interview": "Client requested an interview",
+  "client.not_moving_forward": "Client passed on a candidate",
+  "client.position.create": "Client created a role",
+  score_approval_noop: "Score approval had nothing to change",
+  score_approval_blocked: "Score approval was blocked",
+  score_approved: "Score approved",
+  score_held: "Score put on hold",
+  score_archived: "Score archived",
+  note_added: "Internal note added",
+  payment_exemption_granted: "Payment requirement waived",
+  "public_api.rate_limited": "Public request throttled",
+  "public_api.conflict": "Public request rejected as a duplicate",
+  "public_api.payload_too_large": "Public request rejected as too large",
+  "talent_memory.added": "Talent memory entry added",
+  "processing_job.retried": "Processing job retried",
+  "position.edit_wizard": "Role edited",
+  "position.flagged_for_reassignment": "Role flagged for reassignment",
+  "position.rescore_requested": "Re-score requested for the role",
+  "position.requisition_updated": "Role brief updated",
+  "position.intensity_changed": "Sourcing intensity changed",
+};
+
+const AUDIT_DOMAINS: Record<string, string> = {
+  candidate_funnel: "Candidate",
+  client: "Client",
+  match: "Candidate",
+  position: "Role",
+  interview: "Interview",
+  hire: "Hire",
+  score: "Score",
+  support: "Support session",
+  intake: "Intake",
+  organization: "Client",
+  approvals: "Approval",
+  export: "Export",
+  profile: "Profile",
+  processing_job: "Processing job",
+  talent_memory: "Talent memory",
+  public_api: "Public request",
+};
+
+export function humanizeAuditAction(action: string | null | undefined): string {
+  if (!action) return "Update";
+  const raw = String(action).trim();
+  const key = raw.toLowerCase();
+  if (AUDIT_ACTIONS[key]) return AUDIT_ACTIONS[key]!;
+
+  const parts = key.split(".");
+  if (parts.length > 1) {
+    const domain = AUDIT_DOMAINS[parts[0]!];
+    const rest = humanizeCode(parts.slice(1).join(".")).toLowerCase();
+    if (domain) return `${domain} — ${rest.charAt(0).toUpperCase()}${rest.slice(1)}`;
+  }
+  return humanizeCode(raw);
+}
+
 
 /**
  * Turn a stored evidence location into a sentence fragment a person can read.

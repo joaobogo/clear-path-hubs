@@ -13,7 +13,7 @@ import { Copy } from "lucide-react";
 import { ErrorState } from "@/components/ds";
 import { getRecordAudit, type AuditEntity } from "@/lib/admin-audit.functions";
 import { formatDateTime, formatNumber } from "@/lib/format/datetime";
-import { humanizeCode } from "@/lib/humanize-codes";
+import { humanizeAuditAction, humanizeCode } from "@/lib/humanize-codes";
 
 const PAGE_SIZE = 25;
 
@@ -78,7 +78,7 @@ export function RecordActivityTab({
         {rows.map((r) => (
           <li key={r.id} className="px-4 py-3 text-sm">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <div className="font-medium">{humanizeCode(r.action)}</div>
+              <div className="font-medium">{humanizeAuditAction(r.action)}</div>
               <time
                 dateTime={r.created_at}
                 className="text-xs text-muted-foreground"

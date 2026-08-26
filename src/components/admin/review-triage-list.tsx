@@ -9,6 +9,7 @@
  * One primary action per row — "Open review". Claiming is a secondary control,
  * and rows keep the keyboard path (j/k/Enter/o) shared by every admin queue.
  */
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -400,8 +401,10 @@ function Group({
 
               <div className="flex shrink-0 flex-wrap items-center gap-3 text-xs text-muted-foreground">
                 <Badge variant="secondary">
-                  {r.score_band ?? "no band"}
-                  {r.final_score !== null ? ` · ${r.final_score}` : ""}
+                  {r.score_band || r.final_score !== null
+                    ? toFitPresentation(r.score_band ?? null, r.final_score ?? null).headline
+                    : "Not scored"}
+                  {r.final_score !== null ? ` · ${Math.round(r.final_score)}` : ""}
                 </Badge>
                 <span title="Evidence items resolved">
                   evidence{" "}

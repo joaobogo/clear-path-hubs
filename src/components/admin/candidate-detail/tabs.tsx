@@ -8,6 +8,7 @@ import { CvDownloadAudit } from "@/components/cv-download-audit";
  * reviewer actually opens it.
  */
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
+import { humanizeAuditAction, humanizeCode } from "@/lib/humanize-codes";
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { RecordActivityTab } from "@/components/admin/record-activity-tab";
@@ -995,15 +996,15 @@ export function ActivityAuditTab({
     const decisionEvents = decisions.map((d) => ({
       when: d.created_at,
       kind: "decision",
-      label: d.decision_type,
+      label: humanizeCode(d.decision_type as string),
       detail: d.reason ?? (d.approved_score != null ? `@ ${d.approved_score}` : ""),
       trace: null,
     }));
     const posEvents = ((posActivity as Any[]) ?? []).map((r) => ({
       when: r.created_at,
       kind: "audit",
-      label: r.action,
-      detail: r.actor_user_id ? `actor ${String(r.actor_user_id).slice(0, 8)}` : "system",
+      label: humanizeAuditAction(r.action as string),
+      detail: (r.actor_name as string | null) ?? (r.actor_user_id ? "Unknown user" : "System"),
       trace: r.trace_id,
     }));
     return [...decisionEvents, ...posEvents].sort(
