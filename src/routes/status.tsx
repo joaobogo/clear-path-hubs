@@ -103,12 +103,10 @@ function StatusPill({ level }: { level: StatusLevel }) {
   );
 }
 
+import { formatDate, formatDateTime } from "@/lib/format/datetime";
+
 function formatTime(iso: string): string {
   return formatDateTime(iso);
-}
-
-function formatDate(iso: string): string {
-  return formatDate(iso);
 }
 
 /* -------------------------------------------------------------------- blocks */

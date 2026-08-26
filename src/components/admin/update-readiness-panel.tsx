@@ -11,7 +11,7 @@ import {
   markClientUpdateSent,
   revertClientUpdateSent,
 } from "@/lib/client-update-readiness.functions";
-import { formatDate, readinessToText } from "@/lib/client-update-readiness";
+import { readinessToText } from "@/lib/client-update-readiness";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 const BASELINE_LABEL: Record<string, string> = {
