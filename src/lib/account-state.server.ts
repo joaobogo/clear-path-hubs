@@ -62,7 +62,7 @@ export async function readAccountState(
   const org = (orgRes?.data ?? null) as Any;
   const sub = ((subRes?.data ?? [])[0] ?? null) as Any;
   const ent = ((entRes?.data ?? [])[0] ?? null) as Any;
-  const rows = ((posRes?.data ?? []) as Any[]) ?? [];
+  const rows = (posRes?.data ?? []) as Any[];
 
   const plan = sub?.plan_label
     ? { label: String(sub.plan_label), source: "subscription" as const, status: (sub.status as string) ?? null }
