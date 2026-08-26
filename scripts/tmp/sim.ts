@@ -31,6 +31,14 @@ async function main() {
     ...(pos.preferred_requirements as string[]).map((t, i) => ({ id: `pref-${i}`, text: t, required: false, keywords: [] as string[] })),
   ];
 
+  const { data: rub } = await sb
+    .from("rubric_versions")
+    .select("calibration")
+    .eq("position_id", POSITION_ID)
+    .eq("status", "approved")
+    .maybeSingle();
+  const RUBRIC_CAL = rub?.calibration ?? undefined;
+
   for (const slug of slugs) {
     const mod = await import(`../seed-northwind-demo/candidates/${slug}`);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,7 +88,7 @@ async function main() {
       cv_text: cvText,
       requirements,
       screening,
-      calibration: run?.calibration ?? undefined,
+      calibration: RUBRIC_CAL,
     });
     const t = TARGETS[slug];
     const order = ["req-0","req-1","req-2","req-3","req-4","req-5","pref-0","pref-1","pref-2","pref-3"];
