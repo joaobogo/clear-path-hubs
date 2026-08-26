@@ -16,7 +16,7 @@ import {
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   getPosition,
@@ -204,12 +204,20 @@ function PositionWorkspace() {
   const { tab: tabParam } = Route.useSearch();
   const tab: TabId = tabParam ?? "overview";
   const navigate = Route.useNavigate();
-  const setTab = (next: TabId) =>
-    navigate({
+  // Switching tabs must not throw the reader back to the top of a long page:
+  // keep the scroll position, then bring the tab strip and its panel into view
+  // so the content the user just asked for is the first thing on screen.
+  const panelRef = useRef<HTMLElement | null>(null);
+  const setTab = (next: TabId) => {
+    void navigate({
       search: (prev: { tab?: TabId }) => ({ ...prev, tab: next }),
       replace: true,
       resetScroll: false,
     });
+    requestAnimationFrame(() => {
+      panelRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+  };
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: ["admin-position", id] });
@@ -291,7 +299,7 @@ function PositionWorkspace() {
       <nav
         role="tablist"
         aria-label="Position sections"
-        className="flex flex-wrap gap-1 border-b"
+        className="sticky top-0 z-20 -mx-6 flex flex-wrap gap-1 border-b bg-background px-6"
       >
         {TABS.map((t) => {
           const Icon = t.icon;
@@ -317,7 +325,7 @@ function PositionWorkspace() {
         })}
       </nav>
 
-      <section>
+      <section ref={panelRef} className="scroll-mt-16">
         {tab === "overview" && (
           <div className="space-y-6">
             <GeneratedBlueprintPanel
