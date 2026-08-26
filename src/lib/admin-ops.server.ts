@@ -29,6 +29,11 @@ import { INTAKE_AGING_TIER_DAYS } from "@/lib/intake-aging";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
 import { deliveryReason } from "./notifications/delivery-reasons";
 import { qualifiesAsHire } from "./offer-hire";
+import { publishedRunEmbed, publishedScoreDisplay } from "@/lib/scoring/published-score";
+
+/** Approved run wins over current so admin and client read one number. */
+const pubRun = (m: { approved_run?: unknown; current_run?: unknown }) =>
+  (m.approved_run ?? m.current_run ?? null) as Parameters<typeof publishedScoreDisplay>[0];
 
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
@@ -90,7 +95,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       s
         .from("candidate_matches")
         .select(
-          "id,updated_at,processing_state,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name)),score_runs!candidate_matches_current_score_run_id_fkey(score)",
+          `id,updated_at,processing_state,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name)),${publishedRunEmbed()}`,
           { count: "exact" },
         )
         .eq("admin_status", "pending")
@@ -348,7 +353,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
           posRef(m.positions?.id, m.positions?.title),
           orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
         ],
-        meta: m.score_runs?.score != null ? `score ${Math.round(Number(m.score_runs.score))}` : null,
+        meta: publishedScoreDisplay(pubRun(m)) != null ? `score ${publishedScoreDisplay(pubRun(m))}` : null,
         waiting_since: m.updated_at,
         target: { kind: "review" as const, matchId: m.id },
         action_label: "Review",

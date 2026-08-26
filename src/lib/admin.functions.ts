@@ -382,7 +382,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         new_intakes: (newIntakes ?? []) as AnyRow[],
         positions_review: (positionsReview ?? []) as AnyRow[],
         new_applications: (newApplications ?? []) as AnyRow[],
-        candidates_pending_review: (pendingReview ?? []) as AnyRow[],
+        candidates_pending_review: ((pendingReview ?? []) as AnyRow[]).map(withPublishedRun),
         candidates_ready_to_publish: (readyPublish ?? []) as AnyRow[],
         processing_issues: (processingIssues ?? []) as AnyRow[],
         client_requests: (clientRequests ?? []) as AnyRow[],
@@ -1413,7 +1413,7 @@ export const getClientPreview = createServerFn({ method: "GET" })
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
-         score_runs:approved_score_run_id (score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`,
+         score_runs:approved_score_run_id (score, final_score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`,
       )
       .eq("id", data.match_id)
       .maybeSingle();
