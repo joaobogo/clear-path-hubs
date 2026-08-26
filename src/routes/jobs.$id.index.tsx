@@ -653,7 +653,7 @@ function JobDetail() {
 
               <div className="mt-6">{applyButton}</div>
               <p className="mt-3 text-xs text-muted-foreground">
-                PDF CV, about 3 minutes. You'll get a reference you can track.
+                PDF CV, {applyEffortTimeClause(effort)}. You'll get a reference you can track.
               </p>
             </div>
           </aside>
