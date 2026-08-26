@@ -835,6 +835,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         ok: true as const,
         action: data.action,
         already: false,
+        published: true,
         trace_id: published.trace_id ?? decisionTrace,
         match: published,
       };
