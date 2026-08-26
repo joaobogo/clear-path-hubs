@@ -114,6 +114,32 @@ const REASONS: Record<string, DeliveryReason> = {
     kind: "held",
     countsAsFailure: false,
   },
+  no_matching_sender: {
+    label: "Sender not active",
+    sentence:
+      "Email sending is waiting on the sender domain setup, so this was recorded instead of retried.",
+    kind: "held",
+    countsAsFailure: false,
+  },
+  lovable_api_key_not_registered: {
+    label: "Sender not active",
+    sentence:
+      "Email sending is waiting on the sender configuration, so this was recorded instead of retried.",
+    kind: "held",
+    countsAsFailure: false,
+  },
+  domain_not_verified: {
+    label: "Domain pending",
+    sentence: "Email sending is waiting for the sender domain to finish verification.",
+    kind: "held",
+    countsAsFailure: false,
+  },
+  emails_disabled: {
+    label: "Email disabled",
+    sentence: "Email sending is disabled for this workspace, so this was not sent.",
+    kind: "held",
+    countsAsFailure: false,
+  },
 };
 
 const BY_STATUS: Record<string, DeliveryReason> = {

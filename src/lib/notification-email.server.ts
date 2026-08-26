@@ -11,6 +11,7 @@
 //    `suppressed / email_not_configured` instead of pretending to send.
 
 import type { EventType } from "./events";
+import { EmailAPIError } from "@lovable.dev/email-js";
 import { EVENT_PREFERENCE, normalizePreferences } from "./client-notification-prefs";
 import {
   CANDIDATE_EVENT_PREFERENCE,
@@ -293,7 +294,7 @@ export async function dispatchEmails(
             // A recipient the provider refuses to email is blocked, not a
             // failure of ours: reporting it as "we could not send" invites a
             // pointless retry and reads as a platform fault.
-            status = isBlockedRecipientCode(res.code) ? "suppressed" : "failed";
+            status = isBlockedRecipientCode(res.code) || isHeldEmailCode(res.code) ? "suppressed" : "failed";
             errorCode = res.code;
             errorMessage = res.message;
           }
@@ -336,7 +337,7 @@ async function sendViaProvider(args: {
   if (!apiKey) {
     return { ok: false, code: "email_credentials_missing", message: "LOVABLE_API_KEY is not configured." };
   }
-  const { EmailAPIError, sendLovableEmail } = await import("@lovable.dev/email-js");
+  const { sendLovableEmail } = await import("@lovable.dev/email-js");
   try {
     await sendLovableEmail(
       {
@@ -373,6 +374,39 @@ export function isBlockedRecipientCode(code: string | null | undefined): boolean
     "undeliverable_domain",
     "unreachable_mx",
   ].includes(code);
+}
+
+export function isHeldEmailCode(code: string | null | undefined): boolean {
+  if (!code) return false;
+  return [
+    "email_not_configured",
+    "email_credentials_missing",
+    "no_matching_sender",
+    "lovable_api_key_not_registered",
+    "domain_not_verified",
+    "emails_disabled",
+    "sandboxed_test_recipient",
+    "preference_off",
+    "deferred_to_daily_digest",
+  ].includes(code);
+}
+
+export function classifyEmailError(error: unknown): { code: string; message: string } {
+  if (error instanceof EmailAPIError) {
+    return {
+      code: error.code ?? `provider_${error.status}`,
+      message: error.message.slice(0, 500),
+    };
+  }
+  const message = error instanceof Error ? error.message : String(error);
+  const lower = message.toLowerCase();
+  if (lower.includes("lovable_api_key") || lower.includes("api key")) {
+    return { code: "email_credentials_missing", message: message.slice(0, 500) };
+  }
+  if (lower.includes("no_matching_sender")) {
+    return { code: "no_matching_sender", message: message.slice(0, 500) };
+  }
+  return { code: "provider_exception", message: message.slice(0, 500) };
 }
 
 /** Codes worth another attempt: throttling, provider hiccups, network blips. */

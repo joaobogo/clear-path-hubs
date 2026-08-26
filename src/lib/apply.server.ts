@@ -655,50 +655,17 @@ export async function submitApplicationImpl(
         console.error("[submitApplication] lead notification failed", trace_id, notifyErr);
       }
 
-      // Candidate confirmation — the reference, the status link, and an honest
-      // line about when they hear back. Non-critical: a mail failure must never
-      // cost the applicant their submission.
+      // Candidate confirmation — non-critical, but recorded on the application
+      // so staff can see and retry genuine delivery failures.
       try {
-        const { sendTemplateEmail } = await import("./email-templates/send-email");
-        const reference = ref6(appRow.id);
-        // The confirmation names the employer, so the email must too.
-        const { data: orgRow } = await supabaseAdmin
-          .from("organizations")
-          .select("name")
-          .eq("id", pos.organization_id)
-          .maybeSingle();
-        const result = await sendTemplateEmail("application-received", data.email, {
-          idempotencyKey: `application-received-${appRow.id}`,
-          templateData: {
-            candidateFirstName: (data.full_name ?? "").trim().split(" ")[0] || null,
-            positionTitle: pos.title,
-            organizationName: orgRow?.name ?? null,
-            reference,
-            statusUrl: `https://taasflow.com/apply/status?ref=${reference}`,
-          },
-        });
-        if (result?.sent) {
-          const { error: stampErr } = await supabaseAdmin
-            .from("applications")
-            .update({ confirmation_email_sent_at: new Date().toISOString() })
-            .eq("id", appRow.id);
-          // The send is what the candidate sees; the stamp is our record of it.
-          // Losing the stamp silently is how an application ends up looking
-          // un-notified when it was in fact emailed — so it is logged loudly.
-          if (stampErr) {
-            console.error(
-              "[submitApplication] confirmation sent but stamp failed",
-              trace_id,
-              appRow.id,
-              stampErr.message,
-            );
-          }
-        } else {
+        const { sendApplicationConfirmationEmail } = await import("./application-confirmation-email.server");
+        const result = await sendApplicationConfirmationEmail(supabaseAdmin, appRow.id);
+        if (result.status !== "sent" && result.status !== "already_sent") {
           console.warn(
             "[submitApplication] confirmation not sent",
             trace_id,
             appRow.id,
-            result?.reason ?? "unknown",
+            result.reason ?? "unknown",
           );
         }
       } catch (mailErr) {
