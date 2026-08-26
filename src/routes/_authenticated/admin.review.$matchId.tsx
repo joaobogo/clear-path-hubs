@@ -179,7 +179,15 @@ function ReviewScreen() {
     }
     setBusy(action);
     try {
-      await decide({ data: { match_id: matchId, action, reason: note || undefined } });
+      await decide({
+        data: {
+          match_id: matchId,
+          action,
+          reason: note || undefined,
+          // Approval is internal; publishing is a separate step in the workspace.
+          ...(action === "approve_for_client" ? { publish: false } : {}),
+        },
+      });
       toast.success(`${label} — ${m.candidate_profiles?.full_name ?? "candidate"}`);
       qc.invalidateQueries({ queryKey: ["admin-work-queues"] });
       qc.invalidateQueries({ queryKey: ["admin-review-queue-ids"] });
@@ -242,7 +250,7 @@ function ReviewScreen() {
       switch (e.key.toLowerCase()) {
         case "a":
           e.preventDefault();
-          void run("approve_for_client", "Approved for client");
+          void run("approve_for_client", "Score approved — not shared yet");
           break;
         case "h":
           e.preventDefault();
@@ -477,7 +485,7 @@ function ReviewScreen() {
         />
         <div className="flex items-center gap-2">
           <Button
-            onClick={() => run("approve_for_client", "Approved for client")}
+            onClick={() => run("approve_for_client", "Score approved — not shared yet")}
             disabled={!!busy || approvalBlocked}
             className="gap-1.5"
             title={
