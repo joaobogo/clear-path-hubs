@@ -31,6 +31,7 @@ import {
   restoreOrganization,
 } from "@/lib/admin.functions";
 import { stageDisplayName } from "@/lib/client/stage-display";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { humanizeCode } from "@/lib/humanize-codes";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -606,7 +607,7 @@ function TeamTab({ members, org }: { members: any[]; org: any }) {
               <tr key={m.id} className="border-t">
                 <td className="px-3 py-2">{m.profiles?.full_name ?? "—"}</td>
                 <td className="px-3 py-2 text-muted-foreground">{m.profiles?.email ?? "—"}</td>
-                <td className="px-3 py-2 capitalize">{m.role}</td>
+                <td className="px-3 py-2">{humanizeCode(m.role)}</td>
                 <td className="px-3 py-2">{humanizeCode(m.status)}</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
                   {m.created_at ? new Date(m.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
@@ -650,7 +651,7 @@ function PositionsTab({ positions }: { positions: any[] }) {
                 </Link>
               </td>
               <td className="px-3 py-2"><Badge>{humanizeCode(p.status)}</Badge></td>
-              <td className="px-3 py-2 capitalize">{p.visibility}</td>
+              <td className="px-3 py-2">{humanizeCode(p.visibility)}</td>
               <td className="px-3 py-2 text-muted-foreground">{p.location ?? "—"}</td>
               <td className="px-3 py-2 text-xs text-muted-foreground">
                 {new Date(p.updated_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
@@ -704,9 +705,9 @@ function CandidatesTab({ id }: { id: string }) {
               <td className="whitespace-nowrap px-3 py-2">{stageDisplayName(r.current_stage)}</td>
               <td className="whitespace-nowrap px-3 py-2 text-xs">{r.processing_state ? humanizeCode(r.processing_state) : "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 tabular-nums">{r.fit_score_final ?? "—"}</td>
-              <td className="whitespace-nowrap px-3 py-2">{r.fit_band ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2">{r.fit_band || r.fit_score_final != null ? toFitPresentation(r.fit_band ?? null, r.fit_score_final ?? null).headline : "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 text-xs">{r.admin_status ? humanizeCode(r.admin_status) : "—"}</td>
-              <td className="whitespace-nowrap px-3 py-2 capitalize text-xs">{r.client_visibility ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 text-xs">{r.client_visibility ? humanizeCode(r.client_visibility) : "—"}</td>
             </tr>
           ))}
           {rows.length === 0 && (
@@ -954,8 +955,8 @@ function ContactsTab({ org, members }: { org: any; members: any[] }) {
                       {m.profiles.email}
                     </a>
                   </td>
-                  <td className="px-3 py-2 capitalize">{m.role}</td>
-                  <td className="px-3 py-2 capitalize text-xs text-muted-foreground">
+                  <td className="px-3 py-2">{humanizeCode(m.role)}</td>
+                  <td className="px-3 py-2 text-xs text-muted-foreground">
                     {humanizeCode(m.status)}
                   </td>
                 </tr>
