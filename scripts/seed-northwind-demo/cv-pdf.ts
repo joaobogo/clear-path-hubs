@@ -119,7 +119,7 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
   section("Core skills");
   draw(cv.coreSkills, { gap: 2 });
 
-  section("Experience");
+  section("Professional history");
   for (const role of cv.experience) {
     need(LEAD * 3);
     draw(role.heading, { font: bold });
