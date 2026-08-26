@@ -307,6 +307,12 @@ export function ActionRail({
               >
                 Hold
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {/* Destructive actions sit in their own group, visually separated
+                  from routine repair/review items and always typed-confirmed. */}
+              <DropdownMenuLabel className="text-destructive">
+                Danger zone
+              </DropdownMenuLabel>
               <DropdownMenuItem
                 disabled={!!busy}
                 onSelect={(event) => {
