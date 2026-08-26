@@ -133,7 +133,10 @@ export async function loadCalibrationDesk(
       stage === "offer" ||
       stage === "hired" ||
       String(decision?.decision) === "offer";
-    const hired = hire === "hire_confirmed" || stage === "hired";
+    // One definition of a hire across every surface: a confirmed offer record.
+    // The pipeline stage is a position in the funnel, not proof of a hire, and
+    // counting it here made the desk read one more hire than the Overview.
+    const hired = hire === "hire_confirmed";
 
     return {
       match_id: matchId,

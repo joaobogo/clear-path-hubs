@@ -272,7 +272,7 @@ export function WorkspaceKpiTiles({ orgId }: { orgId: string }) {
       <Tile
         icon={<Users className="h-4 w-4" />}
         label="Seats in use"
-        value={`${data?.seats.active ?? 0} / ${data?.seats.limit ?? 0}`}
+        value={`${data?.seats.used ?? 0} / ${data?.seats.limit ?? 0}`}
         note={
           (data?.seats.invited ?? 0) > 0
             ? `${data?.seats.invited} invitation${data?.seats.invited === 1 ? "" : "s"} pending · ${data?.seats.remaining} free`

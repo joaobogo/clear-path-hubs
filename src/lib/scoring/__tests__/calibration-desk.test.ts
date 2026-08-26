@@ -169,7 +169,9 @@ describe("calibration desk outcome funnel", () => {
   it("includes test organisations only when explicitly asked", async () => {
     const desk = await loadCalibrationDesk(fakeAdmin(fixture) as never, { includeTest: true });
     expect(desk.funnel.scored).toBe(7);
-    expect(desk.funnel.hired).toBe(2);
+    // Only confirmed offer records count as hires. `m-test` sits in the hired
+    // stage with no record, so the desk agrees with the Overview tile (1).
+    expect(desk.funnel.hired).toBe(1);
   });
 
   it("returns an empty desk rather than throwing when nothing is scored", async () => {

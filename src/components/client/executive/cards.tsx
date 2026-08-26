@@ -215,8 +215,12 @@ export function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"]
                   <td data-label="Shortlisted" className="py-2 text-right tabular-nums max-sm:text-left">{r.shortlisted}</td>
                   <td data-label="Hired" className="py-2 text-right tabular-nums max-sm:text-left">{r.hired}</td>
                   <td data-label="Needs your input" className="py-2 text-right tabular-nums max-sm:text-left">
-                    {r.blocked > 0 ? (
-                      <Badge variant="destructive">{r.blocked}</Badge>
+                    {/* Candidates delivered with no decision recorded — the same
+                        figure as the Overview card and the board column. The
+                        column used to print processing failures instead, which
+                        read 0 while ten people waited on a decision. */}
+                    {r.awaiting_decision > 0 ? (
+                      <Badge variant="destructive">{r.awaiting_decision}</Badge>
                     ) : (
                       <span className="text-muted-foreground">0</span>
                     )}

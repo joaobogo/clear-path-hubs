@@ -1,5 +1,6 @@
 // Admin operations reads: work queues, payments/pilot panel, review queue.
 // Server-only. Every query reads real records — nothing is simulated.
+import { CONFIRMATION_PENDING_STATUSES } from "@/lib/client/interviews-to-confirm";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -120,22 +121,20 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
 
 
-    // 5 — interviews requested, or happening in the next 48h.
-    // Inner join on positions and organizations to ensure we only count actionable interviews.
+    // 5 — interviews still awaiting a confirmed time.
+    //
+    // Same definition as the client Interviews page and the canonical reader
+    // (`CONFIRMATION_PENDING_STATUSES`): requested or being scheduled. Bundling
+    // interviews that already have a time in the next 48 hours is what made
+    // this tile read 7 while the client read 5 for the same work.
     excludeTestOrgs(
       s
         .from("interviews")
         .select(
           "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches!inner(candidate_profiles(full_name),positions!inner(id,title,owner_user_id,organizations!inner(id,name)))",
-          { count: "exact" },
         )
-        .or(
-          `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * HOUR).toISOString()})`,
-        )
-        .not("status", "eq", "completed")
-        .not("status", "eq", "completed")
-        .order("requested_at", { ascending: true })
-        .limit(PREVIEW_LIMIT),
+        .in("status", CONFIRMATION_PENDING_STATUSES as unknown as string[])
+        .order("requested_at", { ascending: true }),
       scope,
     ),
 
@@ -187,6 +186,20 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   // One profile read for every owner id on the page, so each row can show who
   // holds it without a second click.
+  // Collapse to one pending interview per candidate — a re-request must not
+  // count the same coordination job twice.
+  const interviewsAwaitingTime: Any[] = (() => {
+    const byMatch = new Map<string, Any>();
+    for (const iv of (interviews.data ?? []) as Any[]) {
+      const key = String(iv.candidate_match_id ?? iv.id);
+      const prev = byMatch.get(key);
+      if (!prev || String(iv.requested_at ?? "") < String(prev.requested_at ?? "")) {
+        byMatch.set(key, iv);
+      }
+    }
+    return [...byMatch.values()];
+  })();
+
   const ownerIds = new Set<string>();
   const addOwner = (v: unknown) => {
     if (typeof v === "string" && v) ownerIds.add(v);
@@ -375,11 +388,13 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     {
       key: "interviews",
       label: "Interviews to coordinate",
-      description: "Requested but unscheduled, or happening within 48 hours.",
-      count: interviews.count ?? 0,
+      description: "Requested or being scheduled, still without a confirmed time.",
+      // One interview per candidate, exactly as the client's "to confirm"
+      // figure counts it, so both sides of the workspace read the same number.
+      count: interviewsAwaitingTime.length,
       action_hint: "Confirm the slot and tell both sides.",
       see_all: { to: "/admin/candidates" },
-      items: ((interviews.data ?? []) as Any[]).slice(0, PREVIEW_LIMIT).map((iv) => ({
+      items: interviewsAwaitingTime.slice(0, PREVIEW_LIMIT).map((iv) => ({
         id: iv.id,
         title: iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate",
         title_ref: posRef(iv.candidate_matches?.positions?.id, iv.candidate_matches?.positions?.title),

@@ -26,6 +26,20 @@ export async function isOrgMember(
 }
 
 /**
+ * Platform staff hold no membership row. Their own client is organization-wide
+ * for most tables, but the membership roster is gated by an explicit
+ * permission, so a staff read of `memberships` came back empty and every
+ * seat tile they opened printed zero.
+ */
+export async function isPlatformStaffCaller(supabase: AnyRow): Promise<boolean> {
+  const { data: auth } = await supabase.auth.getUser();
+  const userId = auth?.user?.id as string | undefined;
+  if (!userId) return false;
+  const { data } = await supabase.rpc("is_platform_staff", { _user: userId });
+  return data === true;
+}
+
+/**
  * Every row of one table for one organization.
  *
  * Members read through the service client (scoped to their organization only);
@@ -39,9 +53,12 @@ export async function readOrgRows(
   select: string,
   refine?: (q: AnyRow) => AnyRow,
 ): Promise<AnyRow[]> {
-  const member = await isOrgMember(supabase, orgId);
+  const [member, staff] = await Promise.all([
+    isOrgMember(supabase, orgId),
+    isPlatformStaffCaller(supabase),
+  ]);
   let db: AnyRow = supabase;
-  if (member) {
+  if (member || staff) {
     const { supabaseAdmin } = await import(
       "@/integrations/supabase/client.server"
     );

@@ -318,7 +318,14 @@ export async function loadUpdateReadiness(
     })),
   ].sort((x, y) => (x.at < y.at ? 1 : -1));
 
-  sections.push({ key: "interviews", title: "Interviews scheduled or completed", items: interviewItems });
+  // This panel reports movement since the last client update, not workspace
+  // totals. Titling it as a total made it read 10 next to the Interviews page's
+  // 12 held interviews, for the same account.
+  sections.push({
+    key: "interviews",
+    title: "Interview activity since the last update",
+    items: interviewItems,
+  });
 
   sections.push({
     key: "stage_moves",
