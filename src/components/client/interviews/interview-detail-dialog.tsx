@@ -25,6 +25,7 @@ import {
 import { DetailRow } from "./detail-row";
 import { ProposeForm } from "./propose-form";
 import { ConfirmForm } from "./confirm-form";
+import { liveSlots } from "@/lib/scheduling";
 import { formatWhen, statusBadgeClass, workspaceTimezone } from "./helpers";
 import {
   displayInterviewStatus,
@@ -67,7 +68,10 @@ export function InterviewDetailDialog({
   const [mode, setMode] = useState<
     "view" | "propose" | "confirm" | "reschedule" | "cancel" | "complete"
   >("view");
-  const [times, setTimes] = useState<string[]>(interview.proposed_times.length ? interview.proposed_times : [""]);
+  // Only times a client could still pick are offered — lapsed windows and
+  // times already in the past are not options.
+  const openSlots = liveSlots(interview.proposed_times ?? [], interview.availability_expires_at);
+  const [times, setTimes] = useState<string[]>(openSlots.length ? openSlots : [""]);
   const [scheduledAt, setScheduledAt] = useState<string>(
     interview.scheduled_at ? interview.scheduled_at.slice(0, 16) : "",
   );
@@ -154,10 +158,10 @@ export function InterviewDetailDialog({
                 </ul>
               )}
             </DetailRow>
-            {interview.proposed_times.length > 0 && interview.status !== "scheduled" ? (
+            {openSlots.length > 0 && interview.status !== "scheduled" ? (
               <DetailRow icon={<CalendarClock className="h-4 w-4" />} label="Proposed times">
                 <ul className="space-y-0.5">
-                  {interview.proposed_times.map((t, i) => (
+                  {openSlots.map((t, i) => (
                     <li key={i}>
                       {formatWhen(t, interview.timezone)}
                       {interview.candidate_selected_time === t ? (
@@ -265,13 +269,18 @@ export function InterviewDetailDialog({
                   Cancel
                 </Button>
               )}
-              {shownStatus === "requested" ? (
-                <Button variant="outline" onClick={() => setMode("propose")}>
-                  Confirm a time
-                </Button>
+              {(shownStatus === "requested" || shownStatus === "scheduling") &&
+              openSlots.length === 0 ? (
+                <Button onClick={() => setMode("propose")}>Send new times</Button>
               ) : null}
-              {shownStatus === "requested" || shownStatus === "scheduling" ? (
-                <Button onClick={() => setMode("confirm")}>Confirm time</Button>
+              {(shownStatus === "requested" || shownStatus === "scheduling") &&
+              openSlots.length > 0 ? (
+                <>
+                  <Button variant="outline" onClick={() => setMode("propose")}>
+                    Propose other times
+                  </Button>
+                  <Button onClick={() => setMode("confirm")}>Confirm time</Button>
+                </>
               ) : null}
               {shownStatus === "scheduled" ? (
                 <>
