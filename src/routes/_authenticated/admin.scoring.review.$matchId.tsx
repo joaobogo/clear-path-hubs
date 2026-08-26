@@ -294,6 +294,8 @@ function ReviewWorkspace() {
           match_id: params.matchId,
           action,
           reason: decisionReason.trim() || undefined,
+          // Approval is internal; publishing to the client is a separate step.
+          ...(action === "approve_for_client" ? { publish: false } : {}),
         },
       });
       setDecisionReason("");
