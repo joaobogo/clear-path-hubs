@@ -234,6 +234,12 @@ async function main() {
     });
 
     if (!submitted.ok) {
+      // Re-running the funnel over an existing cohort is expected: the
+      // application already exists and the pipeline already produced a score.
+      if (submitted.code === "already_applied" && args.stage === "funnel") {
+        console.log("   already applied — keeping the existing application and score");
+        continue;
+      }
       problems.push(`${d.slug}: submission failed (${submitted.code}) ${submitted.message}`);
       console.log(`   ! submission failed: ${submitted.code}`);
       continue;
