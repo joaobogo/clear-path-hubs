@@ -3,7 +3,7 @@ import type { Dossier } from "../types";
 const R1 =
   "Eight years building production React and TypeScript applications for regulated payment products.";
 const R3 =
-  "Owned the reconciliation feature end to end, from schema design to the shipped UI operations staff use daily.";
+  "Owning reconciliation features end to end, from schema design to the shipped UI operations staff use daily.";
 const R2 =
   "Handle the SQL and relational data modelling for the ledger in Postgres, with 60 forward-only migrations in two years.";
 const R4 =

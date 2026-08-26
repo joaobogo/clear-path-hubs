@@ -3,7 +3,7 @@ import type { Dossier } from "../types";
 const R1 =
   "Seven years building production React and TypeScript applications used by clinical teams.";
 const R3 =
-  "Owned the referral feature end to end, from schema design to shipped UI signed off by two hospitals.";
+  "Owning referral features end to end, from schema design to shipped UI signed off by two hospitals.";
 const R2 =
   "Do the SQL and relational data modelling for patient records in Postgres, with 30 reviewed migrations shipped so far.";
 const R4 =

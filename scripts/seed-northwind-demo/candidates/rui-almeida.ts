@@ -3,7 +3,7 @@ import type { Dossier } from "../types";
 const R1 =
   "Six years building and shipping React and TypeScript applications for a logistics marketplace.";
 const R3 =
-  "Owned carrier onboarding end to end, from schema design to shipped UI used by 900 hauliers.";
+  "Owning carrier onboarding features end to end, from schema design to shipped UI used by 900 hauliers.";
 const R2 =
   "Write the SQL and relational data modelling for shipments in Postgres, including the migrations that split the routing tables.";
 const R5 =

@@ -7,7 +7,7 @@ const R3 =
 const R2 =
   "Wrote the SQL and relational data modelling for tenant billing in Postgres, shipping 40 migrations without a rollback.";
 const R4 =
-  "Designed the row-level security model that keeps 620 multi-tenant workspaces in strict isolation.";
+  "Practical experience of the row-level security model that keeps 620 multi-tenant workspaces in strict isolation.";
 const R5 =
   "Maintain 1,900 automated tests, unit in Vitest and end-to-end in Playwright, green on every merge.";
 const P1 =
