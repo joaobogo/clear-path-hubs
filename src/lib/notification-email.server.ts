@@ -98,12 +98,15 @@ export async function isSandboxRecipient(
   if (cached !== undefined) return cached;
   const { data } = await admin
     .from("organizations")
-    .select("is_test_record")
+    .select("is_test_record, is_demo")
     .eq("id", args.orgId)
     .maybeSingle();
-  const isTest = data?.is_test_record === true;
+  // Demo workspaces carry fictional people. Their addresses must never receive
+  // real mail, for the same bounce-reputation reason as test workspaces.
+  const isTest = data?.is_test_record === true || data?.is_demo === true;
   sandboxOrgCache.set(args.orgId, isTest);
   return isTest;
+
 }
 
 export type EmailDecision = "send" | "digest" | "off";

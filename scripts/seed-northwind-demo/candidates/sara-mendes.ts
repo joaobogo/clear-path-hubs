@@ -77,6 +77,8 @@ export const dossier: Dossier = {
     "Sara is the third engineer at an early-stage travel platform, where she built the seasonal availability calendar now used by all 60 operator accounts. She applied the row-level security rules that keep operators apart and wrote the Vitest and Playwright suites around booking. Five years with React and TypeScript, available immediately.",
 
   cv: {
+    layout: "T2",
+    interests: "Ceramics classes on Tuesdays; long-distance cycling in the summer.",
     name: "Sara Mendes",
     title: "Full-Stack Engineer",
     contact: "Lisbon, Portugal · sara.mendes.web@gmail.com · +351 928 447 190",

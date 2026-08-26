@@ -95,6 +95,8 @@ export const dossier: Dossier = {
     "Marta is a staff engineer on an edtech platform, where she owns timed assessment delivery from the Postgres model to the invigilator screen used in live exams. She moved institution separation into database policies and owns a 2,600-test suite across Vitest and Playwright. Ten years with React and TypeScript, relocating to Lisbon in September.",
 
   cv: {
+    layout: "T3",
+    interests: "Trail running in the Serra de Sintra; keeps a film photography habit.",
     name: "Marta Nunes",
     title: "Staff Engineer",
     contact:
