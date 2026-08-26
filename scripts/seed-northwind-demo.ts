@@ -19,7 +19,7 @@
  *   - blocks outbound e-mail/Teams HTTP for the seed process only.
  */
 
-import { renderCvPdf } from "./seed-northwind-demo/cv-pdf";
+import { cvReadingOrder, renderCvPdf } from "./seed-northwind-demo/cv-pdf";
 import type { Dossier } from "./seed-northwind-demo/types";
 import { TARGETS, bandOf } from "./seed-northwind-demo/targets";
 
@@ -200,9 +200,15 @@ async function main() {
       console.log(`   ! evidence sentences missing from extraction:\n     - ${missing.join("\n     - ")}`);
       continue;
     }
+    // Reading order: the sentences must come out in the order the CV lays them
+    // down, not in the order the requirement list happens to name them.
+    const source = norm(cvReadingOrder(d.cv).join(" "));
+    const inSourceOrder = [...d.evidence_sentences].sort(
+      (a, b) => source.indexOf(norm(a)) - source.indexOf(norm(b)),
+    );
     let cursor = -1;
     const outOfOrder: string[] = [];
-    for (const s of d.evidence_sentences) {
+    for (const s of inSourceOrder) {
       const at = flat.indexOf(norm(s));
       if (at < cursor) outOfOrder.push(s);
       cursor = Math.max(cursor, at);

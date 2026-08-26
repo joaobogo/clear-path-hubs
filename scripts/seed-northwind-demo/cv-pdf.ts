@@ -456,10 +456,33 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
   // Length is honest: short careers fit one page, longer ones run to two, and
   // the dossier declares which so drift is caught here rather than in review.
   const pages = doc.getPageCount();
-  const expected = cv.targetPages ?? pages;
+  const expected = cv.targetPages ?? 2;
   if (pages !== expected) {
     throw new Error(`cv_length: ${cv.name} rendered ${pages} page(s), dossier declares ${expected}`);
   }
 
   return await doc.save();
+}
+
+/**
+ * The order the renderer lays prose down, as plain text. Used by the seeder to
+ * check that extraction preserves the document's own reading order (in T2 the
+ * sidebar is drawn last, so it comes last here too).
+ */
+export function cvReadingOrder(cv: CvDoc): string[] {
+  const layout: CvLayout = cv.layout ?? "T1";
+  const main: string[] = [cv.summary];
+  const facts = [cv.coreSkills, ...cv.education, ...cv.certifications, ...cv.languages, cv.interests ?? ""];
+  if (layout !== "T2") main.push(cv.coreSkills);
+  if (layout !== "T2" && cv.educationFirst) main.push(...cv.education, ...cv.certifications);
+  for (const role of cv.experience) main.push(role.heading, role.dates, ...role.bullets);
+  for (const item of cv.selectedWork) main.push(item.heading, item.body);
+  if (layout !== "T2") {
+    if (!cv.educationFirst) main.push(...cv.education, ...cv.certifications);
+    main.push(...cv.languages);
+    if (cv.interests) main.push(cv.interests);
+  } else {
+    main.push(cv.contact, ...facts);
+  }
+  return main.filter(Boolean);
 }
