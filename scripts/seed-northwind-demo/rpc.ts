@@ -90,7 +90,14 @@ export async function callFn<T = unknown>(
   } catch {
     return text as unknown as T;
   }
-  const revived = fromCrossJSON(parsed, { refs: new Map() }) as AnyRow;
+  let revived: AnyRow;
+  try {
+    revived = fromCrossJSON(parsed, { refs: new Map() }) as AnyRow;
+  } catch {
+    // Error envelopes carry an Error instance that plain seroval cannot revive.
+    const msg = /"message"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(text)?.[1];
+    throw new Error(`${exportName} failed: ${msg ?? text.slice(0, 300)}`);
+  }
   if (revived?.error) {
     const e = revived.error;
     throw new Error(`${exportName} failed: ${e?.message ?? JSON.stringify(e).slice(0, 200)}`);
