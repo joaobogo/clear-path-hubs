@@ -752,7 +752,8 @@ async function backdatePosition(sb: AnyRow): Promise<void> {
     submitted_at: businessDay(31, 10),
     approved_at: businessDay(31, 15),
     published_at: businessDay(30, 9),
-    activated_at: businessDay(30, 9),
+    publish_ready_at: businessDay(30, 9),
+    search_live_at: businessDay(30, 9),
     updated_at: businessDay(30, 10),
   });
   console.log("\nPosition history normalised (created D-32 · approved D-31 · published D-30).");

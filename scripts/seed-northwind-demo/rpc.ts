@@ -79,10 +79,17 @@ export async function callFn<T = unknown>(
     headers["content-type"] = "application/json";
     init.body = encoded ?? JSON.stringify(await toJSONAsync({ data: {} }));
   }
-  const res = await fetch(url, init);
-  const text = await res.text();
+  let res = await fetch(url, init);
+  let text = await res.text();
   if (res.status >= 400) {
-    throw new Error(`${exportName} → ${res.status}: ${text.slice(0, 300).replace(/\s+/g, " ")}`);
+    // The dev server registers split server-fn modules lazily; the first hit on
+    // a cold module can come back before it is indexed. One retry settles it.
+    await new Promise((r) => setTimeout(r, 1_500));
+    res = await fetch(url, { ...init, body: init.body });
+    text = await res.text();
+  }
+  if (res.status >= 400) {
+    throw new Error(`${exportName} → ${res.status}: ${text.slice(0, 200).replace(/\s+/g, " ")}`);
   }
   let parsed: AnyRow;
   try {
@@ -95,7 +102,9 @@ export async function callFn<T = unknown>(
     revived = fromCrossJSON(parsed, { refs: new Map() }) as AnyRow;
   } catch {
     // Error envelopes carry an Error instance that plain seroval cannot revive.
-    const msg = /"message"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(text)?.[1];
+    const msg =
+      /"message"\s*:\s*\{[^}]*?"s"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(text)?.[1] ??
+      /"message"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(text)?.[1];
     throw new Error(`${exportName} failed: ${msg ?? text.slice(0, 300)}`);
   }
   if (revived?.error) {
