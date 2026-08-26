@@ -125,13 +125,14 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
       .in("status", ["failed", "error", "retrying"])
       .order("created_at", { ascending: false })
       .limit(50),
-    admin
-      .from("processing_jobs")
-      .select("id, job_type, status, attempts, error_code, error_message, started_at, created_at")
-      .in("status", ["failed", "running", "queued"])
-      .lt("created_at", staleCutoff)
-      .order("created_at", { ascending: false })
-      .limit(50),
+    // Processing exceptions come from the one canonical board so this tile can
+    // never disagree with /admin/operations: same 7-day window, same stuck /
+    // attempt-ceiling rules, same test-record exclusion.
+    (async () => {
+      const { loadExceptionBoard } = await import("./admin-processing-exceptions.server");
+      const board = await loadExceptionBoard(admin as never);
+      return { data: board.active, error: null };
+    })(),
     (async () => {
       const { loadDeliveryFailures } = await import("./notification-failures.server");
       const failures = await loadDeliveryFailures(admin);
@@ -183,16 +184,16 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
       retryable: true,
     });
   }
-  for (const r of jobsRes.data ?? []) {
+  for (const r of (jobsRes as Any).data ?? []) {
     const seenAt = (r.started_at as string) ?? (r.created_at as string);
     issues.push({
-      id: r.id.startsWith("pl_") ? r.id : `pl_${r.id.slice(0, 8)}`,
+      id: r.job_id as string,
       kind: "processing",
       label: `Job: ${r.job_type ?? "processing"}`,
       detail: `${r.status} since ${new Date(seenAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} — ${r.attempts ?? 0} attempt(s)`,
       last_error: (r.error_message as string) ?? (r.error_code as string) ?? null,
       occurred_at: seenAt,
-      retryable: true,
+      retryable: r.retryable !== false,
     });
   }
   for (const r of (deliveriesRes as any).data ?? []) {
