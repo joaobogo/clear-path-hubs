@@ -366,7 +366,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       facts,
       apply_effort: applyEffort,
       onsite_days,
-
+      country_code: (primaryLoc?.country_code ?? "").toUpperCase() || null,
 
       published_at: pos.published_at,
       openings: (pos as { openings?: number }).openings ?? 1,
