@@ -632,6 +632,12 @@ function ApplyPage() {
   const onSubmit = async () => {
     if (submittingRef.current) return;
     setServerError(null);
+    // Hard gate: never submit (or record) a consent the candidate did not give.
+    if (!consent) {
+      setFieldErrors({ consent_terms: "You must accept the terms to continue" });
+      setStep(4);
+      return;
+    }
     // Final aggregate validation across all steps.
     const allErrs = { ...stepIssues(1), ...stepIssues(2), ...stepIssues(3), ...stepIssues(4) };
     setFieldErrors(allErrs);
