@@ -449,7 +449,12 @@ export type Database = {
           candidate_profile_id: string
           closure_notified_at: string | null
           completion_seconds: number | null
+          confirmation_email_attempt_count: number
+          confirmation_email_error_code: string | null
+          confirmation_email_error_message: string | null
+          confirmation_email_last_attempt_at: string | null
           confirmation_email_sent_at: string | null
+          confirmation_email_status: string
           consent: Json
           cover_letter: string | null
           created_at: string
@@ -489,7 +494,12 @@ export type Database = {
           candidate_profile_id: string
           closure_notified_at?: string | null
           completion_seconds?: number | null
+          confirmation_email_attempt_count?: number
+          confirmation_email_error_code?: string | null
+          confirmation_email_error_message?: string | null
+          confirmation_email_last_attempt_at?: string | null
           confirmation_email_sent_at?: string | null
+          confirmation_email_status?: string
           consent?: Json
           cover_letter?: string | null
           created_at?: string
@@ -529,7 +539,12 @@ export type Database = {
           candidate_profile_id?: string
           closure_notified_at?: string | null
           completion_seconds?: number | null
+          confirmation_email_attempt_count?: number
+          confirmation_email_error_code?: string | null
+          confirmation_email_error_message?: string | null
+          confirmation_email_last_attempt_at?: string | null
           confirmation_email_sent_at?: string | null
+          confirmation_email_status?: string
           consent?: Json
           cover_letter?: string | null
           created_at?: string
