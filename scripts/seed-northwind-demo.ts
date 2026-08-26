@@ -349,6 +349,25 @@ async function main() {
   }
 
 
+  // ── funnel: approvals, client decisions, interviews, offers, timeline ──────
+  if (args.stage === "funnel") {
+    const { runFunnel, funnelAssertions } = await import("./seed-northwind-demo/funnel");
+    const funnel = await runFunnel(sb, { only: args.only });
+    problems.push(...funnel.problems);
+    console.log("\nFUNNEL STATE\n");
+    for (const r of funnel.rows) {
+      console.log(
+        [
+          (r.slug ?? "").padEnd(18),
+          `stage=${(r.stage ?? "—").padEnd(18)}`,
+          `admin=${(r.admin ?? "—").padEnd(10)}`,
+          `client=${(r.visibility ?? "—").padEnd(8)}`,
+        ].join(" "),
+      );
+    }
+    await funnelAssertions(sb, problems);
+  }
+
   await runAssertions(sb, problems);
 
   if (problems.length > 0) {
