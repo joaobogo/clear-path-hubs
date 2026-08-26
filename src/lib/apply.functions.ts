@@ -5,6 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { applySchema, type ApplyInput } from "./apply-schema";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
+import { greetingName } from "@/lib/candidate/display-name";
 import type { SubmitApplicationResult } from "./apply-types";
 
 export type { SubmitApplicationResult };
@@ -47,14 +48,13 @@ export const getApplicationReceipt = createServerFn({ method: "GET" })
     const cp = app.candidate_profiles as unknown as {
       full_name: string;
     } | null;
-    const firstName = (cp?.full_name ?? "").trim().split(/\s+/)[0] ?? "";
     return {
       id: app.id,
       reference: ref6(app.id),
       applied_at: app.applied_at,
       position_title: pos?.title ?? null,
       organization_name: pos?.organizations?.name ?? null,
-      candidate_first_name: firstName || null,
+      candidate_first_name: greetingName(cp?.full_name),
     };
   });
 
