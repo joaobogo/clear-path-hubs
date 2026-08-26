@@ -8,6 +8,7 @@ import { CvDownloadAudit } from "@/components/cv-download-audit";
  * reviewer actually opens it.
  */
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
+import { humanizeAuditAction, humanizeCode } from "@/lib/humanize-codes";
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { RecordActivityTab } from "@/components/admin/record-activity-tab";
