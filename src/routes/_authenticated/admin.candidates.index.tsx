@@ -859,6 +859,7 @@ function CandidatesPage() {
           <tbody className="divide-y">
             {rows.map((m) => {
               const score = publishedScoreDisplay(m);
+              const band = publishedBand(m);
               const updated = m.updated_at ? new Date(m.updated_at) : null;
               return (
                 <tr
@@ -918,9 +919,9 @@ function CandidatesPage() {
                   <td className="px-3 py-2">
                     <Badge
                       variant="outline"
-                      className={`whitespace-nowrap text-xs ${BAND_TONE[m.score_band] ?? ""}`}
+                      className={`whitespace-nowrap text-xs ${BAND_TONE[band ?? "unscored"] ?? ""}`}
                     >
-                      {(m.score_band ?? "unscored").replace(/_/g, " ")}
+                      {(band ?? "unscored").replace(/_/g, " ")}
                     </Badge>
                   </td>
                   <td className="px-3 py-2">
@@ -1027,8 +1028,8 @@ function CandidatesPage() {
                 >
                   {(m.processing_state ?? "").replace(/_/g, " ")}
                 </span>
-                <span className={`rounded px-2 py-0.5 ${BAND_TONE[m.score_band] ?? "bg-muted"}`}>
-                  {(m.score_band ?? "unscored").replace(/_/g, " ")}
+                <span className={`rounded px-2 py-0.5 ${BAND_TONE[publishedBand(m) ?? "unscored"] ?? "bg-muted"}`}>
+                  {(publishedBand(m) ?? "unscored").replace(/_/g, " ")}
                 </span>
                 <span
                   className={`rounded px-2 py-0.5 ${REVIEW_TONE[m.admin_status] ?? "bg-muted"}`}
