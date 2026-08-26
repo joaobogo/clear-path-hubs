@@ -30,7 +30,7 @@ import {
 
 import { sanitizeRedirect } from "@/lib/safe-redirect";
 
-const searchSchema = z.object({ redirect: z.string().optional() });
+const searchSchema = z.object({ redirect: z.string().optional(), reason: z.string().optional() });
 
 const QA_DISABLED = { enabled: false, personas: [] as Array<{ key: Persona; label: string }> };
 type Persona =
@@ -98,7 +98,7 @@ const GENERIC_CONFIRM_MESSAGE =
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { redirect } = Route.useSearch();
+  const { redirect, reason } = Route.useSearch();
   const [qa, setQa] = useState<{
     enabled: boolean;
     personas: Array<{ key: Persona; label: string }>;

@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import { ensureFreshSession, useSessionKeepAlive } from "@/lib/auth/session-keepalive";
 
 /**
  * Protected-route gate.
@@ -23,13 +24,28 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
     // getUser() verifies the token against the auth server rather than
     // trusting whatever is in local storage.
-    const { data, error } = await supabase.auth.getUser();
+    let { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {
-      throw redirect({ to: "/login", search: { redirect: location.href } });
+      // An access token that simply aged out is recoverable: refresh it before
+      // bouncing anyone, so a working session never drops on a plain navigation.
+      const state = await ensureFreshSession();
+      if (state === "refreshed" || state === "fresh") {
+        ({ data, error } = await supabase.auth.getUser());
+      }
+    }
+    if (error || !data.user) {
+      // Carry both the destination and the reason, so sign-in explains what
+      // happened and returns the user to where they were.
+      throw redirect({ to: "/login", search: { redirect: location.href, reason: "expired" } });
     }
     return { user: data.user };
   },
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/route.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
-  component: () => <Outlet />,
+  component: AuthenticatedLayout,
 });
+
+function AuthenticatedLayout() {
+  useSessionKeepAlive();
+  return <Outlet />;
+}
