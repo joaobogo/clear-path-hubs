@@ -1762,23 +1762,37 @@ export const setMatchClientVisibility = createServerFn({ method: "POST" })
     const s = await getAdmin();
     const { data: before } = await s
       .from("candidate_matches")
-      .select("id,organization_id,client_visibility")
+      .select(
+        "id,organization_id,client_visibility,canonical_state,admin_status,approved_score_run_id,stage,delivered_at",
+      )
       .eq("id", data.match_id)
       .maybeSingle();
     if (!before) throw new Error("match_not_found");
-    const releasePatch =
-      data.visibility === "visible" && before.client_visibility !== "visible"
-        ? {
-            contact_released_at: new Date().toISOString(),
-            contact_released_by: context.userId,
-            contact_release_reason: "Released automatically at publish to client",
-          }
-        : {};
+    const becomingVisible =
+      data.visibility === "visible" && before.client_visibility !== "visible";
+    if (becomingVisible && (before.admin_status !== "approved" || !before.approved_score_run_id)) {
+      // Publication is the step after approval, never a way around it.
+      throw new Error("publish_blocked:approve_the_score_first");
+    }
+    // The publish gate requires the canonical state and delivery stamp to move
+    // with visibility, so the release happens in one write.
+    const releasePatch = becomingVisible
+      ? {
+          canonical_state: "published_to_client",
+          stage: before.stage === "delivered" ? before.stage : "delivered",
+          delivered_at: before.delivered_at ?? new Date().toISOString(),
+          contact_released_at: new Date().toISOString(),
+          contact_released_by: context.userId,
+          contact_release_reason: "Released automatically at publish to client",
+        }
+      : {};
     const { data: after, error } = await s
       .from("candidate_matches")
       .update({ client_visibility: data.visibility, ...releasePatch })
       .eq("id", data.match_id)
-      .select("id,client_visibility,contact_released_at,contact_released_by,contact_release_reason")
+      .select(
+        "id,client_visibility,canonical_state,stage,delivered_at,contact_released_at,contact_released_by,contact_release_reason",
+      )
       .maybeSingle();
     if (error) throw new Error(error.message);
     await writeAudit({

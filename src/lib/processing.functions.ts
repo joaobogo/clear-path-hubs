@@ -597,6 +597,9 @@ const decisionInput = z
     approved_score: z.number().min(0).max(100).optional(),
     reason: z.string().max(1000).optional(),
     reason_code: z.string().max(64).optional(),
+    // Approval and publication are separate steps. Omitting this keeps the
+    // legacy one-step behaviour for callers that have not been split yet.
+    publish: z.boolean().optional(),
   })
   .superRefine((v, ctx) => {
     // A rejection can never be saved without attribution to a controlled reason.
@@ -715,14 +718,16 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
 
       // Single-transaction, idempotent approval. The RPC locks the match row,
       // inserts the approve decision at most once per (match, run), walks the
-      // legal canonical-state path, and publishes — all atomically. Repeated
-      // clicks return `already: true` instead of failing or half-updating.
+      // legal canonical-state path, and publishes only when asked — all
+      // atomically. Repeated clicks return `already: true`.
+      const wantsPublish = data.publish !== false;
       const { data: rpcResult, error: rpcError } = await supabase.rpc("approve_candidate_match", {
         _match_id: data.match_id,
         _run_id: runIdForDecision,
         _actor_user_id: context.userId,
         _reason: data.reason ?? null,
         _trace_id: decisionTrace,
+        _publish: wantsPublish,
       });
       if (rpcError) {
         await writeAudit("score_approval_failed", {
@@ -749,7 +754,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         application_id?: string | null;
         candidate_profile_id?: string | null;
       } | null;
-      if (!published || published.client_visibility !== "visible") {
+      if (!published || (wantsPublish && published.client_visibility !== "visible")) {
         await writeAudit("score_approval_failed", {
           ...beforeState,
           score_run_id: runIdForDecision,
@@ -764,12 +769,26 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
           ok: true as const,
           action: data.action,
           already: true,
+          published: wantsPublish,
           trace_id: decisionTrace,
           match: published,
         };
       }
       // The successful `score_approved` audit row is written inside the RPC
       // transaction, so it can never disagree with the published state.
+
+      // Approve-only stops here: nothing has been shared, so nothing is
+      // announced to the client or the candidate.
+      if (!wantsPublish) {
+        return {
+          ok: true as const,
+          action: data.action,
+          already: false,
+          published: false,
+          trace_id: published.trace_id ?? decisionTrace,
+          match: published,
+        };
+      }
 
       // Emit candidate_published to the client org (visible delivery)
       try {
@@ -816,6 +835,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         ok: true as const,
         action: data.action,
         already: false,
+        published: true,
         trace_id: published.trace_id ?? decisionTrace,
         match: published,
       };
