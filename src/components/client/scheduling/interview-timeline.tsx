@@ -108,15 +108,10 @@ export function InterviewTimeline({
   const { upcoming, past, cancelled } = useMemo(() => {
     const sorted = [...interviews].sort((a, b) => anchor(a) - anchor(b));
     return {
-      upcoming: sorted.filter((i) => {
-        if (isPastItem(i)) return false;
-        // Suppress "Needs times" cards for candidates who are no longer in an 
-        // interviewable stage (e.g. moved to Offer or Hired since the request).
-        if (i.status === "requested" && i.next_action.includes("Move to interview stage")) {
-          return false;
-        }
-        return true;
-      }),
+      // Every interview still awaiting a time is listed, including requests for
+      // candidates who moved on since. Hiding them made the list show four
+      // while the same page's heading counted five.
+      upcoming: sorted.filter((i) => !isPastItem(i)),
       past: sorted.filter((i) => interviewOccurrence(i) === "happened").reverse(),
       cancelled: sorted.filter((i) => interviewOccurrence(i) === "cancelled").reverse(),
     };
