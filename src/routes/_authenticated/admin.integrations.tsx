@@ -102,6 +102,7 @@ function IntegrationHealthPage() {
           : `Ran ${result.ran} test${result.ran === 1 ? "" : "s"} — ${bad} need${bad === 1 ? "s" : ""} attention.`,
       );
       await qc.invalidateQueries({ queryKey: ["integration-health"] });
+      await qc.invalidateQueries({ queryKey: ["integration-strip"] });
     },
     onError: () =>
       setFeedback(
