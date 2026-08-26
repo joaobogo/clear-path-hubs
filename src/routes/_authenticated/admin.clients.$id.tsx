@@ -357,7 +357,7 @@ function OverviewTab({ org, parsedCvCount }: { org: any; parsedCvCount: number }
         <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground">
           <dt>Name</dt><dd className="text-foreground">{org.name}</dd>
           <dt>Status</dt><dd className="text-foreground">{humanizeCode(org.status)}</dd>
-          <dt>Onboarding</dt><dd className="text-foreground">{humanizeCode(org.onboarding_status ?? "not_started")}</dd>
+          {/* Plan, seats and setup are printed once, by AccountStateStrip above. */}
           <dt>Dashboard</dt><dd className="text-foreground">{humanizeCode(org.dashboard_status ?? "inactive")}</dd>
           <dt>Website</dt><dd className="text-foreground">{org.website ?? "—"}</dd>
           <dt>Domain</dt><dd className="text-foreground">{org.domain ?? "—"}</dd>
