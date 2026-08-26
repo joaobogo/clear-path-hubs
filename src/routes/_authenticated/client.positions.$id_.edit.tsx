@@ -9,8 +9,11 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit
   validateSearch: (search: Record<string, unknown>) => {
     const raw = search.step ? Number(search.step) : undefined;
     const step = raw && raw >= 1 && raw <= 3 ? raw : undefined;
-    return { step };
+    // Set right after "New role": the screen is titled for creation, not editing.
+    const fresh = search.fresh === true || search.fresh === "true" ? true : undefined;
+    return { step, fresh };
   },
+
  loader: async ({ context, params }) => {
  let d;
  try {
