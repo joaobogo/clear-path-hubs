@@ -7,7 +7,7 @@ const R3 =
 const R2 =
   "Responsible for the SQL and relational data modelling of policies in Postgres, including the migrations behind two product launches.";
 const P4 =
-  "Delivered the broker workspace on Remix, the full-stack React framework, halving time to first render.";
+  "Delivered the broker workspace on Remix, a full-stack React framework similar to TanStack Start, halving time to first render.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2018.";
 
