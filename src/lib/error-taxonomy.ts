@@ -51,7 +51,7 @@ export interface NormalizedError {
 // also catches Postgres permission and constraint prose, Zod validation arrays,
 // and JSON-structured error payloads.
 const RAW_LEAK =
-  /(supabase|postgrest|pgrst|jwt|sql|relation ".*"|stack|at .*\(.*:\d+:\d+\)|\{\s*"|\[\s*\{|\[object|row-level security|violates|permission denied|duplicate key|constraint|column .* does not exist|for table "|logic tree|failed to parse|\.ilike\.|\.eq\.|\borgs?\b.*\bin\.\(|[a-z_]+_failed:|"code"\s*:\s*"|"path"\s*:\s*\[)/i;
+  /(supabase|postgrest|pgrst|jwt|sql|relation ".*"|stack|at .*\(.*:\d+:\d+\)|\{\s*"|\[\s*\{|\[object|row-level security|violates|permission denied|duplicate key|constraint|column .* does not exist|for table "|logic tree|failed to parse|invalid input value for enum|invalid input syntax for|type "[a-z_]+" does not exist|unterminated|\.ilike\.|\.eq\.|\borgs?\b.*\bin\.\(|[a-z_]+_failed:|"code"\s*:\s*"|"path"\s*:\s*\[)/i;
 
 export function newCorrelationId(): string {
   const rand =
