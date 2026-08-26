@@ -548,7 +548,7 @@ function JobDetail() {
               <h2 className="text-xl font-semibold tracking-tight">How hiring works here</h2>
               <ol className="mt-4 space-y-4">
                 {[
-                  `Apply in about 3 minutes — share your details, upload your CV${
+                  `Apply in ${applyEffortTimeClause(effort)} — share your details, upload your CV${
                     pos.questions.length > 0
                       ? `, and answer ${pos.questions.length} short screening ${
                           pos.questions.length === 1 ? "question" : "questions"
