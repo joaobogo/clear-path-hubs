@@ -31,20 +31,20 @@ const SUPPRESSION_REASON = "demo candidate — never contact";
 /** Candidate dossier modules, in cohort order. */
 const SLUGS = [
   "helena-carvalho",
-  "tomas-ribeiro",
-  "ines-fonseca",
-  "rui-mendes",
-  "clara-batista",
-  "andre-pinto",
-  "marta-lourenco",
-  "diogo-serrao",
-  "patricia-nunes",
-  "vasco-teixeira",
-  "sara-cordeiro",
-  "bruno-alvim",
-  "lidia-matos",
-  "hugo-peixoto",
-  "carolina-freitas",
+  "tomas-ferreira",
+  "mariana-lopes",
+  "rui-almeida",
+  "marta-nunes",
+  "diogo-martins",
+  "sara-mendes",
+  "vasco-santos",
+  "catarina-ribeiro",
+  "miguel-costa",
+  "ana-sofia-pinto",
+  "filipe-rocha",
+  "laura-fernandez",
+  "gabriel-souza",
+  "joana-teixeira",
 ] as const;
 
 // ── outbound kill switch ────────────────────────────────────────────────────
@@ -92,8 +92,14 @@ async function loadDossiers(only: string | null): Promise<Dossier[]> {
   if (only && slugs.length === 0) throw new Error(`Unknown candidate slug "${only}"`);
   const out: Dossier[] = [];
   for (const slug of slugs) {
-    const mod = await import(`./seed-northwind-demo/candidates/${slug}`);
-    out.push((mod.dossier ?? mod.default) as Dossier);
+    try {
+      const mod = await import(`./seed-northwind-demo/candidates/${slug}`);
+      out.push((mod.dossier ?? mod.default) as Dossier);
+    } catch {
+      // Dossier module not written yet — reported by the caller, not fatal.
+      if (only) throw new Error(`No dossier module for "${slug}"`);
+      console.log(`   (skipping ${slug}: dossier module not written yet)`);
+    }
   }
   return out;
 }
