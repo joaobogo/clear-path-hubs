@@ -759,8 +759,6 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 dealBreakers: dealbreakerLines,
                 location: locationText,
                 workModel: data.workModel || "",
-                employmentType: data.employmentType ?? "",
-                seniority: data.seniority ?? "",
                 onsiteDays: data.onsiteDays ?? null,
                 remoteTimezones: data.remoteTimezones ?? [],
                 remoteAnywhereInCountry: data.remoteAnywhereInCountry === true,

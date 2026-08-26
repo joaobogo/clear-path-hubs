@@ -254,6 +254,7 @@ function ClientDetail() {
               to="/admin/clients/$id"
               params={{ id }}
               search={{ tab: t }}
+              resetScroll={false}
               data-qa-action={`tab-${t}`}
               className={`inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm ${
                 tab === t

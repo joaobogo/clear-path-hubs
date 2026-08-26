@@ -41,7 +41,7 @@ function GapList({
             </span>
             {g.step && onJumpToStep ? (
               <Button type="button" size="sm" variant="ghost" onClick={() => onJumpToStep(g.step!)}>
-                Fix in step {g.step}
+                Fix {g.label}
               </Button>
             ) : g.step && editTo ? (
               <Button asChild size="sm" variant="ghost">
