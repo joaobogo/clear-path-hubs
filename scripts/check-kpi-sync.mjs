@@ -66,16 +66,16 @@ function walk(dir, out = []) {
 const tableGroup = CORE_TABLES.join("|");
 
 /**
- * Counting or aggregating patterns:
- *   - a PostgREST count/head select on a core table
- *   - `.from("<core table>")` followed by a `.length` / `count` / `reduce`
- *     derivation in the same statement chain
+ * Counting or aggregating patterns. A shared business figure reads as a bare
+ * count (`count: "exact", head: true`), a SQL aggregate, or a `.length` over
+ * rows fetched only to be counted. A paginated list that also asks for a total,
+ * and a write that checks how many rows it touched, are neither.
  */
 const PATTERNS = [
   {
     name: "count select",
     re: new RegExp(
-      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)[\\s\\S]{0,400}?count\\s*:\\s*["'\`]exact["'\`]`,
+      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)[\\s\\S]{0,400}?count\\s*:\\s*["'\`]exact["'\`]\\s*,\\s*head\\s*:\\s*true`,
       "g",
     ),
   },
@@ -89,11 +89,12 @@ const PATTERNS = [
   {
     name: "local length derivation",
     re: new RegExp(
-      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)[\\s\\S]{0,600}?\\)\\s*\\?\\?\\s*\\[\\]\\s*\\)\\.length`,
+      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)(?:(?!\\.update\\(|\\.insert\\(|\\.delete\\(|\\.upsert\\()[\\s\\S]){0,600}?\\)\\s*\\?\\?\\s*\\[\\]\\s*\\)\\.length`,
       "g",
     ),
   },
 ];
+
 
 /**
  * A shared business figure is always whole-account: it counts every row of a
