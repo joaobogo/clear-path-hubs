@@ -255,13 +255,15 @@ export const DEFAULT_CALIBRATION: EngineCalibration = {
   thin_cv_tokens: 40,
   // Under 60 characters there is no document to assess at all.
   unreadable_cv_chars: 60,
-  // Substance gate (FIX-09). A CV shorter than ~1.5 paragraphs, or with fewer
-  // distinct words than a single detailed bullet list, is not enough document to
-  // justify a top band however many rubric terms it happens to contain.
-  substance_min_chars: 700,
-  substance_min_tokens: 70,
-  substance_target_chars: 1800,
-  substance_target_tokens: 180,
+  // Substance gate (FIX-09). A CV shorter than a single paragraph, or with a
+  // smaller vocabulary than one detailed bullet list, is not enough document to
+  // justify a top band however many rubric terms it happens to contain. Kept
+  // deliberately low so short-but-real CVs (trades, hospitality) are not punished
+  // for brevity — the depth signals below catch keyword stuffing at any length.
+  substance_min_chars: 300,
+  substance_min_tokens: 40,
+  substance_target_chars: 1200,
+  substance_target_tokens: 120,
   // A matched term surrounded by fewer than six other words is a list item, not
   // described experience; twelve words is a normal achievement sentence.
   evidence_context_min_tokens: 6,
