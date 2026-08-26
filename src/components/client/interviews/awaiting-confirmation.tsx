@@ -4,6 +4,7 @@ import { CalendarClock } from "lucide-react";
 import { formatDateTime, pluralize } from "@/lib/format/datetime";
 import { interviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
 import { liveSlots } from "@/lib/scheduling";
+import { currentInterviewRecords } from "@/lib/client/interview-buckets";
 import type { InterviewDTO } from "@/lib/interviews.functions";
 
 /**
@@ -14,20 +15,18 @@ export function AwaitingConfirmationSection({
   interviews,
   readOnly,
   onConfirm,
+  onSendNewTimes,
+  busyId,
 }: {
   interviews: InterviewDTO[];
   readOnly: boolean;
   onConfirm: (interview: InterviewDTO) => void;
+  onSendNewTimes?: (interview: InterviewDTO) => void;
+  busyId?: string | null;
 }) {
-  // One row per candidate match — the same shape the Roles banner and the
-  // Overview queue count, so all three show the same number.
-  const seen = new Set<string>();
-  const pending = interviewsAwaitingConfirmation(interviews).filter((iv) => {
-    const key = iv.candidate_match_id ?? iv.id;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  // One row per candidate match — the same reconciled records the timeline
+  // below reads, so the heading count and the list can never disagree.
+  const pending = interviewsAwaitingConfirmation(currentInterviewRecords(interviews));
   if (pending.length === 0) return null;
 
   return (
@@ -66,10 +65,24 @@ export function AwaitingConfirmationSection({
                     : "No times still available — we will send new ones"}
                 </p>
               </div>
+              {/* The button matches the slots: nothing to confirm when every
+                  proposed time has lapsed, so the action becomes sending new
+                  ones instead of opening an empty picker. */}
               {!readOnly ? (
-                <Button onClick={() => onConfirm(iv)} className="sm:shrink-0">
-                  Confirm a time
-                </Button>
+                slots.length > 0 ? (
+                  <Button onClick={() => onConfirm(iv)} className="sm:shrink-0">
+                    Confirm a time
+                  </Button>
+                ) : onSendNewTimes ? (
+                  <Button
+                    variant="secondary"
+                    className="sm:shrink-0"
+                    disabled={busyId === iv.id}
+                    onClick={() => onSendNewTimes(iv)}
+                  >
+                    {busyId === iv.id ? "Sending…" : "Send new times"}
+                  </Button>
+                ) : null
               ) : null}
             </Card>
           );
