@@ -554,11 +554,7 @@ function PositionsPage() {
                       )}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
-                      {new Date(p.updated_at).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                      {formatDate(p.updated_at)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Button

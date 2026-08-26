@@ -583,7 +583,7 @@ export function RequisitionEditor({
                     v{v.version_number} · {v.title || "Untitled"}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(v.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} · {v.created_by_name}
+                    {formatDateTime(v.created_at)} · {v.created_by_name}
                   </span>
                 </li>
               ))}

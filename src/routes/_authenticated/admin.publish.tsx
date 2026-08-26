@@ -319,7 +319,7 @@ function PublishDesk() {
                         </Badge>
                       </div>
                       <div className="mt-1.5 text-[10px] text-muted-foreground">
-                        Updated {r.updated_at ? new Date(r.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—"}
+                        Updated {r.updated_at ? formatDateTime(r.updated_at) : "—"}
                       </div>
                     </td>
                     <td className="px-3 py-2">

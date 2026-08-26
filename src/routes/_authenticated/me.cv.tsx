@@ -203,7 +203,7 @@ function CvPage() {
               <div className="truncate font-medium">{currentCv.filename}</div>
               <div className="text-xs text-muted-foreground">
                 {fmtSize(currentCv.size)} · uploaded{" "}
-                {new Date(currentCv.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })} (
+                {formatDate(currentCv.created_at)} (
                 {formatDistanceToNow(new Date(currentCv.created_at), { addSuffix: true })})
               </div>
             </div>
@@ -317,7 +317,7 @@ function CvPage() {
                             <span className="block text-xs text-muted-foreground">
                               {a.company ?? "Company disclosed after review"}
                               {a.applied_at
-                                ? ` · applied ${new Date(a.applied_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`
+                                ? ` · applied ${formatDate(a.applied_at)}`
                                 : ""}
                             </span>
                             <span className="mt-0.5 block text-xs text-muted-foreground">

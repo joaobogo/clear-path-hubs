@@ -61,10 +61,7 @@ export function CandidateStatePanel({
           <div>
             <dt className="text-xs uppercase tracking-wide text-muted-foreground">Interview</dt>
             <dd className="mt-1">
-              {new Date(nextInterviewAt).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
+              {formatDateTime(nextInterviewAt)}
             </dd>
           </div>
         ) : null}
@@ -72,7 +69,7 @@ export function CandidateStatePanel({
 
       {lastUpdate ? (
         <p className="mt-4 text-xs text-muted-foreground">
-          Last change to your application: {new Date(lastUpdate).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+          Last change to your application: {formatDate(lastUpdate)}
         </p>
       ) : null}
     </section>

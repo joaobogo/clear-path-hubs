@@ -51,15 +51,7 @@ function ageLabel(minutes: number): string {
 }
 
 function formatOrphanDate(iso: string): string {
-  return new Date(iso).toLocaleString(APP_LOCALE, {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: WORKSPACE_TIMEZONE,
-  });
+  return formatDateTime(iso);
 }
 
 

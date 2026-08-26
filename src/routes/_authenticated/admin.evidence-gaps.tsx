@@ -193,7 +193,7 @@ function EvidenceGaps() {
                             <p className="text-xs text-muted-foreground">
                               {row.position_title ?? "No role attached"}
                               {" · "}
-                              {new Date(row.first_seen).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                              {formatDate(row.first_seen)}
                               {row.upload_attempts > 1
                                 ? ` · ${row.upload_attempts} upload attempts`
                                 : ""}

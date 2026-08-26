@@ -299,7 +299,7 @@ export async function sendDecisionNudge(
     const nextMs = new Date(lastAt).getTime() + NUDGE_COOLDOWN_MS;
     if (Date.now() < nextMs) {
       throw new Error(
-        `A follow-up was already sent for this candidate. The next one can go out after ${new Date(nextMs).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}.`,
+        `A follow-up was already sent for this candidate. The next one can go out after ${formatDateTime(nextMs)}.`,
       );
     }
   }

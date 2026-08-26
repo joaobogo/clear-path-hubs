@@ -245,11 +245,7 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-3 text-xs tabular-nums text-muted-foreground">
-                        {new Date(row.submitted_at).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric"
-                        })}
+                        {formatDate(row.submitted_at)}
                       </td>
                       <td className="px-3 py-3">
                         <span

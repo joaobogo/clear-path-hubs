@@ -125,7 +125,7 @@ export async function loadMyDay(
       title: `${row.candidate_name} is waiting on a decision`,
       detail:
         row.last_nudge_at
-          ? `Nudged ${new Date(row.last_nudge_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`
+          ? `Nudged ${formatDate(row.last_nudge_at)}`
           : "No nudge sent yet",
       daysOverdue: row.days_waiting,
       positionId: row.position_id,

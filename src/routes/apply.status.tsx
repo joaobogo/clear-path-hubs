@@ -204,7 +204,7 @@ function StatusPage() {
               {result.organization_name ? ` · ${result.organization_name}` : ""}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              Applied {new Date(result.applied_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })} · Reference{" "}
+              Applied {formatDate(result.applied_at)} · Reference{" "}
               <span className="font-mono">{result.reference}</span>
             </p>
 
@@ -259,8 +259,8 @@ function StatusPage() {
                   <div key={r.id} className="rounded-md border bg-card p-4">
                     <p className="text-sm font-medium">{r.prompt}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Asked {new Date(r.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
-                      {r.due_at ? ` · reply by ${new Date(r.due_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}` : ""}
+                      Asked {formatDate(r.created_at)}
+                      {r.due_at ? ` · reply by ${formatDate(r.due_at)}` : ""}
                     </p>
                     {r.expired ? (
                       <p className="mt-3 text-sm text-muted-foreground">

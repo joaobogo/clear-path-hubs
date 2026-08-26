@@ -45,7 +45,7 @@ function useExceptions(positionId?: string) {
 }
 
 function fmt(iso: string | null): string {
-  return iso ? new Date(iso).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—";
+  return iso ? formatDateTime(iso) : "—";
 }
 
 /** Compact count badge for a position header. */

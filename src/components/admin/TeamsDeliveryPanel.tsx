@@ -58,7 +58,7 @@ export function TeamsDeliveryPanel() {
                 </div>
               </div>
               <div className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                {new Date(row.created_at as string).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                {formatDateTime(row.created_at as string)}
               </div>
             </li>
           ))}

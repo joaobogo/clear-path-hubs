@@ -562,7 +562,7 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                   {publishedScoreDisplay(m.score_runs) ?? "—"}
                 </td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
-                  {m.updated_at ? new Date(m.updated_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
+                  {m.updated_at ? formatDate(m.updated_at) : "—"}
                 </td>
                 <td className="px-3 py-2 text-right">
                   <Link
@@ -816,15 +816,7 @@ export function AuditTab({ id }: { id: string }) {
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <div className="font-medium">{humanizeAuditAction(r.action)}</div>
                   <div className="text-xs text-muted-foreground">
-                    {new Date(r.created_at).toLocaleString(APP_LOCALE, {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                      timeZone: WORKSPACE_TIMEZONE,
-                    })}
+                    {formatDateTime(r.created_at)}
                   </div>
                 </div>
                 <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">

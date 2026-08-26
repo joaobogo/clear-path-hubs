@@ -73,9 +73,5 @@ export function formatMoney(cents: number, currency: string): string {
 
 export function formatWhen(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  return formatDate(iso);
 }

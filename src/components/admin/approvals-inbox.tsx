@@ -153,7 +153,7 @@ function Row({
           </p>
           <p className="text-xs text-muted-foreground">
             Requested by {item.requester_name ?? "unknown"} ·{" "}
-            {new Date(item.requested_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+            {formatDateTime(item.requested_at)}
           </p>
           {blocked ? (
             <BlockedReason

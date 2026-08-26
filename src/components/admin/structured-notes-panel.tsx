@@ -216,7 +216,7 @@ export function StructuredNotesPanel({ targetKind, targetId, title = "Recruiter 
                     ) : null}
                     <span>{n.author_name}</span>
                     <span>·</span>
-                    <span>{new Date(n.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
+                    <span>{formatDateTime(n.created_at)}</span>
                     {n.edited_at ? <span>· edited</span> : null}
                     {(stillEditable || n.is_mine) && !isEditing ? (
                       <button

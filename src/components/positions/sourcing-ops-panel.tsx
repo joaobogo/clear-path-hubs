@@ -186,7 +186,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
         <div className="mt-4 flex items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
             {data?.plan?.last_reviewed_at
-              ? `Last reviewed ${new Date(data.plan.last_reviewed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}`
+              ? `Last reviewed ${formatDateTime(data.plan.last_reviewed_at)}`
               : "Not reviewed yet."}
           </p>
           <Button

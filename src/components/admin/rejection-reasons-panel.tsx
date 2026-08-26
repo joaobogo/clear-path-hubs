@@ -79,7 +79,7 @@ export function RejectionReasonsPanel({
                       {d.surface === "client" ? "client decision" : "our decision"}
                       {d.stage_at_decision ? ` · at ${d.stage_at_decision.replace(/_/g, " ")}` : ""}
                       {" · "}
-                      {new Date(d.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                      {formatDate(d.created_at)}
                       {d.detail ? <span className="block">{d.detail}</span> : null}
                     </li>
                   ))}

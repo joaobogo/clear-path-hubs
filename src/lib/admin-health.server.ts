@@ -92,7 +92,7 @@ export async function loadSlaClock(
       hours_remaining: hoursRemaining,
       state,
       detail: met
-        ? `Met — ${count} released${firstAt ? ` by ${new Date(firstAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}` : ""}`
+        ? `Met — ${count} released${firstAt ? ` by ${formatDate(firstAt)}` : ""}`
         : `${count} of ${c.shortlist_size} released so far`,
     });
   }
@@ -193,7 +193,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
       id: r.job_id as string,
       kind: "processing",
       label: `Job: ${r.job_type ?? "processing"}`,
-      detail: `${r.status} since ${new Date(seenAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} — ${r.attempts ?? 0} attempt(s)`,
+      detail: `${r.status} since ${formatDateTime(seenAt)} — ${r.attempts ?? 0} attempt(s)`,
       last_error: (r.error_message as string) ?? (r.error_code as string) ?? null,
       occurred_at: seenAt,
       retryable: r.retryable !== false,
@@ -215,7 +215,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
       id: r.id as string,
       kind: "cv",
       label: `Unprocessed CV — ${(r.candidate_profiles?.full_name as string) ?? "candidate"}`,
-      detail: `${r.processing_state} since ${new Date(r.processing_updated_at as string).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}`,
+      detail: `${r.processing_state} since ${formatDateTime(r.processing_updated_at as string)}`,
       last_error: null,
       occurred_at: r.processing_updated_at as string,
       retryable: true,

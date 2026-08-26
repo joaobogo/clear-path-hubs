@@ -415,7 +415,7 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
         id: `delivery_risk:${p.id}`,
         kind: "delivery_risk",
         title: `No candidates delivered — ${p.title}`,
-        detail: `${p.organizations?.name ?? "—"} · open since ${new Date(p.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`,
+        detail: `${p.organizations?.name ?? "—"} · open since ${formatDate(p.created_at)}`,
         occurred_at: p.created_at,
         severity: "high",
         to: "/admin/positions/$id",

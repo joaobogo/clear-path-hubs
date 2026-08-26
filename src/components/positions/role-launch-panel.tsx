@@ -37,10 +37,7 @@ const STATE_WORD: Record<LaunchStage["state"], string> = {
 
 function when(at: string | null) {
   if (!at) return null;
-  return new Date(at).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    month: "short",
-    day: "numeric",
-  });
+  return formatDate(at);
 }
 
 export function RoleLaunchPanel({ launch }: { launch: RoleLaunchState }) {
@@ -187,7 +184,7 @@ function SourcingEngineCard({ launch }: { launch: RoleLaunchState }) {
         </div>
         {m.lastUpdate && (
           <span className="text-xs text-muted-foreground">
-            Last update {new Date(m.lastUpdate).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, month: "short", day: "numeric" })}
+            Last update {formatDate(m.lastUpdate)}
           </span>
         )}
       </div>

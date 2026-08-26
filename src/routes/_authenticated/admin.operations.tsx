@@ -442,7 +442,7 @@ function OperationsPage() {
                           ) : (
                             <div>—</div>
                           )}
-                          <div>{new Date(g.latest.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</div>
+                          <div>{formatDateTime(g.latest.created_at)}</div>
                         </td>
                         <td className="px-3 py-2 text-right">
                           <div className="flex items-center justify-end gap-1.5">
@@ -597,7 +597,7 @@ function OperationsPage() {
                   {deliveryItems.map((d) => (
                     <tr key={d.id} className="border-t">
                       <td className="px-4 py-2 text-xs text-muted-foreground">
-                        {new Date(d.lastAttemptAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                        {formatDateTime(d.lastAttemptAt)}
                       </td>
                       <td className="px-4 py-2">{humanizeCode(d.audience)}</td>
                       <td className="px-4 py-2">{humanizeCode(d.eventType)}</td>

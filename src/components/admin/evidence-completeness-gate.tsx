@@ -309,7 +309,7 @@ export function EvidenceCompletenessGate({
                 <p className="flex items-center gap-1 text-[11px] font-medium">
                   <ShieldAlert className="h-3 w-3" /> Overridden by{" "}
                   {c.override.actorName ?? "staff"} on{" "}
-                  {new Date(c.override.at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                  {formatDate(c.override.at)}
                 </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{c.override.reason}</p>
               </div>

@@ -224,7 +224,7 @@ function BlogPost() {
                 <>
                   <span>·</span>
                   <time dateTime={published}>
-                    {new Date(published).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                    {formatDate(published)}
                   </time>
                 </>
               )}

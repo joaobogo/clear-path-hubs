@@ -45,11 +45,7 @@ type Preview = Awaited<ReturnType<typeof previewOwnerBulkReassign>>;
 
 function fmtDate(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  return formatDate(iso);
 }
 
 export function OwnershipCoveragePanel({

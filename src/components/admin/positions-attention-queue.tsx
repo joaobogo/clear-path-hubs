@@ -212,7 +212,7 @@ function AttentionCard({
           <dt className="inline">Last movement </dt>
           <dd className="inline font-medium text-foreground">
             {row.last_movement_at
-              ? new Date(row.last_movement_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })
+              ? formatDate(row.last_movement_at)
               : "none yet"}
           </dd>
         </div>

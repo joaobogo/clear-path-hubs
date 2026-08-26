@@ -205,7 +205,7 @@ export function SlaBreachPanel({ data, isLoading, isError, error, onRetry, query
                     <TableCell className="text-right font-semibold">{r.days_over}</TableCell>
                     <TableCell>{r.owner_name}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {new Date(r.first_breach_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                      {formatDateTime(r.first_breach_at)}
                     </TableCell>
                     <TableCell className="text-right">
                       {r.acknowledged ? (
@@ -229,7 +229,7 @@ export function SlaBreachPanel({ data, isLoading, isError, error, onRetry, query
                   {r.acknowledged ? (
                     <TableRow className="opacity-70">
                       <TableCell colSpan={9} className="pt-0 text-xs text-muted-foreground">
-                        {new Date(r.acknowledged.at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} — {r.acknowledged.note}
+                        {formatDateTime(r.acknowledged.at)} — {r.acknowledged.note}
                       </TableCell>
                     </TableRow>
                   ) : null}

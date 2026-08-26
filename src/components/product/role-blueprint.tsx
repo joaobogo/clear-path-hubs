@@ -350,7 +350,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
                     {t.label}
                   </span>
                   <span className="text-xs tabular-nums">
-                    {t.at ? new Date(t.at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
+                    {t.at ? formatDate(t.at) : "—"}
                   </span>
                 </li>
               ))}
@@ -372,7 +372,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
                   >
                     <span className="text-foreground/90">{humanizeBlueprintAction(a.action)}</span>
                     <span className="text-xs text-muted-foreground tabular-nums">
-                      {a.created_at ? new Date(a.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : ""}
+                      {a.created_at ? formatDate(a.created_at) : ""}
                     </span>
                   </li>
                 ))}

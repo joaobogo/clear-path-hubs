@@ -124,7 +124,7 @@ export function UpdateReadinessPanel({ organizationId }: { organizationId: strin
           {query.data.revert_available_until && (
             <p className="border-b bg-muted/40 px-5 py-2 text-xs text-muted-foreground">
               Baseline set by a staff member. Reversible until{" "}
-              {new Date(query.data.revert_available_until).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}.
+              {formatDateTime(query.data.revert_available_until)}.
             </p>
           )}
 

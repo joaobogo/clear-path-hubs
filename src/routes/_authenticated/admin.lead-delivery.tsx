@@ -118,7 +118,7 @@ function LeadDeliveryPage() {
           <CardContent className="p-4">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Latest lead</p>
             <p className="text-sm font-medium">
-              {items[0] ? new Date(items[0].createdAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "None recorded yet"}
+              {items[0] ? formatDateTime(items[0].createdAt) : "None recorded yet"}
             </p>
           </CardContent>
         </Card>
@@ -167,7 +167,7 @@ function LeadDeliveryPage() {
                   {items.map((row) => (
                     <tr key={row.id} className="border-b last:border-0 align-top">
                       <td className="p-3 whitespace-nowrap">
-                        {new Date(row.createdAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                        {formatDateTime(row.createdAt)}
                         {row.attempts > 1 ? (
                           <span className="block text-xs text-muted-foreground">
                             {row.attempts} attempts

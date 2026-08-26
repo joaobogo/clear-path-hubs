@@ -101,7 +101,7 @@ export function PilotWarningsPanel({ organizationId = null, hideWhenEmpty, limit
                 </Badge>
               )}
               <span className="text-muted-foreground">
-                {new Date(r.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                {formatDate(r.created_at)}
               </span>
             </div>
             <p className="mt-1 text-muted-foreground">{r.blocked_line}</p>
@@ -118,9 +118,9 @@ export function PilotWarningsPanel({ organizationId = null, hideWhenEmpty, limit
                 <dt className="text-muted-foreground">First pilot</dt>
                 <dd>
                   {r.first_claim
-                    ? `${r.first_claim.organization_name ?? r.first_claim.company_name} · ${new Date(
+                    ? `${r.first_claim.organization_name ?? r.first_claim.company_name} · ${formatDate(
                         r.first_claim.created_at,
-                      ).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`
+                      )}`
                     : "—"}
                 </dd>
               </div>

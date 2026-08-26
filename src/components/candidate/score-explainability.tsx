@@ -190,7 +190,7 @@ export function ScoreExplainability({
                     )}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(d.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                    {formatDateTime(d.created_at)}
                   </span>
                 </div>
                 {d.reason && (
@@ -353,11 +353,11 @@ function ScoreDiff({ current, prior }: { current: Any; prior: Any }) {
         <li>
           Evaluated{" "}
           {prior.completed_at
-            ? new Date(prior.completed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })
+            ? formatDateTime(prior.completed_at)
             : "—"}{" "}
           →{" "}
           {current.completed_at
-            ? new Date(current.completed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })
+            ? formatDateTime(current.completed_at)
             : "—"}
         </li>
         <li className="italic">

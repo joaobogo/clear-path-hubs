@@ -172,7 +172,7 @@ function BlogIndex() {
               <p className="mt-5 text-xs text-muted-foreground">
                 {featured.readMinutes} min read
                 {featured.publishedAt
-                  ? ` · ${new Date(featured.publishedAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`
+                  ? ` · ${formatDate(featured.publishedAt)}`
                   : ""}
               </p>
             </div>
@@ -254,7 +254,7 @@ function BlogIndex() {
                   </p>
                   {p.publishedAt && (
                     <p className="mt-4 text-xs text-muted-foreground">
-                      Published {new Date(p.publishedAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                      Published {formatDate(p.publishedAt)}
                     </p>
                   )}
                 </div>

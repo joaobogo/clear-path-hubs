@@ -277,11 +277,7 @@ function TrackPage() {
               {data.closed_outcome?.closedAt ? (
                 <p className="text-sm text-muted-foreground">
                   Closed on{" "}
-                  {new Date(data.closed_outcome.closedAt).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {formatDate(data.closed_outcome.closedAt)}
                   .
                 </p>
               ) : null}
@@ -345,8 +341,8 @@ function TrackPage() {
                 <div key={r.id} className="rounded-md border bg-card p-4">
                   <p className="text-sm font-medium">{r.prompt}</p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Asked {new Date(r.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
-                    {r.due_at ? ` · reply by ${new Date(r.due_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}` : ""}
+                    Asked {formatDate(r.created_at)}
+                    {r.due_at ? ` · reply by ${formatDate(r.due_at)}` : ""}
                   </p>
                   {expired ? (
                     <p className="mt-3 text-sm text-muted-foreground">
@@ -410,7 +406,7 @@ function TrackPage() {
             <span className="font-medium">{data.document.filename}</span>
             <span className="text-muted-foreground">
               {" "}
-              · submitted {new Date(data.document.uploaded_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+              · submitted {formatDate(data.document.uploaded_at)}
             </span>
             <br />
             <span className="text-xs text-muted-foreground">
@@ -454,7 +450,7 @@ function TrackPage() {
                 <p className="mt-1 whitespace-pre-wrap">{r.response ?? "—"}</p>
                 {r.responded_at ? (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Sent {new Date(r.responded_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                    Sent {formatDateTime(r.responded_at)}
                   </p>
                 ) : null}
               </li>

@@ -32,7 +32,7 @@ import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, month: "short", day: "numeric" });
+  formatDate(iso);
 
 function RateCell({
   stats,

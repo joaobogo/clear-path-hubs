@@ -175,7 +175,7 @@ function MyApplicationsPage() {
  ) : null}
  {a.next_interview_at ? (
  <span className="text-[10px] text-muted-foreground">
- {new Date(a.next_interview_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+ {formatDate(a.next_interview_at)}
  </span>
  ) : null}
  </div>
@@ -187,13 +187,13 @@ function MyApplicationsPage() {
  <div>
  <div className="uppercase tracking-wide">Applied</div>
  <div className="text-foreground text-sm">
- {new Date(a.applied_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+ {formatDate(a.applied_at)}
  </div>
  </div>
  <div>
  <div className="uppercase tracking-wide">Last update</div>
  <div className="text-foreground text-sm">
- {new Date(a.last_update).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+ {formatDate(a.last_update)}
  </div>
  </div>
   <div>

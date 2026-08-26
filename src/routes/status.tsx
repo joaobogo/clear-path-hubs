@@ -104,21 +104,11 @@ function StatusPill({ level }: { level: StatusLevel }) {
 }
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatDateTime(iso);
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  return formatDate(iso);
 }
 
 /* -------------------------------------------------------------------- blocks */

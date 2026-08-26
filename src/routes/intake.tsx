@@ -3124,7 +3124,7 @@ function ExpressIntakePage() {
                     <p className="text-sm">
                       The compensation came from a brief more than {COMPENSATION_STALE_DAYS} days old
                       {duplicate.compensationAsOf
-                        ? ` (last set ${new Date(duplicate.compensationAsOf).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })})`
+                        ? ` (last set ${formatDate(duplicate.compensationAsOf)})`
                         : ""}
                       . Worth a look before it goes out to candidates.
                     </p>

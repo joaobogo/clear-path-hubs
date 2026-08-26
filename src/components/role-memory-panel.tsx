@@ -330,10 +330,7 @@ function MemoryCard({
         )}
         <span className="ml-auto text-xs text-muted-foreground">
           {row.author_display_name ?? "Team member"} ·{" "}
-          {new Date(row.updated_at).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
+          {formatDateTime(row.updated_at)}
         </span>
       </div>
 

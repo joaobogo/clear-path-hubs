@@ -131,7 +131,7 @@ function ProfileTab({
           <h2 className="text-sm font-semibold">Submission &amp; position</h2>
           <dl className="mt-3 grid grid-cols-[9rem_1fr] gap-y-1.5 text-sm">
             <Row label="Application" v={<span className="font-mono text-xs">{m.application_id?.slice(0, 8)}…</span>} />
-            <Row label="Submitted" v={m.created_at ? new Date(m.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : null} />
+            <Row label="Submitted" v={m.created_at ? formatDateTime(m.created_at) : null} />
             <Row label="Stage" v={(m.stage ?? "—").replace(/_/g, " ")} />
             <Row label="Position" v={<Link to="/admin/positions/$id" params={{ id: pos?.id ?? "" }} className="text-primary hover:underline">{pos?.title}</Link>} />
             <Row label="Position status" v={pos?.status} />

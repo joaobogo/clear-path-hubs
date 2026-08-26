@@ -106,7 +106,7 @@ export function EmailDeliveryPanel() {
                     {row.eventType.replace(/_/g, " ")}
                   </Badge>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {new Date(row.timestamp).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                    {formatDateTime(row.timestamp)}
                   </div>
                 </div>
               </li>
@@ -119,7 +119,7 @@ export function EmailDeliveryPanel() {
 
       {data?.available && data.historyStartsAt ? (
         <p className="mt-3 text-xs text-muted-foreground">
-          History available from {new Date(data.historyStartsAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}. Delivered
+          History available from {formatDate(data.historyStartsAt)}. Delivered
           and opened outcomes are not recorded.
         </p>
       ) : null}

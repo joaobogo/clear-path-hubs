@@ -12,11 +12,7 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 function fmtDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+    return formatDate(iso);
   } catch {
     return iso.slice(0, 10);
   }
