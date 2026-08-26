@@ -240,8 +240,8 @@ function ProfilePage() {
         {/* Email — confirmation flow, never a direct write */}
         <EmailChangeCard />
 
-        {/* Location and time zone */}
-        {ctx?.seat === "candidate" && (
+        {/* Location and time zone — every seat schedules, so this is not candidate-only */}
+        {true && (
           <ProfileSectionCard
             meta={meta("location")}
             initial={initial.location}
