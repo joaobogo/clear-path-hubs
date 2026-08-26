@@ -7,7 +7,7 @@ const R3 =
 const R2 =
   "Do the SQL and relational data modelling for patient records in Postgres, with 30 reviewed migrations shipped so far.";
 const R4 =
-  "Introduced row-level security so each multi-tenant clinic keeps its records in isolation.";
+  "Practical row-level security work: each multi-tenant clinic keeps its records in isolation under one shared-schema model.";
 const P1 =
   "Vitalis Health is multi-tenant SaaS for 45 clinics, held apart by per-tenant data isolation.";
 const P2 =

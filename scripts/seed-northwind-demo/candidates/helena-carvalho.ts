@@ -123,7 +123,7 @@ export const dossier: Dossier = {
           R5,
           P1,
           P2,
-          "Reviewed an internal AI assistant pilot for the support team over two weeks of prototyping.",
+          "Reviewed an internal conversational assistant pilot for the support team over two weeks of prototyping.",
           "Cut the monthly payroll close from three days to four hours for 620 client workspaces, with zero correction runs since launch.",
           "Ran the weekly release review for a team of six and kept the change log readable for support staff.",
           "Reduced the on-call pages from 14 a month to 4 by fixing the three alerts that fired most often.",

@@ -7,9 +7,9 @@ const R3 =
 const R2 =
   "Lead the SQL and relational data modelling for the assessment store in Postgres, with 80 migrations run without downtime.";
 const R4 =
-  "Enforced row-level security in the database so each institution reads its cohort in isolation.";
+  "Enforced row-level security in the database so each multi-tenant institution reads its cohort in isolation under one tenant model.";
 const R5 =
-  "Own 2,600 automated tests, unit in Vitest and end-to-end in Playwright, blocking any red release.";
+  "Own and keep maintaining 2,600 automated tests, unit in Vitest and end-to-end in Playwright, blocking any red release.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2015.";
 
