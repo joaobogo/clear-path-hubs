@@ -8,6 +8,7 @@
 
 export const CLIENT_ROLE_STATUSES = [
   "active",
+  "draft",
   "under_review",
   "paused",
   "closed",
@@ -17,6 +18,7 @@ export type ClientRoleStatusKey = (typeof CLIENT_ROLE_STATUSES)[number];
 
 export const CLIENT_ROLE_STATUS_LABELS: Record<ClientRoleStatusKey, string> = {
   active: "Active",
+  draft: "Draft",
   under_review: "Under review",
   paused: "Paused",
   closed: "Closed",
@@ -47,7 +49,10 @@ export type ClientRoleStatusInput = {
 
 const PAUSED = new Set(["paused", "on_hold"]);
 const CLOSED = new Set(["closed", "archived", "filled", "cancelled"]);
-const SETTING_UP = new Set(["draft", "submitted", "under_review", "needs_clarification"]);
+// A saved-but-unsubmitted brief is a Draft everywhere (list tab, detail, search).
+// Only a submitted brief reads "Under review".
+const DRAFT = new Set(["draft"]);
+const SETTING_UP = new Set(["submitted", "under_review", "needs_clarification"]);
 const LIVE = new Set(["active", "approved", "open", "published"]);
 
 const n = (v: number | undefined) => (typeof v === "number" && v > 0 ? v : 0);
@@ -74,6 +79,7 @@ export function computeClientRoleStatus(input: ClientRoleStatusInput): ClientRol
   if (isPaused) return status("paused");
   if (isClosed && !hasActivePipeline) return status("closed");
   if (hasActivePipeline || LIVE.has(raw) || isClosed) return status("active");
+  if (DRAFT.has(raw)) return status("draft");
   if (SETTING_UP.has(raw)) return status("under_review");
   return status("under_review");
 }

@@ -108,6 +108,8 @@ function PositionsPage() {
   const statusCounts = useMemo(() => countRolesByTab(allRows), [allRows]);
   const rows = useMemo(() => {
     return allRows.filter((p) => {
+      // "All" is a real view: every role the workspace has, whatever its status.
+      if (status === "all") return true;
       return roleTabForRow(p) === status;
     });
   }, [allRows, status]);
@@ -248,7 +250,7 @@ function PositionsPage() {
   {hasRoleData ? (
     <>
       {plural(rows.length, "role")}
-      {status === "active" ? "" : ` in ${roleStatusTabLabel(status).toLowerCase()}`}
+      {status === "active" || status === "all" ? "" : ` in ${roleStatusTabLabel(status).toLowerCase()}`}
     </>
   ) : (
     /* Never a count before the roles list resolves — a zero here reads as
