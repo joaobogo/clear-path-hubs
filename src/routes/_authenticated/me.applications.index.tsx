@@ -52,7 +52,7 @@ const STATUS_TONE = CANDIDATE_STATUS_TONE;
 
 
 function MyApplicationsPage() {
- const data = Route.useLoaderData();
+ const data = Route.useLoaderData() ?? { applications: [] };
  const listFn = useServerFn(listMyApplications);
  const withdrawFn = useServerFn(withdrawApplication);
  const qc = useQueryClient();
