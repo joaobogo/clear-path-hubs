@@ -1,0 +1,11 @@
+{
+  "note": "Files allowed to count or aggregate over the core business tables outside src/lib/kpis/. Each entry needs a reason. Add one only when the figure genuinely is not a shared business figure.",
+  "allow": [
+    { "path": "src/lib/hires/confirmed.server.ts", "reason": "The confirmed-hires reader itself; re-exported by src/lib/kpis." },
+    { "path": "src/lib/client-seats.ts", "reason": "Pure seat derivation used by the seats reader; takes rows, never queries." },
+    { "path": "src/lib/client/role-counts.ts", "reason": "Pure role derivation used by the open-roles reader." },
+    { "path": "src/lib/kpis/org-rollups.server.ts", "reason": "Staff rollups; lives in the KPI module." },
+    { "path": "src/lib/qa-guard.ts", "reason": "Fixture guard, not a business figure." },
+    { "path": "src/lib/data-loaders.server.ts", "reason": "Existence probes for fixture filtering, not counts rendered to users." }
+  ]
+}
