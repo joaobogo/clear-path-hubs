@@ -89,16 +89,21 @@ export function ActionRail({
   // non-retryable failure be clicked again.
   const preflightBlock = approvePreflightBlock(m.canonical_state);
   const approveBlocked = !!preflightBlock || approveFailure?.retryable === false;
+  // Approval is internal only: it records the assessment we stand behind and
+  // never shares the profile. Publication is a separate, confirmed step.
   const runApprove = () => {
     setApproveFailure(null);
     return onRun(
       "approve",
       () =>
         applyReviewDecision({
-          data: { match_id: m.id, action: "approve_for_client", reason },
+          data: { match_id: m.id, action: "approve_for_client", reason, publish: false },
         }),
       {
-        onSuccess: () => setApproveFailure(null),
+        onSuccess: () => {
+          setApproveFailure(null);
+          toast.success("Score approved — not yet shared with the client");
+        },
         onError: (err) => {
           const failure = explainApproveFailure(err.message);
           setApproveFailure(failure);
@@ -108,24 +113,21 @@ export function ActionRail({
     );
   };
 
-  // Approving releases the profile to the client in the same transaction, so it
-  // is never a bare click: the admin reads the client preview first, then
-  // confirms the release explicitly.
-  const confirmApproveAndPublish = async () => {
+  const confirmPublish = async () => {
     const c = await confirm({
-      title: "Approve and publish to the client",
+      title: "Publish to the client",
       object: (m.full_name as string | null) ?? "This candidate",
       description:
-        "Approving releases this profile to the client immediately. Open “Client preview” first if you have not read it yet.",
+        "Publishing releases this approved profile to the client. Open “Client preview” first if you have not read it yet.",
       impact: [
         "The client sees the score, evidence and requirement verdicts as shown in Client preview",
         "The client is notified that a new candidate is available",
         "You can still unpublish afterwards, but the notification stays sent",
       ],
-      confirmLabel: "Approve & publish",
+      confirmLabel: "Publish to client",
     });
     if (!c.confirmed) return;
-    await runApprove();
+    publish.mutate("visible");
   };
 
   // Context-aware primary action — one at a time, following readiness order.
