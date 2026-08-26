@@ -1144,15 +1144,38 @@ export function PositionEditWizard({
                 Continue
               </Button>
             ) : (
-              <Button
-                type="button"
-                onClick={() => saveMutation.mutate()}
-                disabled={saveMutation.isPending || !contentDirty}
-              >
-                {saveMutation.isPending ? "Saving…" : "Save role brief"}
-              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  type="button"
+                  variant={canSubmit ? "outline" : "default"}
+                  onClick={() => saveMutation.mutate()}
+                  disabled={saveMutation.isPending || !contentDirty}
+                >
+                  {saveMutation.isPending ? "Saving…" : "Save role brief"}
+                </Button>
+                {canSubmit && (
+                  <Button
+                    type="button"
+                    onClick={() => submitMutation.mutate()}
+                    disabled={submitMutation.isPending || blockingGaps.length > 0}
+                    title={
+                      blockingGaps.length > 0
+                        ? `Still required: ${blockingGaps.map((g) => g.label).join(", ")}`
+                        : undefined
+                    }
+                  >
+                    {submitMutation.isPending ? "Submitting…" : "Submit for review"}
+                  </Button>
+                )}
+              </div>
             )}
           </div>
+          {step === LAST_STEP && canSubmit && blockingGaps.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              Before you can submit, answer: {blockingGaps.map((g) => g.label).join(", ")}. Everything
+              else on the checklist only improves ranking.
+            </p>
+          )}
         </div>
 
         <aside className="space-y-5 lg:sticky lg:top-6 lg:self-start">
@@ -1160,7 +1183,11 @@ export function PositionEditWizard({
             positionId={state.id}
             onJumpToStep={setStep}
             draft={qualityDraft}
+            onReadiness={({ blocking }) =>
+              setBlockingGaps(blocking.map((g) => ({ label: g.label, step: g.step })))
+            }
           />
+
           <div className="rounded-md border bg-muted/50 p-3 text-xs text-muted-foreground">
             <p className="font-medium text-foreground">Draft saved locally</p>
             <p className="mt-1">
