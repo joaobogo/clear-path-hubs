@@ -373,7 +373,7 @@ export const listMyNotifications = createServerFn({ method: "GET" })
         query = query
           .eq("organization_id", membership.organization_id)
           .eq("audience", "client")
-          .not("event_type", "in", '("cv_parse_failed", "screening_needs_review", "intake_submitted")');
+          .not("event_type", "in", "(cv_parse_failed,screening_needs_review,intake_submitted)");
       }
     }
 
