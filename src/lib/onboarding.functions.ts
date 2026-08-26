@@ -17,6 +17,10 @@ import {
   type OnboardingStepId,
 } from "@/lib/onboarding/onboarding-steps";
 import {
+  deriveOnboardingCompletion,
+  nextIncompleteStep,
+} from "@/lib/onboarding/derive-completion";
+import {
   DEFAULT_WEIGHTS,
   WEIGHT_DIMENSIONS,
   balanceWeights,
@@ -389,32 +393,28 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     }
 
     const confirmed = draft.confirmed ?? {};
-    const complete: OnboardingStepId[] = [];
     // Covered-by-plan counts as paid — see PAID_PAYMENT_STATES.
     const paid = isPaymentSatisfied(position?.payment_status ?? "unpaid");
 
+    // ONE completion derivation, shared with the admin client record so the
+    // client Setup wizard and staff Overview never disagree.
+    const complete = deriveOnboardingCompletion({
+      organizationName: orgRow?.name ?? null,
+      confirmed,
+      position: position
+        ? {
+            title: position.title,
+            mustHaveCount: position.must_haves.length,
+            blueprintConfirmedAt: position.blueprint_confirmed_at,
+            weightsSet: position.weights_set,
+            oversightKeys: Object.keys(position.oversight).length,
+            blueprintStatus: position.blueprint_status,
+            searchLiveAt: position.search_live_at,
+          }
+        : null,
+    });
 
-    if (orgRow?.name && confirmed.workspace) complete.push("workspace");
-    if (position && position.title.trim().length > 1) complete.push("role");
-    if (position && position.must_haves.length >= 3) complete.push("requirements");
-    if (position?.blueprint_confirmed_at) complete.push("blueprint");
-    if (position?.weights_set) complete.push("weights");
-    if (confirmed.agents) complete.push("agents");
-    if (position && Object.keys(position.oversight).length > 0) complete.push("oversight");
-    if (confirmed.systems) complete.push("systems");
-    if (
-      position &&
-      (position.search_live_at ||
-        ["ready", "confirmed", "analyzing_jd", "researching_company", "drafting_blueprint"].includes(
-          position.blueprint_status,
-        ))
-    ) {
-      complete.push("run");
-    }
-    if (confirmed.workspace_entry) complete.push("workspace_entry");
-
-    const nextIncomplete =
-      ONBOARDING_STEP_IDS.find((id) => !complete.includes(id)) ?? "workspace_entry";
+    const nextIncomplete = nextIncompleteStep(complete);
     const current =
       draft.current_step && ONBOARDING_STEP_IDS.includes(draft.current_step)
         ? draft.current_step
