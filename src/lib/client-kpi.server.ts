@@ -6,6 +6,7 @@
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
 import { displayScore } from "@/config/scoring-bands";
+import { publishedBand, publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { countRowsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
