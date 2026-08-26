@@ -74,7 +74,7 @@ export const dossier: Dossier = {
 
   cv: {
     layout: "T2",
-    interests: 'Board-games club organiser; open-water swimming most weekends.'.replace(/^/, ""),
+    interests: "Board-games club organiser; open-water swimming most weekends.",
     name: "Catarina Ribeiro",
     title: "Full-Stack Developer",
     contact: "Braga, Portugal · catarina.ribeiro.dev@gmail.com · +351 925 887 316",

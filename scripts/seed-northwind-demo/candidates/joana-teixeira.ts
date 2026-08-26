@@ -67,7 +67,7 @@ export const dossier: Dossier = {
 
   cv: {
     layout: "T3",
-    interests: 'Sings in a fado group; volunteers at an animal shelter in Braga.'.replace(/^/, ""),
+    interests: "Sings in a fado group; volunteers at an animal shelter in Braga.",
     name: "Joana Teixeira",
     title: "Front-end Developer",
     contact: "Lisbon, Portugal · joana.teixeira.web@gmail.com · +351 921 704 358",

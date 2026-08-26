@@ -93,7 +93,7 @@ export const dossier: Dossier = {
 
   cv: {
     layout: "T2",
-    interests: 'Bread baker at home; helps run a neighbourhood book exchange.'.replace(/^/, ""),
+    interests: "Bread baker at home; helps run a neighbourhood book exchange.",
     name: "Mariana Lopes",
     title: "Senior Full-Stack Engineer",
     contact:

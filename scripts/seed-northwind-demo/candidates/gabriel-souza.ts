@@ -76,7 +76,7 @@ export const dossier: Dossier = {
 
   cv: {
     layout: "T1",
-    interests: 'Capoeira since childhood; cooks for a Brazilian supper club in Lisbon.'.replace(/^/, ""),
+    interests: "Capoeira since childhood; cooks for a Brazilian supper club in Lisbon.",
     name: "Gabriel Souza",
     title: "Full-Stack Engineer",
     contact: "São Paulo, Brazil · gabriel.souza.dev@gmail.com · +55 11 98442-7130",

@@ -87,7 +87,7 @@ export const dossier: Dossier = {
 
   cv: {
     layout: "T2",
-    interests: 'Choir soprano; volunteers at a food bank one Saturday a month.'.replace(/^/, ""),
+    interests: "Choir soprano; volunteers at a food bank one Saturday a month.",
     name: "Ana Sofia Pinto",
     title: "Engineering Manager",
     contact: "Lisbon, Portugal · anasofia.pinto@gmail.com · +351 918 330 476",

@@ -71,7 +71,7 @@ export const dossier: Dossier = {
 
   cv: {
     layout: "T3",
-    interests: 'Restores vintage bicycles; reads a lot of maritime history.'.replace(/^/, ""),
+    interests: "Restores vintage bicycles; reads a lot of maritime history.",
     name: "Miguel Costa",
     title: "Full-Stack Developer",
     contact: "Lisbon, Portugal · miguel.costa.dev@outlook.com · +351 961 224 508",

@@ -79,7 +79,7 @@ export const dossier: Dossier = {
 
   cv: {
     layout: "T1",
-    interests: 'Plays bass in a covers band; keeps a small allotment outside Porto.'.replace(/^/, ""),
+    interests: "Plays bass in a covers band; keeps a small allotment outside Porto.",
     name: "Rui Almeida",
     title: "Full-Stack Engineer",
     contact: "Lisbon, Portugal · rui.almeida.eng@outlook.com · +351 913 668 245",

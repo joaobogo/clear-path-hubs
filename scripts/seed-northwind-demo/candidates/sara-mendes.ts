@@ -78,7 +78,7 @@ export const dossier: Dossier = {
 
   cv: {
     layout: "T2",
-    interests: 'Ceramics classes on Tuesdays; long-distance cycling in the summer.'.replace(/^/, ""),
+    interests: "Ceramics classes on Tuesdays; long-distance cycling in the summer.",
     name: "Sara Mendes",
     title: "Full-Stack Engineer",
     contact: "Lisbon, Portugal · sara.mendes.web@gmail.com · +351 928 447 190",
