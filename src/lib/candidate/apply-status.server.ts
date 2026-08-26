@@ -10,6 +10,7 @@ import {
   type StatusInputs,
 } from "./apply-status-model";
 import type { CandidateStateKey } from "./candidate-transparency";
+import { greetingName } from "./display-name";
 
 export interface PublicInfoRequest {
   id: string;
@@ -158,7 +159,7 @@ export async function loadPublicStatus(
     last_update: lastUpdate,
     position_title: pos?.title ?? null,
     organization_name: pos?.organizations?.name ?? null,
-    candidate_first_name: (cp?.full_name ?? "").trim().split(" ")[0] || null,
+    candidate_first_name: greetingName(cp?.full_name as string | null),
     state,
     steps: buildJourney(state, inputs),
     open_requests,
