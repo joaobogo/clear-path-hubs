@@ -393,10 +393,23 @@ export const requestInterview = createServerFn({ method: "POST" })
         created_by: context.userId,
         updated_by: context.userId,
       };
+    // Reusing an empty request must not rewrite the columns only staff may set
+    // (who it belongs to, who first asked). They already hold the right values
+    // on the existing row, and touching them is rejected by design.
+    const {
+      candidate_match_id: _m,
+      organization_id: _o,
+      position_id: _p,
+      candidate_submission_id: _s,
+      created_by: _c,
+      requested_by_user_id: _r,
+      admin_coordination_required: _a,
+      ...reusePayload
+    } = writePayload;
     const writeQuery = reusable
       ? context.supabase
           .from("interviews")
-          .update(writePayload)
+          .update(reusePayload)
           .eq("id", reusable.id)
           .eq("organization_id", data.orgId)
       : context.supabase.from("interviews").insert(writePayload);

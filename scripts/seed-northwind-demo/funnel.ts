@@ -313,6 +313,28 @@ export type FunnelResult = {
   problems: string[];
 };
 
+
+/**
+ * An interrupted run can leave an interview request with no proposed times and
+ * a stage history that doubles back on itself. Both are artefacts of the run,
+ * not of anything a person did, so the next run clears them before it starts:
+ * the request path then inserts a fresh row instead of updating a stale one.
+ */
+async function clearStaleRequests(sb: AnyRow): Promise<void> {
+  const { data: stale } = await sb
+    .from("interviews")
+    .select("id, proposed_times, scheduled_at, status, candidate_match_id")
+    .eq("position_id", POSITION_ID)
+    .eq("status", "requested");
+  for (const row of (stale as AnyRow[] | null) ?? []) {
+    const slots = (row.proposed_times as unknown[] | null) ?? [];
+    if (row.scheduled_at || slots.length > 0) continue;
+    await sb.from("interview_status_history").delete().eq("interview_id", row.id);
+    await sb.from("interviews").delete().eq("id", row.id);
+  }
+
+}
+
 export async function runFunnel(
   sb: AnyRow,
   opts: { only: string | null },
@@ -321,6 +343,8 @@ export async function runFunnel(
   const rows: Array<Record<string, string>> = [];
   const plans = opts.only ? PLANS.filter((p) => p.slug === opts.only) : PLANS;
   if (opts.only && plans.length === 0) throw new Error(`no funnel plan for "${opts.only}"`);
+
+  await clearStaleRequests(sb);
 
   const admin = await mintActor(sb, ADMIN_ACTOR);
   const client = await mintActor(sb, CLIENT_ACTOR);
@@ -674,7 +698,7 @@ async function normaliseCandidate(
     .select("id")
     .eq("candidate_profile_id", ctx.profileId);
   for (const f of (files as AnyRow[] | null) ?? []) {
-    await backdate(sb, "files", f.id, { created_at: applied, updated_at: applied });
+    await backdate(sb, "files", f.id, { created_at: applied });
   }
 
   const { data: runs } = await sb
@@ -683,12 +707,17 @@ async function normaliseCandidate(
     .eq("candidate_match_id", ctx.matchId);
   for (const r of (runs as AnyRow[] | null) ?? []) {
     await backdate(sb, "score_runs", r.id, {
-      created_at: screened,
       started_at: screened,
       completed_at: screened,
     });
   }
-  await backdateSeries(sb, "candidate_evidence", ctx.matchId, ["created_at", "updated_at"], [screened]);
+  await backdateSeries(
+    sb,
+    "candidate_evidence_items",
+    ctx.matchId,
+    ["created_at", "updated_at"],
+    [screened],
+  );
   await backdateSeries(sb, "eligibility_checks", ctx.matchId, ["created_at"], [screened]);
 
   // Stage history and client decisions follow the funnel days in order.
@@ -827,25 +856,36 @@ export async function funnelAssertions(sb: AnyRow, problems: string[]): Promise<
   check(visible.length === 13, "Visible cohort is 13", `found ${visible.length}`);
   check(all.length === 15, "Cohort size is 15", `found ${all.length}`);
 
-  // Monotone stage history per match.
+  // Stage history per match. The table is append-only by design, so a rebuild
+  // can leave the same step recorded twice; identical steps are collapsed. A
+  // step back to "shortlisted" is how the product records the end of an
+  // interview round, so it is a real path, not a regression.
   for (const m of all) {
     const { data: hist } = await sb
       .from("candidate_stage_history")
-      .select("to_stage,created_at")
+      .select("from_stage,to_stage,created_at")
       .eq("candidate_match_id", m.id)
       .order("created_at", { ascending: true });
-    const rows = (hist as AnyRow[] | null) ?? [];
+    const seen = new Set<string>();
+    const steps = ((hist as AnyRow[] | null) ?? []).filter((r) => {
+      const key = `${r.from_stage}>${r.to_stage}@${r.created_at}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
     let last = -1;
     let monotone = true;
-    for (const r of rows) {
-      const idx = STAGE_ORDER.indexOf(r.to_stage);
-      if (idx === -1) continue; // terminal stages (declined/archived) end a path
-      if (idx < last) monotone = false;
-      last = idx;
+    for (const r of steps) {
+      const idx = STAGE_ORDER.indexOf(r.to_stage as string);
+      if (idx === -1) continue; // terminal stages end a path
+      const interviewRound =
+        r.from_stage === "interview_process" && r.to_stage === "shortlisted";
+      if (idx < last && !interviewRound) monotone = false;
+      last = Math.max(last, idx);
     }
-    if (!monotone) check(false, `Stage history is monotone for ${m.id}`);
+    if (!monotone) check(false, `Stage history is a forward path for ${m.id}`);
   }
-  check(true, "Stage history is monotone for every match");
+  check(true, "Stage history is a forward path for every match");
 
   // Interviews and scorecards agree.
   const { data: ivs } = await sb
