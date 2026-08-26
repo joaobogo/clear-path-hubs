@@ -44,7 +44,13 @@ export const getRouter = () => {
     // the control the pointer is on, which swallowed the click that started
     // the transition. Fast transitions now finish without any swap.
     defaultPendingMs: 350,
-    defaultPendingMinMs: 0,
+    // Must stay non-zero. On a hard load of a client-only subtree (/me, /client,
+    // /admin all render client-side), the router hydrates those matches as
+    // pending and only kicks off the load on the next tick. With a zero minimum
+    // there is no promise to suspend on for that one frame, so the first render
+    // threw an empty value and the page stayed blank. A small floor keeps a real
+    // promise in place and costs one skeleton frame.
+    defaultPendingMinMs: 150,
     // Any route without its own 404 surface still gets a designed page.
     defaultNotFoundComponent: PublicNotFound,
   });
