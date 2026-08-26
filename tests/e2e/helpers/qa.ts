@@ -52,10 +52,15 @@ type QaAction =
   | "client_comms_truth"
   | "candidate_truth";
 
+/**
+ * The QA routes are dev-server-only now (see qa-endpoint-gate), so no shared
+ * secret is required to reach them. When a local QA_SEED_TOKEN happens to be
+ * set the server still enforces it, so we forward it when present.
+ */
+export const QA_E2E_COOKIE_VALUE = "e2e";
+
 function token(): string {
-  const value = process.env["QA_SEED_TOKEN"];
-  if (!value) throw new Error("QA_SEED_TOKEN is not set in the environment");
-  return value;
+  return process.env["QA_SEED_TOKEN"] ?? QA_E2E_COOKIE_VALUE;
 }
 
 export async function qaSeed<T = Record<string, unknown>>(

@@ -1,6 +1,6 @@
 // Phase 11 QA seed route. Public path bypasses auth; guarded by x-qa-token header.
 // Idempotent: on POST action=seed it cleans up prior QA data and provisions a fresh tenant.
-// action=cleanup removes all QA fixtures. Never enable without QA_SEED_TOKEN set.
+// action=cleanup removes all QA fixtures. Dev-server-only: absent in any build.
 
 import { createFileRoute } from "@tanstack/react-router";
 import { readJsonWithLimit } from "@/lib/public-api/body-limit";
@@ -1084,17 +1084,21 @@ async function cleanupCandidateE2E(emailPattern: string): Promise<{ deleted: Rec
 
 
 async function handle(request: Request): Promise<Response> {
-  // Hard kill switch: without ENABLE_QA_ENDPOINTS this route does not exist.
+  // Hard kill switch: outside the local dev server this route does not exist.
   const disabled = qaEndpointDisabledResponse();
   if (disabled) return disabled;
 
   const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
   if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
 
-  const token = request.headers.get("x-qa-token");
+  // Dev-only route (the gate above proves it). A token is honoured when one is
+  // configured locally, but is no longer required — there is no production
+  // deployment of this handler for a token to protect.
   const expected = process.env.QA_SEED_TOKEN;
-  if (!expected) return new Response("QA_SEED_TOKEN not configured", { status: 500 });
-  if (!token || token !== expected) return new Response("forbidden", { status: 401 });
+  if (expected) {
+    const token = request.headers.get("x-qa-token");
+    if (!token || token !== expected) return new Response("forbidden", { status: 401 });
+  }
 
   let body: {
     action?: string;

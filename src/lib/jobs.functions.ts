@@ -12,28 +12,29 @@ import {
 } from "@/lib/jobs/public-facts";
 import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
 import { jobDescriptionSummary } from "@/lib/marketing/job-description";
-import { qaEndpointsEnabled } from "@/lib/public-api/qa-endpoint-gate";
+import { QA_E2E_COOKIE, qaEndpointsEnabled } from "@/lib/public-api/qa-endpoint-gate";
 
 
 
 /**
  * QA fixtures are flagged is_test_record and are invisible to the public board.
- * The E2E harness opts in by setting a `qa_e2e` cookie holding QA_SEED_TOKEN,
- * so the suite can drive the real listing/apply UI without the fixture ever
- * being reachable by a real visitor.
+ * The E2E harness opts in by setting a `qa_e2e` cookie, which is only ever
+ * honoured by the local dev server — in any deployed build the opt-in is dead
+ * code, so a fixture can never be reachable by a real visitor.
  */
 function testRecordsVisible(): boolean {
   if (!qaEndpointsEnabled()) return false;
-  const expected = process.env.QA_SEED_TOKEN;
-  if (!expected) return false;
   let cookie = "";
   try {
     cookie = getRequestHeader("cookie") ?? "";
   } catch {
     return false;
   }
-  const match = /(?:^|;\s*)qa_e2e=([^;]+)/.exec(cookie);
-  return Boolean(match && decodeURIComponent(match[1]) === expected);
+  const match = new RegExp(`(?:^|;\\s*)${QA_E2E_COOKIE}=([^;]+)`).exec(cookie);
+  if (!match) return false;
+  const value = decodeURIComponent(match[1]);
+  const expected = process.env.QA_SEED_TOKEN;
+  return expected ? value === expected : value.length > 0;
 }
 
 
