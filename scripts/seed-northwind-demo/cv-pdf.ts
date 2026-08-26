@@ -116,7 +116,7 @@ const THEMES: Record<CvLayout, Theme> = {
   T2: {
     margin: 42,
     body: 10.5,
-    lead: 13.6,
+    lead: 14.4,
     head: 10.2,
     nameSize: 21,
     accent: [0.11, 0.32, 0.4],
@@ -159,6 +159,9 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
   let mainX = layout === "T2" ? panelW + 24 : t.margin;
   let mainW = A4.w - (layout === "T2" ? 34 : t.margin) - mainX;
   let y = A4.h - t.margin;
+
+  // The heading already says "Core skills", so the label is not repeated in the body.
+  const coreSkills = cv.coreSkills.replace(/^\s*Core skills:\s*/i, "");
 
   const dates = (range: string) =>
     cv.dateStyle === "numeric" ? numericDates(range) : range;
@@ -328,10 +331,9 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
 
   // ── Header ────────────────────────────────────────────────────────────────
   if (layout === "T1") {
-    draw(cv.name, { font: bold, size: t.nameSize });
-    y -= 1;
-    draw(`${cv.title}`, { size: 11.5, color: t.accent });
-    draw(cv.contact, { size: 9.6, color: t.muted, gap: 2 });
+    draw(cv.name, { font: bold, size: t.nameSize, lead: t.nameSize + 6 });
+    draw(`${cv.title}`, { size: 11.5, color: t.accent, lead: 15 });
+    draw(cv.contact, { size: 9.6, color: t.muted, lead: 12, gap: 4 });
   } else if (layout === "T2") {
     page.drawText(winAnsiSafe(cv.name), {
       x: mainX,
@@ -350,9 +352,9 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
     });
     y -= 22;
   } else {
-    draw(cv.name, { font: bold, size: t.nameSize });
-    draw(cv.title, { size: 10.5, font: italic, color: t.muted });
-    draw(cv.contact, { size: 9.2, color: t.muted, gap: 2 });
+    draw(cv.name, { font: bold, size: t.nameSize, lead: t.nameSize + 5 });
+    draw(cv.title, { size: 10.5, font: italic, color: t.muted, lead: 13.5 });
+    draw(cv.contact, { size: 9.2, color: t.muted, lead: 12, gap: 3 });
   }
 
   // ── Main flow ─────────────────────────────────────────────────────────────
@@ -370,7 +372,7 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
 
   if (layout !== "T2") {
     section("Core skills");
-    draw(cv.coreSkills, { gap: 2 });
+    draw(coreSkills, { gap: 2 });
     if (cv.educationFirst) educationBlock();
   }
 
@@ -438,7 +440,7 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
     railHead("Contact");
     for (const part of cv.contact.split(/\s+·\s+/)) rail(part);
     railHead("Core skills");
-    rail(cv.coreSkills);
+    rail(coreSkills);
     railHead("Languages");
     for (const line of cv.languages) rail(line);
     railHead("Education");
@@ -472,8 +474,8 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
 export function cvReadingOrder(cv: CvDoc): string[] {
   const layout: CvLayout = cv.layout ?? "T1";
   const main: string[] = [cv.summary];
-  const facts = [cv.coreSkills, ...cv.education, ...cv.certifications, ...cv.languages, cv.interests ?? ""];
-  if (layout !== "T2") main.push(cv.coreSkills);
+  const facts = [cv.coreSkills.replace(/^\s*Core skills:\s*/i, ""), ...cv.education, ...cv.certifications, ...cv.languages, cv.interests ?? ""];
+  if (layout !== "T2") main.push(cv.coreSkills.replace(/^\s*Core skills:\s*/i, ""));
   if (layout !== "T2" && cv.educationFirst) main.push(...cv.education, ...cv.certifications);
   for (const role of cv.experience) main.push(role.heading, role.dates, ...role.bullets);
   for (const item of cv.selectedWork) main.push(item.heading, item.body);
