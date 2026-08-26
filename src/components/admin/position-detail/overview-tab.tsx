@@ -182,7 +182,8 @@ export function OverviewTab({
         )}
       </div>
 
-      <aside className="space-y-4">
+      {/* Detail rail stays in view on long role pages. */}
+      <aside className="space-y-4 lg:sticky lg:top-16 lg:self-start">
         <div className="rounded-lg border bg-card p-4">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Pipeline
