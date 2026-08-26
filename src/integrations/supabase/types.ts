@@ -15326,6 +15326,7 @@ export type Database = {
         Args: {
           _actor_user_id: string
           _match_id: string
+          _publish?: boolean
           _reason?: string
           _run_id: string
           _trace_id?: string
