@@ -210,9 +210,47 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
     const wa = (p.work_authorization ?? {}) as AnyRow;
     const ctx = (p.intake_context ?? {}) as AnyRow;
     const brief = (ctx.brief ?? {}) as AnyRow;
+    const blueprint = (p.blueprint ?? {}) as AnyRow;
+    const blueprintRole = (blueprint.role ?? {}) as AnyRow;
+    const blueprintProfile = (blueprint.candidate_profile ?? {}) as AnyRow;
+    const blueprintGeography = (blueprint.geography ?? {}) as AnyRow;
+    const blueprintTimeline = (blueprint.timeline ?? {}) as AnyRow;
+    const blueprintSourcing = (blueprint.sourcing_plan ?? {}) as AnyRow;
+    const blueprintComp = (blueprint.compensation ?? {}) as AnyRow;
     const posting = (ctx.posting ?? {}) as AnyRow;
-    const workModel = (p.work_model ?? brief.workModel ?? "") as PositionEditInitial["work_model"];
-    const employmentType = (p.employment_type ?? brief.employmentType ?? "") as PositionEditInitial["employment_type"];
+    const firstText = (...values: unknown[]) => {
+      for (const value of values) {
+        const text = asStr(value).trim();
+        if (text) return text;
+      }
+      return "";
+    };
+    const firstList = (...values: unknown[]) => {
+      for (const value of values) {
+        const list = fromJsonArray(value);
+        if (list.length > 0) return list;
+      }
+      return [];
+    };
+    const rawWorkModel = firstText(p.work_model, ctx.work_model, brief.workModel, blueprintRole.work_model);
+    const workModel: PositionEditInitial["work_model"] =
+      rawWorkModel === "remote" || rawWorkModel === "hybrid" || rawWorkModel === "onsite"
+        ? rawWorkModel
+        : "";
+    const rawEmploymentType = firstText(
+      p.employment_type,
+      ctx.employment_type,
+      brief.employmentType,
+      blueprintRole.employment_type,
+    );
+    const employmentType: PositionEditInitial["employment_type"] =
+      rawEmploymentType === "full_time" ||
+      rawEmploymentType === "part_time" ||
+      rawEmploymentType === "contract" ||
+      rawEmploymentType === "temporary" ||
+      rawEmploymentType === "internship"
+        ? rawEmploymentType
+        : "";
 
     const initial: PositionEditInitial = {
       id: p.id,
@@ -221,47 +259,78 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       status: p.status ?? "draft",
       visibility: p.visibility ?? "private",
 
-      title: p.title ?? "",
-      department: p.department ?? ctx.team ?? brief.team ?? "",
-      location: p.location ?? brief.location ?? "",
+      title: firstText(p.title, brief.roleTitle, blueprintRole.title),
+      department: firstText(p.department, ctx.team, brief.team, blueprintRole.department),
+      location: firstText(p.location, ctx.location, brief.location, blueprintRole.location),
       work_model: workModel,
       employment_type: employmentType,
       // Stored briefs use mixed casing; the picker only matches its own labels.
-      seniority: normalizeSeniority(p.seniority ?? brief.seniority),
-      headcount: typeof p.openings === "number" ? p.openings : "",
-      description: p.description ?? "",
+      seniority: normalizeSeniority(firstText(p.seniority, ctx.seniority, brief.seniority, blueprintRole.seniority)),
+      headcount:
+        typeof p.openings === "number"
+          ? p.openings
+          : typeof blueprintRole.headcount === "number"
+            ? blueprintRole.headcount
+            : "",
+      description: firstText(
+        p.description,
+        ctx.job_description,
+        ctx.jobDescriptionText,
+        brief.jobDescription,
+        brief.jobDescriptionText,
+        blueprintRole.summary,
+      ),
 
-      open_worldwide: Boolean(ctx.open_worldwide ?? brief.openWorldwide),
-      target_countries: fromJsonArray(wa.countries),
+      open_worldwide: Boolean(
+        ctx.open_worldwide ?? brief.openWorldwide ?? blueprintGeography.open_worldwide,
+      ),
+      target_countries: firstList(wa.countries, ctx.target_countries, blueprintGeography.target_countries),
       states_regions: asStrArr(ctx.states_regions),
       metro_areas: asStrArr(ctx.metro_areas),
       search_radius: asStr(ctx.search_radius),
-      hiring_urgency: asStr(comp.urgency) || asStr(ctx.hiring_urgency) || asStr(ctx.hiring_timeline),
-      target_start_date: asStr(ctx.target_start_date) || asStr(brief.targetStartDate),
-      time_to_hire: asStr(ctx.time_to_hire),
+      hiring_urgency: firstText(
+        comp.urgency,
+        ctx.hiring_urgency,
+        ctx.hiring_timeline,
+        blueprintTimeline.hiring_urgency,
+      ),
+      target_start_date: firstText(
+        p.target_start_date,
+        ctx.target_start_date,
+        brief.targetStartDate,
+        blueprintTimeline.target_start_date,
+      ),
+      time_to_hire: firstText(ctx.time_to_hire, blueprintTimeline.time_to_hire),
 
-      must_have_skills: fromJsonArray(p.requirements),
-      nice_to_have_skills: fromJsonArray(p.preferred_requirements),
-      certifications_list: asStrArr(ctx.certifications_list),
-      tools_platforms: asStrArr(ctx.tools_platforms),
-      experience: asStr(ctx.experience),
-      education: asStr(ctx.education),
-      timezone_requirements: asStr(ctx.timezone_requirements),
-      responsibilities: asStr(ctx.responsibilities),
+      must_have_skills: firstList(p.requirements, ctx.must_have_skills, blueprint.must_have_skills),
+      nice_to_have_skills: firstList(
+        p.preferred_requirements,
+        ctx.nice_to_have_skills,
+        blueprint.nice_to_have_skills,
+      ),
+      certifications_list: firstList(ctx.certifications_list, blueprint.certifications),
+      tools_platforms: firstList(ctx.tools_platforms, blueprint.tools_platforms),
+      experience: firstText(ctx.experience, blueprintProfile.experience),
+      education: firstText(ctx.education, blueprintProfile.education),
+      timezone_requirements: firstText(
+        ctx.timezone_requirements,
+        blueprintGeography.timezone_requirements,
+      ),
+      responsibilities: firstList(ctx.responsibilities, blueprint.responsibilities).join("\n"),
       additional_requirements: asStr(ctx.additional_requirements),
 
-      currency: asStr(comp.currency) || asStr(ctx.currency) || "USD",
-      budget_period: asStr(comp.budget_period) || asStr(comp.period) || asStr(ctx.budget_period) || "year",
-      budget_min: asStr(comp.budget_min) || asStr(comp.min) || asStr(ctx.budget_min),
-      budget_max: asStr(comp.budget_max) || asStr(comp.max) || asStr(ctx.budget_max),
-      compensation: asStr(comp.summary) || asStr(comp.text) || asStr(comp.note),
+      currency: firstText(comp.currency, ctx.currency, blueprintComp.currency) || "USD",
+      budget_period: firstText(comp.budget_period, comp.period, ctx.budget_period) || "year",
+      budget_min: firstText(comp.budget_min, comp.min, ctx.budget_min, blueprintComp.min),
+      budget_max: firstText(comp.budget_max, comp.max, ctx.budget_max, blueprintComp.max),
+      compensation: firstText(comp.summary, comp.text, comp.note, blueprintComp.note),
 
-      target_titles: fromJsonArray(wa.target_titles),
+      target_titles: firstList(wa.target_titles, ctx.target_titles, blueprintSourcing.target_titles),
       title_match_timing: (asStr(ctx.title_match_timing) as PositionEditInitial["title_match_timing"]) || "",
-      target_company_types: asStrArr(ctx.target_company_types),
-      include_keywords: asStrArr(ctx.include_keywords),
-      exclude_keywords: asStrArr(ctx.exclude_keywords),
-      disqualifier_tags: fromJsonArray(p.dealbreakers),
+      target_company_types: firstList(ctx.target_company_types, blueprintSourcing.target_company_types),
+      include_keywords: firstList(ctx.include_keywords, blueprintSourcing.include_keywords),
+      exclude_keywords: firstList(ctx.exclude_keywords, blueprintSourcing.exclude_keywords),
+      disqualifier_tags: firstList(p.dealbreakers, blueprint.dealbreakers),
       interview_process: asStr(ctx.interview_process),
       additional_context: asStr(ctx.additional_context),
       company_intro: asStr(posting.company_intro),
@@ -396,12 +465,25 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     // Preserve unknown intake_context/compensation/work_authorization fields
     const { data: existing } = await s
       .from("positions")
-      .select("intake_context,compensation,work_authorization")
+      .select("intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers")
       .eq("id", data.id)
       .maybeSingle();
     const priorCtx = (existing?.intake_context ?? {}) as AnyRow;
     const priorComp = (existing?.compensation ?? {}) as AnyRow;
     const priorWA = (existing?.work_authorization ?? {}) as AnyRow;
+    const preserveRequirementMetadata = (labels: string[], current: unknown, kind?: string) => {
+      const rows = Array.isArray(current) ? (current as AnyRow[]) : [];
+      return labels.map((label) => {
+        const matched = rows.find(
+          (row) =>
+            typeof row === "object" &&
+            row !== null &&
+            String(row.label ?? "").trim().toLowerCase() === label.trim().toLowerCase(),
+        );
+        return matched ? { ...matched, label } : { label, ...(kind ? { kind } : {}) };
+      });
+    };
+    const priorBrief = (priorCtx.brief ?? {}) as AnyRow;
 
     const patch: AnyRow = {
       title: data.title,
@@ -411,9 +493,16 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       employment_type: data.employment_type || null,
       seniority: data.seniority || null,
       description: data.description || null,
-      requirements: data.must_have_skills.map((label) => ({ label, kind: "must_have" })),
-      preferred_requirements: data.nice_to_have_skills.map((label) => ({ label })),
-      dealbreakers: data.disqualifier_tags.map((label) => ({ label })),
+      requirements: preserveRequirementMetadata(
+        data.must_have_skills,
+        existing?.requirements,
+        "must_have",
+      ),
+      preferred_requirements: preserveRequirementMetadata(
+        data.nice_to_have_skills,
+        existing?.preferred_requirements,
+      ),
+      dealbreakers: preserveRequirementMetadata(data.disqualifier_tags, existing?.dealbreakers),
       compensation: {
         ...priorComp,
         summary: data.compensation || null,
@@ -439,6 +528,25 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       },
       intake_context: {
         ...priorCtx,
+        // Keep the legacy brief projection synchronized while canonical columns
+        // remain authoritative. Older roles and downstream exports still read it.
+        brief: {
+          ...priorBrief,
+          roleTitle: data.title,
+          team: data.department || "",
+          location: data.location || "",
+          workModel: data.work_model,
+          employmentType: data.employment_type || "",
+          seniority: data.seniority || "",
+          jobDescription: data.description || "",
+          jobDescriptionText: data.description || "",
+          targetStartDate: data.target_start_date || "",
+        },
+        team: data.department || "",
+        jobDescriptionText: data.description || "",
+        work_model: data.work_model,
+        employment_type: data.employment_type || "",
+        seniority: data.seniority || "",
         open_worldwide: data.open_worldwide,
         states_regions: data.states_regions,
         metro_areas: data.metro_areas,
