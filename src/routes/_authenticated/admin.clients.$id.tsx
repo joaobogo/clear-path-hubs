@@ -7,6 +7,7 @@ import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel"
 import { UpdateReadinessPanel } from "@/components/admin/update-readiness-panel";
 import { AccountOperatingSummary } from "@/components/admin/account-operating-summary";
 import { ClientAccessPanel } from "@/components/admin/client-access-panel";
+import { AccountStateStrip } from "@/components/admin/account-state-strip";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Suspense } from "react";
