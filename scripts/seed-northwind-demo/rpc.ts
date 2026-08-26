@@ -60,7 +60,7 @@ export async function callFn<T = unknown>(
   opts: CallOpts = {},
 ): Promise<T> {
   // Plain seroval, no Start plugins: the payloads here are plain JSON values.
-  const { toJSONAsync, fromJSON } = await import("seroval");
+  const { toJSONAsync, fromCrossJSON } = await import("seroval");
   const method = opts.method ?? "POST";
   const headers: Record<string, string> = {
     authorization: `Bearer ${actor.token}`,
@@ -90,7 +90,7 @@ export async function callFn<T = unknown>(
   } catch {
     return text as unknown as T;
   }
-  const revived = fromJSON(parsed) as AnyRow;
+  const revived = fromCrossJSON(parsed, { refs: new Map() }) as AnyRow;
   if (revived?.error) {
     const e = revived.error;
     throw new Error(`${exportName} failed: ${e?.message ?? JSON.stringify(e).slice(0, 200)}`);
