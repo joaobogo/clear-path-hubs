@@ -688,8 +688,8 @@ function ApplyPage() {
           question_id: q.id,
           value: answers[q.id] ?? null,
         })),
-        consent_terms: consent as true,
-        network_opt_in: network,
+        consent_terms: consent,
+        network_opt_in: network === true,
         idempotency_key: getOrCreateIdempotencyKey(),
         elapsed_seconds: Math.round((Date.now() - startedAtRef.current) / 1000),
 
