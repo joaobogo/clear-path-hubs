@@ -81,7 +81,7 @@ export function AdminScoreNumber({
   // The band comes from the ONE shared helper (score decides the band), never
   // from the stored engine label — otherwise 100 reads "strong fit" here and
   // "Exceptional" in the list.
-  const bandLabel = toFitPresentation(run.fit_label, score).headline;
+  const bandLabel = toFitPresentation(run?.fit_label ?? null, score).headline;
   if (size === "lg") {
     return (
       <div className={`flex flex-wrap items-baseline gap-3 ${className}`} aria-label={scoreLabel}>
