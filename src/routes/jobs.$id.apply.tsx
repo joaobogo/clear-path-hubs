@@ -606,6 +606,12 @@ function ApplyPage() {
     stepHeadingRef.current?.focus();
   }, [step, qCursor]);
 
+  useEffect(() => {
+    if (step === 5) reviewEnteredAtRef.current = Date.now();
+  }, [step]);
+
+
+
   // Only answers the candidate actually gave. A skipped optional question is
   // omitted from the review rather than rendered as an empty row.
   const answeredQuestions = (pos?.questions ?? [])
