@@ -1814,6 +1814,7 @@ function ApplyPage() {
             ) : null}
             {step < 5 ? (
               <Button
+                key="apply-continue"
                 type="button"
                 onClick={returningToReview ? returnToReview : goNext}
                 data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
@@ -1834,7 +1835,12 @@ function ApplyPage() {
                 {returningToReview ? "Done — back to review" : "Continue →"}
               </Button>
             ) : (
+              /* Distinct key: without it React reuses the Continue button's DOM
+                 node for this one, so the key-up of the keypress that advanced
+                 to Review lands on Submit and sends the application without
+                 the applicant ever choosing to. */
               <Button
+                key="apply-submit"
                 type="button"
                 size="lg"
                 onClick={onSubmit}
@@ -1854,6 +1860,7 @@ function ApplyPage() {
                 )}
               </Button>
             )}
+
           </div>
           <p aria-live="assertive" className="sr-only">
             {submitting ? "Sending your application. Please wait." : ""}
