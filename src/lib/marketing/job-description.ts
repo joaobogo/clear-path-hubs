@@ -10,6 +10,11 @@ export type JobBlock =
 
 const BULLET = /^\s*(?:[-*•–]|\d+[.)])\s+/;
 const MD_HEADING = /^\s{0,3}(#{1,6})\s+(.*)$/;
+/**
+ * A Markdown thematic break ("---", "***", "___"). It carries no words, so it
+ * is dropped rather than printed as literal dashes on the page.
+ */
+const MD_RULE = /^\s{0,3}([-*_])(?:\s*\1){2,}\s*$/;
 
 /**
  * Clients often paste Markdown. Raw `##` and `**` must never reach the page,
