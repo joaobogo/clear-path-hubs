@@ -280,7 +280,7 @@ export function GeneratedBlueprintPanel({
             <Field label="Education" value={bp.candidate_profile?.education} source={sources.education} />
             <Field label="Languages" value={bp.candidate_profile?.languages} source={sources.languages} />
             <Field
-              label="Work authorization"
+              label="Work authorisation"
               value={bp.candidate_profile?.work_authorization}
               source={sources.work_authorization}
             />

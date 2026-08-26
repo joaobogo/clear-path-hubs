@@ -29,7 +29,7 @@ function EligibilityOutcome() {
           <div className="rounded-md border border-warning/30 bg-warning/5 p-4 flex gap-3 text-sm text-foreground">
             <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
             <p>
-              Your details have been recorded, but you do not meet the minimum eligibility requirements defined for this position (e.g. work authorization or specific certifications).
+              Your details have been recorded, but you do not meet the minimum eligibility requirements defined for this position (e.g. work authorisation or specific certifications).
             </p>
           </div>
           <p>

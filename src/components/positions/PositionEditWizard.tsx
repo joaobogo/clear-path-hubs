@@ -69,7 +69,7 @@ const DISQUALIFIER_OPTIONS = [
   "No degree or certification",
   "No distributed/remote experience",
   "No relevant industry experience",
-  "No work authorization",
+  "No work authorisation",
   "Overqualified for the level",
   "Weak communication skills",
   "Currently at a competitor",

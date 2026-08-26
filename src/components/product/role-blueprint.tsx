@@ -249,7 +249,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
           />
           <FactTile
             icon={<Shield className="h-4 w-4" />}
-            label="Work authorization"
+            label="Work authorisation"
             primary={workAuth || "As per local law"}
           />
           <FactTile
