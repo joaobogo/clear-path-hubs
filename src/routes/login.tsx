@@ -30,7 +30,7 @@ import {
 
 import { sanitizeRedirect } from "@/lib/safe-redirect";
 
-const searchSchema = z.object({ redirect: z.string().optional() });
+const searchSchema = z.object({ redirect: z.string().optional(), reason: z.string().optional() });
 
 const QA_DISABLED = { enabled: false, personas: [] as Array<{ key: Persona; label: string }> };
 type Persona =
@@ -98,7 +98,7 @@ const GENERIC_CONFIRM_MESSAGE =
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { redirect } = Route.useSearch();
+  const { redirect, reason } = Route.useSearch();
   const [qa, setQa] = useState<{
     enabled: boolean;
     personas: Array<{ key: Persona; label: string }>;
@@ -372,6 +372,19 @@ function LoginPage() {
                   : "We'll send a new link to confirm your email address."}
             </p>
           </div>
+
+          {mode === "signin" && reason === "expired" ? (
+            <p
+              role="status"
+              aria-live="polite"
+              className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground"
+            >
+              Your session timed out for security. Sign in and we'll take you straight back to where
+              you left off.
+            </p>
+          ) : null}
+
+
 
 
           {pickerFor ? (
