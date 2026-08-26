@@ -26,7 +26,10 @@ import {
 } from "@/components/client/position-list/toolbar";
 
 const searchSchema = z.object({
- status: fallback(z.string(), "active").default("active"),
+ // "All" by default: a role a client has just created (Draft) or submitted
+ // (Under review) must never be invisible on the list it was created from.
+ status: fallback(z.string(), "all").default("all"),
+
  q: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "all").default("all"),
  view: fallback(z.enum(["cards", "list"]), "cards").default("cards"),
