@@ -44,12 +44,14 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit
 
 function Page() {
  const initial = Route.useLoaderData();
- const { step } = Route.useSearch();
+ const { step, fresh } = Route.useSearch();
  return (
  <PositionEditWizard
  initial={initial}
  initialStep={step}
+ mode={fresh ? "create" : "edit"}
  audience="client"
+
  returnTo={`/client/positions/${initial.id}`}
  invalidateKeys={[
   kpiCacheKeys.client.position(initial.id),
