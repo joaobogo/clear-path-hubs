@@ -163,15 +163,27 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
     // 7 — real client briefs sitting in the inbox for more than three days.
     loadIntakeAging(s, { includeTest: opts.includeTest ?? false }),
-    // 7 — P-006: candidates with stale scores.
+    // 7 — P-006: candidates with stale scores. One definition everywhere: the
+    // stored flag set by invalidation triggers OR a run produced by an older
+    // engine/calibration than the one running today — the same test the
+    // per-candidate "Stale" badge applies (see freshnessFromRow), so a badge
+    // can never show while this tile reads 0.
     excludeTestOrgs(
       s
         .from("candidate_matches")
         .select(
-          "id,score_stale_at,score_stale_reasons,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name))",
+          "id,score_stale,score_stale_at,score_stale_reasons,scored_at,scored_engine_version,scored_calibration_version,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name))",
           { count: "exact" },
         )
-        .eq("score_stale", true)
+        .not("scored_at", "is", null)
+        .or(
+          [
+            "score_stale.eq.true",
+            `scored_engine_version.neq.${ENGINE_VERSION}`,
+            `scored_engine_version.is.null`,
+            `scored_calibration_version.neq.${CALIBRATION_VERSION}`,
+          ].join(","),
+        )
         .order("score_stale_at", { ascending: true })
         .limit(PREVIEW_LIMIT),
       scope,
