@@ -8,7 +8,7 @@ import { dedupeLocationParts } from "@/lib/jobs/location-format";
 /* Reference data                                                      */
 /* ------------------------------------------------------------------ */
 
-export const COUNTRIES: ReadonlyArray<{ code: string; name: string }> = [
+const COUNTRIES_BY_CODE: ReadonlyArray<{ code: string; name: string }> = [
   { code: "AE", name: "United Arab Emirates" },
   { code: "AR", name: "Argentina" },
   { code: "AT", name: "Austria" },
@@ -74,6 +74,12 @@ export const COUNTRIES: ReadonlyArray<{ code: string; name: string }> = [
   { code: "ZA", name: "South Africa" },
   { code: "XX", name: "Unspecified / legacy" },
 ];
+
+// Display order is always alphabetical by name so dropdowns and type-ahead
+// behave predictably; lookup maps stay keyed by code.
+export const COUNTRIES: ReadonlyArray<{ code: string; name: string }> = Object.freeze(
+  [...COUNTRIES_BY_CODE].sort((a, b) => a.name.localeCompare(b.name, "en")),
+);
 
 const COUNTRY_BY_CODE = new Map(COUNTRIES.map((c) => [c.code, c.name]));
 const COUNTRY_CODE_BY_NAME = new Map(COUNTRIES.map((c) => [c.name.trim().toLowerCase(), c.code]));
