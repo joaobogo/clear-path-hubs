@@ -159,8 +159,6 @@ test.describe("launch smoke journey", () => {
     // ── 2. Candidate signs in and sees their application ──────────────────
     await loginAs(page, "candidate", email, QA_PASSWORD);
     await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
-    await expect(
-      page
     await page.waitForLoadState("networkidle").catch(() => undefined);
     // eslint-disable-next-line no-console
     console.log(
@@ -173,7 +171,6 @@ test.describe("launch smoke journey", () => {
       page
         .getByText(new RegExp(fixtures.position_id.slice(0, 6), "i"))
         .or(page.getByRole("heading", { name: /applications/i }))
-
         .first(),
     ).toBeVisible({ timeout: 60_000 });
     // Best-effort sign-out: bounded so a hidden/absent control can't stall the run.
