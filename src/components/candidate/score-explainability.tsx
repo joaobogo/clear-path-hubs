@@ -1,3 +1,4 @@
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, GitCommit, History, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
@@ -316,7 +317,9 @@ function ScoreDiff({ current, prior }: { current: Any; prior: Any }) {
       : diff < 0
         ? "text-destructive"
         : "text-muted-foreground";
-  const bandChanged = current.fit_label !== prior.fit_label;
+  const bandChanged =
+    toFitPresentation(current.fit_label, current.score).band !==
+    toFitPresentation(prior.fit_label, prior.score).band;
   const contradictionChanged =
     current.contradiction_status !== prior.contradiction_status;
 
@@ -336,8 +339,8 @@ function ScoreDiff({ current, prior }: { current: Any; prior: Any }) {
         <li>
           Fit band:{" "}
           <span className={bandChanged ? "text-foreground font-medium" : ""}>
-            {String(prior.fit_label ?? "—").replace(/_/g, " ")} →{" "}
-            {String(current.fit_label ?? "—").replace(/_/g, " ")}
+            {toFitPresentation(prior.fit_label, prior.score).headline} →{" "}
+            {toFitPresentation(current.fit_label, current.score).headline}
           </span>
         </li>
         <li>
