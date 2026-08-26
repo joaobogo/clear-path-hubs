@@ -58,9 +58,8 @@ export async function callFn<T = unknown>(
   data?: unknown,
   opts: CallOpts = {},
 ): Promise<T> {
-  const { toJSONAsync, fromCrossJSON } = await import("seroval");
-  const { getDefaultSerovalPlugins } = await import("@tanstack/start-client-core");
-  const plugins = getDefaultSerovalPlugins();
+  // Plain seroval, no Start plugins: the payloads here are plain JSON values.
+  const { toJSONAsync, fromJSON } = await import("seroval");
   const method = opts.method ?? "POST";
   const headers: Record<string, string> = {
     authorization: `Bearer ${actor.token}`,
@@ -69,7 +68,7 @@ export async function callFn<T = unknown>(
   const encoded =
     data === undefined
       ? undefined
-      : JSON.stringify(await toJSONAsync({ data }, { plugins }));
+      : JSON.stringify(await toJSONAsync({ data }));
 
   let url = `${BASE}/_serverFn/${fnId(file, exportName)}`;
   const init: RequestInit = { method, headers };
@@ -77,7 +76,7 @@ export async function callFn<T = unknown>(
     if (encoded) url += `?payload=${encodeURIComponent(encoded)}`;
   } else {
     headers["content-type"] = "application/json";
-    init.body = encoded ?? JSON.stringify(await toJSONAsync({ data: {} }, { plugins }));
+    init.body = encoded ?? JSON.stringify(await toJSONAsync({ data: {} }));
   }
   const res = await fetch(url, init);
   const text = await res.text();
@@ -90,7 +89,7 @@ export async function callFn<T = unknown>(
   } catch {
     return text as unknown as T;
   }
-  const revived = fromCrossJSON(parsed, { refs: new Map(), plugins }) as AnyRow;
+  const revived = fromJSON(parsed) as AnyRow;
   if (revived?.error) {
     const e = revived.error;
     throw new Error(`${exportName} failed: ${e?.message ?? JSON.stringify(e).slice(0, 200)}`);
