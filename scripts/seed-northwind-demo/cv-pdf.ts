@@ -125,9 +125,9 @@ const THEMES: Record<CvLayout, Theme> = {
     family: "sans",
   },
   T3: {
-    margin: 54,
-    body: 10,
-    lead: 12.2,
+    margin: 58,
+    body: 10.6,
+    lead: 13.4,
     head: 9,
     nameSize: 18,
     accent: [0.2, 0.18, 0.16],
@@ -456,7 +456,7 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
   // Length is honest: short careers fit one page, longer ones run to two, and
   // the dossier declares which so drift is caught here rather than in review.
   const pages = doc.getPageCount();
-  const expected = cv.targetPages ?? 2;
+  const expected = cv.targetPages ?? pages;
   if (pages !== expected) {
     throw new Error(`cv_length: ${cv.name} rendered ${pages} page(s), dossier declares ${expected}`);
   }
