@@ -151,12 +151,19 @@ async function main() {
   // ── suppressions: every cohort e-mail, before anything is created ─────────
   const allDossiers = await loadDossiers(null);
   for (const d of allDossiers) {
-    const { error } = await sb
+    const { data: active } = await sb
       .from("notification_suppressions")
-      .upsert(
-        { email: d.email.toLowerCase(), reason: SUPPRESSION_REASON },
-        { onConflict: "email" },
-      );
+      .select("id")
+      .eq("email", d.email.toLowerCase())
+      .is("released_at", null)
+      .maybeSingle();
+    if (active) continue;
+    const { error } = await sb.from("notification_suppressions").insert({
+      email: d.email.toLowerCase(),
+      reason: SUPPRESSION_REASON,
+      source: "manual",
+      created_by: ADMIN_ACTOR,
+    });
     if (error) throw new Error(`suppression for ${d.email} failed: ${error.message}`);
   }
   console.log(`Suppressed outbound mail for ${allDossiers.length} cohort addresses.`);
