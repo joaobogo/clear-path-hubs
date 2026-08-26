@@ -473,10 +473,11 @@ export function assessJobQuality(i: QualityInput): {
 
   const summary =
     readiness === "not_scoreable"
-      ? `We can't rank candidates for this role yet — ${blocking.length} thing${blocking.length === 1 ? "" : "s"} missing.`
+      ? `${blocking.length} required answer${blocking.length === 1 ? "" : "s"} still missing — you can keep editing, but you can't submit this role yet.`
       : readiness === "scoreable_with_gaps"
-        ? `Scoreable, but ${degrades.length} gap${degrades.length === 1 ? "" : "s"} will weaken shortlist accuracy.`
-        : "Decision-ready — every field scoring depends on is present.";
+        ? `Ready to submit. ${degrades.length} optional answer${degrades.length === 1 ? "" : "s"} would improve your shortlist.`
+        : "Ready to submit — every answer scoring depends on is present.";
+
 
   return { gaps, blocking, degrades, optional, readiness, summary };
 }

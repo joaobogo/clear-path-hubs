@@ -41,6 +41,8 @@ import {
   type ScreeningInput,
 } from "@/lib/position-edit.functions";
 import { checkRequisitionDuplicate } from "@/lib/requisition.functions";
+import { setPositionLifecycle } from "@/lib/position-lifecycle.functions";
+
 import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { RoleEditorLifecycleActions } from "@/components/positions/RoleEditorLifecycleActions";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
@@ -134,13 +136,17 @@ export function PositionEditWizard({
   invalidateKeys,
   audience,
   initialStep,
+  mode = "edit",
 }: {
   initial: PositionEditInitial;
   returnTo: string;
   invalidateKeys: readonly (readonly unknown[])[];
   audience: "admin" | "client";
   initialStep?: number;
+  /** "create" when the client has just started this role, so the screen is titled "New role". */
+  mode?: "create" | "edit";
 }) {
+
   const navigate = useNavigate();
   const qc = useQueryClient();
   // Which fields this role may edit is a schema fact, not a form decision.
@@ -386,20 +392,47 @@ export function PositionEditWizard({
     }),
     [state],
   );
+  // Reported by the checklist so "Submit for review" is gated on exactly the
+  // items it marks "Required to submit" — never on ranking suggestions.
+  const [blockingGaps, setBlockingGaps] = useState<{ label: string; step?: number }[]>([]);
+  const creating = mode === "create";
+  const canSubmit =
+    audience === "client" && ["draft", "needs_clarification"].includes(String(initial.status));
+
+  const lifecycleFn = useServerFn(setPositionLifecycle);
+  const submitMutation = useMutation({
+    mutationFn: async () => {
+      if (contentDirty || reqDirty) await saveMutation.mutateAsync();
+      return lifecycleFn({ data: { positionId: state.id, action: "submit" } });
+    },
+    onSuccess: async () => {
+      toast.success("Role submitted for review. We'll come back with questions or a shortlist.");
+      await Promise.all(invalidateKeys.map((k) => qc.invalidateQueries({ queryKey: k })));
+      navigate({ to: returnTo });
+    },
+    onError: (e) => toastError(e, { fallback: "We couldn't submit this role. Nothing was lost." }),
+  });
+
+
 
   return (
     <div className="mx-auto max-w-7xl space-y-5 p-4 sm:p-6">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
-            {audience === "admin" ? "Admin · Edit role" : "Edit role"}
+            {audience === "admin"
+              ? "Admin · Edit role"
+              : creating
+                ? "New role"
+                : "Edit role"}
           </p>
           <h1 className="truncate text-xl font-semibold sm:text-2xl">
-            {initial.title || "Untitled role"}
+            {creating && !initial.title ? "New role" : initial.title || "Untitled role"}
           </h1>
           <p className="truncate text-sm text-muted-foreground">
             {initial.organization_name} · Status: {initial.status}
           </p>
+
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="ghost" onClick={() => navigate({ to: returnTo })}>
@@ -513,9 +546,9 @@ export function PositionEditWizard({
                         onChange={(e) => set("department", e.target.value)}
                       />
                     </Field>
-                    <Field label={fieldLabel("location")}>
-                      <Input value={state.location} onChange={(e) => set("location", e.target.value)} />
-                    </Field>
+                    {/* Location is asked once, on step 3 (Country / City), so the
+                        wizard never collects the same answer twice. */}
+
                     <Field label={fieldLabel("employment_type")} error={errors.employment_type} required>
                       <Select
                         value={state.employment_type}
@@ -1111,15 +1144,38 @@ export function PositionEditWizard({
                 Continue
               </Button>
             ) : (
-              <Button
-                type="button"
-                onClick={() => saveMutation.mutate()}
-                disabled={saveMutation.isPending || !contentDirty}
-              >
-                {saveMutation.isPending ? "Saving…" : "Save role brief"}
-              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  type="button"
+                  variant={canSubmit ? "outline" : "default"}
+                  onClick={() => saveMutation.mutate()}
+                  disabled={saveMutation.isPending || !contentDirty}
+                >
+                  {saveMutation.isPending ? "Saving…" : "Save role brief"}
+                </Button>
+                {canSubmit && (
+                  <Button
+                    type="button"
+                    onClick={() => submitMutation.mutate()}
+                    disabled={submitMutation.isPending || blockingGaps.length > 0}
+                    title={
+                      blockingGaps.length > 0
+                        ? `Still required: ${blockingGaps.map((g) => g.label).join(", ")}`
+                        : undefined
+                    }
+                  >
+                    {submitMutation.isPending ? "Submitting…" : "Submit for review"}
+                  </Button>
+                )}
+              </div>
             )}
           </div>
+          {step === LAST_STEP && canSubmit && blockingGaps.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              Before you can submit, answer: {blockingGaps.map((g) => g.label).join(", ")}. Everything
+              else on the checklist only improves ranking.
+            </p>
+          )}
         </div>
 
         <aside className="space-y-5 lg:sticky lg:top-6 lg:self-start">
@@ -1127,7 +1183,11 @@ export function PositionEditWizard({
             positionId={state.id}
             onJumpToStep={setStep}
             draft={qualityDraft}
+            onReadiness={({ blocking }) =>
+              setBlockingGaps(blocking.map((g) => ({ label: g.label, step: g.step })))
+            }
           />
+
           <div className="rounded-md border bg-muted/50 p-3 text-xs text-muted-foreground">
             <p className="font-medium text-foreground">Draft saved locally</p>
             <p className="mt-1">

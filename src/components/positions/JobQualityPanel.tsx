@@ -1,6 +1,6 @@
 // Job-quality indicator: names the missing decision-critical information
 // instead of showing an arbitrary completeness percentage.
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
@@ -67,6 +67,7 @@ export function JobQualityPanel({
   compact,
   editTo,
   draft,
+  onReadiness,
 }: {
   positionId: string;
   onJumpToStep?: (step: number) => void;
@@ -78,6 +79,11 @@ export function JobQualityPanel({
    * user just set clears its entry without waiting for a save.
    */
   draft?: Partial<QualityInput>;
+  /**
+   * Reported from the same assessment the checklist renders, so a submit
+   * control can be gated on exactly the items marked "Required to submit".
+   */
+  onReadiness?: (v: { blocking: QualityGap[]; summary: string }) => void;
 }) {
   const load = useServerFn(getRequisitionQuality);
   const { data, isLoading } = useQuery({
@@ -97,6 +103,11 @@ export function JobQualityPanel({
     return { ...assessJobQuality(merged), input: merged };
   }, [data, draft]);
 
+  useEffect(() => {
+    if (!view || !onReadiness) return;
+    onReadiness({ blocking: view.blocking, summary: view.summary });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
 
   if (isLoading || !view) {
     return <p className="text-sm text-muted-foreground">Checking job quality…</p>;
@@ -107,11 +118,12 @@ export function JobQualityPanel({
       <p className="text-sm font-medium">{view.summary}</p>
       {!compact && (
         <div className="mt-3 space-y-3">
-          <GapList title="Needed before we can rank" gaps={view.blocking} onJumpToStep={onJumpToStep} editTo={editTo} />
-          <GapList title="Improves your shortlist" gaps={view.degrades} onJumpToStep={onJumpToStep} editTo={editTo} />
-          <GapList title="Nice to have" gaps={view.optional} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList title="Required to submit" gaps={view.blocking} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList title="Improves ranking (optional)" gaps={view.degrades} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList title="Nice to have (optional)" gaps={view.optional} onJumpToStep={onJumpToStep} editTo={editTo} />
         </div>
       )}
     </div>
   );
 }
+

@@ -6,11 +6,15 @@ import { getPositionForEdit } from "@/lib/position-edit.functions";
 import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit")({
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search: Record<string, unknown>): { step?: number; fresh?: boolean } => {
     const raw = search.step ? Number(search.step) : undefined;
     const step = raw && raw >= 1 && raw <= 3 ? raw : undefined;
-    return { step };
+    // Set right after "New role": the screen is titled for creation, not editing.
+    const fresh = search.fresh === true || search.fresh === "true" ? true : undefined;
+    return { step, fresh };
   },
+
+
  loader: async ({ context, params }) => {
  let d;
  try {
@@ -40,12 +44,14 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit
 
 function Page() {
  const initial = Route.useLoaderData();
- const { step } = Route.useSearch();
+ const { step, fresh } = Route.useSearch();
  return (
  <PositionEditWizard
  initial={initial}
  initialStep={step}
+ mode={fresh ? "create" : "edit"}
  audience="client"
+
  returnTo={`/client/positions/${initial.id}`}
  invalidateKeys={[
   kpiCacheKeys.client.position(initial.id),
