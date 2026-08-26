@@ -14,12 +14,13 @@ const BASE = process.env.SEED_APP_ORIGIN ?? "http://localhost:8080";
 
 /** Server-function id: the same base64 envelope the client bundle emits. */
 function fnId(file: string, exportName: string): string {
+  // base64url, no padding — the exact envelope the dev/prod client emits.
   return Buffer.from(
     JSON.stringify({
       file: `/src/lib/${file}?tss-serverfn-split`,
       export: `${exportName}_createServerFn_handler`,
     }),
-  ).toString("base64");
+  ).toString("base64url");
 }
 
 export type Actor = { userId: string; email: string; token: string };
