@@ -95,6 +95,14 @@ const PATTERNS = [
   },
 ];
 
+/**
+ * A shared business figure is always whole-account: it counts every row of a
+ * core table for one organization. A probe scoped to a single role, member or
+ * candidate ("does this role still have candidates?") is not one, so only
+ * organization-scoped aggregates are gated.
+ */
+const ORG_SCOPED = /organization_id/;
+
 const offenders = [];
 for (const file of walk(join(ROOT, "src"))) {
   const rel = relative(ROOT, file).split("\\").join("/");
@@ -105,9 +113,11 @@ for (const file of walk(join(ROOT, "src"))) {
     re.lastIndex = 0;
     let match;
     while ((match = re.exec(src))) {
+      if (!ORG_SCOPED.test(match[0])) continue;
       const line = src.slice(0, match.index).split("\n").length;
       offenders.push({ rel, line, table: match[1], name });
     }
+
   }
 }
 
