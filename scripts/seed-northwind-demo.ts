@@ -288,39 +288,66 @@ async function main() {
     //    hydration so nothing is overwritten by the parser.
     await applyCandidateFacts(sb, profileId, d);
 
-    const { data: match } = await sb
-      .from("candidate_matches")
-      .select("id,processing_state,stage,eligibility_status")
-      .eq("id", matchId)
-      .maybeSingle();
-    const { data: run } = await sb
-      .from("score_runs")
-      .select("id,final_score,fit_label,engine_version,rubric_version_id,status,evidence_confidence,must_have_coverage,confidence")
-      .eq("candidate_match_id", matchId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
     rows.push({
       candidate: d.full_name,
       match: matchId,
-      state: match?.processing_state ?? "?",
-      score: run?.final_score != null ? String(run.final_score) : "—",
-      band: run?.final_score != null ? bandOf(Number(run.final_score)) : "—",
-      fit_label: run?.fit_label ?? "—",
-      evidence_confidence: run?.evidence_confidence != null ? String(run.evidence_confidence) : "—",
+      slug: d.slug,
       target: TARGETS[d.slug]?.band ?? d.targets.band,
-      eligibility: match?.eligibility_status ?? "—",
     });
   }
 
   // ── report ────────────────────────────────────────────────────────────────
   console.log("\n\nRESULT\n");
+  const pct = (v: unknown) =>
+    v == null ? "—" : `${Math.round(Number(v) * 100)}%`;
   for (const r of rows) {
+    const { data: match, error: matchErr } = await sb
+      .from("candidate_matches")
+      .select("id,processing_state,stage,admin_status,eligibility_status,current_score_run_id")
+      .eq("id", r.match)
+      .maybeSingle();
+    if (matchErr) problems.push(`${r.candidate}: could not read match — ${matchErr.message}`);
+    const { data: run, error: runErr } = await sb
+      .from("score_runs")
+      .select(
+        "id,final_score,fit_label,fit_band,status,evidence_confidence,confidence,must_have_coverage,preferred_coverage,requirement_coverage,engine_version,rubric_version_id",
+      )
+      .eq("candidate_match_id", r.match)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (runErr) problems.push(`${r.candidate}: could not read score run — ${runErr.message}`);
+
+    const coverage = (run?.requirement_coverage ?? {}) as {
+      screening_alignment?: number;
+      requirement_assessment?: { id: string; status: string; required: boolean }[];
+    };
+    const verdicts = (coverage.requirement_assessment ?? [])
+      .map((a) => {
+        const short = a.status === "met" ? "M" : a.status === "partial" ? "P" : "X";
+        return `${a.required ? "R" : "P"}${a.id.replace("req-", "")}:${short}`;
+      })
+      .join(" ");
+
     console.log(
-      `${(r.candidate ?? "").padEnd(20)} ${(r.state ?? "").padEnd(22)} score=${(r.score ?? "").padEnd(6)} band=${(r.band ?? "").padEnd(15)} target=${(r.target ?? "—").padEnd(15)} fit=${(r.fit_label ?? "—").padEnd(18)} evidence_conf=${r.evidence_confidence ?? "—"} eligibility=${r.eligibility ?? "—"}`,
+      [
+        (r.candidate ?? "").padEnd(18),
+        (match?.processing_state ?? "?").padEnd(22),
+        `score=${(run?.final_score != null ? String(run.final_score) : "—").padEnd(6)}`,
+        `band=${(run?.final_score != null ? bandOf(Number(run.final_score)) : "—").padEnd(16)}`,
+        `target=${(r.target ?? "—").padEnd(15)}`,
+        `fit=${(run?.fit_label ?? "—").padEnd(18)}`,
+        `must=${pct(run?.must_have_coverage).padEnd(5)}`,
+        `pref=${pct(run?.preferred_coverage).padEnd(5)}`,
+        `screen=${pct(coverage.screening_alignment).padEnd(5)}`,
+        `evid_conf=${run?.evidence_confidence ?? "—"}`,
+        `eligibility=${match?.eligibility_status ?? "—"}`,
+        `stage=${match?.stage ?? "—"}/${match?.admin_status ?? "—"}`,
+      ].join(" "),
     );
+    if (verdicts) console.log(`${" ".repeat(18)} requirements: ${verdicts}`);
   }
+
 
   await runAssertions(sb, problems);
 
