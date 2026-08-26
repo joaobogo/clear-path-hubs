@@ -23,15 +23,20 @@ export const TopSignals = memo(function TopSignals({
       source: r.evidence[0]?.source ?? null,
     }));
 
+  // Free text only speaks when the requirement rows back it up, so this list
+  // can never claim a strength the evidence section shows as not evidenced.
   const strengths =
     evidenced.length > 0
       ? evidenced
-      : candidate.strengths.slice(0, 3).map((s, i) => ({
-          id: `strength-${i}`,
-          text: s,
-          detail: null,
-          source: null,
-        }));
+      : evidenceBackedStrengths(candidate)
+          .slice(0, 3)
+          .map((s, i) => ({
+            id: `strength-${i}`,
+            text: s,
+            detail: null,
+            source: null,
+          }));
+
 
   const flags = buildValidationList(candidate.requirement_rows, candidate.concerns, { hideRequirementEvidenceNotes: true });
 
