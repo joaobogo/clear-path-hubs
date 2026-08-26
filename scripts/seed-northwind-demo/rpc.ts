@@ -58,23 +58,31 @@ export async function callFn<T = unknown>(
   data?: unknown,
   opts: CallOpts = {},
 ): Promise<T> {
+  const { toJSONAsync, fromCrossJSON } = await import("seroval");
+  const { getDefaultSerovalPlugins } = await import("@tanstack/start-client-core");
+  const plugins = getDefaultSerovalPlugins();
   const method = opts.method ?? "POST";
   const headers: Record<string, string> = {
     authorization: `Bearer ${actor.token}`,
     "x-tsr-serverFn": "true",
   };
+  const encoded =
+    data === undefined
+      ? undefined
+      : JSON.stringify(await toJSONAsync({ data }, { plugins }));
+
   let url = `${BASE}/_serverFn/${fnId(file, exportName)}`;
   const init: RequestInit = { method, headers };
   if (method === "GET") {
-    if (data !== undefined) url += `?payload=${encodeURIComponent(JSON.stringify({ data }))}`;
+    if (encoded) url += `?payload=${encodeURIComponent(encoded)}`;
   } else {
     headers["content-type"] = "application/json";
-    init.body = JSON.stringify({ data: data ?? {} });
+    init.body = encoded ?? JSON.stringify(await toJSONAsync({ data: {} }, { plugins }));
   }
   const res = await fetch(url, init);
   const text = await res.text();
   if (res.status >= 400) {
-    throw new Error(`${exportName} → ${res.status}: ${text.slice(0, 500)}`);
+    throw new Error(`${exportName} → ${res.status}: ${text.slice(0, 300).replace(/\s+/g, " ")}`);
   }
   let parsed: AnyRow;
   try {
@@ -82,10 +90,10 @@ export async function callFn<T = unknown>(
   } catch {
     return text as unknown as T;
   }
-  // Seroval envelope from the server-function handler: { result | error }.
-  const payload = parsed?.p?.v?.[0] ?? parsed;
-  if (parsed?.p?.k?.includes("error") && parsed.p.v[1]) {
-    throw new Error(`${exportName} returned an error: ${JSON.stringify(parsed.p.v[1]).slice(0, 300)}`);
+  const revived = fromCrossJSON(parsed, { refs: new Map(), plugins }) as AnyRow;
+  if (revived?.error) {
+    const e = revived.error;
+    throw new Error(`${exportName} failed: ${e?.message ?? JSON.stringify(e).slice(0, 200)}`);
   }
-  return (payload ?? parsed) as T;
+  return revived?.result as T;
 }
