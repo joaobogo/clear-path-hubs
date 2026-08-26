@@ -50,3 +50,31 @@ export function publishedBand(run: PublishedScoreRun): ScoreBandKey | null {
   const value = publishedScore(run);
   return value === null ? null : classifyBand(value);
 }
+
+/**
+ * Embed for a candidate_matches select that must resolve the published run.
+ *
+ * Admin surfaces used to embed the CURRENT run only, while the client DTO
+ * embeds the APPROVED run: a match whose current run was superseded (a legacy
+ * fill, a recompute) then showed one number to the recruiter and another to the
+ * employer. Embedding both and preferring the approved one makes the two sides
+ * read the same run by construction.
+ */
+export function publishedRunEmbed(extraColumns = ""): string {
+  const cols = extraColumns
+    ? `${PUBLISHED_SCORE_COLUMNS}, ${extraColumns}`
+    : PUBLISHED_SCORE_COLUMNS;
+  return (
+    `approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(${cols}),` +
+    `current_run:score_runs!candidate_matches_current_score_run_id_fkey(${cols})`
+  );
+}
+
+/** Collapses the two embedded runs into `score_runs` — approved wins. */
+export function withPublishedRun<T extends Record<string, unknown>>(row: T) {
+  const { approved_run, current_run, ...rest } = row as Record<string, unknown>;
+  return { ...rest, score_runs: (approved_run ?? current_run ?? null) } as T & {
+    score_runs: Record<string, unknown> | null;
+  };
+}
+

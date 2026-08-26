@@ -8,9 +8,13 @@
  */
 import { Badge } from "@/components/ui/badge";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
+import { publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
 
 type RunLike = {
   score?: number | null;
+  /** Human-reviewed figure; when present it IS the published score. */
+  final_score?: number | string | null;
+  fit_band?: string | null;
   confidence?: number | null;
   /** 0-100: how much of the rubric the run's evidence could actually decide. */
   evidence_confidence?: number | null;
@@ -67,19 +71,21 @@ export function AdminScoreNumber({
   size?: "sm" | "lg";
   className?: string;
 }) {
-  if (run?.score == null) {
+  const score = publishedScore(run);
+  const display = publishedScoreDisplay(run);
+  if (score == null || display == null) {
     return <span className={`text-sm text-muted-foreground ${className}`}>Not scored</span>;
   }
   const meta = `${confidenceLabel(run)} · ${rubricVersionLabel(run)} · ${engineVersionLabel(run)}`;
-  const scoreLabel = `Score ${Math.round(Number(run.score))}`;
+  const scoreLabel = `Score ${display}`;
   // The band comes from the ONE shared helper (score decides the band), never
   // from the stored engine label — otherwise 100 reads "strong fit" here and
   // "Exceptional" in the list.
-  const bandLabel = toFitPresentation(run.fit_label, run.score).headline;
+  const bandLabel = toFitPresentation(run.fit_label, score).headline;
   if (size === "lg") {
     return (
       <div className={`flex flex-wrap items-baseline gap-3 ${className}`} aria-label={scoreLabel}>
-        <div className="text-5xl font-semibold tabular-nums" aria-hidden="true">{Math.round(Number(run.score))}</div>
+        <div className="text-5xl font-semibold tabular-nums" aria-hidden="true">{display}</div>
         <Badge variant="secondary">{bandLabel}</Badge>
         <span className="text-sm text-muted-foreground">{meta}</span>
       </div>
@@ -88,7 +94,7 @@ export function AdminScoreNumber({
   return (
     <span className={`inline-flex flex-wrap items-baseline gap-1.5 ${className}`} aria-label={scoreLabel}>
       <Badge variant="secondary" className="tabular-nums" aria-hidden="true">
-        Score {Math.round(Number(run.score))}
+        Score {display}
         <span className="ml-1 opacity-70">· {bandLabel}</span>
       </Badge>
       <span className="text-[11px] text-muted-foreground">{meta}</span>

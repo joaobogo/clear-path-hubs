@@ -6,6 +6,7 @@ import { pilotEndsAt } from "@/lib/pilot-state";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { publishedRunEmbed, publishedScore, withPublishedRun } from "@/lib/scoring/published-score";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import type { EventType } from "./events";
 import { qaGuardValues, isQaSafeOrg } from "@/lib/qa-guard";
@@ -250,7 +251,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       s
         .from("candidate_matches")
         .select(
-          "id,updated_at,is_test_record,organization_id,position_id,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label)",
+          `id,updated_at,is_test_record,organization_id,position_id,candidate_profiles(full_name),positions(title,organizations(name)),${publishedRunEmbed()}`,
         )
         .eq("processing_state", "scored")
         .eq("admin_status", "pending")
@@ -901,7 +902,7 @@ export const getPosition = createServerFn({ method: "GET" })
       s
         .from("candidate_matches")
         .select(
-          "id,stage,admin_status,client_visibility,processing_state,updated_at,candidate_profiles(full_name,email),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label)",
+          `id,stage,admin_status,client_visibility,processing_state,updated_at,candidate_profiles(full_name,email),${publishedRunEmbed()}`,
         )
         .eq("position_id", data.id)
         .order("updated_at", { ascending: false })
@@ -911,7 +912,7 @@ export const getPosition = createServerFn({ method: "GET" })
     return {
       position: posRes.data,
       screening: (screeningRes.data ?? []) as AnyRow[],
-      matches: (matchesRes.data ?? []) as AnyRow[],
+      matches: ((matchesRes.data ?? []) as AnyRow[]).map(withPublishedRun),
     };
   });
 
@@ -1384,14 +1385,14 @@ export const getPublishQueue = createServerFn({ method: "GET" })
     const { data } = await s
       .from("candidate_matches")
       .select(
-        "id,updated_at,admin_status,client_visibility,processing_state,current_score_run_id,candidate_profiles(full_name,email),positions(id,title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,contradiction_status,must_have_coverage)",
+        `id,updated_at,admin_status,client_visibility,processing_state,current_score_run_id,candidate_profiles(full_name,email),positions(id,title,organizations(name)),${publishedRunEmbed("contradiction_status, must_have_coverage")}`,
       )
       .eq("processing_state", "scored")
       .in("admin_status", ["pending", "approved", "on_hold"])
       .neq("client_visibility", "visible")
       .order("updated_at", { ascending: false })
       .limit(100);
-    return (data ?? []) as AnyRow[];
+    return ((data ?? []) as AnyRow[]).map(withPublishedRun);
   });
 
 // Sanitized client preview — returns the SAME DTO the real Client view uses,
@@ -1857,7 +1858,7 @@ export const searchCandidateMatches = createServerFn({ method: "POST" })
     let q = s
       .from("candidate_matches")
       .select(
-        "id,application_id,stage,admin_status,client_visibility,processing_state,updated_at,created_at,organization_id,position_id,candidate_profile_id,candidate_profiles(full_name,email),positions(id,title,organization_id,organizations(id,name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,contradiction_status)",
+        `id,application_id,stage,admin_status,client_visibility,processing_state,updated_at,created_at,organization_id,position_id,candidate_profile_id,candidate_profiles(full_name,email),positions(id,title,organization_id,organizations(id,name)),${publishedRunEmbed("contradiction_status")}`,
         { count: "exact" },
       );
 
@@ -1877,7 +1878,7 @@ export const searchCandidateMatches = createServerFn({ method: "POST" })
     if (data.date_to) q = q.lte("updated_at", data.date_to);
 
     const { data: rows, count } = await q;
-    let out = (rows ?? []) as AnyRow[];
+    let out = ((rows ?? []) as AnyRow[]).map(withPublishedRun);
     if (data.q) {
       const needle = data.q.toLowerCase();
       out = out.filter((r) => {
@@ -1888,16 +1889,16 @@ export const searchCandidateMatches = createServerFn({ method: "POST" })
     }
     if (data.min_score != null) {
       const min = data.min_score;
-      out = out.filter((r) => (r.score_runs?.score ?? -1) >= min);
+      out = out.filter((r) => (publishedScore(r.score_runs) ?? -1) >= min);
     }
     if (data.max_score != null) {
       const max = data.max_score;
-      out = out.filter((r) => (r.score_runs?.score ?? 101) <= max);
+      out = out.filter((r) => (publishedScore(r.score_runs) ?? 101) <= max);
     }
     if (sort === "score_desc") {
-      out.sort((a, b) => (b.score_runs?.score ?? -1) - (a.score_runs?.score ?? -1));
+      out.sort((a, b) => (publishedScore(b.score_runs) ?? -1) - (publishedScore(a.score_runs) ?? -1));
     } else if (sort === "score_asc") {
-      out.sort((a, b) => (a.score_runs?.score ?? 101) - (b.score_runs?.score ?? 101));
+      out.sort((a, b) => (publishedScore(a.score_runs) ?? 101) - (publishedScore(b.score_runs) ?? 101));
     }
     return { rows: out, total: count ?? out.length, limit, offset };
   });
