@@ -472,7 +472,9 @@ async function applyCandidateFacts(sb: any, profileId: string, d: Dossier) {
       timezone: d.timezone,
       years_experience: d.years_experience,
       linkedin_url: d.linkedin_url,
-      portfolio_url: d.portfolio_url,
+      // Personal site / portfolio stay NULL: a 404 on a prospect's click is a tell.
+      portfolio_url: null,
+      website_url: null,
       city: d.city,
       region: d.region || null,
       country: d.country,
