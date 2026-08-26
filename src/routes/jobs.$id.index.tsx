@@ -368,15 +368,16 @@ function JobDetail() {
   const pos = fetched;
   if (!pos) return null;
 
-  // A pasted description often repeats the role title as its first heading;
-  // the page already has an h1, so that duplicate is dropped.
+  // A pasted description often repeats the role title, or an "About the role"
+  // heading, at the top. The page already prints both, so those duplicates are
+  // dropped from the first two blocks.
+  const norm = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const blocks = parseJobDescription(pos.description).filter(
     (b, i) =>
       !(
-        i === 0 &&
+        i < 2 &&
         b.kind === "heading" &&
-        b.text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() ===
-          pos.title.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim()
+        (norm(b.text) === norm(pos.title) || norm(b.text) === "about the role")
       ),
   );
   const workModel = labelWorkModel(pos.work_model);
