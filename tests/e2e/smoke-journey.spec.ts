@@ -309,7 +309,14 @@ test.describe("launch smoke journey", () => {
 
     // ── 4. Client signs in and advances the candidate ─────────────────────
     await loginAs(page, "client", fixtures.users["client_admin"]!.email);
+    // A first-time client workspace opens the welcome tour over the page; a real
+    // user dismisses it before working, so do the same.
+    const skipTour = page.getByRole("button", { name: /^skip tour$/i }).first();
+    if (await skipTour.isVisible({ timeout: 10_000 }).catch(() => false)) {
+      await skipTour.click();
+    }
     // Publication is only real if the candidate shows up in the client's own list.
+
     await page.goto("/client/candidates", { waitUntil: "domcontentloaded" });
     await expect(
       page.getByText(fullName).first(),
