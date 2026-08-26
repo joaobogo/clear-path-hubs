@@ -157,6 +157,20 @@ test.describe("launch smoke journey", () => {
     trackedMatchId = matchId;
 
     // ── 2. Candidate signs in and sees their application ──────────────────
+    page.on("pageerror", (err) =>
+      // eslint-disable-next-line no-console
+      console.log("[e2e] pageerror", err.name, err.message, (err.stack ?? "").slice(0, 600)),
+    );
+    page.on("requestfailed", (req) =>
+      // eslint-disable-next-line no-console
+      console.log("[e2e] requestfailed", req.url().slice(0, 160), req.failure()?.errorText),
+    );
+    page.on("response", (res) => {
+      if (res.status() === 404) {
+        // eslint-disable-next-line no-console
+        console.log("[e2e] 404", res.url().slice(0, 200));
+      }
+    });
     await loginAs(page, "candidate", email, QA_PASSWORD);
     await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle").catch(() => undefined);
