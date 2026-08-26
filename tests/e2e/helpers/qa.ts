@@ -60,7 +60,11 @@ type QaAction =
 export const QA_E2E_COOKIE_VALUE = "e2e";
 
 function token(): string {
-  return process.env["QA_SEED_TOKEN"] ?? QA_E2E_COOKIE_VALUE;
+  // An empty/blank env var counts as absent: the server treats a blank
+  // QA_SEED_TOKEN as "no token required", and an empty cookie value would
+  // never round-trip through the browser.
+  const raw = (process.env["QA_SEED_TOKEN"] ?? "").trim();
+  return raw.length > 0 ? raw : QA_E2E_COOKIE_VALUE;
 }
 
 export async function qaSeed<T = Record<string, unknown>>(
