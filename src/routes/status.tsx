@@ -23,7 +23,7 @@ import {
   type StatusLevel,
   type StatusNotice,
 } from "@/lib/status/platform-status";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 export const statusQuery = queryOptions({
   queryKey: ["platform-status", "page"],
@@ -102,8 +102,6 @@ function StatusPill({ level }: { level: StatusLevel }) {
     </span>
   );
 }
-
-import { formatDate, formatDateTime } from "@/lib/format/datetime";
 
 function formatTime(iso: string): string {
   return formatDateTime(iso);
