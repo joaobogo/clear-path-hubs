@@ -111,19 +111,30 @@ export function onTrackingPolicyChange(handler: (p: TrackingPolicy) => void): ()
   return () => window.removeEventListener(POLICY_EVENT, listener);
 }
 
-/** Whether a specific tracker is on the admin's strictly-necessary list. */
+/**
+ * Trackers that always run, whatever the visitor chose and before any choice is
+ * made: RB2B (company-level visitor identification) and GA4. They boot from the
+ * server-rendered head and keep reporting after a rejection. GA4 still runs
+ * cookieless until analytics consent is granted — Consent Mode decides storage,
+ * not whether the tag measures.
+ */
+const ALWAYS_ON_TRACKERS = ["rb2b", "ga4"] as const;
+
+/** Whether a specific tracker is strictly necessary or on the always-on list. */
 export function isTrackerEssential(key: string): boolean {
+  if ((ALWAYS_ON_TRACKERS as readonly string[]).includes(key)) return true;
   return getTrackingPolicy().essentialTrackers.includes(key);
 }
 
 /**
- * The single gate every tracker passes through. Essential trackers run always;
- * everything else needs its consent category permitted.
+ * The single gate every tracker passes through. Essential and always-on
+ * trackers run always; everything else needs its consent category permitted.
  */
 export function isTrackerAllowed(key: string, category: ConsentCategory): boolean {
   if (isTrackerEssential(key)) return true;
   return isAllowed(category);
 }
+
 
 
 /**
