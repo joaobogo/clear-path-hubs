@@ -304,6 +304,13 @@ async function main() {
     await sb.from("applications").update({ legacy_source_system: SEED_MARKER, is_test_record: false }).eq("id", applicationId);
     await sb.from("candidate_matches").update({ legacy_source_system: SEED_MARKER, is_test_record: false }).eq("id", matchId);
     await sb.from("files").update({ legacy_source_system: SEED_MARKER }).eq("candidate_profile_id", profileId);
+    // Storage paths stay sanitised; the displayed name stays the person's own.
+    await sb
+      .from("files")
+      .update({ filename: d.cv_filename })
+      .eq("candidate_profile_id", profileId)
+      .eq("upload_source", "candidate_application");
+
 
     if (args.stage === "apply") {
       rows.push({ candidate: d.full_name, match: matchId, state: "applied (stage=apply)", score: "—", band: "—" });
