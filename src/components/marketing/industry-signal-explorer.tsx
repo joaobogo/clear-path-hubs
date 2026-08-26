@@ -477,7 +477,7 @@ function buildGenericPack(entry: IndustryEntry): Pack {
         },
         {
           key: "authorization",
-          title: "Work authorization & location",
+          title: "Work authorisation & location",
           body: "Right to work and location model captured at intake — a first-class filter, not a footnote.",
           validation: "Authorization is confirmed for the target market before shortlist.",
           flags: {

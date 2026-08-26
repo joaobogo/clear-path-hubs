@@ -6,7 +6,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 import { humanizeCode, humanizeJobName, humanizeTechnicalError } from "@/lib/humanize-codes";
-import { pluralize } from "@/lib/format/datetime";
+import { pluralize, formatDateTime } from "@/lib/format/datetime";
 import { sanitizeInternalMarkers } from "@/lib/human-labels";
 
 import { getPipelineHealth } from "@/lib/admin.functions";
@@ -164,7 +164,7 @@ function HealthPage() {
               {(data.failed_jobs as AnyRow[]).map((j) => (
                 <tr key={j.id} className="border-t">
                   <td className="px-3 py-2 text-xs text-muted-foreground">
-                    {new Date(j.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                    {formatDateTime(j.created_at)}
                   </td>
                   <td className="px-3 py-2 text-xs text-muted-foreground">{humanizeJobName(j.job_type)}</td>
                   <td className="px-3 py-2">

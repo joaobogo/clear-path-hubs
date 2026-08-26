@@ -2,30 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { getActivityFeed } from "@/lib/activity.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatDateTime, formatRelative } from "@/lib/format/datetime";
 
 export const ACTIVITY_QUERY_KEY = ["activity-feed"] as const;
 
-function relTime(iso: string): string {
-  const then = new Date(iso).getTime();
-  const diff = Date.now() - then;
-  const min = Math.round(diff / 60000);
-  if (min < 1) return "just now";
-  if (min < 60) return `${min}m ago`;
-  const hrs = Math.round(min / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.round(hrs / 24);
-  if (days < 7) return `${days}d ago`;
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short" });
-}
-
-function absTime(iso: string): string {
-  // Rendered in the viewer's own timezone; stored and transported as UTC.
-  return new Date(iso).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+const relTime = (iso: string) => formatRelative(iso);
+const absTime = (iso: string) => formatDateTime(iso);
 
 /**
  * Role-scoped activity. Every row comes from the single canonical event table,

@@ -36,7 +36,7 @@ import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
 import { useConfirmAction } from "@/components/ds/confirm-action";
 import { CLIENT_COPY } from "@/lib/events";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 type Backlog = Awaited<ReturnType<typeof getDecisionBacklog>>;
 type Row = Backlog["rows"][number];
@@ -51,7 +51,7 @@ const NUDGE_COPY = CLIENT_COPY["approval_needed"] ?? {
 
 function fmt(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE });
+  return formatDateTime(iso);
 }
 
 export function DecisionBacklogPanel({

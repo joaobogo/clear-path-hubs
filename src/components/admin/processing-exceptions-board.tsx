@@ -13,7 +13,7 @@ import { toastError } from "@/lib/toast-error";
 import { humanizeCode, humanizeJobName, humanizeTechnicalError } from "@/lib/humanize-codes";
 import { TechnicalDetail } from "@/components/admin/technical-detail";
 import { listScoringOrphans, resolveScoringOrphan, type ScoringOrphan } from "@/lib/scoring.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import {
   getProcessingExceptions,
   markProcessingJobPermanentlyFailed,
@@ -51,15 +51,7 @@ function ageLabel(minutes: number): string {
 }
 
 function formatOrphanDate(iso: string): string {
-  return new Date(iso).toLocaleString(APP_LOCALE, {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: WORKSPACE_TIMEZONE,
-  });
+  return formatDateTime(iso);
 }
 
 

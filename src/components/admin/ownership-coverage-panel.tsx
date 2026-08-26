@@ -34,7 +34,7 @@ import {
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ArrowUpRight, AlertTriangle } from "lucide-react";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 const NONE = "__none__";
 
@@ -45,11 +45,7 @@ type Preview = Awaited<ReturnType<typeof previewOwnerBulkReassign>>;
 
 function fmtDate(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  return formatDate(iso);
 }
 
 export function OwnershipCoveragePanel({

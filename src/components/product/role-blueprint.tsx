@@ -5,7 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 import { formatEnumLabel } from "@/lib/human-labels";
 import { DEFAULT_CALIBRATION } from "@/lib/scoring/engine-calibration";
 
@@ -249,7 +249,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
           />
           <FactTile
             icon={<Shield className="h-4 w-4" />}
-            label="Work authorization"
+            label="Work authorisation"
             primary={workAuth || "As per local law"}
           />
           <FactTile
@@ -350,7 +350,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
                     {t.label}
                   </span>
                   <span className="text-xs tabular-nums">
-                    {t.at ? new Date(t.at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
+                    {t.at ? formatDate(t.at) : "—"}
                   </span>
                 </li>
               ))}
@@ -372,7 +372,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
                   >
                     <span className="text-foreground/90">{humanizeBlueprintAction(a.action)}</span>
                     <span className="text-xs text-muted-foreground tabular-nums">
-                      {a.created_at ? new Date(a.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : ""}
+                      {a.created_at ? formatDate(a.created_at) : ""}
                     </span>
                   </li>
                 ))}

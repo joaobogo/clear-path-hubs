@@ -8,7 +8,7 @@
 
 /** Position statuses that count as live delivery work (same as portfolio health). */
 import { formatMoneyFromCents } from "@/lib/money";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 export const ACCOUNT_OPEN_POSITION_STATUSES = [
   "submitted",
   "under_review",
@@ -73,9 +73,5 @@ export function formatMoney(cents: number, currency: string): string {
 
 export function formatWhen(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  return formatDate(iso);
 }

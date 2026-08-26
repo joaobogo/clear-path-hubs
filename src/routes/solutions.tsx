@@ -50,7 +50,7 @@ const SOLUTIONS = [
   {
     icon: Globe2,
     title: "Global talent, remote-ready",
-    body: "50+ countries covered. Timezone-aware shortlisting, work-authorization screening, and remote-first evidence.",
+    body: "50+ countries covered. Timezone-aware shortlisting, work-authorisation screening, and remote-first evidence.",
     cta: { to: "/global-talent", label: "Global talent" },
   },
   {

@@ -21,7 +21,7 @@ import {
   TriangleAlert,
   Wand2,
 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 /**
  * GeneratedBlueprintPanel — surfaces the express-onboarding blueprint on both
@@ -280,7 +280,7 @@ export function GeneratedBlueprintPanel({
             <Field label="Education" value={bp.candidate_profile?.education} source={sources.education} />
             <Field label="Languages" value={bp.candidate_profile?.languages} source={sources.languages} />
             <Field
-              label="Work authorization"
+              label="Work authorisation"
               value={bp.candidate_profile?.work_authorization}
               source={sources.work_authorization}
             />
@@ -393,7 +393,7 @@ export function GeneratedBlueprintPanel({
               <span>Confidence {Math.round(bp.confidence.overall * 100)}%</span>
             )}
             {position?.blueprint_generated_at && (
-              <span>Prepared {new Date(position.blueprint_generated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
+              <span>Prepared {formatDateTime(position.blueprint_generated_at)}</span>
             )}
           </footer>
         </div>

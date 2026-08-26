@@ -19,7 +19,7 @@ import {
   type EvidenceChainNode,
   type EvidenceState,
 } from "@/lib/evidence/evidence-graph";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 /**
  * Interactive Evidence Graph.
@@ -289,7 +289,7 @@ export function EvidenceGraph({
                       Reviewer {active.reviewer.status}
                       {active.reviewer.at && (
                         <span className="font-normal normal-case text-muted-foreground">
-                          · {new Date(active.reviewer.at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                          · {formatDateTime(active.reviewer.at)}
                         </span>
                       )}
                     </div>

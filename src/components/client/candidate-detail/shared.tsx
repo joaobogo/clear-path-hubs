@@ -229,7 +229,7 @@ export function ContactBlock({
     },
     { label: "Location", value: c.location ?? null },
     { label: "Timezone", value: c.timezone ?? null },
-    { label: "Work authorization", value: candidate.work_authorization ?? null },
+    { label: "Work authorisation", value: candidate.work_authorization ?? null },
     {
       label: "Languages",
       value:

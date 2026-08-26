@@ -7,7 +7,7 @@ import { getRejectionReasonSummary } from "@/lib/rejection-reasons.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 export function RejectionReasonsPanel({
   positionId,
@@ -79,7 +79,7 @@ export function RejectionReasonsPanel({
                       {d.surface === "client" ? "client decision" : "our decision"}
                       {d.stage_at_decision ? ` · at ${d.stage_at_decision.replace(/_/g, " ")}` : ""}
                       {" · "}
-                      {new Date(d.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                      {formatDate(d.created_at)}
                       {d.detail ? <span className="block">{d.detail}</span> : null}
                     </li>
                   ))}

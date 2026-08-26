@@ -51,7 +51,7 @@ import {
   Lock,
   RefreshCw,
 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { formatAnswerValue } from "@/lib/human-labels";
 import { cn } from "@/lib/utils";
 
@@ -457,7 +457,7 @@ function ReviewWorkspace() {
                 <AlertTriangle className="size-4" />
                 <AlertTitle>Job changed after scoring</AlertTitle>
                 <AlertDescription>
-                  This job was edited on {new Date(position.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}, after the
+                  This job was edited on {formatDateTime(position.updated_at)}, after the
                   current score ran.
                 </AlertDescription>
                 <Button
@@ -652,7 +652,7 @@ function ReviewWorkspace() {
               {(overrides as Any[]).map((o) => (
                 <li key={o.id} className="rounded border p-2">
                   <p className="text-xs text-muted-foreground">
-                    {new Date(o.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} · evidence corrected
+                    {formatDateTime(o.created_at)} · evidence corrected
                   </p>
                   <p>
                     {fmt(o.before_state?.result)} → {fmt(o.after_state?.result)} — {fmt(o.reason)}
@@ -662,7 +662,7 @@ function ReviewWorkspace() {
               {(decisions as Any[]).map((d) => (
                 <li key={d.id} className="rounded border p-2">
                   <p className="text-xs text-muted-foreground">
-                    {new Date(d.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} · {fmt(d.decision_type)}
+                    {formatDateTime(d.created_at)} · {fmt(d.decision_type)}
                   </p>
                   <p>{fmt(d.reason)}</p>
                 </li>
@@ -670,7 +670,7 @@ function ReviewWorkspace() {
               {(audit as Any[]).map((a) => (
                 <li key={a.id} className="rounded border p-2">
                   <p className="text-xs text-muted-foreground">
-                    {new Date(a.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} · {fmt(a.action)}
+                    {formatDateTime(a.created_at)} · {fmt(a.action)}
                   </p>
                 </li>
               ))}

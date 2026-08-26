@@ -105,7 +105,7 @@ export const CONFIDENCE_LABELS: Record<ConfidenceBand, string> = {
  * but these render with first-class UI copy and analytics rollups.
  */
 export const KNOWN_QUALIFIERS = {
-  work_authorization: "Work authorization",
+  work_authorization: "Work authorisation",
   mandatory_license: "Mandatory licence / credential",
   location: "Location / on-site availability",
   required_language: "Required language",

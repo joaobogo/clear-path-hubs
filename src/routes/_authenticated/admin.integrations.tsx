@@ -16,7 +16,7 @@ import {
   type IntegrationCheckRow,
 } from "@/lib/integration-health.functions";
 import { getIntegrationStrip, type StripChip } from "@/lib/integration-strip.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { humanizeCode } from "@/lib/humanize-codes";
 
 export const healthQuery = {
@@ -256,7 +256,7 @@ function IntegrationHealthPage() {
                   {history.map((row) => (
                     <li key={row.id} className="text-xs">
                       <span className="text-muted-foreground">
-                        {new Date(row.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                        {formatDateTime(row.created_at)}
                       </span>{" "}
                       <Badge variant={STATUS_STYLE[row.status].variant}>
                         {STATUS_STYLE[row.status].label}

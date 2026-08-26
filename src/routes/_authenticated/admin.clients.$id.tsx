@@ -70,7 +70,7 @@ import {
   KeyRound,
   BadgeCheck,
 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 const TABS = [
   "overview",
@@ -373,8 +373,8 @@ function OverviewTab({ org, parsedCvCount }: { org: any; parsedCvCount: number }
           <dt>Primary contact</dt><dd className="text-foreground">{org.primary_contact_name ?? "—"}</dd>
           <dt>Contact email</dt><dd className="text-foreground">{org.primary_contact_email ?? "—"}</dd>
           <dt>Phone</dt><dd className="text-foreground">{org.phone ?? "—"}</dd>
-          <dt>Created</dt><dd className="text-foreground">{new Date(org.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</dd>
-          <dt>Updated</dt><dd className="text-foreground">{new Date(org.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</dd>
+          <dt>Created</dt><dd className="text-foreground">{formatDateTime(org.created_at)}</dd>
+          <dt>Updated</dt><dd className="text-foreground">{formatDateTime(org.updated_at)}</dd>
         </dl>
       </div>
       <DecisionBacklogPanel organizationId={org.id} className="md:col-span-3" />
@@ -610,7 +610,7 @@ function TeamTab({ members, org }: { members: any[]; org: any }) {
                 <td className="px-3 py-2">{humanizeCode(m.role)}</td>
                 <td className="px-3 py-2">{humanizeCode(m.status)}</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
-                  {m.created_at ? new Date(m.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
+                  {m.created_at ? formatDate(m.created_at) : "—"}
                 </td>
               </tr>
             ))}
@@ -654,7 +654,7 @@ function PositionsTab({ positions }: { positions: any[] }) {
               <td className="px-3 py-2">{humanizeCode(p.visibility)}</td>
               <td className="px-3 py-2 text-muted-foreground">{p.location ?? "—"}</td>
               <td className="px-3 py-2 text-xs text-muted-foreground">
-                {new Date(p.updated_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                {formatDate(p.updated_at)}
               </td>
             </tr>
           ))}
@@ -775,7 +775,7 @@ function SettingsTab({ org }: { org: any }) {
           {org.archived_at && (
             <>
               <dt>Archived at</dt>
-              <dd className="text-foreground break-all">{new Date(org.archived_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</dd>
+              <dd className="text-foreground break-all">{formatDateTime(org.archived_at)}</dd>
             </>
           )}
         </dl>
@@ -1073,7 +1073,7 @@ function DocumentsTab({ id, parsedCvCount }: { id: string; parsedCvCount?: numbe
                 {f.size ? `${(Number(f.size) / 1024).toFixed(0)} KB` : "—"}
               </td>
               <td className="px-3 py-2 text-xs text-muted-foreground">
-                {new Date(f.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                {formatDate(f.created_at)}
               </td>
             </tr>
           ))}
@@ -1165,18 +1165,18 @@ function SharesTab({ orgId }: { orgId: string }) {
                 </Badge>
                 {s.revoked_at && (
                   <div className="text-[9px] mt-0.5 text-muted-foreground">
-                    Revoked at {new Date(s.revoked_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                    Revoked at {formatDate(s.revoked_at)}
                   </div>
                 )}
               </td>
               <td className="px-3 py-2 text-xs text-muted-foreground">
-                {new Date(s.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                {formatDate(s.created_at)}
               </td>
               <td className="px-3 py-2 text-right">
                 <div className="text-xs">{s.view_count} views</div>
                 {s.last_viewed_at && (
                   <div className="text-[10px] text-muted-foreground">
-                    Last: {new Date(s.last_viewed_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                    Last: {formatDate(s.last_viewed_at)}
                   </div>
                 )}
               </td>
@@ -1238,7 +1238,7 @@ function TalentMemoryTab({ orgId }: { orgId: string }) {
                 </Badge>
               </td>
               <td className="px-3 py-2 text-xs text-muted-foreground">
-                {new Date(m.tagged_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                {formatDate(m.tagged_at)}
               </td>
             </tr>
           ))}

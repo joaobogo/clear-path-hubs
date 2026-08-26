@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Lock, Unlock, Trash2, Users, AlertTriangle } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
 import { formatAnswerValue } from "@/lib/human-labels";
 
@@ -156,7 +156,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
           <Field label="Portfolio" value={profile?.portfolio_url ?? application?.portfolio_url} link />
           <Field
             label="Applied"
-            value={application?.applied_at ? new Date(application.applied_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : null}
+            value={application?.applied_at ? formatDateTime(application.applied_at) : null}
           />
           <Field label="Source" value={application?.source_kind ?? application?.source} />
         </dl>
@@ -176,7 +176,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
         {released ? (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Released {new Date(match.contact_released_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+              Released {formatDateTime(match.contact_released_at)}
               {match.contact_release_reason ? ` — ${match.contact_release_reason}` : ""}
             </p>
             <Button
@@ -414,7 +414,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {f.page_count ? `${f.page_count} pages · ` : ""}
                   {f.parser ? `${f.parser}${f.parser_version ? ` v${f.parser_version}` : ""} · ` : ""}
-                  {new Date(f.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                  {formatDateTime(f.created_at)}
                 </p>
                 {f.parse_error && (
                   <p className="mt-1 text-xs text-destructive">{f.parse_error}</p>
@@ -436,7 +436,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
                 <span>
                   {(i.interview_type ?? "Interview").replace(/_/g, " ")} ·{" "}
                   <span className="text-muted-foreground">
-                    {i.scheduled_at ? new Date(i.scheduled_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "unscheduled"}
+                    {i.scheduled_at ? formatDateTime(i.scheduled_at) : "unscheduled"}
                   </span>
                 </span>
                 <Badge variant="outline" className="text-xs">
@@ -458,7 +458,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
               <li key={a.id} className="flex items-baseline justify-between gap-3 border-b pb-1.5">
                 <span className="font-medium">{a.action.replace(/_/g, " ")}</span>
                 <span className="whitespace-nowrap text-xs text-muted-foreground">
-                  {new Date(a.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                  {formatDateTime(a.created_at)}
                 </span>
               </li>
             ))}
@@ -494,7 +494,7 @@ function NoteColumn({
               <p className="whitespace-pre-wrap text-sm">{n.body}</p>
               <div className="mt-1 flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">
-                  {new Date(n.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                  {formatDateTime(n.created_at)}
                 </span>
                 <Button
                   size="sm"

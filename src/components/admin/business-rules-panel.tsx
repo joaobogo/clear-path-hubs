@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ChevronDown, RefreshCw, RotateCcw, Save } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 export const BUSINESS_RULES_QUERY = {
   queryKey: ["business-rules-overrides"] as const,
@@ -158,15 +158,7 @@ export function BusinessRulesPanel() {
                     <span>{RULE_META[row.key as (typeof TOP_KEYS)[number]]?.label ?? row.key}</span>
                     <span className="text-xs text-muted-foreground">
                       {row.action === "clear" ? "Restored to default" : "Override saved"} ·{" "}
-                      {new Date(row.created_at).toLocaleString(APP_LOCALE, {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                        timeZone: WORKSPACE_TIMEZONE,
-                      })}
+                      {formatDateTime(row.created_at)}
                     </span>
                   </div>
                   {row.note ? <p className="mt-1 text-xs text-muted-foreground">{row.note}</p> : null}

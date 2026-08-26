@@ -36,7 +36,7 @@ import { Check, Minus, ShieldCheck, UserPlus } from "lucide-react";
 import { useConfirmAction } from "@/components/ds/confirm-action";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 const ROLE_LABEL: Record<string, string> = {
   client_admin: "Owner",
@@ -338,8 +338,8 @@ function MemberRow({
   return (
     <tr className="hover:bg-muted/30">
       <td className="px-4 py-3">
-        <div className="font-medium">{m.full_name ?? m.email ?? "Unnamed member"}</div>
-        <div className="text-xs text-muted-foreground">{m.email ?? "—"}</div>
+        <div className="break-words font-medium">{m.full_name ?? m.email ?? "Unnamed member"}</div>
+        <div className="break-words text-xs text-muted-foreground">{m.email ?? "—"}</div>
         <div className="mt-1 flex gap-1">
           {pending && <Badge variant="outline">pending invite</Badge>}
           {m.status === "suspended" && <Badge variant="secondary">suspended</Badge>}
@@ -363,7 +363,7 @@ function MemberRow({
         <PermissionCell key={p} m={m} perm={p} />
       ))}
       <td className="px-4 py-3 text-xs text-muted-foreground">
-        {m.last_sign_in_at ? new Date(m.last_sign_in_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "Never signed in"}
+        {m.last_sign_in_at ? formatDateTime(m.last_sign_in_at) : "Never signed in"}
       </td>
       <td className="px-4 py-3 text-right">
         <div className="inline-flex gap-1.5">

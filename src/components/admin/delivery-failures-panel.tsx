@@ -28,7 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 type Item = {
   key: string;
@@ -56,7 +56,7 @@ type Item = {
 };
 
 function when(iso: string) {
-  return new Date(iso).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE });
+  return formatDateTime(iso);
 }
 
 export function DeliveryFailuresPanel() {
@@ -268,7 +268,7 @@ export function DeliveryFailuresPanel() {
           <ul className="mt-2 space-y-1 text-xs">
             {blockedAddresses.slice(0, 5).map((a) => (
               <li key={a.address} className="flex items-center justify-between gap-3">
-                <span className="break-all font-medium">{a.address}</span>
+                <span className="break-words font-medium">{a.address}</span>
                 <span className="shrink-0 text-muted-foreground tabular-nums">
                   {a.deliveries} blocked send{a.deliveries === 1 ? "" : "s"}
                 </span>
@@ -316,7 +316,7 @@ export function DeliveryFailuresPanel() {
                       </Badge>
                     ) : null}
                   </td>
-                  <td className="px-4 py-3 break-all">{item.recipient ?? "—"}</td>
+                  <td className="px-4 py-3 break-words">{item.recipient ?? "—"}</td>
                   <td className="px-4 py-3">{item.channel}</td>
                   {/* Human sentence only — the raw code and provider payload
                       stay behind "Copy payload". */}
@@ -406,7 +406,7 @@ export function DeliveryFailuresPanel() {
             {suppressions.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-4 text-sm">
                 <span>
-                  <span className="font-medium break-all">{s.email}</span>
+                  <span className="font-medium break-words">{s.email}</span>
                   <span className="text-muted-foreground">
                     {" "}
                     · {s.reason ?? s.source} · {when(s.created_at)}

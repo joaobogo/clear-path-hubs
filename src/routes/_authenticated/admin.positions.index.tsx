@@ -45,7 +45,7 @@ import {
 } from "@/components/admin/bulk-confirm-dialog";
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
 import { OwnershipCoveragePanel } from "@/components/admin/ownership-coverage-panel";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 
 const searchSchema = z.object({
@@ -554,11 +554,7 @@ function PositionsPage() {
                       )}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
-                      {new Date(p.updated_at).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                      {formatDate(p.updated_at)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Button

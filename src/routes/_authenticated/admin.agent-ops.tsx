@@ -61,7 +61,7 @@ import {
   UserCog,
   X,
 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/agent-ops")({
   head: () => ({
@@ -521,7 +521,7 @@ function RunDetail({ jobId }: { jobId: string }) {
               <li key={i} className="flex items-start justify-between gap-3 rounded-md bg-muted/30 px-3 py-1.5 text-xs">
                 <span>{a.sentence}</span>
                 <span className="whitespace-nowrap text-muted-foreground">
-                  {new Date(a.occurred_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                  {formatDateTime(a.occurred_at)}
                 </span>
               </li>
             ))}
@@ -540,7 +540,7 @@ function RunDetail({ jobId }: { jobId: string }) {
                 <li key={i} className="flex items-center justify-between gap-3 rounded-md bg-muted/30 px-3 py-1.5 text-xs">
                   <span className="font-mono">{a.action}</span>
                   <span className="text-muted-foreground">
-                    {new Date(a.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                    {formatDateTime(a.created_at)}
                   </span>
                 </li>
               ),

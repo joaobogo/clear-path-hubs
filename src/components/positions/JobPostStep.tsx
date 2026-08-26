@@ -155,7 +155,7 @@ export function JobPostStep({
           />
         </Block>
 
-        <Block label="Work authorization" hint="e.g. Must hold EU work rights; no sponsorship.">
+        <Block label="Work authorisation" hint="e.g. Must hold EU work rights; no sponsorship.">
           <Input
             value={value.work_authorization_note}
             maxLength={600}
@@ -291,7 +291,7 @@ export function JobPostStep({
 
             <PreviewSection title="Languages" body={value.languages} />
             <PreviewSection title="Travel" body={value.travel} />
-            <PreviewSection title="Work authorization" body={value.work_authorization_note} />
+            <PreviewSection title="Work authorisation" body={value.work_authorization_note} />
             <PreviewSection title="Benefits" body={value.benefits} />
             <PreviewSection title="Accessibility" body={value.accessibility_note} />
             <PreviewSection title="Equal opportunity" body={value.eeo_statement} />

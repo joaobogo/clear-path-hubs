@@ -17,7 +17,7 @@ import {
   pasteCvText,
   requestCvReupload,
 } from "@/lib/parse-failure/parse-failure.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/parse-failures")({
   head: () => ({
@@ -169,7 +169,7 @@ function ParseFailures() {
                   <p className="mt-1 text-[11px] text-muted-foreground">
                     {row.filename} · {row.attempts} extraction attempt
                     {row.attempts === 1 ? "" : "s"} · uploaded{" "}
-                    {new Date(row.uploaded_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                    {formatDate(row.uploaded_at)}
                   </p>
                 </div>
                 {row.match_id && (
