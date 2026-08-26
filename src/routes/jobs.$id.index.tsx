@@ -375,9 +375,9 @@ function JobDetail() {
   const blocks = parseJobDescription(pos.description).filter(
     (b, i) =>
       !(
-        i < 2 &&
         b.kind === "heading" &&
-        (norm(b.text) === norm(pos.title) || norm(b.text) === "about the role")
+        (norm(b.text) === "about the role" ||
+          (i < 2 && norm(b.text) === norm(pos.title)))
       ),
   );
   const workModel = labelWorkModel(pos.work_model);
