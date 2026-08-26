@@ -632,6 +632,12 @@ function ApplyPage() {
   const onSubmit = async () => {
     if (submittingRef.current) return;
     setServerError(null);
+    // Hard gate: never submit (or record) a consent the candidate did not give.
+    if (!consent) {
+      setFieldErrors({ consent_terms: "You must accept the terms to continue" });
+      setStep(4);
+      return;
+    }
     // Final aggregate validation across all steps.
     const allErrs = { ...stepIssues(1), ...stepIssues(2), ...stepIssues(3), ...stepIssues(4) };
     setFieldErrors(allErrs);
@@ -688,8 +694,8 @@ function ApplyPage() {
           question_id: q.id,
           value: answers[q.id] ?? null,
         })),
-        consent_terms: consent as true,
-        network_opt_in: network,
+        consent_terms: consent,
+        network_opt_in: network === true,
         idempotency_key: getOrCreateIdempotencyKey(),
         elapsed_seconds: Math.round((Date.now() - startedAtRef.current) / 1000),
 
@@ -1740,7 +1746,7 @@ function ApplyPage() {
                       label="Terms and data sharing"
                       value={consent ? "Agreed" : "Not agreed yet"}
                     />
-                    {network && <ReviewRow label="Talent network" value="Yes, add me" />}
+                    <ReviewRow label="Talent network" value={network ? "Yes, add me" : "No"} />
                     {form.accommodation_request.trim() && (
                       <ReviewRow
                         label="Adjustments (private)"
@@ -1804,7 +1810,12 @@ function ApplyPage() {
                 onClick={returningToReview ? returnToReview : goNext}
                 data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
                 className="w-full sm:w-auto"
-                disabled={cvChecking}
+                disabled={cvChecking || (step === 4 && !consent)}
+                title={
+                  step === 4 && !consent
+                    ? "Tick the required consent box to continue"
+                    : undefined
+                }
               >
                 {returningToReview ? "Done — back to review" : "Continue →"}
               </Button>
@@ -1813,8 +1824,8 @@ function ApplyPage() {
                 type="button"
                 size="lg"
                 onClick={onSubmit}
-                disabled={submitting}
-                aria-disabled={submitting}
+                disabled={submitting || !consent}
+                aria-disabled={submitting || !consent}
                 aria-busy={submitting}
                 data-testid="apply-submit"
                 className="w-full sm:w-auto"
