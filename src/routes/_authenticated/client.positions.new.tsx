@@ -68,7 +68,7 @@ function NewRolePage() {
       void router.navigate({
         to: "/client/positions/$id/edit",
         params: { id: res.id },
-        search: { step: undefined },
+        search: { step: undefined, fresh: true },
       });
     },
     // Never leak database prose: toastError keeps human messages and swaps
