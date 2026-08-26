@@ -32,15 +32,14 @@ async function main() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const d = ((mod as any).dossier ?? (mod as any).default);
     const { data: profile } = await sb
-      .from("candidate_profiles").select("id")
+      .from("candidate_profiles").select("id,current_cv_file_id")
       .eq("legacy_source_system", MARKER).ilike("email", d.email).maybeSingle();
     const { data: match } = await sb
       .from("candidate_matches").select("id,application_id")
       .eq("candidate_profile_id", profile.id).maybeSingle();
     const { data: file } = await sb
       .from("files").select("id,extracted_text")
-      .eq("application_id", match.application_id)
-      .order("created_at", { ascending: false }).limit(1).maybeSingle();
+      .eq("id", profile.current_cv_file_id).maybeSingle();
     const { data: ans } = await sb
       .from("application_answers")
       .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker)")
