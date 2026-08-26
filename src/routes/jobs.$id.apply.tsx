@@ -1810,11 +1810,17 @@ function ApplyPage() {
                 onClick={returningToReview ? returnToReview : goNext}
                 data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
                 className="w-full sm:w-auto"
-                disabled={cvChecking || (step === 4 && !consent)}
+                disabled={
+                  cvChecking ||
+                  (step === 4 && !consent) ||
+                  (step === 2 && (!cvFile || !!cvError))
+                }
                 title={
                   step === 4 && !consent
                     ? "Tick the required consent box to continue"
-                    : undefined
+                    : step === 2 && (!cvFile || !!cvError)
+                      ? "Attach your CV as a PDF to continue"
+                      : undefined
                 }
               >
                 {returningToReview ? "Done — back to review" : "Continue →"}
