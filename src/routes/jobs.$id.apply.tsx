@@ -193,6 +193,10 @@ function ApplyPage() {
   // Ticks so "Saved just now" ages into "Saved 3 minutes ago" on its own.
   const [savedTick, setSavedTick] = useState(0);
   const submittingRef = useRef(false);
+  // When Review became visible. Submits fired in the same instant belong to the
+  // click that got here, not to a decision to send.
+  const reviewEnteredAtRef = useRef(0);
+
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   // When this form first became usable. The gap to a successful submit is the
   // only honest source for the time we quote to the next candidate.
@@ -602,6 +606,12 @@ function ApplyPage() {
     stepHeadingRef.current?.focus();
   }, [step, qCursor]);
 
+  useEffect(() => {
+    if (step === 5) reviewEnteredAtRef.current = Date.now();
+  }, [step]);
+
+
+
   // Only answers the candidate actually gave. A skipped optional question is
   // omitted from the review rather than rendered as an empty row.
   const answeredQuestions = (pos?.questions ?? [])
@@ -638,8 +648,13 @@ function ApplyPage() {
 
 
   const onSubmit = async () => {
+    // One in flight at a time, and never a stray event carried over from the
+    // click that landed on Review: sending is only ever a deliberate act.
     if (submittingRef.current) return;
+    if (step !== 5) return;
+    if (Date.now() - reviewEnteredAtRef.current < 400) return;
     setServerError(null);
+
     // Hard gate: never submit (or record) a consent the candidate did not give.
     if (!consent) {
       setFieldErrors({ consent_terms: "You must accept the terms to continue" });
@@ -1814,6 +1829,7 @@ function ApplyPage() {
             ) : null}
             {step < 5 ? (
               <Button
+                key="apply-continue"
                 type="button"
                 onClick={returningToReview ? returnToReview : goNext}
                 data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
@@ -1834,7 +1850,12 @@ function ApplyPage() {
                 {returningToReview ? "Done — back to review" : "Continue →"}
               </Button>
             ) : (
+              /* Distinct key: without it React reuses the Continue button's DOM
+                 node for this one, so the key-up of the keypress that advanced
+                 to Review lands on Submit and sends the application without
+                 the applicant ever choosing to. */
               <Button
+                key="apply-submit"
                 type="button"
                 size="lg"
                 onClick={onSubmit}
@@ -1854,6 +1875,7 @@ function ApplyPage() {
                 )}
               </Button>
             )}
+
           </div>
           <p aria-live="assertive" className="sr-only">
             {submitting ? "Sending your application. Please wait." : ""}
