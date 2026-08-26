@@ -7,6 +7,7 @@ import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel"
 import { UpdateReadinessPanel } from "@/components/admin/update-readiness-panel";
 import { AccountOperatingSummary } from "@/components/admin/account-operating-summary";
 import { ClientAccessPanel } from "@/components/admin/client-access-panel";
+import { AccountStateStrip } from "@/components/admin/account-state-strip";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Suspense } from "react";
@@ -345,6 +346,10 @@ function ClientDetail() {
 function OverviewTab({ org, parsedCvCount }: { org: any; parsedCvCount: number }) {
   return (
     <section className="grid gap-4 md:grid-cols-3">
+      {/* One reader for plan, seats and setup (shared with the Access tab). */}
+      <div className="md:col-span-3">
+        <AccountStateStrip organizationId={org.id} />
+      </div>
       {/* Visual duplicate KPI tiles removed (C1) — reconciled into AccountOperatingSummary. */}
       <div className="md:col-span-3 rounded-lg border p-4 text-sm bg-card">
         <div className="flex items-center justify-between mb-2 border-b pb-2">
@@ -357,7 +362,7 @@ function OverviewTab({ org, parsedCvCount }: { org: any; parsedCvCount: number }
         <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground">
           <dt>Name</dt><dd className="text-foreground">{org.name}</dd>
           <dt>Status</dt><dd className="text-foreground">{humanizeCode(org.status)}</dd>
-          <dt>Onboarding</dt><dd className="text-foreground">{humanizeCode(org.onboarding_status ?? "not_started")}</dd>
+          {/* Plan, seats and setup are printed once, by AccountStateStrip above. */}
           <dt>Dashboard</dt><dd className="text-foreground">{humanizeCode(org.dashboard_status ?? "inactive")}</dd>
           <dt>Website</dt><dd className="text-foreground">{org.website ?? "—"}</dd>
           <dt>Domain</dt><dd className="text-foreground">{org.domain ?? "—"}</dd>
