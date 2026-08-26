@@ -2,7 +2,8 @@ import {
   makeRouteErrorComponent,
   makeRouteNotFoundComponent,
 } from "@/components/workspace/route-states";
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouter, useRouterState } from "@tanstack/react-router";
+import { ComponentErrorBoundary, ErrorState } from "@/components/ds";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
@@ -108,8 +109,41 @@ function MeLayout() {
       contextSubLabel={data?.email ?? undefined}
       navItems={nav}
     >
-      <Outlet />
+      <PortalBoundary>
+        <Outlet />
+      </PortalBoundary>
     </WorkspaceShell>
   );
 }
 
+/**
+ * Last-resort client boundary for the candidate portal. Route-level
+ * errorComponents miss client-render/hydration throws inside the shell, which
+ * previously left an applicant staring at a blank page. Keyed by pathname so
+ * navigating away clears the fallback, and retry re-runs the loaders.
+ */
+function PortalBoundary({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  return (
+    <ComponentErrorBoundary
+      key={pathname}
+      boundary={`candidate.portal:${pathname}`}
+      tone="candidate"
+      fallback={(retry) => (
+        <div className="p-6">
+          <ErrorState
+            title="This page didn't finish loading"
+            description="Nothing about your applications has changed. Try loading it again."
+            onRetry={() => {
+              router.invalidate();
+              retry();
+            }}
+          />
+        </div>
+      )}
+    >
+      {children}
+    </ComponentErrorBoundary>
+  );
+}
