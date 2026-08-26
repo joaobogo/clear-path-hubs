@@ -45,13 +45,8 @@ export function publishedScoreDisplay(run: PublishedScoreRun): number | null {
   return value === null ? null : Math.round(value);
 }
 
-/**
- * Canonical band for a run. The published number decides; the stored label is
- * only consulted for legacy runs that never recorded a figure.
- */
+/** Canonical band for a run: the published number decides. */
 export function publishedBand(run: PublishedScoreRun): ScoreBandKey | null {
   const value = publishedScore(run);
-  if (value !== null) return classifyBand(value);
-  const raw = (run?.fit_band ?? run?.fit_label ?? "").toLowerCase();
-  return raw ? null : null;
+  return value === null ? null : classifyBand(value);
 }
