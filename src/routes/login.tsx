@@ -373,6 +373,19 @@ function LoginPage() {
             </p>
           </div>
 
+          {mode === "signin" && reason === "expired" ? (
+            <p
+              role="status"
+              aria-live="polite"
+              className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground"
+            >
+              Your session timed out for security. Sign in and we'll take you straight back to where
+              you left off.
+            </p>
+          ) : null}
+
+
+
 
           {pickerFor ? (
             <div className="space-y-2">
