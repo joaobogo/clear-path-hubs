@@ -85,6 +85,7 @@ export const dossier: Dossier = {
         dates: "Feb 2021 - Present",
         bullets: [
           R2,
+          "Read through the row-level security rules a colleague set up for our tenant data, but have not written them myself.",
           "Lifted completed orders 17% in a month after rebuilding a three-step checkout as one page.",
           "Cut oversold items from about 40 a week to under 5 by adding fifteen-minute stock reservations.",
           "Contributed to the automated tests in the Playwright checks that run before each client release.",
