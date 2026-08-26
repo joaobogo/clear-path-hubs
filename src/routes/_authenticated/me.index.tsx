@@ -84,7 +84,9 @@ function firstName(full?: string | null, email?: string | null): string {
 }
 
 function MeHome() {
-  const { ctx, apps, cvs, dash } = Route.useLoaderData();
+  const { ctx, apps, cvs, dash } = (Route.useLoaderData() ?? {}) as ReturnType<
+    typeof Route.useLoaderData
+  >;
   const ctxFn = useServerFn(getMyContext);
   const appsFn = useServerFn(listMyApplications);
   const dashFn = useServerFn(getMyDashboard);

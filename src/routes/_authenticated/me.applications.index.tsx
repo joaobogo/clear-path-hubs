@@ -52,7 +52,7 @@ const STATUS_TONE = CANDIDATE_STATUS_TONE;
 
 
 function MyApplicationsPage() {
- const data = Route.useLoaderData();
+ const data = Route.useLoaderData() ?? { applications: [] };
  const listFn = useServerFn(listMyApplications);
  const withdrawFn = useServerFn(withdrawApplication);
  const qc = useQueryClient();
@@ -82,7 +82,7 @@ function MyApplicationsPage() {
  onError: (e: Error) => toastError(e),
  });
 
- const apps = current.applications;
+ const apps = current?.applications ?? [];
 
  return (
  <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
