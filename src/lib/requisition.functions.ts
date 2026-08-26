@@ -247,20 +247,22 @@ export const saveRequisitionMeta = createServerFn({ method: "POST" })
       updated_at: new Date().toISOString(),
     };
 
-    // Compensation is only stored when intentionally collected, and only
-    // platform staff may change the collection/visibility decision.
+    // Only platform staff may change the collection/visibility decision, but
+    // the client owns the budget itself: their edit has to persist, otherwise
+    // the range they typed silently disappears on the next load.
     if (isStaff) {
       patch.compensation_collected = data.compensation_collected;
       patch.compensation_visibility = data.compensation_visibility;
-      patch.compensation = data.compensation_collected
-        ? {
-            ...priorComp,
-            currency: data.currency || "USD",
-            budget_min: data.budget_min || null,
-            budget_max: data.budget_max || null,
-          }
-        : { ...priorComp, currency: null, budget_min: null, budget_max: null };
     }
+    const collected = isStaff ? data.compensation_collected : prior?.compensation_collected !== false;
+    patch.compensation = collected
+      ? {
+          ...priorComp,
+          currency: data.currency || "USD",
+          budget_min: data.budget_min || null,
+          budget_max: data.budget_max || null,
+        }
+      : { ...priorComp, currency: null, budget_min: null, budget_max: null };
 
     const { error: upErr } = await s.from("positions").update(patch).eq("id", data.position_id);
     if (upErr) throw new Error(upErr.message);
