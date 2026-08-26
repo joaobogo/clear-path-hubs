@@ -120,22 +120,20 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
 
 
-    // 5 — interviews requested, or happening in the next 48h.
-    // Inner join on positions and organizations to ensure we only count actionable interviews.
+    // 5 — interviews still awaiting a confirmed time.
+    //
+    // Same definition as the client Interviews page and the canonical reader
+    // (`CONFIRMATION_PENDING_STATUSES`): requested or being scheduled. Bundling
+    // interviews that already have a time in the next 48 hours is what made
+    // this tile read 7 while the client read 5 for the same work.
     excludeTestOrgs(
       s
         .from("interviews")
         .select(
           "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches!inner(candidate_profiles(full_name),positions!inner(id,title,owner_user_id,organizations!inner(id,name)))",
-          { count: "exact" },
         )
-        .or(
-          `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * HOUR).toISOString()})`,
-        )
-        .not("status", "eq", "completed")
-        .not("status", "eq", "completed")
-        .order("requested_at", { ascending: true })
-        .limit(PREVIEW_LIMIT),
+        .in("status", CONFIRMATION_PENDING_STATUSES as unknown as string[])
+        .order("requested_at", { ascending: true }),
       scope,
     ),
 
