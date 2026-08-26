@@ -263,14 +263,10 @@ export function RequisitionEditor({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Country</Label>
-                  <Select value={l.country_code} onValueChange={(v) => setLoc(i, { country_code: v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent className="max-h-72">
-                      {COUNTRIES.map((c) => (
-                        <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <CountryCombobox
+                    value={l.country_code}
+                    onChange={(v) => setLoc(i, { country_code: v })}
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">State / region</Label>
