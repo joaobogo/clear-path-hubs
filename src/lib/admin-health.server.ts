@@ -1,6 +1,9 @@
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { deliveryReason } from "./notifications/delivery-reasons";
 import { normaliseDeliveryStatus } from "./notifications/delivery-state";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Any = any;
 /**
  * Operator SLA clock: which roles are approaching or past a commitment,
  * sorted by how close they are, with the client name and the promise.
@@ -184,7 +187,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
       retryable: true,
     });
   }
-  for (const r of (jobsRes as Any).data ?? []) {
+  for (const r of (jobsRes as { data: Any[] }).data ?? []) {
     const seenAt = (r.started_at as string) ?? (r.created_at as string);
     issues.push({
       id: r.job_id as string,
