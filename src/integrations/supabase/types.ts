@@ -15513,6 +15513,13 @@ export type Database = {
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       sweep_expired_support_sessions: { Args: never; Returns: undefined }
+      sweep_stale_scheduled_interviews: {
+        Args: never
+        Returns: {
+          completed_count: number
+          no_show_count: number
+        }[]
+      }
       sync_cron_invoke_secret: { Args: { _secret: string }; Returns: undefined }
       write_back_closed_search: {
         Args: { _position_id: string }
