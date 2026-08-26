@@ -82,7 +82,7 @@ export const dossier: Dossier = {
     contact: "Lisbon, Portugal · sara.mendes.web@gmail.com · +351 928 447 190",
     summary: `${R1} I have worked mostly on booking flows, where a small mistake becomes a phone call from a tour operator within the hour. Being one of three engineers meant learning the database, the API and the screen at the same time. I am at my best close to the people using the product.`,
     coreSkills:
-      "Core skills: Node.js, REST APIs, Redis, Docker, GitHub Actions, Stripe integrations, calendar and timezone handling.",
+      "Core skills: Node.js, REST APIs, Redis, Docker, GitHub Actions, payment gateway integrations, calendar and timezone handling.",
     experience: [
       {
         heading: "Full-Stack Engineer - Rota Travel Tech, Lisbon",
