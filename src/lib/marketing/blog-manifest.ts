@@ -160,6 +160,9 @@ export const INCLUDED_BLOG_SLUGS: readonly string[] = [
 ] as const;
 
 export const BLOG_METADATA: Record<string, { category: string; tags: string[] }> = {
+  "gen-z-workforce-expectations-2026": { category: "Retention & Culture", tags: ["gen-z","workforce","expectations","2026"] },
+  "consulting-recruitment-strategies": { category: "Talent Strategy", tags: ["consulting","recruitment","strategies"] },
+  "compensation-benchmarking": { category: "Compensation", tags: ["compensation","benchmarking","cost-per-hire"] },
   "30-60-90-onboarding-plan-2026": { category: "Onboarding", tags: ["onboarding", "2026", "plan"] },
   "accounting-firm-recruitment-strategies": { category: "Industry: Accounting", tags: ["accounting", "recruitment", "strategies", "firm"] },
   "accounting-talent-shortage-big-four": { category: "Industry: Accounting", tags: ["accounting", "four", "shortage", "big", "talent"] },
