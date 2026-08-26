@@ -69,14 +69,27 @@ export function resolveApplyEffort(stat: unknown): ApplyEffort {
 }
 
 /**
+ * Just the time clause, so every surface can state the same estimate in its
+ * own sentence shape. This is the single source of truth for the duration
+ * promise; the full line below builds on it.
+ *
+ * Measured: "about 6 minutes". Unmeasured: "under 8 minutes".
+ */
+export function applyEffortTimeClause(effort: ApplyEffort): string {
+  return effort.measured
+    ? `about ${effort.minutes} ${effort.minutes === 1 ? "minute" : "minutes"}`
+    : `under ${effort.minutes + 2} minutes`;
+}
+
+/**
  * The line beside the Apply button and at the top of the apply form. One
  * sentence, no exclamation marks, no countdown — cost, prerequisite, and the
  * fact that stopping halfway is safe.
  */
 export function applyEffortLine(effort: ApplyEffort, steps: number): string {
   const time = effort.measured
-    ? `takes about ${effort.minutes} ${effort.minutes === 1 ? "minute" : "minutes"}`
-    : `usually takes under ${effort.minutes + 2} minutes`;
+    ? applyEffortTimeClause(effort)
+    : `usually ${applyEffortTimeClause(effort)}`;
   return `${steps} steps, ${time}. You'll need your CV as a PDF. Your answers are saved as you go.`;
 }
 

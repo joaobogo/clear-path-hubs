@@ -15,7 +15,9 @@ import {
   EFFORT_DEFAULT,
   applyEffortLine,
   applyEffortProvenance,
+  applyEffortTimeClause,
 } from "@/lib/jobs/apply-effort";
+import { phonePlaceholder } from "@/lib/phone-placeholder";
 
 
 
@@ -1060,14 +1062,8 @@ function ApplyPage() {
                 </h2>
                 <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
                   <li>
-                    ·{" "}
-                    {effort.measured
-                      ? `${STEP_LABELS.length} short steps, about ${effort.minutes} ${
-                          effort.minutes === 1 ? "minute" : "minutes"
-                        } — the median for people who completed this application.`
-                      : `${STEP_LABELS.length} short steps, usually under ${
-                          effort.minutes + 2
-                        } minutes.`}
+                    · {STEP_LABELS.length} short steps, {applyEffortTimeClause(effort)}
+                    {effort.measured ? " — the median for people who completed this application." : "."}
                   </li>
                   <li>· You need your CV as a PDF, up to 10 MB. It is required.</li>
                   <li>
@@ -1128,7 +1124,7 @@ function ApplyPage() {
                     type="tel"
                     autoComplete="tel" inputMode="tel"
                     data-field="phone"
-                    placeholder="+1 555 123 4567"
+                    placeholder={phonePlaceholder(pos.country_code)}
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   />
