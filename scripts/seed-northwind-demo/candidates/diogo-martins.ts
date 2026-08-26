@@ -11,7 +11,7 @@ const R5 =
 const P2 =
   "Employee number seven in an early-stage, founder-led team that grew to 30 while I was there.";
 const P3 =
-  "Shipped LLM-written listing descriptions as product features in production for 300 agents.";
+  "Daily exposure to AI work: shipped LLM-written listing descriptions as product features in production for 300 agents.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2019.";
 

@@ -3,7 +3,7 @@ import type { Dossier } from "../types";
 const R1 =
   "Six years building and shipping React and TypeScript applications for online retailers.";
 const R3 =
-  "Owned checkout end to end, from schema design to shipped UI for eleven retail clients.";
+  "Owning checkout end to end, from schema design to shipped UI for eleven retail clients.";
 const R2 =
   "Write the SQL and relational data modelling for catalogues in Postgres, including the migrations each store launch needs.";
 const R6 =
