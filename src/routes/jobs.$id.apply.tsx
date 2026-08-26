@@ -1824,8 +1824,8 @@ function ApplyPage() {
                 type="button"
                 size="lg"
                 onClick={onSubmit}
-                disabled={submitting}
-                aria-disabled={submitting}
+                disabled={submitting || !consent}
+                aria-disabled={submitting || !consent}
                 aria-busy={submitting}
                 data-testid="apply-submit"
                 className="w-full sm:w-auto"
