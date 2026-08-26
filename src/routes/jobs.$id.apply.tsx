@@ -638,8 +638,13 @@ function ApplyPage() {
 
 
   const onSubmit = async () => {
+    // One in flight at a time, and never a stray event carried over from the
+    // click that landed on Review: sending is only ever a deliberate act.
     if (submittingRef.current) return;
+    if (step !== 5) return;
+    if (Date.now() - reviewEnteredAtRef.current < 400) return;
     setServerError(null);
+
     // Hard gate: never submit (or record) a consent the candidate did not give.
     if (!consent) {
       setFieldErrors({ consent_terms: "You must accept the terms to continue" });
