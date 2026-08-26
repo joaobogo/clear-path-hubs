@@ -100,6 +100,7 @@ import { Route as ApiPublicBlueprintRunRouteImport } from './routes/api/public/b
 import { Route as ApiPublicBlueprintDrainRouteImport } from './routes/api/public/blueprint-drain'
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
 import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
+import { Route as AuthenticatedMePrivacyRouteImport } from './routes/_authenticated/me.privacy'
 import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authenticated/me.messages'
 import { Route as AuthenticatedMeCvRouteImport } from './routes/_authenticated/me.cv'
 import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authenticated/me.applications'
@@ -664,6 +665,11 @@ const AuthenticatedMeSettingsRoute = AuthenticatedMeSettingsRouteImport.update({
 const AuthenticatedMeProfileRoute = AuthenticatedMeProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AuthenticatedMeRoute,
+} as any)
+const AuthenticatedMePrivacyRoute = AuthenticatedMePrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => AuthenticatedMeRoute,
 } as any)
 const AuthenticatedMeMessagesRoute = AuthenticatedMeMessagesRouteImport.update({
@@ -1416,6 +1422,7 @@ export interface FileRoutesByFullPath {
   '/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
   '/me/cv': typeof AuthenticatedMeCvRoute
   '/me/messages': typeof AuthenticatedMeMessagesRoute
+  '/me/privacy': typeof AuthenticatedMePrivacyRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/blueprint-drain': typeof ApiPublicBlueprintDrainRoute
@@ -1604,6 +1611,7 @@ export interface FileRoutesByTo {
   '/client/team': typeof AuthenticatedClientTeamRoute
   '/me/cv': typeof AuthenticatedMeCvRoute
   '/me/messages': typeof AuthenticatedMeMessagesRoute
+  '/me/privacy': typeof AuthenticatedMePrivacyRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/blueprint-drain': typeof ApiPublicBlueprintDrainRoute
@@ -1804,6 +1812,7 @@ export interface FileRoutesById {
   '/_authenticated/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
   '/_authenticated/me/cv': typeof AuthenticatedMeCvRoute
   '/_authenticated/me/messages': typeof AuthenticatedMeMessagesRoute
+  '/_authenticated/me/privacy': typeof AuthenticatedMePrivacyRoute
   '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/blueprint-drain': typeof ApiPublicBlueprintDrainRoute
@@ -2004,6 +2013,7 @@ export interface FileRouteTypes {
     | '/me/applications'
     | '/me/cv'
     | '/me/messages'
+    | '/me/privacy'
     | '/me/profile'
     | '/me/settings'
     | '/api/public/blueprint-drain'
@@ -2192,6 +2202,7 @@ export interface FileRouteTypes {
     | '/client/team'
     | '/me/cv'
     | '/me/messages'
+    | '/me/privacy'
     | '/me/profile'
     | '/me/settings'
     | '/api/public/blueprint-drain'
@@ -2391,6 +2402,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/applications'
     | '/_authenticated/me/cv'
     | '/_authenticated/me/messages'
+    | '/_authenticated/me/privacy'
     | '/_authenticated/me/profile'
     | '/_authenticated/me/settings'
     | '/api/public/blueprint-drain'
@@ -3198,6 +3210,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/me/profile'
       preLoaderRoute: typeof AuthenticatedMeProfileRouteImport
+      parentRoute: typeof AuthenticatedMeRoute
+    }
+    '/_authenticated/me/privacy': {
+      id: '/_authenticated/me/privacy'
+      path: '/privacy'
+      fullPath: '/me/privacy'
+      preLoaderRoute: typeof AuthenticatedMePrivacyRouteImport
       parentRoute: typeof AuthenticatedMeRoute
     }
     '/_authenticated/me/messages': {
@@ -4244,6 +4263,7 @@ interface AuthenticatedMeRouteChildren {
   AuthenticatedMeApplicationsRoute: typeof AuthenticatedMeApplicationsRouteWithChildren
   AuthenticatedMeCvRoute: typeof AuthenticatedMeCvRoute
   AuthenticatedMeMessagesRoute: typeof AuthenticatedMeMessagesRoute
+  AuthenticatedMePrivacyRoute: typeof AuthenticatedMePrivacyRoute
   AuthenticatedMeProfileRoute: typeof AuthenticatedMeProfileRoute
   AuthenticatedMeSettingsRoute: typeof AuthenticatedMeSettingsRoute
   AuthenticatedMeIndexRoute: typeof AuthenticatedMeIndexRoute
@@ -4254,6 +4274,7 @@ const AuthenticatedMeRouteChildren: AuthenticatedMeRouteChildren = {
     AuthenticatedMeApplicationsRouteWithChildren,
   AuthenticatedMeCvRoute: AuthenticatedMeCvRoute,
   AuthenticatedMeMessagesRoute: AuthenticatedMeMessagesRoute,
+  AuthenticatedMePrivacyRoute: AuthenticatedMePrivacyRoute,
   AuthenticatedMeProfileRoute: AuthenticatedMeProfileRoute,
   AuthenticatedMeSettingsRoute: AuthenticatedMeSettingsRoute,
   AuthenticatedMeIndexRoute: AuthenticatedMeIndexRoute,

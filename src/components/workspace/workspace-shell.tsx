@@ -666,7 +666,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
                 <Link to="/me/profile">My profile</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/me/settings">Privacy & settings</Link>
+                <Link to="/me/privacy">Privacy & settings</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <a href="/faq">Help & FAQ</a>
