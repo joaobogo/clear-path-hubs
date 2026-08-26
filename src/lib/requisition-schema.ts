@@ -8,7 +8,7 @@ import { dedupeLocationParts } from "@/lib/jobs/location-format";
 /* Reference data                                                      */
 /* ------------------------------------------------------------------ */
 
-export const COUNTRIES: ReadonlyArray<{ code: string; name: string }> = [
+const COUNTRIES_BY_CODE: ReadonlyArray<{ code: string; name: string }> = [
   { code: "AE", name: "United Arab Emirates" },
   { code: "AR", name: "Argentina" },
   { code: "AT", name: "Austria" },
