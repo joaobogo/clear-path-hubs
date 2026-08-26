@@ -1,7 +1,7 @@
 import type { Dossier } from "../types";
 
 const R1 =
-  "Six years building production React and TypeScript applications for online retailers.";
+  "Six years building and shipping React and TypeScript applications for online retailers.";
 const R3 =
   "Owned checkout end to end, from schema design to shipped UI for eleven retail clients.";
 const R2 =
@@ -87,14 +87,14 @@ export const dossier: Dossier = {
           R2,
           "Lifted completed orders 17% in a month after rebuilding a three-step checkout as one page.",
           "Cut oversold items from about 40 a week to under 5 by adding fifteen-minute stock reservations.",
-          "Contributed to the Playwright checks that run before each client release.",
+          "Contributed to the automated tests in the Playwright checks that run before each client release.",
           "Took the catalogue page from 2.9 s to 1.1 s on mobile for the studio's largest client.",
           "Worked inside a founder-led studio of eight, sitting in on client calls from the first month.",
           "Cut the deployment pipeline from 12 minutes to 6 by caching dependencies between runs.",
           "Ran a monthly triage with support and closed 28 long-standing tickets in a quarter.",
           "Wrote the handover notes that let two colleagues cover the area during holidays.",
           "Mentored a junior developer for seven months; she now reviews changes on her own.",
-          "Halved rework on tickets by agreeing acceptance notes with the product lead before starting.",
+          "Halved rework on tickets by agreeing acceptance notes with the design lead before starting.",
           "Rebuilt a client's checkout, which lifted completed orders by about a fifth.",
           "Cut a shop's page load from 5.1 s to 1.9 s on mobile connections.",
           "Wrote the release checklist the studio still follows before every client launch.",

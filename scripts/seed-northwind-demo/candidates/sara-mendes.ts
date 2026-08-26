@@ -1,7 +1,7 @@
 import type { Dossier } from "../types";
 
 const R1 =
-  "Five years building production React and TypeScript applications for tour operators.";
+  "Five years building and shipping React and TypeScript applications for tour operators.";
 const R4 =
   "Applied row-level security so every multi-tenant operator account stays in isolation from the others.";
 const R5 =
@@ -9,7 +9,7 @@ const R5 =
 const P1 =
   "Rota Travel Tech is multi-tenant SaaS for 60 operators with per-tenant data isolation in the database.";
 const P2 =
-  "Third engineer in an early-stage, founder-led team, hired before the product had paying customers.";
+  "Third engineer in an early-stage, founder-led team, hired before there were paying customers.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2020.";
 
@@ -80,7 +80,7 @@ export const dossier: Dossier = {
     name: "Sara Mendes",
     title: "Full-Stack Engineer",
     contact: "Lisbon, Portugal · sara.mendes.web@gmail.com · +351 928 447 190",
-    summary: `${R1} I have worked mostly on booking flows, where a small mistake becomes a phone call from a tour operator within the hour. Being one of three engineers meant learning the database, the API and the screen at the same time. I am at my best close to the people using the product.`,
+    summary: `${R1} I have worked mostly on booking flows, where a small mistake becomes a phone call from a tour operator within the hour. Being one of three engineers meant learning the database, the API and the screen at the same time. I am at my best close to the people using what I build.`,
     coreSkills:
       "Core skills: Node.js, REST APIs, Redis, Docker, GitHub Actions, payment gateway integrations, calendar and timezone handling.",
     experience: [
@@ -99,7 +99,7 @@ export const dossier: Dossier = {
           "Ran a monthly review with support that turned 25 recurring complaints into shipped changes.",
           "Wrote the handover notes that let two colleagues cover the area while I was on leave.",
           "Mentored a junior developer for eight months; she now handles her own releases.",
-          "Halved the number of clarifying questions on tickets by writing acceptance notes with the product lead.",
+          "Halved the number of clarifying questions on tickets by writing acceptance notes with the design lead.",
         ],
       },
       {

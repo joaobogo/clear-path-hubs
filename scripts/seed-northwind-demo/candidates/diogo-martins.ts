@@ -5,7 +5,7 @@ const R1 =
 const R3 =
   "Owned the listing pipeline end to end, from schema design to shipped UI used by 300 agents.";
 const R2 =
-  "Handle the SQL and relational data modelling for properties in Postgres, writing every migration the team has run since 2022.";
+  "Handle the SQL and relational modelling for properties in Postgres, including the migrations I have written since 2022.";
 const R5 =
   "Built the automated tests for pricing: unit specs in Vitest and end-to-end checks in Playwright on each merge.";
 const P2 =
@@ -92,6 +92,7 @@ export const dossier: Dossier = {
         dates: "Jan 2022 - Present",
         bullets: [
           R2,
+          "No hands-on row-level security or multi-tenant isolation model work yet - our estate is single-tenant.",
           R5,
           P2,
           P3,
