@@ -3779,6 +3779,27 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_rebuild_backup_20260825: {
+        Row: {
+          captured_at: string
+          kind: string
+          payload: Json
+          row_id: string | null
+        }
+        Insert: {
+          captured_at?: string
+          kind: string
+          payload: Json
+          row_id?: string | null
+        }
+        Update: {
+          captured_at?: string
+          kind?: string
+          payload?: Json
+          row_id?: string | null
+        }
+        Relationships: []
+      }
       duplicate_person_decisions: {
         Row: {
           created_at: string
