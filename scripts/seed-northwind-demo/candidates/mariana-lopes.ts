@@ -3,11 +3,11 @@ import type { Dossier } from "../types";
 const R1 =
   "Seven years building production React and TypeScript applications used by clinical teams.";
 const R3 =
-  "Owned the referral feature end to end, from schema design to shipped UI signed off by two hospitals.";
+  "Owning referral features end to end, from schema design to shipped UI signed off by two hospitals.";
 const R2 =
   "Do the SQL and relational data modelling for patient records in Postgres, with 30 reviewed migrations shipped so far.";
 const R4 =
-  "Introduced row-level security so each multi-tenant clinic keeps its records in isolation.";
+  "Practical row-level security work: each multi-tenant clinic keeps its records in isolation under one shared-schema model.";
 const P1 =
   "Vitalis Health is multi-tenant SaaS for 45 clinics, held apart by per-tenant data isolation.";
 const P2 =
@@ -108,7 +108,7 @@ export const dossier: Dossier = {
           R4,
           P1,
           P2,
-          "Contributed to the Playwright suite that covers the referral and consent journeys.",
+          "Contributed to the automated tests in the Playwright suite covering the referral and consent journeys.",
           "Brought referral turnaround from four days to under one across 45 clinics.",
           "Replaced a paper consent process for 12,000 patients with an auditable digital record.",
           "Kept the release notes short enough that support staff actually read them, which halved handover calls.",

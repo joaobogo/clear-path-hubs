@@ -1,15 +1,15 @@
 import type { Dossier } from "../types";
 
 const R1 =
-  "Six years building production React and TypeScript applications for a logistics marketplace.";
+  "Six years building and shipping React and TypeScript applications for a logistics marketplace.";
 const R3 =
-  "Owned carrier onboarding end to end, from schema design to shipped UI used by 900 hauliers.";
+  "Owning carrier onboarding end to end, from schema design to the shipped UI 900 hauliers use every day.";
 const R2 =
   "Write the SQL and relational data modelling for shipments in Postgres, including the migrations that split the routing tables.";
 const R5 =
-  "Wrote the automated tests behind booking: unit coverage in Vitest and end-to-end runs in Playwright before every release.";
+  "Wrote and keep maintaining the automated tests behind booking: unit coverage in Vitest and end-to-end runs in Playwright before every release.";
 const P4 =
-  "Rebuilt the carrier portal on Remix, the full-stack React framework, cutting the first load from 4.1 s to 1.2 s.";
+  "Rebuilt the carrier portal on Remix, a full-stack React framework similar to TanStack Start, cutting the first load from 4.1 s to 1.2 s.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2019.";
 
@@ -81,7 +81,7 @@ export const dossier: Dossier = {
     name: "Rui Almeida",
     title: "Full-Stack Engineer",
     contact: "Lisbon, Portugal · rui.almeida.eng@outlook.com · +351 913 668 245",
-    summary: `${R1} ${R3} Marketplaces are where I have learned the most: two sets of users, both impatient, and every change visible the same afternoon. I prefer being the engineer who follows a feature all the way into production and then fixes what the first week reveals.`,
+    summary: `${R1} ${R3} Marketplaces are where I have learned the most: two sets of users, both impatient, and every change visible the same afternoon. I prefer being the engineer who follows a feature all the way to release and then fixes what the first week reveals.`,
     coreSkills:
       "Core skills: Node.js, REST APIs, Redis, Docker, GitHub Actions, Google Cloud, mobile web performance.",
     experience: [
@@ -95,7 +95,7 @@ export const dossier: Dossier = {
           "Cut carrier onboarding from nine days to two, with 62% of hauliers finishing unaided.",
           "Built the document review queue that replaced a shared mailbox handling 300 uploads a month.",
           "Reduced booking abandonment by 18% after rewriting the price and availability step.",
-          "Some exposure to multi-tenant setups while helping a colleague scope a partner sandbox.",
+          "Some hands-on time with multi-tenant setups while helping a colleague scope a partner sandbox.",
           "Cut the release pipeline from 15 minutes to 6 and removed the manual approval that blocked hotfixes.",
           "Ran a fortnightly review with support that closed 60 stale tickets in four months.",
           "Wrote the on-call runbook for two services after being the only person able to fix them.",

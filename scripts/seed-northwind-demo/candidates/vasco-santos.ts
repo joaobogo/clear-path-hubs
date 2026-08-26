@@ -7,7 +7,7 @@ const R3 =
 const R2 =
   "Responsible for the SQL and relational data modelling of policies in Postgres, including the migrations behind two product launches.";
 const P4 =
-  "Delivered the broker workspace on Remix, the full-stack React framework, halving time to first render.";
+  "Delivered the broker workspace on Remix, a full-stack React framework similar to TanStack Start, halving time to first render.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2018.";
 
@@ -92,7 +92,7 @@ export const dossier: Dossier = {
           "Brought average time to a first claim decision from eleven days to four across 90 branches.",
           "Built the evidence checklist that removed 40% of the queries going back to assessment staff.",
           "Contributed to the Playwright suite covering the claims intake journey.",
-          "Some exposure to multi-tenant setups when we opened a partner-branded quote page.",
+          "Some hands-on time with multi-tenant setups when we opened a partner-branded quote page.",
           "Reviewed an AI document-reading trial for two weeks and recommended against adopting it.",
           "Cut the release pipeline from 14 minutes to 7 and removed two checks that never failed usefully.",
           "Ran a monthly bug review with the support desk and closed 30 old tickets in three months.",

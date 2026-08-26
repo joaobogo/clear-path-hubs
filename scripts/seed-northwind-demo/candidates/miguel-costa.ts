@@ -1,9 +1,9 @@
 import type { Dossier } from "../types";
 
 const R1 =
-  "Five years building production React and TypeScript applications for public bodies.";
+  "Five years building and shipping React and TypeScript applications for public bodies.";
 const R3 =
-  "Owned the permit request feature end to end, from schema design to shipped UI used by two councils.";
+  "Owning the permit request flow end to end, from schema design to shipped UI used by two councils.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2020.";
 
@@ -73,7 +73,7 @@ export const dossier: Dossier = {
     name: "Miguel Costa",
     title: "Full-Stack Developer",
     contact: "Lisbon, Portugal · miguel.costa.dev@outlook.com · +351 961 224 508",
-    summary: `${R1} ${R3} Public-sector work is slower than product work but the users are unforgiving, which has made me careful about forms, wording and error states. I want to move somewhere releases happen weekly rather than quarterly.`,
+    summary: `${R1} ${R3} Public-sector work is slower than commercial work but the users are unforgiving, which has made me careful about forms, wording and error states. I want to move somewhere releases happen weekly rather than quarterly.`,
     coreSkills:
       "Core skills: Node.js, Next.js, Docker, GitLab CI, accessibility standards, document handling, technical writing.",
     experience: [
@@ -81,6 +81,7 @@ export const dossier: Dossier = {
         heading: "Full-Stack Developer - Civitas Consulting, Lisbon",
         dates: "Oct 2021 - Present",
         bullets: [
+          "No hands-on row-level security or multi-tenant isolation model work: our councils each run their own install.",
           "Cut average time to a permit decision from 21 days to 12 across two councils.",
           "Moved about 70% of permit requests online, away from the counter.",
           "Rebuilt the attachment upload after 400 failed submissions in one quarter, ending that failure class.",
@@ -105,7 +106,7 @@ export const dossier: Dossier = {
           "Rebuilt an events calendar in Next.js that handled 40,000 visitors on launch day.",
           "Automated a weekly content report that had taken an editor three hours by hand.",
           "Shipped six internal tools for public-sector clients, two still in daily use.",
-          "Reduced a manual data entry task from three hours a day to about 20 minutes.",
+          "Reduced a manual typing task from three hours a day to about 20 minutes.",
           "Added the first automated checks on a legacy project after a release broke payroll exports.",
           "Wrote the deployment notes that ended the practice of one person shipping everything.",
         ],
@@ -118,7 +119,7 @@ export const dossier: Dossier = {
       },
       {
         heading: "Accessible form patterns (Civitas Consulting)",
-        body: "A shared set of field, error and help patterns that passed an external accessibility review and is now reused on every project the team starts.",
+        body: "A shared set of field, error and help patterns that passed an external accessibility review and is now reused on every project we start.",
       },
     ],
     education: ["BSc Computer Engineering, Instituto Superior de Engenharia de Lisboa, 2020"],

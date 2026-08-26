@@ -3,17 +3,17 @@ import type { Dossier } from "../types";
 const R1 =
   "Eight years building production React and TypeScript applications for regulated payment products.";
 const R3 =
-  "Owned the reconciliation feature end to end, from schema design to the shipped UI operations staff use daily.";
+  "Owning reconciliation features end to end, from schema design to the shipped UI operations staff use daily.";
 const R2 =
   "Handle the SQL and relational data modelling for the ledger in Postgres, with 60 forward-only migrations in two years.";
 const R4 =
-  "Wrote the row-level security policies that hold 180 multi-tenant merchant books in isolation.";
+  "Practical row-level security work, with another isolation model holding 180 multi-tenant merchant books apart.";
 const R5 =
-  "Keep 1,400 automated tests green: unit suites in Vitest and end-to-end journeys in Playwright.";
+  "Keep maintaining 1,400 automated tests green: unit suites in Vitest and end-to-end journeys in Playwright.";
 const P1 =
   "Ledgerly is multi-tenant SaaS for 180 merchants, each book kept apart by per-tenant data isolation.";
 const P4 =
-  "Ported the merchant portal to Next.js, a full-stack React framework, taking server response time to 120 ms.";
+  "Ported the merchant portal to Next.js, a full-stack React framework similar to TanStack Start, taking server response time to 120 ms.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2017.";
 
@@ -122,10 +122,10 @@ export const dossier: Dossier = {
           "Rebuilt payout scheduling so a failed batch retries itself, removing 20 manual interventions a month.",
           "Cut month-end reconciliation for 180 merchants from two days to three hours after the ledger rewrite.",
           "Sat in on a two-day AI vendor evaluation for support triage and wrote up the trade-offs.",
-          "Kept a weekly changelog for the operations team, which cut repeat questions about releases by half.",
+          "Kept a weekly changelog for operations colleagues, which cut repeat questions about releases by half.",
           "Reduced flaky checks in the delivery pipeline from 11 to 2, so releases stopped waiting on reruns.",
           "Paired weekly with a junior engineer for six months; she now owns the billing screens.",
-          "Cut the build from 9 minutes to 4, which moved the team from two releases a week to daily.",
+          "Cut the build from 9 minutes to 4, which moved us from two releases a week to daily.",
           "Wrote the incident notes for three outages and drove the follow-up work to completion.",
         ],
       },
@@ -144,7 +144,7 @@ export const dossier: Dossier = {
         dates: "Sep 2017 - May 2019",
         bullets: [
           "Built the price-change tool used by 240 stores, replacing a weekly spreadsheet cycle.",
-          "Automated stock reports that had cost the finance team six hours every Monday.",
+          "Automated stock reports that had cost finance six hours every Monday.",
           "Shipped the first component set used across three internal applications.",
         ],
       },

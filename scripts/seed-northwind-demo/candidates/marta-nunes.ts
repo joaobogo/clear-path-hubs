@@ -3,13 +3,13 @@ import type { Dossier } from "../types";
 const R1 =
   "Ten years building production React and TypeScript applications for schools and universities.";
 const R3 =
-  "Owned assessment delivery end to end, from schema design to shipped UI used in live exams.";
+  "Owning assessment delivery features end to end, from schema design to shipped UI used in live exams.";
 const R2 =
   "Lead the SQL and relational data modelling for the assessment store in Postgres, with 80 migrations run without downtime.";
 const R4 =
-  "Enforced row-level security in the database so each institution reads its cohort in isolation.";
+  "Practical row-level security in the database, so each multi-tenant institution reads its own cohort in isolation under one tenant model.";
 const R5 =
-  "Own 2,600 automated tests, unit in Vitest and end-to-end in Playwright, blocking any red release.";
+  "Own and keep maintaining 2,600 automated tests, unit in Vitest and end-to-end in Playwright, blocking any red release.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2015.";
 
