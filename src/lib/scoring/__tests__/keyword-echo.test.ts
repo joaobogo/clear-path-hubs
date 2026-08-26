@@ -62,7 +62,11 @@ describe("keyword-echo resistance", () => {
 
   it("records why the keyword-only CV was capped", () => {
     expect(echo.evidence_substance.verdict).toBe("keyword_echo");
-    expect(echo.applied_caps.some((c) => c.reason.startsWith("keyword_echo"))).toBe(true);
+    expect(echo.applied_caps.length).toBeGreaterThan(0);
+    // The reason reaches the reader in plain language, whichever cap binds hardest.
+    expect(
+      echo.concerns.some((c) => c.toLowerCase().includes("keyword list")),
+    ).toBe(true);
   });
 
   it("never presents keyword echo as fully evidenced must-haves", () => {
