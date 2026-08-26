@@ -73,7 +73,7 @@ function installOutboundBlock() {
   }) as typeof fetch;
 }
 
-type Args = { reset: boolean; only: string | null; stage: "apply" | "score" };
+type Args = { reset: boolean; only: string | null; stage: "apply" | "score" | "funnel" };
 
 function parseArgs(): Args {
   const argv = process.argv.slice(2);
@@ -81,9 +81,9 @@ function parseArgs(): Args {
     const i = argv.indexOf(flag);
     return i === -1 ? null : (argv[i + 1] ?? null);
   };
-  const stage = (valueOf("--stage") ?? "score") as Args["stage"];
-  if (stage !== "apply" && stage !== "score") {
-    throw new Error(`--stage must be "apply" or "score" (got "${stage}")`);
+  const stage = (valueOf("--stage") ?? "funnel") as Args["stage"];
+  if (stage !== "apply" && stage !== "score" && stage !== "funnel") {
+    throw new Error(`--stage must be "apply", "score" or "funnel" (got "${stage}")`);
   }
   return { reset: argv.includes("--reset"), only: valueOf("--only"), stage };
 }
@@ -234,6 +234,12 @@ async function main() {
     });
 
     if (!submitted.ok) {
+      // Re-running the funnel over an existing cohort is expected: the
+      // application already exists and the pipeline already produced a score.
+      if (submitted.code === "already_applied" && args.stage === "funnel") {
+        console.log("   already applied — keeping the existing application and score");
+        continue;
+      }
       problems.push(`${d.slug}: submission failed (${submitted.code}) ${submitted.message}`);
       console.log(`   ! submission failed: ${submitted.code}`);
       continue;
@@ -348,6 +354,25 @@ async function main() {
     if (verdicts) console.log(`${" ".repeat(18)} requirements: ${verdicts}`);
   }
 
+
+  // ── funnel: approvals, client decisions, interviews, offers, timeline ──────
+  if (args.stage === "funnel") {
+    const { runFunnel, funnelAssertions } = await import("./seed-northwind-demo/funnel");
+    const funnel = await runFunnel(sb, { only: args.only });
+    problems.push(...funnel.problems);
+    console.log("\nFUNNEL STATE\n");
+    for (const r of funnel.rows) {
+      console.log(
+        [
+          (r.slug ?? "").padEnd(18),
+          `stage=${(r.stage ?? "—").padEnd(18)}`,
+          `admin=${(r.admin ?? "—").padEnd(10)}`,
+          `client=${(r.visibility ?? "—").padEnd(8)}`,
+        ].join(" "),
+      );
+    }
+    await funnelAssertions(sb, problems);
+  }
 
   await runAssertions(sb, problems);
 
