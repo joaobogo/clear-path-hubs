@@ -6,7 +6,7 @@ import { createFileRoute, Link, Outlet, useRouter, useRouterState } from "@tanst
 import { ComponentErrorBoundary, ErrorState } from "@/components/ds";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { getMyContext } from "@/lib/candidate.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
@@ -122,7 +122,7 @@ function MeLayout() {
  * previously left an applicant staring at a blank page. Keyed by pathname so
  * navigating away clears the fallback, and retry re-runs the loaders.
  */
-function PortalBoundary({ children }: { children: React.ReactNode }) {
+function PortalBoundary({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
