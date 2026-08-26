@@ -313,7 +313,7 @@ async function main() {
         "id,final_score,fit_label,fit_band,status,evidence_confidence,confidence,must_have_coverage,preferred_coverage,requirement_coverage,engine_version,rubric_version_id",
       )
       .eq("candidate_match_id", r.match)
-      .order("created_at", { ascending: false })
+      .order("started_at", { ascending: false })
       .limit(1)
       .maybeSingle();
     if (runErr) problems.push(`${r.candidate}: could not read score run — ${runErr.message}`);

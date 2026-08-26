@@ -117,6 +117,10 @@ export const dossier: Dossier = {
           "Shipped scheduled reporting now sending about 4,000 reports a month with under 1% retried by hand.",
           "Replaced a nightly script with a queue that made failures visible and retryable in one click.",
           "Took the analyst dashboard from 4.6 s to 1.3 s by reshaping its queries and caching layer.",
+          "Rebuilt a reporting service that cut a client's month-end close from six days to two.",
+          "Reduced a nightly batch from five hours to 50 minutes by reworking its queries.",
+          "Introduced code review on a team that had none, which cut escaped defects by about half.",
+          "Wrote the architecture notes still used to onboard engineers into that service.",
         ],
       },
       {
