@@ -10,6 +10,7 @@
  * generically rather than rendered raw.
  */
 import type { JourneyEvent } from "@/lib/journey.functions";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 
 /** Event titles, rewritten for client eyes. */
 const EVENT_LABEL: Record<string, string> = {
@@ -35,28 +36,30 @@ const DETAIL_LABEL: Record<string, string> = {
 };
 
 /**
- * Fit bands, in the workspace's own four-label fit vocabulary.
- * Legacy band words (exceptional, good, mixed, weak, …) collapse onto the
- * current four: Top, Strong, Consider, Not recommended.
+ * Fit bands. The words come from the ONE shared band helper
+ * (src/lib/client-fit-presentation.ts), so a journey line can never disagree
+ * with the band shown on the candidate header, list or client preview.
  */
-const BAND_LABEL: Record<string, string> = {
-  exceptional: "Top",
-  unicorn: "Top",
-  top: "Top",
-  top_fit: "Top",
-  strong: "Strong",
-  strong_fit: "Strong",
-  good: "Strong",
-  good_fit: "Strong",
-  consider: "Consider",
-  mixed: "Consider",
-  moderate: "Consider",
-  worth_considering: "Consider",
-  weak: "Not recommended",
-  poor: "Not recommended",
-  not_a_fit: "Not recommended",
-  not_recommended: "Not recommended",
-};
+const BAND_LABEL: Record<string, string> = Object.fromEntries(
+  [
+    "exceptional",
+    "unicorn",
+    "top",
+    "top_fit",
+    "strong",
+    "strong_fit",
+    "good",
+    "good_fit",
+    "consider",
+    "mixed",
+    "moderate",
+    "worth_considering",
+    "weak",
+    "poor",
+    "not_a_fit",
+    "not_recommended",
+  ].map((key) => [key, toFitPresentation(key === "unicorn" ? "exceptional" : key, null).headline]),
+);
 
 /** Band words that may arrive followed by the noun "fit" / "match". */
 const BAND_NOUNS = new Set(["fit", "match"]);
