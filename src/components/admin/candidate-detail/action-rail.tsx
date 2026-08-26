@@ -108,6 +108,26 @@ export function ActionRail({
     );
   };
 
+  // Approving releases the profile to the client in the same transaction, so it
+  // is never a bare click: the admin reads the client preview first, then
+  // confirms the release explicitly.
+  const confirmApproveAndPublish = async () => {
+    const c = await confirm({
+      title: "Approve and publish to the client",
+      object: (m.full_name as string | null) ?? "This candidate",
+      description:
+        "Approving releases this profile to the client immediately. Open “Client preview” first if you have not read it yet.",
+      impact: [
+        "The client sees the score, evidence and requirement verdicts as shown in Client preview",
+        "The client is notified that a new candidate is available",
+        "You can still unpublish afterwards, but the notification stays sent",
+      ],
+      confirmLabel: "Approve & publish",
+    });
+    if (!c.confirmed) return;
+    await runApprove();
+  };
+
   // Context-aware primary action — one at a time, following readiness order.
   let primary: { label: string; qa: string; onClick: () => void; disabled?: boolean };
   if (needsRepair) {
@@ -123,12 +143,14 @@ export function ActionRail({
           : void onRun("retry parse", () => retryParse({ data: { match_id: m.id } })),
     };
   } else if (scored && !approved) {
+    // Preview is the step before release, so it is the primary button; the
+    // release itself sits below it behind a confirm.
     primary = {
-      label: approveFailure?.retryable ? "Retry approve score" : "Approve score",
-      qa: "primary-approve-score",
-      disabled: !!busy || approveBlocked,
-      onClick: runApprove,
+      label: "Preview as client",
+      qa: "primary-preview-client",
+      onClick: () => onSetTab("preview"),
     };
+
   } else if (approved && !isPublished) {
     primary = {
       label: "Preview as client",
@@ -331,7 +353,25 @@ export function ActionRail({
           </DropdownMenu>
         </div>
 
+        {/* Release step: distinct from previewing, and always confirmed. */}
+        {scored && !approved && (
+          <Button
+            variant="secondary"
+            className="mt-2 w-full"
+            disabled={!!busy || approveBlocked}
+            onClick={() => void confirmApproveAndPublish()}
+            data-qa-action="primary-approve-score"
+          >
+            {busy === "approve"
+              ? "Publishing…"
+              : approveFailure?.retryable
+                ? "Retry approve & publish"
+                : "Approve & publish to client"}
+          </Button>
+        )}
+
         {/* Publish button surfaces only when it is the next real step */}
+
         {canPublish && !isPublished && (
           <Button
             variant="secondary"
