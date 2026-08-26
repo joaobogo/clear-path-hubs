@@ -56,10 +56,10 @@ export const PRICING_TIERS: PricingTier[] = [
   {
     id: "pilot",
     name: "Pilot — Single Position",
-    eyebrow: "1 active role",
+    eyebrow: "One-time · 1 active role · 1 per company",
     oneTime: PRICE_PILOT_USD,
     priceDisplay: PRICE_PILOT_DISPLAY,
-    bestFor: "Test the model on one critical hire.",
+    bestFor: "Test the model on one critical hire, once.",
     rolesIncluded: "1 active role",
     turnaround: TURNAROUND_LABEL,
     included: BASE_INCLUDED,

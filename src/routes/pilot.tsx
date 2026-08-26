@@ -50,7 +50,8 @@ const RECEIVE = [
 ];
 
 const NOT_INCLUDED = [
-  "Multiple roles — the pilot covers one active role",
+  "More than one role — the pilot covers a single active role",
+  "A second pilot — each company can run the pilot once",
   "Interview scheduling and offer negotiation on your behalf",
   "Executive search retainers or contingency placements",
   "Background checks, assessments, or payroll",
@@ -76,15 +77,16 @@ function PilotPage() {
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-            {PRICE_PILOT_DISPLAY} one-time pilot · one role · delivery in days
+            {PRICE_PILOT_DISPLAY} one-time pilot · one role · one per company
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Run one role end-to-end for {PRICE_PILOT_DISPLAY}.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            The pilot is a single-role engagement that runs the full TaaSFlow process — intake,
-            sourcing, evidence-based scoring, and a ranked shortlist in a live dashboard — so you can
-            judge candidate quality on real work before committing to a subscription.
+            The pilot is a one-time, single-role engagement that runs the full TaaSFlow process —
+            intake, sourcing, evidence-based scoring, and a ranked shortlist in a live dashboard — so
+            you can judge candidate quality on real work before committing to a subscription. Each
+            company can run it once.
           </p>
           <div className="mt-6 max-w-2xl rounded-xl border border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/5 p-4 text-sm text-[color:var(--brand-navy)]/80">
             <span className="font-semibold text-[color:var(--brand-navy)]">Best for:</span>{" "}
@@ -114,8 +116,9 @@ function PilotPage() {
             What happens in the {PRICE_PILOT_DISPLAY} pilot
           </h2>
           <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Three stages, one role, one fixed price. Available once per company. First candidate
-            activity usually begins within 3–5 days after the search goes live.
+            Three stages, one role, one fixed price. The pilot is a one-time engagement available once
+            per company. First candidate activity usually begins within 3–5 days after the search goes
+            live.
           </p>
           <ol className="mt-8 grid gap-4 md:grid-cols-3">
             {TIMELINE.map((s) => (

@@ -21,6 +21,6 @@ export const PRICING_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How does the pilot work?",
-    a: "The Pilot itself is the pilot: one active role, no long commitment, full workflow. If it fits, keep going or move up. If it doesn't, walk away with every candidate the platform surfaced.",
+    a: "The Pilot is a one-time, single-role engagement. Each company can run it once. You get the full workflow — intake, sourcing, scoring, and a ranked shortlist — for a fixed price. If it fits, move to a subscription. If it doesn't, walk away with every candidate the platform surfaced.",
   },
 ];
