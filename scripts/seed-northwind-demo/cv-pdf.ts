@@ -3,17 +3,24 @@
  *
  * Three visual templates so a reviewer opening several CVs sees documents that
  * plainly came from different people:
- *   T1 "Classic"  serif, single column, centred name block.
- *   T2 "Modern"   sans, left sidebar for facts, right column for the story.
- *   T3 "Senior"   compact sans, ruled section bands, denser leading.
+ *   T1 "Classic ATS"        single column, 20pt name, thin rule under each
+ *                           section heading, 11pt body, dates right-aligned on
+ *                           the role line.
+ *   T2 "Modern two-column"  33% light grey left sidebar carrying the facts,
+ *                           right column carrying the prose. 10.5pt.
+ *   T3 "Compact senior"     single column, no rules, small-caps section labels,
+ *                           tighter leading, employer bold / title italic.
  *
  * WinAnsi only: the standard fonts cannot encode anything outside cp1252, so the
  * text is sanitised (typographic dashes and quotes folded to their ASCII
  * equivalents) while Portuguese accents are kept.
  *
- * Every template draws each block of prose in a single top-to-bottom flow, so
- * extracted text keeps sentences contiguous and the seeder's verbatim evidence
- * assertions hold for all three.
+ * Every template draws prose in a single top-to-bottom flow — in T2 the sidebar
+ * is painted after the main column so the extracted reading order still follows
+ * the story — which keeps the seeder's verbatim evidence assertions valid.
+ *
+ * Metadata carries the candidate's own name as Title and Author; Producer and
+ * Creator are deliberately left at the library default.
  */
 
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
@@ -35,6 +42,18 @@ export function winAnsiSafe(input: string): string {
     .replace(/[^\x09\x0a\x20-\x7e\u00a1-\u00ff\u20ac]/g, "");
 }
 
+const MONTHS: Record<string, string> = {
+  Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
+  Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12",
+};
+
+/** "Mar 2022 - Present" -> "03/2022 - Present" for the numeric-date CVs. */
+function numericDates(range: string): string {
+  return range.replace(/\b([A-Z][a-z]{2})\s+(\d{4})\b/g, (whole, mon: string, year: string) =>
+    MONTHS[mon] ? `${MONTHS[mon]}/${year}` : whole,
+  );
+}
+
 type Font = Awaited<ReturnType<PDFDocument["embedFont"]>>;
 
 type Theme = {
@@ -51,27 +70,27 @@ type Theme = {
 
 const THEMES: Record<CvLayout, Theme> = {
   T1: {
-    margin: 62,
-    body: 10.8,
-    lead: 14.2,
+    margin: 60,
+    body: 11,
+    lead: 14.4,
     head: 11,
     nameSize: 20,
-    accent: [0.16, 0.2, 0.3],
+    accent: [0.14, 0.16, 0.2],
     ink: [0.1, 0.11, 0.13],
     muted: [0.36, 0.38, 0.42],
     fonts: {
-      regular: StandardFonts.TimesRoman,
-      bold: StandardFonts.TimesRomanBold,
-      italic: StandardFonts.TimesRomanItalic,
+      regular: StandardFonts.Helvetica,
+      bold: StandardFonts.HelveticaBold,
+      italic: StandardFonts.HelveticaOblique,
     },
   },
   T2: {
-    margin: 48,
-    body: 10.2,
-    lead: 13.2,
-    head: 10,
+    margin: 42,
+    body: 10.5,
+    lead: 13.6,
+    head: 10.2,
     nameSize: 21,
-    accent: [0.11, 0.35, 0.42],
+    accent: [0.11, 0.32, 0.4],
     ink: [0.11, 0.12, 0.14],
     muted: [0.4, 0.42, 0.46],
     fonts: {
@@ -81,18 +100,18 @@ const THEMES: Record<CvLayout, Theme> = {
     },
   },
   T3: {
-    margin: 52,
-    body: 9.8,
-    lead: 12.4,
-    head: 9.6,
-    nameSize: 17,
+    margin: 54,
+    body: 10,
+    lead: 12.2,
+    head: 9,
+    nameSize: 18,
     accent: [0.2, 0.18, 0.16],
     ink: [0.08, 0.09, 0.1],
     muted: [0.38, 0.38, 0.4],
     fonts: {
-      regular: StandardFonts.Helvetica,
-      bold: StandardFonts.HelveticaBold,
-      italic: StandardFonts.HelveticaOblique,
+      regular: StandardFonts.TimesRoman,
+      bold: StandardFonts.TimesRomanBold,
+      italic: StandardFonts.TimesRomanItalic,
     },
   },
 };
@@ -101,18 +120,25 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
   const layout: CvLayout = cv.layout ?? "T1";
   const t = THEMES[layout];
   const doc = await PDFDocument.create();
+  doc.setTitle(winAnsiSafe(cv.name));
+  doc.setAuthor(winAnsiSafe(cv.name));
   const regular = await doc.embedFont(t.fonts.regular);
   const bold = await doc.embedFont(t.fonts.bold);
   const italic = await doc.embedFont(t.fonts.italic);
 
-  let page = doc.addPage([A4.w, A4.h]);
+  const firstPage = doc.addPage([A4.w, A4.h]);
+  let page = firstPage;
 
-  // Column geometry: T2 reserves a left rail; the others use the full width.
-  const railW = layout === "T2" ? 158 : 0;
-  const gutter = layout === "T2" ? 22 : 0;
-  const mainX = t.margin + railW + gutter;
-  const mainW = A4.w - t.margin - mainX;
+  // T2 reserves a 33% left rail on the first page only; later pages run full width.
+  const panelW = layout === "T2" ? Math.round(A4.w * 0.33) : 0;
+  const railPad = 18;
+  const railW = panelW > 0 ? panelW - railPad * 2 : 0;
+  let mainX = layout === "T2" ? panelW + 24 : t.margin;
+  let mainW = A4.w - (layout === "T2" ? 34 : t.margin) - mainX;
   let y = A4.h - t.margin;
+
+  const dates = (range: string) =>
+    cv.dateStyle === "numeric" ? numericDates(range) : range;
 
   const wrap = (text: string, font: Font, size: number, width: number): string[] => {
     const words = winAnsiSafe(text).split(/\s+/).filter(Boolean);
@@ -133,6 +159,10 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
 
   const newPage = () => {
     page = doc.addPage([A4.w, A4.h]);
+    if (layout === "T2") {
+      mainX = t.margin;
+      mainW = A4.w - t.margin * 2;
+    }
     y = A4.h - t.margin;
   };
   const need = (h: number) => {
@@ -146,7 +176,6 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
     gap?: number;
     color?: [number, number, number];
     align?: "left" | "center";
-    x?: number;
     width?: number;
     lead?: number;
   };
@@ -156,11 +185,11 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
     const font = opts.font ?? regular;
     const size = opts.size ?? t.body;
     const indent = opts.indent ?? 0;
-    const x0 = (opts.x ?? mainX) + indent;
-    const width = (opts.width ?? mainW) - indent;
     const lead = opts.lead ?? t.lead;
-    for (const line of wrap(text, font, size, width)) {
+    for (const line of wrap(text, font, size, (opts.width ?? mainW) - indent)) {
       need(lead);
+      const width = (opts.width ?? mainW) - indent;
+      const x0 = mainX + indent;
       const lineW = font.widthOfTextAtSize(line, size);
       page.drawText(line, {
         x: opts.align === "center" ? x0 + (width - lineW) / 2 : x0,
@@ -174,13 +203,13 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
     if (opts.gap) y -= opts.gap;
   };
 
-  const bullets = (items: string[], marker = "-") => {
+  const bullets = (items: string[]) => {
     for (const b of items) {
-      const lines = wrap(`${marker} ${b}`, regular, t.body, mainW - 12);
+      const lines = wrap(`- ${b}`, regular, t.body, mainW - 12);
       lines.forEach((line, i) => {
         need(t.lead);
         page.drawText(line, {
-          x: mainX + 10 + (i === 0 ? 0 : 9),
+          x: mainX + 8 + (i === 0 ? 0 : 8),
           y: y - t.body,
           size: t.body,
           font: regular,
@@ -192,135 +221,141 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
   };
 
   const section = (title: string) => {
-    need(t.lead * 2.4);
-    y -= layout === "T3" ? 4 : 6;
+    need(t.lead * 2.2);
+    y -= layout === "T3" ? 5 : 7;
     if (layout === "T3") {
-      // Ruled band: a filled strip with the heading reversed out of it.
-      need(16);
-      page.drawRectangle({
-        x: mainX,
-        y: y - 12,
-        width: mainW,
-        height: 14,
-        color: rgb(0.93, 0.93, 0.94),
-      });
+      // Small-caps label: capitals at a reduced size, no rule.
+      need(t.head + 4);
       page.drawText(winAnsiSafe(title.toUpperCase()), {
-        x: mainX + 5,
-        y: y - 9,
+        x: mainX,
+        y: y - t.head,
         size: t.head,
         font: bold,
         color: rgb(...t.accent),
       });
-      y -= 20;
+      y -= t.head + 5;
       return;
     }
-    draw(title.toUpperCase(), {
-      font: bold,
-      size: t.head,
-      color: t.accent,
-      align: layout === "T1" ? "center" : "left",
-    });
+    draw(title.toUpperCase(), { font: bold, size: t.head, color: t.accent });
     page.drawLine({
-      start: { x: mainX, y: y - 1 },
-      end: { x: mainX + mainW, y: y - 1 },
-      thickness: layout === "T2" ? 1.1 : 0.6,
-      color: rgb(...(layout === "T2" ? t.accent : [0.72, 0.74, 0.78])),
+      start: { x: mainX, y: y + 1 },
+      end: { x: mainX + mainW, y: y + 1 },
+      thickness: layout === "T2" ? 1 : 0.5,
+      color: rgb(...(layout === "T2" ? t.accent : [0.7, 0.72, 0.76])),
     });
-    y -= 9;
+    y -= layout === "T2" ? 8 : 7;
+  };
+
+  /** Role line: heading left, date range right-aligned on the same baseline. */
+  const roleLineRight = (heading: string, range: string) => {
+    const rangeText = winAnsiSafe(dates(range));
+    const rangeW = italic.widthOfTextAtSize(rangeText, 9.6);
+    const headingLines = wrap(heading, bold, t.body, mainW - rangeW - 14);
+    headingLines.forEach((line, i) => {
+      need(t.lead);
+      page.drawText(line, { x: mainX, y: y - t.body, size: t.body, font: bold, color: rgb(...t.ink) });
+      if (i === 0) {
+        page.drawText(rangeText, {
+          x: mainX + mainW - rangeW,
+          y: y - t.body,
+          size: 9.6,
+          font: italic,
+          color: rgb(...t.muted),
+        });
+      }
+      y -= t.lead;
+    });
+  };
+
+  /** T3 role line: employer bold, title italic, dates on the next line. */
+  const roleLineSenior = (heading: string, range: string) => {
+    // Headings are "Title - Employer, City"; split so employer reads bold.
+    const parts = winAnsiSafe(heading).split(/\s+-\s+/);
+    const title = parts[0] ?? heading;
+    const employer = parts.slice(1).join(" - ");
+    need(t.lead * 2);
+    const employerText = employer || title;
+    page.drawText(employerText, {
+      x: mainX,
+      y: y - t.body,
+      size: t.body,
+      font: bold,
+      color: rgb(...t.ink),
+    });
+    if (employer) {
+      const w = bold.widthOfTextAtSize(employerText, t.body);
+      page.drawText(` ${title}`, {
+        x: mainX + w + 4,
+        y: y - t.body,
+        size: t.body,
+        font: italic,
+        color: rgb(...t.ink),
+      });
+    }
+    y -= t.lead;
+    page.drawText(winAnsiSafe(dates(range)), {
+      x: mainX,
+      y: y - 9.4,
+      size: 9.4,
+      font: regular,
+      color: rgb(...t.muted),
+    });
+    y -= t.lead - 1;
   };
 
   // ── Header ────────────────────────────────────────────────────────────────
   if (layout === "T1") {
-    draw(cv.name, { font: bold, size: t.nameSize, align: "center" });
-    y -= 2;
-    draw(cv.title, { size: 12, align: "center", color: t.muted });
+    draw(cv.name, { font: bold, size: t.nameSize });
     y -= 1;
-    draw(cv.contact, { size: 9.4, align: "center", color: t.muted, gap: 6 });
+    draw(`${cv.title}`, { size: 11.5, color: t.accent });
+    draw(cv.contact, { size: 9.6, color: t.muted, gap: 2 });
   } else if (layout === "T2") {
-    // Name spans both columns; the rail then carries the facts.
-    const nameLines = wrap(cv.name, bold, t.nameSize, A4.w - t.margin * 2);
-    for (const line of nameLines) {
-      page.drawText(line, {
-        x: t.margin,
-        y: y - t.nameSize,
-        size: t.nameSize,
-        font: bold,
-        color: rgb(...t.ink),
-      });
-      y -= t.nameSize + 3;
-    }
+    page.drawText(winAnsiSafe(cv.name), {
+      x: mainX,
+      y: y - t.nameSize,
+      size: t.nameSize,
+      font: bold,
+      color: rgb(...t.ink),
+    });
+    y -= t.nameSize + 5;
     page.drawText(winAnsiSafe(cv.title), {
-      x: t.margin,
+      x: mainX,
       y: y - 11.5,
       size: 11.5,
       font: regular,
       color: rgb(...t.accent),
     });
-    y -= 24;
-    page.drawLine({
-      start: { x: t.margin, y: y + 8 },
-      end: { x: A4.w - t.margin, y: y + 8 },
-      thickness: 1.4,
-      color: rgb(...t.accent),
-    });
-
-    // Rail is drawn first, top to bottom, then the main column continues.
-    let ry = y;
-    const rail = (text: string, opts: { font?: Font; size?: number; gap?: number; color?: [number, number, number] } = {}) => {
-      const font = opts.font ?? regular;
-      const size = opts.size ?? 9.4;
-      for (const line of wrap(text, font, size, railW)) {
-        page.drawText(line, {
-          x: t.margin,
-          y: ry - size,
-          size,
-          font,
-          color: rgb(...(opts.color ?? t.ink)),
-        });
-        ry -= size + 3.2;
-      }
-      if (opts.gap) ry -= opts.gap;
-    };
-    const railHead = (label: string) => {
-      ry -= 6;
-      rail(label.toUpperCase(), { font: bold, size: 8.6, color: t.accent, gap: 1 });
-    };
-
-    railHead("Contact");
-    for (const part of cv.contact.split(/\s+·\s+/)) rail(part);
-    railHead("Core skills");
-    rail(cv.coreSkills);
-    railHead("Education");
-    for (const line of cv.education) rail(line);
-    if (cv.certifications.length > 0) {
-      railHead("Certifications");
-      for (const line of cv.certifications) rail(line);
-    }
-    railHead("Languages");
-    for (const line of cv.languages) rail(line);
-    if (cv.interests) {
-      railHead("Outside work");
-      rail(cv.interests);
-    }
+    y -= 22;
   } else {
     draw(cv.name, { font: bold, size: t.nameSize });
-    draw(`${cv.title}  |  ${cv.contact}`, { size: 9, color: t.muted, gap: 4 });
+    draw(cv.title, { size: 10.5, font: italic, color: t.muted });
+    draw(cv.contact, { size: 9.2, color: t.muted, gap: 2 });
   }
 
   // ── Main flow ─────────────────────────────────────────────────────────────
-  section("Profile");
+  const educationBlock = () => {
+    section("Education");
+    bullets(cv.education);
+    if (cv.certifications.length > 0) {
+      section("Certifications");
+      bullets(cv.certifications);
+    }
+  };
+
+  section(cv.summaryLabel ?? "Summary");
   draw(cv.summary, { gap: 2 });
 
   if (layout !== "T2") {
     section("Core skills");
     draw(cv.coreSkills, { gap: 2 });
+    if (cv.educationFirst) educationBlock();
   }
 
-  section(layout === "T3" ? "Experience" : "Professional history");
+  section("Experience");
   for (const role of cv.experience) {
     need(t.lead * 3);
-    draw(role.heading, { font: bold });
-    draw(role.dates, { font: italic, size: 9.4, color: t.muted });
+    if (layout === "T3") roleLineSenior(role.heading, role.dates);
+    else roleLineRight(role.heading, role.dates);
     bullets(role.bullets);
     y -= 4;
   }
@@ -335,27 +370,73 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
   }
 
   if (layout !== "T2") {
-    section("Education");
-    bullets(cv.education);
-
-    if (cv.certifications.length > 0) {
-      section("Certifications");
-      bullets(cv.certifications);
-    }
-
+    if (!cv.educationFirst) educationBlock();
     section("Languages");
     bullets(cv.languages);
-
     if (cv.interests) {
-      section("Outside work");
+      section("Interests");
       draw(cv.interests);
     }
   }
 
-  // One or two A4 pages. Short careers legitimately fit on one page; nothing
-  // is padded to reach two, and three pages means the dossier is over length.
+  // ── T2 sidebar, painted last so the extracted reading order stays natural ──
+  if (layout === "T2") {
+    firstPage.drawRectangle({
+      x: 0,
+      y: 0,
+      width: panelW,
+      height: A4.h,
+      color: rgb(0.945, 0.949, 0.953),
+    });
+    let ry = A4.h - t.margin;
+    const rail = (
+      text: string,
+      opts: { font?: Font; size?: number; gap?: number; color?: [number, number, number] } = {},
+    ) => {
+      const font = opts.font ?? regular;
+      const size = opts.size ?? 9.4;
+      for (const line of wrap(text, font, size, railW)) {
+        firstPage.drawText(line, {
+          x: railPad,
+          y: ry - size,
+          size,
+          font,
+          color: rgb(...(opts.color ?? t.ink)),
+        });
+        ry -= size + 3.4;
+      }
+      if (opts.gap) ry -= opts.gap;
+    };
+    const railHead = (label: string) => {
+      ry -= 8;
+      rail(label.toUpperCase(), { font: bold, size: 8.6, color: t.accent, gap: 1.5 });
+    };
+
+    railHead("Contact");
+    for (const part of cv.contact.split(/\s+·\s+/)) rail(part);
+    railHead("Core skills");
+    rail(cv.coreSkills);
+    railHead("Languages");
+    for (const line of cv.languages) rail(line);
+    railHead("Education");
+    for (const line of cv.education) rail(line);
+    if (cv.certifications.length > 0) {
+      railHead("Certifications");
+      for (const line of cv.certifications) rail(line);
+    }
+    if (cv.interests) {
+      railHead("Interests");
+      rail(cv.interests);
+    }
+  }
+
+  // Length is honest: short careers fit one page, longer ones run to two, and
+  // the dossier declares which so drift is caught here rather than in review.
   const pages = doc.getPageCount();
-  if (pages > 2) throw new Error(`cv_too_long: rendered ${pages} pages`);
+  const expected = cv.targetPages ?? 2;
+  if (pages !== expected) {
+    throw new Error(`cv_length: ${cv.name} rendered ${pages} page(s), dossier declares ${expected}`);
+  }
 
   return await doc.save();
 }
