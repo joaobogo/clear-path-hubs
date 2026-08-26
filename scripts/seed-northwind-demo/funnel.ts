@@ -725,8 +725,27 @@ async function normaliseCandidate(
     .slice()
     .sort((a, b) => b - a)
     .map((d, i) => businessDay(d, 11 + (i % 5)));
-  const historyStamps = [screened, delivered, ...decisionStamps];
-  await backdateSeries(sb, "candidate_stage_history", ctx.matchId, ["created_at"], historyStamps);
+  // Stage history is append-only, so each row is dated from the step it
+  // records rather than from the order the rows happen to come back in.
+  const { data: histRows } = await sb
+    .from("candidate_stage_history")
+    .select("id,to_stage,created_at")
+    .eq("candidate_match_id", ctx.matchId)
+    .order("created_at", { ascending: true });
+  let decisionCursor = 0;
+  for (const h of (histRows as AnyRow[] | null) ?? []) {
+    const stage = h.to_stage as string;
+    let stamp: string;
+    if (stage === "new") stamp = applied;
+    else if (stage === "reviewing") stamp = screened;
+    else if (stage === "delivered") stamp = delivered;
+    else {
+      stamp =
+        decisionStamps[Math.min(decisionCursor, decisionStamps.length - 1)] ?? delivered;
+      decisionCursor += 1;
+    }
+    await backdate(sb, "candidate_stage_history", h.id, { created_at: stamp });
+  }
   await backdateSeries(
     sb,
     "client_decisions",
