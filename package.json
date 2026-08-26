@@ -15,13 +15,15 @@
     "check:vocabulary": "node scripts/check-public-vocabulary.mjs && node scripts/check-client-vocabulary.mjs && node scripts/check-no-stripe.mjs",
     "check:vocabulary:client": "node scripts/check-client-vocabulary.mjs",
     "check:no-stripe": "node scripts/check-no-stripe.mjs",
-    "prebuild": "npm run generate:robots && npm run check:vocabulary",
-    "prebuild:dev": "npm run generate:robots && npm run check:vocabulary",
+    "prebuild": "npm run generate:robots && npm run check:vocabulary && npm run check:kpi-sync",
+    "prebuild:dev": "npm run generate:robots && npm run check:vocabulary && npm run check:kpi-sync",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test tests/e2e/smoke-journey.spec.ts",
     "test:e2e:performance": "playwright test tests/e2e/admin-performance-smoke.spec.ts",
-    "release:gate": "npm run test && npm run test:e2e:smoke && npm run test:e2e:performance"
+    "release:gate": "npm run check:kpi-sync && npm run test && npm run test:e2e:smoke && npm run test:e2e:performance",
+    "check:kpi-sync": "node scripts/check-kpi-sync.mjs",
+    "test:kpi-sync": "vitest run tests/kpis"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
