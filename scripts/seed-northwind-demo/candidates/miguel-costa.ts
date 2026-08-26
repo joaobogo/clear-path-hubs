@@ -81,6 +81,7 @@ export const dossier: Dossier = {
         heading: "Full-Stack Developer - Civitas Consulting, Lisbon",
         dates: "Oct 2021 - Present",
         bullets: [
+          "No row-level security or multi-tenant isolation model work: our councils each run their own install.",
           "Cut average time to a permit decision from 21 days to 12 across two councils.",
           "Moved about 70% of permit requests online, away from the counter.",
           "Rebuilt the attachment upload after 400 failed submissions in one quarter, ending that failure class.",
