@@ -7,6 +7,7 @@
  * number on its own. Employer surfaces must use `CandidateScoreBadge` instead.
  */
 import { Badge } from "@/components/ui/badge";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 
 type RunLike = {
   score?: number | null;
@@ -71,13 +72,15 @@ export function AdminScoreNumber({
   }
   const meta = `${confidenceLabel(run)} · ${rubricVersionLabel(run)} · ${engineVersionLabel(run)}`;
   const scoreLabel = `Score ${Math.round(Number(run.score))}`;
+  // The band comes from the ONE shared helper (score decides the band), never
+  // from the stored engine label — otherwise 100 reads "strong fit" here and
+  // "Exceptional" in the list.
+  const bandLabel = toFitPresentation(run.fit_label, run.score).headline;
   if (size === "lg") {
     return (
       <div className={`flex flex-wrap items-baseline gap-3 ${className}`} aria-label={scoreLabel}>
         <div className="text-5xl font-semibold tabular-nums" aria-hidden="true">{Math.round(Number(run.score))}</div>
-        {run.fit_label && (
-          <Badge variant="secondary">{String(run.fit_label).replace(/_/g, " ")}</Badge>
-        )}
+        <Badge variant="secondary">{bandLabel}</Badge>
         <span className="text-sm text-muted-foreground">{meta}</span>
       </div>
     );
@@ -86,9 +89,7 @@ export function AdminScoreNumber({
     <span className={`inline-flex flex-wrap items-baseline gap-1.5 ${className}`} aria-label={scoreLabel}>
       <Badge variant="secondary" className="tabular-nums" aria-hidden="true">
         Score {Math.round(Number(run.score))}
-        {run.fit_label && (
-          <span className="ml-1 opacity-70">· {String(run.fit_label).replace(/_/g, " ")}</span>
-        )}
+        <span className="ml-1 opacity-70">· {bandLabel}</span>
       </Badge>
       <span className="text-[11px] text-muted-foreground">{meta}</span>
     </span>
