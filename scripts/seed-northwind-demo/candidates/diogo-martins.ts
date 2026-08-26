@@ -107,6 +107,7 @@ export const dossier: Dossier = {
           "Delivered a self-service portal that moved 38% of a utility's meter readings off the phone lines.",
           "Rewrote the claims form for an insurer, halving abandonment from 41% to 20%.",
           "Replaced hand-written PostgreSQL reports with a shared query layer used by four teams.",
+          "Prototyped one client portal in Next.js before the team settled on its own setup.",
         ],
       },
     ],
