@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { useAccountState } from "@/components/admin/account-state-strip";
+import { planDisplayLabel } from "@/lib/account-state";
 
 import {
   Select,
@@ -137,6 +139,7 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
       >
         {d ? (
           <ClientAccessBody
+            organizationId={organizationId}
             data={d}
             setInviteOpen={setInviteOpen}
             changeRole={changeRole}
@@ -196,21 +199,29 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
 
 
 function ClientAccessBody({
+  organizationId,
   data: d,
   setInviteOpen,
   changeRole,
   revoke,
   resend,
 }: {
+  organizationId: string;
   data: NonNullable<ReturnType<typeof useQuery<Awaited<ReturnType<typeof inspectClientAccess>>>>["data"]>;
   setInviteOpen: (v: boolean) => void;
   changeRole: ReturnType<typeof useMutation<unknown, Error, { userId: string; role: string }>>;
   revoke: ReturnType<typeof useMutation<unknown, Error, { membershipId: string; reason: string }>>;
   resend: ReturnType<typeof useMutation<unknown, Error, string>>;
 }) {
-  // seat_limit already includes the owner seat (see client-seats.ts).
-  const totalSeats = d.seat_limit;
-  const atCap = d.seats_remaining === 0;
+  // Plan and seat totals come from the one account-state reader, so this tab
+  // cannot disagree with the Overview tab or the client Account page.
+  const accountState = useAccountState(organizationId);
+  const state = accountState.data ?? null;
+  const totalSeats = state?.seats.limit ?? d.seat_limit;
+  const seatsUsed = state?.seats.used ?? d.seats_used;
+  const recruiterSeats = state?.seats.recruiterSeats ?? Math.max(0, d.seat_limit - 1);
+  const planLabel = state ? planDisplayLabel(state.plan) : null;
+  const atCap = (state ? state.seats.remaining : d.seats_remaining) === 0;
   const { confirm, confirmDialog } = useConfirmAction();
 
   /** Resending mails a real invitation, so it asks first and names the person. */
@@ -234,12 +245,12 @@ function ClientAccessBody({
         <div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground">Seat usage</div>
           <div className="mt-1 text-2xl font-semibold tabular-nums">
-            {d.seats_used}
+            {seatsUsed}
             <span className="text-base font-normal text-muted-foreground"> / {totalSeats}</span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Owner seat plus {Math.max(0, d.seat_limit - 1)} recruiter seat{d.seat_limit - 1 === 1 ? "" : "s"} on the
-            current plan. Pending invitations hold a seat.
+            Owner seat plus {recruiterSeats} recruiter seat{recruiterSeats === 1 ? "" : "s"}
+            {planLabel ? ` on ${planLabel}` : ""}. Pending invitations hold a seat.
           </p>
         </div>
         <Button
