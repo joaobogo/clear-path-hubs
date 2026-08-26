@@ -3,7 +3,7 @@ import type { Dossier } from "../types";
 const R1 =
   "Eight years building production React and TypeScript applications before moving into management.";
 const R3 =
-  "Owned the reporting feature end to end, from schema design to shipped UI used by 200 analysts.";
+  "Owning the reporting features end to end, from schema design to shipped UI used by 200 analysts.";
 const R2 =
   "Led the SQL and relational data modelling of the metrics warehouse in Postgres, with 50 migrations delivered on schedule.";
 const P1 =

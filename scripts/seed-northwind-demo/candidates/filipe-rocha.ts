@@ -3,11 +3,11 @@ import type { Dossier } from "../types";
 const R1 =
   "Eight years building production React and TypeScript applications for advertising platforms.";
 const R3 =
-  "Owned campaign budgeting end to end, from schema design to shipped UI used by 400 media buyers.";
+  "Owning campaign budgeting features end to end, from schema design to shipped UI used by 400 media buyers.";
 const R2 =
   "Own the SQL and relational data modelling for spend in Postgres, with 70 migrations shipped against live traffic.";
 const R4 =
-  "Wrote the row-level security model keeping 210 multi-tenant advertiser accounts in isolation.";
+  "Practical row-level security work: the model keeps 210 multi-tenant advertiser accounts in isolation.";
 const R5 =
   "Comfortable writing and maintaining 2,100 automated tests, unit in Vitest and end-to-end in Playwright, run on every pull request.";
 const P1 =

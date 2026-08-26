@@ -11,7 +11,7 @@ const R5 =
 const P1 =
   "Mercado Nube is multi-tenant SaaS for 5,000 seller accounts with per-tenant data isolation.";
 const P3 =
-  "Shipped LLM-backed search as product features in production, live for 5,000 sellers since 2024.";
+  "Daily exposure to AI work: shipped LLM-backed search as product features in production, live for 5,000 sellers since 2024.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2018.";
 

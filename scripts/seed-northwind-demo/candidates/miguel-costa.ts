@@ -3,7 +3,7 @@ import type { Dossier } from "../types";
 const R1 =
   "Five years building and shipping React and TypeScript applications for public bodies.";
 const R3 =
-  "Owned the permit request feature end to end, from schema design to shipped UI used by two councils.";
+  "Owning the permit request flow end to end, from schema design to shipped UI used by two councils.";
 const R6 =
   "English - fluent, written and spoken (C1/C2); working language since 2020.";
 
