@@ -272,7 +272,10 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       not_moving_forward: laneCounts.not_moving_forward,
     };
     const openings = Math.max(1, Number(position.openings ?? 1));
-    const hires = stageCounts.hired ?? 0;
+    // Hires (and therefore openings remaining) come from confirmed offer
+    // records via computeKpis, never from the pipeline lane: a candidate parked
+    // in the Hired column without a confirmed offer is not a hire.
+    const hires = roleKpis.hires;
     const remaining = Math.max(0, openings - hires);
 
 
