@@ -135,6 +135,10 @@ test.describe("launch smoke journey", () => {
     await continueBtn(page).click();
 
     await expect(page.getByRole("heading", { name: /review & submit/i })).toBeVisible();
+    // The form ignores a click within 400ms of landing on Review (that guard is
+    // what stops a carried-over keypress from auto-submitting), so behave like a
+    // person reading the summary before sending.
+    await page.waitForTimeout(700);
     await page.getByTestId("apply-submit").click();
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 150_000 })
