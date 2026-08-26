@@ -185,7 +185,12 @@ async function main() {
     // 1. CV → real 2-page A4 PDF, verified by the product's own extractor.
     const pdf = await renderCvPdf(d.cv);
     const { extractCvText } = await import("../src/lib/cv-extractor.server");
-    const extracted = await extractCvText(pdf, "application/pdf", `${d.slug}.pdf`);
+    // The extractor detaches the buffer it is handed, so verify on a copy.
+    const extracted = await extractCvText(
+      new Uint8Array(pdf),
+      "application/pdf",
+      `${d.slug}.pdf`,
+    );
     const flat = norm(extracted.text);
     const missing = d.evidence_sentences.filter((s) => !flat.includes(norm(s)));
     if (missing.length > 0) {
