@@ -345,6 +345,10 @@ function ClientDetail() {
 function OverviewTab({ org, parsedCvCount }: { org: any; parsedCvCount: number }) {
   return (
     <section className="grid gap-4 md:grid-cols-3">
+      {/* One reader for plan, seats and setup (shared with the Access tab). */}
+      <div className="md:col-span-3">
+        <AccountStateStrip organizationId={org.id} />
+      </div>
       {/* Visual duplicate KPI tiles removed (C1) — reconciled into AccountOperatingSummary. */}
       <div className="md:col-span-3 rounded-lg border p-4 text-sm bg-card">
         <div className="flex items-center justify-between mb-2 border-b pb-2">
