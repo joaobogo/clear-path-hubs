@@ -10,6 +10,7 @@ import {
 } from "@/lib/admin/use-delivery-failures";
 import {
   releaseNotificationRecipient,
+  retryAllDeliveryFailuresFn,
   retryDeliveryFailureFn,
   suppressNotificationRecipient,
   unsuppressAndRetryDelivery,
@@ -31,7 +32,7 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Item = {
   key: string;
-  ledger: "notification" | "lead";
+  ledger: "notification" | "lead" | "application";
   id: string;
   eventType: string;
   eventLabel: string;
@@ -60,12 +61,14 @@ function when(iso: string) {
 
 export function DeliveryFailuresPanel() {
   const retry = useServerFn(retryDeliveryFailureFn);
+  const retryAll = useServerFn(retryAllDeliveryFailuresFn);
   const suppress = useServerFn(suppressNotificationRecipient);
   const release = useServerFn(releaseNotificationRecipient);
   const unsuppress = useServerFn(unsuppressAndRetryDelivery);
   const qc = useQueryClient();
 
   const [staleTarget, setStaleTarget] = useState<Item | null>(null);
+  const [retryAllOpen, setRetryAllOpen] = useState(false);
   const [suppressTarget, setSuppressTarget] = useState<Item | null>(null);
   const [suppressReason, setSuppressReason] = useState("");
 
@@ -88,6 +91,25 @@ export function DeliveryFailuresPanel() {
       void invalidate();
     },
     onError: (e: unknown) => toastError(e, { fallback: "Retry failed" }),
+  });
+
+  const retryAllMut = useMutation({
+    mutationFn: () => retryAll({ data: { limit: 100 } }),
+    onSuccess: (res) => {
+      if (res.failed > 0) {
+        toast.error(`${res.failed} re-send${res.failed === 1 ? "" : "s"} failed again.`);
+      } else if (res.attempted === 0) {
+        toast.success("No retryable deliveries were waiting.");
+      } else {
+        toast.success(`${res.succeeded} delivery${res.succeeded === 1 ? "" : "ies"} re-sent.`);
+      }
+      if (res.skipped > 0) {
+        toast.message(`${res.skipped} older deliver${res.skipped === 1 ? "y" : "ies"} still waiting.`);
+      }
+      setRetryAllOpen(false);
+      void invalidate();
+    },
+    onError: (e: unknown) => toastError(e, { fallback: "Bulk retry failed" }),
   });
 
   const suppressMut = useMutation({
@@ -163,12 +185,20 @@ export function DeliveryFailuresPanel() {
     blockedNotSent: 0,
     blockedDeliveries: 0,
     blockedAddresses: [],
+    spikeAlert: undefined,
   }) as {
     total: number;
     retryable: number;
     blockedNotSent: number;
     blockedDeliveries: number;
     blockedAddresses: BlockedAddress[];
+    spikeAlert?: {
+      active: boolean;
+      recent: number;
+      previous: number;
+      windowHours: number;
+      sentence: string | null;
+    };
   };
   const blockedAddresses = summary.blockedAddresses;
   const suppressions = (query.data?.suppressions ?? []) as Suppression[];
@@ -196,13 +226,30 @@ export function DeliveryFailuresPanel() {
 
   return (
     <section className="mt-10" id="delivery-failures">
-      <header className="mb-4">
-        <h2 className="text-lg font-semibold">Delivery failures</h2>
-        <p className="text-sm text-muted-foreground max-w-2xl">
-          Notifications whose final attempt did not succeed in the last {windowDays} days.
-          Anything listed here means someone believes they were informed and was not.
-        </p>
+      <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold">Delivery failures</h2>
+          <p className="text-sm text-muted-foreground max-w-2xl">
+            Notifications whose final attempt did not succeed in the last {windowDays} days.
+            Anything listed here means someone believes they were informed and was not.
+          </p>
+        </div>
+        {summary.retryable > 0 ? (
+          <Button variant="outline" disabled={retryAllMut.isPending} onClick={() => setRetryAllOpen(true)}>
+            Retry all
+          </Button>
+        ) : null}
       </header>
+
+      {summary.spikeAlert?.active ? (
+        <Card className="mb-4 border-destructive/40 bg-destructive/5 p-3">
+          <div className="text-sm font-medium">Delivery failure spike</div>
+          <p className="mt-1 max-w-2xl text-xs text-muted-foreground">
+            {summary.spikeAlert.sentence} Drain the retryable rows below and check the sender setup if
+            new failures continue appearing.
+          </p>
+        </Card>
+      ) : null}
 
       {/* A suppressed address is not a backlog: every new notification to it
           fails the moment it is sent, so the row count climbs with normal
@@ -407,6 +454,26 @@ export function DeliveryFailuresPanel() {
               }}
             >
               {staleTarget?.staleWarning ? "Send anyway" : "Send again"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={retryAllOpen} onOpenChange={setRetryAllOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Re-send retryable deliveries</DialogTitle>
+            <DialogDescription>
+              This re-sends up to 100 retryable email or alert deliveries through their original path.
+              Suppressed and configuration-held rows are left untouched.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setRetryAllOpen(false)}>
+              Cancel
+            </Button>
+            <Button disabled={retryAllMut.isPending} onClick={() => retryAllMut.mutate()}>
+              Retry all
             </Button>
           </DialogFooter>
         </DialogContent>

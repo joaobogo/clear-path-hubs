@@ -16,6 +16,7 @@ import { deliveryReason } from "./notifications/delivery-reasons";
 type Admin = any;
 
 const WINDOW_DAYS = 7;
+const SPIKE_WINDOW_HOURS = 6;
 
 /** Events where a late re-send is misleading rather than helpful. */
 const TIME_SENSITIVE_EVENTS = new Set<string>([
@@ -31,7 +32,7 @@ const STALE_AFTER_MS = 24 * 60 * 60 * 1000;
 
 export type DeliveryFailure = {
   key: string;
-  ledger: "notification" | "lead";
+  ledger: "notification" | "lead" | "application";
   id: string;
   eventType: string;
   /** Human event name for the row; the raw enum stays in the payload. */
@@ -79,12 +80,37 @@ function isStale(eventType: string, lastAttemptAt: string): boolean {
 }
 
 /** Bounced / suppressed deliveries must never be retried blindly. */
-function notificationRetry(status: string): { retryable: boolean; reason: string | null } {
-  if (status === "bounced")
-    return { retryable: false, reason: "The address rejected the message — retrying will fail again." };
-  if (status === "suppressed")
-    return { retryable: false, reason: "Blocked before sending (suppression list or recipient preference)." };
+function notificationRetry(
+  status: string,
+  code?: string | null,
+): { retryable: boolean; reason: string | null } {
+  const human = deliveryReason(code, status);
+  if (human.kind === "held") return { retryable: false, reason: human.sentence };
+  if (status === "bounced" || human.kind === "blocked") return { retryable: false, reason: human.sentence };
   return { retryable: true, reason: null };
+}
+
+function retrySpike(items: DeliveryFailure[]) {
+  const now = Date.now();
+  const windowMs = SPIKE_WINDOW_HOURS * 3_600_000;
+  let recent = 0;
+  let previous = 0;
+  for (const item of items) {
+    if (!item.retryable) continue;
+    const age = now - new Date(item.lastAttemptAt).getTime();
+    if (age >= 0 && age < windowMs) recent += 1;
+    else if (age >= windowMs && age < windowMs * 2) previous += 1;
+  }
+  const active = recent >= 5 && recent >= Math.max(previous * 2, previous + 5);
+  return {
+    active,
+    recent,
+    previous,
+    windowHours: SPIKE_WINDOW_HOURS,
+    sentence: active
+      ? `Retryable delivery failures increased to ${recent} in the last ${SPIKE_WINDOW_HOURS} hours.`
+      : null,
+  };
 }
 
 /**
@@ -109,6 +135,13 @@ export type DeliveryFailureSummary = {
     lastAttemptAt: string;
     sentence: string;
   }>;
+  spikeAlert: {
+    active: boolean;
+    recent: number;
+    previous: number;
+    windowHours: number;
+    sentence: string | null;
+  };
   windowDays: number;
 };
 
@@ -118,6 +151,13 @@ const EMPTY_SUMMARY: DeliveryFailureSummary = {
   blockedNotSent: 0,
   blockedDeliveries: 0,
   blockedAddresses: [],
+  spikeAlert: {
+    active: false,
+    recent: 0,
+    previous: 0,
+    windowHours: SPIKE_WINDOW_HOURS,
+    sentence: null,
+  },
   windowDays: WINDOW_DAYS,
 };
 
@@ -129,7 +169,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
 }> {
   const cutoff = since();
 
-  const [deliveriesRes, leadsRes] = await Promise.all([
+  const [deliveriesRes, leadsRes, applicationConfirmationsRes] = await Promise.all([
     admin
       .from("notification_deliveries")
       .select(
@@ -148,13 +188,22 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       .gte("created_at", cutoff)
       .order("created_at", { ascending: false })
       .limit(200),
+    (admin.from("applications") as any)
+      .select(
+        "id,position_id,candidate_profile_id,confirmation_email_status,confirmation_email_error_code,confirmation_email_error_message,confirmation_email_attempt_count,confirmation_email_last_attempt_at,confirmation_email_sent_at",
+      )
+      .in("confirmation_email_status", ["failed", "suppressed"])
+      .gte("confirmation_email_last_attempt_at", cutoff)
+      .order("confirmation_email_last_attempt_at", { ascending: false })
+      .limit(200),
   ]);
 
   // Catch and normalize errors to prevent full page crashes in the desk view.
-  if (deliveriesRes.error || leadsRes.error) {
+  if (deliveriesRes.error || leadsRes.error || applicationConfirmationsRes.error) {
     console.error("[loadDeliveryFailures] query failed", {
       deliveries: deliveriesRes.error,
       leads: leadsRes.error,
+      applicationConfirmations: applicationConfirmationsRes.error,
     });
     return { items: [], summary: EMPTY_SUMMARY, suppressions: [], windowDays: WINDOW_DAYS };
   }
@@ -193,8 +242,8 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     const status = String(r["status"]);
     const eventType = n?.event_type ?? "unknown";
     const lastAttemptAt = String(r["last_attempt_at"] ?? r["updated_at"]);
-    const retry = notificationRetry(status);
     const rawCode = (r["error_code"] as string | null) ?? null;
+    const retry = notificationRetry(status, rawCode);
     const human = deliveryReason(rawCode, status);
     return {
       key: `notification:${r["id"]}`,
@@ -321,12 +370,82 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     }
   }
 
+  const applicationRows = (applicationConfirmationsRes.data ?? []) as Array<Record<string, unknown>>;
+  const profileIds = [
+    ...new Set(
+      applicationRows
+        .map((r) => r["candidate_profile_id"] as string | null)
+        .filter((v): v is string => !!v),
+    ),
+  ];
+  const positionIds = [
+    ...new Set(
+      applicationRows
+        .map((r) => r["position_id"] as string | null)
+        .filter((v): v is string => !!v),
+    ),
+  ];
+  const [profilesRes, positionsRes] = await Promise.all([
+    profileIds.length
+      ? admin.from("candidate_profiles").select("id,full_name,email").in("id", profileIds)
+      : { data: [] },
+    positionIds.length
+      ? admin.from("positions").select("id,title").in("id", positionIds)
+      : { data: [] },
+  ]);
+  const profileById = new Map(
+    ((profilesRes.data ?? []) as Array<{ id: string; full_name: string | null; email: string | null }>).map((p) => [p.id, p]),
+  );
+  const positionById = new Map(
+    ((positionsRes.data ?? []) as Array<{ id: string; title: string | null }>).map((p) => [p.id, p]),
+  );
+  const applicationItems: DeliveryFailure[] = applicationRows.map((r) => {
+    const status = String(r["confirmation_email_status"] ?? "failed");
+    const rawCode = (r["confirmation_email_error_code"] as string | null) ?? null;
+    const human = deliveryReason(rawCode, status);
+    const retry = notificationRetry(status, rawCode);
+    const lastAttemptAt = String(r["confirmation_email_last_attempt_at"] ?? r["confirmation_email_sent_at"] ?? new Date().toISOString());
+    const profile = profileById.get(String(r["candidate_profile_id"]));
+    const position = positionById.get(String(r["position_id"]));
+    return {
+      key: `application:${r["id"]}`,
+      ledger: "application" as const,
+      id: String(r["id"]),
+      eventType: "application_received",
+      eventLabel: "Application confirmation",
+      title: position?.title ? `Application received — ${position.title}` : "Application received",
+      audience: "candidate",
+      channel: "email",
+      recipient: profile?.email ?? null,
+      reason: rawCode ?? status,
+      reasonDetail: (r["confirmation_email_error_message"] as string | null) ?? null,
+      reasonLabel: human.label,
+      reasonSentence: human.sentence,
+      canUnsuppress: human.kind === "blocked",
+      attempts: Number(r["confirmation_email_attempt_count"] ?? 1),
+      firstAttemptAt: lastAttemptAt,
+      lastAttemptAt,
+      retryable: retry.retryable,
+      retryBlockedReason: retry.reason,
+      staleWarning: isStale("application_received", lastAttemptAt),
+      relatedPath: `/apply/received/${r["id"]}`,
+      payloadJson: JSON.stringify({
+        application_id: r["id"],
+        event_type: "application_received",
+        candidate_name: profile?.full_name ?? null,
+        recipient_address: profile?.email ?? null,
+        status,
+        error_code: rawCode,
+      }, null, 2),
+    };
+  });
+
   const { listSuppressions } = await import("./notification-suppression.server");
 
   // The window is enforced here, on the last attempt, so no caller has to
   // re-filter afterwards. Re-filtering downstream is what made /admin read 13
   // while /admin/operations read 86 off the same ledger.
-  const items = [...notificationItems, ...leadItems]
+  const items = [...notificationItems, ...leadItems, ...applicationItems]
     .filter((i) => i.lastAttemptAt >= cutoff)
     .sort((a, b) => new Date(b.lastAttemptAt).getTime() - new Date(a.lastAttemptAt).getTime());
 
@@ -360,6 +479,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
   );
   const retryableCount = items.filter((i) => i.retryable).length;
   const blockedNotSent = blockedAddresses.reduce((n, a) => n + a.deliveries, 0);
+  const spikeAlert = retrySpike(items);
 
   return {
     items,
@@ -369,6 +489,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       blockedNotSent,
       blockedDeliveries: blockedNotSent,
       blockedAddresses,
+      spikeAlert,
       windowDays: WINDOW_DAYS,
     },
     suppressions: await listSuppressions(admin),
@@ -382,7 +503,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
  */
 export async function retryDeliveryFailure(
   admin: Admin,
-  args: { ledger: "notification" | "lead"; id: string },
+  args: { ledger: "notification" | "lead" | "application"; id: string },
 ): Promise<{ ok: boolean; status: string; detail: string | null }> {
   if (args.ledger === "notification") {
     const { retryDelivery } = await import("./notification-email.server");
@@ -391,6 +512,15 @@ export async function retryDeliveryFailure(
       return { ok: true, status: "already_sent", detail: res.errorMessage };
     const ok = res.status === "delivered" || res.status === "provider_accepted";
     return { ok, status: res.status, detail: res.errorMessage };
+  }
+  if (args.ledger === "application") {
+    const { sendApplicationConfirmationEmail } = await import("./application-confirmation-email.server");
+    const res = await sendApplicationConfirmationEmail(admin, args.id, { force: true });
+    return {
+      ok: res.status === "sent" || res.status === "already_sent",
+      status: res.status,
+      detail: res.reason,
+    };
   }
 
   const { data: row } = await admin
@@ -421,7 +551,7 @@ export async function retryDeliveryFailure(
  */
 export async function unsuppressAndRetry(
   admin: Admin,
-  args: { email: string; actorUserId: string; ledger?: "notification" | "lead"; id?: string },
+  args: { email: string; actorUserId: string; ledger?: "notification" | "lead" | "application"; id?: string },
 ): Promise<{
   unsuppress: Awaited<ReturnType<typeof import("./notification-suppression.server").unsuppressRecipient>>;
   retry: { attempted: boolean; ok: boolean; status: string; detail: string | null };
@@ -441,6 +571,28 @@ export async function unsuppressAndRetry(
 
   const res = await retryDeliveryFailure(admin, { ledger: args.ledger, id: args.id });
   return { unsuppress, retry: { attempted: true, ...res } };
+}
+
+export async function retryAllDeliveryFailures(
+  admin: Admin,
+  args: { limit?: number } = {},
+): Promise<{ ok: boolean; attempted: number; succeeded: number; failed: number; skipped: number }> {
+  const queue = await loadDeliveryFailures(admin);
+  const limit = Math.min(Math.max(args.limit ?? 100, 1), 200);
+  const items = queue.items.filter((item) => item.retryable).slice(0, limit);
+  let succeeded = 0;
+  let failed = 0;
+  for (const item of items) {
+    try {
+      const res = await retryDeliveryFailure(admin, { ledger: item.ledger, id: item.id });
+      if (res.ok) succeeded += 1;
+      else failed += 1;
+    } catch {
+      failed += 1;
+    }
+  }
+  const skipped = queue.items.filter((item) => item.retryable).length - items.length;
+  return { ok: failed === 0, attempted: items.length, succeeded, failed, skipped };
 }
 
 /**
