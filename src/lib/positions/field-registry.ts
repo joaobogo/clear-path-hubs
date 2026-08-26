@@ -582,14 +582,14 @@ export const POSITION_FIELDS: readonly PositionField[] = [
   },
   {
     name: "work_authorization_note",
-    label: "Work authorization",
+    label: "Work authorisation",
     type: "textarea",
     schema: z.string().max(600).default(""),
     requiredAtIntake: false,
     clientEditable: true,
     adminEditable: true,
     publicListing: true,
-    publicLabel: "Work authorization",
+    publicLabel: "Work authorisation",
   },
   {
     name: "accessibility_note",
