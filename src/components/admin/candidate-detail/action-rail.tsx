@@ -353,7 +353,25 @@ export function ActionRail({
           </DropdownMenu>
         </div>
 
+        {/* Release step: distinct from previewing, and always confirmed. */}
+        {scored && !approved && (
+          <Button
+            variant="secondary"
+            className="mt-2 w-full"
+            disabled={!!busy || approveBlocked}
+            onClick={() => void confirmApproveAndPublish()}
+            data-qa-action="primary-approve-score"
+          >
+            {busy === "approve"
+              ? "Publishing…"
+              : approveFailure?.retryable
+                ? "Retry approve & publish"
+                : "Approve & publish to client"}
+          </Button>
+        )}
+
         {/* Publish button surfaces only when it is the next real step */}
+
         {canPublish && !isPublished && (
           <Button
             variant="secondary"
