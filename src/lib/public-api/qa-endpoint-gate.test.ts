@@ -1,20 +1,21 @@
 import { describe, it, expect } from "vitest";
-import { qaEndpointDisabledResponse } from "./qa-endpoint-gate";
+import { qaEndpointsEnabled, qaEndpointDisabledResponse } from "./qa-endpoint-gate";
 
 describe("qa-endpoint-gate", () => {
-  it("returns 404 when ENABLE_QA_ENDPOINTS is unset", () => {
-    const original = process.env["ENABLE_QA_ENDPOINTS"];
+  it("is closed in a production build, whatever the environment says", () => {
+    process.env["ENABLE_QA_ENDPOINTS"] = "true";
+    expect(qaEndpointsEnabled(false)).toBe(false);
     delete process.env["ENABLE_QA_ENDPOINTS"];
-    const response = qaEndpointDisabledResponse();
-    if (response === null) throw new Error("expected 404 response");
-    expect(response.status).toBe(404);
-    process.env["ENABLE_QA_ENDPOINTS"] = original;
   });
 
-  it("returns null when ENABLE_QA_ENDPOINTS is truthy", () => {
-    const original = process.env["ENABLE_QA_ENDPOINTS"];
-    process.env["ENABLE_QA_ENDPOINTS"] = "true";
-    expect(qaEndpointDisabledResponse()).toBeNull();
-    process.env["ENABLE_QA_ENDPOINTS"] = original;
+  it("is open only for the local dev server", () => {
+    expect(qaEndpointsEnabled(true)).toBe(true);
+  });
+
+  it("answers 404 rather than confirming the route exists when closed", () => {
+    // The suite itself runs in dev mode, so assert on an explicitly closed gate.
+    const response = qaEndpointsEnabled(false) ? null : qaEndpointDisabledResponse();
+    if (response === null) throw new Error("expected a 404 response");
+    expect(response.status).toBe(404);
   });
 });

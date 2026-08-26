@@ -1,34 +1,35 @@
 /**
  * Kill switch for QA-only public routes (destructive seed / cleanup fixtures).
  *
- * These routes must be impossible to invoke in production. The gate is
- * fail-closed: unless ENABLE_QA_ENDPOINTS is explicitly set to a truthy value
- * in the server environment, the route answers 404 before any token check,
- * body read, or rate-limit bookkeeping runs — so production cannot even
- * confirm the endpoint exists.
+ * These routes must be impossible to invoke in production, and that must not
+ * depend on an environment variable being absent. The switch is therefore the
+ * build mode itself: `import.meta.env.DEV` is true only for the local Vite dev
+ * server, and is statically false in every production/preview build, so the
+ * enabling branch is dead code in the deployed bundle. No secret, no token and
+ * no flag can re-open it after launch.
+ *
+ * The local E2E harness (which runs against the dev server on :8080) is the
+ * only caller that ever sees these routes.
  *
  * Server-only: read inside the handler, never imported by client code.
  */
 
-const TRUTHY = new Set(["1", "true", "yes", "on", "enabled"]);
+/** Cookie value the E2E harness presents to opt into test-record reads. */
+export const QA_E2E_COOKIE = "qa_e2e";
 
-/**
- * Production can never enable these routes, whatever the environment says.
- * The flag is only consulted outside production (local dev / CI harness), so a
- * leaked or mis-set ENABLE_QA_ENDPOINTS on the live deployment is inert.
- */
-function isProductionRuntime(): boolean {
-  const node = process.env["NODE_ENV"]?.trim().toLowerCase();
-  if (node === "production") return true;
-  const env = process.env["APP_ENV"]?.trim().toLowerCase();
-  return env === "production" || env === "prod";
+function isDevBuild(): boolean {
+  try {
+    return Boolean(import.meta.env?.DEV);
+  } catch {
+    return false;
+  }
 }
 
-export function qaEndpointsEnabled(): boolean {
-  if (isProductionRuntime()) return false;
-  const raw = process.env["ENABLE_QA_ENDPOINTS"];
-  if (!raw) return false;
-  return TRUTHY.has(raw.trim().toLowerCase());
+/**
+ * `isDev` is injectable for tests only; production callers must not pass it.
+ */
+export function qaEndpointsEnabled(isDev: boolean = isDevBuild()): boolean {
+  return isDev === true;
 }
 
 /** Returns a 404 Response when QA endpoints are disabled, otherwise null. */

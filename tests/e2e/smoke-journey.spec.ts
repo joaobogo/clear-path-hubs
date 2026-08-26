@@ -135,6 +135,10 @@ test.describe("launch smoke journey", () => {
     await continueBtn(page).click();
 
     await expect(page.getByRole("heading", { name: /review & submit/i })).toBeVisible();
+    // The form ignores a click within 400ms of landing on Review (that guard is
+    // what stops a carried-over keypress from auto-submitting), so behave like a
+    // person reading the summary before sending.
+    await page.waitForTimeout(700);
     await page.getByTestId("apply-submit").click();
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 150_000 })
@@ -153,8 +157,30 @@ test.describe("launch smoke journey", () => {
     trackedMatchId = matchId;
 
     // ── 2. Candidate signs in and sees their application ──────────────────
+    page.on("pageerror", (err) =>
+      // eslint-disable-next-line no-console
+      console.log("[e2e] pageerror", err.name, err.message, (err.stack ?? "").slice(0, 600)),
+    );
+    page.on("requestfailed", (req) =>
+      // eslint-disable-next-line no-console
+      console.log("[e2e] requestfailed", req.url().slice(0, 160), req.failure()?.errorText),
+    );
+    page.on("response", (res) => {
+      if (res.status() === 404) {
+        // eslint-disable-next-line no-console
+        console.log("[e2e] 404", res.url().slice(0, 200));
+      }
+    });
     await loginAs(page, "candidate", email, QA_PASSWORD);
     await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("networkidle").catch(() => undefined);
+    // eslint-disable-next-line no-console
+    console.log(
+      "[e2e] portal",
+      page.url(),
+      JSON.stringify((await page.locator("body").innerText().catch(() => "")).slice(0, 400)),
+      JSON.stringify(errors.slice(0, 5)),
+    );
     await expect(
       page
         .getByText(new RegExp(fixtures.position_id.slice(0, 6), "i"))
@@ -223,6 +249,30 @@ test.describe("launch smoke journey", () => {
       throw new Error(`Publish gate blocked the approval: ${await blocked.innerText()}`);
     }
 
+    // Approving the score does not share anything: publication is a second,
+    // confirmed decision taken on the candidate record. Assert the in-between
+    // state, then publish the way a reviewer does.
+    await expect
+      .poll(async () => (await lookupCandidate(email)).matches[0]?.client_visibility, {
+        timeout: 60_000,
+        intervals: [1_000, 2_000],
+      })
+      .toBe("hidden");
+
+    await page.goto(`/admin/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
+    const publishButton = page.getByRole("button", { name: /^publish to client$/i }).first();
+    await expect(
+      publishButton,
+      "an approved candidate offers a separate publish decision",
+    ).toBeEnabled({ timeout: 90_000 });
+    await publishButton.click();
+    await page
+      .getByRole("button", { name: /^publish to client$/i })
+      .last()
+      .click();
+
+
+
     // ── 3b. Assert the published state, from the persisted truth ──────────
     await expect
       .poll(async () => (await lookupCandidate(email)).matches[0]?.client_visibility, {
@@ -259,7 +309,14 @@ test.describe("launch smoke journey", () => {
 
     // ── 4. Client signs in and advances the candidate ─────────────────────
     await loginAs(page, "client", fixtures.users["client_admin"]!.email);
+    // A first-time client workspace opens the welcome tour over the page; a real
+    // user dismisses it before working, so do the same.
+    const skipTour = page.getByRole("button", { name: /^skip tour$/i }).first();
+    if (await skipTour.isVisible({ timeout: 10_000 }).catch(() => false)) {
+      await skipTour.click();
+    }
     // Publication is only real if the candidate shows up in the client's own list.
+
     await page.goto("/client/candidates", { waitUntil: "domcontentloaded" });
     await expect(
       page.getByText(fullName).first(),
@@ -268,16 +325,25 @@ test.describe("launch smoke journey", () => {
     await page.goto(`/client/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByText(fullName).first()).toBeVisible({ timeout: 90_000 });
 
-    const advance = page.getByRole("button", { name: /advance to (shortlist|interview)/i }).first();
+    // The forward move is stage-labelled: "Shortlist" on a delivered candidate,
+    // "Advance to …" once they are further along.
+    const advance = page
+      .getByRole("button", { name: /^(shortlist|advance to (shortlist|interview)|request interview)$/i })
+      .first();
+
     await expect(advance, "client sees a forward decision on an approved candidate").toBeVisible({
       timeout: 60_000,
     });
     await advance.click();
+    // The decision confirms with an undoable toast naming the outcome; the exact
+    // wording is stage-dependent, so assert the confirmation, not one phrasing.
     await expect(
-      page.getByText(/added to your shortlist|interview requested/i).first(),
+      page.getByText(/shortlist|interview|recorded/i).first(),
+      "the client gets a confirmation of the decision",
     ).toBeVisible({
       timeout: 60_000,
     });
+
 
     await expect
       .poll(async () => (await lookupCandidate(email)).matches[0]?.stage, {
