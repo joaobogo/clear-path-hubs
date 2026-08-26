@@ -234,11 +234,28 @@ export async function notifyOrgTeams(args: {
   actions?: TeamsAction[];
 }): Promise<{ ok: boolean; reason?: string }> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  // Demo and test workspaces must never post into a real Teams channel.
+  const { data: org } = await supabaseAdmin
+    .from("organizations")
+    .select("is_demo, is_test_record")
+    .eq("id", args.organizationId)
+    .maybeSingle();
+  if (org?.is_demo === true || org?.is_test_record === true) {
+    await logTeamsDelivery({
+      organization_id: args.organizationId,
+      event_type: args.eventType,
+      status: "failed",
+      error_code: "sandbox_workspace",
+      error_message: "Demo workspace: the message was recorded instead of posted to Teams.",
+    });
+    return { ok: false, reason: "sandbox_workspace" };
+  }
   const { data: link } = await supabaseAdmin
     .from("teams_channel_links")
     .select("team_id, channel_id, enabled, events")
     .eq("organization_id", args.organizationId)
     .maybeSingle();
+
 
   if (!link) return { ok: false, reason: "not_connected" };
   if (link.enabled === false) return { ok: false, reason: "disabled" };
