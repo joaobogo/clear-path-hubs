@@ -45,11 +45,24 @@ const STATUS_STYLE: Record<
   IntegrationCheckRow["status"],
   { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
 > = {
-  ok: { label: "Healthy", variant: "default" },
+  ok: { label: "Healthy", variant: "default", },
   degraded: { label: "Needs attention", variant: "secondary" },
   failed: { label: "Failing", variant: "destructive" },
   not_configured: { label: "Not configured", variant: "outline" },
 };
+
+/** Header-chip states, so a card can render exactly what the chip above says. */
+const CHIP_STYLE: Record<
+  StripChip["state"],
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
+  healthy: { label: "Healthy", variant: "default" },
+  degraded: { label: "Needs attention", variant: "secondary" },
+  failing: { label: "Failing", variant: "destructive" },
+  not_configured: { label: "Not configured", variant: "outline" },
+  unknown: { label: "Not checked", variant: "outline" },
+};
+
 
 function when(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
