@@ -21,6 +21,7 @@
 
 import { renderCvPdf } from "./seed-northwind-demo/cv-pdf";
 import type { Dossier } from "./seed-northwind-demo/types";
+import { TARGETS, bandOf } from "./seed-northwind-demo/targets";
 
 const ORG_ID = "0c86fa1b-94ee-46b8-9a11-a42cee39bfed";
 const POSITION_ID = "ee6d2a82-6122-4026-95e4-45a7821b7b7d";
@@ -31,20 +32,20 @@ const SUPPRESSION_REASON = "demo candidate — never contact";
 /** Candidate dossier modules, in cohort order. */
 const SLUGS = [
   "helena-carvalho",
-  "tomas-ribeiro",
-  "ines-fonseca",
-  "rui-mendes",
-  "clara-batista",
-  "andre-pinto",
-  "marta-lourenco",
-  "diogo-serrao",
-  "patricia-nunes",
-  "vasco-teixeira",
-  "sara-cordeiro",
-  "bruno-alvim",
-  "lidia-matos",
-  "hugo-peixoto",
-  "carolina-freitas",
+  "tomas-ferreira",
+  "mariana-lopes",
+  "rui-almeida",
+  "marta-nunes",
+  "diogo-martins",
+  "sara-mendes",
+  "vasco-santos",
+  "catarina-ribeiro",
+  "miguel-costa",
+  "ana-sofia-pinto",
+  "filipe-rocha",
+  "laura-fernandez",
+  "gabriel-souza",
+  "joana-teixeira",
 ] as const;
 
 // ── outbound kill switch ────────────────────────────────────────────────────
@@ -92,8 +93,14 @@ async function loadDossiers(only: string | null): Promise<Dossier[]> {
   if (only && slugs.length === 0) throw new Error(`Unknown candidate slug "${only}"`);
   const out: Dossier[] = [];
   for (const slug of slugs) {
-    const mod = await import(`./seed-northwind-demo/candidates/${slug}`);
-    out.push((mod.dossier ?? mod.default) as Dossier);
+    try {
+      const mod = await import(`./seed-northwind-demo/candidates/${slug}`);
+      out.push((mod.dossier ?? mod.default) as Dossier);
+    } catch {
+      // Dossier module not written yet — reported by the caller, not fatal.
+      if (only) throw new Error(`No dossier module for "${slug}"`);
+      console.log(`   (skipping ${slug}: dossier module not written yet)`);
+    }
   }
   return out;
 }
@@ -145,12 +152,19 @@ async function main() {
   // ── suppressions: every cohort e-mail, before anything is created ─────────
   const allDossiers = await loadDossiers(null);
   for (const d of allDossiers) {
-    const { error } = await sb
+    const { data: active } = await sb
       .from("notification_suppressions")
-      .upsert(
-        { email: d.email.toLowerCase(), reason: SUPPRESSION_REASON },
-        { onConflict: "email" },
-      );
+      .select("id")
+      .eq("email", d.email.toLowerCase())
+      .is("released_at", null)
+      .maybeSingle();
+    if (active) continue;
+    const { error } = await sb.from("notification_suppressions").insert({
+      email: d.email.toLowerCase(),
+      reason: SUPPRESSION_REASON,
+      source: "manual",
+      created_by: ADMIN_ACTOR,
+    });
     if (error) throw new Error(`suppression for ${d.email} failed: ${error.message}`);
   }
   console.log(`Suppressed outbound mail for ${allDossiers.length} cohort addresses.`);
@@ -172,7 +186,12 @@ async function main() {
     // 1. CV → real 2-page A4 PDF, verified by the product's own extractor.
     const pdf = await renderCvPdf(d.cv);
     const { extractCvText } = await import("../src/lib/cv-extractor.server");
-    const extracted = await extractCvText(pdf, "application/pdf", `${d.slug}.pdf`);
+    // The extractor detaches the buffer it is handed, so verify on a copy.
+    const extracted = await extractCvText(
+      new Uint8Array(pdf),
+      "application/pdf",
+      `${d.slug}.pdf`,
+    );
     const flat = norm(extracted.text);
     const missing = d.evidence_sentences.filter((s) => !flat.includes(norm(s)));
     if (missing.length > 0) {
@@ -220,13 +239,26 @@ async function main() {
       continue;
     }
     const applicationId = submitted.application_id;
-    const { data: appRow } = await sb
+    const { data: appRow, error: appErr } = await sb
       .from("applications")
-      .select("id,candidate_profile_id,candidate_match_id")
+      .select("id,candidate_profile_id")
       .eq("id", applicationId)
       .maybeSingle();
+    if (appErr || !appRow) {
+      throw new Error(`application ${applicationId} not readable: ${appErr?.message ?? "not found"}`);
+    }
     const profileId: string = appRow.candidate_profile_id;
-    const matchId: string = submitted.match_id ?? appRow.candidate_match_id;
+    let matchId: string | undefined = submitted.match_id;
+    if (!matchId) {
+      const { data: m } = await sb
+        .from("candidate_matches")
+        .select("id")
+        .eq("candidate_profile_id", profileId)
+        .eq("position_id", POSITION_ID)
+        .maybeSingle();
+      matchId = m?.id;
+    }
+    if (!matchId) throw new Error(`no match created for ${d.slug}`);
     console.log(`   application ${applicationId} · match ${matchId}`);
 
     // Tag everything this seed created.
@@ -263,7 +295,7 @@ async function main() {
       .maybeSingle();
     const { data: run } = await sb
       .from("score_runs")
-      .select("id,total_score,band,engine_version,rubric_version_id,status")
+      .select("id,final_score,fit_label,engine_version,rubric_version_id,status,evidence_confidence,must_have_coverage,confidence")
       .eq("candidate_match_id", matchId)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -273,9 +305,11 @@ async function main() {
       candidate: d.full_name,
       match: matchId,
       state: match?.processing_state ?? "?",
-      score: run?.total_score != null ? String(run.total_score) : "—",
-      band: run?.band ?? "—",
-      target: d.targets.band,
+      score: run?.final_score != null ? String(run.final_score) : "—",
+      band: run?.final_score != null ? bandOf(Number(run.final_score)) : "—",
+      fit_label: run?.fit_label ?? "—",
+      evidence_confidence: run?.evidence_confidence != null ? String(run.evidence_confidence) : "—",
+      target: TARGETS[d.slug]?.band ?? d.targets.band,
       eligibility: match?.eligibility_status ?? "—",
     });
   }
@@ -284,7 +318,7 @@ async function main() {
   console.log("\n\nRESULT\n");
   for (const r of rows) {
     console.log(
-      `${(r.candidate ?? "").padEnd(20)} ${(r.state ?? "").padEnd(24)} score=${(r.score ?? "").padEnd(5)} band=${(r.band ?? "").padEnd(13)} target=${r.target ?? "—"} eligibility=${r.eligibility ?? "—"}`,
+      `${(r.candidate ?? "").padEnd(20)} ${(r.state ?? "").padEnd(22)} score=${(r.score ?? "").padEnd(6)} band=${(r.band ?? "").padEnd(15)} target=${(r.target ?? "—").padEnd(15)} fit=${(r.fit_label ?? "—").padEnd(18)} evidence_conf=${r.evidence_confidence ?? "—"} eligibility=${r.eligibility ?? "—"}`,
     );
   }
 
@@ -482,7 +516,7 @@ async function runAssertions(sb: any, problems: string[]) {
   const matchIds = (matches ?? []).map((m: { id: string }) => m.id);
   const { data: runs } = await sb
     .from("score_runs")
-    .select("id,candidate_match_id,engine_version,rubric_version_id,total_score,band")
+    .select("id,candidate_match_id,engine_version,rubric_version_id,final_score,fit_label")
     .in("candidate_match_id", matchIds);
   const perMatch = new Map<string, number>();
   for (const r of runs ?? []) perMatch.set(r.candidate_match_id, (perMatch.get(r.candidate_match_id) ?? 0) + 1);
