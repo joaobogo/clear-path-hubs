@@ -23,8 +23,41 @@
  * Creator are deliberately left at the library default.
  */
 
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import fontkit from "@pdf-lib/fontkit";
+import { PDFDocument, rgb } from "pdf-lib";
 import type { CvDoc, CvLayout } from "./types";
+
+/**
+ * Real TrueType faces are embedded (subset) rather than relying on the base-14
+ * fonts: it is what a CV written in Word or Docs looks like on the inside, and
+ * it puts the file in the ordinary 30-120 KB range.
+ */
+type Family = "sans" | "serif";
+const FONT_QUERY: Record<Family, { regular: string; bold: string; italic: string }> = {
+  sans: {
+    regular: "Liberation Sans",
+    bold: "Liberation Sans:bold",
+    italic: "Liberation Sans:italic",
+  },
+  serif: {
+    regular: "Liberation Serif",
+    bold: "Liberation Serif:bold",
+    italic: "Liberation Serif:italic",
+  },
+};
+
+const fontCache = new Map<string, Uint8Array>();
+function fontBytes(query: string): Uint8Array {
+  const hit = fontCache.get(query);
+  if (hit) return hit;
+  const file = execFileSync("fc-match", ["-f", "%{file}", query], { encoding: "utf8" }).trim();
+  if (!file) throw new Error(`font_not_found: ${query}`);
+  const bytes = new Uint8Array(readFileSync(file));
+  fontCache.set(query, bytes);
+  return bytes;
+}
 
 const A4 = { w: 595.28, h: 841.89 };
 
@@ -65,7 +98,7 @@ type Theme = {
   accent: [number, number, number];
   ink: [number, number, number];
   muted: [number, number, number];
-  fonts: { regular: string; bold: string; italic: string };
+  family: Family;
 };
 
 const THEMES: Record<CvLayout, Theme> = {
@@ -78,11 +111,7 @@ const THEMES: Record<CvLayout, Theme> = {
     accent: [0.14, 0.16, 0.2],
     ink: [0.1, 0.11, 0.13],
     muted: [0.36, 0.38, 0.42],
-    fonts: {
-      regular: StandardFonts.Helvetica,
-      bold: StandardFonts.HelveticaBold,
-      italic: StandardFonts.HelveticaOblique,
-    },
+    family: "sans",
   },
   T2: {
     margin: 42,
@@ -93,11 +122,7 @@ const THEMES: Record<CvLayout, Theme> = {
     accent: [0.11, 0.32, 0.4],
     ink: [0.11, 0.12, 0.14],
     muted: [0.4, 0.42, 0.46],
-    fonts: {
-      regular: StandardFonts.Helvetica,
-      bold: StandardFonts.HelveticaBold,
-      italic: StandardFonts.HelveticaOblique,
-    },
+    family: "sans",
   },
   T3: {
     margin: 54,
@@ -108,11 +133,7 @@ const THEMES: Record<CvLayout, Theme> = {
     accent: [0.2, 0.18, 0.16],
     ink: [0.08, 0.09, 0.1],
     muted: [0.38, 0.38, 0.4],
-    fonts: {
-      regular: StandardFonts.TimesRoman,
-      bold: StandardFonts.TimesRomanBold,
-      italic: StandardFonts.TimesRomanItalic,
-    },
+    family: "serif",
   },
 };
 
@@ -122,9 +143,11 @@ export async function renderCvPdf(cv: CvDoc): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
   doc.setTitle(winAnsiSafe(cv.name));
   doc.setAuthor(winAnsiSafe(cv.name));
-  const regular = await doc.embedFont(t.fonts.regular);
-  const bold = await doc.embedFont(t.fonts.bold);
-  const italic = await doc.embedFont(t.fonts.italic);
+  doc.registerFontkit(fontkit);
+  const q = FONT_QUERY[t.family];
+  const regular = await doc.embedFont(fontBytes(q.regular), { subset: true });
+  const bold = await doc.embedFont(fontBytes(q.bold), { subset: true });
+  const italic = await doc.embedFont(fontBytes(q.italic), { subset: true });
 
   const firstPage = doc.addPage([A4.w, A4.h]);
   let page = firstPage;
