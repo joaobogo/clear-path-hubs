@@ -374,11 +374,13 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     {
       key: "interviews",
       label: "Interviews to coordinate",
-      description: "Requested but unscheduled, or happening within 48 hours.",
-      count: interviews.count ?? 0,
+      description: "Requested or being scheduled, still without a confirmed time.",
+      // One interview per candidate, exactly as the client's "to confirm"
+      // figure counts it, so both sides of the workspace read the same number.
+      count: interviewsAwaitingTime.length,
       action_hint: "Confirm the slot and tell both sides.",
       see_all: { to: "/admin/candidates" },
-      items: ((interviews.data ?? []) as Any[]).slice(0, PREVIEW_LIMIT).map((iv) => ({
+      items: interviewsAwaitingTime.slice(0, PREVIEW_LIMIT).map((iv) => ({
         id: iv.id,
         title: iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate",
         title_ref: posRef(iv.candidate_matches?.positions?.id, iv.candidate_matches?.positions?.title),
