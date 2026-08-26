@@ -192,14 +192,19 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
       });
     });
 
-  (candidate.strengths ?? []).slice(0, 3).forEach((s: string, i: number) =>
-    reasons.push({
-      id: `strength-${i}`,
-      tone: "positive",
-      text: s,
-      requirementKey: matchRequirementKey(s, rows),
-    }),
-  );
+  // Free-text strengths may only speak when the requirement rows back them up:
+  // a profile with nothing evidenced must not read "Demonstrated: …".
+  evidenceBackedStrengths(candidate)
+    .slice(0, 3)
+    .forEach((s: string, i: number) =>
+      reasons.push({
+        id: `strength-${i}`,
+        tone: "positive",
+        text: s,
+        requirementKey: matchRequirementKey(s, rows),
+      }),
+    );
+
 
   must
     .filter((r: RequirementRow) => {
