@@ -107,7 +107,27 @@ async function loadDossiers(only: string | null): Promise<Dossier[]> {
 
 const norm = (s: string) => s.replace(/\s+/g, " ").trim();
 
+/**
+ * Launch freeze. The demo cohort is a fixed dataset: re-seeding mid-session
+ * changes candidate names, ids and scores under anyone reading the workspace,
+ * and already broke links that were opened minutes earlier. The script only
+ * runs when the freeze is lifted deliberately.
+ */
+function assertFreezeLifted(argv: string[]) {
+  if (argv.includes("--unfreeze") || process.env["DEMO_SEED_UNFROZEN"] === "1") return;
+  console.error(
+    [
+      "Demo dataset is frozen for launch — nothing was written.",
+      "The Northwind cohort must stay stable across sessions: re-seeding assigns new",
+      "candidate ids and scores and breaks links that are already in use.",
+      "To re-seed deliberately, pass --unfreeze or set DEMO_SEED_UNFROZEN=1.",
+    ].join("\n"),
+  );
+  process.exit(2);
+}
+
 async function main() {
+  assertFreezeLifted(process.argv.slice(2));
   installOutboundBlock();
   const args = parseArgs();
 

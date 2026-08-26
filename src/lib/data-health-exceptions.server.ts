@@ -204,6 +204,11 @@ export async function loadDataHealthExceptions(
   for (const m of matchRows) {
     const cpId = m.candidate_profile_id as string | null;
     if (!cpId) continue;
+    // A match that already carries a completed score has readable CV text
+    // behind it — the file row may live under a different profile link after a
+    // merge. Flagging it "no readable CV, scoring cannot complete" beside a
+    // published score is a contradiction, not an exception.
+    if (m.processing_state === "scored" || m.processing_state === "parsed") continue;
     const files = filesByProfile.get(cpId) ?? [];
     const organization_id = (m.organization_id ?? null) as string | null;
     const shared = {
