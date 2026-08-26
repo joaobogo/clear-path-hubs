@@ -75,7 +75,7 @@ const PATTERNS = [
   {
     name: "count select",
     re: new RegExp(
-      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)[\\s\\S]{0,400}?count\\s*:\\s*["'\`]exact["'\`]\\s*,\\s*head\\s*:\\s*true`,
+      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)[\\s\\S]{0,200}?count\\s*:\\s*["'\`]exact["'\`]\\s*,\\s*head\\s*:\\s*true`,
       "g",
     ),
   },
