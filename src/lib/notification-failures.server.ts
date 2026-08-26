@@ -113,6 +113,25 @@ function retrySpike(items: DeliveryFailure[]) {
   };
 }
 
+function inferLeadEmailCode(detail: string | null | undefined): string {
+  const text = (detail ?? "").toLowerCase();
+  for (const code of [
+    "sandboxed_test_recipient",
+    "no_matching_sender",
+    "lovable_api_key_not_registered",
+    "domain_not_verified",
+    "emails_disabled",
+    "email_credentials_missing",
+    "recipient_suppressed",
+  ]) {
+    if (text.includes(code)) return code;
+  }
+  if (text.includes("test or demo workspace") || text.includes("demo workspace")) {
+    return "sandboxed_test_recipient";
+  }
+  return "recipient_suppressed";
+}
+
 /**
  * The one metric contract every admin surface reads.
  *
@@ -336,19 +355,23 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     if (l["email_status"] === "suppressed") {
       // Visible, but never counted as a failure and never retryable: releasing
       // the address is the only thing that clears it.
+      const reason = inferLeadEmailCode(l["email_detail"] as string | null);
+      const human = deliveryReason(reason);
       leadItems.push({
         ...base,
         key: `lead:${l["id"]}:email-suppressed`,
         channel: "email",
         recipient: ((l["email_recipients"] as string[] | null) ?? []).join(", ") || null,
-        reason: "recipient_suppressed",
+        reason,
         reasonDetail: (l["email_detail"] as string | null) ?? null,
-        reasonLabel: deliveryReason("recipient_suppressed").label,
-        reasonSentence: deliveryReason("recipient_suppressed").sentence,
-        canUnsuppress: true,
+        reasonLabel: human.label,
+        reasonSentence: human.sentence,
+        canUnsuppress: human.kind === "blocked",
         retryable: false,
         retryBlockedReason:
-          "Not sent because the recipient is on the suppression list. Release the address to resume sending.",
+          human.kind === "blocked"
+            ? "Not sent because the recipient is on the suppression list. Release the address to resume sending."
+            : human.sentence,
         staleWarning: false,
       });
     }
