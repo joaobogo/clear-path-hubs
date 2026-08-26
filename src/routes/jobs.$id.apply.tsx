@@ -337,7 +337,7 @@ function ApplyPage() {
     if (["png", "jpg", "jpeg", "heic", "webp"].includes(ext))
       return "This is an image — upload a PDF of your CV, not a photo or screenshot.";
     if (["txt", "rtf", "md"].includes(ext))
-      return "This is a text file — export or print it as a PDF and try again.";
+      return `PDF only — that file was a .${ext}. Export or print it as a PDF and try again.`;
     if (["zip", "rar", "7z"].includes(ext))
       return "This is a compressed folder — upload the CV itself as a single PDF.";
     return `We only accept PDF files${ext ? ` (this one is .${ext})` : ""} — export your CV as a PDF and try again.`;
