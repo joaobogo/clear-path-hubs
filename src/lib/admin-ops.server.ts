@@ -393,12 +393,23 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     {
       key: "interviews",
       label: "Interviews to coordinate",
-      description: "Requested or being scheduled, still without a confirmed time.",
+      description:
+        "Requested or being scheduled, still without a confirmed time. " +
+        "The badge names the split so this never reads as one bucket.",
       // One interview per candidate, exactly as the client's "to confirm"
       // figure counts it, so both sides of the workspace read the same number.
       count: interviewsAwaitingTime.length,
       action_hint: "Confirm the slot and tell both sides.",
       see_all: { to: "/admin/candidates" },
+      secondary_badge: (() => {
+        const awaiting = interviewsAwaitingTime.filter((iv) => iv.status === "requested").length;
+        const soon = interviewsAwaitingTime.length - awaiting;
+        if (!interviewsAwaitingTime.length) return undefined;
+        return {
+          label: `${awaiting} awaiting slot · ${soon} scheduled soon`,
+          tone: "default" as const,
+        };
+      })(),
       items: interviewsAwaitingTime.slice(0, PREVIEW_LIMIT).map((iv) => ({
         id: iv.id,
         title: iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate",
