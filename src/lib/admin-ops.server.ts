@@ -27,6 +27,8 @@ export type {
 import type { QueueClaim, QueueItem, QueueOwner, QueueRef, WorkQueue } from "./admin-ops-types";
 import { INTAKE_AGING_TIER_DAYS } from "@/lib/intake-aging";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
+import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
+import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { deliveryReason } from "./notifications/delivery-reasons";
 import { qualifiesAsHire } from "./offer-hire";
 import { publishedRunEmbed, publishedScoreDisplay } from "@/lib/scoring/published-score";
