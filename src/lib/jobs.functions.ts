@@ -12,6 +12,7 @@ import {
 } from "@/lib/jobs/public-facts";
 import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
 import { jobDescriptionSummary } from "@/lib/marketing/job-description";
+import { qaEndpointsEnabled } from "@/lib/public-api/qa-endpoint-gate";
 
 
 
@@ -22,6 +23,7 @@ import { jobDescriptionSummary } from "@/lib/marketing/job-description";
  * being reachable by a real visitor.
  */
 function testRecordsVisible(): boolean {
+  if (!qaEndpointsEnabled()) return false;
   const expected = process.env.QA_SEED_TOKEN;
   if (!expected) return false;
   let cookie = "";
