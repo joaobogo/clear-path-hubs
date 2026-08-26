@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
+import { panelErrorMessage } from "@/components/admin/panel-state";
 
 interface Props {
   label: string;
@@ -44,9 +45,11 @@ export class AdminWidgetErrorBoundary extends Component<Props, State> {
             <AlertTriangle className="mt-0.5 h-4 w-4 text-destructive" />
             <div className="min-w-0">
               <p className="text-sm font-medium text-destructive">{this.props.label} could not load</p>
-              <div className="mt-1 max-h-24 overflow-auto rounded bg-card/50 p-2 text-[10px] font-mono text-muted-foreground/80">
-                {this.state.error.message || "Something went wrong while loading this panel."}
-              </div>
+              {/* Only copy written for a human survives; database and query
+                  internals are filtered out by panelErrorMessage. */}
+              <p className="mt-1 text-xs text-muted-foreground">
+                {panelErrorMessage(this.state.error)}
+              </p>
               <Button
                 variant="outline"
                 size="sm"
