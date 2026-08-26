@@ -254,7 +254,17 @@ export const saveRequisitionMeta = createServerFn({ method: "POST" })
       patch.compensation_collected = data.compensation_collected;
       patch.compensation_visibility = data.compensation_visibility;
     }
-    const collected = isStaff ? data.compensation_collected : prior?.compensation_collected !== false;
+    const enteredBudget = !!(data.budget_min || data.budget_max);
+    const collected = isStaff
+      ? data.compensation_collected
+      : prior?.compensation_collected !== false || enteredBudget;
+    // A client who types a range has collected it — persist the flag so the
+    // blueprint and listing stop reading "Not disclosed".
+    if (!isStaff && enteredBudget && prior?.compensation_collected !== true) {
+      patch.compensation_collected = true;
+      if (prior?.compensation_visibility == null) patch.compensation_visibility = "public";
+    }
+
     patch.compensation = collected
       ? {
           ...priorComp,

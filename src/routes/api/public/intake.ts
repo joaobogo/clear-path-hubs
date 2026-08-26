@@ -513,6 +513,22 @@ export const Route = createFileRoute("/api/public/intake")({
             .map((line) => line.trim())
             .filter(Boolean)
             .map((label) => ({ label }));
+          // A range typed at intake is a deliberate answer: keep it on the
+          // position record (not only in intake_context) and mark it collected
+          // so the blueprint, role page and listing can show it.
+          const hasBudget = data.budgetMin != null || data.budgetMax != null;
+          const compensationRecord = {
+            ...(data.compensation ? { note: data.compensation, summary: data.compensation } : {}),
+            ...(hasBudget
+              ? {
+                  currency: data.currency || "USD",
+                  budget_min: data.budgetMin ?? null,
+                  budget_max: data.budgetMax ?? null,
+                  min: data.budgetMin ?? null,
+                  max: data.budgetMax ?? null,
+                }
+              : {}),
+          };
 
           const { data: pos, error: posErr } = await supabaseAdmin
             .from("positions")
@@ -528,7 +544,10 @@ export const Route = createFileRoute("/api/public/intake")({
               requirements,
               preferred_requirements: preferred,
               dealbreakers,
-              compensation: data.compensation ? { note: data.compensation } : {},
+              compensation: compensationRecord,
+              compensation_collected: hasBudget,
+              compensation_visibility: hasBudget ? "public" : "internal",
+
               work_authorization: data.workAuthorization
                 ? { note: data.workAuthorization, countries: data.targetCountries, target_titles: data.targetTitles }
                 : { countries: data.targetCountries, target_titles: data.targetTitles },

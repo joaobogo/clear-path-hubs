@@ -426,6 +426,12 @@ export const savePositionEdit = createServerFn({ method: "POST" })
         budget_max: data.budget_max || null,
         max: data.budget_max || null,
       },
+      // Typing a range is the act of collecting it: without this flag the
+      // range is treated as never gathered and reads as "Not disclosed".
+      ...(data.budget_min || data.budget_max
+        ? { compensation_collected: true, compensation_visibility: "public" }
+        : {}),
+
       work_authorization: {
         ...priorWA,
         countries: data.target_countries,
