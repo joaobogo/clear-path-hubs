@@ -7,7 +7,7 @@ const R3 =
 const R2 =
   "Handle the SQL and relational modelling for properties in Postgres, including the migrations I have written since 2022.";
 const R5 =
-  "Built the automated tests for pricing: unit specs in Vitest and end-to-end checks in Playwright on each merge.";
+  "Built and keep maintaining the automated tests for pricing: unit specs in Vitest and end-to-end checks in Playwright on each merge.";
 const P2 =
   "Employee number seven in an early-stage, founder-led team that grew to 30 while I was there.";
 const P3 =

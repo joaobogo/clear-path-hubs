@@ -92,7 +92,7 @@ export const dossier: Dossier = {
           "Brought average time to a first claim decision from eleven days to four across 90 branches.",
           "Built the evidence checklist that removed 40% of the queries going back to assessment staff.",
           "Contributed to the Playwright suite covering the claims intake journey.",
-          "Some exposure to multi-tenant setups when we opened a partner-branded quote page.",
+          "Some hands-on time with multi-tenant setups when we opened a partner-branded quote page.",
           "Reviewed an AI document-reading trial for two weeks and recommended against adopting it.",
           "Cut the release pipeline from 14 minutes to 7 and removed two checks that never failed usefully.",
           "Ran a monthly bug review with the support desk and closed 30 old tickets in three months.",

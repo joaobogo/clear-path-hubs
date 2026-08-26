@@ -3,7 +3,7 @@ import type { Dossier } from "../types";
 const R1 =
   "Five years building and shipping React and TypeScript applications for tour operators.";
 const R4 =
-  "Applied row-level security so every multi-tenant operator account stays in isolation from the others.";
+  "Applied a practical row-level security model so every multi-tenant operator account stays in isolation from the others.";
 const R5 =
   "Wrote the automated tests for booking: unit specs in Vitest and end-to-end journeys in Playwright.";
 const P1 =
