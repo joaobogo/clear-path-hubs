@@ -465,12 +465,25 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     // Preserve unknown intake_context/compensation/work_authorization fields
     const { data: existing } = await s
       .from("positions")
-      .select("intake_context,compensation,work_authorization")
+      .select("intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers")
       .eq("id", data.id)
       .maybeSingle();
     const priorCtx = (existing?.intake_context ?? {}) as AnyRow;
     const priorComp = (existing?.compensation ?? {}) as AnyRow;
     const priorWA = (existing?.work_authorization ?? {}) as AnyRow;
+    const preserveRequirementMetadata = (labels: string[], current: unknown, kind?: string) => {
+      const rows = Array.isArray(current) ? (current as AnyRow[]) : [];
+      return labels.map((label) => {
+        const matched = rows.find(
+          (row) =>
+            typeof row === "object" &&
+            row !== null &&
+            String(row.label ?? "").trim().toLowerCase() === label.trim().toLowerCase(),
+        );
+        return matched ? { ...matched, label } : { label, ...(kind ? { kind } : {}) };
+      });
+    };
+    const priorBrief = (priorCtx.brief ?? {}) as AnyRow;
 
     const patch: AnyRow = {
       title: data.title,
@@ -480,9 +493,16 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       employment_type: data.employment_type || null,
       seniority: data.seniority || null,
       description: data.description || null,
-      requirements: data.must_have_skills.map((label) => ({ label, kind: "must_have" })),
-      preferred_requirements: data.nice_to_have_skills.map((label) => ({ label })),
-      dealbreakers: data.disqualifier_tags.map((label) => ({ label })),
+      requirements: preserveRequirementMetadata(
+        data.must_have_skills,
+        existing?.requirements,
+        "must_have",
+      ),
+      preferred_requirements: preserveRequirementMetadata(
+        data.nice_to_have_skills,
+        existing?.preferred_requirements,
+      ),
+      dealbreakers: preserveRequirementMetadata(data.disqualifier_tags, existing?.dealbreakers),
       compensation: {
         ...priorComp,
         summary: data.compensation || null,
@@ -508,6 +528,25 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       },
       intake_context: {
         ...priorCtx,
+        // Keep the legacy brief projection synchronized while canonical columns
+        // remain authoritative. Older roles and downstream exports still read it.
+        brief: {
+          ...priorBrief,
+          roleTitle: data.title,
+          team: data.department || "",
+          location: data.location || "",
+          workModel: data.work_model,
+          employmentType: data.employment_type || "",
+          seniority: data.seniority || "",
+          jobDescription: data.description || "",
+          jobDescriptionText: data.description || "",
+          targetStartDate: data.target_start_date || "",
+        },
+        team: data.department || "",
+        jobDescriptionText: data.description || "",
+        work_model: data.work_model,
+        employment_type: data.employment_type || "",
+        seniority: data.seniority || "",
         open_worldwide: data.open_worldwide,
         states_regions: data.states_regions,
         metro_areas: data.metro_areas,
