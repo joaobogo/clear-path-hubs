@@ -59,6 +59,6 @@ describe("Role State Coherence", () => {
       { status: "archived" },
     ]);
 
-    expect(counts).toEqual({ active: 1, draft: 1, review: 1, paused: 1, closed: 2 });
+    expect(counts).toEqual({ all: 6, active: 1, draft: 1, review: 1, paused: 1, closed: 2 });
   });
 });

@@ -10,6 +10,7 @@
  */
 
 export const ROLE_STATUS_TABS = [
+  { key: "all", label: "All" },
   { key: "active", label: "Active" },
   { key: "draft", label: "Draft" },
   { key: "review", label: "Under review" },
@@ -17,7 +18,7 @@ export const ROLE_STATUS_TABS = [
   { key: "closed", label: "Archived" },
 ] as const;
 
-export type RoleStatusTabKey = (typeof ROLE_STATUS_TABS)[number]["key"];
+export type RoleStatusTabKey = Exclude<(typeof ROLE_STATUS_TABS)[number]["key"], "all">;
 
 const STATUS_TO_TAB: Record<string, RoleStatusTabKey> = {
   active: "active",
@@ -50,6 +51,7 @@ export function roleStatusTab(status: string | null | undefined): RoleStatusTabK
 
 /** DB statuses that belong to a tab — used for server-side filtering. */
 export function statusesForRoleTab(tab: string): string[] {
+  if (tab === "all") return Object.keys(STATUS_TO_TAB);
   return Object.entries(STATUS_TO_TAB)
     .filter(([, t]) => t === tab)
     .map(([s]) => s);
@@ -70,8 +72,9 @@ export function roleStatusTabLabel(tab: string): string {
  */
 export function countRolesByTab(
   rows: Array<{ status?: unknown; client_status?: { key?: string } | null }>,
-): Record<RoleStatusTabKey, number> {
-  const counts: Record<RoleStatusTabKey, number> = {
+): Record<RoleStatusTabKey | "all", number> {
+  const counts: Record<RoleStatusTabKey | "all", number> = {
+    all: rows.length,
     active: 0,
     draft: 0,
     review: 0,

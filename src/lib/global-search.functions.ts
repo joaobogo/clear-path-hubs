@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { formatDate, formatDateTime } from "@/lib/format/datetime";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { sentenceLabel } from "@/lib/format/sentence-label";
+import { computeClientRoleStatus } from "@/lib/client-role-status";
 
 /**
  * Global workspace search.
@@ -198,7 +199,12 @@ export const globalSearch = createServerFn({ method: "POST" })
         if (error) throw new Error(error.message);
         groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
           const context = [p.location].filter(Boolean).join(" · ");
-          const state = sentenceLabel(p.status);
+          // Client scope must read the same status word as the Roles list and
+          // the role detail page — never the raw lifecycle value.
+          const state =
+            scope === "admin"
+              ? sentenceLabel(p.status)
+              : computeClientRoleStatus({ status: String(p.status) }).label;
 
           if (scope === "admin") {
             return {
