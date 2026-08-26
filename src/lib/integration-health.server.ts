@@ -341,18 +341,53 @@ async function checkEmail(): Promise<CheckResult> {
   if (suppressed > 0) problems.push(`${suppressed} suppressed send(s)`);
 
   if (items.length === 0) {
+    // The provider's recent-event feed being empty does not mean nothing was
+    // sent: our own delivery ledger is what the Notifications panel counts.
+    // Read the same 7-day window it uses so the two panels cannot contradict
+    // each other ("no email sent yet" against "Emails sent 35").
+    let ledgerSent = 0;
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const since = new Date(Date.now() - 7 * 86_400_000).toISOString();
+      const { count } = await supabaseAdmin
+        .from("notification_deliveries")
+        .select("id", { count: "exact", head: true })
+        .eq("channel", "email")
+        .gte("created_at", since)
+        .in("status", ["provider_accepted", "delivered"]);
+      ledgerSent = count ?? 0;
+    } catch {
+      ledgerSent = 0;
+    }
+
+    if (ledgerSent > 0) {
+      return {
+        ...base,
+        status: "degraded",
+        summary: `${ledgerSent} email send${ledgerSent === 1 ? "" : "s"} recorded in the last 7 days, but the provider returned no recent events.`,
+        error_code: "email_history_empty",
+        error_detail: "Our delivery ledger has sends; the provider's last 100 events are empty.",
+        remediation:
+          "Sends are being accepted but the provider is not reporting them back. Re-run the test in a few minutes; if it stays empty, check the sender domain configuration.",
+        latency_ms: run.ms,
+        details: { counts, ledger_sent_7d: ledgerSent },
+      };
+    }
+
     return {
       ...base,
       status: "degraded",
       summary: "Email service reachable but no send has been recorded yet.",
       error_code: "email_no_history",
-      error_detail: "The last 100 events are empty.",
+      error_detail: "The last 100 events are empty, and our delivery ledger has none either.",
       remediation:
         "Nothing proves delivery yet. Trigger one real notification (for example a receipt) and re-run this test.",
       latency_ms: run.ms,
-      details: { counts },
+      details: { counts, ledger_sent_7d: 0 },
     };
   }
+
+
 
   return {
     ...base,
