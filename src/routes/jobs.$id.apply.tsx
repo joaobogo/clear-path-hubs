@@ -1804,7 +1804,12 @@ function ApplyPage() {
                 onClick={returningToReview ? returnToReview : goNext}
                 data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
                 className="w-full sm:w-auto"
-                disabled={cvChecking}
+                disabled={cvChecking || (step === 4 && !consent)}
+                title={
+                  step === 4 && !consent
+                    ? "Tick the required consent box to continue"
+                    : undefined
+                }
               >
                 {returningToReview ? "Done — back to review" : "Continue →"}
               </Button>
