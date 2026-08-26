@@ -264,9 +264,10 @@ export const DEFAULT_CALIBRATION: EngineCalibration = {
   substance_min_tokens: 40,
   substance_target_chars: 1200,
   substance_target_tokens: 120,
-  // A matched term surrounded by fewer than six other words is a list item, not
-  // described experience; twelve words is a normal achievement sentence.
-  evidence_context_min_tokens: 6,
+  // A matched term standing almost alone is a list item, not described
+  // experience; twelve words is a normal achievement sentence. The floor is set
+  // conservatively (four words) so only genuinely bare mentions trip it.
+  evidence_context_min_tokens: 4,
   evidence_context_target_tokens: 12,
   // Two snippets from the same sentence are one passage. 160 characters is about
   // one sentence at the engine's snippet radius.
