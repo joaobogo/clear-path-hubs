@@ -361,35 +361,39 @@ export function ActionRail({
           </DropdownMenu>
         </div>
 
-        {/* Release step: distinct from previewing, and always confirmed. */}
+        {/* Step one: approve internally. Nothing is shared by this click. */}
         {scored && !approved && (
           <Button
             variant="secondary"
             className="mt-2 w-full"
             disabled={!!busy || approveBlocked}
-            onClick={() => void confirmApproveAndPublish()}
+            onClick={() => void runApprove()}
             data-qa-action="primary-approve-score"
           >
             {busy === "approve"
-              ? "Publishing…"
+              ? "Approving…"
               : approveFailure?.retryable
-                ? "Retry approve & publish"
-                : "Approve & publish to client"}
+                ? "Retry approve score"
+                : "Approve score (not shared yet)"}
           </Button>
         )}
 
-        {/* Publish button surfaces only when it is the next real step */}
-
+        {/* Step two: publish, always behind a confirm. */}
         {canPublish && !isPublished && (
-          <Button
-            variant="secondary"
-            className="mt-2 w-full"
-            disabled={publish.isPending}
-            onClick={() => publish.mutate("visible")}
-            data-qa-action="publish-to-client"
-          >
-            Publish candidate
-          </Button>
+          <>
+            <Button
+              variant="default"
+              className="mt-2 w-full"
+              disabled={publish.isPending}
+              onClick={() => void confirmPublish()}
+              data-qa-action="publish-to-client"
+            >
+              {publish.isPending ? "Publishing…" : "Publish to client"}
+            </Button>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Approved and not shared yet — the client cannot see this candidate.
+            </p>
+          </>
         )}
         {isPublished && (
           <Button
