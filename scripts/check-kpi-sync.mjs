@@ -1,0 +1,131 @@
+#!/usr/bin/env node
+/**
+ * CI guard: exactly one derivation per business figure.
+ *
+ * The recurring bug class on this platform is the same number computed in two
+ * places. `src/lib/kpis/` now owns every business figure; this gate fails the
+ * build when code outside it counts or aggregates over one of the core tables
+ * (hire_records, positions, interviews, memberships, candidate_matches).
+ *
+ * Justified exceptions live in scripts/kpi-sync-allowlist.json with a reason.
+ *
+ * Usage:
+ *   node scripts/check-kpi-sync.mjs           # verify (prebuild / CI)
+ *   node scripts/check-kpi-sync.mjs --list    # print every offender found
+ */
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join, relative } from "node:path";
+
+const ROOT = process.cwd();
+const ALLOWLIST = JSON.parse(
+  readFileSync(join(ROOT, "scripts", "kpi-sync-allowlist.json"), "utf8"),
+);
+const allowed = new Set(ALLOWLIST.allow.map((e) => e.path));
+
+const CORE_TABLES = [
+  "hire_records",
+  "positions",
+  "interviews",
+  "memberships",
+  "candidate_matches",
+];
+
+/** Directories that own the shared figures, or never render one. */
+const OWNED_PREFIXES = [
+  "src/lib/kpis/",
+  "src/lib/hires/",
+  "supabase/",
+  "scripts/",
+  "tests/",
+];
+
+const SKIP_DIRS = new Set([
+  "node_modules",
+  ".git",
+  "dist",
+  "build",
+  ".output",
+  ".vinxi",
+  ".nitro",
+  ".tanstack",
+  "coverage",
+  "playwright-report",
+  "test-results",
+]);
+
+function walk(dir, out = []) {
+  for (const entry of readdirSync(dir)) {
+    if (SKIP_DIRS.has(entry)) continue;
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) walk(full, out);
+    else if (/\.(ts|tsx)$/.test(entry) && !/\.(test|spec)\.tsx?$/.test(entry)) out.push(full);
+  }
+  return out;
+}
+
+const tableGroup = CORE_TABLES.join("|");
+
+/**
+ * Counting or aggregating patterns:
+ *   - a PostgREST count/head select on a core table
+ *   - `.from("<core table>")` followed by a `.length` / `count` / `reduce`
+ *     derivation in the same statement chain
+ */
+const PATTERNS = [
+  {
+    name: "count select",
+    re: new RegExp(
+      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)[\\s\\S]{0,400}?count\\s*:\\s*["'\`]exact["'\`]`,
+      "g",
+    ),
+  },
+  {
+    name: "aggregate select",
+    re: new RegExp(
+      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)[\\s\\S]{0,200}?select\\([^)]*(count\\(|sum\\(|avg\\()`,
+      "g",
+    ),
+  },
+  {
+    name: "local length derivation",
+    re: new RegExp(
+      `from\\(\\s*["'\`](${tableGroup})["'\`]\\s*\\)[\\s\\S]{0,600}?\\)\\s*\\?\\?\\s*\\[\\]\\s*\\)\\.length`,
+      "g",
+    ),
+  },
+];
+
+const offenders = [];
+for (const file of walk(join(ROOT, "src"))) {
+  const rel = relative(ROOT, file).split("\\").join("/");
+  if (OWNED_PREFIXES.some((p) => rel.startsWith(p))) continue;
+  if (allowed.has(rel)) continue;
+  const src = readFileSync(file, "utf8");
+  for (const { name, re } of PATTERNS) {
+    re.lastIndex = 0;
+    let match;
+    while ((match = re.exec(src))) {
+      const line = src.slice(0, match.index).split("\n").length;
+      offenders.push({ rel, line, table: match[1], name });
+    }
+  }
+}
+
+if (offenders.length) {
+  console.error(
+    `\n✖ KPI sync gate: ${offenders.length} derivation(s) of a business figure outside src/lib/kpis/:\n`,
+  );
+  for (const o of offenders) {
+    console.error(`  ${o.rel}:${o.line}  ${o.name} over ${o.table}`);
+  }
+  console.error(
+    "\nRead the figure from src/lib/kpis/ instead, or add the file to scripts/kpi-sync-allowlist.json with a reason.\n",
+  );
+  process.exit(1);
+}
+
+if (process.argv.includes("--list")) {
+  console.log("Allowlisted exceptions:");
+  for (const e of ALLOWLIST.allow) console.log(`  ${e.path} — ${e.reason}`);
+}
+console.log("✓ KPI sync gate: one derivation per business figure.");
