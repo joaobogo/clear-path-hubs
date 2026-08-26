@@ -52,7 +52,7 @@ import {
 import { ExportControl } from "@/components/admin/export-control";
 import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
-import { classifyBand } from "@/lib/scoring/bands";
+import { publishedBand, publishedScoreDisplay } from "@/lib/scoring/published-score";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, pluralize, formatNumber } from "@/lib/format/datetime";
 
 /** Dense list label: band + confidence, no bare number (rubric lives on detail). */
@@ -62,11 +62,10 @@ function scoreBandListLabel(m: {
   fit_band?: string | null;
   confidence?: number | null;
 }): string {
-  const raw = m.final_score ?? m.score ?? null;
-  if (raw == null) return "Not scored";
-  const band = classifyBand(Number(raw)).replace(/_/g, " ");
+  const band = publishedBand(m);
+  if (band == null) return "Not scored";
   const conf = m.confidence == null ? "" : ` · ${Math.round(Number(m.confidence) * 100)}%`;
-  return `${band}${conf}`;
+  return `${band.replace(/_/g, " ")}${conf}`;
 }
 
 const searchSchema = z.object({
@@ -859,7 +858,7 @@ function CandidatesPage() {
           </thead>
           <tbody className="divide-y">
             {rows.map((m) => {
-              const score = m.final_score ?? m.score;
+              const score = publishedScoreDisplay(m);
               const updated = m.updated_at ? new Date(m.updated_at) : null;
               return (
                 <tr

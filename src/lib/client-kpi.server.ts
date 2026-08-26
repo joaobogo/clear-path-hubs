@@ -5,7 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
-import { displayScore } from "@/config/scoring-bands";
+import { publishedBand, publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { countRowsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
@@ -189,7 +189,7 @@ export async function loadKpiRows(
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
        client_decision_due_at, recommendation, contact_released_at,
-       score_runs:approved_score_run_id (score, fit_label, fit_band),
+       score_runs:approved_score_run_id (score, final_score, fit_label, fit_band),
        organizations!inner(name)`
     )
     .eq("organization_id", orgId)
@@ -284,7 +284,7 @@ export async function loadKpiRows(
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
     delivered_at: m.delivered_at,
-    approved_score: m.score_runs?.score ?? null,
+    approved_score: publishedScore(m.score_runs) ?? null,
     approved_fit_label: m.score_runs?.fit_label ?? null,
     organization_name: m.organizations?.name ?? null,
     approved_fit_band: m.score_runs?.fit_band ?? null,
@@ -895,7 +895,7 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
          candidate_profiles(id, full_name, email, phone, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
-         score_runs:approved_score_run_id (score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
+         score_runs:approved_score_run_id (score, final_score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
 
 
 /** Lowest score inside the strongest configured band. Single source of truth. */
@@ -979,7 +979,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
 
   const fit = toFitPresentation(
     run?.fit_label ?? run?.fit_band ?? null,
-    run?.score != null ? Number(run.score) : null,
+    publishedScore(run),
   );
 
   const prettyHeadline = prettifyHeadline(cp.headline ?? null);
@@ -1000,7 +1000,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     ],
   );
 
-  const coverageSummary = summariseCoverage(requirement_rows, fit, run?.score != null ? Number(run.score) : coverage?.fit_score ?? null, {
+  const coverageSummary = summariseCoverage(requirement_rows, fit, publishedScore(run) ?? coverage?.fit_score ?? null, {
     must_have_coverage: typeof run?.must_have_coverage === "number" ? run.must_have_coverage : undefined,
     preferred_coverage: typeof run?.preferred_coverage === "number" ? run.preferred_coverage : undefined,
   });
@@ -1010,7 +1010,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const score_composition = buildScoreComposition({
     coverage: coverage as Record<string, unknown> | null,
     result: (run?.result as Record<string, unknown> | null) ?? null,
-    displayedScore: run?.score != null ? Number(run.score) : null,
+    displayedScore: publishedScore(run),
     requirementRows: requirement_rows,
   });
 
@@ -1057,7 +1057,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const clientExplanation = buildScoreExplanation({
     audience: "client",
     method: (run as AnyRow)?.evaluation_method ?? null,
-    score: run?.score != null ? Math.round(Number(run.score)) : null,
+    score: publishedScoreDisplay(run),
     bandLabel: fit.headline,
     evidencePath: { kind: "route", to: `/client/candidates/${row.id}#sec-coverage` },
     criteria: requirement_rows.map((r) => ({
@@ -1120,8 +1120,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     // `fit_band` string uses the engine's label vocabulary, not band keys, so
     // feeding it here silently failed the top-band test.
     unicorn: isUnicornMatch({
-      score: run?.score != null ? Number(run.score) : null,
-      band: run?.score != null ? classifyBand(Number(run.score)) : null,
+      score: publishedScore(run),
+      band: publishedBand(run),
       hired: row.stage === "hired",
     }),
 
@@ -1154,7 +1154,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     // ONE published score for every surface: the approved score run. Admin lists,
     // client lists and this page all read the same number, so the composition
     // panel explains the score and never replaces it.
-    score: run?.score != null ? displayScore(Number(run.score)) : null,
+    score: publishedScoreDisplay(run),
 
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
