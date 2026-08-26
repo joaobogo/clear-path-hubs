@@ -308,6 +308,10 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       pos.compensation,
       p.compensation_visibility as string | null,
     );
+    // The primary location drives both the public fact line and the locale
+    // used for placeholders (e.g. the phone input's country prefix).
+    const primaryLoc = (locs ?? []).find((l) => l.is_primary) ?? (locs ?? [])[0];
+
     // The seven deciding facts are resolved server-side so the board card, the
     // detail page and the JSON-LD can never drift apart.
     const facts = buildPublicJobFacts({
@@ -315,7 +319,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       compensation_visibility: p.compensation_visibility as string | null,
       work_model: pos.work_model,
       onsite_days: (posting as Record<string, unknown>).onsite_days,
-      location: withCountry(pos.location, (locs ?? []).find((l) => l.is_primary) ?? (locs ?? [])[0]),
+      location: withCountry(pos.location, primaryLoc),
       primary_timezone: p.primary_timezone as string | null,
       timezone_overlap_hours: p.timezone_overlap_hours,
       work_authorization: p.work_authorization,
