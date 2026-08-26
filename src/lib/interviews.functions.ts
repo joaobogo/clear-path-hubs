@@ -393,19 +393,25 @@ export const requestInterview = createServerFn({ method: "POST" })
         created_by: context.userId,
         updated_by: context.userId,
       };
-    // Reusing an empty request must not rewrite the columns only staff may set
-    // (who it belongs to, who first asked). They already hold the right values
-    // on the existing row, and touching them is rejected by design.
-    const {
-      candidate_match_id: _m,
-      organization_id: _o,
-      position_id: _p,
-      candidate_submission_id: _s,
-      created_by: _c,
-      requested_by_user_id: _r,
-      admin_coordination_required: _a,
-      ...reusePayload
-    } = writePayload;
+    // Reusing an empty request may only touch the proposal itself. The columns
+    // that say who the request belongs to and who first asked are staff-owned:
+    // they already hold the right values on the existing row, and the database
+    // rejects any update that includes them. Whitelist rather than omit, so a
+    // new field on the insert payload can never leak into the reuse update.
+    const reusePayload = {
+      status: writePayload.status,
+      interview_type: writePayload.interview_type,
+      timezone: writePayload.timezone,
+      duration_minutes: writePayload.duration_minutes,
+      proposed_times: writePayload.proposed_times,
+      participants: writePayload.participants,
+      notes: writePayload.notes,
+      requested_at: writePayload.requested_at,
+      scheduling_method: writePayload.scheduling_method,
+      calendly_url: writePayload.calendly_url,
+      availability_expires_at: writePayload.availability_expires_at,
+      updated_by: writePayload.updated_by,
+    };
     const writeQuery = reusable
       ? context.supabase
           .from("interviews")
@@ -418,8 +424,12 @@ export const requestInterview = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error) {
       if ((error as AnyRow).code === "23505") throw new Error("interview_already_active");
+      // A staff-owned column guard means the request belongs to someone else —
+      // never surface the raw database sentence to the person clicking.
+      if ((error as AnyRow).code === "42501") throw new Error("interview_already_active");
       throw new Error(error.message);
     }
+
 
     await writeAudit(context.supabase, {
       actor: context.userId,
