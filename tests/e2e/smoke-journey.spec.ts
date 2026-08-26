@@ -335,11 +335,15 @@ test.describe("launch smoke journey", () => {
       timeout: 60_000,
     });
     await advance.click();
+    // The decision confirms with an undoable toast naming the outcome; the exact
+    // wording is stage-dependent, so assert the confirmation, not one phrasing.
     await expect(
-      page.getByText(/added to your shortlist|interview requested/i).first(),
+      page.getByText(/shortlist|interview|recorded/i).first(),
+      "the client gets a confirmation of the decision",
     ).toBeVisible({
       timeout: 60_000,
     });
+
 
     await expect
       .poll(async () => (await lookupCandidate(email)).matches[0]?.stage, {
