@@ -241,8 +241,7 @@ function ProfilePage() {
         <EmailChangeCard />
 
         {/* Location and time zone — every seat schedules, so this is not candidate-only */}
-        {true && (
-          <ProfileSectionCard
+        <ProfileSectionCard
             meta={meta("location")}
             initial={initial.location}
             autoOpen={openSection === "location"}
@@ -293,7 +292,6 @@ function ProfilePage() {
               return commit("location", parsed.data);
             }}
           />
-        )}
 
 
 
