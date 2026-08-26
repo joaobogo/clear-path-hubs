@@ -35,7 +35,10 @@ export const DIGEST_META: Record<DigestKey, { label: string; to: string }> = {
   integration_degradations: { label: "Integration degradations", to: "/admin/integrations" },
   // Approvals are worked from the Overview work queue.
   approvals_pending: { label: "Approvals pending", to: "/admin" },
-  delivery_failures: { label: "Delivery failures (7d)", to: "/admin/notifications" },
+  // Same name, same definition as the Overview work queue and the Operations
+  // tile: only failures a retry can actually clear. Blocked/suppressed
+  // addresses are excluded everywhere, so the popover can never disagree.
+  delivery_failures: { label: "Delivery failures to retry (7d)", to: "/admin/notifications" },
 };
 
 export const getExceptionDigest = createServerFn({ method: "GET" })
@@ -77,10 +80,10 @@ export const getExceptionDigest = createServerFn({ method: "GET" })
       }),
       settle("delivery_failures", async () => {
         const { loadDeliveryFailures } = await import("./notification-failures.server");
+        // The 7-day window and the retryable/blocked split are decided inside
+        // the loader; reuse its headline number rather than recounting rows.
         const failures = await loadDeliveryFailures(admin);
-        // P-015: Filter to last 7 days for metric consistency.
-        const cutoff = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
-        return failures.items.filter(f => f.lastAttemptAt >= cutoff).length;
+        return failures.summary.retryable;
       }),
     ]);
 
