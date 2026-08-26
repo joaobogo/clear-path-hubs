@@ -55,7 +55,7 @@ export function CandidateCard({
 
   return (
     <div
-      className={`group relative rounded-xl border bg-card p-4 transition hover:shadow-md hover:border-primary/40 ${
+      className={`group relative min-w-0 max-w-full overflow-hidden rounded-xl border bg-card p-4 transition hover:shadow-md hover:border-primary/40 ${
         compareSelected ? "ring-2 ring-primary/40" : ""
       }`}
     >
