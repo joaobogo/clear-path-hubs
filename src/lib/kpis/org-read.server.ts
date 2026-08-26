@@ -32,9 +32,11 @@ export async function isOrgMember(
  * seat tile they opened printed zero.
  */
 export async function isPlatformStaffCaller(supabase: AnyRow): Promise<boolean> {
+  if (typeof supabase?.auth?.getUser !== "function") return false;
   const { data: auth } = await supabase.auth.getUser();
   const userId = auth?.user?.id as string | undefined;
   if (!userId) return false;
+
   const { data } = await supabase.rpc("is_platform_staff", { _user: userId });
   return data === true;
 }
