@@ -249,6 +249,30 @@ test.describe("launch smoke journey", () => {
       throw new Error(`Publish gate blocked the approval: ${await blocked.innerText()}`);
     }
 
+    // Approving the score does not share anything: publication is a second,
+    // confirmed decision taken on the candidate record. Assert the in-between
+    // state, then publish the way a reviewer does.
+    await expect
+      .poll(async () => (await lookupCandidate(email)).matches[0]?.client_visibility, {
+        timeout: 60_000,
+        intervals: [1_000, 2_000],
+      })
+      .toBe("hidden");
+
+    await page.goto(`/admin/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
+    const publishButton = page.getByRole("button", { name: /^publish to client$/i }).first();
+    await expect(
+      publishButton,
+      "an approved candidate offers a separate publish decision",
+    ).toBeEnabled({ timeout: 90_000 });
+    await publishButton.click();
+    await page
+      .getByRole("button", { name: /^publish to client$/i })
+      .last()
+      .click();
+
+
+
     // ── 3b. Assert the published state, from the persisted truth ──────────
     await expect
       .poll(async () => (await lookupCandidate(email)).matches[0]?.client_visibility, {
