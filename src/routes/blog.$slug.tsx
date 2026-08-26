@@ -16,7 +16,7 @@ import {
 } from "@/lib/marketing/blog-manifest";
 import { isPublishedBlogSlug, listAllBlogRows } from "@/lib/marketing/blog-catalog";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }) => {

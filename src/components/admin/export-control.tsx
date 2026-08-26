@@ -30,7 +30,7 @@ import {
   requestCandidateExport,
   retryExport,
 } from "@/lib/exports.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 export type ExportScope = {
   organization_id?: string;

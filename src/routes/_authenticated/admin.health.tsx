@@ -6,7 +6,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 import { humanizeCode, humanizeJobName, humanizeTechnicalError } from "@/lib/humanize-codes";
-import { pluralize } from "@/lib/format/datetime";
+import { pluralize, formatDateTime } from "@/lib/format/datetime";
 import { sanitizeInternalMarkers } from "@/lib/human-labels";
 
 import { getPipelineHealth } from "@/lib/admin.functions";

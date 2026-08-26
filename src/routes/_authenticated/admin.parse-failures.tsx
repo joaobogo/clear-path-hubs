@@ -17,7 +17,7 @@ import {
   pasteCvText,
   requestCvReupload,
 } from "@/lib/parse-failure/parse-failure.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/parse-failures")({
   head: () => ({

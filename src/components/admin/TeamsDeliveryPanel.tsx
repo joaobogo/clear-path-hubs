@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listTeamsDeliveries } from "@/lib/teams.functions";
 import { Badge } from "@/components/ui/badge";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 /**
  * Staff view of Microsoft Teams delivery: how many workspaces are connected,

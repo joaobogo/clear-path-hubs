@@ -10,7 +10,7 @@ import {
 } from "@/lib/booking/calendly-webhooks.functions";
 import { PanelState } from "@/components/admin/panel-state";
 import { toastError } from "@/lib/toast-error";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 const QUERY_KEY = ["calendly-webhook-status"] as const;
 

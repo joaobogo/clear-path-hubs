@@ -43,7 +43,7 @@ import {
   useQueueKeyboard,
   type QueueKeyboard,
 } from "@/lib/admin/queue-keyboard";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 
 function TierBadge({ days }: { days: number }) {

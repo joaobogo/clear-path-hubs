@@ -26,7 +26,7 @@ import { CandidateStatePanel } from "@/components/candidate/candidate-state-pane
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 import { ProcessingWindowNote } from "@/components/candidate/candidate-notes";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 const searchSchema = z.object({ ref: z.string().optional() });
 

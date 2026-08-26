@@ -1,7 +1,7 @@
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, GitCommit, History, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 // Evidence-first score explainability panel.
 //

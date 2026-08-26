@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Lock, Unlock, Trash2, Users, AlertTriangle } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
 import { formatAnswerValue } from "@/lib/human-labels";
 

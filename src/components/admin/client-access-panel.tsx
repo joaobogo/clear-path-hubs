@@ -36,7 +36,7 @@ import { Check, Minus, ShieldCheck, UserPlus } from "lucide-react";
 import { useConfirmAction } from "@/components/ds/confirm-action";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 const ROLE_LABEL: Record<string, string> = {
   client_admin: "Owner",

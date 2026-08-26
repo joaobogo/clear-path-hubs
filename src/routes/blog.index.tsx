@@ -9,7 +9,7 @@ import {
   BLOG_CATEGORY_SLUGS,
 } from "@/lib/marketing/blog-manifest";
 import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 const entry = getPage("blog");
 

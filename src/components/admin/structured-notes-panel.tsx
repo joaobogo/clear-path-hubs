@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { toastError } from "@/lib/toast-error";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 type Props = {
   targetKind: NoteTargetKind;

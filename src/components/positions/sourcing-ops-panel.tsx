@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { useConfirmAction } from "@/components/ds";
 import { Plus, Radar, Trash2 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;

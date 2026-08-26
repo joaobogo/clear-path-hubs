@@ -21,7 +21,7 @@ import {
   TriangleAlert,
   Wand2,
 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 /**
  * GeneratedBlueprintPanel — surfaces the express-onboarding blueprint on both

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { toastError } from "@/lib/toast-error";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 const PERIODS = [
   { days: 1, label: "24 hours" },

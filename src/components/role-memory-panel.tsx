@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/select";
 import { Pin, PinOff, Trash2, NotebookPen, ArrowRightLeft } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 const KIND_LABEL: Record<RoleMemoryKind, string> = {
   brief: "Brief anchor",

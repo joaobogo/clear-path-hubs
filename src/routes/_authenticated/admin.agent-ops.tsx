@@ -61,7 +61,7 @@ import {
   UserCog,
   X,
 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/agent-ops")({
   head: () => ({

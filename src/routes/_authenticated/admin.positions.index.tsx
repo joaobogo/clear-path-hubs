@@ -45,7 +45,7 @@ import {
 } from "@/components/admin/bulk-confirm-dialog";
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
 import { OwnershipCoveragePanel } from "@/components/admin/ownership-coverage-panel";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 
 const searchSchema = z.object({

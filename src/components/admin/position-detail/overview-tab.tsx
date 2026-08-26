@@ -19,7 +19,7 @@ import {
 import { ExternalLink } from "lucide-react";
 import { evaluatePublishGate, PUBLISH_BLOCKER_LABEL } from "@/lib/publish-gate";
 import { updatePosition } from "@/lib/admin.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { publishedScore } from "@/lib/scoring/published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

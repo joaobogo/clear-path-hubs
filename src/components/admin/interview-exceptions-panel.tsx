@@ -34,7 +34,7 @@ import {
   type InterviewExceptionRow,
   type InterviewOutcome,
 } from "@/lib/interview-exceptions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 function useExceptions(positionId?: string) {
   return useQuery({

@@ -12,7 +12,7 @@ import {
   revertClientUpdateSent,
 } from "@/lib/client-update-readiness.functions";
 import { formatDate, readinessToText } from "@/lib/client-update-readiness";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 const BASELINE_LABEL: Record<string, string> = {
   update_sent: "last update marked as sent",

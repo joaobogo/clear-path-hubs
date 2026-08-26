@@ -19,7 +19,7 @@ import { getAdminMatch, downloadEvidenceRecord } from "@/lib/processing.function
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/$id_/evidence")({
   loader: async ({ context, params }) => {

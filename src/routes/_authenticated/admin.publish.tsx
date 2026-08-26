@@ -16,7 +16,7 @@ import { BlockedReason } from "@/components/admin/blocked-reason";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
 import { QUEUE_ROW_ACTIVE_CLASS, useQueueKeyboard } from "@/lib/admin/queue-keyboard";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 
 export const Route = createFileRoute("/_authenticated/admin/publish")({

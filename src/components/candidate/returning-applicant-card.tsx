@@ -8,7 +8,7 @@ import type { ExistingApplicationSummary } from "@/lib/candidate/existing-applic
 import { ALLOWED_CV_EXT, MAX_CV_BYTES, fileExt } from "@/lib/apply-schema";
 import { CV_MESSAGES } from "@/lib/cv-validation";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 function fmtDate(iso: string): string {
   try {

@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { listPilotWarnings, grantPilotException } from "@/lib/pilot-eligibility.functions";
 import { PILOT_EXCEPTION_KINDS, exceptionKindLabel } from "@/lib/pilot-eligibility";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 type Props = {
   /** Limit to one workspace, e.g. on an intake or organisation page. */

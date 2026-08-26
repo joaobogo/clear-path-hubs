@@ -9,7 +9,7 @@ import { listMyMessages, markMyMessagesRead, sendMyMessage } from "@/lib/candida
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/me/messages")({
  head: () => ({

@@ -51,7 +51,7 @@ import {
   Lock,
   RefreshCw,
 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { formatAnswerValue } from "@/lib/human-labels";
 import { cn } from "@/lib/utils";
 

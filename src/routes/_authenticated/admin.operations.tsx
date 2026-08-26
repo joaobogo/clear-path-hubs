@@ -38,7 +38,7 @@ import { SourceQualityRollupPanel } from "@/components/admin/source-quality-pane
 import { OutreachHealthPanel } from "@/components/admin/outreach-health-panel";
 import { InterviewExceptionsPanel } from "@/components/admin/interview-exceptions-panel";
 import { AlertTriangle, Wifi, Server, User, MoreHorizontal, FileText, Search } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/operations")({
   pendingComponent: () => (

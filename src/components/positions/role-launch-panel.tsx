@@ -8,7 +8,7 @@ import {
   type RoleLaunchState,
 } from "@/lib/role-launch";
 import { CheckCircle2, Circle, Loader2, Radar, TriangleAlert } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 /**
  * RoleLaunchPanel — the client's "what is happening with my role" view.

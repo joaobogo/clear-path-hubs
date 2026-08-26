@@ -9,7 +9,7 @@
  * ordering, which is "most overdue first".
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 type Admin = SupabaseClient<never, never, never>;
 

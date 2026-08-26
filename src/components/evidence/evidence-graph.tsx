@@ -19,7 +19,7 @@ import {
   type EvidenceChainNode,
   type EvidenceState,
 } from "@/lib/evidence/evidence-graph";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 /**
  * Interactive Evidence Graph.

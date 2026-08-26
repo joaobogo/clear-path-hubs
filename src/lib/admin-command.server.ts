@@ -6,7 +6,7 @@
  * derived "trends", no sampled estimates.
  */
 import { attachMemberProfiles } from "@/lib/membership-profiles.server";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;

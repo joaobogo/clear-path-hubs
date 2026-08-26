@@ -38,7 +38,7 @@ import {
   formatTimelineDate,
   type CandidateTimelineEvent,
 } from "@/lib/candidate/timeline";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   head: () => ({

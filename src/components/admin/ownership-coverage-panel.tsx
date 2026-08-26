@@ -34,7 +34,7 @@ import {
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ArrowUpRight, AlertTriangle } from "lucide-react";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 const NONE = "__none__";
 

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Row } from "@/components/admin/candidate-detail/primitives";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { formatWorkAuthorization } from "@/lib/human-labels";
 import { updateCandidateProfileField } from "@/lib/admin-candidates.functions";
 

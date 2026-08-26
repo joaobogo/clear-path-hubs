@@ -100,7 +100,7 @@ import {
   cleanLine,
   Row,
 } from "@/components/admin/candidate-detail/primitives";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 
 // ── CV & parsed ────────────────────────────────────────────────────────────

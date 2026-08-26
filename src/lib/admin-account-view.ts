@@ -8,7 +8,7 @@
 
 /** Position statuses that count as live delivery work (same as portfolio health). */
 import { formatMoneyFromCents } from "@/lib/money";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 export const ACCOUNT_OPEN_POSITION_STATUSES = [
   "submitted",
   "under_review",

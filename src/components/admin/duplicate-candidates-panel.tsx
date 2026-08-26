@@ -28,7 +28,7 @@ import {
   type DuplicatePair,
   type DuplicatePersonSide,
 } from "@/lib/duplicate-candidates";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 function fmtDate(iso: string | null): string {
   return iso ? formatDate(iso) : "—";
