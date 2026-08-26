@@ -1740,7 +1740,7 @@ function ApplyPage() {
                       label="Terms and data sharing"
                       value={consent ? "Agreed" : "Not agreed yet"}
                     />
-                    {network && <ReviewRow label="Talent network" value="Yes, add me" />}
+                    <ReviewRow label="Talent network" value={network ? "Yes, add me" : "No"} />
                     {form.accommodation_request.trim() && (
                       <ReviewRow
                         label="Adjustments (private)"
