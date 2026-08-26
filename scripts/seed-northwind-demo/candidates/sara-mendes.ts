@@ -82,7 +82,7 @@ export const dossier: Dossier = {
     contact: "Lisbon, Portugal · sara.mendes.web@gmail.com · +351 928 447 190",
     summary: `${R1} I have worked mostly on booking flows, where a small mistake becomes a phone call from a tour operator within the hour. Being one of three engineers meant learning the database, the API and the screen at the same time. I am at my best close to the people using the product.`,
     coreSkills:
-      "Core skills: Node.js, REST APIs, Redis, Docker, GitHub Actions, Stripe integrations, calendar and timezone handling.",
+      "Core skills: Node.js, REST APIs, Redis, Docker, GitHub Actions, payment gateway integrations, calendar and timezone handling.",
     experience: [
       {
         heading: "Full-Stack Engineer - Rota Travel Tech, Lisbon",
@@ -95,6 +95,11 @@ export const dossier: Dossier = {
           "Shipped the seasonal availability calendar to 60 operators, removing six hours of manual fixes a week.",
           "Cut booking drop-off on mobile from 46% to 29% by rebuilding the passenger details step.",
           "Added Postgres indexes that took the departure search from 3 s to under 400 ms.",
+          "Cut the release pipeline from 13 minutes to 6 by splitting the checks that ran twice.",
+          "Ran a monthly review with support that turned 25 recurring complaints into shipped changes.",
+          "Wrote the handover notes that let two colleagues cover the area while I was on leave.",
+          "Mentored a junior developer for eight months; she now handles her own releases.",
+          "Halved the number of clarifying questions on tickets by writing acceptance notes with the product lead.",
         ],
       },
       {
@@ -104,11 +109,10 @@ export const dossier: Dossier = {
           "Delivered nine hospitality websites, four of them with direct booking integrations.",
           "Rebuilt a restaurant group's reservation page, lifting online bookings by 31% in a quarter.",
           "Wrote the studio's deployment checklist after two bad Friday releases.",
-          "Cut the release pipeline from 13 minutes to 6 by splitting the checks that ran twice.",
-          "Ran a monthly review with support that turned 25 recurring complaints into shipped changes.",
-          "Wrote the handover notes that let two colleagues cover the area while I was on leave.",
-          "Mentored a junior developer for eight months; she now handles her own releases.",
-          "Halved the number of clarifying questions on tickets by writing acceptance notes with the product lead.",
+          "Built eight client sites, four of which are still running unchanged three years later.",
+          "Halved page weight on the studio's largest site by replacing hand-cropped images with a build step.",
+          "Introduced the studio's first shared component set, which cut new-page time from days to hours.",
+          "Wrote the handover notes clients needed to edit their own content without calling the studio.",
         ],
       },
     ],
