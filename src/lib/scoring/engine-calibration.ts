@@ -34,7 +34,7 @@ import type { EvaluationMethod } from "./evaluation-method";
  * ladder, snippet radius, negation windows, unreadable-CV cut) moved in here
  * and onto the rubric version.
  */
-export const CALIBRATION_VERSION = "taasflow-calibration-v1.2.0";
+export const CALIBRATION_VERSION = "taasflow-calibration-v1.3.0";
 
 /**
  * How the engine reaches its numbers. Recorded on every run as
@@ -74,11 +74,25 @@ export const CalibrationSchema = z.object({
   thin_cv_tokens: z.number().int().min(0).optional(),
   unreadable_cv_chars: z.number().int().min(0).optional(),
 
+  // Evidence substance (anti keyword-echo)
+  substance_min_chars: z.number().int().min(0).optional(),
+  substance_min_tokens: z.number().int().min(0).optional(),
+  substance_target_chars: z.number().int().min(1).optional(),
+  substance_target_tokens: z.number().int().min(1).optional(),
+  evidence_context_min_tokens: z.number().min(0).optional(),
+  evidence_context_target_tokens: z.number().min(1).optional(),
+  evidence_passage_width_chars: z.number().int().min(1).optional(),
+  evidence_passage_target: z.number().int().min(1).optional(),
+  keyword_echo_ratio: z.number().min(0).max(1).optional(),
+  keyword_echo_cap: z.number().min(0).max(1).optional(),
+  thin_substance_cap: z.number().min(0).max(1).optional(),
+
   // Caps and weights
   disqualified_cap: z.number().min(0).max(1).optional(),
   unparsed_cv_cap: z.number().min(0).max(1).optional(),
   must_have_floor: z.number().min(0).max(1).optional(),
   must_have_floor_cap: z.number().min(0).max(1).optional(),
+
   base_weights: z
     .object({
       must_have: z.number().min(0),
@@ -145,6 +159,28 @@ export type EngineCalibration = {
   thin_cv_tokens: number;
   /** Below this the CV text is unusable: band becomes `unknown`, not `not_a_fit`. */
   unreadable_cv_chars: number;
+  /** Below this many characters a CV cannot support a top band (substance gate). */
+  substance_min_chars: number;
+  /** Below this many distinct non-stopword words a CV cannot support a top band. */
+  substance_min_tokens: number;
+  /** CV length at which the substance rollup saturates. */
+  substance_target_chars: number;
+  /** Distinct-vocabulary count at which the substance rollup saturates. */
+  substance_target_tokens: number;
+  /** Words of non-term context an evidence snippet needs to read as experience. */
+  evidence_context_min_tokens: number;
+  /** Context-word count at which evidence depth saturates. */
+  evidence_context_target_tokens: number;
+  /** Width of a CV "passage" when de-duplicating evidence locations. */
+  evidence_passage_width_chars: number;
+  /** Distinct passages at which evidence breadth saturates. */
+  evidence_passage_target: number;
+  /** Share of a CV's vocabulary that being the rubric's own terms reads as echo. */
+  keyword_echo_ratio: number;
+  /** Ceiling (0-1) for a run whose evidence is a keyword echo. */
+  keyword_echo_cap: number;
+  /** Ceiling (0-1) for a run whose document or evidence depth is thin. */
+  thin_substance_cap: number;
   /** Hard ceiling (0-1) once a disqualifying screening answer is present. */
   disqualified_cap: number;
   /**
@@ -190,7 +226,7 @@ export type EngineCalibration = {
  */
 export const DEFAULT_CALIBRATION: EngineCalibration = {
   calibration_version: CALIBRATION_VERSION,
-  engine_version: "taasflow-scoring-v1.2.0",
+  engine_version: "taasflow-scoring-v1.3.0",
   role_family: null,
   // Absent evidence is an information gap, not a negative finding. 0.4 sits
   // just below `partial` so an unvalidated requirement can never outrank one
@@ -219,6 +255,31 @@ export const DEFAULT_CALIBRATION: EngineCalibration = {
   thin_cv_tokens: 40,
   // Under 60 characters there is no document to assess at all.
   unreadable_cv_chars: 60,
+  // Substance gate (FIX-09). A CV shorter than a single paragraph, or with a
+  // smaller vocabulary than one detailed bullet list, is not enough document to
+  // justify a top band however many rubric terms it happens to contain. Kept
+  // deliberately low so short-but-real CVs (trades, hospitality) are not punished
+  // for brevity — the depth signals below catch keyword stuffing at any length.
+  substance_min_chars: 300,
+  substance_min_tokens: 40,
+  substance_target_chars: 1200,
+  substance_target_tokens: 120,
+  // A matched term standing almost alone is a list item, not described
+  // experience; twelve words is a normal achievement sentence. The floor is set
+  // conservatively (four words) so only genuinely bare mentions trip it.
+  evidence_context_min_tokens: 4,
+  evidence_context_target_tokens: 12,
+  // Two snippets from the same sentence are one passage. 160 characters is about
+  // one sentence at the engine's snippet radius.
+  evidence_passage_width_chars: 160,
+  evidence_passage_target: 3,
+  // When a third of a CV's whole vocabulary IS the rubric's terms, the document
+  // was written against the rubric rather than describing a career.
+  keyword_echo_ratio: 0.33,
+  // Keyword echo cannot present above the middle of "Consider"; thin-but-real
+  // documents stop at the top of "Consider" instead of reaching "Strong".
+  keyword_echo_cap: 0.6,
+  thin_substance_cap: 0.69,
   // A dealbreaker answer must dominate the composite, but the run stays
   // readable rather than collapsing to zero.
   disqualified_cap: 0.15,
@@ -314,6 +375,10 @@ export function calibrationProvenance(c: EngineCalibration): Array<{ label: stri
     { label: "Thin CV cut", value: `${c.thin_cv_chars} chars / ${c.thin_cv_tokens} tokens` },
     { label: "Disqualified cap", value: `${Math.round(c.disqualified_cap * 100)}/100` },
     { label: "Unparsed CV cap", value: `${Math.round(c.unparsed_cv_cap * 100)}/100` },
+    {
+      label: "Evidence substance",
+      value: `under ${c.substance_min_chars} chars / ${c.substance_min_tokens} words caps at ${Math.round(c.thin_substance_cap * 100)}/100; keyword echo caps at ${Math.round(c.keyword_echo_cap * 100)}/100`,
+    },
     {
       label: "Must-have floor",
       value: `below ${Math.round(c.must_have_floor * 100)}% coverage caps at ${Math.round(c.must_have_floor_cap * 100)}/100`,

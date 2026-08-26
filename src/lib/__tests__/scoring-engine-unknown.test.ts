@@ -65,6 +65,15 @@ describe("scoring engine — unknown vs missing (F-003)", () => {
     expect(r.fit_label).toBe("not_a_fit");
     expect(r.score).toBeLessThanOrEqual(15);
     // But the evidence itself is preserved for admin review — not blanked out.
-    expect(r.requirement_assessment.some((a) => a.status === "met")).toBe(true);
+    // This CV is a bare keyword list, so its matches read as unverified
+    // ("partial", needing validation) rather than fully evidenced (FIX-09); what
+    // matters here is that the matched terms and quotes survive the cap.
+    expect(r.evidence.length).toBeGreaterThan(0);
+    expect(
+      r.requirement_assessment.some(
+        (a) => a.status === "met" || (a.status === "partial" && a.matched_terms.length > 0),
+      ),
+    ).toBe(true);
+
   });
 });
