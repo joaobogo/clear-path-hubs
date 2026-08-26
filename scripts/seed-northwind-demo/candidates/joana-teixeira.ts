@@ -70,7 +70,7 @@ export const dossier: Dossier = {
     title: "Front-end Developer",
     contact: "Lisbon, Portugal · joana.teixeira.web@gmail.com · +351 921 704 358",
     summary:
-      "Three years of interface work at Lisbon agencies, mostly marketing sites and small internal editors built with React. I care about how a page behaves on a slow phone and about wording that does not confuse people. I am looking for my first product team, where I can stay with something longer than a campaign.",
+      "Three years of interface work at Lisbon agencies, mostly marketing sites and small internal editors built with React. I care about how a page behaves on a slow phone and about wording that does not confuse people. I am looking for my first in-house engineering role, where I can stay with something longer than a campaign.",
     coreSkills:
       "Core skills: CSS architecture, design systems, Figma handover, accessibility, image optimisation, content editing tools.",
     experience: [
@@ -106,7 +106,7 @@ export const dossier: Dossier = {
           "Cut the studio's average page weight by about half by introducing an image build step.",
           "Wrote the component usage notes that let two colleagues build pages without asking questions.",
           "Fixed the accessibility issues that took two client sites through their review first time.",
-          "Trained a client's marketing team to edit their own copy, removing about 15 tickets a month.",
+          "Trained a client's marketing colleagues to edit their own copy, removing about 15 tickets a month.",
         ],
       },
     ],
