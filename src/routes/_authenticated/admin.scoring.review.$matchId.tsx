@@ -120,7 +120,9 @@ function provenance(item: Any) {
 
 function fmt(v: unknown) {
   if (v == null || v === "") return "—";
-  return String(v);
+  const s = String(v);
+  // Stored enum tokens ("provisional_scoring") read as a label, never as a key.
+  return /^[a-z0-9]+([_.][a-z0-9]+)+$/.test(s) ? humanizeCode(s) : s;
 }
 
 function ReviewWorkspace() {
