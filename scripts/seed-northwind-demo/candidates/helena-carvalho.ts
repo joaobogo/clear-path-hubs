@@ -154,7 +154,7 @@ export const dossier: Dossier = {
       },
       {
         heading: "Payroll approval console (Pluma HR)",
-        body: "A line-by-line review screen for payroll managers, with an immutable audit trail that survived an external payroll audit in 2024 with no findings.",
+        body: "Built on TanStack Start, a full-stack React framework: a line-by-line review screen for payroll managers, with an immutable audit trail that survived an external payroll audit in 2024 with no findings.",
       },
     ],
     education: ["MSc Computer Engineering, Universidade Nova de Lisboa, 2015"],
