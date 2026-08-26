@@ -338,8 +338,8 @@ function MemberRow({
   return (
     <tr className="hover:bg-muted/30">
       <td className="px-4 py-3">
-        <div className="font-medium">{m.full_name ?? m.email ?? "Unnamed member"}</div>
-        <div className="text-xs text-muted-foreground">{m.email ?? "—"}</div>
+        <div className="break-words font-medium">{m.full_name ?? m.email ?? "Unnamed member"}</div>
+        <div className="break-words text-xs text-muted-foreground">{m.email ?? "—"}</div>
         <div className="mt-1 flex gap-1">
           {pending && <Badge variant="outline">pending invite</Badge>}
           {m.status === "suspended" && <Badge variant="secondary">suspended</Badge>}
