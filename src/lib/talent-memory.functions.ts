@@ -4,6 +4,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { writeAudit } from "@/lib/admin.functions";
+import {
+  ACTIVE_MATCH_STAGES,
+  excludeStillInPlay,
+  isActiveMatchStage,
+  pairKey,
+} from "@/lib/talent/active-stage";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
