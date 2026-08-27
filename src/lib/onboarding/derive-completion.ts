@@ -35,8 +35,31 @@ export type OnboardingCompletionInput = {
     oversightKeys?: number;
     blueprintStatus?: string | null;
     searchLiveAt?: string | null;
+    /** Lifecycle status of the role (`active`, `filled`, `draft`, …). */
+    status?: string | null;
+    /** Candidates already shared with the workspace for this role. */
+    deliveredCandidates?: number;
   } | null;
 };
+
+/** Statuses that mean the role is past setup and out in the market. */
+const LIVE_POSITION_STATUSES = ["active", "paused", "filled", "closed"];
+
+/**
+ * A role that is producing has, by definition, been set up.
+ *
+ * Setup completion used to be inferred only from the wizard's own artefacts, so
+ * a role that went live through intake or staff onboarding — search running,
+ * candidates delivered, an offer out — still read "Step 4 of 10: nothing sources
+ * until you confirm it". Real activity is the stronger evidence, so it wins.
+ */
+export function isPositionLive(
+  p: NonNullable<OnboardingCompletionInput["position"]>,
+): boolean {
+  if (p.searchLiveAt) return true;
+  if ((p.deliveredCandidates ?? 0) > 0) return true;
+  return LIVE_POSITION_STATUSES.includes(String(p.status ?? ""));
+}
 
 export function deriveOnboardingCompletion(
   input: OnboardingCompletionInput,
@@ -44,6 +67,13 @@ export function deriveOnboardingCompletion(
   const confirmed = input.confirmed ?? {};
   const p = input.position ?? null;
   const done: OnboardingStepId[] = [];
+
+  // A live role means every configuration step behind it happened, whichever
+  // route it took. The wizard then reads as complete instead of asking the user
+  // to confirm a summary for a search that is already delivering candidates.
+  if (p && isPositionLive(p)) {
+    return [...ONBOARDING_STEP_IDS];
+  }
 
   if (input.organizationName && confirmed.workspace) done.push("workspace");
   if (p && String(p.title ?? "").trim().length > 1) done.push("role");
