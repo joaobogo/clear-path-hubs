@@ -22,20 +22,20 @@
 import { z } from "zod";
 import {
   PRICE_PILOT_USD,
-  PRICE_MULTI_USD,
-  PRICE_SPRINT_USD,
-  PRICE_SUB_BRONZE_USD,
-  PRICE_SUB_SILVER_FROM_USD,
-  PRICE_SUB_GOLD_FROM_USD,
-  PRICE_SUB_BRONZE_DISPLAY,
-  PRICE_SUB_SILVER_DISPLAY,
-  PRICE_SUB_GOLD_DISPLAY,
-  PRICE_SUB_ENTERPRISE_DISPLAY,
-  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
   PRICE_PILOT_DISPLAY,
-  PRICE_MULTI_DISPLAY,
-  PRICE_SPRINT_DISPLAY,
-  PRICE_ENTERPRISE_DISPLAY,
+  GROWTH_RATE_USD,
+  SCALE_RATE_USD,
+  VOLUME_RATE_USD,
+  GROWTH_RATE_DISPLAY,
+  SCALE_RATE_DISPLAY,
+  VOLUME_RATE_DISPLAY,
+  PILOT_ROLES_LABEL,
+  GROWTH_ROLES_LABEL,
+  SCALE_ROLES_LABEL,
+  VOLUME_ROLES_LABEL,
+  ABOVE_MAX_DISPLAY,
+  ABOVE_MAX_ROLES_LABEL,
+  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
   POSITION_BANDS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
@@ -60,22 +60,26 @@ export interface Cta {
 }
 
 export interface OneOffPackage {
-  id: "pilot" | "multi" | "sprint" | "enterprise";
+  id: "pilot" | "growth" | "scale" | "volume" | "enterprise";
   name: string;
   eyebrow: string;
   minRoles: number;
   maxRoles: number | null;
   priceUsd: number | null;
   priceDisplay: string;
+  /** Per-position rate for banded tiers. null for the pilot and above the max. */
+  ratePerPositionUsd: number | null;
   cta: CtaKey;
   deliverables: string[];
 }
 
 export interface SubscriptionTier {
-  id: "bronze" | "silver" | "gold" | "enterprise";
+  id: "pilot" | "growth" | "scale" | "volume" | "enterprise";
   name: string;
   priceUsdMonthly: number | null;
   priceDisplay: string;
+  /** Per-position rate for banded tiers. null for the pilot and above the max. */
+  ratePerPositionUsd: number | null;
   isCustom: boolean;
   minRolesPerMonth: number;
   maxRolesPerMonth: number | null;
