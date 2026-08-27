@@ -131,3 +131,55 @@ export function buildQueue(items: QueueItem[], now: Date = new Date()): QueueGro
     total: rows.length,
   };
 }
+
+/**
+ * A collapsed cluster of rows that ask the client the same question about the
+ * same role. One candidate waiting reads as itself; four candidates waiting on
+ * a decision for one role read as one line with a count and the longest wait,
+ * which the client can open to see the individual people.
+ */
+export type QueueCluster = {
+  /** Stable identity, derived from the shared kind and role. */
+  key: string;
+  kind: QueueKind;
+  type_label: string;
+  role_title: string;
+  /** Rows in the cluster, longest wait first. */
+  rows: QueueRow[];
+  /** Longest wait in the cluster, in whole days. */
+  longest_wait: number | null;
+  /** True when any row in the cluster is past its due date. */
+  overdue: boolean;
+};
+
+/**
+ * Group rows of the same kind for the same role. Single rows come back as
+ * clusters of one so the caller renders from a single shape. Input order is
+ * preserved: the first row of a cluster keeps the position that row had.
+ */
+export function clusterQueue(rows: QueueRow[]): QueueCluster[] {
+  const order: string[] = [];
+  const byKey = new Map<string, QueueRow[]>();
+  for (const row of rows) {
+    const key = `${row.kind}:${row.position_id ?? row.role_title}`;
+    if (!byKey.has(key)) {
+      byKey.set(key, []);
+      order.push(key);
+    }
+    byKey.get(key)!.push(row);
+  }
+  return order.map((key) => {
+    const group = byKey.get(key)!;
+    const sorted = [...group].sort((a, b) => (b.days_waiting ?? -1) - (a.days_waiting ?? -1));
+    const waits = sorted.map((r) => r.days_waiting).filter((d): d is number => d != null);
+    return {
+      key,
+      kind: sorted[0]!.kind,
+      type_label: sorted[0]!.type_label,
+      role_title: sorted[0]!.role_title,
+      rows: sorted,
+      longest_wait: waits.length > 0 ? Math.max(...waits) : null,
+      overdue: sorted.some((r) => r.overdue),
+    };
+  });
+}

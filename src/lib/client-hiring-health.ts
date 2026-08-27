@@ -69,7 +69,11 @@ export function computeHiringHealth(input: HiringHealthInput): HiringHealth {
     {
       key: "awaiting_decision",
       value: input.awaitingDecision,
-      label: plural(input.awaitingDecision, "awaiting your decision", "awaiting your decision"),
+      label: plural(
+        input.awaitingDecision,
+        "waiting on your decision",
+        "waiting on your decision",
+      ),
     },
     {
       key: "roles_without_shortlist",
