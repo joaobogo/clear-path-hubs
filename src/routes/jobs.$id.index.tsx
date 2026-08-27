@@ -344,7 +344,9 @@ function BulletList({ items }: { items: string[] }) {
       {items.map((item, i) => (
         <li key={i} className="flex gap-3 text-[0.95rem] leading-relaxed text-foreground/90">
           <Check className="mt-1 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-          <span>{item}</span>
+          <span>
+            <InlineFormattedText value={item} />
+          </span>
         </li>
       ))}
     </ul>

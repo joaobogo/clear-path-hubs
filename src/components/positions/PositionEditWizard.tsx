@@ -50,6 +50,8 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/dat
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import type { QualityInput } from "@/lib/requisition-schema";
 import {
+import { RichTextInput } from "@/components/ui/rich-text-input";
+import { stripInlineMarkup } from "@/lib/marketing/inline-format";
   editableFieldNames,
   fieldHint,
   fieldLabel,
@@ -615,14 +617,15 @@ export function PositionEditWizard({
                     label={fieldLabel("description")}
                     hint={fieldHint("description")}
                   >
-                    <Textarea
+                    <RichTextInput
                       rows={6}
+                      ariaLabel="Job description"
                       value={state.description}
-                      onChange={(e) => set("description", e.target.value)}
+                      onChange={(v) => set("description", v)}
                       placeholder="Paste the full job description or describe the role, responsibilities, and success criteria."
                     />
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {state.description.trim().length} characters
+                      {stripInlineMarkup(state.description).trim().length} characters
                     </p>
                   </Field>
 
