@@ -178,7 +178,7 @@ export function AgencyComparator() {
                 </h4>
                 <p className="mt-3 max-w-md text-sm font-light opacity-80 sm:text-base">
                   {isCustom
-                    ? `Above {MAX_POSITIONS} positions we scope it with you — no savings figure is invented.`
+                    ? `Above ${MAX_POSITIONS} positions we scope it with you — no savings figure is invented.`
                     : savings != null && savings > 0
                       ? `Total projected savings with TaaSFlow${savingsPct != null ? ` — ${savingsPct}% reduction` : ""}.`
                       : "TaaSFlow doesn't beat your inputs here. Adjust volume, fee, or internal hours."}
