@@ -7,11 +7,11 @@
  * `client-fit-presentation`, whose thresholds come from `scoring/bands.ts`.
  *
  * Numeric scores belong on admin/staff surfaces only, and only next to their
- * confidence and rubric version (see `ScoreProvenance` in the admin review).
+ * confidence and scoring-model version (see `ScoreProvenance` in the admin
+ * review).
  *
- * The unicorn marker survives, but it is no longer a bare 95 threshold: the
- * canonical rule in `isUnicornMatch()` requires a top-tier band AND a confirmed
- * hire, so the marker means outcome-verified fit.
+ * Standout candidates carry no extra chip on a client screen: the fit band
+ * already says what the client needs to know.
  */
 import { toFitPresentation, type FitPresentation } from "@/lib/client-fit-presentation";
 import { getEvidenceCounts } from "@/lib/client/evidence-counts";
@@ -45,6 +45,10 @@ type Props = {
    * print a supported-count that we cannot back with snippets.
    */
   evidencePending?: boolean;
+  /**
+   * Kept for call-site compatibility. Standout candidates are communicated by
+   * the fit band alone — no internal "unicorn" label reaches a client.
+   */
   unicorn?: boolean;
   className?: string;
   hideEvidenceChip?: boolean;
@@ -70,18 +74,6 @@ const BAND_DOT: Record<FitPresentation["accent"], string> = {
   rose: "rounded-none border-b-2 border-current bg-transparent",
 };
 
-export function UnicornBadge({ className = "" }: { className?: string }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary ${className}`}
-      title="Unicorn — fit score of 95 or higher"
-    >
-      <span aria-hidden>🦄</span>
-      Unicorn
-    </span>
-  );
-}
-
 export function CandidateScoreBadge({
   score = null,
   fitLabel = null,
@@ -89,14 +81,13 @@ export function CandidateScoreBadge({
   rechecking = false,
   humanReviewed = false,
   evidencePending = false,
-  unicorn = false,
   className = "",
   hideEvidenceChip = false,
   hideScore = false,
   hideBand = false,
 }: Props) {
   const hasBand = fitLabel != null || score != null;
-  if (!hasBand && !unicorn) return null;
+  if (!hasBand) return null;
   const fit = hasBand ? toFitPresentation(fitLabel, score) : null;
   const counts = evidence && (evidence as any).rows ? getEvidenceCounts((evidence as any).rows) : null;
   const support =
@@ -168,7 +159,6 @@ export function CandidateScoreBadge({
           Reviewed by our team
         </span>
       )}
-      {unicorn && <UnicornBadge />}
     </span>
   );
 }

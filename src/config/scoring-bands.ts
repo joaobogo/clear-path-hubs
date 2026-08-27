@@ -38,7 +38,7 @@ const COPY: readonly BandCopy[] = [
     shortLabel: "Exceptional",
     tone: "confident",
     accent: "emerald",
-    description: "Unicorn-level fit. Direct evidence across every dimension.",
+    description: "Exceptional fit. Direct evidence across every dimension.",
   },
   {
     key: "top",
