@@ -24,7 +24,7 @@
             "failure": "net::ERR_ABORTED"
           },
           {
-            "url": "https://calendly.com/christian-brogger-taasflow?embed_domain=taasflow.com&embed_type=Inline&hide_gdpr_banner=1",
+            "url": "/book",
             "status": 404,
             "failure": null
           }
@@ -830,7 +830,7 @@
             "failure": "net::ERR_ABORTED"
           },
           {
-            "url": "https://calendly.com/christian-brogger-taasflow?embed_domain=taasflow.com&embed_type=Inline&hide_gdpr_banner=1",
+            "url": "/book",
             "status": 404,
             "failure": null
           }
@@ -1636,7 +1636,7 @@
             "failure": "net::ERR_ABORTED"
           },
           {
-            "url": "https://calendly.com/christian-brogger-taasflow?embed_domain=taasflow.com&embed_type=Inline&hide_gdpr_banner=1",
+            "url": "/book",
             "status": 404,
             "failure": null
           }
