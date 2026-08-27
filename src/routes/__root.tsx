@@ -84,7 +84,9 @@ export const Route = createRootRouteWithContext<{
         href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap",
       },
     ],
-    script: [
+    // NOTE: the key is `scripts` — TanStack ignores a `script` key silently,
+    // which is why this sitewide graph was absent from the served HTML.
+    scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -98,14 +100,13 @@ export const Route = createRootRouteWithContext<{
               logo: {
                 "@type": "ImageObject",
                 "@id": "https://taasflow.com/#logo",
-                url: "https://taasflow.com/logo.png",
-                contentUrl: "https://taasflow.com/logo.png",
-                width: 512,
-                height: 512,
+                url: "https://taasflow.com/favicon.png",
+                contentUrl: "https://taasflow.com/favicon.png",
                 caption: "TaaSFlow",
               },
               image: { "@id": "https://taasflow.com/#logo" },
-              sameAs: ["https://twitter.com/taasflow", "https://linkedin.com/company/taasflow"],
+              // sameAs intentionally omitted: only add profiles that are
+              // verified to exist and to belong to TaaSFlow.
             },
             {
               "@type": "WebApplication",
