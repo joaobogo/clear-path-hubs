@@ -9,6 +9,12 @@ export type ClientCandidateKpis = {
   offers: number;
   hires: number;
   /**
+   * Candidates delivered with no decision recorded yet — the one "awaiting your
+   * review" rule, identical to the Overview queue, Roles and Insights. Derived
+   * from the rows on screen so the tile can never read the total candidate count.
+   */
+  awaiting_decision: number;
+  /**
    * Stage partition: every shared candidate falls into exactly one bucket, so a
    * row of stage tiles adds up to `delivered` and can never sum to more than the
    * list beneath it. `hires` stays the confirmed-hire figure and is not part of
