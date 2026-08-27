@@ -5,6 +5,7 @@ import { z } from "zod";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { listPublicPositions } from "@/lib/jobs.functions";
+import type { PublicPositionSummary } from "@/lib/jobs.functions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +45,9 @@ export const Route = createFileRoute("/jobs/")({
       stripSearchParams({ q: "", location: "", work: "any", type: "any", level: "any", page: 1 }),
     ],
   },
-  head: () => ({
+  head: ({ loaderData }) => {
+    const roles: PublicPositionSummary[] = (loaderData as PublicPositionSummary[] | undefined) ?? [];
+    return ({
     meta: [
       { title: "Open roles — TaaSFlow job board" },
       {
@@ -62,7 +65,28 @@ export const Route = createFileRoute("/jobs/")({
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://taasflow.com/jobs" }],
-  }),
+    // ItemList of the roles actually listed on this page. Each entry points at
+    // the role page, which carries the full JobPosting node — no duplicated,
+    // possibly stale copy of the posting itself here.
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Open roles at TaaSFlow",
+          numberOfItems: roles.length,
+          itemListElement: roles.slice(0, 50).map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: p.title,
+            url: `https://taasflow.com/jobs/${buildJobSlug(p)}`,
+          })),
+        }),
+      },
+    ],
+  });
+  },
   loader: async ({ context }) => context.queryClient.ensureQueryData(positionsQuery),
   component: JobsPage,
   errorComponent: makeRouteErrorComponent("public", "jobs.index"),
