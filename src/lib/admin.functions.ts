@@ -729,8 +729,10 @@ export const getClient = createServerFn({ method: "GET" })
 
     const roll = rollups[String(data.id)];
 
-    // Documents and the "parsed CVs" headline read the same rows, so the two
-    // counts can never disagree on screen.
+    // The "parsed CVs" headline counts files that actually parsed; the
+    // Documents list below it shows every document. Different facts, different
+    // labels — the old comment here claimed same-rows parity while the
+    // headline was silently counting failed and never-parsed uploads as done.
     const { data: docMatchRows } = await s
       .from("candidate_matches")
       .select("candidate_profile_id")
@@ -747,7 +749,12 @@ export const getClient = createServerFn({ method: "GET" })
       const { count } = await s
         .from("files")
         .select("id", { count: "exact", head: true })
-        .in("candidate_profile_id", docProfileIds);
+        .in("candidate_profile_id", docProfileIds)
+        // "PARSED CVs" must count parsed CVs. This headline used to count
+        // every file row — failed and never-parsed uploads included — so it
+        // reported work as done that the parse-failure queue said was not.
+        // Same states the evidence-gaps checker calls parsed.
+        .in("parse_state", ["parsed", "reviewed_offline"]);
       parsedCvCount = count ?? 0;
     }
 
