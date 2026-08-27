@@ -118,7 +118,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     // ── Positions (open by region + pipeline by BU counts) ────────────────
     const { data: positions } = await s
       .from("positions")
-      .select("id, department, location, status, title, is_test_record")
+      .select("id, department, location, status, title, is_test_record, search_live_at")
       .eq("organization_id", orgId)
       .or(NOT_TEST_RECORD);
     const posRows: AnyRow[] = positions ?? [];
@@ -335,8 +335,17 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       m.updated_at &&
       now.getTime() - new Date(m.updated_at).getTime() > 24 * 3600_000,
     ).length;
+    // Only roles that genuinely have no search count as waiting on intake: a
+    // role whose search is live, or that already has candidates, is set up even
+    // if its record was never walked through the wizard.
+    const positionsWithCandidates = new Set<string>(
+      matchRows.map((m: AnyRow) => String(m.position_id)),
+    );
     const draftPositions = posRows.filter(
-      (p) => ["draft", "needs_clarification"].includes(String(p.status)),
+      (p) =>
+        ["draft", "needs_clarification"].includes(String(p.status)) &&
+        !p.search_live_at &&
+        !positionsWithCandidates.has(String(p.id)),
     ).length;
 
     // Open offers pending action

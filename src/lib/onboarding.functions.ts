@@ -396,6 +396,18 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     // Covered-by-plan counts as paid — see PAID_PAYMENT_STATES.
     const paid = isPaymentSatisfied(position?.payment_status ?? "unpaid");
 
+    // Candidates already delivered for this role: a producing role is set up,
+    // whichever route it took to go live.
+    let deliveredForPosition = 0;
+    if (position?.id) {
+      const { count } = await supabase
+        .from("candidate_matches")
+        .select("id", { count: "exact", head: true })
+        .eq("organization_id", org)
+        .eq("position_id", position.id);
+      deliveredForPosition = count ?? 0;
+    }
+
     // ONE completion derivation, shared with the admin client record so the
     // client Setup wizard and staff Overview never disagree.
     const complete = deriveOnboardingCompletion({
@@ -410,6 +422,8 @@ export const getOnboardingState = createServerFn({ method: "GET" })
             oversightKeys: Object.keys(position.oversight).length,
             blueprintStatus: position.blueprint_status,
             searchLiveAt: position.search_live_at,
+            status: position.status,
+            deliveredCandidates: deliveredForPosition,
           }
         : null,
     });

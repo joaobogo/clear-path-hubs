@@ -51,7 +51,7 @@ export async function readAccountState(
     a
       .from("positions")
       .select(
-        "id, title, requirements, evaluation_weights, blueprint_status, blueprint_confirmed_at, search_live_at, intake_context, created_at",
+        "id, title, status, requirements, evaluation_weights, blueprint_status, blueprint_confirmed_at, search_live_at, intake_context, created_at",
       )
       .eq("organization_id", organizationId)
       .order("created_at", { ascending: false })
@@ -98,6 +98,18 @@ export async function readAccountState(
     confirmed = {};
   }
 
+  // Candidates already shared for this role: the strongest evidence that setup
+  // finished, whichever route the role took.
+  let deliveredForPosition = 0;
+  if (row?.id) {
+    const { count } = await a
+      .from("candidate_matches")
+      .select("id", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .eq("position_id", row.id);
+    deliveredForPosition = count ?? 0;
+  }
+
   const complete = deriveOnboardingCompletion({
     organizationName: org?.name ?? "workspace",
     confirmed: confirmed as Any,
@@ -113,6 +125,8 @@ export async function readAccountState(
               : 0,
           blueprintStatus: row.blueprint_status ?? null,
           searchLiveAt: row.search_live_at ?? null,
+          status: row.status ?? null,
+          deliveredCandidates: deliveredForPosition,
         }
       : null,
   });
