@@ -410,6 +410,8 @@ export const getOnboardingState = createServerFn({ method: "GET" })
             oversightKeys: Object.keys(position.oversight).length,
             blueprintStatus: position.blueprint_status,
             searchLiveAt: position.search_live_at,
+            status: position.status,
+            deliveredCandidates: deliveredForPosition,
           }
         : null,
     });

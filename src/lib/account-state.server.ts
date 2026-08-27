@@ -113,6 +113,8 @@ export async function readAccountState(
               : 0,
           blueprintStatus: row.blueprint_status ?? null,
           searchLiveAt: row.search_live_at ?? null,
+          status: row.status ?? null,
+          deliveredCandidates: deliveredForPosition,
         }
       : null,
   });
