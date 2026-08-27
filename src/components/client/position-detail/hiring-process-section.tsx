@@ -21,8 +21,8 @@ export function HiringProcessSection({
       <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
         <ProcessStep
           n={1}
-          title="Delivered"
-          body="TaaSFlow reviews sourced candidates and only delivers those cleared for your role."
+          title="Candidates"
+          body="TaaSFlow reviews sourced candidates and only shares those cleared for your role."
           done={mattersCount > 0}
         />
         <ProcessStep

@@ -379,7 +379,7 @@ function VisualDelivery() {
     <div className="space-y-2">
       <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Workspace</div>
       <div className="grid grid-cols-3 gap-2">
-        {["Delivered", "In review", "Interview"].map((c) => (
+        {["Candidates", "In review", "Interview"].map((c) => (
           <div key={c} className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-2">
             <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">{c}</div>
             <div className="mt-1 h-1.5 rounded-full bg-[color:var(--brand-ocean)]/60" />

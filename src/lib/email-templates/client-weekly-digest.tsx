@@ -152,7 +152,7 @@ export const template = {
     summary: {
       windowLabel: '7 Mar – 14 Mar',
       metrics: [
-        { label: 'Candidates delivered', count: 3 },
+        { label: 'Candidates', count: 3 },
         { label: 'Interviews held', count: 1 },
         { label: 'Decision made', count: 1 },
       ],

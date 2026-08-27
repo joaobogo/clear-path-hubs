@@ -741,7 +741,7 @@ const NON_CANDIDATE_ACTION_PREFIXES = [
 
 /** Stage keys → the sentence a client reads. */
 const STAGE_EVENT_LABEL: Record<string, string> = {
-  delivered: "Delivered to you",
+  delivered: "Added to your candidates",
   shortlisted: "Shortlisted by your team",
   interview_process: "Moved into interviews",
   offer: "Offer extended",
@@ -766,7 +766,7 @@ const AUDIT_ACTION_LABEL: Record<string, string> = {
   "contact_release_revoked": "Contact details access removed",
   "contact_released": "Contact details released",
   "candidate_match.stage_changed": "Stage changed",
-  "candidate_match.publish": "Delivered to you",
+  "candidate_match.publish": "Added to your candidates",
   "interview.scheduled": "Interview scheduled",
   "interview.requested": "Interview requested",
   "interview.completed": "Interview completed",

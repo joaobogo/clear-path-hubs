@@ -281,7 +281,7 @@ function PositionsVisual() {
                 </div>
                 <div className="rounded bg-[color:var(--brand-ocean)]/10 py-1.5">
                   <div className="font-bold text-[color:var(--brand-ocean-text)]">{r.delivered}</div>
-                  <div className="text-[color:var(--brand-navy)]/80">Delivered</div>
+                  <div className="text-[color:var(--brand-navy)]/80">Candidates</div>
                 </div>
               </div>
             </div>
@@ -458,7 +458,7 @@ function CollabVisual() {
     {
       icon: Send,
       who: "TaaSFlow",
-      text: "Delivered 3 candidates for Head of Growth.",
+      text: "Shared 3 candidates for Head of Growth.",
       when: "2h ago",
     },
     {
