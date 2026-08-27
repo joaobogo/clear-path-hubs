@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { Markdown, slugifyHeading } from "@/components/marketing/markdown";
 import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
+import { resolveBlogAuthor } from "@/content/blog-authors";
 import {
   estimateReadMinutes,
   getBlogPost,
@@ -124,7 +125,7 @@ function BlogPost() {
   const read = estimateReadMinutes(entry.markdown);
   const published = meta["article:published_time"];
   const updated = meta["article:modified_time"] || published;
-  const author = meta.author || "TaaSFlow";
+  const author = resolveBlogAuthor(meta.author);
   const entryAny = entry as unknown as { category?: string; tags?: string[]; industry?: string };
   const category =
     BLOG_METADATA[slug]?.category ?? entryAny.category ?? "General";
@@ -184,7 +185,7 @@ function BlogPost() {
     headline: title,
     datePublished: published,
     dateModified: updated,
-    author: { "@type": "Organization", name: author },
+    author: { "@type": author.type, name: author.name, ...(author.url ? { url: author.url } : {}) },
     publisher: { "@type": "Organization", name: "TaaSFlow" },
     articleSection: category,
     keywords: tags.join(", "),
@@ -233,7 +234,9 @@ function BlogPost() {
             <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
               {title}
             </h1>
-            <p className="mt-3 text-sm text-muted-foreground">By {author}</p>
+            <p className="mt-3 text-sm text-muted-foreground">
+              By {author.name} · {author.role}
+            </p>
 
             {heroImage ? (
               <figure className="mt-8 overflow-hidden rounded-2xl border border-border/60 bg-muted/20">
@@ -307,6 +310,25 @@ function BlogPost() {
                 ))}
               </div>
             )}
+            {/* Who wrote this — a described byline, not a bare brand name */}
+            <aside className="mt-10 rounded-2xl border border-border/60 bg-muted/20 p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                About the author
+              </p>
+              <p className="mt-2 text-sm font-semibold">
+                {author.name} — {author.role}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{author.note}</p>
+              {author.url ? (
+                <Link
+                  to={author.url}
+                  className="mt-3 inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                >
+                  More about the team <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              ) : null}
+            </aside>
+
 
             {/* Related industries — commercial adjacency, not a sales banner */}
             {relatedIndustries.length > 0 && (

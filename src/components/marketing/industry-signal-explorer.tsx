@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { IndustryEntry } from "@/content/industries-v2";
+import { getSignalFlags } from "@/content/industry-evidence-bank";
 
 /**
  * Domain-aware candidate-signal explorer.
@@ -25,10 +26,13 @@ type Signal = {
 type Pack = { label: string; signals: Signal[] };
 
 export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
-  const pack: Pack = useMemo(() => resolvePack(entry), [entry]);
+  // The illustrative flags come from this industry's own example bank so no
+  // two industry pages show the same sample evidence verbatim.
+  const pack: Pack = useMemo(() => specialise(entry, resolveSignalPack(entry)), [entry]);
 
   const [activeIdx, setActiveIdx] = useState(0);
   const active = pack.signals[activeIdx];
+
 
   return (
     <div>
@@ -129,15 +133,36 @@ export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
   );
 }
 
+/**
+ * Swaps each dimension's illustrative flags for this industry's own examples.
+ * Methodology copy (body / validation) stays domain-level; only the
+ * illustrative examples are per-industry, so nothing repeats across pages.
+ */
+function specialise(entry: IndustryEntry, pack: Pack): Pack {
+  return {
+    ...pack,
+    signals: pack.signals.map((s) => {
+      const flags = getSignalFlags(entry.slug, s.key);
+      return flags ? { ...s, flags } : s;
+    }),
+  };
+}
+
 /* -------- dimension packs -------- */
 
-function resolvePack(entry: IndustryEntry): Pack {
+/**
+ * Resolves the domain pack for an industry. Exported because
+ * scripts/generate-industry-evidence-bank.mjs needs the same signal keys
+ * to build each industry's own, non-overlapping example bank.
+ */
+export function resolveSignalPack(entry: IndustryEntry): Pack {
   const direct = DOMAIN_PACKS[entry.slug];
   if (direct) return direct;
   const family = FAMILY_MAP[entry.slug];
   if (family && DOMAIN_PACKS[family]) return DOMAIN_PACKS[family];
   return buildGenericPack(entry);
 }
+
 
 // Map niche slugs onto a parent family with a well-defined pack.
 const FAMILY_MAP: Record<string, string> = {
