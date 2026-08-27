@@ -401,6 +401,15 @@ export const RequirementRowView = memo(function RequirementRowView({
   // never as work in progress.
   const status = resolveRequirementStatus(row);
   const badge = statusBadge(status);
+  // Presentation hygiene: identical and near-identical snippets collapse to
+  // one, nothing repeats the summary line above, and a quote that survives as
+  // a broken fragment is not shown at all.
+  const evidence = presentEvidenceList(row.evidence, [claim, row.explanation]);
+  const context = presentEvidenceList(row.context, [
+    claim,
+    row.explanation,
+    ...evidence.map((e) => e.quote),
+  ]);
   return (
     <li className="rounded-md border bg-background/40 p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -429,52 +438,47 @@ export const RequirementRowView = memo(function RequirementRowView({
       {claim && (
         <p className="mt-2 text-sm text-foreground/90">{claim}</p>
       )}
-      {(row.evidence.length > 0 || row.context.length > 0) && (
+      {(evidence.length > 0 || context.length > 0) && (
         <Accordion type="single" collapsible className="mt-2">
           <AccordionItem value="evidence" className="border-none">
             <AccordionTrigger className="py-1 text-xs text-muted-foreground hover:no-underline">
-              {row.evidence.length > 0
-                ? `Show evidence (${row.evidence.length})`
+              {evidence.length > 0
+                ? `Show evidence (${evidence.length})`
                 : "Show context"}
             </AccordionTrigger>
             <AccordionContent>
-              {row.evidence.length > 0 && (
+              {evidence.length > 0 && (
                 <ul className="mt-1 space-y-2 border-l-2 border-primary/30 pl-3 text-sm">
-                  {row.evidence.map((e, i) => (
+                  {evidence.map((e, i) => (
                     <li key={i}>
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        {e.source && (
-                          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                            {humanizeSource(e.source)}
-
-                          </div>
-                        )}
+                        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                          {e.sourceLine}
+                        </div>
                         <span className="text-[10px] taas-fg-success font-medium">Verified</span>
                       </div>
-                      <div className="text-foreground/90">{renderQuote(e.snippet)}</div>
+                      <div className="text-foreground/90">{e.quote}</div>
                     </li>
                   ))}
                 </ul>
               )}
-              {row.evidence.length === 0 && status === "not_evidenced" && (
+              {evidence.length === 0 && status === "not_evidenced" && (
                 <p className="text-sm text-muted-foreground italic">
                   Not evidenced in this candidate's record.
                 </p>
               )}
-              {row.context.length > 0 && (
+              {context.length > 0 && (
                 <div className="mt-3">
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
                     Candidate context
                   </div>
                   <ul className="mt-1 space-y-2 border-l-2 border-muted pl-3 text-sm">
-                    {row.context.map((e, i) => (
+                    {context.map((e, i) => (
                       <li key={i}>
-                        {e.source && (
-                          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                            {humanizeSource(e.source)}
-                          </div>
-                        )}
-                        <div className="text-muted-foreground">{renderQuote(e.snippet)}</div>
+                        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                          {e.sourceLine}
+                        </div>
+                        <div className="text-muted-foreground">{e.quote}</div>
                       </li>
                     ))}
                   </ul>
@@ -484,7 +488,7 @@ export const RequirementRowView = memo(function RequirementRowView({
           </AccordionItem>
         </Accordion>
       )}
-      {row.evidence.length === 0 && row.context.length === 0 && status === "not_evidenced" && (
+      {evidence.length === 0 && context.length === 0 && status === "not_evidenced" && (
         <p className="mt-2 text-sm text-muted-foreground italic">
           Not evidenced in this candidate's record.
         </p>
