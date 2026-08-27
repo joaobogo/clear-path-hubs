@@ -124,7 +124,7 @@ export function ClientBrandHeader({
         {/* TaaSFlow product-shell ribbon */}
         <div className="ml-auto hidden shrink-0 flex-col items-end sm:flex">
           <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-            Delivered on
+            Powered by
           </span>
           <span className="text-sm font-semibold tracking-tight text-foreground">
             TaaSFlow

@@ -348,7 +348,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
             summary.interviewing +
             summary.offers
           }
-          hint="Delivered · shortlisted · interviewing · offers"
+          hint="Candidates · shortlisted · interviewing · offers"
         />
         <SummaryTile
           label="Candidates delivered"

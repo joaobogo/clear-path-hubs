@@ -199,7 +199,7 @@ export function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"]
                 <th className="py-2 text-left font-medium">Team</th>
                 <th className="py-2 text-right font-medium">Open roles</th>
                 <th className="py-2 text-right font-medium">Active</th>
-                <th className="py-2 text-right font-medium">Delivered</th>
+                <th className="py-2 text-right font-medium">Candidates</th>
                 <th className="py-2 text-right font-medium">Shortlisted</th>
                 <th className="py-2 text-right font-medium">Hired</th>
                 <th className="py-2 text-right font-medium">Needs your input</th>
@@ -211,7 +211,7 @@ export function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"]
                   <td data-label="Team" className="py-2 font-medium">{r.business_unit}</td>
                   <td data-label="Open roles" className="py-2 text-right tabular-nums max-sm:text-left">{r.open_roles}</td>
                   <td data-label="Active" className="py-2 text-right tabular-nums max-sm:text-left">{r.active_candidates}</td>
-                  <td data-label="Delivered" className="py-2 text-right tabular-nums max-sm:text-left">{r.delivered}</td>
+                  <td data-label="Candidates" className="py-2 text-right tabular-nums max-sm:text-left">{r.delivered}</td>
                   <td data-label="Shortlisted" className="py-2 text-right tabular-nums max-sm:text-left">{r.shortlisted}</td>
                   <td data-label="Hired" className="py-2 text-right tabular-nums max-sm:text-left">{r.hired}</td>
                   <td data-label="Needs your input" className="py-2 text-right tabular-nums max-sm:text-left">
@@ -312,8 +312,8 @@ export function VelocityCard({
           <div className="space-y-1 text-sm">
             <p className="font-medium">
               {totalDelivered === 0
-                ? "No candidates delivered yet."
-                : `${totalDelivered} candidate${totalDelivered === 1 ? "" : "s"} delivered so far, across ${activeDeliveryWeeks.length} week${activeDeliveryWeeks.length === 1 ? "" : "s"}${
+                ? "No candidates shared yet."
+                : `${totalDelivered} candidate${totalDelivered === 1 ? "" : "s"} shared so far, across ${activeDeliveryWeeks.length} week${activeDeliveryWeeks.length === 1 ? "" : "s"}${
                     activeDeliveryWeeks.length === 1
                       ? ` (week of ${activeDeliveryWeeks[0]!.label})`
                       : ""
