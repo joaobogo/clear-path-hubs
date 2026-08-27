@@ -1074,7 +1074,16 @@ export const getAdminMatch = createServerFn({ method: "GET" })
 
     return {
       match: m,
-      runs: runsRes.data ?? [],
+      // Fold the video bonus HERE, once, so every admin surface reading these
+      // runs shows the published number. Without it the admin header rendered
+      // the raw engine score while the client workspace — which folds the
+      // bonus in its DTO — showed ten points more for the same candidate. A
+      // reviewer saw 64 · Consider next to a client preview reading
+      // 74 · Strong, which is the worst possible place for the two sides to
+      // disagree: the number the whole product is built on.
+      runs: ((runsRes.data ?? []) as AnyRow[]).map((r) =>
+        withVideoIntroBonus(r, hasVideoIntro(m)),
+      ),
       decisions: decisionsRes.data ?? [],
       jobs: jobsRes.data ?? [],
       evidence: evidenceRes.data ?? null,

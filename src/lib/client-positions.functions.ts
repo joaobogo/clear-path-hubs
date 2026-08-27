@@ -6,6 +6,11 @@ import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { assertNoQaContamination } from "@/lib/qa-guard";
+import {
+  publishedScore,
+  withVideoIntroBonus,
+  hasVideoIntro,
+} from "@/lib/scoring/published-score";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
@@ -220,9 +225,9 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const { data: rawMatches } = await context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, admin_status, delivered_at, approved_score_run_id, candidate_profile_id,
+        `id, stage, admin_status, delivered_at, approved_score_run_id, candidate_profile_id, intro_video_url,
          candidate_profiles(id, full_name, headline, location),
-         score_runs:approved_score_run_id (score, fit_label, fit_band, explanation, requirement_coverage)`,
+         score_runs:approved_score_run_id (score, final_score, fit_label, fit_band, explanation, requirement_coverage)`,
       )
       .eq("organization_id", data.orgId)
       .eq("position_id", data.positionId)
@@ -458,7 +463,10 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         match_id: String(m.id),
         name: (m.candidate_profiles?.full_name as string | null) ?? null,
         stage: String(m.stage),
-        score: run?.score == null ? null : Number(run.score),
+        // The published number — human adjustment and video bonus folded in.
+        // Read raw, this surface banded a candidate one way in the role story
+        // and another on their own page.
+        score: publishedScore(withVideoIntroBonus(run, hasVideoIntro(m))),
         requirement_rows: buildRequirementRows(
           {
             requirements: (position.requirements as any[]) ?? [],
