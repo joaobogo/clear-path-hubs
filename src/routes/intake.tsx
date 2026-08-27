@@ -2345,39 +2345,43 @@ function ExpressIntakePage() {
             Each additional must-have narrows the search, so the more you add, the fewer eligible candidates there will be.
           </p>
 
-          <RequirementsList
-            items={state.requirements}
-            onChange={setRequirements}
-            rowErrors={rowErrors}
-            listError={errors.requirements || null}
-            needsConfirm={
-              validateRequirements(state.requirements, {
-                manyConfirmed: state.manyMustHavesConfirmed,
-              }).needsConfirm
-            }
-            manyConfirmed={state.manyMustHavesConfirmed}
-            onConfirmMany={(confirmed) => {
-              set("manyMustHavesConfirmed", confirmed);
-              if (confirmed) setErrors((e) => ({ ...e, requirements: "" }));
-            }}
-            roleTitle={state.roleTitle}
-            suggestions={suggestions}
-            onRetrySuggestions={() => {
-              const jd = state.jobDescriptionText.trim();
-              if (jd.length < MIN_JD_TEXT) return;
-              suggestedForRef.current = "";
-              void fetchSuggestions(jd, state.roleTitle);
-            }}
-          />
+          <SectionGroup title="Requirements">
+            <RequirementsList
+              items={state.requirements}
+              onChange={setRequirements}
+              rowErrors={rowErrors}
+              listError={errors.requirements || null}
+              needsConfirm={
+                validateRequirements(state.requirements, {
+                  manyConfirmed: state.manyMustHavesConfirmed,
+                }).needsConfirm
+              }
+              manyConfirmed={state.manyMustHavesConfirmed}
+              onConfirmMany={(confirmed) => {
+                set("manyMustHavesConfirmed", confirmed);
+                if (confirmed) setErrors((e) => ({ ...e, requirements: "" }));
+              }}
+              roleTitle={state.roleTitle}
+              suggestions={suggestions}
+              onRetrySuggestions={() => {
+                const jd = state.jobDescriptionText.trim();
+                if (jd.length < MIN_JD_TEXT) return;
+                suggestedForRef.current = "";
+                void fetchSuggestions(jd, state.roleTitle);
+              }}
+            />
+          </SectionGroup>
 
-          <FieldExamples
-            field="must_haves"
-            roleTitle={state.roleTitle}
-            label="See an example must-have"
-            onUse={(text) =>
-              setRequirements([...state.requirements, { text, tag: "must_have" }])
-            }
-          />
+          <SectionGroup title="Example must-haves">
+            <FieldExamples
+              field="must_haves"
+              roleTitle={state.roleTitle}
+              label="See an example must-have"
+              onUse={(text) =>
+                setRequirements([...state.requirements, { text, tag: "must_have" }])
+              }
+            />
+          </SectionGroup>
         </Section>
         )}
 
@@ -2388,340 +2392,341 @@ function ExpressIntakePage() {
             will simply be marked <span className="font-medium">Brief incomplete</span> until you do.
           </p>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-
-            <Field
-              label={intakeFieldLabel("location")} carried={isCarried("location")}
-              error={errors.location}
-              required={req["location"]}
-              hint="City and country, or the region candidates must live in."
-            >
-              <Input
-                value={state.location}
-                onChange={(e) => set("location", e.target.value)}
-                placeholder="Manchester, United Kingdom"
-              />
-            </Field>
-            <Field label={intakeFieldLabel("workModel")} carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
-              <select
-                id="work-model"
-                value={state.workModel}
-                onChange={(e) => onWorkModelChange(e.target.value as FormState["workModel"])}
-                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-                aria-invalid={Boolean(errors.workModel)}
+          <SectionGroup title="Location and working model">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                label={intakeFieldLabel("location")} carried={isCarried("location")}
+                error={errors.location}
+                required={req["location"]}
+                hint="City and country, or the region candidates must live in."
               >
-                <option value="">Choose one</option>
-                {WORK_MODELS.map((m) => (
-                  <option key={m} value={m}>
-                    {WORK_MODEL_LABELS[m]}
-                  </option>
-                ))}
-              </select>
-            </Field>
-          </div>
-
-          {/* Hybrid is the only model that needs a day count. */}
-          {state.workModel === "hybrid" && (
-            <Field
-              label="Days on site each week" carried={isCarried("onsiteDays")}
-              error={errors.onsiteDays}
-              required={req["onsiteDays"]}
-              hint="Between 1 and 5. Candidates ask this first, and a wrong guess costs you offers."
-            >
-              <Input
-                value={state.onsiteDays}
-                onChange={(e) => set("onsiteDays", e.target.value.replace(/[^\d]/g, ""))}
-                inputMode="numeric"
-                placeholder="3"
-              />
-            </Field>
-          )}
-
-          {/* Remote roles need a boundary: timezone bands, or the whole country. */}
-          {state.workModel === "remote" && (
-            <fieldset className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
-              <legend className="text-sm font-medium">
-                Acceptable timezones
-                {req["remoteTimezones"] ? (
-                  <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
-                    *
-                  </span>
-                ) : (
-                  <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
-                    Optional
-                  </span>
-                )}
-              </legend>
-              <p className="text-sm text-[color:var(--brand-navy)]/75">
-                Pick the working-hours bands you can live with, or say anywhere in the country.
-              </p>
-              <label className="flex cursor-pointer items-start gap-3 text-sm">
-                <input
-                  type="checkbox"
-                  className="mt-1"
-                  checked={state.remoteAnywhereInCountry}
-                  onChange={(e) => {
-                    const on = e.target.checked;
-                    setState((s) => ({
-                      ...s,
-                      remoteAnywhereInCountry: on,
-                      remoteTimezones: on ? [] : s.remoteTimezones,
-                    }));
-                    setErrors((prev) => {
-                      const next = { ...prev };
-                      delete next.remoteTimezones;
-                      return next;
-                    });
-                  }}
-                />
-                <span>Anywhere in the country — timezone does not matter</span>
-              </label>
-              {!state.remoteAnywhereInCountry && (
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {TIMEZONE_BANDS.map((tz) => (
-                    <label key={tz.value} className="flex cursor-pointer items-start gap-3 text-sm">
-                      <input
-                        type="checkbox"
-                        className="mt-1"
-                        checked={state.remoteTimezones.includes(tz.value)}
-                        onChange={() => toggleTimezone(tz.value)}
-                      />
-                      <span>{tz.label}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
-              {errors.remoteTimezones && (
-                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                  {errors.remoteTimezones}
-                </p>
-              )}
-            </fieldset>
-          )}
-
-          {/* Always asked, never defaulted. */}
-          <fieldset
-            className={`space-y-2 rounded-lg border p-4 ${
-              errors.sponsorshipAvailable
-                ? "border-[color:var(--brand-danger)] bg-[color:var(--brand-danger)]/5"
-                : "border-[color:var(--brand-navy)]/12 bg-white"
-            }`}
-          >
-            <legend className="text-sm font-medium">
-              Can you sponsor a visa?
-              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
-                *
-              </span>
-            </legend>
-            <p className="text-sm text-[color:var(--brand-navy)]/75">
-              {SPONSORSHIP_WHY_IT_MATTERS}
-            </p>
-            {SPONSORSHIP_OPTIONS.map((opt) => (
-              <label
-                key={opt.value}
-                className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
-              >
-                <input
-                  type="radio"
-                  name="sponsorship-available"
-                  value={opt.value}
-                  checked={state.sponsorshipAvailable === opt.value}
-                  onChange={() =>
-                    setState((s) => ({
-                      ...s,
-                      sponsorshipAvailable: opt.value,
-                      // Work authorisation is the same answer in other words,
-                      // so it is derived rather than asked twice.
-                      workAuthorization:
-                        opt.value === "yes" ? "will_sponsor" : "already_authorized",
-                    }))
-                  }
-                  className="mt-1"
-                />
-                <span className="text-sm leading-relaxed">
-                  <span className="font-medium">{opt.label}</span>
-                  <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
-                </span>
-              </label>
-            ))}
-            {errors.sponsorshipAvailable && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.sponsorshipAvailable}
-              </p>
-            )}
-          </fieldset>
-
-          <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
-            <p className="text-sm font-semibold">Compensation range</p>
-            <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
-            <div className="grid gap-3 sm:grid-cols-4">
-              <Field label={intakeFieldLabel("currency")} carried={isCarried("currency")} htmlFor="currency">
-                <select
-                  id="currency"
-                  value={state.currency}
-                  onChange={(e) => set("currency", e.target.value)}
-                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-                >
-                  {COMP_CURRENCIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label={intakeFieldLabel("salaryMin")} error={errors.salaryMin} required={req["salaryMin"]}>
                 <Input
-                  value={state.salaryMin}
-                  disabled={state.compensationUndecided}
-                  onChange={(e) => onSalaryChange("salaryMin", e.target.value)}
-                  inputMode="numeric"
-                  placeholder="70000"
+                  value={state.location}
+                  onChange={(e) => set("location", e.target.value)}
+                  placeholder="Manchester, United Kingdom"
                 />
               </Field>
-              <Field label={intakeFieldLabel("salaryMax")} error={errors.salaryMax} required={req["salaryMax"]}>
-                <Input
-                  value={state.salaryMax}
-                  disabled={state.compensationUndecided}
-                  onChange={(e) => onSalaryChange("salaryMax", e.target.value)}
-                  inputMode="numeric"
-                  placeholder="85000"
-                />
-              </Field>
-              <Field label={intakeFieldLabel("compensationPeriod")} carried={isCarried("compensationPeriod")} htmlFor="comp-period">
+              <Field label={intakeFieldLabel("workModel")} carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
                 <select
-                  id="comp-period"
-                  value={state.compensationPeriod}
-                  onChange={(e) => set("compensationPeriod", e.target.value)}
+                  id="work-model"
+                  value={state.workModel}
+                  onChange={(e) => onWorkModelChange(e.target.value as FormState["workModel"])}
                   className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                  aria-invalid={Boolean(errors.workModel)}
                 >
-                  {COMP_PERIODS.map((p) => (
-                    <option key={p} value={p}>
-                      {COMP_PERIOD_LABELS[p]}
+                  <option value="">Choose one</option>
+                  {WORK_MODELS.map((m) => (
+                    <option key={m} value={m}>
+                      {WORK_MODEL_LABELS[m]}
                     </option>
                   ))}
                 </select>
               </Field>
             </div>
 
-            {/* Wide-range confirmation: it goes through, but on purpose. */}
-            {wideRange && (
-              <div
-                className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3"
-                data-field="wideRangeConfirmed"
+            {/* Hybrid is the only model that needs a day count. */}
+            {state.workModel === "hybrid" && (
+              <Field
+                label="Days on site each week" carried={isCarried("onsiteDays")}
+                error={errors.onsiteDays}
+                required={req["onsiteDays"]}
+                hint="Between 1 and 5. Candidates ask this first, and a wrong guess costs you offers."
               >
+                <Input
+                  value={state.onsiteDays}
+                  onChange={(e) => set("onsiteDays", e.target.value.replace(/[^\d]/g, ""))}
+                  inputMode="numeric"
+                  placeholder="3"
+                />
+              </Field>
+            )}
+
+            {/* Remote roles need a boundary: timezone bands, or the whole country. */}
+            {state.workModel === "remote" && (
+              <fieldset className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
+                <legend className="text-sm font-medium">
+                  Acceptable timezones
+                  {req["remoteTimezones"] ? (
+                    <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
+                      *
+                    </span>
+                  ) : (
+                    <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+                      Optional
+                    </span>
+                  )}
+                </legend>
+                <p className="text-sm text-[color:var(--brand-navy)]/75">
+                  Pick the working-hours bands you can live with, or say anywhere in the country.
+                </p>
                 <label className="flex cursor-pointer items-start gap-3 text-sm">
                   <input
                     type="checkbox"
-                    checked={state.wideRangeConfirmed}
-                    onChange={(e) => set("wideRangeConfirmed", e.target.checked)}
+                    className="mt-1"
+                    checked={state.remoteAnywhereInCountry}
+                    onChange={(e) => {
+                      const on = e.target.checked;
+                      setState((s) => ({
+                        ...s,
+                        remoteAnywhereInCountry: on,
+                        remoteTimezones: on ? [] : s.remoteTimezones,
+                      }));
+                      setErrors((prev) => {
+                        const next = { ...prev };
+                        delete next.remoteTimezones;
+                        return next;
+                      });
+                    }}
+                  />
+                  <span>Anywhere in the country — timezone does not matter</span>
+                </label>
+                {!state.remoteAnywhereInCountry && (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {TIMEZONE_BANDS.map((tz) => (
+                      <label key={tz.value} className="flex cursor-pointer items-start gap-3 text-sm">
+                        <input
+                          type="checkbox"
+                          className="mt-1"
+                          checked={state.remoteTimezones.includes(tz.value)}
+                          onChange={() => toggleTimezone(tz.value)}
+                        />
+                        <span>{tz.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+                {errors.remoteTimezones && (
+                  <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                    {errors.remoteTimezones}
+                  </p>
+                )}
+              </fieldset>
+            )}
+          </SectionGroup>
+
+          <SectionGroup title="Visa sponsorship">
+            <fieldset
+              className={`space-y-2 rounded-lg border p-4 ${
+                errors.sponsorshipAvailable
+                  ? "border-[color:var(--brand-danger)] bg-[color:var(--brand-danger)]/5"
+                  : "border-[color:var(--brand-navy)]/12 bg-white"
+              }`}
+            >
+              <legend className="text-sm font-medium">
+                Can you sponsor a visa?
+                <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
+                  *
+                </span>
+              </legend>
+              <p className="text-sm text-[color:var(--brand-navy)]/75">
+                {SPONSORSHIP_WHY_IT_MATTERS}
+              </p>
+              {SPONSORSHIP_OPTIONS.map((opt) => (
+                <label
+                  key={opt.value}
+                  className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
+                >
+                  <input
+                    type="radio"
+                    name="sponsorship-available"
+                    value={opt.value}
+                    checked={state.sponsorshipAvailable === opt.value}
+                    onChange={() =>
+                      setState((s) => ({
+                        ...s,
+                        sponsorshipAvailable: opt.value,
+                        // Work authorisation is the same answer in other words,
+                        // so it is derived rather than asked twice.
+                        workAuthorization:
+                          opt.value === "yes" ? "will_sponsor" : "already_authorized",
+                      }))
+                    }
+                    className="mt-1"
+                  />
+                  <span className="text-sm leading-relaxed">
+                    <span className="font-medium">{opt.label}</span>
+                    <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
+                  </span>
+                </label>
+              ))}
+              {errors.sponsorshipAvailable && (
+                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                  {errors.sponsorshipAvailable}
+                </p>
+              )}
+            </fieldset>
+          </SectionGroup>
+
+          <SectionGroup title="Compensation">
+            <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
+              <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
+              <div className="grid gap-3 sm:grid-cols-4">
+                <Field label={intakeFieldLabel("currency")} carried={isCarried("currency")} htmlFor="currency">
+                  <select
+                    id="currency"
+                    value={state.currency}
+                    onChange={(e) => set("currency", e.target.value)}
+                    className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                  >
+                    {COMP_CURRENCIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label={intakeFieldLabel("salaryMin")} error={errors.salaryMin} required={req["salaryMin"]}>
+                  <Input
+                    value={state.salaryMin}
+                    disabled={state.compensationUndecided}
+                    onChange={(e) => onSalaryChange("salaryMin", e.target.value)}
+                    inputMode="numeric"
+                    placeholder="70000"
+                  />
+                </Field>
+                <Field label={intakeFieldLabel("salaryMax")} error={errors.salaryMax} required={req["salaryMax"]}>
+                  <Input
+                    value={state.salaryMax}
+                    disabled={state.compensationUndecided}
+                    onChange={(e) => onSalaryChange("salaryMax", e.target.value)}
+                    inputMode="numeric"
+                    placeholder="85000"
+                  />
+                </Field>
+                <Field label={intakeFieldLabel("compensationPeriod")} carried={isCarried("compensationPeriod")} htmlFor="comp-period">
+                  <select
+                    id="comp-period"
+                    value={state.compensationPeriod}
+                    onChange={(e) => set("compensationPeriod", e.target.value)}
+                    className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                  >
+                    {COMP_PERIODS.map((p) => (
+                      <option key={p} value={p}>
+                        {COMP_PERIOD_LABELS[p]}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+
+              {/* Wide-range confirmation: it goes through, but on purpose. */}
+              {wideRange && (
+                <div
+                  className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3"
+                  data-field="wideRangeConfirmed"
+                >
+                  <label className="flex cursor-pointer items-start gap-3 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={state.wideRangeConfirmed}
+                      onChange={(e) => set("wideRangeConfirmed", e.target.checked)}
+                      className="mt-0.5 h-4 w-4"
+                    />
+                    <span>{COMPENSATION_WIDE_RANGE_WARNING}</span>
+                  </label>
+                  {errors.wideRangeConfirmed && !state.wideRangeConfirmed && (
+                    <p className="text-sm text-red-600" data-field-error="true">
+                      {errors.wideRangeConfirmed}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* "Not decided yet" is recorded as undecided, never as zero. */}
+              <div className="space-y-1" data-field="compensationUndecided">
+                <label className="flex cursor-pointer items-start gap-3 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={state.compensationUndecided}
+                    onChange={(e) => {
+                      const on = e.target.checked;
+                      setState((prev) => ({
+                        ...prev,
+                        compensationUndecided: on,
+                        salaryMin: on ? "" : prev.salaryMin,
+                        salaryMax: on ? "" : prev.salaryMax,
+                        wideRangeConfirmed: on ? false : prev.wideRangeConfirmed,
+                      }));
+                      setErrors((prev) => {
+                        const nextErrors = { ...prev };
+                        delete nextErrors.salaryMin;
+                        delete nextErrors.salaryMax;
+                        delete nextErrors.compensationUndecided;
+                        delete nextErrors.wideRangeConfirmed;
+                        return nextErrors;
+                      });
+                    }}
                     className="mt-0.5 h-4 w-4"
                   />
-                  <span>{COMPENSATION_WIDE_RANGE_WARNING}</span>
+                  <span>
+                    Not decided yet
+                    <span className="block text-[color:var(--brand-navy)]/65">
+                      We will record this as undecided and mark the brief incomplete for compensation.
+                    </span>
+                  </span>
                 </label>
-                {errors.wideRangeConfirmed && !state.wideRangeConfirmed && (
+                {errors.compensationUndecided && (
                   <p className="text-sm text-red-600" data-field-error="true">
-                    {errors.wideRangeConfirmed}
+                    {errors.compensationUndecided}
                   </p>
                 )}
               </div>
-            )}
 
-            {/* "Not decided yet" is recorded as undecided, never as zero. */}
-            <div className="space-y-1" data-field="compensationUndecided">
+              <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
+                <select
+                  id="comp-equity"
+                  value={state.equity}
+                  onChange={(e) => set("equity", e.target.value)}
+                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                >
+                  <option value="">Not stated</option>
+                  {COMP_EQUITY.map((k) => (
+                    <option key={k} value={k}>
+                      {COMP_EQUITY_LABELS[k]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
               <label className="flex cursor-pointer items-start gap-3 text-sm">
                 <input
                   type="checkbox"
-                  checked={state.compensationUndecided}
-                  onChange={(e) => {
-                    const on = e.target.checked;
-                    setState((prev) => ({
-                      ...prev,
-                      compensationUndecided: on,
-                      salaryMin: on ? "" : prev.salaryMin,
-                      salaryMax: on ? "" : prev.salaryMax,
-                      wideRangeConfirmed: on ? false : prev.wideRangeConfirmed,
-                    }));
-                    setErrors((prev) => {
-                      const nextErrors = { ...prev };
-                      delete nextErrors.salaryMin;
-                      delete nextErrors.salaryMax;
-                      delete nextErrors.compensationUndecided;
-                      delete nextErrors.wideRangeConfirmed;
-                      return nextErrors;
-                    });
-                  }}
+                  checked={state.compensationFlexible}
+                  onChange={(e) => set("compensationFlexible", e.target.checked)}
                   className="mt-0.5 h-4 w-4"
                 />
-                <span>
-                  Not decided yet
-                  <span className="block text-[color:var(--brand-navy)]/65">
-                    We will record this as undecided and mark the brief incomplete for compensation.
-                  </span>
-                </span>
+                <span>Flexible for the right person</span>
               </label>
-              {errors.compensationUndecided && (
-                <p className="text-sm text-red-600" data-field-error="true">
-                  {errors.compensationUndecided}
-                </p>
-              )}
-            </div>
 
-            <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
-              <select
-                id="comp-equity"
-                value={state.equity}
-                onChange={(e) => set("equity", e.target.value)}
-                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+              <Field
+                label="Anything else about the package"
+                error={errors.compensationNote}
+                required={req["compensationNote"]}
+                hint="Bonus, relocation, shift premium, or where exactly you have room."
               >
-                <option value="">Not stated</option>
-                {COMP_EQUITY.map((k) => (
-                  <option key={k} value={k}>
-                    {COMP_EQUITY_LABELS[k]}
-                  </option>
-                ))}
-              </select>
-            </Field>
+                <Input
+                  value={state.compensationNote}
+                  onChange={(e) => set("compensationNote", e.target.value)}
+                  placeholder="10% annual bonus; can stretch to 90k for someone exceptional"
+                />
+              </Field>
+            </div>
+          </SectionGroup>
 
-            <label className="flex cursor-pointer items-start gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={state.compensationFlexible}
-                onChange={(e) => set("compensationFlexible", e.target.checked)}
-                className="mt-0.5 h-4 w-4"
-              />
-              <span>Flexible for the right person</span>
-            </label>
-
+          <SectionGroup title="Start date">
             <Field
-              label="Anything else about the package"
-              error={errors.compensationNote}
-              required={req["compensationNote"]}
-              hint="Bonus, relocation, shift premium, or where exactly you have room."
+              label={intakeFieldLabel("startDate")}
+              error={errors.targetStartDate}
+              required={req["targetStartDate"]}
+              hint="We will tell you honestly if it is achievable."
             >
               <Input
-                value={state.compensationNote}
-                onChange={(e) => set("compensationNote", e.target.value)}
-                placeholder="10% annual bonus; can stretch to 90k for someone exceptional"
+                type="date"
+                value={state.targetStartDate}
+                onChange={(e) => set("targetStartDate", e.target.value)}
               />
             </Field>
-
-          </div>
-
-
-
-
-          <Field
-            label={intakeFieldLabel("startDate")}
-            error={errors.targetStartDate}
-            required={req["targetStartDate"]}
-            hint="We will tell you honestly if it is achievable."
-          >
-            <Input
-              type="date"
-              value={state.targetStartDate}
-              onChange={(e) => set("targetStartDate", e.target.value)}
-            />
-          </Field>
+          </SectionGroup>
         </Section>
         )}
 
@@ -2732,302 +2737,301 @@ function ExpressIntakePage() {
             out halfway.
           </p>
 
-          <fieldset className="space-y-3" data-field="dealBreakerList">
-            <legend className="text-sm font-medium">
-              What would rule someone out?
-              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-navy)]/50 text-xs">
-                Optional
-              </span>
-            </legend>
-            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-              {DEAL_BREAKER_WHY_IT_MATTERS}
-            </p>
-            <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
-              {DEAL_BREAKER_POLICY_LINE}
-            </p>
-
-            <div className="space-y-2">
-              {state.dealBreakerList.map((line, index) => {
-                const rowError = dealBreakerIssues.rowErrors[index];
-                return (
-                  <div key={index}>
-                    <div className="flex items-start gap-2">
-                      <Input
-                        value={line}
-                        maxLength={MAX_DEAL_BREAKER_CHARS}
-                        onChange={(e) => setDealBreaker(index, e.target.value)}
-                        placeholder={
-                          index === 0
-                            ? "No agency-side-only backgrounds"
-                            : index === 1
-                              ? "Cannot start within six weeks"
-                              : "No hands-on ownership of the core system"
-                        }
-                        aria-label={`Deal-breaker ${index + 1}`}
-                        aria-invalid={Boolean(rowError)}
-                      />
-                      {state.dealBreakerList.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeDealBreaker(index)}
-                          className="mt-2 text-xs underline text-[color:var(--brand-navy)]/70"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                    {rowError && (
-                      <p
-                        data-field-error="true"
-                        className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                      >
-                        {rowError}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {dealBreakerIssues.listError && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {dealBreakerIssues.listError}
+          <SectionGroup title="What rules someone out?">
+            <fieldset className="space-y-3" data-field="dealBreakerList">
+              <legend className="sr-only">What would rule someone out?</legend>
+              <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                {DEAL_BREAKER_WHY_IT_MATTERS}
               </p>
-            )}
-
-            {normalizeDealBreakers(state.dealBreakerList).length === 0 && (
               <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
-                {DEAL_BREAKER_EMPTY_HINT}
+                {DEAL_BREAKER_POLICY_LINE}
               </p>
-            )}
 
-            {state.dealBreakerList.length < MAX_DEAL_BREAKERS ? (
-              <Button type="button" variant="outline" size="sm" onClick={addDealBreaker}>
-                Add another
-              </Button>
-            ) : (
-              <p className="text-xs text-[color:var(--brand-navy)]/60">
-                Five is the most we record — beyond that it stops being a filter.
-              </p>
-            )}
-
-          </fieldset>
-
-          <fieldset className="space-y-3" data-field="interviewStages">
-            <legend className="text-sm font-medium">
-              Your interview process
-              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-navy)]/50 text-xs">
-                Optional
-              </span>
-            </legend>
-            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-              {INTERVIEW_PROCESS_WHY_IT_MATTERS}
-            </p>
-            {isCarried("interviewStages") && (
-              <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
-            )}
-
-            {state.interviewStages.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4">
-                <p className="text-sm font-medium">Most clients run three stages</p>
-                <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                  {DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((s) => s.name).join(" → ")}. Use it as a
-                  starting point, or build your own — nothing is saved until you choose.
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Button type="button" variant="outline" size="sm" onClick={useStageTemplate}>
-                    Use this as a starting point
-                  </Button>
-                  <Button type="button" variant="ghost" size="sm" onClick={addStage}>
-                    Build my own
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {state.interviewStages.map((stage, index) => {
-                  const issues = stageErrors[index] ?? {};
+              <div className="space-y-2">
+                {state.dealBreakerList.map((line, index) => {
+                  const rowError = dealBreakerIssues.rowErrors[index];
                   return (
-                    <div
-                      key={index}
-                      className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-                          Stage {index + 1}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => removeStage(index)}
-                          className="text-xs underline text-[color:var(--brand-navy)]/70"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                        <div>
-                          <Label className="text-xs">What is this stage?</Label>
-                          <Input
-                            value={stage.name}
-                            maxLength={MAX_STAGE_NAME_CHARS}
-                            onChange={(e) => updateStage(index, { name: e.target.value })}
-                            placeholder="Hiring manager interview"
-                            aria-invalid={Boolean(issues.name)}
-                          />
-                          {issues.name && (
-                            <p
-                              data-field-error="true"
-                              className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                            >
-                              {issues.name}
-                            </p>
-                          )}
-                        </div>
-                        <div>
-                          <Label className="text-xs">Format</Label>
-                          <select
-                            value={stage.format}
-                            onChange={(e) =>
-                              updateStage(index, {
-                                format: e.target.value as InterviewStage["format"],
-                              })
-                            }
-                            className="h-10 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                    <div key={index}>
+                      <div className="flex items-start gap-2">
+                        <Input
+                          value={line}
+                          maxLength={MAX_DEAL_BREAKER_CHARS}
+                          onChange={(e) => setDealBreaker(index, e.target.value)}
+                          placeholder={
+                            index === 0
+                              ? "No agency-side-only backgrounds"
+                              : index === 1
+                                ? "Cannot start within six weeks"
+                                : "No hands-on ownership of the core system"
+                          }
+                          aria-label={`Deal-breaker ${index + 1}`}
+                          aria-invalid={Boolean(rowError)}
+                        />
+                        {state.dealBreakerList.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeDealBreaker(index)}
+                            className="mt-2 text-xs underline text-[color:var(--brand-navy)]/70"
                           >
-                            {INTERVIEW_STAGE_FORMATS.map((f) => (
-                              <option key={f} value={f}>
-                                {INTERVIEW_STAGE_FORMAT_LABELS[f]}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <Label className="text-xs">Who runs it?</Label>
-                          <Input
-                            value={stage.ownerName ?? ""}
-                            onChange={(e) => updateStage(index, { ownerName: e.target.value })}
-                            placeholder="Dana Okoro"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Their email</Label>
-                          <Input
-                            type="email"
-                            value={stage.ownerEmail ?? ""}
-                            onChange={(e) => updateStage(index, { ownerEmail: e.target.value })}
-                            placeholder="dana@company.com"
-                            aria-invalid={Boolean(issues.ownerEmail)}
-                          />
-                          {issues.ownerEmail && (
-                            <p
-                              data-field-error="true"
-                              className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                            >
-                              {issues.ownerEmail}
-                            </p>
-                          )}
-                        </div>
+                            Remove
+                          </button>
+                        )}
                       </div>
+                      {rowError && (
+                        <p
+                          data-field-error="true"
+                          className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                        >
+                          {rowError}
+                        </p>
+                      )}
                     </div>
                   );
                 })}
-                {state.interviewStages.length < MAX_INTERVIEW_STAGES ? (
-                  <Button type="button" variant="outline" size="sm" onClick={addStage}>
-                    Add a stage
-                  </Button>
-                ) : (
-                  <p className="text-xs text-[color:var(--brand-navy)]/60">
-                    Five stages is the most we record — beyond that candidates drop out.
+              </div>
+
+              {dealBreakerIssues.listError && (
+                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                  {dealBreakerIssues.listError}
+                </p>
+              )}
+
+              {normalizeDealBreakers(state.dealBreakerList).length === 0 && (
+                <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
+                  {DEAL_BREAKER_EMPTY_HINT}
+                </p>
+              )}
+
+              {state.dealBreakerList.length < MAX_DEAL_BREAKERS ? (
+                <Button type="button" variant="outline" size="sm" onClick={addDealBreaker}>
+                  Add another
+                </Button>
+              ) : (
+                <p className="text-xs text-[color:var(--brand-navy)]/60">
+                  Five is the most we record — beyond that it stops being a filter.
+                </p>
+              )}
+            </fieldset>
+          </SectionGroup>
+
+          <SectionGroup title="Your interview process">
+            <fieldset className="space-y-3" data-field="interviewStages">
+              <legend className="sr-only">Your interview process</legend>
+              <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                {INTERVIEW_PROCESS_WHY_IT_MATTERS}
+              </p>
+              {isCarried("interviewStages") && (
+                <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
+              )}
+
+              {state.interviewStages.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4">
+                  <p className="text-sm font-medium">Most clients run three stages</p>
+                  <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                    {DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((s) => s.name).join(" → ")}. Use it as a
+                    starting point, or build your own — nothing is saved until you choose.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={useStageTemplate}>
+                      Use this as a starting point
+                    </Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={addStage}>
+                      Build my own
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">Stages</h4>
+                  {state.interviewStages.map((stage, index) => {
+                    const issues = stageErrors[index] ?? {};
+                    return (
+                      <div
+                        key={index}
+                        className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4"
+                      >
+                        <div className="flex items-center justify-between gap-2 border-b border-[color:var(--brand-navy)]/10 pb-2">
+                          <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--brand-navy)]/70">
+                            Stage {index + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeStage(index)}
+                            className="text-xs underline text-[color:var(--brand-navy)]/70"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                          <div>
+                            <Label className="text-xs">What is this stage?</Label>
+                            <Input
+                              value={stage.name}
+                              maxLength={MAX_STAGE_NAME_CHARS}
+                              onChange={(e) => updateStage(index, { name: e.target.value })}
+                              placeholder="Hiring manager interview"
+                              aria-invalid={Boolean(issues.name)}
+                            />
+                            {issues.name && (
+                              <p
+                                data-field-error="true"
+                                className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                              >
+                                {issues.name}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <Label className="text-xs">Format</Label>
+                            <select
+                              value={stage.format}
+                              onChange={(e) =>
+                                updateStage(index, {
+                                  format: e.target.value as InterviewStage["format"],
+                                })
+                              }
+                              className="h-10 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                            >
+                              {INTERVIEW_STAGE_FORMATS.map((f) => (
+                                <option key={f} value={f}>
+                                  {INTERVIEW_STAGE_FORMAT_LABELS[f]}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-xs">Who runs it?</Label>
+                            <Input
+                              value={stage.ownerName ?? ""}
+                              onChange={(e) => updateStage(index, { ownerName: e.target.value })}
+                              placeholder="Dana Okoro"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Their email</Label>
+                            <Input
+                              type="email"
+                              value={stage.ownerEmail ?? ""}
+                              onChange={(e) => updateStage(index, { ownerEmail: e.target.value })}
+                              placeholder="dana@company.com"
+                              aria-invalid={Boolean(issues.ownerEmail)}
+                            />
+                            {issues.ownerEmail && (
+                              <p
+                                data-field-error="true"
+                                className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                              >
+                                {issues.ownerEmail}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {state.interviewStages.length < MAX_INTERVIEW_STAGES ? (
+                    <Button type="button" variant="outline" size="sm" onClick={addStage}>
+                      Add a stage
+                    </Button>
+                  ) : (
+                    <p className="text-xs text-[color:var(--brand-navy)]/60">
+                      Five stages is the most we record — beyond that candidates drop out.
+                    </p>
+                  )}
+                </div>
+              )}
+              {errors.interviewStages && (
+                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                  {errors.interviewStages}
+                </p>
+              )}
+            </fieldset>
+          </SectionGroup>
+
+          <SectionGroup title="Timeline">
+            <Field
+              label={intakeFieldLabel("targetDaysToOffer")} carried={isCarried("targetDaysToOffer")}
+              error={errors.targetDaysToOffer}
+              required={req["targetDaysToOffer"]}
+              hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}
+            >
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={state.targetDaysToOffer}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/[^0-9]/g, "").slice(0, 3);
+                  set("targetDaysToOffer", digits);
+                  setErrors((prev) => ({ ...prev, targetDaysToOffer: "" }));
+                }}
+                placeholder="21"
+                className="max-w-[8rem]"
+              />
+            </Field>
+          </SectionGroup>
+
+          <SectionGroup title="Decision maker">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field
+                label="Who makes the final decision?" carried={isCarried("decisionMaker")}
+                error={errors.decisionMaker}
+                required={req["decisionMaker"]}
+                hint="Name and role. We keep the process moving through them."
+              >
+                <Input
+                  value={state.decisionMaker}
+                  onChange={(e) => set("decisionMaker", e.target.value)}
+                  placeholder="Dana Okoro, Operations Director"
+                />
+              </Field>
+              <Field
+                label="Their email" carried={isCarried("decisionMakerEmail")}
+                error={errors.decisionMakerEmail}
+                required={req["decisionMakerEmail"]}
+                hint="Only used if you invite them below."
+              >
+                <Input
+                  type="email"
+                  value={state.decisionMakerEmail}
+                  onChange={(e) => {
+                    set("decisionMakerEmail", e.target.value);
+                    setErrors((prev) => ({ ...prev, decisionMakerEmail: "" }));
+                  }}
+                  placeholder="dana@company.com"
+                />
+              </Field>
+            </div>
+          </SectionGroup>
+
+          {collaborators.length > 0 && (
+            <SectionGroup title="People you named">
+              <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4">
+                <ul className="space-y-0.5 text-sm text-[color:var(--brand-navy)]/75">
+                  {collaborators.map((c) => (
+                    <li key={c.email}>{c.name ? `${c.name} — ${c.email}` : c.email}</li>
+                  ))}
+                </ul>
+                <div className="mt-3 flex items-start gap-3">
+                  <Checkbox
+                    id="invite-collaborators"
+                    checked={state.inviteCollaborators}
+                    onCheckedChange={(v) => set("inviteCollaborators", v === true)}
+                    className="mt-0.5"
+                  />
+                  <span className="order-last text-xs text-[color:var(--brand-navy)]/60">
+                    Optional
+                  </span>
+                  <label htmlFor="invite-collaborators" className="text-sm leading-relaxed">
+                    {COLLABORATOR_OPT_IN_LABEL}
+                  </label>
+                </div>
+                {!state.inviteCollaborators && (
+                  <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
+                    We will not email anyone on this list.
                   </p>
                 )}
               </div>
-            )}
-            {errors.interviewStages && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.interviewStages}
-              </p>
-            )}
-          </fieldset>
-
-          <Field
-            label={intakeFieldLabel("targetDaysToOffer")} carried={isCarried("targetDaysToOffer")}
-            error={errors.targetDaysToOffer}
-            required={req["targetDaysToOffer"]}
-            hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}
-          >
-            <Input
-              type="text"
-              inputMode="numeric"
-              value={state.targetDaysToOffer}
-              onChange={(e) => {
-                const digits = e.target.value.replace(/[^0-9]/g, "").slice(0, 3);
-                set("targetDaysToOffer", digits);
-                setErrors((prev) => ({ ...prev, targetDaysToOffer: "" }));
-              }}
-              placeholder="21"
-              className="max-w-[8rem]"
-            />
-          </Field>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field
-              label="Who makes the final decision?" carried={isCarried("decisionMaker")}
-              error={errors.decisionMaker}
-              required={req["decisionMaker"]}
-              hint="Name and role. We keep the process moving through them."
-            >
-              <Input
-                value={state.decisionMaker}
-                onChange={(e) => set("decisionMaker", e.target.value)}
-                placeholder="Dana Okoro, Operations Director"
-              />
-            </Field>
-            <Field
-              label="Their email" carried={isCarried("decisionMakerEmail")}
-              error={errors.decisionMakerEmail}
-              required={req["decisionMakerEmail"]}
-              hint="Only used if you invite them below."
-            >
-              <Input
-                type="email"
-                value={state.decisionMakerEmail}
-                onChange={(e) => {
-                  set("decisionMakerEmail", e.target.value);
-                  setErrors((prev) => ({ ...prev, decisionMakerEmail: "" }));
-                }}
-                placeholder="dana@company.com"
-              />
-            </Field>
-          </div>
-
-          {collaborators.length > 0 && (
-            <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4">
-              <p className="text-sm font-semibold">People you named</p>
-              <ul className="mt-1 space-y-0.5 text-sm text-[color:var(--brand-navy)]/75">
-                {collaborators.map((c) => (
-                  <li key={c.email}>{c.name ? `${c.name} — ${c.email}` : c.email}</li>
-                ))}
-              </ul>
-              <div className="mt-3 flex items-start gap-3">
-                <Checkbox
-                  id="invite-collaborators"
-                  checked={state.inviteCollaborators}
-                  onCheckedChange={(v) => set("inviteCollaborators", v === true)}
-                  className="mt-0.5"
-                />
-                <span className="order-last text-xs text-[color:var(--brand-navy)]/60">
-                  Optional
-                </span>
-                <label htmlFor="invite-collaborators" className="text-sm leading-relaxed">
-                  {COLLABORATOR_OPT_IN_LABEL}
-                </label>
-              </div>
-              {!state.inviteCollaborators && (
-                <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
-                  We will not email anyone on this list.
-                </p>
-              )}
-            </div>
+            </SectionGroup>
           )}
 
         </Section>
@@ -3502,15 +3506,30 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="space-y-4 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-5 sm:p-6">
-      <div className="flex items-center gap-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-xs font-semibold text-white">
+    <section id={id} className="space-y-6 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-6 sm:p-8">
+      <div className="flex items-center gap-3 border-b border-[color:var(--brand-navy)]/10 pb-4">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-sm font-bold text-white">
           {step}
         </span>
-        <h2 className="text-base font-semibold">{title}</h2>
+        <h2 className="text-lg font-bold text-[color:var(--brand-navy)]">{title}</h2>
       </div>
       {children}
     </section>
+  );
+}
+
+function SectionGroup({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-4">
+      <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">{title}</h3>
+      {children}
+    </div>
   );
 }
 
