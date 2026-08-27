@@ -357,8 +357,38 @@ export const listSilverMedalists = createServerFn({ method: "GET" })
     if (data.reason) q = q.eq("reason_category", data.reason);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    const decorated = await decorateMemories(context.supabase, (rows as AnyRow[]) ?? []);
+    const raw = (rows as AnyRow[]) ?? [];
+
+    // A candidate still in play for a role is not passed over for that role.
+    // Drop those memories so the pool never contradicts Candidates/Interviews.
+    const activePairs = new Set<string>();
+    const profileIds = Array.from(new Set(raw.map((r) => r.candidate_profile_id).filter(Boolean)));
+    if (profileIds.length > 0) {
+      const { data: liveMatches } = await context.supabase
+        .from("candidate_matches")
+        .select("candidate_profile_id, position_id, stage")
+        .eq("organization_id", data.orgId)
+        .in("candidate_profile_id", profileIds)
+        .in("stage", ACTIVE_MATCH_STAGES as unknown as string[]);
+      for (const m of ((liveMatches as AnyRow[]) ?? [])) {
+        if (isActiveMatchStage(m.stage)) {
+          activePairs.add(pairKey(String(m.candidate_profile_id), m.position_id ?? null));
+        }
+      }
+    }
+
+    const decorated = await decorateMemories(
+      context.supabase,
+      excludeStillInPlay(
+        raw as unknown as Array<{
+          candidate_profile_id: string;
+          source_position_id: string | null;
+        }>,
+        activePairs,
+      ) as unknown as AnyRow[],
+    );
     const term = data.q?.trim().toLowerCase();
+
     const filtered = term
       ? decorated.filter((m) => {
           const hay = [
