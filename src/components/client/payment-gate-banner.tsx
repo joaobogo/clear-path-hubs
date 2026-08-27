@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Clock3, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
+import { formatDateTime } from "@/lib/format/datetime";
 
 
 type Props = {

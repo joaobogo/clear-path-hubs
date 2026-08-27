@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { getCandidateHistory } from "@/lib/candidate-history.functions";
 import { PanelState } from "@/components/admin/panel-state";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatDateTime } from "@/lib/format/datetime";
 import {
   HISTORY_PAGE_SIZE,
   SOURCE_LABEL,

@@ -17,7 +17,7 @@ import {
   MailOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatDateTime } from "@/lib/format/datetime";
 
 const ICON: Record<JourneyEventKind, React.ComponentType<{ className?: string }>> = {
   sourced: Send,
