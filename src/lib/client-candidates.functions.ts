@@ -8,7 +8,7 @@ import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
-import { classifyBand } from "@/lib/scoring/bands";
+import { isStrongFitScore } from "@/lib/scoring/score-counts";
 
 import {
   DEAL_BREAKER_REASON_CODES,
@@ -188,7 +188,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         // run's score, with the stored label only as a fallback.
         if (data.filter === "top")
           return d.score != null
-            ? (TOP_FIT_LABELS as readonly string[]).includes(classifyBand(d.score))
+            ? isStrongFitScore(d.score)
             : d.fit_label != null && (TOP_FIT_LABELS as readonly string[]).includes(d.fit_label);
         return true;
       });

@@ -20,6 +20,7 @@ import { clientStatusLabel } from "@/lib/vocabulary";
  */
 
 import { median, pct } from "./hiring-intelligence";
+import { publishedScore, type PublishedScoreRun } from "@/lib/scoring/published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
@@ -116,11 +117,9 @@ function ms(v: unknown): number | null {
   return Number.isNaN(t) ? null : t;
 }
 
+/** The published score, from the one reader. */
 function scoreOf(run: Row): number | null {
-  const v = run.final_score ?? run.score;
-  if (v == null) return null;
-  const n = Number(v);
-  return Number.isNaN(n) ? null : n;
+  return publishedScore(run as PublishedScoreRun);
 }
 
 function quantile(sorted: number[], q: number): number | null {

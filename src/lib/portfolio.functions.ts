@@ -8,9 +8,8 @@
  *   • getPortfolioUnits  — flat list of child orgs for filters/drill-through.
  *
  * All reads use `requireSupabaseAuth`. RLS on `organizations`, `positions`,
- * and `candidate_matches` (inherited by `v_portfolio_rollup`) enforces
- * tenant isolation — the view is `security_invoker`, so a member of the
- * parent org sees the parent's own rows but not sibling parents.
+ * and `candidate_matches` enforces tenant isolation, and every count comes
+ * from the canonical readers in `@/lib/kpis` rather than a stored aggregate.
  *
  * A child org is currently NOT auto-visible to parent-org members unless
  * they also hold a membership on that child. Follow-up work: add a helper
@@ -27,17 +26,8 @@ const inputSchema = z.object({
   orgId: z.string().uuid(),
 });
 
-export type PortfolioRollupRow = {
-  portfolio_org_id: string;
-  organization_id: string;
-  organization_name: string;
-  business_unit: string;
-  region: string;
-  open_positions: number;
-  filled_positions: number;
-  candidates_in_flight: number;
-  hires: number;
-};
+export type { PortfolioRollupRow } from "@/lib/kpis/portfolio-rollup.server";
+import type { PortfolioRollupRow } from "@/lib/kpis/portfolio-rollup.server";
 
 export type PortfolioSummary = {
   parent: {
@@ -100,14 +90,10 @@ export const getPortfolioRollup = createServerFn({ method: "GET" })
     const rootRow = unitList.find((u) => u.id === rootId);
     const parentName = rootRow?.name ?? org.name;
 
-    // Rollup via the view — RLS on base tables filters unreadable rows.
-    const { data: rows, error: rowsErr } = await context.supabase
-      .from("v_portfolio_rollup")
-      .select("*")
-      .in("organization_id", unitList.map((u) => u.id));
-    if (rowsErr) throw new Error(rowsErr.message);
-
-    const list = (rows ?? []) as PortfolioRollupRow[];
+    // Derived from the canonical readers, never from a stored aggregate, so
+    // these figures match the dashboards row for row.
+    const { loadPortfolioRollup } = await import("@/lib/kpis/portfolio-rollup.server");
+    const list = await loadPortfolioRollup(context.supabase, unitList);
 
     const regions = Array.from(
       new Set(list.map((r) => r.region).filter((r) => r && r !== "Unassigned")),

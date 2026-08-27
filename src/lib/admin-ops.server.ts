@@ -1,6 +1,7 @@
 // Admin operations reads: work queues, payments/pilot panel, review queue.
 // Server-only. Every query reads real records — nothing is simulated.
 import { CONFIRMATION_PENDING_STATUSES } from "@/lib/client/interviews-to-confirm";
+import { dedupeAwaitingByMatch } from "@/lib/kpis/interviews.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -208,15 +209,13 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   // Collapse to one pending interview per candidate — a re-request must not
   // count the same coordination job twice.
   const interviewsAwaitingTime: Any[] = (() => {
-    const byMatch = new Map<string, Any>();
-    for (const iv of (interviews.data ?? []) as Any[]) {
-      const key = String(iv.candidate_match_id ?? iv.id);
-      const prev = byMatch.get(key);
-      if (!prev || String(iv.requested_at ?? "") < String(prev.requested_at ?? "")) {
-        byMatch.set(key, iv);
-      }
-    }
-    return [...byMatch.values()];
+    const rows = (interviews.data ?? []) as Any[];
+    const byId = new Map(rows.map((iv) => [String(iv.id), iv]));
+    // The one-per-candidate rule comes from the canonical reader, so this badge
+    // and the client's "awaiting a time" figure count the same work.
+    return dedupeAwaitingByMatch(rows)
+      .map((entry) => byId.get(String(entry.interview_id)))
+      .filter(Boolean) as Any[];
   })();
 
   const ownerIds = new Set<string>();

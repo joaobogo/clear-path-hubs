@@ -26,18 +26,13 @@ export type PendingConfirmationInterview = {
   proposed_times: string[];
 };
 
-export async function loadInterviewsAwaitingTime(
-  supabase: AnyRow,
-  orgId: string,
-): Promise<PendingConfirmationInterview[]> {
-  const rows = await readOrgRows(
-    supabase,
-    orgId,
-    "interviews",
-    "id, candidate_match_id, position_id, status, requested_at, created_at, proposed_times",
-    (q) => q.in("status", CONFIRMATION_PENDING_STATUSES as unknown as string[]),
-  );
-
+/**
+ * The one-per-candidate rule behind every "awaiting a time" figure: a candidate
+ * with two open requests is one piece of work, and the earliest request wins.
+ * Admin queues that need joined rows for their previews apply this same
+ * function, so their badge can never disagree with the client's count.
+ */
+export function dedupeAwaitingByMatch(rows: readonly AnyRow[]): PendingConfirmationInterview[] {
   const byMatch = new Map<string, PendingConfirmationInterview>();
   for (const row of rows) {
     const matchId = row.candidate_match_id as string | null;
@@ -62,6 +57,20 @@ export async function loadInterviewsAwaitingTime(
     }
   }
   return [...byMatch.values()];
+}
+
+export async function loadInterviewsAwaitingTime(
+  supabase: AnyRow,
+  orgId: string,
+): Promise<PendingConfirmationInterview[]> {
+  const rows = await readOrgRows(
+    supabase,
+    orgId,
+    "interviews",
+    "id, candidate_match_id, position_id, status, requested_at, created_at, proposed_times",
+    (q) => q.in("status", CONFIRMATION_PENDING_STATUSES as unknown as string[]),
+  );
+  return dedupeAwaitingByMatch(rows);
 }
 
 export async function countInterviewsAwaitingTime(

@@ -29,6 +29,7 @@ export {
 } from "@/lib/kpis/open-roles.server";
 export {
   loadInterviewsAwaitingTime,
+  dedupeAwaitingByMatch,
   countInterviewsAwaitingTime,
   loadInterviewsHeld,
   countInterviewsHeld,

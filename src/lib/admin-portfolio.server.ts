@@ -3,7 +3,7 @@
  *
  * Every number here is derived from existing tables — positions,
  * candidate_matches, client_decisions, subscriptions — plus the canonical
- * `v_portfolio_rollup` view for open/filled position counts. No score out of
+ * the canonical open-roles reader for position counts. No score out of
  * 100, no trend, no invented benchmark: each column is a raw count or an age in
  * days that an operator can verify by opening the account.
  *
@@ -163,10 +163,15 @@ export async function loadPortfolioHealth(
       .from("organizations")
       .select("id, name, status, plan_name, is_test_record")
       .in("id", orgIds),
-    supabase
-      .from("v_portfolio_rollup")
-      .select("organization_id, open_positions")
-      .in("organization_id", orgIds),
+    (async () => {
+      // Open roles come from the canonical reader, not a stored aggregate.
+      const { countOpenRolesByOrg } = await import("@/lib/kpis/portfolio-rollup.server");
+      const byOrg = await countOpenRolesByOrg(
+        supabase,
+        orgIds.map((id) => ({ id, name: "" })),
+      );
+      return { data: byOrg, error: null };
+    })(),
     supabase
       .from("candidate_matches")
       .select("id, organization_id, position_id, stage, delivered_at, updated_at")
@@ -187,7 +192,7 @@ export async function loadPortfolioHealth(
 
   for (const [label, res] of [
     ["organizations", orgsRes],
-    ["portfolio rollup", rollupRes],
+    ["open roles", rollupRes],
     ["candidate submissions", matchesRes],
     ["client decisions", decisionsRes],
     ["subscriptions", subsRes],
@@ -203,12 +208,8 @@ export async function loadPortfolioHealth(
   const matches = (matchesRes.data ?? []) as Any[];
   const decisions = (decisionsRes.data ?? []) as Any[];
   const subs = (subsRes.data ?? []) as Any[];
-  const rollup = new Map<string, number>(
-    ((rollupRes.data ?? []) as Any[]).map((r) => [
-      r.organization_id as string,
-      Number(r.open_positions ?? 0),
-    ]),
-  );
+  const rollup: Map<string, number> =
+    (rollupRes.data as Map<string, number> | null) ?? new Map<string, number>();
 
   const positionsWithSubmission = new Set(matches.map((m) => m.position_id as string));
 
