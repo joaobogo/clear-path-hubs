@@ -405,6 +405,85 @@ export const rescore = createServerFn({ method: "POST" })
     return { ok: true, state, trace_id };
   });
 
+/**
+ * Re-score every already-scored candidate against the engine running today.
+ *
+ * Scoring only — no re-parse, no re-enrichment. The evidence is unchanged; it
+ * is the reading of it that moved, so paying the LLM again would be waste.
+ *
+ * Safe to run repeatedly. Runs are immutable and a rescore reuses a completed
+ * run whose input_hash matches, so once a match has been scored on the current
+ * ENGINE_VERSION a second pass is a no-op for it. That also means this does
+ * nothing at all unless ENGINE_VERSION was bumped — which is the point: a
+ * silent no-op is better than silently rewriting scores nobody asked to change.
+ *
+ * Batched and resumable rather than one long transaction: `limit` bounds the
+ * work per call and the summary says how many are left, so a large workspace
+ * is drained by calling it again rather than by holding a request open.
+ */
+export const rescoreAllScored = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        limit: z.number().int().min(1).max(200).optional().default(50),
+        /** Restrict to one workspace. Omit to sweep every organisation. */
+        organization_id: z.string().uuid().optional(),
+      })
+      .parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const supabase = (await getAdmin()) as AnyRow;
+    const trace_id = traceId();
+
+    // Only matches that already carry a score run: nothing here should drag an
+    // unparsed or half-processed candidate into scoring for the first time.
+    let q = supabase
+      .from("candidate_matches")
+      .select("id, current_score_run_id, score_runs!candidate_matches_current_score_run_id_fkey(engine_version)")
+      .eq("processing_state", "scored")
+      .not("current_score_run_id", "is", null)
+      .limit(data.limit);
+    if (data.organization_id) q = q.eq("organization_id", data.organization_id);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+
+    // Skip anything already on today's engine so repeat calls converge.
+    const stale = ((rows ?? []) as AnyRow[]).filter(
+      (m) => String(m.score_runs?.engine_version ?? "") !== ENGINE_VERSION,
+    );
+
+    const rescored: string[] = [];
+    const failed: Array<{ id: string; error: string }> = [];
+    for (const m of stale) {
+      try {
+        await stepScore(String(m.id), trace_id);
+        rescored.push(String(m.id));
+      } catch (e) {
+        // One bad row must not abandon the batch — record it and continue.
+        failed.push({ id: String(m.id), error: e instanceof Error ? e.message : "rescore_failed" });
+      }
+    }
+
+    const { count: remaining } = await supabase
+      .from("candidate_matches")
+      .select("id", { count: "exact", head: true })
+      .eq("processing_state", "scored")
+      .not("current_score_run_id", "is", null);
+
+    return {
+      ok: true as const,
+      engine_version: ENGINE_VERSION,
+      examined: (rows ?? []).length,
+      rescored: rescored.length,
+      skipped_already_current: (rows ?? []).length - stale.length,
+      failed,
+      approximate_total_scored: remaining ?? null,
+      trace_id,
+    };
+  });
+
 // ---------- Phase 6: narrow admin actions ----------
 
 export const retryHydration = createServerFn({ method: "POST" })
