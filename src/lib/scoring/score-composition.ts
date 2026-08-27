@@ -35,6 +35,10 @@ export type ScoreComposition = {
   exactTotalPts: number;
   /** The published score: the exact total rounded once, at the end. */
   totalPts: number;
+  /** Loom introduction bonus (0 or VIDEO_INTRO_BONUS_PTS), shown as its own line. */
+  videoBonusPts: number;
+  /** totalPts + videoBonusPts — the figure every surface must show. */
+  grandTotalPts: number;
   /** The score actually shown to the client, when there is one. */
   displayedScore: number | null;
   /** True when the three contributions reproduce the displayed score. */
@@ -111,6 +115,8 @@ export function buildScoreComposition(input: {
    * quote a share the panels below contradict.
    */
   requirementRows?: Array<{ status: string; importance?: string }> | null;
+  /** Loom introduction bonus earned by this match (0 when there is no video). */
+  videoBonusPts?: number;
 }): ScoreComposition | null {
   const cov = (input.coverage ?? {}) as Record<string, any>;
   const res = (input.result ?? {}) as Record<string, any>;
