@@ -133,7 +133,7 @@ export const INTEGRATIONS: Integration[] = [
       "Agreed in writing during onboarding. Application status lookups return only the reference holder's own state.",
     healthVisibility: false,
     healthNote: "Failures return an explicit error on the response.",
-    docs: { label: "Talk to us about API access", to: "/contact" },
+    docs: { label: "Message us about API access", to: "/contact" },
   },
   {
     id: "payment-webhooks",
@@ -201,7 +201,7 @@ export const INTEGRATIONS: Integration[] = [
     permissions: "Read scheduling links and availability, and read booked events.",
     healthVisibility: true,
     healthNote: "Probed from the admin integration health page before a booking page is shown.",
-    docs: { label: "Book a call", to: "/contact" },
+    docs: { label: "Book a call", to: "/book" },
   },
 
   /* ------------------------------------------------------ email / messaging */

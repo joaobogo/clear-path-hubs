@@ -61,7 +61,7 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     rolesIncluded: PILOT_ROLES_LABEL,
     included: BASE,
     ctaLabel: "Book a discovery call",
-    ctaTo: "/contact",
+    ctaTo: "/book",
   },
   {
     id: "growth",
@@ -75,7 +75,7 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     rolesIncluded: GROWTH_ROLES_LABEL,
     included: [...BASE, "Dedicated support"],
     ctaLabel: "Book a discovery call",
-    ctaTo: "/contact",
+    ctaTo: "/book",
     highlight: true,
   },
   {
@@ -90,7 +90,7 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     rolesIncluded: SCALE_ROLES_LABEL,
     included: [...BASE, "Priority support", "Faster calibration cycles"],
     ctaLabel: "Book a discovery call",
-    ctaTo: "/contact",
+    ctaTo: "/book",
   },
   {
     id: "volume",
@@ -109,7 +109,7 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
       "Executive portfolio dashboard",
     ],
     ctaLabel: "Book a discovery call",
-    ctaTo: "/contact",
+    ctaTo: "/book",
   },
   {
     id: "enterprise",

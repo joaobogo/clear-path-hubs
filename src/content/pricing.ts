@@ -86,7 +86,7 @@ export const PRICING_TIERS: PricingTier[] = [
     turnaround: TURNAROUND_LABEL,
     included: BASE_INCLUDED,
     ctaLabel: "Book a discovery call",
-    ctaTo: "/contact",
+    ctaTo: "/book",
   },
   {
     id: "growth",
@@ -101,7 +101,7 @@ export const PRICING_TIERS: PricingTier[] = [
     turnaround: TURNAROUND_LABEL,
     included: PARALLEL_INCLUDED,
     ctaLabel: "Book a discovery call",
-    ctaTo: "/contact",
+    ctaTo: "/book",
     highlight: true,
   },
   {
@@ -117,7 +117,7 @@ export const PRICING_TIERS: PricingTier[] = [
     turnaround: TURNAROUND_LABEL,
     included: [...PARALLEL_INCLUDED, "Priority support"],
     ctaLabel: "Book a discovery call",
-    ctaTo: "/contact",
+    ctaTo: "/book",
   },
   {
     id: "volume",
@@ -137,7 +137,7 @@ export const PRICING_TIERS: PricingTier[] = [
       "Executive portfolio dashboard",
     ],
     ctaLabel: "Book a discovery call",
-    ctaTo: "/contact",
+    ctaTo: "/book",
   },
   {
     id: "enterprise",

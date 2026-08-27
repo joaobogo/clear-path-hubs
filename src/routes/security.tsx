@@ -185,7 +185,7 @@ function TrustCenterPage() {
         eyebrow="Procurement"
         title="Need this in a security questionnaire?"
         description="Send us your questionnaire or DPA template. We answer against the real configuration, and we say 'not yet' where that is the honest answer."
-        primary={{ to: "/contact", label: "Talk to us" }}
+        primary={{ to: "/contact", label: "Send us a message" }}
         secondary={{ to: "/privacy", label: "Read the Privacy Notice" }}
       />
     </SiteShell>

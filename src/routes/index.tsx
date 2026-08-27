@@ -1540,10 +1540,10 @@ function Home() {
               See package pricing <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
             <Link
-              to="/contact"
+              to="/book"
               className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30"
             >
-              Talk to founders
+              Book a call with the founders
             </Link>
             <Link
               to="/how-it-works"

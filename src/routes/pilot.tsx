@@ -103,7 +103,7 @@ function PilotPage() {
               to="/contact"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              Ask a question
+              Send us a message
             </Link>
           </div>
         </PublicPage>
