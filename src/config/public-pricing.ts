@@ -1,50 +1,49 @@
 /**
  * TaaSFlow — Calculator/selector shape for public pricing.
- * ==================================================
- * Numeric values are imported from src/config/pricing-core.ts — the single
- * source of truth. Update pricing-core.ts and every consumer here plus
- * src/content/pricing.ts updates automatically.
- *
- * Consumed by:
- *   • Pricing page calculator
- *   • Homepage ROI calculator
- *   • Agency comparator
- *   • Enterprise page teasers
+ * =======================================================
+ * Every number here comes from src/config/pricing-core.ts, which holds the
+ * only pricing rule: $699 for one position, then $900 (2–10), $850 (11–20),
+ * $800 (21–30) per position, 30 maximum, monotonic total.
  *
  * Rules
- *   • Do NOT hard-code prices in this file — use the core.
- *   • Do NOT infer checkout prices from this file — it is marketing config.
- *   • Values pending owner sign-off use approvalStatus !== "approved" and the
- *     calculator hides the numeric price / renders a "Contact Sales" affordance.
+ *   • Never hard-code a price in this file.
+ *   • Never show a band or a range as a price, and never write "From".
+ *   • Totals shown to a visitor are the exact final totals from
+ *     `positionsTotalUsd()`.
  */
 
 import {
   PRICE_PILOT_USD,
-  PRICE_MULTI_USD,
-  PRICE_SPRINT_USD,
+  MAX_POSITIONS,
   POSITION_BANDS,
+  GROWTH_RATE_USD,
+  SCALE_RATE_USD,
+  VOLUME_RATE_USD,
+  positionsTotalUsd,
+  formatUsdExact,
 } from "@/config/pricing-core";
 
-export type BillingType = "one-time-flat" | "monthly-subscription" | "custom";
+export type BillingType = "one-time-flat" | "per-position" | "custom";
 export type ApprovalStatus = "approved" | "pending" | "review";
 
 export interface PricingPackage {
   /** Machine identifier used in analytics, tests, and internal wiring. */
-  id: "pilot" | "multi-position" | "hiring-sprint" | "subscription";
+  id: "pilot" | "growth" | "scale" | "volume" | "above-max";
   /** Public-facing name shown on the Pricing page and calculator. */
   name: string;
   /** Public one-line description shown under the package title. */
   description: string;
   /** Inclusive lower bound of positions. */
   minPositions: number;
-  /** Inclusive upper bound (null = unbounded, e.g. Subscription 11+). */
+  /** Inclusive upper bound (null = unbounded, i.e. above the maximum). */
   maxPositions: number | null;
-  /** Price in USD. null = quote / not published. */
+  /** Exact total in USD when the band is a single position. null otherwise. */
   priceUsd: number | null;
+  /** Per-position rate in USD for banded tiers. null for pilot / above max. */
+  ratePerPositionUsd: number | null;
   billingType: BillingType;
-  /** True while owner has NOT approved the numeric price for public use. */
+  /** True when no price is published for this band. */
   customPricingOnly: boolean;
-  /** Sign-off state — controls whether numeric price is rendered. */
   approvalStatus: ApprovalStatus;
   /** ISO date this row was last confirmed. */
   effectiveDate: string;
@@ -52,11 +51,8 @@ export interface PricingPackage {
   active: boolean;
 }
 
-/**
- * Approved packages. Values reflect the current live source at
- * taasflow.com/pricing. Any change goes through owner review — see
- * docs/migration/calculator-pricing-reconciliation.md.
- */
+const EFFECTIVE = "2026-08-30";
+
 export const PRICING_PACKAGES: readonly PricingPackage[] = [
   {
     id: "pilot",
@@ -65,49 +61,67 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
     minPositions: POSITION_BANDS.pilot.min,
     maxPositions: POSITION_BANDS.pilot.max,
     priceUsd: PRICE_PILOT_USD,
+    ratePerPositionUsd: null,
     billingType: "one-time-flat",
     customPricingOnly: false,
     approvalStatus: "approved",
-    effectiveDate: "2026-07-23",
+    effectiveDate: EFFECTIVE,
     active: true,
   },
   {
-    id: "multi-position",
-    name: "Multi Role",
-    description: "A handful of roles running in parallel.",
-    minPositions: POSITION_BANDS.multi.min,
-    maxPositions: POSITION_BANDS.multi.max,
-    priceUsd: PRICE_MULTI_USD,
-    billingType: "one-time-flat",
+    id: "growth",
+    name: "2 to 10 positions",
+    description: "Several roles running in parallel.",
+    minPositions: POSITION_BANDS.growth.min,
+    maxPositions: POSITION_BANDS.growth.max,
+    priceUsd: null,
+    ratePerPositionUsd: GROWTH_RATE_USD,
+    billingType: "per-position",
     customPricingOnly: false,
     approvalStatus: "approved",
-    effectiveDate: "2026-07-23",
+    effectiveDate: EFFECTIVE,
     active: true,
   },
   {
-    id: "hiring-sprint",
-    name: "Hiring Sprint",
-    description: "Multiple roles sourced simultaneously.",
-    minPositions: POSITION_BANDS.sprint.min,
-    maxPositions: POSITION_BANDS.sprint.max,
-    priceUsd: PRICE_SPRINT_USD,
-    billingType: "one-time-flat",
+    id: "scale",
+    name: "11 to 20 positions",
+    description: "Concurrent hiring across functions.",
+    minPositions: POSITION_BANDS.scale.min,
+    maxPositions: POSITION_BANDS.scale.max,
+    priceUsd: null,
+    ratePerPositionUsd: SCALE_RATE_USD,
+    billingType: "per-position",
     customPricingOnly: false,
     approvalStatus: "approved",
-    effectiveDate: "2026-07-23",
+    effectiveDate: EFFECTIVE,
     active: true,
   },
   {
-    id: "subscription",
-    name: "Subscription",
-    description: "Continuous hiring across teams and geographies.",
-    minPositions: POSITION_BANDS.subscription.min,
-    maxPositions: POSITION_BANDS.subscription.max,
-    priceUsd: null, // Unapproved — see reconciliation doc.
+    id: "volume",
+    name: "21 to 30 positions",
+    description: "Portfolio hiring at the lowest published rate.",
+    minPositions: POSITION_BANDS.volume.min,
+    maxPositions: POSITION_BANDS.volume.max,
+    priceUsd: null,
+    ratePerPositionUsd: VOLUME_RATE_USD,
+    billingType: "per-position",
+    customPricingOnly: false,
+    approvalStatus: "approved",
+    effectiveDate: EFFECTIVE,
+    active: true,
+  },
+  {
+    id: "above-max",
+    name: `More than ${MAX_POSITIONS} positions`,
+    description: "Above the published maximum we scope it with you.",
+    minPositions: POSITION_BANDS.aboveMax.min,
+    maxPositions: POSITION_BANDS.aboveMax.max,
+    priceUsd: null,
+    ratePerPositionUsd: null,
     billingType: "custom",
     customPricingOnly: true,
-    approvalStatus: "review",
-    effectiveDate: "2026-07-23",
+    approvalStatus: "approved",
+    effectiveDate: EFFECTIVE,
     active: true,
   },
 ] as const;
@@ -122,7 +136,7 @@ export const CALCULATOR_DEFAULTS = {
 } as const;
 
 export const CALCULATOR_LIMITS = {
-  positions:            { min: 1,      max: 20,    step: 1 },
+  positions:            { min: 1,      max: MAX_POSITIONS, step: 1 },
   agencyFeePct:         { min: 0.10,   max: 0.30,  step: 0.01 },
   averageSalaryUsd:     { min: 40_000, max: 250_000, step: 5_000 },
   recruiterHourlyUsd:   { min: 20,     max: 150,   step: 5 },
@@ -134,8 +148,8 @@ export const CALCULATOR_DISCLAIMER =
 
 /**
  * Calculator presets — one-click assumption bundles.
- * Presets only change input assumptions; math still runs against approved
- * pricing. No fabricated results, no fake savings.
+ * Presets only change input assumptions; the TaaSFlow total always comes from
+ * `positionsTotalUsd()`.
  */
 export interface CalculatorPreset {
   id: "one-critical" | "growing-team" | "hiring-sprint" | "high-volume";
@@ -173,7 +187,7 @@ export const CALCULATOR_PRESETS: readonly CalculatorPreset[] = [
     id: "high-volume",
     label: "High Volume",
     description: "Continuous hiring across teams.",
-    inputs: { positions: 15, averageSalaryUsd: 80_000, agencyFeePct: 0.18, recruiterHourlyUsd: 40, sourcingHoursPerRole: 20 },
+    inputs: { positions: 20, averageSalaryUsd: 80_000, agencyFeePct: 0.18, recruiterHourlyUsd: 40, sourcingHoursPerRole: 20 },
   },
 ] as const;
 
@@ -188,22 +202,22 @@ export function selectPackage(positions: number): PricingPackage | null {
   return null;
 }
 
-/** True iff the tier's numeric price is safe to display publicly. */
+/** True iff a numeric price is published for this band. */
 export function isTierPricePublic(pkg: PricingPackage): boolean {
   return (
     pkg.active &&
     pkg.approvalStatus === "approved" &&
     !pkg.customPricingOnly &&
-    pkg.priceUsd !== null
+    (pkg.priceUsd !== null || pkg.ratePerPositionUsd !== null)
   );
 }
 
-/** USD, no decimals, K-abbreviated over $1,000. Mirrors source formatter. */
-export function formatUsdCompact(value: number): string {
-  if (!Number.isFinite(value)) return "—";
-  if (Math.abs(value) < 1000) return `$${Math.round(value).toLocaleString("en-US")}`;
-  const k = value / 1000;
-  const rounded = Math.round(k * 10) / 10;
-  const str = rounded % 1 === 0 ? rounded.toFixed(0) : rounded.toFixed(1);
-  return `$${str}K`;
+/** Exact final total for a position count. null above the maximum. */
+export function totalForPositions(positions: number): number | null {
+  return positionsTotalUsd(positions);
+}
+
+/** USD, exact, never abbreviated. */
+export function formatUsd(value: number): string {
+  return formatUsdExact(value);
 }
