@@ -82,7 +82,7 @@ export function HiringSnapshot({
     },
   ].filter((t) => !t.onlyWhenPositive || (t.value ?? 0) > 0);
 
-  const segmentTiles = [
+  const segmentTiles: Array<{ label: string; value: number | undefined; filter: Record<string, string> }> = [
     // Links through the KPI drill-through key, not a single band, so the tile
     // and the list it opens always count the same candidates.
     { label: "Strongest fit", value: kpis?.top, filter: { filter: "top" } },
