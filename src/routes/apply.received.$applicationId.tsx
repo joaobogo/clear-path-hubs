@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getApplicationReceipt } from "@/lib/apply.functions";
 import { Button } from "@/components/ui/button";
-import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 import { CandidateStatePanel } from "@/components/candidate/candidate-state-panel";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
 import { ReferenceBlock } from "@/components/candidate/reference-block";
-import { ProcessingWindowNote, RetentionNote } from "@/components/candidate/candidate-notes";
+import { PrivacySummaryNote } from "@/components/candidate/candidate-notes";
 import {
   APPLICATION_NEXT_STEPS,
   CONTACT_METHOD_SENTENCE,
@@ -213,14 +212,7 @@ function Received() {
           <CandidateStatePanel state="application_received" />
         </div>
 
-        <ProcessingWindowNote />
-
-        <RetentionNote />
-
-  
-        <div className="mt-6">
-          <TransparencyPanel company={data.organization_name} />
-        </div>
+        <PrivacySummaryNote />
 
         <p className="mt-6 text-xs text-muted-foreground">
           Keep reference <span className="select-all font-mono font-medium">{reference}</span> handy

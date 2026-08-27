@@ -1,10 +1,35 @@
 /**
- * Two honest notes for candidates: how long reading a CV takes, and what we
- * keep afterwards. Both live here so the wording is identical on the receipt
- * and the public status page.
+ * Notes shown to a candidate after they apply.
+ *
+ * These pages used to carry three stacked blocks — a processing-window note, a
+ * retention list and an accordion explaining automation — which crowded out the
+ * thing the candidate came for. `PrivacySummaryNote` replaces them with one
+ * line plus the link.
+ *
+ * It is deliberately not a trim for brevity alone: the disclosure that a person
+ * reviews the application and that software only assists is a UK/EU automated
+ * decision-making obligation, and the retention period and deletion right have
+ * to stay reachable. Those facts are kept here in short form, with the full
+ * notice one click away. Do not remove the sentence about human review or the
+ * link without checking /privacy still covers both.
  */
 import { Link } from "@tanstack/react-router";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
+
+/** One-line replacement for the old three-block privacy stack. */
+export function PrivacySummaryNote({ className }: { className?: string }) {
+  return (
+    <p className={className ?? "mt-6 text-sm text-muted-foreground"}>
+      A person reviews your application — software only helps summarise it, and never decides on
+      its own. We keep what you sent for up to 24 months, share it with this employer only, and
+      you can ask us to delete it at any time by writing to {SUPPORT_EMAIL}.{" "}
+      <Link to="/privacy" className="underline underline-offset-2">
+        Read the full privacy notice
+      </Link>
+      .
+    </p>
+  );
+}
 
 /** Typical time before a CV has been read end to end. */
 export const CV_READ_WINDOW_LABEL = "usually a few minutes, occasionally up to an hour";

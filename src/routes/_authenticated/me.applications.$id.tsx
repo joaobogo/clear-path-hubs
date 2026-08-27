@@ -25,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { TransparencyPanel } from "@/components/candidate/transparency-panel";
+import { PrivacySummaryNote } from "@/components/candidate/candidate-notes";
 import { FileText } from "lucide-react";
 import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { useConfirmAction } from "@/components/ds";
@@ -492,9 +492,7 @@ function TrackPage() {
         </section>
       ) : null}
 
-      <div className="mt-6">
-        <TransparencyPanel company={data.company} />
-      </div>
+      <PrivacySummaryNote />
 
       {confirmDialog}
     </div>
