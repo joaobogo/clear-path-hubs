@@ -19,7 +19,6 @@ import {
   resolveWorkArrangement,
   type PublicJobFacts,
 } from "@/lib/jobs/public-facts";
-import { formatLocationLine } from "@/lib/jobs/location-format";
 import {
   APPLY_STEPS,
   EFFORT_DEFAULT,
