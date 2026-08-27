@@ -379,13 +379,6 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
-      <CtaSection
-        eyebrow="Get a scoped quote"
-        title="Tell us about the role. We come back with an exact price."
-        description="Complete the guided intake or book a short call — no obligation, no placement fees, no lock-in on the conversation."
-        primary={{ to: "/intake", label: "Start Hiring" }}
-        secondary={{ to: "/contact", label: "Contact Sales" }}
-      />
           <PageConnections
         commercial={{ to: "/intake", label: "Start hiring", desc: "Pick a plan and open your first role." }}
         explainer={{ to: "/how-it-works", label: "How delivery works", desc: "What each subscription actually includes each week." }}
