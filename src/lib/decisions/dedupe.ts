@@ -25,6 +25,9 @@ export type DecisionLike = {
   candidate_match_id?: string | null;
 };
 
+/** Identical decisions closer together than this are one decision. */
+const REPEAT_GAP_MS = 30 * 60_000;
+
 function subject(row: DecisionLike): string {
   return String(row.candidate_match_id ?? row.entity_id ?? "");
 }
@@ -58,15 +61,21 @@ export function dedupeDecisions<T extends DecisionLike>(rows: T[]): T[] {
   const keep = new Set<T>();
   /** Last decision kind kept per subject, to spot a genuine change of mind. */
   const lastKind = new Map<string, string>();
-  const seen = new Set<string>();
+  /** When each identical decision was last kept, so a burst collapses. */
+  const seenAt = new Map<string, number>();
 
   for (const row of chronological) {
     const s = subject(row);
     const k = key(row);
+    const previous = seenAt.get(k);
     const changedSinceLast = lastKind.get(s) !== undefined && lastKind.get(s) !== kind(row);
-    if (!seen.has(k) || changedSinceLast) {
+    // A genuine change of mind is a new entry, but only once the same decision
+    // is at least a few minutes old — bursts written in the same minute are the
+    // same decision recorded more than once.
+    const isRepeat = previous !== undefined && (!changedSinceLast || time(row) - previous < REPEAT_GAP_MS);
+    if (!isRepeat) {
       keep.add(row);
-      seen.add(k);
+      seenAt.set(k, time(row));
       lastKind.set(s, kind(row));
     }
   }
