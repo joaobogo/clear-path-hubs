@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { IntroVideoPanel } from "@/components/client/intro-video-panel";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ViewerReadOnlyNotice } from "@/components/client/states";
@@ -435,6 +436,11 @@ function CandidateDetailPage() {
 
  <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-12">
  <div className="space-y-4 lg:col-span-8">
+ {/* A short recruiter introduction, when one is attached. */}
+ <IntroVideoPanel
+  video={candidate.intro_video}
+  candidateName={candidate.candidate.display_name}
+ />
  {/* 2 — THE VERDICT */}
  {verdictTrusted ? (
  <div id="sec-fit" className="scroll-mt-24 space-y-3">
