@@ -66,7 +66,8 @@ export const Route = createFileRoute("/pricing")({
 });
 
 function PricingPage() {
-  const paid = PRICING_TIERS.filter((t) => t.id !== "enterprise");
+  // Every published package, including the talk-to-us card above the maximum.
+  const paid = PRICING_TIERS;
   const [mode, setMode] = useState<"oneoff" | "subscription">("oneoff");
 
   return (
@@ -151,7 +152,7 @@ function PricingPage() {
         <PublicPage>
           {mode === "oneoff" ? (
             <>
-              <div className="grid gap-5 md:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {paid.map((tier) => (
                   <PricingTierCard key={tier.id} tier={tier} />
                 ))}
