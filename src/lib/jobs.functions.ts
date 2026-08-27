@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { titleCaseLocation, withCountry } from "@/lib/jobs/location-format";
+import { canonicalLocation } from "@/lib/jobs/location-format";
 import type { Database } from "@/integrations/supabase/types";
 import {
   buildPublicJobFacts,
@@ -200,7 +200,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
         return {
           id: p.id,
           title: p.title,
-          location: titleCaseLocation(withCountry(p.location, primaryLocationByPosition.get(p.id))),
+          location: canonicalLocation(p.location, primaryLocationByPosition.get(p.id)),
           work_model: p.work_model,
           employment_type: p.employment_type,
           seniority: p.seniority,
@@ -323,7 +323,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       compensation_visibility: p.compensation_visibility as string | null,
       work_model: pos.work_model,
       onsite_days: (posting as Record<string, unknown>).onsite_days,
-      location: withCountry(pos.location, primaryLoc),
+      location: canonicalLocation(pos.location, primaryLoc),
       primary_timezone: p.primary_timezone as string | null,
       timezone_overlap_hours: p.timezone_overlap_hours,
       work_authorization: p.work_authorization,

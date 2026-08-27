@@ -145,7 +145,7 @@ export function resolveLocation(
   const overlap = num(overlapHours);
   const parts: string[] = [];
   if (place) parts.push(place);
-  if (tz) parts.push(`${zoneDisplay(tz)} time zone`);
+  if (tz) parts.push(zoneDisplay(tz));
   if (overlap && overlap > 0) {
     parts.push(`${overlap} ${overlap === 1 ? "hour" : "hours"} overlap required`);
   }
