@@ -46,3 +46,34 @@ export const setCandidateIntroVideo = createServerFn({ method: "POST" })
 
     return { intro_video: link ? { url: link.url, embed_url: link.embedUrl } : null };
   });
+
+/**
+ * Does this candidate's introduction still resolve, and how long is it?
+ *
+ * Read through the caller's own session, so row-level security decides who may
+ * ask: platform staff and members of the hiring organisation see the video, and
+ * no other candidate ever can.
+ */
+export const resolveIntroVideo = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ match_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { parseLoomLink } = await import("@/lib/media/loom-link");
+    const { data: row, error } = await (context.supabase as AnyRow)
+      .from("candidate_matches")
+      .select("id, intro_video_url")
+      .eq("id", data.match_id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    const link = parseLoomLink(row?.intro_video_url);
+    if (!link) return { available: false as boolean, url: null, embed_url: null, duration_seconds: null };
+
+    const { probeLoomVideo } = await import("@/lib/media/loom-oembed.server");
+    const probe = await probeLoomVideo(link.url);
+    return {
+      available: probe.ok,
+      url: link.url,
+      embed_url: link.embedUrl,
+      duration_seconds: probe.duration_seconds,
+    };
+  });
