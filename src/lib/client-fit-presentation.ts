@@ -353,15 +353,22 @@ export function evidenceSupport(
 
   // HONESTY GATE: A requirement is only MET if there is direct evidence.
   // If the engine claimed it but found no snippets, downgrade to PARTIAL.
-  let isMet = (matched.some(sameRequirement) || declared?.status === "met") && evidence.length > 0;
-  let isPartial = partial.some(sameRequirement) || declared?.status === "partial" || (matched.some(sameRequirement) && evidence.length === 0);
+  // Rescued quotes count as evidence: they come from the same record.
+  let isMet = (matched.some(sameRequirement) || declared?.status === "met") && supporting.length > 0;
+  let isPartial = partial.some(sameRequirement) || declared?.status === "partial" || (matched.some(sameRequirement) && supporting.length === 0);
   const isContradicted = contradicts.some(sameRequirement) || declared?.status === "contradicted" || contradictions.length > 0;
 
   // With no coverage record, the candidate's own evidence decides the status.
   if (!declared && !isMet && !isPartial && !isContradicted && mine.length > 0) {
     const results = mine.map((e: any) => String(e.result ?? "").toLowerCase());
-    if (results.some((v) => v === "strong" || v === "met" || v === "full") && evidence.length > 0) isMet = true;
-    else if (results.some((v) => v === "partial" || v === "weak") || evidence.length === 0) isPartial = true;
+    if (results.some((v) => v === "strong" || v === "met" || v === "full") && supporting.length > 0) isMet = true;
+    else if (results.some((v) => v === "partial" || v === "weak") || supporting.length === 0) isPartial = true;
+  }
+
+  // A rescued quote with no coverage verdict of its own still evidences the
+  // requirement — read it as partly evidenced rather than not evidenced.
+  if (!isMet && !isPartial && !isContradicted && evidence.length === 0 && rescued.length > 0) {
+    isPartial = true;
   }
 
   let rawStatus: RequirementStatus = "not_evidenced";
@@ -370,12 +377,12 @@ export function evidenceSupport(
   else if (isPartial) rawStatus = "partial";
 
   // One canonical status per requirement, derived from the evidence that exists.
-  const status = resolveRequirementStatus({ status: rawStatus, evidence, contradictions, label: r.label });
+  const status = resolveRequirementStatus({ status: rawStatus, evidence: supporting, contradictions, label: r.label });
 
 
   return {
     status,
-    evidence,
+    evidence: supporting,
     explanation: (r.explanation as string) || null,
     interpretation: null,
     contradictions,
