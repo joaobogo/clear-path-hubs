@@ -2345,39 +2345,43 @@ function ExpressIntakePage() {
             Each additional must-have narrows the search, so the more you add, the fewer eligible candidates there will be.
           </p>
 
-          <RequirementsList
-            items={state.requirements}
-            onChange={setRequirements}
-            rowErrors={rowErrors}
-            listError={errors.requirements || null}
-            needsConfirm={
-              validateRequirements(state.requirements, {
-                manyConfirmed: state.manyMustHavesConfirmed,
-              }).needsConfirm
-            }
-            manyConfirmed={state.manyMustHavesConfirmed}
-            onConfirmMany={(confirmed) => {
-              set("manyMustHavesConfirmed", confirmed);
-              if (confirmed) setErrors((e) => ({ ...e, requirements: "" }));
-            }}
-            roleTitle={state.roleTitle}
-            suggestions={suggestions}
-            onRetrySuggestions={() => {
-              const jd = state.jobDescriptionText.trim();
-              if (jd.length < MIN_JD_TEXT) return;
-              suggestedForRef.current = "";
-              void fetchSuggestions(jd, state.roleTitle);
-            }}
-          />
+          <SectionGroup title="Requirements">
+            <RequirementsList
+              items={state.requirements}
+              onChange={setRequirements}
+              rowErrors={rowErrors}
+              listError={errors.requirements || null}
+              needsConfirm={
+                validateRequirements(state.requirements, {
+                  manyConfirmed: state.manyMustHavesConfirmed,
+                }).needsConfirm
+              }
+              manyConfirmed={state.manyMustHavesConfirmed}
+              onConfirmMany={(confirmed) => {
+                set("manyMustHavesConfirmed", confirmed);
+                if (confirmed) setErrors((e) => ({ ...e, requirements: "" }));
+              }}
+              roleTitle={state.roleTitle}
+              suggestions={suggestions}
+              onRetrySuggestions={() => {
+                const jd = state.jobDescriptionText.trim();
+                if (jd.length < MIN_JD_TEXT) return;
+                suggestedForRef.current = "";
+                void fetchSuggestions(jd, state.roleTitle);
+              }}
+            />
+          </SectionGroup>
 
-          <FieldExamples
-            field="must_haves"
-            roleTitle={state.roleTitle}
-            label="See an example must-have"
-            onUse={(text) =>
-              setRequirements([...state.requirements, { text, tag: "must_have" }])
-            }
-          />
+          <SectionGroup title="Example must-haves">
+            <FieldExamples
+              field="must_haves"
+              roleTitle={state.roleTitle}
+              label="See an example must-have"
+              onUse={(text) =>
+                setRequirements([...state.requirements, { text, tag: "must_have" }])
+              }
+            />
+          </SectionGroup>
         </Section>
         )}
 
