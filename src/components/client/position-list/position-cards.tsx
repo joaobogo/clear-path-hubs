@@ -59,7 +59,7 @@ export function PortfolioSnapshot({
   const allTiles: Array<{ label: string; value: number; href?: string }> = [
     { label: "Active", value: data.active, href: "/client/positions" },
     {
-      label: "Delivered",
+      label: "Candidates",
       value: data.delivered,
       href: "/client/candidates?stage=delivered",
     },
@@ -121,7 +121,7 @@ export function PositionCard({ p }: { p: Row }) {
     p.kpis.interviewing +
     p.kpis.hires;
   const segments = [
-    { key: "delivered", label: "Delivered", value: p.kpis.delivered, className: "taas-bg-info-soft" },
+    { key: "delivered", label: "Candidates", value: p.kpis.delivered, className: "taas-bg-info-soft" },
     { key: "shortlisted", label: "Shortlisted", value: p.kpis.shortlisted, className: "taas-bg-info-soft" },
     { key: "interviewing", label: "Interview", value: p.kpis.interviewing, className: "taas-bg-warning-soft" },
     { key: "hires", label: "Hires", value: p.kpis.hires, className: "taas-bg-success-soft" },
@@ -204,7 +204,7 @@ export function CompactList({ rows }: { rows: Row[] }) {
               <th className="px-4 py-2 text-left">Role</th>
               <th className="px-3 py-2 text-left">Status</th>
               <th className="px-3 py-2 text-left">Location</th>
-              <th className="px-3 py-2 text-right">Delivered</th>
+              <th className="px-3 py-2 text-right">Candidates</th>
               <th className="px-3 py-2 text-right">Shortlist</th>
               <th className="px-3 py-2 text-right">Interview</th>
               <th className="px-3 py-2 text-right">Hires</th>
