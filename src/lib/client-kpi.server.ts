@@ -1111,6 +1111,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     intro_video,
     delivered_at: row.delivered_at ?? null,
     interview_active: Boolean(row.interview_active),
+    client_decided: Boolean(row.client_decided),
+    hire_confirmed: Boolean(row.hire_confirmed),
     contact_released: released,
 
     stage_entered_at:
