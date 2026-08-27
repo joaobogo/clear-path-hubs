@@ -18,6 +18,7 @@ import {
   applyEffortTimeClause,
 } from "@/lib/jobs/apply-effort";
 import { phonePlaceholder } from "@/lib/phone-placeholder";
+import { validateLoomLink, LOOM_LINK_HINT } from "@/lib/media/loom-link";
 
 
 
@@ -64,6 +65,7 @@ const EMPTY_FORM = {
   portfolio_url: "",
   linkedin_url: "",
   website_url: "",
+  loom_url: "",
   accommodation_request: "",
 };
 
@@ -499,6 +501,10 @@ function ApplyPage() {
       if (!url(form.portfolio_url)) errs.portfolio_url = "Enter a full link starting with https://";
       if (!url(form.linkedin_url)) errs.linkedin_url = "Enter a full link starting with https://";
       if (!url(form.website_url)) errs.website_url = "Enter a full link starting with https://";
+      // Optional: an empty field is never an error, and a bad link names what
+      // is wrong without blocking anything else.
+      const loom = validateLoomLink(form.loom_url);
+      if (loom.error) errs.loom_url = loom.error;
     }
     if (n === 3) Object.assign(errs, questionIssues(pos!.questions));
     if (n === 4) {
@@ -679,7 +685,13 @@ function ApplyPage() {
         allErrs.password2
       )
         setStep(1);
-      else if (allErrs.cv || allErrs.portfolio_url || allErrs.linkedin_url || allErrs.website_url)
+      else if (
+        allErrs.cv ||
+        allErrs.portfolio_url ||
+        allErrs.linkedin_url ||
+        allErrs.website_url ||
+        allErrs.loom_url
+      )
         setStep(2);
       else if (Object.keys(allErrs).some((k) => k.startsWith("q:"))) setStep(3);
       else if (allErrs.consent_terms) setStep(4);
@@ -708,6 +720,7 @@ function ApplyPage() {
         portfolio_url: form.portfolio_url,
         linkedin_url: form.linkedin_url,
         website_url: form.website_url,
+        loom_url: form.loom_url,
         accommodation_request: form.accommodation_request,
         source: "public_job_board",
         cv: {
@@ -1478,6 +1491,38 @@ function ApplyPage() {
                       <p className="mt-1 text-xs text-destructive">{fieldErrors.website_url}</p>
                     )}
                   </div>
+                </div>
+
+                <div className="rounded-lg border border-border bg-muted/40 p-4">
+                  <Label htmlFor="loom_url">
+                    Introduce yourself on video{" "}
+                    <span className="font-normal text-muted-foreground">(optional)</span>
+                  </Label>
+                  <p id="loom_url-help" className="mt-1 text-xs text-muted-foreground">
+                    Record a one-to-five-minute Loom in English telling us who you are and what
+                    you do best, then paste the share link below. It is worth doing: a video
+                    adds 10 points to your score. Your score is built from real evidence and
+                    reviewed by specialist recruiters who know your field — never by software
+                    alone — and clients generally shortlist from the strongest-scoring
+                    candidates, so those points can be the difference between being read and
+                    being passed over. Skip it if you'd rather — it never blocks your
+                    application.
+                  </p>
+                  <Input
+                    id="loom_url"
+                    inputMode="url"
+                    data-field="loom_url"
+                    aria-describedby="loom_url-help"
+                    placeholder="https://www.loom.com/share/…"
+                    className="mt-2"
+                    value={form.loom_url}
+                    onChange={(e) => setForm({ ...form, loom_url: e.target.value })}
+                  />
+                  {fieldErrors.loom_url ? (
+                    <p className="mt-1 text-xs text-destructive">{fieldErrors.loom_url}</p>
+                  ) : (
+                    <p className="mt-1 text-xs text-muted-foreground">{LOOM_LINK_HINT}</p>
+                  )}
                 </div>
               </div>
             </div>
