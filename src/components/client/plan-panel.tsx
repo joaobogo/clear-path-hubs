@@ -11,6 +11,7 @@ import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
+import { paymentsEnabled } from "@/config/commerce";
 import {
   getPlanState,
   listPlans,
@@ -328,7 +329,22 @@ export function PlanPanel({
                             {plan.interval === "year" ? " / year" : " / month"}
                           </span>
                         </div>
-                        {!isCurrent && (
+                        {!isCurrent && !paymentsEnabled() ? (
+                          // Checkout is switched off (commerce.ts): every
+                          // payment CTA routes to booking instead, the same
+                          // rule the intake form follows. This button used to
+                          // open the Stripe dialog regardless, and getStripe()
+                          // throws with payments off — "Start this plan"
+                          // crashed the Account page to the error boundary.
+                          <Button
+                            size="sm"
+                            variant={isUpgrade ? "default" : "outline"}
+                            className="mt-3 w-full"
+                            asChild
+                          >
+                            <a href="/book">Book a call to start</a>
+                          </Button>
+                        ) : !isCurrent ? (
                           <Button
                             size="sm"
                             variant={isUpgrade ? "default" : "outline"}
@@ -344,7 +360,7 @@ export function PlanPanel({
                                 ? "Move up now"
                                 : "Move down at renewal"}
                           </Button>
-                        )}
+                        ) : null}
                       </li>
                     );
                   })}

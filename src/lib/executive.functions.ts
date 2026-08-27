@@ -141,7 +141,16 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       )
       .eq("organization_id", orgId)
       .or(NOT_TEST_RECORD);
-    const matchRows: AnyRow[] = matches ?? [];
+    const allMatchRows: AnyRow[] = matches ?? [];
+    // This is a CLIENT page: every aggregate a client reads counts only what
+    // they can see, the same rule as loadKpiRows and countOpenOffers. Without
+    // it, pipeline-by-BU, time-in-stage and delivery velocity counted hidden
+    // candidates — so Insights disagreed with the Candidates tab beside it.
+    // The unfiltered rows survive ONLY for the "waiting to be released to you"
+    // bottleneck, which is by definition a count of hidden candidates.
+    const matchRows: AnyRow[] = allMatchRows.filter(
+      (m) => String(m.client_visibility ?? "") === "visible",
+    );
     const posById = new Map<string, AnyRow>(posRows.map((p) => [p.id, p]));
 
     // Open / filled by region. Both Insights panels read the same open-roles
@@ -340,12 +349,15 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
 
 
     // ── Bottlenecks ───────────────────────────────────────────────────────
-    const pendingPublish = matchRows.filter(
+    // Counts HIDDEN candidates by definition, so it reads the unfiltered rows.
+    const pendingPublish = allMatchRows.filter(
       (m) =>
         String(m.admin_status ?? "") === "ready_to_publish" ||
         (m.approved_score_run_id && String(m.client_visibility ?? "") === "hidden"),
     ).length;
-    const stuckProcessing = matchRows.filter((m) =>
+    // Processing happens before publish, so most of these rows are still
+    // hidden — this reads the unfiltered set on purpose.
+    const stuckProcessing = allMatchRows.filter((m) =>
       ["queued", "processing", "extracting", "scoring"].includes(
         String(m.processing_state ?? ""),
       ) &&
@@ -354,9 +366,10 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     ).length;
     // Only roles that genuinely have no search count as waiting on intake: a
     // role whose search is live, or that already has candidates, is set up even
-    // if its record was never walked through the wizard.
+    // if its record was never walked through the wizard. A hidden candidate
+    // still proves the search ran, so this too reads the unfiltered set.
     const positionsWithCandidates = new Set<string>(
-      matchRows.map((m: AnyRow) => String(m.position_id)),
+      allMatchRows.map((m: AnyRow) => String(m.position_id)),
     );
     const draftPositions = posRows.filter(
       (p) =>

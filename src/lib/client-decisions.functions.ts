@@ -79,6 +79,69 @@ import {
   confirmBlueprintSchema,
 } from "@/lib/client-shared.server";
 
+/**
+ * Keep hire_records in step with the pipeline stage, whatever moved it.
+ *
+ * The Offers board and every money figure read hire_records; the pipeline
+ * reads candidate_matches.stage. This reconciliation used to live inline in
+ * moveMatchStage only — the kanban drag. The buttons ("Make offer",
+ * "Confirm hire") go through clientAction, which moved the stage and wrote no
+ * record, so a button-made offer was invisible on the Offers board and a
+ * button-confirmed hire never reached the finance tiles. One helper, called by
+ * both paths, so there is no third copy to forget next time.
+ *
+ * Entering Offer writes offer_drafted — the client has decided to make an
+ * offer, not told us the terms; claiming it was sent would put a date on the
+ * board nobody chose. Entering Hired inserts or promotes to hire_confirmed.
+ */
+async function reconcileHireRecordForStage(
+  supabase: AnyRow,
+  args: {
+    matchId: string;
+    orgId: string;
+    positionId: string | null;
+    candidateProfileId: string | null;
+    toStage: MatchStage;
+  },
+): Promise<void> {
+  if (args.toStage !== "offer" && args.toStage !== "hired") return;
+
+  const { data: existing } = await supabase
+    .from("hire_records")
+    .select("id, status")
+    .eq("candidate_match_id", args.matchId)
+    .maybeSingle();
+
+  if (args.toStage === "offer") {
+    if (!existing) {
+      await supabase.from("hire_records").insert({
+        candidate_match_id: args.matchId,
+        organization_id: args.orgId,
+        position_id: args.positionId,
+        candidate_profile_id: args.candidateProfileId,
+        status: "offer_drafted",
+      } as never);
+    }
+    return;
+  }
+
+  if (!existing) {
+    await supabase.from("hire_records").insert({
+      candidate_match_id: args.matchId,
+      organization_id: args.orgId,
+      position_id: args.positionId,
+      candidate_profile_id: args.candidateProfileId,
+      status: "hire_confirmed",
+      hired_at: new Date().toISOString(),
+    } as never);
+  } else if (existing.status !== "hire_confirmed") {
+    await supabase
+      .from("hire_records")
+      .update({ status: "hire_confirmed", hired_at: new Date().toISOString() } as never)
+      .eq("id", existing.id);
+  }
+}
+
 export const moveMatchStage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
@@ -164,59 +227,13 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       .eq("organization_id", data.orgId);
     if (updateError) throw new Error(updateError.message);
 
-    // The same reconciliation the 'hired' branch below has always done, for the
-    // stage before it. Moving someone to Offer only changed the pipeline stage,
-    // while the Offers board and the finance tile read hire_records — so a
-    // candidate could sit in the Offer column of the Candidates tab with no row
-    // on the Offers board at all, and the client was shown two different sets of
-    // people for the same question.
-    if (data.toStage === "offer") {
-      const { data: existingOffer } = await context.supabase
-        .from("hire_records")
-        .select("id")
-        .eq("candidate_match_id", data.matchId)
-        .maybeSingle();
-      if (!existingOffer) {
-        // Drafted, not sent: the client has decided to make an offer, they have
-        // not told us the terms. Claiming it was sent would put a date on the
-        // board that nobody chose.
-        await context.supabase.from("hire_records").insert({
-          candidate_match_id: data.matchId,
-          organization_id: data.orgId,
-          position_id: match.position_id,
-          candidate_profile_id: match.candidate_profile_id,
-          status: "offer_drafted",
-        } as never);
-      }
-    }
-
-    // B4/HIRE reconciliation: When moving to 'hired', ensure a hire_record exists.
-    // The client workspace moves the stage, but the rollup reads hire_records.
-    if (data.toStage === "hired") {
-      const { data: existingHire } = await context.supabase
-        .from("hire_records")
-        .select("id, status")
-        .eq("candidate_match_id", data.matchId)
-        .maybeSingle();
-
-      if (!existingHire) {
-        // Create a default 'hire_confirmed' record to satisfy reporting rollup.
-        await context.supabase.from("hire_records").insert({
-          candidate_match_id: data.matchId,
-          organization_id: data.orgId,
-          position_id: match.position_id,
-          candidate_profile_id: match.candidate_profile_id,
-          status: "hire_confirmed",
-          hired_at: new Date().toISOString(),
-        } as never);
-      } else if (existingHire.status !== "hire_confirmed") {
-        // Promote existing offer/draft to confirmed hire.
-        await context.supabase
-          .from("hire_records")
-          .update({ status: "hire_confirmed", hired_at: new Date().toISOString() } as never)
-          .eq("id", existingHire.id);
-      }
-    }
+    await reconcileHireRecordForStage(context.supabase, {
+      matchId: data.matchId,
+      orgId: data.orgId,
+      positionId: match.position_id as string,
+      candidateProfileId: match.candidate_profile_id as string,
+      toStage: data.toStage,
+    });
     // When leaving a gated stage, retract any unstarted side-artifacts.
     if (from === "interview_process" && data.toStage !== "interview_process") {
       await context.supabase
@@ -640,6 +657,17 @@ export const clientAction = createServerFn({ method: "POST" })
         .update({ stage: nextStage })
         .eq("id", data.matchId)
         .eq("organization_id", data.orgId);
+      // The buttons and the kanban must leave the same records behind. This
+      // path used to skip the hire_records reconciliation, so "Make offer"
+      // put nobody on the Offers board and "Confirm hire" reached no finance
+      // figure.
+      await reconcileHireRecordForStage(context.supabase, {
+        matchId: data.matchId,
+        orgId: data.orgId,
+        positionId: match.position_id as string,
+        candidateProfileId: match.candidate_profile_id as string,
+        toStage: nextStage,
+      });
       // When leaving a gated stage, retract any unstarted side-artifacts.
       if (match.stage === "interview_process" && nextStage !== "interview_process") {
         await context.supabase

@@ -131,11 +131,16 @@ export function CandidateScoreBadge({
         </span>
       )}
       {rechecking && (
+        // "Being re-checked", never "Reviewed by our team": rechecking means
+        // the assessment is STALE — something behind it changed. This chip used
+        // to render the same words as the genuine human-review chip below, so
+        // every stale candidate carried a fabricated specialist endorsement,
+        // strongest exactly when the number was least reliable.
         <span
           className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
           title={recheckNote}
         >
-          Reviewed by our team
+          Being re-checked
         </span>
       )}
       {evidencePending && !rechecking && (

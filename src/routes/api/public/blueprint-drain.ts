@@ -13,11 +13,18 @@ export const Route = createFileRoute("/api/public/blueprint-drain")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const secret = process.env.BLUEPRINT_DRAIN_SECRET ?? "";
-        const auth = request.headers.get("authorization") ?? "";
-        if (secret && !auth.endsWith(secret)) {
-          return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
-        }
+        // Fail CLOSED, like every other scheduler endpoint. The old check was
+        // `if (secret && ...)`: with BLUEPRINT_DRAIN_SECRET unset this was an
+        // unauthenticated public POST that burns LLM budget on up to 25
+        // positions per call — an unconfigured environment silently became an
+        // open endpoint, which is the exact failure cron-auth.ts documents.
+        // The suffix match (`auth.endsWith(secret)`) also was not
+        // constant-time; requireCronSecret is. The scheduler presents
+        // CRON_INVOKE_SECRET like every other cron route, so ops has one
+        // secret to manage instead of a second one that can drift.
+        const { requireCronSecret } = await import("@/lib/public-api/cron-auth");
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

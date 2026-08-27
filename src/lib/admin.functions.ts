@@ -1469,6 +1469,7 @@ export const getClientPreview = createServerFn({ method: "GET" })
       .from("candidate_matches")
       .select(
         `id, stage, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by, contact_release_reason,
+         intro_video_url,
          canonical_state, processing_state, processing_updated_at, submitted_to_client_at,
          score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),

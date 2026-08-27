@@ -467,6 +467,11 @@ function ApplyPage() {
   ): Record<string, string> => {
     const errs: Record<string, string> = {};
     qs.forEach((q) => {
+      // Only questions marked required gate the application. The flag was
+      // fetched, rendered as the asterisk, and then ignored here — so a
+      // question shown as optional still hard-blocked Continue with
+      // "This question is required", which reads as the form being broken.
+      if (!q.required) return;
       const v = answers[q.id];
       const empty =
         v == null || (typeof v === "string" && v.trim() === "");
@@ -633,7 +638,11 @@ function ApplyPage() {
             ? "—"
             : String(v).trim();
       return { id: q.id, question: q.question, value: text };
-    });
+    })
+    // The comment above was a promise the code did not keep: every question
+    // was mapped, so a skipped optional one rendered as a "—" row. Now that
+    // optional questions can actually be skipped, keep the promise.
+    .filter((q) => q.value !== "—");
 
 
 

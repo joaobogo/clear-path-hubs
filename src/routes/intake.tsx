@@ -1194,6 +1194,14 @@ function ExpressIntakePage() {
       setAuthed(true);
       setAccountEmail(email);
       setEmailStatus({ kind: "idle" });
+      // The password has done its job — the session is the credential now.
+      // Leaving it in state dead-ended the whole form: submit sent
+      // password="what they typed" with confirmPassword="", the schema's
+      // match refine failed, and the failing fields were hidden because the
+      // user was signed in. "Both passwords must match", nothing to fix,
+      // no way through but a refresh.
+      setState((s) => ({ ...s, password: "", confirmPassword: "" }));
+      setErrors((e) => ({ ...e, password: "", confirmPassword: "" }));
       toast.success("Signed in. This role will be added to your existing organisation.");
       continueAfterAccount();
     } catch {
@@ -1538,8 +1546,10 @@ function ExpressIntakePage() {
       workEmail: state.workEmail,
       phone: state.phone,
       contactLinkedin: state.contactLinkedin,
-      password: state.password,
-      confirmPassword: state.confirmPassword,
+      // Second line of defence for the same dead-end: an authed submitter has
+      // no password step, so stale field values must never reach the schema.
+      password: authed ? "" : state.password,
+      confirmPassword: authed ? "" : state.confirmPassword,
       roleTitle: state.roleTitle,
       team: state.team,
       jobDescriptionText: state.jobDescriptionText,

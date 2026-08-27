@@ -103,7 +103,9 @@ async function pipelineByStage(sb: AnySupabase, org: string): Promise<BlockData 
     .from("candidate_matches")
     .select("stage")
     .eq("organization_id", org)
-    .eq("client_visibility", "visible");
+    .eq("client_visibility", "visible")
+    // QA fixtures inflated the lanes on every workspace that carries them.
+    .eq("is_test_record", false);
   const rows = (data ?? []) as Array<{ stage: string }>;
   if (rows.length === 0) return null;
   const counts = new Map<string, number>();
@@ -136,8 +138,29 @@ async function decisionsWaiting(sb: AnySupabase, org: string): Promise<BlockData
     .eq("organization_id", org)
     .eq("client_visibility", "visible")
     .eq("stage", "delivered")
+    .eq("is_test_record", false)
     .not("delivered_at", "is", null);
-  const rows = (data ?? []) as Array<{ delivered_at: string }>;
+  const candidates = (data ?? []) as Array<{ id: string; delivered_at: string }>;
+  if (candidates.length === 0) return null;
+
+  // The canonical rule (isAwaitingClientDecision): a recorded client decision
+  // — including "hold" — clears a candidate out of "waiting on you". This
+  // block used to count every delivered match regardless, so a client who had
+  // put someone on hold still saw them "waiting" here while the Overview
+  // correctly said zero. Same question, two answers, one screen apart.
+  const { data: decisions } = await sb
+    .from("client_decisions")
+    .select("candidate_match_id")
+    .in(
+      "candidate_match_id",
+      candidates.map((c) => c.id),
+    );
+  const decided = new Set(
+    ((decisions ?? []) as Array<{ candidate_match_id: string | null }>)
+      .map((d) => d.candidate_match_id)
+      .filter(Boolean),
+  );
+  const rows = candidates.filter((c) => !decided.has(c.id));
   if (rows.length === 0) return null;
   const oldest = rows
     .map((r) => days(r.delivered_at, new Date().toISOString()))
@@ -226,7 +249,10 @@ async function offerStatus(sb: AnySupabase, org: string): Promise<BlockData | nu
     .from("hire_records")
     .select("id, status, sent_at, updated_at")
     .eq("organization_id", org)
-    .not("status", "in", "(hire_confirmed,closed)");
+    // "closed_lost", not "closed" — the excluded status did not exist, so
+    // declined and closed-lost offers rendered as live and fed the stalled
+    // count, contradicting countOpenOffers on the same dashboard.
+    .not("status", "in", "(hire_confirmed,closed_lost)");
   const rows = (data ?? []) as Array<Record<string, string | null>>;
   if (rows.length === 0) return null;
   const counts = new Map<string, number>();
@@ -309,6 +335,10 @@ async function talentPoolGrowth(sb: AnySupabase, org: string): Promise<BlockData
     .from("candidate_matches")
     .select("created_at")
     .eq("organization_id", org)
+    // Growth a client is shown is growth the client can see: this block used
+    // to count hidden and QA rows, unlike every other block on the page.
+    .eq("client_visibility", "visible")
+    .eq("is_test_record", false)
     .gte("created_at", since);
   const rows = (data ?? []) as Array<{ created_at: string }>;
   if (rows.length === 0) return null;

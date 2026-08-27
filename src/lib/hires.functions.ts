@@ -525,7 +525,14 @@ export const upsertOfferDraft = createServerFn({ method: "POST" })
   });
 
 function candidateStageForHireStatus(status: HireStatus): string | null {
-  if (status === "hire_confirmed" || status === "offer_accepted") return "hired";
+  // An accepted offer is NOT a confirmed hire. isLiveOffer counts
+  // offer_accepted as still open (start date, references, paperwork can all
+  // fall through), and every hires figure counts only hire_confirmed. Mapping
+  // offer_accepted to "hired" put a hire on the board that no hires reader
+  // acknowledged, while the executive money tiles still counted the offer as
+  // live — three surfaces, three stories. The candidate stays at "offer"
+  // until the hire is confirmed.
+  if (status === "hire_confirmed") return "hired";
   if (status === "offer_declined" || status === "closed_lost") return "not_moving_forward";
   return null;
 }
