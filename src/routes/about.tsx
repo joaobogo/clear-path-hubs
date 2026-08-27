@@ -90,38 +90,45 @@ const SERVES = [
 
 export const Route = createFileRoute("/about")({
   head: () =>
-    marketingHead(undefined, "/about", {
-      title: "About TaaSFlow — the AI Hiring Intelligence Platform",
-      description:
-        "TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.",
-      // Named leadership, matching the on-page cards exactly. Only the fields
-      // that are verifiably true are emitted — no sameAs for an unconfirmed
-      // profile, no invented job history.
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "AboutPage",
-            url: "https://taasflow.com/about",
-            mainEntity: {
-              "@type": "Organization",
-              "@id": "https://taasflow.com/#organization",
-              name: "TaaSFlow",
-              url: "https://taasflow.com",
-              employee: LEADERS.map((leader) => ({
-                "@type": "Person",
-                name: leader.name,
-                jobTitle: leader.title,
-                description: leader.bio,
-                worksFor: { "@id": "https://taasflow.com/#organization" },
-                ...(leader.linkedin ? { sameAs: [leader.linkedin] } : {}),
-              })),
-            },
-          }),
-        },
-      ],
-    }),
+    marketingHead(
+      undefined,
+      "/about",
+      {
+        title: "About TaaSFlow — the AI Hiring Intelligence Platform",
+        description:
+          "TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.",
+      },
+      {
+        // Named leadership, matching the on-page cards exactly. Only fields
+        // that are verifiably true are emitted — no sameAs for an unconfirmed
+        // profile, no invented job history.
+        scripts: [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "AboutPage",
+              url: "https://taasflow.com/about",
+              mainEntity: {
+                "@type": "Organization",
+                "@id": "https://taasflow.com/#organization",
+                name: "TaaSFlow",
+                url: "https://taasflow.com",
+                employee: LEADERS.map((leader) => ({
+                  "@type": "Person",
+                  name: leader.name,
+                  jobTitle: leader.title,
+                  description: leader.bio,
+                  worksFor: { "@id": "https://taasflow.com/#organization" },
+                  ...(leader.linkedin ? { sameAs: [leader.linkedin] } : {}),
+                })),
+              },
+            }),
+          },
+        ],
+      },
+    ),
+
   component: AboutPage,
 });
 
