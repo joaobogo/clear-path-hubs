@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScanText } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
+import { CvPreviewDialog } from "@/components/cv-preview-dialog";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { ProcessState } from "@/components/ds/process-state";
 import { candidateProcessStatus } from "@/lib/loading/process-catalogue";
@@ -71,7 +72,6 @@ function WorkspaceHeader({
               />
 
             )}
-            {currentRun?.score != null && <AdminScoreNumber run={currentRun} />}
             {currentRun?.rubric_version_number != null && (
               <Badge variant="secondary" className="font-mono text-[10px]">
                 v{currentRun.rubric_version_number}
@@ -89,6 +89,12 @@ function WorkspaceHeader({
             <Badge variant="outline" className="font-mono text-[10px] uppercase">visibility: {m.client_visibility}</Badge>
 
           </div>
+          {/* The client reads the fit as a large figure; admin only ever got a
+              small chip in a row of eight other chips. Same number, same
+              prominence, so both sides argue from the same headline. */}
+          {currentRun?.score != null && (
+            <AdminScoreNumber run={currentRun} size="lg" className="mt-3" />
+          )}
           <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
             {cp?.email && <span>{cp.email}</span>}
             {cp?.email && pos?.title && <span>·</span>}
@@ -119,6 +125,9 @@ function WorkspaceHeader({
               <ScanText className="mr-2 h-4 w-4" /> Evidence record
             </Link>
           </Button>
+          {/* The client can read a CV without downloading it; admin could only
+              download. Same dialog, so the two sides stay in step. */}
+          <CvPreviewDialog matchId={m.id} candidateName={cp?.full_name ?? "Candidate"} />
           <DownloadCvButton matchId={m.id} mode="download" />
         </div>
       </div>
