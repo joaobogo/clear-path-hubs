@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Loader2, MessageSquare, MoreHorizontal, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +9,6 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { clientStageLabel } from "@/lib/client-stage-labels";
 import type { MatchStage } from "@/lib/client-kpi.server";
 
 // ─── Stage → primary + secondary actions ─────────────────────────────────────

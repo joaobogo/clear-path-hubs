@@ -23,6 +23,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { clientStageLabel } from "@/lib/client-stage-labels";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { formatEnumLabel } from "@/lib/human-labels";
 import { formatDateTime } from "@/lib/format/datetime";
@@ -70,9 +71,8 @@ export function CandidateHeader({
             hideScore
             hideBand
           />
-          <Badge variant="outline" className="capitalize">
-            {formatEnumLabel(candidate.stage)}
-          </Badge>
+          {/* The one place the candidate's status is stated on this page. */}
+          <Badge variant="outline">{clientStageLabel(candidate.stage)}</Badge>
           {candidate.explanation?.kind === "evidence_pending" && (
             <TooltipProvider>
               <Tooltip>
