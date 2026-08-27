@@ -31,6 +31,35 @@ function num(value: unknown): number | null {
 }
 
 /**
+ * Points a genuine Loom introduction adds on top of the three weighted
+ * components. Awarded once per match, derived at read time from
+ * `candidate_matches.intro_video_url`: present link → +10, removed link → gone.
+ * The total may exceed 100 (97 + video = 107); bands clamp for colour only.
+ */
+export const VIDEO_INTRO_BONUS_PTS = 10;
+
+/** True when the match carries a stored intro video link (validated at write). */
+export function hasVideoIntro(
+  row: { intro_video_url?: unknown } | null | undefined,
+): boolean {
+  return typeof row?.intro_video_url === "string" && row.intro_video_url.trim().length > 0;
+}
+
+/**
+ * A copy of the run with the video bonus folded into both score columns.
+ * `final_score ?? score` then resolves to the post-bonus figure on every
+ * surface, so admin and client can never print the pre-bonus number beside it.
+ */
+export function withVideoIntroBonus<T extends PublishedScoreRun>(run: T, hasVideo: boolean): T {
+  if (!run || !hasVideo) return run as T;
+  const shift = (v: unknown) => {
+    const n = num(v);
+    return n === null ? v : n + VIDEO_INTRO_BONUS_PTS;
+  };
+  return { ...run, score: shift(run.score), final_score: shift(run.final_score) } as T;
+}
+
+/**
  * The published score for a run: the human-reviewed `final_score` when the run
  * carries one, otherwise the engine `score`. Never averages or re-weights.
  */
