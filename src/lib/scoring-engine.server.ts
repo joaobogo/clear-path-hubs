@@ -129,16 +129,71 @@ export function tokenize(text: string): string[] {
   return (text.toLowerCase().match(/[a-z0-9+.#-]{2,}/g) ?? []).filter((t) => !STOP.has(t));
 }
 
+/**
+ * Words that describe HAVING a skill rather than naming one.
+ *
+ * A requirement is written as a sentence — "Practical experience with
+ * row-level security or another multi-tenant isolation model" — but only some
+ * of those words are the capability. The rest are framing: degree, quantity,
+ * possession. They almost never appear in a CV in that form, yet every one of
+ * them used to become a keyword, and `met` needs 60% of the keywords matched.
+ *
+ * That requirement produced eight keywords, four of which ("practical",
+ * "experience", "another", plus the connectives already dropped as stopwords)
+ * carry no signal at all — so a candidate who wrote "per-tenant data isolation
+ * audited twice a year" could match the real terms and still land at
+ * "partly evidenced", because the noise words dragged the ratio down.
+ *
+ * Deliberately conservative: only possession/degree/quantifier words. Nothing
+ * that can name a capability. "model", "team", "management", "design" and the
+ * like stay, because they are content in some requirements even when they read
+ * as filler in others — and a false drop silently loses real evidence, which
+ * is the failure this table exists to prevent.
+ */
+const REQUIREMENT_FRAMING = new Set([
+  // possession / degree. Hyphenated forms are listed explicitly because
+  // tokenize keeps hyphens, so "hands-on" arrives as one token — the reason
+  // the Docker fixture below still read "partial" on the first attempt.
+  // NB "end-to-end" is deliberately NOT here: in "automated tests (unit and
+  // end-to-end)" it names the capability, and a false drop loses real
+  // evidence — the failure this table exists to prevent.
+  "experience", "experienced", "practical", "hands", "handson", "hands-on",
+  "in-depth", "well-versed", "day-to-day", "strong",
+  "solid", "proven", "demonstrable", "demonstrated", "deep", "excellent",
+  "good", "great", "ability", "able", "capable", "knowledge", "understanding",
+  "familiarity", "familiar", "comfortable", "confident", "expertise", "expert",
+  "background", "track", "record", "skilled", "competent", "fluency",
+  // quantity / qualification
+  "years", "year", "minimum", "least", "plus", "ideally", "preferably",
+  "bonus", "nice", "desirable", "required", "requirement", "essential",
+  "another", "similar", "equivalent", "relevant", "appropriate", "various",
+  "multiple", "several", "strongly", "highly", "well", "very",
+  // sentence scaffolding the stopword list does not cover
+  "including", "include", "includes", "etc", "such", "able", "willing",
+  "working", "work", "role", "position", "candidate", "candidates",
+]);
+
 function extractKeywordsFromRequirement(text: string, cap: number): string[] {
   const toks = tokenize(text);
-  // Preserve multi-word phrases up to 3 tokens if they look like techs.
   const seen = new Set<string>();
   const out: string[] = [];
   for (const t of toks) {
     if (t.length < 2) continue;
+    if (REQUIREMENT_FRAMING.has(t)) continue;
     if (!seen.has(t)) {
       seen.add(t);
       out.push(t);
+    }
+  }
+  // A requirement written entirely in framing words still has to be matchable
+  // against something, so fall back to the unfiltered tokens rather than
+  // producing zero keywords (which would read as "no evidence possible").
+  if (out.length === 0) {
+    for (const t of toks) {
+      if (t.length >= 2 && !seen.has(t)) {
+        seen.add(t);
+        out.push(t);
+      }
     }
   }
   return out.slice(0, cap);

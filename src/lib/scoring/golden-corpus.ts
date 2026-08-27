@@ -28,6 +28,17 @@ export const req = (text: string, keywords: string[], required = true): Requirem
   keywords,
 });
 
+/**
+ * A requirement with NO keywords, so the engine derives them from the text.
+ * This is what a client's free-text intake line actually looks like.
+ */
+export const reqFromText = (text: string, required = true): RequirementInput => ({
+  id: `rt-${text.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40)}`,
+  text,
+  required,
+  keywords: [],
+});
+
 export type Fixture = {
   name: string;
   cv: string;
@@ -245,6 +256,45 @@ export const FIXTURES: Fixture[] = [
     name: "punctuated term still matches inside prose",
     cv: `Built .NET services and migrated legacy WCF endpoints to modern hosting. ${filler}`,
     requirement: req("C#/.NET", [".net"]),
+    expected: "met",
+  },
+
+  // ---- requirements written as sentences, with no keywords supplied -------
+  // Every fixture above hands the engine an explicit keyword list, so none of
+  // them exercised extractKeywordsFromRequirement — the path production
+  // actually uses, because a client types requirements as free text in intake.
+  // The gate was blind to the whole derivation until these were added.
+  {
+    name: "sentence requirement: framing words do not drag a real match to partial",
+    cv: `Built multi-tenant SaaS with per-tenant data isolation enforced in Postgres. ${filler}`,
+    // Derives to the content terms; "practical", "experience" and "another"
+    // are framing and must not count toward the ratio.
+    requirement: reqFromText(
+      "Practical experience with row-level security or another multi-tenant isolation model",
+    ),
+    expected: "partial",
+  },
+  {
+    name: "sentence requirement: the capability stated plainly is met",
+    cv: `Wrote the SQL and relational data modelling for tenant billing in Postgres, shipping 40 migrations. ${filler}`,
+    requirement: reqFromText("Strong SQL and relational data modelling in Postgres"),
+    expected: "met",
+  },
+  {
+    name: "sentence requirement: a genuinely absent capability is still missing",
+    cv: `Frontend engineer building design systems and component libraries. ${filler}`,
+    requirement: reqFromText("Proven experience running Kubernetes clusters in production"),
+    expected: "missing",
+  },
+  {
+    // The complaint this change answers. Before framing words were dropped
+    // this derived to [proven, hands, experience, docker] and needed 3 of 4
+    // matched, so a candidate who plainly uses Docker scored "partly
+    // evidenced" because their CV does not contain the words "proven",
+    // "hands" or "experience". It now derives to [docker] and is met.
+    name: "sentence requirement: one real capability, stated once, is met not partial",
+    cv: `Containerised every service with Docker and shipped them to production. ${filler}`,
+    requirement: reqFromText("Proven hands-on experience with Docker"),
     expected: "met",
   },
 ];
