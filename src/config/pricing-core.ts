@@ -34,7 +34,7 @@ export const PRICE_PILOT_USD = 699;
 export const BASE_RATE_PER_POSITION_USD = 800;
 
 /** Hard maximum. Above this we show no price and the CTA is to talk to us. */
-export const MAX_POSITIONS = 50;
+export const MAX_POSITIONS = 100;
 
 /** Internal derivation inputs: capacity + volume discount. Never rendered. */
 export const PACKAGE_DERIVATION = [
@@ -42,7 +42,7 @@ export const PACKAGE_DERIVATION = [
   { id: "scale", capacity: 20, volumeDiscount: 0.05 },
   { id: "volume", capacity: 30, volumeDiscount: 0.1 },
   { id: "portfolio", capacity: 40, volumeDiscount: 0.15 },
-  { id: "program", capacity: 50, volumeDiscount: 0.2 },
+  { id: "program", capacity: 100, volumeDiscount: 0.2 },
 ] as const;
 
 export type PackageId =
