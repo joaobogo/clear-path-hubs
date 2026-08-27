@@ -12,6 +12,7 @@ import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 import { loadConfirmedHires } from "@/lib/kpis/confirmed-hires.server";
 import { loadOpenRoles, loadOrgRoles } from "@/lib/kpis/open-roles.server";
 import { loadKpiRows, computeKpis, isAwaitingClientDecision } from "@/lib/client-kpi.server";
+import { loadInterviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 import {
   PUBLISHED_SCORE_COLUMNS,
