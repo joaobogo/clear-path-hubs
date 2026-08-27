@@ -377,6 +377,20 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       }
     }
 
+    // Demo and test workspaces never send real email, so a "blocked"/"not
+    // delivered" notice there describes the sandbox, not the product. Hide the
+    // delivery state entirely for those workspaces.
+    let hideDeliveryState = false;
+    if (membership?.organization_id) {
+      const { data: org } = await context.supabase
+        .from("organizations")
+        .select("is_demo, is_test_record, is_qa")
+        .eq("id", membership.organization_id)
+        .maybeSingle();
+      hideDeliveryState =
+        org?.is_demo === true || org?.is_test_record === true || org?.is_qa === true;
+    }
+
     const { data, error } = await query
       .order("created_at", { ascending: false })
       .limit(50);
