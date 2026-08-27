@@ -20,8 +20,16 @@
  *      and one-off `paid` roles are unaffected.
  */
 import { describe, it, expect, beforeEach } from "vitest";
-import { PAID_PAYMENT_STATES, isPaymentSatisfied } from "@/lib/publish-gate";
+import { PAID_PAYMENT_STATES, isPaymentSatisfied as isPaymentSatisfiedLive } from "@/lib/publish-gate";
 import { findPlan } from "@/lib/payments-catalog";
+
+// This suite proves what the gate does WHILE PAYMENTS ARE LIVE. The production
+// flag is currently off (commerce.ts), which makes the gate pass everything —
+// correct for the product, useless for these assertions. Pin the flag on here
+// so the paid path stays proven and re-enabling payments stays a one-line
+// change.
+const isPaymentSatisfied = (status: string | null | undefined) =>
+  isPaymentSatisfiedLive(status, true);
 
 type PaymentStatus = "unpaid" | "pending" | "paid" | "refunded" | "exempt" | "covered";
 type PositionStatus = "draft" | "submitted" | "approved" | "active" | "paused";

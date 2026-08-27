@@ -6,9 +6,11 @@
  *  - the admin "Publish blockers" list
  *
  * so the list can never disagree with the action. There is no client-side
- * bypass: payment state is read from the row and only cleared by a real payment
- * or an audited exemption.
+ * bypass: while payments are live, payment state is read from the row and only
+ * cleared by a real payment or an audited exemption. While they are switched
+ * off it is not a blocker at all — see isPaymentSatisfied.
  */
+import { PAYMENTS_ENABLED } from "@/config/commerce";
 
 export type PublishBlocker =
   | "payment_unpaid"
@@ -60,7 +62,30 @@ export type PublishGateInput = {
   requirements?: unknown;
 };
 
-export function isPaymentSatisfied(paymentStatus: string | null | undefined): boolean {
+/**
+ * Payment cannot block a role while there is no way to pay.
+ *
+ * commerce.ts turns the whole payment surface off with PAYMENTS_ENABLED, and
+ * says flipping that one line restores payments everywhere. This gate never
+ * read it. So with checkout switched off, every role still failed on
+ * "Payment not complete" — a client could finish a brief and never publish it,
+ * and the only way through was an admin granting an exemption for a payment
+ * system that is not live. Eight roles sat blocked on exactly this.
+ *
+ * When payments are enabled this behaves as before, so turning them on is
+ * still the single line the comment promises.
+ */
+export function isPaymentSatisfied(
+  paymentStatus: string | null | undefined,
+  /**
+   * Injectable so the payment lifecycle suite can keep proving the gated
+   * behaviour while the switch is off. Turning payments back on must stay the
+   * one-line change commerce.ts promises, and that is only true if the paid
+   * path is still under test.
+   */
+  paymentsEnabled: boolean = PAYMENTS_ENABLED,
+): boolean {
+  if (!paymentsEnabled) return true;
   return (PAID_PAYMENT_STATES as readonly string[]).includes(paymentStatus ?? "unpaid");
 }
 
