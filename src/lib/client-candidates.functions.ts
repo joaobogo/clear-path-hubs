@@ -167,11 +167,36 @@ export const getClientCandidates = createServerFn({ method: "GET" })
       }
     }
 
+    // What the client has already answered, and which candidates hold a
+    // confirmed offer record. The snapshot tiles count "awaiting your review"
+    // and "hired" from these, so a tile can never read a different figure from
+    // the board column beneath it or from Overview, Roles and Insights.
+    const decidedMatches = new Set<string>();
+    if (matchIds.length > 0) {
+      const { data: decisions } = await context.supabase
+        .from("client_decisions")
+        .select("candidate_match_id")
+        .in("candidate_match_id", matchIds);
+      for (const d of ((decisions as AnyRow[]) ?? [])) {
+        if (d.candidate_match_id) decidedMatches.add(d.candidate_match_id as string);
+      }
+    }
+    const { indexConfirmedHires, loadConfirmedHires } = await import(
+      "@/lib/hires/confirmed.server"
+    );
+    const confirmedHires = indexConfirmedHires(
+      await loadConfirmedHires(context.supabase, data.orgId),
+    );
+
     // Map to sanitized client-safe DTOs first — filters below operate on those.
     let dtos = ((rows as AnyRow[]) ?? []).map((r) =>
       toClientCandidateDTO({
         ...r,
         interview_active: activeInterviews.has(r.id as string),
+        client_decided: decidedMatches.has(r.id as string),
+        hire_confirmed:
+          confirmedHires.matchIds.has(String(r.id)) ||
+          confirmedHires.pairs.has(`${r.position_id}:${r.candidate_profile_id}`),
         evidence_items: evidenceByMatch.get(r.id as string) ?? [],
       }),
     );
