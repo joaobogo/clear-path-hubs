@@ -162,14 +162,14 @@ function AboutPage() {
             Leadership
           </p>
           <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-            Meet the founders
+            Meet the leadership
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Careers built advising global enterprises. Now applying the same
             rigor to the world of hiring.
           </p>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
             {LEADERS.map((leader) => {
               const initials = leader.name
                 .split(" ")
@@ -245,6 +245,10 @@ function AboutPage() {
               );
             })}
           </div>
+
+          <p className="mt-6 max-w-3xl text-xs text-[color:var(--brand-navy)]/70">
+            {PRIOR_EXPERIENCE_DISCLAIMER}
+          </p>
 
           <div className="mt-12 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
             <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-3xl">
