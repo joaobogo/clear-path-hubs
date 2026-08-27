@@ -300,7 +300,9 @@ export function renderQuote(raw: string | null | undefined): string {
   const scrubbed = stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim();
   if (!scrubbed) return "";
 
-  const base = renderDropOpeningFragment(renderStripLeadingJunk(scrubbed));
+  const base = renderDropOpeningFragment(
+    renderStripLeadingJunk(renderDropTruncatedOpeningToken(renderStripLeadingJunk(scrubbed))),
+  );
   const trimmedStart = renderSnapStart(base);
   const ended = renderSnapEnd(trimmedStart);
   const started = ended.length >= 40 ? trimmedStart : base;
