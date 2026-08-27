@@ -29,7 +29,6 @@ import {
 import { Lock, Unlock, Trash2, Users, AlertTriangle } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
-import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
 import { formatAnswerValue } from "@/lib/human-labels";
 
 
@@ -122,13 +121,6 @@ export function AdminDossier({ matchId }: { matchId: string }) {
 
   const internalNotes = (notes as Any[]).filter((n) => n.visibility === "internal");
   const clientNotes = (notes as Any[]).filter((n) => n.visibility === "client_visible");
-  const gate = cvConsentGate({
-    stage: match.stage,
-    contact_released_at: match.contact_released_at,
-    contact_released_by: match.contact_released_by,
-    contact_release_reason: match.contact_release_reason,
-    has_interview: (interviews as Any[] | undefined)?.length ? true : false,
-  });
   const released = Boolean(match.contact_released_at);
   const published = match.client_visibility === "visible";
   const candidateLabel = (profile?.full_name as string | null) ?? "This candidate";
@@ -165,11 +157,14 @@ export function AdminDossier({ matchId }: { matchId: string }) {
       {/* Contact release */}
       <Section
         title="Contact release"
-        hint="Publishing shows the profile. Releasing contact details is a separate, audited permission."
+        hint="Publishing a candidate releases their contact details and CV to the client in the same write. There is no second step."
         action={
-          <Badge variant={gate.open ? "default" : "outline"} className="gap-1">
-            {gate.open ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
-            {gate.adminLabel}
+          // Reflects whether the client can actually see the details. The gate
+          // label read "Blocked — pre-interview", which described a rule that no
+          // longer decides this and left reviewers looking for an action to take.
+          <Badge variant={released ? "default" : "outline"} className="gap-1">
+            {released ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+            {released ? "Released" : "Not released"}
           </Badge>
         }
       >
@@ -209,35 +204,45 @@ export function AdminDossier({ matchId }: { matchId: string }) {
           </div>
         ) : (
           <div className="space-y-3">
-            {!published && (
+            {!published ? (
+              // Nothing to do here. Publishing writes contact_released_at in the
+              // same update, so offering a separate "release" action before then
+              // invented a step that does not exist and read as a blocker.
+              <p className="text-sm text-muted-foreground">
+                Contact details are released automatically when you publish this candidate to
+                the client, in the same action. Nothing to do here.
+              </p>
+            ) : (
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Not published yet</AlertTitle>
+                <AlertTitle>Published without contact details</AlertTitle>
                 <AlertDescription>
-                  Publish this candidate to the client before releasing contact details.
+                  Publishing now releases contact automatically, but this candidate was
+                  published before that changed — the client is still seeing masked details.
+                  Release them here.
                 </AlertDescription>
               </Alert>
             )}
+            {published && (
+              <>
             <div className="space-y-1.5">
               <Label htmlFor="release-reason">Reason (required, recorded in audit)</Label>
               <Input
                 id="release-reason"
                 value={releaseReason}
                 onChange={(e) => setReleaseReason(e.target.value)}
-                placeholder="e.g. Client confirmed interview slot"
+                placeholder="e.g. published before automatic release"
               />
             </div>
             <Button
               size="sm"
               className="min-h-11"
-              disabled={!published || !releaseReason.trim() || release.isPending}
+              disabled={!releaseReason.trim() || release.isPending}
               aria-busy={release.isPending || undefined}
               title={
-                !published
-                  ? "Publish this candidate to the client first"
-                  : !releaseReason.trim()
-                    ? "Add a reason — it is recorded in the audit trail"
-                    : undefined
+                !releaseReason.trim()
+                  ? "Add a reason — it is recorded in the audit trail"
+                  : undefined
               }
               onClick={async () => {
                 const r = await confirm({
@@ -257,6 +262,8 @@ export function AdminDossier({ matchId }: { matchId: string }) {
             >
               {release.isPending ? "Releasing…" : "Release contact details"}
             </Button>
+              </>
+            )}
           </div>
         )}
       </Section>
