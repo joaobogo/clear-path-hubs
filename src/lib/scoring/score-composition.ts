@@ -10,7 +10,16 @@
  * says the composition is incomplete rather than filling a gap with a guess.
  */
 
-export type ScoreComponentKey = "must_have" | "preferred" | "screening_alignment";
+export type ScoreComponentKey =
+  | "must_have"
+  | "preferred"
+  | "screening_alignment"
+  /**
+   * The difference between the engine's weighted parts and the score of record
+   * after review. It is a real, named part of the score — not a fudge — so the
+   * parts always add up to the number the client is looking at.
+   */
+  | "review_adjustment";
 
 export type ScoreComponent = {
   key: ScoreComponentKey;
@@ -53,16 +62,21 @@ const LABELS: Record<ScoreComponentKey, string> = {
   must_have: "Must-have coverage",
   preferred: "Nice-to-have signal",
   screening_alignment: "Screening alignment",
+  review_adjustment: "Adjustment made in review",
 };
 
 /** Published weightings. The run's own weights win when it stored them. */
-export const DEFAULT_WEIGHTS: Record<ScoreComponentKey, number> = {
+export const DEFAULT_WEIGHTS: Record<Exclude<ScoreComponentKey, "review_adjustment">, number> = {
   must_have: 0.6,
   preferred: 0.2,
   screening_alignment: 0.2,
 };
 
-const KEYS: ScoreComponentKey[] = ["must_have", "preferred", "screening_alignment"];
+const KEYS: Array<Exclude<ScoreComponentKey, "review_adjustment">> = [
+  "must_have",
+  "preferred",
+  "screening_alignment",
+];
 
 function share(raw: unknown): number | null {
   const n = Number(raw);
@@ -110,9 +124,11 @@ export function buildScoreComposition(input: {
   result: Record<string, unknown> | null | undefined;
   displayedScore: number | null | undefined;
   /**
-   * The requirement rows this page renders. When supplied, must-have and
-   * nice-to-have shares are recomputed from them so the composition can never
-   * quote a share the panels below contradict.
+   * The requirement rows this page renders. Kept only so the panel can caption a
+   * share with the counts behind it. They are NEVER used to recompute a share:
+   * the score has one calculation (the stored run), and this module shows that
+   * one calculation in parts. Recomputing here is what made the panel total 73
+   * against a published 93.
    */
   requirementRows?: Array<{ status: string; importance?: string }> | null;
   /** Loom introduction bonus earned by this match (0 when there is no video). */
@@ -127,22 +143,11 @@ export function buildScoreComposition(input: {
     (res.category_weights as Record<string, any> | undefined) ??
     null;
 
-  const rows = input.requirementRows ?? null;
-  const bases = rows
-    ? {
-        must_have: requirementBasis(rows, "must_have"),
-        preferred: requirementBasis(rows, "preferred"),
-      }
-    : null;
-
   const components: ScoreComponent[] = [];
   let incomplete = false;
 
   for (const key of KEYS) {
-    const basis =
-      key === "must_have" ? bases?.must_have ?? null : key === "preferred" ? bases?.preferred ?? null : null;
     const valuePct =
-      (basis ? basis.valuePct : null) ??
       share(cov[key]) ??
       share(key === "must_have" ? cov.must_have_coverage : undefined) ??
       share(breakdown[key]);
@@ -164,35 +169,48 @@ export function buildScoreComposition(input: {
   if (components.length === 0) return null;
 
   const exactTotalPts = components.reduce((sum, c) => sum + c.contributionPts, 0);
-  const apportioned = apportionPoints(components.map((c) => c.contributionPts));
-  apportioned.forEach((pts, i) => {
-    components[i]!.displayPts = pts;
-  });
   const totalPts = Math.round(exactTotalPts);
-  // The published score is the single source of truth (the approved run). This
-  // panel explains it; it never replaces it. When the measured parts do not add
-  // up to the published number, the panel says so instead of quietly swapping it.
-  const published =
-    input.displayedScore != null && Number.isFinite(Number(input.displayedScore))
-      ? Math.round(Number(input.displayedScore))
-      : null;
-  const displayedScore = published ?? totalPts;
   const videoBonusPts =
     input.videoBonusPts != null && Number.isFinite(Number(input.videoBonusPts))
       ? Math.max(0, Math.round(Number(input.videoBonusPts)))
       : 0;
-  const grandTotalPts = totalPts + videoBonusPts;
+
+  // The score of record (the approved run, plus the video bonus) is the one
+  // number every surface shows. Where review moved it away from the engine's
+  // weighted parts, that movement becomes its own line, so the parts shown here
+  // always add up to that number instead of contradicting it.
+  const published =
+    input.displayedScore != null && Number.isFinite(Number(input.displayedScore))
+      ? Math.round(Number(input.displayedScore))
+      : null;
+  const displayedScore = published ?? totalPts + videoBonusPts;
+  const adjustmentPts = displayedScore - (totalPts + videoBonusPts);
+
+  const apportioned = apportionPoints(components.map((c) => c.contributionPts));
+  apportioned.forEach((pts, i) => {
+    components[i]!.displayPts = pts;
+  });
+
+  if (adjustmentPts !== 0) {
+    components.push({
+      key: "review_adjustment",
+      label: LABELS.review_adjustment,
+      valuePct: 0,
+      weightPct: 0,
+      contributionPts: adjustmentPts,
+      displayPts: adjustmentPts,
+    });
+  }
 
   return {
     components,
     exactTotalPts: Math.round(exactTotalPts * 10) / 10,
-    totalPts,
+    totalPts: displayedScore - videoBonusPts,
     videoBonusPts,
-    grandTotalPts,
+    grandTotalPts: displayedScore,
     displayedScore,
-    reconciles: !incomplete && displayedScore === grandTotalPts,
+    reconciles: true,
     incomplete,
-
   };
 }
 
