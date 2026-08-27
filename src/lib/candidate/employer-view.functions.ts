@@ -108,7 +108,9 @@ export const getMyEmployerPreview = createServerFn({ method: "GET" })
     });
 
     return {
-      dto,
+      // A recruiter's introduction video is written for the employer, not for
+      // the candidate: it never appears in the candidate's own preview.
+      dto: { ...dto, intro_video: null },
       contact_released: dto.contact_released,
     };
 
