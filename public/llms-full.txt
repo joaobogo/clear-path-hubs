@@ -6,8 +6,6 @@
 
 What the service is and who it is for.
 
-- ; // Homepage metadata is authored inline (guardrail: the legacy JSON content entry // contains unapproved
-- and totals claims). The content bundle is // deliberately NOT imported here — importing it pulls every blog/industry // markdown file into the homepage chunk (~890 KiB) and delays hydration. export const Route = createFileRoute(
 - Candidates scored against the requirements your team approved — highest fit first, with the reasoning in view.
 - The Evidence Graph maps CV quotes and reviewer notes to every must-have, so decisions are grounded in what the CV actually says.
 - Every stage — Applied, Under review, Shortlisted, Interview, Offer — reflects the current state, not a weekly snapshot.
@@ -46,33 +44,19 @@ What the service is and who it is for.
 - AI in Recruitment 2026: What Works, What Fails, and What Is Next
 - An honest assessment of AI in recruiting — from resume parsing to predictive analytics — and where human judgment still decides.
 - A research-backed onboarding framework with week-by-week milestones and manager checkpoints for new hires.
+- Which roles are being augmented versus automated — and how hiring teams should prioritise skills as the mix shifts.
+- Percentage-of-salary placement fees, paid on every hire.
 
 ## Pricing — https://taasflow.com/pricing
 
 Pilot, packages and monthly subscription tiers.
 
-- Pricing & Plan Entitlements | TaaSFlow Platform
 - Software-enabled recruiting delivered as a subscription: ATS, recruiting agents, multichannel outreach and curated talent data for one flat monthly fee per active role, with no placement fees.
 - One platform, Talent Management that scales.
 - A hiring team planning roles together in a light-filled meeting room
-- flex flex-wrap gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80
 - Evidence-backed scoring on every candidate
-- mx-auto inline-flex w-full max-w-md items-center rounded-full border border-[color:var(--brand-navy)]/12 bg-white p-1 sm:mx-0 sm:mx-auto sm:flex
-- bg-[color:var(--brand-navy)] text-white shadow-sm
-- mt-4 text-center text-sm text-[color:var(--brand-navy)]/80
 - A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now.
 - Continuous capacity, billed monthly — Bronze through Enterprise.
-- font-semibold text-[color:var(--brand-navy)]
-- — applied to your subscription when we agree the plan on the call. Monthly prices are shown above.
-- mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80
-- font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl
-- rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8
-- font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight
-- mt-2 text-sm text-[color:var(--brand-navy)]/80
-- mt-5 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85
-- rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-cream)] p-6 sm:p-8
-- mt-0.5 text-[color:var(--brand-navy)]/80 transition-transform group-open:rotate-45
-- mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80
 - Tell us about the role. We come back with an exact price.
 - Complete the guided intake or book a short call — no obligation, no placement fees, no lock-in on the conversation.
 - What each subscription actually includes each week.
@@ -89,17 +73,12 @@ Pilot, packages and monthly subscription tiers.
 
 Intake, sourcing, screening, shortlist, hire.
 
-- ); export const Route = createFileRoute(
-- How it works — AI Hiring Intelligence Platform | TaaSFlow
 - The operational explainer: Blueprint Compiler, Agent Layer discovery, Evidence Graph review, Scoring Engine ranking and Decision Workspace delivery.
-- text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]
-- mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl
 - The operational anatomy of a TaaSFlow hire.
 - The actual mechanics — blueprint, agents, evidence, scoring, decision — and who owns what.
 - A hiring team reviewing candidate shortlists together at a table
 - The intake becomes an approved blueprint.
 - Your intake is not filed away — it becomes the scoring rubric, the search plan, and the screening spec. Weights and deal-breakers are approved before sourcing agents identify a single candidate.
-- mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/80
 - Must-haves, nice-to-haves, and deal-breakers made explicit
 - Search plan reviewed with you before launch
 - LinkedIn, sponsored ads, university partnerships, email marketing, web-scale intent scanning, billboards, radio, cold calling, job boards, communities, staffing partners, executive recruiters, inbound applications — every source feeds the same evidence-first scoring bar.
@@ -129,7 +108,6 @@ The ATS and workspace clients work in.
 - No candidate reaches your shortlist until evidence is verified and the release is approved.
 - Each score names the rubric version it ran on. Versions are frozen once scored against.
 - Weights, must-haves and intensity — steady, standard or aggressive — are set per role.
-- Enable, pause or disable any agent per role. Paused agents stop; the change is logged.
 - Every state change, override, release and access event is appended, never edited.
 - Hire, reject or withdrawal — with the reason captured at decision time.
 - The verified evidence behind that outcome stays attached to the record.
@@ -141,14 +119,8 @@ The ATS and workspace clients work in.
 - Doesn't produce ranked, evidenced shortlists on active roles.
 - Requirements enter once, compile into a versioned rubric, and every step after that is recorded.
 - An operations lead reviewing hiring performance on a wall display in a modern office
-- text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]
-- mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl
 - Representative data for one senior platform role. In the workspace this is the real record, with reviewer history attached.
 - Every shortlist arrives with the evidence that produced it.
-- mt-10 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white
-- bg-[color:var(--brand-navy)]/[0.04] text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80
-- px-4 py-4 font-semibold text-[color:var(--brand-navy)] sm:px-6
-- mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-4
 - Submit intake and see the compiled rubric, agent runs, and first evidence-backed shortlist inside your workspace.
 - Pick a module. See exactly what it does.
 - What enters it, what it does, what it produces, what you control, and what gets recorded.
@@ -165,46 +137,18 @@ The ATS and workspace clients work in.
 
 Engagement outcomes. Client names are withheld unless a client approved attribution.
 
-- ); export const Route = createFileRoute(
-- Case studies — hiring outcomes | TaaSFlow
 - Hospitality, finance, healthcare, tech, consumer and industrial engagements — evidence-backed shortlists produced by the AI Hiring Intelligence Platform.
-- absolute inset-0 h-full w-full opacity-[0.18]
-- mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6
-- rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur
-- mt-3 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80
-- mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl
-- mt-8 rounded-2xl border border-border/60 bg-muted/20 p-5
-- text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80
-- mt-8 rounded-2xl border border-border/60 bg-background p-6
-- mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4
-- relative flex items-start gap-3 rounded-xl border border-border/60 bg-card p-4
-- flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[color:var(--brand-ocean-text)]
-- inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-on-dark)]/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur
-- font-display text-2xl font-semibold tracking-tight sm:text-3xl
-- mt-1 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80
-- border-b border-border/60 bg-background px-5 pb-4 text-center text-[11px] leading-relaxed text-[color:var(--brand-navy)]/70
-- text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80
-- relative mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4
-- flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-[color:var(--brand-ocean-text)]
-- mt-1 text-sm font-semibold text-[color:var(--brand-navy)]
-- mt-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/70
-- mt-20 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-[color:var(--sector-panel-1)] via-[color:var(--sector-panel-2)] to-[color:var(--sector-panel-3)] p-8 text-[color:var(--brand-on-dark)] md:p-12
-- grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center
-- inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-on-dark)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur
-- h-1.5 w-1.5 rounded-full bg-[color:var(--sector-finance-accent)]
-- faster interview-to-offer than the client's prior baseline
-- lower cost-per-hire vs. previous agency engagements
-- shortlist → onsite pass-through across technical loops
-- credential-verified before shortlist in regulated verticals
-- underrepresented representation on senior shortlists
-- missed pre-opening dates across six hospitality sites
-- text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]
-- mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl
-- mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3
-- rounded-2xl border border-border/60 bg-card p-6
-- font-display text-4xl font-semibold tracking-tight text-[color:var(--brand-ocean-text)]
-- mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80
-- inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]
+- The operating model that produced these numbers.
+- Deep dives on hiring economics and evaluation.
+- Case-study-adjacent playbooks per vertical.
+- Active or recent engagements represented on this page
+- Representative delivery figures for this vertical — not the reported results of one named client.
+- No published quote for this engagement. We only publish testimonials a client has written and approved for attribution — references are available on request.
+- One workspace, one evidence model — applied consistently whether the role sits in Zurich, São Paulo, or Tokyo.
+- Numbers that show up in the client's own dashboard.
+- Metrics reflect aggregate delivery performance across representative TaaSFlow engagements in each vertical. Named case studies with written client approval are added individually as each client signs off on attribution.
+- Six engagements across hospitality, finance, healthcare, tech, consumer, and industrial — with a global operating footprint and evidence-scored shortlists every time.
+- Start an intake and see shortlist delivery inside your own workspace in under 10 days.
 
 ## FAQ — https://taasflow.com/faq
 
@@ -255,46 +199,17 @@ Billing, scope, screening and data questions.
 
 Index of sector-specific hiring guidance.
 
-- ; /** * /industries — deep sector-expertise library entrance. * * Editorial hero (no giant decorative photo, no repetition of individual * industry-page heroes), fast client search + family filters with URL * state, ItemList JSON-LD for indexing, accessible reset, methodology * explainer and a
-- Industries — AI Hiring Intelligence by sector | TaaSFlow
 - Fifty-seven industries, six page archetypes, one AI Hiring Intelligence Platform. Search or filter to the vertical you hire for.
-- inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]
-- inline-flex min-h-11 items-center justify-center gap-1 rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]
-- w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-[color:var(--taas-surface-card)] py-2.5 pl-9 pr-9 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/80 focus:border-[color:var(--brand-navy)]/40 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]
-- -mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1
-- mb-6 text-sm text-[color:var(--brand-navy)]/80
-- text-lg font-semibold text-[color:var(--brand-navy)]
-- mt-2 text-sm text-[color:var(--brand-navy)]/80
-- mt-5 flex flex-wrap justify-center gap-3
-- rounded-full border border-[color:var(--brand-navy)]/20 px-4 py-2 text-xs font-semibold text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5
-- grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3
-- border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] py-14
-- grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start
-- text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]
-- mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl
-- mt-4 max-w-xl text-[15px] leading-relaxed text-[color:var(--brand-navy)]/80
-- inline-flex min-h-11 items-center justify-center gap-1 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90
-- inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]
 - Signals, credentials and outcomes match the industry — not a generic sourcing template.
 - Every score point ties to a specific sentence pulled from the candidate's document.
 - A partner reviews each shortlist against the role, jurisdiction and delivery expectations.
 - One workspace, one intake, one commercial model — with content that adapts per industry.
-- flex items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--taas-surface-card)] p-4
-- grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] font-semibold text-[color:var(--brand-on-dark)]
-- text-sm font-semibold text-[color:var(--brand-navy)]
-- mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl
-- inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90
-- text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]
-- text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-ocean-text)]
-- mt-1 font-[family-name:var(--brand-font-display)] text-xl font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean-text)]
-- mt-2 line-clamp-2 text-sm text-[color:var(--brand-navy)]/80
-- font-semibold text-[color:var(--brand-navy)]
-- bg-gradient-to-br from-[color:var(--category-systems-1)] to-[color:var(--category-systems-2)] text-[color:var(--brand-on-dark)]
-- bg-gradient-to-br from-[color:var(--category-trust-1)] to-[color:var(--category-trust-2)] text-[color:var(--category-trust-fg)]
-- bg-gradient-to-br from-[color:var(--category-risk-1)] to-[color:var(--category-risk-2)] text-[color:var(--category-risk-fg)]
-- bg-gradient-to-br from-[color:var(--category-operations-1)] to-[color:var(--category-operations-2)] text-[color:var(--brand-on-dark)]
-- bg-gradient-to-br from-[color:var(--category-service-1)] to-[color:var(--category-service-2)] text-[color:var(--brand-on-dark)]
-- bg-gradient-to-br from-[color:var(--category-expertise-1)] to-[color:var(--category-expertise-2)] text-[color:var(--category-expertise-fg)]
+- Hiring intelligence, tuned to the realities of each industry.
+- One recruiting model, six page archetypes, and a rubric calibrated to the language, evidence and regulation of every sector we serve.
+- Try a broader query, clear filters, or contact us — we may serve the vertical without a dedicated page yet.
+- Every industry gets a rubric calibrated to what actually matters in that sector — the language on the CV, the credentials that gate the role, the signals that predict delivery. Nothing is borrowed from a generic template.
+- We build custom rubrics for adjacent sectors.
+- Tell us what you hire for. We'll confirm coverage, share a sample rubric, and start a role if it's a fit.
 
 ## Open roles — https://taasflow.com/jobs
 
@@ -302,11 +217,6 @@ Live job board for candidates.
 
 - Browse roles open through TaaSFlow. Every application gets a structured screening against what the role asks for — apply in minutes, no account needed.
 - Roles currently open through TaaSFlow. Apply in minutes.
-- && p.work_model !== workModel) return false; if (employment !==
-- && p.employment_type !== employment) return false; if (seniority !==
-- && p.seniority !== seniority) return false; if (loc && !(p.location ??
-- text-3xl md:text-4xl font-semibold tracking-tight
-- mt-6 inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90
 - Only active + public roles with a complete description and at least one requirement appear on the board.
 - No open roles right now — join the talent network to be first in line when the next role goes live.
 - Try widening the location or removing a filter.
@@ -315,7 +225,226 @@ Live job board for candidates.
 
 How candidate and client data is handled.
 
-- ); export const Route = createFileRoute(
 - How TaaSFlow collects, uses, and protects personal information across recruitment activities.
 - How TaaSFlow collects, uses, and protects personal information.
 - Personal data collected through the intake, application, and workspace flows is stored in a managed Postgres database, with the application served from an edge hosting network. CV files are held in private object storage with row-level access policies. The named providers behind this infrastructure are listed in the sub-processor register in section 6 below.
+
+## Pilot — https://taasflow.com/pilot
+
+The one-time single-role pilot: what it includes and what it costs.
+
+- You create your workspace and upload the job description. TaaSFlow builds the role blueprint, screening criteria and sourcing plan automatically, and you review or edit every detail before the search goes live.
+- Sourcing agents continuously identify candidates across talent signals, then the Scoring Engine scores every candidate against your rubric. Each score is tied to evidence pulled from the CV, so you can see why a candidate ranks where they do.
+- Reviewed, evidence-backed candidates are published to your dashboard, ranked. You review, message your platform experts, and give feedback that shapes the next round.
+- One role scoped end-to-end with our team
+- A live client dashboard with pipeline, messages, and status
+- A ranked shortlist of pre-screened candidates
+- Evidence per requirement, tied to CV quotes
+- Full candidate profiles and CV downloads
+- Configurable expert oversight, reachable in the workspace
+- More than one role — the pilot covers a single active role
+- A second pilot — each company can run the pilot once
+- Interview scheduling and offer negotiation on your behalf
+- Executive search retainers or contingency placements
+- Background checks, assessments, or payroll
+- Ongoing weekly delivery — that starts with a subscription
+- Move to a flat monthly fee and keep the same workspace, rubric, and expert oversight. Nothing is rebuilt.
+- No commitment, no placement fee. You keep every candidate the platform surfaced and the evidence behind each score.
+- The pilot is a one-time, single-role engagement that runs the full TaaSFlow process — intake, sourcing, evidence-based scoring, and a ranked shortlist in a live dashboard — so you can judge candidate quality on real work before committing to a subscription. Each company can run it once.
+- Three stages, one role, one fixed price. The pilot is a one-time engagement available once per company. First candidate activity usually begins within 3–5 days after the search goes live.
+
+## Agents — https://taasflow.com/agents
+
+The agents that run a search, with their inputs, outputs and approval gates.
+
+- Agents work inside role rules, a frozen rubric and approval gates. Every action they take is recorded.
+- A recruiter reviewing candidate evidence at a desk in the evening
+- Agents keep working between your meetings — inside limits you set.
+- You choose which agents run, what they may send, and what must be approved before a candidate reaches you.
+- Agents do not talk in prose. Each one passes a structured record forward, and the Governance Agent records the handoff.
+- Approval gates sit between the blueprint and sourcing, and between scoring and release. Work stops at those gates until a person clears it.
+- These are enforced in the system, not stated as policy.
+- This is the activity rail from the workspace: actor, action, time, status and result — including the runs that are waiting on a person.
+
+## Solutions — https://taasflow.com/solutions
+
+Which engagement fits a given hiring situation.
+
+- Solutions — AI Hiring Intelligence for every hiring need
+- Pilot a single hire, scale volume hiring, run enterprise hiring or hire globally. One platform, one monthly fee, ranked candidates in days.
+- Run 3–15 active roles at a flat monthly rate. Unlimited hires per subscription. Your workspace tracks every requisition in one place.
+- Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — we integrate.
+- 50+ countries covered. Timezone-aware shortlisting, work-authorisation screening, and remote-first evidence.
+- 5-step consultation captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.
+- Consent tracking, retention policies, and full audit trail. GDPR-aligned. Your data stays yours.
+- From a single pilot hire to enterprise programs across 50+ countries — TaaSFlow adapts to the shape of your team.
+- Book a 20-minute consultation — we'll map your open roles to the right plan.
+
+## Enterprise — https://taasflow.com/enterprise
+
+Security, procurement, seats and audit requirements for larger programmes.
+
+- The AI Hiring Intelligence Platform for teams hiring at scale: ranked, evidence-backed shortlists, governance controls and audit trails in one workspace.
+- Recruiting infrastructure for teams running many roles at once: recruiting agents, multichannel outreach, evidence-backed scoring, governance controls and audit trails in one workspace.
+- Two or three functions hiring in parallel with shared standards.
+- Agent capacity plus a named account lead
+- Multi-business-unit hiring with executive reporting.
+- Continuous hiring where volume shifts by quarter.
+- No search starts until must-haves, nice-to-haves and weightings are signed off in writing at intake.
+- Each score line carries the source text it came from, so a hiring committee can check the reasoning.
+- A recruiter reads and signs off every shortlist. Nothing reaches your dashboard unread.
+- Change the brief and affected candidates are flagged for re-review rather than left on a stale score.
+- Consistent rubric across every role family
+- The same role family is scored against the same rubric version, whichever recruiter runs the search.
+- Advance, hold and pass all require a reason code, which feeds calibration for the next batch.
+- UK, EU-27, EFTA and select MENA markets, with local time-zone screening and language filters.
+- North America, LATAM and the Caribbean, with time-zone-aligned pipelines for cross-region teams.
+- Australia, New Zealand, India, Singapore and Southeast Asia, with explicit local-hours filters.
+- Every account is isolated at the database layer. Your candidates and pipelines are never visible to another tenant.
+- Access is scoped to business unit, team or requisition, and candidate contact details are released deliberately, not by default.
+- Candidates apply directly and consent to processing. CVs are stored as PDFs in private storage with time-limited access links.
+- Score changes, decisions, releases and exports are logged with actor and timestamp for internal review.
+- DPAs, sub-processor lists, retention windows and security questionnaires are completed during onboarding.
+- Role families, business units, expected volume, stakeholders and reporting needs.
+- Business units, hiring teams, permissions and dashboards configured to match your org.
+- Criteria and weightings approved per role family. Agent capacity assigned and oversight briefed.
+- Delivery begins in the workspace, in days from an approved brief.
+- Calibration on the first batches, then a standing review on volume, quality and cycle time.
+- Roles live in different spreadsheets, ATSes, and inboxes. Nobody has a single view of what is actually happening.
+- Every recruiter scores differently. Hiring managers see different signals for what is supposedly the same role.
+- Batches of résumés arrive without evidence. Decisions rely on trust rather than what the CV actually says.
+- TA leads, business partners, and hiring managers all need context — and end up reconstructing it in status meetings.
+- Interviews start with no shared record of what was assessed at sourcing, so questions get repeated and time is lost.
+- Cycle time and stage health are calculated retroactively from stale exports rather than a live account view.
+- Business units, teams, and hiring managers modeled explicitly so requisitions, permissions, and reporting line up with how you actually operate.
+- Dedicated agent capacity per role family or business unit. Standards stay consistent as volume changes and new requisitions open.
+- Every open role is a separate pipeline inside the same Client workspace — no context switching between tools per requisition.
+- Requisition portfolio view for TA leadership
+- Role-scoped pipelines for hiring managers
+- Business-unit rollups for people partners
+- Role-based access so people see the pipelines they own
+- Role-specific scoring aligned to your intake
+
+## Integrations — https://taasflow.com/integrations
+
+Calendars, video interviews and email that connect to the workspace.
+
+- Every TaaSFlow integration with its purpose, connection method, data exchanged, permissions and current availability. Planned connections are labelled as planned, never as available.
+- Tell us which system you run and what should flow between it and TaaSFlow. We build integrations by demand, and we will tell you honestly whether it is on the roadmap.
+- No setup documentation — nothing to set up yet.
+- Each listing states its purpose, how the connection is made, what data crosses the boundary and what permissions it needs. Anything not built yet is marked Planned.
+- We only list connections that exist in the platform or are formally documented. If the one you need is missing, ask us for it — we prioritise by demand.
+
+## Security — https://taasflow.com/security
+
+Access control, data handling and hosting posture.
+
+- Verified security and privacy information for TaaSFlow: row-level tenant isolation, access controls, encryption, retention, audit coverage, subprocessors and incident response — with dates and sources.
+- Security and privacy, stated only where we can prove it
+- Every claim here traces to the platform, an internal control, or a published policy. Where something is not in place yet, it says so.
+- A secure data facility corridor lit by a single warm light
+- Send us your questionnaire or DPA template. We answer against the real configuration, and we say 'not yet' where that is the honest answer.
+- This page is our own account of how the system works — not an independent audit or a third-party verification.
+- A real person reads these. Use the closest match rather than a general enquiry form.
+
+## Trust — https://taasflow.com/trust
+
+Commitments on data, screening and how decisions are recorded.
+
+- The commercial trust pack for TaaSFlow. How pricing works, what you keep, how scoring works, candidate privacy, and where the line runs between TaaSFlow and your team.
+- Every candidate profile, evidence, and score you have seen — permanently.
+- Your role blueprints, rubrics, screening questions, and scoring logic.
+- Talent pools, silver medalist memory, and rediscovery data.
+- Every decision, comment, and hire record — with audit trail.
+- Exportable shortlists and share links for internal stakeholders.
+- No per-seat charges for internal reviewers.
+- No extra fees for rediscovery or silver medalist hires.
+- Every score points at a specific line in the CV, an answer to a screening question, or a piece of enrichment data. If we cannot cite it, we do not score it.
+- The scoring rubric is generated from your role blueprint — must-haves, preferred criteria, dealbreakers, and screening answers. It is visible to you before any candidate is scored.
+- Once a score is generated it is written to an append-only record with the model version and the evidence used. Nobody can rewrite history.
+- When two evidence sources disagree — CV vs LinkedIn, claim vs screening answer — we flag it as a contradiction on the candidate card instead of picking a winner.
+- Every extracted fact carries a confidence signal. Low-confidence facts do not carry the same weight as verified ones and are visible as such.
+- Candidates own their data. They can request access, correction, and deletion at any time.
+- CVs are stored in a private bucket with per-organization access, encrypted at rest.
+- External stakeholder share links are token-gated, scoped to the shortlist, and revocable.
+- PII is never used to train third-party models. Model calls are per-request, stateless, and logged for audit.
+- Consent and legal basis are recorded per candidate — with an audit trail on every access.
+- We help translate the ask into a structured brief and rubric.
+- You approve the brief, the rubric, and the dealbreakers before sourcing starts.
+- We run multi-channel sourcing and outreach with delivery health tracking.
+- You see the pipeline in real time and can pause, redirect, or comment.
+- We parse CVs, extract evidence, and score against your rubric.
+- You review, override, and decide. Every override is captured with a reason.
+- We deliver a ranked shortlist with evidence and provenance.
+- You decide who moves forward. We never make hire/no-hire calls for you.
+- We host the system of record and keep the audit trail complete.
+- You own the data. Export, delete, or migrate at any time.
+- What happens if we stop working with TaaSFlow?
+- No. Pricing is package-based and published above. Higher volume gets a lower cost per role. Enterprise plans are custom but never percentage-based.
+- Do candidates know they are being evaluated by an AI-assisted system?
+- Yes. The application flow and privacy notice make the AI-assisted evaluation explicit. Every evaluation is reviewable and reversible by a human.
+- Can the AI make a hire or reject a candidate?
+- No. The system ranks and explains. A human on your team makes every progression, offer, and rejection decision. Every decision is logged with the person and the reason.
+- How are you different from an ATS or a recruiting agency?
+- An ATS stores. An agency executes. TaaSFlow is a recruiting execution system: system of record + sourcing + evidence-first scoring + live client control + persistent memory across roles.
+- TaaSFlow runs alongside — the system of record for how the role was actually run, the evidence behind every candidate, and the memory that carries between roles.
+- In an isolated, per-organization workspace with row-level security. Encrypted at rest. Access is scoped to your team and, when granted, our staff — every read is logged.
+- Per-organization workspace with row-level security on every table.
+- Least-privilege roles: platform admin, client admin, editor, viewer. All access audited.
+
+## Global talent — https://taasflow.com/global-talent
+
+Hiring across regions, remote-ready and compliance considerations.
+
+- Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.
+- Active sourcing across the UK, EU-27, EFTA and select MENA markets. Local time-zone screening and language filters.
+- North America, LATAM and Caribbean coverage with time-zone-aligned pipelines for cross-region teams.
+- Established reach across Australia, New Zealand, India, Singapore and Southeast Asia. Explicit local-hours filters.
+- Remote-first is the default working model on most briefs.
+- Time-zone constraints are captured at intake and enforced in scoring.
+- Hybrid and on-site briefs state the required city or region up front.
+- Working preference is a candidate-owned field — filters, not assumptions.
+- Relocation and visa support are brief-specific. They appear on the job details only when the client has confirmed it in writing.
+- If a role offers relocation, the type of support (bonus, agency, sponsorship) is stated on the job page — never implied by us.
+- Candidates share work authorisation and relocation openness during intake, so mismatches never reach the shortlist.
+- Structured multi-channel sourcing per brief, not blanket outreach.
+- Role-specific rubrics adapt to regional titles, credentials and market norms.
+- Language proficiency captured as a first-class attribute where the brief requires it.
+- Every candidate is reviewed by a human before introduction.
+- Employer of record is the client. Introductions include eligibility and location.
+- Fixed-term contracts where the client already has the entity or contractor framework in place.
+- Where an EOR is required, we introduce with the client's chosen partner — we don't act as the employer of record ourselves.
+- Structured intake captures region, remote scope and any relocation commitment before sourcing starts.
+- Remote-first sourcing across EMEA, the Americas and APAC. Relocation and visa support are offered per brief, only when the employer has confirmed the scope in writing.
+- Coverage means active sourcing, screening and time-zone alignment — not country checklists.
+- We do not publish country totals or visa outcomes. Every brief states what the employer commits to, and nothing more.
+
+## Terms — https://taasflow.com/terms
+
+Contract terms for the subscription and pilot.
+
+- TaaSFlow runs on a managed Postgres database, authentication and file storage operated by Supabase, with application hosting, CDN and WAF services on Cloudflare's edge network. The full sub-processor register is published in section 6 of our Privacy Notice. This wording is pending review by TaaSFlow's legal counsel.
+
+## About — https://taasflow.com/about
+
+Why TaaSFlow exists and how it operates.
+
+- Great hiring starts with great process. We just made it repeatable.
+- 25 years designing and driving value creation across Fortune 500s and private equity. Former Director at UBS Investment Bank, and led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Pragmatic and disruption-minded, with technology as the enabler — and deep experience working directly with leadership teams to execute business strategy.
+- The best candidates aren't looking. You need to know where they are and how to reach them.
+- Former strategist for Hilton, Marriott, Four Seasons and Philips, and represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe and the Gulf, focused on employer branding, global talent markets and building real connections at scale.
+- TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — an AI Hiring Intelligence Platform that runs the search end to end, priced like software, with configurable expert oversight on every shortlist.
+- Every score cites the exact CV quote it came from. If we cannot cite it, we do not claim it.
+- The workspace your client sees is the same workspace the platform runs on. Nothing lives in a private inbox.
+- Every candidate the platform surfaces stays in your Talent Graph — even between roles. No gatekeeping, no lock-in.
+- Applicants get a real answer, real feedback, real timelines. Silence is not a delivery mode.
+- Scaling teams that need predictable throughput without building an internal recruiting org overnight.
+- Established teams running multiple parallel searches that need one operating model, not five separate vendor contracts.
+- Operators who want to run the search themselves without losing their week to sourcing.
+- About TaaSFlow — the AI Hiring Intelligence Platform
+- TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.
+- Start hiring with an evidence-first model.
+- Submit a role in the guided intake — your workspace is ready as soon as you finish.
+- Why we built a subscription recruiting product.
+- We exist to make recruiting explainable again.
+- Careers built advising global enterprises. Now applying the same rigor to the world of hiring.

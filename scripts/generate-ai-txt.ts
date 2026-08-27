@@ -18,6 +18,18 @@ function routeFiles(path: string): string[] {
   return [`src/routes/${seg}.tsx`, `src/routes/${seg}.index.tsx`];
 }
 
+/**
+ * Strips comments and import/type machinery so authored prose is all that is
+ * left to match. Without this, a guardrail comment above a route's metadata
+ * reads as page copy and ends up published in llms-full.txt.
+ */
+function stripCode(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:'"\\])\/\/[^\n]*/g, "$1")
+    .replace(/^\s*import[\s\S]*?from\s+["'][^"']+["'];?/gm, " ");
+}
+
 /** Pulls human-readable copy out of a route's JSX string and text literals. */
 function extractCopy(source: string): string[] {
   const out: string[] = [];
@@ -26,6 +38,10 @@ function extractCopy(source: string): string[] {
     // Sentence-like copy only: skip class names, tokens and single words.
     if (t.length < 40) return;
     if (/[{}<>]|className|=>|https?:\/\/|^[a-z-]+:/.test(t)) return;
+    // Reject leftover code shapes: identifiers, JSX props, path- or camelCase
+    // tokens, and anything that doesn't read as a sentence.
+    if (/[;`|\\]|\b(const|export|function|readonly|interface|createFileRoute|guardrail)\b/.test(t)) return;
+    if (!/^["'(\u2014\u201c]?[A-Z0-9]/.test(t)) return;
     if (!/[a-z] [a-z]/i.test(t)) return;
     if (out.includes(t)) return;
     out.push(t);
@@ -46,7 +62,7 @@ for (const page of AI_FACTS.pages) {
   const file = routeFiles(page.path).find((f) => existsSync(f));
   blocks.push(`## ${page.title} — ${AI_FACTS.origin}${page.path}`, "", page.note, "");
   if (!file) continue;
-  const copy = extractCopy(readFileSync(file, "utf8")).slice(0, 40);
+  const copy = extractCopy(stripCode(readFileSync(file, "utf8"))).slice(0, 40);
   if (copy.length) blocks.push(...copy.map((c) => `- ${c}`), "");
 }
 
