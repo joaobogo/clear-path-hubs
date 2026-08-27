@@ -313,6 +313,35 @@ export function evidenceSupport(
     }))
     .filter((e) => e.snippet.length > 0);
 
+  /**
+   * Cross-requirement rescue.
+   *
+   * The engine tags each quote with the requirement it was extracted for. When
+   * it tagged a genuinely relevant passage to a neighbouring requirement (the
+   * row-level-security quote landed on the multi-tenant nice-to-have), the
+   * must-have was left with only generic passages and read "not evidenced"
+   * while the quote sat two rows below marked "Met". The same record cannot
+   * hold evidence that is both present and absent, so when a requirement ends
+   * up with no quote of its own we look across the whole record for passages
+   * that plainly speak to it and cite those instead.
+   */
+  const rescued =
+    evidence.length === 0
+      ? rawEvidence
+          .filter((e: any) => !e.contradiction && !isCandidateHeadline(evidenceSnippet(e)))
+          .filter((e: any) => passageSupportsRequirement(cleanQuote(evidenceSnippet(e)), r.label))
+          .map((e: any) => ({
+            label: e.label || "Evidence",
+            snippet: cleanQuote(evidenceSnippet(e)),
+            source: e.source || e.source_kind || null,
+            location: (e.source_location ?? e.location ?? null) as EvidenceLocation,
+          }))
+          .filter((e) => e.snippet.length > 0)
+          .filter((e, i, all) => all.findIndex((o) => o.snippet === e.snippet) === i)
+          .slice(0, 2)
+      : [];
+  const supporting = evidence.length > 0 ? evidence : rescued;
+
   const contradictions = mine
     .filter((e: any) => e.contradiction)
     .map((e: any) => ({
