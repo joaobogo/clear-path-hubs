@@ -9,8 +9,8 @@
  *   • Up to 20 positions       → $15,200
  *   • Up to 30 positions       → $21,600
  *   • Up to 40 positions       → $27,200
- *   • Up to 50 positions       → $32,000
- *   • More than 50 positions   → no price shown; the CTA is to talk to us
+ *   • Up to 100 positions      → $80,000
+ *   • More than 100 positions  → no price shown; the CTA is to talk to us
  *
  * DERIVATION (internal reasoning only — never rendered):
  * the five package totals are capacity × $800 base, less a volume discount of
