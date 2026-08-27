@@ -119,9 +119,9 @@ function inPriorWindow(rowIso: string | null, priorFrom: string, from: string): 
   return t >= new Date(priorFrom).getTime() && t < new Date(from).getTime();
 }
 
+/** The published score, from the one reader. */
 function scoreOf(run: Row): number | null {
-  const v = run.final_score ?? run.score;
-  return typeof v === "number" ? v : v == null ? null : Number(v);
+  return publishedScore(run as PublishedScoreRun);
 }
 
 function positionLink(positionId: string | null, orgId?: string) {

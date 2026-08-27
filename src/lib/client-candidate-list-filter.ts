@@ -5,6 +5,7 @@
 // URL-driven, so this function is the single answer to "does the list agree
 // with the chips and the tile that linked here?".
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { isStrongFitBand, isUnicornScore } from "@/lib/scoring/score-counts";
 
 // Fit-band ordering for the "Highest approved fit" sort. Employer surfaces have
 // no numeric rating to sort on — the band is the contract.
@@ -37,11 +38,11 @@ const STAGE_ORDER: Record<ClientCandidateDTO["stage"], number> = {
 };
 
 /**
- * Mirrors `isTopMatch` in client-kpi.server.ts via the presentation band: the
- * tile and the list it links to must show the same number of candidates.
+ * The strong-fit predicate, read from the one implementation — so the tile and
+ * the list it links to can never show different numbers.
  */
 export function matchesTopTile(c: ClientCandidateDTO): boolean {
-  return c.fit.band === "exceptional" || c.fit.band === "top" || c.fit.band === "strong";
+  return isStrongFitBand(c.fit.band);
 }
 
 /**
@@ -67,7 +68,7 @@ export function filterCandidates(
   return rows.filter((c) => {
     if (s.filter === "top" && !matchesTopTile(c)) return false;
     if (s.filter === "interview_pipeline" && !matchesInterviewTile(c)) return false;
-    if (s.unicorn === "1" && (c.score === null || c.score < 95)) return false;
+    if (s.unicorn === "1" && !isUnicornScore(c.score)) return false;
     if (s.stage !== "all" && c.stage !== s.stage) return false;
     if (s.fit !== "all" && c.fit.band !== s.fit) return false;
     if (s.critical !== "all") {

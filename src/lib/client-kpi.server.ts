@@ -5,6 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
+import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
 import { publishedBand, publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
@@ -317,13 +318,10 @@ export async function loadKpiRows(
 export function isTopMatch(r: KpiRow): boolean {
   if (r.approved_score_run_id == null) return false;
   const words = TOP_FIT_LABELS as readonly string[];
-  if (r.approved_score != null) {
-    const band = classifyBand(r.approved_score);
-    // C9: Strong fit (70+) counts as 'top' for the "Strongest candidates" tile
-    // to match the client-facing presentation logic.
-    return band === "exceptional" || band === "top" || band === "strong";
-  }
+  // One predicate for every "strongest candidates" figure, admin and client.
+  if (r.approved_score != null) return isStrongFitScore(r.approved_score);
   if (r.approved_fit_label != null && words.includes(r.approved_fit_label)) return true;
+  if (isStrongFitBand(r.approved_fit_band)) return true;
   if (r.approved_fit_band != null && words.includes(r.approved_fit_band)) return true;
   return false;
 }

@@ -1,4 +1,5 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { isStrongFitBand } from "@/lib/scoring/score-counts";
 
 export type ClientCandidateKpis = {
   delivered: number;
@@ -34,13 +35,7 @@ export function computeCandidateKpis(
     delivered += 1;
     // "Strongest candidates" tile: the same predicate used by the KPI drill-through
     // (filter: "top") and the client-facing band presentation.
-    if (
-      row.fit.band === "exceptional" ||
-      row.fit.band === "top" ||
-      row.fit.band === "strong"
-    ) {
-      top += 1;
-    }
+    if (isStrongFitBand(row.fit.band)) top += 1;
     if (row.stage === "shortlisted") shortlisted += 1;
     if (row.stage === "interview_process") interviewing += 1;
     if (row.stage === "offer") offers += 1;
