@@ -172,6 +172,18 @@ export function isNotRecommendedFit(
 
 // ── Requirement rows ─────────────────────────────────────────────────────────
 
+/** Where in the source document a quote sits, when the record holds it. */
+export type EvidenceLocation =
+  | string
+  | null
+  | {
+      section?: string | null;
+      heading?: string | null;
+      block?: string | null;
+      page?: string | number | null;
+      page_number?: string | number | null;
+    };
+
 export type RequirementStatus =
   | "met"
   | "partial"
@@ -185,11 +197,11 @@ export type RequirementRow = {
   label: string;
   importance: "must_have" | "preferred";
   status: RequirementStatus;
-  evidence: Array<{ label: string; snippet: string; source: string | null }>;
+  evidence: Array<{ label: string; snippet: string; source: string | null; location?: EvidenceLocation }>;
   explanation: string | null;
   interpretation: string | null;
-  contradictions: Array<{ label: string; snippet: string; source: string | null }>;
-  context: Array<{ label: string; snippet: string; source: string | null }>;
+  contradictions: Array<{ label: string; snippet: string; source: string | null; location?: EvidenceLocation }>;
+  context: Array<{ label: string; snippet: string; source: string | null; location?: EvidenceLocation }>;
 };
 
 /** "5+ years building web apps" -> "5-years-building-web-apps" */
@@ -297,6 +309,7 @@ export function evidenceSupport(
       label: e.label || "Evidence",
       snippet: cleanQuote(evidenceSnippet(e)),
       source: e.source || e.source_kind || null,
+      location: (e.source_location ?? e.location ?? null) as EvidenceLocation,
     }))
     .filter((e) => e.snippet.length > 0);
 
@@ -306,6 +319,7 @@ export function evidenceSupport(
       label: e.label || "Contradiction",
       snippet: cleanQuote(evidenceSnippet(e)),
       source: e.source || e.source_kind || null,
+      location: (e.source_location ?? e.location ?? null) as EvidenceLocation,
     }));
 
   // HONESTY GATE: A requirement is only MET if there is direct evidence.

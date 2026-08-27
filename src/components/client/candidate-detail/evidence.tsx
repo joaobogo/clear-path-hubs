@@ -9,7 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { humanizeSource, renderQuote } from "@/lib/evidence/quote-hygiene";
+import { presentEvidenceList } from "@/lib/evidence/evidence-presentation";
 
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
@@ -219,13 +219,12 @@ export const FitHero = memo(function FitHero({
   const fit = candidate.fit;
   // Once a candidate is hired or no longer moving forward, a recommendation to
   // interview is stale advice — the decision is already made.
+  // The stage is stated once, as the chip beside the candidate's name. A decided
+  // candidate therefore shows no recommendation line here rather than repeating
+  // it, and stale advice ("interview them") is never shown after a decision.
   const decided =
     candidate.stage === "hired" || candidate.stage === "not_moving_forward";
-  const recommendation = decided
-    ? candidate.stage === "hired"
-      ? "Hired — no further action needed."
-      : "No longer moving forward."
-    : fit.recommendation;
+  const recommendation = decided ? null : fit.recommendation;
   const ring = accentToRing(fit.accent);
   const bg = accentToSoftBg(fit.accent);
   const dashArray = 251.2; // 2π·40
@@ -258,18 +257,22 @@ export const FitHero = memo(function FitHero({
               <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
                 {fit.headline}
               </h2>
-              <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
-                {recommendation}
-              </p>
+              {recommendation && (
+                <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
+                  {recommendation}
+                </p>
+              )}
             </div>
           ) : (
             <>
               <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
                 {fit.headline}
               </h2>
-              <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
-                {recommendation}
-              </p>
+              {recommendation && (
+                <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
+                  {recommendation}
+                </p>
+              )}
             </>
           )}
           {(() => {
@@ -401,6 +404,15 @@ export const RequirementRowView = memo(function RequirementRowView({
   // never as work in progress.
   const status = resolveRequirementStatus(row);
   const badge = statusBadge(status);
+  // Presentation hygiene: identical and near-identical snippets collapse to
+  // one, nothing repeats the summary line above, and a quote that survives as
+  // a broken fragment is not shown at all.
+  const evidence = presentEvidenceList(row.evidence, [claim, row.explanation]);
+  const context = presentEvidenceList(row.context, [
+    claim,
+    row.explanation,
+    ...evidence.map((e) => e.quote),
+  ]);
   return (
     <li className="rounded-md border bg-background/40 p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -429,52 +441,47 @@ export const RequirementRowView = memo(function RequirementRowView({
       {claim && (
         <p className="mt-2 text-sm text-foreground/90">{claim}</p>
       )}
-      {(row.evidence.length > 0 || row.context.length > 0) && (
+      {(evidence.length > 0 || context.length > 0) && (
         <Accordion type="single" collapsible className="mt-2">
           <AccordionItem value="evidence" className="border-none">
             <AccordionTrigger className="py-1 text-xs text-muted-foreground hover:no-underline">
-              {row.evidence.length > 0
-                ? `Show evidence (${row.evidence.length})`
+              {evidence.length > 0
+                ? `Show evidence (${evidence.length})`
                 : "Show context"}
             </AccordionTrigger>
             <AccordionContent>
-              {row.evidence.length > 0 && (
+              {evidence.length > 0 && (
                 <ul className="mt-1 space-y-2 border-l-2 border-primary/30 pl-3 text-sm">
-                  {row.evidence.map((e, i) => (
+                  {evidence.map((e, i) => (
                     <li key={i}>
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        {e.source && (
-                          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                            {humanizeSource(e.source)}
-
-                          </div>
-                        )}
+                        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                          {e.sourceLine}
+                        </div>
                         <span className="text-[10px] taas-fg-success font-medium">Verified</span>
                       </div>
-                      <div className="text-foreground/90">{renderQuote(e.snippet)}</div>
+                      <div className="text-foreground/90">{e.quote}</div>
                     </li>
                   ))}
                 </ul>
               )}
-              {row.evidence.length === 0 && status === "not_evidenced" && (
+              {evidence.length === 0 && status === "not_evidenced" && (
                 <p className="text-sm text-muted-foreground italic">
                   Not evidenced in this candidate's record.
                 </p>
               )}
-              {row.context.length > 0 && (
+              {context.length > 0 && (
                 <div className="mt-3">
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
                     Candidate context
                   </div>
                   <ul className="mt-1 space-y-2 border-l-2 border-muted pl-3 text-sm">
-                    {row.context.map((e, i) => (
+                    {context.map((e, i) => (
                       <li key={i}>
-                        {e.source && (
-                          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                            {humanizeSource(e.source)}
-                          </div>
-                        )}
-                        <div className="text-muted-foreground">{renderQuote(e.snippet)}</div>
+                        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                          {e.sourceLine}
+                        </div>
+                        <div className="text-muted-foreground">{e.quote}</div>
                       </li>
                     ))}
                   </ul>
@@ -484,7 +491,7 @@ export const RequirementRowView = memo(function RequirementRowView({
           </AccordionItem>
         </Accordion>
       )}
-      {row.evidence.length === 0 && row.context.length === 0 && status === "not_evidenced" && (
+      {evidence.length === 0 && context.length === 0 && status === "not_evidenced" && (
         <p className="mt-2 text-sm text-muted-foreground italic">
           Not evidenced in this candidate's record.
         </p>
@@ -611,15 +618,7 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
               />
             )}
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">{counts.total} requirements</span>
-            {" — "}
-            {counts.met} fully met · {counts.partial} partly evidenced · {counts.unknown} not evidenced
-          </p>
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Direct quotes on record: {counts.quoted} of {counts.total}
-            {counts.partial > 0 && " — partial rows are backed by related signals"}
-          </p>
+          {/* The coverage figures are stated once, on the fit card above. */}
           <Separator className="mt-4" />
         </div>
       )}
