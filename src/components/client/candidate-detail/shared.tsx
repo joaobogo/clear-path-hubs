@@ -25,7 +25,6 @@ import {
 import { cn } from "@/lib/utils";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
-import { formatEnumLabel } from "@/lib/human-labels";
 import { formatDateTime } from "@/lib/format/datetime";
 import { getEvidenceCounts } from "@/lib/client/evidence-counts";
 
