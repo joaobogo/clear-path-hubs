@@ -9,27 +9,57 @@
 import { describe, expect, it } from "vitest";
 import {
   PRICE_PILOT_USD,
-  PRICE_MULTI_USD,
-  PRICE_SPRINT_USD,
-  PRICE_SUB_BRONZE_USD,
-  PRICE_SUB_SILVER_FROM_USD,
-  PRICE_SUB_GOLD_FROM_USD,
+  MAX_POSITIONS,
+  positionsTotalUsd,
 } from "@/config/pricing-core";
-import { PLAN_CATALOGUE, findPlan } from "@/lib/payments-catalog";
+import {
+  PLAN_CATALOGUE,
+  findPlan,
+  CATALOGUE_POSITION_COUNTS,
+} from "@/lib/payments-catalog";
 
 const annual = (monthly: number) => Math.round(monthly * 12 * 0.9);
 
-const EXPECTED: Record<string, number> = {
-  pilot_onetime: PRICE_PILOT_USD,
-  multi_onetime: PRICE_MULTI_USD,
-  sprint_onetime: PRICE_SPRINT_USD,
-  sub_bronze_monthly: PRICE_SUB_BRONZE_USD,
-  sub_bronze_yearly: annual(PRICE_SUB_BRONZE_USD),
-  sub_silver_monthly: PRICE_SUB_SILVER_FROM_USD,
-  sub_silver_yearly: annual(PRICE_SUB_SILVER_FROM_USD),
-  sub_gold_monthly: PRICE_SUB_GOLD_FROM_USD,
-  sub_gold_yearly: annual(PRICE_SUB_GOLD_FROM_USD),
-};
+const EXPECTED: Record<string, number> = Object.fromEntries(
+  CATALOGUE_POSITION_COUNTS.flatMap((n) => {
+    const total = positionsTotalUsd(n)!;
+    return [
+      [`oneoff_pos_${n}`, total],
+      [`sub_pos_${n}_monthly`, total],
+      [`sub_pos_${n}_yearly`, annual(total)],
+    ] as [string, number][];
+  }),
+);
+
+describe("the pricing rule", () => {
+  it("prices a single position at the flat pilot fee", () => {
+    expect(positionsTotalUsd(1)).toBe(PRICE_PILOT_USD);
+    expect(PRICE_PILOT_USD).toBe(699);
+  });
+
+  it("applies the band rate to every position", () => {
+    expect(positionsTotalUsd(2)).toBe(1_800);
+    expect(positionsTotalUsd(10)).toBe(9_000);
+    expect(positionsTotalUsd(12)).toBe(10_200);
+    expect(positionsTotalUsd(20)).toBe(17_000);
+    expect(positionsTotalUsd(22)).toBe(17_600);
+    expect(positionsTotalUsd(30)).toBe(24_000);
+  });
+
+  it("never lets the total fall as the count rises", () => {
+    expect(positionsTotalUsd(21)).toBe(17_000);
+    for (let n = 2; n <= MAX_POSITIONS; n += 1) {
+      expect(positionsTotalUsd(n)!).toBeGreaterThanOrEqual(
+        positionsTotalUsd(n - 1)!,
+      );
+    }
+  });
+
+  it("shows no price above the maximum", () => {
+    expect(positionsTotalUsd(MAX_POSITIONS + 1)).toBeNull();
+    expect(MAX_POSITIONS).toBe(30);
+  });
+});
 
 describe("checkout catalogue pricing", () => {
   it("covers exactly the expected set of sellable prices", () => {

@@ -292,14 +292,14 @@ describe("selecting a plan and paying", () => {
   it("a package purchase grants an allowance sized to the plan", () => {
     const result = db.grantPackageEntitlement({
       eventId: "evt_pkg_1",
-      priceId: "multi_onetime",
+      priceId: "oneoff_pos_5",
       expiresAt: Date.now() + 90 * 24 * 60 * 60 * 1000,
     });
 
     expect(result.applied).toBe(true);
     const ent = db.entitlements[0];
-    expect(ent.plan_label).toBe(findPlan("multi_onetime")!.label);
-    expect(ent.roles_total).toBe(findPlan("multi_onetime")!.rolesTotal);
+    expect(ent.plan_label).toBe(findPlan("oneoff_pos_5")!.label);
+    expect(ent.roles_total).toBe(findPlan("oneoff_pos_5")!.rolesTotal);
     expect(ent.roles_used).toBe(0);
     expect(ent.status).toBe("active");
     // Ops must be told to start work — a paid client waiting silently is the
@@ -308,10 +308,10 @@ describe("selecting a plan and paying", () => {
   });
 
   it("a replayed package webhook does not grant a second allowance", () => {
-    db.grantPackageEntitlement({ eventId: "evt_dup", priceId: "pilot_onetime", expiresAt: null });
+    db.grantPackageEntitlement({ eventId: "evt_dup", priceId: "oneoff_pos_1", expiresAt: null });
     const replay = db.grantPackageEntitlement({
       eventId: "evt_dup",
-      priceId: "pilot_onetime",
+      priceId: "oneoff_pos_1",
       expiresAt: null,
     });
 
@@ -324,7 +324,7 @@ describe("selecting a plan and paying", () => {
       eventId: "evt_sub_1",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "active",
       periodEnd: Date.now() + MONTH,
     });
@@ -334,7 +334,7 @@ describe("selecting a plan and paying", () => {
     const ent = db.entitlements[0];
     expect(ent.source).toBe("subscription");
     expect(ent.subscription_id).toBe(db.subscriptions[0].id);
-    expect(ent.roles_total).toBe(findPlan("sub_bronze_monthly")!.rolesTotal);
+    expect(ent.roles_total).toBe(findPlan("sub_pos_5_monthly")!.rolesTotal);
   });
 
   it("a trialing subscription already carries a usable allowance", () => {
@@ -342,7 +342,7 @@ describe("selecting a plan and paying", () => {
       eventId: "evt_trial",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_trial",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "trialing",
     });
     expect(db.entitlements[0].status).toBe("active");
@@ -358,7 +358,7 @@ describe("entitlement unlocks the gated feature", () => {
       eventId: "evt_sub_1",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "active",
       periodEnd: Date.now() + MONTH,
     });
@@ -426,7 +426,7 @@ describe("entitlement unlocks the gated feature", () => {
     fresh.addRole("pos_x");
     fresh.grantPackageEntitlement({
       eventId: "evt_old",
-      priceId: "pilot_onetime",
+      priceId: "oneoff_pos_1",
       expiresAt: Date.now() - 1000,
     });
     expect(fresh.consumeAllowance("pos_x", EDITOR)).toEqual({
@@ -445,7 +445,7 @@ describe("failed payment", () => {
       eventId: "evt_sub_1",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "active",
       periodEnd: Date.now() + MONTH,
     });
@@ -458,7 +458,7 @@ describe("failed payment", () => {
       eventId: "evt_pastdue",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "past_due",
     });
 
@@ -473,14 +473,14 @@ describe("failed payment", () => {
       eventId: "evt_pastdue",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "past_due",
     });
     db.applySubscriptionEvent({
       eventId: "evt_recovered",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "active",
     });
 
@@ -494,7 +494,7 @@ describe("failed payment", () => {
       eventId: "evt_unpaid",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "unpaid",
     });
 
@@ -519,7 +519,7 @@ describe("failed payment", () => {
       eventId: "evt_gone",
       eventType: "customer.subscription.deleted",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "canceled",
     });
 
@@ -538,7 +538,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_sub_1",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "active",
       periodEnd: Date.now() + MONTH,
     });
@@ -552,7 +552,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_up",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "active",
     });
     expect(db.entitlements[0].roles_used).toBe(before);
@@ -562,35 +562,35 @@ describe("downgrade and cancellation", () => {
   it("a scheduled downgrade does not reduce the allowance before renewal", () => {
     const renewal = Date.now() + MONTH;
     // changePlan schedules the switch and records the intent.
-    db.subscriptions[0].pending_price_id = "sub_bronze_monthly";
+    db.subscriptions[0].pending_price_id = "sub_pos_5_monthly";
     db.subscriptions[0].pending_effective_at = renewal;
 
     // Nothing about today's access changes.
-    expect(db.entitlements[0].price_id).toBe("sub_gold_monthly");
-    expect(db.entitlements[0].roles_total).toBe(findPlan("sub_gold_monthly")!.rolesTotal);
+    expect(db.entitlements[0].price_id).toBe("sub_pos_30_monthly");
+    expect(db.entitlements[0].roles_total).toBe(findPlan("sub_pos_30_monthly")!.rolesTotal);
     expect(db.positions.get("pos_1")!.status).toBe("active");
   });
 
   it("the downgrade lands at renewal and clears the pending flag", () => {
-    db.subscriptions[0].pending_price_id = "sub_bronze_monthly";
+    db.subscriptions[0].pending_price_id = "sub_pos_5_monthly";
     db.subscriptions[0].pending_effective_at = Date.now() + MONTH;
 
     db.applySubscriptionEvent({
       eventId: "evt_renewed",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "active",
       periodEnd: Date.now() + 2 * MONTH,
     });
 
     const sub = db.subscriptions[0];
-    expect(sub.price_id).toBe("sub_bronze_monthly");
+    expect(sub.price_id).toBe("sub_pos_5_monthly");
     expect(sub.pending_price_id).toBeNull();
     expect(sub.pending_effective_at).toBeNull();
 
     const ent = db.entitlements[0];
-    expect(ent.roles_total).toBe(findPlan("sub_bronze_monthly")!.rolesTotal);
+    expect(ent.roles_total).toBe(findPlan("sub_pos_5_monthly")!.rolesTotal);
     expect(ent.status).toBe("active");
     // The live role stays live across the downgrade.
     expect(db.positions.get("pos_1")!.status).toBe("active");
@@ -602,7 +602,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_cancel_req",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "active",
       periodEnd,
       cancelAtPeriodEnd: true,
@@ -620,7 +620,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_cancel_req",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "active",
       cancelAtPeriodEnd: true,
     });
@@ -628,7 +628,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_resume",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "active",
       cancelAtPeriodEnd: false,
     });
@@ -643,7 +643,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_deleted",
       eventType: "customer.subscription.deleted",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "canceled",
     });
 
@@ -661,7 +661,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_deleted",
       eventType: "customer.subscription.deleted",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "canceled",
     });
 
@@ -678,14 +678,14 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_deleted",
       eventType: "customer.subscription.deleted",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "canceled",
     });
     db.applySubscriptionEvent({
       eventId: "evt_resub",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_stripe_2",
-      priceId: "sub_bronze_monthly",
+      priceId: "sub_pos_5_monthly",
       status: "active",
       periodEnd: Date.now() + MONTH,
     });
@@ -703,7 +703,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_sub_1",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_gold_monthly",
+      priceId: "sub_pos_30_monthly",
       status: "active",
     });
     expect(replay).toEqual({ applied: false, reason: "duplicate_event" });
