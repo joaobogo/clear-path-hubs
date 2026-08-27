@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { IndustryEntry, IndustryRoleFamily } from "@/content/industries-v2";
+import { getRoleEvidence } from "@/content/industry-evidence-bank";
 
 /**
  * Interactive role explorer. Two axes of selection:
@@ -374,27 +375,16 @@ function buildValidation(fn: RoleFunction, entry: IndustryEntry): string[] {
 }
 
 function buildEvidence(role: string, sen: Seniority, fn: RoleFunction, entry: IndustryEntry): string {
-  const templates: Record<RoleFunction, string> = {
-    engineering: `“Led design of the payments service (Go, Postgres, Kafka) serving 1.2M events/day — on-call rotation and SLO ownership documented.”`,
-    product: `“Owned onboarding relaunch: activation +18% in Q2, receipts in the release notes and product analytics dashboard.”`,
-    design: `“Rebuilt the checkout flow: task success +22%, case study links to before/after metrics and the research plan.”`,
-    data: `“Built the churn model in production (Snowflake, dbt, feature store) with owner rota and monitoring dashboard.”`,
-    security: `“Owned SOC 2 Type II readiness: 61 controls mapped, evidence collection automated, audit passed.”`,
-    devops: `“Ran the platform SRE rota: p99 latency held at 220ms across 4 regions, 3 postmortems attached.”`,
-    sales: `“117% quota FY23 on a $1.4M book of enterprise SaaS deals, average sales cycle 96 days.”`,
-    marketing: `“Sourced $2.1M pipeline from paid + content in Q3, attribution stitched via Segment → Snowflake.”`,
-    customer: `“Ran a $6.8M book of enterprise CS accounts: NRR 118%, GRR 96%, expansion motion documented.”`,
-    finance: `“Owned the monthly close for a 240-person SaaS business, no material adjustments in the last four audits.”`,
-    legal: `“Named counsel on 14 cross-border SaaS commercial contracts (US / UK / EU) — GDPR and CCPA lines included.”`,
-    clinical: `“Active RN licence (state), 2,400+ patient encounters in a Level II trauma centre, ACLS current.”`,
-    operations: `“Superintendent on a $42M mid-rise: 21-month schedule, zero lost-time incidents, sub-trade schedule attached.”`,
-    hr: `“Closed 38 engineering requisitions in 12 months: avg. time-to-fill 34 days, 91% offer acceptance.”`,
-    generic: `“Owned a comparable ${entry.name.toLowerCase()} initiative with scope, tooling and stakeholder impact on the CV.”`,
-  };
-  const line = templates[fn];
-  return sen === "Junior"
-    ? line.replace(/Led|Owned|Ran/, "Contributed to").replace(/Owned/g, "Supported")
-    : line;
+  // Illustrative evidence comes from this industry's own example bank —
+  // never from a function-level template shared across verticals, which is
+  // how the same sample quote used to appear on several industry pages.
+  const banked = getRoleEvidence(entry.slug, fn);
+  if (banked) {
+    return sen === "Junior"
+      ? `${banked} For an early-career hire we weight scope and receipts over years.`
+      : banked;
+  }
+  return `For a ${role} in ${entry.name.toLowerCase()}, a CV scores on the work it names, its scope and who can confirm it — not on a keyword list.`;
 }
 
 function buildCta(role: string, sen: Seniority): string {
