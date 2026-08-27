@@ -8,7 +8,6 @@ import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { submitApplication } from "@/lib/apply.functions";
 import { resolveWorkArrangement } from "@/lib/jobs/public-facts";
-import { formatLocationLine } from "@/lib/jobs/location-format";
 import {
   APPLY_STEPS,
   APPLY_STEP_LABELS,
@@ -1270,7 +1269,7 @@ function ApplyPage() {
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Badge variant="secondary" className="font-normal bg-background/50">
-                      {formatLocationLine(pos.location.split(","))}
+                      {pos.location}
                       {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}` : ""}
                       {pos.openings && pos.openings > 1 ? ` · ${pos.openings} openings` : " · 1 opening"}
                     </Badge>

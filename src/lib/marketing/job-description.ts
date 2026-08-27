@@ -111,6 +111,19 @@ export function parseJobDescription(description: string): JobBlock[] {
   );
 }
 
+/**
+ * A pasted "Junior to Mid-Level | Brazil | Full-Time" style banner restates the
+ * structured fields — and often contradicts them. The structured fields are
+ * what the product knows, so a line like this is dropped from the listing.
+ */
+export function isMetaHeaderLine(text: string): boolean {
+  const t = stripInlineMarkup(text).trim();
+  if (!t.includes("|") && !t.includes("·")) return false;
+  if (/[.!?]/.test(t)) return false;
+  const segments = t.split(/\s*[|·]\s*/).filter(Boolean);
+  return segments.length >= 2 && segments.every((s) => s.split(/\s+/).length <= 6);
+}
+
 /** Short plain-text summary for meta descriptions and previews. */
 export function jobDescriptionSummary(description: string, max = 155): string {
   const paragraphs = parseJobDescription(description).flatMap((b) =>
