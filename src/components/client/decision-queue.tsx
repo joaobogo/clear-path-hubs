@@ -354,12 +354,12 @@ export function DecisionQueue({
             Overdue · {overdue.length}
           </h3>
           <ul className="divide-y bg-card">
-            {overdue.map((r) => (
-              <QueueRowItem
-                key={r.key}
-                row={r}
+            {clusterQueue(overdue).map((c) => (
+              <QueueClusterItem
+                key={c.key}
+                cluster={c}
                 search={search}
-                onHandled={() => markHandled(r.key)}
+                onHandled={markHandled}
               />
             ))}
           </ul>
@@ -368,13 +368,8 @@ export function DecisionQueue({
 
       {upcoming.length > 0 && (
         <ul className={cn("divide-y overflow-hidden rounded-xl border bg-card")}>
-          {upcoming.map((r) => (
-            <QueueRowItem
-              key={r.key}
-              row={r}
-              search={search}
-              onHandled={() => markHandled(r.key)}
-            />
+          {clusterQueue(upcoming).map((c) => (
+            <QueueClusterItem key={c.key} cluster={c} search={search} onHandled={markHandled} />
           ))}
         </ul>
       )}
