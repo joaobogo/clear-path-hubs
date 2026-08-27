@@ -1,4 +1,5 @@
 import { CLIENT_DECISION_ACTIONS } from "@/lib/client-activity-actions";
+import { dedupeDecisions } from "@/lib/decisions/dedupe";
 import { WEEKLY_WINDOW_DAYS } from "@/lib/client-weekly-update";
 
 /**
@@ -67,8 +68,10 @@ export async function loadClientWeekActivity(
       .order("created_at", { ascending: true }),
   ]);
 
-  const decisions = ((decisionsRes.data ?? []) as WeekActivityRow[]).filter(
-    (d, i, all) => all.findIndex((o) => o.id === d.id) === i,
+  const decisions = dedupeDecisions(
+    ((decisionsRes.data ?? []) as WeekActivityRow[]).filter(
+      (d, i, all) => all.findIndex((o) => o.id === d.id) === i,
+    ),
   );
 
   return {

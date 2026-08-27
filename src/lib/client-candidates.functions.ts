@@ -1,3 +1,4 @@
+import { dedupeDecisions } from "@/lib/decisions/dedupe";
 // Released candidate list and single candidate read.
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
@@ -272,7 +273,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
         .order("created_at", { ascending: false }),
       context.supabase
         .from("client_decisions")
-        .select("id, decision, feedback, created_at")
+        .select("id, decision, feedback, reason_code, details, created_at")
         .eq("candidate_match_id", data.matchId)
         .order("created_at", { ascending: false }),
       applicationId
@@ -322,7 +323,9 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     return {
       candidate: toClientCandidateDTO(matchWithAnswers),
       interviews: (interviews as AnyRow[]) ?? [],
-      decisions: (decisions as AnyRow[]) ?? [],
+      // One entry per real decision: a decision recorded more than once never
+      // shows up as a repeating history.
+      decisions: dedupeDecisions(((decisions as AnyRow[]) ?? []) as AnyRow[]),
     };
   });
 
