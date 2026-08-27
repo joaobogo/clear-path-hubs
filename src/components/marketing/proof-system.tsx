@@ -1,13 +1,14 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { PRICE_SUB_BRONZE_USD } from "@/config/pricing-core";
+import { positionsTotalUsd } from "@/config/pricing-core";
 /** Agency benchmark used in the cost comparison. Contingency fees typically
  *  run 20–25% of first-year salary; we quote the midpoint and show the math. */
 const AGENCY_FEE_PCT = 22;
 const BENCHMARK_SALARY_USD = 150_000;
 const AGENCY_FEE_USD = Math.round((BENCHMARK_SALARY_USD * AGENCY_FEE_PCT) / 100);
-/** Entry subscription figure shown in this comparison — canonical Bronze anchor. */
-const COMPARISON_SUB_USD = PRICE_SUB_BRONZE_USD;
+/** Comparison figure: the exact total for ten positions under the pricing rule. */
+const COMPARISON_POSITIONS = 10;
+const COMPARISON_SUB_USD = positionsTotalUsd(COMPARISON_POSITIONS)!;
 const COST_DIFFERENCE_USD = AGENCY_FEE_USD - COMPARISON_SUB_USD;
 const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
 
