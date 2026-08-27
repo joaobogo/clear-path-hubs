@@ -27,11 +27,19 @@ export interface StallInput {
   sent_at?: string | null;
   negotiating_at?: string | null;
   accepted_at?: string | null;
+  declined_at?: string | null;
+  hired_at?: string | null;
+  closed_at?: string | null;
   updated_at?: string | null;
   last_nudged_at?: string | null;
 }
 
-/** Timestamp the current stage was entered. */
+/**
+ * Timestamp the current stage was entered — always the recorded event time for
+ * that stage, so every surface (board card, "who owes what" row, timeline)
+ * prints one date for one event. updated_at is only a last resort: it moves
+ * whenever anything on the record is touched.
+ */
 export function stageEnteredAt(h: StallInput): string | null {
   switch (h.status) {
     case "offer_drafted":
@@ -42,10 +50,19 @@ export function stageEnteredAt(h: StallInput): string | null {
       return h.negotiating_at ?? h.updated_at ?? null;
     case "offer_accepted":
       return h.accepted_at ?? h.updated_at ?? null;
+    case "offer_declined":
+      return h.declined_at ?? h.updated_at ?? null;
+    case "hire_confirmed":
+      // Confirmed hires without a recorded hire date fall back to acceptance,
+      // matching the confirmed-hires reader and the offer event list.
+      return h.hired_at ?? h.accepted_at ?? h.updated_at ?? null;
+    case "closed_lost":
+      return h.closed_at ?? h.updated_at ?? null;
     default:
       return h.updated_at ?? null;
   }
 }
+
 
 /** Hours since the last meaningful movement (stage entry or nudge). */
 export function hoursSinceMovement(h: StallInput, now: Date = new Date()): number | null {
