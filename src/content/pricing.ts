@@ -1,33 +1,43 @@
 // Tier-card display shape for public pricing surfaces.
 // Numeric values come from src/config/pricing-core.ts — the single source of
-// truth. Do NOT hard-code prices here; update pricing-core.ts and every
-// consumer (Pricing page, ROI calculator, homepage, agency comparator)
-// updates automatically.
+// truth. Do NOT hard-code prices here, never render a band as a price, and
+// never precede a price with "From".
 //
 // Consumed by: /pricing, ROI calculator, homepage cost band, agency comparator.
 
 import {
   PRICE_PILOT_USD,
-  PRICE_MULTI_USD,
-  PRICE_SPRINT_USD,
   PRICE_PILOT_DISPLAY,
-  PRICE_MULTI_DISPLAY,
-  PRICE_SPRINT_DISPLAY,
-  PRICE_ENTERPRISE_DISPLAY,
+  GROWTH_RATE_USD,
+  SCALE_RATE_USD,
+  VOLUME_RATE_USD,
+  GROWTH_RATE_DISPLAY,
+  SCALE_RATE_DISPLAY,
+  VOLUME_RATE_DISPLAY,
+  GROWTH_ROLES_LABEL,
+  SCALE_ROLES_LABEL,
+  VOLUME_ROLES_LABEL,
+  PILOT_ROLES_LABEL,
+  ABOVE_MAX_DISPLAY,
+  ABOVE_MAX_ROLES_LABEL,
+  ABOVE_MAX_CTA_LABEL,
+  PER_POSITION_SUFFIX,
   ROI_REFERENCE_PACKAGE_USD,
   ROI_REFERENCE_PACKAGE_LABEL as CORE_ROI_LABEL,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
 
 export type PricingTier = {
-  id: "pilot" | "multi" | "sprint" | "enterprise";
+  id: "pilot" | "growth" | "scale" | "volume" | "enterprise";
   name: string;
   eyebrow: string;
-  /** One-time flat fee in USD. Null for custom scope. */
+  /** Exact flat total in USD for a single-position pilot. Null for rate tiers. */
   oneTime: number | null;
-  /** Display string, e.g. "$399", "$2.1K", "$4.5K", "Custom". */
+  /** Per-position rate in USD for rate tiers. Null for the pilot and above 30. */
+  rateUsd: number | null;
+  /** Display string — an exact total ($699) or an exact rate ($900). */
   priceDisplay: string;
-  /** Sub-price line (e.g. "≈ $600 per position"). */
+  /** Sub-price line (e.g. "per position"). */
   pricePer?: string;
   /** Best-fit descriptor. */
   bestFor: string;
@@ -52,85 +62,103 @@ const BASE_INCLUDED = [
   "3 months candidate-record retention",
 ];
 
+const PARALLEL_INCLUDED = [
+  "Ranked shortlist refreshed weekly",
+  "Top 10 candidates per position",
+  "All positions worked in parallel",
+  "Ranked shortlist per position",
+  "Evidence-backed scoring with fit notes",
+  "Criteria-based ethical ranking",
+  "3 months candidate-record retention",
+];
+
 export const PRICING_TIERS: PricingTier[] = [
   {
     id: "pilot",
     name: "Pilot — Single Position",
-    eyebrow: "One-time · 1 active role · 1 per company",
+    eyebrow: `One-time · ${PILOT_ROLES_LABEL} · 1 per company`,
     oneTime: PRICE_PILOT_USD,
+    rateUsd: null,
     priceDisplay: PRICE_PILOT_DISPLAY,
+    pricePer: "flat, billed once",
     bestFor: "Test the model on one critical hire, once.",
-    rolesIncluded: "1 active role",
+    rolesIncluded: PILOT_ROLES_LABEL,
     turnaround: TURNAROUND_LABEL,
     included: BASE_INCLUDED,
     ctaLabel: "Book a discovery call",
     ctaTo: "/contact",
   },
   {
-    id: "multi",
-    name: "Multi Role",
-    eyebrow: "2–5 active roles",
-    oneTime: PRICE_MULTI_USD,
-    priceDisplay: PRICE_MULTI_DISPLAY,
-    pricePer: "≈ $600 per position",
+    id: "growth",
+    name: "2 to 10 positions",
+    eyebrow: GROWTH_ROLES_LABEL,
+    oneTime: null,
+    rateUsd: GROWTH_RATE_USD,
+    priceDisplay: GROWTH_RATE_DISPLAY,
+    pricePer: PER_POSITION_SUFFIX,
     bestFor: "Run parallel searches with shared intake context.",
-    rolesIncluded: "2–5 active roles",
+    rolesIncluded: GROWTH_ROLES_LABEL,
     turnaround: TURNAROUND_LABEL,
-    included: [
-      "Ranked shortlist refreshed weekly",
-      "Top 10 candidates per position",
-      "All active roles worked in parallel",
-      "Ranked shortlist per role",
-      "Evidence-backed scoring with fit notes",
-      "Criteria-based ethical ranking",
-      "3 months candidate-record retention",
-    ],
+    included: PARALLEL_INCLUDED,
     ctaLabel: "Book a discovery call",
     ctaTo: "/contact",
     highlight: true,
   },
   {
-    id: "sprint",
-    name: "Hiring Sprint",
-    eyebrow: "6–10 active roles",
-    oneTime: PRICE_SPRINT_USD,
-    priceDisplay: PRICE_SPRINT_DISPLAY,
-    pricePer: "≈ $562 per position",
+    id: "scale",
+    name: "11 to 20 positions",
+    eyebrow: SCALE_ROLES_LABEL,
+    oneTime: null,
+    rateUsd: SCALE_RATE_USD,
+    priceDisplay: SCALE_RATE_DISPLAY,
+    pricePer: PER_POSITION_SUFFIX,
     bestFor: "Concurrent hiring across functions with priority support.",
-    rolesIncluded: "6–10 active roles",
+    rolesIncluded: SCALE_ROLES_LABEL,
+    turnaround: TURNAROUND_LABEL,
+    included: [...PARALLEL_INCLUDED, "Priority support"],
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/contact",
+  },
+  {
+    id: "volume",
+    name: "21 to 30 positions",
+    eyebrow: VOLUME_ROLES_LABEL,
+    oneTime: null,
+    rateUsd: VOLUME_RATE_USD,
+    priceDisplay: VOLUME_RATE_DISPLAY,
+    pricePer: PER_POSITION_SUFFIX,
+    bestFor: "Portfolio hiring across teams at the lowest published rate.",
+    rolesIncluded: VOLUME_ROLES_LABEL,
     turnaround: TURNAROUND_LABEL,
     included: [
-      "Ranked shortlist refreshed weekly",
-      "Top 10 candidates per position",
-      "All active roles worked in parallel",
-      "Ranked shortlist per role",
-      "Evidence-backed scoring with fit notes",
-      "Criteria-based ethical ranking",
-      "3 months candidate-record retention",
+      ...PARALLEL_INCLUDED,
       "Priority support",
+      "Dedicated account manager",
+      "Executive portfolio dashboard",
     ],
     ctaLabel: "Book a discovery call",
     ctaTo: "/contact",
   },
   {
     id: "enterprise",
-    name: "Custom Billing",
-    eyebrow: "10+ roles or continuous hiring",
+    name: "More than 30 positions",
+    eyebrow: ABOVE_MAX_ROLES_LABEL,
     oneTime: null,
-    priceDisplay: PRICE_ENTERPRISE_DISPLAY,
+    rateUsd: null,
+    priceDisplay: ABOVE_MAX_DISPLAY,
     bestFor:
       "Continuous hiring across business units, geographies, or 50–5,000-employee operators.",
-    rolesIncluded: "Custom scope",
+    rolesIncluded: ABOVE_MAX_ROLES_LABEL,
     turnaround: "Custom system operating cadence",
     included: [
-      "Everything in Hiring Sprint",
+      "Everything in 21 to 30 positions",
       "Dedicated account structure",
       "Tailored billing and reporting",
       "SLA-backed delivery",
       "SSO, custom data residency, security review",
       "Named executive sponsor",
     ],
-    ctaLabel: "Talk to Enterprise",
+    ctaLabel: ABOVE_MAX_CTA_LABEL,
     ctaTo: "/enterprise",
   },
 ];
@@ -154,7 +182,7 @@ export const NEVER_CHARGED: string[] = [
   "Hidden markups on interviews or offers",
 ];
 
-/** Reference package price used by ROI calculator (Multi Role). */
+/** Reference basket price used by the ROI calculator. */
 export const ROI_REFERENCE_PACKAGE = ROI_REFERENCE_PACKAGE_USD;
 export const ROI_REFERENCE_PACKAGE_LABEL = CORE_ROI_LABEL;
 
