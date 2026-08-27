@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { Markdown, slugifyHeading } from "@/components/marketing/markdown";
 import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
+import { resolveBlogAuthor } from "@/content/blog-authors";
 import {
   estimateReadMinutes,
   getBlogPost,
