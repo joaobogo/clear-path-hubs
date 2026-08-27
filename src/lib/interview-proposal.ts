@@ -4,6 +4,7 @@
 
 import { isValidTimezone, timezoneAbbr } from "./scheduling";
 import { zonedWallClockToIso } from "./availability";
+import { zoneDisplay } from "@/lib/time/zone-label";
 
 /** Formats the client can pick. Kept to the three real-world options. */
 export const PROPOSAL_FORMATS = [

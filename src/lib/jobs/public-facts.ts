@@ -1,5 +1,6 @@
 import { extractOnsiteDays } from "./onsite-days";
-import { titleCaseLocation } from "./location-format";
+import { canonicalLocation } from "./location-format";
+import { zoneDisplay } from "@/lib/time/zone-label";
 
 /**
  * The deciding facts on a public job page, derived once and shared by the
@@ -139,12 +140,12 @@ export function resolveLocation(
   primaryTimezone: string | null | undefined,
   overlapHours: unknown,
 ): string {
-  const place = titleCaseLocation(str(location));
+  const place = canonicalLocation(str(location), null);
   const tz = str(primaryTimezone);
   const overlap = num(overlapHours);
   const parts: string[] = [];
   if (place) parts.push(place);
-  if (tz) parts.push(`${tz} time zone`);
+  if (tz) parts.push(`${zoneDisplay(tz)} time zone`);
   if (overlap && overlap > 0) {
     parts.push(`${overlap} ${overlap === 1 ? "hour" : "hours"} overlap required`);
   }
