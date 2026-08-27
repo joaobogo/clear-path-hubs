@@ -1438,11 +1438,23 @@ export const getClientPreview = createServerFn({ method: "GET" })
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
-         score_runs:approved_score_run_id (score, final_score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`,
+         approved_score_run_id, current_score_run_id,
+         score_runs:approved_score_run_id (score, final_score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage),
+         current_run:current_score_run_id (score, final_score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`,
       )
       .eq("id", data.match_id)
       .maybeSingle();
     if (!m) return null;
+
+    // Before a score is approved there is no approved run, and the DTO used to
+    // assemble from nothing — the preview rendered a full candidate card
+    // claiming "none of your requirements show evidence yet" while the Evidence
+    // tab beside it listed the quotes. Fall back to the current run so the
+    // preview shows what the client WILL see, and tell the reviewer that is what
+    // they are looking at rather than calling it exact.
+    const previewRow = m as AnyRow;
+    const usingUnapprovedRun = !previewRow.score_runs && !!previewRow.current_run;
+    if (usingUnapprovedRun) previewRow.score_runs = previewRow.current_run;
 
     const applicationId = (m as AnyRow).application_id;
     const [hydratedMatch] = await (
@@ -1493,6 +1505,8 @@ export const getClientPreview = createServerFn({ method: "GET" })
       candidate: toClientCandidateDTO(matchWithAnswers as AnyRow),
       interviews: (interviewsRes.data as AnyRow[]) ?? [],
       decisions: (decisionsRes.data as AnyRow[]) ?? [],
+      /** True when the score shown is not yet approved, so this is a forecast. */
+      usingUnapprovedRun,
     };
   });
 

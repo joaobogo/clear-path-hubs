@@ -12,6 +12,7 @@ import {
 import { ENGINE_VERSION } from "./scoring/engine-version";
 import { cleanQuote } from "./evidence/quote-hygiene";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
+import { deriveStrengths } from "./scoring/strengths";
 import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
 import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
@@ -720,10 +721,7 @@ export function scoreCandidate(input: {
         ? "worth_considering"
         : bandToFitLabel(canonicalBand);
 
-  const strengths: string[] = assessment
-    .filter((a) => a.status === "met")
-    .slice(0, 5)
-    .map((a) => `Demonstrated: ${a.text}`);
+  const strengths: string[] = deriveStrengths(assessment);
   const concerns: string[] = assessment
     .filter((a) => a.required && a.status !== "met")
     .slice(0, 5)

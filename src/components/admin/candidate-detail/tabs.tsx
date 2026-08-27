@@ -15,6 +15,7 @@ import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import { useServerFn } from "@tanstack/react-start";
 import React, { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { deriveStrengths } from "@/lib/scoring/strengths";
 import {
   advanceProcessing,
   applyReviewDecision,
@@ -572,6 +573,14 @@ export function ScoreTab({
       </div>
     );
   const catBreakdown = result?.category_breakdown ?? {};
+  // Runs written before deriveStrengths() existed stored only strictly-met
+  // requirements, so an evidenced candidate could read "None surfaced". Re-derive
+  // from the assessment the run already carries — no rescore, no stored number
+  // changes.
+  const shownStrengths: string[] =
+    (result?.strengths ?? []).length > 0
+      ? (result?.strengths as string[])
+      : deriveStrengths(result?.requirement_assessment ?? []);
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="rounded-lg border bg-card p-5">
@@ -596,15 +605,15 @@ export function ScoreTab({
           <Bar label="Screening alignment" value={catBreakdown.screening_alignment} />
         </div>
 
-        {(result?.strengths?.length > 0 || result?.concerns?.length > 0) && (
+        {(shownStrengths.length > 0 || result?.concerns?.length > 0) && (
           <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
             <div className="rounded-md border bg-background/50 p-3">
               <h4 className="text-xs font-semibold uppercase text-success dark:text-success">Strengths</h4>
               <ul className="mt-1 list-disc space-y-1 pl-4 text-sm">
-                {(result?.strengths ?? []).map((s: string, i: number) => (
+                {shownStrengths.map((s: string, i: number) => (
                   <li key={i}>{cleanLine(String(s))}</li>
                 ))}
-                {(result?.strengths ?? []).length === 0 && (
+                {shownStrengths.length === 0 && (
                   <li className="list-none text-muted-foreground">None surfaced.</li>
                 )}
               </ul>
@@ -943,7 +952,9 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
       <Alert className="taas-bg-info-soft border-info/20">
         <Eye className="h-4 w-4 taas-tx-info" />
         <AlertDescription className="text-xs text-info/80">
-          This is an exact preview of what the client sees in their workspace.
+          {(data as Any).usingUnapprovedRun
+            ? "This score has not been approved yet, so the client cannot see any of this. This is what their workspace will show once you approve and publish."
+            : "This is an exact preview of what the client sees in their workspace."}
         </AlertDescription>
       </Alert>
 
