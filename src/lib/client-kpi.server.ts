@@ -7,7 +7,7 @@
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
 import { parseLoomLink } from "@/lib/media/loom-link";
 import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
-import { publishedBand, publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
+import { publishedBand, publishedScore, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus, VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { countRowsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
@@ -910,7 +910,9 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
 export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const cp = row.candidate_profiles ?? {};
   const pos = row.positions ?? null;
-  const run = row.score_runs ?? null;
+  // The published figure includes the Loom introduction bonus; every panel
+  // below reads from this adjusted run so no surface can show the pre-bonus one.
+  const run = withVideoIntroBonus(row.score_runs ?? null, hasVideoIntro(row));
   const coverage = run?.requirement_coverage ?? null;
 
   const fullName: string = (cp.full_name ?? "").trim() || "Candidate";
