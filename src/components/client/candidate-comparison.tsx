@@ -23,6 +23,7 @@ import {
 } from "@/lib/client-compare";
 import { humanizeConcernSentence } from "@/lib/client/validation-list";
 import { verifiedStrengths } from "@/lib/client/score-breakdown";
+import { renderQuote } from "@/lib/evidence/quote-hygiene";
 
 
 
@@ -580,6 +581,18 @@ function RequirementGrid({
   const rows = diffOnly ? matrix.filter((r) => !r.uniform) : matrix;
   const template = { gridTemplateColumns: `minmax(150px, 1.2fr) repeat(${cols}, minmax(0, 1fr))` };
 
+  // Counted over the whole matrix, never the "differences only" subset, so
+  // ticking that box cannot appear to change how a candidate did.
+  const mustHaveRows = matrix.filter((r) => r.importance === "must_have");
+  const tallyFor = (matchId: string) => {
+    const mine = mustHaveRows.map((r) => r.cells.find((c) => c.match_id === matchId));
+    return {
+      met: mine.filter((c) => c?.status === "met").length,
+      partial: mine.filter((c) => c?.status === "partial").length,
+      total: mustHaveRows.length,
+    };
+  };
+
   return (
     <section className="mt-4" aria-label="Requirement comparison grid">
       <div className="flex items-baseline justify-between gap-3">
@@ -613,21 +626,43 @@ function RequirementGrid({
                 style={template}
               >
                 <div className="text-xs font-medium text-muted-foreground">Requirement</div>
-                {candidates.map((c) => (
-                  <div key={c.match_id} className="min-w-0">
-                    <div className="truncate text-sm font-semibold">
-                      {c.candidate.display_name}
+                {candidates.map((c) => {
+                  // The headline the grid never gave: how each candidate did on
+                  // the requirements that actually filter, without reading every
+                  // cell in the column.
+                  const t = tallyFor(c.match_id);
+                  const complete = t.total > 0 && t.met === t.total;
+                  return (
+                    <div key={c.match_id} className="min-w-0">
+                      <div className="truncate text-sm font-semibold">
+                        {c.candidate.display_name}
+                      </div>
+                      {t.total > 0 && (
+                        <div className="text-[11px] text-muted-foreground">
+                          <span
+                            className={
+                              complete
+                                ? "font-semibold text-success dark:text-success"
+                                : "font-semibold text-foreground"
+                            }
+                          >
+                            {t.met}/{t.total}
+                          </span>{" "}
+                          must-haves
+                          {t.partial > 0 ? ` · ${t.partial} partial` : ""}
+                        </div>
+                      )}
+                      <Link
+                        to="/client/candidates/$id"
+                        params={{ id: c.match_id }}
+                        search={orgSearch}
+                        className="text-[11px] text-primary hover:underline"
+                      >
+                        Review →
+                      </Link>
                     </div>
-                    <Link
-                      to="/client/candidates/$id"
-                      params={{ id: c.match_id }}
-                      search={orgSearch}
-                      className="text-[11px] text-primary hover:underline"
-                    >
-                      Review →
-                    </Link>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {rows.map((r) => (
@@ -653,17 +688,20 @@ function RequirementGrid({
                               </span>
                               {meta.label}
                             </span>
-                            {cell.evidence && (
-                              <p className="mt-0.5 line-clamp-2 text-muted-foreground">
-                                {cell.evidence}
-                              </p>
-                            )}
+                            {/* The quote used to sit here, clamped to two lines
+                                in every cell. Across four candidates and ten
+                                requirements that is forty truncated fragments
+                                competing with the statuses, and the same quote
+                                is already one hover away. The verdict stays,
+                                the wall of text goes. */}
                           </div>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs text-xs">
                           {cell.status === "met" || cell.status === "partial" || cell.evidence ? (
                             <>
-                              <p>{cell.evidence || "Direct evidence confirmed."}</p>
+                              {/* Cleaned, like every other CV-derived line we
+                                  render — raw slices open mid-word. */}
+                              <p>{renderQuote(cell.evidence) || "Direct evidence confirmed."}</p>
                               {cell.source && (
                                 <p className="mt-1 text-muted-foreground">Source: {cell.source}</p>
                               )}
