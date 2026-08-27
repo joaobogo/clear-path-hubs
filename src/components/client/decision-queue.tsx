@@ -341,7 +341,7 @@ export function DecisionQueue({
           What needs you
         </h2>
         <span className="text-xs text-muted-foreground">
-          {visible.length} item{visible.length === 1 ? "" : "s"}, soonest first
+          {visible.length} item{visible.length === 1 ? "" : "s"}, longest waiting first
         </span>
       </div>
 
