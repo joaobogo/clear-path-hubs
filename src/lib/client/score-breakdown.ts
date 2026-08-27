@@ -376,3 +376,16 @@ function cleanReasons(reasons: BreakdownReason[]): BreakdownReason[] {
   }
   return out;
 }
+
+/**
+ * The verified strengths for a candidate: exactly the lines the profile prints
+ * under "What lifts the score". The comparison board counts this list, so the
+ * "Verified strengths" number can never disagree with the bullets a reader
+ * finds on the candidate's own page — and it varies with the candidate instead
+ * of sitting on a shared cap.
+ */
+export function verifiedStrengths(candidate: ClientCandidateDTO): string[] {
+  return buildScoreBreakdown(candidate)
+    .reasons.filter((r) => r.tone === "positive")
+    .map((r) => r.text);
+}
