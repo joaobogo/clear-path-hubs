@@ -594,6 +594,42 @@ export const restoreOrganization = createServerFn({ method: "POST" })
       .select("*")
       .maybeSingle();
     if (error) throw new Error(`restore_failed:${error.message} [${trace}]`);
+
+    // Undo the cascade, using the statuses recorded when the client was
+    // archived. Restoring everything to one status would silently promote
+    // drafts to active, so anything we cannot account for stays archived and is
+    // reopened by hand.
+    const { data: lastArchive } = await s
+      .from("audit_events")
+      .select("after_state")
+      .eq("organization_id", data.id)
+      .eq("action", "organization.archive")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const cascaded = (((lastArchive as AnyRow)?.after_state as AnyRow)?.cascaded_positions ??
+      []) as Array<{ id: string; status: string }>;
+
+    // One update per distinct prior status rather than one per position.
+    const byStatus = new Map<string, string[]>();
+    for (const p of cascaded) {
+      if (!p?.id || !p?.status) continue;
+      byStatus.set(p.status, [...(byStatus.get(p.status) ?? []), p.id]);
+    }
+    let restoredPositions = 0;
+    for (const [status, ids] of byStatus) {
+      const { data: touched, error: posErr } = await s
+        .from("positions")
+        .update({ status, updated_at: now })
+        .in("id", ids)
+        // Only reverse what is still archived; anything reopened in the
+        // meantime keeps the status a person chose for it.
+        .eq("status", "archived")
+        .select("id");
+      if (posErr) throw new Error(`restore_positions_failed:${posErr.message} [${trace}]`);
+      restoredPositions += ((touched ?? []) as AnyRow[]).length;
+    }
+
     await writeAudit({
       actor: context.userId,
       action: "organization.restore",
@@ -601,10 +637,10 @@ export const restoreOrganization = createServerFn({ method: "POST" })
       entity_id: data.id,
       organization_id: data.id,
       before,
-      after,
+      after: { ...(after as AnyRow), restored_positions: restoredPositions },
       trace_id: trace,
     });
-    return { ok: true as const, organization: after, trace_id: trace };
+    return { ok: true as const, organization: after, restored_positions: restoredPositions, trace_id: trace };
   });
 
 
@@ -2136,6 +2172,34 @@ export const archiveOrganization = createServerFn({ method: "POST" })
       .select("*")
       .maybeSingle();
     if (error) throw new Error(`archive_failed:${error.message} [${trace}]`);
+
+    // An archived client cannot have live roles. Archiving the organisation on
+    // its own left every position exactly as it was — including ones with
+    // status "active", which is what the public job board reads, so a closed
+    // client's roles carried on collecting applications.
+    //
+    // The prior status of each is recorded in the audit event so restore can
+    // put them back as they were rather than guessing a single status for all.
+    const { data: livePositions } = await s
+      .from("positions")
+      .select("id,status")
+      .eq("organization_id", data.id)
+      .neq("status", "archived");
+    const cascaded = ((livePositions ?? []) as AnyRow[]).map((p) => ({
+      id: String(p.id),
+      status: String(p.status),
+    }));
+    if (cascaded.length > 0) {
+      const { error: posErr } = await s
+        .from("positions")
+        .update({ status: "archived", updated_at: now })
+        .in(
+          "id",
+          cascaded.map((p) => p.id),
+        );
+      if (posErr) throw new Error(`archive_positions_failed:${posErr.message} [${trace}]`);
+    }
+
     await writeAudit({
       actor: context.userId,
       action: "organization.archive",
@@ -2143,10 +2207,15 @@ export const archiveOrganization = createServerFn({ method: "POST" })
       entity_id: data.id,
       organization_id: data.id,
       before,
-      after,
+      after: { ...(after as AnyRow), cascaded_positions: cascaded },
       trace_id: trace,
     });
-    return { ok: true as const, organization: after, trace_id: trace };
+    return {
+      ok: true as const,
+      organization: after,
+      archived_positions: cascaded.length,
+      trace_id: trace,
+    };
   });
 
 
