@@ -43,9 +43,9 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
   const c = candidate.score_composition;
   if (!c || c.components.length === 0) return null;
 
-  // Every percentage is recomputed from the requirement rows this page already
-  // renders, so the composition can never quote a share the panels below
-  // contradict. Half a point for a partly met requirement.
+  // The shares come from the assessment itself — the same calculation that
+  // produced the score above. Requirement counts are used only to caption a
+  // share when they describe exactly that share; they never replace it.
   const rows = candidate.requirement_rows ?? [];
   const bases = {
     must_have: requirementBasis(rows, "must_have"),
@@ -54,7 +54,10 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
   const answers = candidate.screening_answers?.length ?? 0;
 
   const lines = c.components.map((k) => {
-    const basis = k.key === "must_have" ? bases.must_have : k.key === "preferred" ? bases.preferred : null;
+    const candidateBasis =
+      k.key === "must_have" ? bases.must_have : k.key === "preferred" ? bases.preferred : null;
+    const basis =
+      candidateBasis && Math.abs(candidateBasis.valuePct - k.valuePct) < 0.05 ? candidateBasis : null;
     const basisLabel = basis
       ? formatBasis(basis)
       : k.key === "screening_alignment" && answers > 0
@@ -66,7 +69,6 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
   // to add up to it exactly. A Loom introduction adds its own line on top.
   const videoBonusPts = c.videoBonusPts ?? 0;
   const totalPts = c.grandTotalPts ?? c.totalPts + videoBonusPts;
-  const reconciles = c.reconciles;
 
   return (
     <div className="mt-4 rounded-lg border p-3">
@@ -86,7 +88,9 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
             <tr key={k.key} className="border-t align-baseline">
               <td data-label="Component" className="py-1.5 pr-2">{k.label}</td>
               <td data-label="How it did" className="py-1.5 pr-2 text-muted-foreground">
-                {k.basisLabel ?? `${k.valuePct}%`}
+                {k.key === "review_adjustment"
+                  ? "Recorded when a reviewer checked this assessment"
+                  : k.basisLabel ?? `${k.valuePct}%`}
               </td>
               <td data-label="Points" className="py-1.5 text-right tabular-nums">
                 <Tooltip>
@@ -95,13 +99,23 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
                       type="button"
                       className="cursor-help underline decoration-dotted underline-offset-2"
                     >
+                      {k.key === "review_adjustment" && k.displayPts > 0 ? "+" : ""}
                       {k.displayPts} pts
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    {k.valuePct}%
-                    {k.basisLabel ? ` (${k.basisLabel})` : ""} &times; {k.weightPct}% ={" "}
-                    {k.displayPts} points
+                    {k.key === "review_adjustment" ? (
+                      <>
+                        {k.displayPts > 0 ? "+" : ""}
+                        {k.displayPts} points from the review of this assessment
+                      </>
+                    ) : (
+                      <>
+                        {k.valuePct}%
+                        {k.basisLabel ? ` (${k.basisLabel})` : ""} &times; {k.weightPct}% ={" "}
+                        {k.displayPts} points
+                      </>
+                    )}
                   </TooltipContent>
                 </Tooltip>
               </td>
@@ -130,13 +144,7 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
       <p className="mt-2 text-[11px] text-muted-foreground">
         Percentages are weighted counts of the requirements listed below: a fully
         evidenced requirement scores one point, a partly evidenced one half.
-        {c.incomplete
-          ? " One of the three weightings was not measured for this assessment, so the parts do not add up to the whole yet."
-          : reconciles && c.displayedScore != null
-            ? videoBonusPts > 0
-              ? ` The four parts add up to ${totalPts}, the score shown above.`
-              : ` The three parts add up to ${totalPts}, the score shown above.`
-            : " The parts and the score shown disagree; the assessment is being re-checked."}
+{` The parts add up to ${totalPts}, the score shown above.`}
       </p>
     </div>
   );
