@@ -9,7 +9,7 @@
  *   • Up to 20 positions       → $15,200
  *   • Up to 30 positions       → $21,600
  *   • Up to 40 positions       → $27,200
- *   • Up to 100 positions      → $80,000
+ *   • Up to 100 positions      → $64,000
  *   • More than 100 positions  → no price shown; the CTA is to talk to us
  *
  * DERIVATION (internal reasoning only — never rendered):
