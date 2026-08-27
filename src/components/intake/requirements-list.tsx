@@ -64,6 +64,8 @@ export function RequirementsList({
   onRetrySuggestions?: () => void;
 }) {
   const mustHaves = countMustHaves(items);
+  /** Over the cap and not yet acknowledged — this is what blocks Continue. */
+  const overMustHaveCap = mustHaves > MAX_MUST_HAVES && !manyConfirmed;
   const existingKeys = new Set(items.map((i) => normalizeRequirementKey(i.text)));
 
   const setItem = (index: number, patch: Partial<RequirementItem>) => {
@@ -87,10 +89,31 @@ export function RequirementsList({
     <div className="space-y-4" data-field="Requirements">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <p className="text-sm font-medium">Requirements</p>
-        <p className="text-xs text-[color:var(--brand-navy)]/70">
+        <p
+          className={
+            overMustHaveCap
+              ? "text-xs font-semibold text-[color:var(--brand-danger)]"
+              : "text-xs text-[color:var(--brand-navy)]/70"
+          }
+        >
           {mustHaves} must {mustHaves === 1 ? "have" : "haves"} · {items.length} in total
         </p>
       </div>
+
+      {/* The cap is what blocks Continue, and both the message and the tickbox
+          that clears it sit below the whole list — twenty rows down on a long
+          brief. Say it here, where the count is, so the client is not hunting
+          for a problem they were only told about in a toast. */}
+      {overMustHaveCap && (
+        <p
+          role="alert"
+          className="rounded-lg border border-[color:var(--brand-danger)]/30 bg-[color:var(--brand-danger)]/5 p-3 text-sm text-[color:var(--brand-danger)]"
+        >
+          {MAX_MUST_HAVES} or fewer must-haves gets you a shortlist faster. Re-tag a few as
+          &ldquo;Nice to have&rdquo;, or tick the box at the end of the list to keep all{" "}
+          {mustHaves}.
+        </p>
+      )}
 
       {/* What each tag actually does. Not decoration — this is the instruction. */}
       <ul className="space-y-1 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-3 text-xs text-[color:var(--brand-navy)]/80">

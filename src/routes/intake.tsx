@@ -614,14 +614,21 @@ function ExpressIntakePage() {
 
   /** Move focus and announcement to the first invalid field on this step. */
   const focusFirstError = () => {
+    // Two frames, not one. The error is written with setState immediately
+    // before this runs, so on the first frame React has not committed it yet
+    // and the query matches nothing — the scroll silently never happened and
+    // the client was told to check a highlight that was never brought into
+    // view. The second frame runs after the commit.
     requestAnimationFrame(() => {
-      const err = document.querySelector<HTMLElement>("[data-field-error='true']");
-      if (!err) return;
-      err.scrollIntoView({ behavior: "smooth", block: "center" });
-      const field = err.closest("[data-field]")?.querySelector<HTMLElement>(
-        "input, textarea, select",
-      );
-      (field ?? err).focus?.();
+      requestAnimationFrame(() => {
+        const err = document.querySelector<HTMLElement>("[data-field-error='true']");
+        if (!err) return;
+        err.scrollIntoView({ behavior: "smooth", block: "center" });
+        const field = err.closest("[data-field]")?.querySelector<HTMLElement>(
+          "input, textarea, select",
+        );
+        (field ?? err).focus?.();
+      });
     });
   };
 
@@ -629,6 +636,11 @@ function ExpressIntakePage() {
   const validateStep = (index: number): boolean => {
     const key = INTAKE_STEPS[index].key;
     const next: Record<string, string> = {};
+    // The first row-level problem, kept so the toast can name it. Row errors
+    // live in their own state and render beside the row, which on a 21-row
+    // requirements list is often far below the fold — "check the highlighted
+    // fields" then points at something the client cannot see.
+    let firstRowMessage: string | null = null;
     if (key === "company") {
       const res = stepValidators.company.safeParse({
         companyName: state.companyName,
@@ -670,6 +682,12 @@ function ExpressIntakePage() {
       // belongs in the shared error map.
       setRowErrors(res.rowErrors);
       if (res.listError) next.requirements = res.listError;
+      const firstIndex = Object.keys(res.rowErrors)
+        .map(Number)
+        .sort((a, b) => a - b)[0];
+      if (firstIndex !== undefined) {
+        firstRowMessage = `Requirement ${firstIndex + 1}: ${res.rowErrors[firstIndex]}`;
+      }
       hardFail = !res.ok;
     }
     if (key === "details") {
@@ -715,9 +733,12 @@ function ExpressIntakePage() {
       return { ...carried, ...next };
     });
     if (hardFail || Object.keys(next).length > 0) {
-      // On a phone the highlighted field is usually far from the Continue
-      // button, so say something where the tap happened.
-      toast.error("Please check the highlighted fields on this step.");
+      // Say what is actually wrong. The highlighted field is usually far from
+      // the Continue button — on the requirements step it can be twenty rows
+      // down — so a toast that only says "check the highlighted fields" leaves
+      // the client hunting for a problem they cannot see.
+      const reason = firstRowMessage ?? Object.values(next)[0] ?? null;
+      toast.error(reason ?? "Please check the highlighted fields on this step.");
       focusFirstError();
       return false;
     }
@@ -1630,7 +1651,9 @@ function ExpressIntakePage() {
 
 
       setErrors(next);
-      toast.error("Please check the highlighted fields.");
+      // Same reasoning as validateStep: name the first real problem rather than
+      // pointing at a highlight that may be on another step entirely.
+      toast.error(Object.values(next)[0] ?? "Please check the highlighted fields.");
       // Send the client to the step that actually holds the first problem,
       // rather than showing an error they cannot see.
       const badStep = INTAKE_STEPS.findIndex((s) =>
