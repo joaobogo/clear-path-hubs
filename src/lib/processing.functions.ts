@@ -13,6 +13,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import {
+  publishedScore,
+  withVideoIntroBonus,
+  hasVideoIntro,
+} from "@/lib/scoring/published-score";
 import type { Json } from "@/integrations/supabase/types";
 import {
   ENGINE_VERSION,
@@ -940,7 +945,7 @@ export const listAdminMatches = createServerFn({ method: "GET" })
     let q = supabase
       .from("candidate_matches")
       .select(
-        "id,processing_state,admin_status,client_visibility,updated_at,current_score_run_id,candidate_profiles(full_name,email),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,must_have_coverage,contradiction_status)",
+        "id,processing_state,admin_status,client_visibility,updated_at,current_score_run_id,intro_video_url,candidate_profiles(full_name,email),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,final_score,fit_label,must_have_coverage,contradiction_status)",
       );
     if (!data.include_archived) {
       // Hide deleted/archived rows so the admin list reflects the delete action.
@@ -960,7 +965,10 @@ export const listAdminMatches = createServerFn({ method: "GET" })
         processing_state: m.processing_state as State,
         admin_status: m.admin_status as string,
         client_visibility: m.client_visibility as string,
-        score: (sr?.score as number) ?? null,
+        // The published number, bonus folded in — the same figure the publish
+        // queue beside this list shows. This used to read run.score raw, so
+        // one match carried two different numbers on two adjacent admin tabs.
+        score: publishedScore(withVideoIntroBonus(sr ?? null, hasVideoIntro(m))),
         fit_label: (sr?.fit_label as string) ?? null,
         must_have_coverage: (sr?.must_have_coverage as number) ?? null,
         contradiction_status: (sr?.contradiction_status as string) ?? null,

@@ -6,7 +6,13 @@ import { pilotEndsAt } from "@/lib/pilot-state";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { publishedRunEmbed, publishedScore, withPublishedRun } from "@/lib/scoring/published-score";
+import {
+  publishedRunEmbed,
+  publishedScore,
+  withPublishedRun,
+  withVideoIntroBonus,
+  hasVideoIntro,
+} from "@/lib/scoring/published-score";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import type { EventType } from "./events";
 import { qaGuardValues, isQaSafeOrg } from "@/lib/qa-guard";
@@ -2283,17 +2289,20 @@ export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
     const { data: rows } = await s
       .from("candidate_matches")
       .select(
-        "id,stage,processing_state,recommendation,canonical_state,admin_status,client_visibility,updated_at,candidate_profiles(id,full_name,email),positions(id,title),approved_run:approved_score_run_id(score,fit_label,fit_band),current_run:current_score_run_id(score,fit_label,fit_band)",
+        "id,stage,processing_state,recommendation,canonical_state,admin_status,client_visibility,updated_at,intro_video_url,candidate_profiles(id,full_name,email),positions(id,title),approved_run:approved_score_run_id(score,final_score,fit_label,fit_band),current_run:current_score_run_id(score,final_score,fit_label,fit_band)",
       )
       .eq("organization_id", data.id)
       .order("updated_at", { ascending: false })
       .limit(data.limit);
     // Stage, score and fit come from the same records the client workspace
-    // reads: the pipeline stage on the match and the approved score run (the
-    // in-flight run only as a fallback for candidates not yet approved).
+    // reads — resolved through publishedScore, which is the mandated path.
+    // This surface used to read run.score raw: no final_score (a human
+    // adjustment vanished here), no video bonus — so staff looking at a
+    // client's org saw different numbers than the client for the same people.
     return ((rows ?? []) as AnyRow[]).map((r) => {
-      const run = (r.approved_run ?? r.current_run ?? null) as AnyRow | null;
-      const score = typeof run?.score === "number" ? run.score : null;
+      const rawRun = (r.approved_run ?? r.current_run ?? null) as AnyRow | null;
+      const run = withVideoIntroBonus(rawRun, hasVideoIntro(r));
+      const score = publishedScore(run);
       const fit = toFitPresentation(
         (run?.fit_label ?? run?.fit_band ?? null) as string | null,
         score,

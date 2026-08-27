@@ -198,6 +198,11 @@ function CandidateWorkspace() {
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: ["admin-candidate", id] });
+    // The Client Preview tab has its own query, and nothing refreshed it: for
+    // the staleTime window after approving or publishing, the reviewer who had
+    // just acted still saw the pre-action DTO — banner insisting the score was
+    // not approved yet, seconds after they approved it.
+    await qc.invalidateQueries({ queryKey: ["client-preview", id] });
     await router.invalidate();
   };
 

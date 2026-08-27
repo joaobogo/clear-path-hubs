@@ -44,6 +44,7 @@ import { assessFreshness, mergeStoredStaleness, type Freshness } from "@/lib/sco
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 import { buildReviewTimeline, type ReviewTimeline } from "@/lib/client/review-timeline";
+import { getEvidenceCounts } from "@/lib/client/evidence-counts";
 import {
   buildScoreComposition,
   type ScoreComposition,
@@ -1196,12 +1197,15 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     main_consideration: mainConsideration,
     requirement_rows,
     score_composition,
-    // Honesty gate: only requirements this page can actually quote count as
-    // evidenced, so the chip can never promise more than the tab renders.
-    evidence_support: {
-      supported: requirement_rows.filter((r) => r.evidence.length > 0).length,
-      total: requirement_rows.length,
-    },
+    // The SAME derivation the detail page uses (getEvidenceCounts →
+    // resolveRequirementStatus), so the chip on a card or share can never
+    // disagree with the page behind it. This used to count any non-empty
+    // evidence array — contradicted rows included — so the list said one
+    // number and the detail said another for the same candidate.
+    evidence_support: (() => {
+      const counts = getEvidenceCounts(requirement_rows);
+      return { supported: counts.evidenced, total: counts.total };
+    })(),
 
     human_review: (() => {
       const res = (run?.result as AnyRow | null) ?? null;

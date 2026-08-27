@@ -1869,27 +1869,38 @@ function ApplyPage() {
               />
             ) : null}
             {step < 5 ? (
-              <Button
-                key="apply-continue"
-                type="button"
-                onClick={returningToReview ? returnToReview : goNext}
-                data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
-                className="w-full sm:w-auto"
-                disabled={
-                  cvChecking ||
-                  (step === 4 && !consent) ||
-                  (step === 2 && (!cvFile || !!cvError))
-                }
-                title={
+              (() => {
+                const gateReason =
                   step === 4 && !consent
                     ? "Tick the required consent box to continue"
                     : step === 2 && (!cvFile || !!cvError)
                       ? "Attach your CV as a PDF to continue"
-                      : undefined
-                }
-              >
-                {returningToReview ? "Done — back to review" : "Continue →"}
-              </Button>
+                      : null;
+                return (
+                  <div className="w-full sm:w-auto">
+                    <Button
+                      key="apply-continue"
+                      type="button"
+                      onClick={returningToReview ? returnToReview : goNext}
+                      data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
+                      className="w-full sm:w-auto"
+                      disabled={cvChecking || Boolean(gateReason)}
+                      title={gateReason ?? undefined}
+                    >
+                      {returningToReview ? "Done — back to review" : "Continue →"}
+                    </Button>
+                    {/* The reason used to live only in title= — a hover
+                        tooltip, which does not exist on a phone. Most
+                        candidates apply from one, so they tapped a dead
+                        Continue with no explanation. Say it on screen. */}
+                    {gateReason && (
+                      <p className="mt-1.5 text-xs text-muted-foreground" role="status">
+                        {gateReason}
+                      </p>
+                    )}
+                  </div>
+                );
+              })()
             ) : (
               /* Distinct key: without it React reuses the Continue button's DOM
                  node for this one, so the key-up of the keypress that advanced

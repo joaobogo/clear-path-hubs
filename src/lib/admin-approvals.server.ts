@@ -381,7 +381,10 @@ async function publishMatch(admin: Admin, matchId: string, actorUserId: string, 
   if (!gate.ok) throw new Error(`publish_blocked:${gate.reason}`);
 
   const { evidenceGateBlockers } = await import("@/lib/evidence/completeness.server");
-  const blockers = await evidenceGateBlockers(admin as never, matchId);
+  // Evaluate the run being published, not the working run. The gate used to
+  // resolve current-first while this path publishes approved-first, so it
+  // could pass on evidence belonging to a run other than the one going out.
+  const blockers = await evidenceGateBlockers(admin as never, matchId, runId);
   if (blockers.length > 0) throw new Error(`publish_blocked:evidence_incomplete`);
 
   const { data: rpc, error: rpcErr } = await admin.rpc("approve_candidate_match", {

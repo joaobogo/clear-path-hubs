@@ -80,6 +80,13 @@ export interface CompletenessPayload {
 export async function loadCompleteness(
   supabase: Client,
   matchId: string,
+  /**
+   * The run whose assessments back the report. The evidence-review UI wants
+   * the working (current) run; the publish gate must evaluate the run it is
+   * about to publish — which resolves approved-first. Left to default, the two
+   * gates could pass on different runs for the same candidate.
+   */
+  runIdOverride?: string | null,
 ): Promise<CompletenessPayload> {
   const { data: match, error: matchErr } = await supabase
     .from("candidate_matches")
@@ -91,7 +98,8 @@ export async function loadCompleteness(
   if (matchErr) throw matchErr;
   if (!match) throw new Error("match_not_found");
 
-  const runId = match.current_score_run_id ?? match.approved_score_run_id ?? null;
+  const runId =
+    runIdOverride ?? match.current_score_run_id ?? match.approved_score_run_id ?? null;
 
   const [itemsRes, runRes, evidenceRes, overrideRes] = await Promise.all([
     supabase
@@ -189,8 +197,12 @@ export async function loadCompleteness(
  * Gate used by the approval path. Returns the blocking labels, or an empty
  * array when every must-have criterion has evidence or a recorded override.
  */
-export async function evidenceGateBlockers(supabase: Client, matchId: string): Promise<string[]> {
-  const payload = await loadCompleteness(supabase, matchId);
+export async function evidenceGateBlockers(
+  supabase: Client,
+  matchId: string,
+  runId?: string | null,
+): Promise<string[]> {
+  const payload = await loadCompleteness(supabase, matchId, runId);
   return payload.report.blockingLabels;
 }
 
