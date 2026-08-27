@@ -6,7 +6,6 @@ import {
   SiteShell,
   PublicPage,
   PublicSection,
-  CtaSection,
 } from "@/components/marketing/site-shell";
 import { EditorialHero } from "@/components/marketing/editorial-hero";
 import pricingHero from "@/assets/page-pricing-hero.jpg";
