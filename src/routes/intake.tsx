@@ -99,6 +99,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { clearIntakeDraft } from "@/lib/intake-draft.functions";
 import {
+  clearDraftMirror,
   emailIntakeResumeLink,
   fetchIntakeDraft,
   markIntakeSubmitted,
@@ -275,7 +276,7 @@ const EMPTY: FormState = {
   targetStartDate: "",
   consent: false,
   pilotAcknowledgement: false,
-  researchConsent: true,
+  researchConsent: false,
   companyFax: "",
 };
 
@@ -828,6 +829,7 @@ function ExpressIntakePage() {
       confirmPassword: "",
       consent: false,
       pilotAcknowledgement: false,
+      researchConsent: false,
     }));
   };
 
@@ -989,6 +991,7 @@ function ExpressIntakePage() {
         } else if (remote.status === "expired") {
           setDraftNotice(INTAKE_DRAFT_EXPIRED_MESSAGE);
         } else if (remote.status === "submitted") {
+          clearDraftMirror();
           setDraftNotice(INTAKE_DRAFT_SUBMITTED_MESSAGE);
         }
       } catch {
@@ -1379,6 +1382,32 @@ function ExpressIntakePage() {
     dupBlockers.push("Check the copied compensation is still right");
   }
 
+  /**
+   * Is this one answer good enough to stop calling it missing? Used to retire a
+   * shown error the moment the answer becomes valid, so the "still needs your
+   * answer" summary tracks what is on screen instead of the last Continue click.
+   */
+  const answerNowValid = (key: string, value: unknown, next: FormState): boolean => {
+    if (key === "companyName" || key === "companyWebsite" || key === "firstName" || key === "lastName" || key === "workEmail") {
+      const res = stepValidators.company.safeParse({
+        companyName: next.companyName,
+        companyWebsite: next.companyWebsite,
+        firstName: next.firstName,
+        lastName: next.lastName,
+        workEmail: next.workEmail,
+      });
+      return res.success || !res.error.issues.some((i) => String(i.path[0] ?? "") === key);
+    }
+    if (key === "roleTitle") return stepValidators.role.safeParse({ roleTitle: next.roleTitle }).success;
+    if (key === "jobDescriptionText") {
+      return Boolean(jdFile) || next.jobDescriptionText.trim().length >= MIN_JD_TEXT;
+    }
+    if (typeof value === "boolean") return value;
+    if (typeof value === "string") return value.trim().length > 0;
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== null && value !== undefined;
+  };
+
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
       startedRef.current = true;
@@ -1386,6 +1415,16 @@ function ExpressIntakePage() {
     }
     editedRef.current.add(key as string);
     setState((s) => ({ ...s, [key]: value }));
+    // Retire this field's error as soon as the answer holds up, so the summary
+    // above Continue reflects the form as it is now.
+    const nextState = { ...state, [key]: value } as FormState;
+    setErrors((prev) => {
+      if (!prev[key as string]) return prev;
+      if (!answerNowValid(key as string, value, nextState)) return prev;
+      const cleared = { ...prev };
+      delete cleared[key as string];
+      return cleared;
+    });
     // An edited answer is this role's own answer, not an inherited one.
     setCarriedFields((prev) => {
       if (!prev.has(key as string)) return prev;
@@ -2164,6 +2203,7 @@ function ExpressIntakePage() {
           <div className="flex flex-wrap items-center gap-3">
             <Button
               type="button"
+              variant="outline"
               className="min-h-11"
               disabled={accountBusy}
               onClick={() => void (signInMode ? signInInline() : createAccountInline())}
@@ -2176,7 +2216,7 @@ function ExpressIntakePage() {
               ) : signInMode ? (
                 "Sign in and continue"
               ) : (
-                "Create my account now"
+                "Create my account now (optional)"
               )}
             </Button>
             <button
@@ -2187,6 +2227,10 @@ function ExpressIntakePage() {
               {signInMode ? "I don't have an account yet" : "I already have an account"}
             </button>
           </div>
+          <p className="text-sm text-[color:var(--brand-navy)]/70">
+            You don't have to do this now — <strong>Continue</strong> at the bottom of this step is the
+            way forward, and we'll set the account up as you go.
+          </p>
           <p className="text-sm text-[color:var(--brand-navy)]/70">
             Prefer the full login screen?{" "}
             <a href="/login" className="underline">

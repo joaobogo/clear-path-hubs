@@ -791,7 +791,7 @@ export const INTAKE_STEPS = [
   {
     key: "details",
     title: "Details and confirm",
-    blurb: "Money, place, timing and process. Optional now — finish later if you prefer.",
+    blurb: "Money, place, timing and process. Only visa sponsorship is required here — the rest you can finish later.",
     minutes: 2,
     required: false,
   },

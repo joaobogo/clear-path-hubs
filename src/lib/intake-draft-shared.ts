@@ -47,6 +47,7 @@ export const NEVER_PERSISTED_DRAFT_FIELDS = [
   "confirmPassword",
   "consent",
   "pilotAcknowledgement",
+  "researchConsent",
   "companyFax",
 ] as const;
 
