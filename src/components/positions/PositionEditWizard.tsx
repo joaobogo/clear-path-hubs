@@ -50,13 +50,13 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/dat
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import type { QualityInput } from "@/lib/requisition-schema";
 import {
-import { RichTextInput } from "@/components/ui/rich-text-input";
-import { stripInlineMarkup } from "@/lib/marketing/inline-format";
   editableFieldNames,
   fieldHint,
   fieldLabel,
   fieldOptions,
 } from "@/lib/positions/field-registry";
+import { RichTextInput } from "@/components/ui/rich-text-input";
+import { stripInlineMarkup } from "@/lib/marketing/inline-format";
 
 /** Same three steps, same words, as the client intake form. */
 const STEPS = [
