@@ -14328,6 +14328,7 @@ export type Database = {
           candidate_profile_id: string | null
           event_id: string | null
           event_type: Database["public"]["Enums"]["event_type"] | null
+          is_test_record: boolean | null
           occurred_at: string | null
           organization_id: string | null
           payload: Json | null

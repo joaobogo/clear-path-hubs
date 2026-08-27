@@ -317,7 +317,7 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
         const { data, error } = await supabaseAdmin
           .from("score_runs")
           .select("status, error_code")
-          .gte("created_at", since(24))
+          .gte("started_at", since(24))
           .limit(5_000);
         if (error) throw error;
         return data ?? [];
