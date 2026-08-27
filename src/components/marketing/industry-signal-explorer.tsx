@@ -25,10 +25,13 @@ type Signal = {
 type Pack = { label: string; signals: Signal[] };
 
 export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
-  const pack: Pack = useMemo(() => resolvePack(entry), [entry]);
+  // The illustrative flags come from this industry's own example bank so no
+  // two industry pages show the same sample evidence verbatim.
+  const pack: Pack = useMemo(() => specialise(entry, resolveSignalPack(entry)), [entry]);
 
   const [activeIdx, setActiveIdx] = useState(0);
   const active = pack.signals[activeIdx];
+
 
   return (
     <div>
