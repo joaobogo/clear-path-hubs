@@ -20,9 +20,9 @@ export type ZonedTime = {
   zone: string;
   /** e.g. "GMT+1" — resolved for this instant, so DST is respected. */
   offsetLabel: string;
-  /** e.g. "Europe/Lisbon, GMT+1" */
+  /** e.g. "Lisbon, GMT+1" */
   zoneLabel: string;
-  /** e.g. "15 Aug 2026, 10:00 (Europe/Lisbon, GMT+1)" */
+  /** e.g. "15 Aug 2026, 10:00 (Lisbon, GMT+1)" */
   full: string;
   /** True when we could not honour the requested zone and fell back to UTC. */
   fellBack: boolean;
@@ -37,6 +37,43 @@ function safeZone(zone: string | null | undefined): { zone: string; fellBack: bo
   } catch {
     return { zone: FALLBACK_ZONE, fellBack: true };
   }
+}
+
+/**
+ * Friendly name for an IANA zone: "America/Sao_Paulo" -> "São Paulo".
+ * Raw slash-separated identifiers must never reach a screen.
+ */
+const FRIENDLY_ZONE_NAMES: Record<string, string> = {
+  "America/Sao_Paulo": "São Paulo",
+  "Europe/Lisbon": "Lisbon",
+  "Europe/London": "London",
+  "America/New_York": "New York",
+};
+
+export function friendlyZoneName(zone: string | null | undefined): string {
+  const raw = (zone ?? "").trim();
+  if (!raw) return FALLBACK_ZONE;
+  if (FRIENDLY_ZONE_NAMES[raw]) return FRIENDLY_ZONE_NAMES[raw];
+  const segment = raw.split("/").pop() ?? raw;
+  return segment.replace(/_/g, " ");
+}
+
+/**
+ * The one way a timezone is written for people: "São Paulo (GMT-3)".
+ * Every surface that shows a zone uses this — listings, interviews, emails.
+ */
+export function zoneDisplay(
+  zone: string | null | undefined,
+  at: string | Date = new Date(),
+): string {
+  const raw = (zone ?? "").trim();
+  if (!raw) return FALLBACK_ZONE;
+  const resolved = safeZone(raw);
+  if (resolved.fellBack) return raw;
+  const name = friendlyZoneName(resolved.zone);
+  const offset = offsetLabel(at, resolved.zone);
+  if (resolved.zone === FALLBACK_ZONE) return "UTC (GMT)";
+  return `${name} (${offset})`;
 }
 
 /** "GMT+1" / "GMT-3" / "GMT" for the given instant in the given zone. */
@@ -70,7 +107,7 @@ export function formatZonedTime(
   const timeLabel = formatDateTime(date, "", resolved.zone);
 
   const offset = offsetLabel(date, resolved.zone);
-  const zoneLabel = `${resolved.zone}, ${offset}`;
+  const zoneLabel = `${friendlyZoneName(resolved.zone)}, ${offset}`;
   return {
     timeLabel,
     zone: resolved.zone,
@@ -102,5 +139,5 @@ export function zoneNote(zoned: ZonedTime): string {
 }
 
 export function zoneLabelSentence(zoned: ZonedTime): string {
-  return `${zoned.zone} (${zoned.offsetLabel})`;
+  return `${friendlyZoneName(zoned.zone)} (${zoned.offsetLabel})`;
 }

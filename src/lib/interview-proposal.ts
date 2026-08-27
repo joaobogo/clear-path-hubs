@@ -88,7 +88,7 @@ export function earliestSlotMs(now = Date.now()): number {
 /** "GMT+1" style label so a proposed time is never ambiguous. */
 export function zoneLabel(timezone: string, referenceIso?: string | null): string {
   const iso = referenceIso ?? new Date().toISOString();
-  return `${timezone} (${timezoneAbbr(iso, timezone)})`;
+  return zoneDisplay(timezone, iso);
 }
 
 export type ProposalResult = {
