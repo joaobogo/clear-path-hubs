@@ -190,7 +190,7 @@ export async function loadKpiRows(
     .from("candidate_matches")
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
-       client_decision_due_at, recommendation, contact_released_at,
+       client_decision_due_at, recommendation, contact_released_at, intro_video_url,
        score_runs:approved_score_run_id (score, final_score, fit_label, fit_band),
        organizations!inner(name)`
     )
@@ -286,7 +286,7 @@ export async function loadKpiRows(
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
     delivered_at: m.delivered_at,
-    approved_score: publishedScore(m.score_runs) ?? null,
+    approved_score: publishedScore(withVideoIntroBonus(m.score_runs, hasVideoIntro(m))) ?? null,
     approved_fit_label: m.score_runs?.fit_label ?? null,
     organization_name: m.organizations?.name ?? null,
     approved_fit_band: m.score_runs?.fit_band ?? null,
@@ -1020,6 +1020,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     result: (run?.result as Record<string, unknown> | null) ?? null,
     displayedScore: publishedScore(run),
     requirementRows: requirement_rows,
+    videoBonusPts: hasVideoIntro(row) ? VIDEO_INTRO_BONUS_PTS : 0,
   });
 
   const workAuth = normWorkAuth(cp.work_authorization);
