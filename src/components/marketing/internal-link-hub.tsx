@@ -30,7 +30,7 @@ const RESOURCE_LINKS = [
   { to: "/faq", label: "Frequently asked questions" },
   { to: "/about", label: "About TaaSFlow" },
   { to: "/journey", label: "Our journey" },
-  { to: "/contact", label: "Talk to the team" },
+  { to: "/contact", label: "Message the team" },
 ] as const;
 
 const CANDIDATE_LINKS = [

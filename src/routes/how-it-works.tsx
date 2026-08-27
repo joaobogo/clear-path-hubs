@@ -69,7 +69,7 @@ function HowItWorksPage() {
           { value: "Every score", label: "Backed by evidence" },
         ]}
         primary={{ to: "/intake", label: "Start a role" }}
-        secondary={{ to: "/contact", label: "Talk to us" }}
+        secondary={{ to: "/contact", label: "Send us a message" }}
         note={`The ${PRODUCT_CATEGORY}: ${MODULES.blueprint}, ${MODULES.agents}, ${MODULES.evidence}, ${MODULES.scoring} and the ${MODULES.workspace}.`}
       />
 

@@ -535,7 +535,7 @@ export const OPERATIONS_GUIDES: ResourceGuide[] = [
     onward: [
       { to: "/pricing", label: "Pricing", desc: "Compare your daily cost to a subscription." },
       { to: "/how-it-works", label: "How it works", desc: "Where the days go, and how they compress." },
-      { to: "/contact", label: "Talk to us", desc: "Bring your numbers." },
+      { to: "/contact", label: "Send us a message", desc: "Bring your numbers." },
     ],
   },
 ];

@@ -205,7 +205,7 @@ export const COMPARISON_GUIDES: ResourceGuide[] = [
     onward: [
       { to: "/pricing", label: "Pricing", desc: "What each tier includes, including seats." },
       { to: "/solutions", label: "Solutions", desc: "How teams structure the split." },
-      { to: "/contact", label: "Talk it through", desc: "Bring your role count and calendar." },
+      { to: "/book", label: "Book a call", desc: "Bring your role count and calendar." },
     ],
   },
 

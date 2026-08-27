@@ -133,7 +133,7 @@ export const INTEGRATIONS: Integration[] = [
       "Agreed in writing during onboarding. Application status lookups return only the reference holder's own state.",
     healthVisibility: false,
     healthNote: "Failures return an explicit error on the response.",
-    docs: { label: "Talk to us about API access", to: "/contact" },
+    docs: { label: "Message us about API access", to: "/contact" },
   },
   {
     id: "payment-webhooks",
