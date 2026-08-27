@@ -17,7 +17,7 @@ import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
 import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import {
   PRICE_PILOT_DISPLAY,
-  NO_DISCOUNT_NOTE,
+  ANNUAL_DISCOUNT_NOTE,
   MAX_POSITIONS,
 } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
@@ -171,10 +171,10 @@ function PricingPage() {
                 ))}
               </div>
               {/* One total per package — the same packages whether billed once
-                  or monthly. No discounts, no ranges. */}
+                  or monthly. The only published discount is annual prepay. */}
               <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
                 <span className="font-semibold text-[color:var(--brand-navy)]">
-                  {NO_DISCOUNT_NOTE}
+                  {ANNUAL_DISCOUNT_NOTE}
                 </span>{" "}
                 {PAYMENTS_ENABLED
                   ? "The total you see is the total charged at checkout."

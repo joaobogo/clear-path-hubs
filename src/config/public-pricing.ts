@@ -17,6 +17,8 @@ import {
   PACKAGE_10,
   PACKAGE_20,
   PACKAGE_30,
+  PACKAGE_40,
+  PACKAGE_50,
   positionsTotalUsd,
   formatUsdExact,
 } from "@/config/pricing-core";
@@ -26,7 +28,7 @@ export type ApprovalStatus = "approved" | "pending" | "review";
 
 export interface PricingPackage {
   /** Machine identifier used in analytics, tests, and internal wiring. */
-  id: "pilot" | "growth" | "scale" | "volume" | "above-max";
+  id: "pilot" | "growth" | "scale" | "volume" | "portfolio" | "program" | "above-max";
   /** Public-facing name shown on the Pricing page and calculator. */
   name: string;
   /** Public one-line description shown under the package title. */
@@ -96,6 +98,32 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
     minPositions: PACKAGE_20.capacity + 1,
     maxPositions: PACKAGE_30.capacity,
     priceUsd: PACKAGE_30.totalUsd,
+    billingType: "package",
+    customPricingOnly: false,
+    approvalStatus: "approved",
+    effectiveDate: EFFECTIVE,
+    active: true,
+  },
+  {
+    id: "portfolio",
+    name: PACKAGE_40.capacityLabel,
+    description: "Portfolio hiring across business units.",
+    minPositions: PACKAGE_30.capacity + 1,
+    maxPositions: PACKAGE_40.capacity,
+    priceUsd: PACKAGE_40.totalUsd,
+    billingType: "package",
+    customPricingOnly: false,
+    approvalStatus: "approved",
+    effectiveDate: EFFECTIVE,
+    active: true,
+  },
+  {
+    id: "program",
+    name: PACKAGE_50.capacityLabel,
+    description: "A continuous hiring programme in one package.",
+    minPositions: PACKAGE_40.capacity + 1,
+    maxPositions: PACKAGE_50.capacity,
+    priceUsd: PACKAGE_50.totalUsd,
     billingType: "package",
     customPricingOnly: false,
     approvalStatus: "approved",

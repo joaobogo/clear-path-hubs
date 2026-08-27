@@ -11,6 +11,8 @@ import {
   PACKAGE_10,
   PACKAGE_20,
   PACKAGE_30,
+  PACKAGE_40,
+  PACKAGE_50,
   PILOT_ROLES_LABEL,
   ABOVE_MAX_DISPLAY,
   ABOVE_MAX_ROLES_LABEL,
@@ -21,7 +23,7 @@ import {
 } from "@/config/pricing-core";
 
 export type PricingTier = {
-  id: "pilot" | "growth" | "scale" | "volume" | "enterprise";
+  id: "pilot" | "growth" | "scale" | "volume" | "portfolio" | "program" | "enterprise";
   name: string;
   eyebrow: string;
   /** The one exact total in USD for this package. Null above the maximum. */
@@ -127,6 +129,45 @@ export const PRICING_TIERS: PricingTier[] = [
     ctaTo: "/book",
   },
   {
+    id: "portfolio",
+    name: PACKAGE_40.capacityLabel,
+    eyebrow: PACKAGE_40.capacityLabel,
+    oneTime: PACKAGE_40.totalUsd,
+    priceDisplay: PACKAGE_40.totalDisplay,
+    pricePer: "billed once",
+    bestFor: "Portfolio hiring across business units.",
+    rolesIncluded: PACKAGE_40.capacityLabel,
+    turnaround: TURNAROUND_LABEL,
+    included: [
+      ...PARALLEL_INCLUDED,
+      "Priority support",
+      "Dedicated account manager",
+      "Executive portfolio dashboard",
+    ],
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/book",
+  },
+  {
+    id: "program",
+    name: PACKAGE_50.capacityLabel,
+    eyebrow: PACKAGE_50.capacityLabel,
+    oneTime: PACKAGE_50.totalUsd,
+    priceDisplay: PACKAGE_50.totalDisplay,
+    pricePer: "billed once",
+    bestFor: "A continuous hiring programme run as one package.",
+    rolesIncluded: PACKAGE_50.capacityLabel,
+    turnaround: TURNAROUND_LABEL,
+    included: [
+      ...PARALLEL_INCLUDED,
+      "Priority support",
+      "Dedicated account manager",
+      "Executive portfolio dashboard",
+      "Named executive sponsor",
+    ],
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/book",
+  },
+  {
     id: "enterprise",
     name: ABOVE_MAX_ROLES_LABEL,
     eyebrow: ABOVE_MAX_ROLES_LABEL,
@@ -137,7 +178,7 @@ export const PRICING_TIERS: PricingTier[] = [
     rolesIncluded: ABOVE_MAX_ROLES_LABEL,
     turnaround: "Custom system operating cadence",
     included: [
-      `Everything in ${PACKAGE_30.capacityLabel}`,
+      `Everything in ${PACKAGE_50.capacityLabel}`,
       "Dedicated account structure",
       "Tailored billing and reporting",
       "SLA-backed delivery",

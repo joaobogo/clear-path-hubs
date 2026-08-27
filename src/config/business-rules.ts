@@ -29,7 +29,8 @@ import {
   PILOT_ROLES_LABEL,
   ABOVE_MAX_DISPLAY,
   ABOVE_MAX_ROLES_LABEL,
-  NO_DISCOUNT_NOTE,
+  ANNUAL_DISCOUNT_NOTE,
+  ANNUAL_DISCOUNT_PCT,
   MAX_POSITIONS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
@@ -280,7 +281,8 @@ export const BUSINESS_RULES_DEFAULTS = {
   ] satisfies SubscriptionTier[],
 
 
-  discountNote: NO_DISCOUNT_NOTE,
+  discountNote: ANNUAL_DISCOUNT_NOTE,
+  annualDiscountPct: ANNUAL_DISCOUNT_PCT,
   scoring: {
     dimensions: [
       { id: "must_haves", label: "Must-haves", weight: 40, description: "Non-negotiable requirements evidenced in the CV." },

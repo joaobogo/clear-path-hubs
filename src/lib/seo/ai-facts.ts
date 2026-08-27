@@ -14,6 +14,9 @@ import {
   PILOT_ROLES_LABEL,
   PRICE_PILOT_DISPLAY,
   PACKAGE_10,
+  PACKAGE_40,
+  PACKAGE_50,
+  ANNUAL_DISCOUNT_DISPLAY,
   PACKAGE_20,
   PACKAGE_30,
 
@@ -28,7 +31,7 @@ export const AI_FACTS = {
     "TaaSFlow is a subscription recruiting service: an applicant tracking system, sourcing and candidate outreach in one monthly subscription, with AI-assisted screening and a human recruiter reviewing every shortlist before a client sees it.",
   model: [
     `Pilot: ${PRICE_PILOT_DISPLAY} one-time, ${PILOT_ROLES_LABEL}. One pilot per company — it is not a recurring plan.`,
-    `Packages, not positions: ${PACKAGE_10.capacityLabel} — ${PACKAGE_10.totalDisplay}; ${PACKAGE_20.capacityLabel} — ${PACKAGE_20.totalDisplay}; ${PACKAGE_30.capacityLabel} — ${PACKAGE_30.totalDisplay}. ${MAX_POSITIONS} positions is the maximum; above that no price is published and the next step is to talk to us. One-off and subscription use the same three packages at the same prices, and there is no annual discount: the total shown is the total charged.`,
+    `Packages, not positions: ${PACKAGE_10.capacityLabel} — ${PACKAGE_10.totalDisplay}; ${PACKAGE_20.capacityLabel} — ${PACKAGE_20.totalDisplay}; ${PACKAGE_30.capacityLabel} — ${PACKAGE_30.totalDisplay}; ${PACKAGE_40.capacityLabel} — ${PACKAGE_40.totalDisplay}; ${PACKAGE_50.capacityLabel} — ${PACKAGE_50.totalDisplay}. ${MAX_POSITIONS} positions is the maximum; above that no price is published and the next step is to talk to us. One-off and subscription use the same packages at the same monthly prices; paying twelve months up front takes ${ANNUAL_DISCOUNT_DISPLAY} off the annual total.`,
     "No placement fees and no percentage-of-salary commission on hires.",
     `${TURNAROUND_LABEL} on a shortlist for a briefed role.`,
   ],

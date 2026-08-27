@@ -430,7 +430,7 @@ export const ENTITLEMENT_POLICY: PolicyItem[] = [
     id: "billing",
     question: "How often are we billed?",
     answer:
-      "We sell packages. The pilot is a flat fee for one position, billed once. Each larger package states a capacity and one total — one-off and subscription use the same packages at the same prices, with subscriptions billed monthly at the start of the month. There is no annual discount — the total you see is the total you pay. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
+      "We sell packages. The pilot is a flat fee for one position, billed once. Each larger package states a capacity and one total — one-off and subscription use the same packages at the same prices, with subscriptions billed monthly at the start of the month. Paying twelve months up front saves 10% on the annual total; the monthly price itself never changes. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
   },
   {
     id: "upgrade",

@@ -11,6 +11,8 @@ import {
   PRICE_PILOT_USD,
   MAX_POSITIONS,
   positionsTotalUsd,
+  subscriptionTotalsUsd,
+  ANNUAL_DISCOUNT_PCT,
 } from "@/config/pricing-core";
 import {
   PLAN_CATALOGUE,
@@ -41,6 +43,10 @@ describe("the pricing rule", () => {
     expect(positionsTotalUsd(20)).toBe(15_200);
     expect(positionsTotalUsd(22)).toBe(21_600);
     expect(positionsTotalUsd(30)).toBe(21_600);
+    expect(positionsTotalUsd(31)).toBe(27_200);
+    expect(positionsTotalUsd(40)).toBe(27_200);
+    expect(positionsTotalUsd(41)).toBe(32_000);
+    expect(positionsTotalUsd(50)).toBe(32_000);
   });
 
   it("never lets the total fall as the count rises", () => {
@@ -54,7 +60,18 @@ describe("the pricing rule", () => {
 
   it("shows no price above the maximum", () => {
     expect(positionsTotalUsd(MAX_POSITIONS + 1)).toBeNull();
-    expect(MAX_POSITIONS).toBe(30);
+    expect(MAX_POSITIONS).toBe(50);
+  });
+
+  it("takes 10% off a twelve-month prepayment, without moving the monthly price", () => {
+    const totals = subscriptionTotalsUsd(12)!;
+    expect(totals.monthly).toBe(15_200);
+    expect(totals.annualBeforeDiscount).toBe(15_200 * 12);
+    expect(totals.annual).toBe(Math.round(15_200 * 12 * 0.9));
+    expect(totals.annualSavings).toBe(15_200 * 12 - totals.annual);
+    expect(ANNUAL_DISCOUNT_PCT).toBe(0.1);
+    // Above the maximum there is no published price, so no annual price either.
+    expect(subscriptionTotalsUsd(MAX_POSITIONS + 1)).toBeNull();
   });
 });
 

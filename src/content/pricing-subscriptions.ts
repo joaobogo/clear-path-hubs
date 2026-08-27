@@ -4,22 +4,28 @@
  * src/config/pricing-core.ts.
  *
  * A subscription card says what capacity you get each month and what it costs
- * each month. There is no annual discount, no per-position figure, and no
- * package described as a range between two counts.
+ * each month. Paying twelve months up front takes 10% off the annual total —
+ * the only discount we publish, and it never changes the monthly price. No
+ * per-position figure, and no package described as a range between two counts.
  */
 import {
   PILOT_PACKAGE,
   PACKAGE_10,
   PACKAGE_20,
   PACKAGE_30,
+  PACKAGE_40,
+  PACKAGE_50,
   PILOT_ROLES_LABEL,
   ABOVE_MAX_DISPLAY,
   ABOVE_MAX_ROLES_LABEL,
   ABOVE_MAX_CTA_LABEL,
+  ANNUAL_DISCOUNT_DISPLAY,
+  ANNUAL_DISCOUNT_PCT,
+  formatUsdExact,
 } from "@/config/pricing-core";
 
 export type SubscriptionTier = {
-  id: "pilot" | "growth" | "scale" | "volume" | "enterprise";
+  id: "pilot" | "growth" | "scale" | "volume" | "portfolio" | "program" | "enterprise";
   name: string;
   eyebrow: string;
   /** The one exact monthly total for this package. Null above the maximum. */
@@ -27,6 +33,11 @@ export type SubscriptionTier = {
   priceDisplay: string;
   priceSuffix: string;
   billingNote: string;
+  /** Twelve months paid up front, 10% off. Null where no price is published. */
+  annual?: number | null;
+  annualDisplay?: string;
+  /** What the annual prepayment saves, e.g. "Save $9,600 a year". */
+  annualSavingsNote?: string;
   bestFor: string;
   rolesIncluded: string;
   included: string[];
@@ -43,7 +54,7 @@ const BASE = [
   "3 months candidate-record retention",
 ];
 
-export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
+const BASE_TIERS: SubscriptionTier[] = [
   {
     id: "pilot",
     name: "Pilot",
@@ -107,6 +118,45 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     ctaTo: "/book",
   },
   {
+    id: "portfolio",
+    name: PACKAGE_40.capacityLabel,
+    eyebrow: PACKAGE_40.capacityLabel,
+    monthly: PACKAGE_40.totalUsd,
+    priceDisplay: PACKAGE_40.totalDisplay,
+    priceSuffix: "a month",
+    billingNote: "Billed monthly",
+    bestFor: `${PACKAGE_40.capacityLabel} running together, every month.`,
+    rolesIncluded: PACKAGE_40.capacityLabel,
+    included: [
+      ...BASE,
+      "Dedicated account manager",
+      "Custom reporting",
+      "Executive portfolio dashboard",
+    ],
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/book",
+  },
+  {
+    id: "program",
+    name: PACKAGE_50.capacityLabel,
+    eyebrow: PACKAGE_50.capacityLabel,
+    monthly: PACKAGE_50.totalUsd,
+    priceDisplay: PACKAGE_50.totalDisplay,
+    priceSuffix: "a month",
+    billingNote: "Billed monthly",
+    bestFor: `${PACKAGE_50.capacityLabel} running together, every month.`,
+    rolesIncluded: PACKAGE_50.capacityLabel,
+    included: [
+      ...BASE,
+      "Dedicated account manager",
+      "Custom reporting",
+      "Executive portfolio dashboard",
+      "Named executive sponsor",
+    ],
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/book",
+  },
+  {
     id: "enterprise",
     name: ABOVE_MAX_ROLES_LABEL,
     eyebrow: ABOVE_MAX_ROLES_LABEL,
@@ -118,7 +168,7 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     rolesIncluded: ABOVE_MAX_ROLES_LABEL,
     included: [
       ...BASE,
-      `Everything in ${PACKAGE_30.capacityLabel}`,
+      `Everything in ${PACKAGE_50.capacityLabel}`,
       "White-glove onboarding",
       "Strategic planning sessions",
     ],
@@ -126,3 +176,24 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     ctaTo: "/enterprise",
   },
 ];
+
+/** Every published subscription tier, with annual-prepay figures filled in. */
+export const SUBSCRIPTION_TIERS: SubscriptionTier[] = BASE_TIERS.map(withAnnual);
+
+/**
+ * Fill the annual-prepay fields from the one rule in pricing-core. Tiers with
+ * no published monthly price (above the maximum) get no annual price either.
+ */
+function withAnnual(tier: SubscriptionTier): SubscriptionTier {
+  if (tier.monthly === null) {
+    return { ...tier, annual: null, annualDisplay: ABOVE_MAX_DISPLAY };
+  }
+  const annual = Math.round(tier.monthly * 12 * (1 - ANNUAL_DISCOUNT_PCT));
+  const savings = tier.monthly * 12 - annual;
+  return {
+    ...tier,
+    annual,
+    annualDisplay: formatUsdExact(annual),
+    annualSavingsNote: `Save ${formatUsdExact(savings)} a year — ${ANNUAL_DISCOUNT_DISPLAY} off when you pay twelve months up front.`,
+  };
+}

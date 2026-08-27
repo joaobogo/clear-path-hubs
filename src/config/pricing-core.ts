@@ -8,17 +8,20 @@
  *   • Up to 10 positions       → $8,000
  *   • Up to 20 positions       → $15,200
  *   • Up to 30 positions       → $21,600
- *   • More than 30 positions   → no price shown; the CTA is to talk to us
+ *   • Up to 40 positions       → $27,200
+ *   • Up to 50 positions       → $32,000
+ *   • More than 50 positions   → no price shown; the CTA is to talk to us
  *
  * DERIVATION (internal reasoning only — never rendered):
- * the three package totals are capacity × $800 base, less a volume discount of
- * 0%, 5% and 10% respectively. The per-position figure is how we work the
- * number out; it is never shown to a customer, never printed on a card, never
- * written in a caption and never used as a unit anywhere on the site.
+ * the five package totals are capacity × $800 base, less a volume discount of
+ * 0%, 5%, 10%, 15% and 20% respectively. The per-position figure is how we work
+ * the number out; it is never shown to a customer, never printed on a card,
+ * never written in a caption and never used as a unit anywhere on the site.
  *
- * Subscriptions use exactly the same three packages at exactly the same
- * prices, billed monthly instead of once. There is no annual discount: a
- * second, lower total would contradict one package having one price.
+ * Subscriptions use exactly the same packages at exactly the same prices,
+ * billed monthly instead of once. Paying twelve months up front takes 10% off
+ * the annual total — the one discount we publish. The monthly package total
+ * itself never changes.
  *
  * Never render a price preceded by "From", never describe a package as a range
  * between two counts, and never publish a per-position figure.
@@ -31,16 +34,24 @@ export const PRICE_PILOT_USD = 699;
 export const BASE_RATE_PER_POSITION_USD = 800;
 
 /** Hard maximum. Above this we show no price and the CTA is to talk to us. */
-export const MAX_POSITIONS = 30;
+export const MAX_POSITIONS = 50;
 
 /** Internal derivation inputs: capacity + volume discount. Never rendered. */
 export const PACKAGE_DERIVATION = [
   { id: "growth", capacity: 10, volumeDiscount: 0 },
   { id: "scale", capacity: 20, volumeDiscount: 0.05 },
   { id: "volume", capacity: 30, volumeDiscount: 0.1 },
+  { id: "portfolio", capacity: 40, volumeDiscount: 0.15 },
+  { id: "program", capacity: 50, volumeDiscount: 0.2 },
 ] as const;
 
-export type PackageId = "pilot" | "growth" | "scale" | "volume";
+export type PackageId =
+  | "pilot"
+  | "growth"
+  | "scale"
+  | "volume"
+  | "portfolio"
+  | "program";
 
 /** USD, exact, no rounding and no abbreviation. */
 export function formatUsdExact(value: number): string {
@@ -67,7 +78,7 @@ export type PricingPackageCore = {
 
 export const PILOT_ROLES_LABEL = "1 position";
 
-/** The four published packages, in order. */
+/** The six published packages, in ascending capacity order. */
 export const PACKAGES: readonly PricingPackageCore[] = [
   {
     id: "pilot",
@@ -92,6 +103,8 @@ export const PILOT_PACKAGE = PACKAGES[0]!;
 export const PACKAGE_10 = PACKAGES[1]!;
 export const PACKAGE_20 = PACKAGES[2]!;
 export const PACKAGE_30 = PACKAGES[3]!;
+export const PACKAGE_40 = PACKAGES[4]!;
+export const PACKAGE_50 = PACKAGES[5]!;
 
 export const PRICE_PILOT_DISPLAY = PILOT_PACKAGE.totalDisplay;
 
@@ -134,6 +147,44 @@ export const ROI_REFERENCE_PACKAGE_LABEL = PACKAGE_10.capacityLabel;
 /** Turnaround guarantee shared across every published package. */
 export const TURNAROUND_LABEL = "5-day turnaround";
 
-/** One package, one price — billed once or monthly. No annual discount. */
-export const NO_DISCOUNT_NOTE =
-  "One package, one price — billed once or monthly, with no annual discount.";
+/**
+ * The one discount we publish: pay twelve months up front, save 10%.
+ * The monthly package total itself never changes — the discount applies only to
+ * the annual prepayment, so one package still has one price.
+ */
+export const ANNUAL_DISCOUNT_PCT = 0.1;
+
+/** Rendered percentage, e.g. "10%". */
+export const ANNUAL_DISCOUNT_DISPLAY = `${Math.round(ANNUAL_DISCOUNT_PCT * 100)}%`;
+
+/** Billing note shown wherever packages are published. */
+export const ANNUAL_DISCOUNT_NOTE =
+  `One package, one price — billed once or monthly. Pay twelve months up front and save ${ANNUAL_DISCOUNT_DISPLAY}.`;
+
+export type SubscriptionTotals = {
+  /** The package total, charged each month. */
+  monthly: number;
+  /** Twelve monthly totals, before the annual-prepay discount. */
+  annualBeforeDiscount: number;
+  /** What twelve months cost when paid up front. */
+  annual: number;
+  /** What the annual prepayment saves. */
+  annualSavings: number;
+};
+
+/**
+ * Subscription totals for a position count, or null above the maximum where no
+ * price is published. Every subscription figure on the site comes from here.
+ */
+export function subscriptionTotalsUsd(positions: number): SubscriptionTotals | null {
+  const monthly = positionsTotalUsd(positions);
+  if (monthly === null) return null;
+  const annualBeforeDiscount = monthly * 12;
+  const annual = Math.round(annualBeforeDiscount * (1 - ANNUAL_DISCOUNT_PCT));
+  return {
+    monthly,
+    annualBeforeDiscount,
+    annual,
+    annualSavings: annualBeforeDiscount - annual,
+  };
+}

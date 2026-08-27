@@ -17,7 +17,7 @@ export const PRICING_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is there a contract minimum?",
-    a: "Subscriptions run month-to-month and one-off packages have no minimum at all. There is no annual commitment and no annual discount — the total you see for your position count is the total you pay. Exact terms are on your quote.",
+    a: "Subscriptions run month-to-month and one-off packages have no minimum at all. There is no annual commitment. If you choose to pay twelve months up front you save 10% on the annual total; the monthly package price itself never changes. Exact terms are on your quote.",
   },
   {
     q: "How does the pilot work?",

@@ -31,6 +31,11 @@ type TierMatch = {
  * package that covers a position count, and its one total. Nothing here is
  * hard-coded, and no per-position figure is ever shown.
  */
+/** Look tiers up by id — positional indexes break whenever a package is added. */
+function tierName(id: (typeof PRICING_TIERS)[number]["id"], fallback: string): string {
+  return PRICING_TIERS.find((t) => t.id === id)?.name ?? fallback;
+}
+
 function matchTier(positions: number): TierMatch {
   if (positions <= 0) {
     return { label: "—", detail: "Add at least 1 position", price: null };
@@ -39,14 +44,14 @@ function matchTier(positions: number): TierMatch {
   const total = positionsTotalUsd(positions);
   if (!pkg || total === null) {
     return {
-      label: PRICING_TIERS[4].name,
+      label: tierName("enterprise", ABOVE_MAX_DISPLAY),
       detail: `More than ${MAX_POSITIONS} positions — let's talk it through`,
       price: null,
     };
   }
   if (positions === 1) {
     return {
-      label: PRICING_TIERS[0].name,
+      label: tierName("pilot", "Pilot"),
       detail: "Flat pilot fee, billed once",
       price: total,
     };
