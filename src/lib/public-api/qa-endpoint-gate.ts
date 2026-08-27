@@ -32,9 +32,17 @@ export function qaEndpointsEnabled(isDev: boolean = isDevBuild()): boolean {
   return isDev === true;
 }
 
-/** Returns a 404 Response when QA endpoints are disabled, otherwise null. */
-export function qaEndpointDisabledResponse(): Response | null {
-  if (qaEndpointsEnabled()) return null;
+/**
+ * Returns a 404 Response when QA endpoints are disabled, otherwise null.
+ *
+ * `isDev` is injectable for the same reason it is on qaEndpointsEnabled, and
+ * production callers must not pass it. Without it the closed branch could not
+ * be tested at all: vitest runs with import.meta.env.DEV true, so this always
+ * returned null under test and the one assertion covering the kill switch for
+ * the destructive QA routes could never reach the code it was written for.
+ */
+export function qaEndpointDisabledResponse(isDev?: boolean): Response | null {
+  if (qaEndpointsEnabled(isDev ?? isDevBuild())) return null;
   return new Response("Not Found", {
     status: 404,
     headers: { "content-type": "text/plain; charset=utf-8" },

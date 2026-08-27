@@ -9,11 +9,23 @@ import {
 } from "../bands";
 
 const sqlPath = resolve(process.cwd(), "src/lib/scoring/score-band.sql");
-const checkedIn = readFileSync(sqlPath, "utf8");
+
+/**
+ * Line endings are a property of the checkout, not of the SQL.
+ *
+ * Git converts this file to CRLF on a Windows checkout while the generator
+ * emits LF, so a byte-for-byte comparison failed on every Windows run and
+ * reported an identical diff — every line marked changed, every line reading
+ * the same. That is indistinguishable from real drift at a glance, which is
+ * the one thing this guard exists to make obvious. Normalising both sides
+ * still catches any actual difference in the SQL.
+ */
+const normalizeEol = (s: string) => s.replace(/\r\n/g, "\n");
+const checkedIn = normalizeEol(readFileSync(sqlPath, "utf8"));
 
 describe("score_band SQL parity", () => {
-  it("checked-in SQL matches the generator byte-for-byte", () => {
-    expect(checkedIn).toBe(buildScoreBandSql());
+  it("checked-in SQL matches the generator", () => {
+    expect(checkedIn).toBe(normalizeEol(buildScoreBandSql()));
   });
 
   it("every boundary in the TS table appears in the SQL", () => {

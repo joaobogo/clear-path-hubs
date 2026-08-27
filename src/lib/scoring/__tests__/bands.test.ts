@@ -13,7 +13,11 @@ import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { scoreBand } from "@/lib/status-system";
 
 const SQL_PATH = path.join(process.cwd(), "src/lib/scoring/score-band.sql");
-const sql = readFileSync(SQL_PATH, "utf8");
+// Line endings are a checkout artefact: git rewrites this file to CRLF on
+// Windows while the generator emits LF, so a raw comparison reported an
+// identical-looking diff on every line. Normalised so the guard shows real drift.
+const normalizeEol = (s: string) => s.replace(/\r\n/g, "\n");
+const sql = normalizeEol(readFileSync(SQL_PATH, "utf8"));
 
 /**
  * Evaluates the checked-in SQL band function the way Postgres would: parse the
@@ -35,7 +39,7 @@ function sqlBandOf(score: number | null): string {
 
 describe("canonical band table", () => {
   it("ships SQL generated from the TypeScript boundaries", () => {
-    expect(sql).toBe(buildScoreBandSql());
+    expect(sql).toBe(normalizeEol(buildScoreBandSql()));
   });
 
   it("produces the same band in TypeScript and in SQL for every score", () => {

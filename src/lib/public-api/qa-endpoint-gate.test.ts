@@ -13,9 +13,22 @@ describe("qa-endpoint-gate", () => {
   });
 
   it("answers 404 rather than confirming the route exists when closed", () => {
-    // The suite itself runs in dev mode, so assert on an explicitly closed gate.
-    const response = qaEndpointsEnabled(false) ? null : qaEndpointDisabledResponse();
+    // The suite runs in dev mode, so the gate has to be closed explicitly.
+    // Passing it to qaEndpointsEnabled was not enough — the response helper
+    // re-read the build mode itself and always returned null here.
+    const response = qaEndpointDisabledResponse(false);
     if (response === null) throw new Error("expected a 404 response");
     expect(response.status).toBe(404);
+  });
+
+  it("stays open for the dev server it exists for", () => {
+    expect(qaEndpointDisabledResponse(true)).toBeNull();
+  });
+
+  it("says nothing about the route it is hiding", async () => {
+    const response = qaEndpointDisabledResponse(false)!;
+    // A body naming the route, or anything but a plain 404, confirms to a
+    // prober that the endpoint is real and merely switched off.
+    expect(await response.text()).toBe("Not Found");
   });
 });
