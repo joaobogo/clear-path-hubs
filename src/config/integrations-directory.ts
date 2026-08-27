@@ -201,7 +201,7 @@ export const INTEGRATIONS: Integration[] = [
     permissions: "Read scheduling links and availability, and read booked events.",
     healthVisibility: true,
     healthNote: "Probed from the admin integration health page before a booking page is shown.",
-    docs: { label: "Book a call", to: "/contact" },
+    docs: { label: "Book a call", to: "/book" },
   },
 
   /* ------------------------------------------------------ email / messaging */

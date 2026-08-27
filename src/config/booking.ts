@@ -2,18 +2,12 @@
  * Canonical booking configuration — client-safe.
  *
  * ONE destination for every "book a call / demo / talk to sales" CTA on the
- * site: BOOKING_ROUTE. Nothing else may hardcode a Calendly URL.
+ * site: BOOKING_ROUTE. It renders the native TaaSFlow scheduler, which reads
+ * real availability from our own scheduling settings. No third-party embed and
+ * no hardcoded personal calendar link may live here.
  *
- * Availability is never invented here: the scheduler embeds the real Calendly
- * event type, which is bound to the host's calendar. This file only decides
- * WHICH event type a given entry point should open.
- *
- * Configuration comes from build-time env so the event type can be corrected
- * without a code change:
- *   VITE_CALENDLY_SCHEDULING_URL  — full URL of the discovery event type
- *   VITE_CALENDLY_DEMO_URL        — optional, platform-demo event type
- * Both are public scheduling URLs (safe in the browser). Secrets (API token,
- * webhook signing key) live server-side only and never appear in this file.
+ * Controls that open the contact form must say so in their label ("Send us a
+ * message"), never "Book a call".
  */
 
 export const BOOKING_ROUTE = "/book" as const;
@@ -32,33 +26,12 @@ export type MeetingType = {
   id: MeetingTypeId;
   /** Visitor-facing name. */
   name: string;
-  /** Nominal duration, for copy only — Calendly remains authoritative. */
+  /** Nominal duration, for copy only — real slots come from the scheduler. */
   durationLabel: string;
   summary: string;
-  /** Real Calendly event-type URL. Empty string = not configured yet. */
-  schedulingUrl: string;
   agenda: readonly string[];
   prepare: readonly string[];
 };
-
-function envUrl(value: unknown): string {
-  const raw = typeof value === "string" ? value.trim() : "";
-  if (!raw) return "";
-  try {
-    const url = new URL(raw);
-    // Only ever embed our own scheduling provider.
-    if (url.hostname !== "calendly.com" && !url.hostname.endsWith(".calendly.com")) return "";
-    return url.toString().replace(/\/$/, "");
-  } catch {
-    return "";
-  }
-}
-
-const DISCOVERY_URL = envUrl(
-  import.meta.env["VITE_CALENDLY_SCHEDULING_URL"] ??
-    "https://calendly.com/christian-brogger-taasflow",
-);
-const DEMO_URL = envUrl(import.meta.env["VITE_CALENDLY_DEMO_URL"]) || DISCOVERY_URL;
 
 export const MEETING_TYPES: Record<MeetingTypeId, MeetingType> = {
   discovery: {
@@ -67,7 +40,6 @@ export const MEETING_TYPES: Record<MeetingTypeId, MeetingType> = {
     durationLabel: "20 minutes",
     summary:
       "We map the roles you're hiring, the evidence bar for each, and how TaaSFlow would run them.",
-    schedulingUrl: DISCOVERY_URL,
     agenda: [
       "The roles you need filled and by when",
       "What good actually looks like for each role",
@@ -86,7 +58,6 @@ export const MEETING_TYPES: Record<MeetingTypeId, MeetingType> = {
     durationLabel: "30 minutes",
     summary:
       "A live walkthrough of the workspace: intake, evidence extraction, scoring, and the decision queue.",
-    schedulingUrl: DEMO_URL,
     agenda: [
       "Role intake and blueprint generation",
       "Evidence extraction from real CVs",
@@ -104,11 +75,6 @@ export const DEFAULT_MEETING_TYPE: MeetingTypeId = "discovery";
 
 export function resolveMeetingType(value: unknown): MeetingTypeId {
   return value === "demo" ? "demo" : DEFAULT_MEETING_TYPE;
-}
-
-/** True when we have a real event type to embed. */
-export function isSchedulerConfigured(id: MeetingTypeId): boolean {
-  return MEETING_TYPES[id].schedulingUrl.length > 0;
 }
 
 /**

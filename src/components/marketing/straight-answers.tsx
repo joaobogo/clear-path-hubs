@@ -123,10 +123,10 @@ export function StraightAnswers() {
         <p className="mt-8 text-sm text-[color:var(--brand-navy)]/80">
           Still want to talk it through?{" "}
           <Link
-            to="/contact"
+            to="/book"
             className="font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
           >
-            Book a Call →
+            Book a call →
           </Link>
         </p>
       </PublicPage>

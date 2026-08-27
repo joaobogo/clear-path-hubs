@@ -153,7 +153,7 @@ export function AgencyFeeComparison() {
           <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
         <Link
-          to="/contact"
+          to="/book"
           className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
         >
           Book a call
