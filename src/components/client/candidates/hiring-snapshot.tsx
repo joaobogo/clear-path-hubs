@@ -6,13 +6,15 @@ import type { ClientCandidateKpis } from "@/lib/client/candidate-kpi";
 export type HiringSnapshotKpis = Partial<ClientCandidateKpis>;
 
 /**
- * Two rows of figures that answer two different questions, and never mix them.
+ * The pipeline, as one row of figures that answer one question.
  *
- * The first row is the pipeline: every shared candidate sits in exactly one
- * stage, so those tiles add up to the total shown beside the heading and to the
- * list below. The second row holds figures that are not stages — a fit segment
- * and the review queue — which overlap the stages and are labelled as such, so
- * nobody reads them as part of the same total.
+ * Every shared candidate sits in exactly one stage, so these tiles add up to the
+ * total shown beside the heading and to the list below.
+ *
+ * There used to be a second row ("ways of looking at the same people") holding
+ * overlapping non-stage counts. It double-counted candidates already shown
+ * above, needed a caption to explain why its numbers did not add up, and its
+ * tiles rendered a doubled border. It was removed rather than repaired.
  */
 export function HiringSnapshot({
   kpis,
@@ -82,17 +84,6 @@ export function HiringSnapshot({
     },
   ].filter((t) => !t.onlyWhenPositive || (t.value ?? 0) > 0);
 
-  const segmentTiles: Array<{ label: string; value: number | undefined; filter: Record<string, string> }> = [
-    // Links through the KPI drill-through key, not a single band, so the tile
-    // and the list it opens always count the same candidates.
-    { label: "Strongest fit", value: kpis?.top, filter: { filter: "top" } },
-    {
-      label: "Waiting on your decision",
-      value: awaitingDecision ?? part?.awaiting,
-      filter: { stage: "delivered" },
-    },
-  ];
-
   return (
     <section aria-label="Hiring snapshot" className="mb-6 space-y-4">
       <div>
@@ -121,30 +112,6 @@ export function HiringSnapshot({
         </div>
       </div>
 
-      <div>
-        <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Ways of looking at the same people
-          </h2>
-          <span className="text-xs text-muted-foreground">
-            Not stages — these overlap with the row above
-          </span>
-        </div>
-        <div className="grid grid-cols-2 gap-2 sm:max-w-md">
-          {segmentTiles.map((tile) => (
-            <div key={tile.label} className="rounded-xl border border-dashed bg-muted/20 p-0.5">
-              <SnapshotTile
-                label={tile.label}
-                value={tile.value}
-                loading={skeleton}
-                to="/client/candidates"
-                filter={tile.filter as Record<string, string> | undefined}
-                org={orgSearch}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
