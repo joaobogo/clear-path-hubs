@@ -1,15 +1,53 @@
 {
   "note": "Files allowed to count or aggregate over the core business tables outside src/lib/kpis/. Each entry needs a reason. Add one only when the number genuinely is not one of the shared business figures.",
   "allow": [
-    { "path": "src/lib/hires/confirmed.server.ts", "reason": "The confirmed-hires reader itself; re-exported by src/lib/kpis." },
-    { "path": "src/lib/client-seats.ts", "reason": "Pure seat derivation used by the seats reader; takes rows, never queries." },
-    { "path": "src/lib/client/role-counts.ts", "reason": "Pure role derivation used by the open-roles reader." },
-    { "path": "src/lib/qa-guard.ts", "reason": "Fixture guard, not a business figure." },
-    { "path": "src/lib/data-loaders.server.ts", "reason": "Existence probes for fixture filtering, never rendered as a count." },
-    { "path": "src/lib/admin.functions.ts", "reason": "Pagination totals for the staff role list, and the pilot one-active-role guard — neither is a rendered business figure." },
-    { "path": "src/lib/compensation.functions.ts", "reason": "Offers on one role, used to describe a compensation signal, not the account's offer figure." },
-    { "path": "src/lib/requisition.functions.ts", "reason": "Size of a rescore fan-out, written to the audit trail only." },
-    { "path": "src/lib/qa/consistency.server.ts", "reason": "Diagnostic tool whose job is to compare raw rows against the readers." },
-    { "path": "src/lib/client-team-activity.functions.ts", "reason": "Team-activity trend counts (candidates delivered) are not one of the seven shared figures." }
+    {
+      "path": "src/lib/hires/confirmed.server.ts",
+      "reason": "The confirmed-hires reader itself; re-exported by src/lib/kpis."
+    },
+    {
+      "path": "src/lib/client-seats.ts",
+      "reason": "Pure seat derivation used by the seats reader; takes rows, never queries."
+    },
+    {
+      "path": "src/lib/client/role-counts.ts",
+      "reason": "Pure role derivation used by the open-roles reader."
+    },
+    {
+      "path": "src/lib/qa-guard.ts",
+      "reason": "Fixture guard, not a business figure."
+    },
+    {
+      "path": "src/lib/data-loaders.server.ts",
+      "reason": "Existence probes for fixture filtering, never rendered as a count."
+    },
+    {
+      "path": "src/lib/admin.functions.ts",
+      "reason": "Pagination totals for the staff role list, and the pilot one-active-role guard \u2014 neither is a rendered business figure."
+    },
+    {
+      "path": "src/lib/compensation.functions.ts",
+      "reason": "Offers on one role, used to describe a compensation signal, not the account's offer figure."
+    },
+    {
+      "path": "src/lib/requisition.functions.ts",
+      "reason": "Size of a rescore fan-out, written to the audit trail only."
+    },
+    {
+      "path": "src/lib/qa/consistency.server.ts",
+      "reason": "Diagnostic tool whose job is to compare raw rows against the readers."
+    },
+    {
+      "path": "src/lib/client-team-activity.functions.ts",
+      "reason": "Team-activity trend counts (candidates delivered) are not one of the seven shared figures."
+    },
+    {
+      "path": "src/lib/account-state.server.ts",
+      "reason": "Existence probe for setup completion (has this role produced candidates?), never rendered as a count."
+    },
+    {
+      "path": "src/lib/onboarding.functions.ts",
+      "reason": "Existence probe for setup completion (has this role produced candidates?), never rendered as a count."
+    }
   ]
 }
