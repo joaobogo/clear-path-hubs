@@ -440,6 +440,9 @@ export const listMyNotifications = createServerFn({ method: "GET" })
 
         const { resolveStaffPersona } = await import("./staff-persona.server");
         const staffRoles = new Set(["platform_admin", "operations"]);
+        // Whoever is reading decides how much of a staff identity is safe to
+        // show: outside the admin bell, staff always read as the team persona.
+        const readerIsStaffAudience = (rows[0]?.audience as any) === "admin";
 
         for (const p of profiles ?? []) {
           const m = (memberships ?? []).find(mem => mem.user_id === p.auth_user_id);
@@ -448,7 +451,9 @@ export const listMyNotifications = createServerFn({ method: "GET" })
             name: (p.full_name as string | null) ?? null,
             email: (p.email as string | null) ?? null,
             isStaff,
+            maskStatus: !readerIsStaffAudience,
           });
+
           nameById.set(p.auth_user_id as string, persona.name);
         }
       }
