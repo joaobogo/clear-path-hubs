@@ -453,6 +453,7 @@ function CandidatesPage() {
     onRetry={retryAll}
     retrying={kpisLoading || gate.retrying}
     orgSearch={orgSearch}
+    awaitingDecision={overview?.kpis?.awaiting_decision}
   />
 
   <CandidatesFiltersPanel
