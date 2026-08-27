@@ -212,14 +212,17 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     };
     const decision = stageToDecision[data.toStage];
     if (decision) {
-      await context.supabase.from("client_decisions").insert({
+      // One writer, one entry per real decision.
+      const { recordClientDecision } = await import("@/lib/decisions/record.server");
+      await recordClientDecision(context.supabase, {
         candidate_match_id: data.matchId,
         organization_id: data.orgId,
-        decision: decision as never,
+        decision,
         actor_user_id: context.userId,
-        feedback: data.reason?.trim() || null,
+        feedback: data.reason ?? null,
         reason_code: data.reasonCode ?? null,
-      } as never);
+        from_stage: from as string,
+      });
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -662,15 +665,16 @@ export const clientAction = createServerFn({ method: "POST" })
     } as const;
     const decision = (decisionMap as Record<string, string>)[data.action] ?? null;
     if (decision) {
-      await context.supabase.from("client_decisions").insert({
+      const { recordClientDecision } = await import("@/lib/decisions/record.server");
+      await recordClientDecision(context.supabase, {
         candidate_match_id: data.matchId,
         organization_id: data.orgId,
-        decision: decision as never,
-        feedback: data.feedback?.trim() || null,
+        decision,
+        feedback: data.feedback ?? null,
         reason_code: data.reasonCode ?? null,
-        details: (data.signals?.length || data.rating
+        details: data.signals?.length || data.rating
           ? { signals: data.signals ?? [], rating: data.rating ?? null }
-          : null) as never,
+          : null,
         from_stage: match.stage as string,
         actor_user_id: context.userId,
       });
