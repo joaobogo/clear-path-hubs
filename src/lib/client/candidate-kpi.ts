@@ -74,7 +74,6 @@ export function computeCandidateKpis(
         part.hired += 1;
         break;
       case "not_moving_forward":
-      case "withdrawn":
         part.closed += 1;
         break;
       default:
