@@ -12,6 +12,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { reasonLabel } from "@/lib/client-decision-reasons";
 import {
+  ACTIVE_MATCH_STAGES,
+  isActiveMatchStage,
+  pairKey,
+} from "@/lib/talent/active-stage";
+import {
   buildPreviouslyConsidered,
   type ConsideredInput,
   type ConsideredRow,
@@ -134,12 +139,27 @@ export const listPreviouslyConsidered = createServerFn({ method: "POST" })
       );
     }
 
+    // A candidate still in play for the earlier role was not passed over for it.
+    const { data: liveMatches } = await context.supabase
+      .from("candidate_matches")
+      .select("candidate_profile_id, position_id, stage")
+      .eq("organization_id", data.orgId)
+      .in("candidate_profile_id", profileIds)
+      .in("stage", [...ACTIVE_MATCH_STAGES]);
+    const activePairs = new Set<string>();
+    for (const m of ((liveMatches as AnyRow[]) ?? [])) {
+      if (isActiveMatchStage(m.stage as string)) {
+        activePairs.add(pairKey(String(m.candidate_profile_id), (m.position_id as string) ?? null));
+      }
+    }
+
     const inputs: ConsideredInput[] = [];
     for (const d of rows) {
       const match = d.candidate_matches as AnyRow;
       const profile = profileById.get(match.candidate_profile_id as string);
       const prior = positionById.get(match.position_id as string);
       if (!profile || !prior) continue;
+      if (activePairs.has(pairKey(profile.id as string, prior.id as string))) continue;
       // Retention expiry on the profile, or the recorded consent window.
       const retention = (profile.expires_at as string | null) ?? null;
       const consent = consentById.get(profile.id as string) ?? null;
