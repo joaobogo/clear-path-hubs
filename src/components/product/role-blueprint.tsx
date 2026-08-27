@@ -8,6 +8,7 @@ import {
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 import { formatEnumLabel } from "@/lib/human-labels";
 import { DEFAULT_CALIBRATION } from "@/lib/scoring/engine-calibration";
+import { InlineFormattedText } from "@/components/ui/inline-formatted-text";
 
 
 
@@ -202,7 +203,9 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
         {position.description ? (
           <div>
             <SectionLabel>Summary</SectionLabel>
-            <p className="text-sm whitespace-pre-wrap text-foreground/90">{position.description}</p>
+            <p className="text-sm whitespace-pre-wrap text-foreground/90">
+              <InlineFormattedText value={position.description} />
+            </p>
           </div>
         ) : null}
 
