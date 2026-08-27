@@ -12,6 +12,7 @@ import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 import { loadConfirmedHires } from "@/lib/kpis/confirmed-hires.server";
 import { loadOpenRoles, loadOrgRoles } from "@/lib/kpis/open-roles.server";
 import { loadKpiRows, computeKpis, isAwaitingClientDecision } from "@/lib/client-kpi.server";
+import { loadInterviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 import {
   PUBLISHED_SCORE_COLUMNS,
@@ -177,9 +178,17 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const hiredMatchIds = new Set(
       kpiRows.filter((r) => r.hire_confirmed).map((r) => String(r.id)),
     );
+    // "Needs your input" is a union, matching its caption: candidates waiting
+    // on a decision plus interviews waiting on the client to confirm a time.
+    // A candidate in both states is counted once.
+    const awaitingConfirmation = await loadInterviewsAwaitingConfirmation(s, orgId);
     const awaitingDecisionMatchIds = new Set(
       kpiRows.filter(isAwaitingClientDecision).map((r) => String(r.id)),
     );
+    for (const iv of awaitingConfirmation) {
+      if (iv.candidate_match_id) awaitingDecisionMatchIds.add(String(iv.candidate_match_id));
+    }
+
     const buMap = new Map<
       string,
       {
