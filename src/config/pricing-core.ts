@@ -34,7 +34,7 @@ export const PRICE_PILOT_USD = 699;
 export const BASE_RATE_PER_POSITION_USD = 800;
 
 /** Hard maximum. Above this we show no price and the CTA is to talk to us. */
-export const MAX_POSITIONS = 50;
+export const MAX_POSITIONS = 100;
 
 /** Internal derivation inputs: capacity + volume discount. Never rendered. */
 export const PACKAGE_DERIVATION = [
