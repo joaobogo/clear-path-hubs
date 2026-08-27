@@ -2341,6 +2341,9 @@ function ExpressIntakePage() {
           <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
             One list. Tag each requirement so sourcing chases the right people instead of a wish list.
           </p>
+          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+            Each additional must-have narrows the search, so the more you add, the fewer eligible candidates there will be.
+          </p>
 
           <RequirementsList
             items={state.requirements}
@@ -3393,6 +3396,9 @@ function ExpressIntakePage() {
                 {PAYMENTS_ENABLED
                   ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
                   : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."}
+              </p>
+              <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+                Your information stays inside TaaSFlow, part of Flow Group Ventures, and is never sold or passed to third parties.
               </p>
             </div>
             <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
