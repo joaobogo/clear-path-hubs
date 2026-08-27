@@ -18,6 +18,8 @@
  * OnlineMeetings.ReadWrite (admin-consented) on the Entra app registration.
  */
 
+import { COHOST_EMAILS } from "@/config/scheduler";
+
 const GRAPH = "https://graph.microsoft.com/v1.0";
 
 export type GraphConfig = {
@@ -196,6 +198,16 @@ function eventPayload(input: EventInput) {
         emailAddress: { address: input.attendeeEmail, name: input.attendeeName },
         type: "required",
       },
+      // Whoever actually takes the call. Without them the event existed only in
+      // the organising mailbox, so a booked meeting reached nobody's calendar
+      // and the first anyone knew of it was the reminder — or the visitor
+      // sitting alone on the Teams link.
+      ...COHOST_EMAILS.filter(
+        (email) => email.toLowerCase() !== input.attendeeEmail.trim().toLowerCase(),
+      ).map((email) => ({
+        emailAddress: { address: email },
+        type: "required" as const,
+      })),
     ],
     isOnlineMeeting: true,
     onlineMeetingProvider: "teamsForBusiness",

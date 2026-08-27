@@ -68,6 +68,26 @@ export const HOST_NAME = envStr(import.meta.env["VITE_BOOKING_HOST_NAME"], "TaaS
 export const HOST_EMAIL = envStr(import.meta.env["VITE_BOOKING_HOST_EMAIL"], "hello@taasflow.com");
 
 /**
+ * People who must be on every booked call besides the organising mailbox.
+ *
+ * A booking used to invite the visitor and nobody else: the event landed in the
+ * host mailbox's calendar, and whoever actually takes the call only found out
+ * if they happened to watch that inbox. These addresses are added as required
+ * attendees, so the meeting appears in their own calendars with the Teams link
+ * the moment it is booked.
+ *
+ * Comma-separated, set as VITE_BOOKING_COHOST_EMAILS. Empty by default — an
+ * unset value must never invent an invitee.
+ */
+export const COHOST_EMAILS: readonly string[] = envStr(
+  import.meta.env["VITE_BOOKING_COHOST_EMAILS"],
+  "",
+)
+  .split(",")
+  .map((s) => s.trim())
+  .filter((s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
+
+/**
  * Optional standing meeting room. When unset we store null and tell the visitor
  * the link arrives by email — we never invent a URL that does not exist.
  */
