@@ -74,7 +74,7 @@ function useCvDownload(matchId: string, mode: Mode) {
       if (!preview) {
         // A file save gives no on-page feedback of its own, so confirm it the
         // same way the ZIP download does: name the file that was saved.
-        toast.success("CV downloaded", { description: res.filename });
+        toast.success("CV downloaded", { description: res.filename, duration: 5000 });
       }
       resetTimer.current = setTimeout(() => setState("idle"), 2500);
 

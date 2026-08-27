@@ -61,8 +61,8 @@ export const TIER_META: Record<NotificationTier, TierMeta> = {
     order: 1,
   },
   important: {
-    label: "Important update",
-    description: "Something changed that affects a decision you own.",
+    label: "Important",
+    description: "Decisions and outcomes that change your hiring pipeline.",
     badgeClass: "bg-secondary text-secondary-foreground",
     accentClass: "border-l-secondary",
     order: 2,
@@ -238,6 +238,9 @@ const RULES: Partial<Record<EventType, NotificationRule>> = {
   },
 
   // ── Important update ───────────────────────────────────────────────────
+  // Reserved for decisions and outcomes that change the hiring pipeline.
+  // Routine lifecycle updates (role approved, interview scheduled, etc.) live
+  // in Informational so the "Important" tab carries signal.
   shortlist_ready: {
     tier: "important",
     affects: "A role you are hiring for",
@@ -248,16 +251,15 @@ const RULES: Partial<Record<EventType, NotificationRule>> = {
     candidateSensitive: true,
   },
   candidate_published: {
-    tier: "important",
+    tier: "informational",
     affects: "Your candidate pipeline",
     why: "A new candidate is ready for your decision.",
-    action: "Open the candidate",
-    dismissal: "on_action",
+    dismissal: "manual",
     group: "Candidates",
     candidateSensitive: true,
   },
   scoring_completed: {
-    tier: "important",
+    tier: "informational",
     affects: "Evidence behind a candidate",
     why: "Findings changed, so the ranking you saw earlier may differ.",
     dismissal: "manual",
@@ -297,15 +299,14 @@ const RULES: Partial<Record<EventType, NotificationRule>> = {
     candidateSensitive: true,
   },
   message_sent: {
-    tier: "important",
+    tier: "informational",
     affects: "A conversation on this role",
     why: "Replies are expected within your service commitment.",
-    action: "Open the conversation",
-    dismissal: "on_action",
+    dismissal: "manual",
     group: "Messages",
   },
   interview_scheduled: {
-    tier: "important",
+    tier: "informational",
     affects: "Your calendar",
     why: "The time is now confirmed with everyone.",
     dismissal: "manual",
@@ -322,7 +323,7 @@ const RULES: Partial<Record<EventType, NotificationRule>> = {
     candidateSensitive: true,
   },
   interview_cancelled: {
-    tier: "important",
+    tier: "informational",
     affects: "Your calendar",
     why: "The slot is free again and may need rebooking.",
     dismissal: "manual",
@@ -338,7 +339,7 @@ const RULES: Partial<Record<EventType, NotificationRule>> = {
     candidateSensitive: true,
   },
   contact_released: {
-    tier: "important",
+    tier: "informational",
     affects: "How you reach this candidate",
     why: "You can now contact them directly.",
     dismissal: "manual",
@@ -354,21 +355,21 @@ const RULES: Partial<Record<EventType, NotificationRule>> = {
     candidateSensitive: true,
   },
   position_approved: {
-    tier: "important",
+    tier: "informational",
     affects: "A role you submitted",
     why: "It is cleared and being prepared for launch.",
     dismissal: "manual",
     group: "Roles",
   },
   position_activated: {
-    tier: "important",
+    tier: "informational",
     affects: "A role you submitted",
     why: "Applications can arrive from now on.",
     dismissal: "manual",
     group: "Roles",
   },
   position_reopened: {
-    tier: "important",
+    tier: "informational",
     affects: "A role you paused",
     why: "Sourcing has resumed.",
     dismissal: "manual",
