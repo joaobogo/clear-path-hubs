@@ -190,7 +190,7 @@ const COPY: Record<ErrorKind, Copy> = {
     },
     client: {
       title: "We couldn't find that",
-      description: "This item is no longer available in your workspace.",
+      description: "We couldn't find that page.",
       action: "Back to dashboard",
     },
     candidate: {

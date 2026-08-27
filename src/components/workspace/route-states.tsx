@@ -122,9 +122,9 @@ export function makeRouteNotFoundComponent(tone: AudienceTone) {
         <ErrorState
           title={normalized.title}
           description={
-            identifier
+            tone === "public" || identifier
               ? normalized.description
-              : normalized.description
+              : "We couldn't find that page."
           }
 
           action={<HomeLink tone={tone} search={linkSearch} />}

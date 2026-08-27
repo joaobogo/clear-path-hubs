@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Users } from "lucide-react";
+import { plural } from "@/lib/format/plural";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { isUnicornMatch } from "@/lib/scoring/bands";
 import { publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
@@ -61,7 +62,7 @@ export function PipelineBoard({
         <h2 className="text-lg font-semibold">Candidates by stage</h2>
         <div className="text-xs text-muted-foreground">
           <Users className="inline h-3.5 w-3.5 mr-1" />
-          {matches.length} candidate{matches.length === 1 ? "" : "s"} visible
+          {plural(matches.length, "candidate")}
         </div>
       </div>
       <div
