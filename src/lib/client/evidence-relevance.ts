@@ -83,8 +83,83 @@ function stem(t: string): string {
 }
 
 /**
- * True when the passage shares at least one meaningful term with the
- * requirement — the minimum bar for quoting it as direct evidence.
+ * Words that describe an attitude or an everyday verb rather than the subject
+ * of a requirement. "Comfortable writing and maintaining automated tests"
+ * shares "comfortable" and "writing" with "Comfortable being the most senior
+ * engineer in the room and still writing the difficult parts myself" — a
+ * passage about seniority, not tests. Sharing only these words is not support:
+ * the passage has to speak to the requirement's own subject.
+ */
+const SOFT = new Set(
+  [
+    "comfortable",
+    "confident",
+    "happy",
+    "willing",
+    "keen",
+    "eager",
+    "interested",
+    "write",
+    "writing",
+    "written",
+    "maintain",
+    "maintaining",
+    "maintained",
+    "build",
+    "building",
+    "built",
+    "deliver",
+    "delivering",
+    "own",
+    "owning",
+    "ownership",
+    "run",
+    "running",
+    "make",
+    "making",
+    "keep",
+    "keeping",
+    "take",
+    "taking",
+    "help",
+    "helping",
+    "support",
+    "supporting",
+    "need",
+    "needs",
+    "want",
+    "part",
+    "parts",
+    "day",
+    "week",
+    "first",
+    "still",
+    "myself",
+    "room",
+    "difficult",
+    "engineer",
+    "engineers",
+    "engineering",
+    "developer",
+    "developers",
+    "software",
+    "people",
+    "person",
+  ].map(stem),
+);
+
+function looseMatch(w: string, have: Set<string>): boolean {
+  if (have.has(w)) return true;
+  // Allow compound forms: "row-level" vs "rowlevel", "founder-led" vs "founderled".
+  for (const h of have) {
+    if (h.length >= 5 && (h.includes(w) || w.includes(h))) return true;
+  }
+  return false;
+}
+
+/**
+ * True when the passage speaks to the requirement's subject — the minimum bar
+ * for quoting it as direct evidence under a "Met" mark.
  */
 export function passageSupportsRequirement(
   passage: string,
@@ -93,9 +168,16 @@ export function passageSupportsRequirement(
   const wanted = new Set(tokens(requirementLabel).map(stem));
   if (wanted.size === 0) return true; // nothing specific to check against
   const have = new Set(tokens(passage).map(stem));
+
+  // The requirement's subject terms. When it has any, the passage must hit one
+  // of them; attitude words on their own never carry a quote.
+  const subject = [...wanted].filter((w) => !SOFT.has(w));
+  if (subject.length > 0) {
+    return subject.some((w) => looseMatch(w, have));
+  }
+
   for (const w of wanted) {
     if (have.has(w)) return true;
-    // Allow compound forms: "row-level" vs "rowlevel", "founder-led" vs "founderled".
     for (const h of have) {
       if (h.length >= 5 && (h.includes(w) || w.includes(h))) return true;
     }
