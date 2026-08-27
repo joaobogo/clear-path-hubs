@@ -13,7 +13,10 @@ import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import {
   PILOT_ROLES_LABEL,
   PRICE_PILOT_DISPLAY,
-  PRICE_SUB_BRONZE_DISPLAY,
+  GROWTH_RATE_DISPLAY,
+  SCALE_RATE_DISPLAY,
+  VOLUME_RATE_DISPLAY,
+  MAX_POSITIONS,
   SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
@@ -25,7 +28,7 @@ export const AI_FACTS = {
     "TaaSFlow is a subscription recruiting service: an applicant tracking system, sourcing and candidate outreach in one monthly subscription, with AI-assisted screening and a human recruiter reviewing every shortlist before a client sees it.",
   model: [
     `Pilot: ${PRICE_PILOT_DISPLAY} one-time, ${PILOT_ROLES_LABEL}. One pilot per company — it is not a recurring plan.`,
-    `Subscription: flat monthly fee from ${PRICE_SUB_BRONZE_DISPLAY} per month. ${SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}.`,
+    `Positions are priced by total count: ${GROWTH_RATE_DISPLAY} each for 2–10, ${SCALE_RATE_DISPLAY} each for 11–20, ${VOLUME_RATE_DISPLAY} each for 21–30. ${MAX_POSITIONS} positions is the maximum; above that we scope it with you. One-off and subscription use the same rates. ${SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}.`,
     "No placement fees and no percentage-of-salary commission on hires.",
     `${TURNAROUND_LABEL} on a shortlist for a briefed role.`,
   ],
@@ -38,7 +41,7 @@ export const AI_FACTS = {
    */
   pages: [
     { path: "/", title: "TaaSFlow — subscription recruiting", note: "What the service is and who it is for." },
-    { path: "/pricing", title: "Pricing", note: "Pilot, packages and monthly subscription tiers." },
+    { path: "/pricing", title: "Pricing", note: "The exact total for any position count from 1 to 30." },
     { path: "/how-it-works", title: "How it works", note: "Intake, sourcing, screening, shortlist, hire." },
     { path: "/platform", title: "Platform", note: "The ATS and workspace clients work in." },
     { path: "/case-studies", title: "Case studies", note: "Engagement outcomes. Client names are withheld unless a client approved attribution." },

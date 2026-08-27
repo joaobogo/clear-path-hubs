@@ -37,10 +37,8 @@ import {
   type LeadVolume,
 } from "@/lib/marketing/lead-routing";
 import {
-  PRICE_MULTI_USD,
-  PRICE_PILOT_USD,
-  PRICE_SPRINT_USD,
-  PRICE_SUB_GOLD_FROM_USD,
+  positionsTotalUsd,
+  MAX_POSITIONS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
 
@@ -78,10 +76,17 @@ const VOLUMES: LeadVolume[] = ["one", "two_to_five", "six_to_ten", "eleven_plus"
 const URGENCIES: LeadUrgency[] = ["immediate", "this_quarter", "exploring"];
 
 function packageFor(volume: LeadVolume): { label: string; usd: number | null; note: string } {
-  if (volume === "one") return { label: "Pilot — 1 active role", usd: PRICE_PILOT_USD, note: "One role, full workflow." };
-  if (volume === "two_to_five") return { label: "Multi Role — 2–5 roles", usd: PRICE_MULTI_USD, note: "One package covering the set." };
-  if (volume === "six_to_ten") return { label: "Sprint — 6–10 roles", usd: PRICE_SPRINT_USD, note: "Concurrent mandates, one desk." };
-  return { label: "Subscription — 11+ roles", usd: PRICE_SUB_GOLD_FROM_USD, note: "From this level, priced as a monthly subscription." };
+  if (volume === "one")
+    return { label: "1 position", usd: positionsTotalUsd(1), note: "One role, full workflow — flat fee." };
+  if (volume === "two_to_five")
+    return { label: "5 positions", usd: positionsTotalUsd(5), note: "Exact total for five positions." };
+  if (volume === "six_to_ten")
+    return { label: "10 positions", usd: positionsTotalUsd(10), note: "Exact total for ten positions." };
+  return {
+    label: "20 positions",
+    usd: positionsTotalUsd(20),
+    note: `Exact total for twenty positions. Above ${MAX_POSITIONS} we scope it with you.`,
+  };
 }
 
 const money = (n: number) =>

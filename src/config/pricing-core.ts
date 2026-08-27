@@ -1,64 +1,129 @@
 /**
- * TaaSFlow — Canonical price anchors (single source of truth)
- * ============================================================
- * Every public surface (Pricing page, Homepage tiers, ROI calculator, agency
- * comparator, proposal templates, intake copy) reads its numeric price from
- * this file. Change values HERE — every consumer updates automatically.
+ * TaaSFlow — Canonical price rule (single source of truth)
+ * ========================================================
+ * THE RULE — there is no other one:
+ *   • 1 position                → flat $699 pilot
+ *   • 2–10 positions            → $900 per position
+ *   • 11–20 positions           → $850 per position
+ *   • 21–30 positions           → $800 per position
+ *   • more than 30 positions    → no price shown, the CTA is to talk to us
  *
- * Consumers:
- *   src/content/pricing.ts       → tier-card display shape
- *   src/config/public-pricing.ts → calculator/selector shape
+ * The rate is set by the TOTAL number of positions and applies to all of them,
+ * so 12 positions = 12 × $850 = $10,200.
  *
- * Rule: never hard-code these numbers anywhere else in the app.
+ * Monotonic guard: the total must never fall as the count rises. Where a band
+ * boundary would produce a lower total (20 × $850 = $17,000 vs 21 × $800 =
+ * $16,800), the total is held at the previous maximum until the new rate
+ * overtakes it — so 21 positions is also $17,000 and 22 is $17,600.
+ *
+ * Every price rendered or charged anywhere reads `positionsTotalUsd()` from
+ * this file. Never hard-code a price, a band as a price, or the word "From".
+ *
+ * One-off and subscription use the same rates.
  */
 
-export const PRICE_PILOT_USD = 399;
-export const PRICE_MULTI_USD = 2_100;
-export const PRICE_SPRINT_USD = 4_500;
+/** Flat pilot fee for a single position. */
+export const PRICE_PILOT_USD = 699;
+
+/** Hard maximum. Above this we show no price and the CTA is to talk to us. */
+export const MAX_POSITIONS = 30;
+
+/** Per-position rates by total position count. */
+export const POSITION_RATE_BANDS = [
+  { id: "growth", min: 2, max: 10, rateUsd: 900 },
+  { id: "scale", min: 11, max: 20, rateUsd: 850 },
+  { id: "volume", min: 21, max: 30, rateUsd: 800 },
+] as const;
+
+export type PositionRateBand = (typeof POSITION_RATE_BANDS)[number];
+
+/** USD, exact, no rounding and no abbreviation. */
+export function formatUsdExact(value: number): string {
+  if (!Number.isFinite(value)) return "—";
+  return `$${Math.round(value).toLocaleString("en-US")}`;
+}
+
+/** The per-position rate for a total count, or null outside 2–30. */
+export function positionRateUsd(positions: number): number | null {
+  if (!Number.isInteger(positions)) return null;
+  const band = POSITION_RATE_BANDS.find(
+    (b) => positions >= b.min && positions <= b.max,
+  );
+  return band ? band.rateUsd : null;
+}
+
+/** Raw total before the monotonic guard. */
+function rawTotalUsd(positions: number): number | null {
+  if (positions === 1) return PRICE_PILOT_USD;
+  const rate = positionRateUsd(positions);
+  return rate === null ? null : rate * positions;
+}
 
 /**
- * Monthly subscription anchors — volume-based options.
- * Mirrors taasflow.com/pricing (Subscription tab): Bronze / Silver / Gold / Enterprise.
- * Annual commit saves 10% (applied at checkout / on invoice).
+ * THE function. Exact final total for `positions`, including the monotonic
+ * guard. Returns null when no price is shown (0, non-integer, or above 30).
  */
-export const PRICE_SUB_BRONZE_USD = 7_000;
-export const PRICE_SUB_SILVER_FROM_USD = 7_500;
-export const PRICE_SUB_GOLD_FROM_USD = 15_000;
-export const PRICE_SUB_BRONZE_DISPLAY = "$7.0K";
-export const PRICE_SUB_SILVER_DISPLAY = "From $7.5K";
-export const PRICE_SUB_GOLD_DISPLAY = "From $15.0K";
-export const PRICE_SUB_ENTERPRISE_DISPLAY = "Custom";
-export const SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL = "Save 10% with annual commit";
+export function positionsTotalUsd(positions: number): number | null {
+  if (!Number.isInteger(positions) || positions < 1 || positions > MAX_POSITIONS)
+    return null;
+  let best = 0;
+  for (let n = 1; n <= positions; n += 1) {
+    const raw = rawTotalUsd(n);
+    if (raw !== null && raw > best) best = raw;
+  }
+  return best;
+}
 
-/**
- * Canonical display strings — every public surface (pricing page, homepage
- * tiers, ROI calculator, pitch/boardroom decks, proposal templates, intake
- * copy) MUST render prices via these constants. Never hard-code the string
- * form elsewhere.
- */
-export const PRICE_PILOT_DISPLAY = `$${PRICE_PILOT_USD}`;
-export const PRICE_MULTI_DISPLAY = "$2.1K";
-export const PRICE_SPRINT_DISPLAY = "$4.5K";
-export const PRICE_ENTERPRISE_DISPLAY = "Custom";
+/** Exact total as a display string, or the talk-to-us label above the maximum. */
+export function positionsTotalDisplay(positions: number): string {
+  const total = positionsTotalUsd(positions);
+  return total === null ? ABOVE_MAX_DISPLAY : formatUsdExact(total);
+}
 
-/** Position-band descriptors — one source for tier subtitles/eyebrows. */
-export const PILOT_ROLES_LABEL = "1 active role";
-export const MULTI_ROLES_LABEL = "2–5 active roles";
-export const SPRINT_ROLES_LABEL = "6–10 active roles";
-export const ENTERPRISE_ROLES_LABEL = "11+ roles or continuous hiring";
+/** Rate as a display string for a band (never a range, never "From"). */
+export function rateDisplay(rateUsd: number): string {
+  return formatUsdExact(rateUsd);
+}
 
-/** Multi Role is the reference package used for ROI comparisons. */
-export const ROI_REFERENCE_PACKAGE_USD = PRICE_MULTI_USD;
-export const ROI_REFERENCE_PACKAGE_LABEL =
-  "Multi Role one-off package (2–5 roles)";
+export const PRICE_PILOT_DISPLAY = formatUsdExact(PRICE_PILOT_USD);
+export const PER_POSITION_SUFFIX = "per position";
+
+/** Above the maximum: no price, talk to us. */
+export const ABOVE_MAX_DISPLAY = "Talk to us";
+export const ABOVE_MAX_CTA_LABEL = "Talk to us";
+export const ABOVE_MAX_ROLES_LABEL = `More than ${MAX_POSITIONS} positions`;
+
+/** Band descriptors — one source for tier subtitles/eyebrows. */
+export const PILOT_ROLES_LABEL = "1 position";
+export const GROWTH_ROLES_LABEL = "2–10 positions";
+export const SCALE_ROLES_LABEL = "11–20 positions";
+export const VOLUME_ROLES_LABEL = "21–30 positions";
+
+export const GROWTH_RATE_USD = POSITION_RATE_BANDS[0].rateUsd;
+export const SCALE_RATE_USD = POSITION_RATE_BANDS[1].rateUsd;
+export const VOLUME_RATE_USD = POSITION_RATE_BANDS[2].rateUsd;
+export const GROWTH_RATE_DISPLAY = rateDisplay(GROWTH_RATE_USD);
+export const SCALE_RATE_DISPLAY = rateDisplay(SCALE_RATE_USD);
+export const VOLUME_RATE_DISPLAY = rateDisplay(VOLUME_RATE_USD);
+
+/** Position-band boundaries (display and selector use only — never pricing). */
+export const POSITION_BANDS = {
+  pilot: { min: 1, max: 1 },
+  growth: { min: POSITION_RATE_BANDS[0].min, max: POSITION_RATE_BANDS[0].max },
+  scale: { min: POSITION_RATE_BANDS[1].min, max: POSITION_RATE_BANDS[1].max },
+  volume: { min: POSITION_RATE_BANDS[2].min, max: POSITION_RATE_BANDS[2].max },
+  aboveMax: { min: MAX_POSITIONS + 1, max: null as number | null },
+} as const;
+
+/** Three positions is the reference basket used for ROI comparisons. */
+export const ROI_REFERENCE_POSITIONS = 3;
+export const ROI_REFERENCE_PACKAGE_USD = positionsTotalUsd(
+  ROI_REFERENCE_POSITIONS,
+)!;
+export const ROI_REFERENCE_PACKAGE_LABEL = `${ROI_REFERENCE_POSITIONS} positions at ${GROWTH_RATE_DISPLAY} each`;
 
 /** Turnaround guarantee shared across every published tier. */
 export const TURNAROUND_LABEL = "5-day turnaround";
 
-/** Position-band boundaries used by the calculator selector. */
-export const POSITION_BANDS = {
-  pilot: { min: 1, max: 1 },
-  multi: { min: 2, max: 5 },
-  sprint: { min: 6, max: 10 },
-  subscription: { min: 11, max: null as number | null },
-} as const;
+/** Annual commitment note for subscription billing (same rates). */
+export const SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL = "Save 10% with annual commit";

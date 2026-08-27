@@ -58,23 +58,18 @@ export type EntitlementRow = {
   plans: Record<string, EntitlementValue>;
 };
 
-/** One-off package plans (Pilot / Multi / Sprint / Custom). */
-export const ONEOFF_PLAN_IDS = ["pilot", "multi", "sprint", "enterprise"] as const;
+/** Position bands — the same bands one-off and subscription both use. */
+export const ONEOFF_PLAN_IDS = ["pilot", "growth", "scale", "volume", "enterprise"] as const;
 export const ONEOFF_PLAN_LABELS: Record<string, string> = {
-  pilot: "Pilot",
-  multi: "Multi Role",
-  sprint: "Hiring Sprint",
-  enterprise: "Custom",
+  pilot: "1 position",
+  growth: "2 to 10",
+  scale: "11 to 20",
+  volume: "21 to 30",
+  enterprise: "More than 30",
 };
 
-/** Subscription plans (Bronze / Silver / Gold / Enterprise). */
-export const SUBSCRIPTION_PLAN_IDS = ["bronze", "silver", "gold", "enterprise"] as const;
-export const SUBSCRIPTION_PLAN_LABELS: Record<string, string> = {
-  bronze: "Bronze",
-  silver: "Silver",
-  gold: "Gold",
-  enterprise: "Enterprise",
-};
+export const SUBSCRIPTION_PLAN_IDS = ONEOFF_PLAN_IDS;
+export const SUBSCRIPTION_PLAN_LABELS = ONEOFF_PLAN_LABELS;
 
 /* ------------------------------------------------------------------ */
 /* One-off entitlement matrix                                          */
@@ -88,8 +83,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       "Roles that are open in the workspace and being worked by the agent layer at the same time.",
     plans: {
       pilot: value("1"),
-      multi: value("2–5"),
-      sprint: value("6–10"),
+      growth: value("2–10"),
+      scale: value("11–20"),
+      volume: value("21–30"),
       enterprise: value("Scoped", "Set with your plan"),
     },
   },
@@ -99,8 +95,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
     description: "People in your organisation with their own login to the workspace.",
     plans: {
       pilot: value("2 seats", "1 owner + 1 recruiter"),
-      multi: value("4 seats", "1 owner + 3 recruiters"),
-      sprint: value("6 seats", "1 owner + 5 recruiters"),
+      growth: value("4 seats", "1 owner + 3 recruiters"),
+      scale: value("8 seats", "1 owner + 7 recruiters"),
+      volume: value("11 seats", "1 owner + 10 recruiters"),
       enterprise: value("Scoped", "Agreed during security and procurement review"),
     },
   },
@@ -111,8 +108,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       "Intake, blueprint, discovery, evidence and scoring agent runs available to your roles.",
     plans: {
       pilot: value("Full agent layer", "Scoped to 1 active role"),
-      multi: value("Full agent layer", "Scoped to your active roles"),
-      sprint: value("Full agent layer", "Concurrent runs across all active roles"),
+      growth: value("Full agent layer", "Scoped to your active roles"),
+      scale: value("Full agent layer", "Concurrent runs across all active roles"),
+      volume: value("Full agent layer", "Concurrent runs across all active roles"),
       enterprise: value("Full agent layer", "Capacity planned with your plan"),
     },
   },
@@ -122,8 +120,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
     description: "Candidate profiles, evidence and scores stored in your workspace.",
     plans: {
       pilot: value("Unmetered for your roles", "No per-CV charges"),
-      multi: value("Unmetered for your roles", "No per-CV charges"),
-      sprint: value("Unmetered for your roles", "No per-CV charges"),
+      growth: value("Unmetered for your roles", "No per-CV charges"),
+      scale: value("Unmetered for your roles", "No per-CV charges"),
+      volume: value("Unmetered for your roles", "No per-CV charges"),
       enterprise: value("Unmetered for your roles", "No per-CV charges"),
     },
   },
@@ -133,8 +132,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
     description: "How long candidate records and evidence stay accessible in your workspace.",
     plans: {
       pilot: value("3 months"),
-      multi: value("3 months"),
-      sprint: value("3 months"),
+      growth: value("3 months"),
+      scale: value("3 months"),
+      volume: value("3 months"),
       enterprise: value("Custom", "Including data-residency requirements"),
     },
   },
@@ -145,8 +145,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       "Pipeline health, time-to-first-qualified, score distribution and dropout analysis.",
     plans: {
       pilot: included(),
-      multi: included(),
-      sprint: included(),
+      growth: included(),
+      scale: included(),
+      volume: included(),
       enterprise: value("Included + custom reporting"),
     },
   },
@@ -157,8 +158,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       "Every score traced to the specific findings behind it, per candidate and requirement.",
     plans: {
       pilot: included(),
-      multi: included(),
-      sprint: included(),
+      growth: included(),
+      scale: included(),
+      volume: included(),
       enterprise: included(),
     },
   },
@@ -169,8 +171,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       "Approval gates before candidates are visible, contact-release permissions, role-based access.",
     plans: {
       pilot: included(),
-      multi: included(),
-      sprint: included(),
+      growth: included(),
+      scale: included(),
+      volume: included(),
       enterprise: value("Included + SSO and security review"),
     },
   },
@@ -180,8 +183,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
     description: "Exportable record of decisions, scores and evidence for internal review.",
     plans: {
       pilot: pending("Export entitlement scope per plan not defined commercially"),
-      multi: pending("Export entitlement scope per plan not defined commercially"),
-      sprint: pending("Export entitlement scope per plan not defined commercially"),
+      growth: pending("Export entitlement scope per plan not defined commercially"),
+      scale: pending("Export entitlement scope per plan not defined commercially"),
+      volume: pending("Export entitlement scope per plan not defined commercially"),
       enterprise: value("Scoped", "Agreed in your reporting requirements"),
     },
   },
@@ -191,8 +195,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
     description: "Email and calendar coordination connected to your workspace.",
     plans: {
       pilot: pending("Per-plan integration entitlements not defined commercially"),
-      multi: pending("Per-plan integration entitlements not defined commercially"),
-      sprint: pending("Per-plan integration entitlements not defined commercially"),
+      growth: pending("Per-plan integration entitlements not defined commercially"),
+      scale: pending("Per-plan integration entitlements not defined commercially"),
+      volume: pending("Per-plan integration entitlements not defined commercially"),
       enterprise: value("Scoped", "Reviewed with your IT and security teams"),
     },
   },
@@ -202,8 +207,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
     description: "How you reach us and how quickly we respond.",
     plans: {
       pilot: value("Standard support"),
-      multi: value("Standard support"),
-      sprint: value("Priority support"),
+      growth: value("Standard support"),
+      scale: value("Priority support"),
+      volume: value("Priority support"),
       enterprise: value("SLA-backed support", "Named executive sponsor"),
     },
   },
@@ -214,8 +220,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       "Human review of agent output before candidates reach your decision queue.",
     plans: {
       pilot: value("Included"),
-      multi: value("Included"),
-      sprint: value("Included + priority calibration"),
+      growth: value("Included"),
+      scale: value("Included + priority calibration"),
+      volume: value("Included + priority calibration"),
       enterprise: value("Included + dedicated account structure"),
     },
   },
@@ -225,8 +232,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
     description: "What the platform produces for each active role.",
     plans: {
       pilot: value("Ranked, evidence-backed shortlists", "Refreshed weekly"),
-      multi: value("Ranked shortlists per role", "All roles run in parallel"),
-      sprint: value("Ranked shortlists per role", "All roles run in parallel"),
+      growth: value("Ranked shortlists per role", "All roles run in parallel"),
+      scale: value("Ranked shortlists per role", "All roles run in parallel"),
+      volume: value("Ranked shortlists per role", "All roles run in parallel"),
       enterprise: value("Ranked shortlists per role", "Custom operating cadence"),
     },
   },
@@ -243,10 +251,11 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     description:
       "Roles open in the workspace and worked by the agent layer within the billing month.",
     plans: {
-      bronze: value("Up to 15 per month"),
-      silver: value("16–30 per month"),
-      gold: value("31–50 per month"),
-      enterprise: value("50+ per month", "Scoped to your plan"),
+      pilot: value("1 per month"),
+      growth: value("2–10 per month"),
+      scale: value("11–20 per month"),
+      volume: value("21–30 per month"),
+      enterprise: value("More than 30 per month", "Scoped with you"),
     },
   },
   {
@@ -254,9 +263,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Workspace seats",
     description: "People in your organisation with their own login to the workspace.",
     plans: {
-      bronze: value("4 seats", "1 owner + 3 recruiters"),
-      silver: value("6 seats", "1 owner + 5 recruiters"),
-      gold: value("11 seats", "1 owner + 10 recruiters"),
+      pilot: value("2 seats", "1 owner + 1 recruiter"),
+      growth: value("4 seats", "1 owner + 3 recruiters"),
+      scale: value("8 seats", "1 owner + 7 recruiters"),
+      volume: value("11 seats", "1 owner + 10 recruiters"),
       enterprise: value("Scoped", "Agreed during procurement"),
     },
   },
@@ -266,9 +276,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     description:
       "Intake, blueprint, discovery, evidence and scoring agent runs available to your roles.",
     plans: {
-      bronze: value("Full agent layer", "Within your monthly role band"),
-      silver: value("Full agent layer", "Faster calibration cycles"),
-      gold: value("Full agent layer", "Highest concurrency in the published bands"),
+      pilot: value("Full agent layer", "Within your monthly role band"),
+      growth: value("Full agent layer", "Within your monthly role band"),
+      scale: value("Full agent layer", "Faster calibration cycles"),
+      volume: value("Full agent layer", "Highest concurrency in the published bands"),
       enterprise: value("Full agent layer", "Capacity planned with your plan"),
     },
   },
@@ -277,9 +288,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Candidate records",
     description: "Candidate profiles, evidence and scores stored in your workspace.",
     plans: {
-      bronze: value("Unmetered for your roles", "No per-CV charges"),
-      silver: value("Unmetered for your roles", "No per-CV charges"),
-      gold: value("Unmetered for your roles", "No per-CV charges"),
+      pilot: value("Unmetered for your roles", "No per-CV charges"),
+      growth: value("Unmetered for your roles", "No per-CV charges"),
+      scale: value("Unmetered for your roles", "No per-CV charges"),
+      volume: value("Unmetered for your roles", "No per-CV charges"),
       enterprise: value("Unmetered for your roles", "No per-CV charges"),
     },
   },
@@ -288,9 +300,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Data retention",
     description: "How long candidate records and evidence stay accessible in your workspace.",
     plans: {
-      bronze: value("3 months"),
-      silver: value("3 months"),
-      gold: value("3 months"),
+      pilot: value("3 months"),
+      growth: value("3 months"),
+      scale: value("3 months"),
+      volume: value("3 months"),
       enterprise: value("Custom", "Including data-residency requirements"),
     },
   },
@@ -300,9 +313,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     description:
       "Pipeline health, speed, score distribution and dropout analysis across your roles.",
     plans: {
-      bronze: included(),
-      silver: included(),
-      gold: value("Included + custom reporting"),
+      pilot: included(),
+      growth: included(),
+      scale: included(),
+      volume: value("Included + custom reporting"),
       enterprise: value("Included + strategic planning sessions"),
     },
   },
@@ -311,9 +325,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Evidence Graph access",
     description: "Every score traced to the findings behind it, per candidate and requirement.",
     plans: {
-      bronze: included(),
-      silver: included(),
-      gold: included(),
+      pilot: included(),
+      growth: included(),
+      scale: included(),
+      volume: included(),
       enterprise: included(),
     },
   },
@@ -323,9 +338,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     description:
       "Approval gates, contact-release permissions and role-based access across your team.",
     plans: {
-      bronze: included(),
-      silver: included(),
-      gold: included(),
+      pilot: included(),
+      growth: included(),
+      scale: included(),
+      volume: included(),
       enterprise: value("Included + security review"),
     },
   },
@@ -334,9 +350,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Audit exports",
     description: "Exportable record of decisions, scores and evidence for internal review.",
     plans: {
-      bronze: pending("Export entitlement scope per plan not defined commercially"),
-      silver: pending("Export entitlement scope per plan not defined commercially"),
-      gold: value("Included with custom reporting"),
+      pilot: pending("Export entitlement scope per plan not defined commercially"),
+      growth: pending("Export entitlement scope per plan not defined commercially"),
+      scale: pending("Export entitlement scope per plan not defined commercially"),
+      volume: value("Included with custom reporting"),
       enterprise: value("Scoped", "Agreed in your reporting requirements"),
     },
   },
@@ -345,9 +362,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Integration access",
     description: "Email and calendar coordination connected to your workspace.",
     plans: {
-      bronze: pending("Per-plan integration entitlements not defined commercially"),
-      silver: pending("Per-plan integration entitlements not defined commercially"),
-      gold: pending("Per-plan integration entitlements not defined commercially"),
+      pilot: pending("Per-plan integration entitlements not defined commercially"),
+      growth: pending("Per-plan integration entitlements not defined commercially"),
+      scale: pending("Per-plan integration entitlements not defined commercially"),
+      volume: pending("Per-plan integration entitlements not defined commercially"),
       enterprise: value("Scoped", "Reviewed with your IT and security teams"),
     },
   },
@@ -356,9 +374,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Support level",
     description: "How you reach us and how quickly we respond.",
     plans: {
-      bronze: value("Dedicated support"),
-      silver: value("Priority support"),
-      gold: value("Dedicated account manager"),
+      pilot: value("Dedicated support"),
+      growth: value("Dedicated support"),
+      scale: value("Priority support"),
+      volume: value("Dedicated account manager"),
       enterprise: value("White-glove onboarding", "Strategic planning sessions"),
     },
   },
@@ -367,9 +386,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Expert oversight",
     description: "Human review of agent output before candidates reach your decision queue.",
     plans: {
-      bronze: value("Included"),
-      silver: value("Included + faster calibration"),
-      gold: value("Included + named account manager"),
+      pilot: value("Included"),
+      growth: value("Included"),
+      scale: value("Included + faster calibration"),
+      volume: value("Included + named account manager"),
       enterprise: value("Included + strategic reviews"),
     },
   },
@@ -378,9 +398,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     label: "Included results",
     description: "What the platform produces for each active role.",
     plans: {
-      bronze: value("Ranked, evidence-backed shortlists", "Refreshed weekly"),
-      silver: value("Ranked shortlists per role", "Refreshed weekly"),
-      gold: value("Ranked shortlists per role", "Refreshed weekly"),
+      pilot: value("Ranked, evidence-backed shortlists", "Refreshed weekly"),
+      growth: value("Ranked, evidence-backed shortlists", "Refreshed weekly"),
+      scale: value("Ranked shortlists per role", "Refreshed weekly"),
+      volume: value("Ranked shortlists per role", "Refreshed weekly"),
       enterprise: value("Ranked shortlists per role", "Custom operating cadence"),
     },
   },
@@ -409,7 +430,7 @@ export const ENTITLEMENT_POLICY: PolicyItem[] = [
     id: "billing",
     question: "How often are we billed?",
     answer:
-      "One-off packages are a single flat fee for the scoped roles. Subscription plans are billed monthly at the start of the month. Annual commitment saves 10%, applied on your invoice. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
+      "A single position is a flat fee. From two positions up, the rate is set by your total position count and applies to every position — one-off and subscription use the same rates. Subscription plans are billed monthly at the start of the month. Annual commitment saves 10%, applied on your invoice. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
   },
   {
     id: "upgrade",

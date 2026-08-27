@@ -22,20 +22,20 @@
 import { z } from "zod";
 import {
   PRICE_PILOT_USD,
-  PRICE_MULTI_USD,
-  PRICE_SPRINT_USD,
-  PRICE_SUB_BRONZE_USD,
-  PRICE_SUB_SILVER_FROM_USD,
-  PRICE_SUB_GOLD_FROM_USD,
-  PRICE_SUB_BRONZE_DISPLAY,
-  PRICE_SUB_SILVER_DISPLAY,
-  PRICE_SUB_GOLD_DISPLAY,
-  PRICE_SUB_ENTERPRISE_DISPLAY,
-  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
   PRICE_PILOT_DISPLAY,
-  PRICE_MULTI_DISPLAY,
-  PRICE_SPRINT_DISPLAY,
-  PRICE_ENTERPRISE_DISPLAY,
+  GROWTH_RATE_USD,
+  SCALE_RATE_USD,
+  VOLUME_RATE_USD,
+  GROWTH_RATE_DISPLAY,
+  SCALE_RATE_DISPLAY,
+  VOLUME_RATE_DISPLAY,
+  PILOT_ROLES_LABEL,
+  GROWTH_ROLES_LABEL,
+  SCALE_ROLES_LABEL,
+  VOLUME_ROLES_LABEL,
+  ABOVE_MAX_DISPLAY,
+  ABOVE_MAX_ROLES_LABEL,
+  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
   POSITION_BANDS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
@@ -60,22 +60,26 @@ export interface Cta {
 }
 
 export interface OneOffPackage {
-  id: "pilot" | "multi" | "sprint" | "enterprise";
+  id: "pilot" | "growth" | "scale" | "volume" | "enterprise";
   name: string;
   eyebrow: string;
   minRoles: number;
   maxRoles: number | null;
   priceUsd: number | null;
   priceDisplay: string;
+  /** Per-position rate for banded tiers. null for the pilot and above the max. */
+  ratePerPositionUsd: number | null;
   cta: CtaKey;
   deliverables: string[];
 }
 
 export interface SubscriptionTier {
-  id: "bronze" | "silver" | "gold" | "enterprise";
+  id: "pilot" | "growth" | "scale" | "volume" | "enterprise";
   name: string;
   priceUsdMonthly: number | null;
   priceDisplay: string;
+  /** Per-position rate for banded tiers. null for the pilot and above the max. */
+  ratePerPositionUsd: number | null;
   isCustom: boolean;
   minRolesPerMonth: number;
   maxRolesPerMonth: number | null;
@@ -128,11 +132,12 @@ export const BUSINESS_RULES_DEFAULTS = {
     {
       id: "pilot",
       name: "Pilot — Single Position",
-      eyebrow: "1 active role",
+      eyebrow: PILOT_ROLES_LABEL,
       minRoles: POSITION_BANDS.pilot.min,
       maxRoles: POSITION_BANDS.pilot.max,
       priceUsd: PRICE_PILOT_USD,
       priceDisplay: PRICE_PILOT_DISPLAY,
+      ratePerPositionUsd: null,
       cta: "book_a_call",
       deliverables: [
         "First ranked shortlist in days",
@@ -142,45 +147,65 @@ export const BUSINESS_RULES_DEFAULTS = {
       ],
     },
     {
-      id: "multi",
-      name: "Multi Role",
-      eyebrow: "2–5 active roles",
-      minRoles: POSITION_BANDS.multi.min,
-      maxRoles: POSITION_BANDS.multi.max,
-      priceUsd: PRICE_MULTI_USD,
-      priceDisplay: PRICE_MULTI_DISPLAY,
+      id: "growth",
+      name: "2 to 10 positions",
+      eyebrow: GROWTH_ROLES_LABEL,
+      minRoles: POSITION_BANDS.growth.min,
+      maxRoles: POSITION_BANDS.growth.max,
+      priceUsd: null,
+      priceDisplay: GROWTH_RATE_DISPLAY,
+      ratePerPositionUsd: GROWTH_RATE_USD,
       cta: "book_a_call",
       deliverables: [
         "First ranked shortlist in days",
-        "Top 10 per role, weekly refresh",
-        "Shared intake context across roles",
+        "Top 10 per position, weekly refresh",
+        "Shared intake context across positions",
         "3 months workspace access",
       ],
     },
     {
-      id: "sprint",
-      name: "Hiring Sprint",
-      eyebrow: "6–10 active roles",
-      minRoles: POSITION_BANDS.sprint.min,
-      maxRoles: POSITION_BANDS.sprint.max,
-      priceUsd: PRICE_SPRINT_USD,
-      priceDisplay: PRICE_SPRINT_DISPLAY,
+      id: "scale",
+      name: "11 to 20 positions",
+      eyebrow: SCALE_ROLES_LABEL,
+      minRoles: POSITION_BANDS.scale.min,
+      maxRoles: POSITION_BANDS.scale.max,
+      priceUsd: null,
+      priceDisplay: SCALE_RATE_DISPLAY,
+      ratePerPositionUsd: SCALE_RATE_USD,
       cta: "book_a_call",
       deliverables: [
         "First ranked shortlist in days",
-        "Parallel sourcing across roles",
+        "Parallel sourcing across positions",
         "Executive-portfolio dashboard",
         "3 months workspace access",
       ],
     },
     {
-      id: "enterprise",
-      name: "Enterprise",
-      eyebrow: "11+ roles / continuous hiring",
-      minRoles: POSITION_BANDS.subscription.min,
-      maxRoles: POSITION_BANDS.subscription.max,
+      id: "volume",
+      name: "21 to 30 positions",
+      eyebrow: VOLUME_ROLES_LABEL,
+      minRoles: POSITION_BANDS.volume.min,
+      maxRoles: POSITION_BANDS.volume.max,
       priceUsd: null,
-      priceDisplay: PRICE_ENTERPRISE_DISPLAY,
+      priceDisplay: VOLUME_RATE_DISPLAY,
+      ratePerPositionUsd: VOLUME_RATE_USD,
+      cta: "book_a_call",
+      deliverables: [
+        "First ranked shortlist in days",
+        "Parallel sourcing across positions",
+        "Dedicated account manager",
+        "3 months workspace access",
+      ],
+    },
+    {
+      id: "enterprise",
+      name: ABOVE_MAX_ROLES_LABEL,
+      eyebrow: ABOVE_MAX_ROLES_LABEL,
+      minRoles: POSITION_BANDS.aboveMax.min,
+      maxRoles: POSITION_BANDS.aboveMax.max,
+      priceUsd: null,
+      priceDisplay: ABOVE_MAX_DISPLAY,
+      ratePerPositionUsd: null,
       cta: "contact_sales",
       deliverables: [
         "Custom SLAs and dedicated agent capacity",
@@ -192,58 +217,78 @@ export const BUSINESS_RULES_DEFAULTS = {
   ] satisfies OneOffPackage[],
   subscriptions: [
     {
-      id: "bronze",
-      name: "Bronze",
-      priceUsdMonthly: PRICE_SUB_BRONZE_USD,
-      priceDisplay: PRICE_SUB_BRONZE_DISPLAY,
+      id: "pilot",
+      name: "Single position",
+      priceUsdMonthly: PRICE_PILOT_USD,
+      priceDisplay: PRICE_PILOT_DISPLAY,
+      ratePerPositionUsd: null,
       isCustom: false,
-      minRolesPerMonth: 1,
-      maxRolesPerMonth: 3,
+      minRolesPerMonth: POSITION_BANDS.pilot.min,
+      maxRolesPerMonth: POSITION_BANDS.pilot.max,
       cta: "book_a_call",
       deliverables: [
-        "Up to 3 active roles per month",
+        "One position, full workflow",
         "Weekly ranked refresh",
         "3 months workspace access",
       ],
     },
     {
-      id: "silver",
-      name: "Silver",
-      priceUsdMonthly: PRICE_SUB_SILVER_FROM_USD,
-      priceDisplay: PRICE_SUB_SILVER_DISPLAY,
+      id: "growth",
+      name: "2 to 10 positions",
+      priceUsdMonthly: null,
+      priceDisplay: GROWTH_RATE_DISPLAY,
+      ratePerPositionUsd: GROWTH_RATE_USD,
       isCustom: false,
-      minRolesPerMonth: 4,
-      maxRolesPerMonth: 8,
+      minRolesPerMonth: POSITION_BANDS.growth.min,
+      maxRolesPerMonth: POSITION_BANDS.growth.max,
       cta: "book_a_call",
       deliverables: [
-        "Up to 8 active roles per month",
+        "2 to 10 active positions",
         "Weekly ranked refresh",
-        "Talent-pool memory across roles",
+        "Talent-pool memory across positions",
       ],
     },
     {
-      id: "gold",
-      name: "Gold",
-      priceUsdMonthly: PRICE_SUB_GOLD_FROM_USD,
-      priceDisplay: PRICE_SUB_GOLD_DISPLAY,
+      id: "scale",
+      name: "11 to 20 positions",
+      priceUsdMonthly: null,
+      priceDisplay: SCALE_RATE_DISPLAY,
+      ratePerPositionUsd: SCALE_RATE_USD,
       isCustom: false,
-      minRolesPerMonth: 9,
-      maxRolesPerMonth: 20,
+      minRolesPerMonth: POSITION_BANDS.scale.min,
+      maxRolesPerMonth: POSITION_BANDS.scale.max,
       cta: "book_a_call",
       deliverables: [
-        "Up to 20 active roles per month",
+        "11 to 20 active positions",
         "Dedicated sourcing agent capacity",
         "Executive portfolio dashboard",
       ],
     },
     {
-      id: "enterprise",
-      name: "Enterprise",
+      id: "volume",
+      name: "21 to 30 positions",
       priceUsdMonthly: null,
-      priceDisplay: PRICE_SUB_ENTERPRISE_DISPLAY,
+      priceDisplay: VOLUME_RATE_DISPLAY,
+      ratePerPositionUsd: VOLUME_RATE_USD,
+      isCustom: false,
+      minRolesPerMonth: POSITION_BANDS.volume.min,
+      maxRolesPerMonth: POSITION_BANDS.volume.max,
+      cta: "book_a_call",
+      deliverables: [
+        "21 to 30 active positions",
+        "Dedicated account manager",
+        "Custom reporting",
+      ],
+    },
+    {
+      id: "enterprise",
+      name: ABOVE_MAX_ROLES_LABEL,
+      priceUsdMonthly: null,
+      priceDisplay: ABOVE_MAX_DISPLAY,
+      ratePerPositionUsd: null,
       isCustom: true,
-      minRolesPerMonth: 21,
-      maxRolesPerMonth: null,
+      minRolesPerMonth: POSITION_BANDS.aboveMax.min,
+      maxRolesPerMonth: POSITION_BANDS.aboveMax.max,
       cta: "contact_sales",
       deliverables: [
         "Custom volume & SLAs",
@@ -252,6 +297,7 @@ export const BUSINESS_RULES_DEFAULTS = {
       ],
     },
   ] satisfies SubscriptionTier[],
+
   annualDiscountLabel: SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
   scoring: {
     dimensions: [

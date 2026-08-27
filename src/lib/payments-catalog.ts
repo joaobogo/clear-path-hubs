@@ -1,29 +1,31 @@
 /**
  * What a client is buying — the single source of truth for everything sold.
  *
- * Amounts mirror src/config/pricing-core.ts. The price actually charged is
- * always resolved server-side from the payment provider by `priceId`; nothing
- * the browser sends about price is trusted. The numbers here exist so we can
- * show honest copy before checkout, and so the webhook knows what allowance a
- * purchase grants.
+ * Every amount comes from `positionsTotalUsd()` in src/config/pricing-core.ts,
+ * so the catalogue can never disagree with the price on the page. The price
+ * actually charged is still resolved server-side from the payment provider by
+ * `priceId`; nothing the browser sends about price is trusted.
+ *
+ * Price identifiers are named after the position count they cover
+ * (`oneoff_pos_5`, `sub_pos_5_monthly`), because the amount is a pure function
+ * of that count. Identifiers from the previous, deleted price model are gone.
  */
 import {
-  PRICE_PILOT_USD,
-  PRICE_MULTI_USD,
-  PRICE_SPRINT_USD,
-  PRICE_SUB_BRONZE_USD,
-  PRICE_SUB_SILVER_FROM_USD,
-  PRICE_SUB_GOLD_FROM_USD,
+  positionsTotalUsd,
+  formatUsdExact,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
 
-export const POSITION_PUBLISH_PRICE_ID = "pilot_onetime";
+/** Position counts we publish as buyable offers. Any count 1–30 is priced by the rule. */
+export const CATALOGUE_POSITION_COUNTS = [1, 5, 10, 20, 30] as const;
+
+export const POSITION_PUBLISH_PRICE_ID = "oneoff_pos_1";
 
 export const POSITION_PUBLISH_OFFER = {
   priceId: POSITION_PUBLISH_PRICE_ID,
   name: "Pilot — 1 active role",
-  amountUsd: PRICE_PILOT_USD,
-  display: `$${PRICE_PILOT_USD}`,
+  amountUsd: positionsTotalUsd(1)!,
+  display: formatUsdExact(positionsTotalUsd(1)!),
   turnaround: TURNAROUND_LABEL,
   includes: [
     "One active role published to the job board and our sourcing network",
@@ -55,113 +57,65 @@ export type PlanOffer = {
   summary: string;
 };
 
-export const PLAN_CATALOGUE: readonly PlanOffer[] = [
-  {
-    priceId: POSITION_PUBLISH_PRICE_ID,
-    productId: "pilot",
-    label: "Pilot",
-    kind: "package",
-    amountUsd: PRICE_PILOT_USD,
-    rolesTotal: 1,
-    validForDays: 90,
-    tier: 1,
-    summary: "One active role, 5-day turnaround.",
-  },
-  {
-    priceId: "multi_onetime",
-    productId: "multi_position",
-    label: "Multi Role",
-    kind: "package",
-    amountUsd: PRICE_MULTI_USD,
-    rolesTotal: 5,
-    validForDays: 180,
-    tier: 2,
-    summary: "Up to 5 active roles, used whenever you need them.",
-  },
-  {
-    priceId: "sprint_onetime",
-    productId: "sprint_package",
-    label: "Sprint",
-    kind: "package",
-    amountUsd: PRICE_SPRINT_USD,
-    rolesTotal: 10,
-    validForDays: 180,
-    tier: 3,
-    summary: "Up to 10 active roles for a hiring push.",
-  },
-  {
-    priceId: "sub_bronze_monthly",
-    productId: "subscription_bronze",
-    label: "Bronze",
-    kind: "subscription",
-    interval: "month",
-    amountUsd: PRICE_SUB_BRONZE_USD,
-    rolesTotal: 12,
-    validForDays: null,
-    tier: 4,
-    summary: "Up to 12 active roles at a time, continuous hiring.",
-  },
-  {
-    priceId: "sub_bronze_yearly",
-    productId: "subscription_bronze",
-    label: "Bronze (annual)",
-    kind: "subscription",
-    interval: "year",
-    amountUsd: Math.round(PRICE_SUB_BRONZE_USD * 12 * 0.9),
-    rolesTotal: 12,
-    validForDays: null,
-    tier: 4,
-    summary: "Bronze on an annual commit — 10% off.",
-  },
-  {
-    priceId: "sub_silver_monthly",
-    productId: "subscription_silver",
-    label: "Silver",
-    kind: "subscription",
-    interval: "month",
-    amountUsd: PRICE_SUB_SILVER_FROM_USD,
-    rolesTotal: 20,
-    validForDays: null,
-    tier: 5,
-    summary: "Up to 20 active roles at a time.",
-  },
-  {
-    priceId: "sub_silver_yearly",
-    productId: "subscription_silver",
-    label: "Silver (annual)",
-    kind: "subscription",
-    interval: "year",
-    amountUsd: Math.round(PRICE_SUB_SILVER_FROM_USD * 12 * 0.9),
-    rolesTotal: 20,
-    validForDays: null,
-    tier: 5,
-    summary: "Silver on an annual commit — 10% off.",
-  },
-  {
-    priceId: "sub_gold_monthly",
-    productId: "subscription_gold",
-    label: "Gold",
-    kind: "subscription",
-    interval: "month",
-    amountUsd: PRICE_SUB_GOLD_FROM_USD,
-    rolesTotal: null,
-    validForDays: null,
-    tier: 6,
-    summary: "Unlimited active roles, continuous hiring.",
-  },
-  {
-    priceId: "sub_gold_yearly",
-    productId: "subscription_gold",
-    label: "Gold (annual)",
-    kind: "subscription",
-    interval: "year",
-    amountUsd: Math.round(PRICE_SUB_GOLD_FROM_USD * 12 * 0.9),
-    rolesTotal: null,
-    validForDays: null,
-    tier: 6,
-    summary: "Gold on an annual commit — 10% off.",
-  },
-] as const;
+const ANNUAL_MULTIPLIER = 12 * 0.9; // 10% off on an annual commit
+
+function positionsLabel(n: number): string {
+  return n === 1 ? "1 position" : `${n} positions`;
+}
+
+function buildCatalogue(): PlanOffer[] {
+  const offers: PlanOffer[] = [];
+  CATALOGUE_POSITION_COUNTS.forEach((n, index) => {
+    const total = positionsTotalUsd(n)!;
+    const label = n === 1 ? "Pilot — 1 position" : positionsLabel(n);
+    offers.push({
+      priceId: `oneoff_pos_${n}`,
+      productId: `oneoff_pos_${n}`,
+      label,
+      kind: "package",
+      amountUsd: total,
+      rolesTotal: n,
+      validForDays: n === 1 ? 90 : 180,
+      tier: index + 1,
+      summary:
+        n === 1
+          ? `One active role for ${formatUsdExact(total)}, ${TURNAROUND_LABEL}.`
+          : `${positionsLabel(n)} for ${formatUsdExact(total)} in total.`,
+    });
+  });
+
+  CATALOGUE_POSITION_COUNTS.forEach((n, index) => {
+    const total = positionsTotalUsd(n)!;
+    offers.push({
+      priceId: `sub_pos_${n}_monthly`,
+      productId: `sub_pos_${n}`,
+      label: `${positionsLabel(n)} — monthly`,
+      kind: "subscription",
+      interval: "month",
+      amountUsd: total,
+      rolesTotal: n,
+      validForDays: null,
+      tier: 10 + index + 1,
+      summary: `${positionsLabel(n)} at a time for ${formatUsdExact(total)} a month.`,
+    });
+    offers.push({
+      priceId: `sub_pos_${n}_yearly`,
+      productId: `sub_pos_${n}`,
+      label: `${positionsLabel(n)} — annual`,
+      kind: "subscription",
+      interval: "year",
+      amountUsd: Math.round(total * ANNUAL_MULTIPLIER),
+      rolesTotal: n,
+      validForDays: null,
+      tier: 10 + index + 1,
+      summary: `${positionsLabel(n)} on an annual commit — 10% off.`,
+    });
+  });
+
+  return offers;
+}
+
+export const PLAN_CATALOGUE: readonly PlanOffer[] = buildCatalogue();
 
 export function findPlan(priceId: string): PlanOffer | undefined {
   return PLAN_CATALOGUE.find((p) => p.priceId === priceId);

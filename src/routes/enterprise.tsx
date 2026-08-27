@@ -22,12 +22,14 @@ import {
 import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
 import {
-  PRICE_SUB_BRONZE_DISPLAY,
-  PRICE_SUB_SILVER_DISPLAY,
-  PRICE_SUB_GOLD_DISPLAY,
-  PRICE_SUB_ENTERPRISE_DISPLAY,
+  PRICE_PILOT_DISPLAY,
+  GROWTH_RATE_DISPLAY,
+  SCALE_RATE_DISPLAY,
+  VOLUME_RATE_DISPLAY,
+  ABOVE_MAX_DISPLAY,
+  MAX_POSITIONS,
+  PER_POSITION_SUFFIX,
   SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
-  POSITION_BANDS,
 } from "@/config/pricing-core";
 
 // Enterprise metadata authored inline. Legacy JSON contained unapproved
@@ -67,35 +69,41 @@ const DECISION_PATH = [
   { href: "#timeline", label: "Implementation" },
 ];
 
-// Subscription options start at 11+ active roles (POSITION_BANDS.subscription).
-// Buyers with 1–10 roles purchase the one-off packages instead — see /pricing.
+// One rule for every band — see src/config/pricing-core.ts.
 const VOLUME_BANDS = [
   {
-    band: "Bronze — up to 15 positions / month",
-    price: PRICE_SUB_BRONZE_DISPLAY,
+    band: "1 position",
+    price: PRICE_PILOT_DISPLAY,
     cadence: "Weekly ranked delivery",
     agentCapacity: "One agent capacity block",
-    fit: "A single function hiring steadily — usually one hiring manager group.",
+    fit: "A single critical hire, run end to end.",
   },
   {
-    band: "Silver — 16–30 positions / month",
-    price: PRICE_SUB_SILVER_DISPLAY,
+    band: "2 to 10 positions",
+    price: `${GROWTH_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
     cadence: "Weekly delivery per role family",
     agentCapacity: "Agent capacity per role family",
-    fit: "Two or three functions hiring in parallel with shared standards.",
+    fit: "One or two functions hiring in parallel with shared standards.",
   },
   {
-    band: "Gold — 31–50 positions / month",
-    price: PRICE_SUB_GOLD_DISPLAY,
+    band: "11 to 20 positions",
+    price: `${SCALE_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
     cadence: "Twice-weekly delivery on priority roles",
     agentCapacity: "Agent capacity plus a named account lead",
     fit: "Multi-business-unit hiring with executive reporting.",
   },
   {
-    band: "Enterprise — 50+ or continuous hiring",
-    price: PRICE_SUB_ENTERPRISE_DISPLAY,
-    cadence: "Cadence agreed per business unit",
+    band: "21 to 30 positions",
+    price: `${VOLUME_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
+    cadence: "Twice-weekly delivery across the portfolio",
     agentCapacity: "Enterprise-scale agent capacity",
+    fit: "Portfolio hiring at the lowest published rate.",
+  },
+  {
+    band: `More than ${MAX_POSITIONS} positions`,
+    price: ABOVE_MAX_DISPLAY,
+    cadence: "Cadence agreed per business unit",
+    agentCapacity: "Scoped with you",
     fit: "Continuous hiring where volume shifts by quarter.",
   },
 ];
@@ -278,13 +286,13 @@ function EnterprisePage() {
             How the model scales with your requisition count.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Subscription options cover {POSITION_BANDS.subscription.min}+ active roles or
-            continuous hiring. Volume can move up or down between review
+            The rate is set by your total position count and applies to every
+            position. Volume can move up or down between review
             cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()} on subscriptions.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
-            Hiring {POSITION_BANDS.pilot.min}–{POSITION_BANDS.sprint.max} roles? Those buy the
-            one-off packages instead — Pilot, Multi Role or Hiring Sprint on the{" "}
+            Above {MAX_POSITIONS} positions there is no published price — we
+            scope it with you. Everything up to that reads as an exact total on the{" "}
             <Link to="/pricing" className="font-semibold underline underline-offset-4">
               pricing page
             </Link>

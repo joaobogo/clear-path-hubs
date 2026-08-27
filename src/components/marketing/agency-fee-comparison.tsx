@@ -6,10 +6,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import {
-  PRICE_PILOT_USD,
-  PRICE_MULTI_USD,
-  PRICE_SPRINT_USD,
   PRICE_PILOT_DISPLAY,
+  positionsTotalUsd,
 } from "@/config/pricing-core";
 
 const EXAMPLE_SALARY = 95_000;
@@ -22,9 +20,9 @@ const usd = (n: number) =>
   });
 
 const SCENARIOS = [
-  { hires: 1, label: "1 hire", package: "Pilot — single position", cost: PRICE_PILOT_USD },
-  { hires: 3, label: "3 hires", package: "Multi Role (2–5 roles)", cost: PRICE_MULTI_USD },
-  { hires: 10, label: "10 hires", package: "Hiring Sprint (6–10 roles)", cost: PRICE_SPRINT_USD },
+  { hires: 1, label: "1 hire", package: "Pilot — single position", cost: positionsTotalUsd(1)! },
+  { hires: 3, label: "3 hires", package: "3 positions", cost: positionsTotalUsd(3)! },
+  { hires: 10, label: "10 hires", package: "10 positions", cost: positionsTotalUsd(10)! },
 ].map((s) => {
   const low = s.hires * EXAMPLE_SALARY * 0.2;
   const high = s.hires * EXAMPLE_SALARY * 0.25;
