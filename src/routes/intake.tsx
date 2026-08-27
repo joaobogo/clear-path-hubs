@@ -1414,16 +1414,16 @@ function ExpressIntakePage() {
       trackEvent("express_intake_started", { flow: "express_onboarding" });
     }
     editedRef.current.add(key as string);
-    setState((s) => {
-      const next = { ...s, [key]: value } as FormState;
-      setErrors((prev) => {
-        if (!prev[key as string]) return prev;
-        if (!answerNowValid(key as string, value, next)) return prev;
-        const cleared = { ...prev };
-        delete cleared[key as string];
-        return cleared;
-      });
-      return next;
+    setState((s) => ({ ...s, [key]: value }));
+    // Retire this field's error as soon as the answer holds up, so the summary
+    // above Continue reflects the form as it is now.
+    const nextState = { ...state, [key]: value } as FormState;
+    setErrors((prev) => {
+      if (!prev[key as string]) return prev;
+      if (!answerNowValid(key as string, value, nextState)) return prev;
+      const cleared = { ...prev };
+      delete cleared[key as string];
+      return cleared;
     });
     // An edited answer is this role's own answer, not an inherited one.
     setCarriedFields((prev) => {
