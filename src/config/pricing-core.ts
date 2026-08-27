@@ -104,7 +104,7 @@ export const PACKAGE_10 = PACKAGES[1]!;
 export const PACKAGE_20 = PACKAGES[2]!;
 export const PACKAGE_30 = PACKAGES[3]!;
 export const PACKAGE_40 = PACKAGES[4]!;
-export const PACKAGE_50 = PACKAGES[5]!;
+export const PACKAGE_100 = PACKAGES[5]!;
 
 export const PRICE_PILOT_DISPLAY = PILOT_PACKAGE.totalDisplay;
 
