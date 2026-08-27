@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { MarkdownToolbar, useMarkdownShortcuts } from "@/components/intake/markdown-toolbar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
@@ -613,6 +614,13 @@ function ExpressIntakePage() {
   };
 
   /** Move focus and announcement to the first invalid field on this step. */
+  // Job description formatting. The field stores markdown either way; the
+  // toolbar just stops the client having to type the syntax themselves.
+  const jdTextRef = useRef<HTMLTextAreaElement | null>(null);
+  const jdShortcuts = useMarkdownShortcuts(jdTextRef, state.jobDescriptionText, (next) =>
+    set("jobDescriptionText", next),
+  );
+
   const focusFirstError = () => {
     // Two frames, not one. The error is written with setState immediately
     // before this runs, so on the first frame React has not committed it yet
@@ -2375,11 +2383,19 @@ function ExpressIntakePage() {
             />
 
             <div className="relative">
+              <MarkdownToolbar
+                textareaRef={jdTextRef}
+                value={state.jobDescriptionText}
+                onChange={(next) => set("jobDescriptionText", next)}
+              />
               <Textarea
                 id="jd-text"
+                ref={jdTextRef}
                 value={state.jobDescriptionText}
                 onChange={(e) => set("jobDescriptionText", e.target.value)}
+                onKeyDown={jdShortcuts}
                 rows={8}
+                className="rounded-t-none"
                 placeholder={
                   jdFile
                     ? "Anything else we should know about this role (optional)…"
