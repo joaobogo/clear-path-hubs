@@ -16,6 +16,8 @@ import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 import {
   PUBLISHED_SCORE_COLUMNS,
   publishedScore,
+  hasVideoIntro,
+  withVideoIntroBonus,
   type PublishedScoreRun,
 } from "@/lib/scoring/published-score";
 

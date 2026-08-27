@@ -4,6 +4,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   PUBLISHED_SCORE_COLUMNS,
   publishedScore,
+  hasVideoIntro,
+  withVideoIntroBonus,
   type PublishedScoreRun,
 } from "@/lib/scoring/published-score";
 import { classifyBand } from "@/lib/scoring/bands";
