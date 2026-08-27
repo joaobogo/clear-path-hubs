@@ -174,14 +174,26 @@ export function TeamTab() {
  enabled: !!orgId && !!isAdmin,
  });
 
-  const visible = useMemo(
-    () => (rows as AnyRow[]).filter((r) => {
-      if (r.status === "removed") return false;
-      const email = r.profiles?.email?.toLowerCase() ?? "";
-      return !email.endsWith("@taasflow.com");
-    }),
-    [rows],
-  );
+  // The roster lists every person the seat reader counts: seat-holding
+  // memberships of this workspace, including the signed-in user. Email domains
+  // are never inspected — that filter hid real members while the seat figure
+  // still counted them. Only platform staff (who hold no client seat) and
+  // removed memberships are left out. Pending invitations stay in the list and
+  // are labelled by their own status badge.
+  const visible = useMemo(() => {
+    const staffRoles = new Set(["platform_admin", "operations"]);
+    const statusRank: Record<string, number> = { active: 0, invited: 1, suspended: 2 };
+    return (rows as AnyRow[])
+      .filter((r) => r.status !== "removed" && !staffRoles.has(String(r.role ?? "")))
+      .sort(
+        (a, b) =>
+          (statusRank[String(a.status)] ?? 3) - (statusRank[String(b.status)] ?? 3) ||
+          String(a.profiles?.full_name ?? a.profiles?.email ?? "").localeCompare(
+            String(b.profiles?.full_name ?? b.profiles?.email ?? ""),
+          ),
+      );
+  }, [rows]);
+
  const counts = useMemo(() => {
   const c = { total: 0, admin: 0, invited: 0, active: 0 };
   for (const r of visible) {
