@@ -8,6 +8,7 @@ import { BLUEPRINT_STAGES } from "@/lib/express-intake-schema";
 import { CheckCircle2, CircleDashed, Loader2, TriangleAlert } from "lucide-react";
 import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
 import { buildDeliveryCommitment, type StoredCommitment } from "@/lib/delivery-commitment";
+import { KickoffBookingCard } from "@/components/booking/kickoff-booking-card";
 
 const searchSchema = z.object({
   intake_id: z.string().uuid().optional(),
@@ -289,6 +290,16 @@ function ConfirmationPage() {
           )}
         </CardContent>
       </Card>
+
+      {intake_id && status && (
+        <div className="mt-4">
+          <KickoffBookingCard
+            intakeId={intake_id}
+            positionId={status.positionId}
+            roleTitle={status.roleTitle}
+          />
+        </div>
+      )}
     </FormShell>
   );
 }
