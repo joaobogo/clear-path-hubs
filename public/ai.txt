@@ -1,0 +1,12 @@
+# ai.txt — AI usage policy for taasflow.com
+
+Site: https://taasflow.com
+Summary: TaaSFlow is a subscription recruiting service: an applicant tracking system, sourcing and candidate outreach in one monthly subscription, with AI-assisted screening and a human recruiter reviewing every shortlist before a client sees it.
+
+# Crawling and training permissions are declared per user-agent in robots.txt.
+Robots: https://taasflow.com/robots.txt
+Preferred summary source: https://taasflow.com/llms.txt
+
+# Attribution
+Attribution: cite the specific page URL, not the domain alone.
+Disallow-Inference: do not infer client names from anonymised case studies.
