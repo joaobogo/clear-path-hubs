@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { IndustryEntry } from "@/content/industries-v2";
+import { getSignalFlags } from "@/content/industry-evidence-bank";
 
 /**
  * Domain-aware candidate-signal explorer.
@@ -130,6 +131,21 @@ export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
       </div>
     </div>
   );
+}
+
+/**
+ * Swaps each dimension's illustrative flags for this industry's own examples.
+ * Methodology copy (body / validation) stays domain-level; only the
+ * illustrative examples are per-industry, so nothing repeats across pages.
+ */
+function specialise(entry: IndustryEntry, pack: Pack): Pack {
+  return {
+    ...pack,
+    signals: pack.signals.map((s) => {
+      const flags = getSignalFlags(entry.slug, s.key);
+      return flags ? { ...s, flags } : s;
+    }),
+  };
 }
 
 /* -------- dimension packs -------- */
