@@ -6,7 +6,7 @@ describe("evidence presentation", () => {
     expect(stripSectionHeading("SUMMARY Eight years building payment platforms across Europe.").text)
       .toBe("Eight years building payment platforms across Europe.");
     expect(stripSectionHeading("TORY Senior Software Engineer at Northwind, 2019-2022, owned billing.").section)
-      .toBe("History");
+      .toBe("Employment history");
     expect(stripSectionHeading("NGUAGES - Portuguese (native), English (C2), Spanish conversational").section)
       .toBe("Languages");
   });
@@ -31,7 +31,8 @@ describe("evidence presentation", () => {
       [],
     );
     expect(item.sourceLine).toContain("Curriculum Vitae");
-    expect(item.sourceLine).toContain("History");
+    expect(item.sourceLine).toContain("Employment history");
+    expect(item.sourceLine).toContain("Northwind");
     expect(item.sourceLine).toContain("2019–2022");
   });
   it("shows no quote when only a fragment remains", () => {

@@ -130,7 +130,7 @@ function extractDate(raw: string): string | null {
  */
 function extractRoleAndEmployer(raw: string): { position: string | null; employer: string | null } {
   const m = raw.match(
-    /\b((?:Senior |Lead |Principal |Staff |Junior |Head of |Chief )?[A-Z][A-Za-z]+(?: [A-Z&][A-Za-z-]+){0,3}(?:Engineer|Developer|Designer|Manager|Analyst|Specialist|Architect|Consultant|Director|Lead|Officer))\s*(?:—|–|-|,|\bat\b|@)\s*([A-Z][A-Za-z0-9&.']*(?: [A-Z][A-Za-z0-9&.']*){0,2})/,
+    /\b((?:Senior|Lead|Principal|Staff|Junior|Chief)?\s*(?:[A-Z][A-Za-z-]+\s+){0,3}(?:Engineer|Developer|Designer|Manager|Analyst|Specialist|Architect|Consultant|Director|Officer))\s*(?:—|–|-|,|\bat\b|@)\s*([A-Z][A-Za-z0-9&.']*(?: [A-Z][A-Za-z0-9&.']*){0,2})/,
   );
   if (!m) return { position: null, employer: null };
   return { position: m[1].trim(), employer: m[2].trim() };
