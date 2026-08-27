@@ -2,9 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CalendarClock } from "lucide-react";
 import { formatDateTime, pluralize } from "@/lib/format/datetime";
-import { interviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
 import { liveSlots } from "@/lib/scheduling";
-import { currentInterviewRecords } from "@/lib/client/interview-buckets";
+import { interviewBuckets } from "@/lib/client/interview-buckets";
 import type { InterviewDTO } from "@/lib/interviews.functions";
 
 /**
@@ -26,7 +25,7 @@ export function AwaitingConfirmationSection({
 }) {
   // One row per candidate match — the same reconciled records the timeline
   // below reads, so the heading count and the list can never disagree.
-  const pending = interviewsAwaitingConfirmation(currentInterviewRecords(interviews));
+  const pending = interviewBuckets(interviews).awaiting;
   if (pending.length === 0) return null;
 
   return (
