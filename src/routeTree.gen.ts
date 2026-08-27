@@ -116,6 +116,7 @@ import { Route as AuthenticatedClientOnboardingRouteImport } from './routes/_aut
 import { Route as AuthenticatedClientOffersRouteImport } from './routes/_authenticated/client.offers'
 import { Route as AuthenticatedClientMessagesRouteImport } from './routes/_authenticated/client.messages'
 import { Route as AuthenticatedClientInterviewsRouteImport } from './routes/_authenticated/client.interviews'
+import { Route as AuthenticatedClientInsightsRouteImport } from './routes/_authenticated/client.insights'
 import { Route as AuthenticatedClientInboxRouteImport } from './routes/_authenticated/client.inbox'
 import { Route as AuthenticatedClientExecutiveRouteImport } from './routes/_authenticated/client.executive'
 import { Route as AuthenticatedClientDataRouteImport } from './routes/_authenticated/client.data'
@@ -756,6 +757,12 @@ const AuthenticatedClientInterviewsRoute =
   AuthenticatedClientInterviewsRouteImport.update({
     id: '/interviews',
     path: '/interviews',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
+const AuthenticatedClientInsightsRoute =
+  AuthenticatedClientInsightsRouteImport.update({
+    id: '/insights',
+    path: '/insights',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
 const AuthenticatedClientInboxRoute =
@@ -1407,6 +1414,7 @@ export interface FileRoutesByFullPath {
   '/client/data': typeof AuthenticatedClientDataRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/client/inbox': typeof AuthenticatedClientInboxRoute
+  '/client/insights': typeof AuthenticatedClientInsightsRoute
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
@@ -1598,6 +1606,7 @@ export interface FileRoutesByTo {
   '/client/data': typeof AuthenticatedClientDataRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/client/inbox': typeof AuthenticatedClientInboxRoute
+  '/client/insights': typeof AuthenticatedClientInsightsRoute
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
@@ -1797,6 +1806,7 @@ export interface FileRoutesById {
   '/_authenticated/client/data': typeof AuthenticatedClientDataRoute
   '/_authenticated/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/_authenticated/client/inbox': typeof AuthenticatedClientInboxRoute
+  '/_authenticated/client/insights': typeof AuthenticatedClientInsightsRoute
   '/_authenticated/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/_authenticated/client/messages': typeof AuthenticatedClientMessagesRoute
   '/_authenticated/client/offers': typeof AuthenticatedClientOffersRoute
@@ -1998,6 +2008,7 @@ export interface FileRouteTypes {
     | '/client/data'
     | '/client/executive'
     | '/client/inbox'
+    | '/client/insights'
     | '/client/interviews'
     | '/client/messages'
     | '/client/offers'
@@ -2189,6 +2200,7 @@ export interface FileRouteTypes {
     | '/client/data'
     | '/client/executive'
     | '/client/inbox'
+    | '/client/insights'
     | '/client/interviews'
     | '/client/messages'
     | '/client/offers'
@@ -2387,6 +2399,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/data'
     | '/_authenticated/client/executive'
     | '/_authenticated/client/inbox'
+    | '/_authenticated/client/insights'
     | '/_authenticated/client/interviews'
     | '/_authenticated/client/messages'
     | '/_authenticated/client/offers'
@@ -3324,6 +3337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientInterviewsRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/insights': {
+      id: '/_authenticated/client/insights'
+      path: '/insights'
+      fullPath: '/client/insights'
+      preLoaderRoute: typeof AuthenticatedClientInsightsRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/inbox': {
       id: '/_authenticated/client/inbox'
       path: '/inbox'
@@ -4189,6 +4209,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientDataRoute: typeof AuthenticatedClientDataRoute
   AuthenticatedClientExecutiveRoute: typeof AuthenticatedClientExecutiveRoute
   AuthenticatedClientInboxRoute: typeof AuthenticatedClientInboxRoute
+  AuthenticatedClientInsightsRoute: typeof AuthenticatedClientInsightsRoute
   AuthenticatedClientInterviewsRoute: typeof AuthenticatedClientInterviewsRoute
   AuthenticatedClientMessagesRoute: typeof AuthenticatedClientMessagesRoute
   AuthenticatedClientOffersRoute: typeof AuthenticatedClientOffersRoute
@@ -4217,6 +4238,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientDataRoute: AuthenticatedClientDataRoute,
   AuthenticatedClientExecutiveRoute: AuthenticatedClientExecutiveRoute,
   AuthenticatedClientInboxRoute: AuthenticatedClientInboxRoute,
+  AuthenticatedClientInsightsRoute: AuthenticatedClientInsightsRoute,
   AuthenticatedClientInterviewsRoute: AuthenticatedClientInterviewsRoute,
   AuthenticatedClientMessagesRoute: AuthenticatedClientMessagesRoute,
   AuthenticatedClientOffersRoute: AuthenticatedClientOffersRoute,

@@ -483,8 +483,14 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
           <span className="font-semibold">{intent.respondsFrom}</span>. We'll reply to the email
           you provided.
         </p>
+        {/* newTraceId("contact") returns "contact-<stamp>-<random>", and the
+            reference used to render traceId.slice(0, 8). "contact-" is exactly
+            eight characters, so every visitor was handed the prefix and none of
+            the unique part — the same dead string every time, useless to quote
+            back to us. The whole id is shown, and is selectable in one click. */}
         <p className="mt-2 text-xs text-[color:var(--brand-navy)]/80">
-          Reference: <span className="font-mono">{done.traceId.slice(0, 8) || "—"}</span>
+          Reference:{" "}
+          <span className="select-all font-mono">{done.traceId || "—"}</span>
         </p>
       </div>
     );
