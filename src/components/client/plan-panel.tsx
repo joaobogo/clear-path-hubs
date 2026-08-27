@@ -303,7 +303,7 @@ export function PlanPanel({
             <div className="space-y-5">
               <div>
                 <div className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-                  Monthly and annual plans
+                  Monthly plans
                 </div>
                 <ul className="mt-2 grid gap-3 sm:grid-cols-2">
                   {subscriptions.map((plan) => {

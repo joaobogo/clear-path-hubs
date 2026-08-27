@@ -17,7 +17,7 @@ import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
 import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import {
   PRICE_PILOT_DISPLAY,
-  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+  NO_DISCOUNT_NOTE,
 } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
@@ -80,7 +80,7 @@ function PricingPage() {
         stats={[
           { value: PRICE_PILOT_DISPLAY, label: "Pilot, billed once" },
           { value: "0%", label: "Of salary, ever" },
-          { value: SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL, label: "Paying annually" },
+          { value: MAX_POSITIONS_DISPLAY, label: "Positions, maximum" },
         ]}
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/book", label: "Book a call" }}
@@ -168,15 +168,15 @@ function PricingPage() {
                   <SubscriptionTierCard key={tier.id} tier={tier} />
                 ))}
               </div>
-              {/* Annual discount applies to subscription options only — never
-                  to the one-off packages above. */}
+              {/* One exact total per position count — the same rates whether
+                  billed once or monthly. No discounts, no ranges. */}
               <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
                 <span className="font-semibold text-[color:var(--brand-navy)]">
-                  {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}
+                  {NO_DISCOUNT_NOTE}
                 </span>{" "}
                 {PAYMENTS_ENABLED
-                  ? "— applied at subscription checkout or on your invoice. Monthly prices are shown above."
-                  : "— applied to your subscription when we agree the plan on the call. Monthly prices are shown above."}
+                  ? "The total you see is the total charged at checkout."
+                  : "The total you see is the total on your invoice."}
               </p>
             </>
           )}

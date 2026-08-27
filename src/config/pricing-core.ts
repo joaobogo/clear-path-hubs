@@ -125,5 +125,9 @@ export const ROI_REFERENCE_PACKAGE_LABEL = `${ROI_REFERENCE_POSITIONS} positions
 /** Turnaround guarantee shared across every published tier. */
 export const TURNAROUND_LABEL = "5-day turnaround";
 
-/** Annual commitment note for subscription billing (same rates). */
-export const SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL = "Save 10% with annual commit";
+/**
+ * There is no annual discount and never a second, lower total: one exact price
+ * per position count, whether billed once or monthly.
+ */
+export const NO_DISCOUNT_NOTE =
+  "One exact total per position count — no annual discount, no ranges.";
