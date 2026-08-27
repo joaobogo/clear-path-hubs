@@ -438,6 +438,7 @@ function CandidateDetailPage() {
  <div className="space-y-4 lg:col-span-8">
  {/* A short recruiter introduction, when one is attached. */}
  <IntroVideoPanel
+  matchId={candidate.match_id}
   video={candidate.intro_video}
   candidateName={candidate.candidate.display_name}
  />
