@@ -99,20 +99,15 @@ function wholeDays(from: string | null, to: string | null): number | null {
   return Math.max(0, Math.round((b - a) / DAY_MS));
 }
 
-
-const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
-
-/** "12 Mar" for this year, "12 Mar 2025" otherwise. Empty string when unknown. */
-export function formatStageDate(iso: string | null | undefined, now: Date = new Date()): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const base = `${d.getDate()} ${MONTHS[d.getMonth()]}`;
-  return d.getFullYear() === now.getFullYear() ? base : `${base} ${d.getFullYear()}`;
+/**
+ * The one workspace date format, always with the year ("12 Mar 2026"). A
+ * year-less variant made "Offer since 14 Aug" disagree with "14 Aug 2026"
+ * printed two rows below it.
+ */
+export function formatStageDate(iso: string | null | undefined, _now: Date = new Date()): string {
+  return formatDate(iso, "");
 }
+
 
 export function computeRoleProgress(
   input: RoleProgressInput,
