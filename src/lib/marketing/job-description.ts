@@ -3,6 +3,8 @@
 // write — ALL-CAPS headings, "Title:" headings, and "-"/"*"/"1." bullets — into
 // typed blocks the detail page can render with real hierarchy.
 
+import { stripInlineMarkup } from "./inline-format";
+
 export type JobBlock =
   | { kind: "heading"; text: string }
   | { kind: "paragraph"; text: string }
@@ -32,7 +34,8 @@ export function stripJobMarkdown(text: string): string {
 }
 
 function isHeading(line: string): boolean {
-  const t = line.trim();
+  // Inline styles never decide whether a line is a heading.
+  const t = stripInlineMarkup(line).trim();
   if (MD_HEADING.test(t)) return true;
   if (!t || t.length > 70 || BULLET.test(line)) return false;
   // "MAIN RESPONSIBILITIES" — all caps, at least one letter, no trailing period.
@@ -44,7 +47,7 @@ function isHeading(line: string): boolean {
 }
 
 function titleCase(text: string): string {
-  const t = stripJobMarkdown(text).replace(/:\s*$/, "").trim();
+  const t = stripJobMarkdown(stripInlineMarkup(text)).replace(/:\s*$/, "").trim();
   const letters = t.replace(/[^A-Za-zÀ-ÿ]/g, "");
   if (letters && letters === letters.toUpperCase()) {
     return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
@@ -118,7 +121,9 @@ export function jobDescriptionSummary(description: string, max = 155): string {
   const sentence =
     paragraphs.find((t) => /[.!?]/.test(t) && t.length > 60 && !t.includes("|")) ??
     paragraphs[0];
-  const text = sentence ?? stripJobMarkdown((description ?? "").trim());
+  const text = stripInlineMarkup(
+    sentence ?? stripJobMarkdown((description ?? "").trim()),
+  );
 
 
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;

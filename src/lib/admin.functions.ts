@@ -10,6 +10,7 @@ import { publishedRunEmbed, publishedScore, withPublishedRun } from "@/lib/scori
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import type { EventType } from "./events";
 import { qaGuardValues, isQaSafeOrg } from "@/lib/qa-guard";
+import { sanitizeInlineMarkup } from "@/lib/marketing/inline-format";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -944,7 +945,8 @@ const positionPatch = z.object({
   patch: z
     .object({
       title: z.string().min(3).max(200).optional(),
-      description: z.string().max(20_000).optional(),
+      // Only bold/italic/underline survive; any other markup is stripped here.
+      description: z.string().max(20_000).transform(sanitizeInlineMarkup).optional(),
       location: z.string().max(200).nullable().optional(),
       department: z.string().max(200).nullable().optional(),
       work_model: z.enum(["remote", "hybrid", "onsite"]).nullable().optional(),

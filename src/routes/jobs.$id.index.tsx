@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { parseJobDescription, jobDescriptionSummary } from "@/lib/marketing/job-description";
+import { InlineFormattedText } from "@/components/ui/inline-formatted-text";
 import {
   NOT_SPECIFIED,
   RANGE_ON_CALL,
@@ -343,7 +344,9 @@ function BulletList({ items }: { items: string[] }) {
       {items.map((item, i) => (
         <li key={i} className="flex gap-3 text-[0.95rem] leading-relaxed text-foreground/90">
           <Check className="mt-1 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-          <span>{item}</span>
+          <span>
+            <InlineFormattedText value={item} />
+          </span>
         </li>
       ))}
     </ul>
@@ -485,7 +488,7 @@ function JobDetail() {
                     <BulletList key={i} items={block.items} />
                   ) : (
                     <p key={i} className="text-[0.95rem] leading-relaxed text-foreground/90">
-                      {block.text}
+                      <InlineFormattedText value={block.text} />
                     </p>
                   ),
                 )}

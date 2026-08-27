@@ -18,6 +18,7 @@ import { assertWorkspaceAccess, assertWorkspaceWrite } from "@/lib/authz/workspa
 import { normalizeSeniority } from "@/lib/position-seniority";
 import { normalizeTravelExpectation } from "@/lib/requisition-schema";
 import { positionShapeFor } from "@/lib/positions/field-registry";
+import { sanitizeInlineMarkup, stripInlineMarkup } from "@/lib/marketing/inline-format";
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -456,7 +457,9 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     const trace_id = traceId();
     const s = await getAdmin();
 
-    if (data.must_have_skills.length < 3 && data.description.trim().length < 40) {
+    // Formatting tags are not content: length is measured on the words only.
+    const description = sanitizeInlineMarkup(data.description);
+    if (data.must_have_skills.length < 3 && stripInlineMarkup(description).trim().length < 40) {
       throw new Error(
         "Provide at least 3 must-have skills or a job description of at least 40 characters",
       );
@@ -492,7 +495,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       work_model: data.work_model,
       employment_type: data.employment_type || null,
       seniority: data.seniority || null,
-      description: data.description || null,
+      description: description || null,
       requirements: preserveRequirementMetadata(
         data.must_have_skills,
         existing?.requirements,

@@ -8,7 +8,6 @@ import { toastError } from "@/lib/toast-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -21,6 +20,7 @@ import { evaluatePublishGate, PUBLISH_BLOCKER_LABEL } from "@/lib/publish-gate";
 import { updatePosition } from "@/lib/admin.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { publishedScore } from "@/lib/scoring/published-score";
+import { RichTextInput } from "@/components/ui/rich-text-input";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -124,11 +124,12 @@ export function OverviewTab({
         </div>
         <div>
           <Label htmlFor="desc">Description</Label>
-          <Textarea
+          <RichTextInput
             id="desc"
             rows={8}
+            ariaLabel="Description"
             value={form.description}
-            onChange={(e) => set("description", e.target.value)}
+            onChange={(v) => set("description", v)}
           />
         </div>
         <div className="grid gap-3 md:grid-cols-2">
