@@ -275,7 +275,7 @@ const EMPTY: FormState = {
   targetStartDate: "",
   consent: false,
   pilotAcknowledgement: false,
-  researchConsent: true,
+  researchConsent: false,
   companyFax: "",
 };
 
@@ -828,6 +828,7 @@ function ExpressIntakePage() {
       confirmPassword: "",
       consent: false,
       pilotAcknowledgement: false,
+      researchConsent: false,
     }));
   };
 
@@ -2164,6 +2165,7 @@ function ExpressIntakePage() {
           <div className="flex flex-wrap items-center gap-3">
             <Button
               type="button"
+              variant="outline"
               className="min-h-11"
               disabled={accountBusy}
               onClick={() => void (signInMode ? signInInline() : createAccountInline())}
@@ -2176,7 +2178,7 @@ function ExpressIntakePage() {
               ) : signInMode ? (
                 "Sign in and continue"
               ) : (
-                "Create my account now"
+                "Create my account now (optional)"
               )}
             </Button>
             <button
@@ -2187,6 +2189,10 @@ function ExpressIntakePage() {
               {signInMode ? "I don't have an account yet" : "I already have an account"}
             </button>
           </div>
+          <p className="text-sm text-[color:var(--brand-navy)]/70">
+            You don't have to do this now — <strong>Continue</strong> at the bottom of this step is the
+            way forward, and we'll set the account up as you go.
+          </p>
           <p className="text-sm text-[color:var(--brand-navy)]/70">
             Prefer the full login screen?{" "}
             <a href="/login" className="underline">
