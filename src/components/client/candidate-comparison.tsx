@@ -22,6 +22,8 @@ import {
   type CompareMatrixRow,
 } from "@/lib/client-compare";
 import { humanizeConcernSentence } from "@/lib/client/validation-list";
+import { verifiedStrengths } from "@/lib/client/score-breakdown";
+
 
 
 
@@ -709,24 +711,25 @@ function ComparisonRow({
 
 
 /**
- * Strengths bullets shown in the comparison — the single list behind both the
- * "Strengths" row and the "Verified strengths" number. Blank and duplicate
- * entries are dropped here so the number can never exceed the bullets shown.
+ * Strengths bullets shown in the comparison — the same list the candidate's own
+ * page prints under "What lifts the score", so the "Verified strengths" number
+ * always equals the bullets a reader finds there. Reading the raw strengths
+ * array with a cap of four made three different candidates all show "4".
  */
 function strengthBullets(c: ClientCandidateDTO): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
-  for (const raw of c.strengths ?? []) {
+  for (const raw of verifiedStrengths(c)) {
     const text = typeof raw === "string" ? raw.trim() : String(raw ?? "").trim();
     if (!text) continue;
     const key = text.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(text);
-    if (out.length === 4) break;
   }
   return out;
 }
+
 
 /**
  * Visual ranking board — shows relative strength per axis using dots (●○○).
