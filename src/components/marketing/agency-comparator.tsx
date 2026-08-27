@@ -15,7 +15,7 @@ import { PRICING_TIERS } from "@/content/pricing";
 import {
   MAX_POSITIONS,
   positionsTotalUsd,
-  positionRateUsd,
+  packageForPositions,
   formatUsdExact,
   ABOVE_MAX_DISPLAY,
 } from "@/config/pricing-core";
@@ -27,18 +27,20 @@ type TierMatch = {
 };
 
 /**
- * One rule, one function: `positionsTotalUsd()` in pricing-core returns the
- * exact final total for a position count. Nothing here is hard-coded.
+ * One rule, one function: `packageForPositions()` in pricing-core returns the
+ * package that covers a position count, and its one total. Nothing here is
+ * hard-coded, and no per-position figure is ever shown.
  */
 function matchTier(positions: number): TierMatch {
   if (positions <= 0) {
     return { label: "—", detail: "Add at least 1 position", price: null };
   }
+  const pkg = packageForPositions(positions);
   const total = positionsTotalUsd(positions);
-  if (total === null) {
+  if (!pkg || total === null) {
     return {
       label: PRICING_TIERS[4].name,
-      detail: `More than ${MAX_POSITIONS} positions — we scope it with you`,
+      detail: `More than ${MAX_POSITIONS} positions — let's talk it through`,
       price: null,
     };
   }
@@ -49,13 +51,13 @@ function matchTier(positions: number): TierMatch {
       price: total,
     };
   }
-  const rate = positionRateUsd(positions)!;
   return {
-    label: `${positions} positions`,
-    detail: `${positions} × ${formatUsdExact(rate)} per position`,
+    label: pkg.capacityLabel,
+    detail: `${pkg.capacityLabel} — one total`,
     price: total,
   };
 }
+
 
 function formatCompact(value: number): string {
   return formatUsdExact(value);

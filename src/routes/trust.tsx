@@ -8,17 +8,14 @@ import {
 } from "@/components/marketing/site-shell";
 import {
   PRICE_PILOT_DISPLAY,
-  GROWTH_RATE_DISPLAY,
-  SCALE_RATE_DISPLAY,
-  VOLUME_RATE_DISPLAY,
+  PACKAGE_10,
+  PACKAGE_20,
+  PACKAGE_30,
   ABOVE_MAX_DISPLAY,
-  PER_POSITION_SUFFIX,
   PILOT_ROLES_LABEL,
-  GROWTH_ROLES_LABEL,
-  SCALE_ROLES_LABEL,
-  VOLUME_ROLES_LABEL,
   ABOVE_MAX_ROLES_LABEL,
 } from "@/config/pricing-core";
+
 import {
   ShieldCheck,
   Lock,
@@ -63,23 +60,24 @@ const PRICING_LINES = [
     detail: "Flat fee, billed once. See the system on a real role before scaling.",
   },
   {
-    label: "2 to 10 positions",
-    price: `${GROWTH_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
-    scope: GROWTH_ROLES_LABEL,
-    detail: "The rate applies to every position you run.",
+    label: PACKAGE_10.capacityLabel,
+    price: PACKAGE_10.totalDisplay,
+    scope: PACKAGE_10.capacityLabel,
+    detail: "One package, one total — billed once or monthly.",
   },
   {
-    label: "11 to 20 positions",
-    price: `${SCALE_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
-    scope: SCALE_ROLES_LABEL,
-    detail: "Higher volume, lower cost per position.",
+    label: PACKAGE_20.capacityLabel,
+    price: PACKAGE_20.totalDisplay,
+    scope: PACKAGE_20.capacityLabel,
+    detail: "More capacity in the same package, at one total.",
   },
   {
-    label: "21 to 30 positions",
-    price: `${VOLUME_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
-    scope: VOLUME_ROLES_LABEL,
-    detail: "The lowest published rate. Thirty positions is the maximum.",
+    label: PACKAGE_30.capacityLabel,
+    price: PACKAGE_30.totalDisplay,
+    scope: PACKAGE_30.capacityLabel,
+    detail: "The largest published package. Thirty positions is the maximum.",
   },
+
   {
     label: "More than 30 positions",
     price: ABOVE_MAX_DISPLAY,

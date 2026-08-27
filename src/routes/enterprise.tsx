@@ -23,13 +23,13 @@ import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
 import {
   PRICE_PILOT_DISPLAY,
-  GROWTH_RATE_DISPLAY,
-  SCALE_RATE_DISPLAY,
-  VOLUME_RATE_DISPLAY,
+  PACKAGE_10,
+  PACKAGE_20,
+  PACKAGE_30,
   ABOVE_MAX_DISPLAY,
   MAX_POSITIONS,
-  PER_POSITION_SUFFIX,
 } from "@/config/pricing-core";
+
 
 // Enterprise metadata authored inline. Legacy JSON contained unapproved
 // commercial and volume claims — kept out on purpose.
@@ -78,26 +78,27 @@ const VOLUME_BANDS = [
     fit: "A single critical hire, run end to end.",
   },
   {
-    band: "2 to 10 positions",
-    price: `${GROWTH_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
+    band: PACKAGE_10.capacityLabel,
+    price: PACKAGE_10.totalDisplay,
     cadence: "Weekly delivery per role family",
     agentCapacity: "Agent capacity per role family",
     fit: "One or two functions hiring in parallel with shared standards.",
   },
   {
-    band: "11 to 20 positions",
-    price: `${SCALE_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
+    band: PACKAGE_20.capacityLabel,
+    price: PACKAGE_20.totalDisplay,
     cadence: "Twice-weekly delivery on priority roles",
     agentCapacity: "Agent capacity plus a named account lead",
     fit: "Multi-business-unit hiring with executive reporting.",
   },
   {
-    band: "21 to 30 positions",
-    price: `${VOLUME_RATE_DISPLAY} ${PER_POSITION_SUFFIX}`,
+    band: PACKAGE_30.capacityLabel,
+    price: PACKAGE_30.totalDisplay,
     cadence: "Twice-weekly delivery across the portfolio",
     agentCapacity: "Enterprise-scale agent capacity",
-    fit: "Portfolio hiring at the lowest published rate.",
+    fit: "Portfolio hiring across teams in one package.",
   },
+
   {
     band: `More than ${MAX_POSITIONS} positions`,
     price: ABOVE_MAX_DISPLAY,

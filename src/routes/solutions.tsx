@@ -38,7 +38,7 @@ const SOLUTIONS = [
   {
     icon: Users,
     title: "Scale hiring teams",
-    body: "Run 3–15 active roles at a flat monthly rate. Unlimited hires per subscription. Your workspace tracks every requisition in one place.",
+    body: "Pick the package that covers your open roles and pay one monthly total. Hires within that capacity are included. Your workspace tracks every requisition in one place.",
     cta: { to: "/pricing", label: "See pricing" },
   },
   {

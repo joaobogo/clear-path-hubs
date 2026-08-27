@@ -37,7 +37,8 @@ import {
   type LeadVolume,
 } from "@/lib/marketing/lead-routing";
 import {
-  positionsTotalUsd,
+  packageForPositions,
+  ABOVE_MAX_ROLES_LABEL,
   MAX_POSITIONS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
@@ -76,16 +77,28 @@ const VOLUMES: LeadVolume[] = ["one", "two_to_five", "six_to_ten", "eleven_plus"
 const URGENCIES: LeadUrgency[] = ["immediate", "this_quarter", "exploring"];
 
 function packageFor(volume: LeadVolume): { label: string; usd: number | null; note: string } {
-  if (volume === "one")
-    return { label: "1 position", usd: positionsTotalUsd(1), note: "One role, full workflow — flat fee." };
-  if (volume === "two_to_five")
-    return { label: "5 positions", usd: positionsTotalUsd(5), note: "Exact total for five positions." };
-  if (volume === "six_to_ten")
-    return { label: "10 positions", usd: positionsTotalUsd(10), note: "Exact total for ten positions." };
+  const pkg =
+    volume === "one"
+      ? packageForPositions(1)
+      : volume === "two_to_five"
+        ? packageForPositions(5)
+        : volume === "six_to_ten"
+          ? packageForPositions(10)
+          : packageForPositions(20);
+  if (!pkg) {
+    return {
+      label: ABOVE_MAX_ROLES_LABEL,
+      usd: null,
+      note: "No published price above the maximum — let's talk it through.",
+    };
+  }
   return {
-    label: "20 positions",
-    usd: positionsTotalUsd(20),
-    note: `Exact total for twenty positions. Above ${MAX_POSITIONS} we scope it with you.`,
+    label: pkg.capacityLabel,
+    usd: pkg.totalUsd,
+    note:
+      pkg.capacity === 1
+        ? "One role, full workflow — flat fee, billed once."
+        : `One total for the package. Above ${MAX_POSITIONS} positions, let's talk it through.`,
   };
 }
 

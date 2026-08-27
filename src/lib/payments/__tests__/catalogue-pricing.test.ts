@@ -15,15 +15,15 @@ import {
 import {
   PLAN_CATALOGUE,
   findPlan,
-  CATALOGUE_POSITION_COUNTS,
+  CATALOGUE_PACKAGES,
 } from "@/lib/payments-catalog";
 
 const EXPECTED: Record<string, number> = Object.fromEntries(
-  CATALOGUE_POSITION_COUNTS.flatMap((n) => {
-    const total = positionsTotalUsd(n)!;
+  CATALOGUE_PACKAGES.flatMap((pkg) => {
+    const key = pkg.id === "pilot" ? "pilot" : String(pkg.capacity);
     return [
-      [`oneoff_pos_${n}`, total],
-      [`sub_pos_${n}_monthly`, total],
+      [`oneoff_pkg_${key}`, pkg.totalUsd],
+      [`sub_pkg_${key}_monthly`, pkg.totalUsd],
     ] as [string, number][];
   }),
 );
@@ -34,17 +34,17 @@ describe("the pricing rule", () => {
     expect(PRICE_PILOT_USD).toBe(699);
   });
 
-  it("applies the band rate to every position", () => {
-    expect(positionsTotalUsd(2)).toBe(1_800);
-    expect(positionsTotalUsd(10)).toBe(9_000);
-    expect(positionsTotalUsd(12)).toBe(10_200);
-    expect(positionsTotalUsd(20)).toBe(17_000);
-    expect(positionsTotalUsd(22)).toBe(17_600);
-    expect(positionsTotalUsd(30)).toBe(24_000);
+  it("charges the covering package's one total", () => {
+    expect(positionsTotalUsd(2)).toBe(8_000);
+    expect(positionsTotalUsd(10)).toBe(8_000);
+    expect(positionsTotalUsd(12)).toBe(15_200);
+    expect(positionsTotalUsd(20)).toBe(15_200);
+    expect(positionsTotalUsd(22)).toBe(21_600);
+    expect(positionsTotalUsd(30)).toBe(21_600);
   });
 
   it("never lets the total fall as the count rises", () => {
-    expect(positionsTotalUsd(21)).toBe(17_000);
+    expect(positionsTotalUsd(21)).toBe(21_600);
     for (let n = 2; n <= MAX_POSITIONS; n += 1) {
       expect(positionsTotalUsd(n)!).toBeGreaterThanOrEqual(
         positionsTotalUsd(n - 1)!,

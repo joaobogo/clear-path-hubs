@@ -6,21 +6,23 @@
  * actually charged is still resolved server-side from the payment provider by
  * `priceId`; nothing the browser sends about price is trusted.
  *
- * Price identifiers are named after the position count they cover
- * (`oneoff_pos_5`, `sub_pos_5_monthly`), because the amount is a pure function
- * of that count. Identifiers from the previous, deleted price model are gone.
+ * We sell packages, not positions. Price identifiers are named after the
+ * package capacity they cover (`oneoff_pkg_10`, `sub_pkg_10_monthly`), because
+ * the amount is a pure function of the package. Identifiers from the previous,
+ * deleted per-position price model are gone.
  * There is no annual price: a second, lower total would contradict the rule.
  */
 import {
+  PACKAGES,
   positionsTotalUsd,
   formatUsdExact,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
 
-/** Position counts we publish as buyable offers. Any count 1–30 is priced by the rule. */
-export const CATALOGUE_POSITION_COUNTS = [1, 5, 10, 20, 30] as const;
+/** The published packages, in order: pilot, up to 10, up to 20, up to 30. */
+export const CATALOGUE_PACKAGES = PACKAGES;
 
-export const POSITION_PUBLISH_PRICE_ID = "oneoff_pos_1";
+export const POSITION_PUBLISH_PRICE_ID = "oneoff_pkg_pilot";
 
 export const POSITION_PUBLISH_OFFER = {
   priceId: POSITION_PUBLISH_PRICE_ID,
@@ -58,44 +60,38 @@ export type PlanOffer = {
   summary: string;
 };
 
-function positionsLabel(n: number): string {
-  return n === 1 ? "1 position" : `${n} positions`;
-}
-
 function buildCatalogue(): PlanOffer[] {
   const offers: PlanOffer[] = [];
-  CATALOGUE_POSITION_COUNTS.forEach((n, index) => {
-    const total = positionsTotalUsd(n)!;
-    const label = n === 1 ? "Pilot — 1 position" : positionsLabel(n);
+
+  CATALOGUE_PACKAGES.forEach((pkg, index) => {
     offers.push({
-      priceId: `oneoff_pos_${n}`,
-      productId: `oneoff_pos_${n}`,
-      label,
+      priceId: `oneoff_pkg_${pkg.id === "pilot" ? "pilot" : pkg.capacity}`,
+      productId: `oneoff_pkg_${pkg.id === "pilot" ? "pilot" : pkg.capacity}`,
+      label: pkg.id === "pilot" ? "Pilot — 1 position" : pkg.capacityLabel,
       kind: "package",
-      amountUsd: total,
-      rolesTotal: n,
-      validForDays: n === 1 ? 90 : 180,
+      amountUsd: pkg.totalUsd,
+      rolesTotal: pkg.capacity,
+      validForDays: pkg.id === "pilot" ? 90 : 180,
       tier: index + 1,
       summary:
-        n === 1
-          ? `One active role for ${formatUsdExact(total)}, ${TURNAROUND_LABEL}.`
-          : `${positionsLabel(n)} for ${formatUsdExact(total)} in total.`,
+        pkg.id === "pilot"
+          ? `One active role for ${pkg.totalDisplay}, ${TURNAROUND_LABEL}.`
+          : `${pkg.capacityLabel} for ${pkg.totalDisplay} in total.`,
     });
   });
 
-  CATALOGUE_POSITION_COUNTS.forEach((n, index) => {
-    const total = positionsTotalUsd(n)!;
+  CATALOGUE_PACKAGES.forEach((pkg, index) => {
     offers.push({
-      priceId: `sub_pos_${n}_monthly`,
-      productId: `sub_pos_${n}`,
-      label: `${positionsLabel(n)} — monthly`,
+      priceId: `sub_pkg_${pkg.id === "pilot" ? "pilot" : pkg.capacity}_monthly`,
+      productId: `sub_pkg_${pkg.id === "pilot" ? "pilot" : pkg.capacity}`,
+      label: `${pkg.id === "pilot" ? "1 position" : pkg.capacityLabel} — monthly`,
       kind: "subscription",
       interval: "month",
-      amountUsd: total,
-      rolesTotal: n,
+      amountUsd: pkg.totalUsd,
+      rolesTotal: pkg.capacity,
       validForDays: null,
       tier: 10 + index + 1,
-      summary: `${positionsLabel(n)} at a time for ${formatUsdExact(total)} a month.`,
+      summary: `${pkg.capacityLabel} each month for ${pkg.totalDisplay} a month.`,
     });
   });
 
@@ -114,7 +110,7 @@ export function isSubscriptionPrice(priceId: string): boolean {
 
 /** Human sentence for an allowance — used in receipts and workspace copy. */
 export function allowanceSentence(plan: PlanOffer): string {
-  if (plan.rolesTotal === null) return "Unlimited active roles while the plan runs.";
+  if (plan.rolesTotal === null) return "Capacity agreed with you.";
   if (plan.kind === "subscription") {
     return `Up to ${plan.rolesTotal} active roles at a time.`;
   }

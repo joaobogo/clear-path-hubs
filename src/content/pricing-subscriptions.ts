@@ -1,33 +1,28 @@
 /**
- * Subscription pricing — the SAME rates as one-off. There is one rule and it
- * lives in src/config/pricing-core.ts: $699 for a single position, then $900
- * (2–10), $850 (11–20) and $800 (21–30) per position, 30 maximum.
- * Never render a band as a price and never precede a price with "From".
+ * Subscription pricing — the SAME three packages at the SAME prices as one-off,
+ * billed monthly instead of once. One rule, one place:
+ * src/config/pricing-core.ts.
+ *
+ * A subscription card says what capacity you get each month and what it costs
+ * each month. There is no annual discount, no per-position figure, and no
+ * package described as a range between two counts.
  */
 import {
-  PRICE_PILOT_USD,
-  PRICE_PILOT_DISPLAY,
-  GROWTH_RATE_USD,
-  SCALE_RATE_USD,
-  VOLUME_RATE_USD,
-  GROWTH_RATE_DISPLAY,
-  SCALE_RATE_DISPLAY,
-  VOLUME_RATE_DISPLAY,
+  PILOT_PACKAGE,
+  PACKAGE_10,
+  PACKAGE_20,
+  PACKAGE_30,
   PILOT_ROLES_LABEL,
-  GROWTH_ROLES_LABEL,
-  SCALE_ROLES_LABEL,
-  VOLUME_ROLES_LABEL,
   ABOVE_MAX_DISPLAY,
   ABOVE_MAX_ROLES_LABEL,
   ABOVE_MAX_CTA_LABEL,
-  PER_POSITION_SUFFIX,
 } from "@/config/pricing-core";
 
 export type SubscriptionTier = {
   id: "pilot" | "growth" | "scale" | "volume" | "enterprise";
   name: string;
   eyebrow: string;
-  /** Exact monthly amount for the pilot, or the per-position rate for bands. */
+  /** The one exact monthly total for this package. Null above the maximum. */
   monthly: number | null;
   priceDisplay: string;
   priceSuffix: string;
@@ -51,11 +46,11 @@ const BASE = [
 export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
   {
     id: "pilot",
-    name: "Single position",
+    name: "Pilot",
     eyebrow: PILOT_ROLES_LABEL,
-    monthly: PRICE_PILOT_USD,
-    priceDisplay: PRICE_PILOT_DISPLAY,
-    priceSuffix: "flat, one position",
+    monthly: PILOT_PACKAGE.totalUsd,
+    priceDisplay: PILOT_PACKAGE.totalDisplay,
+    priceSuffix: "one position",
     billingNote: "Billed once — one pilot per company",
     bestFor: "One position, the full workflow.",
     rolesIncluded: PILOT_ROLES_LABEL,
@@ -65,14 +60,14 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
   },
   {
     id: "growth",
-    name: "2 to 10 positions",
-    eyebrow: GROWTH_ROLES_LABEL,
-    monthly: GROWTH_RATE_USD,
-    priceDisplay: GROWTH_RATE_DISPLAY,
-    priceSuffix: PER_POSITION_SUFFIX,
-    billingNote: "Billed at start of month",
-    bestFor: "2 to 10 positions running together.",
-    rolesIncluded: GROWTH_ROLES_LABEL,
+    name: PACKAGE_10.capacityLabel,
+    eyebrow: PACKAGE_10.capacityLabel,
+    monthly: PACKAGE_10.totalUsd,
+    priceDisplay: PACKAGE_10.totalDisplay,
+    priceSuffix: "a month",
+    billingNote: "Billed monthly",
+    bestFor: `${PACKAGE_10.capacityLabel} running together, every month.`,
+    rolesIncluded: PACKAGE_10.capacityLabel,
     included: [...BASE, "Dedicated support"],
     ctaLabel: "Book a discovery call",
     ctaTo: "/book",
@@ -80,28 +75,28 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
   },
   {
     id: "scale",
-    name: "11 to 20 positions",
-    eyebrow: SCALE_ROLES_LABEL,
-    monthly: SCALE_RATE_USD,
-    priceDisplay: SCALE_RATE_DISPLAY,
-    priceSuffix: PER_POSITION_SUFFIX,
-    billingNote: "Billed at start of month",
-    bestFor: "11 to 20 positions running together.",
-    rolesIncluded: SCALE_ROLES_LABEL,
+    name: PACKAGE_20.capacityLabel,
+    eyebrow: PACKAGE_20.capacityLabel,
+    monthly: PACKAGE_20.totalUsd,
+    priceDisplay: PACKAGE_20.totalDisplay,
+    priceSuffix: "a month",
+    billingNote: "Billed monthly",
+    bestFor: `${PACKAGE_20.capacityLabel} running together, every month.`,
+    rolesIncluded: PACKAGE_20.capacityLabel,
     included: [...BASE, "Priority support", "Faster calibration cycles"],
     ctaLabel: "Book a discovery call",
     ctaTo: "/book",
   },
   {
     id: "volume",
-    name: "21 to 30 positions",
-    eyebrow: VOLUME_ROLES_LABEL,
-    monthly: VOLUME_RATE_USD,
-    priceDisplay: VOLUME_RATE_DISPLAY,
-    priceSuffix: PER_POSITION_SUFFIX,
-    billingNote: "Billed at start of month",
-    bestFor: "21 to 30 positions running together.",
-    rolesIncluded: VOLUME_ROLES_LABEL,
+    name: PACKAGE_30.capacityLabel,
+    eyebrow: PACKAGE_30.capacityLabel,
+    monthly: PACKAGE_30.totalUsd,
+    priceDisplay: PACKAGE_30.totalDisplay,
+    priceSuffix: "a month",
+    billingNote: "Billed monthly",
+    bestFor: `${PACKAGE_30.capacityLabel} running together, every month.`,
+    rolesIncluded: PACKAGE_30.capacityLabel,
     included: [
       ...BASE,
       "Dedicated account manager",
@@ -113,17 +108,17 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
   },
   {
     id: "enterprise",
-    name: "More than 30 positions",
+    name: ABOVE_MAX_ROLES_LABEL,
     eyebrow: ABOVE_MAX_ROLES_LABEL,
     monthly: null,
     priceDisplay: ABOVE_MAX_DISPLAY,
     priceSuffix: "Scoped with you",
     billingNote: ABOVE_MAX_ROLES_LABEL,
-    bestFor: "Above 30 positions we scope it with you.",
+    bestFor: "Above the published maximum we scope it with you.",
     rolesIncluded: ABOVE_MAX_ROLES_LABEL,
     included: [
       ...BASE,
-      "Everything in 21 to 30 positions",
+      `Everything in ${PACKAGE_30.capacityLabel}`,
       "White-glove onboarding",
       "Strategic planning sessions",
     ],

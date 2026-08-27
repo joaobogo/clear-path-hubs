@@ -1,41 +1,46 @@
 /**
  * TaaSFlow — Canonical price rule (single source of truth)
  * ========================================================
- * THE RULE — there is no other one:
- *   • 1 position                → flat $699 pilot
- *   • 2–10 positions            → $900 per position
- *   • 11–20 positions           → $850 per position
- *   • 21–30 positions           → $800 per position
- *   • more than 30 positions    → no price shown, the CTA is to talk to us
+ * WE SELL PACKAGES, NOT POSITIONS.
  *
- * The rate is set by the TOTAL number of positions and applies to all of them,
- * so 12 positions = 12 × $850 = $10,200.
+ * Each package states a capacity ("up to N positions") and one total price:
+ *   • Pilot                    → 1 position, one time only, $699
+ *   • Up to 10 positions       → $8,000
+ *   • Up to 20 positions       → $15,200
+ *   • Up to 30 positions       → $21,600
+ *   • More than 30 positions   → no price shown; the CTA is to talk to us
  *
- * Monotonic guard: the total must never fall as the count rises. Where a band
- * boundary would produce a lower total (20 × $850 = $17,000 vs 21 × $800 =
- * $16,800), the total is held at the previous maximum until the new rate
- * overtakes it — so 21 positions is also $17,000 and 22 is $17,600.
+ * DERIVATION (internal reasoning only — never rendered):
+ * the three package totals are capacity × $800 base, less a volume discount of
+ * 0%, 5% and 10% respectively. The per-position figure is how we work the
+ * number out; it is never shown to a customer, never printed on a card, never
+ * written in a caption and never used as a unit anywhere on the site.
  *
- * Every price rendered or charged anywhere reads `positionsTotalUsd()` from
- * this file. Never hard-code a price, a band as a price, or the word "From".
+ * Subscriptions use exactly the same three packages at exactly the same
+ * prices, billed monthly instead of once. There is no annual discount: a
+ * second, lower total would contradict one package having one price.
  *
- * One-off and subscription use the same rates.
+ * Never render a price preceded by "From", never describe a package as a range
+ * between two counts, and never publish a per-position figure.
  */
 
-/** Flat pilot fee for a single position. */
+/** Flat pilot fee — one position, one time only. */
 export const PRICE_PILOT_USD = 699;
+
+/** Internal base rate used to derive package totals. Never rendered. */
+export const BASE_RATE_PER_POSITION_USD = 800;
 
 /** Hard maximum. Above this we show no price and the CTA is to talk to us. */
 export const MAX_POSITIONS = 30;
 
-/** Per-position rates by total position count. */
-export const POSITION_RATE_BANDS = [
-  { id: "growth", min: 2, max: 10, rateUsd: 900 },
-  { id: "scale", min: 11, max: 20, rateUsd: 850 },
-  { id: "volume", min: 21, max: 30, rateUsd: 800 },
+/** Internal derivation inputs: capacity + volume discount. Never rendered. */
+export const PACKAGE_DERIVATION = [
+  { id: "growth", capacity: 10, volumeDiscount: 0 },
+  { id: "scale", capacity: 20, volumeDiscount: 0.05 },
+  { id: "volume", capacity: 30, volumeDiscount: 0.1 },
 ] as const;
 
-export type PositionRateBand = (typeof POSITION_RATE_BANDS)[number];
+export type PackageId = "pilot" | "growth" | "scale" | "volume";
 
 /** USD, exact, no rounding and no abbreviation. */
 export function formatUsdExact(value: number): string {
@@ -43,91 +48,92 @@ export function formatUsdExact(value: number): string {
   return `$${Math.round(value).toLocaleString("en-US")}`;
 }
 
-/** The per-position rate for a total count, or null outside 2–30. */
-export function positionRateUsd(positions: number): number | null {
-  if (!Number.isInteger(positions)) return null;
-  const band = POSITION_RATE_BANDS.find(
-    (b) => positions >= b.min && positions <= b.max,
-  );
-  return band ? band.rateUsd : null;
+/** Internal: total for a capacity from the base rate and its volume discount. */
+function derivePackageTotal(capacity: number, volumeDiscount: number): number {
+  return Math.round(capacity * BASE_RATE_PER_POSITION_USD * (1 - volumeDiscount));
 }
 
-/** Raw total before the monotonic guard. */
-function rawTotalUsd(positions: number): number | null {
-  if (positions === 1) return PRICE_PILOT_USD;
-  const rate = positionRateUsd(positions);
-  return rate === null ? null : rate * positions;
-}
+export type PricingPackageCore = {
+  id: PackageId;
+  /** Positions included in the package. */
+  capacity: number;
+  /** The one total price. Billed once, or monthly on a subscription. */
+  totalUsd: number;
+  /** Exact total as a display string. */
+  totalDisplay: string;
+  /** Capacity sentence — always "up to" and a single number. */
+  capacityLabel: string;
+};
 
-/**
- * THE function. Exact final total for `positions`, including the monotonic
- * guard. Returns null when no price is shown (0, non-integer, or above 30).
- */
-export function positionsTotalUsd(positions: number): number | null {
-  if (!Number.isInteger(positions) || positions < 1 || positions > MAX_POSITIONS)
-    return null;
-  let best = 0;
-  for (let n = 1; n <= positions; n += 1) {
-    const raw = rawTotalUsd(n);
-    if (raw !== null && raw > best) best = raw;
-  }
-  return best;
-}
+export const PILOT_ROLES_LABEL = "1 position";
 
-/** Exact total as a display string, or the talk-to-us label above the maximum. */
-export function positionsTotalDisplay(positions: number): string {
-  const total = positionsTotalUsd(positions);
-  return total === null ? ABOVE_MAX_DISPLAY : formatUsdExact(total);
-}
+/** The four published packages, in order. */
+export const PACKAGES: readonly PricingPackageCore[] = [
+  {
+    id: "pilot",
+    capacity: 1,
+    totalUsd: PRICE_PILOT_USD,
+    totalDisplay: formatUsdExact(PRICE_PILOT_USD),
+    capacityLabel: PILOT_ROLES_LABEL,
+  },
+  ...PACKAGE_DERIVATION.map((d) => {
+    const totalUsd = derivePackageTotal(d.capacity, d.volumeDiscount);
+    return {
+      id: d.id as PackageId,
+      capacity: d.capacity,
+      totalUsd,
+      totalDisplay: formatUsdExact(totalUsd),
+      capacityLabel: `Up to ${d.capacity} positions`,
+    };
+  }),
+] as const;
 
-/** Rate as a display string for a band (never a range, never "From"). */
-export function rateDisplay(rateUsd: number): string {
-  return formatUsdExact(rateUsd);
-}
+export const PILOT_PACKAGE = PACKAGES[0]!;
+export const PACKAGE_10 = PACKAGES[1]!;
+export const PACKAGE_20 = PACKAGES[2]!;
+export const PACKAGE_30 = PACKAGES[3]!;
 
-export const PRICE_PILOT_DISPLAY = formatUsdExact(PRICE_PILOT_USD);
-export const PER_POSITION_SUFFIX = "per position";
+export const PRICE_PILOT_DISPLAY = PILOT_PACKAGE.totalDisplay;
 
 /** Above the maximum: no price, talk to us. */
 export const ABOVE_MAX_DISPLAY = "Talk to us";
 export const ABOVE_MAX_CTA_LABEL = "Talk to us";
 export const ABOVE_MAX_ROLES_LABEL = `More than ${MAX_POSITIONS} positions`;
 
-/** Band descriptors — one source for tier subtitles/eyebrows. */
-export const PILOT_ROLES_LABEL = "1 position";
-export const GROWTH_ROLES_LABEL = "2–10 positions";
-export const SCALE_ROLES_LABEL = "11–20 positions";
-export const VOLUME_ROLES_LABEL = "21–30 positions";
+/**
+ * THE function. The package that covers `positions`, or null when no price is
+ * shown (0, non-integer, or above the maximum). Anywhere the product needs to
+ * know which package someone falls into, it asks this.
+ */
+export function packageForPositions(positions: number): PricingPackageCore | null {
+  if (!Number.isInteger(positions) || positions < 1) return null;
+  return PACKAGES.find((p) => positions <= p.capacity) ?? null;
+}
 
-export const GROWTH_RATE_USD = POSITION_RATE_BANDS[0].rateUsd;
-export const SCALE_RATE_USD = POSITION_RATE_BANDS[1].rateUsd;
-export const VOLUME_RATE_USD = POSITION_RATE_BANDS[2].rateUsd;
-export const GROWTH_RATE_DISPLAY = rateDisplay(GROWTH_RATE_USD);
-export const SCALE_RATE_DISPLAY = rateDisplay(SCALE_RATE_USD);
-export const VOLUME_RATE_DISPLAY = rateDisplay(VOLUME_RATE_USD);
+/** The one total for a position count — the covering package's total. */
+export function positionsTotalUsd(positions: number): number | null {
+  return packageForPositions(positions)?.totalUsd ?? null;
+}
 
-/** Position-band boundaries (display and selector use only — never pricing). */
-export const POSITION_BANDS = {
-  pilot: { min: 1, max: 1 },
-  growth: { min: POSITION_RATE_BANDS[0].min, max: POSITION_RATE_BANDS[0].max },
-  scale: { min: POSITION_RATE_BANDS[1].min, max: POSITION_RATE_BANDS[1].max },
-  volume: { min: POSITION_RATE_BANDS[2].min, max: POSITION_RATE_BANDS[2].max },
-  aboveMax: { min: MAX_POSITIONS + 1, max: null as number | null },
-} as const;
+/** Exact total as a display string, or the talk-to-us label above the maximum. */
+export function positionsTotalDisplay(positions: number): string {
+  const pkg = packageForPositions(positions);
+  return pkg ? pkg.totalDisplay : ABOVE_MAX_DISPLAY;
+}
 
-/** Three positions is the reference basket used for ROI comparisons. */
-export const ROI_REFERENCE_POSITIONS = 3;
-export const ROI_REFERENCE_PACKAGE_USD = positionsTotalUsd(
-  ROI_REFERENCE_POSITIONS,
-)!;
-export const ROI_REFERENCE_PACKAGE_LABEL = `${ROI_REFERENCE_POSITIONS} positions at ${GROWTH_RATE_DISPLAY} each`;
+/** Capacity sentence for a position count, or the talk-to-us label. */
+export function positionsCapacityLabel(positions: number): string {
+  return packageForPositions(positions)?.capacityLabel ?? ABOVE_MAX_ROLES_LABEL;
+}
 
-/** Turnaround guarantee shared across every published tier. */
+/** Reference package used for ROI comparisons. */
+export const ROI_REFERENCE_POSITIONS = PACKAGE_10.capacity;
+export const ROI_REFERENCE_PACKAGE_USD = PACKAGE_10.totalUsd;
+export const ROI_REFERENCE_PACKAGE_LABEL = PACKAGE_10.capacityLabel;
+
+/** Turnaround guarantee shared across every published package. */
 export const TURNAROUND_LABEL = "5-day turnaround";
 
-/**
- * There is no annual discount and never a second, lower total: one exact price
- * per position count, whether billed once or monthly.
- */
+/** One package, one price — billed once or monthly. No annual discount. */
 export const NO_DISCOUNT_NOTE =
-  "One exact total per position count — no annual discount, no ranges.";
+  "One package, one price — billed once or monthly, with no annual discount.";
