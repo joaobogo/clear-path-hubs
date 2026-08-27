@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertWorkspaceArea } from "@/lib/collaborator-roles.server";
 import {
+import { dedupeDecisions } from "@/lib/decisions/dedupe";
   VIEW_ACTION,
   VIEW_DEDUPE_MINUTES,
   sortActivity,
@@ -163,7 +164,7 @@ export const getCandidateTeamActivity = createServerFn({ method: "POST" })
         .limit(100),
       supabaseAdmin
         .from("client_decisions")
-        .select("id, actor_user_id, created_at, decision, recorded_by_staff")
+        .select("id, actor_user_id, created_at, decision, feedback, reason_code, recorded_by_staff")
         .eq("candidate_match_id", data.matchId)
         .eq("organization_id", data.orgId)
         .in("actor_user_id", teamIds)
@@ -187,17 +188,21 @@ export const getCandidateTeamActivity = createServerFn({ method: "POST" })
       actor_user_id: string;
       created_at: string;
       decision: string | null;
+      feedback: string | null;
+      reason_code: string | null;
       recorded_by_staff: boolean | null;
     }[]
     // A decision our team entered on the client's behalf is not their activity.
     ).filter((d) => d.recorded_by_staff !== true);
+    // One row per real decision — duplicated writes never spam the feed.
+    const dedupedDecisions = dedupeDecisions(decisionRows);
 
     const userIds = Array.from(
       new Set([
         ...viewRows.map((r) => r.actor_user_id),
         ...noteRows.map((r) => r.author_user_id),
         ...cardRows.map((r) => r.reviewer_user_id),
-        ...decisionRows.map((r) => r.actor_user_id),
+        ...dedupedDecisions.map((r) => r.actor_user_id),
       ]),
     );
 
@@ -233,7 +238,7 @@ export const getCandidateTeamActivity = createServerFn({ method: "POST" })
         at: r.submitted_at,
         detail: r.recommendation ? String(r.recommendation).replace(/_/g, " ") : null,
       })),
-      ...decisionRows.map((r) => ({
+      ...dedupedDecisions.map((r) => ({
         id: `decision:${r.id}`,
         kind: "decision" as const,
         actorName: nameOf(byId.get(r.actor_user_id)),
