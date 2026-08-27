@@ -99,10 +99,11 @@ export function publishedRunEmbed(extraColumns = ""): string {
   );
 }
 
-/** Collapses the two embedded runs into `score_runs` — approved wins. */
+/** Collapses the two embedded runs into `score_runs` — approved wins, video bonus folded. */
 export function withPublishedRun<T extends Record<string, unknown>>(row: T) {
   const { approved_run, current_run, ...rest } = row as Record<string, unknown>;
-  return { ...rest, score_runs: (approved_run ?? current_run ?? null) } as T & {
+  const run = (approved_run ?? current_run ?? null) as PublishedScoreRun;
+  return { ...rest, score_runs: withVideoIntroBonus(run, hasVideoIntro(rest)) } as T & {
     score_runs: Record<string, unknown> | null;
   };
 }
