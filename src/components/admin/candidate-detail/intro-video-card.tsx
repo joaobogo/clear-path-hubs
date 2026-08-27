@@ -91,6 +91,18 @@ export function IntroVideoCard({
         )}
       </form>
       {saved && (
+        <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-md bg-muted">
+          <iframe
+            src={saved.embedUrl}
+            title="Candidate video introduction"
+            allow="fullscreen; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        </div>
+      )}
+      {saved && (
         <a
           href={saved.url}
           target="_blank"
