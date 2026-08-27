@@ -375,7 +375,7 @@ export const listSilverMedalists = createServerFn({ method: "GET" })
         .select("candidate_profile_id, position_id, stage")
         .eq("organization_id", data.orgId)
         .in("candidate_profile_id", profileIds)
-        .in("stage", ACTIVE_MATCH_STAGES as unknown as string[]);
+        .in("stage", [...ACTIVE_MATCH_STAGES]);
       for (const m of ((liveMatches as AnyRow[]) ?? [])) {
         if (isActiveMatchStage(m.stage)) {
           activePairs.add(pairKey(String(m.candidate_profile_id), m.position_id ?? null));
