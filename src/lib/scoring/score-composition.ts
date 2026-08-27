@@ -177,13 +177,20 @@ export function buildScoreComposition(input: {
       ? Math.round(Number(input.displayedScore))
       : null;
   const displayedScore = published ?? totalPts;
+  const videoBonusPts =
+    input.videoBonusPts != null && Number.isFinite(Number(input.videoBonusPts))
+      ? Math.max(0, Math.round(Number(input.videoBonusPts)))
+      : 0;
+  const grandTotalPts = totalPts + videoBonusPts;
 
   return {
     components,
     exactTotalPts: Math.round(exactTotalPts * 10) / 10,
     totalPts,
+    videoBonusPts,
+    grandTotalPts,
     displayedScore,
-    reconciles: !incomplete && displayedScore === totalPts,
+    reconciles: !incomplete && displayedScore === grandTotalPts,
     incomplete,
 
   };
