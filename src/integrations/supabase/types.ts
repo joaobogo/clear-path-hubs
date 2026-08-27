@@ -1824,6 +1824,9 @@ export type Database = {
           expires_at: string | null
           id: string
           integrity_status: Database["public"]["Enums"]["integrity_status"]
+          intro_video_added_at: string | null
+          intro_video_added_by: string | null
+          intro_video_url: string | null
           is_test_record: boolean
           last_processing_trace_id: string | null
           legacy_source_id: string | null
@@ -1875,6 +1878,9 @@ export type Database = {
           expires_at?: string | null
           id?: string
           integrity_status?: Database["public"]["Enums"]["integrity_status"]
+          intro_video_added_at?: string | null
+          intro_video_added_by?: string | null
+          intro_video_url?: string | null
           is_test_record?: boolean
           last_processing_trace_id?: string | null
           legacy_source_id?: string | null
@@ -1926,6 +1932,9 @@ export type Database = {
           expires_at?: string | null
           id?: string
           integrity_status?: Database["public"]["Enums"]["integrity_status"]
+          intro_video_added_at?: string | null
+          intro_video_added_by?: string | null
+          intro_video_url?: string | null
           is_test_record?: boolean
           last_processing_trace_id?: string | null
           legacy_source_id?: string | null
