@@ -146,17 +146,93 @@ function QueueRowItem({
           <span>{waitingLabel(row.days_waiting)}</span>
         </span>
       </Link>
-      <span className="flex shrink-0 items-center gap-1">
-        <Button variant="ghost" size="sm" className="h-9 text-xs" onClick={onHandled}>
-          Done
-        </Button>
+      <span className="flex shrink-0 items-center gap-2">
+        {/* The real action is what the client came to do, so it carries the
+            weight. "Done" only hides the row, so it reads as a quiet link. */}
         <Link to={row.to as never} search={search as never} aria-label={row.action}>
-          <Button size="sm" variant="outline" className="h-9 gap-1 text-xs">
+          <Button size="sm" className="h-9 gap-1 text-xs">
             <span className="hidden sm:inline">{row.action}</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 px-2 text-xs font-normal text-muted-foreground underline-offset-4 hover:underline"
+          onClick={onHandled}
+        >
+          Done
+        </Button>
       </span>
+    </li>
+  );
+}
+
+/**
+ * A cluster of same-kind rows for one role, shown as a single line with the
+ * count and the longest wait. Opening it lists the individual people, each with
+ * its own action.
+ */
+function QueueClusterItem({
+  cluster,
+  search,
+  onHandled,
+}: {
+  cluster: QueueCluster;
+  search?: Record<string, string>;
+  onHandled: (key: string) => void;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const count = cluster.rows.length;
+  const lead = cluster.rows[0]!;
+
+  if (count === 1) {
+    return <QueueRowItem row={lead} search={search} onHandled={() => onHandled(lead.key)} />;
+  }
+
+  return (
+    <li className="px-4 py-3 sm:px-5">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+        <div className="min-w-0">
+          <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+            <span className="truncate text-[15px] font-semibold leading-snug">
+              {count} candidates are waiting on you
+            </span>
+            <span className="truncate text-sm text-muted-foreground">· {lead.role_title}</span>
+          </span>
+          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground sm:text-[13px]">
+            <span className="font-medium text-foreground">{cluster.type_label}</span>
+            <span aria-hidden="true">·</span>
+            <span className={cluster.overdue ? "font-medium taas-fg-warning" : undefined}>
+              Longest wait {waitingLabel(cluster.longest_wait).replace("Waiting ", "")}
+            </span>
+          </span>
+        </div>
+        <span className="flex shrink-0 items-center gap-2">
+          <Link to={lead.to as never} search={search as never} aria-label={lead.action}>
+            <Button size="sm" className="h-9 gap-1 text-xs">
+              <span className="hidden sm:inline">{lead.action}</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 px-2 text-xs font-normal text-muted-foreground underline-offset-4 hover:underline"
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? "Hide" : `Show all ${count}`}
+          </Button>
+        </span>
+      </div>
+      {open && (
+        <ul className="mt-2 divide-y rounded-lg border bg-muted/20">
+          {cluster.rows.map((r) => (
+            <QueueRowItem key={r.key} row={r} search={search} onHandled={() => onHandled(r.key)} />
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
