@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { plural, pluralWord } from "@/lib/format/plural";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import {
   STAGE_OPTIONS,
@@ -199,8 +200,13 @@ export function CandidatesFiltersPanel({
       {/* Result count · active filter chips · saved views */}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span className="text-xs text-muted-foreground" data-testid="candidates-result-count">
-          <span className="tabular-nums font-medium text-foreground">{resultCount ?? 0}</span>
-          {typeof totalCount === "number" ? ` of ${totalCount} candidates` : " candidates"}
+          {(() => {
+            const count = resultCount ?? 0;
+            if (typeof totalCount === "number" && totalCount !== count) {
+              return `${count} of ${totalCount} ${pluralWord(totalCount, "candidate")}`;
+            }
+            return plural(count, "candidate");
+          })()}
         </span>
         {activeFilters.map((f) => (
           <span
