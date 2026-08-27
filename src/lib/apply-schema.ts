@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isLoomLink, LOOM_LINK_HINT } from "@/lib/media/loom-link";
 
 export const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
 // CVs are PDF-only across UI, backend, storage and processing.
@@ -41,6 +42,15 @@ export const applySchema = z.object({
   portfolio_url: optionalUrl,
   linkedin_url: optionalUrl,
   website_url: optionalUrl,
+  // Optional Loom introduction. Genuinely optional: empty is fine, and a
+  // non-Loom link is rejected with a plain sentence rather than a block.
+  loom_url: z
+    .string()
+    .trim()
+    .max(500)
+    .optional()
+    .or(z.literal(""))
+    .refine((v) => !v || isLoomLink(v), `That is not a Loom link. ${LOOM_LINK_HINT}`),
   accommodation_request: z.string().trim().max(2000).optional().or(z.literal("")),
   answers: z.array(answerSchema).max(50).default([]),
   consent_terms: z.literal(true, {

@@ -528,6 +528,14 @@ export async function submitApplicationImpl(
       }
 
       // 9. Create candidate_match (unique on application_id).
+      // A Loom link in the application becomes the match's intro video. The
+      // schema already rejected non-Loom input; canonicalise before storing so
+      // the row-level CHECK (https://www.loom.com/share/<id>) always passes.
+      let introVideoUrl: string | null = null;
+      if (data.loom_url) {
+        const { parseLoomLink } = await import("./media/loom-link");
+        introVideoUrl = parseLoomLink(data.loom_url)?.url ?? null;
+      }
       const { data: matchRow, error: cmErr } = await supabaseAdmin
         .from("candidate_matches")
         .insert({
@@ -535,6 +543,9 @@ export async function submitApplicationImpl(
           candidate_profile_id: candidateProfileId,
           position_id: data.position_id,
           organization_id: pos.organization_id,
+          intro_video_url: introVideoUrl,
+          intro_video_added_by: introVideoUrl ? authUserId : null,
+          intro_video_added_at: introVideoUrl ? new Date().toISOString() : null,
           stage: isDisqualified ? "not_moving_forward" : "new",
           admin_status: isDisqualified ? "rejected" : "pending",
           client_visibility: "hidden",
