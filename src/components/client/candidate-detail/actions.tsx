@@ -95,10 +95,8 @@ export function ActionArea({
   return (
     <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
       <div className="mb-3 flex items-center justify-between gap-2">
+        {/* The stage is named once, as the chip beside the candidate's name. */}
         <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-foreground/90">Stage actions</h2>
-        <Badge variant="outline" className="tabular-nums">
-          {clientStageLabel(stage)}
-        </Badge>
       </div>
       {stage === "hired" ? (
         <p className="text-sm text-muted-foreground">Candidate marked as hired. 🎉</p>

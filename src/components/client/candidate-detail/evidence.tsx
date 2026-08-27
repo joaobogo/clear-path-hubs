@@ -219,13 +219,12 @@ export const FitHero = memo(function FitHero({
   const fit = candidate.fit;
   // Once a candidate is hired or no longer moving forward, a recommendation to
   // interview is stale advice — the decision is already made.
+  // The stage is stated once, as the chip beside the candidate's name. A decided
+  // candidate therefore shows no recommendation line here rather than repeating
+  // it, and stale advice ("interview them") is never shown after a decision.
   const decided =
     candidate.stage === "hired" || candidate.stage === "not_moving_forward";
-  const recommendation = decided
-    ? candidate.stage === "hired"
-      ? "Hired — no further action needed."
-      : "No longer moving forward."
-    : fit.recommendation;
+  const recommendation = decided ? null : fit.recommendation;
   const ring = accentToRing(fit.accent);
   const bg = accentToSoftBg(fit.accent);
   const dashArray = 251.2; // 2π·40
@@ -258,18 +257,22 @@ export const FitHero = memo(function FitHero({
               <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
                 {fit.headline}
               </h2>
-              <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
-                {recommendation}
-              </p>
+              {recommendation && (
+                <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
+                  {recommendation}
+                </p>
+              )}
             </div>
           ) : (
             <>
               <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
                 {fit.headline}
               </h2>
-              <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
-                {recommendation}
-              </p>
+              {recommendation && (
+                <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
+                  {recommendation}
+                </p>
+              )}
             </>
           )}
           {(() => {
@@ -615,15 +618,7 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
               />
             )}
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">{counts.total} requirements</span>
-            {" — "}
-            {counts.met} fully met · {counts.partial} partly evidenced · {counts.unknown} not evidenced
-          </p>
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Direct quotes on record: {counts.quoted} of {counts.total}
-            {counts.partial > 0 && " — partial rows are backed by related signals"}
-          </p>
+          {/* The coverage figures are stated once, on the fit card above. */}
           <Separator className="mt-4" />
         </div>
       )}
