@@ -433,7 +433,7 @@ export const businessRulesSchema = z
     }),
     packages: z.array(packageSchema).min(1),
     subscriptions: z.array(subscriptionSchema).min(1),
-    annualDiscountLabel: z.string().min(1),
+    discountNote: z.string().min(1),
     scoring: scoringSchema,
     ctas: z.record(ctaKeySchema, z.object({
       label: z.string().min(1),
