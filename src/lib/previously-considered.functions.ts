@@ -12,6 +12,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { reasonLabel } from "@/lib/client-decision-reasons";
 import {
+  ACTIVE_MATCH_STAGES,
+  isActiveMatchStage,
+  pairKey,
+} from "@/lib/talent/active-stage";
+import {
   buildPreviouslyConsidered,
   type ConsideredInput,
   type ConsideredRow,
