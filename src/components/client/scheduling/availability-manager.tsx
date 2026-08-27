@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { zoneDisplay } from "@/lib/time/zone-label";
 import {
   getAvailabilityWindows,
   saveAvailabilityWindows,
@@ -130,7 +131,7 @@ export function AvailabilityManager({
                 ? "Loading your saved windows…"
                 : saved.length === 0
                   ? "Set your windows once — candidates then pick from them, no back-and-forth."
-                  : `Candidates choose from these windows (${query.data?.timezone ?? "UTC"}).`}
+                  : `Candidates choose from these windows (${zoneDisplay(query.data?.timezone ?? "UTC")}).`}
           </p>
 
           {saved.length > 0 ? (

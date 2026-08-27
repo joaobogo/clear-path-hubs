@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import { toast } from "sonner";
+import { zoneDisplay } from "@/lib/time/zone-label";
 import {
   BadgeCheck,
   Briefcase,
@@ -248,7 +249,7 @@ export const ProfilePanel = memo(function ProfilePanel({
     ["Email", c.email],
     ["Phone", c.phone],
     ["Location", c.location],
-    ["Timezone", c.timezone],
+    ["Timezone", c.timezone ? zoneDisplay(c.timezone) : null],
     ["Availability", c.availability],
     ["Work authorisation", candidate.work_authorization],
     ["Years of experience", c.years_experience != null ? `${c.years_experience}` : null],
@@ -349,7 +350,7 @@ export const AvailabilityPanel = memo(function AvailabilityPanel({
           Availability
         </div>
         <div className="mt-1 text-sm font-medium">{av ?? "Not specified"}</div>
-        {tz && <div className="text-xs text-muted-foreground">Timezone {tz}</div>}
+        {tz && <div className="text-xs text-muted-foreground">Timezone {zoneDisplay(tz)}</div>}
       </div>
     </SectionCard>
   );

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { CvPreviewDialog } from "@/components/cv-preview-dialog";
+import { zoneDisplay } from "@/lib/time/zone-label";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
@@ -227,7 +228,9 @@ export function ContactBlock({
         ) : null,
     },
     { label: "Location", value: c.location ?? null },
-    { label: "Timezone", value: c.timezone ?? null },
+    // zoneDisplay, not the raw column: "Europe/Lisbon" is a database row, and
+    // a client reading it starts wondering what else on the page is unfinished.
+    { label: "Timezone", value: c.timezone ? zoneDisplay(c.timezone) : null },
     { label: "Work authorisation", value: candidate.work_authorization ?? null },
     {
       label: "Languages",

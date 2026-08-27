@@ -24,6 +24,7 @@ import {
 import { humanizeConcernSentence } from "@/lib/client/validation-list";
 import { verifiedStrengths } from "@/lib/client/score-breakdown";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
+import { zoneDisplay } from "@/lib/time/zone-label";
 
 
 
@@ -362,7 +363,9 @@ export function CompareSheet({
                     )}
                   </div>
                   {c.candidate.timezone && (
-                    <div className="text-muted-foreground">TZ {c.candidate.timezone}</div>
+                    <div className="text-muted-foreground">
+                      TZ {zoneDisplay(c.candidate.timezone)}
+                    </div>
                   )}
                   <div className="text-muted-foreground">
                     Auth: {c.work_authorization ?? "Not provided"}
