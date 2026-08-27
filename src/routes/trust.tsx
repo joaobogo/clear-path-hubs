@@ -75,11 +75,16 @@ const PRICING_LINES = [
     label: PACKAGE_30.capacityLabel,
     price: PACKAGE_30.totalDisplay,
     scope: PACKAGE_30.capacityLabel,
-    detail: "The largest published package. Thirty positions is the maximum.",
+    detail: "More capacity again, still one total.",
   },
-
   {
-    label: "More than 30 positions",
+    label: PACKAGE_100.capacityLabel,
+    price: PACKAGE_100.totalDisplay,
+    scope: PACKAGE_100.capacityLabel,
+    detail: `The largest published package. ${MAX_POSITIONS} positions is the maximum.`,
+  },
+  {
+    label: ABOVE_MAX_ROLES_LABEL,
     price: ABOVE_MAX_DISPLAY,
     scope: ABOVE_MAX_ROLES_LABEL,
     detail: "No published price — we scope it with you.",
