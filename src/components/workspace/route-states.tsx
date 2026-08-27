@@ -117,16 +117,23 @@ export function makeRouteNotFoundComponent(tone: AudienceTone) {
     const identifier = Object.values(params ?? {}).find(
       (value) => typeof value === "string" && value.length > 0,
     );
+
+    // Unknown routes → neutral "page not found". Missing records (URL has an
+    // identifier) → "no longer available" so the copy matches reality.
+    const description =
+      tone === "public"
+        ? normalized.description
+        : identifier
+          ? tone === "client"
+            ? "This item is no longer available in your workspace."
+            : normalized.description
+          : "We couldn't find that page.";
+
     return (
       <div className="p-6">
         <ErrorState
           title={normalized.title}
-          description={
-            tone === "public" || identifier
-              ? normalized.description
-              : "We couldn't find that page."
-          }
-
+          description={description}
           action={<HomeLink tone={tone} search={linkSearch} />}
         />
       </div>
