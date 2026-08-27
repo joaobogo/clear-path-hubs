@@ -44,7 +44,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FormShell } from "@/components/marketing/form-shell";
-import { TransparencyPanel } from "@/components/candidate/transparency-panel";
+
 import { ReturningApplicantCard } from "@/components/candidate/returning-applicant-card";
 import type { ExistingApplicationSummary } from "@/lib/candidate/existing-application.server";
 import { Loader2 } from "lucide-react";
@@ -1623,12 +1623,6 @@ function ApplyPage() {
                 </ul>
               </div>
 
-              <TransparencyPanel
-                company={pos.organization_name}
-                title="Before you send it"
-                intro="Software helps read your CV; a person reviews your application. Here's the detail."
-                defaultOpen="automation"
-              />
 
 
 
@@ -1873,6 +1867,10 @@ function ApplyPage() {
             )}
 
           </div>
+          <p className="text-xs text-muted-foreground">
+            Your information stays inside TaaSFlow, part of Flow Group Ventures,
+            and is never sold or passed to third parties.
+          </p>
           <p aria-live="assertive" className="sr-only">
             {submitting ? "Sending your application. Please wait." : ""}
           </p>
