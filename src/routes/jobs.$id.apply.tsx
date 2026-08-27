@@ -1497,15 +1497,13 @@ function ApplyPage() {
                     Introduce yourself on video{" "}
                     <span className="font-normal text-muted-foreground">(optional)</span>
                   </Label>
+                  {/* Copy agreed with Fabiana and Chris: shortened, and no longer
+                      explains the scoring model. "(optional)" already sits in the
+                      label, so the old "skip it if you'd rather" line was cut. */}
                   <p id="loom_url-help" className="mt-1 text-xs text-muted-foreground">
-                    Record a one-to-five-minute Loom in English telling us who you are and what
-                    you do best, then paste the share link below. It is worth doing: a video
-                    adds 10 points to your score. Your score is built from real evidence and
-                    reviewed by specialist recruiters who know your field — never by software
-                    alone — and clients generally shortlist from the strongest-scoring
-                    candidates, so those points can be the difference between being read and
-                    being passed over. Skip it if you'd rather — it never blocks your
-                    application.
+                    Record a 1–5 minute Loom in English introducing yourself and what you do
+                    best, then paste the link below. A video adds 10 points to your profile and
+                    helps recruiters and clients get to know you even better.
                   </p>
                   <Input
                     id="loom_url"
