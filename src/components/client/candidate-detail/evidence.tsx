@@ -9,7 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { humanizeSource, renderQuote } from "@/lib/evidence/quote-hygiene";
+import { presentEvidenceList } from "@/lib/evidence/evidence-presentation";
 
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";

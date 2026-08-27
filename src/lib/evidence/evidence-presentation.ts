@@ -19,7 +19,7 @@ export type RawEvidenceItem = {
   label?: string;
   snippet: string;
   source?: string | null;
-  location?: unknown;
+  location?: import("@/lib/client-fit-presentation").EvidenceLocation;
 };
 
 export type PresentedEvidenceItem = {
