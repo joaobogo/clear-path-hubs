@@ -9,6 +9,7 @@ import {
   type PublishBlocker,
   type PublishGateInput,
 } from "./publish-gate";
+import { isQaFixtureTitle } from "./client/test-record-filter";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -147,8 +148,18 @@ export async function loadPublishGateQueue(
     };
   });
 
-  // Blocked roles first, then longest-waiting.
-  rows.sort((a, b) => Number(a.can_publish) - Number(b.can_publish));
+  // Second line of defence, the same rule the client surfaces already apply.
+  // The query above excludes organisations flagged is_test_record, but fixtures
+  // seeded under an unflagged demo org — "[QA test — ignore] QA Draft Role" —
+  // survived it and filled the publish desk with roles nobody intends to
+  // publish. The marker is in the title, so use it, unless the admin has opted
+  // into test records.
+  const visible = (opts.includeTest ?? false)
+    ? rows
+    : rows.filter((r) => !isQaFixtureTitle(r.title));
 
-  return { rows, total_unpublished: rows.length };
+  // Blocked roles first, then longest-waiting.
+  visible.sort((a, b) => Number(a.can_publish) - Number(b.can_publish));
+
+  return { rows: visible, total_unpublished: visible.length };
 }
