@@ -142,7 +142,7 @@ function PricingPage() {
           <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/80">
             {mode === "oneoff"
               ? "A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now."
-              : "Continuous capacity, billed monthly — the same rates as one-off, one position up to 30."}
+              : `Continuous capacity, billed monthly — the same rates as one-off, one position up to ${MAX_POSITIONS}.`}
           </p>
         </PublicPage>
       </PublicSection>

@@ -49,16 +49,14 @@ What the service is and who it is for.
 
 ## Pricing — https://taasflow.com/pricing
 
-Pilot, packages and monthly subscription tiers.
+The exact total for any position count from 1 to 100.
 
 - Software-enabled recruiting delivered as a subscription: ATS, recruiting agents, multichannel outreach and curated talent data for one flat monthly fee per active role, with no placement fees.
 - One platform, Talent Management that scales.
 - A hiring team planning roles together in a light-filled meeting room
 - Evidence-backed scoring on every candidate
 - A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now.
-- Continuous capacity, billed monthly — Bronze through Enterprise.
-- Tell us about the role. We come back with an exact price.
-- Complete the guided intake or book a short call — no obligation, no placement fees, no lock-in on the conversation.
+- The total you see is the total on your invoice.
 - What each subscription actually includes each week.
 - Overages, holds, cancellation, and enterprise terms.
 - Volume, procurement, and MSA-ready terms.
@@ -84,7 +82,7 @@ Intake, sourcing, screening, shortlist, hire.
 - LinkedIn, sponsored ads, university partnerships, email marketing, web-scale intent scanning, billboards, radio, cold calling, job boards, communities, staffing partners, executive recruiters, inbound applications — every source feeds the same evidence-first scoring bar.
 - Digital, direct, AI-driven, inbound, offline — five families of channels working in parallel per role
 - AI intent scanning surfaces high-intent passive candidates other tools never see
-- Named-target outreach + a 20,000-strong talent network + silver-medalist rehydration
+- Named-target outreach + a 20,000-strong talent network + past finalists brought back in
 - Universities, staffing partners, referrals, events, PR, radio and OOH when a role warrants it
 - Whatever the channel — LinkedIn or a billboard — the candidate is scored on the same rubric
 - Every score has a quote. Every quote has a source.
@@ -272,7 +270,7 @@ Which engagement fits a given hiring situation.
 
 - Solutions — AI Hiring Intelligence for every hiring need
 - Pilot a single hire, scale volume hiring, run enterprise hiring or hire globally. One platform, one monthly fee, ranked candidates in days.
-- Run 3–15 active roles at a flat monthly rate. Unlimited hires per subscription. Your workspace tracks every requisition in one place.
+- Pick the package that covers your open roles and pay one monthly total. Hires within that capacity are included. Your workspace tracks every requisition in one place.
 - Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — we integrate.
 - 50+ countries covered. Timezone-aware shortlisting, work-authorisation screening, and remote-first evidence.
 - 5-step consultation captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.
@@ -286,9 +284,11 @@ Security, procurement, seats and audit requirements for larger programmes.
 
 - The AI Hiring Intelligence Platform for teams hiring at scale: ranked, evidence-backed shortlists, governance controls and audit trails in one workspace.
 - Recruiting infrastructure for teams running many roles at once: recruiting agents, multichannel outreach, evidence-backed scoring, governance controls and audit trails in one workspace.
-- Two or three functions hiring in parallel with shared standards.
+- One or two functions hiring in parallel with shared standards.
 - Agent capacity plus a named account lead
 - Multi-business-unit hiring with executive reporting.
+- Twice-weekly delivery across the portfolio
+- Portfolio hiring across teams in one package.
 - Continuous hiring where volume shifts by quarter.
 - No search starts until must-haves, nice-to-haves and weightings are signed off in writing at intake.
 - Each score line carries the source text it came from, so a hiring committee can check the reasoning.
@@ -319,11 +319,9 @@ Security, procurement, seats and audit requirements for larger programmes.
 - Business units, teams, and hiring managers modeled explicitly so requisitions, permissions, and reporting line up with how you actually operate.
 - Dedicated agent capacity per role family or business unit. Standards stay consistent as volume changes and new requisitions open.
 - Every open role is a separate pipeline inside the same Client workspace — no context switching between tools per requisition.
-- Requisition portfolio view for TA leadership
 - Role-scoped pipelines for hiring managers
 - Business-unit rollups for people partners
 - Role-based access so people see the pipelines they own
-- Role-specific scoring aligned to your intake
 
 ## Integrations — https://taasflow.com/integrations
 
@@ -352,13 +350,12 @@ Access control, data handling and hosting posture.
 Commitments on data, screening and how decisions are recorded.
 
 - The commercial trust pack for TaaSFlow. How pricing works, what you keep, how scoring works, candidate privacy, and where the line runs between TaaSFlow and your team.
-- Every candidate profile, evidence, and score you have seen — permanently.
 - Your role blueprints, rubrics, screening questions, and scoring logic.
-- Talent pools, silver medalist memory, and rediscovery data.
-- Every decision, comment, and hire record — with audit trail.
+- Talent pools, previously shortlisted candidates, and rediscovery data.
+- Every decision, comment, and hire record — with a full history of who changed what.
 - Exportable shortlists and share links for internal stakeholders.
 - No per-seat charges for internal reviewers.
-- No extra fees for rediscovery or silver medalist hires.
+- No extra fees for rediscovery or hiring someone you shortlisted earlier.
 - Every score points at a specific line in the CV, an answer to a screening question, or a piece of enrichment data. If we cannot cite it, we do not score it.
 - The scoring rubric is generated from your role blueprint — must-haves, preferred criteria, dealbreakers, and screening answers. It is visible to you before any candidate is scored.
 - Once a score is generated it is written to an append-only record with the model version and the evidence used. Nobody can rewrite history.
@@ -368,7 +365,7 @@ Commitments on data, screening and how decisions are recorded.
 - CVs are stored in a private bucket with per-organization access, encrypted at rest.
 - External stakeholder share links are token-gated, scoped to the shortlist, and revocable.
 - PII is never used to train third-party models. Model calls are per-request, stateless, and logged for audit.
-- Consent and legal basis are recorded per candidate — with an audit trail on every access.
+- Consent and legal basis are recorded per candidate — with a full history of every access.
 - We help translate the ask into a structured brief and rubric.
 - You approve the brief, the rubric, and the dealbreakers before sourcing starts.
 - We run multi-channel sourcing and outreach with delivery health tracking.
@@ -377,7 +374,7 @@ Commitments on data, screening and how decisions are recorded.
 - You review, override, and decide. Every override is captured with a reason.
 - We deliver a ranked shortlist with evidence and provenance.
 - You decide who moves forward. We never make hire/no-hire calls for you.
-- We host the system of record and keep the audit trail complete.
+- We host the system of record and keep the full change history complete.
 - You own the data. Export, delete, or migrate at any time.
 - What happens if we stop working with TaaSFlow?
 - No. Pricing is package-based and published above. Higher volume gets a lower cost per role. Enterprise plans are custom but never percentage-based.
@@ -391,6 +388,7 @@ Commitments on data, screening and how decisions are recorded.
 - In an isolated, per-organization workspace with row-level security. Encrypted at rest. Access is scoped to your team and, when granted, our staff — every read is logged.
 - Per-organization workspace with row-level security on every table.
 - Least-privilege roles: platform admin, client admin, editor, viewer. All access audited.
+- TLS in transit. Encrypted at rest. Private storage for CVs and evidence.
 
 ## Global talent — https://taasflow.com/global-talent
 

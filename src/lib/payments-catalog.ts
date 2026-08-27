@@ -19,7 +19,7 @@ import {
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
 
-/** The published packages, in order: pilot, up to 10, up to 20, up to 30. */
+/** The published packages, in ascending capacity order, from pricing-core. */
 export const CATALOGUE_PACKAGES = PACKAGES;
 
 export const POSITION_PUBLISH_PRICE_ID = "oneoff_pkg_pilot";

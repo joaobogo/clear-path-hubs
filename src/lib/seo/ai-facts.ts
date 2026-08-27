@@ -44,7 +44,13 @@ export const AI_FACTS = {
    */
   pages: [
     { path: "/", title: "TaaSFlow — subscription recruiting", note: "What the service is and who it is for." },
-    { path: "/pricing", title: "Pricing", note: "The exact total for any position count from 1 to 30." },
+    // Derived, never typed: this said "1 to 30" after the maximum moved to
+    // 100, and it is one of the facts an LLM quotes back about our pricing.
+    {
+      path: "/pricing",
+      title: "Pricing",
+      note: `The exact total for any position count from 1 to ${MAX_POSITIONS}.`,
+    },
     { path: "/how-it-works", title: "How it works", note: "Intake, sourcing, screening, shortlist, hire." },
     { path: "/platform", title: "Platform", note: "The ATS and workspace clients work in." },
     { path: "/case-studies", title: "Case studies", note: "Engagement outcomes. Client names are withheld unless a client approved attribution." },

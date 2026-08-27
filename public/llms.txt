@@ -3,14 +3,14 @@
 > TaaSFlow is a subscription recruiting service: an applicant tracking system, sourcing and candidate outreach in one monthly subscription, with AI-assisted screening and a human recruiter reviewing every shortlist before a client sees it.
 
 ## Commercial model
-- Pilot: $399 one-time, 1 active role. One pilot per company — it is not a recurring plan.
-- Subscription: flat monthly fee from $7.0K per month. Save 10% with annual commit.
+- Pilot: $699 one-time, 1 position. One pilot per company — it is not a recurring plan.
+- Packages, not positions: Up to 10 positions — $8,000; Up to 20 positions — $15,200; Up to 30 positions — $21,600; Up to 40 positions — $27,200; Up to 100 positions — $64,000. 100 positions is the maximum; above that no price is published and the next step is to talk to us. One-off and subscription use the same packages at the same monthly prices; paying twelve months up front takes 10% off the annual total.
 - No placement fees and no percentage-of-salary commission on hires.
 - 5-day turnaround on a shortlist for a briefed role.
 
 ## Canonical pages
 - [TaaSFlow — subscription recruiting](https://taasflow.com/): What the service is and who it is for.
-- [Pricing](https://taasflow.com/pricing): Pilot, packages and monthly subscription tiers.
+- [Pricing](https://taasflow.com/pricing): The exact total for any position count from 1 to 100.
 - [How it works](https://taasflow.com/how-it-works): Intake, sourcing, screening, shortlist, hire.
 - [Platform](https://taasflow.com/platform): The ATS and workspace clients work in.
 - [Case studies](https://taasflow.com/case-studies): Engagement outcomes. Client names are withheld unless a client approved attribution.
