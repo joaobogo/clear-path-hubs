@@ -138,7 +138,7 @@ function ItemActions({
     mutationFn: () => retry({ data: { positionId: item.role!.id } }),
     onSuccess: (res: { ok: boolean; reason?: string | null }) => {
       if (res.ok) {
-        toast.success("Running again", { description: "We restarted the blueprint." });
+        toast.success("Running again", { description: "We restarted the role brief." });
       } else {
         toast.message(
           res.reason === "already_running"

@@ -81,7 +81,7 @@ function derivedSourcingChannels(position: AnyRow): { label: string; note: strin
   const seniority = String(position.seniority ?? "").toLowerCase();
   const workModel = String(position.work_model ?? "").toLowerCase();
   const base = [
-    { label: "TaaSFlow Talent Memory", note: "Prior vetted candidates matched to this rubric" },
+    { label: "TaaSFlow Talent Memory", note: "Prior vetted candidates matched to this brief" },
     { label: "LinkedIn direct outreach", note: "Targeted by must-have coverage" },
     { label: "Referral network", note: "Warm intros from prior hires" },
   ];
@@ -99,17 +99,17 @@ function derivedSourcingChannels(position: AnyRow): { label: string; note: strin
 function humanizeBlueprintAction(action: string): string {
   const raw = (action ?? "").replace(/[._]/g, " ").toLowerCase().trim();
   const map: Record<string, string> = {
-    "position submit": "Blueprint submitted for review",
+    "position submit": "Role brief submitted for review",
     "position status update": "Status changed",
-    "position approve": "Blueprint approved",
-    "position approved": "Blueprint approved",
+    "position approve": "Role brief approved",
+    "position approved": "Role brief approved",
     "position published": "Position published",
-    "position update": "Blueprint edited",
+    "position update": "Role brief edited",
     "position closed": "Position closed",
     "position archived": "Position archived",
     "position create": "Role created in your workspace",
     "position start review": "Review started",
-    "position edit wizard": "Blueprint edited",
+    "position edit wizard": "Role brief edited",
     "position requisition updated": "Requisition updated",
     "position owner assigned": "Owner assigned",
     "position backup owner assigned": "Backup owner assigned",
@@ -167,7 +167,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
 
   return (
     <section
-      aria-label="Role blueprint"
+      aria-label="Role brief"
       className="rounded-xl border bg-card overflow-hidden"
       data-qa="role-blueprint"
     >
@@ -177,7 +177,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-muted-foreground" />
-            <h2 className="text-base font-semibold">Role blueprint</h2>
+            <h2 className="text-base font-semibold">Role brief</h2>
             {approved ? (
               <Badge variant="secondary" className="gap-1">
                 <CheckCircle2 className="h-3 w-3" /> Approved
@@ -187,7 +187,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
             )}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Full brief, scoring rubric, approval history and change log.
+            Full brief, scoring weights, approval history and change log.
           </p>
         </div>
         <div className="flex items-center gap-2 text-right text-[11px] text-muted-foreground">
@@ -266,7 +266,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
 
         {/* Scoring rubric preview — the same weighting candidate pages show */}
         <div>
-          <SectionLabel>Scoring rubric preview</SectionLabel>
+          <SectionLabel>Scoring weights</SectionLabel>
           <p className="text-xs text-muted-foreground mb-2">
             Every candidate score you see is computed against this weighting. Evidence in each candidate
             report cites the specific line item below.
@@ -385,7 +385,7 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
         </div>
 
         <div className="rounded-lg border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
-          Anchored to this blueprint: every candidate score, shortlist call, and AI recommendation in this
+          Anchored to this brief: every candidate score, shortlist call, and AI recommendation in this
           workspace references the approved brief shown above. Requesting a change opens a new revision —
           earlier assessments stay tied to the brief they were made against.
         </div>
@@ -492,7 +492,7 @@ function RubricRow({
         <div className="text-xs text-muted-foreground">
           {count == null
             ? "Screening answers against your brief"
-            : `${count} ${count === 1 ? "line" : "lines"} in blueprint`}
+            : `${count} ${count === 1 ? "line" : "lines"} in brief`}
         </div>
       </div>
       <div className="w-32">
