@@ -290,6 +290,16 @@ function ConfirmationPage() {
           )}
         </CardContent>
       </Card>
+
+      {intake_id && status && (
+        <div className="mt-4">
+          <KickoffBookingCard
+            intakeId={intake_id}
+            positionId={status.positionId}
+            roleTitle={status.roleTitle}
+          />
+        </div>
+      )}
     </FormShell>
   );
 }
