@@ -151,8 +151,8 @@ export function canonicalLocation(
   const rowCountry = (row?.country ?? "").trim();
 
   let country: string | null =
-    (rowCode ? COUNTRY_NAMES[rowCode] ?? null : null) ??
-    (rowCountry ? countryFromToken(rowCountry) ?? rowCountry : null);
+    (rowCode ? (COUNTRY_NAMES[rowCode] ?? null) : null) ||
+    (rowCountry ? (countryFromToken(rowCountry) ?? rowCountry) : null);
   if (!country) {
     for (const part of parts) {
       const resolved = countryFromToken(part);
