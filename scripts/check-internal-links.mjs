@@ -78,6 +78,8 @@ function walkTop(rel) {
 const broken = new Map(); // slug -> files
 for (const file of files) {
   if (file.endsWith("routeTree.gen.ts")) continue;
+  // Test fixtures use made-up slugs on purpose.
+  if (/\.(test|spec)\.tsx?$/.test(file)) continue;
   const src = read(file);
   const selfSlug = file.startsWith(blogDir)
     ? file.slice(blogDir.length + 1).replace(/\.json$/, "")
