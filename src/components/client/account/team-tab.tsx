@@ -174,14 +174,26 @@ export function TeamTab() {
  enabled: !!orgId && !!isAdmin,
  });
 
-  const visible = useMemo(
-    () => (rows as AnyRow[]).filter((r) => {
-      if (r.status === "removed") return false;
-      const email = r.profiles?.email?.toLowerCase() ?? "";
-      return !email.endsWith("@taasflow.com");
-    }),
-    [rows],
-  );
+  // The roster lists every person the seat reader counts: seat-holding
+  // memberships of this workspace, including the signed-in user. Email domains
+  // are never inspected — that filter hid real members while the seat figure
+  // still counted them. Only platform staff (who hold no client seat) and
+  // removed memberships are left out. Pending invitations stay in the list and
+  // are labelled by their own status badge.
+  const visible = useMemo(() => {
+    const staffRoles = new Set(["platform_admin", "operations"]);
+    const statusRank: Record<string, number> = { active: 0, invited: 1, suspended: 2 };
+    return (rows as AnyRow[])
+      .filter((r) => r.status !== "removed" && !staffRoles.has(String(r.role ?? "")))
+      .sort(
+        (a, b) =>
+          (statusRank[String(a.status)] ?? 3) - (statusRank[String(b.status)] ?? 3) ||
+          String(a.profiles?.full_name ?? a.profiles?.email ?? "").localeCompare(
+            String(b.profiles?.full_name ?? b.profiles?.email ?? ""),
+          ),
+      );
+  }, [rows]);
+
  const counts = useMemo(() => {
   const c = { total: 0, admin: 0, invited: 0, active: 0 };
   for (const r of visible) {
@@ -360,12 +372,12 @@ export function TeamTab() {
  </div>
  ))}
  </div>
- ) : visible.length <= 1 ? (
+ ) : visible.length === 0 ? (
  <div className="p-10 text-center">
  <div className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-primary/10 text-primary">
  <Users className="h-5 w-5" />
  </div>
- <div className="mt-3 text-base font-semibold">Just you so far</div>
+ <div className="mt-3 text-base font-semibold">No one has a seat yet</div>
  <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
  Add hiring managers to run roles and interviewers to give feedback — each only gets
  what their role needs.
@@ -375,22 +387,8 @@ export function TeamTab() {
  <InviteDialog orgId={orgId} seatsFull={seatsFull} usage={seatUsage} />
  </div>
  )}
- {visible.length === 1 && (
- <ul className="mt-6 divide-y border-t text-left">
-  {visible.map((m: AnyRow) => (
-  <MemberRow
-  key={m.user_id}
-  orgId={orgId!}
-  member={m}
-  canMutate={!!canMutate}
-  selfId={selfId}
-  seatsFull={seatsFull}
-  usage={seatUsage}
-  />
-  ))}
-  </ul>
-  )}
   </div>
+
   ) : (
   <ul className="divide-y">
   {visible.map((m: AnyRow) => (
