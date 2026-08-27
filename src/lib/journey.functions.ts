@@ -167,10 +167,10 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
       candidateMatchId
         ? supabase
             .from("audit_events")
-            .select("action, occurred_at, after_state")
+            .select("action, created_at, after_state")
             .eq("entity_id", candidateMatchId)
             .eq("entity_type", "candidate_match")
-            .order("occurred_at", { ascending: true })
+            .order("created_at", { ascending: true })
         : Promise.resolve({ data: [] as Any[] }),
     ]);
 
@@ -272,7 +272,7 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
     // P-017: Derive journeys from real audit events where available
     const auditMap = new Map<string, string>();
     for (const a of (audits ?? []) as Any[]) {
-      auditMap.set(a.action, a.occurred_at);
+      auditMap.set(a.action, a.created_at);
     }
 
     // First stage move of a given kind, from the stage history table.

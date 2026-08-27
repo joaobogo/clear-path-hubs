@@ -28,8 +28,6 @@ export type {
 import type { QueueClaim, QueueItem, QueueOwner, QueueRef, WorkQueue } from "./admin-ops-types";
 import { INTAKE_AGING_TIER_DAYS } from "@/lib/intake-aging";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
-import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
-import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { deliveryReason } from "./notifications/delivery-reasons";
 import { qualifiesAsHire } from "./offer-hire";
 import { publishedRunEmbed, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus } from "@/lib/scoring/published-score";
@@ -178,18 +176,11 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       s
         .from("candidate_matches")
         .select(
-          "id,score_stale,score_stale_at,score_stale_reasons,scored_at,scored_engine_version,scored_calibration_version,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name))",
+          "id,score_stale,score_stale_at,score_stale_reasons,current_score_run_id,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name))",
           { count: "exact" },
         )
-        .not("scored_at", "is", null)
-        .or(
-          [
-            "score_stale.eq.true",
-            `scored_engine_version.neq.${ENGINE_VERSION}`,
-            `scored_engine_version.is.null`,
-            `scored_calibration_version.neq.${CALIBRATION_VERSION}`,
-          ].join(","),
-        )
+        .not("current_score_run_id", "is", null)
+        .eq("score_stale", true)
         .order("score_stale_at", { ascending: true })
         .limit(PREVIEW_LIMIT),
       scope,

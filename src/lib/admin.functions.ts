@@ -53,7 +53,7 @@ export async function writeAudit(opts: {
     .eq("action", opts.action)
     .eq("entity_type", opts.entity_type)
     .eq("entity_id", opts.entity_id)
-    .gte("occurred_at", oneSecondAgo)
+    .gte("created_at", oneSecondAgo)
     .limit(1)
     .maybeSingle();
 
