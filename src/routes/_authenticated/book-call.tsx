@@ -1,19 +1,17 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
-import { CalendarClock, Check, ExternalLink, Loader2, PhoneCall } from "lucide-react";
+import { CalendarClock, Check, Loader2, PhoneCall } from "lucide-react";
 import {
   cancelDiscoveryCall,
   confirmDiscoveryCall,
   getBookingState,
   requestDiscoveryCall,
 } from "@/lib/booking.functions";
-import { DEFAULT_MEETING_TYPE, MEETING_TYPES } from "@/config/booking";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
-import { mountCalendlyInline, onCalendlyEvent } from "@/lib/calendly";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,8 +43,6 @@ export const Route = createFileRoute("/_authenticated/book-call")({
   component: BookCallPage,
 });
 
-const CALENDLY_BOOKING_URL = MEETING_TYPES[DEFAULT_MEETING_TYPE].schedulingUrl;
-
 function localTimeZone() {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
@@ -72,9 +68,6 @@ function BookCallPage() {
   const queryClient = useQueryClient();
   const timeZone = useMemo(() => localTimeZone(), []);
   const [notes, setNotes] = useState("");
-  const [embedState, setEmbedState] = useState<"idle" | "ready" | "unavailable">("idle");
-  const embedRef = useRef<HTMLDivElement | null>(null);
-  const callIdRef = useRef<string | null>(null);
 
   const loadState = useServerFn(getBookingState);
   const request = useServerFn(requestDiscoveryCall);
@@ -86,36 +79,11 @@ function BookCallPage() {
     queryFn: () => loadState({ data: { positionId: position } }),
   });
 
-  // Calendly confirms the chosen time by postMessage. Only then is a call real,
-  // so only then do we mark it booked and leave the page.
-  const handleScheduled = useCallback(async () => {
-    const callId = callIdRef.current;
-    if (callId) {
-      try {
-        await confirm({ data: { callId } });
-      } catch {
-        /* the requested row already exists; status catch-up is not worth blocking on */
-      }
-    }
-    toast.success("Time confirmed — check your email for the invite. Your workspace is open.");
-    await queryClient.invalidateQueries({ queryKey: ["booking-state"] });
-    navigate({ to: "/client" });
-  }, [confirm, navigate, queryClient]);
-
-  useEffect(
-    () =>
-      onCalendlyEvent((name) => {
-        if (name === "calendly.event_scheduled") void handleScheduled();
-      }),
-    [handleScheduled],
-  );
-
   const openScheduler = useMutation({
     mutationFn: async () => {
       const result = await request({
         data: { positionId: position, timezone: timeZone, notes: notes.trim() || undefined },
       });
-      if (result.ok) callIdRef.current = result.callId;
       // CRM capture is a best-effort backstop; the sales_calls row is the truth.
       void submitToCrm({
         formId: "book-a-call",
@@ -147,7 +115,6 @@ function BookCallPage() {
 
   const booked = stateQuery.data?.call ?? null;
   const role = stateQuery.data?.position ?? null;
-  const schedulerVisible = embedState === "ready";
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
@@ -199,11 +166,11 @@ function BookCallPage() {
               <Button onClick={() => navigate({ to: "/client" })}>
                 {PAYMENTS_ENABLED ? "Go to your workspace" : "Go to my dashboard"}
               </Button>
-              <Button variant="outline" asChild>
-                <a href={CALENDLY_BOOKING_URL} target="_blank" rel="noopener noreferrer">
-                  Change your time
-                  <ExternalLink className="ml-2 h-4 w-4" aria-hidden />
-                </a>
+              <Button
+                variant="outline"
+                onClick={() => navigate({ to: "/book", search: { cta: "in-app" } })}
+              >
+                Change your time
               </Button>
               {PAYMENTS_ENABLED && role ? (
                 <Button
@@ -233,7 +200,7 @@ function BookCallPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className={schedulerVisible ? "hidden" : undefined}>
+              <div>
                 <label htmlFor="call-notes" className="mb-1 block text-sm font-medium">
                   Anything we should read first? (optional)
                 </label>
@@ -246,8 +213,7 @@ function BookCallPage() {
                 />
               </div>
 
-              {!schedulerVisible ? (
-                <Button
+              <Button
                   onClick={() => openScheduler.mutate()}
                   disabled={openScheduler.isPending}
                 >
