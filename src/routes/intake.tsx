@@ -2737,302 +2737,301 @@ function ExpressIntakePage() {
             out halfway.
           </p>
 
-          <fieldset className="space-y-3" data-field="dealBreakerList">
-            <legend className="text-sm font-medium">
-              What would rule someone out?
-              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-navy)]/50 text-xs">
-                Optional
-              </span>
-            </legend>
-            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-              {DEAL_BREAKER_WHY_IT_MATTERS}
-            </p>
-            <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
-              {DEAL_BREAKER_POLICY_LINE}
-            </p>
-
-            <div className="space-y-2">
-              {state.dealBreakerList.map((line, index) => {
-                const rowError = dealBreakerIssues.rowErrors[index];
-                return (
-                  <div key={index}>
-                    <div className="flex items-start gap-2">
-                      <Input
-                        value={line}
-                        maxLength={MAX_DEAL_BREAKER_CHARS}
-                        onChange={(e) => setDealBreaker(index, e.target.value)}
-                        placeholder={
-                          index === 0
-                            ? "No agency-side-only backgrounds"
-                            : index === 1
-                              ? "Cannot start within six weeks"
-                              : "No hands-on ownership of the core system"
-                        }
-                        aria-label={`Deal-breaker ${index + 1}`}
-                        aria-invalid={Boolean(rowError)}
-                      />
-                      {state.dealBreakerList.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeDealBreaker(index)}
-                          className="mt-2 text-xs underline text-[color:var(--brand-navy)]/70"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                    {rowError && (
-                      <p
-                        data-field-error="true"
-                        className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                      >
-                        {rowError}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {dealBreakerIssues.listError && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {dealBreakerIssues.listError}
+          <SectionGroup title="What rules someone out?">
+            <fieldset className="space-y-3" data-field="dealBreakerList">
+              <legend className="sr-only">What would rule someone out?</legend>
+              <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                {DEAL_BREAKER_WHY_IT_MATTERS}
               </p>
-            )}
-
-            {normalizeDealBreakers(state.dealBreakerList).length === 0 && (
               <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
-                {DEAL_BREAKER_EMPTY_HINT}
+                {DEAL_BREAKER_POLICY_LINE}
               </p>
-            )}
 
-            {state.dealBreakerList.length < MAX_DEAL_BREAKERS ? (
-              <Button type="button" variant="outline" size="sm" onClick={addDealBreaker}>
-                Add another
-              </Button>
-            ) : (
-              <p className="text-xs text-[color:var(--brand-navy)]/60">
-                Five is the most we record — beyond that it stops being a filter.
-              </p>
-            )}
-
-          </fieldset>
-
-          <fieldset className="space-y-3" data-field="interviewStages">
-            <legend className="text-sm font-medium">
-              Your interview process
-              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-navy)]/50 text-xs">
-                Optional
-              </span>
-            </legend>
-            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-              {INTERVIEW_PROCESS_WHY_IT_MATTERS}
-            </p>
-            {isCarried("interviewStages") && (
-              <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
-            )}
-
-            {state.interviewStages.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4">
-                <p className="text-sm font-medium">Most clients run three stages</p>
-                <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                  {DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((s) => s.name).join(" → ")}. Use it as a
-                  starting point, or build your own — nothing is saved until you choose.
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Button type="button" variant="outline" size="sm" onClick={useStageTemplate}>
-                    Use this as a starting point
-                  </Button>
-                  <Button type="button" variant="ghost" size="sm" onClick={addStage}>
-                    Build my own
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {state.interviewStages.map((stage, index) => {
-                  const issues = stageErrors[index] ?? {};
+              <div className="space-y-2">
+                {state.dealBreakerList.map((line, index) => {
+                  const rowError = dealBreakerIssues.rowErrors[index];
                   return (
-                    <div
-                      key={index}
-                      className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-                          Stage {index + 1}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => removeStage(index)}
-                          className="text-xs underline text-[color:var(--brand-navy)]/70"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                        <div>
-                          <Label className="text-xs">What is this stage?</Label>
-                          <Input
-                            value={stage.name}
-                            maxLength={MAX_STAGE_NAME_CHARS}
-                            onChange={(e) => updateStage(index, { name: e.target.value })}
-                            placeholder="Hiring manager interview"
-                            aria-invalid={Boolean(issues.name)}
-                          />
-                          {issues.name && (
-                            <p
-                              data-field-error="true"
-                              className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                            >
-                              {issues.name}
-                            </p>
-                          )}
-                        </div>
-                        <div>
-                          <Label className="text-xs">Format</Label>
-                          <select
-                            value={stage.format}
-                            onChange={(e) =>
-                              updateStage(index, {
-                                format: e.target.value as InterviewStage["format"],
-                              })
-                            }
-                            className="h-10 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                    <div key={index}>
+                      <div className="flex items-start gap-2">
+                        <Input
+                          value={line}
+                          maxLength={MAX_DEAL_BREAKER_CHARS}
+                          onChange={(e) => setDealBreaker(index, e.target.value)}
+                          placeholder={
+                            index === 0
+                              ? "No agency-side-only backgrounds"
+                              : index === 1
+                                ? "Cannot start within six weeks"
+                                : "No hands-on ownership of the core system"
+                          }
+                          aria-label={`Deal-breaker ${index + 1}`}
+                          aria-invalid={Boolean(rowError)}
+                        />
+                        {state.dealBreakerList.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeDealBreaker(index)}
+                            className="mt-2 text-xs underline text-[color:var(--brand-navy)]/70"
                           >
-                            {INTERVIEW_STAGE_FORMATS.map((f) => (
-                              <option key={f} value={f}>
-                                {INTERVIEW_STAGE_FORMAT_LABELS[f]}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <Label className="text-xs">Who runs it?</Label>
-                          <Input
-                            value={stage.ownerName ?? ""}
-                            onChange={(e) => updateStage(index, { ownerName: e.target.value })}
-                            placeholder="Dana Okoro"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Their email</Label>
-                          <Input
-                            type="email"
-                            value={stage.ownerEmail ?? ""}
-                            onChange={(e) => updateStage(index, { ownerEmail: e.target.value })}
-                            placeholder="dana@company.com"
-                            aria-invalid={Boolean(issues.ownerEmail)}
-                          />
-                          {issues.ownerEmail && (
-                            <p
-                              data-field-error="true"
-                              className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                            >
-                              {issues.ownerEmail}
-                            </p>
-                          )}
-                        </div>
+                            Remove
+                          </button>
+                        )}
                       </div>
+                      {rowError && (
+                        <p
+                          data-field-error="true"
+                          className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                        >
+                          {rowError}
+                        </p>
+                      )}
                     </div>
                   );
                 })}
-                {state.interviewStages.length < MAX_INTERVIEW_STAGES ? (
-                  <Button type="button" variant="outline" size="sm" onClick={addStage}>
-                    Add a stage
-                  </Button>
-                ) : (
-                  <p className="text-xs text-[color:var(--brand-navy)]/60">
-                    Five stages is the most we record — beyond that candidates drop out.
+              </div>
+
+              {dealBreakerIssues.listError && (
+                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                  {dealBreakerIssues.listError}
+                </p>
+              )}
+
+              {normalizeDealBreakers(state.dealBreakerList).length === 0 && (
+                <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
+                  {DEAL_BREAKER_EMPTY_HINT}
+                </p>
+              )}
+
+              {state.dealBreakerList.length < MAX_DEAL_BREAKERS ? (
+                <Button type="button" variant="outline" size="sm" onClick={addDealBreaker}>
+                  Add another
+                </Button>
+              ) : (
+                <p className="text-xs text-[color:var(--brand-navy)]/60">
+                  Five is the most we record — beyond that it stops being a filter.
+                </p>
+              )}
+            </fieldset>
+          </SectionGroup>
+
+          <SectionGroup title="Your interview process">
+            <fieldset className="space-y-3" data-field="interviewStages">
+              <legend className="sr-only">Your interview process</legend>
+              <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                {INTERVIEW_PROCESS_WHY_IT_MATTERS}
+              </p>
+              {isCarried("interviewStages") && (
+                <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
+              )}
+
+              {state.interviewStages.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4">
+                  <p className="text-sm font-medium">Most clients run three stages</p>
+                  <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                    {DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((s) => s.name).join(" → ")}. Use it as a
+                    starting point, or build your own — nothing is saved until you choose.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={useStageTemplate}>
+                      Use this as a starting point
+                    </Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={addStage}>
+                      Build my own
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">Stages</h4>
+                  {state.interviewStages.map((stage, index) => {
+                    const issues = stageErrors[index] ?? {};
+                    return (
+                      <div
+                        key={index}
+                        className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4"
+                      >
+                        <div className="flex items-center justify-between gap-2 border-b border-[color:var(--brand-navy)]/10 pb-2">
+                          <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--brand-navy)]/70">
+                            Stage {index + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeStage(index)}
+                            className="text-xs underline text-[color:var(--brand-navy)]/70"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                          <div>
+                            <Label className="text-xs">What is this stage?</Label>
+                            <Input
+                              value={stage.name}
+                              maxLength={MAX_STAGE_NAME_CHARS}
+                              onChange={(e) => updateStage(index, { name: e.target.value })}
+                              placeholder="Hiring manager interview"
+                              aria-invalid={Boolean(issues.name)}
+                            />
+                            {issues.name && (
+                              <p
+                                data-field-error="true"
+                                className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                              >
+                                {issues.name}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <Label className="text-xs">Format</Label>
+                            <select
+                              value={stage.format}
+                              onChange={(e) =>
+                                updateStage(index, {
+                                  format: e.target.value as InterviewStage["format"],
+                                })
+                              }
+                              className="h-10 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                            >
+                              {INTERVIEW_STAGE_FORMATS.map((f) => (
+                                <option key={f} value={f}>
+                                  {INTERVIEW_STAGE_FORMAT_LABELS[f]}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <Label className="text-xs">Who runs it?</Label>
+                            <Input
+                              value={stage.ownerName ?? ""}
+                              onChange={(e) => updateStage(index, { ownerName: e.target.value })}
+                              placeholder="Dana Okoro"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Their email</Label>
+                            <Input
+                              type="email"
+                              value={stage.ownerEmail ?? ""}
+                              onChange={(e) => updateStage(index, { ownerEmail: e.target.value })}
+                              placeholder="dana@company.com"
+                              aria-invalid={Boolean(issues.ownerEmail)}
+                            />
+                            {issues.ownerEmail && (
+                              <p
+                                data-field-error="true"
+                                className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                              >
+                                {issues.ownerEmail}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {state.interviewStages.length < MAX_INTERVIEW_STAGES ? (
+                    <Button type="button" variant="outline" size="sm" onClick={addStage}>
+                      Add a stage
+                    </Button>
+                  ) : (
+                    <p className="text-xs text-[color:var(--brand-navy)]/60">
+                      Five stages is the most we record — beyond that candidates drop out.
+                    </p>
+                  )}
+                </div>
+              )}
+              {errors.interviewStages && (
+                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                  {errors.interviewStages}
+                </p>
+              )}
+            </fieldset>
+          </SectionGroup>
+
+          <SectionGroup title="Timeline">
+            <Field
+              label={intakeFieldLabel("targetDaysToOffer")} carried={isCarried("targetDaysToOffer")}
+              error={errors.targetDaysToOffer}
+              required={req["targetDaysToOffer"]}
+              hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}
+            >
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={state.targetDaysToOffer}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/[^0-9]/g, "").slice(0, 3);
+                  set("targetDaysToOffer", digits);
+                  setErrors((prev) => ({ ...prev, targetDaysToOffer: "" }));
+                }}
+                placeholder="21"
+                className="max-w-[8rem]"
+              />
+            </Field>
+          </SectionGroup>
+
+          <SectionGroup title="Decision maker">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field
+                label="Who makes the final decision?" carried={isCarried("decisionMaker")}
+                error={errors.decisionMaker}
+                required={req["decisionMaker"]}
+                hint="Name and role. We keep the process moving through them."
+              >
+                <Input
+                  value={state.decisionMaker}
+                  onChange={(e) => set("decisionMaker", e.target.value)}
+                  placeholder="Dana Okoro, Operations Director"
+                />
+              </Field>
+              <Field
+                label="Their email" carried={isCarried("decisionMakerEmail")}
+                error={errors.decisionMakerEmail}
+                required={req["decisionMakerEmail"]}
+                hint="Only used if you invite them below."
+              >
+                <Input
+                  type="email"
+                  value={state.decisionMakerEmail}
+                  onChange={(e) => {
+                    set("decisionMakerEmail", e.target.value);
+                    setErrors((prev) => ({ ...prev, decisionMakerEmail: "" }));
+                  }}
+                  placeholder="dana@company.com"
+                />
+              </Field>
+            </div>
+          </SectionGroup>
+
+          {collaborators.length > 0 && (
+            <SectionGroup title="People you named">
+              <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4">
+                <ul className="space-y-0.5 text-sm text-[color:var(--brand-navy)]/75">
+                  {collaborators.map((c) => (
+                    <li key={c.email}>{c.name ? `${c.name} — ${c.email}` : c.email}</li>
+                  ))}
+                </ul>
+                <div className="mt-3 flex items-start gap-3">
+                  <Checkbox
+                    id="invite-collaborators"
+                    checked={state.inviteCollaborators}
+                    onCheckedChange={(v) => set("inviteCollaborators", v === true)}
+                    className="mt-0.5"
+                  />
+                  <span className="order-last text-xs text-[color:var(--brand-navy)]/60">
+                    Optional
+                  </span>
+                  <label htmlFor="invite-collaborators" className="text-sm leading-relaxed">
+                    {COLLABORATOR_OPT_IN_LABEL}
+                  </label>
+                </div>
+                {!state.inviteCollaborators && (
+                  <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
+                    We will not email anyone on this list.
                   </p>
                 )}
               </div>
-            )}
-            {errors.interviewStages && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.interviewStages}
-              </p>
-            )}
-          </fieldset>
-
-          <Field
-            label={intakeFieldLabel("targetDaysToOffer")} carried={isCarried("targetDaysToOffer")}
-            error={errors.targetDaysToOffer}
-            required={req["targetDaysToOffer"]}
-            hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}
-          >
-            <Input
-              type="text"
-              inputMode="numeric"
-              value={state.targetDaysToOffer}
-              onChange={(e) => {
-                const digits = e.target.value.replace(/[^0-9]/g, "").slice(0, 3);
-                set("targetDaysToOffer", digits);
-                setErrors((prev) => ({ ...prev, targetDaysToOffer: "" }));
-              }}
-              placeholder="21"
-              className="max-w-[8rem]"
-            />
-          </Field>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field
-              label="Who makes the final decision?" carried={isCarried("decisionMaker")}
-              error={errors.decisionMaker}
-              required={req["decisionMaker"]}
-              hint="Name and role. We keep the process moving through them."
-            >
-              <Input
-                value={state.decisionMaker}
-                onChange={(e) => set("decisionMaker", e.target.value)}
-                placeholder="Dana Okoro, Operations Director"
-              />
-            </Field>
-            <Field
-              label="Their email" carried={isCarried("decisionMakerEmail")}
-              error={errors.decisionMakerEmail}
-              required={req["decisionMakerEmail"]}
-              hint="Only used if you invite them below."
-            >
-              <Input
-                type="email"
-                value={state.decisionMakerEmail}
-                onChange={(e) => {
-                  set("decisionMakerEmail", e.target.value);
-                  setErrors((prev) => ({ ...prev, decisionMakerEmail: "" }));
-                }}
-                placeholder="dana@company.com"
-              />
-            </Field>
-          </div>
-
-          {collaborators.length > 0 && (
-            <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4">
-              <p className="text-sm font-semibold">People you named</p>
-              <ul className="mt-1 space-y-0.5 text-sm text-[color:var(--brand-navy)]/75">
-                {collaborators.map((c) => (
-                  <li key={c.email}>{c.name ? `${c.name} — ${c.email}` : c.email}</li>
-                ))}
-              </ul>
-              <div className="mt-3 flex items-start gap-3">
-                <Checkbox
-                  id="invite-collaborators"
-                  checked={state.inviteCollaborators}
-                  onCheckedChange={(v) => set("inviteCollaborators", v === true)}
-                  className="mt-0.5"
-                />
-                <span className="order-last text-xs text-[color:var(--brand-navy)]/60">
-                  Optional
-                </span>
-                <label htmlFor="invite-collaborators" className="text-sm leading-relaxed">
-                  {COLLABORATOR_OPT_IN_LABEL}
-                </label>
-              </div>
-              {!state.inviteCollaborators && (
-                <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
-                  We will not email anyone on this list.
-                </p>
-              )}
-            </div>
+            </SectionGroup>
           )}
 
         </Section>
