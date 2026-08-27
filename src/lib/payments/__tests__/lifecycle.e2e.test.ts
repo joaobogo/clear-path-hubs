@@ -538,7 +538,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_sub_1",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "active",
       periodEnd: Date.now() + MONTH,
     });
@@ -552,7 +552,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_up",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "active",
     });
     expect(db.entitlements[0].roles_used).toBe(before);
@@ -566,8 +566,8 @@ describe("downgrade and cancellation", () => {
     db.subscriptions[0].pending_effective_at = renewal;
 
     // Nothing about today's access changes.
-    expect(db.entitlements[0].price_id).toBe("sub_pos_30_monthly");
-    expect(db.entitlements[0].roles_total).toBe(findPlan("sub_pos_30_monthly")!.rolesTotal);
+    expect(db.entitlements[0].price_id).toBe("sub_pkg_30_monthly");
+    expect(db.entitlements[0].roles_total).toBe(findPlan("sub_pkg_30_monthly")!.rolesTotal);
     expect(db.positions.get("pos_1")!.status).toBe("active");
   });
 
@@ -602,7 +602,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_cancel_req",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "active",
       periodEnd,
       cancelAtPeriodEnd: true,
@@ -620,7 +620,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_cancel_req",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "active",
       cancelAtPeriodEnd: true,
     });
@@ -628,7 +628,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_resume",
       eventType: "customer.subscription.updated",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "active",
       cancelAtPeriodEnd: false,
     });
@@ -643,7 +643,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_deleted",
       eventType: "customer.subscription.deleted",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "canceled",
     });
 
@@ -661,7 +661,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_deleted",
       eventType: "customer.subscription.deleted",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "canceled",
     });
 
@@ -678,7 +678,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_deleted",
       eventType: "customer.subscription.deleted",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "canceled",
     });
     db.applySubscriptionEvent({
@@ -703,7 +703,7 @@ describe("downgrade and cancellation", () => {
       eventId: "evt_sub_1",
       eventType: "customer.subscription.created",
       subscriptionId: "sub_stripe_1",
-      priceId: "sub_pos_30_monthly",
+      priceId: "sub_pkg_30_monthly",
       status: "active",
     });
     expect(replay).toEqual({ applied: false, reason: "duplicate_event" });
