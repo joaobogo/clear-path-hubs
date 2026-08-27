@@ -9,8 +9,8 @@
  *   • Up to 20 positions       → $15,200
  *   • Up to 30 positions       → $21,600
  *   • Up to 40 positions       → $27,200
- *   • Up to 50 positions       → $32,000
- *   • More than 50 positions   → no price shown; the CTA is to talk to us
+ *   • Up to 100 positions      → $64,000
+ *   • More than 100 positions  → no price shown; the CTA is to talk to us
  *
  * DERIVATION (internal reasoning only — never rendered):
  * the five package totals are capacity × $800 base, less a volume discount of
@@ -34,7 +34,7 @@ export const PRICE_PILOT_USD = 699;
 export const BASE_RATE_PER_POSITION_USD = 800;
 
 /** Hard maximum. Above this we show no price and the CTA is to talk to us. */
-export const MAX_POSITIONS = 50;
+export const MAX_POSITIONS = 100;
 
 /** Internal derivation inputs: capacity + volume discount. Never rendered. */
 export const PACKAGE_DERIVATION = [
@@ -42,7 +42,7 @@ export const PACKAGE_DERIVATION = [
   { id: "scale", capacity: 20, volumeDiscount: 0.05 },
   { id: "volume", capacity: 30, volumeDiscount: 0.1 },
   { id: "portfolio", capacity: 40, volumeDiscount: 0.15 },
-  { id: "program", capacity: 50, volumeDiscount: 0.2 },
+  { id: "program", capacity: 100, volumeDiscount: 0.2 },
 ] as const;
 
 export type PackageId =
@@ -104,7 +104,7 @@ export const PACKAGE_10 = PACKAGES[1]!;
 export const PACKAGE_20 = PACKAGES[2]!;
 export const PACKAGE_30 = PACKAGES[3]!;
 export const PACKAGE_40 = PACKAGES[4]!;
-export const PACKAGE_50 = PACKAGES[5]!;
+export const PACKAGE_100 = PACKAGES[5]!;
 
 export const PRICE_PILOT_DISPLAY = PILOT_PACKAGE.totalDisplay;
 

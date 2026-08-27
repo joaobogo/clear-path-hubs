@@ -45,8 +45,8 @@ describe("the pricing rule", () => {
     expect(positionsTotalUsd(30)).toBe(21_600);
     expect(positionsTotalUsd(31)).toBe(27_200);
     expect(positionsTotalUsd(40)).toBe(27_200);
-    expect(positionsTotalUsd(41)).toBe(32_000);
-    expect(positionsTotalUsd(50)).toBe(32_000);
+    expect(positionsTotalUsd(41)).toBe(64_000);
+    expect(positionsTotalUsd(100)).toBe(64_000);
   });
 
   it("never lets the total fall as the count rises", () => {
@@ -60,7 +60,7 @@ describe("the pricing rule", () => {
 
   it("shows no price above the maximum", () => {
     expect(positionsTotalUsd(MAX_POSITIONS + 1)).toBeNull();
-    expect(MAX_POSITIONS).toBe(50);
+    expect(MAX_POSITIONS).toBe(100);
   });
 
   it("takes 10% off a twelve-month prepayment, without moving the monthly price", () => {
