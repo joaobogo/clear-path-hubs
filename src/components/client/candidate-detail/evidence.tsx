@@ -656,7 +656,9 @@ export const WhatNeedsValidation = memo(function WhatNeedsValidation({
   // Derived from the same coverage statuses rendered by RequirementCoverage, so
   // a badge and its validation sentence can never disagree.
   const items = buildValidationList(candidate.requirement_rows, candidate.concerns);
-  if (items.length === 0) return null;
+  // Once the hiring decision is made, "confirm before a hiring decision" is
+  // stale advice — hide the section for hired candidates.
+  if (items.length === 0 || candidate.stage === "hired") return null;
 
   const [showAll, setShowAll] = useState(false);
   const rowById = new Map(candidate.requirement_rows.map((r) => [r.id, r]));

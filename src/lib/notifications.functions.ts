@@ -546,7 +546,7 @@ export const listMyNotifications = createServerFn({ method: "GET" })
             : r.body,
         link_path,
         actor_label: r.event_id ? (actorByEvent.get(r.event_id) ?? null) : null,
-        delivery_state: deliveryByNotification.get(r.id) ?? null,
+        delivery_state: hideDeliveryState ? null : (deliveryByNotification.get(r.id) ?? null),
       };
     });
     const unread = items.filter((n: any) => !n.read_at).length;
