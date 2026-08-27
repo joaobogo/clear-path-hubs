@@ -8,17 +8,14 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { seatBlockCode, type SeatBlock } from "@/lib/seat-limit";
 import { readSeatsForOrg } from "@/lib/kpis/seats.server";
+import type { SeatCount } from "@/lib/client-seats";
 
 export async function readSeatUsage(
   orgId: string,
-): Promise<{ seatLimit: number; seatsUsed: number; seatsLeft: number }> {
+): Promise<SeatCount> {
   // One reader for seats (src/lib/kpis/seats.server.ts) — the Account page, the
   // authz endpoint and this guard must never produce different seat totals.
-  const { seatLimit, seatsUsed, seatsLeft } = await readSeatsForOrg(
-    supabaseAdmin,
-    orgId,
-  );
-  return { seatLimit, seatsUsed, seatsLeft };
+  return readSeatsForOrg(supabaseAdmin, orgId);
 }
 
 /**
@@ -27,10 +24,12 @@ export async function readSeatUsage(
  * UI renders the upgrade prompt rather than echoing this string verbatim.
  */
 export async function assertSeatAvailable(orgId: string): Promise<void> {
-  const { seatLimit, seatsUsed } = await readSeatUsage(orgId);
-  if (seatsUsed >= seatLimit) {
+  // Capacity, not occupancy: a pending invitation reserves a seat even though
+  // nobody holds it yet, so the guard reads the allocated total.
+  const { seatLimit, seatsAllocated } = await readSeatUsage(orgId);
+  if (seatsAllocated >= seatLimit) {
     throw new Error(
-      `Seat limit reached — your plan includes ${seatLimit} seats and all ${seatsUsed} are in use (pending invitations hold a seat). Remove a teammate to free a seat, or talk to us about adding seats.`,
+      `Seat limit reached — your plan includes ${seatLimit} seats and all ${seatsAllocated} are taken (pending invitations hold a seat). Remove a teammate to free a seat, or talk to us about adding seats.`,
     );
   }
 }
@@ -47,7 +46,7 @@ export async function evaluateSeatBlock(
   // Limit, usage and the invited/active split all come from the one seat
   // reader, so a refusal explains itself with the same numbers the screens show.
   const usage = await readSeatsForOrg(supabaseAdmin, orgId);
-  if (usage.seatsUsed < usage.seatLimit) return null;
+  if (usage.seatsAllocated < usage.seatLimit) return null;
   return { code: seatBlockCode(usage), usage };
 }
 

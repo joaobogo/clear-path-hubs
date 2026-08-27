@@ -225,7 +225,10 @@ export function TeamTab() {
  );
  }
 
-  const seatsUsed = seats?.seatsUsed ?? counts.total;
+  // Seat figures come from the one seat reader. A pending invitation is never
+  // added to the used count — it is shown on its own.
+  const seatsUsed = seats?.seatsUsed ?? counts.active;
+  const pendingInvites = seats?.pendingInvites ?? counts.invited;
   const seatLimit = seats?.seatLimit ?? null;
   // Only claim the workspace is full when the server actually said so. If seat
   // usage failed to load we let the attempt through and rely on the server
@@ -234,8 +237,9 @@ export function TeamTab() {
   const seatUsage = {
      seatsUsed,
      seatLimit,
-     pendingInvites: counts.invited,
-     activeMembers: counts.active,
+     pendingInvites,
+     activeMembers: seats?.activeMembers ?? counts.active,
+     ...(seats ? { seatsAllocated: seats.seatsAllocated } : {}),
    };
   const seatsLeft = seats?.seatsLeft ?? null;
   const seatPct =
@@ -256,7 +260,7 @@ export function TeamTab() {
   {seatLimit === null
   ? `${counts.total} member${counts.total === 1 ? "" : "s"}`
   : `${seatsUsed} of ${seatLimit} seat${seatLimit === 1 ? "" : "s"} in use`}
-  {counts.invited > 0 && ` · ${counts.invited} pending`}
+  {pendingInvites > 0 && ` · ${pendingInvites} pending`}
   </p>
   )}
   </div>
@@ -273,8 +277,8 @@ export function TeamTab() {
   <span className="font-medium text-foreground">{seatsUsed}</span> of {seatLimit} used
   {seatsLeft !== null &&
   ` · ${seatsLeft} ${seatsLeft === 1 ? "seat" : "seats"} available`}
-  {counts.invited > 0 &&
-  ` · ${counts.invited} pending invitation${counts.invited === 1 ? "" : "s"} holding a seat`}
+  {pendingInvites > 0 &&
+  ` · ${pendingInvites} pending invitation${pendingInvites === 1 ? "" : "s"} reserving a seat`}
   </p>
   </div>
   {seatPct !== null && (

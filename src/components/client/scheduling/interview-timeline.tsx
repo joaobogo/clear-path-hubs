@@ -17,6 +17,7 @@ import {
 } from "@/lib/interview-timing";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { interviewBuckets } from "@/lib/client/interview-buckets";
 import { SlotProposer, type ProposalSubmission } from "./slot-proposer";
 import { AgeBadge } from "@/components/client/age-badge";
 import {
@@ -61,14 +62,6 @@ function anchor(iv: InterviewDTO): number {
   return Number.isNaN(t) ? 0 : t;
 }
 
-function isPastItem(iv: InterviewDTO): boolean {
-  // Strictly temporal: a meeting in the future has not happened, whatever its
-  // stored status claims. Cancelled meetings sit with the past either way.
-  const occurrence = interviewOccurrence(iv);
-  return occurrence === "happened" || occurrence === "cancelled";
-}
-
-
 /**
  * One timeline: proposed, confirmed and completed interviews on a single axis,
  * every time rendered in the interview timezone and the viewer's own.
@@ -106,16 +99,15 @@ export function InterviewTimeline({
 }) {
   const tz = viewerTimezone();
   const { upcoming, past, cancelled } = useMemo(() => {
+    // One bucketing function (src/lib/client/interview-buckets.ts): open work
+    // is one row per candidate, history is every interview that happened.
     const sorted = [...interviews].sort((a, b) => anchor(a) - anchor(b));
+    const buckets = interviewBuckets(sorted);
     return {
-      // Every interview still awaiting a time is listed, including requests for
-      // candidates who moved on since. Hiding them made the list show four
-      // while the same page's heading counted five.
-      upcoming: sorted.filter((i) => !isPastItem(i)),
-      past: sorted.filter((i) => interviewOccurrence(i) === "happened").reverse(),
-      cancelled: sorted.filter((i) => interviewOccurrence(i) === "cancelled").reverse(),
+      upcoming: buckets.upcoming,
+      past: [...buckets.past].reverse(),
+      cancelled: [...buckets.cancelled].reverse(),
     };
-
   }, [interviews]);
 
   const render = (iv: InterviewDTO) => (

@@ -49,7 +49,6 @@ import { getWorkspaceTimezone } from "@/lib/format/datetime";
 import { resolveRecipientZone } from "@/lib/time/zone-label";
 import { AwaitingConfirmationSection } from "@/components/client/interviews/awaiting-confirmation";
 import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
-import { currentInterviewRecords } from "@/lib/client/interview-buckets";
 
 const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/interviews")({
@@ -130,9 +129,9 @@ function InterviewsPage() {
   );
 
   const allInterviews = (listQuery.data?.interviews as InterviewDTO[] | undefined) ?? [];
-  // Superseded records (a cancelled request replaced by a live one for the same
-  // candidate) are folded away so a candidate cannot sit in two buckets.
-  const interviews = currentInterviewRecords(allInterviews);
+  // The page passes every record down; bucketing (one function) decides what is
+  // deduped, so completed interviews are never collapsed out of history.
+  const interviews = allInterviews;
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: kpiCacheKeys.client.interviews(org) });
