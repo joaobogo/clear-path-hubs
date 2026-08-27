@@ -22,6 +22,8 @@ import {
   type CompareMatrixRow,
 } from "@/lib/client-compare";
 import { humanizeConcernSentence } from "@/lib/client/validation-list";
+import { verifiedStrengths } from "@/lib/client/score-breakdown";
+
 
 
 
