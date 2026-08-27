@@ -139,11 +139,14 @@ function CandidatesPage() {
 
   // Tile counts come from the same rows the board and list render, so they update
   // the moment a candidate is moved — including the optimistic board update.
+  // The workspace hire figure is used only once it has actually arrived: passing
+  // a 0 default made the "Hired" tile flip to 0 whenever the summary query was
+  // still in flight, while the candidate itself still read "Hired".
   const rowKpis = useMemo(() => {
     if (rowsStatus !== "success") return undefined;
     return computeCandidateKpis(
       rowsRaw as ClientCandidateDTO[],
-      overview?.kpis?.hires ?? 0,
+      overview?.kpis?.hires,
     );
   }, [rowsRaw, rowsStatus, overview?.kpis?.hires]);
 
