@@ -2392,340 +2392,341 @@ function ExpressIntakePage() {
             will simply be marked <span className="font-medium">Brief incomplete</span> until you do.
           </p>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-
-            <Field
-              label={intakeFieldLabel("location")} carried={isCarried("location")}
-              error={errors.location}
-              required={req["location"]}
-              hint="City and country, or the region candidates must live in."
-            >
-              <Input
-                value={state.location}
-                onChange={(e) => set("location", e.target.value)}
-                placeholder="Manchester, United Kingdom"
-              />
-            </Field>
-            <Field label={intakeFieldLabel("workModel")} carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
-              <select
-                id="work-model"
-                value={state.workModel}
-                onChange={(e) => onWorkModelChange(e.target.value as FormState["workModel"])}
-                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-                aria-invalid={Boolean(errors.workModel)}
+          <SectionGroup title="Location and working model">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                label={intakeFieldLabel("location")} carried={isCarried("location")}
+                error={errors.location}
+                required={req["location"]}
+                hint="City and country, or the region candidates must live in."
               >
-                <option value="">Choose one</option>
-                {WORK_MODELS.map((m) => (
-                  <option key={m} value={m}>
-                    {WORK_MODEL_LABELS[m]}
-                  </option>
-                ))}
-              </select>
-            </Field>
-          </div>
-
-          {/* Hybrid is the only model that needs a day count. */}
-          {state.workModel === "hybrid" && (
-            <Field
-              label="Days on site each week" carried={isCarried("onsiteDays")}
-              error={errors.onsiteDays}
-              required={req["onsiteDays"]}
-              hint="Between 1 and 5. Candidates ask this first, and a wrong guess costs you offers."
-            >
-              <Input
-                value={state.onsiteDays}
-                onChange={(e) => set("onsiteDays", e.target.value.replace(/[^\d]/g, ""))}
-                inputMode="numeric"
-                placeholder="3"
-              />
-            </Field>
-          )}
-
-          {/* Remote roles need a boundary: timezone bands, or the whole country. */}
-          {state.workModel === "remote" && (
-            <fieldset className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
-              <legend className="text-sm font-medium">
-                Acceptable timezones
-                {req["remoteTimezones"] ? (
-                  <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
-                    *
-                  </span>
-                ) : (
-                  <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
-                    Optional
-                  </span>
-                )}
-              </legend>
-              <p className="text-sm text-[color:var(--brand-navy)]/75">
-                Pick the working-hours bands you can live with, or say anywhere in the country.
-              </p>
-              <label className="flex cursor-pointer items-start gap-3 text-sm">
-                <input
-                  type="checkbox"
-                  className="mt-1"
-                  checked={state.remoteAnywhereInCountry}
-                  onChange={(e) => {
-                    const on = e.target.checked;
-                    setState((s) => ({
-                      ...s,
-                      remoteAnywhereInCountry: on,
-                      remoteTimezones: on ? [] : s.remoteTimezones,
-                    }));
-                    setErrors((prev) => {
-                      const next = { ...prev };
-                      delete next.remoteTimezones;
-                      return next;
-                    });
-                  }}
-                />
-                <span>Anywhere in the country — timezone does not matter</span>
-              </label>
-              {!state.remoteAnywhereInCountry && (
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {TIMEZONE_BANDS.map((tz) => (
-                    <label key={tz.value} className="flex cursor-pointer items-start gap-3 text-sm">
-                      <input
-                        type="checkbox"
-                        className="mt-1"
-                        checked={state.remoteTimezones.includes(tz.value)}
-                        onChange={() => toggleTimezone(tz.value)}
-                      />
-                      <span>{tz.label}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
-              {errors.remoteTimezones && (
-                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                  {errors.remoteTimezones}
-                </p>
-              )}
-            </fieldset>
-          )}
-
-          {/* Always asked, never defaulted. */}
-          <fieldset
-            className={`space-y-2 rounded-lg border p-4 ${
-              errors.sponsorshipAvailable
-                ? "border-[color:var(--brand-danger)] bg-[color:var(--brand-danger)]/5"
-                : "border-[color:var(--brand-navy)]/12 bg-white"
-            }`}
-          >
-            <legend className="text-sm font-medium">
-              Can you sponsor a visa?
-              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
-                *
-              </span>
-            </legend>
-            <p className="text-sm text-[color:var(--brand-navy)]/75">
-              {SPONSORSHIP_WHY_IT_MATTERS}
-            </p>
-            {SPONSORSHIP_OPTIONS.map((opt) => (
-              <label
-                key={opt.value}
-                className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
-              >
-                <input
-                  type="radio"
-                  name="sponsorship-available"
-                  value={opt.value}
-                  checked={state.sponsorshipAvailable === opt.value}
-                  onChange={() =>
-                    setState((s) => ({
-                      ...s,
-                      sponsorshipAvailable: opt.value,
-                      // Work authorisation is the same answer in other words,
-                      // so it is derived rather than asked twice.
-                      workAuthorization:
-                        opt.value === "yes" ? "will_sponsor" : "already_authorized",
-                    }))
-                  }
-                  className="mt-1"
-                />
-                <span className="text-sm leading-relaxed">
-                  <span className="font-medium">{opt.label}</span>
-                  <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
-                </span>
-              </label>
-            ))}
-            {errors.sponsorshipAvailable && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.sponsorshipAvailable}
-              </p>
-            )}
-          </fieldset>
-
-          <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
-            <p className="text-sm font-semibold">Compensation range</p>
-            <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
-            <div className="grid gap-3 sm:grid-cols-4">
-              <Field label={intakeFieldLabel("currency")} carried={isCarried("currency")} htmlFor="currency">
-                <select
-                  id="currency"
-                  value={state.currency}
-                  onChange={(e) => set("currency", e.target.value)}
-                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-                >
-                  {COMP_CURRENCIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label={intakeFieldLabel("salaryMin")} error={errors.salaryMin} required={req["salaryMin"]}>
                 <Input
-                  value={state.salaryMin}
-                  disabled={state.compensationUndecided}
-                  onChange={(e) => onSalaryChange("salaryMin", e.target.value)}
-                  inputMode="numeric"
-                  placeholder="70000"
+                  value={state.location}
+                  onChange={(e) => set("location", e.target.value)}
+                  placeholder="Manchester, United Kingdom"
                 />
               </Field>
-              <Field label={intakeFieldLabel("salaryMax")} error={errors.salaryMax} required={req["salaryMax"]}>
-                <Input
-                  value={state.salaryMax}
-                  disabled={state.compensationUndecided}
-                  onChange={(e) => onSalaryChange("salaryMax", e.target.value)}
-                  inputMode="numeric"
-                  placeholder="85000"
-                />
-              </Field>
-              <Field label={intakeFieldLabel("compensationPeriod")} carried={isCarried("compensationPeriod")} htmlFor="comp-period">
+              <Field label={intakeFieldLabel("workModel")} carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
                 <select
-                  id="comp-period"
-                  value={state.compensationPeriod}
-                  onChange={(e) => set("compensationPeriod", e.target.value)}
+                  id="work-model"
+                  value={state.workModel}
+                  onChange={(e) => onWorkModelChange(e.target.value as FormState["workModel"])}
                   className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                  aria-invalid={Boolean(errors.workModel)}
                 >
-                  {COMP_PERIODS.map((p) => (
-                    <option key={p} value={p}>
-                      {COMP_PERIOD_LABELS[p]}
+                  <option value="">Choose one</option>
+                  {WORK_MODELS.map((m) => (
+                    <option key={m} value={m}>
+                      {WORK_MODEL_LABELS[m]}
                     </option>
                   ))}
                 </select>
               </Field>
             </div>
 
-            {/* Wide-range confirmation: it goes through, but on purpose. */}
-            {wideRange && (
-              <div
-                className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3"
-                data-field="wideRangeConfirmed"
+            {/* Hybrid is the only model that needs a day count. */}
+            {state.workModel === "hybrid" && (
+              <Field
+                label="Days on site each week" carried={isCarried("onsiteDays")}
+                error={errors.onsiteDays}
+                required={req["onsiteDays"]}
+                hint="Between 1 and 5. Candidates ask this first, and a wrong guess costs you offers."
               >
+                <Input
+                  value={state.onsiteDays}
+                  onChange={(e) => set("onsiteDays", e.target.value.replace(/[^\d]/g, ""))}
+                  inputMode="numeric"
+                  placeholder="3"
+                />
+              </Field>
+            )}
+
+            {/* Remote roles need a boundary: timezone bands, or the whole country. */}
+            {state.workModel === "remote" && (
+              <fieldset className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
+                <legend className="text-sm font-medium">
+                  Acceptable timezones
+                  {req["remoteTimezones"] ? (
+                    <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
+                      *
+                    </span>
+                  ) : (
+                    <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+                      Optional
+                    </span>
+                  )}
+                </legend>
+                <p className="text-sm text-[color:var(--brand-navy)]/75">
+                  Pick the working-hours bands you can live with, or say anywhere in the country.
+                </p>
                 <label className="flex cursor-pointer items-start gap-3 text-sm">
                   <input
                     type="checkbox"
-                    checked={state.wideRangeConfirmed}
-                    onChange={(e) => set("wideRangeConfirmed", e.target.checked)}
+                    className="mt-1"
+                    checked={state.remoteAnywhereInCountry}
+                    onChange={(e) => {
+                      const on = e.target.checked;
+                      setState((s) => ({
+                        ...s,
+                        remoteAnywhereInCountry: on,
+                        remoteTimezones: on ? [] : s.remoteTimezones,
+                      }));
+                      setErrors((prev) => {
+                        const next = { ...prev };
+                        delete next.remoteTimezones;
+                        return next;
+                      });
+                    }}
+                  />
+                  <span>Anywhere in the country — timezone does not matter</span>
+                </label>
+                {!state.remoteAnywhereInCountry && (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {TIMEZONE_BANDS.map((tz) => (
+                      <label key={tz.value} className="flex cursor-pointer items-start gap-3 text-sm">
+                        <input
+                          type="checkbox"
+                          className="mt-1"
+                          checked={state.remoteTimezones.includes(tz.value)}
+                          onChange={() => toggleTimezone(tz.value)}
+                        />
+                        <span>{tz.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+                {errors.remoteTimezones && (
+                  <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                    {errors.remoteTimezones}
+                  </p>
+                )}
+              </fieldset>
+            )}
+          </SectionGroup>
+
+          <SectionGroup title="Visa sponsorship">
+            <fieldset
+              className={`space-y-2 rounded-lg border p-4 ${
+                errors.sponsorshipAvailable
+                  ? "border-[color:var(--brand-danger)] bg-[color:var(--brand-danger)]/5"
+                  : "border-[color:var(--brand-navy)]/12 bg-white"
+              }`}
+            >
+              <legend className="text-sm font-medium">
+                Can you sponsor a visa?
+                <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
+                  *
+                </span>
+              </legend>
+              <p className="text-sm text-[color:var(--brand-navy)]/75">
+                {SPONSORSHIP_WHY_IT_MATTERS}
+              </p>
+              {SPONSORSHIP_OPTIONS.map((opt) => (
+                <label
+                  key={opt.value}
+                  className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
+                >
+                  <input
+                    type="radio"
+                    name="sponsorship-available"
+                    value={opt.value}
+                    checked={state.sponsorshipAvailable === opt.value}
+                    onChange={() =>
+                      setState((s) => ({
+                        ...s,
+                        sponsorshipAvailable: opt.value,
+                        // Work authorisation is the same answer in other words,
+                        // so it is derived rather than asked twice.
+                        workAuthorization:
+                          opt.value === "yes" ? "will_sponsor" : "already_authorized",
+                      }))
+                    }
+                    className="mt-1"
+                  />
+                  <span className="text-sm leading-relaxed">
+                    <span className="font-medium">{opt.label}</span>
+                    <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
+                  </span>
+                </label>
+              ))}
+              {errors.sponsorshipAvailable && (
+                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                  {errors.sponsorshipAvailable}
+                </p>
+              )}
+            </fieldset>
+          </SectionGroup>
+
+          <SectionGroup title="Compensation">
+            <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
+              <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
+              <div className="grid gap-3 sm:grid-cols-4">
+                <Field label={intakeFieldLabel("currency")} carried={isCarried("currency")} htmlFor="currency">
+                  <select
+                    id="currency"
+                    value={state.currency}
+                    onChange={(e) => set("currency", e.target.value)}
+                    className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                  >
+                    {COMP_CURRENCIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label={intakeFieldLabel("salaryMin")} error={errors.salaryMin} required={req["salaryMin"]}>
+                  <Input
+                    value={state.salaryMin}
+                    disabled={state.compensationUndecided}
+                    onChange={(e) => onSalaryChange("salaryMin", e.target.value)}
+                    inputMode="numeric"
+                    placeholder="70000"
+                  />
+                </Field>
+                <Field label={intakeFieldLabel("salaryMax")} error={errors.salaryMax} required={req["salaryMax"]}>
+                  <Input
+                    value={state.salaryMax}
+                    disabled={state.compensationUndecided}
+                    onChange={(e) => onSalaryChange("salaryMax", e.target.value)}
+                    inputMode="numeric"
+                    placeholder="85000"
+                  />
+                </Field>
+                <Field label={intakeFieldLabel("compensationPeriod")} carried={isCarried("compensationPeriod")} htmlFor="comp-period">
+                  <select
+                    id="comp-period"
+                    value={state.compensationPeriod}
+                    onChange={(e) => set("compensationPeriod", e.target.value)}
+                    className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                  >
+                    {COMP_PERIODS.map((p) => (
+                      <option key={p} value={p}>
+                        {COMP_PERIOD_LABELS[p]}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+
+              {/* Wide-range confirmation: it goes through, but on purpose. */}
+              {wideRange && (
+                <div
+                  className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3"
+                  data-field="wideRangeConfirmed"
+                >
+                  <label className="flex cursor-pointer items-start gap-3 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={state.wideRangeConfirmed}
+                      onChange={(e) => set("wideRangeConfirmed", e.target.checked)}
+                      className="mt-0.5 h-4 w-4"
+                    />
+                    <span>{COMPENSATION_WIDE_RANGE_WARNING}</span>
+                  </label>
+                  {errors.wideRangeConfirmed && !state.wideRangeConfirmed && (
+                    <p className="text-sm text-red-600" data-field-error="true">
+                      {errors.wideRangeConfirmed}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* "Not decided yet" is recorded as undecided, never as zero. */}
+              <div className="space-y-1" data-field="compensationUndecided">
+                <label className="flex cursor-pointer items-start gap-3 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={state.compensationUndecided}
+                    onChange={(e) => {
+                      const on = e.target.checked;
+                      setState((prev) => ({
+                        ...prev,
+                        compensationUndecided: on,
+                        salaryMin: on ? "" : prev.salaryMin,
+                        salaryMax: on ? "" : prev.salaryMax,
+                        wideRangeConfirmed: on ? false : prev.wideRangeConfirmed,
+                      }));
+                      setErrors((prev) => {
+                        const nextErrors = { ...prev };
+                        delete nextErrors.salaryMin;
+                        delete nextErrors.salaryMax;
+                        delete nextErrors.compensationUndecided;
+                        delete nextErrors.wideRangeConfirmed;
+                        return nextErrors;
+                      });
+                    }}
                     className="mt-0.5 h-4 w-4"
                   />
-                  <span>{COMPENSATION_WIDE_RANGE_WARNING}</span>
+                  <span>
+                    Not decided yet
+                    <span className="block text-[color:var(--brand-navy)]/65">
+                      We will record this as undecided and mark the brief incomplete for compensation.
+                    </span>
+                  </span>
                 </label>
-                {errors.wideRangeConfirmed && !state.wideRangeConfirmed && (
+                {errors.compensationUndecided && (
                   <p className="text-sm text-red-600" data-field-error="true">
-                    {errors.wideRangeConfirmed}
+                    {errors.compensationUndecided}
                   </p>
                 )}
               </div>
-            )}
 
-            {/* "Not decided yet" is recorded as undecided, never as zero. */}
-            <div className="space-y-1" data-field="compensationUndecided">
+              <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
+                <select
+                  id="comp-equity"
+                  value={state.equity}
+                  onChange={(e) => set("equity", e.target.value)}
+                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                >
+                  <option value="">Not stated</option>
+                  {COMP_EQUITY.map((k) => (
+                    <option key={k} value={k}>
+                      {COMP_EQUITY_LABELS[k]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
               <label className="flex cursor-pointer items-start gap-3 text-sm">
                 <input
                   type="checkbox"
-                  checked={state.compensationUndecided}
-                  onChange={(e) => {
-                    const on = e.target.checked;
-                    setState((prev) => ({
-                      ...prev,
-                      compensationUndecided: on,
-                      salaryMin: on ? "" : prev.salaryMin,
-                      salaryMax: on ? "" : prev.salaryMax,
-                      wideRangeConfirmed: on ? false : prev.wideRangeConfirmed,
-                    }));
-                    setErrors((prev) => {
-                      const nextErrors = { ...prev };
-                      delete nextErrors.salaryMin;
-                      delete nextErrors.salaryMax;
-                      delete nextErrors.compensationUndecided;
-                      delete nextErrors.wideRangeConfirmed;
-                      return nextErrors;
-                    });
-                  }}
+                  checked={state.compensationFlexible}
+                  onChange={(e) => set("compensationFlexible", e.target.checked)}
                   className="mt-0.5 h-4 w-4"
                 />
-                <span>
-                  Not decided yet
-                  <span className="block text-[color:var(--brand-navy)]/65">
-                    We will record this as undecided and mark the brief incomplete for compensation.
-                  </span>
-                </span>
+                <span>Flexible for the right person</span>
               </label>
-              {errors.compensationUndecided && (
-                <p className="text-sm text-red-600" data-field-error="true">
-                  {errors.compensationUndecided}
-                </p>
-              )}
-            </div>
 
-            <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
-              <select
-                id="comp-equity"
-                value={state.equity}
-                onChange={(e) => set("equity", e.target.value)}
-                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+              <Field
+                label="Anything else about the package"
+                error={errors.compensationNote}
+                required={req["compensationNote"]}
+                hint="Bonus, relocation, shift premium, or where exactly you have room."
               >
-                <option value="">Not stated</option>
-                {COMP_EQUITY.map((k) => (
-                  <option key={k} value={k}>
-                    {COMP_EQUITY_LABELS[k]}
-                  </option>
-                ))}
-              </select>
-            </Field>
+                <Input
+                  value={state.compensationNote}
+                  onChange={(e) => set("compensationNote", e.target.value)}
+                  placeholder="10% annual bonus; can stretch to 90k for someone exceptional"
+                />
+              </Field>
+            </div>
+          </SectionGroup>
 
-            <label className="flex cursor-pointer items-start gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={state.compensationFlexible}
-                onChange={(e) => set("compensationFlexible", e.target.checked)}
-                className="mt-0.5 h-4 w-4"
-              />
-              <span>Flexible for the right person</span>
-            </label>
-
+          <SectionGroup title="Start date">
             <Field
-              label="Anything else about the package"
-              error={errors.compensationNote}
-              required={req["compensationNote"]}
-              hint="Bonus, relocation, shift premium, or where exactly you have room."
+              label={intakeFieldLabel("startDate")}
+              error={errors.targetStartDate}
+              required={req["targetStartDate"]}
+              hint="We will tell you honestly if it is achievable."
             >
               <Input
-                value={state.compensationNote}
-                onChange={(e) => set("compensationNote", e.target.value)}
-                placeholder="10% annual bonus; can stretch to 90k for someone exceptional"
+                type="date"
+                value={state.targetStartDate}
+                onChange={(e) => set("targetStartDate", e.target.value)}
               />
             </Field>
-
-          </div>
-
-
-
-
-          <Field
-            label={intakeFieldLabel("startDate")}
-            error={errors.targetStartDate}
-            required={req["targetStartDate"]}
-            hint="We will tell you honestly if it is achievable."
-          >
-            <Input
-              type="date"
-              value={state.targetStartDate}
-              onChange={(e) => set("targetStartDate", e.target.value)}
-            />
-          </Field>
+          </SectionGroup>
         </Section>
         )}
 
