@@ -8,22 +8,14 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { seatBlockCode, type SeatBlock } from "@/lib/seat-limit";
 import { readSeatsForOrg } from "@/lib/kpis/seats.server";
+import type { SeatCount } from "@/lib/client-seats";
 
 export async function readSeatUsage(
   orgId: string,
-): Promise<{
-  seatLimit: number;
-  seatsUsed: number;
-  seatsAllocated: number;
-  seatsLeft: number;
-}> {
+): Promise<SeatCount> {
   // One reader for seats (src/lib/kpis/seats.server.ts) — the Account page, the
   // authz endpoint and this guard must never produce different seat totals.
-  const { seatLimit, seatsUsed, seatsAllocated, seatsLeft } = await readSeatsForOrg(
-    supabaseAdmin,
-    orgId,
-  );
-  return { seatLimit, seatsUsed, seatsAllocated, seatsLeft };
+  return readSeatsForOrg(supabaseAdmin, orgId);
 }
 
 /**
