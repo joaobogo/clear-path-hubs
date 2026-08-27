@@ -1,3 +1,4 @@
+import { dedupeDecisions } from "@/lib/decisions/dedupe";
 // Released candidate list and single candidate read.
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
@@ -51,7 +52,6 @@ import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
 import { isActiveInterview } from "@/lib/interview-state";
 
 import {
-import { dedupeDecisions } from "@/lib/decisions/dedupe";
   type AnyRow,
   type ClientRole,
   type CandidateFilter,
