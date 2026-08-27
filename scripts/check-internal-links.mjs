@@ -37,6 +37,9 @@ const categorySlugs = new Set(
 
 /* ---------- walk the sources that can author a blog URL ---------- */
 
+// Only surfaces a visitor can actually reach: app code, the static page
+// content, and blog posts that are live. Orphaned post JSON files aren't
+// served, so links inside them can't be broken links for anyone.
 const files = [];
 (function walk(dir) {
   for (const name of readdirSync(dir)) {
@@ -49,15 +52,39 @@ const files = [];
       files.push(p);
     }
   }
-})(join(ROOT, "src"));
+})(join(ROOT, "src/routes"));
+walkTop("src/components");
+walkTop("src/lib");
+walkTop("src/content/pages");
+for (const slug of live) {
+  const p = join(blogDir, `${slug}.json`);
+  try {
+    statSync(p);
+    files.push(p);
+  } catch {
+    /* manifest slug without a file — reported by scaled-content-check */
+  }
+}
+
+function walkTop(rel) {
+  const dir = join(ROOT, rel);
+  for (const name of readdirSync(dir)) {
+    const p = join(dir, name);
+    if (statSync(p).isDirectory()) walkTop(join(rel, name));
+    else if (/\.(tsx?|json)$/.test(name)) files.push(p);
+  }
+}
 
 const broken = new Map(); // slug -> files
 for (const file of files) {
   if (file.endsWith("routeTree.gen.ts")) continue;
   const src = read(file);
+  const selfSlug = file.startsWith(blogDir)
+    ? file.slice(blogDir.length + 1).replace(/\.json$/, "")
+    : null;
   for (const m of src.matchAll(/\/blog\/([a-z0-9][a-z0-9-]{2,})/gi)) {
     const slug = m[1].toLowerCase();
-    if (slug === "category" || slug === "index") continue;
+    if (slug === "category" || slug === "index" || slug === selfSlug) continue;
     if (live.has(slug) || categorySlugs.has(slug)) continue;
     // Template expressions like /blog/${slug} are resolved at runtime.
     if (slug.startsWith("$")) continue;
