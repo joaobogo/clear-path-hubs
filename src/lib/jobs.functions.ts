@@ -13,6 +13,7 @@ import {
 import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
 import { jobDescriptionSummary } from "@/lib/marketing/job-description";
 import { QA_E2E_COOKIE, qaEndpointsEnabled } from "@/lib/public-api/qa-endpoint-gate";
+import { publicOrgNameOr } from "@/lib/org/public-org-name";
 
 
 
@@ -203,7 +204,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           work_model: p.work_model,
           employment_type: p.employment_type,
           seniority: p.seniority,
-          organization_name: employerNames.get(p.id) ?? "Hiring Organization",
+          organization_name: publicOrgNameOr(employerNames.get(p.id), "Hiring Organization"),
           compensation_display: comp.display,
           compensation_line: comp.line,
 
@@ -237,7 +238,7 @@ export const getPositionClosure = createServerFn({ method: "GET" })
     if (error) return null;
     if (!row) return null;
     const r = row as { id: string; title: string; status: string; organization_name: string };
-    return r;
+    return { ...r, organization_name: publicOrgNameOr(r.organization_name, "Hiring Organization") };
   });
 
 export const getPublicPosition = createServerFn({ method: "GET" })
@@ -402,7 +403,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       })(),
       organization_name: confidential
         ? "Confidential employer"
-        : (employer?.name ?? "Hiring Organization"),
+        : publicOrgNameOr(employer?.name, "Hiring Organization"),
       questions: (questions ?? []).map((q) => ({
         id: q.id,
         question: q.question,

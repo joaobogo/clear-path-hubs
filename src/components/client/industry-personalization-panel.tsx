@@ -96,7 +96,7 @@ export function IndustryPersonalizationPanel({ industry }: Props) {
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-full border border-current/20 bg-card/70 px-2.5 py-1 text-[11px] font-medium text-foreground/80">
           <BadgeCheck className="h-3 w-3" aria-hidden />
-          Rubric preset applied
+          Scoring preset applied
         </span>
       </div>
 

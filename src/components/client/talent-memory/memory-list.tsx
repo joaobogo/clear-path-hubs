@@ -64,7 +64,7 @@ export function MemoryCard({
             <Badge variant="outline" className="text-[10px]">archived</Badge>
           ) : (
             <Badge className="border-warning/60 bg-warning/60 text-warning-strong text-[10px]">
-              silver
+              Previously shortlisted
             </Badge>
           )}
         </div>

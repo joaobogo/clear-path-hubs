@@ -7,6 +7,7 @@ import { applySchema, type ApplyInput } from "./apply-schema";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 import { greetingName } from "@/lib/candidate/display-name";
 import type { SubmitApplicationResult } from "./apply-types";
+import { publicOrgName } from "@/lib/org/public-org-name";
 
 export type { SubmitApplicationResult };
 
@@ -53,7 +54,7 @@ export const getApplicationReceipt = createServerFn({ method: "GET" })
       reference: ref6(app.id),
       applied_at: app.applied_at,
       position_title: pos?.title ?? null,
-      organization_name: pos?.organizations?.name ?? null,
+      organization_name: publicOrgName(pos?.organizations?.name) || null,
       candidate_first_name: greetingName(cp?.full_name),
     };
   });

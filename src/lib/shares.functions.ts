@@ -7,6 +7,7 @@ import { z } from "zod";
 import { toClientCandidateDTO } from "@/lib/client-kpi.server";
 import { writeAudit } from "@/lib/admin.functions";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { publicOrgNameOr } from "@/lib/org/public-org-name";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -375,7 +376,7 @@ export const getShortlistShareByToken = createServerFn({ method: "GET" })
         default_mode: share.default_mode as ShareMode,
         allow_comments: share.allow_comments,
         expires_at: share.expires_at,
-        organization_name: share.organizations?.name ?? "Hiring Organization",
+        organization_name: publicOrgNameOr(share.organizations?.name, "Hiring Organization"),
         position: share.positions
           ? {
               id: share.positions.id,

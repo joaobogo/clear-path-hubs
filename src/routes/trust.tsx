@@ -91,8 +91,8 @@ const PRICING_LINES = [
 const CLIENT_KEEPS = [
   "Every candidate profile, evidence, and score you have seen — permanently.",
   "Your role blueprints, rubrics, screening questions, and scoring logic.",
-  "Talent pools, silver medalist memory, and rediscovery data.",
-  "Every decision, comment, and hire record — with audit trail.",
+  "Talent pools, previously shortlisted candidates, and rediscovery data.",
+  "Every decision, comment, and hire record — with a full history of who changed what.",
   "Exportable shortlists and share links for internal stakeholders.",
 ];
 
@@ -100,7 +100,7 @@ const NEVER_CHARGED = [
   "No placement fees.",
   "No salary percentages.",
   "No per-seat charges for internal reviewers.",
-  "No extra fees for rediscovery or silver medalist hires.",
+  "No extra fees for rediscovery or hiring someone you shortlisted earlier.",
 ];
 
 const SCORING_LINES = [
@@ -131,7 +131,7 @@ const PRIVACY_LINES = [
   "CVs are stored in a private bucket with per-organization access, encrypted at rest.",
   "External stakeholder share links are token-gated, scoped to the shortlist, and revocable.",
   "PII is never used to train third-party models. Model calls are per-request, stateless, and logged for audit.",
-  "Consent and legal basis are recorded per candidate — with an audit trail on every access.",
+  "Consent and legal basis are recorded per candidate — with a full history of every access.",
 ];
 
 type Split = { area: string; taasflow: string; client: string };
@@ -158,7 +158,7 @@ const SPLIT: Split[] = [
   },
   {
     area: "Data & records",
-    taasflow: "We host the system of record and keep the audit trail complete.",
+    taasflow: "We host the system of record and keep the full change history complete.",
     client: "You own the data. Export, delete, or migrate at any time.",
   },
 ];
@@ -199,7 +199,7 @@ const SECURITY_LINES = [
   { icon: KeyRound, title: "Access control", body: "Least-privilege roles: platform admin, client admin, editor, viewer. All access audited." },
   { icon: ShieldCheck, title: "Encryption", body: "TLS in transit. Encrypted at rest. Private storage for CVs and evidence." },
   { icon: FileText, title: "Auditability", body: "Immutable audit events for score runs, decisions, and admin actions." },
-  { icon: Scale, title: "Legal basis & consent", body: "Consent and legal basis recorded per candidate with a full audit trail." },
+  { icon: Scale, title: "Legal basis & consent", body: "Consent and legal basis recorded per candidate with a full change history." },
   { icon: Users, title: "Subject rights", body: "Candidates can request access, correction, or deletion. We honor them in-product." },
 ];
 
@@ -468,7 +468,7 @@ function TrustPage() {
       <CtaSection
         eyebrow="Buy with your eyes open"
         title="Book a walkthrough of the trust pack."
-        description="30 minutes. We show pricing, scoring, evidence, and the audit trail on a live workspace — with your role, not a demo."
+        description="30 minutes. We show pricing, scoring, evidence, and the full change history on a live workspace — with your role, not a demo."
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/pricing", label: "See pricing detail" }}
       />
