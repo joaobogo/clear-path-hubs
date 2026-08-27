@@ -123,7 +123,7 @@ function validateStep(step: number, s: State): Record<string, string> {
     if (min && max && min >= max) e.budget_max = "Maximum must be higher than the minimum.";
   }
   if (step === 2) {
-    if (s.must_have_skills.length < 3 && s.description.trim().length < 40) {
+    if (s.must_have_skills.length < 3 && stripInlineMarkup(s.description).trim().length < 40) {
       e.must_have_skills =
         "Add at least 3 must-have skills or a job description of 40+ characters on Step 1";
     }
