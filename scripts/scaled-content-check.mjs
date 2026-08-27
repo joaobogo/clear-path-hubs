@@ -86,7 +86,7 @@ for (const file of [
 const manifest = read("src/lib/marketing/blog-manifest.ts");
 const includedBlock = manifest
   .split("export const INCLUDED_BLOG_SLUGS")[1]
-  .split("];")[0];
+  .split(/\n\]/)[0];
 const included = [...includedBlock.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
 
 const blogDir = "src/content/blog";
