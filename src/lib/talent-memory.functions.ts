@@ -389,6 +389,7 @@ export const listSilverMedalists = createServerFn({ method: "GET" })
         raw as unknown as Array<{
           candidate_profile_id: string;
           source_position_id: string | null;
+          reason_category?: string | null;
         }>,
         activePairs,
       ) as unknown as AnyRow[],

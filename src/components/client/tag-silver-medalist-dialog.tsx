@@ -27,7 +27,6 @@ import {
   tagSilverMedalist,
   getMemoryByMatch,
   type SilverReason,
-  type SilverConsent,
 } from "@/lib/talent-memory.functions";
 
 type Props = {
@@ -51,7 +50,6 @@ export function TagSilverMedalistDialog({
   const tag = useServerFn(tagSilverMedalist);
   const [reason, setReason] = useState<SilverReason>("better_fit_selected");
   const [notes, setNotes] = useState("");
-  const [consent, setConsent] = useState<SilverConsent>("pending");
 
   const mut = useMutation({
     mutationFn: () =>
@@ -61,7 +59,6 @@ export function TagSilverMedalistDialog({
           matchId,
           reason_category: reason,
           reason_notes: notes || undefined,
-          consent_status: consent,
         },
       }),
     onSuccess: () => {
@@ -122,28 +119,11 @@ export function TagSilverMedalistDialog({
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Consent to keep on file</label>
-            <div className="flex flex-wrap gap-2">
-              {(["granted", "pending", "declined"] as SilverConsent[]).map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setConsent(c)}
-                  className={`rounded-full border px-3 py-1 text-xs capitalize transition ${
-                    consent === c
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Track the candidate&apos;s stated preference for staying in your talent pool.
-            </p>
-          </div>
+          {/* The consent picker was removed from the client dialog: a client
+              adding someone to their own pool is not the person who holds the
+              candidate's stated preference, so asking them to record it put a
+              guess on file. The field still exists on the record and is still
+              set by the server default. */}
         </div>
 
         <DialogFooter>
