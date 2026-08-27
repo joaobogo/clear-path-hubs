@@ -62,14 +62,6 @@ function anchor(iv: InterviewDTO): number {
   return Number.isNaN(t) ? 0 : t;
 }
 
-function isPastItem(iv: InterviewDTO): boolean {
-  // Strictly temporal: a meeting in the future has not happened, whatever its
-  // stored status claims. Cancelled meetings sit with the past either way.
-  const occurrence = interviewOccurrence(iv);
-  return occurrence === "happened" || occurrence === "cancelled";
-}
-
-
 /**
  * One timeline: proposed, confirmed and completed interviews on a single axis,
  * every time rendered in the interview timezone and the viewer's own.
