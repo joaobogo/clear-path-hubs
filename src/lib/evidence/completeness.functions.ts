@@ -104,8 +104,40 @@ export const addManualEvidence = createServerFn({ method: "POST" })
       },
     });
 
+    await markScoreStaleAfterEvidenceChange(data.matchId);
+
     return { ok: true as const, evidenceItemId: item.id };
   });
+
+/**
+ * A score is a reading of the evidence, so changing the evidence dates it.
+ *
+ * The database has had mark_matches_score_stale since the invalidation triggers
+ * were added, and the staleness chip has always known how to render the result,
+ * but nothing called it when a reviewer touched evidence: they would add a
+ * quote, or override a missing must-have, and the number beside it carried on
+ * as though nothing had happened.
+ *
+ * This marks and offers — it does not rescore. Rescoring on someone's behalf
+ * would rewrite a figure they are in the middle of reviewing, and the freshness
+ * model is explicit that a rescore is never triggered automatically.
+ *
+ * Failing to flag must not fail the write the reviewer actually asked for; the
+ * reconciler picks up anything missed.
+ */
+async function markScoreStaleAfterEvidenceChange(matchId: string): Promise<void> {
+  try {
+    // The RPC is granted to service_role only, so it cannot run on the caller's
+    // client even though the caller is staff.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.rpc("mark_matches_score_stale", {
+      _match_ids: [matchId],
+      _reason: "evidence_changed",
+    });
+  } catch (e) {
+    console.error("[completeness] could not flag score as stale", e);
+  }
+}
 
 const overrideInput = z.object({
   matchId: z.string().uuid(),
@@ -138,5 +170,6 @@ export const overrideMissingCriterion = createServerFn({ method: "POST" })
       },
     });
     if (error) throw error;
+    await markScoreStaleAfterEvidenceChange(data.matchId);
     return { ok: true as const };
   });

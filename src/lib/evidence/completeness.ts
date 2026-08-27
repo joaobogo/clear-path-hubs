@@ -16,6 +16,15 @@ export interface EvidenceSourceView {
   /** Where this came from: CV, application answer, interview, manual entry, scoring run. */
   source: string;
   snippet: string | null;
+  /**
+   * What the passage was taken to mean for this criterion — the reasoning, not
+   * the quote. Recorded as `normalized_meaning` on the evidence item and used
+   * to sit unread: it was only ever a fallback for a missing passage, so in the
+   * normal case it was dropped. A reviewer confirming evidence needs the quote
+   * AND the claim being made about it, or the only way to check the reasoning
+   * is to re-read the CV.
+   */
+  meaning: string | null;
   /** Raw verdict as recorded upstream (strong / partial / met / missing …). */
   result: string | null;
   confidence: number | null;
@@ -162,19 +171,26 @@ export function buildCompletenessReport(input: {
 }): CompletenessReport {
   const overrideByKey = new Map(input.overrides.map((o) => [o.criterionKey, o]));
 
-  const itemSource = (it: RawEvidenceItem): EvidenceSourceView => ({
-    source: it.source_kind ?? "evidence",
-    snippet: it.source_passage ?? it.normalized_meaning ?? null,
-    result: it.result,
-    confidence: it.confidence == null ? null : Number(it.confidence),
-    evidenceItemId: it.id,
-    reviewerStatus: it.reviewer_status ?? null,
-    integrityOk: it.integrity_ok !== false,
-  });
+  const itemSource = (it: RawEvidenceItem): EvidenceSourceView => {
+    const passage = it.source_passage ?? null;
+    const meaning = it.normalized_meaning ?? null;
+    return {
+      source: it.source_kind ?? "evidence",
+      snippet: passage ?? meaning,
+      // Only worth showing as reasoning when it is not already the quote.
+      meaning: passage && meaning ? meaning : null,
+      result: it.result,
+      confidence: it.confidence == null ? null : Number(it.confidence),
+      evidenceItemId: it.id,
+      reviewerStatus: it.reviewer_status ?? null,
+      integrityOk: it.integrity_ok !== false,
+    };
+  };
 
   const assessmentSource = (a: RawAssessment): EvidenceSourceView => ({
     source: "scoring run",
     snippet: a.snippet,
+    meaning: null,
     result: a.result,
     confidence: a.confidence,
     evidenceItemId: null,

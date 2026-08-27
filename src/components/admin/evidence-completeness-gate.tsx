@@ -293,6 +293,14 @@ export function EvidenceCompletenessGate({
                     <p className="text-xs italic text-muted-foreground">
                       {s.snippet ?? "No passage recorded"}
                     </p>
+                    {/* The claim being made about the quote. Confirming evidence
+                        without it means re-reading the CV to work out why this
+                        passage was attached to this requirement at all. */}
+                    {s.meaning && (
+                      <p className="mt-0.5 text-xs text-foreground/80">
+                        <span className="font-medium">Why this counts:</span> {s.meaning}
+                      </p>
+                    )}
                     <p className="text-[11px] text-muted-foreground">
                       source: {s.source}
                       {s.result ? ` · ${s.result}` : ""}

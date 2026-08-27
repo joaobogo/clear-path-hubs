@@ -47,7 +47,8 @@ export type StaleReasonCode =
   | "requirements_changed"
   | "screening_changed"
   | "rubric_superseded"
-  | "new_cv";
+  | "new_cv"
+  | "evidence_changed";
 
 export type StaleReason = {
   code: StaleReasonCode;
@@ -191,6 +192,8 @@ const STORED_LABELS: Record<string, string> = {
   screening_changed: "The screening questions for this role changed after this was assessed.",
   rubric_superseded: "The approved scoring criteria for this role were replaced.",
   new_cv: "The candidate attached a newer CV after this was assessed.",
+  evidence_changed:
+    "A reviewer added, corrected or overrode evidence after this was assessed.",
 };
 
 export function storedStaleReasons(stored: StoredStaleness | null | undefined): StaleReason[] {
