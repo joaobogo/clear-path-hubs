@@ -9,6 +9,12 @@ export type ClientCandidateKpis = {
   offers: number;
   hires: number;
   /**
+   * Candidates delivered with no decision recorded yet — the one "awaiting your
+   * review" rule, identical to the Overview queue, Roles and Insights. Derived
+   * from the rows on screen so the tile can never read the total candidate count.
+   */
+  awaiting_decision: number;
+  /**
    * Stage partition: every shared candidate falls into exactly one bucket, so a
    * row of stage tiles adds up to `delivered` and can never sum to more than the
    * list beneath it. `hires` stays the confirmed-hire figure and is not part of
@@ -35,13 +41,17 @@ export type ClientCandidateKpis = {
 export function computeCandidateKpis(
   rows: ClientCandidateDTO[],
   /**
-   * Confirmed hires for the workspace, from the one hire selector. The stage
-   * never decides this number, so the tile agrees with Offers and Account.
+   * Confirmed hires for the workspace, from the one hire selector. Optional:
+   * when it isn't supplied yet (the workspace summary is still loading) the
+   * rows' own confirmed-offer flag decides, so the tile can't flip 1 → 0 → 1
+   * across reloads while the candidate still reads "Hired".
    */
-  confirmedHires = 0,
+  confirmedHires?: number,
 ): ClientCandidateKpis {
   let delivered = 0;
   let top = 0;
+  let awaitingDecision = 0;
+  let rowHires = 0;
   const part = {
     awaiting: 0,
     shortlisted: 0,
@@ -57,6 +67,9 @@ export function computeCandidateKpis(
     // "Strongest candidates" tile: the same predicate used by the KPI drill-through
     // (filter: "top") and the client-facing band presentation.
     if (isStrongFitBand(row.fit.band)) top += 1;
+    // The canonical awaiting rule: delivered and no decision recorded.
+    if (row.stage === "delivered" && !row.client_decided) awaitingDecision += 1;
+    if (row.hire_confirmed) rowHires += 1;
     switch (row.stage) {
       case "delivered":
         part.awaiting += 1;
@@ -87,7 +100,10 @@ export function computeCandidateKpis(
     shortlisted: part.shortlisted,
     interviewing: part.interviewing,
     offers: part.offer,
-    hires: confirmedHires,
+    hires: confirmedHires ?? rowHires,
+    awaiting_decision: awaitingDecision,
+    // The partition stays stage-shaped so the tiles still add up to the list
+    // beneath them and each tile matches its board column exactly.
     stage_partition: part,
   };
 }
