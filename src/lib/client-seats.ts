@@ -27,7 +27,14 @@ export type SeatMembershipRow = { role?: string | null; status?: string | null }
 export type SeatCount = {
   /** Total seats on the plan: recruiter allowance + the owner seat. */
   seatLimit: number;
+  /**
+   * Seats held by a person. A pending invitation is NOT in use — nobody holds
+   * it yet — so it is reported in `pendingInvites` and counted only against
+   * remaining capacity through `seatsAllocated`.
+   */
   seatsUsed: number;
+  /** Seats that cannot be handed to someone else: in use plus reserved. */
+  seatsAllocated: number;
   seatsLeft: number;
   activeMembers: number;
   pendingInvites: number;
@@ -56,12 +63,16 @@ export function computeSeatCount(
   const seatLimit =
     (Number.isFinite(recruiterSeats) ? Math.max(0, recruiterSeats) : DEFAULT_RECRUITER_SEATS) + 1;
   const holders = rows.filter(holdsSeat);
-  const seatsUsed = holders.length;
+  const activeMembers = holders.filter((r) => r.status === "active").length;
+  const pendingInvites = holders.filter((r) => r.status === "invited").length;
+  const seatsAllocated = activeMembers + pendingInvites;
   return {
     seatLimit,
-    seatsUsed,
-    seatsLeft: Math.max(0, seatLimit - seatsUsed),
-    activeMembers: holders.filter((r) => r.status === "active").length,
-    pendingInvites: holders.filter((r) => r.status === "invited").length,
+    seatsUsed: activeMembers,
+    seatsAllocated,
+    seatsLeft: Math.max(0, seatLimit - seatsAllocated),
+    activeMembers,
+    pendingInvites,
   };
 }
+
