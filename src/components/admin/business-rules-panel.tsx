@@ -37,7 +37,7 @@ const RULE_META: Record<(typeof TOP_KEYS)[number], { label: string; help: string
   retention: { label: "Data retention", help: "How long candidate documents and records are kept." },
   packages: { label: "Service packages", help: "Package names, seat counts and inclusions used in proposals." },
   subscriptions: { label: "Subscription plans", help: "Plan tiers and monthly prices used across pricing surfaces." },
-  discountNote: { label: "Discount note", help: "There is no discount: one exact total per position count." },
+  discountNote: { label: "Discount note", help: "There is no discount: one package, one total." },
   scoring: { label: "Scoring thresholds", help: "Score bands and gates that decide shortlist eligibility." },
   ctas: { label: "Call-to-action copy", help: "Button and link wording used on marketing pages." },
   contact: { label: "Contact details", help: "Public email, phone and address details." },
