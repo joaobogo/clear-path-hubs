@@ -60,7 +60,7 @@ describe("the pricing rule", () => {
 
   it("shows no price above the maximum", () => {
     expect(positionsTotalUsd(MAX_POSITIONS + 1)).toBeNull();
-    expect(MAX_POSITIONS).toBe(50);
+    expect(MAX_POSITIONS).toBe(100);
   });
 
   it("takes 10% off a twelve-month prepayment, without moving the monthly price", () => {
