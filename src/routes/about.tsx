@@ -7,46 +7,49 @@ import {
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
-import joaoLucianoPhoto from "@/assets/founders/joao-luciano.jpg.asset.json";
 
-// ─── LEADERSHIP — Edit this block to publish the named founder narrative ────
-// The rest of the About page reads from this constant. Update once, publish.
-// If any field is empty string, that block hides gracefully.
+// ─── LEADERSHIP — single source of truth for the named leadership narrative ──
+// Canonical version: the two named leaders published on Flow Group Ventures'
+// reviewed leadership register (Brøgger as CEO, Bogo Kasprzak as CMO). Name
+// spellings follow that register: "Christian Brøgger" (ø) and
+// "João (John) Bogo Kasprzak".
+// Employers named in a bio are PRIOR EMPLOYERS/PROGRAMMES of that individual,
+// never TaaSFlow clients — the disclaimer below is rendered with the cards and
+// must stay whenever an employer brand is named.
+// A `linkedin` value is published only when the profile has been confirmed to
+// belong to that person. Leave it empty rather than link an unverified slug.
 const LEADERS = [
   {
-    name: "João Luciano",
-    title: "Co-founder & CEO",
-    location: "Lisbon · Global",
-    photoUrl: joaoLucianoPhoto.url,
-    linkedin: "https://www.linkedin.com/in/joaoluciano/",
-    quote:
-      "We built TaaSFlow because we were tired of hiring being the least explainable part of running a company.",
-    bio: "Operator turned founder. Ran hiring at venture-backed teams across LATAM and EMEA before realising the tooling gap was structural, not brand. Focused on building a recruiting function that behaves like software — visible, priced predictably, and accountable to evidence.",
-    tags: ["Product-led recruiting", "Operator background", "Evidence-first", "GTM"],
-  },
-  {
-    name: "Christian Brogger",
-    title: "Co-founder & COO",
-    location: "London · Global",
+    name: "Christian Brøgger",
+    title: "Chief Executive Officer",
+    location: "North America · Europe",
     photoUrl: "/__l5e/assets-v1/15766c52-abcb-4608-ada7-4a2c2a5b34e9/christian-brogger.jpg",
     linkedin: "https://www.linkedin.com/in/christian-brogger/",
     quote:
       "Great hiring starts with great process. We just made it repeatable.",
-    bio: "25 years designing and driving value creation across Fortune 500s and private equity. Former Director at UBS Investment Bank; led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Pragmatic, disruption-minded, technology-as-enabler — with deep experience partnering directly with leadership teams to execute business strategy.",
+    bio: "25 years designing and driving value creation across Fortune 500s and private equity. Former Director at UBS Investment Bank, and led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Pragmatic and disruption-minded, with technology as the enabler — and deep experience working directly with leadership teams to execute business strategy.",
     tags: ["Process excellence", "Enterprise transformation", "Global delivery", "Operational strategy"],
   },
   {
-    name: "João Bogo",
-    title: "Co-founder & CMO",
-    location: "Lisbon · LATAM & EMEA",
+    name: "João (John) Bogo Kasprzak",
+    title: "Chief Marketing Officer",
+    location: "Global · LATAM lead",
     photoUrl: "/__l5e/assets-v1/be65771c-f2ae-41cd-b895-a60020362f38/joao-bogo.jpg",
-    linkedin: "https://www.linkedin.com/in/joaomarcoscsilva/",
+    // Unverified: the previously published slug (/in/joaomarcoscsilva/) spells a
+    // different name and LinkedIn serves an auth wall for every slug, so it
+    // cannot be confirmed. Restore only once the profile URL is confirmed.
+    linkedin: "",
     quote:
       "The best candidates aren't looking. You need to know where they are and how to reach them.",
-    bio: "Former strategist for Hilton, Marriott, Four Seasons, and Philips. Represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe, and the Gulf — with a focus on employer branding, global talent markets, and building real connections at scale.",
+    bio: "Former strategist for Hilton, Marriott, Four Seasons and Philips, and represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe and the Gulf, focused on employer branding, global talent markets and building real connections at scale.",
     tags: ["Global talent markets", "Employer branding", "Strategic partnerships", "Recruitment marketing"],
   },
 ] as const;
+
+// Rendered under the leadership cards, per the FGV disclaimer standard.
+const PRIOR_EXPERIENCE_DISCLAIMER =
+  "Organisations named above are prior employers and programmes of the individual concerned. They are not TaaSFlow clients and imply no endorsement of TaaSFlow.";
+
 
 const WHY_NOW =
   "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — an AI Hiring Intelligence Platform that runs the search end to end, priced like software, with configurable expert oversight on every shortlist.";
@@ -87,13 +90,48 @@ const SERVES = [
 
 export const Route = createFileRoute("/about")({
   head: () =>
-    marketingHead(undefined, "/about", {
-      title: "About TaaSFlow — the AI Hiring Intelligence Platform",
-      description:
-        "TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.",
-    }),
+    marketingHead(
+      undefined,
+      "/about",
+      {
+        title: "About TaaSFlow — the AI Hiring Intelligence Platform",
+        description:
+          "TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.",
+      },
+      {
+        // Named leadership, matching the on-page cards exactly. Only fields
+        // that are verifiably true are emitted — no sameAs for an unconfirmed
+        // profile, no invented job history.
+        scripts: [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "AboutPage",
+              url: "https://taasflow.com/about",
+              mainEntity: {
+                "@type": "Organization",
+                "@id": "https://taasflow.com/#organization",
+                name: "TaaSFlow",
+                url: "https://taasflow.com",
+                employee: LEADERS.map((leader) => ({
+                  "@type": "Person",
+                  name: leader.name,
+                  jobTitle: leader.title,
+                  description: leader.bio,
+                  worksFor: { "@id": "https://taasflow.com/#organization" },
+                  ...(leader.linkedin ? { sameAs: [leader.linkedin] } : {}),
+                })),
+              },
+            }),
+          },
+        ],
+      },
+    ),
+
   component: AboutPage,
 });
+
 
 function AboutPage() {
   return (
@@ -124,14 +162,14 @@ function AboutPage() {
             Leadership
           </p>
           <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-            Meet the founders
+            Meet the leadership
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Careers built advising global enterprises. Now applying the same
             rigor to the world of hiring.
           </p>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
             {LEADERS.map((leader) => {
               const initials = leader.name
                 .split(" ")
@@ -207,6 +245,10 @@ function AboutPage() {
               );
             })}
           </div>
+
+          <p className="mt-6 max-w-3xl text-xs text-[color:var(--brand-navy)]/70">
+            {PRIOR_EXPERIENCE_DISCLAIMER}
+          </p>
 
           <div className="mt-12 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
             <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-3xl">
