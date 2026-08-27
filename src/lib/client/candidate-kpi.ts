@@ -102,6 +102,8 @@ export function computeCandidateKpis(
     offers: part.offer,
     hires: confirmedHires ?? rowHires,
     awaiting_decision: awaitingDecision,
-    stage_partition: { ...part, awaiting: awaitingDecision },
+    // The partition stays stage-shaped so the tiles still add up to the list
+    // beneath them and each tile matches its board column exactly.
+    stage_partition: part,
   };
 }
