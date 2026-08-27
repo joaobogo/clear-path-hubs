@@ -17,13 +17,15 @@ import {
 } from "lucide-react";
 import {
   PRICE_PILOT_DISPLAY,
-  PRICE_MULTI_DISPLAY,
-  PRICE_SPRINT_DISPLAY,
-  PRICE_ENTERPRISE_DISPLAY,
+  GROWTH_RATE_DISPLAY,
+  SCALE_RATE_DISPLAY,
+  VOLUME_RATE_DISPLAY,
+  ABOVE_MAX_DISPLAY,
   PILOT_ROLES_LABEL,
-  MULTI_ROLES_LABEL,
-  SPRINT_ROLES_LABEL,
-  ENTERPRISE_ROLES_LABEL,
+  GROWTH_ROLES_LABEL,
+  SCALE_ROLES_LABEL,
+  VOLUME_ROLES_LABEL,
+  ABOVE_MAX_ROLES_LABEL,
 } from "@/config/pricing-core";
 
 /**
@@ -412,10 +414,11 @@ function SlideEconomics() {
       </h2>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { tier: "Pilot", price: PRICE_PILOT_DISPLAY, unit: " one-time", body: PILOT_ROLES_LABEL + ". Test the model on one critical hire." },
-          { tier: "Multi Role", price: PRICE_MULTI_DISPLAY, unit: " one-time", body: MULTI_ROLES_LABEL + ". Parallel searches, shared context.", highlight: true },
-          { tier: "Hiring Sprint", price: PRICE_SPRINT_DISPLAY, unit: " one-time", body: SPRINT_ROLES_LABEL + ". Concurrent, priority support." },
-          { tier: "Custom", price: PRICE_ENTERPRISE_DISPLAY, unit: "", body: ENTERPRISE_ROLES_LABEL + ". Continuous portfolio hiring." },
+          { tier: "Pilot", price: PRICE_PILOT_DISPLAY, unit: " flat", body: PILOT_ROLES_LABEL + ". Test the model on one critical hire." },
+          { tier: "2 to 10 positions", price: GROWTH_RATE_DISPLAY, unit: " per position", body: GROWTH_ROLES_LABEL + ". Parallel searches, shared context.", highlight: true },
+          { tier: "11 to 20 positions", price: SCALE_RATE_DISPLAY, unit: " per position", body: SCALE_ROLES_LABEL + ". Concurrent, priority support." },
+          { tier: "21 to 30 positions", price: VOLUME_RATE_DISPLAY, unit: " per position", body: VOLUME_ROLES_LABEL + ". Portfolio hiring, lowest published rate." },
+          { tier: ABOVE_MAX_ROLES_LABEL, price: ABOVE_MAX_DISPLAY, unit: "", body: "Above the maximum we scope it with you." },
         ].map((t) => (
           <div
             key={t.tier}
