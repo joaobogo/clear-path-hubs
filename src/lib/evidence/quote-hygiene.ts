@@ -239,6 +239,41 @@ function renderStripLeadingJunk(text: string): string {
   return out;
 }
 
+/**
+ * Whole words that legitimately open a quote in all caps: common acronyms and
+ * CV section headings. Anything else all-caps at the start of a stored quote
+ * is the tail of a word the offset slice cut into ("NGUAGES", "TORY").
+ */
+const KEEP_OPENING_TOKENS = new Set([
+  "SQL", "AWS", "API", "GCP", "CI", "CD", "QA", "UI", "UX", "ETL", "KPI",
+  "OKR", "SLA", "SLO", "GDPR", "HIPAA", "SOC", "ISO", "PHP", "CSS", "HTML",
+  "JSON", "REST", "GRPC", "ML", "AI", "NLP", "SRE", "TDD", "BDD", "DDD",
+  "B2B", "B2C", "SAAS", "PAAS", "IAAS", "SDK", "IDE", "ORM", "SSR", "SSG",
+  "LANGUAGES", "LANGUAGE", "HISTORY", "SUMMARY", "EXPERIENCE", "EDUCATION",
+  "SKILLS", "PROFILE", "PROJECTS", "EMPLOYMENT", "CERTIFICATIONS", "STACK",
+  "TOOLS", "OBJECTIVE", "ABOUT", "HIGHLIGHTS", "ACHIEVEMENTS",
+]);
+
+/**
+ * Drop an opening token that is the fragment of a word a character-offset
+ * slice cut into: an unrecognised all-caps stub ("NGUAGES", "TORY") or a
+ * 1-3 digit stub ("020" from "2020"). Whole words are never touched.
+ */
+function renderDropTruncatedOpeningToken(text: string): string {
+  let out = text.trim();
+  for (let i = 0; i < 2; i++) {
+    const m = out.match(/^(\S+)(\s+\S[\s\S]*)$/);
+    if (!m) return out;
+    const [, first, rest] = m;
+    if (rest.trim().length < 12) return out;
+    const isDigitStub = /^\d{1,3}$/.test(first);
+    const isCapsStub = /^[A-Z]{3,12}$/.test(first) && !KEEP_OPENING_TOKENS.has(first);
+    if (!isDigitStub && !isCapsStub) return out;
+    out = rest.replace(/^[^A-Za-z0-9]+/, "").trim();
+  }
+  return out;
+}
+
 function renderCapAtWord(text: string): string {
   if (text.length <= QUOTE_MAX_CHARS) return text;
   const cut = text.slice(0, QUOTE_MAX_CHARS);
@@ -265,7 +300,9 @@ export function renderQuote(raw: string | null | undefined): string {
   const scrubbed = stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim();
   if (!scrubbed) return "";
 
-  const base = renderDropOpeningFragment(renderStripLeadingJunk(scrubbed));
+  const base = renderDropOpeningFragment(
+    renderStripLeadingJunk(renderDropTruncatedOpeningToken(renderStripLeadingJunk(scrubbed))),
+  );
   const trimmedStart = renderSnapStart(base);
   const ended = renderSnapEnd(trimmedStart);
   const started = ended.length >= 40 ? trimmedStart : base;

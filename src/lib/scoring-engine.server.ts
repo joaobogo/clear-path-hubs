@@ -230,6 +230,28 @@ export function isNegatedMention(
   );
 }
 
+const isWordChar = (c: string | undefined): boolean => !!c && /[A-Za-z0-9]/.test(c);
+
+/**
+ * A fixed-radius slice lands mid-word; move the bounds to the nearest word
+ * boundary so every quote begins and ends on a whole word.
+ */
+function snapToWordBounds(cv: string, start: number, end: number, guardLo: number, guardHi: number): [number, number] {
+  let s = start;
+  if (s > 0 && isWordChar(cv[s - 1]) && isWordChar(cv[s])) {
+    // Mid-word: skip the partial token, then any separators after it.
+    while (s < guardHi && isWordChar(cv[s])) s++;
+    while (s < guardHi && !isWordChar(cv[s])) s++;
+  }
+  let e = end;
+  if (e < cv.length && isWordChar(cv[e - 1]) && isWordChar(cv[e])) {
+    // Mid-word: retreat past the partial token, then any separators before it.
+    while (e > guardLo && isWordChar(cv[e - 1])) e--;
+    while (e > guardLo && !isWordChar(cv[e - 1])) e--;
+  }
+  return [s, Math.max(e, s)];
+}
+
 function findSnippet(
   cv: string,
   term: string,
@@ -238,8 +260,9 @@ function findSnippet(
 ): { snippet: string; location: string } | null {
   const idx = at ?? cv.toLowerCase().indexOf(term.toLowerCase());
   if (idx === -1) return null;
-  const start = Math.max(0, idx - radius);
-  const end = Math.min(cv.length, idx + term.length + radius);
+  const rawStart = Math.max(0, idx - radius);
+  const rawEnd = Math.min(cv.length, idx + term.length + radius);
+  const [start, end] = snapToWordBounds(cv, rawStart, rawEnd, idx + term.length, idx);
   const snippet = cleanQuote(cv.slice(start, end));
   if (!snippet) return null;
   return { snippet, location: `cv:${start}-${end}` };
