@@ -313,6 +313,35 @@ export function evidenceSupport(
     }))
     .filter((e) => e.snippet.length > 0);
 
+  /**
+   * Cross-requirement rescue.
+   *
+   * The engine tags each quote with the requirement it was extracted for. When
+   * it tagged a genuinely relevant passage to a neighbouring requirement (the
+   * row-level-security quote landed on the multi-tenant nice-to-have), the
+   * must-have was left with only generic passages and read "not evidenced"
+   * while the quote sat two rows below marked "Met". The same record cannot
+   * hold evidence that is both present and absent, so when a requirement ends
+   * up with no quote of its own we look across the whole record for passages
+   * that plainly speak to it and cite those instead.
+   */
+  const rescued =
+    evidence.length === 0
+      ? rawEvidence
+          .filter((e: any) => !e.contradiction && !isCandidateHeadline(evidenceSnippet(e)))
+          .filter((e: any) => passageSupportsRequirement(cleanQuote(evidenceSnippet(e)), r.label))
+          .map((e: any) => ({
+            label: e.label || "Evidence",
+            snippet: cleanQuote(evidenceSnippet(e)),
+            source: e.source || e.source_kind || null,
+            location: (e.source_location ?? e.location ?? null) as EvidenceLocation,
+          }))
+          .filter((e) => e.snippet.length > 0)
+          .filter((e, i, all) => all.findIndex((o) => o.snippet === e.snippet) === i)
+          .slice(0, 2)
+      : [];
+  const supporting = evidence.length > 0 ? evidence : rescued;
+
   const contradictions = mine
     .filter((e: any) => e.contradiction)
     .map((e: any) => ({
@@ -324,15 +353,22 @@ export function evidenceSupport(
 
   // HONESTY GATE: A requirement is only MET if there is direct evidence.
   // If the engine claimed it but found no snippets, downgrade to PARTIAL.
-  let isMet = (matched.some(sameRequirement) || declared?.status === "met") && evidence.length > 0;
-  let isPartial = partial.some(sameRequirement) || declared?.status === "partial" || (matched.some(sameRequirement) && evidence.length === 0);
+  // Rescued quotes count as evidence: they come from the same record.
+  let isMet = (matched.some(sameRequirement) || declared?.status === "met") && supporting.length > 0;
+  let isPartial = partial.some(sameRequirement) || declared?.status === "partial" || (matched.some(sameRequirement) && supporting.length === 0);
   const isContradicted = contradicts.some(sameRequirement) || declared?.status === "contradicted" || contradictions.length > 0;
 
   // With no coverage record, the candidate's own evidence decides the status.
   if (!declared && !isMet && !isPartial && !isContradicted && mine.length > 0) {
     const results = mine.map((e: any) => String(e.result ?? "").toLowerCase());
-    if (results.some((v) => v === "strong" || v === "met" || v === "full") && evidence.length > 0) isMet = true;
-    else if (results.some((v) => v === "partial" || v === "weak") || evidence.length === 0) isPartial = true;
+    if (results.some((v) => v === "strong" || v === "met" || v === "full") && supporting.length > 0) isMet = true;
+    else if (results.some((v) => v === "partial" || v === "weak") || supporting.length === 0) isPartial = true;
+  }
+
+  // A rescued quote with no coverage verdict of its own still evidences the
+  // requirement — read it as partly evidenced rather than not evidenced.
+  if (!isMet && !isPartial && !isContradicted && evidence.length === 0 && rescued.length > 0) {
+    isPartial = true;
   }
 
   let rawStatus: RequirementStatus = "not_evidenced";
@@ -341,12 +377,12 @@ export function evidenceSupport(
   else if (isPartial) rawStatus = "partial";
 
   // One canonical status per requirement, derived from the evidence that exists.
-  const status = resolveRequirementStatus({ status: rawStatus, evidence, contradictions, label: r.label });
+  const status = resolveRequirementStatus({ status: rawStatus, evidence: supporting, contradictions, label: r.label });
 
 
   return {
     status,
-    evidence,
+    evidence: supporting,
     explanation: (r.explanation as string) || null,
     interpretation: null,
     contradictions,

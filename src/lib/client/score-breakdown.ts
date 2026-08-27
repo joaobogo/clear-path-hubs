@@ -276,14 +276,31 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
     reasons.push(reason);
   }
 
-  (candidate.concerns ?? []).slice(0, 3).forEach((c: string, i: number) =>
-    reasons.push({
-      id: `concern-${i}`,
-      tone: "watch",
-      text: humanizeConcernSentence(c),
-      requirementKey: matchRequirementKey(c, rows),
-    }),
+  // A free-text concern that restates a requirement we can now evidence would
+  // contradict the row above it ("Met" beside "no direct evidence for…"), so it
+  // is dropped: the requirement rows are the record of what is evidenced.
+  const evidencedKeys = new Set(
+    rows
+      .filter((r: RequirementRow) => {
+        const s = resolveRequirementStatus(r);
+        return (s === "met" || s === "partial") && r.evidence.length > 0;
+      })
+      .map((r: RequirementRow) => requirementKey(r)),
   );
+  (candidate.concerns ?? [])
+    .filter((c: string) => {
+      const key = matchRequirementKey(c, rows);
+      return !(key && evidencedKeys.has(key));
+    })
+    .slice(0, 3)
+    .forEach((c: string, i: number) =>
+      reasons.push({
+        id: `concern-${i}`,
+        tone: "watch",
+        text: humanizeConcernSentence(c),
+        requirementKey: matchRequirementKey(c, rows),
+      }),
+    );
   if (candidate.main_consideration) {
     reasons.push({
       id: "main-consideration",
