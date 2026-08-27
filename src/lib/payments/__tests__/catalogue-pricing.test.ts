@@ -18,15 +18,12 @@ import {
   CATALOGUE_POSITION_COUNTS,
 } from "@/lib/payments-catalog";
 
-const annual = (monthly: number) => Math.round(monthly * 12 * 0.9);
-
 const EXPECTED: Record<string, number> = Object.fromEntries(
   CATALOGUE_POSITION_COUNTS.flatMap((n) => {
     const total = positionsTotalUsd(n)!;
     return [
       [`oneoff_pos_${n}`, total],
       [`sub_pos_${n}_monthly`, total],
-      [`sub_pos_${n}_yearly`, annual(total)],
     ] as [string, number][];
   }),
 );
@@ -82,14 +79,8 @@ describe("checkout catalogue pricing", () => {
     }
   });
 
-  it("keeps annual commits at a 10% discount on twelve months", () => {
-    for (const yearly of PLAN_CATALOGUE.filter((p) => p.interval === "year")) {
-      const monthly = PLAN_CATALOGUE.find(
-        (p) => p.productId === yearly.productId && p.interval === "month",
-      );
-      expect(monthly).toBeDefined();
-      expect(yearly.amountUsd).toBe(annual(monthly!.amountUsd));
-    }
+  it("offers no annual price — a lower total would contradict the rule", () => {
+    expect(PLAN_CATALOGUE.filter((p) => p.interval === "year")).toHaveLength(0);
   });
 
   it("uses one price id per plan and one product id per tier", () => {
