@@ -4,6 +4,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   PUBLISHED_SCORE_COLUMNS,
   publishedScore,
+  hasVideoIntro,
+  withVideoIntroBonus,
   type PublishedScoreRun,
 } from "@/lib/scoring/published-score";
 import { classifyBand } from "@/lib/scoring/bands";
@@ -72,7 +74,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("candidate_matches")
       .select(
-        `id, position_id, delivered_at, updated_at, approved_score_run_id, positions(title), score_runs!candidate_matches_approved_score_run_id_fkey(${PUBLISHED_SCORE_COLUMNS})`,
+        `id, position_id, delivered_at, updated_at, approved_score_run_id, intro_video_url, positions(title), score_runs!candidate_matches_approved_score_run_id_fkey(${PUBLISHED_SCORE_COLUMNS})`,
       )
       .eq("organization_id", data.organization_id)
       .eq("client_visibility", "visible");
@@ -87,6 +89,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
       position_id: string;
       delivered_at: string | null;
       updated_at: string;
+      intro_video_url?: string | null;
       positions?: { title: string } | null;
       score_runs?: PublishedScoreRun;
     };
@@ -96,7 +99,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
       const anchor = raw.delivered_at ?? raw.updated_at;
       const { key, start, end } = isoWeek(anchor);
       const bucketKey = `${key}::${raw.position_id}`;
-      const score = publishedScore(raw.score_runs);
+      const score = publishedScore(withVideoIntroBonus(raw.score_runs, hasVideoIntro(raw)));
 
       let b = buckets.get(bucketKey);
       if (!b) {

@@ -224,8 +224,39 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
 
     const { data: rows, count, error } = await q;
     if (error) throw new Error(error.message);
+
+    // The Loom introduction bonus is derived at read time, not stored, so the
+    // index view cannot hold it. Fold it into the page rows here — added when
+    // a link exists, gone when it is removed, awarded once per match.
+    let pageRows = (rows ?? []) as AnyRow[];
+    const matchIds = pageRows.map((r) => r.match_id as string).filter(Boolean);
+    if (matchIds.length > 0) {
+      const { hasVideoIntro, withVideoIntroBonus } = await import("@/lib/scoring/published-score");
+      const { data: videoRows } = await s
+        .from("candidate_matches")
+        .select("id, intro_video_url")
+        .in("id", matchIds);
+      const videoByMatch = new Map(
+        ((videoRows ?? []) as AnyRow[]).map((v) => [String(v.id), hasVideoIntro(v)]),
+      );
+      pageRows = pageRows.map((r) =>
+        withVideoIntroBonus(r, videoByMatch.get(String(r.match_id)) ?? false),
+      );
+      // Score sorts ran on the pre-bonus column in the view; re-order the page
+      // on the folded figure so the bonus can never invert a near tie.
+      if (data.sort === "score_desc" || data.sort === "score_asc") {
+        const { publishedScore } = await import("@/lib/scoring/published-score");
+        const asc = data.sort === "score_asc";
+        pageRows = [...pageRows].sort((a, b) => {
+          const av = publishedScore(a) ?? (asc ? Number.POSITIVE_INFINITY : -1);
+          const bv = publishedScore(b) ?? (asc ? Number.POSITIVE_INFINITY : -1);
+          return asc ? av - bv : bv - av;
+        });
+      }
+    }
+
     return {
-      rows: (rows ?? []) as AnyRow[],
+      rows: pageRows,
       total: count ?? 0,
       limit,
       offset,

@@ -16,6 +16,8 @@ import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 import {
   PUBLISHED_SCORE_COLUMNS,
   publishedScore,
+  hasVideoIntro,
+  withVideoIntroBonus,
   type PublishedScoreRun,
 } from "@/lib/scoring/published-score";
 
@@ -126,7 +128,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const { data: matches } = await s
       .from("candidate_matches")
       .select(
-        "id, position_id, stage, admin_status, client_visibility, delivered_at, updated_at, processing_state, approved_score_run_id",
+        "id, position_id, stage, admin_status, client_visibility, delivered_at, updated_at, processing_state, approved_score_run_id, intro_video_url",
       )
       .eq("organization_id", orgId)
       .or(NOT_TEST_RECORD);
@@ -424,7 +426,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         const delivered = new Date(m.delivered_at);
         if (delivered < w.start || delivered >= w.end) continue;
         const run = runById.get(m.approved_score_run_id);
-        const value = publishedScore(run as PublishedScoreRun);
+        const value = publishedScore(withVideoIntroBonus(run as PublishedScoreRun, hasVideoIntro(m)));
         if (value != null) scores.push(value);
       }
       const avg = scores.length

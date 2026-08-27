@@ -30,7 +30,10 @@ export function ScoreRing({
   accent?: FitPresentation["accent"];
   size?: number;
 }) {
+  // The arc fills at 100, but the printed figure shows the true value — a
+  // video introduction can push a score past 100 (97 + 10 = 107).
   const clamped = Math.max(0, Math.min(100, Math.round(value)));
+  const figure = Math.round(value);
   const stroke = 5;
   const r = (size - stroke) / 2;
   const circumference = 2 * Math.PI * r;
@@ -62,7 +65,7 @@ export function ScoreRing({
         />
       </svg>
       <span className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-        <span className="text-[13px] font-semibold tabular-nums">{clamped}</span>
+        <span className="text-[13px] font-semibold tabular-nums">{figure}</span>
         <span className="text-[8px] uppercase tracking-wide opacity-70">{label}</span>
       </span>
     </span>

@@ -7,7 +7,7 @@
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
 import { parseLoomLink } from "@/lib/media/loom-link";
 import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
-import { publishedBand, publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
+import { publishedBand, publishedScore, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus, VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { countRowsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
@@ -190,7 +190,7 @@ export async function loadKpiRows(
     .from("candidate_matches")
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
-       client_decision_due_at, recommendation, contact_released_at,
+       client_decision_due_at, recommendation, contact_released_at, intro_video_url,
        score_runs:approved_score_run_id (score, final_score, fit_label, fit_band),
        organizations!inner(name)`
     )
@@ -286,7 +286,7 @@ export async function loadKpiRows(
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
     delivered_at: m.delivered_at,
-    approved_score: publishedScore(m.score_runs) ?? null,
+    approved_score: publishedScore(withVideoIntroBonus(m.score_runs, hasVideoIntro(m))) ?? null,
     approved_fit_label: m.score_runs?.fit_label ?? null,
     organization_name: m.organizations?.name ?? null,
     approved_fit_band: m.score_runs?.fit_band ?? null,
@@ -910,7 +910,9 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
 export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const cp = row.candidate_profiles ?? {};
   const pos = row.positions ?? null;
-  const run = row.score_runs ?? null;
+  // The published figure includes the Loom introduction bonus; every panel
+  // below reads from this adjusted run so no surface can show the pre-bonus one.
+  const run = withVideoIntroBonus(row.score_runs ?? null, hasVideoIntro(row));
   const coverage = run?.requirement_coverage ?? null;
 
   const fullName: string = (cp.full_name ?? "").trim() || "Candidate";
@@ -1018,6 +1020,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     result: (run?.result as Record<string, unknown> | null) ?? null,
     displayedScore: publishedScore(run),
     requirementRows: requirement_rows,
+    videoBonusPts: hasVideoIntro(row) ? VIDEO_INTRO_BONUS_PTS : 0,
   });
 
   const workAuth = normWorkAuth(cp.work_authorization);

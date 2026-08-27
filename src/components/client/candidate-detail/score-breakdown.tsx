@@ -63,8 +63,9 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
     return { ...k, basisLabel };
   });
   // Rounding happens once, on the total; the parts are whole points apportioned
-  // to add up to it exactly.
-  const totalPts = c.totalPts;
+  // to add up to it exactly. A Loom introduction adds its own line on top.
+  const videoBonusPts = c.videoBonusPts ?? 0;
+  const totalPts = c.grandTotalPts ?? c.totalPts + videoBonusPts;
   const reconciles = c.reconciles;
 
   return (
@@ -106,6 +107,17 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
               </td>
             </tr>
           ))}
+          {videoBonusPts > 0 && (
+            <tr className="border-t align-baseline">
+              <td data-label="Component" className="py-1.5 pr-2">Video introduction</td>
+              <td data-label="How it did" className="py-1.5 pr-2 text-muted-foreground">
+                Loom link on the application
+              </td>
+              <td data-label="Points" className="py-1.5 text-right tabular-nums">
+                +{videoBonusPts} pts
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
       </TooltipProvider>
@@ -121,7 +133,9 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
         {c.incomplete
           ? " One of the three weightings was not measured for this assessment, so the parts do not add up to the whole yet."
           : reconciles && c.displayedScore != null
-            ? ` The three parts add up to ${totalPts}, the score shown above.`
+            ? videoBonusPts > 0
+              ? ` The four parts add up to ${totalPts}, the score shown above.`
+              : ` The three parts add up to ${totalPts}, the score shown above.`
             : " The parts and the score shown disagree; the assessment is being re-checked."}
       </p>
     </div>

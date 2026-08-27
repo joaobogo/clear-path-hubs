@@ -32,11 +32,14 @@ import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { deliveryReason } from "./notifications/delivery-reasons";
 import { qualifiesAsHire } from "./offer-hire";
-import { publishedRunEmbed, publishedScoreDisplay } from "@/lib/scoring/published-score";
+import { publishedRunEmbed, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus } from "@/lib/scoring/published-score";
 
-/** Approved run wins over current so admin and client read one number. */
-const pubRun = (m: { approved_run?: unknown; current_run?: unknown }) =>
-  (m.approved_run ?? m.current_run ?? null) as Parameters<typeof publishedScoreDisplay>[0];
+/** Approved run wins over current so admin and client read one number; the Loom bonus folds in here. */
+const pubRun = (m: { approved_run?: unknown; current_run?: unknown; intro_video_url?: unknown }) =>
+  withVideoIntroBonus(
+    (m.approved_run ?? m.current_run ?? null) as Parameters<typeof publishedScoreDisplay>[0],
+    hasVideoIntro(m),
+  );
 
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
@@ -98,7 +101,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       s
         .from("candidate_matches")
         .select(
-          `id,updated_at,processing_state,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name)),${publishedRunEmbed()}`,
+          `id,updated_at,processing_state,intro_video_url,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name)),${publishedRunEmbed()}`,
           { count: "exact" },
         )
         .eq("admin_status", "pending")

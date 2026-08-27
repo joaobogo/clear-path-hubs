@@ -252,7 +252,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       s
         .from("candidate_matches")
         .select(
-          `id,updated_at,is_test_record,organization_id,position_id,candidate_profiles(full_name),positions(title,organizations(name)),${publishedRunEmbed()}`,
+          `id,updated_at,is_test_record,organization_id,position_id,intro_video_url,candidate_profiles(full_name),positions(title,organizations(name)),${publishedRunEmbed()}`,
         )
         .eq("processing_state", "scored")
         .eq("admin_status", "pending")
@@ -926,7 +926,7 @@ export const getPosition = createServerFn({ method: "GET" })
       s
         .from("candidate_matches")
         .select(
-          `id,stage,admin_status,client_visibility,processing_state,updated_at,candidate_profiles(full_name,email),${publishedRunEmbed()}`,
+          `id,stage,admin_status,client_visibility,processing_state,updated_at,intro_video_url,candidate_profiles(full_name,email),${publishedRunEmbed()}`,
         )
         .eq("position_id", data.id)
         .order("updated_at", { ascending: false })
@@ -1410,7 +1410,7 @@ export const getPublishQueue = createServerFn({ method: "GET" })
     const { data } = await s
       .from("candidate_matches")
       .select(
-        `id,updated_at,admin_status,client_visibility,processing_state,current_score_run_id,candidate_profiles(full_name,email),positions(id,title,organizations(name)),${publishedRunEmbed("contradiction_status, must_have_coverage")}`,
+        `id,updated_at,admin_status,client_visibility,processing_state,current_score_run_id,intro_video_url,candidate_profiles(full_name,email),positions(id,title,organizations(name)),${publishedRunEmbed("contradiction_status, must_have_coverage")}`,
       )
       .eq("processing_state", "scored")
       .in("admin_status", ["pending", "approved", "on_hold"])
@@ -1897,7 +1897,7 @@ export const searchCandidateMatches = createServerFn({ method: "POST" })
     let q = s
       .from("candidate_matches")
       .select(
-        `id,application_id,stage,admin_status,client_visibility,processing_state,updated_at,created_at,organization_id,position_id,candidate_profile_id,candidate_profiles(full_name,email),positions(id,title,organization_id,organizations(id,name)),${publishedRunEmbed("contradiction_status")}`,
+        `id,application_id,stage,admin_status,client_visibility,processing_state,updated_at,created_at,organization_id,position_id,candidate_profile_id,intro_video_url,candidate_profiles(full_name,email),positions(id,title,organization_id,organizations(id,name)),${publishedRunEmbed("contradiction_status")}`,
         { count: "exact" },
       );
 
