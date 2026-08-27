@@ -97,6 +97,7 @@ export function CandidatesBoardView({
         dragOver={dragOver}
         setDragOver={setDragOver}
         movePending={move.isPending}
+        pendingMatchId={move.isPending ? (move.variables?.matchId ?? null) : null}
         attemptMove={attemptMove}
         showRole
         emptyHint="No candidates here"

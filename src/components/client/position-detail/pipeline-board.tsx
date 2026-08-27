@@ -42,6 +42,7 @@ export function PipelineBoard({
   dragOver,
   setDragOver,
   movePending,
+  pendingMatchId = null,
   attemptMove,
   showRole,
   emptyHint,
@@ -52,6 +53,13 @@ export function PipelineBoard({
   dragOver: MatchStage | null;
   setDragOver: (updater: MatchStage | null | ((c: MatchStage | null) => MatchStage | null)) => void;
   movePending: boolean;
+  /**
+   * The one card currently being saved. Only its own control is disabled —
+   * `movePending` is board-wide, so using it here greyed out every "Change
+   * stage" button on every card for the length of one request and made a board
+   * that had already updated optimistically look frozen.
+   */
+  pendingMatchId?: string | null;
   attemptMove: (matchId: string, from: MatchStage, to: MatchStage) => void;
   showRole?: boolean;
   emptyHint?: string;
@@ -113,7 +121,7 @@ export function PipelineBoard({
                       data-testid="pipeline-card"
                       data-match-id={m.id}
                       data-stage={from}
-                      draggable={canEdit && !movePending}
+                      draggable={canEdit && pendingMatchId !== m.id}
                       onDragStart={(e) => {
                         e.dataTransfer.setData("text/match-id", m.id);
                         e.dataTransfer.setData("text/from-stage", from);
@@ -164,7 +172,7 @@ export function PipelineBoard({
                                 size="sm"
                                 variant="outline"
                                 className="h-8 w-full text-xs"
-                                disabled={movePending}
+                                disabled={pendingMatchId === m.id}
                                 aria-label={`Change stage for ${m.candidate_profiles?.full_name ?? "candidate"}`}
                               >
                                 Change stage
