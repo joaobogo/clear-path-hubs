@@ -72,7 +72,7 @@ export async function loadAccountCommercial(
 
   // Shared seat derivation — staff see exactly what the client sees.
   void seats;
-  const { seatLimit: seatsLimit, seatsUsed } = await readSeatsForOrg(
+  const { seatLimit: seatsLimit, seatsUsed, seatsLeft } = await readSeatsForOrg(
     admin,
     organizationId,
   );
@@ -88,7 +88,7 @@ export async function loadAccountCommercial(
     roles_used: ent?.roles_used ?? null,
     seats_limit: seatsLimit,
     seats_used: seatsUsed,
-    seats_remaining: Math.max(0, seatsLimit - seatsUsed),
+    seats_remaining: seatsLeft,
     last_payment: pay
       ? {
           status: String(pay.status),
