@@ -44,7 +44,7 @@ export const Route = createFileRoute("/jobs/")({
       stripSearchParams({ q: "", location: "", work: "any", type: "any", level: "any", page: 1 }),
     ],
   },
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
       { title: "Open roles — TaaSFlow job board" },
       {
@@ -62,6 +62,26 @@ export const Route = createFileRoute("/jobs/")({
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://taasflow.com/jobs" }],
+    // ItemList of the roles actually listed on this page. Each entry points at
+    // the role page, which carries the full JobPosting node — no duplicated,
+    // possibly stale copy of the posting itself here.
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Open roles at TaaSFlow",
+          numberOfItems: (loaderData ?? []).length,
+          itemListElement: (loaderData ?? []).slice(0, 50).map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: p.title,
+            url: `https://taasflow.com/jobs/${buildJobSlug(p.title, p.id)}`,
+          })),
+        }),
+      },
+    ],
   }),
   loader: async ({ context }) => context.queryClient.ensureQueryData(positionsQuery),
   component: JobsPage,
