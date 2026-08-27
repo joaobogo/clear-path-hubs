@@ -11,7 +11,7 @@ import { buildJobSlug, extractJobUuid } from "@/lib/marketing/job-slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/marketing/site-shell";
-import { parseJobDescription, jobDescriptionSummary } from "@/lib/marketing/job-description";
+import { parseJobDescription, jobDescriptionSummary, isMetaHeaderLine } from "@/lib/marketing/job-description";
 import { InlineFormattedText } from "@/components/ui/inline-formatted-text";
 import {
   NOT_SPECIFIED,
@@ -19,7 +19,6 @@ import {
   resolveWorkArrangement,
   type PublicJobFacts,
 } from "@/lib/jobs/public-facts";
-import { formatLocationLine } from "@/lib/jobs/location-format";
 import {
   APPLY_STEPS,
   EFFORT_DEFAULT,
@@ -376,14 +375,19 @@ function JobDetail() {
   // heading, at the top. The page already prints both, so those duplicates are
   // dropped from the first two blocks.
   const norm = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-  const blocks = parseJobDescription(pos.description).filter(
-    (b, i) =>
-      !(
-        b.kind === "heading" &&
-        (norm(b.text) === "about the role" ||
-          (i < 2 && norm(b.text) === norm(pos.title)))
-      ),
-  );
+  const blocks = parseJobDescription(pos.description).filter((b, i) => {
+    if (
+      b.kind === "heading" &&
+      (norm(b.text) === "about the role" || (i < 2 && norm(b.text) === norm(pos.title)))
+    ) {
+      return false;
+    }
+    // The structured employment type, seniority and location are printed by the
+    // page itself. A pasted banner restating them differently is dropped so the
+    // listing never contradicts itself.
+    if (b.kind !== "list" && i < 4 && isMetaHeaderLine(b.text)) return false;
+    return true;
+  });
   const workModel = labelWorkModel(pos.work_model);
   const employment = labelEmployment(pos.employment_type);
 
@@ -646,7 +650,7 @@ function JobDetail() {
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Badge variant="secondary" className="font-normal">
-                      {formatLocationLine(pos.location.split(","))}
+                      {pos.location}
                       {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}` : ""}
                       {pos.openings && pos.openings > 1 ? ` · ${pos.openings} openings` : " · 1 opening"}
                     </Badge>

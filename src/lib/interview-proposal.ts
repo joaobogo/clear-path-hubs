@@ -4,6 +4,7 @@
 
 import { isValidTimezone, timezoneAbbr } from "./scheduling";
 import { zonedWallClockToIso } from "./availability";
+import { zoneDisplay } from "@/lib/time/zone-label";
 
 /** Formats the client can pick. Kept to the three real-world options. */
 export const PROPOSAL_FORMATS = [
@@ -88,7 +89,7 @@ export function earliestSlotMs(now = Date.now()): number {
 /** "GMT+1" style label so a proposed time is never ambiguous. */
 export function zoneLabel(timezone: string, referenceIso?: string | null): string {
   const iso = referenceIso ?? new Date().toISOString();
-  return `${timezone} (${timezoneAbbr(iso, timezone)})`;
+  return zoneDisplay(timezone, iso);
 }
 
 export type ProposalResult = {

@@ -28,6 +28,23 @@ export const positionsQuery = queryOptions({
 
 const PAGE_SIZE = 20;
 
+/** The filter dropdowns' own options, so trigger and list can never disagree. */
+const WORK_MODEL_OPTIONS = [
+  { value: "any", label: "Any work model" },
+  { value: "remote", label: "Remote" },
+  { value: "hybrid", label: "Hybrid" },
+  { value: "onsite", label: "On-site" },
+] as const;
+
+const EMPLOYMENT_OPTIONS = [
+  { value: "any", label: "Any employment type" },
+  { value: "full_time", label: "Full-time" },
+  { value: "part_time", label: "Part-time" },
+  { value: "contract", label: "Contract" },
+  { value: "temporary", label: "Temporary" },
+  { value: "internship", label: "Internship" },
+] as const;
+
 /** Filters live in the URL so any search can be copied, shared or bookmarked. */
 const jobsSearchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -239,7 +256,7 @@ function JobsPage() {
   const pageItems = filtered.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE);
 
   return (
-    <SiteShell>
+    <SiteShell hideLinkHub>
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Open roles</h1>
@@ -282,13 +299,14 @@ function JobsPage() {
             onValueChange={(v) => { setParam({ work: v, page: 1 }); }}
           >
             <SelectTrigger id="work-model-select" aria-label="Work model">
-              <SelectValue placeholder="Work model" />
+              <SelectValue placeholder="Work model">
+                {WORK_MODEL_OPTIONS.find((o) => o.value === workModel)?.label ?? "Any work model"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="any">Any work model</SelectItem>
-              <SelectItem value="remote">Remote</SelectItem>
-              <SelectItem value="hybrid">Hybrid</SelectItem>
-              <SelectItem value="onsite">Onsite</SelectItem>
+              {WORK_MODEL_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Label htmlFor="employment-type-select" className="sr-only">Employment type</Label>
@@ -297,15 +315,14 @@ function JobsPage() {
             onValueChange={(v) => { setParam({ type: v, page: 1 }); }}
           >
             <SelectTrigger id="employment-type-select" aria-label="Employment type">
-              <SelectValue placeholder="Employment" />
+              <SelectValue placeholder="Employment type">
+                {EMPLOYMENT_OPTIONS.find((o) => o.value === employment)?.label ?? "Any employment type"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="any">Any employment</SelectItem>
-              <SelectItem value="full_time">Full-time</SelectItem>
-              <SelectItem value="part_time">Part-time</SelectItem>
-              <SelectItem value="contract">Contract</SelectItem>
-              <SelectItem value="temporary">Temporary</SelectItem>
-              <SelectItem value="internship">Internship</SelectItem>
+              {EMPLOYMENT_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

@@ -119,3 +119,55 @@ export function withCountry(
   if (place.toLowerCase().includes(country.toLowerCase())) return place;
   return `${place}, ${country}`;
 }
+
+/**
+ * The ONE way a location is written for candidates: "City, Country".
+ *
+ * Records arrive in every shape — "Curitiba, Paraná, BR", "Curitiba, PR,
+ * Brazil", "Lisbon, Portugal" — so the string is rebuilt from its parts. A
+ * country code is resolved to its country name, the country is never repeated,
+ * and a code is never mixed with a name.
+ */
+export function canonicalLocation(
+  location: string | null | undefined,
+  row?: { city?: string | null; region?: string | null; country?: string | null; country_code?: string | null } | null,
+): string {
+  const raw = (location ?? "").trim();
+  const parts = raw
+    ? raw.split(/\s*,\s*/).map((s) => s.trim()).filter(Boolean)
+    : [];
+
+  const countryFromToken = (token: string): string | null => {
+    const upper = token.toUpperCase();
+    if (COUNTRY_NAMES[upper]) return COUNTRY_NAMES[upper];
+    const known = Object.values(COUNTRY_NAMES).find(
+      (name) => name.toLowerCase() === token.toLowerCase(),
+    );
+    return known ?? null;
+  };
+
+  const rowCity = (row?.city ?? "").trim();
+  const rowCode = (row?.country_code ?? "").trim().toUpperCase();
+  const rowCountry = (row?.country ?? "").trim();
+
+  let country: string | null =
+    (rowCode ? (COUNTRY_NAMES[rowCode] ?? null) : null) ||
+    (rowCountry ? (countryFromToken(rowCountry) ?? rowCountry) : null);
+  if (!country) {
+    for (const part of parts) {
+      const resolved = countryFromToken(part);
+      if (resolved) country = resolved;
+    }
+  }
+
+  // A part that only names the country (or a country code) is dropped; the
+  // first remaining part is the place.
+  const placeParts = parts.filter((part) => !countryFromToken(part));
+  let city = placeParts[0] ?? "";
+  if (rowCity && (!city || placeParts.some((p) => p.toLowerCase() === rowCity.toLowerCase()))) {
+    city = rowCity;
+  }
+
+  if (!city && !country) return titleCaseLocation(raw);
+  return formatLocationLine([city || null, country]);
+}
