@@ -372,12 +372,12 @@ export function TeamTab() {
  </div>
  ))}
  </div>
- ) : visible.length <= 1 ? (
+ ) : visible.length === 0 ? (
  <div className="p-10 text-center">
  <div className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-primary/10 text-primary">
  <Users className="h-5 w-5" />
  </div>
- <div className="mt-3 text-base font-semibold">Just you so far</div>
+ <div className="mt-3 text-base font-semibold">No one has a seat yet</div>
  <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
  Add hiring managers to run roles and interviewers to give feedback — each only gets
  what their role needs.
@@ -387,22 +387,8 @@ export function TeamTab() {
  <InviteDialog orgId={orgId} seatsFull={seatsFull} usage={seatUsage} />
  </div>
  )}
- {visible.length === 1 && (
- <ul className="mt-6 divide-y border-t text-left">
-  {visible.map((m: AnyRow) => (
-  <MemberRow
-  key={m.user_id}
-  orgId={orgId!}
-  member={m}
-  canMutate={!!canMutate}
-  selfId={selfId}
-  seatsFull={seatsFull}
-  usage={seatUsage}
-  />
-  ))}
-  </ul>
-  )}
   </div>
+
   ) : (
   <ul className="divide-y">
   {visible.map((m: AnyRow) => (
