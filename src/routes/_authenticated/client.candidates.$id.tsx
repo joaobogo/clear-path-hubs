@@ -456,21 +456,47 @@ function CandidateDetailPage() {
 
   <JumpNav
    items={[
+    { id: "sec-score", label: "Score" },
+    { id: "sec-facts", label: "Pay & availability" },
     { id: "sec-evidence", label: "Evidence" },
     ...(candidate.stage !== "hired"
       ? [{ id: "sec-confirm", label: "Confirm in interview" }]
       : []),
-    { id: "sec-score", label: "Score" },
     { id: "sec-profile", label: "Profile" },
    ]}
   />
 
-  {/* 3 — THE EVIDENCE: requirements listed once, with coverage folded in */}
+  {/* 3 — THE NUMBER EXPLAINED: sits directly under the verdict it explains.
+      It used to sit below the evidence and the interview checklist, so the
+      figure and the reasoning behind it were a scroll apart. */}
+  <div id="sec-score" className="scroll-mt-24">
+  <ScoreBreakdown candidate={candidate} hideRequirementRows />
+  </div>
+
+  {/* 4 — THE DEAL-BREAKER FACTS: pay and availability decide as many rejections
+      as the evidence does, so they are answered before the long read rather
+      than being buried inside a tab further down. */}
+  <div id="sec-facts" className="scroll-mt-24 grid grid-cols-1 gap-4 lg:grid-cols-2">
+  {compQuery.isError ? (
+  <QueryErrorCard
+    compact
+    title="We couldn't load compensation figures"
+    error={compQuery.error}
+    onRetry={() => void compQuery.refetch()}
+    retrying={compQuery.isFetching}
+  />
+  ) : (
+  <CompensationPanel signal={compSignal} loading={compPending} />
+  )}
+  <AvailabilityPanel candidate={candidate} />
+  </div>
+
+  {/* 5 — THE EVIDENCE: requirements listed once, with coverage folded in */}
   <div id="sec-evidence" className="scroll-mt-24 space-y-4">
   <WhyThisCandidate candidate={candidate} withCoverage />
   </div>
 
-  {/* 4 — WHAT TO CONFIRM: hidden once the hiring decision is made */}
+  {/* 6 — WHAT TO CONFIRM: hidden once the hiring decision is made */}
   {candidate.stage !== "hired" && (
   <div id="sec-confirm" className="scroll-mt-24">
   <WhatNeedsValidation
@@ -481,11 +507,6 @@ function CandidateDetailPage() {
   />
   </div>
   )}
-
-  {/* 5 — THE NUMBER EXPLAINED */}
-  <div id="sec-score" className="scroll-mt-24">
-  <ScoreBreakdown candidate={candidate} hideRequirementRows />
-  </div>
 
  {/* 4 — CONTACT (mobile keeps it in the main flow, after the evidence) */}
  <ContactBlock
@@ -574,23 +595,10 @@ function CandidateDetailPage() {
   </TabsList>
 
 <TabsContent value="summary" className="mt-4 space-y-4">
-{/* Row 1 — Compensation beside Availability */}
-<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-{compQuery.isError ? (
-<QueryErrorCard
-compact
-title="We couldn't load compensation figures"
-error={compQuery.error}
-onRetry={() => void compQuery.refetch()}
-retrying={compQuery.isFetching}
-/>
-) : (
-<CompensationPanel signal={compSignal} loading={compPending} />
-)}
-<AvailabilityPanel candidate={candidate} />
-</div>
+{/* Compensation and availability used to open this tab; they now sit above it
+    in "sec-facts", answered before the reader commits to the long read. */}
 
-{/* Row 2 — Career experience (wider) beside Skills, education and languages */}
+{/* Row 1 — Career experience (wider) beside Skills, education and languages */}
 <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
 <div className="lg:col-span-3">
 <ExperienceTimeline candidate={candidate} />
