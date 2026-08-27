@@ -153,8 +153,11 @@ export async function emitEventFromServer(args: {
 
   if (recipients.length === 0) return { event_id: eventId, delivered: 0 };
 
-  // Actor enrichment and identity for the bell.
+  // Actor enrichment and identity for the bell. Client- and candidate-facing
+  // copy never names an individual staff member: the bell must agree with the
+  // Messages thread, which renders staff as the team persona.
   let actorName: string | null = null;
+  let actorNameMasked: string | null = null;
   if (args.actor_user_id) {
     const { resolveStaffPersona } = await import("./staff-persona.server");
     const { data: actorProfile } = await supabaseAdmin
@@ -171,14 +174,19 @@ export async function emitEventFromServer(args: {
       .maybeSingle();
 
     const isStaff = actorMembership ? ["platform_admin", "operations"].includes(actorMembership.role) : false;
-    const persona = resolveStaffPersona({
+    const personaArgs = {
       name: (actorProfile?.full_name as string | null) ?? null,
       email: (actorProfile?.email as string | null) ?? null,
       isStaff,
-    });
-    
+    };
+    const persona = resolveStaffPersona(personaArgs);
+    const personaMasked = resolveStaffPersona({ ...personaArgs, maskStatus: true });
+
     if (persona.name) {
       actorName = persona.name;
+    }
+    if (personaMasked.name) {
+      actorNameMasked = personaMasked.name;
     }
   }
 
@@ -187,21 +195,23 @@ export async function emitEventFromServer(args: {
     .map((r) => {
       const copy = copyFor(r.audience, args.event);
       if (!copy) return null;
+      const who = r.audience === "admin" ? actorName : actorNameMasked;
       return {
         event_id: eventId,
         recipient_user_id: r.user_id,
         audience: r.audience,
         organization_id: args.organization_id ?? null,
         event_type: args.event,
-        title: args.event === "approval_needed" && actorName 
-          ? `${actorName}: ${copy.title}` 
-          : actorName && args.event === "message_sent" 
-            ? `New message from ${actorName}` 
-            : actorName && r.audience === "client" && args.event === "candidate_stage_changed"
-              ? `Status changed by ${actorName}`
+        title: args.event === "approval_needed" && who
+          ? `${who}: ${copy.title}`
+          : who && args.event === "message_sent"
+            ? `New message from ${who}`
+            : who && r.audience === "client" && args.event === "candidate_stage_changed"
+              ? `Status changed by ${who}`
               : r.audience === "client" && args.event === "interview_requested"
                 ? "You requested an interview"
                 : copy.title,
+
         // A clarification request is worthless without the question itself, so
         // the typed question travels as the notification body.
         body:
