@@ -355,7 +355,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       id: pos.id,
       title: pos.title,
       department: pos.department,
-      location: pos.location,
+      location: canonicalLocation(pos.location, primaryLoc),
       work_model: pos.work_model,
       employment_type: pos.employment_type,
       seniority: pos.seniority,
