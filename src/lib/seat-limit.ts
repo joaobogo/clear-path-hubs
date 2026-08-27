@@ -69,7 +69,10 @@ export function seatAwareErrorMessage(
 
 /** What the UI knows about seat consumption when it has to explain a refusal. */
 export type SeatUsage = {
+  /** Seats held by a person. Pending invitations are not included. */
   seatsUsed?: number;
+  /** Seats held plus seats reserved by pending invitations. */
+  seatsAllocated?: number;
   seatLimit?: number | null;
   /** Invitations sent but not accepted — each one holds a seat. */
   pendingInvites?: number;
@@ -182,7 +185,7 @@ export function seatBlockReason(block: SeatBlock): string {
   const { usage } = block;
   const counts =
     typeof usage.seatLimit === "number" && usage.seatLimit > 0
-      ? `${usage.seatsUsed ?? usage.seatLimit} of ${usage.seatLimit} seats are in use`
+      ? `${usage.seatsAllocated ?? usage.seatsUsed ?? usage.seatLimit} of ${usage.seatLimit} seats are taken`
       : "every seat on your plan is in use";
   switch (block.code) {
     case "pending_invites_hold_seats":

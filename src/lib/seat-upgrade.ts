@@ -45,7 +45,9 @@ export function seatUpgradeSearch(
 ): SeatUpgradeSearch {
   const limit = typeof usage?.seatLimit === "number" ? usage.seatLimit : undefined;
   const out: SeatUpgradeSearch = { seatsNeeded: Math.max(1, Math.floor(seatsNeeded)) };
-  if (typeof usage?.seatsUsed === "number") out.seatsUsed = usage.seatsUsed;
+  // Capacity is what an upgrade has to clear, so reserved seats count here.
+  const taken = usage?.seatsAllocated ?? usage?.seatsUsed;
+  if (typeof taken === "number") out.seatsUsed = taken;
   if (typeof limit === "number") out.seatLimit = limit;
   if (typeof usage?.pendingInvites === "number") out.seatsPending = usage.pendingInvites;
   return out;
