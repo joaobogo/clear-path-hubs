@@ -199,7 +199,13 @@ export function RequisitionEditor({
           ? "Role details saved — a re-assessment is pending for this role."
           : "Role details saved",
       );
-      await qc.invalidateQueries({ queryKey: ["requisition-meta", positionId] });
+      // The submit gate counts locations from the saved requisition quality
+      // read, so it has to be refreshed by the same save that writes them —
+      // otherwise "At least one location" never clears.
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["requisition-meta", positionId] }),
+        qc.invalidateQueries({ queryKey: ["requisition-quality", positionId] }),
+      ]);
     },
     onError: (e) => toastError(e, { fallback: "Save failed" }),
   });
@@ -208,7 +214,13 @@ export function RequisitionEditor({
     mutationFn: async () => rescore({ data: { id: positionId, reason: form?.change_reason ?? "" } }),
     onSuccess: async (res) => {
       toast.success(`Rescore event recorded for ${res.candidates_affected} candidate(s)`);
-      await qc.invalidateQueries({ queryKey: ["requisition-meta", positionId] });
+      // The submit gate counts locations from the saved requisition quality
+      // read, so it has to be refreshed by the same save that writes them —
+      // otherwise "At least one location" never clears.
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["requisition-meta", positionId] }),
+        qc.invalidateQueries({ queryKey: ["requisition-quality", positionId] }),
+      ]);
     },
     onError: (e) => toastError(e, { fallback: "Could not start rescore" }),
   });
