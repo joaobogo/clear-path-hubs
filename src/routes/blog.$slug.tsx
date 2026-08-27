@@ -310,6 +310,25 @@ function BlogPost() {
                 ))}
               </div>
             )}
+            {/* Who wrote this — a described byline, not a bare brand name */}
+            <aside className="mt-10 rounded-2xl border border-border/60 bg-muted/20 p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                About the author
+              </p>
+              <p className="mt-2 text-sm font-semibold">
+                {author.name} — {author.role}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{author.note}</p>
+              {author.url ? (
+                <Link
+                  to={author.url}
+                  className="mt-3 inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                >
+                  More about the team <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              ) : null}
+            </aside>
+
 
             {/* Related industries — commercial adjacency, not a sales banner */}
             {relatedIndustries.length > 0 && (
