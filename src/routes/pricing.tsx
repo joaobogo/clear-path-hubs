@@ -45,7 +45,7 @@ export const Route = createFileRoute("/pricing")({
     marketingHead(undefined, "/pricing", {
       title: "Pricing & Plan Entitlements | TaaSFlow Platform",
       description:
-        `TaaSFlow platform plans from ${PRICE_PILOT_DISPLAY}: active roles under management, agent capacity, Hiring Intelligence, Evidence Graph, governance and support — compared side by side.`,
+        `TaaSFlow platform packages, starting with the ${PRICE_PILOT_DISPLAY} pilot: active roles under management, agent capacity, Hiring Intelligence, Evidence Graph, governance and support — compared side by side.`,
     }, {
       breadcrumbs: [
         { name: "Home", path: "/" },
@@ -169,8 +169,8 @@ function PricingPage() {
                   <SubscriptionTierCard key={tier.id} tier={tier} />
                 ))}
               </div>
-              {/* One exact total per position count — the same rates whether
-                  billed once or monthly. No discounts, no ranges. */}
+              {/* One total per package — the same packages whether billed once
+                  or monthly. No discounts, no ranges. */}
               <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
                 <span className="font-semibold text-[color:var(--brand-navy)]">
                   {NO_DISCOUNT_NOTE}
