@@ -5,6 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
+import { parseLoomLink } from "@/lib/media/loom-link";
 import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
 import { publishedBand, publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
 
@@ -534,6 +535,12 @@ export type ClientCandidateDTO = {
     at: string;
     summary: string | null;
   }>;
+  /**
+   * A short Loom introduction the recruiting team attached to this candidate.
+   * `null` when none exists — the surface then renders nothing at all, no empty
+   * player and no dead control.
+   */
+  intro_video: { url: string; embed_url: string } | null;
   /** Verified, shareable evidence bullets for the shortlist card. */
   evidence_card: EvidenceCard;
   /** Compact review timeline: CV read → scored → reviewed → shared. */
@@ -888,6 +895,7 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
  * never select different columns.
  */
 export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by, contact_release_reason,
+         intro_video_url,
          canonical_state, processing_state, processing_updated_at, submitted_to_client_at,
          score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
          candidate_profiles(id, full_name, email, phone, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
@@ -1083,9 +1091,13 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   // CV from that moment with no extra consent step.
   const released = Boolean(row.contact_released_at);
 
+  const introLoom = parseLoomLink((row as AnyRow).intro_video_url);
+  const intro_video = introLoom ? { url: introLoom.url, embed_url: introLoom.embedUrl } : null;
+
   return {
     match_id: row.id,
     stage: row.stage,
+    intro_video,
     delivered_at: row.delivered_at ?? null,
     interview_active: Boolean(row.interview_active),
     contact_released: released,
