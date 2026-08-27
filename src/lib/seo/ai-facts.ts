@@ -13,9 +13,10 @@ import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import {
   PILOT_ROLES_LABEL,
   PRICE_PILOT_DISPLAY,
-  GROWTH_RATE_DISPLAY,
-  SCALE_RATE_DISPLAY,
-  VOLUME_RATE_DISPLAY,
+  PACKAGE_10,
+  PACKAGE_20,
+  PACKAGE_30,
+
   MAX_POSITIONS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
@@ -27,7 +28,7 @@ export const AI_FACTS = {
     "TaaSFlow is a subscription recruiting service: an applicant tracking system, sourcing and candidate outreach in one monthly subscription, with AI-assisted screening and a human recruiter reviewing every shortlist before a client sees it.",
   model: [
     `Pilot: ${PRICE_PILOT_DISPLAY} one-time, ${PILOT_ROLES_LABEL}. One pilot per company — it is not a recurring plan.`,
-    `Positions are priced by total count: ${GROWTH_RATE_DISPLAY} each for 2–10, ${SCALE_RATE_DISPLAY} each for 11–20, ${VOLUME_RATE_DISPLAY} each for 21–30. ${MAX_POSITIONS} positions is the maximum; above that we scope it with you. One-off and subscription use the same rates, and there is no annual discount: the total shown is the total charged.`,
+    `Packages, not positions: ${PACKAGE_10.capacityLabel} — ${PACKAGE_10.totalDisplay}; ${PACKAGE_20.capacityLabel} — ${PACKAGE_20.totalDisplay}; ${PACKAGE_30.capacityLabel} — ${PACKAGE_30.totalDisplay}. ${MAX_POSITIONS} positions is the maximum; above that no price is published and the next step is to talk to us. One-off and subscription use the same three packages at the same prices, and there is no annual discount: the total shown is the total charged.`,
     "No placement fees and no percentage-of-salary commission on hires.",
     `${TURNAROUND_LABEL} on a shortlist for a briefed role.`,
   ],

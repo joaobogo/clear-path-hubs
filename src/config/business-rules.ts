@@ -23,22 +23,17 @@ import { z } from "zod";
 import {
   PRICE_PILOT_USD,
   PRICE_PILOT_DISPLAY,
-  GROWTH_RATE_USD,
-  SCALE_RATE_USD,
-  VOLUME_RATE_USD,
-  GROWTH_RATE_DISPLAY,
-  SCALE_RATE_DISPLAY,
-  VOLUME_RATE_DISPLAY,
+  PACKAGE_10,
+  PACKAGE_20,
+  PACKAGE_30,
   PILOT_ROLES_LABEL,
-  GROWTH_ROLES_LABEL,
-  SCALE_ROLES_LABEL,
-  VOLUME_ROLES_LABEL,
   ABOVE_MAX_DISPLAY,
   ABOVE_MAX_ROLES_LABEL,
   NO_DISCOUNT_NOTE,
-  POSITION_BANDS,
+  MAX_POSITIONS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
+
 
 // ---------------------------------------------------------------------------
 // Types
@@ -67,8 +62,6 @@ export interface OneOffPackage {
   maxRoles: number | null;
   priceUsd: number | null;
   priceDisplay: string;
-  /** Per-position rate for banded tiers. null for the pilot and above the max. */
-  ratePerPositionUsd: number | null;
   cta: CtaKey;
   deliverables: string[];
 }
@@ -78,8 +71,6 @@ export interface SubscriptionTier {
   name: string;
   priceUsdMonthly: number | null;
   priceDisplay: string;
-  /** Per-position rate for banded tiers. null for the pilot and above the max. */
-  ratePerPositionUsd: number | null;
   isCustom: boolean;
   minRolesPerMonth: number;
   maxRolesPerMonth: number | null;
@@ -133,28 +124,26 @@ export const BUSINESS_RULES_DEFAULTS = {
       id: "pilot",
       name: "Pilot — Single Position",
       eyebrow: PILOT_ROLES_LABEL,
-      minRoles: POSITION_BANDS.pilot.min,
-      maxRoles: POSITION_BANDS.pilot.max,
+      minRoles: 1,
+      maxRoles: 1,
       priceUsd: PRICE_PILOT_USD,
       priceDisplay: PRICE_PILOT_DISPLAY,
-      ratePerPositionUsd: null,
       cta: "book_a_call",
       deliverables: [
         "First ranked shortlist in days",
         "Top 10 evidence-scored candidates",
-        "Scoring rubric with fit notes",
+        "Scoring weights with fit notes",
         "3 months workspace access",
       ],
     },
     {
       id: "growth",
-      name: "2 to 10 positions",
-      eyebrow: GROWTH_ROLES_LABEL,
-      minRoles: POSITION_BANDS.growth.min,
-      maxRoles: POSITION_BANDS.growth.max,
-      priceUsd: null,
-      priceDisplay: GROWTH_RATE_DISPLAY,
-      ratePerPositionUsd: GROWTH_RATE_USD,
+      name: PACKAGE_10.capacityLabel,
+      eyebrow: PACKAGE_10.capacityLabel,
+      minRoles: 2,
+      maxRoles: PACKAGE_10.capacity,
+      priceUsd: PACKAGE_10.totalUsd,
+      priceDisplay: PACKAGE_10.totalDisplay,
       cta: "book_a_call",
       deliverables: [
         "First ranked shortlist in days",
@@ -165,13 +154,12 @@ export const BUSINESS_RULES_DEFAULTS = {
     },
     {
       id: "scale",
-      name: "11 to 20 positions",
-      eyebrow: SCALE_ROLES_LABEL,
-      minRoles: POSITION_BANDS.scale.min,
-      maxRoles: POSITION_BANDS.scale.max,
-      priceUsd: null,
-      priceDisplay: SCALE_RATE_DISPLAY,
-      ratePerPositionUsd: SCALE_RATE_USD,
+      name: PACKAGE_20.capacityLabel,
+      eyebrow: PACKAGE_20.capacityLabel,
+      minRoles: PACKAGE_10.capacity + 1,
+      maxRoles: PACKAGE_20.capacity,
+      priceUsd: PACKAGE_20.totalUsd,
+      priceDisplay: PACKAGE_20.totalDisplay,
       cta: "book_a_call",
       deliverables: [
         "First ranked shortlist in days",
@@ -182,13 +170,12 @@ export const BUSINESS_RULES_DEFAULTS = {
     },
     {
       id: "volume",
-      name: "21 to 30 positions",
-      eyebrow: VOLUME_ROLES_LABEL,
-      minRoles: POSITION_BANDS.volume.min,
-      maxRoles: POSITION_BANDS.volume.max,
-      priceUsd: null,
-      priceDisplay: VOLUME_RATE_DISPLAY,
-      ratePerPositionUsd: VOLUME_RATE_USD,
+      name: PACKAGE_30.capacityLabel,
+      eyebrow: PACKAGE_30.capacityLabel,
+      minRoles: PACKAGE_20.capacity + 1,
+      maxRoles: PACKAGE_30.capacity,
+      priceUsd: PACKAGE_30.totalUsd,
+      priceDisplay: PACKAGE_30.totalDisplay,
       cta: "book_a_call",
       deliverables: [
         "First ranked shortlist in days",
@@ -201,11 +188,10 @@ export const BUSINESS_RULES_DEFAULTS = {
       id: "enterprise",
       name: ABOVE_MAX_ROLES_LABEL,
       eyebrow: ABOVE_MAX_ROLES_LABEL,
-      minRoles: POSITION_BANDS.aboveMax.min,
-      maxRoles: POSITION_BANDS.aboveMax.max,
+      minRoles: MAX_POSITIONS + 1,
+      maxRoles: null,
       priceUsd: null,
       priceDisplay: ABOVE_MAX_DISPLAY,
-      ratePerPositionUsd: null,
       cta: "contact_sales",
       deliverables: [
         "Custom SLAs and dedicated agent capacity",
@@ -221,10 +207,9 @@ export const BUSINESS_RULES_DEFAULTS = {
       name: "Single position",
       priceUsdMonthly: PRICE_PILOT_USD,
       priceDisplay: PRICE_PILOT_DISPLAY,
-      ratePerPositionUsd: null,
       isCustom: false,
-      minRolesPerMonth: POSITION_BANDS.pilot.min,
-      maxRolesPerMonth: POSITION_BANDS.pilot.max,
+      minRolesPerMonth: 1,
+      maxRolesPerMonth: 1,
       cta: "book_a_call",
       deliverables: [
         "One position, full workflow",
@@ -234,48 +219,45 @@ export const BUSINESS_RULES_DEFAULTS = {
     },
     {
       id: "growth",
-      name: "2 to 10 positions",
-      priceUsdMonthly: null,
-      priceDisplay: GROWTH_RATE_DISPLAY,
-      ratePerPositionUsd: GROWTH_RATE_USD,
+      name: PACKAGE_10.capacityLabel,
+      priceUsdMonthly: PACKAGE_10.totalUsd,
+      priceDisplay: PACKAGE_10.totalDisplay,
       isCustom: false,
-      minRolesPerMonth: POSITION_BANDS.growth.min,
-      maxRolesPerMonth: POSITION_BANDS.growth.max,
+      minRolesPerMonth: 2,
+      maxRolesPerMonth: PACKAGE_10.capacity,
       cta: "book_a_call",
       deliverables: [
-        "2 to 10 active positions",
+        `${PACKAGE_10.capacityLabel} each month`,
         "Weekly ranked refresh",
         "Talent-pool memory across positions",
       ],
     },
     {
       id: "scale",
-      name: "11 to 20 positions",
-      priceUsdMonthly: null,
-      priceDisplay: SCALE_RATE_DISPLAY,
-      ratePerPositionUsd: SCALE_RATE_USD,
+      name: PACKAGE_20.capacityLabel,
+      priceUsdMonthly: PACKAGE_20.totalUsd,
+      priceDisplay: PACKAGE_20.totalDisplay,
       isCustom: false,
-      minRolesPerMonth: POSITION_BANDS.scale.min,
-      maxRolesPerMonth: POSITION_BANDS.scale.max,
+      minRolesPerMonth: PACKAGE_10.capacity + 1,
+      maxRolesPerMonth: PACKAGE_20.capacity,
       cta: "book_a_call",
       deliverables: [
-        "11 to 20 active positions",
+        `${PACKAGE_20.capacityLabel} each month`,
         "Dedicated sourcing agent capacity",
         "Executive portfolio dashboard",
       ],
     },
     {
       id: "volume",
-      name: "21 to 30 positions",
-      priceUsdMonthly: null,
-      priceDisplay: VOLUME_RATE_DISPLAY,
-      ratePerPositionUsd: VOLUME_RATE_USD,
+      name: PACKAGE_30.capacityLabel,
+      priceUsdMonthly: PACKAGE_30.totalUsd,
+      priceDisplay: PACKAGE_30.totalDisplay,
       isCustom: false,
-      minRolesPerMonth: POSITION_BANDS.volume.min,
-      maxRolesPerMonth: POSITION_BANDS.volume.max,
+      minRolesPerMonth: PACKAGE_20.capacity + 1,
+      maxRolesPerMonth: PACKAGE_30.capacity,
       cta: "book_a_call",
       deliverables: [
-        "21 to 30 active positions",
+        `${PACKAGE_30.capacityLabel} each month`,
         "Dedicated account manager",
         "Custom reporting",
       ],
@@ -285,10 +267,9 @@ export const BUSINESS_RULES_DEFAULTS = {
       name: ABOVE_MAX_ROLES_LABEL,
       priceUsdMonthly: null,
       priceDisplay: ABOVE_MAX_DISPLAY,
-      ratePerPositionUsd: null,
       isCustom: true,
-      minRolesPerMonth: POSITION_BANDS.aboveMax.min,
-      maxRolesPerMonth: POSITION_BANDS.aboveMax.max,
+      minRolesPerMonth: MAX_POSITIONS + 1,
+      maxRolesPerMonth: null,
       cta: "contact_sales",
       deliverables: [
         "Custom volume & SLAs",
@@ -297,6 +278,7 @@ export const BUSINESS_RULES_DEFAULTS = {
       ],
     },
   ] satisfies SubscriptionTier[],
+
 
   discountNote: NO_DISCOUNT_NOTE,
   scoring: {

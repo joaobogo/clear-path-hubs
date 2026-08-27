@@ -10,16 +10,14 @@ import { marketingHead } from "@/lib/marketing/head";
 import { CheckCircle2, XCircle, Sparkles, ShieldCheck, LineChart, Users } from "lucide-react";
 import {
   PRICE_PILOT_DISPLAY,
-  GROWTH_RATE_DISPLAY,
-  SCALE_RATE_DISPLAY,
-  VOLUME_RATE_DISPLAY,
+  PACKAGE_10,
+  PACKAGE_20,
+  PACKAGE_30,
   ABOVE_MAX_DISPLAY,
   PILOT_ROLES_LABEL,
-  GROWTH_ROLES_LABEL,
-  SCALE_ROLES_LABEL,
-  VOLUME_ROLES_LABEL,
   ABOVE_MAX_ROLES_LABEL,
 } from "@/config/pricing-core";
+
 
 /**
  * /pitch — approved public overview page.
@@ -122,27 +120,28 @@ const ECONOMICS: Array<{
     line: "Test the model on one critical hire. 5-day turnaround.",
   },
   {
-    tier: "2 to 10 positions",
-    price: GROWTH_RATE_DISPLAY,
-    unit: " per position",
-    fits: GROWTH_ROLES_LABEL,
+    tier: PACKAGE_10.capacityLabel,
+    price: PACKAGE_10.totalDisplay,
+    unit: "",
+    fits: PACKAGE_10.capacityLabel,
     line: "Parallel searches with shared intake context.",
     highlight: true,
   },
   {
-    tier: "11 to 20 positions",
-    price: SCALE_RATE_DISPLAY,
-    unit: " per position",
-    fits: SCALE_ROLES_LABEL,
+    tier: PACKAGE_20.capacityLabel,
+    price: PACKAGE_20.totalDisplay,
+    unit: "",
+    fits: PACKAGE_20.capacityLabel,
     line: "Concurrent hiring across functions with priority support.",
   },
   {
-    tier: "21 to 30 positions",
-    price: VOLUME_RATE_DISPLAY,
-    unit: " per position",
-    fits: VOLUME_ROLES_LABEL,
-    line: "Portfolio hiring at the lowest published rate.",
+    tier: PACKAGE_30.capacityLabel,
+    price: PACKAGE_30.totalDisplay,
+    unit: "",
+    fits: PACKAGE_30.capacityLabel,
+    line: "Portfolio hiring in the largest published package.",
   },
+
   {
     tier: "More than 30 positions",
     price: ABOVE_MAX_DISPLAY,

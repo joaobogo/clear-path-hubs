@@ -3,7 +3,6 @@
  * =======================================================
  * Every number here comes from src/config/pricing-core.ts, which holds the
  * only pricing rule: $699 for one position, then $900 (2–10), $850 (11–20),
- * $800 (21–30) per position, 30 maximum, monotonic total.
  *
  * Rules
  *   • Never hard-code a price in this file.
@@ -15,15 +14,14 @@
 import {
   PRICE_PILOT_USD,
   MAX_POSITIONS,
-  POSITION_BANDS,
-  GROWTH_RATE_USD,
-  SCALE_RATE_USD,
-  VOLUME_RATE_USD,
+  PACKAGE_10,
+  PACKAGE_20,
+  PACKAGE_30,
   positionsTotalUsd,
   formatUsdExact,
 } from "@/config/pricing-core";
 
-export type BillingType = "one-time-flat" | "per-position" | "custom";
+export type BillingType = "one-time-flat" | "package" | "custom";
 export type ApprovalStatus = "approved" | "pending" | "review";
 
 export interface PricingPackage {
@@ -39,8 +37,6 @@ export interface PricingPackage {
   maxPositions: number | null;
   /** Exact total in USD when the band is a single position. null otherwise. */
   priceUsd: number | null;
-  /** Per-position rate in USD for banded tiers. null for pilot / above max. */
-  ratePerPositionUsd: number | null;
   billingType: BillingType;
   /** True when no price is published for this band. */
   customPricingOnly: boolean;
@@ -58,10 +54,9 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
     id: "pilot",
     name: "Pilot — Single Position",
     description: "A focused engagement to fill one open role.",
-    minPositions: POSITION_BANDS.pilot.min,
-    maxPositions: POSITION_BANDS.pilot.max,
+    minPositions: 1,
+    maxPositions: 1,
     priceUsd: PRICE_PILOT_USD,
-    ratePerPositionUsd: null,
     billingType: "one-time-flat",
     customPricingOnly: false,
     approvalStatus: "approved",
@@ -70,13 +65,12 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
   },
   {
     id: "growth",
-    name: "2 to 10 positions",
+    name: PACKAGE_10.capacityLabel,
     description: "Several roles running in parallel.",
-    minPositions: POSITION_BANDS.growth.min,
-    maxPositions: POSITION_BANDS.growth.max,
-    priceUsd: null,
-    ratePerPositionUsd: GROWTH_RATE_USD,
-    billingType: "per-position",
+    minPositions: 2,
+    maxPositions: PACKAGE_10.capacity,
+    priceUsd: PACKAGE_10.totalUsd,
+    billingType: "package",
     customPricingOnly: false,
     approvalStatus: "approved",
     effectiveDate: EFFECTIVE,
@@ -84,13 +78,12 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
   },
   {
     id: "scale",
-    name: "11 to 20 positions",
+    name: PACKAGE_20.capacityLabel,
     description: "Concurrent hiring across functions.",
-    minPositions: POSITION_BANDS.scale.min,
-    maxPositions: POSITION_BANDS.scale.max,
-    priceUsd: null,
-    ratePerPositionUsd: SCALE_RATE_USD,
-    billingType: "per-position",
+    minPositions: PACKAGE_10.capacity + 1,
+    maxPositions: PACKAGE_20.capacity,
+    priceUsd: PACKAGE_20.totalUsd,
+    billingType: "package",
     customPricingOnly: false,
     approvalStatus: "approved",
     effectiveDate: EFFECTIVE,
@@ -98,13 +91,12 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
   },
   {
     id: "volume",
-    name: "21 to 30 positions",
-    description: "Portfolio hiring at the lowest published rate.",
-    minPositions: POSITION_BANDS.volume.min,
-    maxPositions: POSITION_BANDS.volume.max,
-    priceUsd: null,
-    ratePerPositionUsd: VOLUME_RATE_USD,
-    billingType: "per-position",
+    name: PACKAGE_30.capacityLabel,
+    description: "Portfolio hiring in one package.",
+    minPositions: PACKAGE_20.capacity + 1,
+    maxPositions: PACKAGE_30.capacity,
+    priceUsd: PACKAGE_30.totalUsd,
+    billingType: "package",
     customPricingOnly: false,
     approvalStatus: "approved",
     effectiveDate: EFFECTIVE,
@@ -113,11 +105,10 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
   {
     id: "above-max",
     name: `More than ${MAX_POSITIONS} positions`,
-    description: "Above the published maximum we scope it with you.",
-    minPositions: POSITION_BANDS.aboveMax.min,
-    maxPositions: POSITION_BANDS.aboveMax.max,
+    description: "Above the published maximum, the next step is to talk to us.",
+    minPositions: MAX_POSITIONS + 1,
+    maxPositions: null,
     priceUsd: null,
-    ratePerPositionUsd: null,
     billingType: "custom",
     customPricingOnly: true,
     approvalStatus: "approved",
@@ -208,7 +199,7 @@ export function isTierPricePublic(pkg: PricingPackage): boolean {
     pkg.active &&
     pkg.approvalStatus === "approved" &&
     !pkg.customPricingOnly &&
-    (pkg.priceUsd !== null || pkg.ratePerPositionUsd !== null)
+    pkg.priceUsd !== null
   );
 }
 

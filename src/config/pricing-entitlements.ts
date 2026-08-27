@@ -58,14 +58,14 @@ export type EntitlementRow = {
   plans: Record<string, EntitlementValue>;
 };
 
-/** Position bands — the same bands one-off and subscription both use. */
+/** The published packages — the same packages one-off and subscription use. */
 export const ONEOFF_PLAN_IDS = ["pilot", "growth", "scale", "volume", "enterprise"] as const;
 export const ONEOFF_PLAN_LABELS: Record<string, string> = {
   pilot: "1 position",
-  growth: "2 to 10",
-  scale: "11 to 20",
-  volume: "21 to 30",
-  enterprise: "More than 30",
+  growth: "Up to 10 positions",
+  scale: "Up to 20 positions",
+  volume: "Up to 30 positions",
+  enterprise: "More than 30 positions",
 };
 
 export const SUBSCRIPTION_PLAN_IDS = ONEOFF_PLAN_IDS;
@@ -83,9 +83,9 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       "Roles that are open in the workspace and being worked by the agent layer at the same time.",
     plans: {
       pilot: value("1"),
-      growth: value("2–10"),
-      scale: value("11–20"),
-      volume: value("21–30"),
+      growth: value("Up to 10"),
+      scale: value("Up to 20"),
+      volume: value("Up to 30"),
       enterprise: value("Scoped", "Set with your plan"),
     },
   },
@@ -252,9 +252,9 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
       "Roles open in the workspace and worked by the agent layer within the billing month.",
     plans: {
       pilot: value("1 per month"),
-      growth: value("2–10 per month"),
-      scale: value("11–20 per month"),
-      volume: value("21–30 per month"),
+      growth: value("Up to 10 per month"),
+      scale: value("Up to 20 per month"),
+      volume: value("Up to 30 per month"),
       enterprise: value("More than 30 per month", "Scoped with you"),
     },
   },
@@ -276,10 +276,10 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
     description:
       "Intake, blueprint, discovery, evidence and scoring agent runs available to your roles.",
     plans: {
-      pilot: value("Full agent layer", "Within your monthly role band"),
-      growth: value("Full agent layer", "Within your monthly role band"),
+      pilot: value("Full agent layer", "Within your monthly package capacity"),
+      growth: value("Full agent layer", "Within your monthly package capacity"),
       scale: value("Full agent layer", "Faster calibration cycles"),
-      volume: value("Full agent layer", "Highest concurrency in the published bands"),
+      volume: value("Full agent layer", "Highest concurrency in the published packages"),
       enterprise: value("Full agent layer", "Capacity planned with your plan"),
     },
   },
@@ -424,19 +424,19 @@ export const ENTITLEMENT_POLICY: PolicyItem[] = [
     id: "limits",
     question: "What happens when limits are reached?",
     answer:
-      "Nothing breaks and nothing is charged automatically. When you reach your active-role entitlement, new roles queue as drafts in the workspace until a role closes or you move to the next band. We will tell you which roles are counting and what your options are before anything changes.",
+      "Nothing breaks and nothing is charged automatically. When you reach your active-role entitlement, new roles queue as drafts in the workspace until a role closes or you move to the next package. We will tell you which roles are counting and what your options are before anything changes.",
   },
   {
     id: "billing",
     question: "How often are we billed?",
     answer:
-      "A single position is a flat fee. From two positions up, the rate is set by your total position count and applies to every position — one-off and subscription use the same rates. Subscription plans are billed monthly at the start of the month. There is no annual discount — the total you see is the total you pay. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
+      "We sell packages. The pilot is a flat fee for one position, billed once. Each larger package states a capacity and one total — one-off and subscription use the same packages at the same prices, with subscriptions billed monthly at the start of the month. There is no annual discount — the total you see is the total you pay. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
   },
   {
     id: "upgrade",
     question: "How does the upgrade path work?",
     answer:
-      "Move to a higher band at the next billing cycle. Your workspace, intake context, evidence, scores and candidate records carry over — you do not start again. Downgrades work the same way.",
+      "Move to a larger package at the next billing cycle. Your workspace, intake context, evidence, scores and candidate records carry over — you do not start again. Downgrades work the same way.",
   },
   {
     id: "cancellation",
