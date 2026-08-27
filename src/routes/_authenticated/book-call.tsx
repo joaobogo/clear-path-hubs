@@ -214,49 +214,19 @@ function BookCallPage() {
               </div>
 
               <Button
-                  onClick={() => openScheduler.mutate()}
-                  disabled={openScheduler.isPending}
-                >
-                  {openScheduler.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> Opening
-                      scheduler…
-                    </>
-                  ) : (
-                    "Open the scheduler"
-                  )}
-                </Button>
-              ) : null}
+                onClick={() => openScheduler.mutate()}
+                disabled={openScheduler.isPending}
+              >
+                {openScheduler.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> Opening
+                    scheduler…
+                  </>
+                ) : (
+                  "Open the scheduler"
+                )}
+              </Button>
 
-              {/* The scheduler renders in place, so picking a time is never
-                  interrupted by a redirect or blocked by a popup blocker. */}
-              <div
-                ref={embedRef}
-                aria-label="Booking calendar"
-                className={
-                  schedulerVisible
-                    ? "min-h-[680px] w-full overflow-hidden rounded-lg border"
-                    : "hidden"
-                }
-              />
-
-              {embedState === "unavailable" ? (
-                <div className="rounded-lg border border-warning bg-warning/10 p-4 text-sm">
-                  <p className="font-medium text-warning-foreground">
-                    The calendar couldn't load in this browser.
-                  </p>
-                  <p className="mt-1 text-muted-foreground">
-                    An extension or network policy is blocking it. Your request is saved — pick your
-                    time directly instead.
-                  </p>
-                  <Button className="mt-3" asChild>
-                    <a href={CALENDLY_BOOKING_URL} target="_blank" rel="noopener noreferrer">
-                      Open the booking page
-                      <ExternalLink className="ml-2 h-4 w-4" aria-hidden />
-                    </a>
-                  </Button>
-                </div>
-              ) : null}
 
               <p className="text-xs text-muted-foreground">
                 Times are shown in your local time zone ({timeZone}) inside the scheduler, and every
