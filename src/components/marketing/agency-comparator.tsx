@@ -12,59 +12,53 @@ import { ArrowRight } from "lucide-react";
  */
 
 import { PRICING_TIERS } from "@/content/pricing";
-import { POSITION_BANDS } from "@/config/pricing-core";
+import {
+  MAX_POSITIONS,
+  positionsTotalUsd,
+  positionRateUsd,
+  formatUsdExact,
+  ABOVE_MAX_DISPLAY,
+} from "@/config/pricing-core";
 
 type TierMatch = {
   label: string;
   detail: string;
-  price: number | null; // null => custom / quote
+  price: number | null; // null => above the maximum, talk to us
 };
 
 /**
- * Band boundaries come from POSITION_BANDS in pricing-core (the single source
- * of truth): pilot 1, multi 2–5, sprint 6–10, subscription 11+. Tier names come
- * from PRICING_TIERS. Nothing here is hard-coded.
+ * One rule, one function: `positionsTotalUsd()` in pricing-core returns the
+ * exact final total for a position count. Nothing here is hard-coded.
  */
 function matchTier(positions: number): TierMatch {
   if (positions <= 0) {
     return { label: "—", detail: "Add at least 1 position", price: null };
   }
-  const { pilot, multi, sprint, subscription } = POSITION_BANDS;
-  if (positions <= pilot.max) {
+  const total = positionsTotalUsd(positions);
+  if (total === null) {
+    return {
+      label: PRICING_TIERS[4].name,
+      detail: `More than ${MAX_POSITIONS} positions — we scope it with you`,
+      price: null,
+    };
+  }
+  if (positions === 1) {
     return {
       label: PRICING_TIERS[0].name,
-      detail: `One-off package (${pilot.min})`,
-      price: PRICING_TIERS[0].oneTime,
+      detail: "Flat pilot fee, billed once",
+      price: total,
     };
   }
-  if (positions >= multi.min && positions <= multi.max) {
-    return {
-      label: PRICING_TIERS[1].name,
-      detail: `One-off package (${multi.min}–${multi.max})`,
-      price: PRICING_TIERS[1].oneTime,
-    };
-  }
-  if (positions >= sprint.min && positions <= sprint.max) {
-    return {
-      label: PRICING_TIERS[2].name,
-      detail: `One-off package (${sprint.min}–${sprint.max})`,
-      price: PRICING_TIERS[2].oneTime,
-    };
-  }
+  const rate = positionRateUsd(positions)!;
   return {
-    label: "Subscription",
-    detail: `${subscription.min}+ roles or continuous hiring — Bronze to Enterprise, scoped quote`,
-    price: null,
+    label: `${positions} positions`,
+    detail: `${positions} × ${formatUsdExact(rate)} per position`,
+    price: total,
   };
 }
 
 function formatCompact(value: number): string {
-  if (value >= 1000) {
-    const k = value / 1000;
-    const oneDecimal = Math.round(k * 10) / 10;
-    return `$${Number.isInteger(oneDecimal) ? oneDecimal.toFixed(0) : oneDecimal.toFixed(1)}K`;
-  }
-  return `$${Math.round(value).toLocaleString("en-US")}`;
+  return formatUsdExact(value);
 }
 
 export function AgencyComparator() {
@@ -111,7 +105,7 @@ export function AgencyComparator() {
               value={positions}
               onChange={setPositions}
               min={1}
-              max={25}
+              max={MAX_POSITIONS}
               step={1}
               display={`${positions} ${positions === 1 ? "role" : "roles"}`}
             />
@@ -175,16 +169,16 @@ export function AgencyComparator() {
 
             <div className="relative z-10">
               <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] opacity-60">
-                {isCustom ? "Scoped quote required" : "Annual savings summary"}
+                {isCustom ? "Talk to us" : "Annual savings summary"}
               </span>
 
               <div className="mt-6 sm:mt-10">
                 <h4 className="break-words font-[family-name:var(--brand-font-display)] text-5xl italic leading-[0.95] tracking-tight tabular-nums sm:text-6xl md:text-7xl lg:text-8xl">
-                  {isCustom ? "Custom" : formatCompact(savings ?? 0)}
+                  {isCustom ? ABOVE_MAX_DISPLAY : formatCompact(savings ?? 0)}
                 </h4>
                 <p className="mt-3 max-w-md text-sm font-light opacity-80 sm:text-base">
                   {isCustom
-                    ? "Volumes of 11 or more positions run on a subscription option with a scoped quote — no savings figure is invented."
+                    ? `Above {MAX_POSITIONS} positions we scope it with you — no savings figure is invented.`
                     : savings != null && savings > 0
                       ? `Total projected savings with TaaSFlow${savingsPct != null ? ` — ${savingsPct}% reduction` : ""}.`
                       : "TaaSFlow doesn't beat your inputs here. Adjust volume, fee, or internal hours."}
@@ -209,7 +203,7 @@ export function AgencyComparator() {
                     TaaSFlow · {tier.label}
                   </span>
                   <p className="mt-3 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums sm:text-3xl md:text-4xl">
-                    {isCustom ? "Custom" : formatCompact(taasCost)}
+                    {isCustom ? ABOVE_MAX_DISPLAY : formatCompact(taasCost)}
                   </p>
                   <p className="mt-1 text-xs opacity-50">{tier.detail}</p>
                 </div>
