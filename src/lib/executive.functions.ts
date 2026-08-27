@@ -177,9 +177,17 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const hiredMatchIds = new Set(
       kpiRows.filter((r) => r.hire_confirmed).map((r) => String(r.id)),
     );
+    // "Needs your input" is a union, matching its caption: candidates waiting
+    // on a decision plus interviews waiting on the client to confirm a time.
+    // A candidate in both states is counted once.
+    const awaitingConfirmation = await loadInterviewsAwaitingConfirmation(s, orgId);
     const awaitingDecisionMatchIds = new Set(
       kpiRows.filter(isAwaitingClientDecision).map((r) => String(r.id)),
     );
+    for (const iv of awaitingConfirmation) {
+      if (iv.candidate_match_id) awaitingDecisionMatchIds.add(String(iv.candidate_match_id));
+    }
+
     const buMap = new Map<
       string,
       {
