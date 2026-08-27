@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isLoomLink, LOOM_LINK_HINT } from "@/lib/media/loom-link";
 
 export const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
 // CVs are PDF-only across UI, backend, storage and processing.
