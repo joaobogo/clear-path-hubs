@@ -72,7 +72,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("candidate_matches")
       .select(
-        `id, position_id, delivered_at, updated_at, approved_score_run_id, positions(title), score_runs!candidate_matches_approved_score_run_id_fkey(${PUBLISHED_SCORE_COLUMNS})`,
+        `id, position_id, delivered_at, updated_at, approved_score_run_id, intro_video_url, positions(title), score_runs!candidate_matches_approved_score_run_id_fkey(${PUBLISHED_SCORE_COLUMNS})`,
       )
       .eq("organization_id", data.organization_id)
       .eq("client_visibility", "visible");
