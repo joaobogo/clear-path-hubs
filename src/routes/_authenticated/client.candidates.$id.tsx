@@ -457,7 +457,9 @@ function CandidateDetailPage() {
   <JumpNav
    items={[
     { id: "sec-evidence", label: "Evidence" },
-    { id: "sec-confirm", label: "Confirm in interview" },
+    ...(candidate.stage !== "hired"
+      ? [{ id: "sec-confirm", label: "Confirm in interview" }]
+      : []),
     { id: "sec-score", label: "Score" },
     { id: "sec-profile", label: "Profile" },
    ]}
@@ -468,7 +470,8 @@ function CandidateDetailPage() {
   <WhyThisCandidate candidate={candidate} withCoverage />
   </div>
 
-  {/* 4 — WHAT TO CONFIRM */}
+  {/* 4 — WHAT TO CONFIRM: hidden once the hiring decision is made */}
+  {candidate.stage !== "hired" && (
   <div id="sec-confirm" className="scroll-mt-24">
   <WhatNeedsValidation
     candidate={candidate}
@@ -477,6 +480,7 @@ function CandidateDetailPage() {
     onInterviewGuideClick={() => setActiveTab("interview")}
   />
   </div>
+  )}
 
   {/* 5 — THE NUMBER EXPLAINED */}
   <div id="sec-score" className="scroll-mt-24">
