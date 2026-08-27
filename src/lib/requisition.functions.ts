@@ -240,7 +240,10 @@ export const saveRequisitionMeta = createServerFn({ method: "POST" })
       reference_code: data.reference_code || null,
       owner_user_id: isStaff ? data.owner_user_id : prior?.owner_user_id ?? null,
       travel_expectation: data.travel_expectation || null,
-      primary_timezone: data.primary_timezone || null,
+      // Store the canonical form the reader produces, so what was saved is
+      // what comes back. The raw value used to be written and then blanked by
+      // the read's normaliser — a field that forgot what was typed.
+      primary_timezone: normalizeTimezoneAnchor(data.primary_timezone) || null,
       timezone_overlap_hours: data.timezone_overlap_hours,
       target_start_date: data.target_start_date || null,
       evaluation_weights: weights,

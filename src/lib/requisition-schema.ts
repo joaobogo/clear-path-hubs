@@ -134,7 +134,14 @@ export function normalizeTimezoneAnchor(raw: unknown): string {
   const v = typeof raw === "string" ? raw.trim() : "";
   if (!v || v.length > 80) return "";
   if (/^[A-Za-z]+\/[A-Za-z0-9_+\-/]+$/.test(v)) return v;
-  if (/^(UTC|GMT)([+-]\d{1,2}(:\d{2})?)?$/i.test(v)) return v.toUpperCase();
+  // Tolerate spacing in offsets — "GMT +1", "utc + 2" — people type them, and
+  // rejecting the spaced form is not a meaning anyone intends. Canonical form
+  // out: "GMT+1".
+  const offset = v.match(/^(UTC|GMT)\s*(([+-])\s*(\d{1,2})(:\d{2})?)?$/i);
+  if (offset) {
+    const [, prefix, , sign, hours, minutes] = offset;
+    return `${prefix.toUpperCase()}${sign ? `${sign}${Number(hours)}${minutes ?? ""}` : ""}`;
+  }
   return "";
 }
 
@@ -339,6 +346,18 @@ export const requisitionMetaSchema = z
         code: "custom",
         path: ["primary_timezone"],
         message: "Fully remote roles need a timezone anchor or a required overlap window.",
+      });
+    }
+    // A value the normaliser cannot read used to be accepted here, written to
+    // the row, and then silently blanked by the next read — the field looked
+    // like it forgot what was typed. If it will not survive the round-trip,
+    // refuse it now and say what shapes do.
+    if (v.primary_timezone.trim() && !normalizeTimezoneAnchor(v.primary_timezone)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["primary_timezone"],
+        message:
+          "Timezone anchor not recognised — use a zone like America/New_York or an offset like UTC+1.",
       });
     }
     if (v.compensation_collected) {
