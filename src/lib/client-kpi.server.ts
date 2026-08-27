@@ -424,6 +424,14 @@ export type ClientCandidateDTO = {
    */
   interview_active: boolean;
   /**
+   * True when the client has already recorded a decision on this candidate.
+   * Carried so the snapshot tiles can apply the one "awaiting your review"
+   * rule (delivered, undecided) instead of counting the delivered stage.
+   */
+  client_decided: boolean;
+  /** True when a confirmed offer record exists — never the pipeline stage. */
+  hire_confirmed: boolean;
+  /**
    * Whether an admin has released this candidate's contact details to the
    * employer. The raw CV carries email and phone, so CV download/preview is
    * offered only when this is true — the server re-checks it regardless.
