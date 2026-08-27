@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { AlertTriangle, CheckCircle2, ChevronRight, RefreshCw, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { QueueRow } from "@/lib/client-decision-queue";
+import { clusterQueue, type QueueCluster, type QueueRow } from "@/lib/client-decision-queue";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 /**
