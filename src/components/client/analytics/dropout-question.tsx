@@ -9,6 +9,7 @@ import {
   Cell,
   LabelList,
 } from "recharts";
+import { pluralWord } from "@/lib/format/plural";
 import { QuestionCard, NotAvailable, Interpretation } from "./primitives";
 import type { getClientInsights } from "@/lib/insights.functions";
 
@@ -66,8 +67,8 @@ export function DropoutQuestion({
           </div>
           <Interpretation>
             {dropout.biggest_drop
-              ? `Of the ${dropout.total} candidates shown to you, the largest fall-off is between ${dropout.biggest_drop.from} and ${dropout.biggest_drop.label} — ${dropout.biggest_drop.dropped} candidates stopped there.`
-              : `All ${dropout.total} candidates shown to you are still moving forward — no drop-off recorded yet.`}
+              ? `Of the ${dropout.total} ${pluralWord(dropout.total, "candidate")} shown to you, the largest fall-off is between ${dropout.biggest_drop.from} and ${dropout.biggest_drop.label} — ${dropout.biggest_drop.dropped} ${pluralWord(dropout.biggest_drop.dropped, "candidate")} stopped there.`
+              : `All ${dropout.total} ${pluralWord(dropout.total, "candidate")} shown to you are still moving forward — no drop-off recorded yet.`}
           </Interpretation>
         </>
       )}

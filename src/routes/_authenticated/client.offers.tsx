@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { HandCoins } from "lucide-react";
 import { formatMoneyMajorCompact } from "@/lib/money";
+import { plural, pluralWord } from "@/lib/format/plural";
 import {
   listHires,
   getTimeToHireReport,
@@ -200,7 +201,7 @@ function OffersPage() {
                   !pendingReport && report?.totals.avg_salary == null
                     ? "No confirmed hire has compensation on record"
                     : reportIncomplete
-                      ? `Based on ${report?.totals.accepted_offers} of ${hiresCount} hires with compensation on record`
+                      ? `Based on ${plural(report?.totals.accepted_offers ?? 0, "accepted offer")} of ${plural(hiresCount ?? 0, "hire")} with compensation on record`
                       : "Confirmed hires average"
                 }
               />
@@ -275,9 +276,9 @@ function OffersPage() {
                   >
                     <span className="truncate">{o.owner_name}</span>
                     <span className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>
-                        <strong className="text-foreground">{o.hires}</strong> hires
-                      </span>
+                    <span>
+                      <strong className="text-foreground">{o.hires}</strong> {pluralWord(o.hires, "hire")}
+                    </span>
                       <span>
                         {o.avg_days_to_hire == null
                           ? "—"

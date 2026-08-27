@@ -1,5 +1,6 @@
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
+import { pluralWord } from "@/lib/format/plural";
 import { Link } from "@tanstack/react-router";
 import { NotCurrentChip } from "@/components/client/degraded-banner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -267,7 +268,7 @@ export function TimeInStageCard({ rows }: { rows: ExecutiveReport["time_in_stage
                     {clientStageLabel(r.stage)}
                   </span>
                   <span className="tabular-nums text-muted-foreground">
-                    {r.count} candidates · avg <span className="text-foreground">{r.avg_days}d</span>
+                    {r.count} {pluralWord(r.count, "candidate")} · avg <span className="text-foreground">{r.avg_days}d</span>
                   </span>
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-muted">
