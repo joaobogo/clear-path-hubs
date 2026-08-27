@@ -77,7 +77,7 @@ export const Route = createFileRoute("/jobs/")({
             "@type": "ListItem",
             position: i + 1,
             name: p.title,
-            url: `https://taasflow.com/jobs/${buildJobSlug(p.title, p.id)}`,
+            url: `https://taasflow.com/jobs/${buildJobSlug(p)}`,
           })),
         }),
       },
