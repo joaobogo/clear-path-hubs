@@ -378,8 +378,7 @@ function PricingPage() {
           </div>
         </PublicPage>
       </PublicSection>
-
-          <PageConnections
+      <PageConnections
         commercial={{ to: "/intake", label: "Start hiring", desc: "Pick a plan and open your first role." }}
         explainer={{ to: "/how-it-works", label: "How delivery works", desc: "What each subscription actually includes each week." }}
         resource={{ to: "/faq", label: "Pricing questions answered", desc: "Overages, holds, cancellation, and enterprise terms." }}
