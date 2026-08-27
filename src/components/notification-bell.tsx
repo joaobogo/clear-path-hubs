@@ -135,10 +135,16 @@ export function NotificationBell({ role = "client" }: { role?: "admin" | "client
       ? accountDelivery
       : null;
 
+  // If the selected tier's chip is no longer shown (the list became a single
+  // tier, so the chip would not narrow anything), fall back to "all" rather
+  // than filtering by a control the user can no longer see or de-select.
+  const effectiveFilter =
+    filter !== "all" && filter !== "unread" && counts[filter] >= totalRows ? "all" : filter;
+
   const visible = groups.filter((g) => {
-    if (filter === "all") return true;
-    if (filter === "unread") return g.unread > 0;
-    return g.tier === filter;
+    if (effectiveFilter === "all") return true;
+    if (effectiveFilter === "unread") return g.unread > 0;
+    return g.tier === effectiveFilter;
   });
 
   return (
@@ -225,7 +231,13 @@ export function NotificationBell({ role = "client" }: { role?: "admin" | "client
             <FilterChip active={filter === "unread"} onClick={() => setFilter("unread")}>
               Unread {unreadRows > 0 ? `(${unreadRows})` : ""}
             </FilterChip>
-            {NOTIFICATION_TIERS.filter((t) => counts[t] > 0).map((t) => (
+            {/* A chip that selects every row is not a filter. When the whole
+                list is one tier, showing that tier's chip produced
+                "All (18) · Unread (18) · Informational (18)" — three controls,
+                one identical list, which reads as filtering being broken. A
+                tier chip appears only when choosing it would actually narrow
+                the list. */}
+            {NOTIFICATION_TIERS.filter((t) => counts[t] > 0 && counts[t] < totalRows).map((t) => (
               <FilterChip key={t} active={filter === t} onClick={() => setFilter(t)}>
                 {TIER_META[t].label} ({counts[t]})
               </FilterChip>
@@ -290,7 +302,7 @@ export function NotificationBell({ role = "client" }: { role?: "admin" | "client
             </div>
           ) : visible.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-              {filter === "all"
+              {effectiveFilter === "all"
                 ? "You're all caught up."
                 : "Nothing in this view right now."}
             </div>

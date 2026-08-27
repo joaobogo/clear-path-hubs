@@ -224,6 +224,22 @@ export const listClientInterviews = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
+
+    // Close out interviews whose slot has passed before answering. The
+    // database has had sweep_stale_scheduled_interviews for this — confirmed
+    // slots become completed, unconfirmed ones are flagged no-show — but no
+    // cron and no caller ever invoked it, so yesterday's interviews sat
+    // "scheduled" forever on the very list that shows the schedule. Sweeping
+    // lazily on read costs one RPC and needs no scheduler; a failure only
+    // means the list is as stale as it always was, so it never blocks the
+    // read.
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.rpc("sweep_stale_scheduled_interviews");
+    } catch (e) {
+      console.error("[listClientInterviews] stale sweep failed", e);
+    }
+
     let q = context.supabase
       .from("interviews")
       .select("*")
