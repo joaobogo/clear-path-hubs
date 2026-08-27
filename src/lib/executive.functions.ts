@@ -122,7 +122,15 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       .select("id, department, location, status, title, is_test_record, search_live_at")
       .eq("organization_id", orgId)
       .or(NOT_TEST_RECORD);
-    const posRows: AnyRow[] = positions ?? [];
+    // Same second line of defence as the Roles page: fixtures seeded before the
+    // is_test_record flag existed read as real rows, and this page counted them
+    // while the Roles tab hid them — so Insights said "Roles waiting on intake:
+    // 2" above a Roles tab showing zero drafts. Two surfaces, one workspace,
+    // two answers.
+    const { isQaFixtureTitle } = await import("@/lib/client/test-record-filter");
+    const posRows: AnyRow[] = (positions ?? []).filter(
+      (p: AnyRow) => !isQaFixtureTitle(p.title),
+    );
 
 
     // ── Matches (pipeline by BU, time-in-stage, blocked) ──────────────────

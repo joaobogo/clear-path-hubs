@@ -45,6 +45,7 @@ import {
   evaluateAdvanceGate,
 } from "@/lib/client/advance-gate";
 import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+import { publicOrgNameOr } from "@/lib/org/public-org-name";
 
 import {
   type AnyRow,
@@ -116,7 +117,7 @@ export const getClientContext = createServerFn({ method: "GET" })
         organizations: memberships.map((m) => ({
           id: m.organization_id,
           role: m.role as ClientRole,
-          name: m.organizations?.name ?? "Organization",
+          name: publicOrgNameOr(m.organizations?.name, "Organization"),
         })),
         isStaff,
         onboarding,
@@ -136,7 +137,12 @@ export const getClientContext = createServerFn({ method: "GET" })
       active: {
         organization_id: active.organization_id,
         role: active.role as ClientRole,
-        name: active.organizations?.name ?? "Organization",
+        // Bookkeeping suffixes — "(Demo)", "[Test]" — are for telling
+        // workspaces apart in the admin console. The public job board already
+        // strips them; the workspace sidebar, headings and Account page were
+        // still printing the stored value, so the client's own product carried
+        // an internal marker the public site was careful to hide.
+        name: publicOrgNameOr(active.organizations?.name, "Organization"),
         industry: (active.organizations?.industry ?? null) as string | null,
         parent_organization_id: parentId,
         logo_url: (active.organizations?.logo_url ?? null) as string | null,
@@ -152,7 +158,7 @@ export const getClientContext = createServerFn({ method: "GET" })
       organizations: memberships.map((m) => ({
         id: m.organization_id,
         role: m.role as ClientRole,
-        name: m.organizations?.name ?? "Organization",
+        name: publicOrgNameOr(m.organizations?.name, "Organization"),
       })),
       isStaff,
       onboarding,
