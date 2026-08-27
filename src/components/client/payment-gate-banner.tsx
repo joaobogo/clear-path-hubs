@@ -22,13 +22,7 @@ export function PaymentGateBanner({ positionId, positionTitle, paymentStatus, ca
 
 
   const callLabel = callStart
-    ? new Intl.DateTimeFormat("en-GB", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(new Date(callStart))
+    ? formatDateTime(callStart, "")
     : null;
 
   return (

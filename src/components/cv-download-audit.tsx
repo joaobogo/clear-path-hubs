@@ -13,15 +13,7 @@ const AUDIENCE_LABEL: Record<CvDownloadAuditEntry["audience"], string> = {
 };
 
 function when(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString(APP_LOCALE, {
-    timeZone: WORKSPACE_TIMEZONE,
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatDateTime(iso, "");
 }
 
 /**

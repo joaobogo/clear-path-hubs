@@ -46,15 +46,7 @@ const TONE_CLS: Record<JourneyEvent["tone"], string> = {
 };
 
 function fmt(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString(APP_LOCALE, {
-    timeZone: WORKSPACE_TIMEZONE,
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatDateTime(iso, "");
 }
 
 export function JourneyTimeline({

@@ -94,7 +94,7 @@ export function formatInZone(
   const body = new Intl.DateTimeFormat("en-GB", {
     timeZone: zone,
     ...(withDate
-      ? { weekday: "short", day: "numeric", month: "short", year: "numeric" }
+      ? { day: "2-digit", month: "short", year: "numeric" }
       : {}),
     hour: "2-digit",
     minute: "2-digit",

@@ -41,7 +41,7 @@ const SOURCE_TONE: Record<HistorySource, string> = {
 
 function when(iso: string): string {
   const d = new Date(iso);
-  return Number.isNaN(d.valueOf()) ? iso : d.toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE });
+  return Number.isNaN(d.valueOf()) ? iso : formatDateTime(d, iso);
 }
 
 export function CandidateHistoryTimeline({
