@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { presentEvidenceList } from "@/lib/evidence/evidence-presentation";
+import { renderQuote } from "@/lib/evidence/quote-hygiene";
 
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
@@ -407,10 +408,17 @@ export const RequirementRowView = memo(function RequirementRowView({
   // Presentation hygiene: identical and near-identical snippets collapse to
   // one, nothing repeats the summary line above, and a quote that survives as
   // a broken fragment is not shown at all.
-  const evidence = presentEvidenceList(row.evidence, [claim, row.explanation]);
+  // Both of these are CV-derived and were rendered raw, so character-offset
+  // slices reached the client as debris — "TORY Lead Full-Stack Engineer"
+  // (cut out of HISTORY), "NGUAGES - Portuguese" (out of LANGUAGES). The
+  // quotes inside "Show evidence" were already cleaned; these two lines, which
+  // are the ones actually read, were not. Same helper, same treatment.
+  const safeExplanation = renderQuote(row.explanation) || null;
+  const safeClaim = renderQuote(claim) || null;
+  const evidence = presentEvidenceList(row.evidence, [safeClaim, safeExplanation]);
   const context = presentEvidenceList(row.context, [
-    claim,
-    row.explanation,
+    safeClaim,
+    safeExplanation,
     ...evidence.map((e) => e.quote),
   ]);
   return (
@@ -423,8 +431,8 @@ export const RequirementRowView = memo(function RequirementRowView({
               {row.importance === "must_have" ? "Must-have" : "Preferred"}
             </Badge>
           </div>
-          {row.explanation && (
-            <p className="mt-1 text-sm text-muted-foreground">{row.explanation}</p>
+          {safeExplanation && (
+            <p className="mt-1 text-sm text-muted-foreground">{safeExplanation}</p>
           )}
         </div>
         <span
@@ -438,8 +446,8 @@ export const RequirementRowView = memo(function RequirementRowView({
           {badge.label}
         </span>
       </div>
-      {claim && (
-        <p className="mt-2 text-sm text-foreground/90">{claim}</p>
+      {safeClaim && (
+        <p className="mt-2 text-sm text-foreground/90">{safeClaim}</p>
       )}
       {(evidence.length > 0 || context.length > 0) && (
         <Accordion type="single" collapsible className="mt-2">
