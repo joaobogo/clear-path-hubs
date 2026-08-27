@@ -430,7 +430,7 @@ export const ENTITLEMENT_POLICY: PolicyItem[] = [
     id: "billing",
     question: "How often are we billed?",
     answer:
-      "A single position is a flat fee. From two positions up, the rate is set by your total position count and applies to every position — one-off and subscription use the same rates. Subscription plans are billed monthly at the start of the month. Annual commitment saves 10%, applied on your invoice. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
+      "A single position is a flat fee. From two positions up, the rate is set by your total position count and applies to every position — one-off and subscription use the same rates. Subscription plans are billed monthly at the start of the month. There is no annual discount — the total you see is the total you pay. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
   },
   {
     id: "upgrade",

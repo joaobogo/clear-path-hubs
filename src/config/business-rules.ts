@@ -35,7 +35,7 @@ import {
   VOLUME_ROLES_LABEL,
   ABOVE_MAX_DISPLAY,
   ABOVE_MAX_ROLES_LABEL,
-  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+  NO_DISCOUNT_NOTE,
   POSITION_BANDS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
@@ -298,7 +298,7 @@ export const BUSINESS_RULES_DEFAULTS = {
     },
   ] satisfies SubscriptionTier[],
 
-  annualDiscountLabel: SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+  discountNote: NO_DISCOUNT_NOTE,
   scoring: {
     dimensions: [
       { id: "must_haves", label: "Must-haves", weight: 40, description: "Non-negotiable requirements evidenced in the CV." },
@@ -433,7 +433,7 @@ export const businessRulesSchema = z
     }),
     packages: z.array(packageSchema).min(1),
     subscriptions: z.array(subscriptionSchema).min(1),
-    annualDiscountLabel: z.string().min(1),
+    discountNote: z.string().min(1),
     scoring: scoringSchema,
     ctas: z.record(ctaKeySchema, z.object({
       label: z.string().min(1),

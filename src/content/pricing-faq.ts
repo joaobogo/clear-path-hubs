@@ -1,7 +1,7 @@
 export const PRICING_FAQ: { q: string; a: string }[] = [
   {
     q: "How does subscription recruiting differ from an agency?",
-    a: "An agency charges a percentage of first-year salary once a candidate is placed. TaaSFlow charges a flat monthly fee for the search itself — the Agent Layer, the sourcing, the evaluation, the Decision Workspace. Every candidate the platform surfaces stays in your workspace whether they get hired or not.",
+    a: "An agency charges a percentage of first-year salary once a candidate is placed. TaaSFlow charges one exact total, set by how many positions you are hiring for, for the search itself — the sourcing, the evaluation, the workspace. Every candidate the platform surfaces stays in your workspace whether they get hired or not.",
   },
   {
     q: "Do prices go up if we hire multiple candidates?",
@@ -12,12 +12,12 @@ export const PRICING_FAQ: { q: string; a: string }[] = [
     a: "Yes. Engagements can be paused with notice and resumed when the next roles are ready. Your workspace, candidates, and evidence stay in place while paused.",
   },
   {
-    q: "What if we outgrow a tier mid-engagement?",
-    a: "Move up at the next billing cycle — the intake context, workspace, and reusable pipeline carry over. Downgrades work the same way.",
+    q: "What if we add positions mid-engagement?",
+    a: "Your total is recalculated from the new position count at the next billing cycle, and the total never falls as the count rises. The intake context, workspace, and reusable pipeline carry over. Removing positions works the same way.",
   },
   {
     q: "Is there a contract minimum?",
-    a: "The Bronze and Silver subscriptions run month-to-month. Gold and Enterprise have quarterly minimums to align agent capacity planning with your plan. One-off packages have no minimum at all. Exact terms are on your scoped quote.",
+    a: "Subscriptions run month-to-month and one-off packages have no minimum at all. There is no annual commitment and no annual discount — the total you see for your position count is the total you pay. Exact terms are on your quote.",
   },
   {
     q: "How does the pilot work?",

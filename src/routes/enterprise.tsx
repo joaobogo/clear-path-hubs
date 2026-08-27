@@ -29,7 +29,6 @@ import {
   ABOVE_MAX_DISPLAY,
   MAX_POSITIONS,
   PER_POSITION_SUFFIX,
-  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
 } from "@/config/pricing-core";
 
 // Enterprise metadata authored inline. Legacy JSON contained unapproved
@@ -287,8 +286,8 @@ function EnterprisePage() {
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             The rate is set by your total position count and applies to every
-            position. Volume can move up or down between review
-            cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()} on subscriptions.
+            position. Volume can move up or down between review cycles, and the
+            total never falls as the count rises.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             Above {MAX_POSITIONS} positions there is no published price — we

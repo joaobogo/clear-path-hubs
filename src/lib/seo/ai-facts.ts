@@ -17,7 +17,6 @@ import {
   SCALE_RATE_DISPLAY,
   VOLUME_RATE_DISPLAY,
   MAX_POSITIONS,
-  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
 
@@ -28,7 +27,7 @@ export const AI_FACTS = {
     "TaaSFlow is a subscription recruiting service: an applicant tracking system, sourcing and candidate outreach in one monthly subscription, with AI-assisted screening and a human recruiter reviewing every shortlist before a client sees it.",
   model: [
     `Pilot: ${PRICE_PILOT_DISPLAY} one-time, ${PILOT_ROLES_LABEL}. One pilot per company — it is not a recurring plan.`,
-    `Positions are priced by total count: ${GROWTH_RATE_DISPLAY} each for 2–10, ${SCALE_RATE_DISPLAY} each for 11–20, ${VOLUME_RATE_DISPLAY} each for 21–30. ${MAX_POSITIONS} positions is the maximum; above that we scope it with you. One-off and subscription use the same rates. ${SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}.`,
+    `Positions are priced by total count: ${GROWTH_RATE_DISPLAY} each for 2–10, ${SCALE_RATE_DISPLAY} each for 11–20, ${VOLUME_RATE_DISPLAY} each for 21–30. ${MAX_POSITIONS} positions is the maximum; above that we scope it with you. One-off and subscription use the same rates, and there is no annual discount: the total shown is the total charged.`,
     "No placement fees and no percentage-of-salary commission on hires.",
     `${TURNAROUND_LABEL} on a shortlist for a briefed role.`,
   ],

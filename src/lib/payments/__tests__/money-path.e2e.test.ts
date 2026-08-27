@@ -15,6 +15,7 @@
  * leaves the role unpublished*.
  */
 import { describe, it, expect, beforeEach } from "vitest";
+import { positionsTotalUsd } from "@/config/pricing-core";
 
 type PaymentStatus = "unpaid" | "pending" | "paid" | "refunded" | "exempt";
 type PositionStatus = "draft" | "active" | "approved" | "paused";
@@ -137,7 +138,7 @@ const paidEvent = (eventId = "evt_1") => ({
   organizationId: ORG,
   positionId: POS,
   providerReference: "cs_test_123",
-  amountCents: 39900,
+  amountCents: positionsTotalUsd(1)! * 100,
   currency: "usd",
   outcome: "paid" as const,
 });

@@ -17,7 +17,8 @@ import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
 import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import {
   PRICE_PILOT_DISPLAY,
-  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+  NO_DISCOUNT_NOTE,
+  MAX_POSITIONS,
 } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
@@ -80,7 +81,7 @@ function PricingPage() {
         stats={[
           { value: PRICE_PILOT_DISPLAY, label: "Pilot, billed once" },
           { value: "0%", label: "Of salary, ever" },
-          { value: SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL, label: "Paying annually" },
+          { value: String(MAX_POSITIONS), label: "Positions, maximum" },
         ]}
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/book", label: "Book a call" }}
@@ -140,7 +141,7 @@ function PricingPage() {
           <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/80">
             {mode === "oneoff"
               ? "A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now."
-              : "Continuous capacity, billed monthly — Bronze through Enterprise."}
+              : "Continuous capacity, billed monthly — the same rates as one-off, one position up to 30."}
           </p>
         </PublicPage>
       </PublicSection>
@@ -168,15 +169,15 @@ function PricingPage() {
                   <SubscriptionTierCard key={tier.id} tier={tier} />
                 ))}
               </div>
-              {/* Annual discount applies to subscription options only — never
-                  to the one-off packages above. */}
+              {/* One exact total per position count — the same rates whether
+                  billed once or monthly. No discounts, no ranges. */}
               <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
                 <span className="font-semibold text-[color:var(--brand-navy)]">
-                  {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}
+                  {NO_DISCOUNT_NOTE}
                 </span>{" "}
                 {PAYMENTS_ENABLED
-                  ? "— applied at subscription checkout or on your invoice. Monthly prices are shown above."
-                  : "— applied to your subscription when we agree the plan on the call. Monthly prices are shown above."}
+                  ? "The total you see is the total charged at checkout."
+                  : "The total you see is the total on your invoice."}
               </p>
             </>
           )}
