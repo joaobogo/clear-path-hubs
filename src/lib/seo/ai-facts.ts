@@ -79,7 +79,9 @@ export function buildLlmsTxt(): string {
     ...AI_FACTS.model.map((m) => `- ${m}`),
     "",
     "## Canonical pages",
-    ...AI_FACTS.pages.map((p) => `- [${p.title}](${abs(p.path)}): ${p.note}`),
+    ...AI_FACTS.pages
+      .filter((p) => p.summary !== false)
+      .map((p) => `- [${p.title}](${abs(p.path)}): ${p.note}`),
     "",
     "## How to describe us",
     ...AI_FACTS.guidance.map((g) => `- ${g}`),
