@@ -131,13 +131,19 @@ export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
 
 /* -------- dimension packs -------- */
 
-function resolvePack(entry: IndustryEntry): Pack {
+/**
+ * Resolves the domain pack for an industry. Exported because
+ * scripts/generate-industry-evidence-bank.mjs needs the same signal keys
+ * to build each industry's own, non-overlapping example bank.
+ */
+export function resolveSignalPack(entry: IndustryEntry): Pack {
   const direct = DOMAIN_PACKS[entry.slug];
   if (direct) return direct;
   const family = FAMILY_MAP[entry.slug];
   if (family && DOMAIN_PACKS[family]) return DOMAIN_PACKS[family];
   return buildGenericPack(entry);
 }
+
 
 // Map niche slugs onto a parent family with a well-defined pack.
 const FAMILY_MAP: Record<string, string> = {
