@@ -32,7 +32,7 @@ const PAIRS: { old: string; oldNote: string; taas: string; taasNote: string }[] 
     old: "Repeated fees",
     oldNote: "The same candidate re-submitted next quarter triggers a new placement fee.",
     taas: "Reusable candidate pool",
-    taasNote: "Silver-medalists remain yours. Bring them back on the next role at no additional cost.",
+    taasNote: "Strong runners-up remain yours. Bring them back on the next role at no additional cost.",
   },
   {
     old: "No shared decision record",

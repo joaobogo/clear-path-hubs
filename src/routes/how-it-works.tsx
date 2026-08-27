@@ -125,7 +125,7 @@ function HowItWorksPage() {
                 {[
                   "Digital, direct, AI-driven, inbound, offline — five families of channels working in parallel per role",
                   "AI intent scanning surfaces high-intent passive candidates other tools never see",
-                  "Named-target outreach + a 20,000-strong talent network + silver-medalist rehydration",
+                  "Named-target outreach + a 20,000-strong talent network + past finalists brought back in",
                   "Universities, staffing partners, referrals, events, PR, radio and OOH when a role warrants it",
                   "Whatever the channel — LinkedIn or a billboard — the candidate is scored on the same rubric",
                 ].map((t) => (

@@ -172,7 +172,7 @@ export function SourcingEcosystemMap() {
       channels: [
         { label: "Named-target outreach", note: "Precision headhunting by named account", icon: <UserPlus className="h-4 w-4" aria-hidden /> },
         { label: "Talent network", note: "Curated pool from 20,000+ prior placements", icon: <Network className="h-4 w-4" aria-hidden /> },
-        { label: "Silver medalists", note: "Rehydrated finalists from previous roles", icon: <Archive className="h-4 w-4" aria-hidden /> },
+        { label: "Past finalists", note: "Strong runners-up from previous roles, brought back in", icon: <Archive className="h-4 w-4" aria-hidden /> },
         { label: "Executive oversight bench", note: "20+ senior hiring experts across geographies", icon: <Briefcase className="h-4 w-4" aria-hidden /> },
       ],
     },

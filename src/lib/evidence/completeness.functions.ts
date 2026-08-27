@@ -75,7 +75,15 @@ export const addManualEvidence = createServerFn({ method: "POST" })
         confidence: data.result === "strong" ? 0.9 : 0.6,
         source_passage: data.passage,
         source_location: { entered_by: "reviewer" },
-        normalized_meaning: data.criterionLabel,
+        // The meaning field answers "why does this passage count for this
+        // criterion". Echoing the criterion label here made the UI render
+        // "Why this counts: Fluent professional English" under a quote about
+        // fluent professional English — circular, and it discredits the field
+        // everywhere else. The reviewer's note IS their reasoning when they
+        // wrote one; otherwise store nothing rather than a tautology.
+        // (Criterion matching is unaffected: it also matches on
+        // rubric_criterion_key, which carries the label.)
+        normalized_meaning: data.note?.trim() || "",
         result: data.result,
         source_kind: data.sourceKind === "manual" ? "Reviewer verified" : data.sourceKind,
         reviewer_status: "accepted",

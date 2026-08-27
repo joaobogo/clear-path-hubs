@@ -81,7 +81,7 @@ const ENGINE_STEPS = [
   {
     n: "03",
     title: "Ranked shortlist in days",
-    body: "Top candidates delivered with evidence, interview guide, and fit narrative. Silver medalists stay in your workspace, not ours.",
+    body: "Top candidates delivered with evidence, interview guide, and fit narrative. Strong runners-up stay in your workspace, not ours.",
   },
   {
     n: "04",

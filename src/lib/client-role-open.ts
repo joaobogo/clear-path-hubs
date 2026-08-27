@@ -9,9 +9,17 @@
  * Open  = the workspace is actively being served on this role.
  * Filled = the position status says so, OR the pipeline has a hired candidate.
  */
+import { CLIENT_OPEN_ROLE_STATUSES } from "@/lib/client/role-counts";
 
-/** Statuses that count as an open role. Matches Overview and the KPI service. */
-export const OPEN_ROLE_STATUSES = ["active", "approved"] as const;
+/**
+ * Statuses that count as an open role — DERIVED from the one live rule in
+ * client/role-counts.ts, which the Account tile, Roles page and Insights all
+ * read. This file used to declare its own narrower list (without "paused")
+ * and claim it matched them; nothing consumed it, so the lie was harmless
+ * until someone trusted the comment. A paused role is an open engagement —
+ * the search is on hold, the account is not closed.
+ */
+export const OPEN_ROLE_STATUSES = CLIENT_OPEN_ROLE_STATUSES;
 
 /** Statuses that close a role out. */
 export const CLOSED_ROLE_STATUSES = ["filled", "closed", "archived"] as const;

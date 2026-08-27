@@ -48,7 +48,7 @@ const PILLARS = [
     bullets: [
       "Inbound + outbound in one funnel",
       "Channel attribution on every hire",
-      "Silver medalists rediscovered automatically",
+      "Past finalists resurfaced automatically",
     ],
   },
   {

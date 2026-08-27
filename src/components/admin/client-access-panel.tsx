@@ -60,7 +60,14 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
     queryFn: () => inspect({ data: { organization_id: organizationId } }),
   });
 
-  const refresh = () => qc.invalidateQueries({ queryKey: ["client-access", organizationId] });
+  const refresh = () => {
+    void qc.invalidateQueries({ queryKey: ["client-access", organizationId] });
+    // The seat chip and the at-cap Invite gating read the account-state query,
+    // not the member list. Refreshing only the list meant inviting the last
+    // seat left Invite enabled (the next attempt failed server-side), and
+    // freeing a seat left it disabled behind "Seat limit reached".
+    void qc.invalidateQueries({ queryKey: ["account-state", organizationId] });
+  };
 
   const invite = useMutation({
     mutationFn: () =>

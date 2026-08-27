@@ -587,9 +587,38 @@ export const restoreOrganization = createServerFn({ method: "POST" })
     if (!before) throw new Error(`organization_not_found [${trace}]`);
     if (!before.archived_at) return { ok: true as const, organization: before, trace_id: trace };
     const now = new Date().toISOString();
+
+    // What was this client before it was archived? The archive event stores
+    // the whole prior row; restoring unconditionally to "active" silently
+    // promoted a paused or prospect account — an archive-by-mistake came back
+    // as a live client. Unknown or archived-looking prior statuses fall back
+    // to "active" rather than restoring an archived org into an archived state.
+    const { data: lastArchive } = await s
+      .from("audit_events")
+      .select("after_state, before_state")
+      .eq("organization_id", data.id)
+      .eq("action", "organization.archive")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const priorStatus = String(
+      ((lastArchive as AnyRow)?.before_state as AnyRow)?.status ?? "active",
+    );
+    const restoredStatus = priorStatus && priorStatus !== "archived" ? priorStatus : "active";
+    // Dashboard status is restored as recorded — "inactive" can be a
+    // legitimate pre-archive state, unlike an org status of "archived".
+    const restoredDashboard =
+      String(((lastArchive as AnyRow)?.before_state as AnyRow)?.dashboard_status ?? "") ||
+      "active";
+
     const { data: after, error } = await s
       .from("organizations")
-      .update({ archived_at: null, status: "active", dashboard_status: "active", updated_at: now })
+      .update({
+        archived_at: null,
+        status: restoredStatus,
+        dashboard_status: restoredDashboard,
+        updated_at: now,
+      })
       .eq("id", data.id)
       .select("*")
       .maybeSingle();
@@ -599,14 +628,6 @@ export const restoreOrganization = createServerFn({ method: "POST" })
     // archived. Restoring everything to one status would silently promote
     // drafts to active, so anything we cannot account for stays archived and is
     // reopened by hand.
-    const { data: lastArchive } = await s
-      .from("audit_events")
-      .select("after_state")
-      .eq("organization_id", data.id)
-      .eq("action", "organization.archive")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
     const cascaded = (((lastArchive as AnyRow)?.after_state as AnyRow)?.cascaded_positions ??
       []) as Array<{ id: string; status: string }>;
 
@@ -2164,6 +2185,14 @@ export const archiveOrganization = createServerFn({ method: "POST" })
     if (!before) throw new Error(`organization_not_found [${trace}]`);
     if (before.name.trim().toLowerCase() !== data.confirm_name.trim().toLowerCase()) {
       throw new Error(`confirmation_mismatch [${trace}]`);
+    }
+    // Idempotent, like restore. A second archive (stale tab, two admins) used
+    // to run the whole cascade again against an already-archived client, find
+    // zero live positions, and write a NEW audit event whose cascade list was
+    // empty — the restore path reads the latest event, so it would restore
+    // nothing and every previously live role stayed stuck archived.
+    if (before.archived_at) {
+      return { ok: true as const, organization: before, archived_positions: 0, trace_id: trace };
     }
     const now = new Date().toISOString();
     const { data: after, error } = await s

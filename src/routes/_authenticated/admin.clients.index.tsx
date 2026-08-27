@@ -817,8 +817,15 @@ function RowOverflowMenu({ row, onArchive }: { row: ClientRow; onArchive: () => 
   const qc = useQueryClient();
   const restore = useMutation({
     mutationFn: (id: string) => restoreOrganization({ data: { id } }),
-    onSuccess: () => {
-      toast.success(`${row.name} restored`);
+    onSuccess: (res) => {
+      // Say how many roles came back. Restore reopens the positions the
+      // archive closed; a bare "restored" hid the one number that tells the
+      // admin whether the client's roles are live again — including the
+      // honest zero when the cascade record had nothing to restore.
+      const n = (res as { restored_positions?: number }).restored_positions ?? 0;
+      toast.success(
+        `${row.name} restored — ${n} role${n === 1 ? "" : "s"} reopened`,
+      );
       qc.invalidateQueries({ queryKey: ["admin-clients"] });
       router.invalidate();
     },
