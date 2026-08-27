@@ -185,7 +185,10 @@ export function seatBlockReason(block: SeatBlock): string {
   const { usage } = block;
   const counts =
     typeof usage.seatLimit === "number" && usage.seatLimit > 0
-      ? `${usage.seatsAllocated ?? usage.seatsUsed ?? usage.seatLimit} of ${usage.seatLimit} seats are taken`
+      // "in use" everywhere else — the team tab, the seat notice two functions
+      // up, and the plan copy. This line was the only place that said "taken",
+      // so the same fact was worded two ways in the same dialog.
+      ? `${usage.seatsAllocated ?? usage.seatsUsed ?? usage.seatLimit} of ${usage.seatLimit} seats are in use`
       : "every seat on your plan is in use";
   switch (block.code) {
     case "pending_invites_hold_seats":

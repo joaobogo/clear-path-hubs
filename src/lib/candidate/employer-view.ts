@@ -168,6 +168,26 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
     label: "Whether the employer may see your contact details and CV file",
   },
 
+  // Added to the DTO without being described here, so the candidate's "what
+  // employers see" preview was three fields out of date. The intro video is the
+  // one that matters most: a candidate who records a Loom should be told plainly
+  // that the employer watches it.
+  {
+    key: "intro_video",
+    group: "identity",
+    label: "Your introduction video, if you recorded one",
+    note: "The employer can play it from your profile.",
+  },
+  {
+    key: "client_decided",
+    group: "process",
+    label: "Whether the employer has made a decision on you",
+  },
+  {
+    key: "hire_confirmed",
+    group: "process",
+    label: "Whether a hire has been confirmed",
+  },
   { key: "stage_entered_at", group: "process", label: "Date you entered the current stage" },
   { key: "last_updated", group: "process", label: "Date the record was last updated" },
   {

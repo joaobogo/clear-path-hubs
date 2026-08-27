@@ -9,7 +9,21 @@
  */
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative, sep } from "node:path";
+
+/**
+ * Repo-relative, forward-slashed, on every platform.
+ *
+ * This used to be `file.replace(process.cwd() + "/", "")`. On Windows the
+ * walked paths are backslash-separated, so that replace matched nothing: every
+ * id kept its absolute "C:\..." prefix, no id could ever match the allowlist
+ * below, and the guard reported its two documented exceptions as offenders on
+ * every run. A check that always fails is a check nobody reads — and it would
+ * have hidden a genuinely unguarded function among the noise.
+ */
+function repoRelative(file: string): string {
+  return relative(process.cwd(), file).split(sep).join("/");
+}
 
 const ROOT = join(process.cwd(), "src/lib");
 
@@ -78,7 +92,7 @@ describe("admin surface authorization coverage", () => {
     const offenders: string[] = [];
     for (const file of files) {
       for (const name of unguardedExports(file)) {
-        const id = `${file.replace(process.cwd() + "/", "")} :: ${name}`;
+        const id = `${repoRelative(file)} :: ${name}`;
         if (SELF_SCOPED_BY_RLS.has(id)) continue;
         offenders.push(id);
       }
