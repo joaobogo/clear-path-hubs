@@ -1,6 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import {
+  PUBLISHED_SCORE_COLUMNS,
+  publishedScore,
+  type PublishedScoreRun,
+} from "@/lib/scoring/published-score";
+import { classifyBand } from "@/lib/scoring/bands";
+import { isStrongFitBand } from "@/lib/scoring/score-counts";
 
 /**
  * Deliveries are ISO-week rollups of client-visible candidate matches per position.
@@ -24,9 +31,12 @@ export type DeliveryRow = {
   candidate_count: number;
   new_count: number; // delivered_at within this week
   refreshed_count: number; // client_visibility=visible, delivered_at older but updated in week
-  band_high: number; // final_score >= 80
-  band_mid: number; // 60-79
-  band_low: number; // < 60
+  /** Strong-fit bands (the strongest three), from the one band table. */
+  band_high: number;
+  /** Worth-considering band. */
+  band_mid: number;
+  /** Below the considering band. */
+  band_low: number;
   match_ids: string[];
   earliest: string;
   latest: string;
@@ -62,7 +72,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("candidate_matches")
       .select(
-        "id, position_id, delivered_at, updated_at, approved_score_run_id, positions(title), score_runs!candidate_matches_approved_score_run_id_fkey(final_score)",
+        `id, position_id, delivered_at, updated_at, approved_score_run_id, positions(title), score_runs!candidate_matches_approved_score_run_id_fkey(${PUBLISHED_SCORE_COLUMNS})`,
       )
       .eq("organization_id", data.organization_id)
       .eq("client_visibility", "visible");
@@ -78,7 +88,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
       delivered_at: string | null;
       updated_at: string;
       positions?: { title: string } | null;
-      score_runs?: { final_score: number | null } | null;
+      score_runs?: PublishedScoreRun;
     };
 
     const buckets = new Map<string, DeliveryRow>();
@@ -86,7 +96,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
       const anchor = raw.delivered_at ?? raw.updated_at;
       const { key, start, end } = isoWeek(anchor);
       const bucketKey = `${key}::${raw.position_id}`;
-      const finalScore = raw.score_runs?.final_score ?? null;
+      const score = publishedScore(raw.score_runs);
 
       let b = buckets.get(bucketKey);
       if (!b) {
@@ -116,9 +126,10 @@ export const listDeliveries = createServerFn({ method: "GET" })
       } else {
         b.refreshed_count += 1;
       }
-      if (finalScore != null) {
-        if (finalScore >= 80) b.band_high += 1;
-        else if (finalScore >= 60) b.band_mid += 1;
+      if (score != null) {
+        // Canonical bands decide the buckets — no local cut-offs.
+        if (isStrongFitBand(classifyBand(score))) b.band_high += 1;
+        else if (classifyBand(score) === "consider") b.band_mid += 1;
         else b.band_low += 1;
       }
       if (anchor < b.earliest) b.earliest = anchor;

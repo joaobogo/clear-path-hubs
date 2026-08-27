@@ -26,6 +26,7 @@ import {
 } from "./hiring-intelligence";
 import { plural, pluralWord } from "@/lib/format/plural";
 import {
+import { publishedScore, type PublishedScoreRun } from "@/lib/scoring/published-score";
   BEST_PRACTICES,
   deriveRecommendations,
   type BestPractice,

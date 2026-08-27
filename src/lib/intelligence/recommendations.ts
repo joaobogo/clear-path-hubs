@@ -20,6 +20,7 @@ import { clientStatusLabel } from "@/lib/vocabulary";
  */
 
 import { median, pct } from "./hiring-intelligence";
+import { publishedScore, type PublishedScoreRun } from "@/lib/scoring/published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;

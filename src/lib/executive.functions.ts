@@ -13,6 +13,11 @@ import { loadConfirmedHires } from "@/lib/kpis/confirmed-hires.server";
 import { loadOpenRoles, loadOrgRoles } from "@/lib/kpis/open-roles.server";
 import { loadKpiRows, computeKpis, isAwaitingClientDecision } from "@/lib/client-kpi.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
+import {
+  PUBLISHED_SCORE_COLUMNS,
+  publishedScore,
+  type PublishedScoreRun,
+} from "@/lib/scoring/published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -400,7 +405,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       ).length,
     }));
 
-    // ── Shortlist quality (weekly avg approved final_score) ───────────────
+    // ── Shortlist quality (weekly avg of the published approved score) ────
     const approvedRunIds = matchRows
       .filter((m) => m.approved_score_run_id && m.delivered_at)
       .map((m) => m.approved_score_run_id);
@@ -408,7 +413,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     if (approvedRunIds.length > 0) {
       const { data: runs } = await s
         .from("score_runs")
-        .select("id, final_score, completed_at")
+        .select(`id, completed_at, ${PUBLISHED_SCORE_COLUMNS}`)
         .in("id", approvedRunIds);
       runById = new Map((runs as AnyRow[] | null ?? []).map((r) => [r.id, r]));
     }
@@ -419,7 +424,8 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         const delivered = new Date(m.delivered_at);
         if (delivered < w.start || delivered >= w.end) continue;
         const run = runById.get(m.approved_score_run_id);
-        if (run?.final_score != null) scores.push(Number(run.final_score));
+        const value = publishedScore(run as PublishedScoreRun);
+        if (value != null) scores.push(value);
       }
       const avg = scores.length
         ? Math.round((scores.reduce((s, v) => s + v, 0) / scores.length) * 10) / 10
