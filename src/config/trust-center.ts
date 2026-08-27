@@ -148,7 +148,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
         reference: "search_path pinned to public, extensions",
       },
       {
-        text: "Support access by platform staff runs as a bounded, expiring session; every action is written to a support-action log and to the audit trail with the real actor retained.",
+        text: "Support access by platform staff runs as a bounded, expiring session; every action is written to a support-action log and to the change history with the real actor retained.",
         source: "doc",
         reference: "Support-mode safety certification",
       },
@@ -181,7 +181,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
         reference: "Authenticated server-function middleware",
       },
       {
-        text: "Membership can be deactivated by an organisation admin, and the change is recorded in the audit trail.",
+        text: "Membership can be deactivated by an organisation admin, and the change is recorded in the change history.",
         source: "doc",
         reference: "Multi-org and revocation certification",
       },
@@ -322,7 +322,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
         reference: "docs/runbooks 01–14",
       },
       {
-        text: "Any incorrect candidate visibility is treated as a security incident until proven otherwise: access is reconstructed from the audit trail, and affected users and trace IDs are recorded.",
+        text: "Any incorrect candidate visibility is treated as a security incident until proven otherwise: access is reconstructed from the change history, and affected users and trace IDs are recorded.",
         source: "doc",
         reference: "Runbook 08 — wrong client visibility",
       },

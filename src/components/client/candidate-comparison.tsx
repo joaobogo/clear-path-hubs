@@ -17,7 +17,6 @@ import {
   buildCompareMatrix,
   compareEligibility,
   rubricGuard,
-  rubricVersion,
   STATUS_LABEL,
   type CompareStatus,
   type CompareMatrixRow,
@@ -245,13 +244,6 @@ export function CompareSheet({
                   Requirements changed between reviews
                 </div>
                 <p className="mt-1 text-foreground/90">{guard.warning}</p>
-                <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
-                  {candidates.map((c) => (
-                    <li key={c.match_id}>
-                      {c.candidate.display_name} — reviewed against {rubricVersion(c)}
-                    </li>
-                  ))}
-                </ul>
               </div>
             )}
 
