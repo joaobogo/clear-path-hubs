@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { isQaFixtureTitle } from "./client/test-record-filter";
+import { isQaFixtureSubject, isQaFixtureTitle } from "./client/test-record-filter";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertNoQaContamination } from "@/lib/qa-guard";
 import {
@@ -315,7 +315,7 @@ export const listConversations = createServerFn({ method: "GET" })
       const visibleRows = rows.filter((c) => {
         if (c.position_id && qaPositionIds.has(c.position_id as string)) return false;
         if (c.candidate_match_id && qaMatchIds.has(c.candidate_match_id as string)) return false;
-        if (isQaFixtureTitle(c.subject)) return false;
+        if (isQaFixtureSubject(c.subject)) return false;
         const body = last[c.id as string]?.body;
         return !isQaFixtureTitle(body);
       });
@@ -409,9 +409,14 @@ export const ensureConversation = createServerFn({ method: "POST" })
     const { data: existing } = await existingQ.maybeSingle();
     if (existing) return { id: (existing as Row).id as string };
 
-    const qa = await assertNoQaContamination(supabase, data.orgId, [
-      data.subject,
-    ]);
+    // Thread subjects are guarded unconditionally: demo workspaces are shown to
+    // clients too, so a QA-named thread must not be creatable in any workspace.
+    if (isQaFixtureSubject(data.subject)) {
+      throw new Error(
+        "That subject reads as a test thread. Please give the conversation a real subject.",
+      );
+    }
+    const qa = await assertNoQaContamination(supabase, data.orgId, [data.subject]);
     if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
 
     const { data: created, error } = await supabase
