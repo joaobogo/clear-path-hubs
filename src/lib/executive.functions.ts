@@ -520,18 +520,31 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         return Number.isFinite(n) && n > 0;
       });
 
+    // How many offers are open is a pipeline question, not a paperwork one, so
+    // it comes from the same reader every other surface uses. This tile used to
+    // count hire_records instead, and a candidate can reach the offer stage
+    // without one ever being written — so the client was shown "1 open offer"
+    // here while the Offers board, the Candidates tab, Roles and the Overview
+    // all said 2, and the person missing from this count had no offer record.
+    //
+    // The money figures below stay on hire_records because salary only exists
+    // there. That is why the caption reads "N of M": M offers are open, N of
+    // them have a compensation figure recorded.
+    const { countOpenOffers } = await import("@/lib/kpis/candidates-in-play.server");
+    const openOfferCount = await countOpenOffers(s, orgId);
+
     const finance_summary = {
       hires_30d,
       hires_90d,
       hires_ytd,
-      open_offers: openOfferRows.length,
+      open_offers: openOfferCount,
       open_offer_value: sumSalary(openOfferRows),
       open_offers_with_compensation: withComp(openOfferRows).length,
       avg_salary: avgSalary(openOfferRows),
       salary_currency: currencyOf(openOfferRows),
 
       projected_hires_next_30d: Math.min(
-        openOfferRows.length,
+        openOfferCount,
         Math.max(hires_30d, Math.round(projectedRate / 6)),
       ),
     };

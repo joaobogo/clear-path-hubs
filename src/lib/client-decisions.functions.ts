@@ -164,6 +164,32 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       .eq("organization_id", data.orgId);
     if (updateError) throw new Error(updateError.message);
 
+    // The same reconciliation the 'hired' branch below has always done, for the
+    // stage before it. Moving someone to Offer only changed the pipeline stage,
+    // while the Offers board and the finance tile read hire_records — so a
+    // candidate could sit in the Offer column of the Candidates tab with no row
+    // on the Offers board at all, and the client was shown two different sets of
+    // people for the same question.
+    if (data.toStage === "offer") {
+      const { data: existingOffer } = await context.supabase
+        .from("hire_records")
+        .select("id")
+        .eq("candidate_match_id", data.matchId)
+        .maybeSingle();
+      if (!existingOffer) {
+        // Drafted, not sent: the client has decided to make an offer, they have
+        // not told us the terms. Claiming it was sent would put a date on the
+        // board that nobody chose.
+        await context.supabase.from("hire_records").insert({
+          candidate_match_id: data.matchId,
+          organization_id: data.orgId,
+          position_id: match.position_id,
+          candidate_profile_id: match.candidate_profile_id,
+          status: "offer_drafted",
+        } as never);
+      }
+    }
+
     // B4/HIRE reconciliation: When moving to 'hired', ensure a hire_record exists.
     // The client workspace moves the stage, but the rollup reads hire_records.
     if (data.toStage === "hired") {
