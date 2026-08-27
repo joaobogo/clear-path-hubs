@@ -18,7 +18,7 @@ import {
   PACKAGE_20,
   PACKAGE_30,
   PACKAGE_40,
-  PACKAGE_100,
+  PACKAGE_50,
   positionsTotalUsd,
   formatUsdExact,
 } from "@/config/pricing-core";
@@ -119,11 +119,11 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
   },
   {
     id: "program",
-    name: PACKAGE_100.capacityLabel,
+    name: PACKAGE_50.capacityLabel,
     description: "A continuous hiring programme in one package.",
     minPositions: PACKAGE_40.capacity + 1,
-    maxPositions: PACKAGE_100.capacity,
-    priceUsd: PACKAGE_100.totalUsd,
+    maxPositions: PACKAGE_50.capacity,
+    priceUsd: PACKAGE_50.totalUsd,
     billingType: "package",
     customPricingOnly: false,
     approvalStatus: "approved",

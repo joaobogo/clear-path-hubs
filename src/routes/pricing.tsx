@@ -82,7 +82,7 @@ function PricingPage() {
         stats={[
           { value: PRICE_PILOT_DISPLAY, label: "Pilot, billed once" },
           { value: "0%", label: "Of salary, ever" },
-          { value: String(MAX_POSITIONS), label: "Positions, maximum" },
+          { value: `${MAX_POSITIONS}+`, label: "Positions, and beyond" },
         ]}
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/book", label: "Book a call" }}
