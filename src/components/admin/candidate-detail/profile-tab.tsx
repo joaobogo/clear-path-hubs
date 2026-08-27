@@ -10,6 +10,7 @@ import { Row } from "@/components/admin/candidate-detail/primitives";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { formatWorkAuthorization } from "@/lib/human-labels";
 import { updateCandidateProfileField } from "@/lib/admin-candidates.functions";
+import { IntroVideoCard } from "@/components/admin/candidate-detail/intro-video-card";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -80,6 +81,7 @@ function ProfileTab({
   return (
     <div className="space-y-4">
       {insights && <InsightsBriefing insights={insights} />}
+      <IntroVideoCard matchId={m.id} currentUrl={m.intro_video_url ?? null} />
       <div className="grid gap-4 lg:grid-cols-2">
 
       <div className="rounded-lg border bg-card p-5">
