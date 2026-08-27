@@ -168,8 +168,19 @@ export function absoluteLink(path: string | null | undefined): string {
 }
 
 /**
- * Minimal, brand-consistent HTML. Deliberately plain so it renders identically
- * on mobile and desktop clients and contains no placeholder variables.
+ * Notification email HTML.
+ *
+ * Every notification that reaches an inbox — a new message from a client, a
+ * decision waiting, a shortlist delivered — used to arrive as a grey wordmark
+ * and a black button, while the transactional templates next to it in the same
+ * inbox carried the navy header and ocean button from
+ * `src/lib/email-templates/brand.tsx`. Two different products, from the same
+ * sender, on the same day.
+ *
+ * The palette below mirrors that file exactly. It is inlined rather than
+ * imported because email clients resolve neither CSS variables nor oklch(), and
+ * because this module is server-only and must not pull in React Email to render
+ * one card. If the brand palette moves, move it here too.
  */
 export function renderEmail(args: {
   title: string;
@@ -177,26 +188,71 @@ export function renderEmail(args: {
   actionLabel: string;
   actionUrl: string;
   context?: string | null;
+  /** Overrides the default "reply to this email" line. */
+  footerNote?: string | null;
 }): string {
   const esc = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const font =
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+  // Mirrors palette in src/lib/email-templates/brand.tsx.
+  const navy = "#1e2a4a";
+  const ocean = "#2563eb";
+  const ink = "#141a28";
+  const body = "#55606f";
+  const muted = "#8a93a3";
+  const border = "#e3e8ef";
+
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>${esc(args.title)}</title></head>
-<body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#111827">
-<div style="max-width:560px;margin:0 auto;padding:32px 24px">
-  <div style="font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7280">TaaSFlow</div>
-  <h1 style="font-size:22px;line-height:1.3;margin:16px 0 8px">${esc(args.title)}</h1>
-  <p style="font-size:15px;line-height:1.6;margin:0 0 16px;color:#374151">${esc(args.body)}</p>
-  ${args.context ? `<p style="font-size:14px;line-height:1.6;margin:0 0 20px;color:#6b7280">${esc(args.context)}</p>` : ""}
-  <p style="margin:24px 0">
-    <a href="${esc(args.actionUrl)}" style="display:inline-block;background:#111827;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-size:15px;font-weight:600">${esc(args.actionLabel)}</a>
-  </p>
-  <p style="font-size:13px;line-height:1.6;color:#6b7280;margin:0">
-    Need help? Reply to this email and our team will pick it up.
-  </p>
+<body style="margin:0;padding:0;background:#ffffff;font-family:${font};color:${ink}">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(args.body)}</div>
+<div style="max-width:560px;margin:0 auto;padding:24px 0 32px">
+  <div style="background:${navy};padding:22px 28px;border-radius:12px 12px 0 0">
+    <p style="color:#ffffff;font-size:17px;font-weight:700;letter-spacing:-0.01em;margin:0">TaaSFlow</p>
+    <p style="color:#b9c6e0;font-size:12px;margin:4px 0 0">Hiring intelligence</p>
+  </div>
+  <div style="border:1px solid ${border};border-top:none;border-radius:0 0 12px 12px;padding:28px">
+    <h1 style="font-size:21px;font-weight:700;color:${ink};margin:0 0 14px;line-height:1.3">${esc(args.title)}</h1>
+    <p style="font-size:15px;color:${body};line-height:1.6;margin:0 0 20px">${esc(args.body)}</p>
+    ${args.context ? `<p style="font-size:14px;color:${muted};line-height:1.6;margin:0 0 20px">${esc(args.context)}</p>` : ""}
+    <p style="margin:0 0 24px">
+      <a href="${esc(args.actionUrl)}" style="background:${ocean};color:#ffffff;font-size:15px;font-weight:600;border-radius:8px;padding:14px 24px;text-decoration:none;display:inline-block">${esc(args.actionLabel)}</a>
+    </p>
+    <p style="font-size:13px;color:${muted};line-height:1.6;margin:0;border-top:1px solid ${border};padding-top:16px">
+      ${esc(args.footerNote ?? "Need help? Reply to this email and our team will pick it up.")}
+    </p>
+  </div>
 </div>
 </body></html>`;
+}
+
+/**
+ * What the button says. "Open in TaaSFlow" on a message notice makes the reader
+ * work out why they are being sent anywhere; naming the thing waiting for them
+ * is the difference between a click and an ignored email.
+ */
+export function emailActionLabel(event: EventType): string {
+  switch (event) {
+    case "message_sent":
+      return "Read the message";
+    case "approval_needed":
+      return "Review and decide";
+    case "candidate_published":
+    case "shortlist_ready":
+      return "See the shortlist";
+    case "interview_requested":
+    case "interview_scheduled":
+    case "interview_rescheduled":
+      return "See the interview";
+    case "clarification_requested":
+    case "client_information_requested":
+    case "role_information_missing":
+      return "Answer the question";
+    default:
+      return "Open in TaaSFlow";
+  }
 }
 
 export type EmailAttempt = {
@@ -282,7 +338,7 @@ export async function dispatchEmails(
             html: renderEmail({
               title: n.title,
               body: n.body ?? n.title,
-              actionLabel: "Open in TaaSFlow",
+              actionLabel: emailActionLabel(n.event_type),
               actionUrl: absoluteLink(n.link_path),
             }),
             idempotencyKey: `${n.id}:email`,
