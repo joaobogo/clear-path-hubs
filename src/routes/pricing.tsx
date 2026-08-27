@@ -18,6 +18,7 @@ import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import {
   PRICE_PILOT_DISPLAY,
   NO_DISCOUNT_NOTE,
+  MAX_POSITIONS,
 } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
@@ -80,7 +81,7 @@ function PricingPage() {
         stats={[
           { value: PRICE_PILOT_DISPLAY, label: "Pilot, billed once" },
           { value: "0%", label: "Of salary, ever" },
-          { value: MAX_POSITIONS_DISPLAY, label: "Positions, maximum" },
+          { value: String(MAX_POSITIONS), label: "Positions, maximum" },
         ]}
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/book", label: "Book a call" }}

@@ -9,6 +9,7 @@
  * Price identifiers are named after the position count they cover
  * (`oneoff_pos_5`, `sub_pos_5_monthly`), because the amount is a pure function
  * of that count. Identifiers from the previous, deleted price model are gone.
+ * There is no annual price: a second, lower total would contradict the rule.
  */
 import {
   positionsTotalUsd,
@@ -57,8 +58,6 @@ export type PlanOffer = {
   summary: string;
 };
 
-const ANNUAL_MULTIPLIER = 12 * 0.9; // 10% off on an annual commit
-
 function positionsLabel(n: number): string {
   return n === 1 ? "1 position" : `${n} positions`;
 }
@@ -97,18 +96,6 @@ function buildCatalogue(): PlanOffer[] {
       validForDays: null,
       tier: 10 + index + 1,
       summary: `${positionsLabel(n)} at a time for ${formatUsdExact(total)} a month.`,
-    });
-    offers.push({
-      priceId: `sub_pos_${n}_yearly`,
-      productId: `sub_pos_${n}`,
-      label: `${positionsLabel(n)} — annual`,
-      kind: "subscription",
-      interval: "year",
-      amountUsd: Math.round(total * ANNUAL_MULTIPLIER),
-      rolesTotal: n,
-      validForDays: null,
-      tier: 10 + index + 1,
-      summary: `${positionsLabel(n)} on an annual commit — 10% off.`,
     });
   });
 
