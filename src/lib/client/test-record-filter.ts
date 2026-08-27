@@ -42,3 +42,20 @@ export function isQaFixtureTitle(title: unknown): boolean {
   const t = title.toLowerCase();
   return QA_TITLE_MARKERS.some((marker) => t.includes(marker));
 }
+
+/**
+ * Conversation subjects are held to a stricter rule than role titles.
+ *
+ * A thread called "History Integrity Test" is a QA artefact by any reading, and
+ * a demo workspace is still a client-visible workspace — so no thread whose
+ * subject reads as a test, check or fixture belongs in one, whatever flags the
+ * organisation carries. Word boundaries keep genuine words ("Testing Engineer",
+ * "Quality Assurance Lead") out of the net.
+ */
+const QA_SUBJECT_PATTERN =
+  /\b(test|tests|qa|q\.a\.|fixture|fixtures|smoke|e2e|sanity|integrity check|dry run|scratch|placeholder|lorem)\b/i;
+
+export function isQaFixtureSubject(subject: unknown): boolean {
+  if (typeof subject !== "string") return false;
+  return isQaFixtureTitle(subject) || QA_SUBJECT_PATTERN.test(subject);
+}
