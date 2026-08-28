@@ -326,11 +326,23 @@ async function stepEnrich(matchId: string, trace_id: string): Promise<State> {
   return "ready_to_score";
 }
 
-async function stepScore(matchId: string, trace_id: string): Promise<State> {
+async function stepScore(
+  matchId: string,
+  trace_id: string,
+  opts: { force?: boolean } = {},
+): Promise<State> {
   // Delegates to the canonical scoring service — do NOT insert score_runs here.
-  const outcome = await executeScoring(matchId, { trace_id, reason: "manual_step" });
+  // force: an explicit rescore must bypass the "already scored" short-circuit,
+  // otherwise the service returns reused:true without recomputing and an engine
+  // upgrade never lands (the drain loop then never converges).
+  const outcome = await executeScoring(matchId, {
+    trace_id,
+    reason: "manual_step",
+    ...(opts.force ? { force: true } : {}),
+  });
   return outcome.final_state;
 }
+
 
 async function isStaff(userId: string): Promise<boolean> {
   const supabase = (await getAdmin()) as AnyRow;
@@ -401,7 +413,9 @@ export const rescore = createServerFn({ method: "POST" })
     // written UNLESS the input hash matches a completed run for this match, in which case
     // that run is reused (idempotent rescore).
     let state = await stepEnrich(data.match_id, trace_id);
-    if (state === "ready_to_score") state = await stepScore(data.match_id, trace_id);
+    if (state === "ready_to_score" || state === "scored")
+      state = await stepScore(data.match_id, trace_id, { force: true });
+
     return { ok: true, state, trace_id };
   });
 
@@ -458,7 +472,7 @@ export const rescoreAllScored = createServerFn({ method: "POST" })
     const failed: Array<{ id: string; error: string }> = [];
     for (const m of stale) {
       try {
-        await stepScore(String(m.id), trace_id);
+        await stepScore(String(m.id), trace_id, { force: true });
         rescored.push(String(m.id));
       } catch (e) {
         // One bad row must not abandon the batch — record it and continue.

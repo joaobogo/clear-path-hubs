@@ -17,8 +17,17 @@ const SITE_URL = `https://${ROOT_DOMAIN}`
 
 // The SDK handler owns verification, dispatch, and retry semantics; this file
 // owns only the email decisions: subjects, templates, and per-type props.
-const handler = createAuthEmailHandler({
+//
+// Built lazily on first request: createAuthEmailHandler throws when the API key
+// is absent, and at module scope that throw happens while the route tree is
+// evaluated — taking down SSR for every route, not just this webhook.
+let cached: ReturnType<typeof createAuthEmailHandler> | null = null
+
+function getHandler() {
+  if (cached) return cached
+  cached = createAuthEmailHandler({
   apiKey: process.env.LOVABLE_API_KEY!,
+
   from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
   senderDomain: SENDER_DOMAIN,
   sendUrl: process.env.LOVABLE_SEND_URL,
@@ -75,12 +84,15 @@ const handler = createAuthEmailHandler({
         React.createElement(ReauthenticationEmail, { token: data.token ?? '' }),
     },
   },
-})
+  })
+  return cached
+}
 
 export const Route = createFileRoute("/lovable/email/auth/webhook")({
   server: {
     handlers: {
-      POST: ({ request }) => handler(request),
+      POST: ({ request }) => getHandler()(request),
+
     },
   },
 })
