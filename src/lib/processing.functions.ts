@@ -472,7 +472,7 @@ export const rescoreAllScored = createServerFn({ method: "POST" })
     const failed: Array<{ id: string; error: string }> = [];
     for (const m of stale) {
       try {
-        await stepScore(String(m.id), trace_id);
+        await stepScore(String(m.id), trace_id, { force: true });
         rescored.push(String(m.id));
       } catch (e) {
         // One bad row must not abandon the batch — record it and continue.
