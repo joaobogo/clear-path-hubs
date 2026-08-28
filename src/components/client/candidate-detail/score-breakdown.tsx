@@ -149,7 +149,7 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
         {lines.some(
           (k) => (k.key === "must_have" || k.key === "preferred") && !k.basisLabel,
         )
-          ? "Percentages come from the scoring run's own assessment. A percentage can sit above a plain count of the list below when the run settled a requirement the list still shows as pending confirmation."
+          ? "Percentages come from the assessment itself. A percentage can sit above a plain count of the list below when the assessment settled a requirement the list still shows as pending confirmation."
           : "Percentages are weighted counts of the requirements listed below: a fully evidenced requirement scores one point, a partly evidenced one half."}
         {` The parts add up to ${totalPts}, the score shown above.`}
       </p>

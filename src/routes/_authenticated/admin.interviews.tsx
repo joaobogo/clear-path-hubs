@@ -79,6 +79,20 @@ function InterviewsPage() {
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-24 w-full" />
         </div>
+      ) : query.isError ? (
+        <Card className="p-6">
+          <p className="text-sm font-medium">We couldn't load interviews.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {(query.error as Error)?.message ?? "Unknown error"}
+          </p>
+          <button
+            type="button"
+            className="mt-3 text-sm text-primary hover:underline"
+            onClick={() => query.refetch()}
+          >
+            Try again
+          </button>
+        </Card>
       ) : (
         <div className="space-y-6">
           {GROUPS.map((g) => {
