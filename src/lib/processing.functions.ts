@@ -10,6 +10,7 @@
 //   - recorded with a trace id and processing_job row
 //   - never rewrites completed score runs (they are immutable)
 
+import { isGarbageCvText } from "@/lib/cv/parse-facts";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -234,7 +235,15 @@ async function stepParse(matchId: string, trace_id: string): Promise<State> {
 
   await setState(matchId, "parsing", { trace_id });
 
-  if (ctx.file.extracted_text && ctx.file.extracted_text.length >= 200) {
+  // Length alone is not readability: a raw-PDF byte soup is thousands of
+  // characters long. Retry-parse declared such a file "parsed" and the
+  // pipeline spent 15 minutes extracting evidence from garbage before the
+  // late gate finally fired (audit #4, H1).
+  if (
+    ctx.file.extracted_text &&
+    ctx.file.extracted_text.length >= 200 &&
+    !isGarbageCvText(ctx.file.extracted_text)
+  ) {
     await setState(matchId, "parsed", { trace_id });
     return "parsed";
   }
@@ -258,7 +267,18 @@ async function stepParse(matchId: string, trace_id: string): Promise<State> {
     })
     .eq("id", ctx.file.id);
 
-  if (needs_ocr) {
+  if (needs_ocr || isGarbageCvText(text)) {
+    // Mark the FILE unreadable too, so the parse-failures desk and Data
+    // health count it — "Every document currently on file was read
+    // successfully." rendered while a byte-soup CV sat scored (audit #4, H1).
+    await supabase
+      .from("files")
+      .update({
+        parse_state: "review_required",
+        parse_error_code: "cv_unreadable",
+        parse_error: "The document could not be read as text and needs OCR before evidence work.",
+      })
+      .eq("id", ctx.file.id);
     await setState(matchId, "ocr_required", {
       trace_id,
       code: "cv_unreadable",
@@ -1097,7 +1117,7 @@ export const getAdminMatch = createServerFn({ method: "GET" })
     if (error || !m) return null;
 
     const cpId = (m.candidate_profiles as AnyRow)?.id ?? "";
-    const [runsRes, decisionsRes, jobsRes, evidenceRes, fileRes, siblingsRes] = await Promise.all([
+    const [runsRes, decisionsRes, jobsRes, evidenceRes, fileRes, siblingsRes, answersRes] = await Promise.all([
       supabase
         .from("score_runs")
         .select(
@@ -1146,6 +1166,15 @@ export const getAdminMatch = createServerFn({ method: "GET" })
         .select("id,positions(title)")
         .eq("candidate_profile_id", cpId)
         .order("created_at", { ascending: false }),
+      // Screening answers belong to the APPLICATION, not the profile. Without
+      // this read the review page's screening panel could only ever say "No
+      // screening answers recorded." — reviewers approved blind (audit #4, H2).
+      m.application_id
+        ? supabase
+            .from("application_answers")
+            .select("id,answer,created_at,screening_questions(question,answer_type,dealbreaker,display_order)")
+            .eq("application_id", m.application_id)
+        : Promise.resolve({ data: [] as AnyRow[] }),
     ]);
 
     // Lifetime of a staff CV preview link. Short by design; re-signed on demand.
@@ -1179,6 +1208,12 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       ),
       decisions: decisionsRes.data ?? [],
       jobs: jobsRes.data ?? [],
+      // Sorted the way the candidate answered them.
+      answers: (((answersRes as AnyRow).data ?? []) as AnyRow[]).sort(
+        (a, b) =>
+          (a.screening_questions?.display_order ?? 0) -
+          (b.screening_questions?.display_order ?? 0),
+      ),
       evidence: evidenceRes.data ?? null,
       cv: fileRes.data
         ? { ...fileRes.data, signed_url: cv_signed_url, url_expires_at: cv_url_expires_at }

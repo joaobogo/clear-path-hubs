@@ -280,10 +280,19 @@ function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?
           </span>
         )}
       </div>
-      {insights?.headline_suggested && (
+      {/* Suppressed means suppressed: the chip alone was rendered while the
+          full "compelling candidate" read followed underneath it on a
+          disqualified candidate (audit #4, M4). */}
+      {capped && (
+        <p className="mt-2 text-sm text-muted-foreground">
+          The model's read is withheld for a disqualified candidate. Review the
+          screening answer on the Screening tab.
+        </p>
+      )}
+      {!capped && insights?.headline_suggested && (
         <p className="mt-2 text-sm font-medium text-foreground">{insights.headline_suggested}</p>
       )}
-      {insights?.pitch_summary && (
+      {!capped && insights?.pitch_summary && (
         <div
           className={`mt-3 rounded-md border-l-4 p-3 text-sm leading-relaxed ${
             insights.pitch_tone === "sell"
@@ -305,12 +314,12 @@ function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?
           {insights.pitch_summary}
         </div>
       )}
-      {insights?.narrative && (
+      {!capped && insights?.narrative && (
         <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
           {insights.narrative}
         </div>
       )}
-      {highlights.length > 0 && (
+      {!capped && highlights.length > 0 && (
         <>
           <h3 className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Highlights
@@ -320,7 +329,7 @@ function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?
           </ul>
         </>
       )}
-      {(strengths.length > 0 || concerns.length > 0) && (
+      {!capped && (strengths.length > 0 || concerns.length > 0) && (
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div className="rounded-md border bg-background/60 p-3">
             <h4 className="text-xs font-semibold uppercase text-success dark:text-success">

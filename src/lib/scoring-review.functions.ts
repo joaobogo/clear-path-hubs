@@ -169,7 +169,31 @@ export const listReviewQueue = createServerFn({ method: "POST" })
       .order("match_id", { ascending: true })
       .range(offset, offset + limit - 1);
     if (error) throw new Error(error.message);
-    return { rows: (rows ?? []) as AnyRow[], total: count ?? 0, limit, offset };
+
+    // The queue view carries the RAW engine score; every other surface shows
+    // the published number (raw + video-intro bonus). Fold it here so the
+    // queue card cannot read "Consider · 67" beside a list saying 77 · Strong
+    // (audit #4, H3).
+    const queueRows = (rows ?? []) as AnyRow[];
+    const matchIds = queueRows.map((r) => r.match_id).filter(Boolean);
+    if (matchIds.length > 0) {
+      const { data: videoRows } = await s
+        .from("candidate_matches")
+        .select("id,intro_video_url")
+        .in("id", matchIds);
+      const { VIDEO_INTRO_BONUS_PTS, hasVideoIntro } = await import(
+        "@/lib/scoring/published-score"
+      );
+      const withVideo = new Set(
+        ((videoRows ?? []) as AnyRow[]).filter(hasVideoIntro).map((v) => String(v.id)),
+      );
+      for (const r of queueRows) {
+        if (r.final_score != null && withVideo.has(String(r.match_id))) {
+          r.final_score = Number(r.final_score) + VIDEO_INTRO_BONUS_PTS;
+        }
+      }
+    }
+    return { rows: queueRows, total: count ?? 0, limit, offset };
   });
 
 // ─── Review record ───────────────────────────────────────────────────────────
@@ -190,7 +214,7 @@ export const getReviewRecord = createServerFn({ method: "POST" })
     const { data: m } = await s
       .from("candidate_matches")
       .select(
-        "id,application_id,candidate_profile_id,position_id,organization_id,stage,admin_status,client_visibility,canonical_state,processing_state,processing_error_code,processing_error_message,eligibility_status,integrity_status,recommendation,recommendation_reason,evidence_confidence,contact_released_at,current_score_run_id,approved_score_run_id,created_at,updated_at",
+        "id,application_id,candidate_profile_id,position_id,organization_id,stage,admin_status,client_visibility,canonical_state,processing_state,processing_error_code,processing_error_message,eligibility_status,integrity_status,recommendation,recommendation_reason,evidence_confidence,contact_released_at,current_score_run_id,approved_score_run_id,created_at,updated_at,intro_video_url",
       )
       .eq("id", data.match_id)
       .maybeSingle();
@@ -275,7 +299,15 @@ export const getReviewRecord = createServerFn({ method: "POST" })
         .maybeSingle(),
     ]);
 
-    const runs = (runsRes.data ?? []) as AnyRow[];
+    // Fold the video-intro bonus exactly as every other admin surface does.
+    // Without it this page printed "Score 67 · Consider" while the list, the
+    // header and the client all said 77 · Strong (audit #4, H3).
+    const { withVideoIntroBonus, hasVideoIntro } = await import(
+      "@/lib/scoring/published-score"
+    );
+    const runs = ((runsRes.data ?? []) as AnyRow[]).map((r) =>
+      withVideoIntroBonus(r, hasVideoIntro(m)),
+    );
     const currentRun = runs.find((r) => r.id === m.current_score_run_id) ?? runs[0] ?? null;
     const previousRun = currentRun ? runs.find((r) => r.id !== currentRun.id) ?? null : null;
 

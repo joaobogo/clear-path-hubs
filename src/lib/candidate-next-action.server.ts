@@ -52,7 +52,7 @@ export async function loadNextAction(
   const matchRes = await admin
     .from("candidate_matches")
     .select(
-      "id, organization_id, position_id, candidate_profile_id, stage, processing_state, processing_updated_at, admin_status, client_visibility, integrity_status, current_score_run_id, approved_score_run_id, delivered_at, created_at, updated_at, candidate_profiles(full_name)",
+      "id, organization_id, position_id, candidate_profile_id, stage, processing_state, processing_updated_at, admin_status, client_visibility, integrity_status, current_score_run_id, approved_score_run_id, delivered_at, created_at, updated_at, candidate_profiles(full_name), score_runs!candidate_matches_current_score_run_id_fkey(contradiction_status)",
     )
     .eq("id", matchId)
     .maybeSingle();
@@ -143,6 +143,9 @@ export async function loadNextAction(
     },
     scorecards: ((scorecardRes.data ?? []) as unknown[]).length,
     hire_record: hireRow ? { status: hireRow.status, created_at: hireRow.created_at } : null,
+    disqualified_by_screening:
+      ((m as Record<string, unknown>)["score_runs"] as { contradiction_status?: string } | null)
+        ?.contradiction_status === "disqualifying_answer",
   };
 
   const tasks = (taskRes.data ?? []) as Array<{

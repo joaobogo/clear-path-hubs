@@ -109,6 +109,18 @@ export function withPublishedRun<T extends Record<string, unknown>>(row: T) {
 }
 
 /**
+ * A score built on text that later proved unreadable is not a score. When a
+ * candidate sits in ocr_required, every surface must show "no score" instead
+ * of the number the garbage text produced — the audit found a byte-soup CV
+ * wearing "41 · Not recommended" while its state said unreadable (H1).
+ */
+export function scoreVoidedByUnreadableCv(
+  match: { processing_state?: string | null } | null | undefined,
+): boolean {
+  return String(match?.processing_state ?? "") === "ocr_required";
+}
+
+/**
  * Pick the published run out of a full run history: the approved run wins,
  * then the current pointer, then the newest run. This is the run-array twin of
  * `withPublishedRun` for surfaces that load every run (candidate workspace,

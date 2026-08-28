@@ -72,6 +72,7 @@ import { FitHero, WhyWeShortlisted, RequirementCoverage, WhyThisCandidate, WhatN
 import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
 import { IntroVideoPanel } from "@/components/client/intro-video-panel";
+import { VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 
 
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
@@ -146,8 +147,9 @@ export function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string;
         >
           <div className="mb-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
             <span>
+              {/* Second copy of the hard-coded demo org (audit #3, #10). */}
               {pitchTone === "sell"
-                ? "Northwind Talent's pitch"
+                ? "TaaSFlow's pitch"
                 : pitchTone === "cautious"
                   ? "Honest read"
                   : "Balanced view"}
@@ -560,12 +562,15 @@ export function ScoreTab({
   runs,
   decisions,
   evidence,
+  match,
 }: {
   currentRun: Any;
   result: Any;
   runs?: Any[];
   decisions?: Any[];
   evidence?: Any;
+  /** Needed to show the video-intro bonus as its own line. */
+  match?: Any;
 }) {
   if (!currentRun)
     return (
@@ -574,6 +579,11 @@ export function ScoreTab({
       </div>
     );
   const catBreakdown = result?.category_breakdown ?? {};
+  // The run handed to this tab already has the bonus folded in (getAdminMatch
+  // folds it once). Recover the raw figure so the arithmetic can be shown.
+  const videoBonusPts = match?.intro_video_url ? VIDEO_INTRO_BONUS_PTS : 0;
+  const rawScore =
+    Number(currentRun.final_score ?? currentRun.score ?? 0) - videoBonusPts;
   // Runs written before deriveStrengths() existed stored only strictly-met
   // requirements, so an evidenced candidate could read "None surfaced". Re-derive
   // from the assessment the run already carries — no rescore, no stored number
@@ -593,7 +603,18 @@ export function ScoreTab({
         </div>
         {/* Staff-only number: always with its confidence and rubric version. */}
         <AdminScoreNumber run={currentRun} size="lg" className="mt-4" />
-        {currentRun.explanation && (
+        {/* Show the bonus as its own line, and never let the engine's stored
+            sentence ("worth considering — score 67.1/100") contradict the
+            post-bonus header above it (audit #4, H3/M3). */}
+        {videoBonusPts > 0 && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Evidence score {Number(rawScore).toFixed(1)} + intro video +{videoBonusPts} ={" "}
+            <span className="font-medium text-foreground">
+              {Math.round(Number(rawScore) + videoBonusPts)}
+            </span>
+          </p>
+        )}
+        {currentRun.explanation && videoBonusPts === 0 && (
           <p className="mt-3 whitespace-pre-wrap text-sm">{cleanLine(String(currentRun.explanation))}</p>
         )}
 

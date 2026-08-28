@@ -51,6 +51,14 @@ export type NextActionFacts = {
   interviews: { total: number; upcoming: number; completed: number; last_completed_at: string | null };
   scorecards: number;
   hire_record: { status: string; created_at: string } | null;
+  /**
+   * True when the published run was capped by a disqualifying screening
+   * answer. These sit in manual_review_required, so the repair branch below
+   * claimed "processing stopped … no usable score yet" beside a real capped
+   * score and a "Disqualified by screening" banner — three contradictory
+   * statements on one screen (audit #4, M4).
+   */
+  disqualified_by_screening?: boolean;
 };
 
 const OWNER_LABEL: Record<OwnerSide, string> = {
@@ -146,6 +154,22 @@ export function deriveNextAction(f: NextActionFacts): NextAction {
       waiting_since: null,
       action: { kind: "none" },
       action_label: null,
+    };
+  }
+
+  // A dealbreaker outcome is a decision, not a broken pipeline: it owns the
+  // screen alone (audit #4, M4).
+  if (f.disqualified_by_screening) {
+    return {
+      ...base,
+      step: "review_disqualification",
+      owner: "us",
+      step_label: "Disqualified by a screening answer",
+      because:
+        "A screening answer failed one of this role's dealbreakers, so the score is capped. Override with a reason if the dealbreaker should not apply.",
+      waiting_since: firstTs(f.processing_updated_at, f.created_at),
+      action: { kind: "navigate", tab: "screening" },
+      action_label: "Review the answer",
     };
   }
 

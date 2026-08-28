@@ -334,6 +334,7 @@ function CandidateWorkspace() {
                     runs={runs}
                     decisions={decisions}
                     evidence={evidence}
+                    match={m}
                   />
                 )}
                 {tab === "screening" && <ScreeningTab result={currentResult} evidence={evidence} />}

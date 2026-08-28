@@ -9,6 +9,7 @@ import { ScanText } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { CvPreviewDialog } from "@/components/cv-preview-dialog";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
+import { scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 import { ProcessState } from "@/components/ds/process-state";
 import { candidateProcessStatus } from "@/lib/loading/process-catalogue";
 import { isSupersededError } from "@/lib/agent-ops/agent-ops";
@@ -94,8 +95,14 @@ function WorkspaceHeader({
           {/* The client reads the fit as a large figure; admin only ever got a
               small chip in a row of eight other chips. Same number, same
               prominence, so both sides argue from the same headline. */}
-          {currentRun?.score != null && (
-            <AdminScoreNumber run={currentRun} size="lg" className="mt-3" />
+          {scoreVoidedByUnreadableCv(m) ? (
+            <p className="mt-3 text-lg font-semibold text-muted-foreground">
+              No score — CV unreadable
+            </p>
+          ) : (
+            currentRun?.score != null && (
+              <AdminScoreNumber run={currentRun} size="lg" className="mt-3" />
+            )
           )}
           <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
             {cp?.email && <span>{cp.email}</span>}
