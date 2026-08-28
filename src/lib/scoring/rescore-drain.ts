@@ -15,12 +15,15 @@
 
 export type RescoreBatch = {
   rescored: number;
+  /** Rows skipped because their role is archived/closed — never an error. */
+  skipped_archived?: number;
   examined: number;
   failed: Array<{ id: string; error: string }>;
 };
 
 export type RescoreTotals = {
   rescored: number;
+  skippedArchived: number;
   failed: number;
   examined: number;
   passes: number;
@@ -41,6 +44,7 @@ export async function drainRescore(
   maxPasses: number = MAX_RESCORE_PASSES,
 ): Promise<RescoreTotals> {
   let rescored = 0;
+  let skippedArchived = 0;
   let failed = 0;
   let examined = 0;
   let passes = 0;
@@ -49,9 +53,10 @@ export async function drainRescore(
     const batch = await runBatch();
     passes += 1;
     rescored += batch.rescored;
+    skippedArchived = Math.max(skippedArchived, batch.skipped_archived ?? 0);
     failed += batch.failed.length;
     examined += batch.examined;
-    onProgress?.({ rescored, failed, examined, passes });
+    onProgress?.({ rescored, skippedArchived, failed, examined, passes });
     // A pass that re-scored nothing means every remaining match is already on
     // the current engine. Note this is `rescored`, not `examined`: the server
     // still examines rows it skips, so stopping on `examined === 0` would loop
@@ -59,5 +64,5 @@ export async function drainRescore(
     if (batch.rescored === 0) break;
   }
 
-  return { rescored, failed, examined, passes, hitPassLimit: passes >= maxPasses };
+  return { rescored, skippedArchived, failed, examined, passes, hitPassLimit: passes >= maxPasses };
 }

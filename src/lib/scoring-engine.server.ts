@@ -292,6 +292,30 @@ const NEGATION_CUES = [
   "lack of",
   "no formal",
   "limited to no",
+  // Self-deprecating qualifiers a candidate writes about a weaker skill. A
+  // screening answer reading "I'm less experienced with React/Supabase"
+  // credited Supabase as MET (audit #4, M6) — the sentence says the opposite.
+  "less experienced",
+  "least experienced",
+  "little experience",
+  "minimal experience",
+  "some exposure to",
+  "still learning",
+  "beginner",
+  "basic knowledge",
+  "not yet used",
+  "yet to use",
+  "would like to learn",
+  "want to learn",
+  "keen to learn",
+  "no professional experience",
+  // Portuguese equivalents — the roster is Brazil-based.
+  "pouca experiência",
+  "pouca experiencia",
+  "sem experiência",
+  "sem experiencia",
+  "estou aprendendo",
+  "básico",
 ];
 
 /**
@@ -614,6 +638,14 @@ export function scoreCandidate(input: {
         new RegExp(`(^|[^A-Za-z0-9])${escapeRe(kw[0]!.toUpperCase() + kw.slice(1))}`).test(r.text),
       );
 
+    // Keywords the requirement names as a specific product/tool: capitalised
+    // mid-sentence in the requirement text (Lovable, Cloudflare, Supabase).
+    // Sentence-initial words are excluded — they are capitalised by grammar.
+    const namedProducts = r.keywords.filter((kw) => {
+      const capitalised = kw[0]!.toUpperCase() + kw.slice(1);
+      return new RegExp(`[^.!?]\\s${escapeRe(capitalised)}\\b`).test(r.text);
+    });
+
     let status: RequirementAssessment["status"];
     let needs_validation = false;
     if (matched.length === 0 && negated.length > 0) {
@@ -644,6 +676,29 @@ export function scoreCandidate(input: {
     } else {
       status = "partial";
     }
+
+    // Named-product gate, both directions (audit #4, H5).
+    //
+    // "Experience with Lovable" came back MET quoting AWS and Kibana on a CV
+    // where the word Lovable never appears: when a requirement names specific
+    // products, one of those names must actually be present, because generic
+    // overlap is not evidence of a named tool.
+    //
+    // The converse matters just as much: naming the product IS the evidence,
+    // whatever the surrounding prose ("or a similar AI app builder") does to
+    // the keyword ratio.
+    if (namedProducts.length > 0 && matched.length > 0) {
+      const namedHit = namedProducts.some((p) =>
+        matched.some((kw) => kw.toLowerCase() === p.toLowerCase()),
+      );
+      if (namedHit) {
+        status = "met";
+      } else if (status === "met") {
+        status = "partial";
+        needs_validation = true;
+      }
+    }
+
     evidence.push(...localEvidence.slice(0, cal.max_evidence_per_requirement));
     return {
       id: r.id,

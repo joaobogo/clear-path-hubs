@@ -47,4 +47,15 @@
  * Scores move (upward for previously under-credited candidates) — that is
  * the point of the release.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.5.0";
+/**
+ * v1.5.1 — evidence honesty (audit #4, H5/M6). Two deterministic guards:
+ *   1. Named-product gate: a requirement that names specific products
+ *      ("Experience with Lovable", "Cloudflare, Netlify, or Vercel") can only
+ *      reach "met" when one of those names actually appears. It was returning
+ *      MET while quoting AWS and Kibana on a CV with no mention of Lovable.
+ *   2. Self-deprecating qualifiers ("less experienced with", "still learning",
+ *      "pouca experiência") join the negation cues, so "I'm less experienced
+ *      with React/Supabase" stops crediting Supabase as evidence.
+ * Scores move DOWN for requirements that were credited without support.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.5.1";

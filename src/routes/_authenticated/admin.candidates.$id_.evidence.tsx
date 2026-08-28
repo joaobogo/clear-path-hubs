@@ -175,16 +175,45 @@ function EvidenceViewer() {
         </div>
       </div>
 
-      {/* Contradictions banner */}
+      {/* Contradictions banner. "Resolve before publishing" is wrong advice on
+          an already-published candidate — say what to do NOW (audit #4, M2). */}
       {contradictions && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Contradiction detected</AlertTitle>
           <AlertDescription>
-            {String(contradictions).replace(/_/g, " ")} — resolve before publishing to the client.
+            {String(contradictions).replace(/_/g, " ")} —{" "}
+            {match.client_visibility === "visible"
+              ? "this candidate is already live for the client; approve a newer run or correct the evidence to clear it."
+              : "resolve before publishing to the client."}
           </AlertDescription>
         </Alert>
       )}
+
+      {/* A newer completed run exists but the client still sees the approved
+          one — the audit found a published candidate showing 46 · Not
+          recommended while the current run said 54 · Consider (M2). */}
+      {(() => {
+        const approvedId = match.approved_score_run_id;
+        if (!approvedId) return null;
+        // Runs arrive newest-first; the first completed run that is not the
+        // approved one is the candidate for re-approval.
+        const newer = (runs as Any[]).find(
+          (r) => r.status === "completed" && String(r.id) !== String(approvedId),
+        );
+        if (!newer) return null;
+        return (
+          <Alert>
+            <AlertTitle>A newer assessment is available</AlertTitle>
+            <AlertDescription>
+              The client is seeing the approved run. A newer completed run scored{" "}
+              <b>{Math.round(Number(newer.final_score ?? newer.score ?? 0))}</b> on engine{" "}
+              {newer.engine_version}. Approve it from the candidate workspace to update what
+              the client sees.
+            </AlertDescription>
+          </Alert>
+        );
+      })()}
 
       {/* Provenance summary */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -348,8 +377,10 @@ function EvidenceViewer() {
           </ul>
         ) : contradictions ? (
           <EmptyLine>
-            Flagged as <b>{String(contradictions).replace(/_/g, " ")}</b> — see requirement mapping
-            for the specific rows.
+            {/* Never promise rows that do not exist: this pointed reviewers at
+                a "requirement mapping" where nothing was flagged (M2). */}
+            Flagged as <b>{String(contradictions).replace(/_/g, " ")}</b> — this run recorded no
+            row-level conflict, so re-scoring on the current engine will clear it.
           </EmptyLine>
         ) : (
           <EmptyLine>No contradictions detected.</EmptyLine>

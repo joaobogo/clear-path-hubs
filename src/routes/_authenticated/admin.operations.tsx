@@ -697,10 +697,16 @@ function RescoreAllButton({ onDone }: { onDone: (msg: string) => void }) {
       ),
     onSuccess: async (r) => {
       setProgress(null);
+      // Say what actually happened, including the archived roles that were
+      // deliberately skipped — the old toast reported a no-op while seven
+      // candidates sat on the previous engine (audit #4, H4).
+      const skipped = r.skippedArchived
+        ? ` · ${r.skippedArchived} skipped (archived role)`
+        : "";
       onDone(
         r.rescored === 0
-          ? "Every candidate is already scored on the current engine — nothing to do."
-          : `Re-scored ${r.rescored} candidate${r.rescored === 1 ? "" : "s"} on the current engine` +
+          ? `Every candidate is already scored on ${ENGINE_VERSION.replace(/^taasflow-scoring-/, "")} — nothing to do.${skipped}`
+          : `Re-scored ${r.rescored} candidate${r.rescored === 1 ? "" : "s"} on the current engine${skipped}` +
               (r.failed ? ` · ${r.failed} failed, see Operations incidents` : ""),
       );
       await qc.invalidateQueries({ queryKey: ["pipeline-health"] });

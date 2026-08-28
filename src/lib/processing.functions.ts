@@ -471,20 +471,33 @@ export const rescoreAllScored = createServerFn({ method: "POST" })
     const supabase = (await getAdmin()) as AnyRow;
     const trace_id = traceId();
 
-    // Only matches that already carry a score run: nothing here should drag an
-    // unparsed or half-processed candidate into scoring for the first time.
+    // Any match that already carries a score run — including dealbreaker-capped
+    // ones parked in manual_review_required. Filtering to processing_state
+    // 'scored' left every capped candidate stranded on the old engine while the
+    // toast claimed the roster was current (audit #4, H4).
     let q = supabase
       .from("candidate_matches")
-      .select("id, current_score_run_id, score_runs!candidate_matches_current_score_run_id_fkey(engine_version)")
-      .eq("processing_state", "scored")
+      .select(
+        "id, current_score_run_id, positions(status), score_runs!candidate_matches_current_score_run_id_fkey(engine_version)",
+      )
+      .in("processing_state", ["scored", "manual_review_required"])
       .not("current_score_run_id", "is", null)
       .limit(data.limit);
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 
+    // An archived role cannot be scored — the service rejects it. Skipping
+    // these BEFORE enqueueing stops the run manufacturing a Failed job (and a
+    // scary red incident row) on every pass.
+    const ARCHIVED = new Set(["archived", "closed"]);
+    const eligible = ((rows ?? []) as AnyRow[]).filter(
+      (m) => !ARCHIVED.has(String(m.positions?.status ?? "")),
+    );
+    const skippedArchived = (rows ?? []).length - eligible.length;
+
     // Skip anything already on today's engine so repeat calls converge.
-    const stale = ((rows ?? []) as AnyRow[]).filter(
+    const stale = eligible.filter(
       (m) => String(m.score_runs?.engine_version ?? "") !== ENGINE_VERSION,
     );
 
@@ -503,7 +516,7 @@ export const rescoreAllScored = createServerFn({ method: "POST" })
     const { count: remaining } = await supabase
       .from("candidate_matches")
       .select("id", { count: "exact", head: true })
-      .eq("processing_state", "scored")
+      .in("processing_state", ["scored", "manual_review_required"])
       .not("current_score_run_id", "is", null);
 
     return {
@@ -511,7 +524,8 @@ export const rescoreAllScored = createServerFn({ method: "POST" })
       engine_version: ENGINE_VERSION,
       examined: (rows ?? []).length,
       rescored: rescored.length,
-      skipped_already_current: (rows ?? []).length - stale.length,
+      skipped_already_current: eligible.length - stale.length,
+      skipped_archived: skippedArchived,
       failed,
       approximate_total_scored: remaining ?? null,
       trace_id,
