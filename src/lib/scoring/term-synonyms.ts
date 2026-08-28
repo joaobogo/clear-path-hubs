@@ -54,8 +54,8 @@ const SYNONYM_GROUPS: Record<string, string[]> = {
   erp: ["sap", "netsuite"],
   saas: ["software as a service"],
   b2b: ["business to business"],
-  ux: ["user experience"],
-  ui: ["user interface"],
+  ux: ["user experience", "experiência do usuário", "experiencia do usuario"],
+  ui: ["user interface", "interface", "interfaces"],
   figma: ["sketch"],
   accounting: ["bookkeeping"],
   ifrs: ["international financial reporting standards"],
@@ -81,6 +81,42 @@ const SYNONYM_GROUPS: Record<string, string[]> = {
   tableau: ["looker"],
   spanish: ["espanol", "español"],
   portuguese: ["portugues", "português"],
+
+  // ---- capability verbs and their common realisations -------------------
+  // Candidates describe troubleshooting by naming what they did ("diagnosed
+  // and resolved…"), not by writing the requirement's verb. These are
+  // explicit realisations, not stemming.
+  troubleshoot: [
+    "troubleshooting", "diagnose", "diagnosed", "diagnosing", "debug",
+    "debugging", "debugged", "root cause", "root-cause",
+  ],
+  solve: ["solved", "solving", "resolve", "resolved", "resolving", "resolution"],
+  problems: ["problem", "issue", "issues", "incident", "incidents"],
+  ai: [
+    "ia", "artificial intelligence", "inteligência artificial",
+    "inteligencia artificial", "llm", "llms", "chatgpt", "copilot", "claude",
+  ],
+  tools: ["tool", "tooling", "ferramentas", "ferramenta"],
+  workflow: ["workflows", "fluxo de trabalho", "fluxos de trabalho"],
+  fluent: ["fluency", "fluente", "fluência", "fluencia", "fluently"],
+
+  // ---- Portuguese surface forms -----------------------------------------
+  // A Brazil-based role receives Portuguese CVs; a requirement written in
+  // English must accept the PT expression of the same capability, or every
+  // PT CV is structurally under-scored (live audit finding S-05).
+  english: ["inglês", "ingles"],
+  security: [
+    "segurança", "seguranca", "cybersecurity", "cyber security",
+    "cibernética", "cibernetica",
+  ],
+  development: ["desenvolvimento"],
+  developer: ["desenvolvedor", "desenvolvedora"],
+  integration: ["integrações", "integracoes", "integração", "integracao"],
+  testing: ["testes", "teste"],
+  database: ["banco de dados", "bancos de dados"],
+  responsive: ["responsivo", "responsiva", "responsivos", "responsivas"],
+  management: ["gestão", "gestao", "gerenciamento"],
+  communication: ["comunicação", "comunicacao"],
 };
 
 /** alias -> the terms it is evidence for. Built once from SYNONYM_GROUPS. */

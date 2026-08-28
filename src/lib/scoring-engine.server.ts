@@ -181,6 +181,16 @@ const REQUIREMENT_FRAMING = new Set([
   // sentence scaffolding the stopword list does not cover
   "including", "include", "includes", "etc", "such", "able", "willing",
   "working", "work", "role", "position", "candidate", "candidates",
+  // Elaboration noise (v1.5.0). These words elaborate a capability the
+  // requirement already names, and several of them double as CV SECTION
+  // HEADERS ("PROFESSIONAL EXPERIENCE", "TECHNICAL SKILLS") — so they granted
+  // free keyword credit to any CV with standard English headings while a
+  // Portuguese CV with identical substance could not match them. A
+  // requirement written ENTIRELY in these words still matches via the
+  // zero-keyword fallback below.
+  "professional", "skills", "skill", "speaking", "communication",
+  "principles", "fundamentals", "practices", "best", "part", "technical",
+  "independently", "effectively", "efficiently",
 ]);
 
 function extractKeywordsFromRequirement(text: string, cap: number): string[] {
@@ -219,6 +229,28 @@ function escapeRe(s: string) {
  * (`node.js`, `c++`, `.net`) still match because only alphanumeric neighbours
  * are rejected.
  */
+/**
+ * Safe morphological variants of a term (v1.5.0).
+ *
+ * The matcher deliberately has no stemming — "java" must never reach
+ * "javascript". But zero inflection meant "workflow" could not match
+ * "workflows" and "diagnose" could not match "diagnosing", which punished
+ * candidates for grammar. These are purely additive suffix forms of terms of
+ * SIX or more characters (so "react" can never generate "reacting", and
+ * short ambiguous names — go, java, vue — are untouched), plus a plural
+ * strip. Word-boundary anchoring still applies to every variant.
+ */
+const MIN_INFLECT_LEN = 6;
+export function inflectionVariants(term: string): string[] {
+  const t = term.trim().toLowerCase();
+  if (t.length < MIN_INFLECT_LEN || !/^[a-z]+$/.test(t)) return [];
+  const out: string[] = [];
+  out.push(`${t}s`, `${t}es`, `${t}ed`, `${t}ing`);
+  if (t.endsWith("e")) out.push(`${t.slice(0, -1)}ing`, `${t}d`);
+  if (t.endsWith("s")) out.push(t.slice(0, -1));
+  return out;
+}
+
 export function findTermMatches(
   cv: string,
   term: string,
@@ -468,6 +500,21 @@ export function scoreCandidate(input: {
   // Missing keywords in this regime map to `unknown` (validate), never irrational zero.
   const cvIsThin = cv.trim().length < cal.thin_cv_chars || cvTokens.size < cal.thin_cv_tokens;
 
+  // Screening answers are part of the evidence corpus (v1.5.0). The Score tab
+  // has always promised evidence "from the CV or screening answers" — the
+  // engine now honours it: a requirement keyword found in an answer's text is
+  // evidence with source "screening". ONLY the answer value is scanned — the
+  // question's own wording contains the requirement's words by construction,
+  // so scanning it would hand every candidate free credit for being asked.
+  const screeningCorpus = input.screening
+    .map((s) => ({
+      question_id: s.question_id,
+      text: normalizeScreeningValue(s),
+    }))
+    // yes/no/unknown carry no describable content; the linked-answer floor
+    // below is what credits an affirmative boolean.
+    .filter((s) => s.text.length >= 8);
+
   const evidence: EvidenceRef[] = [];
   const assessment: RequirementAssessment[] = requirements.map((r) => {
     const matched: string[] = [];
@@ -475,9 +522,23 @@ export function scoreCandidate(input: {
     const localEvidence: EvidenceRef[] = [];
     for (const kw of r.keywords) {
       const k = kw.toLowerCase();
-      // Route the term through the synonym table: "k8s" is evidence for
-      // "kubernetes", while "java" and "javascript" stay disjoint terms.
-      const surfaceForms = expandTerm(k);
+      // Route the term through the synonym table ("k8s" is evidence for
+      // "kubernetes"; "java" and "javascript" stay disjoint), then add safe
+      // inflections of every surface form so "workflows" satisfies
+      // "workflow" without any general stemming step.
+      const surfaceForms = (() => {
+        const out: string[] = [];
+        const seen = new Set<string>();
+        for (const base of expandTerm(k)) {
+          for (const form of [base, ...inflectionVariants(base)]) {
+            if (!seen.has(form)) {
+              seen.add(form);
+              out.push(form);
+            }
+          }
+        }
+        return out;
+      })();
       let hits: number[] = [];
       let matchedForm = k;
       for (const form of surfaceForms) {
@@ -488,7 +549,29 @@ export function scoreCandidate(input: {
           break;
         }
       }
-      if (hits.length === 0) continue;
+      if (hits.length === 0) {
+        // Not in the CV — check the screening answers before giving up.
+        let found = false;
+        for (const sc of screeningCorpus) {
+          for (const form of surfaceForms) {
+            const at = findTermMatches(sc.text, form, 1)[0];
+            if (at === undefined) continue;
+            matched.push(kw);
+            localEvidence.push({
+              requirement_id: r.id,
+              requirement_text: r.text,
+              source: "screening",
+              matched_terms: [kw],
+              snippet: cleanQuote(sc.text) || sc.text.slice(0, 200),
+              location: `screening:${sc.question_id}`,
+            });
+            found = true;
+            break;
+          }
+          if (found) break;
+        }
+        continue;
+      }
       const affirmative = hits.filter((idx) => !isNegatedMention(cv, idx, cal));
       if (affirmative.length === 0) {
         // Every mention is inside a negating clause ("no experience with X").
@@ -519,6 +602,18 @@ export function scoreCandidate(input: {
         });
       }
     }
+    // An alternatives list — "Cloudflare, Netlify, or Vercel", every keyword a
+    // proper noun joined by or/ou — is satisfied by ANY one of them. The ratio
+    // formula below would demand all three, which no candidate can pass and no
+    // client intended. Restricted to capitalised alternatives so "React or a
+    // similar frontend framework" keeps its normal threshold.
+    const isAlternativesList =
+      r.keywords.length >= 2 &&
+      /\b(or|ou)\b/i.test(r.text) &&
+      r.keywords.every((kw) =>
+        new RegExp(`(^|[^A-Za-z0-9])${escapeRe(kw[0]!.toUpperCase() + kw.slice(1))}`).test(r.text),
+      );
+
     let status: RequirementAssessment["status"];
     let needs_validation = false;
     if (matched.length === 0 && negated.length > 0) {
@@ -535,16 +630,16 @@ export function scoreCandidate(input: {
         status = "missing";
       }
     } else if (
+      isAlternativesList ||
       matched.length >=
-      // The floor can never exceed the number of terms the requirement actually
-      // has, otherwise a single-term requirement ("HACCP") could only ever
-      // reach "partial" no matter how clearly the CV evidences it.
-      Math.min(
-        r.keywords.length,
-        Math.max(cal.met_keyword_floor, Math.ceil(r.keywords.length * cal.met_keyword_ratio)),
-      )
+        // The floor can never exceed the number of terms the requirement
+        // actually has, otherwise a single-term requirement ("HACCP") could
+        // only ever reach "partial" no matter how clearly the CV evidences it.
+        Math.min(
+          r.keywords.length,
+          Math.max(cal.met_keyword_floor, Math.ceil(r.keywords.length * cal.met_keyword_ratio)),
+        )
     ) {
-
       status = "met";
     } else {
       status = "partial";
@@ -594,27 +689,47 @@ export function scoreCandidate(input: {
     (s) => (s.question || "").trim() || `question ${s.question_id}`,
   );
 
-  // Contradiction: a boolean "yes" is only a contradiction when the claim it
-  // makes is the SAME SUBJECT a required requirement found nothing for. The
-  // previous test — "any yes was answered" AND "any required requirement is
-  // missing" — linked nothing to nothing, so it fired for essentially every
-  // real candidate, blocked score approval, and gave the reviewer no row to
-  // resolve. Each flagged pair is now recorded so the review surface can name
-  // exactly which answer conflicts with which requirement.
+  // Linked screening answers (v1.5.0). An answer and a requirement are linked
+  // when they share at least two content words — one shared word is
+  // coincidence, not subject. A linked affirmative then means two different
+  // things depending on what the CV said:
+  //
+  //   - CV silent (missing/unknown): the answer is weak POSITIVE evidence.
+  //     The requirement is floored at "partial", flagged for validation, and
+  //     the answer is recorded as its evidence. Self-attestation never
+  //     reaches "met" on its own.
+  //   - CV affirmatively NEGATES the claim (status "contradicted"): that is a
+  //     real screening/CV contradiction, recorded pair by pair.
+  //
+  // v1.4.1 flagged the silent case as a contradiction, which punished the
+  // candidate for the CV not repeating their answer. Absence of corroboration
+  // is a thing to verify, not a conflict.
   const contradiction_rows: ScoringResult["contradiction_rows"] = [];
   if (!disqualified) {
     const meaningful = (text: string) =>
       tokenize(text).filter((t) => t.length >= 4 && !REQUIREMENT_FRAMING.has(t));
-    const missingRequired = assessment.filter((a) => a.required && a.status === "missing");
     for (const s of input.screening) {
       if (s.answer_type !== "boolean" || normalizeScreeningValue(s) !== "yes") continue;
       const qTokens = new Set(meaningful(s.question ?? ""));
       if (qTokens.size === 0) continue;
-      for (const a of missingRequired) {
-        // Two shared content words means the question and the requirement talk
-        // about the same thing — one shared word is coincidence, not subject.
+      for (const a of assessment) {
+        if (!a.required) continue;
         const overlap = new Set(meaningful(a.text).filter((t) => qTokens.has(t)));
-        if (overlap.size >= 2) {
+        if (overlap.size < 2) continue;
+        if (a.status === "missing" || a.status === "unknown") {
+          a.status = "partial";
+          a.needs_validation = true;
+          const ref: EvidenceRef = {
+            requirement_id: a.id,
+            requirement_text: a.text,
+            source: "screening",
+            matched_terms: [...overlap],
+            snippet: `Answered yes to: "${s.question}"`,
+            location: `screening:${s.question_id}`,
+          };
+          a.evidence.push(ref);
+          evidence.push(ref);
+        } else if (a.status === "contradicted") {
           contradiction_rows.push({
             question_id: s.question_id,
             question: s.question,
@@ -823,7 +938,7 @@ export function scoreCandidate(input: {
     // Name the conflicting pair — an unexplained flag cannot be resolved.
     const named = contradiction_rows
       .slice(0, 2)
-      .map((r) => `answered yes on "${r.question}" but the CV shows nothing for "${r.requirement}"`)
+      .map((r) => `answered yes on "${r.question}" but the CV contradicts "${r.requirement}"`)
       .join("; ");
     concerns.unshift(`Screening/CV conflict: ${named}.`);
   } else if (contradiction_status !== "none") {

@@ -26,5 +26,25 @@
  * the pairs in contradiction_rows. The old test (any yes + any missing
  * must-have) flagged essentially every real candidate and blocked approval
  * with nothing to resolve. Scores are unchanged; the flag and concerns are.
+ *
+ * v1.5.0 — fairness release (audit S-05). Five deterministic changes, all
+ * data-driven, none model-driven:
+ *   1. Portuguese surface forms + capability realisations in the synonym
+ *      table (segurança→security, diagnosed→troubleshoot, …).
+ *   2. Bounded inflection matching: terms of 6+ letters also match their
+ *      s/es/ed/ing forms ("workflow"→"workflows"); short ambiguous names
+ *      (go, java, react) are untouched.
+ *   3. Elaboration words that double as CV section headers ("professional",
+ *      "skills", "technical", …) no longer count as keywords — they gave
+ *      English-format CVs free credit PT CVs could not earn.
+ *   4. An alternatives list of proper nouns ("Cloudflare, Netlify, or
+ *      Vercel") is met by ANY one, not all of them.
+ *   5. Screening answers are evidence: answer text is scanned for
+ *      requirement terms, and a linked affirmative boolean floors a silent
+ *      requirement at "partial · needs validation" instead of flagging a
+ *      contradiction. The contradiction flag now fires only when the CV
+ *      affirmatively negates what the answer claims.
+ * Scores move (upward for previously under-credited candidates) — that is
+ * the point of the release.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.4.1";
+export const ENGINE_VERSION = "taasflow-scoring-v1.5.0";
