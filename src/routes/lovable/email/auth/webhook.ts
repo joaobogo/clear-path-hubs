@@ -84,12 +84,15 @@ function getHandler() {
         React.createElement(ReauthenticationEmail, { token: data.token ?? '' }),
     },
   },
-})
+  })
+  return cached
+}
 
 export const Route = createFileRoute("/lovable/email/auth/webhook")({
   server: {
     handlers: {
-      POST: ({ request }) => handler(request),
+      POST: ({ request }) => getHandler()(request),
+
     },
   },
 })
