@@ -122,6 +122,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       positionsQueryRes,
       activePositions,
       openOffers,
+      inReviewRes,
     ] = await Promise.all([
       getInterviewsAwaitingFeedback(context.supabase, data.orgId),
       // 1. Unified open items and blocked roles.
@@ -157,6 +158,25 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       // Open roles: the one reader decides the number.
       countOpenRolesForOrg(context.supabase, data.orgId),
       countOpenOffers(context.supabase, data.orgId),
+      // Applications TaaSFlow is working on that the client cannot see yet.
+      // Without this, eight applications could arrive in 36 hours while the
+      // overview said "Nothing needs you today", Roles said screening was
+      // "Upcoming" and Candidates said the search had failed (audit C-07).
+      context.supabase
+        .from("candidate_matches")
+        .select("id", { count: "exact", head: true })
+        .eq("organization_id", data.orgId)
+        .neq("client_visibility", "visible")
+        .in("processing_state", [
+          "queued",
+          "parsing",
+          "parsed",
+          "enriching",
+          "ready_to_score",
+          "scoring",
+          "scored",
+          "manual_review_required",
+        ]),
     ]);
 
     const pendingByPosition = new Map<string, string[]>();
@@ -195,6 +215,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       interviews_to_confirm: pendingConfirmations.length,
       offers: openOffers,
       missing_feedback: interviewsAwaitingFeedback.length,
+      in_review_by_taasflow: ((inReviewRes as AnyRow)?.count as number | null) ?? 0,
     };
 
 

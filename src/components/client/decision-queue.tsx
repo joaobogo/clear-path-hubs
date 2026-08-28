@@ -245,6 +245,7 @@ export function DecisionQueue({
   onRetry,
   orgId,
   orgSearch,
+  inReviewByTaasflow = 0,
 }: {
   rows: QueueRow[];
   meta: QueueMeta | null | undefined;
@@ -253,6 +254,8 @@ export function DecisionQueue({
   onRetry: () => void;
   orgId: string | null | undefined;
   orgSearch?: string | null;
+  /** Applications TaaSFlow is assessing that the client cannot see yet. */
+  inReviewByTaasflow?: number;
 }) {
   const { hidden, pending, markHandled, undo } = useHandled(orgId);
   const search = orgSearch ? { org: orgSearch } : undefined;
@@ -320,6 +323,13 @@ export function DecisionQueue({
                 {meta
                   ? `${meta.checked} item${meta.checked === 1 ? "" : "s"} checked.`
                   : "Your queue is clear."}
+                {/* The single most important fact for a waiting client: work
+                    IS happening. Eight applications once arrived in 36 hours
+                    while this card said only "Nothing needs you today"
+                    (audit C-07). */}
+                {inReviewByTaasflow > 0
+                  ? ` ${inReviewByTaasflow} application${inReviewByTaasflow === 1 ? " is" : "s are"} in review with TaaSFlow right now.`
+                  : ""}
                 {meta?.next_expected_at
                   ? ` Next delivery expected ${fmtDate(meta.next_expected_at)}.`
                   : ""}

@@ -1331,13 +1331,17 @@ export async function loadRoleStageDates(
     row.sourcing = min(row.sourcing, c.started_at ?? c.created_at);
   }
 
-  // Screening — first candidate worked on for the role (visible to the client).
+  // Screening — first candidate worked on for the role. Deliberately NOT
+  // filtered to client-visible matches: screening is OUR work and happens
+  // before publication, so the visibility filter made the tracker say
+  // "Screening — Upcoming" while eight applications were mid-review
+  // (audit C-07). Shortlist/offer below still derive from client-facing
+  // stages, which imply visibility.
   const { data: matches } = await scoped(
     supabase
       .from("candidate_matches")
-      .select("position_id, created_at, delivered_at, stage")
-      .eq("organization_id", orgId)
-      .eq("client_visibility", "visible"),
+      .select("position_id, created_at, delivered_at, stage, client_visibility")
+      .eq("organization_id", orgId),
   );
   // Shortlist / Offer come from the recorded stage entry — the same timestamp
   // the Offers page and the client KPIs age. A delivery date is only used when
@@ -1349,6 +1353,8 @@ export async function loadRoleStageDates(
     if (!m.position_id) continue;
     const row = take(m.position_id);
     row.screening = min(row.screening, m.created_at ?? m.delivered_at);
+    // Client-facing stage fallbacks keep the visibility gate.
+    if (m.client_visibility !== "visible") continue;
     if (m.stage === "shortlisted" || m.stage === "interview_process") {
       fallbackShortlist.set(
         m.position_id,

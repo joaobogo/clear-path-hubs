@@ -293,6 +293,7 @@ function OverviewPage() {
               onRetry={retryAll}
               orgId={orgId ?? null}
               orgSearch={orgSearch ?? null}
+              inReviewByTaasflow={(kpis as Any)?.in_review_by_taasflow ?? 0}
             />
 
             {/* Missing brief details block sourcing — answerable in place */}
