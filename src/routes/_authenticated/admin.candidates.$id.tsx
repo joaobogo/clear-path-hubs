@@ -10,6 +10,7 @@ import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-quer
 import { lazy, Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getAdminMatch, getMatchHeavyDetail } from "@/lib/processing.functions";
+import { resolvePublishedRun } from "@/lib/scoring/published-score";
 import {
   User,
   FileText,
@@ -194,6 +195,12 @@ function CandidateWorkspace() {
   const pos = m.positions as Any;
   const currentRun = runs[0] as Any | undefined;
   const currentResult = (currentRun?.result ?? null) as Any | null;
+  // The header wears the PUBLISHED number (approved run, else current
+  // pointer) — the same one the list, the work queue and the client resolve.
+  // runs[0] is the latest engine opinion, which after a rescore can be an
+  // unapproved figure: feeding it to the header made the headline change
+  // value when a heavy tab's fuller run history arrived.
+  const publishedRun = (resolvePublishedRun(runs, m) ?? currentRun) as Any | undefined;
   const heavyPending = HEAVY_TABS.has(tab) && heavyQuery.isPending;
 
   const invalidate = async () => {
@@ -229,7 +236,7 @@ function CandidateWorkspace() {
 
   return (
     <div className="mx-auto max-w-[1600px] px-6 py-6 space-y-6">
-      <WorkspaceHeader m={m} cp={cp} pos={pos} currentRun={currentRun} />
+      <WorkspaceHeader m={m} cp={cp} pos={pos} currentRun={publishedRun} />
 
       <ComponentErrorBoundary boundary="admin.candidate.next-action" tone="admin">
         <CandidateNextActionBar matchId={id} onNavigateTab={(t) => setTab(t as TabId)} />

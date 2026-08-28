@@ -108,3 +108,27 @@ export function withPublishedRun<T extends Record<string, unknown>>(row: T) {
   };
 }
 
+/**
+ * Pick the published run out of a full run history: the approved run wins,
+ * then the current pointer, then the newest run. This is the run-array twin of
+ * `withPublishedRun` for surfaces that load every run (candidate workspace,
+ * evidence record) instead of embedding one. Headlines must come from this
+ * run — `runs[0]` is the latest ENGINE OPINION, which after a rescore can be
+ * a number no human has approved and no client has seen.
+ */
+export function resolvePublishedRun<T extends { id?: unknown }>(
+  runs: readonly T[] | null | undefined,
+  match:
+    | { approved_score_run_id?: string | null; current_score_run_id?: string | null }
+    | null
+    | undefined,
+): T | null {
+  const list = runs ?? [];
+  for (const wanted of [match?.approved_score_run_id, match?.current_score_run_id]) {
+    if (!wanted) continue;
+    const hit = list.find((r) => String(r.id) === String(wanted));
+    if (hit) return hit;
+  }
+  return list[0] ?? null;
+}
+

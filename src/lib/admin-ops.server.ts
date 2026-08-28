@@ -169,22 +169,33 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     loadIntakeAging(s, { includeTest: opts.includeTest ?? false }),
     // 7 — P-006: candidates with stale scores. One definition everywhere: the
     // stored flag set by invalidation triggers OR a run produced by an older
-    // engine/calibration than the one running today — the same test the
-    // per-candidate "Stale" badge applies (see freshnessFromRow), so a badge
-    // can never show while this tile reads 0.
-    excludeTestOrgs(
-      s
-        .from("candidate_matches")
-        .select(
-          "id,score_stale,score_stale_at,score_stale_reasons,current_score_run_id,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name))",
-          { count: "exact" },
-        )
-        .not("current_score_run_id", "is", null)
-        .eq("score_stale", true)
-        .order("score_stale_at", { ascending: true })
-        .limit(PREVIEW_LIMIT),
-      scope,
-    ),
+    // engine than the one running today — the same test the per-candidate
+    // "Stale" badge applies (see freshnessFromRow), so a badge can never show
+    // while this tile reads 0. The engine half must be computed here: the
+    // stored flag only covers trigger-recorded invalidations, and after an
+    // engine upgrade every list row wore a stale chip while this tile — which
+    // once queried only the flag — still read 0.
+    (async () => {
+      const { data, error } = await excludeTestOrgs(
+        s
+          .from("candidate_matches")
+          .select(
+            "id,score_stale,score_stale_at,score_stale_reasons,current_score_run_id,score_runs!candidate_matches_current_score_run_id_fkey(engine_version),candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name))",
+          )
+          .not("current_score_run_id", "is", null)
+          .order("score_stale_at", { ascending: true, nullsFirst: false })
+          .limit(500),
+        scope,
+      );
+      if (error) return { data: [], count: 0 };
+      const { ENGINE_VERSION } = await import("@/lib/scoring/engine-version");
+      const rows = ((data ?? []) as Any[]).filter(
+        (m) =>
+          m.score_stale === true ||
+          String(m.score_runs?.engine_version ?? "") !== ENGINE_VERSION,
+      );
+      return { data: rows.slice(0, PREVIEW_LIMIT), count: rows.length };
+    })(),
   ]);
 
 
@@ -488,7 +499,12 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
           posRef(m.positions?.id, m.positions?.title),
           orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
         ],
-        meta: Array.isArray(m.score_stale_reasons) ? m.score_stale_reasons.join(", ") : "Inputs changed",
+        meta:
+          Array.isArray(m.score_stale_reasons) && m.score_stale_reasons.length > 0
+            ? m.score_stale_reasons.join(", ")
+            : m.score_stale
+              ? "Inputs changed"
+              : "Assessed with an older engine version",
         waiting_since: m.score_stale_at,
         key: "score_stale",
         target: { kind: "review" as const, matchId: m.id },

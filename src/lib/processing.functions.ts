@@ -1201,7 +1201,11 @@ export const getMatchHeavyDetail = createServerFn({ method: "GET" })
     const supabase = (await getAdmin()) as AnyRow;
     const { data: m } = await supabase
       .from("candidate_matches")
-      .select("id,candidate_profile_id")
+      // intro_video_url is required to fold the video bonus below — without it
+      // the heavy runs replaced the (folded) light runs when a score tab
+      // opened, and the header silently dropped ten points for any candidate
+      // with an intro video.
+      .select("id,candidate_profile_id,intro_video_url")
       .eq("id", data.id)
       .maybeSingle();
     if (!m) return null;
@@ -1246,7 +1250,12 @@ export const getMatchHeavyDetail = createServerFn({ method: "GET" })
     }
 
     return {
-      runs: runsRes.data ?? [],
+      // Same fold as getAdminMatch: these runs REPLACE the light runs in the
+      // workspace when a heavy tab opens, so they must carry the same
+      // published numbers or the header changes value between tabs.
+      runs: ((runsRes.data ?? []) as AnyRow[]).map((r) =>
+        withVideoIntroBonus(r, hasVideoIntro(m)),
+      ),
       evidence: evidenceRes.data ?? null,
       cv: fileRes.data
         ? { ...fileRes.data, signed_url: cv_signed_url, url_expires_at: cv_url_expires_at }

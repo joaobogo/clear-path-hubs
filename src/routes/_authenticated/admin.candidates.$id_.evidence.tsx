@@ -16,6 +16,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { getAdminMatch, downloadEvidenceRecord } from "@/lib/processing.functions";
+import { resolvePublishedRun } from "@/lib/scoring/published-score";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -62,8 +63,11 @@ function EvidenceViewer() {
   const { match, runs, evidence, cv, decisions } = data;
   const cp = match.candidate_profiles;
   const pos = match.positions;
-  const currentRun =
-    runs.find((r: Any) => r.id === match.current_score_run_id) ?? runs[0] ?? null;
+  // Approved run first, then the current pointer, then the newest row — the
+  // same resolution as every other headline. This page previously skipped the
+  // approved run, so its "Score" tile could disagree with the list and the
+  // client for any candidate whose approval predates a rescore.
+  const currentRun = resolvePublishedRun(runs as Any[], match) as Any | null;
   const result = currentRun?.result ?? {};
   const insights = evidence?.extracted?.insights ?? null;
   const parsed = evidence?.extracted ?? null;
