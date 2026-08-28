@@ -11,6 +11,9 @@ import { Toaster } from "@/components/ui/sonner";
 import { BRAND_ONE_LINER, PRODUCT_CATEGORY } from "@/config/product-language";
 import { resetStaleBrowserStorage } from "@/lib/storage-epoch";
 import { captureFirstTouch } from "@/lib/crm/attribution";
+import { HEAD_BOOT_SNIPPETS } from "@/lib/tracking/pixels";
+import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
+import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { GlobalRouteError } from "@/components/global-error";
 import { PublicNotFound } from "@/components/marketing/site-shell";
 import "@/styles.css";
@@ -89,6 +92,11 @@ export const Route = createRootRouteWithContext<{
     // NOTE: the key is `scripts` — TanStack ignores a `script` key silently,
     // which is why this sitewide graph was absent from the served HTML.
     scripts: [
+      // Tracker boot snippets (GA4 consent-default + RB2B). These were
+      // exported from pixels.ts but never referenced, so /admin/health read
+      // "connected · not injected" for every tracker while ad budget ran
+      // (audit A-04). GA4 boots with consent DENIED until the banner grants.
+      ...HEAD_BOOT_SNIPPETS.map((s) => ({ children: s.children })),
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -167,6 +175,10 @@ function RootComponent() {
   return (
     <>
       <Outlet />
+      {/* The ONLY caller of initializeTrackers()/onConsentChange — without it
+          mounted, consent could be granted and nothing ever injected. */}
+      <TrackingRouteObserver />
+      <ConsentBanner />
       <Toaster position="bottom-right" richColors closeButton />
     </>
   );
