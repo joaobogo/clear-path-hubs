@@ -19,8 +19,11 @@ import {
   rescore,
   markManualReview,
   backfillCandidateInsights,
+  rescoreAllScored,
 } from "@/lib/processing.functions";
 import { Button } from "@/components/ui/button";
+import { useConfirmAction } from "@/components/ds/confirm-action";
+import { drainRescore, type RescoreBatch } from "@/lib/scoring/rescore-drain";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -255,7 +258,10 @@ function OperationsPage() {
             Actionable incidents grouped by entity, process, and root cause.
           </p>
         </div>
-        <BackfillInsightsButton onDone={(msg) => setFeedback(msg)} />
+        <div className="flex flex-wrap items-center gap-2">
+          <RescoreAllButton onDone={(msg) => setFeedback(msg)} />
+          <BackfillInsightsButton onDone={(msg) => setFeedback(msg)} />
+        </div>
       </header>
 
       {feedback && (
@@ -660,6 +666,78 @@ function CategoryPill({
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * Re-score every candidate against the engine running today.
+ *
+ * Drains in batches from the browser rather than holding one long request
+ * open: a workspace with hundreds of candidates would otherwise time out
+ * halfway and leave half the roster on the old engine with no way to tell
+ * which half. Each call reports what it did, the loop stops when a pass
+ * rescores nothing, and progress is shown while it runs so a long sweep never
+ * looks like a hung button.
+ */
+function RescoreAllButton({ onDone }: { onDone: (msg: string) => void }) {
+  const qc = useQueryClient();
+  const { confirm, confirmDialog } = useConfirmAction();
+  const rescoreFn = useServerFn(rescoreAllScored);
+  const [progress, setProgress] = useState<string | null>(null);
+
+  const m = useMutation({
+    // The loop lives in rescore-drain.ts and is unit-tested there: its
+    // termination condition is the part that can silently be wrong, and it
+    // must not need a signed-in admin to verify.
+    mutationFn: () =>
+      drainRescore(
+        () => rescoreFn({ data: { limit: 50 } }) as Promise<RescoreBatch>,
+        (t) => setProgress(`Re-scored ${t.rescored}${t.failed ? ` · ${t.failed} failed` : ""}…`),
+      ),
+    onSuccess: async (r) => {
+      setProgress(null);
+      onDone(
+        r.rescored === 0
+          ? "Every candidate is already scored on the current engine — nothing to do."
+          : `Re-scored ${r.rescored} candidate${r.rescored === 1 ? "" : "s"} on the current engine` +
+              (r.failed ? ` · ${r.failed} failed, see Operations incidents` : ""),
+      );
+      await qc.invalidateQueries({ queryKey: ["pipeline-health"] });
+      await qc.invalidateQueries({ queryKey: ["admin-processing"] });
+    },
+    onError: (e: Error) => {
+      setProgress(null);
+      onDone(`Re-score failed: ${e.message}`);
+    },
+  });
+
+  return (
+    <>
+    {confirmDialog}
+    <Button
+      size="sm"
+      variant="secondary"
+      data-testid="rescore-all"
+      disabled={m.isPending}
+      onClick={async () => {
+        const r = await confirm({
+          title: "Re-score every candidate",
+          object: "every scored candidate",
+          description:
+            "Re-runs scoring for every scored candidate against the engine running today. Evidence and CVs are not re-processed, and score runs are immutable — this writes new runs and leaves the old ones intact.",
+          impact: [
+            "Scores may move for candidates assessed by an older engine",
+            "Candidates already on the current engine are skipped",
+            "Safe to run again; it stops when there is nothing left to do",
+          ],
+          confirmLabel: "Re-score all",
+        });
+        if (r.confirmed) m.mutate();
+      }}
+    >
+      {m.isPending ? (progress ?? "Re-scoring…") : "Re-score all candidates"}
+    </Button>
+    </>
   );
 }
 
