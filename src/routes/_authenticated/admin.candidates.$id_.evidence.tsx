@@ -289,6 +289,14 @@ function EvidenceViewer() {
               </details>
             )}
           </div>
+        ) : evidence?.created_at ? (
+          // A snapshot exists — it just carries no model narrative. Saying
+          // "no enrichment on file" seconds after a successful enrichment run
+          // reads as a failure (audit #4, M5).
+          <EmptyLine>
+            Enrichment ran on {fmtDate(evidence.created_at)}; this candidate has no
+            model narrative attached. Parsed facts above are the extracted record.
+          </EmptyLine>
         ) : (
           <EmptyLine>No enrichment on file.</EmptyLine>
         )}

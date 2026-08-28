@@ -9,6 +9,7 @@ import { CvDownloadAudit } from "@/components/cv-download-audit";
  */
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { humanizeAuditAction, humanizeCode } from "@/lib/humanize-codes";
+import { formatLanguageEntry } from "@/lib/human-labels";
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { RecordActivityTab } from "@/components/admin/record-activity-tab";
@@ -184,11 +185,10 @@ export function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string;
                   Languages
                 </dt>
                 <dd>
-                  {languages.length === 0
-                    ? "—"
-                    : languages
-                        .map((l) => (typeof l === "string" ? l : `${l.language ?? "?"}${l.level ? ` (${l.level})` : ""}`))
-                        .join(" · ")}
+                  {/* One tolerant formatter: the parser stores several
+                      shapes and this printed "?" for all but one (M5). */}
+                  {languages.map(formatLanguageEntry).filter(Boolean).join(" · ") ||
+                    "Not stated in the CV"}
                 </dd>
               </div>
             </dl>
@@ -310,10 +310,13 @@ export function EnrichmentTab({ cp, evidence }: { cp: Any; evidence: Any }) {
       <div className="rounded-lg border bg-card p-5">
         <h2 className="text-sm font-semibold">Languages</h2>
         <ul className="mt-2 space-y-1 text-sm">
-          {languages.length === 0 && <li className="text-muted-foreground">None extracted.</li>}
-          {languages.map((l, i) => (
-            <li key={i}>{typeof l === "string" ? l : `${l.language ?? "?"} · ${l.level ?? ""}`.trim()}</li>
-          ))}
+          {languages.length === 0 && (
+            <li className="text-muted-foreground">Not stated in the CV</li>
+          )}
+          {languages.map((l, i) => {
+            const line = formatLanguageEntry(l);
+            return line ? <li key={i}>{line}</li> : null;
+          })}
         </ul>
       </div>
 

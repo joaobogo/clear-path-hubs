@@ -148,8 +148,15 @@ export function SlaScorecard({
           label="Commitments met"
           value={summary.onTimeRate === null ? "—" : `${summary.onTimeRate}%`}
           detail={
+            /* "100% — 1 of 3 tracked · 1 met" reads as a contradiction: the
+               percentage is over MEASURED commitments, not tracked ones
+               (audit #4, L6). Say which denominator it uses. */
             summary.total
-              ? `${summary.measured} of ${summary.total} tracked · ${summary.met} met`
+              ? `${summary.met} met of ${summary.measured} measured${
+                  summary.total > summary.measured
+                    ? ` · ${summary.total - summary.measured} not yet due`
+                    : ""
+                }`
               : "Nothing tracked yet"
           }
         />

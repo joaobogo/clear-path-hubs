@@ -124,8 +124,13 @@ export function RoleStatusList({
                     >
                       <span>
                         <span className="font-semibold text-foreground">Next: </span>
-                        {next.sentence}{" "}
-                        <span className="font-medium text-foreground">{next.ownerLabel}</span>
+                        {next.sentence}
+                        {/* Labelled owner — a bare trailing "You" read as a
+                            sentence cut off mid-thought (audit #4, M7). */}
+                        {" · "}
+                        <span className="font-medium text-foreground">
+                          With: {next.ownerLabel === "You" ? "you" : next.ownerLabel}
+                        </span>
                         {next.dateLabel ? ` · by ${next.dateLabel}` : ""}
                       </span>
                     </p>

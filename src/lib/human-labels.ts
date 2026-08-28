@@ -173,3 +173,31 @@ export function formatAnswerValue(raw: unknown): string {
     .map(([k, v]) => `${formatEnumLabel(k)}: ${formatAnswerValue(v)}`);
   return entries.length > 0 ? entries.join(" · ") : "—";
 }
+
+/**
+ * A language entry, however the parser stored it.
+ *
+ * The enrichment snapshot holds several shapes across candidates: a plain
+ * string ("Inglês – Intermediário"), {language, level}, {name, level}, or a
+ * bare {level} when only the proficiency was captured. Two admin surfaces
+ * assumed `.language` and printed "? · Intermediário" for everything else
+ * (audit #4, M5). Never render a placeholder: if only a level is known, say
+ * so plainly.
+ */
+export function formatLanguageEntry(entry: unknown): string {
+  if (entry == null) return "";
+  if (typeof entry === "string") {
+    // Already a human line — normalise the separators only.
+    return entry.replace(/\s*[–—-]\s*/g, " — ").trim();
+  }
+  if (typeof entry !== "object") return String(entry);
+  const e = entry as Record<string, unknown>;
+  const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+  const name =
+    str(e.language) || str(e.name) || str(e.label) || str(e.lang) || str(e.title);
+  const level = str(e.level) || str(e.proficiency) || str(e.fluency) || str(e.cefr);
+  if (name && level) return `${name} — ${level}`;
+  if (name) return name;
+  if (level) return `Level ${level} (language not recorded)`;
+  return "";
+}

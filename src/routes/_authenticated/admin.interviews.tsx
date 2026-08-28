@@ -29,8 +29,11 @@ export const Route = createFileRoute("/_authenticated/admin/interviews")({
 type Any = any;
 
 const STATUS_TONE: Record<string, string> = {
-  requested: "taas-bg-warning-soft taas-tx-warning",
-  scheduling: "taas-bg-warning-soft taas-tx-warning",
+  // Dark amber text on light amber — the token pair used everywhere else.
+  // The previous combination rendered near-white on light amber and was
+  // unreadable (audit #4, L1).
+  requested: "bg-warning/15 text-warning-foreground dark:text-warning-foreground",
+  scheduling: "bg-warning/15 text-warning-foreground dark:text-warning-foreground",
   scheduled: "bg-info/15 text-info",
   completed: "bg-success/15 text-success",
   cancelled: "bg-muted text-muted-foreground",
