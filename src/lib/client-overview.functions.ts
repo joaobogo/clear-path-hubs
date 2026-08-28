@@ -89,27 +89,76 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const s = context.supabase as AnyRow;
 
-    const { getInterviewsAwaitingFeedback } = await import("./client/interviews-awaiting-feedback.server");
-    const interviewsAwaitingFeedback = await getInterviewsAwaitingFeedback(context.supabase, data.orgId);
+    // Every read below depends only on (supabase, orgId) — they ran as a
+    // serial await chain, and this single server function was the measured
+    // bulk of the client overview's 7.9s first paint (audit X-02). Modules
+    // load together, then the reads fan out in ONE round of round-trips.
+    // Only genuinely dependent reads (scorecards ← interviews, stage dates ←
+    // positions, profile hydration ← matches) stay sequential.
+    const [
+      { getInterviewsAwaitingFeedback },
+      { loadInterviewsAwaitingConfirmation },
+      { readSeatsForOrg },
+      { loadClientWeekActivity },
+      { countOpenRolesForOrg },
+      { countOpenOffers },
+    ] = await Promise.all([
+      import("./client/interviews-awaiting-feedback.server"),
+      import("./client/interviews-to-confirm.server"),
+      import("@/lib/kpis/seats.server"),
+      import("./client/week-activity.server"),
+      import("@/lib/kpis/open-roles.server"),
+      import("@/lib/kpis/candidates-in-play.server"),
+    ]);
 
-    // 1. Fetch the unified open items and blocked roles.
-    const openItemsResponse = await loadClientOpenItems(
-      context.supabase,
-      context.userId,
-      data.orgId,
-    );
-    const rows = await loadKpiRows(s, data.orgId);
+    const [
+      interviewsAwaitingFeedback,
+      openItemsResponse,
+      rows,
+      pendingConfirmations,
+      { activeMembers },
+      weekActivity,
+      interviewsRes,
+      positionsQueryRes,
+      activePositions,
+      openOffers,
+    ] = await Promise.all([
+      getInterviewsAwaitingFeedback(context.supabase, data.orgId),
+      // 1. Unified open items and blocked roles.
+      loadClientOpenItems(context.supabase, context.userId, data.orgId),
+      loadKpiRows(s, data.orgId),
+      // Interviews still waiting on a confirmed time — the one shared query
+      // the Overview queue and the Interviews page read.
+      loadInterviewsAwaitingConfirmation(context.supabase, data.orgId),
+      // Seats come from the one reader, so Overview, Account, Team & roles
+      // and the staff account summary print the same figure.
+      readSeatsForOrg(context.supabase, data.orgId),
+      // "This week" counts from the shared selector the weekly card reads.
+      loadClientWeekActivity(context.supabase, data.orgId),
+      s
+        .from("interviews")
+        .select("id, candidate_match_id, position_id, completed_at, status")
+        .eq("organization_id", data.orgId)
+        .eq("status", "completed")
+        .not("completed_at", "is", null)
+        .order("completed_at", { ascending: true })
+        .limit(100),
+      excludeTestRecords(
+        context.supabase
+          .from("positions")
+          .select(
+            "id, title, status, updated_at, created_at, organization_id, organizations(name), openings",
+          )
+          .eq("organization_id", data.orgId)
+          // Active work only: a closed or on-hold role must leave every count
+          // and the decision queue in the same refresh.
+          .in("status", ["active", "approved"]),
+      ).order("updated_at", { ascending: false }),
+      // Open roles: the one reader decides the number.
+      countOpenRolesForOrg(context.supabase, data.orgId),
+      countOpenOffers(context.supabase, data.orgId),
+    ]);
 
-    // Interviews still waiting on a confirmed time — the one shared query the
-    // Overview queue and the Interviews page read. The "at risk" line must age
-    // a real interview request, never an offer's stage date.
-    const { loadInterviewsAwaitingConfirmation } = await import(
-      "./client/interviews-to-confirm.server"
-    );
-    const pendingConfirmations = await loadInterviewsAwaitingConfirmation(
-      context.supabase,
-      data.orgId,
-    );
     const pendingByPosition = new Map<string, string[]>();
     for (const pending of pendingConfirmations) {
       if (!pending.position_id) continue;
@@ -117,27 +166,8 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       if (pending.requested_at) list.push(pending.requested_at);
       pendingByPosition.set(pending.position_id, list);
     }
-    
-    // Seats come from the one reader, so Overview, Account, Team & roles and
-    // the staff account summary print the same figure.
-    const { readSeatsForOrg } = await import("@/lib/kpis/seats.server");
-    const { activeMembers } = await readSeatsForOrg(context.supabase, data.orgId);
 
-    // "This week" interview and decision counts come from the shared selector,
-    // the same one the weekly update card reads.
-    const { loadClientWeekActivity } = await import("./client/week-activity.server");
-    const weekActivity = await loadClientWeekActivity(context.supabase, data.orgId);
-
-    const interviewsRes = await s
-      .from("interviews")
-      .select("id, candidate_match_id, position_id, completed_at, status")
-      .eq("organization_id", data.orgId)
-      .eq("status", "completed")
-      .not("completed_at", "is", null)
-      .order("completed_at", { ascending: true })
-      .limit(100);
-    
-    const completedInterviews = (interviewsRes.data as AnyRow[]) ?? [];
+    const completedInterviews = ((interviewsRes as AnyRow).data as AnyRow[]) ?? [];
     const scoredInterviewIds = new Set<string>();
     if (completedInterviews.length > 0) {
       const { data: cards } = await s
@@ -149,20 +179,8 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       }
     }
 
-    const { data: positions, error: positionsError } = await excludeTestRecords(context.supabase
-      .from("positions")
-      .select("id, title, status, updated_at, created_at, organization_id, organizations(name), openings")
-
-      .eq("organization_id", data.orgId)
-      // Active work only: a closed or on-hold role must leave every count and
-      // the decision queue in the same refresh.
-      .in("status", ["active", "approved"]))
-      .order("updated_at", { ascending: false });
+    const { data: positions, error: positionsError } = positionsQueryRes as AnyRow;
     const activePositionsList = (positions as AnyRow[]) ?? [];
-    // Open roles: the one reader decides the number, whatever this page's own
-    // query happened to return.
-    const { countOpenRolesForOrg } = await import("@/lib/kpis/open-roles.server");
-    const activePositions = await countOpenRolesForOrg(context.supabase, data.orgId);
 
     // Reconciliation (B4/B3): ensure KPI counts use the same positions we just loaded.
     // Hires come from computeKpis, which reads the confirmed offer records.
@@ -175,10 +193,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       // Interviews awaiting a time and open offers come from their one reader,
       // never from the length of a queue list on this page.
       interviews_to_confirm: pendingConfirmations.length,
-      offers: await (await import("@/lib/kpis/candidates-in-play.server")).countOpenOffers(
-        context.supabase,
-        data.orgId,
-      ),
+      offers: openOffers,
       missing_feedback: interviewsAwaitingFeedback.length,
     };
 
@@ -502,18 +517,48 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     const next_milestones_failed = Boolean(positionsError);
 
     // Latest delivered candidates (top 4 — kept concise).
-    const { data: latestMatches } = await excludeTestRecords(context.supabase
-      .from("candidate_matches")
-      .select(
-        `id, stage, delivered_at, position_id, candidate_profile_id, intro_video_url,
-         candidate_profiles(id, full_name, headline, location, availability, years_experience, summary),
-         positions(id, title),
-         score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,
+    // Tail reads fan out together — only profile hydration depends on the
+    // matches result (audit X-02).
+    const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
+    const [latestMatchesRes, recentMessagesRes, eventsRes] = await Promise.all([
+      excludeTestRecords(
+        context.supabase
+          .from("candidate_matches")
+          .select(
+            `id, stage, delivered_at, position_id, candidate_profile_id, intro_video_url,
+             candidate_profiles(id, full_name, headline, location, availability, years_experience, summary),
+             positions(id, title),
+             score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,
+          )
+          .eq("organization_id", data.orgId)
+          .eq("client_visibility", "visible"),
       )
-      .eq("organization_id", data.orgId)
-      .eq("client_visibility", "visible"))
-      .order("delivered_at", { ascending: false })
-      .limit(4);
+        .order("delivered_at", { ascending: false })
+        .limit(4),
+      // Recent messages (last 3). Attributed to the real sender: labelling a
+      // client's own message "TaaSFlow" made the panel read as if we wrote it.
+      context.supabase
+        .from("messages")
+        .select("id, body, created_at, sender_user_id, thread_id")
+        .eq("thread_id", data.orgId)
+        .order("created_at", { ascending: false })
+        .limit(3),
+      // "What changed" — client-relevant events only, same window as the
+      // "This week" tiles so list and counts cannot disagree. audit_events is
+      // staff-only under RLS; read whitelisted actions with the admin client,
+      // still scoped to this organization.
+      (auditDb as AnyRow)
+        .from("audit_events")
+        .select("id, action, entity_type, created_at")
+        .eq("organization_id", data.orgId)
+        .in("action", [...CLIENT_RELEVANT_ACTIONS])
+        .gte("created_at", weekActivity.windowStart)
+        .lte("created_at", weekActivity.windowEnd)
+        .order("created_at", { ascending: false })
+        .limit(6),
+    ]);
+
+    const latestMatches = (latestMatchesRes as AnyRow).data as AnyRow[] | null;
     const latest_candidates = (
       await hydrateClientCandidateProfiles(latestMatches as AnyRow[])
     )
@@ -524,15 +569,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         return scoreOf(b) - scoreOf(a);
       });
 
-    // Recent messages (last 3). Attributed to the real sender: labelling a
-    // client's own message "TaaSFlow" made the panel read as if we wrote it.
-    const { data: recentMessages } = await context.supabase
-      .from("messages")
-      .select("id, body, created_at, sender_user_id, thread_id")
-      .eq("thread_id", data.orgId)
-      .order("created_at", { ascending: false })
-      .limit(3);
-    const recentMessageRows = (recentMessages as AnyRow[]) ?? [];
+    const recentMessageRows = ((recentMessagesRes as AnyRow).data as AnyRow[]) ?? [];
     const recent_messages = [];
     if (recentMessageRows.length > 0) {
       const senderIds = [
@@ -590,24 +627,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     }
 
 
-    // "What changed" — filter to client-relevant events only (never internal
-    // processing chatter). Whitelist the actions we surface.
-    // audit_events is staff-only under RLS; read the whitelisted client-facing
-    // actions with the admin client, still scoped to this organization.
-    const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
-    const { data: events } = await (auditDb as AnyRow)
-      .from("audit_events")
-      .select("id, action, entity_type, created_at")
-      .eq("organization_id", data.orgId)
-      .in("action", [...CLIENT_RELEVANT_ACTIONS])
-      // Same window the "This week" tiles count, so the list and the counts
-      // cannot disagree about the same events.
-      .gte("created_at", weekActivity.windowStart)
-      .lte("created_at", weekActivity.windowEnd)
-      .order("created_at", { ascending: false })
-      .limit(6);
-
-
+    const events = (eventsRes as AnyRow).data as AnyRow[] | undefined;
     const lastEvent = (events as AnyRow[] | undefined)?.[0];
     const last_updated: string | null =
       lastEvent?.created_at ?? activePositionsList[0]?.updated_at ?? null;

@@ -453,10 +453,11 @@ const CLIENT_REFRESH_KEYS = [
 
 
 function ClientCoordinator({ orgId }: { orgId: string }) {
- const [userId, setUserId] = useState<string | null>(null);
- useEffect(() => {
- supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
- }, []);
+ // The auth guard already verified the user and returned it as router
+ // context — a per-mount getUser() here was one of 16 identical
+ // /auth/v1/user round-trips on a single page load (audit A-15).
+ const { user } = Route.useRouteContext();
+ const userId = user?.id ?? null;
  const live = useDashboardRealtime({
    userId,
    audience: "client",

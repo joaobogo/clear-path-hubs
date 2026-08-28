@@ -64,10 +64,9 @@ export const Route = createFileRoute("/_authenticated/client/")({
 type Any = any;
 
 function OverviewPage() {
-  const [selfId, setSelfId] = useState<string | null>(null);
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? null));
-  }, []);
+  // User comes from the auth guard's router context — no network (A-15).
+  const { user } = Route.useRouteContext();
+  const selfId = user?.id ?? null;
   const { density, compact, setDensity } = useDensity(selfId);
   const ctxFn = useServerFn(getClientContext);
   const overviewFn = useServerFn(loadClientOverview);
