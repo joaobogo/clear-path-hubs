@@ -17,7 +17,10 @@ import { Link } from "@tanstack/react-router";
 const KIND_LABEL: Record<string, string> = {
   webhook: "Failed webhooks",
   processing: "Processing exceptions",
-  email: "Failed emails",
+  // One row per delivery-failure item, most of which are Teams/webhook
+  // channels — "Failed emails 277" above cards reading 142 was three pages
+  // counting three aggregations under one word (audit A-05/A-11).
+  email: "Delivery failures",
   cv: "Unprocessed CVs",
 };
 

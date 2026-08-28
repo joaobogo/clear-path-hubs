@@ -25,6 +25,11 @@ function outcomeFromHireStatus(status: string | null): CalibrationOutcome | null
     case "offer_accepted":
     case "offer_drafted":
       return "offered";
+    // A declined offer still reached offer — mapping it to null made the row
+    // fall through to decision/stage and sometimes to "no outcome", which is
+    // how the desk and the review center disagreed by one (audit A-05).
+    case "offer_declined":
+      return "offered";
     case "closed_lost":
       return "rejected";
     default:

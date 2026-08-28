@@ -323,7 +323,10 @@ export function computeCalibrationDesk(rows: DeskRow[]): CalibrationDesk {
   const scores = rows.map((r) => r.final_score).filter((s) => Number.isFinite(s));
   const platformMedian = median(scores);
   const funnel = buildFunnel(rows);
-  const decided = funnel.approved + funnel.declined;
+  // Distinct candidates, not a sum: a match that was approved and later
+  // declined counted twice, so this sentence disagreed with the review
+  // center's outcome count by exactly the double-counted rows (audit A-05).
+  const decided = rows.filter((r) => r.approved || r.declined).length;
 
   const positions = buildSegments(
     rows,

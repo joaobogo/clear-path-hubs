@@ -141,11 +141,14 @@ function inferLeadEmailCode(detail: string | null | undefined): string {
  *   total          — retryable + blockedNotSent, for reconciliation copy only.
  */
 export type DeliveryFailureSummary = {
+  /** Every failure row in the window — always equals items.length. */
   total: number;
   /** Failures a retry can actually clear. THE headline number. */
   retryable: number;
   /** Deliveries never sent because the address is blocked. Never retryable. */
   blockedNotSent: number;
+  /** Failed rows that are neither retryable nor suppression-blocked. */
+  notRetryableOther: number;
   /** @deprecated Alias of blockedNotSent, kept for existing row copy. */
   blockedDeliveries: number;
   blockedAddresses: Array<{
@@ -168,6 +171,7 @@ const EMPTY_SUMMARY: DeliveryFailureSummary = {
   total: 0,
   retryable: 0,
   blockedNotSent: 0,
+  notRetryableOther: 0,
   blockedDeliveries: 0,
   blockedAddresses: [],
   spikeAlert: {
@@ -507,9 +511,15 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
   return {
     items,
     summary: {
-      total: retryableCount + blockedNotSent,
+      // The list total IS the list. `retryable + blockedNotSent` skipped rows
+      // that are neither (held/config/bounced/non-email channels), so
+      // "Rows listed below: 229" sat above a panel rendering 277 rows and
+      // three admin pages showed three different failure counts (audit A-05).
+      total: items.length,
       retryable: retryableCount,
       blockedNotSent,
+      /** Failed rows that are neither retryable nor suppression-blocked. */
+      notRetryableOther: items.length - retryableCount - blockedNotSent,
       blockedDeliveries: blockedNotSent,
       blockedAddresses,
       spikeAlert,

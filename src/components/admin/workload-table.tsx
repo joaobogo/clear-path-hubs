@@ -68,7 +68,10 @@ export function WorkloadTable({ includeTest: explicit }: { includeTest?: boolean
             {q.data.totals.open_positions} open role
             {q.data.totals.open_positions === 1 ? "" : "s"} ·{" "}
             {q.data.totals.active_candidates} active candidates ·{" "}
-            {q.data.totals.submissions_this_week} submitted this week
+            {/* This count is delivered_at within 7 days on open roles — not
+                applications received. The old label read as the latter and
+                contradicted the candidate DB by half (audit A-05). */}
+            {q.data.totals.submissions_this_week} delivered to clients (7d)
           </p>
         )}
       </div>

@@ -208,8 +208,12 @@ export async function loadWorkloadTable(
       const roleRow = isUnassigned ? undefined : staff.find((s) => s.user_id === key);
       r = {
         key,
+        // "Unassigned or inactive owner": this row also absorbs roles whose
+        // owner is not an active staff member. Calling it plain "Unassigned"
+        // contradicted /admin/positions, which counts those separately as
+        // inactive-owner and reported "0 without owner" (audit A-05).
         name: isUnassigned
-          ? "Unassigned"
+          ? "Unassigned or inactive owner"
           : p?.full_name || p?.email || "Unknown staff member",
         email: isUnassigned ? null : (p?.email ?? null),
         role: isUnassigned ? null : (roleRow?.role ?? null),
@@ -306,10 +310,35 @@ export async function loadOwnedPositions(
     .order("updated_at", { ascending: false })
     .limit(100);
   if (!opts.includeTest) q = q.eq("is_test_record", false);
-  q = owner === UNASSIGNED_KEY ? q.is("owner_user_id", null) : q.eq("owner_user_id", owner);
+  // The Unassigned aggregate absorbs BOTH ownerless roles and roles whose
+  // owner is not an active staff member — the drill-down must match its own
+  // row count, so it cannot filter to null owners only (audit A-05).
+  if (owner !== UNASSIGNED_KEY) q = q.eq("owner_user_id", owner);
 
   const { data, error } = await q;
   if (error) throw new Error(error.message);
+  if (owner === UNASSIGNED_KEY) {
+    const { data: staffRows, error: staffError } = await a
+      .from("memberships")
+      .select("user_id")
+      .eq("status", "active")
+      .in("role", ["platform_admin", "operations"]);
+    if (staffError) throw new Error(staffError.message);
+    const staffIds = new Set(
+      ((staffRows ?? []) as Array<{ user_id: string }>).map((s) => s.user_id),
+    );
+    const filtered = ((data ?? []) as Array<Record<string, unknown>>).filter(
+      (p) => !p['owner_user_id'] || !staffIds.has(String(p['owner_user_id'])),
+    );
+    return filtered.map((p) => ({
+      id: String(p['id']),
+      title: String(p['title'] ?? "Untitled position"),
+      organization_name:
+        (p['organizations'] as { name?: string } | null)?.name ?? null,
+      status: String(p['status'] ?? ""),
+      owner_user_id: (p['owner_user_id'] as string | null) ?? null,
+    }));
+  }
   return ((data ?? []) as Array<Record<string, unknown>>).map((p) => ({
     id: String(p['id']),
     title: String(p['title'] ?? "Untitled position"),

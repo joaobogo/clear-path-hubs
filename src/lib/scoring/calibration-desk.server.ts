@@ -14,16 +14,10 @@
 type Any = any;
 
 import { computeCalibrationDesk, type CalibrationDesk, type DeskRow } from "./calibration-desk";
+import { isExtendedOffer } from "@/lib/offer-hire";
 
 const APPROVAL_DECISIONS = new Set(["shortlist", "request_interview", "offer", "hire"]);
 const DECLINE_DECISIONS = new Set(["not_moving_forward"]);
-const OFFER_HIRE_STATUSES = new Set([
-  "offer_drafted",
-  "offer_sent",
-  "offer_negotiating",
-  "offer_accepted",
-  "hire_confirmed",
-]);
 const ADVANCED_STAGES = new Set(["shortlisted", "interview_process", "offer", "hired"]);
 
 export async function loadCalibrationDesk(
@@ -128,11 +122,11 @@ export async function loadCalibrationDesk(
     const declined = DECLINE_DECISIONS.has(String(decision?.decision)) || stage === "not_moving_forward";
     const approved =
       anyApproval.has(matchId) || (stage ? ADVANCED_STAGES.has(stage) : false) || Boolean(hire);
-    const offered =
-      (hire ? OFFER_HIRE_STATUSES.has(hire) : false) ||
-      stage === "offer" ||
-      stage === "hired" ||
-      String(decision?.decision) === "offer";
+    // Same evidence and same predicate as the admin overview's offer rollup
+    // (isExtendedOffer over hire_records) — this desk previously ORed in the
+    // pipeline stage and the client's decision, so "Offers 3" here sat under
+    // an overview reading "Offers extended 2" (audit A-05).
+    const offered = hire ? isExtendedOffer(hire) : false;
     // One definition of a hire across every surface: a confirmed offer record.
     // The pipeline stage is a position in the funnel, not proof of a hire, and
     // counting it here made the desk read one more hire than the Overview.

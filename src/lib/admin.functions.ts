@@ -2713,17 +2713,29 @@ export const getOperationsIncidents = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    // Same 7-day window the exceptions board applies — without it, the
+    // "Failed jobs" stat on this page read 24 while the board directly
+    // beneath it listed 1 (audit A-05): 23 were ancient history.
+    const windowStart = new Date(Date.now() - 7 * 86_400_000).toISOString();
     const { data: failed } = await s
       .from("processing_jobs")
       .select("id,entity_type,entity_id,job_type,status,attempts,error_code,error_message,trace_id,created_at,started_at,completed_at")
       .eq("status", "failed")
+      .gte("created_at", windowStart)
       .order("created_at", { ascending: false })
       .limit(200);
     const jobs = (failed ?? []) as AnyRow[];
     const matchIds = Array.from(
       new Set(jobs.filter((j) => j.entity_type === "candidate_match").map((j) => j.entity_id)),
     );
-    let matchMap = new Map<string, AnyRow>();
+    // Jobs keyed by APPLICATION id previously resolved to no candidate at
+    // all, so incident rows read "application · 718fb9ca" with no name and
+    // no link (audit A-12). Resolve those through candidate_matches too and
+    // key the map by both ids.
+    const applicationIds = Array.from(
+      new Set(jobs.filter((j) => j.entity_type === "application").map((j) => j.entity_id)),
+    );
+    const matchMap = new Map<string, AnyRow>();
     if (matchIds.length) {
       const { data: matches } = await s
         .from("candidate_matches")
@@ -2731,7 +2743,18 @@ export const getOperationsIncidents = createServerFn({ method: "GET" })
           "id,processing_state,candidate_profiles(full_name),positions(title,organizations(name))",
         )
         .in("id", matchIds);
-      matchMap = new Map(((matches ?? []) as AnyRow[]).map((m) => [m.id, m]));
+      for (const m of (matches ?? []) as AnyRow[]) matchMap.set(m.id, m);
+    }
+    if (applicationIds.length) {
+      const { data: appMatches } = await s
+        .from("candidate_matches")
+        .select(
+          "id,application_id,processing_state,candidate_profiles(full_name),positions(title,organizations(name))",
+        )
+        .in("application_id", applicationIds);
+      for (const m of (appMatches ?? []) as AnyRow[]) {
+        if (m.application_id) matchMap.set(m.application_id, m);
+      }
     }
     // Active queued/running jobs — to prevent duplicate retries.
     const { data: active } = await s
