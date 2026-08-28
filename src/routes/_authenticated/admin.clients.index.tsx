@@ -264,7 +264,12 @@ function ClientsPage() {
   }, [data, search, includeTest, effectiveOrgType]);
 
   const total = filtered.length;
-  const activeCount = filtered.filter((r) => !r.archived_at).length;
+  // "Active" means status Active — not merely "not archived". The old
+  // predicate counted prospects too, so the header read "3 actives" over a
+  // list with one Active org (audit A-03).
+  const activeCount = filtered.filter(
+    (r) => !r.archived_at && String(r.status).toLowerCase() === "active",
+  ).length;
   const archivedCount = filtered.filter((r) => !!r.archived_at).length;
 
   // Surface a dismissible notice when a filter value is not recognised instead

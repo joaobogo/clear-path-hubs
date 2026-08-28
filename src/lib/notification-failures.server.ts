@@ -474,6 +474,10 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
   // while /admin/operations read 86 off the same ledger.
   const items = [...notificationItems, ...leadItems, ...applicationItems]
     .filter((i) => i.lastAttemptAt >= cutoff)
+    // Recorded-by-design outcomes are not failures: a demo workspace's
+    // "recorded instead of sent" row sat in the failure list with a Retry
+    // button (audit A-11). deliveryReason marks those countsAsFailure: false.
+    .filter((i) => deliveryReason(i.reason, i.reason).countsAsFailure !== false)
     .sort((a, b) => new Date(b.lastAttemptAt).getTime() - new Date(a.lastAttemptAt).getTime());
 
   // A suppressed address does not produce a backlog an operator can drain: every

@@ -1,4 +1,5 @@
 import { formatEnumLabel } from "@/lib/human-labels";
+import { vocabularyEntry } from "@/lib/vocabulary";
 import { useMemo, useState } from "react";
 import { getEvidenceCounts, getCoverageRatio, formatCoveragePct } from "@/lib/client/evidence-counts";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -349,8 +350,11 @@ export function CompareSheet({
               hide={diffOnly && allSame(candidates.map((c) => c.stage))}
             >
               {candidates.map((c) => (
-                <div key={c.match_id} className="text-xs capitalize">
-                  {formatEnumLabel(c.stage)}
+                <div key={c.match_id} className="text-xs">
+                  {/* The CLIENT stage word — the list next door says
+                      "Awaiting your review" while this said "Delivered"
+                      (audit X-01/C-08). One vocabulary, one audience. */}
+                  {vocabularyEntry(c.stage)?.client ?? formatEnumLabel(c.stage)}
                 </div>
               ))}
             </ComparisonRow>

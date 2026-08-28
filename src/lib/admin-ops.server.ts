@@ -518,8 +518,11 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     },
     {
       key: "hires_pending",
-      label: "Hires confirmed (Total)",
-      description: "Candidates currently in the 'hired' stage across the portfolio.",
+      // No "(Total)": the count follows the page's scope filter like every
+      // other card, so under ?scope=mine the old label promised a portfolio
+      // figure while showing a personal one (audit A-09).
+      label: "Hires confirmed",
+      description: "Candidates currently in the 'hired' stage in this view.",
       count: hiredCount,
       action_hint: "View confirmed hires and start dates.",
       see_all: { to: "/admin/candidates" },

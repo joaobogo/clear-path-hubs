@@ -29,7 +29,7 @@ export async function loadCalibrationDesk(
 
   let runsQuery = supabaseAdmin
     .from("score_runs")
-    .select("candidate_match_id,final_score,completed_at,organization_id,is_test_record")
+    .select("candidate_match_id,final_score,completed_at,organization_id,is_test_record,applied_cap,cap_reason")
     .eq("status", "completed")
     .not("final_score", "is", null)
     .not("candidate_match_id", "is", null)
@@ -47,6 +47,11 @@ export async function loadCalibrationDesk(
   // Most recent completed run wins — one row per candidate, never per attempt.
   const latestByMatch = new Map<string, Any>();
   for (const run of (runs ?? []) as Any[]) {
+    // A gate-capped run is a screening OUTCOME, not a scoring observation. Two
+    // dealbreaker 15s dragged a segment's median to 15.0 and its drift to
+    // "43.8 points lower" — the drift desk exists to detect engine bias, and
+    // caps are not the engine's opinion of fit (audit S-17).
+    if (run.applied_cap != null || run.cap_reason) continue;
     if (!latestByMatch.has(run.candidate_match_id)) latestByMatch.set(run.candidate_match_id, run);
   }
   const matchIds = [...latestByMatch.keys()];

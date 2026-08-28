@@ -4,8 +4,6 @@ import {
 } from "@/components/workspace/route-states";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { getStaffAccess } from "@/lib/admin-staff-gate.functions";
@@ -93,7 +91,9 @@ const ADMIN_REFRESH_KEYS = [
 
 
 function AdminLayout() {
-  const { staffAccess } = Route.useRouteContext();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ctx = Route.useRouteContext() as any;
+  const staffAccess = ctx.staffAccess;
   // Nav comes from the same predicate the gate and the server functions use.
   const navItems = staffAccess.platformAdmin
     ? ADMIN_NAV
@@ -103,14 +103,17 @@ function AdminLayout() {
   const sectionGroups = filterSectionGroups(ADMIN_SECTION_GROUPS, {
     platformAdmin: staffAccess.platformAdmin,
   });
-  const [userId, setUserId] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUserId(data.user?.id ?? null);
-      setEmail(data.user?.email ?? null);
-    });
-  }, []);
+  // The auth guard already verified the user and returned it as router
+  // context — no per-mount network call (audit A-15). Display name over the
+  // raw login address: the client shell shows "J.K." while this one showed
+  // the email for the same session (audit X-07).
+  const user = ctx.user;
+  const userId = (user?.id as string | null) ?? null;
+  const displayIdentity =
+    (user?.user_metadata?.full_name as string | undefined) ??
+    (user?.user_metadata?.name as string | undefined) ??
+    (user?.email as string | undefined) ??
+    null;
   useDashboardRealtime({
     userId,
     audience: "admin",
@@ -124,7 +127,7 @@ function AdminLayout() {
         role="admin"
         contextKicker="TaaSFlow"
         contextLabel="Admin"
-        contextSubLabel={email ?? undefined}
+        contextSubLabel={displayIdentity ?? undefined}
         navItems={navItems}
         searchScope="admin"
         headerSlot={

@@ -241,8 +241,20 @@ export function PlanPanel({
           <div>
             <div className="text-xs text-muted-foreground">Current plan</div>
             <div className="mt-1 text-sm font-medium">
-              {sub?.label ?? (allowance?.source === "package" ? allowance.label : "Pay per role")}
+              {/* Never invent a commercial arrangement: with no subscription
+                  and no package on record, "Pay per role" told the client
+                  they were on a plan the admin record says does not exist
+                  (audit C-05). Say what is true. */}
+              {sub?.label ??
+                (allowance?.source === "package"
+                  ? allowance.label
+                  : "No plan on record yet")}
             </div>
+            {!sub && allowance?.source !== "package" && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Your team will confirm your commercial setup — ask them any time.
+              </p>
+            )}
           </div>
           <div>
             <div className="text-xs text-muted-foreground">Roles left to open</div>

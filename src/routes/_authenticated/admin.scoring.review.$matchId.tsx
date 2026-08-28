@@ -490,9 +490,49 @@ function ReviewWorkspace() {
           <section className="space-y-3">
             <h2 className="text-sm font-semibold">Evidence by dimension</h2>
             {grouped.length === 0 ? (
-              <Card className="p-6 text-sm text-muted-foreground">
-                No structured evidence yet. Run the pipeline or review the CV directly.
-              </Card>
+              // The structured evidence-items table is written by a separate
+              // pipeline step that does not always run — but the score run
+              // itself carries per-requirement evidence. The page built for
+              // human verification said "No structured evidence yet" while
+              // the evidence record listed quotes for six requirements
+              // (audit S-11). Fall back to the run's own assessment.
+              Array.isArray((currentRun?.result as Any)?.requirement_assessment) &&
+              ((currentRun.result as Any).requirement_assessment as Any[]).some(
+                (r: Any) => Array.isArray(r?.evidence) && r.evidence.length > 0,
+              ) ? (
+                <Card className="space-y-3 p-5">
+                  <p className="text-xs text-muted-foreground">
+                    Showing the scoring run's own evidence — structured review
+                    items have not been generated for this candidate yet, so
+                    row-level corrections are made from the Score tab.
+                  </p>
+                  {((currentRun.result as Any).requirement_assessment as Any[])
+                    .filter((r: Any) => Array.isArray(r?.evidence) && r.evidence.length > 0)
+                    .map((r: Any, i: number) => (
+                      <div key={i} className="space-y-1 rounded-lg border p-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`rounded px-2 py-0.5 text-xs font-medium ${
+                              RESULT_TONE[String(r.status)] ?? "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {humanizeCode(String(r.status ?? "unknown"))}
+                          </span>
+                          <span className="text-sm font-medium">{String(r.text ?? "")}</span>
+                        </div>
+                        {(r.evidence as Any[]).slice(0, 3).map((e: Any, j: number) => (
+                          <p key={j} className="border-l-2 border-primary/30 pl-2 text-xs text-muted-foreground">
+                            {String(e.snippet ?? "")}
+                          </p>
+                        ))}
+                      </div>
+                    ))}
+                </Card>
+              ) : (
+                <Card className="p-6 text-sm text-muted-foreground">
+                  No structured evidence yet. Run the pipeline or review the CV directly.
+                </Card>
+              )
             ) : null}
             {grouped.map(([dim, items], gi) => (
               <Card

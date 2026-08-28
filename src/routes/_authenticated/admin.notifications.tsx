@@ -1,10 +1,13 @@
 import { APP_LOCALE } from "@/lib/format/datetime";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import { useDeliveryFailures } from "@/lib/admin/use-delivery-failures";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QueryState } from "@/components/ds";
 import { DeliveryFailuresPanel } from "@/components/admin/delivery-failures-panel";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+const authRoute = getRouteApi("/_authenticated");
 
 export const Route = createFileRoute("/_authenticated/admin/notifications")({
   head: () => ({
@@ -23,8 +26,21 @@ export const Route = createFileRoute("/_authenticated/admin/notifications")({
 
 function NotificationsPage() {
   const query = useDeliveryFailures();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { user } = authRoute.useRouteContext() as any;
 
   const email = query.data?.email as { configured: boolean; reason?: string | null } | undefined;
+
+  // A staff account whose OWN address is suppressed silently loses every
+  // score-approval and decision email — the audit found the platform admin's
+  // address with 83 blocked sends and no warning anywhere (A-02).
+  const blockedAddresses = ((query.data?.summary as { blockedAddresses?: Array<{ address: string; deliveries: number }> } | undefined)
+    ?.blockedAddresses ?? []);
+  const selfBlocked = user?.email
+    ? blockedAddresses.find(
+        (b) => b.address?.toLowerCase() === String(user.email).toLowerCase(),
+      )
+    : undefined;
 
   // One server function, one 7-day window: these tiles, the banner and the rows
   // below all read the same payload, so they cannot disagree. Until that payload
@@ -58,6 +74,18 @@ function NotificationsPage() {
           suppressed lands here.
         </p>
       </header>
+
+      {selfBlocked && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertTitle>Your own address is on the suppression list</AlertTitle>
+          <AlertDescription>
+            {selfBlocked.deliveries} email{selfBlocked.deliveries === 1 ? "" : "s"} to your
+            signed-in address ({selfBlocked.address}) were dropped without sending — including
+            score approvals and decision notices. Release the address below to start
+            receiving them again.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         {tiles.map((s) => (

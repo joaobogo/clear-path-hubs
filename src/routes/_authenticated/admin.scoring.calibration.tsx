@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { getCalibrationDesk } from "@/lib/scoring/calibration-desk.functions";
+import { SCORE_BAND_DEFS } from "@/config/scoring-bands";
 import { CalibrationDistributionChart } from "@/components/admin/calibration-distribution-chart";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -106,7 +107,13 @@ function SegmentTable({
                     </td>
                     <td className="py-2 pr-3 tabular-nums">{row.hired}</td>
                     <td className="py-2 text-xs text-muted-foreground">
-                      {row.bands_used.join(", ") || "—"}
+                      {/* Band labels, never enum keys — this cell printed
+                          "not_recommended, consider" raw (audit S-17/S-21). */}
+                      {row.bands_used
+                        .map(
+                          (b) => SCORE_BAND_DEFS.find((d) => d.key === b)?.label ?? String(b),
+                        )
+                        .join(", ") || "—"}
                     </td>
                   </tr>
                 ))}

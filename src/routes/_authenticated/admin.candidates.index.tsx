@@ -907,7 +907,12 @@ function CandidatesPage() {
                         STATE_TONE[m.processing_state] ?? "bg-muted text-muted-foreground"
                       }`}
                     >
-                      {(m.processing_state ?? "").replace(/_/g, " ")}
+                      {/* A dealbreaker cap is a screening outcome, not stuck
+                          processing (audit S-14). */}
+                      {m.processing_state === "manual_review_required" &&
+                      m.contradiction_status === "disqualifying_answer"
+                        ? "disqualified by screening"
+                        : (m.processing_state ?? "").replace(/_/g, " ")}
                     </span>
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">
@@ -1031,7 +1036,10 @@ function CandidatesPage() {
                     STATE_TONE[m.processing_state] ?? "bg-muted text-muted-foreground"
                   }`}
                 >
-                  {(m.processing_state ?? "").replace(/_/g, " ")}
+                  {m.processing_state === "manual_review_required" &&
+                  m.contradiction_status === "disqualifying_answer"
+                    ? "disqualified by screening"
+                    : (m.processing_state ?? "").replace(/_/g, " ")}
                 </span>
                 <span className={`rounded px-2 py-0.5 ${BAND_TONE[publishedBand(m) ?? "unscored"] ?? "bg-muted"}`}>
                   {(publishedBand(m) ?? "unscored").replace(/_/g, " ")}
