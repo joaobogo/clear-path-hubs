@@ -326,11 +326,23 @@ async function stepEnrich(matchId: string, trace_id: string): Promise<State> {
   return "ready_to_score";
 }
 
-async function stepScore(matchId: string, trace_id: string): Promise<State> {
+async function stepScore(
+  matchId: string,
+  trace_id: string,
+  opts: { force?: boolean } = {},
+): Promise<State> {
   // Delegates to the canonical scoring service — do NOT insert score_runs here.
-  const outcome = await executeScoring(matchId, { trace_id, reason: "manual_step" });
+  // force: an explicit rescore must bypass the "already scored" short-circuit,
+  // otherwise the service returns reused:true without recomputing and an engine
+  // upgrade never lands (the drain loop then never converges).
+  const outcome = await executeScoring(matchId, {
+    trace_id,
+    reason: "manual_step",
+    ...(opts.force ? { force: true } : {}),
+  });
   return outcome.final_state;
 }
+
 
 async function isStaff(userId: string): Promise<boolean> {
   const supabase = (await getAdmin()) as AnyRow;
