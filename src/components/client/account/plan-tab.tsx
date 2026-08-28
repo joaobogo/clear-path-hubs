@@ -124,15 +124,8 @@ export function PlanTab() {
   const canMutate = Boolean(isAdmin) && !support.readOnly;
   const canSeeBilling = canAccessArea(ctx?.active?.role as string | undefined, "billing");
 
-  const packages = PLAN_CATALOGUE.filter((p) => p.kind === "package");
-  const subscriptions = PLAN_CATALOGUE.filter((p) => p.kind === "subscription");
-
   const [requested, setRequested] = useState<string | null>(null);
-  const canPick = Boolean(orgId) && canSeeBilling && canMutate;
-  const pick = (priceId: string) => {
-    setRequested(priceId);
-    document.getElementById("plan-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+
 
   // Seat context arrives from a blocked invite or reactivation on the team tab,
   // so the numbers behind the prompt are the same numbers shown here.
