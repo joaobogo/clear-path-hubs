@@ -151,6 +151,19 @@ export type DeliveryFailureSummary = {
   notRetryableOther: number;
   /** @deprecated Alias of blockedNotSent, kept for existing row copy. */
   blockedDeliveries: number;
+  /**
+   * One entry per (channel, reason) that produced 5+ rows in the window. A
+   * single broken integration generated 147 identical rows, burying every
+   * other incident and inviting 147 pointless retries (audit #4, H8).
+   */
+  systemicFailures: Array<{
+    channel: string;
+    reason: string;
+    label: string;
+    sentence: string;
+    count: number;
+    lastAttemptAt: string;
+  }>;
   blockedAddresses: Array<{
     address: string;
     deliveries: number;
@@ -173,6 +186,7 @@ const EMPTY_SUMMARY: DeliveryFailureSummary = {
   blockedNotSent: 0,
   notRetryableOther: 0,
   blockedDeliveries: 0,
+  systemicFailures: [],
   blockedAddresses: [],
   spikeAlert: {
     active: false,
@@ -512,6 +526,36 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
   const blockedNotSent = blockedAddresses.reduce((n, a) => n + a.deliveries, 0);
   const spikeAlert = retrySpike(items);
 
+  // Systemic failures: one broken integration produced 147 identical rows,
+  // burying every other incident and inviting 147 pointless retries (audit
+  // #4, H8). Group by (channel, reason) and surface the big ones as ONE
+  // incident with a count.
+  const systemicMap = new Map<
+    string,
+    { channel: string; reason: string; label: string; sentence: string; count: number; lastAttemptAt: string }
+  >();
+  for (const it of items) {
+    const key = `${it.channel}::${it.reason}`;
+    const prev = systemicMap.get(key);
+    if (prev) {
+      prev.count += 1;
+      if (it.lastAttemptAt > prev.lastAttemptAt) prev.lastAttemptAt = it.lastAttemptAt;
+    } else {
+      systemicMap.set(key, {
+        channel: it.channel,
+        reason: it.reason,
+        label: it.reasonLabel,
+        sentence: it.reasonSentence,
+        count: 1,
+        lastAttemptAt: it.lastAttemptAt,
+      });
+    }
+  }
+  const SYSTEMIC_MIN = 5;
+  const systemicFailures = [...systemicMap.values()]
+    .filter((g) => g.count >= SYSTEMIC_MIN)
+    .sort((a, b) => b.count - a.count);
+
   return {
     items,
     summary: {
@@ -525,6 +569,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       /** Failed rows that are neither retryable nor suppression-blocked. */
       notRetryableOther: items.length - retryableCount - blockedNotSent,
       blockedDeliveries: blockedNotSent,
+      systemicFailures,
       blockedAddresses,
       spikeAlert,
       windowDays: WINDOW_DAYS,

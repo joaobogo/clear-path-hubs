@@ -192,6 +192,14 @@ export function DeliveryFailuresPanel() {
     blockedNotSent: number;
     blockedDeliveries: number;
     blockedAddresses: BlockedAddress[];
+    systemicFailures?: Array<{
+      channel: string;
+      reason: string;
+      label: string;
+      sentence: string;
+      count: number;
+      lastAttemptAt: string;
+    }>;
     spikeAlert?: {
       active: boolean;
       recent: number;
@@ -249,6 +257,29 @@ export function DeliveryFailuresPanel() {
             new failures continue appearing.
           </p>
         </Card>
+      ) : null}
+
+      {/* One broken integration is ONE incident, not 147 rows to retry
+          individually (audit #4, H8). */}
+      {(summary.systemicFailures ?? []).length > 0 ? (
+        <div className="mb-4 rounded-lg border border-destructive/40 bg-destructive/5 p-3">
+          <div className="text-sm font-medium">
+            {(summary.systemicFailures ?? []).length === 1
+              ? "One systemic failure is generating most of these rows"
+              : `${(summary.systemicFailures ?? []).length} systemic failures are generating most of these rows`}
+          </div>
+          <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+            {(summary.systemicFailures ?? []).map((g) => (
+              <li key={`${g.channel}:${g.reason}`}>
+                <span className="font-medium text-foreground">
+                  {g.count} × {g.label}
+                </span>{" "}
+                · {g.channel} — {g.sentence} Retrying individual rows will not help until the
+                integration is fixed.
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : null}
 
       {/* A suppressed address is not a backlog: every new notification to it

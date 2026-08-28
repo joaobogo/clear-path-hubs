@@ -180,7 +180,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         s
           .from("candidate_matches")
           .select(
-            "id,score_stale,score_stale_at,score_stale_reasons,current_score_run_id,score_runs!candidate_matches_current_score_run_id_fkey(engine_version),candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name))",
+            "id,score_stale,score_stale_at,score_stale_reasons,current_score_run_id,approved_score_run_id,approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(engine_version),score_runs!candidate_matches_current_score_run_id_fkey(engine_version),candidate_profiles(full_name),positions(id,title,status,owner_user_id,organizations(id,name))",
           )
           .not("current_score_run_id", "is", null)
           .order("score_stale_at", { ascending: true, nullsFirst: false })
@@ -189,11 +189,22 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       );
       if (error) return { data: [], count: 0 };
       const { ENGINE_VERSION } = await import("@/lib/scoring/engine-version");
-      const rows = ((data ?? []) as Any[]).filter(
-        (m) =>
-          m.score_stale === true ||
-          String(m.score_runs?.engine_version ?? "") !== ENGINE_VERSION,
-      );
+      const ARCHIVED = new Set(["archived", "closed"]);
+      const rows = ((data ?? []) as Any[]).filter((m) => {
+        // A role nobody is hiring for cannot have a stale deliverable, and its
+        // Recompute can only fail (audit #4, M1/M10).
+        if (ARCHIVED.has(String(m.positions?.status ?? ""))) return false;
+        // Same rule the LIST CHIP applies: the run the client sees (approved)
+        // or the current run was produced by an older engine. The tile read 7
+        // while 22 rows wore a chip because it only checked the current run
+        // (audit #4, M1).
+        const currentEngine = String(m.score_runs?.engine_version ?? "");
+        const approvedEngine = String(m.approved_run?.engine_version ?? "");
+        const engineStale =
+          currentEngine !== ENGINE_VERSION ||
+          (m.approved_score_run_id ? approvedEngine !== ENGINE_VERSION : false);
+        return m.score_stale === true || engineStale;
+      });
       return { data: rows.slice(0, PREVIEW_LIMIT), count: rows.length };
     })(),
   ]);

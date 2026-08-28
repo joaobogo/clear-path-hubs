@@ -127,7 +127,10 @@ export function assessFreshness(input: FreshnessInput): Freshness {
   if (scoredEngine && currentEngine && scoredEngine !== currentEngine) {
     reasons.push({
       code: "engine_changed",
-      label: "Assessed with an earlier scoring version — ask us to reassess.",
+      // "Ask us to reassess" is CLIENT copy that rendered inside the admin
+      // console, where the reader IS us (audit #3, S-10 follow-up). State the
+      // fact; the surface decides the call to action.
+      label: "Assessed with an earlier scoring version — a re-score will refresh it.",
       detail: `Assessed with engine ${scoredEngine}; the current version is ${currentEngine}.`,
     });
   }

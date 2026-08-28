@@ -100,6 +100,16 @@ const REASONS: Record<string, DeliveryReason> = {
     kind: "held",
     countsAsFailure: false,
   },
+  // The Teams path writes its own code. Without an entry here it fell through
+  // to "Unclear outcome" and counted as a real failure, so ten demo-workspace
+  // rows sat in the failure list with a Retry button (audit #4, M9).
+  sandbox_workspace: {
+    label: "Demo workspace — recorded, not sent",
+    sentence:
+      "This is a test or demo workspace, so the message was recorded instead of posted to Teams.",
+    kind: "held",
+    countsAsFailure: false,
+  },
   email_not_configured: {
     label: "Email not configured",
     sentence:

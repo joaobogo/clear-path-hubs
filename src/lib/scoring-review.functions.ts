@@ -174,7 +174,27 @@ export const listReviewQueue = createServerFn({ method: "POST" })
     // the published number (raw + video-intro bonus). Fold it here so the
     // queue card cannot read "Consider · 67" beside a list saying 77 · Strong
     // (audit #4, H3).
-    const queueRows = (rows ?? []) as AnyRow[];
+    let queueRows = (rows ?? []) as AnyRow[];
+
+    // An archived role has no client deliverable left to block, yet three of
+    // its candidates sat in "Blocking a client deliverable · 25d overdue"
+    // with a Recompute that can only ever fail (audit #4, M10).
+    const positionIds = [...new Set(queueRows.map((r) => r.position_id).filter(Boolean))];
+    if (positionIds.length > 0) {
+      const { data: posRows } = await s
+        .from("positions")
+        .select("id,status")
+        .in("id", positionIds);
+      const archived = new Set(
+        ((posRows ?? []) as AnyRow[])
+          .filter((p) => ["archived", "closed"].includes(String(p.status ?? "")))
+          .map((p) => String(p.id)),
+      );
+      if (archived.size > 0) {
+        queueRows = queueRows.filter((r) => !archived.has(String(r.position_id)));
+      }
+    }
+
     const matchIds = queueRows.map((r) => r.match_id).filter(Boolean);
     if (matchIds.length > 0) {
       const { data: videoRows } = await s
