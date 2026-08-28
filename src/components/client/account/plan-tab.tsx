@@ -91,9 +91,10 @@ export function PlanTab() {
           </p>
           <p className="mt-1 text-sm text-muted-foreground">{seatContextSummary(seatCtx)}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Each plan below shows the seats it includes and whether it clears that gap the moment
-            it starts. Cancelling a pending invitation frees a seat without changing plan.
+            Your plan below shows the seats it includes. Cancelling a pending invitation frees a
+            seat without changing plan.
           </p>
+
         </div>
       )}
 
