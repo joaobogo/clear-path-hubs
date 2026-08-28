@@ -146,19 +146,6 @@ export function PlanTab() {
   const showSeatContext = hasSeatContext(seatCtx);
   const shortfall = seatShortfall(seatCtx);
 
-  const seatNoteFor = (productId: string) => {
-    if (!showSeatContext) return { note: null as string | null, resolves: false };
-    const total = planTotalSeats(productId);
-    if (total === null)
-      return { note: "Seats scoped with you — we set them when the plan is agreed.", resolves: false };
-    const resolves = planResolvesSeatNeed(total, seatCtx);
-    const used = seatCtx.seatsUsed;
-    const free = typeof used === "number" ? Math.max(0, total - used) : null;
-    const note = resolves
-      ? `${total} seats — frees ${free ?? seatCtx.seatsNeeded} seat${(free ?? 1) === 1 ? "" : "s"} straight after the switch.`
-      : `${total} seats — still ${Math.max(1, (seatCtx.seatsNeeded ?? 1) - (free ?? 0))} short of what you need.`;
-    return { note, resolves };
-  };
 
 
 
