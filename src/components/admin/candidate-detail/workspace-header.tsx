@@ -2,6 +2,7 @@
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScanText } from "lucide-react";
@@ -55,6 +56,7 @@ function WorkspaceHeader({
             <h1 className="truncate text-2xl font-semibold tracking-tight">
               {cp?.full_name ?? "Unknown candidate"}
             </h1>
+            <UnicornMarker score={currentRun} />
             {currentRun?.score != null && (
               <ScoreStalenessChip
                 freshness={freshnessFromRow({

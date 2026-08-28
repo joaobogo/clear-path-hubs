@@ -1,6 +1,7 @@
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "@tanstack/react-router";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { CandidatePrimaryAction } from "@/components/client/candidate-primary-action";
 import { clientStageLabel } from "@/lib/client-stage-labels";
@@ -103,6 +104,7 @@ export function CompactList({
                     className="font-medium hover:underline"
                   >
                     {c.candidate.display_name}
+                    <UnicornMarker unicorn={c.unicorn} className="ml-1" />
                   </Link>
                   <div className="text-xs text-muted-foreground truncate max-w-[200px] lg:max-w-sm">
                     {candidateHeadline(c)}
