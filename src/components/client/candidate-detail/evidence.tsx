@@ -228,6 +228,35 @@ export const FitHero = memo(function FitHero({
   const recommendation = decided ? null : fit.recommendation;
   const ring = accentToRing(fit.accent);
   const bg = accentToSoftBg(fit.accent);
+
+  // No completed assessment — say so. Rendering the fallback band here once
+  // labelled every unpublished candidate "Consider", including one whose real
+  // verdict was a dealbreaker cap.
+  if (!fit.assessed) {
+    return (
+      <section
+        aria-labelledby="fit-heading"
+        className="rounded-xl border bg-muted/30 p-5 sm:p-6"
+      >
+        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <Sparkles className="h-3.5 w-3.5" aria-hidden />
+          Fit for {candidate.position?.title ?? "this role"}
+        </div>
+        <h2 id="fit-heading" className="mt-3 text-2xl font-semibold tracking-tight">
+          Assessment in review
+        </h2>
+        <p className="mt-0.5 text-sm text-muted-foreground">
+          We're finishing this candidate's assessment. The fit verdict and its
+          supporting evidence appear here once our team approves it.
+        </p>
+        {candidate.summary && (
+          <p className="mt-3 text-sm leading-relaxed text-foreground/90">
+            {candidate.summary}
+          </p>
+        )}
+      </section>
+    );
+  }
   const dashArray = 251.2; // 2π·40
   // The ring encodes the fit band, not the internal number — a percentage arc
   // would leak engine precision onto an employer surface.

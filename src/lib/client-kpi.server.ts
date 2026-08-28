@@ -987,12 +987,19 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     const s = v.trim();
     return /^https?:\/\/[^\s]+$/i.test(s) ? s : null;
   };
-  const links = {
-    linkedin: isHttp(cp.linkedin_url),
-    portfolio: isHttp(cp.portfolio_url),
-    github: isHttp((cp as AnyRow).github_url),
-    website: isHttp((cp as AnyRow).website_url ?? (cp as AnyRow).website),
-  };
+  // LinkedIn and personal sites are contact channels — a client one click from
+  // the candidate's inbox has effectively received their contact details. They
+  // follow the same release gate as email and phone (checked further down,
+  // where `released` is derived).
+  const contactReleased = Boolean(row.contact_released_at);
+  const links = contactReleased
+    ? {
+        linkedin: isHttp(cp.linkedin_url),
+        portfolio: isHttp(cp.portfolio_url),
+        github: isHttp((cp as AnyRow).github_url),
+        website: isHttp((cp as AnyRow).website_url ?? (cp as AnyRow).website),
+      }
+    : { linkedin: null, portfolio: null, github: null, website: null };
 
   const fit = toFitPresentation(
     run?.fit_label ?? run?.fit_band ?? null,

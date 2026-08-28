@@ -42,6 +42,14 @@ export type FitPresentation = {
   recommendation: string; // short verb clause
   tone: "confident" | "positive" | "neutral" | "cautious" | "dissuade";
   accent: "emerald" | "sky" | "amber" | "slate" | "rose";
+  /**
+   * False when neither a score nor a recognised label existed and the band is
+   * only the fallback. Surfaces must render "in review" in that case — a
+   * candidate with no completed assessment must never wear a real band. A
+   * dealbreaker-capped 15 once showed as "Consider" on the client route
+   * because the fallback band was indistinguishable from a computed one.
+   */
+  assessed: boolean;
 };
 
 /**
@@ -96,7 +104,7 @@ const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
 
 
 
-const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
+const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band" | "assessed">> = {
   exceptional: {
     headline: "Exceptional",
     recommendation: "Prioritise for interview",
@@ -154,7 +162,7 @@ export function toFitPresentation(
     band = RAW_LABEL_MAP[key] ?? null;
   }
   const resolved: FitBand = band ?? "consider";
-  return { band: resolved, ...BAND_TABLE[resolved] };
+  return { band: resolved, ...BAND_TABLE[resolved], assessed: band !== null };
 }
 
 /**
