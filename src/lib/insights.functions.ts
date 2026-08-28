@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import {
   computeCost,
   computeDropout,
@@ -40,14 +41,10 @@ export const getClientInsights = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    const { data: membership } = await supabase
-      .from("memberships")
-      .select("role, status")
-      .eq("user_id", userId)
-      .eq("organization_id", data.organization_id)
-      .eq("status", "active")
-      .maybeSingle();
-    if (!membership) throw new Error("Forbidden");
+    // Canonical access check — a raw membership read denied platform staff in
+    // org-preview mode, so the Analytics page failed with a bare "Forbidden"
+    // for the people preview exists for. Read-only page: read access suffices.
+    await assertWorkspaceAccess(supabase, userId, data.organization_id);
 
     const w = makeWindow(data.days);
 
@@ -122,14 +119,8 @@ export const getInsightsPositions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => z.object({ organization_id: z.string().uuid() }).parse(raw))
   .handler(async ({ data, context }) => {
-    const { data: membership } = await context.supabase
-      .from("memberships")
-      .select("id")
-      .eq("user_id", context.userId)
-      .eq("organization_id", data.organization_id)
-      .eq("status", "active")
-      .maybeSingle();
-    if (!membership) throw new Error("Forbidden");
+    // Same canonical check as getClientInsights — staff support view included.
+    await assertWorkspaceAccess(context.supabase, context.userId, data.organization_id);
 
     const { data: pos } = await context.supabase
       .from("positions")

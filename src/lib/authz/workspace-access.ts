@@ -179,3 +179,24 @@ export async function assertWorkspaceTeamAccess(
   }
   return access;
 }
+
+/**
+ * Throws unless the caller may VIEW the workspace team. Same audience as
+ * managing (workspace admins, platform staff) with one difference: staff in
+ * org-preview keep read access. P25 makes impersonation read-only by zeroing
+ * canManageTeam, which is correct for invites and role changes — but the team
+ * roster is a read, and gating it on the manage flag made the preview's Team
+ * page fail with "You need team access" for the exact people preview exists
+ * for. Every mutation stays on assertWorkspaceTeamAccess.
+ */
+export async function assertWorkspaceTeamView(
+  supabase: Db,
+  userId: string,
+  orgId: string,
+): Promise<WorkspaceAccess> {
+  const access = await assertWorkspaceAccess(supabase, userId, orgId);
+  if (!access.canManageTeam && !access.isStaff) {
+    throw new WorkspaceAccessError("You need team access in this workspace.");
+  }
+  return access;
+}

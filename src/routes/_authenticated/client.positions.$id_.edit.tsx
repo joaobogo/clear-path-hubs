@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit
   },
 
 
- loader: async ({ context, params }) => {
+ loader: async ({ context, params, location }) => {
  let d;
  try {
   d = await context.queryClient.ensureQueryData({
@@ -25,9 +25,14 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit
  } catch (e) {
   // A seat without edit rights should still be able to open its own role:
   // fall back to the read-only role page instead of a permission wall.
+  // Search params ride along — staff org-preview context lives there.
   const msg = e instanceof Error ? e.message.replace(/^Error: /, "") : "";
   if (msg.includes("forbidden")) {
-   throw redirect({ to: "/client/positions/$id", params: { id: params.id } });
+   throw redirect({
+    to: "/client/positions/$id",
+    params: { id: params.id },
+    search: location.search as Record<string, unknown>,
+   });
   }
   throw e;
  }

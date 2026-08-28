@@ -12,7 +12,10 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
  * address too.
  */
 export const Route = createFileRoute("/_authenticated/client/insights")({
-  beforeLoad: () => {
-    throw redirect({ to: "/client/executive" });
+  beforeLoad: ({ search }) => {
+    // Carry the query string across. Staff org-preview lives in `?org=…&preview=…`,
+    // so a bare redirect dropped the workspace context and landed a previewing
+    // admin on "your staff account isn't a member of a client organization".
+    throw redirect({ to: "/client/executive", search: search as Record<string, unknown> });
   },
 });

@@ -45,7 +45,7 @@ import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
 import {
   assertWorkspaceAccess,
-  assertWorkspaceTeamAccess,
+  assertWorkspaceTeamView,
   readWorkspaceAccess,
 } from "@/lib/authz/workspace-access";
 import { hydrateClientCandidateProfiles } from "@/lib/client-candidate-hydrate.server";
@@ -92,7 +92,9 @@ export const getClientTeam = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     // One canonical access resolution: membership, role and staff flag all come
     // from the shared helper, which also handles archived workspaces and staff.
-    await assertWorkspaceTeamAccess(context.supabase, context.userId, data.orgId);
+    // View gate, not manage: staff in org-preview may read the roster (P25
+    // keeps every mutation below on the manage gate).
+    await assertWorkspaceTeamView(context.supabase, context.userId, data.orgId);
 
     // After authorization, use the privileged server client for the roster so
     // organization-row visibility cannot make an authorized team appear broken.
