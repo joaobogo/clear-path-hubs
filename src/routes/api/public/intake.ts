@@ -129,6 +129,15 @@ const intakePayloadSchema = z
       path: ["mustHaveSkills"],
       message: "Provide at least 3 must-have skills or a job description of at least 40 characters",
     },
+  )
+  // An inverted range silently became the role's official compensation and
+  // diverged from the JD text with no check anywhere (audit S-15).
+  .refine(
+    (v) => v.budgetMin == null || v.budgetMax == null || v.budgetMin <= v.budgetMax,
+    {
+      path: ["budgetMax"],
+      message: "The maximum compensation must be at least the minimum",
+    },
   );
 
 const normalizeCompany = (name: string) => name.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.,]/g, "");

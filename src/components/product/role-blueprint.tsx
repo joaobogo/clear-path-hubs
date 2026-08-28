@@ -230,6 +230,15 @@ export function RoleBlueprint({ position, activity = [], defaultOpen = true }: R
             emptyHint="No hard blockers set"
           />
         </div>
+        {/* This column is the intake's free-text list; the gates candidates
+            actually face are the screening questions tagged as dealbreakers.
+            Saying so keeps the brief honest when the two differ (audit S-16). */}
+        {dealbreakers.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            Dealbreakers are enforced through the screening questions candidates
+            answer when applying.
+          </p>
+        )}
 
         {/* Facts strip */}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

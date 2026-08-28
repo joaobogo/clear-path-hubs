@@ -216,7 +216,7 @@ export const getReviewRecord = createServerFn({ method: "POST" })
       s
         .from("positions")
         .select(
-          "id,title,status,updated_at,requirements,preferred_requirements,description,evaluation_weights,seniority,employment_type,organizations(id,name)",
+          "id,title,status,updated_at,requirements,preferred_requirements,description,evaluation_weights,seniority,employment_type,dealbreakers,organizations(id,name)",
         )
         .eq("id", m.position_id)
         .maybeSingle(),
@@ -300,7 +300,56 @@ export const getReviewRecord = createServerFn({ method: "POST" })
       previousRun,
       runs,
       evidenceItems: (itemsRes.data ?? []) as AnyRow[],
-      eligibility: (eligibilityRes.data ?? []) as AnyRow[],
+      // Configured gates, not just triggered ones. eligibility_checks rows are
+      // written REACTIVELY (when a dealbreaker answer fires), so a role with
+      // configured dealbreakers routinely showed "No qualifiers configured."
+      // on the page built to review them, while the client brief listed one
+      // and two screening questions wore dealbreaker tags — three surfaces,
+      // three answers (audit S-16). Synthesize a row per configured gate that
+      // has no stored check yet.
+      eligibility: (() => {
+        const stored = (eligibilityRes.data ?? []) as AnyRow[];
+        const storedText = stored
+          .map((r) => `${r.qualifier_key ?? ""} ${r.qualifier_label ?? ""}`.toLowerCase())
+          .join(" | ");
+        const synthesized: AnyRow[] = [];
+        const posDealbreakers = Array.isArray((positionRes.data as AnyRow)?.dealbreakers)
+          ? ((positionRes.data as AnyRow).dealbreakers as AnyRow[])
+          : [];
+        for (const [i, d] of posDealbreakers.entries()) {
+          const label = String(d?.label ?? d ?? "").trim();
+          if (!label) continue;
+          if (storedText.includes(label.toLowerCase())) continue;
+          synthesized.push({
+            id: `config-dealbreaker-${i}`,
+            qualifier_key: `configured:${i}`,
+            qualifier_label: label,
+            qualifier_kind: "dealbreaker",
+            status: "not_evaluated",
+            reason: "Configured on the role brief — no screening answer has tested it yet.",
+            evidence: null,
+            updated_at: null,
+          });
+        }
+        for (const a of (answersRes.data ?? []) as AnyRow[]) {
+          const q = a.screening_questions;
+          if (!q?.dealbreaker) continue;
+          const label = String(q.question ?? "").trim();
+          if (!label || storedText.includes(label.toLowerCase().slice(0, 40))) continue;
+          synthesized.push({
+            id: `config-question-${a.id}`,
+            qualifier_key: `question:${a.id}`,
+            qualifier_label: label,
+            qualifier_kind: "dealbreaker",
+            // A stored check would exist if the answer had failed the gate.
+            status: "eligible",
+            reason: "Screening dealbreaker — answered without triggering the gate.",
+            evidence: null,
+            updated_at: a.created_at ?? null,
+          });
+        }
+        return [...stored, ...synthesized];
+      })(),
       eligibilityResolution: resolveEligibilityFromRows(
         (eligibilityRes.data ?? []) as unknown as EligibilityCheckRow[],
       ),
