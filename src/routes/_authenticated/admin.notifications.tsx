@@ -1,3 +1,4 @@
+import { APP_LOCALE } from "@/lib/format/datetime";
 import { createFileRoute } from "@tanstack/react-router";
 import { useDeliveryFailures } from "@/lib/admin/use-delivery-failures";
 import { Card } from "@/components/ui/card";
@@ -37,7 +38,7 @@ function NotificationsPage() {
     | undefined;
 
   const num = (value: number | undefined) =>
-    query.data && typeof value === "number" ? value.toLocaleString() : "—";
+    query.data && typeof value === "number" ? value.toLocaleString(APP_LOCALE) : "—";
 
   const tiles = [
     { label: "Emails sent (7d)", value: num(volume?.emailSent) },

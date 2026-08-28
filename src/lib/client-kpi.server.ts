@@ -4,6 +4,7 @@
 //
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
+import { APP_LOCALE } from "@/lib/format/datetime";
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
 import { parseLoomLink } from "@/lib/media/loom-link";
 import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
@@ -650,7 +651,7 @@ function formatMoney(v: unknown, currency?: string | null): string | null {
       maximumFractionDigits: 0,
     }).format(n);
   } catch {
-    return `${cur} ${Math.round(n).toLocaleString()}`;
+    return `${cur} ${Math.round(n).toLocaleString(APP_LOCALE)}`;
   }
 }
 

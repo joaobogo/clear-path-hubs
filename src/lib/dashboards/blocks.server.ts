@@ -7,6 +7,7 @@
  *  2. Loading each block from the records that already exist. Blocks return
  *     null when there is genuinely nothing yet; they never invent a zero.
  */
+import { APP_LOCALE } from "@/lib/format/datetime";
 import { clientStatusLabel } from "@/lib/vocabulary";
 import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { findPlan } from "@/lib/payments-catalog";
@@ -312,7 +313,7 @@ async function spendPerHire(sb: AnySupabase, org: string): Promise<BlockData | n
   const currency = String(paid[0].currency ?? "gbp").toUpperCase();
   const hireCount = confirmedHires;
   const fmt = (n: number) =>
-    `${currency === "GBP" ? "£" : currency === "USD" ? "$" : `${currency} `}${Math.round(n).toLocaleString()}`;
+    `${currency === "GBP" ? "£" : currency === "USD" ? "$" : `${currency} `}${Math.round(n).toLocaleString(APP_LOCALE)}`;
   if (hireCount === 0) {
     return {
       kind: "stat",

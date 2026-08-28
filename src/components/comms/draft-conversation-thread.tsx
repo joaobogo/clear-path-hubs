@@ -27,7 +27,7 @@ import { Loader2, Paperclip, Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useClientOrgSearch } from "@/lib/use-client-org";
-import { formatTime } from "@/lib/format/datetime";
+import { APP_LOCALE, formatTime } from "@/lib/format/datetime";
 
 function timeLabel(iso: string) {
   return formatTime(iso);
@@ -392,7 +392,7 @@ export function DraftConversationThread({
             </p>
           )}
           <p className={cn("text-xs text-muted-foreground", sendError && "opacity-70")}>
-            Attach {ALLOWED_ATTACHMENT_HINT}. Up to {MAX_MESSAGE_CHARS.toLocaleString()}{" "}
+            Attach {ALLOWED_ATTACHMENT_HINT}. Up to {MAX_MESSAGE_CHARS.toLocaleString(APP_LOCALE)}{" "}
             characters.
           </p>
         </form>

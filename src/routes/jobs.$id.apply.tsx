@@ -1451,8 +1451,8 @@ function ApplyPage() {
                     className="mt-1 text-xs text-muted-foreground"
                   >
                     {form.cover_letter.length === 0
-                      ? `Up to ${COVER_NOTE_MAX.toLocaleString()} characters. A few sentences is plenty.`
-                      : `${form.cover_letter.length.toLocaleString()} of ${COVER_NOTE_MAX.toLocaleString()} characters`}
+                      ? `Up to ${COVER_NOTE_MAX.toLocaleString(APP_LOCALE)} characters. A few sentences is plenty.`
+                      : `${form.cover_letter.length.toLocaleString(APP_LOCALE)} of ${COVER_NOTE_MAX.toLocaleString(APP_LOCALE)} characters`}
                   </p>
                 </div>
 

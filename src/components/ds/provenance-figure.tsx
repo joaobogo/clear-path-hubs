@@ -1,3 +1,4 @@
+import { APP_LOCALE } from "@/lib/format/datetime";
 import { useState } from "react";
 import { Info } from "lucide-react";
 import {
@@ -50,14 +51,14 @@ export function ProvenanceFigure({
               <div className="flex justify-between gap-4">
                 <dt className="text-muted-foreground">Records</dt>
                 <dd className="font-medium tabular-nums">
-                  {provenance.record_count.toLocaleString()}
+                  {provenance.record_count.toLocaleString(APP_LOCALE)}
                 </dd>
               </div>
               {typeof provenance.closed_searches === "number" && (
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Closed searches</dt>
                   <dd className="font-medium tabular-nums">
-                    {provenance.closed_searches.toLocaleString()}
+                    {provenance.closed_searches.toLocaleString(APP_LOCALE)}
                   </dd>
                 </div>
               )}

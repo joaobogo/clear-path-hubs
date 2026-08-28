@@ -230,11 +230,11 @@ function PositionsPage() {
               ? "Couldn't load positions"
               : listQuery.isLoading
               ? "Loading positions…"
-              : `${total.toLocaleString()} position${total === 1 ? "" : "s"} across all clients`}
+              : `${total.toLocaleString(APP_LOCALE)} position${total === 1 ? "" : "s"} across all clients`}
             {!listQuery.isLoading && !listQuery.isError && hiddenTest > 0 && (
               <>
                 {" · "}
-                <span>{hiddenTest.toLocaleString()} hidden as test/internal</span>
+                <span>{hiddenTest.toLocaleString(APP_LOCALE)} hidden as test/internal</span>
               </>
             )}
 

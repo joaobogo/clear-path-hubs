@@ -1,3 +1,4 @@
+import { APP_LOCALE } from "@/lib/format/datetime";
 /**
  * Attachment rules for client-visible message threads.
  *
@@ -142,7 +143,7 @@ export function checkMessageBody(
   if (trimmed.length > MAX_MESSAGE_CHARS) {
     return {
       ok: false,
-      error: `That message is ${trimmed.length.toLocaleString()} characters. The limit is ${MAX_MESSAGE_CHARS.toLocaleString()}.`,
+      error: `That message is ${trimmed.length.toLocaleString(APP_LOCALE)} characters. The limit is ${MAX_MESSAGE_CHARS.toLocaleString(APP_LOCALE)}.`,
     };
   }
   return { ok: true, body: trimmed };

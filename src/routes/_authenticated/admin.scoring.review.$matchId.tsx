@@ -120,9 +120,14 @@ function provenance(item: Any) {
 
 function fmt(v: unknown) {
   if (v == null || v === "") return "—";
+  // Numbers are never enum tokens. 54.3 once matched the token pattern below
+  // (digits, dot, digits) and was "humanized" into "54 3" — the page built for
+  // hand-verifying scores garbled every decimal it showed.
+  if (typeof v === "number") return Number.isInteger(v) ? String(v) : v.toFixed(1);
   const s = String(v);
   // Stored enum tokens ("provisional_scoring") read as a label, never as a key.
-  return /^[a-z0-9]+([_.][a-z0-9]+)+$/.test(s) ? humanizeCode(s) : s;
+  // A token must contain a letter — numeric strings pass through untouched.
+  return /[a-z]/.test(s) && /^[a-z0-9]+([_.][a-z0-9]+)+$/.test(s) ? humanizeCode(s) : s;
 }
 
 function ReviewWorkspace() {

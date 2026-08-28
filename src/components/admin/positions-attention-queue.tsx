@@ -102,7 +102,7 @@ export function PositionsAttentionQueue({ includeTest }: { includeTest: boolean 
         <div className="rounded-lg border bg-card px-4 py-10 text-center">
           <p className="text-sm font-medium">No jobs need attention right now</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {data ? `${data.checked.toLocaleString()} open job${data.checked === 1 ? "" : "s"} checked` : ""}
+            {data ? `${data.checked.toLocaleString(APP_LOCALE)} open job${data.checked === 1 ? "" : "s"} checked` : ""}
             {data && data.reviewed_today > 0 ? ` · ${data.reviewed_today} marked reviewed today` : ""}
           </p>
         </div>
@@ -111,7 +111,7 @@ export function PositionsAttentionQueue({ includeTest }: { includeTest: boolean 
     {data && (
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">
-        {data.rows.length} of {data.checked.toLocaleString()} open jobs need attention
+        {data.rows.length} of {data.checked.toLocaleString(APP_LOCALE)} open jobs need attention
         {data.reviewed_today > 0 ? ` · ${data.reviewed_today} reviewed today and hidden` : ""}
       </p>
 

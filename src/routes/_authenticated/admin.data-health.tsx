@@ -1,3 +1,4 @@
+import { APP_LOCALE } from "@/lib/format/datetime";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -110,8 +111,8 @@ function DataHealthMetrics() {
       <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
           label="People in graph"
-          value={data.graph.persons.toLocaleString()}
-          detail={`${data.graph.edges.toLocaleString()} edges · ${data.graph.density} per person`}
+          value={data.graph.persons.toLocaleString(APP_LOCALE)}
+          detail={`${data.graph.edges.toLocaleString(APP_LOCALE)} edges · ${data.graph.density} per person`}
         />
         <Stat
           label="Duplicate rate"
@@ -127,7 +128,7 @@ function DataHealthMetrics() {
         />
         <Stat
           label="Orphaned records"
-          value={orphanTotal.toLocaleString()}
+          value={orphanTotal.toLocaleString(APP_LOCALE)}
           tone={orphanTotal > 0 ? "warn" : "good"}
           detail="Rows that cannot be traced to an owner"
         />
@@ -231,7 +232,7 @@ function DataHealthMetrics() {
               ) : (
                 Object.entries(data.graph.edges_by_kind).map(([k, v]) => (
                   <Badge key={k} variant="secondary" className="font-normal">
-                    {k.replace(/_/g, " ")}: {v.toLocaleString()}
+                    {k.replace(/_/g, " ")}: {v.toLocaleString(APP_LOCALE)}
                   </Badge>
                 ))
               )}

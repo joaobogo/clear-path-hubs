@@ -456,9 +456,9 @@ function ExpressIntakePage() {
       ? "Not decided yet"
       : [
           state.salaryMin && state.salaryMax
-            ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
+            ? `${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)}–${Number(
                 state.salaryMax,
-              ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+              ).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
             : "",
           state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
           state.equity ? COMP_EQUITY_LABELS[state.equity as "none"] : "",

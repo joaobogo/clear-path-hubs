@@ -1,4 +1,5 @@
 import { toFitPresentation } from "@/lib/client-fit-presentation";
+import { DEFAULT_WEIGHTS } from "@/lib/scoring/score-composition";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, GitCommit, History, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
@@ -210,21 +211,31 @@ function pickCategories(
   result: Any,
 ): { label: string; value: number | null; weight?: number }[] {
   const cb = result?.category_breakdown ?? {};
+  // Same resolution as the client-facing composition panel: the run's stored
+  // weights win, DEFAULT_WEIGHTS otherwise. This panel once hardcoded
+  // 50/30/20 while the engine scored with 60/20/20, so an admin checking the
+  // arithmetic by hand always got a different number than the candidate's.
+  const stored = (result?.category_weights ?? {}) as Record<string, unknown>;
+  const weightOf = (key: keyof typeof DEFAULT_WEIGHTS): number => {
+    const n = Number(stored[key]);
+    if (Number.isFinite(n) && n > 0) return n <= 1 ? n : n / 100;
+    return DEFAULT_WEIGHTS[key];
+  };
   return [
     {
       label: "Must-have coverage",
       value: run.must_have_coverage ?? cb.must_have ?? null,
-      weight: 0.5,
+      weight: weightOf("must_have"),
     },
     {
       label: "Preferred coverage",
       value: run.preferred_coverage ?? cb.preferred ?? null,
-      weight: 0.3,
+      weight: weightOf("preferred"),
     },
     {
       label: "Screening alignment",
       value: cb.screening_alignment ?? null,
-      weight: 0.2,
+      weight: weightOf("screening_alignment"),
     },
   ];
 }
