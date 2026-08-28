@@ -52,6 +52,7 @@ import {
 import { ExportControl } from "@/components/admin/export-control";
 import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { publishedBand, publishedScoreDisplay } from "@/lib/scoring/published-score";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, pluralize, formatNumber } from "@/lib/format/datetime";
 
@@ -879,6 +880,7 @@ function CandidatesPage() {
                     <a href={`/admin/candidates/${m.match_id}`} className="block hover:underline">
                       <div className="flex items-center gap-1.5 font-medium">
                         {m.full_name ?? "Unnamed candidate"}
+                        <UnicornMarker score={m} />
                         {m.has_critical_flag && (
                           <AlertTriangle
                             className="h-3.5 w-3.5 text-destructive"
@@ -1008,7 +1010,10 @@ function CandidatesPage() {
             <a href={`/admin/candidates/${m.match_id}`} className="block">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="truncate font-medium">{m.full_name ?? "Unnamed candidate"}</div>
+                  <div className="flex items-center gap-1.5 truncate font-medium">
+                    {m.full_name ?? "Unnamed candidate"}
+                    <UnicornMarker score={m} />
+                  </div>
                   <div className="truncate text-xs text-muted-foreground">
                     {m.org_name} · {m.position_title}
                   </div>
