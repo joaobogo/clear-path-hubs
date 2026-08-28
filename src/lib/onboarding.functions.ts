@@ -331,7 +331,16 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     const orgRow = (orgRes.data ?? null) as Db;
     const rows = (posRes.data ?? []) as Db[];
     const preferredId = draft.position_id ?? orgRow?.pilot_position_id ?? null;
-    const row = rows.find((r) => r.id === preferredId) ?? rows[0] ?? null;
+    // A LIVE role outranks a stale draft pointer. The wizard read "Step 2 of
+    // 10 · Define the first role" (from a 22 Aug draft) while the role had
+    // been approved and published for days — real activity is the stronger
+    // evidence, the same rule deriveOnboardingCompletion applies (audit C-04).
+    const liveRow = rows.find(
+      (r) =>
+        r.search_live_at ||
+        ["active", "paused", "filled", "closed"].includes(String(r.status ?? "")),
+    );
+    const row = liveRow ?? rows.find((r) => r.id === preferredId) ?? rows[0] ?? null;
 
     let position: OnboardingPositionState | null = null;
     if (row) {

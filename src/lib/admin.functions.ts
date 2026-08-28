@@ -1584,6 +1584,27 @@ export const getClientPreview = createServerFn({ method: "GET" })
 
 // ─── Pipeline Health ─────────────────────────────────────────────────────────
 
+/**
+ * The admin interviews desk. /admin/interviews used to redirect silently to
+ * the decision backlog while the overview counted "Interviews to coordinate 3"
+ * with nowhere to coordinate them (audit A-09). One list, newest need first.
+ */
+export const getAdminInterviews = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data, error } = await s
+      .from("interviews")
+      .select(
+        "id,status,requested_at,scheduled_at,completed_at,notes,candidate_match_id,candidate_matches!inner(id,organization_id,candidate_profiles(full_name),positions!inner(id,title,organizations!inner(id,name)))",
+      )
+      .order("requested_at", { ascending: true })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    return { interviews: (data ?? []) as AnyRow[] };
+  });
+
 export const getPipelineHealth = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

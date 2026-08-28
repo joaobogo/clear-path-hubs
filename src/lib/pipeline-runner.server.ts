@@ -7,6 +7,7 @@
 
 import { extractCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
+import { parseCvFacts } from "./cv/parse-facts";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
 import { generateCandidateInsights, type CandidateInsights } from "./candidate-insights.server";
@@ -389,6 +390,10 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       organizationName: (ctx.match.organizations as any)?.name ?? "the organization",
       screening,
     });
+    // Deterministic fallback facts — PT/EN section parsing fills what the
+    // hydration model missed, so "Parsed facts" never shows "—" for a fact
+    // that is plainly in the CV (audit S-20).
+    const cvFacts = parseCvFacts(cvText);
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,
       candidate_profile_id: ctx.match.candidate_profile_id,
@@ -396,10 +401,15 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       engine_version: ENGINE_VERSION,
       extracted: {
         cv_length: cvText.length,
-        skills: (freshProfile?.skills ?? []) as Json,
+        skills: (((freshProfile?.skills as string[] | null)?.length
+          ? freshProfile?.skills
+          : cvFacts.skills) ?? []) as Json,
         experience: (freshProfile?.experience ?? []) as Json,
         headline: freshProfile?.headline ?? null,
         location: freshProfile?.location ?? null,
+        years_experience: cvFacts.years_experience,
+        languages: cvFacts.languages as unknown as Json,
+        linkedin_url: cvFacts.linkedin_url,
         hydration: { applied: hydration.applied, skipped: hydration.skipped, ok: hydration.ok, reason: hydration.reason ?? null },
         insights: insights as unknown as Json,
         insights_error,
@@ -413,6 +423,25 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       raw_text_sample: cvText.slice(0, 800),
     }, { onConflict: "candidate_match_id,engine_version" });
     steps.push({ step: "insights", ok: !!insights, note: insights ? `verdicts:${insights.requirement_verdicts.length}` : insights_error ?? "skipped" });
+
+    // Additive profile backfill: fill ONLY fields the profile does not have.
+    // "LinkedIn Not provided" rendered for a candidate whose CV printed the
+    // URL (audit S-20); a deterministic extract closes that without ever
+    // overwriting hydrated or hand-entered values.
+    if (cvFacts.linkedin_url) {
+      await s
+        .from("candidate_profiles")
+        .update({ linkedin_url: cvFacts.linkedin_url })
+        .eq("id", ctx.match.candidate_profile_id)
+        .is("linkedin_url", null);
+    }
+    if (cvFacts.years_experience != null) {
+      await s
+        .from("candidate_profiles")
+        .update({ years_experience: cvFacts.years_experience })
+        .eq("id", ctx.match.candidate_profile_id)
+        .is("years_experience", null);
+    }
 
     const pos = ctx.position;
     if (!pos || pos.status !== "active") {
@@ -545,6 +574,7 @@ export async function runEnrichmentOnly(
       organizationName: (ctx.match.organizations as any)?.name ?? "the organization",
       screening,
     });
+    const cvFacts = parseCvFacts(cvText);
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,
       candidate_profile_id: ctx.match.candidate_profile_id,
@@ -552,10 +582,15 @@ export async function runEnrichmentOnly(
       engine_version: ENGINE_VERSION,
       extracted: {
         cv_length: cvText.length,
-        skills: (freshProfile?.skills ?? []) as Json,
+        skills: (((freshProfile?.skills as string[] | null)?.length
+          ? freshProfile?.skills
+          : cvFacts.skills) ?? []) as Json,
         experience: (freshProfile?.experience ?? []) as Json,
         headline: freshProfile?.headline ?? null,
         location: freshProfile?.location ?? null,
+        years_experience: cvFacts.years_experience,
+        languages: cvFacts.languages as unknown as Json,
+        linkedin_url: cvFacts.linkedin_url,
         refreshed_at: new Date().toISOString(),
         insights: insights as unknown as Json,
         insights_error,
