@@ -21,6 +21,40 @@ function hasContactDetail(line: string): boolean {
   return phoneCandidate.replace(/\D/g, "").length >= 7;
 }
 
+/**
+ * Collapse letter-spaced PDF headings. Designers space out masthead titles
+ * ("T E C H N I C A L  P R O D U C T  D E V E L O P E R") and text extraction
+ * keeps every letter as its own token; a character-offset slice through one of
+ * these produced "evidence" quotes that were somebody's name banner.
+ */
+function stripLetterSpacedRuns(text: string): string {
+  return text
+    .replace(/(?:\b[A-Za-zÀ-ÿ]\b[ \t]+){6,}\b[A-Za-zÀ-ÿ]\b/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+const LINK_HUB_WORDS = [
+  "github", "linkedin", "portfolio", "email", "website", "phone",
+  "contact", "blog", "twitter", "behance", "dribbble",
+];
+const PROSE_MARKERS =
+  /\b(the|and|with|for|from|our|their|using|built|led|worked|developed|managed|created|designed|delivered|responsible)\b/g;
+
+/**
+ * A CV masthead is a strip of platform names and title words with no prose —
+ * "FULL STACK DEVELOPER · GitHub Portfolio Email LinkedIn". It carries zero
+ * evidence about any requirement, but its keyword density made it a favourite
+ * pick for offset-sliced quotes.
+ */
+export function isLinkHubDebris(raw: string | null | undefined): boolean {
+  if (!raw) return false;
+  const t = String(raw).toLowerCase();
+  const hits = LINK_HUB_WORDS.filter((w) => new RegExp(`\\b${w}\\b`).test(t)).length;
+  if (hits < 3) return false;
+  return (t.match(PROSE_MARKERS) ?? []).length <= 1;
+}
+
 const PHONE_RE_GLOBAL = /\+?\d[\d\s().-]{6,}\d/g;
 
 /** Remove every address, domain and phone number from a line of text. */
@@ -139,8 +173,10 @@ function capAtWord(text: string): string {
  */
 export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
-  if (isTemplatedEvidence(raw)) return "";
-  const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
+  if (isTemplatedEvidence(raw) || isLinkHubDebris(raw)) return "";
+  const collapsed = stripLetterSpacedRuns(
+    stripContactLines(String(raw)).replace(/\s+/g, " ").trim(),
+  );
   if (!collapsed) return "";
   const base = dropOpeningFragment(stripLeadingJunk(collapsed));
   const trimmedStart = snapStart(base);
@@ -295,9 +331,11 @@ function renderCapAtWord(text: string): string {
  */
 export function renderQuote(raw: string | null | undefined): string {
   if (!raw) return "";
-  if (isTemplatedEvidence(raw)) return "";
+  if (isTemplatedEvidence(raw) || isLinkHubDebris(raw)) return "";
 
-  const scrubbed = stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim();
+  const scrubbed = stripLetterSpacedRuns(
+    stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim(),
+  );
   if (!scrubbed) return "";
 
   const base = renderDropOpeningFragment(

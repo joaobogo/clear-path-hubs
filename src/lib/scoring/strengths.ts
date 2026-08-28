@@ -44,11 +44,16 @@ export function deriveStrengths(
     .filter((a) => a.status === "met")
     .map((a) => `Demonstrated: ${a.text}`);
 
-  // Partial rows carry real quotes; they are evidence the reviewer should see,
-  // not silence. Worded so nobody mistakes them for a cleared requirement.
+  // Genuine strengths stand alone. Partial rows already appear under concerns
+  // as "worth confirming" — repeating them here made both columns read as the
+  // same list for every mid-scoring candidate. They pad this list only when
+  // NOTHING fully cleared the bar, preserving the original guarantee that an
+  // evidenced candidate never reads "Strengths: none surfaced".
+  if (met.length > 0) return met.slice(0, limit);
+
   const partial = assessment
     .filter((a) => a.status === "partial" && hasEvidence(a))
     .map((a) => `Evidence found, pending confirmation: ${a.text}`);
 
-  return [...met, ...partial].slice(0, limit);
+  return partial.slice(0, limit);
 }

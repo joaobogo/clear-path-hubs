@@ -35,3 +35,37 @@ describe("renderQuote — opening fragments (F9)", () => {
     expect(out.startsWith("2020")).toBe(true);
   });
 });
+
+describe("renderQuote — CV masthead debris (audit S-07)", () => {
+  it("rejects a letter-spaced PDF name banner outright", () => {
+    // Live finding: a candidate's spaced-out masthead was quoted as evidence
+    // of "fluent professional English".
+    const out = renderQuote(
+      "E L O P E R T E C H N I C A L P R O D U C T D E V E L O P E R PROFESSIONAL EXPERIENCE Curitiba - PR CONTACT",
+    );
+    expect(out).not.toMatch(/[A-Z] [A-Z] [A-Z]/);
+  });
+
+  it("collapses a letter-spaced run inside otherwise real prose", () => {
+    const out = renderQuote(
+      "T E C H N I C A L P R O D U C T D E V E L O P E R Built and shipped integrations for enterprise clients across four markets with weekly releases",
+    );
+    expect(out).toContain("Built and shipped integrations");
+    expect(out).not.toMatch(/[A-Z] [A-Z] [A-Z]/);
+  });
+
+  it("rejects a link-hub strip as evidence", () => {
+    // "GitHub Portfolio Email LinkedIn" carries zero evidence for anything.
+    const out = renderQuote(
+      "FULL STACK DEVELOPER INTEGRATIONS & PRODUCT DEVELOPMENT GitHub Portfolio Email LinkedIn",
+    );
+    expect(out).toBe("");
+  });
+
+  it("keeps prose that merely mentions the platforms", () => {
+    const out = renderQuote(
+      "Built the company's GitHub automation and the LinkedIn integration used by the recruiting team for sourcing and outreach",
+    );
+    expect(out).toContain("GitHub automation");
+  });
+});

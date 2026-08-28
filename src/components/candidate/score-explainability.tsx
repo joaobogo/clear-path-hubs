@@ -113,12 +113,15 @@ export function ScoreExplainability({
         <div className="grid gap-3 md:grid-cols-2">
           <ReasonBlock
             tone="positive"
-            title="Why this score is high"
+            // Evidence-neutral: this column once read "Why this score is
+            // high" above a 24, and repeated partial rows from the concerns
+            // column under a contradictory banner.
+            title="What the evidence supports"
             items={reasons.strengths}
           />
           <ReasonBlock
             tone="negative"
-            title="What pulled the score down"
+            title="Not evidenced or needs confirming"
             items={reasons.concerns}
           />
         </div>
