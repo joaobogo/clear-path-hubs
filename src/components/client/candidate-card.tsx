@@ -1,6 +1,7 @@
 import { Link, useSearch } from "@tanstack/react-router";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { CandidatePrimaryAction } from "@/components/client/candidate-primary-action";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
