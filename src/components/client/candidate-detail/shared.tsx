@@ -14,6 +14,7 @@ import { DownloadCvButton } from "@/components/download-cv-button";
 import { CvPreviewDialog } from "@/components/cv-preview-dialog";
 import { zoneDisplay } from "@/lib/time/zone-label";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
