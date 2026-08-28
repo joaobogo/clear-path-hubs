@@ -119,8 +119,17 @@ export async function loadAccountDelivery(
   // We count both 'filled' and 'hired' matches to ensure hiring numbers are accurate.
   const filledRoles = positions.filter((p) => p.status === "filled" || p.status === "hired").length;
 
-  // Candidates in play: the one reader again.
-  const inPipeline = await countCandidatesInPlay(admin, organizationId);
+  // Staff pipeline, not the client's. countCandidatesInPlay counts only
+  // client-VISIBLE matches, so a workspace with eight applications mid-scoring
+  // read "Candidates in pipeline 0" beside "8 parsed CVs" on its own account
+  // record. For staff, every application that has not reached a terminal state
+  // is in the pipeline — published or not.
+  const { count: inPipelineCount } = await a
+    .from("candidate_matches")
+    .select("id", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .not("stage", "in", "(hired,not_moving_forward)");
+  const inPipeline = inPipelineCount ?? (await countCandidatesInPlay(admin, organizationId));
 
   const [{ loadDecisionBacklog }, { loadSlaBreaches }] = await Promise.all([
     import("./admin-decision-backlog.server"),
