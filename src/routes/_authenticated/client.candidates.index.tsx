@@ -432,12 +432,14 @@ function CandidatesPage() {
         disabled={!compareCheck.ok}
         title={compareCheck.reason ?? undefined}
       >
-        Compare {selectedCandidates.length > 0 ? `${selectedCandidates.length} ` : ""}side by side
+        {/* Counts render only from a comparable selection — "Compare 1 side
+            by side" is not a thing (audit S-19/C-08). */}
+        Compare {selectedCandidates.length >= COMPARE_MIN ? `${selectedCandidates.length} ` : ""}side by side
       </Button>
       <BulkCvDownloadButton
         targets={cvTargets}
         label={
-          selectedCandidates.length > 0
+          selectedCandidates.length >= 2
             ? `Download ${plural(selectedCandidates.length, "CV", "CVs")} (ZIP)`
             : "Download CVs (ZIP)"
         }

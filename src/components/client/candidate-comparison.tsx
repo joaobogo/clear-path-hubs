@@ -23,7 +23,7 @@ import {
 } from "@/lib/client-compare";
 import { humanizeConcernSentence } from "@/lib/client/validation-list";
 import { verifiedStrengths } from "@/lib/client/score-breakdown";
-import { renderQuote } from "@/lib/evidence/quote-hygiene";
+import { renderQuote, humanizeSource } from "@/lib/evidence/quote-hygiene";
 import { zoneDisplay } from "@/lib/time/zone-label";
 
 
@@ -105,7 +105,14 @@ function buildObservations(cands: ClientCandidateDTO[]): string[] {
     );
   }
 
-  const concerns = cands.map((c) => ({ n: c.candidate.display_name, k: c.concerns.length }));
+  // SAME counter as the strength board's "Areas to validate" axis — this
+  // observation once counted the concerns array while the table counted
+  // partial-evidence rows, so the sentence said 3 above a column reading 2
+  // (audit S-19). One number, one source.
+  const concerns = cands.map((c) => ({
+    n: c.candidate.display_name,
+    k: getEvidenceCounts(c.requirement_rows ?? []).partial,
+  }));
   const maxConcerns = Math.max(...concerns.map((x) => x.k));
   const minConcerns = Math.min(...concerns.map((x) => x.k));
   if (maxConcerns !== minConcerns) {
@@ -287,7 +294,18 @@ export function CompareSheet({
                   <div className="text-xs text-muted-foreground truncate">
                     {c.candidate.headline ?? c.position?.title}
                   </div>
-                  <div className="mt-1 text-xs text-muted-foreground">{c.fit.headline}</div>
+                  {/* The number belongs in the header — the audit found the
+                      comparison showed only band words while every decision
+                      turns on the score (S-19). */}
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {typeof c.score === "number" ? (
+                      <span className="font-semibold tabular-nums text-foreground">
+                        {Math.round(c.score)}
+                      </span>
+                    ) : null}
+                    {typeof c.score === "number" ? " · " : ""}
+                    {c.fit.headline}
+                  </div>
                   <Link
                     to="/client/candidates/$id"
                     params={{ id: c.match_id }}
@@ -300,15 +318,26 @@ export function CompareSheet({
               ))}
             </div>
 
-            {/* Fit recommendation row */}
+            {/* Fit recommendation row. A decided candidate gets the decision,
+                not stale advice — "Prioritise for interview" rendered for a
+                HIRED candidate because the band table knows nothing about
+                stage (audit S-19). */}
             <ComparisonRow
               label="Recommendation"
               cols={cols}
-              hide={diffOnly && allSame(candidates.map((c) => c.fit.recommendation))}
+              hide={diffOnly && allSame(candidates.map((c) =>
+                c.stage === "hired" || c.stage === "not_moving_forward"
+                  ? c.stage
+                  : c.fit.recommendation,
+              ))}
             >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs text-foreground/90">
-                  {c.fit.recommendation}
+                  {c.stage === "hired"
+                    ? "Hired — decision made"
+                    : c.stage === "not_moving_forward"
+                      ? "Not moving forward — decision made"
+                      : c.fit.recommendation}
                 </div>
               ))}
             </ComparisonRow>
@@ -341,38 +370,49 @@ export function CompareSheet({
               ))}
             </ComparisonRow>
 
-            {/* Logistics — location + timezone + work authorization */}
-            <ComparisonRow
-              label="Logistics"
-              cols={cols}
-              hide={
-                diffOnly &&
-                allSame(
-                  candidates.map(
-                    (c) =>
-                      `${c.candidate.location ?? ""}|${c.candidate.timezone ?? ""}|${c.work_authorization ?? ""}`,
-                  ),
-                )
-              }
-            >
-              {candidates.map((c) => (
-                <div key={c.match_id} className="text-xs">
-                  <div>
-                    {c.candidate.location ?? (
-                      <span className="text-muted-foreground">Not provided</span>
-                    )}
+            {/* Logistics — location + timezone + work authorization. When the
+                values are identical for every candidate they collapse to one
+                line: the same authorization sentence printed three times told
+                the reader nothing (audit S-19). */}
+            {allSame(
+              candidates.map(
+                (c) =>
+                  `${c.candidate.location ?? ""}|${c.candidate.timezone ?? ""}|${c.work_authorization ?? ""}`,
+              ),
+            ) ? (
+              !diffOnly && (
+                <ComparisonRow label="Logistics" cols={1}>
+                  <div className="text-xs text-muted-foreground">
+                    Same for all candidates:{" "}
+                    {candidates[0]?.candidate.location ?? "Location not provided"}
+                    {candidates[0]?.candidate.timezone
+                      ? ` · TZ ${zoneDisplay(candidates[0].candidate.timezone)}`
+                      : ""}
+                    {` · Auth: ${candidates[0]?.work_authorization ?? "Not provided"}`}
                   </div>
-                  {c.candidate.timezone && (
-                    <div className="text-muted-foreground">
-                      TZ {zoneDisplay(c.candidate.timezone)}
+                </ComparisonRow>
+              )
+            ) : (
+              <ComparisonRow label="Logistics" cols={cols}>
+                {candidates.map((c) => (
+                  <div key={c.match_id} className="text-xs">
+                    <div>
+                      {c.candidate.location ?? (
+                        <span className="text-muted-foreground">Not provided</span>
+                      )}
                     </div>
-                  )}
-                  <div className="text-muted-foreground">
-                    Auth: {c.work_authorization ?? "Not provided"}
+                    {c.candidate.timezone && (
+                      <div className="text-muted-foreground">
+                        TZ {zoneDisplay(c.candidate.timezone)}
+                      </div>
+                    )}
+                    <div className="text-muted-foreground">
+                      Auth: {c.work_authorization ?? "Not provided"}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </ComparisonRow>
+                ))}
+              </ComparisonRow>
+            )}
 
             {/* Compensation alignment */}
             <ComparisonRow
@@ -547,11 +587,21 @@ export function CompareSheet({
                 <div />
                 {candidates.map((c) => (
                   <ul key={c.match_id} className="text-xs space-y-1 list-disc pl-4">
-                    {c.interview_guide.slice(0, 3).map((q, i) => (
-                      <li key={i}>{q.question}</li>
-                    ))}
-                    {c.interview_guide.length === 0 && (
-                      <li className="list-none text-muted-foreground">No suggestions available.</li>
+                    {/* Interview questions for a decided candidate are stale
+                        advice (audit S-19). */}
+                    {c.stage === "hired" || c.stage === "not_moving_forward" ? (
+                      <li className="list-none text-muted-foreground">
+                        Decision already made — no interview needed.
+                      </li>
+                    ) : (
+                      <>
+                        {c.interview_guide.slice(0, 3).map((q, i) => (
+                          <li key={i}>{q.question}</li>
+                        ))}
+                        {c.interview_guide.length === 0 && (
+                          <li className="list-none text-muted-foreground">No suggestions available.</li>
+                        )}
+                      </>
                     )}
                   </ul>
                 ))}
@@ -706,7 +756,11 @@ function RequirementGrid({
                                   render — raw slices open mid-word. */}
                               <p>{renderQuote(cell.evidence) || "Direct evidence confirmed."}</p>
                               {cell.source && (
-                                <p className="mt-1 text-muted-foreground">Source: {cell.source}</p>
+                                <p className="mt-1 text-muted-foreground">
+                                  {/* "cv:435-590" is an offset, not a source
+                                      a client can read (audit S-22). */}
+                                  Source: {humanizeSource(cell.source)}
+                                </p>
                               )}
                             </>
                           ) : (

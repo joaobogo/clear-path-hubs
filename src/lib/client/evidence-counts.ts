@@ -12,6 +12,8 @@ export interface EvidenceCounts {
   met: number;
   partial: number;
   unknown: number;
+  /** Rows where the evidence conflicts with the requirement. */
+  contradicted: number;
   total: number;
   must_met: number;
   must_total: number;
@@ -34,6 +36,10 @@ export function getEvidenceCounts(rows: RequirementRow[]): EvidenceCounts {
   const unknown = resolved.filter(
     (r) => r.status === "not_evidenced" || r.status === "missing",
   ).length;
+  // Contradicted rows were counted in the total but assigned to no bucket, so
+  // "2 fully met · 2 partly · 4 not evidenced" summed to 8 of "your 10
+  // requirements" (audit S-18). Every non-N/A row now lands somewhere.
+  const contradicted = resolved.filter((r) => r.status === "contradicted").length;
   const total = resolved.filter((r) => r.status !== "not_applicable").length;
   const related = resolved.filter(
     (r) => r.status !== "not_applicable" && hasRelatedSignal(r.row),
@@ -51,6 +57,7 @@ export function getEvidenceCounts(rows: RequirementRow[]): EvidenceCounts {
     met,
     partial,
     unknown,
+    contradicted,
     total,
     must_met,
     must_total,

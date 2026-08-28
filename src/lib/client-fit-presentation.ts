@@ -15,6 +15,7 @@ import {
   isRelevantEvidence,
   isCandidateHeadline,
 } from "@/lib/evidence/quote-hygiene";
+import { isNearDuplicate } from "@/lib/evidence/evidence-presentation";
 import { classifyBand, type ScoreBandKey, isTopBand } from "@/lib/scoring/bands";
 import { passageSupportsRequirement } from "./client/evidence-relevance";
 import { resolveRequirementStatus } from "@/lib/client/requirement-status";
@@ -319,7 +320,21 @@ export function evidenceSupport(
       source: e.source || e.source_kind || null,
       location: (e.source_location ?? e.location ?? null) as EvidenceLocation,
     }))
-    .filter((e) => e.snippet.length > 0);
+    .filter((e) => e.snippet.length > 0)
+    // The engine stores overlapping offset slices of the SAME CV span as
+    // separate items (cv:435-583 and cv:435-590 both rendered — audit S-22).
+    // Collapse near-duplicates once at the source, keeping the fuller quote,
+    // so every consumer — including ones that read row.evidence raw — agrees.
+    .filter(
+      (e, i, all) =>
+        !all.some(
+          (o, j) =>
+            j !== i &&
+            isNearDuplicate(o.snippet, e.snippet) &&
+            (o.snippet.length > e.snippet.length ||
+              (o.snippet.length === e.snippet.length && j < i)),
+        ),
+    );
 
   /**
    * Cross-requirement rescue.

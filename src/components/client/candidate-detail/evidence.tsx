@@ -209,6 +209,9 @@ function coverageVerdictLine(counts: EvidenceCounts): string | null {
   if (met > 0) chunks.push(`${met} fully met`);
   if (partial > 0) chunks.push(`${partial} partly evidenced`);
   if (unknown > 0) chunks.push(`${unknown} not evidenced`);
+  // Conflicted rows count toward the total, so they must appear in the
+  // sentence — the parts once summed to 8 of "your 10 requirements" (S-18).
+  if (counts.contradicted > 0) chunks.push(`${counts.contradicted} in conflict`);
   return `Scored against your ${total} requirements — ${chunks.join(" · ")}.`;
 }
 
@@ -446,7 +449,12 @@ export const RequirementRowView = memo(function RequirementRowView({
   // are the ones actually read, were not. Same helper, same treatment.
   const safeExplanation = renderQuote(row.explanation) || null;
   const safeClaim = renderQuote(claim) || null;
-  const evidence = presentEvidenceList(row.evidence, [safeClaim, safeExplanation]);
+  // The claim is NOT in the exclusion list: suppressing a quote for restating
+  // the rationale made "Show evidence (2)" in Requirement coverage and
+  // "Show evidence (1)" in Why this candidate for the same requirement
+  // (audit S-22). A quote matching the claim is verbatim corroboration —
+  // it renders with its Verified tag; only the explanation line dedupes.
+  const evidence = presentEvidenceList(row.evidence, [safeExplanation]);
   const context = presentEvidenceList(row.context, [
     safeClaim,
     safeExplanation,

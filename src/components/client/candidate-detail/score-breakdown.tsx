@@ -142,9 +142,16 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
         </span>
       </div>
       <p className="mt-2 text-[11px] text-muted-foreground">
-        Percentages are weighted counts of the requirements listed below: a fully
-        evidenced requirement scores one point, a partly evidenced one half.
-{` The parts add up to ${totalPts}, the score shown above.`}
+        {/* The old sentence promised the percentages were counts of the rows
+            below even when the display-side evidence check had re-graded rows
+            and the stored share no longer matched (66.7% above 2+2-of-6 rows,
+            audit S-18). Claim row provenance only when it is true. */}
+        {lines.some(
+          (k) => (k.key === "must_have" || k.key === "preferred") && !k.basisLabel,
+        )
+          ? "Percentages come from the scoring run's own assessment. A percentage can sit above a plain count of the list below when the run settled a requirement the list still shows as pending confirmation."
+          : "Percentages are weighted counts of the requirements listed below: a fully evidenced requirement scores one point, a partly evidenced one half."}
+        {` The parts add up to ${totalPts}, the score shown above.`}
       </p>
     </div>
   );

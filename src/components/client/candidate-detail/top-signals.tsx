@@ -2,6 +2,7 @@ import { memo } from "react";
 import { CheckCircle2, Info } from "lucide-react";
 import { buildValidationList } from "@/lib/client/validation-list";
 import { evidenceBackedStrengths } from "@/lib/client/score-breakdown";
+import { renderQuote, humanizeSource } from "@/lib/evidence/quote-hygiene";
 
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
@@ -20,9 +21,12 @@ export const TopSignals = memo(function TopSignals({
     .slice(0, 3)
     .map((r) => ({
       id: r.id,
+      // These two lines are the ones a client actually reads first — they
+      // rendered raw snippets and raw offset sources ("(cv:435-583)"),
+      // bypassing the hygiene every other quote gets (audit S-22).
       text: r.label,
-      detail: r.evidence[0]?.snippet ?? null,
-      source: r.evidence[0]?.source ?? null,
+      detail: renderQuote(r.evidence[0]?.snippet) || null,
+      source: r.evidence[0]?.source ? humanizeSource(r.evidence[0].source) : null,
     }));
 
   // Free text only speaks when the requirement rows back it up, so this list
