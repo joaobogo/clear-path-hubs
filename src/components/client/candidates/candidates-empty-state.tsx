@@ -55,6 +55,7 @@ export function CandidatesEmptyState({
         rolesInSetup: signals.rolesInSetup,
         discoveryStarted: signals.discoveryStarted,
         inProcessing: signals.inProcessing,
+        awaitingRelease: signals.awaitingRelease,
         runsCompleted: signals.runsCompleted,
         runsRunning: signals.runsRunning,
         sourcing: signals.sourcing,

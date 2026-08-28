@@ -198,6 +198,8 @@ export function resolveNoCandidatesState(signals: {
   discoveryStarted: boolean;
   /** Candidates currently being processed or scored (not yet approved). */
   inProcessing: number;
+  /** Candidates assessed but not yet published to this workspace. */
+  awaitingRelease?: number;
   /** Discovery finished but produced nobody above the bar. */
   runsCompleted: number;
   /** Runs queued or executing right now (for the scoped role when filtered). */
@@ -211,6 +213,7 @@ export function resolveNoCandidatesState(signals: {
 }): SurfaceStateContent {
   const { activeRoles, rolesInSetup, discoveryStarted, inProcessing, runsCompleted } = signals;
   const runsRunning = signals.runsRunning ?? 0;
+  const awaitingRelease = signals.awaitingRelease ?? 0;
   const sourcing = signals.sourcing ?? null;
 
   if (activeRoles === 0 && rolesInSetup > 0) {
@@ -271,6 +274,25 @@ export function resolveNoCandidatesState(signals: {
     };
   }
 
+  // Candidates that are assessed but not yet published are still "in review"
+  // from the client's point of view. Without this branch, a workspace whose
+  // whole pipeline sat between scoring and publication fell through to the
+  // "search finished with nobody qualified" verdict — false and alarming.
+  if (awaitingRelease > 0) {
+    return {
+      id: "candidates.awaiting-release",
+      icon: "candidates",
+      tone: "waiting",
+      title: "Candidates are in final review",
+      why: `${awaitingRelease} candidate${awaitingRelease === 1 ? " has" : "s have"} been assessed and ${awaitingRelease === 1 ? "is" : "are"} being checked by your TaaSFlow team before reaching you.`,
+      expected: EXPECTED_PROCESSING,
+      populates: "Each candidate appears here as soon as your team approves and publishes them.",
+      activity: "Automated assessment is done — your team's review and approval is the current step.",
+      action: { label: "See role progress", to: "/client/positions" },
+      secondaryAction: { label: "Message your team", to: "/client/conversations" },
+    };
+  }
+
   // A search that is still running can never be reported as finished. When we
   // are scoped to one role we say which stage it is in and since when.
   if (runsRunning > 0 || (sourcing && !sourcing.finished)) {
@@ -292,7 +314,13 @@ export function resolveNoCandidatesState(signals: {
     };
   }
 
-  if (runsCompleted > 0 && runsRunning === 0 && inProcessing === 0 && (!sourcing || sourcing.finished)) {
+  if (
+    runsCompleted > 0 &&
+    runsRunning === 0 &&
+    inProcessing === 0 &&
+    awaitingRelease === 0 &&
+    (!sourcing || sourcing.finished)
+  ) {
     return {
       id: "candidates.no-qualifiers",
       icon: "candidates",

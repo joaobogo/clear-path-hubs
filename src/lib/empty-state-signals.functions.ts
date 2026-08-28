@@ -17,6 +17,12 @@ export interface EmptyStateSignals {
   discoveryStarted: boolean;
   /** Candidates currently in extraction/scoring — not yet reviewable. */
   inProcessing: number;
+  /**
+   * Candidates assessed (scored or flagged for human review) but not yet
+   * published to the client. From the client's perspective these are still
+   * "in review" — a finished run with candidates here is NOT a failed search.
+   */
+  awaitingRelease: number;
   /** Finished score runs (discovery produced results, qualifying or not). */
   runsCompleted: number;
   /** Runs queued or executing right now. */
@@ -49,6 +55,7 @@ const EMPTY: EmptyStateSignals = {
   rolesInSetup: 0,
   discoveryStarted: false,
   inProcessing: 0,
+  awaitingRelease: 0,
   runsCompleted: 0,
   runsRunning: 0,
   awaitingDecision: 0,
@@ -100,6 +107,7 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
         activeRoles,
         rolesInSetup,
         inProcessing,
+        awaitingRelease,
         runsCompleted,
         runsRunning,
         awaitingDecision,
@@ -118,6 +126,11 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
           sb.from("positions").select("id", head).eq("organization_id", org).eq("status", "draft"),
         ),
         countRows(scopedMatches().in("processing_state", ["queued", "parsing", "parsed", "enriching", "ready_to_score", "scoring"])),
+        countRows(
+          scopedMatches()
+            .in("processing_state", ["scored", "manual_review_required"])
+            .neq("client_visibility", "visible"),
+        ),
         countRows(scopedRuns().eq("status", "completed")),
         countRows(scopedRuns().in("status", ["queued", "running"])),
         countRows(scopedMatches().eq("client_visibility", "visible").eq("stage", "delivered")),
@@ -180,7 +193,10 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
         sourcing = {
           stageLabel,
           startedAt,
-          finished: runsRunning === 0 && inProcessing === 0 && runsCompleted > 0,
+          // Candidates awaiting publication mean review is still in progress
+          // from the client's point of view — the search is not "finished".
+          finished:
+            runsRunning === 0 && inProcessing === 0 && awaitingRelease === 0 && runsCompleted > 0,
         };
       }
 
@@ -189,6 +205,7 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
         rolesInSetup,
         discoveryStarted: runsCompleted + runsRunning > 0 || inProcessing > 0,
         inProcessing,
+        awaitingRelease,
         runsCompleted,
         runsRunning,
         awaitingDecision,
