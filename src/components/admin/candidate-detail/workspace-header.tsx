@@ -132,6 +132,24 @@ function WorkspaceHeader({
         </div>
       </div>
       {(() => {
+        // A dealbreaker outcome is not a processing failure. These candidates
+        // completed scoring — a screening answer capped them — but the state
+        // machine parks them in manual_review_required, and this banner then
+        // claimed "evidence extraction did not complete" beside a real score.
+        if (currentRun?.contradiction_status === "disqualifying_answer") {
+          return (
+            <Alert>
+              <AlertTitle>Disqualified by screening answer</AlertTitle>
+              <AlertDescription>
+                A screening answer failed a dealbreaker for this role, so the
+                score is capped. The assessment itself completed — review the
+                Screening tab to see the answer, and override with a reason if
+                the dealbreaker should not apply.
+              </AlertDescription>
+            </Alert>
+          );
+        }
+
         // REQUIRED FIX: Banner reflects only the LATEST run's state.
         // If the latest run is completed (parsing/scored), we hide the banner.
         const state = String(m.processing_state ?? "");

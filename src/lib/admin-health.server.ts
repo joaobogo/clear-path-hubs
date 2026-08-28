@@ -145,7 +145,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
       admin
         .from("candidate_matches")
         .select(
-          "id, processing_state, processing_updated_at, candidate_profiles:candidate_profile_id(full_name)",
+          "id, processing_state, processing_updated_at, score_runs!candidate_matches_current_score_run_id_fkey(contradiction_status), candidate_profiles:candidate_profile_id(full_name)",
         )
         .in("processing_state", [
           "queued",
@@ -211,6 +211,16 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
     });
   }
   for (const r of cvRes.data ?? []) {
+    // A dealbreaker cap parks a match in manual_review_required with a
+    // COMPLETED assessment behind it. That is a screening outcome, not an
+    // unprocessed CV — listing five of them under "UNPROCESSED CVS" sent an
+    // operator hunting for extraction failures that never happened.
+    if (
+      r.processing_state === "manual_review_required" &&
+      (r.score_runs as Any)?.contradiction_status === "disqualifying_answer"
+    ) {
+      continue;
+    }
     issues.push({
       id: r.id as string,
       kind: "cv",

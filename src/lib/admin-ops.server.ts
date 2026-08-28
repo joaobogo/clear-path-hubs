@@ -365,7 +365,8 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       items: ((review.data ?? []) as Any[]).slice(0, PREVIEW_LIMIT).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
-        title_ref: posRef(m.positions?.id, m.positions?.title),
+        // No title_ref: the renderer prefers it over title, and these rows' title
+        // is the CANDIDATE — the position is already the clickable subtitle.
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
         subtitle_refs: [
           posRef(m.positions?.id, m.positions?.title),
@@ -391,7 +392,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       items: overdue.slice(0, 8).map((m) => ({
         id: m.match_id,
         title: m.candidate_name ?? "Candidate",
-        title_ref: posRef(m.position_id, m.position_title),
+        // No title_ref — candidate name renders; position is in the subtitle.
         subtitle: `${m.position_title ?? "—"} · ${m.client_name ?? "—"}`,
         
         subtitle_refs: [
@@ -431,7 +432,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       items: interviewsAwaitingTime.slice(0, PREVIEW_LIMIT).map((iv) => ({
         id: iv.id,
         title: iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate",
-        title_ref: posRef(iv.candidate_matches?.positions?.id, iv.candidate_matches?.positions?.title),
+        // No title_ref — candidate name renders; position is in the subtitle.
         subtitle: `${iv.candidate_matches?.positions?.title ?? "—"} · ${
           iv.candidate_matches?.positions?.organizations?.name ?? "—"
         }`,
@@ -492,7 +493,8 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       items: ((stale.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
-        title_ref: posRef(m.positions?.id, m.positions?.title),
+        // No title_ref: the renderer prefers it over title, and these rows' title
+        // is the CANDIDATE — the position is already the clickable subtitle.
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
         
         subtitle_refs: [
