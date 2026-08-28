@@ -56,15 +56,17 @@ export const Route = createRootRouteWithContext<{
       },
     ],
     links: [
+      // Only files that exist in /public — /favicon.svg and
+      // /apple-touch-icon.png were referenced but never shipped, so every
+      // page load logged 404s.
       {
         rel: "icon",
-        type: "image/svg+xml",
-        href: "/favicon.svg",
+        type: "image/png",
+        href: "/favicon.png",
       },
       {
         rel: "apple-touch-icon",
-        sizes: "180x180",
-        href: "/apple-touch-icon.png",
+        href: "/favicon.png",
       },
       {
         rel: "manifest",

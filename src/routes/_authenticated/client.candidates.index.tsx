@@ -224,9 +224,12 @@ function CandidatesPage() {
  currentPage * PAGE_SIZE,
  );
 
-  // Comparison state — seed from ?compare= (highest priority) or local storage.
-  // Nothing is pre-selected: the client must tick candidates before Compare or
-  // Bulk CV download become active.
+  // Comparison state — seed from ?compare= (highest priority), or from local
+  // storage ONLY when the URL explicitly reopens the comparison view. A fresh
+  // visit must start with nothing selected: silently restoring a previous
+  // session's ticks made the button read "Compare 1 side by side" with no
+  // visible selection anywhere, and the first click on a candidate appeared
+  // to toggle them OFF.
   const initialCompare = useMemo(() => {
     if (search.compare) {
       return search.compare
@@ -234,8 +237,9 @@ function CandidatesPage() {
         .map((s: string) => s.trim())
         .filter(Boolean);
     }
-    return orgId ? loadCompareSelection(orgId) : [];
-  }, [search.compare, orgId]);
+    if (search.view === "compare" && orgId) return loadCompareSelection(orgId);
+    return [];
+  }, [search.compare, search.view, orgId]);
 
   const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
   const [compareOpen, setCompareOpen] = useState(false);
