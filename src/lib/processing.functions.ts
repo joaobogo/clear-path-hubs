@@ -413,7 +413,9 @@ export const rescore = createServerFn({ method: "POST" })
     // written UNLESS the input hash matches a completed run for this match, in which case
     // that run is reused (idempotent rescore).
     let state = await stepEnrich(data.match_id, trace_id);
-    if (state === "ready_to_score") state = await stepScore(data.match_id, trace_id);
+    if (state === "ready_to_score" || state === "scored")
+      state = await stepScore(data.match_id, trace_id, { force: true });
+
     return { ok: true, state, trace_id };
   });
 
