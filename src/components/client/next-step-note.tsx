@@ -43,9 +43,12 @@ export function NextStepNote({
       )}
       <p className="leading-relaxed">
         <span className="font-medium text-foreground">Next: </span>
-        {next.sentence}{" "}
+        {next.sentence}
+        {/* Labelled owner — a bare trailing "You" read as a sentence cut
+            off mid-thought (audit #3, finding 16). */}
+        {" · "}
         <span className="font-medium text-foreground">
-          {waitingOnClient ? "You" : "Recruiting team"}
+          With: {waitingOnClient ? "you" : "the recruiting team"}
         </span>
         {clientDue && (
           <>

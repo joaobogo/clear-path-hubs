@@ -36,6 +36,19 @@ export function publicOrgName(name: string | null | undefined): string {
   return out;
 }
 
+/**
+ * True when the stored name carries an internal marker ("(Demo)", "[Test]").
+ * Stripping the marker makes the NAME safe for display, but the ORG is still
+ * internal — a demo workspace's role was live on the public job board taking
+ * real applications (audit #3, finding 7). Surfaces that list content, not
+ * just names, must exclude these organisations entirely.
+ */
+export function hasInternalOrgMarker(name: string | null | undefined): boolean {
+  const raw = typeof name === "string" ? name.trim() : "";
+  if (!raw) return false;
+  return publicOrgName(raw) !== raw;
+}
+
 /** Same as `publicOrgName`, falling back when nothing usable remains. */
 export function publicOrgNameOr(
   name: string | null | undefined,

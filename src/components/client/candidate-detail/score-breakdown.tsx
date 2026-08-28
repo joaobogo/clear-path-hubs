@@ -240,8 +240,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
             Conflicting signals found
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            {candidate.evaluation.contradiction} — flagged in evidence review before
-            this candidate was delivered to your workspace.
+            {candidate.evaluation.contradiction}
           </p>
         </div>
       )}

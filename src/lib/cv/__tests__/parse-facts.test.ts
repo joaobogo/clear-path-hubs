@@ -101,3 +101,31 @@ describe("parseCvFacts", () => {
     expect(facts.linkedin_url).toBe("https://linkedin.com/in/maria-j");
   });
 });
+
+describe("isGarbageCvText (audit #3, finding 4)", () => {
+  it("flags binary PDF byte soup", async () => {
+    const { isGarbageCvText } = await import("@/lib/cv/parse-facts");
+    const soup = "M\u0007\u0002\u0019_\u00d2\u00a1\u0001\u0003 \u0004s{\u0005\u0006\u0007 U\u000449 ".repeat(40);
+    expect(isGarbageCvText(soup)).toBe(true);
+  });
+  it("flags replacement-character floods", async () => {
+    const { isGarbageCvText } = await import("@/lib/cv/parse-facts");
+    expect(isGarbageCvText(("V`F\uFFFD0_\uFFFDO\uFFFD \uFFFD\uFFFD ~,\uFFFD3 ").repeat(30))).toBe(true);
+  });
+  it("passes a normal English CV", async () => {
+    const { isGarbageCvText } = await import("@/lib/cv/parse-facts");
+    expect(
+      isGarbageCvText(
+        "Full Stack Developer with 6+ years of experience building SaaS products. Skills: React, TypeScript, Node.js.".repeat(5),
+      ),
+    ).toBe(false);
+  });
+  it("passes a Portuguese CV with accents", async () => {
+    const { isGarbageCvText } = await import("@/lib/cv/parse-facts");
+    expect(
+      isGarbageCvText(
+        "Desenvolvedora com 5 anos de experiência em aplicações web. Habilidades: integração, segurança, comunicação.".repeat(5),
+      ),
+    ).toBe(false);
+  });
+});

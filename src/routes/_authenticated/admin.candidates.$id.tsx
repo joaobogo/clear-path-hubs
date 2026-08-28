@@ -280,7 +280,14 @@ function CandidateWorkspace() {
 
           <section>
             {tab === "profile" && (
-              <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} evidence={evidence} />
+              <ProfileTab
+                cp={cp}
+                pos={pos}
+                m={m}
+                siblings={siblings}
+                evidence={evidence}
+                capped={publishedRun?.contradiction_status === "disqualifying_answer"}
+              />
             )}
             {heavyQuery.isError && HEAVY_TABS.has(tab) && (
               <div

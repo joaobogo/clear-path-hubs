@@ -176,7 +176,11 @@ export async function loadClientOpenItems(
       kind: "pending_decision",
       id: row.id,
       subject_id: row.id,
-      label: "A candidate is waiting on your decision",
+      // Named, scored rows: five identical "A candidate is waiting…" lines
+      // told the client nothing but the wait times (audit #3, finding 17).
+      label: row.candidate_name
+        ? `${row.candidate_name}${row.approved_score != null ? ` (${Math.round(row.approved_score)})` : ""} is waiting on your decision`
+        : "A candidate is waiting on your decision",
       context: roleLine(row.position_id),
       href: `/client/candidates/${row.id}`,
       due_at: row.client_decision_due_at,

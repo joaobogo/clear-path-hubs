@@ -130,6 +130,44 @@ export function extractLinkedinUrl(cvText: string): string | null {
   return url.startsWith("http") ? url : `https://${url}`;
 }
 
+/**
+ * True when extracted "text" is binary garbage rather than prose (audit #3
+ * finding 4: a CV whose extraction produced raw PDF bytes was scored 28.6 and
+ * its byte soup quoted as evidence). Three cheap signals, all of which real
+ * CVs pass comfortably in any latin-script language:
+ *   - printable ratio: most characters are letters/digits/punctuation/space
+ *   - letter ratio: a meaningful share are actual letters
+ *   - replacement characters (�) are rare
+ */
+export function isGarbageCvText(text: string | null | undefined): boolean {
+  const t = (text ?? "").slice(0, 20_000);
+  if (t.length < 60) return false; // emptiness is handled elsewhere
+  let printable = 0;
+  let letters = 0;
+  let replacement = 0;
+  for (const ch of t) {
+    const code = ch.codePointAt(0)!;
+    if (code === 0xfffd) {
+      replacement += 1;
+      continue;
+    }
+    if (
+      (code >= 0x20 && code <= 0x7e) ||
+      code === 0x09 ||
+      code === 0x0a ||
+      code === 0x0d ||
+      (code >= 0xc0 && code <= 0x17f) || // latin-1 supplement + extended-A
+      code === 0x2013 || code === 0x2014 || code === 0x2019 || code === 0x201c ||
+      code === 0x201d || code === 0x2022 || code === 0x00b7
+    ) {
+      printable += 1;
+      if (/\p{L}/u.test(ch)) letters += 1;
+    }
+  }
+  const n = t.length;
+  return printable / n < 0.85 || letters / n < 0.35 || replacement / n > 0.05;
+}
+
 export function parseCvFacts(cvText: string): ParsedCvFacts {
   const text = cvText ?? "";
   return {

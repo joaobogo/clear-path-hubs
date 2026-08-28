@@ -52,6 +52,7 @@ export function RoleStatusList({
             >
               <Link
                 to="/client/positions/$id"
+      search={(prev: Record<string, unknown>) => prev}
                 params={{ id: r.position_id }}
                 className={
                   compact

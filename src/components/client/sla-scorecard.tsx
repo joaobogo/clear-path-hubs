@@ -52,6 +52,7 @@ function RoleBlock({ role, showLink }: { role: RoleSla; showLink: boolean }) {
           {showLink ? (
             <Link
               to="/client/positions/$id"
+      search={(prev: Record<string, unknown>) => prev}
               params={{ id: role.positionId }}
               className="truncate font-medium hover:underline"
             >

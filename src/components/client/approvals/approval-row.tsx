@@ -165,6 +165,7 @@ export function ApprovalRowItem({
           {task.position_title && task.position_id && (
             <Link
               to="/client/positions/$id"
+      search={(prev: Record<string, unknown>) => prev}
               params={{ id: task.position_id }}
               className="hover:underline"
             >

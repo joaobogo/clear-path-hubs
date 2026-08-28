@@ -13,7 +13,7 @@ import {
 import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
 import { jobDescriptionSummary } from "@/lib/marketing/job-description";
 import { QA_E2E_COOKIE, qaEndpointsEnabled } from "@/lib/public-api/qa-endpoint-gate";
-import { publicOrgNameOr } from "@/lib/org/public-org-name";
+import { publicOrgNameOr, hasInternalOrgMarker } from "@/lib/org/public-org-name";
 
 
 
@@ -191,6 +191,10 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
         const reqs = Array.isArray(p.requirements) ? (p.requirements as unknown[]) : [];
         return desc.length >= 80 && reqs.length > 0;
       })
+      // A demo/test workspace's role must never be public: the Northwind demo
+      // job sat on the live board accepting real applications (audit #3,
+      // finding 7). The internal marker on the RAW org name is the signal.
+      .filter((p) => !hasInternalOrgMarker(employerNames.get(p.id)))
       .map((p) => {
         const comp = resolveCompensation(
           p.compensation,
@@ -290,6 +294,11 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       ) => Promise<{ data: unknown; error: unknown }>
     )("public_position_employer", { _id: data.id });
     const employer = (employerRow ?? null) as { name?: string; logo_url?: string | null } | null;
+
+    // Same belt-and-braces as the board list: an org whose raw name carries an
+    // internal marker ("(Demo)") is internal even when it was never flagged in
+    // the database — its role's direct URL must 404 publicly (audit #3, #7).
+    if (hasInternalOrgMarker(employer?.name)) return null;
 
     // Only the public `posting` subtree of intake_context is exposed, via a
     // definer lookup. anon has no column grant on intake_context itself, which

@@ -118,5 +118,8 @@ export const SLA_STATE_LABEL: Record<SlaState, string> = {
   missed: "Missed",
   on_track: "On track",
   at_risk: "At risk",
-  pending: "Not started",
+  // "Not started" sat beside "Search live since 25 Aug" (audit #3, #16) —
+  // pending means no commitment is measurable yet, not that nothing is
+  // happening.
+  pending: "Nothing due yet",
 };

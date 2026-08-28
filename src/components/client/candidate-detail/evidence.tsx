@@ -143,8 +143,9 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
             Conflicting signals found
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            {pretty(ev.contradiction)} — flagged in evidence review before this
-            candidate was delivered to your workspace.
+            {/* Already a complete human sentence naming the pair — never an
+                enum plus boilerplate (audit #3, finding 2). */}
+            {ev.contradiction}
           </p>
         </div>
       )}

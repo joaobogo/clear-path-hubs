@@ -27,6 +27,7 @@ import {
   type FitPresentation,
 } from "@/lib/client-fit-presentation";
 import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
+import { contradictionSentence } from "@/lib/client/contradiction-copy";
 import {
   clientMethodLabel,
   normalizeEvaluationMethod,
@@ -117,6 +118,8 @@ export const TOP_FIT_LABELS = [
 export type KpiRow = {
   id: string;
   candidate_profile_id: string;
+  /** Candidate's display name, for queue rows that must name the person. */
+  candidate_name: string | null;
   position_id: string;
   stage: MatchStage;
   approved_score_run_id: string | null;
@@ -193,6 +196,7 @@ export async function loadKpiRows(
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
        client_decision_due_at, recommendation, contact_released_at, intro_video_url,
+       candidate_profiles(full_name),
        score_runs:approved_score_run_id (score, final_score, fit_label, fit_band),
        organizations!inner(name)`
     )
@@ -284,6 +288,7 @@ export async function loadKpiRows(
   return (matches as AnyRow[]).map((m) => ({
     id: m.id,
     candidate_profile_id: m.candidate_profile_id,
+    candidate_name: (m.candidate_profiles?.full_name as string | null) ?? null,
     position_id: m.position_id,
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
@@ -1268,10 +1273,14 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     evaluation: {
       engine_version: run?.engine_version ?? null,
       blueprint_version: run?.blueprint_version ?? null,
-      contradiction:
-        run?.contradiction_status && run.contradiction_status !== "none"
-          ? String(run.contradiction_status)
-          : null,
+      // A human sentence naming the conflicting pair, or null — never the
+      // raw enum ("screening_contradicts_cv" reached a client card, audit #3).
+      contradiction: contradictionSentence(
+        run?.contradiction_status,
+        (run?.result as AnyRow)?.contradiction_rows as
+          | Array<{ question?: string; requirement?: string }>
+          | undefined,
+      ),
       completed_at: run?.completed_at ?? null,
       method: normalizeEvaluationMethod((run as AnyRow)?.evaluation_method),
       method_label: clientMethodLabel((run as AnyRow)?.evaluation_method),

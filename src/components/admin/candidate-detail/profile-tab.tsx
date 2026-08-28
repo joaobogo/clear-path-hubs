@@ -22,12 +22,16 @@ function ProfileTab({
   m,
   siblings,
   evidence,
+  capped = false,
 }: {
   cp: Any;
   pos: Any;
   m: Any;
   siblings: Any[];
   evidence: Any;
+  /** True when the published run is dealbreaker-capped — the AI briefing must
+   *  not wear a band that contradicts the disqualification (audit #3, #11). */
+  capped?: boolean;
 }) {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Record<string, boolean>>({});
@@ -80,7 +84,7 @@ function ProfileTab({
   const insights = evidence?.extracted?.insights as Any | null;
   return (
     <div className="space-y-4">
-      {insights && <InsightsBriefing insights={insights} />}
+      {insights && <InsightsBriefing insights={insights} capped={capped} />}
       <IntroVideoCard matchId={m.id} currentUrl={m.intro_video_url ?? null} />
       <div className="grid gap-4 lg:grid-cols-2">
 
@@ -241,7 +245,7 @@ function EditableRow({
   );
 }
 
-function InsightsBriefing({ insights }: { insights: Any }) {
+function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?: boolean }) {
   const rec = String(insights?.overall_recommendation ?? "consider");
   const recTone =
     rec === "advance" ? "bg-success/15 text-success dark:text-success"
@@ -257,10 +261,20 @@ function InsightsBriefing({ insights }: { insights: Any }) {
         <Badge variant="secondary" className="capitalize">
           {String(insights?.seniority ?? "unknown")}
         </Badge>
-        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${recTone}`}>
-          {rec}
-        </span>
-        {typeof insights?.confidence === "number" && (
+        {/* The model's read, clearly labelled — it sat unlabelled beside a
+            header saying "24 · Not recommended", and a dealbreaker-capped
+            candidate wore "Consider · confidence 85%" (audit #3, #11). A
+            capped candidate's verdict is the disqualification, full stop. */}
+        {capped ? (
+          <span className="inline-flex items-center rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-medium text-destructive">
+            Disqualified by screening — AI read suppressed
+          </span>
+        ) : (
+          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${recTone}`}>
+            AI read: {rec}
+          </span>
+        )}
+        {!capped && typeof insights?.confidence === "number" && (
           <span className="text-xs text-muted-foreground">
             confidence {Math.round(insights.confidence * 100)}%
           </span>
@@ -280,8 +294,10 @@ function InsightsBriefing({ insights }: { insights: Any }) {
           }`}
         >
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            {/* Never a hard-coded demo org: this label read "Northwind
+                Talent's pitch" above an OmniFlow candidate (audit #3, #10). */}
             {insights.pitch_tone === "sell"
-              ? "Northwind Talent's pitch"
+              ? "TaaSFlow's pitch"
               : insights.pitch_tone === "cautious"
                 ? "Honest read"
                 : "Balanced view"}

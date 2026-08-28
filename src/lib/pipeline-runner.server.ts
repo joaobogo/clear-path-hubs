@@ -7,7 +7,7 @@
 
 import { extractCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
-import { parseCvFacts } from "./cv/parse-facts";
+import { parseCvFacts, isGarbageCvText } from "./cv/parse-facts";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
 import { generateCandidateInsights, type CandidateInsights } from "./candidate-insights.server";
@@ -291,7 +291,10 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       await s.from("files").update(patch).eq("id", fileId);
     };
     let cvText = ctx.file.extracted_text ?? "";
-    if (!cvText || cvText.length < 200) {
+    // Stored text that is binary garbage must be re-extracted, not reused —
+    // one CV's raw PDF bytes were scored 28.6 and quoted as evidence
+    // (audit #3, finding 4).
+    if (!cvText || cvText.length < 200 || isGarbageCvText(cvText)) {
       await setFile({
         parse_state: "parsing",
         parse_started_at: new Date().toISOString(),
@@ -332,6 +335,21 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
         });
         await recordJob(s, matchId, "parse", "completed", trace_id);
         return { match_id: matchId, trace_id, final_state: "ocr_required", steps: [{ step: "parse", ok: true, note: "ocr_required" }] };
+      }
+      // Fresh extraction that produced byte soup routes to OCR/manual review
+      // — it must never reach scoring, let alone a client card.
+      if (cvText.length >= 60 && isGarbageCvText(cvText)) {
+        await setFile({
+          parse_state: "review_required",
+          parse_error_code: "cv_unreadable",
+          parse_error: "Extracted text is unreadable (binary or encoding damage) — OCR needed.",
+        });
+        await setState(s, matchId, "ocr_required", {
+          trace_id, code: "cv_unreadable",
+          message: "Extracted text is unreadable (binary or encoding damage) — OCR needed.",
+        });
+        await recordJob(s, matchId, "parse", "completed", trace_id);
+        return { match_id: matchId, trace_id, final_state: "ocr_required", steps: [{ step: "parse", ok: true, note: "garbage_text_ocr_required" }] };
       }
       if (!cvText || cvText.length < 60) {
         await setFile({
@@ -516,6 +534,11 @@ export async function runHydrationOnly(matchId: string): Promise<PipelineOutcome
       await recordJob(s, matchId, "hydrate", "failed", trace_id, { code: "cv_unreadable", message: "no_text" });
       return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "hydrate", ok: false, note: "no_text" }] };
     }
+    if (isGarbageCvText(cvText)) {
+      await setState(s, matchId, "ocr_required", { trace_id, code: "cv_unreadable", message: "Extracted text is unreadable (binary or encoding damage) — run OCR / Retry parse." });
+      await recordJob(s, matchId, "hydrate", "failed", trace_id, { code: "cv_unreadable", message: "garbage_text" });
+      return { match_id: matchId, trace_id, final_state: "ocr_required", steps: [{ step: "hydrate", ok: false, note: "garbage_text" }] };
+    }
     await setState(s, matchId, "enriching", { trace_id });
     const hydration = await hydrateProfileFromCv({
       candidate_profile_id: ctx.match.candidate_profile_id,
@@ -562,6 +585,11 @@ export async function runEnrichmentOnly(
       await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: "No extracted CV text." });
       await recordJob(s, matchId, "enrich", "failed", trace_id, { code: "cv_unreadable", message: "no_text" });
       return { match_id: matchId, trace_id, final_state: "failed", steps: [...steps, { step: "enrich", ok: false, note: "no_text" }] };
+    }
+    if (isGarbageCvText(cvText)) {
+      await setState(s, matchId, "ocr_required", { trace_id, code: "cv_unreadable", message: "Extracted text is unreadable (binary or encoding damage) — run OCR / Retry parse." });
+      await recordJob(s, matchId, "enrich", "failed", trace_id, { code: "cv_unreadable", message: "garbage_text" });
+      return { match_id: matchId, trace_id, final_state: "ocr_required", steps: [...steps, { step: "enrich", ok: false, note: "garbage_text" }] };
     }
     const { data: freshProfile } = await s
       .from("candidate_profiles")
