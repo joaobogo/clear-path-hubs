@@ -15,6 +15,7 @@ import { recomputeScore } from "@/lib/scoring-review.functions";
 import { EvidenceCompletenessGate } from "@/components/admin/evidence-completeness-gate";
 import { CvPreviewPane } from "@/components/admin/cv-preview-pane";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { RejectReasonDialog } from "@/components/admin/reject-reason-dialog";
 import {
   Kbd,
