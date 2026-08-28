@@ -289,8 +289,9 @@ function ReviewScreen() {
       {/* Header: who, for what, where in the queue */}
       <header className="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
         <div className="min-w-0">
-          <h1 className="truncate text-lg font-semibold tracking-tight">
+          <h1 className="flex items-center gap-2 truncate text-lg font-semibold tracking-tight">
             {m.candidate_profiles?.full_name ?? "Candidate"}
+            <UnicornMarker score={currentRun} />
           </h1>
           <p className="truncate text-xs text-muted-foreground">
             {m.positions?.title ?? "—"} · {m.positions?.organizations?.name ?? "—"}
