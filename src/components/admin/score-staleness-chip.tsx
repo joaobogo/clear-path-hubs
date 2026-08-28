@@ -79,7 +79,10 @@ export function ScoreStalenessChip({
             )}
           >
             <Icon className="h-3 w-3" aria-hidden />
-            {compact ? null : <span>{unknown ? "Unverified age" : "Stale"}</span>}
+            {/* Always worded: an icon-plus-colour-only indicator failed the
+                accessibility spot-check (audit X-04/S-10) — dense rows get the
+                short word, full rows the full label. */}
+            <span>{compact ? "Stale" : unknown ? "Unverified age" : "Stale"}</span>
           </span>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs space-y-1 text-xs">

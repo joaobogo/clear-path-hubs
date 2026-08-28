@@ -12,7 +12,7 @@ describe("deriveCardAssessment", () => {
       freshness: stale,
     });
     expect(a.state).toBe("settled");
-    expect(a.note).toBe("4 of 6 of your requirements evidenced");
+    expect(a.note).toBe("4 of 6 requirements evidenced");
   });
 
   it("marks a thin write-up without hiding it", () => {
@@ -46,7 +46,7 @@ describe("deriveCardAssessment", () => {
     });
     expect(a.state).toBe("settled");
     expect(a.state === "settled" && a.thin).toBe(true);
-    expect(a.state === "settled" && a.note).toBe("0 of 6 of your requirements evidenced");
+    expect(a.state === "settled" && a.note).toBe("0 of 6 requirements evidenced");
   });
 
   it("still re-checks stale candidates without evidence even when support is provided", () => {

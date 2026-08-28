@@ -82,7 +82,7 @@ describe("shortlist rationale", () => {
     expect(r.lines[0].claim).toBeNull();
     expect(r.lines[0].sources).toEqual([]);
     expect(r.gaps.map((g) => g.requirement)).toEqual(["Fintech domain"]);
-    expect(r.summary).toBe("0 of 1 of your requirements evidenced");
+    expect(r.summary).toBe("0 of 1 requirements evidenced");
   });
 
   it("falls back to screening answers and recruiter notes, labelled as such", () => {
@@ -124,6 +124,6 @@ describe("shortlist rationale", () => {
         row({ label: "B", status: "not_applicable" }),
       ],
     });
-    expect(r.summary).toBe("1 of 1 of your requirements evidenced");
+    expect(r.summary).toBe("1 of 1 requirements evidenced");
   });
 });

@@ -52,7 +52,7 @@ import {
   Lock,
   RefreshCw,
 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime, pluralize } from "@/lib/format/datetime";
 import { formatAnswerValue } from "@/lib/human-labels";
 import { cn } from "@/lib/utils";
 
@@ -774,10 +774,15 @@ function ReviewWorkspace() {
             <h2 className="text-sm font-semibold">Document</h2>
             <p className="inline-flex items-center gap-2 text-sm">
               <FileText className="size-4" />
-              {fmt(doc?.filename)}
+              {/* A filename is never an enum token — fmt() once title-cased
+                  "curriculo_atual.pdf" into "Curriculo Atual Pdf". */}
+              {doc?.filename ?? "—"}
             </p>
             <p className="text-xs text-muted-foreground">
-              Parse state {fmt(doc?.parse_state)} · {fmt(doc?.page_count)} pages
+              Parse state {fmt(doc?.parse_state)}
+              {typeof doc?.page_count === "number"
+                ? ` · ${pluralize(doc.page_count, "page")}`
+                : ""}
             </p>
             <Button asChild variant="outline" size="sm">
               <Link

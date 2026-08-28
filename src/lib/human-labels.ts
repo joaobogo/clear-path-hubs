@@ -156,7 +156,10 @@ export function formatWorkAuthorization(raw: unknown): string | null {
 export function formatAnswerValue(raw: unknown): string {
   if (raw == null || raw === "") return "—";
   if (typeof raw === "string") return sanitizeInternalMarkers(raw) ?? "—";
-  if (typeof raw === "number" || typeof raw === "boolean") return String(raw);
+  // A yes/no answer must read as an answer, not as a JSON literal — this
+  // formatter once let dealbreaker answers reach review pages as "true".
+  if (typeof raw === "boolean") return raw ? "Yes" : "No";
+  if (typeof raw === "number") return String(raw);
   if (Array.isArray(raw)) {
     return raw.map((v) => formatAnswerValue(v)).filter((v) => v !== "—").join(", ") || "—";
   }

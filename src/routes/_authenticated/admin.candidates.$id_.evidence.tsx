@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { getAdminMatch, downloadEvidenceRecord } from "@/lib/processing.functions";
 import { resolvePublishedRun } from "@/lib/scoring/published-score";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -127,8 +128,9 @@ function EvidenceViewer() {
       timeline.push({
         at: r.completed_at,
         kind: "score",
-        label: `Score run · ${r.fit_label ?? r.score ?? "—"}`,
-        detail: `engine ${r.engine_version} · ${r.contradiction_status ?? "no contradictions"}`,
+        // Human band words, never the engine's enum ("worth_considering").
+        label: `Score run · ${toFitPresentation(r.fit_label, r.score).headline}`,
+        detail: `engine ${r.engine_version} · ${(r.contradiction_status ?? "no contradictions").replace(/_/g, " ")}`,
       });
   for (const d of (decisions ?? []) as Any[])
     timeline.push({
@@ -159,8 +161,10 @@ function EvidenceViewer() {
             <span className="font-normal text-muted-foreground">for {pos?.title ?? "role"}</span>
           </h1>
           <div className="mt-1 text-sm text-muted-foreground">
-            {pos?.organizations?.name ?? "—"} · match {id.slice(0, 8)} ·
-            engine {currentRun?.engine_version ?? evidence?.engine_version ?? "—"}
+            {pos?.organizations?.name ?? "—"} · engine{" "}
+            {currentRun?.engine_version ?? evidence?.engine_version ?? "—"}
+            {/* The raw match id lives in the URL and the downloaded record —
+                truncated hex in prose reads as gibberish (S-21). */}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -185,7 +189,12 @@ function EvidenceViewer() {
       {/* Provenance summary */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Tile label="Score" value={currentRun?.score != null ? String(currentRun.score) : "—"} />
-        <Tile label="Fit" value={currentRun?.fit_label ?? "—"} />
+        <Tile
+          label="Fit"
+          value={
+            currentRun ? toFitPresentation(currentRun.fit_label, currentRun.score).headline : "—"
+          }
+        />
         <Tile
           label="Must-have coverage"
           value={

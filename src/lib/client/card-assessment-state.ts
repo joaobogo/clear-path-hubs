@@ -56,7 +56,7 @@ export function deriveCardAssessment(input: CardAssessmentInput): CardAssessment
     const support = input.support;
     const note =
       support && support.total > 0
-        ? `${support.supported} of ${support.total} of your requirements evidenced`
+        ? `${support.supported} of ${support.total} requirements evidenced`
         : `${bullets} requirement${bullets === 1 ? "" : "s"} evidenced from the CV`;
     return { state: "settled", thin: bullets < THIN_EVIDENCE_BELOW, note };
   }
@@ -68,7 +68,7 @@ export function deriveCardAssessment(input: CardAssessmentInput): CardAssessment
     return {
       state: "settled",
       thin: true,
-      note: `${input.support.supported} of ${input.support.total} of your requirements evidenced`,
+      note: `${input.support.supported} of ${input.support.total} requirements evidenced`,
     };
   }
 

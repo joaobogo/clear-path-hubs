@@ -115,7 +115,7 @@ export function criteriaSummary(criteria: ExplainedCriterion[]): string {
   const total = criteria.length;
   const evidencedTotal = evidenced.length;
   
-  const head = `${evidencedTotal} of ${total} of your requirements evidenced`;
+  const head = `${evidencedTotal} of ${total} requirements evidenced`;
   const named = evidenced
     .slice(0, 3)
     .map((c) => `${c.label} — ${c.verdict_label.toLowerCase()}`)

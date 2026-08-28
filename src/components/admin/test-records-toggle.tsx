@@ -63,8 +63,11 @@ export function TestRecordsToggle() {
   return (
     <div className="flex items-center gap-2 rounded-md border border-border/60 px-2.5 py-1.5">
       <FlaskConical className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+      {/* An action label, not a status label: "Test records hidden" on a
+          switch read as a state description, leaving the control's effect
+          ambiguous (audit A-14). The switch position shows the state. */}
       <Label htmlFor="admin-show-test" className="cursor-pointer text-xs text-muted-foreground">
-        {show ? "Test records shown" : "Test records hidden"}
+        Show test records
       </Label>
       <Switch
         id="admin-show-test"

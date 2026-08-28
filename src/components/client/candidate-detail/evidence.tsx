@@ -377,7 +377,9 @@ export const WhyWeShortlisted = memo(function WhyWeShortlisted({
   };
   return (
     <SectionCard
-      title="Why we shortlisted"
+      // Stage-neutral: this card renders for every delivered candidate, most
+      // of whom are not shortlisted (audit S-23).
+      title="Why this candidate stands out"
       icon={<CheckCircle2 className="h-4 w-4" />}
       description="One line for every requirement you gave us at intake, with the source of each claim."
     >

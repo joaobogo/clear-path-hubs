@@ -31,11 +31,15 @@ type RunLike = {
  */
 export function rubricVersionLabel(run: RunLike | null | undefined): string {
   const rv = run?.rubric_versions ?? null;
-  if (rv && (rv.label || rv.version_number != null)) {
-    return `scored against ${rv.label ?? "criteria"} v${rv.version_number ?? "?"}`;
+  if (rv && rv.version_number != null) {
+    // rv.label is a machine slug ("auto-v1"); interpolating it produced
+    // "scored against auto-v1 v1". The version number is the human fact.
+    return `scored against criteria version ${rv.version_number}`;
   }
+  // Never a truncated UUID in prose — "criteria set 9dad7cb4" reads as
+  // gibberish and leaks an internal identifier (S-21).
   return run?.rubric_version_id
-    ? `scored against criteria set ${run.rubric_version_id.slice(0, 8)}`
+    ? "scored against an earlier criteria version"
     : "criteria set not recorded";
 }
 
@@ -47,16 +51,18 @@ export function engineVersionLabel(run: RunLike | null | undefined): string {
 }
 
 export function confidenceLabel(run: RunLike | null | undefined): string {
+  // Product copy, not debug output — "how complete the data was: 97%" read
+  // as a colon-prefixed log fragment on every staff score display (S-21).
   const overall =
     run?.confidence == null
-      ? "how complete the data was: not recorded"
-      : `how complete the data was: ${Math.round(Number(run.confidence) * 100)}%`;
+      ? "data completeness not recorded"
+      : `data completeness ${Math.round(Number(run.confidence) * 100)}%`;
   // Both facts travel together: how complete the source data was, and how much
   // of the role's criteria the evidence could actually settle.
   const evidence =
     run?.evidence_confidence == null
       ? null
-      : `criteria backed by evidence: ${Math.round(Number(run.evidence_confidence))}%`;
+      : `evidence coverage ${Math.round(Number(run.evidence_confidence))}%`;
   return evidence ? `${overall} · ${evidence}` : overall;
 }
 

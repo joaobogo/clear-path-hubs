@@ -125,7 +125,7 @@ describe("buildShortlistRationale summary", () => {
       screening_answers: [],
       evidence: [],
     });
-    expect(r.summary).toBe("1 of 2 of your requirements evidenced");
+    expect(r.summary).toBe("1 of 2 requirements evidenced");
     expect(r.gaps).toHaveLength(0);
   });
 });

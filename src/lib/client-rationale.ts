@@ -201,7 +201,7 @@ export function buildShortlistRationale(
   const summary =
     canonical.total === 0
       ? "0 of 0 requirements evidenced"
-      : `${canonical.evidenced} of ${canonical.total} of your requirements evidenced`;
+      : `${canonical.evidenced} of ${canonical.total} requirements evidenced`;
 
 
   return { lines, evidenced, gaps, summary };

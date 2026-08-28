@@ -305,8 +305,12 @@ export const LinksPanel = memo(function LinksPanel({
                 rel="noopener noreferrer"
                 className="min-w-0 flex-1 truncate text-primary hover:underline"
                 aria-label={`Open ${e.label} (opens in new tab)`}
+                title={e.url}
               >
-                {e.url.replace(/^https?:\/\//, "")}
+                {/* A short action label, never the raw URL: long LinkedIn
+                    addresses CSS-truncated into "www.linke…" (audit S-23).
+                    The full URL stays in href and title. */}
+                View {e.label.toLowerCase()}
                 <ExternalLink className="ml-1 inline h-3 w-3" aria-hidden />
               </a>
             ) : (

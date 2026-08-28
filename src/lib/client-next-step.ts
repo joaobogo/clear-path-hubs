@@ -8,7 +8,7 @@
  */
 
 import type { MatchStage } from "@/lib/client-kpi.server";
-import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatTime, formatWeekday } from "@/lib/format/datetime";
+import { formatDate, formatWeekday } from "@/lib/format/datetime";
 import { calendarDaysUntil } from "@/lib/format/relative-date";
 
 export type NextStep = {
@@ -86,19 +86,32 @@ export function withinLabel(hours: number): string {
   return days === 1 ? "within 24h" : `within ${days} days`;
 }
 
+/**
+ * Headlines end with a period; appending an SLA clause after one produced
+ * "…reaches you. within 24h." (audit C-08). Strip it before joining.
+ */
+function trimDot(headline: string): string {
+  return headline.replace(/\.\s*$/, "");
+}
+
 /** Absolute deadline from the moment the stage was entered. */
 export function dueAt(stageEnteredAt: string | null, hours: number, now = new Date()): Date {
   const start = stageEnteredAt ? new Date(stageEnteredAt) : now;
   return new Date(start.getTime() + hours * 3_600_000);
 }
 
-/** "by 14:00 today" / "by tomorrow 09:00" / "by Fri 09:00". */
+/** "by end of day today" / "by tomorrow morning" / "by Friday". */
 export function dueLabel(due: Date, now = new Date()): string {
-  const time = formatTime(due);
+  // A commitment window is a promise, not an appointment. Minute precision
+  // ("by tomorrow 01:42") turned stage_entered_at + 24h into a fake alarm
+  // clock — rendered in whatever timezone happened to be loaded (audit C-06,
+  // S-23). Day-part phrasing is honest at any timezone offset.
+  const hour = due.getHours();
+  const part = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "end of day";
   const dayDiff = calendarDaysUntil(due, now) ?? 0;
-  if (dayDiff <= 0) return `by ${time} today`;
-  if (dayDiff === 1) return `by tomorrow ${time}`;
-  if (dayDiff < 7) return `by ${formatWeekday(due)} ${time}`;
+  if (dayDiff <= 0) return `by ${part === "end of day" ? "end of day" : `this ${part}`} today`;
+  if (dayDiff === 1) return `by tomorrow ${part === "end of day" ? "evening" : part}`;
+  if (dayDiff < 7) return `by ${formatWeekday(due)}`;
   return `by ${formatDate(due)}`;
 }
 
@@ -137,7 +150,7 @@ export function buildNextStep(
   if (isOverdue && options?.clientView) {
     return {
       headline: step.headline,
-      sentence: `${step.headline} ${withinLabel(step.withinHours)}.`,
+      sentence: `${trimDot(step.headline)} ${withinLabel(step.withinHours)}.`,
       due: null,
       owner: step.owner,
       overdue: false,
@@ -145,7 +158,7 @@ export function buildNextStep(
   }
 
   // When overdue internally, we drop the "within X days" SLA clause and state the elapsed time instead.
-  let sentence = `${step.headline} ${withinLabel(step.withinHours)}.`;
+  let sentence = `${trimDot(step.headline)} ${withinLabel(step.withinHours)}.`;
   let due = dueLabel(deadline, now);
 
   if (isOverdue) {
@@ -178,5 +191,5 @@ export function confirmationLine(stage: MatchStage, now = new Date()): string {
   const step = nextStepForStage(stage);
   if (step.owner === "client" || step.withinHours === null) return step.headline;
   const due = dueAt(now.toISOString(), step.withinHours, now);
-  return `${step.headline} ${withinLabel(step.withinHours)} — ${dueLabel(due, now)}.`;
+  return `${trimDot(step.headline)} ${withinLabel(step.withinHours)} — ${dueLabel(due, now)}.`;
 }
