@@ -12,6 +12,7 @@
  * reproducible from source rows alone.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { formatDate } from "@/lib/format/datetime";
 
 type Admin = SupabaseClient<never, never, never>;
 
@@ -272,8 +273,8 @@ export async function loadSlaBreaches(
         days_over: daysOver(deadlineMs, firstMs ?? nowMs),
         first_breach_at: new Date(deadlineMs).toISOString(),
         basis: firstDelivered
-          ? `Baseline ${baselineAt.slice(0, 10)} → first client-visible candidate ${firstDelivered.slice(0, 10)}`
-          : `Baseline ${baselineAt.slice(0, 10)} → no client-visible candidate yet`,
+          ? `Baseline ${formatDate(baselineAt)} → first client-visible candidate ${formatDate(firstDelivered)}`
+          : `Baseline ${formatDate(baselineAt)} → no client-visible candidate yet`,
       });
     }
 
@@ -289,7 +290,7 @@ export async function loadSlaBreaches(
         actual_label: `${delivered.length} of ${shortlistSize} delivered`,
         days_over: daysOver(deadlineMs, nowMs),
         first_breach_at: new Date(deadlineMs).toISOString(),
-        basis: `${delivered.length} client-visible candidates by day ${targetDays} deadline (${new Date(deadlineMs).toISOString().slice(0, 10)})`,
+        basis: `${delivered.length} client-visible candidates by day ${targetDays} deadline (${formatDate(new Date(deadlineMs).toISOString())})`,
       });
     }
 
@@ -334,7 +335,7 @@ export async function loadSlaBreaches(
         actual_label: `${num(worst.actualHours)}h${worst.responded ? "" : " (still open)"}`,
         days_over: daysOver(worst.dueMs, nowMs),
         first_breach_at: new Date(worst.dueMs).toISOString(),
-        basis: `Interview requested ${worst.requestedAt.slice(0, 10)}, slots ${worst.responded ? "offered late" : "not offered yet"} against a ${slotHours}h promise`,
+        basis: `Interview requested ${formatDate(worst.requestedAt)}, slots ${worst.responded ? "offered late" : "not offered yet"} against a ${slotHours}h promise`,
       });
     }
   }

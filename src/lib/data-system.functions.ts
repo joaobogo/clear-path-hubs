@@ -354,11 +354,31 @@ export const getDataHealth = createServerFn({ method: "GET" })
       String(f.file_status ?? "").includes("fail"),
     ).length;
 
-    const { data: newestEvidence } = await supabase
-      .from("candidate_evidence_items")
-      .select("created_at")
-      .order("created_at", { ascending: false })
-      .limit(1);
+    // The pipeline writes candidate_evidence on every run; the structured
+    // candidate_evidence_items table is populated by a separate step that
+    // does not always execute. Reading only the latter made this panel say
+    // "Newest evidence: never" beside its own count of 255 evidence edges
+    // (audit A-07). Newest of either table is the honest answer.
+    const [{ data: newestEvidenceItems }, { data: newestEvidenceRecords }] =
+      await Promise.all([
+        supabase
+          .from("candidate_evidence_items")
+          .select("created_at")
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase
+          .from("candidate_evidence")
+          .select("created_at")
+          .order("created_at", { ascending: false })
+          .limit(1),
+      ]);
+    const newestEvidence = [
+      newestEvidenceItems?.[0]?.created_at ?? null,
+      newestEvidenceRecords?.[0]?.created_at ?? null,
+    ]
+      .filter((v): v is string => Boolean(v))
+      .sort()
+      .slice(-1);
     const { data: newestSignal } = await supabase
       .from("search_signals")
       .select("created_at")
@@ -394,7 +414,7 @@ export const getDataHealth = createServerFn({ method: "GET" })
       coverage,
       freshness: {
         newest_candidate: newestCandidate,
-        newest_evidence: newestEvidence?.[0]?.created_at ?? null,
+        newest_evidence: newestEvidence[0] ?? null,
         newest_signal: newestSignal?.[0]?.created_at ?? null,
         stale_days: stale,
       },

@@ -561,7 +561,9 @@ export function OfferHireRollupPanel({ teamWideNote = false }: { teamWideNote?: 
                     >
                       {o.candidate_name} — {o.position_title}
                     </Link>
-                    <span className="tabular-nums text-muted-foreground">{o.start_date}</span>
+                    {/* Same formatter the table above already uses — this one
+                        spot printed the raw ISO date (audit A-12). */}
+                    <span className="tabular-nums text-muted-foreground">{fmtDate(o.start_date)}</span>
                   </li>
                 ))}
               </ul>

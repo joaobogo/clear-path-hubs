@@ -716,13 +716,28 @@ function ReviewWorkspace() {
                   <p>{fmt(d.reason)}</p>
                 </li>
               ))}
-              {(audit as Any[]).map((a) => (
-                <li key={a.id} className="rounded border p-2">
-                  <p className="text-xs text-muted-foreground">
-                    {formatDateTime(a.created_at)} · {fmt(a.action)}
-                  </p>
-                </li>
-              ))}
+              {(audit as Any[])
+                // Every review decision is dual-written: a score_decisions
+                // row (rendered above, with its reason) AND a mirroring
+                // audit_events row. Rendering both printed the same action
+                // twice with the same timestamp (audit A-12). The audit list
+                // keeps only events the decisions list does not already tell.
+                .filter(
+                  (a) =>
+                    !(decisions as Any[]).some(
+                      (d) =>
+                        Math.abs(
+                          new Date(a.created_at).getTime() - new Date(d.created_at).getTime(),
+                        ) < 10_000 && String(a.action ?? "").startsWith("score"),
+                    ),
+                )
+                .map((a) => (
+                  <li key={a.id} className="rounded border p-2">
+                    <p className="text-xs text-muted-foreground">
+                      {formatDateTime(a.created_at)} · {fmt(a.action)}
+                    </p>
+                  </li>
+                ))}
             </ul>
           </Card>
         </div>

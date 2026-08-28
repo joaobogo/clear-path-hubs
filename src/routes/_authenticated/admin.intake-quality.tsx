@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format/datetime";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
@@ -210,7 +211,7 @@ function IntakeQuality() {
                         {item.client_name ? ` · ${item.client_name}` : ""}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        Since {item.first_seen.slice(0, 10)}
+                        Since {formatDate(item.first_seen)}
                       </span>
                       <span className="ml-auto flex items-center gap-2">
                         <Badge variant="outline" className="text-xs">
