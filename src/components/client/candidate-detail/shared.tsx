@@ -57,6 +57,7 @@ export function CandidateHeader({
           <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">
             {c.display_name}
           </h1>
+          <UnicornMarker unicorn={candidate.unicorn} />
           <CandidateScoreBadge
             score={candidate.score}
             fitLabel={candidate.fit_label}
