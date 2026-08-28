@@ -34,6 +34,14 @@ export const Route = createFileRoute("/_authenticated/client/executive")({
   }),
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.executive.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
+  // First paint was a bare white page for seconds (audit C-03/X-02).
+  pendingComponent: () => (
+    <div className="mx-auto max-w-6xl space-y-4 p-6" aria-busy="true">
+      <SkeletonStats />
+      <SkeletonStats />
+      <span className="sr-only">Loading insights…</span>
+    </div>
+  ),
   component: ExecutivePage,
 });
 

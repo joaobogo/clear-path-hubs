@@ -102,7 +102,7 @@ export async function loadSlaBreaches(
   const [posRes, orgRes, matchRes, ivRes, ackRes] = await Promise.all([
     a
       .from("positions")
-      .select("id, title, owner_user_id, organization_id, is_test_record")
+      .select("id, title, status, owner_user_id, organization_id, is_test_record")
       .in("id", positionIds),
     a.from("organizations").select("id, name, is_test_record").in("id", orgIds),
     a
@@ -215,6 +215,10 @@ export async function loadSlaBreaches(
     const isTest =
       position['is_test_record'] === true || (org?.['is_test_record'] as boolean) === true;
     if (isTest && !opts.includeTest) continue;
+    // An archived or closed role has no delivery promise left to break — its
+    // commitment row kept the SLA clock running ("+24d" on a role archived
+    // weeks ago, audit A-06).
+    if (["archived", "closed"].includes(String(position['status'] ?? ""))) continue;
 
     monitored += 1;
 

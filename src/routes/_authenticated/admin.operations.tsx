@@ -744,6 +744,9 @@ function RescoreAllButton({ onDone }: { onDone: (msg: string) => void }) {
 function BackfillInsightsButton({ onDone }: { onDone: (msg: string) => void }) {
   const qc = useQueryClient();
   const backfillFn = useServerFn(backfillCandidateInsights);
+  // A bulk write behind a single unguarded click (audit A-13) — same confirm
+  // step the Re-score button beside it already has.
+  const { confirm, confirmDialog } = useConfirmAction();
   const m = useMutation({
     mutationFn: () => backfillFn({ data: {} }),
     onSuccess: async (r: { scanned: number; targeted: number; processed: number; failed: { message: string }[] }) => {
@@ -756,8 +759,25 @@ function BackfillInsightsButton({ onDone }: { onDone: (msg: string) => void }) {
     onError: (e: Error) => onDone(`Backfill failed: ${e.message}`),
   });
   return (
-    <Button size="sm" variant="secondary" onClick={() => m.mutate()} disabled={m.isPending}>
-      {m.isPending ? "Enriching candidates…" : "Enrich all candidate profiles"}
-    </Button>
+    <>
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={async () => {
+          const r = await confirm({
+            title: "Enrich all candidate profiles",
+            object: "every candidate missing enrichment",
+            description:
+              "Runs the insights backfill across every candidate that is missing enrichment. This can take a few minutes and calls the model once per candidate.",
+            confirmLabel: "Enrich all",
+          });
+          if (r.confirmed) m.mutate();
+        }}
+        disabled={m.isPending}
+      >
+        {m.isPending ? "Enriching candidates…" : "Enrich all candidate profiles"}
+      </Button>
+      {confirmDialog}
+    </>
   );
 }

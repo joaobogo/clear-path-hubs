@@ -130,9 +130,15 @@ export function ScoreExplainability({
       {/* Evidence quotes */}
       {verdicts.length > 0 && (
         <div className="rounded-lg border bg-card p-4">
-          <h3 className="text-sm font-semibold">CV evidence</h3>
+          <h3 className="text-sm font-semibold">CV evidence — AI reading</h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Direct quotes from the candidate's CV backing each requirement.
+            {/* Two verdicts for one requirement on one tab, with no hint which
+                one scores, read as the system contradicting itself (audit
+                S-13). This block is the model's advisory reading; the scored
+                verdicts are the category breakdown above. */}
+            Direct quotes from the candidate's CV, read by the model. Advisory —
+            where this disagrees with the scored breakdown above, the breakdown
+            is what the score uses, and the disagreement is worth a human look.
           </p>
           <ul className="mt-3 space-y-2">
             {verdicts.slice(0, 10).map((v, i) => (
