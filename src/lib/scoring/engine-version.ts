@@ -20,5 +20,11 @@
  * v1.4.0 — requirement framing words ("proven", "hands-on", "experience") no
  * longer count as keywords, so a candidate is no longer marked down for not
  * writing words nobody writes about themselves.
+ *
+ * v1.4.1 — "screening contradicts CV" now requires a specific answer whose
+ * subject overlaps a specific unevidenced required requirement, and records
+ * the pairs in contradiction_rows. The old test (any yes + any missing
+ * must-have) flagged essentially every real candidate and blocked approval
+ * with nothing to resolve. Scores are unchanged; the flag and concerns are.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.4.0";
+export const ENGINE_VERSION = "taasflow-scoring-v1.4.1";

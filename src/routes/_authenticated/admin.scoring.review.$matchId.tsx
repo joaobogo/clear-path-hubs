@@ -718,6 +718,19 @@ function ReviewWorkspace() {
                   <dt className="text-muted-foreground">Contradictions</dt>
                   <dd>{fmt(currentRun.contradiction_status)}</dd>
                 </div>
+                {/* Name the pairs — an unexplained flag cannot be resolved. */}
+                {Array.isArray((currentRun.result as Any)?.contradiction_rows) &&
+                  ((currentRun.result as Any).contradiction_rows as Any[]).length > 0 && (
+                    <div className="col-span-2 space-y-1 pt-1">
+                      {((currentRun.result as Any).contradiction_rows as Any[]).map(
+                        (r: Any, i: number) => (
+                          <p key={i} className="rounded border border-destructive/20 bg-destructive/5 p-2 text-xs">
+                            Answered yes to “{r.question}” — no CV evidence for “{r.requirement}”.
+                          </p>
+                        ),
+                      )}
+                    </div>
+                  )}
               </dl>
             ) : (
               <p className="text-sm text-muted-foreground">No score run yet.</p>

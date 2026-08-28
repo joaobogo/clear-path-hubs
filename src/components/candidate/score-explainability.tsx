@@ -77,6 +77,19 @@ export function ScoreExplainability({
             {String(contradiction).replace(/_/g, " ")} — evidence review required
             before this candidate is validated for delivery.
           </p>
+          {/* The specific pairs behind the flag. A flag with no rows to
+              resolve cannot be actioned, so the engine records each one. */}
+          {Array.isArray(result?.contradiction_rows) &&
+            result.contradiction_rows.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs">
+                {result.contradiction_rows.map((r: Any, i: number) => (
+                  <li key={i} className="rounded border border-destructive/20 bg-background/60 p-2">
+                    Answered <span className="font-medium">yes</span> to “{r.question}” but the
+                    CV shows nothing for <span className="font-medium">“{r.requirement}”</span>.
+                  </li>
+                ))}
+              </ul>
+            )}
         </div>
       )}
 

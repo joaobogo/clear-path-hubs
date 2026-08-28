@@ -107,6 +107,16 @@ export interface ScoringResult {
   }>;
   contradiction_status: "none" | "screening_contradicts_cv" | "disqualifying_answer";
   /**
+   * The specific answer/requirement pairs behind a screening_contradicts_cv
+   * flag. Empty unless the status is raised — a flag with no rows to resolve
+   * cannot be actioned by a reviewer and must not exist.
+   */
+  contradiction_rows: Array<{
+    question_id: string;
+    question: string;
+    requirement: string;
+  }>;
+  /**
    * How much substance sits around the matched terms — the anti keyword-echo
    * measure. A run whose evidence is a keyword list is capped, never presented
    * as a top band, however many rubric terms it contains.
@@ -584,19 +594,39 @@ export function scoreCandidate(input: {
     (s) => (s.question || "").trim() || `question ${s.question_id}`,
   );
 
-  // Contradiction: screening claims yes to a boolean but nothing corroborating in CV.
-  // Distinct from "missing evidence" — only flag if the screening asserted a strong claim
-  // AND at least one required assessment is missing.
+  // Contradiction: a boolean "yes" is only a contradiction when the claim it
+  // makes is the SAME SUBJECT a required requirement found nothing for. The
+  // previous test — "any yes was answered" AND "any required requirement is
+  // missing" — linked nothing to nothing, so it fired for essentially every
+  // real candidate, blocked score approval, and gave the reviewer no row to
+  // resolve. Each flagged pair is now recorded so the review surface can name
+  // exactly which answer conflicts with which requirement.
+  const contradiction_rows: ScoringResult["contradiction_rows"] = [];
+  if (!disqualified) {
+    const meaningful = (text: string) =>
+      tokenize(text).filter((t) => t.length >= 4 && !REQUIREMENT_FRAMING.has(t));
+    const missingRequired = assessment.filter((a) => a.required && a.status === "missing");
+    for (const s of input.screening) {
+      if (s.answer_type !== "boolean" || normalizeScreeningValue(s) !== "yes") continue;
+      const qTokens = new Set(meaningful(s.question ?? ""));
+      if (qTokens.size === 0) continue;
+      for (const a of missingRequired) {
+        // Two shared content words means the question and the requirement talk
+        // about the same thing — one shared word is coincidence, not subject.
+        const overlap = new Set(meaningful(a.text).filter((t) => qTokens.has(t)));
+        if (overlap.size >= 2) {
+          contradiction_rows.push({
+            question_id: s.question_id,
+            question: s.question,
+            requirement: a.text,
+          });
+        }
+      }
+    }
+  }
   let contradiction_status: ScoringResult["contradiction_status"] = "none";
   if (disqualified) contradiction_status = "disqualifying_answer";
-  else if (
-    input.screening.some(
-      (s) => s.answer_type === "boolean" && normalizeScreeningValue(s) === "yes",
-    ) &&
-    assessment.some((a) => a.required && a.status === "missing")
-  ) {
-    contradiction_status = "screening_contradicts_cv";
-  }
+  else if (contradiction_rows.length > 0) contradiction_status = "screening_contradicts_cv";
 
   // Category breakdown — "unknown" contributes a neutral 0.4 (validate, not zero).
   // A category with no inputs at all is EXCLUDED from the weighting rather than
@@ -789,7 +819,14 @@ export function scoreCandidate(input: {
             ? `Contradicting evidence for required: ${a.text}`
             : `Partly evidenced — worth confirming: ${a.text}`,
     );
-  if (contradiction_status !== "none") {
+  if (contradiction_status === "screening_contradicts_cv") {
+    // Name the conflicting pair — an unexplained flag cannot be resolved.
+    const named = contradiction_rows
+      .slice(0, 2)
+      .map((r) => `answered yes on "${r.question}" but the CV shows nothing for "${r.requirement}"`)
+      .join("; ");
+    concerns.unshift(`Screening/CV conflict: ${named}.`);
+  } else if (contradiction_status !== "none") {
     concerns.unshift(`Screening/CV contradiction (${contradiction_status.replace(/_/g, " ")}).`);
   }
   if (cv.trim().length < cal.unreadable_cv_chars) {
@@ -828,6 +865,7 @@ export function scoreCandidate(input: {
     evidence: evidence.slice(0, cal.keyword_cap),
     screening_evidence,
     contradiction_status,
+    contradiction_rows,
     evidence_substance: substance,
     completed_at,
     input_hash,
