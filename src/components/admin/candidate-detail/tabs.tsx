@@ -71,6 +71,7 @@ import {
 import { FitHero, WhyWeShortlisted, RequirementCoverage, WhyThisCandidate, WhatNeedsValidation } from "@/components/client/candidate-detail/evidence";
 import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
+import { IntroVideoPanel } from "@/components/client/intro-video-panel";
 
 
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
@@ -959,6 +960,14 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
       </Alert>
 
       <div className="rounded-lg border bg-background p-6 shadow-sm">
+        {/* Same order as the client route: the intro video renders above the
+            verdict there, and the preview's job is to match what they see —
+            it was the one element this tab silently dropped. */}
+        <IntroVideoPanel
+          matchId={dto.match_id}
+          video={dto.intro_video}
+          candidateName={dto.candidate?.display_name}
+        />
         <FitHero candidate={dto} />
         <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-12">
           <div className="space-y-8 lg:col-span-8">
