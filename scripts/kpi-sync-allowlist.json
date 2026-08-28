@@ -48,6 +48,14 @@
     {
       "path": "src/lib/onboarding.functions.ts",
       "reason": "Existence probe for setup completion (has this role produced candidates?), never rendered as a count."
+    },
+    {
+      "path": "src/lib/admin-account-view.server.ts",
+      "reason": "Staff-only pipeline count includes not-yet-published applications, which is deliberately wider than the client-visible candidates figure."
+    },
+    {
+      "path": "src/lib/client-overview.functions.ts",
+      "reason": "Counts applications still in screening that the client cannot see yet \u2014 a progress signal, not the shared candidates figure."
     }
   ]
 }
