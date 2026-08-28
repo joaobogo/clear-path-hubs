@@ -1,3 +1,4 @@
+import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -737,6 +738,13 @@ function RescoreAllButton({ onDone }: { onDone: (msg: string) => void }) {
     >
       {m.isPending ? (progress ?? "Re-scoring…") : "Re-score all candidates"}
     </Button>
+    {/* One glance answers "did the deploy land?" — production ran a stale
+        build for a full day while every fix sat in git, and nothing on any
+        page said which engine was actually serving (audit #3, finding 1). */}
+    <span className="ml-2 text-xs text-muted-foreground">
+      Engine running today:{" "}
+      <span className="font-mono">{ENGINE_VERSION.replace(/^taasflow-scoring-/, "")}</span>
+    </span>
     </>
   );
 }
