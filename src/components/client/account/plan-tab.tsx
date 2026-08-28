@@ -7,8 +7,6 @@ import { useState } from "react";
 import { Link, useSearch } from "@tanstack/react-router";
 import {
   hasSeatContext,
-  planResolvesSeatNeed,
-  planTotalSeats,
   seatContextSummary,
   seatShortfall,
   type SeatUpgradeContext,
@@ -18,7 +16,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { getClientContext } from "@/lib/client-context.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
-import { PLAN_CATALOGUE } from "@/lib/payments-catalog";
 import { TURNAROUND_LABEL } from "@/config/pricing-core";
 import { PlanPanel } from "@/components/client/plan-panel";
 import { ServiceExpectationsTable } from "@/components/client/service-expectations-table";
@@ -27,80 +24,9 @@ import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
 import { areaDeniedMessage, canAccessArea } from "@/lib/collaborator-roles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 
-function money(amountUsd: number) {
-  return `$${amountUsd.toLocaleString("en-US")}`;
-}
-
-/**
- * One plan, clickable when the viewer is allowed to buy or switch. The whole
- * card is the control so it works on a phone without hunting for a button.
- */
-function PlanCard({
-  label,
-  price,
-  summary,
-  detail,
-  onSelect,
-  actionLabel,
-  seatNote,
-  resolvesSeats,
-}: {
-  label: string;
-  price: string;
-  summary: string;
-  detail: string | null;
-  onSelect: (() => void) | null;
-  actionLabel: string;
-  /** Seat maths for this plan, shown only when arriving from a seat block. */
-  seatNote?: string | null;
-  resolvesSeats?: boolean;
-}) {
-  const body = (
-    <>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center justify-between gap-2 text-base">
-          {label}
-          <Badge variant="outline">{price}</Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2 text-sm text-muted-foreground">
-        <p>{summary}</p>
-        {detail ? <p className="text-xs">{detail}</p> : null}
-        {seatNote ? (
-          <p
-            data-testid="plan-seat-note"
-            className={`text-xs ${resolvesSeats ? "taas-fg-success" : "taas-fg-warning"}`}
-          >
-            {seatNote}
-          </p>
-        ) : null}
-      </CardContent>
-    </>
-  );
-
-  if (!onSelect) return <Card>{body}</Card>;
-
-  return (
-    <Card
-      role="button"
-      tabIndex={0}
-      aria-label={`${actionLabel} — ${label}, ${price}`}
-      onClick={onSelect}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onSelect();
-        }
-      }}
-      className="cursor-pointer transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      {body}
-    </Card>
-  );
-}
 
 
 export function PlanTab() {
@@ -124,15 +50,8 @@ export function PlanTab() {
   const canMutate = Boolean(isAdmin) && !support.readOnly;
   const canSeeBilling = canAccessArea(ctx?.active?.role as string | undefined, "billing");
 
-  const packages = PLAN_CATALOGUE.filter((p) => p.kind === "package");
-  const subscriptions = PLAN_CATALOGUE.filter((p) => p.kind === "subscription");
-
   const [requested, setRequested] = useState<string | null>(null);
-  const canPick = Boolean(orgId) && canSeeBilling && canMutate;
-  const pick = (priceId: string) => {
-    setRequested(priceId);
-    document.getElementById("plan-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+
 
   // Seat context arrives from a blocked invite or reactivation on the team tab,
   // so the numbers behind the prompt are the same numbers shown here.
@@ -146,19 +65,6 @@ export function PlanTab() {
   const showSeatContext = hasSeatContext(seatCtx);
   const shortfall = seatShortfall(seatCtx);
 
-  const seatNoteFor = (productId: string) => {
-    if (!showSeatContext) return { note: null as string | null, resolves: false };
-    const total = planTotalSeats(productId);
-    if (total === null)
-      return { note: "Seats scoped with you — we set them when the plan is agreed.", resolves: false };
-    const resolves = planResolvesSeatNeed(total, seatCtx);
-    const used = seatCtx.seatsUsed;
-    const free = typeof used === "number" ? Math.max(0, total - used) : null;
-    const note = resolves
-      ? `${total} seats — frees ${free ?? seatCtx.seatsNeeded} seat${(free ?? 1) === 1 ? "" : "s"} straight after the switch.`
-      : `${total} seats — still ${Math.max(1, (seatCtx.seatsNeeded ?? 1) - (free ?? 0))} short of what you need.`;
-    return { note, resolves };
-  };
 
 
 
@@ -185,9 +91,10 @@ export function PlanTab() {
           </p>
           <p className="mt-1 text-sm text-muted-foreground">{seatContextSummary(seatCtx)}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Each plan below shows the seats it includes and whether it clears that gap the moment
-            it starts. Cancelling a pending invitation frees a seat without changing plan.
+            Your plan below shows the seats it includes. Cancelling a pending invitation frees a
+            seat without changing plan.
           </p>
+
         </div>
       )}
 
@@ -216,50 +123,6 @@ export function PlanTab() {
         </>
       )}
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold">One-off packages</h2>
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {packages.map((plan) => {
-            const seat = seatNoteFor(plan.productId);
-            return (
-              <PlanCard
-                key={plan.priceId}
-                label={plan.label}
-                price={money(plan.amountUsd)}
-                summary={plan.summary}
-                detail={plan.validForDays ? `Valid ${plan.validForDays} days` : null}
-                onSelect={canPick ? () => pick(plan.priceId) : null}
-                actionLabel="Buy this package"
-                seatNote={seat.note}
-                resolvesSeats={seat.resolves}
-              />
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold">Subscriptions</h2>
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {subscriptions.map((plan) => {
-            const seat = seatNoteFor(plan.productId);
-            return (
-              <PlanCard
-                key={plan.priceId}
-                label={plan.label}
-                price={`${money(plan.amountUsd)}/${plan.interval === "year" ? "yr" : "mo"}`}
-                summary={plan.summary}
-                detail="Cancel any time — it runs to the end of the period"
-                onSelect={canPick ? () => pick(plan.priceId) : null}
-                actionLabel="Switch to this plan"
-                seatNote={seat.note}
-                resolvesSeats={seat.resolves}
-              />
-            );
-          })}
-        </div>
-
-      </section>
 
       <Card>
         <CardHeader className="pb-2">
