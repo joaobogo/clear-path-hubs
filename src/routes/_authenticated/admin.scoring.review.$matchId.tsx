@@ -29,6 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -333,8 +334,9 @@ function ReviewWorkspace() {
       </div>
 
       <header className="space-y-2">
-        <h1 className="text-xl font-semibold tracking-tight">
+        <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
           {profile?.full_name ?? "Unnamed candidate"}
+          <UnicornMarker score={currentRun} />
         </h1>
         <p className="text-sm text-muted-foreground">
           {position?.title ?? "—"} · {position?.organizations?.name ?? "—"} · state{" "}

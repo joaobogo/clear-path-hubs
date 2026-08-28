@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Ban, CheckCircle2, Eye, Pause, ExternalLink } from "lucide-react";
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
 import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { BlockedReason } from "@/components/admin/blocked-reason";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
@@ -272,7 +273,10 @@ function PublishDesk() {
                     className={"align-top hover:bg-muted/30 " + QUEUE_ROW_ACTIVE_CLASS}
                   >
                     <td className="px-3 py-2">
-                      <div className="font-medium">{r.candidate_profiles?.full_name ?? "—"}</div>
+                      <div className="flex items-center gap-1.5 font-medium">
+                        {r.candidate_profiles?.full_name ?? "—"}
+                        <UnicornMarker score={run} />
+                      </div>
                       <div className="text-[10px] text-muted-foreground">
                         {r.candidate_profiles?.email ?? ""}
                       </div>

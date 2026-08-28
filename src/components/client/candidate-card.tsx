@@ -1,6 +1,7 @@
 import { Link, useSearch } from "@tanstack/react-router";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { CandidatePrimaryAction } from "@/components/client/candidate-primary-action";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -80,6 +81,7 @@ export function CandidateCard({
           className="block text-sm font-semibold hover:underline truncate"
         >
           {c.candidate.display_name}
+          <UnicornMarker unicorn={c.unicorn} className="ml-1" />
         </Link>
         <p className="mt-0.5 text-xs text-muted-foreground truncate">{cardHeadline(c)}</p>
       </div>
