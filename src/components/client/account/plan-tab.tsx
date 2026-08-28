@@ -7,8 +7,6 @@ import { useState } from "react";
 import { Link, useSearch } from "@tanstack/react-router";
 import {
   hasSeatContext,
-  planResolvesSeatNeed,
-  planTotalSeats,
   seatContextSummary,
   seatShortfall,
   type SeatUpgradeContext,
@@ -18,7 +16,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { getClientContext } from "@/lib/client-context.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
-import { PLAN_CATALOGUE } from "@/lib/payments-catalog";
 import { TURNAROUND_LABEL } from "@/config/pricing-core";
 import { PlanPanel } from "@/components/client/plan-panel";
 import { ServiceExpectationsTable } from "@/components/client/service-expectations-table";
@@ -27,7 +24,7 @@ import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
 import { areaDeniedMessage, canAccessArea } from "@/lib/collaborator-roles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 
 
