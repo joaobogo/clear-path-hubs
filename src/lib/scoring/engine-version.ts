@@ -58,4 +58,18 @@
  *      with React/Supabase" stops crediting Supabase as evidence.
  * Scores move DOWN for requirements that were credited without support.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.5.1";
+/**
+ * v1.5.2 — no claim without a passage (audit #4, M6). Two more guards, both
+ * deterministic:
+ *   1. A negation is no longer discarded because the same term also matched
+ *      somewhere positive. "I'm less experienced with React/Supabase" was
+ *      ignored the moment Supabase appeared elsewhere, and the row went out
+ *      as MET; a qualifying statement now caps the row at "partial · needs
+ *      validation".
+ *   2. A "met" or "partial" row must carry at least one quote. Rows that
+ *      matched a term but captured no passage went to the client as verdicts
+ *      nobody could check ("English · Met" with nothing behind it); they are
+ *      now "unknown · needs validation", which is what they actually are.
+ * Scores move DOWN for requirements that were credited without a passage.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.5.2";

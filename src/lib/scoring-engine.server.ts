@@ -543,6 +543,14 @@ export function scoreCandidate(input: {
   const assessment: RequirementAssessment[] = requirements.map((r) => {
     const matched: string[] = [];
     const negated: string[] = [];
+    /**
+     * Terms the CV mentions BOTH affirmatively and inside a qualifying clause
+     * — "used Supabase for auth" alongside "I'm less experienced with
+     * Supabase". `negated` only fills when EVERY mention is negated, so this
+     * mixed case slipped through as a clean match and the row went out as Met
+     * (audit #4, M6).
+     */
+    const qualified: string[] = [];
     const localEvidence: EvidenceRef[] = [];
     for (const kw of r.keywords) {
       const k = kw.toLowerCase();
@@ -614,6 +622,9 @@ export function scoreCandidate(input: {
         continue;
       }
       matched.push(kw);
+      // Some mentions affirm and some qualify. The match is real, but so is
+      // what the candidate said about their own level of it.
+      if (affirmative.length < hits.length) qualified.push(kw);
       const sn = findSnippet(cv, matchedForm, affirmative[0], cal.snippet_radius_chars);
       if (sn) {
         localEvidence.push({
@@ -699,14 +710,35 @@ export function scoreCandidate(input: {
       }
     }
 
-    evidence.push(...localEvidence.slice(0, cal.max_evidence_per_requirement));
+    // A qualifying statement alongside a positive match. Negation used to be
+    // consulted ONLY when EVERY mention was negated, so "I'm less experienced
+    // with React/Supabase" was discarded the moment Supabase also appeared
+    // somewhere positive — and the row went out as Met (audit #4, M6). The
+    // candidate said something qualifying about this requirement; that caps
+    // the row and asks for a human.
+    if ((qualified.length > 0 || negated.length > 0) && matched.length > 0 && status === "met") {
+      status = "partial";
+      needs_validation = true;
+    }
+
+    // No quote, no claim. A Met or Partial row with nothing to show is a
+    // keyword hit a client cannot check — the audit found "English · Met" with
+    // no passage behind it at all (audit #4, M6). The term match is real, so
+    // this is not "missing"; it is unverified, and says so.
+    const quotes = localEvidence.slice(0, cal.max_evidence_per_requirement);
+    if (quotes.length === 0 && (status === "met" || status === "partial")) {
+      status = "unknown";
+      needs_validation = true;
+    }
+
+    evidence.push(...quotes);
     return {
       id: r.id,
       text: r.text,
       required: r.required,
       status,
       matched_terms: matched,
-      evidence: localEvidence.slice(0, cal.max_evidence_per_requirement),
+      evidence: quotes,
       needs_validation,
     };
   });
