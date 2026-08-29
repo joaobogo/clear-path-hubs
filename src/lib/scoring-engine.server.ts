@@ -989,15 +989,21 @@ export function scoreCandidate(input: {
             ? `Contradicting evidence for required: ${a.text}`
             : `Partly evidenced — worth confirming: ${a.text}`,
     );
-  if (contradiction_status === "screening_contradicts_cv") {
+  if (contradiction_status !== "none") {
     // Name the conflicting pair — an unexplained flag cannot be resolved.
     const named = contradiction_rows
       .slice(0, 2)
       .map((r) => `answered yes on "${r.question}" but the CV contradicts "${r.requirement}"`)
       .join("; ");
-    concerns.unshift(`Screening/CV conflict: ${named}.`);
-  } else if (contradiction_status !== "none") {
-    concerns.unshift(`Screening/CV contradiction (${contradiction_status.replace(/_/g, " ")}).`);
+    // A raw status token used to be printed when there was no pair to name
+    // ("Screening/CV contradiction (screening contradicts cv).") and an empty
+    // row list produced the fragment "Screening/CV conflict: ." — both reached
+    // the client's "What holds it back" verbatim (audit #4, item 12).
+    concerns.unshift(
+      named
+        ? `Screening/CV conflict: ${named}.`
+        : "A screening answer and the CV disagree. Confirm which is current before deciding.",
+    );
   }
   if (cv.trim().length < cal.unreadable_cv_chars) {
     concerns.push("CV text could not be extracted with confidence.");

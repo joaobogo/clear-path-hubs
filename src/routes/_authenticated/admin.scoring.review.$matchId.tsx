@@ -29,6 +29,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
+import { scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
+import { renderQuote } from "@/lib/evidence/quote-hygiene";
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -321,6 +323,18 @@ function ReviewWorkspace() {
     }
   }
 
+  const scoreVoided = scoreVoidedByUnreadableCv(match as Any);
+
+  // The screening questions a disqualifying answer tripped, read off the cap
+  // the engine recorded ("disqualifying_answer: <question>, <question>").
+  const disqualifyingCaps: string[] = (
+    ((currentRun?.result as Any)?.applied_caps as Any[] | undefined) ?? []
+  )
+    .map((c: Any) => String(c?.reason ?? ""))
+    .filter((r) => r.startsWith("disqualifying_answer:"))
+    .map((r) => r.slice("disqualifying_answer:".length).trim())
+    .filter(Boolean);
+
   const scoreDelta =
     currentRun && previousRun
       ? Number(currentRun.final_score ?? currentRun.score ?? 0) -
@@ -355,10 +369,22 @@ function ReviewWorkspace() {
           {fmt(match.canonical_state)} · processing {fmt(match.processing_state)}
         </p>
         <div className="flex flex-wrap gap-2">
-          {/* Staff view: the number never travels without its confidence pair
-              and the rubric version it was scored against. */}
-          <AdminScoreNumber run={currentRun as never} />
-          <Badge variant="secondary">Fit {toFitPresentation((currentRun?.fit_label ?? currentRun?.fit_band ?? null) as string | null, (currentRun?.final_score ?? currentRun?.score ?? null) as number | null).headline}</Badge>
+          {/* A score computed from text that later proved unreadable is not a
+              score. The candidate workspace header already says so; this page
+              still printed "Score 41 · Not recommended" beside a processing
+              state of ocr_required (audit #4, item 13). */}
+          {scoreVoided ? (
+            <Badge variant="outline" className="border-warning/40 bg-warning/10">
+              No score — CV unreadable
+            </Badge>
+          ) : (
+            <>
+              {/* Staff view: the number never travels without its confidence pair
+                  and the rubric version it was scored against. */}
+              <AdminScoreNumber run={currentRun as never} />
+              <Badge variant="secondary">Fit {toFitPresentation((currentRun?.fit_label ?? currentRun?.fit_band ?? null) as string | null, (currentRun?.final_score ?? currentRun?.score ?? null) as number | null).headline}</Badge>
+            </>
+          )}
           <Badge variant="secondary">Eligibility {fmt(match.eligibility_status)}</Badge>
           <Badge variant={match.contact_released_at ? "default" : "outline"}>
             <Lock className="mr-1 size-3" />
@@ -504,9 +530,14 @@ function ReviewWorkspace() {
                 run's assessment is now always available beneath whatever
                 structured items exist. */}
             {(() => {
+              // EVERY requirement the run assessed, not only the ones that
+              // found evidence. A requirement with nothing behind it is the
+              // most important row on this page — it is the gap the reviewer
+              // is deciding about — and filtering it out left the panel
+              // showing a single dimension out of eight (audit #4, item 21).
               const runRows = Array.isArray((currentRun?.result as Any)?.requirement_assessment)
-                ? ((currentRun.result as Any).requirement_assessment as Any[]).filter(
-                    (r: Any) => Array.isArray(r?.evidence) && r.evidence.length > 0,
+                ? ((currentRun.result as Any).requirement_assessment as Any[]).filter((r: Any) =>
+                    Boolean(r?.text),
                   )
                 : [];
               if (grouped.length === 0 && runRows.length === 0) {
@@ -536,11 +567,30 @@ function ReviewWorkspace() {
                         </span>
                         <span className="text-sm font-medium">{String(r.text ?? "")}</span>
                       </div>
-                      {(r.evidence as Any[]).slice(0, 3).map((e: Any, j: number) => (
-                        <p key={j} className="border-l-2 border-primary/30 pl-2 text-xs text-muted-foreground">
-                          {String(e.snippet ?? "")}
-                        </p>
-                      ))}
+                      {(() => {
+                        // Quotes go through the same hygiene every other
+                        // surface uses, so byte soup from an unreadable CV is
+                        // never quoted here as evidence (audit #4, item 13).
+                        const quotes = (Array.isArray(r.evidence) ? (r.evidence as Any[]) : [])
+                          .map((e: Any) => renderQuote(String(e?.snippet ?? "")))
+                          .filter(Boolean)
+                          .slice(0, 3);
+                        if (quotes.length === 0) {
+                          return (
+                            <p className="pl-2 text-xs italic text-muted-foreground">
+                              No passage in the application supports this requirement.
+                            </p>
+                          );
+                        }
+                        return quotes.map((q, j) => (
+                          <p
+                            key={j}
+                            className="border-l-2 border-primary/30 pl-2 text-xs text-muted-foreground"
+                          >
+                            {q}
+                          </p>
+                        ));
+                      })()}
                     </div>
                   ))}
                 </Card>
@@ -782,7 +832,15 @@ function ReviewWorkspace() {
         <aside className="space-y-4">
           <Card className="space-y-2 p-5">
             <h2 className="text-sm font-semibold">Version comparison</h2>
-            {currentRun ? (
+            {scoreVoided ? (
+              /* Same rule as the header: the figures below were computed from
+                 text that proved unreadable, so "SCORE 41.4" is not a fact
+                 about this candidate (audit #4, item 13). */
+              <p className="text-sm text-muted-foreground">
+                No score to compare — the CV could not be read. Run OCR or retry parse, then
+                rescore.
+              </p>
+            ) : currentRun ? (
               <dl className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Current</dt>
@@ -831,6 +889,25 @@ function ReviewWorkspace() {
                       )}
                     </div>
                   )}
+                {/* A disqualifying answer has no contradiction row: its pair is
+                    the screening question and the dealbreaker it tripped, which
+                    the engine records in the cap reason. Without this the
+                    banner said only "disqualifying answer — read the evidence
+                    before approving", and the reviewer had to go and find WHICH
+                    answer on another tab (audit #4, item 11). */}
+                {disqualifyingCaps.length > 0 && (
+                  <div className="col-span-2 space-y-1 pt-1">
+                    {disqualifyingCaps.map((reason, i) => (
+                      <p
+                        key={i}
+                        className="rounded border border-destructive/20 bg-destructive/5 p-2 text-xs"
+                      >
+                        Disqualifying screening answer on “{reason}” — the score is capped because
+                        of it.
+                      </p>
+                    ))}
+                  </div>
+                )}
               </dl>
             ) : (
               <p className="text-sm text-muted-foreground">No score run yet.</p>

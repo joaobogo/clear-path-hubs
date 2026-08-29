@@ -27,7 +27,7 @@ import {
   type FitPresentation,
 } from "@/lib/client-fit-presentation";
 import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
-import { contradictionSentence } from "@/lib/client/contradiction-copy";
+import { contradictionSentence, displayConcern } from "@/lib/client/contradiction-copy";
 import {
   clientMethodLabel,
   normalizeEvaluationMethod,
@@ -1084,11 +1084,24 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const prettyHeadline = prettifyHeadline(cp.headline ?? null);
   const chips: string[] = []; // Reconciled C1: no longer using derived chips here
 
-  const concerns: string[] = Array.isArray(runConcerns)
-    ? runConcerns.slice(0, 5).map(String)
+  // Concern lines are stored on the run, so a run approved under an older
+  // engine still carries the text it was scored with — including the raw
+  // status token "Screening/CV contradiction (screening contradicts cv)."
+  // which reached the client's "What holds it back" verbatim (audit #4,
+  // item 12). Rewritten at read time; a line with nothing actionable is
+  // dropped rather than shown as a token.
+  const contradictionRows = (run?.result as AnyRow)?.contradiction_rows as
+    | Array<{ question?: string; requirement?: string }>
+    | undefined;
+  const rawConcerns: string[] = Array.isArray(runConcerns)
+    ? runConcerns.map(String)
     : Array.isArray(coverage?.missing)
-      ? coverage.missing.slice(0, 5).map(String)
+      ? coverage.missing.map(String)
       : [];
+  const concerns: string[] = rawConcerns
+    .map((c) => displayConcern(c, contradictionRows))
+    .filter((c): c is string => Boolean(c))
+    .slice(0, 5);
 
   const requirement_rows = buildRequirementRows(
     pos ? { requirements: pos.requirements, preferred_requirements: pos.preferred_requirements } : null,
@@ -1352,12 +1365,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       blueprint_version: run?.blueprint_version ?? null,
       // A human sentence naming the conflicting pair, or null — never the
       // raw enum ("screening_contradicts_cv" reached a client card, audit #3).
-      contradiction: contradictionSentence(
-        run?.contradiction_status,
-        (run?.result as AnyRow)?.contradiction_rows as
-          | Array<{ question?: string; requirement?: string }>
-          | undefined,
-      ),
+      contradiction: contradictionSentence(run?.contradiction_status, contradictionRows),
       completed_at: run?.completed_at ?? null,
       method: normalizeEvaluationMethod((run as AnyRow)?.evaluation_method),
       method_label: clientMethodLabel((run as AnyRow)?.evaluation_method),

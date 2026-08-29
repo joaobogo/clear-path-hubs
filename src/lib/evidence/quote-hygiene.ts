@@ -239,6 +239,34 @@ export function cleanQuote(raw: string | null | undefined): string {
 // renderQuote — client/admin UI rendering only. Aggressive PII + boundary snap.
 // ---------------------------------------------------------------------------
 
+/**
+ * A quote sliced out of a CV whose extraction produced byte soup rather than
+ * text — "…M������_�ҡ…". These were rendered as evidence under real
+ * requirements, so a candidate whose CV nothing could be read from appeared to
+ * have quoted proof of AI tooling and UX principles (audit #4, item 13).
+ *
+ * Deliberately stricter than the whole-document `isGarbageCvText` gate: a
+ * quote is short, so a handful of replacement characters is already fatal,
+ * while a document of the same ratio might still be mostly readable.
+ */
+export function isMojibake(raw: string | null | undefined): boolean {
+  const text = String(raw ?? "");
+  if (!text) return false;
+  const n = text.length;
+  // U+FFFD is the decoder saying it could not read the byte. Two of them in a
+  // passage means the passage is not text.
+  const replacement = (text.match(/�/g) ?? []).length;
+  if (replacement >= 2 || replacement / n > 0.02) return true;
+  // Control characters (excluding tab/newline/carriage return) never appear in
+  // prose and are the other signature of a mis-decoded binary stream.
+  const control = (text.match(/[ --]/g) ?? []).length;
+  if (control > 0) return true;
+  // Finally, a passage that is mostly not letters, digits, spaces or ordinary
+  // punctuation is not something to quote at anybody.
+  const ordinary = (text.match(/[\p{L}\p{N}\s.,;:!?'"()\-–—/&%+#@]/gu) ?? []).length;
+  return ordinary / n < 0.85;
+}
+
 const RENDER_EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
 const RENDER_URL_RE = /(https?:\/\/|www\.)\S+|\b[a-z0-9-]+\.(com|net|org|io|dev|co|ai)(\/\S*)?\b/gi;
 const RENDER_PHONE_RE = /(?:\+?\d[\d\s().-]{6,}\d)/g;
@@ -378,6 +406,7 @@ function renderCapAtWord(text: string): string {
 export function renderQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   if (isTemplatedEvidence(raw) || isLinkHubDebris(raw)) return "";
+  if (isMojibake(raw)) return "";
 
   const scrubbed = stripSpacedBanners(
     stripLetterSpacedRuns(stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim()),

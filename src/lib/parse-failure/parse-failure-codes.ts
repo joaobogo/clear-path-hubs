@@ -34,6 +34,22 @@ const REUPLOAD_LINE =
   "Please upload your CV again as a PDF that contains selectable text, rather than a photo or scan.";
 
 export const PARSE_FAILURES: Record<string, ParseFailure> = {
+  /**
+   * Extraction reported success and returned byte soup. The file's parse_state
+   * stays "parsed", so nothing flagged it until the scoring pipeline's garbage
+   * gate parked the match in ocr_required (audit #4, item 13).
+   */
+  cv_unreadable: {
+    code: "cv_unreadable",
+    label: "Read, but not readable",
+    cause:
+      "Text came out of the document, but it is not readable language — the encoding is damaged or the file is not really a text document.",
+    nextAction: "Run OCR on the document, or ask the candidate for a clean copy.",
+    owner: "recruiter",
+    reuploadFixes: true,
+    candidateMessage: REUPLOAD_LINE,
+    ocr: true,
+  },
   text_layer_missing: {
     code: "text_layer_missing",
     label: "Scan without text",

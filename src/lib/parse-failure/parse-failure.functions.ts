@@ -39,6 +39,50 @@ export const listParseFailures = createServerFn({ method: "GET" })
     const { data: files, error } = await fileQuery;
     if (error) throw new Error(`parse_failures_failed: ${error.message}`);
     const rows = (files ?? []) as Any[];
+
+    // A document can extract "successfully" into byte soup: the file's
+    // parse_state stays `parsed`, so this desk reported "Every document
+    // currently on file was read successfully" while a candidate's CV was
+    // plainly unreadable on their profile (audit #4, item 13). The garbage
+    // gate parks those matches in `ocr_required`; their files belong here.
+    if (!data.state || data.state === "all") {
+      const { data: ocrMatches } = await supabaseAdmin
+        .from("candidate_matches")
+        .select("candidate_profile_id")
+        .eq("processing_state", "ocr_required")
+        .limit(200);
+      const ocrCpIds = [
+        ...new Set(((ocrMatches ?? []) as Any[]).map((m) => m.candidate_profile_id).filter(Boolean)),
+      ] as string[];
+      const alreadyListed = new Set(rows.map((f) => f.candidate_profile_id));
+      const missing = ocrCpIds.filter((id) => !alreadyListed.has(id));
+      if (missing.length > 0) {
+        const { data: profileRows } = await supabaseAdmin
+          .from("candidate_profiles")
+          .select("current_cv_file_id")
+          .in("id", missing);
+        const fileIds = ((profileRows ?? []) as Any[])
+          .map((p) => p.current_cv_file_id)
+          .filter(Boolean) as string[];
+        if (fileIds.length > 0) {
+          let extraQuery = supabaseAdmin
+            .from("files")
+            .select(
+              "id,filename,candidate_profile_id,parse_state,parse_error_code,parse_error,extraction_attempts,ocr_used,created_at,is_test_record",
+            )
+            .in("id", fileIds);
+          if (!data.include_test) {
+            extraQuery = extraQuery.or("is_test_record.is.null,is_test_record.eq.false");
+          }
+          const { data: extraFiles } = await extraQuery;
+          for (const f of ((extraFiles ?? []) as Any[])) {
+            // Named for what it is: the text came out, and it was not text.
+            rows.push({ ...f, parse_error_code: f.parse_error_code ?? "cv_unreadable" });
+          }
+        }
+      }
+    }
+
     if (rows.length === 0) return { rows: [], total: 0 };
 
     const cpIds = [...new Set(rows.map((f) => f.candidate_profile_id).filter(Boolean))] as string[];
