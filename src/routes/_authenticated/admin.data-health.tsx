@@ -1,4 +1,4 @@
-import { APP_LOCALE } from "@/lib/format/datetime";
+import { APP_LOCALE, formatDateTime } from "@/lib/format/datetime";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -32,14 +32,15 @@ export const Route = createFileRoute("/_authenticated/admin/data-health")({
   component: DataHealthPage,
 });
 
-function when(iso: string | null) {
-  if (!iso) return "never";
-  return new Date(iso).toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+// Was a private `toLocaleString` with no timeZone, so this page rendered in
+// the viewer's browser zone while every other timestamp renders in the
+// workspace zone (audit #4, M16). One formatter, one zone.
+//
+// The empty case said "never", which reads as a broken feed on a workspace
+// that simply has not recorded that kind of row yet (audit #4, L12). Each row
+// now says what is actually absent.
+function when(iso: string | null, empty = "None recorded yet") {
+  return formatDateTime(iso, empty);
 }
 
 function Stat({
@@ -120,11 +121,25 @@ function DataHealthMetrics() {
           tone={data.duplicates.duplicate_rate > 10 ? "warn" : "good"}
           detail={`${data.duplicates.merged_persons} merged of ${data.duplicates.persons}`}
         />
+        {/* A CV can upload cleanly and still extract to unreadable text. That
+            case sets no failed file_status, so the tile read "0 of 39 files"
+            beside a candidate whose CV nothing could be read from (audit #4,
+            L12). Both kinds of failure are now on the tile. */}
         <Stat
           label="Extraction failures"
           value={`${data.extraction.failure_rate}%`}
-          tone={data.extraction.failure_rate > 5 ? "warn" : "good"}
-          detail={`${data.extraction.files_failed} of ${data.extraction.files_total} files`}
+          tone={
+            data.extraction.failure_rate > 5 || data.extraction.unreadable_cvs > 0
+              ? "warn"
+              : "good"
+          }
+          detail={
+            data.extraction.unreadable_cvs > 0
+              ? `${data.extraction.files_failed} of ${data.extraction.files_total} files · ${data.extraction.unreadable_cvs} CV${
+                  data.extraction.unreadable_cvs === 1 ? "" : "s"
+                } need OCR`
+              : `${data.extraction.files_failed} of ${data.extraction.files_total} files`
+          }
         />
         <Stat
           label="Orphaned records"
@@ -165,15 +180,15 @@ function DataHealthMetrics() {
             <dl className="mt-3 space-y-2 text-sm">
               <div className="flex justify-between gap-4">
                 <dt className="text-muted-foreground">Newest candidate</dt>
-                <dd>{when(data.freshness.newest_candidate)}</dd>
+                <dd>{when(data.freshness.newest_candidate, "No candidates yet")}</dd>
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-muted-foreground">Newest evidence</dt>
-                <dd>{when(data.freshness.newest_evidence)}</dd>
+                <dd>{when(data.freshness.newest_evidence, "No evidence recorded yet")}</dd>
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-muted-foreground">Newest signal</dt>
-                <dd>{when(data.freshness.newest_signal)}</dd>
+                <dd>{when(data.freshness.newest_signal, "No search signals yet")}</dd>
               </div>
             </dl>
             {data.freshness.stale_days !== null &&

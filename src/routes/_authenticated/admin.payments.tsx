@@ -6,6 +6,7 @@ import { listAdminPayments } from "@/lib/admin-payments.functions";
 import { getPaymentsOps } from "@/lib/admin-ops.functions";
 import { getStripePaymentMode } from "@/lib/integration-health.functions";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
+import { formatDate } from "@/lib/format/datetime";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -164,11 +165,7 @@ function AdminPaymentsPage() {
                         <Badge variant={statusTone(row.status) as any}>{row.status}</Badge>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(row.paidAt ?? row.createdAt).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {formatDate(row.paidAt ?? row.createdAt, "—")}
                       </TableCell>
                       <TableCell className="max-w-[220px] truncate font-mono text-xs text-muted-foreground">
                         {row.providerReference ?? "—"}

@@ -131,6 +131,13 @@ function fmt(v: unknown) {
   return /[a-z]/.test(s) && /^[a-z0-9]+([_.][a-z0-9]+)+$/.test(s) ? humanizeCode(s) : s;
 }
 
+/** A stored 0-1 coverage ratio as the whole percentage every surface shows. */
+function pctOfRatio(v: unknown): string {
+  const n = typeof v === "number" ? v : Number(v);
+  if (v == null || !Number.isFinite(n)) return "—";
+  return `${Math.round(Math.max(0, Math.min(1, n)) * 100)}%`;
+}
+
 function ReviewWorkspace() {
   const params = Route.useParams();
   const search = Route.useSearch();
@@ -489,51 +496,56 @@ function ReviewWorkspace() {
           {/* Evidence per dimension */}
           <section className="space-y-3">
             <h2 className="text-sm font-semibold">Evidence by dimension</h2>
-            {grouped.length === 0 ? (
-              // The structured evidence-items table is written by a separate
-              // pipeline step that does not always run — but the score run
-              // itself carries per-requirement evidence. The page built for
-              // human verification said "No structured evidence yet" while
-              // the evidence record listed quotes for six requirements
-              // (audit S-11). Fall back to the run's own assessment.
-              Array.isArray((currentRun?.result as Any)?.requirement_assessment) &&
-              ((currentRun.result as Any).requirement_assessment as Any[]).some(
-                (r: Any) => Array.isArray(r?.evidence) && r.evidence.length > 0,
-              ) ? (
+            {/* The structured evidence-items table is written by a separate
+                pipeline step that often covers only the dimensions a reviewer
+                has already touched. Gating the run's own evidence on
+                `grouped.length === 0` meant ONE admin-verified dimension hid
+                the other seven requirements entirely (audit #4, M18). The
+                run's assessment is now always available beneath whatever
+                structured items exist. */}
+            {(() => {
+              const runRows = Array.isArray((currentRun?.result as Any)?.requirement_assessment)
+                ? ((currentRun.result as Any).requirement_assessment as Any[]).filter(
+                    (r: Any) => Array.isArray(r?.evidence) && r.evidence.length > 0,
+                  )
+                : [];
+              if (grouped.length === 0 && runRows.length === 0) {
+                return (
+                  <Card className="p-6 text-sm text-muted-foreground">
+                    No structured evidence yet. Run the pipeline or review the CV directly.
+                  </Card>
+                );
+              }
+              if (runRows.length === 0) return null;
+              return (
                 <Card className="space-y-3 p-5">
                   <p className="text-xs text-muted-foreground">
-                    Showing the scoring run's own evidence — structured review
-                    items have not been generated for this candidate yet, so
-                    row-level corrections are made from the Score tab.
+                    {grouped.length === 0
+                      ? "From the scoring run — structured review items have not been generated for this candidate, so row-level corrections are made from the Score tab."
+                      : "From the scoring run — every requirement the run assessed. Dimensions with structured review items are shown above and can be corrected there."}
                   </p>
-                  {((currentRun.result as Any).requirement_assessment as Any[])
-                    .filter((r: Any) => Array.isArray(r?.evidence) && r.evidence.length > 0)
-                    .map((r: Any, i: number) => (
-                      <div key={i} className="space-y-1 rounded-lg border p-3">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span
-                            className={`rounded px-2 py-0.5 text-xs font-medium ${
-                              RESULT_TONE[String(r.status)] ?? "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {humanizeCode(String(r.status ?? "unknown"))}
-                          </span>
-                          <span className="text-sm font-medium">{String(r.text ?? "")}</span>
-                        </div>
-                        {(r.evidence as Any[]).slice(0, 3).map((e: Any, j: number) => (
-                          <p key={j} className="border-l-2 border-primary/30 pl-2 text-xs text-muted-foreground">
-                            {String(e.snippet ?? "")}
-                          </p>
-                        ))}
+                  {runRows.map((r: Any, i: number) => (
+                    <div key={i} className="space-y-1 rounded-lg border p-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span
+                          className={`rounded px-2 py-0.5 text-xs font-medium ${
+                            RESULT_TONE[String(r.status)] ?? "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {humanizeCode(String(r.status ?? "unknown"))}
+                        </span>
+                        <span className="text-sm font-medium">{String(r.text ?? "")}</span>
                       </div>
-                    ))}
+                      {(r.evidence as Any[]).slice(0, 3).map((e: Any, j: number) => (
+                        <p key={j} className="border-l-2 border-primary/30 pl-2 text-xs text-muted-foreground">
+                          {String(e.snippet ?? "")}
+                        </p>
+                      ))}
+                    </div>
+                  ))}
                 </Card>
-              ) : (
-                <Card className="p-6 text-sm text-muted-foreground">
-                  No structured evidence yet. Run the pipeline or review the CV directly.
-                </Card>
-              )
-            ) : null}
+              );
+            })()}
             {grouped.map(([dim, items], gi) => (
               <Card
                 key={dim}
@@ -708,14 +720,38 @@ function ReviewWorkspace() {
                   </p>
                 </li>
               ))}
-              {(decisions as Any[]).map((d) => (
-                <li key={d.id} className="rounded border p-2">
-                  <p className="text-xs text-muted-foreground">
-                    {formatDateTime(d.created_at)} · {fmt(d.decision_type)}
-                  </p>
-                  <p>{fmt(d.reason)}</p>
-                </li>
-              ))}
+              {/* Repeated attempts at the same blocked action are one event
+                  with a count, not four identical rows a minute apart
+                  ("Score Approval Blocked" at 04:36, 04:37, 04:38 and 01:30 —
+                  audit #4, M17). Runs are consecutive rows sharing the action
+                  and reason. */}
+              {(() => {
+                const rows = decisions as Any[];
+                const groups: Array<{ first: Any; count: number; lastAt: string }> = [];
+                for (const d of rows) {
+                  const prev = groups[groups.length - 1];
+                  const sameAction =
+                    prev &&
+                    String(prev.first.decision_type) === String(d.decision_type) &&
+                    String(prev.first.reason ?? "") === String(d.reason ?? "");
+                  if (sameAction) {
+                    prev.count += 1;
+                    // Rows arrive newest-first, so the last one seen is oldest.
+                    prev.lastAt = d.created_at;
+                  } else {
+                    groups.push({ first: d, count: 1, lastAt: d.created_at });
+                  }
+                }
+                return groups.map((g) => (
+                  <li key={g.first.id} className="rounded border p-2">
+                    <p className="text-xs text-muted-foreground">
+                      {formatDateTime(g.first.created_at)} · {fmt(g.first.decision_type)}
+                      {g.count > 1 ? ` · ×${g.count} (since ${formatDateTime(g.lastAt)})` : ""}
+                    </p>
+                    <p>{fmt(g.first.reason)}</p>
+                  </li>
+                ));
+              })()}
               {(audit as Any[])
                 // Every review decision is dual-written: a score_decisions
                 // row (rendered above, with its reason) AND a mirroring
@@ -767,9 +803,16 @@ function ReviewWorkspace() {
                     </dd>
                   </div>
                 ) : null}
+                {/* A 0-1 ratio through the generic formatter printed "0.8" /
+                    "1" / "0.4" here while every other surface shows the same
+                    figure as a percentage (audit #4, M3). */}
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Must-have coverage</dt>
-                  <dd>{fmt(currentRun.must_have_coverage)}</dd>
+                  <dd>{pctOfRatio(currentRun.must_have_coverage)}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Preferred coverage</dt>
+                  <dd>{pctOfRatio(currentRun.preferred_coverage)}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Contradictions</dt>
@@ -993,7 +1036,10 @@ function EligibilityRow({
     <div className="space-y-2 rounded-md border p-3">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-medium">{check.qualifier_label ?? check.qualifier_key}</p>
-        <Badge variant={check.status === "eligible" ? "default" : "outline"}>{check.status}</Badge>
+        {/* Words, not enum keys — this printed "not_evaluated" (M18). */}
+        <Badge variant={check.status === "eligible" ? "default" : "outline"}>
+          {humanizeCode(String(check.status ?? "unknown"))}
+        </Badge>
       </div>
       {check.reason ? <p className="text-xs text-muted-foreground">{check.reason}</p> : null}
       <select

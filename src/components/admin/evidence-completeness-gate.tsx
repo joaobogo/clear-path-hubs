@@ -17,6 +17,8 @@ import {
 } from "@/lib/evidence/completeness.functions";
 import { applyReviewDecision } from "@/lib/processing.functions";
 import type { CriterionRow } from "@/lib/evidence/completeness";
+import { humanizeCode } from "@/lib/humanize-codes";
+import { humanizeSource } from "@/lib/evidence/quote-hygiene";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -301,11 +303,17 @@ export function EvidenceCompletenessGate({
                         <span className="font-medium">Why this counts:</span> {s.meaning}
                       </p>
                     )}
+                    {/* Was "source: cv · met · confidence 0.85 · confirmed" —
+                        raw enum tokens and a bare 0-1 decimal, where every
+                        other surface writes a whole percentage and a word
+                        (audit #4, L5). Same facts, same units, same wording. */}
                     <p className="text-[11px] text-muted-foreground">
-                      source: {s.source}
-                      {s.result ? ` · ${s.result}` : ""}
-                      {s.confidence != null ? ` · confidence ${s.confidence.toFixed(2)}` : ""}
-                      {s.reviewerStatus ? ` · ${s.reviewerStatus}` : ""}
+                      Source: {humanizeSource(s.source)}
+                      {s.result ? ` · ${humanizeCode(String(s.result))}` : ""}
+                      {s.confidence != null
+                        ? ` · confidence ${Math.round(Number(s.confidence) * 100)}%`
+                        : ""}
+                      {s.reviewerStatus ? ` · ${humanizeCode(String(s.reviewerStatus))}` : ""}
                     </p>
                   </li>
                 ))}

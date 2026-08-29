@@ -622,12 +622,42 @@ function normEducation(raw: unknown): ClientCandidateDTO["education"] {
   }));
 }
 
+/** "Portuguese (native)" / "English — C2" → { name, level }. */
+function splitLanguageLine(entry: string): { name: string; level: string | null } | null {
+  const text = entry.trim().replace(/^[•·\-–—]\s*/, "");
+  if (!text) return null;
+  const bracketed = text.match(/^(.+?)\s*[([]\s*([^)\]]+?)\s*[)\]]\s*$/);
+  if (bracketed) return { name: bracketed[1]!.trim(), level: bracketed[2]!.trim() || null };
+  const dashed = text.match(/^(.+?)\s*[:\-–—]\s*(.+)$/);
+  if (dashed) return { name: dashed[1]!.trim(), level: dashed[2]!.trim() || null };
+  return { name: text, level: null };
+}
+
+/**
+ * Languages are stored as an array on most profiles, but some rows carry the
+ * CV's own line ("Portuguese (native), English (C2), Spanish (B1)") or a single
+ * object. Requiring an array made those profiles read "Languages: Not provided"
+ * beside a CV that plainly lists three (audit #4, L11).
+ */
 function normLanguages(raw: unknown): ClientCandidateDTO["languages"] {
-  if (!Array.isArray(raw)) return [];
-  return raw.slice(0, 8).map((l: AnyRow) => ({
-    name: String(l?.name ?? l?.language ?? l),
-    level: normStr(l?.level ?? l?.proficiency),
-  })).filter((l) => l.name);
+  if (typeof raw === "string") {
+    return raw
+      .split(/[,;•·\n|]+/)
+      .map(splitLanguageLine)
+      .filter((l): l is { name: string; level: string | null } => Boolean(l?.name))
+      .slice(0, 8);
+  }
+  const list = Array.isArray(raw) ? raw : raw && typeof raw === "object" ? [raw] : [];
+  return list
+    .slice(0, 8)
+    .map((l: AnyRow) => {
+      // An entry can itself be a plain string inside the array.
+      if (typeof l === "string") return splitLanguageLine(l);
+      const name = normStr(l?.name ?? l?.language);
+      if (!name) return null;
+      return { name, level: normStr(l?.level ?? l?.proficiency) };
+    })
+    .filter((l): l is { name: string; level: string | null } => Boolean(l?.name));
 }
 
 function normWorkAuth(raw: unknown): string | null {
@@ -690,9 +720,25 @@ function normCompensationRange(raw: unknown): {
   return { role_range, currency, cadence, min, max };
 }
 
-function normCandidateExpectation(raw: unknown): { text: string | null; amount: number | null; currency: string | null } {
-  if (!raw) return { text: null, amount: null, currency: null };
-  if (typeof raw === "string") return { text: raw.trim() || null, amount: null, currency: null };
+/**
+ * A candidate's pay expectation, which may be a single figure or a range.
+ *
+ * This used to fold a range down to `r.min` and hand that one number to the
+ * classifier, so a candidate asking R$4,500–R$6,000 against a R$5,000–R$7,000
+ * role was judged on 4,500 alone and labelled "below range" — a dealbreaker
+ * chip for someone whose range actually overlaps the role's (audit #4, M12).
+ * Both ends are kept, and the text says the range the candidate gave.
+ */
+function normCandidateExpectation(raw: unknown): {
+  text: string | null;
+  amount: number | null;
+  min: number | null;
+  max: number | null;
+  currency: string | null;
+} {
+  const empty = { text: null, amount: null, min: null, max: null, currency: null };
+  if (!raw) return empty;
+  if (typeof raw === "string") return { ...empty, text: raw.trim() || null };
   const r = raw as AnyRow;
   const currency = normStr(r.currency) ?? null;
   const toNum = (v: unknown) => {
@@ -700,23 +746,44 @@ function normCandidateExpectation(raw: unknown): { text: string | null; amount: 
     const n = typeof v === "number" ? v : Number(String(v).replace(/[^\d.-]/g, ""));
     return Number.isFinite(n) && n > 0 ? n : null;
   };
-  const target = toNum(r.target ?? r.expected ?? r.amount ?? r.value ?? r.min ?? r.desired);
+  // A point expectation, if the candidate gave one.
+  const point = toNum(r.target ?? r.expected ?? r.amount ?? r.value ?? r.desired);
+  const rangeMin = toNum(r.min);
+  const rangeMax = toNum(r.max);
+  const min = point ?? rangeMin;
+  const max = point != null && rangeMax == null ? point : (rangeMax ?? rangeMin ?? point);
+
   const explicit = normStr(r.display ?? r.summary ?? r.note ?? r.text);
-  const text =
-    explicit ?? (target != null ? (formatMoney(target, currency) ?? String(target)) : null);
-  return { text, amount: target, currency };
+  const money = (n: number) => formatMoney(n, currency) ?? String(n);
+  const derived =
+    min != null && max != null && max !== min
+      ? `${money(min)}–${money(max)}`
+      : min != null
+        ? money(min)
+        : null;
+
+  return { text: explicit ?? derived, amount: point ?? min, min, max, currency };
 }
 
+/**
+ * Compare the candidate's expectation with the role's range.
+ *
+ * When the candidate gave a range, the two bands are compared for OVERLAP: any
+ * overlap is "aligned", because a deal exists at some figure both sides named.
+ * Only a band entirely above or entirely below the role's is "over"/"under"
+ * (audit #4, M12). A single figure behaves exactly as before.
+ */
 export function classifyCompensation(
   role: { min: number | null; max: number | null },
-  cand: { amount: number | null },
+  cand: { amount: number | null; min?: number | null; max?: number | null },
 ): "aligned" | "over" | "under" | "unknown" {
-  if (cand.amount == null || (role.min == null && role.max == null)) return "unknown";
-  const a = cand.amount;
+  const candLo = cand.min ?? cand.amount;
+  const candHi = cand.max ?? cand.amount;
+  if (candLo == null || candHi == null || (role.min == null && role.max == null)) return "unknown";
   const lo = role.min ?? -Infinity;
   const hi = role.max ?? Infinity;
-  if (a < lo) return "under";
-  if (a > hi) return "over";
+  if (candHi < lo) return "under";
+  if (candLo > hi) return "over";
   return "aligned";
 }
 

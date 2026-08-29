@@ -163,9 +163,18 @@ function SignalRow({ signal }: { signal: HealthSignal }) {
 export function SystemHealthStrip({
   organizationId,
   className,
+  sourcingLive = true,
 }: {
   organizationId: string | null;
   className?: string;
+  /**
+   * Whether the workspace has a live role. The all-clear headline claimed
+   * "your workspace is live and sourcing is already moving" on any workspace
+   * with nothing to flag — including one whose only role was submitted and
+   * awaiting payment, where it contradicted the payment banner directly
+   * beneath it (audit #4, M15).
+   */
+  sourcingLive?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const fetchHealth = useServerFn(getSystemHealth);
@@ -248,7 +257,13 @@ export function SystemHealthStrip({
             className="min-w-0 truncate text-xs text-muted-foreground sm:text-sm"
             aria-live="polite"
           >
-            {platformNotice.show ? platformNotice.title : (data.attention_count > 0 ? data.headline : "Nothing is blocked — your workspace is live and sourcing is already moving.")}
+            {platformNotice.show
+              ? platformNotice.title
+              : data.attention_count > 0
+                ? data.headline
+                : sourcingLive
+                  ? "Nothing is blocked — your workspace is live and sourcing is already moving."
+                  : "Nothing is blocked on our side."}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1">

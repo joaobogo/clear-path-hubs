@@ -202,6 +202,15 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     const { data: positions, error: positionsError } = positionsQueryRes as AnyRow;
     const activePositionsList = (positions as AnyRow[]) ?? [];
 
+    // The organisation's own name, so the header greets a client by name even
+    // before their first role goes live (audit #4, M15).
+    const { data: orgRow } = await context.supabase
+      .from("organizations")
+      .select("name")
+      .eq("id", data.orgId)
+      .maybeSingle();
+    const orgName = ((orgRow as AnyRow)?.name as string | null) || null;
+
     // Reconciliation (B4/B3): ensure KPI counts use the same positions we just loaded.
     // Hires come from computeKpis, which reads the confirmed offer records.
     const kpis = {
@@ -658,7 +667,10 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       hiring_health,
       org: {
         id: data.orgId,
-        name: activePositionsList[0]?.organizations?.name ?? "Your workspace",
+        // Read off the first ACTIVE position, so a workspace with no live role
+        // fell back to the generic "Your workspace" even though we know the
+        // organisation perfectly well (audit #4, M15). Ask the org itself.
+        name: orgName ?? activePositionsList[0]?.organizations?.name ?? "Your workspace",
       },
 
 

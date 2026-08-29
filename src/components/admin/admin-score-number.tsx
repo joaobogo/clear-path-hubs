@@ -22,6 +22,8 @@ type RunLike = {
   engine_version?: string | null;
   rubric_version_id?: string | null;
   rubric_versions?: { label?: string | null; version_number?: number | null } | null;
+  /** Flat column form, selected by surfaces that do not join `rubric_versions`. */
+  rubric_version_number?: number | null;
 };
 
 /**
@@ -29,12 +31,29 @@ type RunLike = {
  * "engine version" or a bare confidence decimal — each label says what the fact
  * means for their decision.
  */
+/**
+ * The criteria version behind a run, wherever the caller's row carries it.
+ *
+ * Surfaces load runs differently: some select the flat `rubric_version_number`
+ * column, others join `rubric_versions`. Each surface reading only its own
+ * shape is why one chip said "criteria set not recorded" beside a sentence
+ * reading "scored against criteria version 1" on the same screen (audit #4,
+ * M3). Both shapes resolve here, so every surface answers identically.
+ */
+export function rubricVersionNumber(run: RunLike | null | undefined): number | null {
+  const joined = run?.rubric_versions?.version_number;
+  if (joined != null) return Number(joined);
+  const flat = (run as { rubric_version_number?: number | null } | null | undefined)
+    ?.rubric_version_number;
+  return flat != null ? Number(flat) : null;
+}
+
 export function rubricVersionLabel(run: RunLike | null | undefined): string {
-  const rv = run?.rubric_versions ?? null;
-  if (rv && rv.version_number != null) {
-    // rv.label is a machine slug ("auto-v1"); interpolating it produced
+  const version = rubricVersionNumber(run);
+  if (version != null) {
+    // The joined label is a machine slug ("auto-v1"); interpolating it produced
     // "scored against auto-v1 v1". The version number is the human fact.
-    return `scored against criteria version ${rv.version_number}`;
+    return `scored against criteria version ${version}`;
   }
   // Never a truncated UUID in prose — "criteria set 9dad7cb4" reads as
   // gibberish and leaks an internal identifier (S-21).

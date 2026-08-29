@@ -3,6 +3,7 @@
  * custom build, and what that pipeline is worth.
  */
 import { useState } from "react";
+import { formatDate } from "@/lib/format/datetime";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -172,7 +173,7 @@ function DashboardRequestsPage() {
                 <div>
                   <CardTitle className="text-base">{r.organizationName}</CardTitle>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(r.createdAt).toLocaleDateString("en-GB")}
+                    {formatDate(r.createdAt, "—")}
                   </p>
                 </div>
                 <Badge variant={r.status === "new" ? "default" : "secondary"}>{r.status}</Badge>

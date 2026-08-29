@@ -105,6 +105,7 @@ import {
   Row,
 } from "@/components/admin/candidate-detail/primitives";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
+import { reconcileExplanationBand } from "@/lib/scoring/explanation-band";
 
 
 // ── CV & parsed ────────────────────────────────────────────────────────────
@@ -618,7 +619,9 @@ export function ScoreTab({
           </p>
         )}
         {currentRun.explanation && videoBonusPts === 0 && (
-          <p className="mt-3 whitespace-pre-wrap text-sm">{cleanLine(String(currentRun.explanation))}</p>
+          <p className="mt-3 whitespace-pre-wrap text-sm">
+            {cleanLine(reconcileExplanationBand(String(currentRun.explanation)))}
+          </p>
         )}
 
         <h3 className="mt-6 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -755,7 +758,7 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
                           : "outline"
                     }
                   >
-                    {s.aligned ?? "n/a"}
+                    {humanizeCode(String(s.aligned ?? "n/a"))}
                   </Badge>
                 </div>
                 {llm && (
@@ -771,7 +774,7 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
                           : "outline"
                         }
                       >
-                        {llm.cv_supports}
+                        {humanizeCode(String(llm.cv_supports ?? "unclear"))}
                       </Badge>
                     </div>
                     {llm.note && <p className="mt-1 text-muted-foreground">{llm.note}</p>}
@@ -805,7 +808,7 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
                           : "outline"
                         }
                       >
-                        {llm.cv_supports}
+                        {humanizeCode(String(llm.cv_supports ?? "unclear"))}
                       </Badge>
                     </div>
                     {llm.note && <p className="mt-1 text-muted-foreground">{llm.note}</p>}
@@ -832,7 +835,7 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
                     : "outline"
                   }
                 >
-                  {llm.cv_supports}
+                  {humanizeCode(String(llm.cv_supports ?? "unclear"))}
                 </Badge>
               </div>
               {llm.note && <p className="mt-1 text-xs text-muted-foreground">{llm.note}</p>}

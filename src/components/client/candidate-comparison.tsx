@@ -359,20 +359,30 @@ export function CompareSheet({
               ))}
             </ComparisonRow>
 
-            {/* Availability */}
-            <ComparisonRow
-              label="Availability"
-              cols={cols}
-              hide={diffOnly && allSame(candidates.map((c) => c.candidate.availability ?? ""))}
-            >
-              {candidates.map((c) => (
-                <div key={c.match_id} className="text-xs">
-                  {c.candidate.availability || (
-                    <span className="text-muted-foreground">Not provided</span>
-                  )}
-                </div>
-              ))}
-            </ComparisonRow>
+            {/* Availability. Collapses to one line when every candidate says
+                the same thing, exactly like Logistics below — printing
+                "Available" three times across a comparison row tells the
+                reader nothing, and is not a comparison (audit #4, L8). */}
+            {allSame(candidates.map((c) => c.candidate.availability ?? "")) ? (
+              !diffOnly && (
+                <ComparisonRow label="Availability" cols={1}>
+                  <div className="text-xs text-muted-foreground">
+                    Same for all candidates:{" "}
+                    {candidates[0]?.candidate.availability || "Not provided"}
+                  </div>
+                </ComparisonRow>
+              )
+            ) : (
+              <ComparisonRow label="Availability" cols={cols}>
+                {candidates.map((c) => (
+                  <div key={c.match_id} className="text-xs">
+                    {c.candidate.availability || (
+                      <span className="text-muted-foreground">Not provided</span>
+                    )}
+                  </div>
+                ))}
+              </ComparisonRow>
+            )}
 
             {/* Logistics — location + timezone + work authorization. When the
                 values are identical for every candidate they collapse to one
@@ -882,23 +892,30 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
       </div>
       <div className="space-y-2.5">
         {axes.map((axis) => {
-          const max = Math.max(...axis.values);
-          const min = Math.min(...axis.values);
-          const span = max - min;
+          // Ranked by DISTINCT value, not by position on a continuous scale.
+          // The old `(v - min) / span > 0.66` test handed the same "strongest"
+          // dot to two candidates with different numbers — one area to validate
+          // and two both read as ● whenever a third candidate sat far enough
+          // below them (audit #4, L8). Equal values share a dot; different
+          // values never do.
+          const distinct = [...new Set(axis.values)].sort((a, b) => b - a);
+          const dotFor = (v: number): { dot: string; cls: string } => {
+            if (distinct.length < 2) {
+              // Everyone is level. Nobody is the strongest.
+              return { dot: "◐", cls: "text-warning-foreground dark:text-warning-foreground" };
+            }
+            const rank = distinct.indexOf(v);
+            if (rank === 0) return { dot: "●", cls: "text-success" };
+            if (rank === distinct.length - 1) return { dot: "○", cls: "text-muted-foreground" };
+            return { dot: "◐", cls: "text-warning-foreground dark:text-warning-foreground" };
+          };
           return (
             <div key={axis.key} className="grid gap-3 sm:grid-cols-[9rem_1fr] items-center">
               <div className="text-xs font-medium text-foreground/80">{axis.label}</div>
               <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${candidates.length}, minmax(0, 1fr))` }}>
                 {candidates.map((c, i) => {
                   const v = axis.values[i];
-                  const rel = span === 0 ? 0.5 : (v - min) / span;
-                  const dot = rel > 0.66 ? "●" : rel > 0.33 ? "◐" : "○";
-                  const cls =
-                    rel > 0.66
-                      ? "text-success"
-                      : rel > 0.33
-                        ? "text-warning-foreground dark:text-warning-foreground"
-                        : "text-muted-foreground";
+                  const { dot, cls } = dotFor(v);
                   return (
                     <div key={c.match_id} className="flex items-center gap-2 rounded-md border bg-card px-2 py-1.5">
                       <span className={`text-lg leading-none ${cls}`} aria-hidden>

@@ -58,7 +58,16 @@ const GROUPS: Array<{ key: string; title: string; statuses: string[]; hint: stri
     statuses: ["completed"],
     hint: "Held — chase feedback if the scorecard is still missing.",
   },
+  {
+    key: "cancelled",
+    title: "Cancelled",
+    statuses: ["cancelled"],
+    hint: "Called off. Kept on the page so the counts account for every interview.",
+  },
 ];
+
+/** Every status the groups above claim. Anything else still has to be shown. */
+const GROUPED_STATUSES = new Set(GROUPS.flatMap((g) => g.statuses));
 
 function InterviewsPage() {
   const fn = useServerFn(getAdminInterviews);
@@ -67,6 +76,10 @@ function InterviewsPage() {
     queryFn: () => fn(),
   });
   const interviews = ((query.data as Any)?.interviews ?? []) as Any[];
+  // A status outside the groups below used to disappear from the page with no
+  // count admitting it, so the sections never added up to what "every
+  // interview" promised (audit #4, L10). Anything ungrouped is listed too.
+  const ungrouped = interviews.filter((iv) => !GROUPED_STATUSES.has(String(iv.status)));
 
   return (
     <div className="max-w-5xl p-6 md:p-8">
@@ -75,6 +88,13 @@ function InterviewsPage() {
         <p className="max-w-2xl text-sm text-muted-foreground">
           Every interview across all clients, grouped by what needs doing next.
         </p>
+        {!query.isLoading && !query.isError && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            {interviews.length === 0
+              ? "No interviews yet."
+              : `${interviews.length} interview${interviews.length === 1 ? "" : "s"} in total.`}
+          </p>
+        )}
       </header>
 
       {query.isLoading ? (
@@ -98,8 +118,23 @@ function InterviewsPage() {
         </Card>
       ) : (
         <div className="space-y-6">
-          {GROUPS.map((g) => {
-            const rows = interviews.filter((iv) => g.statuses.includes(String(iv.status)));
+          {[
+            ...GROUPS.map((g) => ({
+              ...g,
+              rows: interviews.filter((iv) => g.statuses.includes(String(iv.status))),
+            })),
+            ...(ungrouped.length > 0
+              ? [
+                  {
+                    key: "other",
+                    title: "Other statuses",
+                    hint: "Not in a stage above — shown so no interview is hidden.",
+                    rows: ungrouped,
+                  },
+                ]
+              : []),
+          ].map((g) => {
+            const rows = g.rows;
             return (
               <section key={g.key}>
                 <div className="mb-2 flex items-baseline gap-2">

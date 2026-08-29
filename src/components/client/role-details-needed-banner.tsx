@@ -7,7 +7,20 @@ import type { IncompleteRole } from "@/lib/position-readiness.functions";
  * open is something we go over together on the call. This names the details so
  * a client who wants to fill them in now can, and nothing waits on them.
  */
-export function RoleDetailsNeededBanner({ roles }: { roles: IncompleteRole[] }) {
+export function RoleDetailsNeededBanner({
+  roles,
+  sourcingLive = true,
+}: {
+  roles: IncompleteRole[];
+  /**
+   * Whether the workspace actually has a live role. This banner asserted "your
+   * workspace is live and sourcing is already moving" unconditionally, so on a
+   * workspace whose only role was submitted-but-unpaid it contradicted the
+   * payment banner beside it (audit #4, M15). The reassurance is only true
+   * when something is genuinely running.
+   */
+  sourcingLive?: boolean;
+}) {
   if (roles.length === 0) return null;
 
   return (
@@ -22,8 +35,9 @@ export function RoleDetailsNeededBanner({ roles }: { roles: IncompleteRole[] }) 
           : `${roles.length} roles can be sharpened with a few optional details`}
       </p>
       <p className="mt-1 text-sm text-muted-foreground">
-        Nothing is blocked — your workspace is live and sourcing is already moving. Add these now if
-        you like, or we go over them together on the call.
+        {sourcingLive
+          ? "Nothing is blocked — your workspace is live and sourcing is already moving. Add these now if you like, or we go over them together on the call."
+          : "These details are not what you are waiting on. Add them now if you like, or we go over them together on the call."}
       </p>
 
       <ul className="mt-4 space-y-3">

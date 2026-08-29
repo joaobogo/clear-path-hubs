@@ -40,7 +40,17 @@ export function OperationalHealthPanel() {
     mutationFn: async (v: { kind: "webhook" | "processing" | "email" | "cv"; id: string }) =>
       retryFn({ data: v }),
     onSuccess: async () => {
-      setNote(`Retry queued · ${new Date().toLocaleTimeString(APP_LOCALE, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`);
+      // Workspace zone, like every other timestamp on this panel — a retry
+      // stamped in the viewer's zone reads as an hour that never happened
+      // next to the failure it retried (audit #4, M16).
+      setNote(
+        `Retry queued · ${new Date().toLocaleTimeString(APP_LOCALE, {
+          timeZone: WORKSPACE_TIMEZONE,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })}`,
+      );
       await qc.invalidateQueries({ queryKey: ["ops-health"] });
     },
     onError: (e: Error) => {

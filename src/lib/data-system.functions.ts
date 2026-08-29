@@ -281,6 +281,8 @@ export type DataHealth = {
     files_total: number;
     files_failed: number;
     failure_rate: number;
+    /** CVs that uploaded fine but extracted to text nothing can be read from. */
+    unreadable_cvs: number;
   };
   orphans: {
     matches_without_person: number;
@@ -353,6 +355,15 @@ export const getDataHealth = createServerFn({ method: "GET" })
     const failed = fileRows.filter((f) =>
       String(f.file_status ?? "").includes("fail"),
     ).length;
+
+    // A CV that uploads and "extracts" into unusable text never sets a failed
+    // file_status, so this panel reported "0 of 39 files" while a candidate's
+    // CV was plainly unreadable on screen (audit #4, L12). The garbage gate
+    // parks those in `ocr_required`; count them as the failures they are.
+    const { count: unreadableCvs } = await supabase
+      .from("candidate_matches")
+      .select("id", { count: "exact", head: true })
+      .eq("processing_state", "ocr_required");
 
     // The pipeline writes candidate_evidence on every run; the structured
     // candidate_evidence_items table is populated by a separate step that
@@ -431,6 +442,7 @@ export const getDataHealth = createServerFn({ method: "GET" })
         failure_rate: fileRows.length
           ? Math.round((failed / fileRows.length) * 1000) / 10
           : 0,
+        unreadable_cvs: unreadableCvs ?? 0,
       },
       orphans: {
         matches_without_person: matchesNoPerson ?? 0,

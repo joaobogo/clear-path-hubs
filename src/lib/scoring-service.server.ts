@@ -39,6 +39,7 @@ import {
   type EngineCalibration,
 } from "./scoring/engine-calibration";
 import { buildReplaySnapshot } from "./scoring/replay";
+import { classifyScoreBand } from "@/config/scoring-bands";
 import type { Json } from "@/integrations/supabase/types";
 import { randomUUID } from "crypto";
 
@@ -656,8 +657,13 @@ export async function executeScoring(
 }
 
 function buildExplanation(r: ScoringResult, caps: Array<{ reason: string; cap: number }>): string {
+  // The engine's fit_label uses its own vocabulary (strong_fit /
+  // worth_considering / not_a_fit) while every surface bands the NUMBER
+  // through the canonical table. Leading with the raw label produced
+  // "worth considering — score 82.9/100" under a header reading
+  // "83 · Strong" (audit #4, M3). One band table, one word.
   const parts = [
-    `${r.fit_label.replace(/_/g, " ")} — score ${r.score.toFixed(1)}/100`,
+    `${classifyScoreBand(r.score).label} — score ${r.score.toFixed(1)}/100`,
     `must-have coverage ${(r.must_have_coverage * 100).toFixed(0)}%`,
     `preferred coverage ${(r.preferred_coverage * 100).toFixed(0)}%`,
   ];

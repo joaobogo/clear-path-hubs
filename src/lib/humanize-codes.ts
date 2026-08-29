@@ -6,6 +6,21 @@
  */
 
 const DICTIONARY: Record<string, string> = {
+  // Screening answer verdicts (admin Screening tab)
+  yes: "Yes",
+  no: "No",
+  unclear: "Unclear",
+  aligned: "Aligned",
+  misaligned: "Misaligned",
+  "n/a": "Not applicable",
+
+  // Eligibility qualifier states (Critical requirements panel)
+  not_evaluated: "Not evaluated yet",
+  needs_validation: "Needs validation",
+  not_eligible: "Not eligible",
+  eligible: "Eligible",
+  excepted: "Exception granted",
+
   // Delivery & Suppression
   recipient_suppressed: "Blocked before sending (suppression list or recipient preference)",
   undeliverable_domain: "The recipient's email domain does not accept mail",

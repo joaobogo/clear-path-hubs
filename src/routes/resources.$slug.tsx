@@ -222,7 +222,10 @@ function ResourceGuidePage() {
   const related = guide.related
     .map((slug) => RESOURCE_GUIDES.find((g) => g.slug === slug))
     .filter((g): g is ResourceGuide => Boolean(g));
+  // Pinned to UTC: this is a static publication date, and rendering it in the
+  // viewer's zone made the server and client HTML disagree (audit #4, M16).
   const updated = new Date(guide.updated).toLocaleDateString("en-GB", {
+    timeZone: "UTC",
     day: "numeric",
     month: "long",
     year: "numeric",

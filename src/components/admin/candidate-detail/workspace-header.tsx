@@ -1,7 +1,7 @@
 // Extracted from the candidate detail route so first paint ships less code.
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
-import { AdminScoreNumber } from "@/components/admin/admin-score-number";
+import { AdminScoreNumber, rubricVersionNumber } from "@/components/admin/admin-score-number";
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -75,12 +75,15 @@ function WorkspaceHeader({
               />
 
             )}
-            {currentRun?.rubric_version_number != null && (
+            {/* Through the shared resolver: reading only the flat column made
+                this chip claim "not recorded" for a run whose criteria version
+                the Score tab was displaying (audit #4, M3). */}
+            {rubricVersionNumber(currentRun) != null && (
               <Badge variant="secondary" className="font-mono text-[10px]">
-                v{currentRun.rubric_version_number}
+                v{rubricVersionNumber(currentRun)}
               </Badge>
             )}
-            {!currentRun?.rubric_version_number && currentRun?.status === "completed" && (
+            {rubricVersionNumber(currentRun) == null && currentRun?.status === "completed" && (
               <Badge variant="outline" className="border-warning/30 bg-warning/10 text-[10px] text-warning-foreground">
                 criteria set not recorded
               </Badge>

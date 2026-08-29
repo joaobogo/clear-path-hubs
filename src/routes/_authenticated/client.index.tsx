@@ -29,7 +29,6 @@ import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 import { HiringHealthLine } from "@/components/client/hiring-health-line";
 import { applyOverdueAndRiskSignals } from "@/lib/client-hiring-health";
-import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 import { DecisionQueue } from "@/components/client/decision-queue";
 import { OpenItemsStrip } from "@/components/client/open-items-strip";
@@ -189,7 +188,17 @@ function OverviewPage() {
     return activity.filter((e) => new Date(e.created_at).getTime() > lastSeen);
   }, [activity, lastSeen]);
 
-  const showOnboarding = !!kpis && kpis.active_positions === 0 && kpis.delivered === 0;
+  // "No live roles" is not the same as "no roles". A workspace whose only role
+  // is submitted-but-unpaid has zero active positions and zero delivered
+  // candidates, so this used to render the brand-new-workspace welcome — "Your
+  // workspace is ready", "Add your first role", "Nothing is running yet" — for
+  // a client who had already submitted a role and was waiting on payment. The
+  // one banner that explains that wait lives in the other branch, so it was
+  // hidden exactly when it was needed (audit #4, M15).
+  const hasSubmittedRole =
+    pendingRoles.length > 0 || rolesNeedingDetails.length > 0 || visibleRoles.length > 0;
+  const showOnboarding =
+    !!kpis && kpis.active_positions === 0 && kpis.delivered === 0 && !hasSubmittedRole;
 
   // The headline reads from the same signals as the decision queue and the
   // role at-risk lines on this page, so the three can never disagree.
@@ -261,7 +270,10 @@ function OverviewPage() {
       )}
 
       {/* Blocking gaps come first — before onboarding, health, or the queue */}
-      <RoleDetailsNeededBanner roles={rolesNeedingDetails} />
+      <RoleDetailsNeededBanner
+        roles={rolesNeedingDetails}
+        sourcingLive={(kpis?.active_positions ?? 0) > 0}
+      />
 
       {showOnboarding ? (
         <EmptyWelcome canSubmit={canSubmit} />

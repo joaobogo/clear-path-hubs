@@ -5,6 +5,7 @@ import { z } from "zod";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { listPublicPositions } from "@/lib/jobs.functions";
+import { formatDate } from "@/lib/format/datetime";
 import type { PublicPositionSummary } from "@/lib/jobs.functions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -130,11 +131,9 @@ function formatPosted(value: string | null): string | null {
   if (!value) return null;
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  // Through the shared formatter so a posting date reads the same here as on
+  // the job page, and so server render and client render agree (audit #4, M16).
+  return formatDate(d) || null;
 }
 
 type ChipProps = { label: string; onClear: () => void };

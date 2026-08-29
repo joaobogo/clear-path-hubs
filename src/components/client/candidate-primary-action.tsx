@@ -201,8 +201,13 @@ export function CandidatePrimaryAction({
     </Button>
   );
 
-  // Not recommended: evidence first. The advance move stays available, but as a
-  // quiet secondary button carrying the recommendation beside it.
+  // Not recommended: evidence first. The advance move stays available as a
+  // quiet secondary button.
+  //
+  // The band label used to be repeated here as a trailing caption, so the card
+  // read "Not recommended" twice — once in its own band chip and again beside
+  // the buttons (audit #4, L11). The chip states the band; this row states the
+  // moves available.
   if (notRecommended) {
     return (
       <div className="inline-flex flex-wrap items-center justify-end gap-2">
@@ -218,7 +223,6 @@ export function CandidatePrimaryAction({
           </Link>
         </Button>
         {advanceButton}
-        <span className="text-xs text-muted-foreground">Not recommended</span>
       </div>
     );
   }

@@ -62,19 +62,26 @@ export const listEmailDeliveryEvents = createServerFn({ method: "GET" })
 
     // Attach the person and role behind each address where we can, so a failure
     // is actionable rather than an anonymous email address.
-    const recipients = Array.from(new Set(events.map((e) => e.recipient))).slice(0, 200);
+    // Looked up 200 addresses and left the rest labelled unknown, so on a busy
+    // day a recipient we know perfectly well read as unidentified (audit #4,
+    // L13). Chunked instead: every address in the window gets resolved.
+    const recipients = Array.from(new Set(events.map((e) => e.recipient)));
     const identities = new Map<string, { name: string | null; role: string }>();
     if (recipients.length > 0) {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const [{ data: profiles }, { data: candidates }] = await Promise.all([
-        supabaseAdmin.from("profiles").select("email, full_name").in("email", recipients),
-        supabaseAdmin.from("candidate_profiles").select("email, full_name").in("email", recipients),
-      ]);
-      for (const c of candidates ?? []) {
-        if (c.email) identities.set(c.email, { name: c.full_name ?? null, role: "Candidate" });
-      }
-      for (const p of profiles ?? []) {
-        if (p.email) identities.set(p.email, { name: p.full_name ?? null, role: "Account user" });
+      const CHUNK = 200;
+      for (let i = 0; i < recipients.length; i += CHUNK) {
+        const batch = recipients.slice(i, i + CHUNK);
+        const [{ data: profiles }, { data: candidates }] = await Promise.all([
+          supabaseAdmin.from("profiles").select("email, full_name").in("email", batch),
+          supabaseAdmin.from("candidate_profiles").select("email, full_name").in("email", batch),
+        ]);
+        for (const c of candidates ?? []) {
+          if (c.email) identities.set(c.email, { name: c.full_name ?? null, role: "Candidate" });
+        }
+        for (const p of profiles ?? []) {
+          if (p.email) identities.set(p.email, { name: p.full_name ?? null, role: "Account user" });
+        }
       }
     }
 
@@ -93,7 +100,9 @@ export const listEmailDeliveryEvents = createServerFn({ method: "GET" })
         status: e.status ?? null,
         messageId: e.message_id ?? null,
         who: identities.get(e.recipient)?.name ?? null,
-        role: identities.get(e.recipient)?.role ?? "Unknown recipient",
+        // "Unknown recipient" read as a delivery fault. The address is known —
+        // it just is not a candidate or an account user (audit #4, L13).
+        role: identities.get(e.recipient)?.role ?? "Not in our records",
       })),
     };
   });

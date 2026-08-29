@@ -34,6 +34,52 @@ function stripLetterSpacedRuns(text: string): string {
     .trim();
 }
 
+/**
+ * The regex above only recognises runs of *single* letters, so PDF extraction
+ * that fuses a pair — "E D U C AT I O N", "P R O D U CT" — splits the run into
+ * two short halves and neither reaches the threshold. The banner then survived
+ * into rendered evidence (audit #4, L2).
+ *
+ * This walks tokens instead: a run of six or more tokens that are all one or
+ * two letters, at least five of them single letters, is a spaced banner. Real
+ * prose never strings six such tokens together, and the single-letter floor
+ * keeps short-word sequences ("it is on us to do it") out of range.
+ *
+ * Render-side only. `cleanQuote` keeps the original regex because it feeds the
+ * scoring engine and the golden-score gate pins its output.
+ */
+function spacedTokenLetters(token: string): string | null {
+  const letters = token.replace(/[^A-Za-zÀ-ÿ]/g, "");
+  if (!letters || letters.length > 2) return null;
+  // Only trailing/leading punctuation may ride along — never digits or symbols
+  // that carry meaning ("3.5", "C++").
+  if (token.replace(/[.,:;·|]/g, "").length !== letters.length) return null;
+  return letters;
+}
+
+function stripSpacedBanners(text: string): string {
+  const parts = text.split(/\s+/).filter(Boolean);
+  const out: string[] = [];
+  let i = 0;
+  while (i < parts.length) {
+    let end = i;
+    let singles = 0;
+    while (end < parts.length) {
+      const letters = spacedTokenLetters(parts[end]!);
+      if (letters === null) break;
+      if (letters.length === 1) singles += 1;
+      end += 1;
+    }
+    if (end - i >= 6 && singles >= 5) {
+      i = end; // drop the whole banner
+      continue;
+    }
+    out.push(parts[i]!);
+    i += 1;
+  }
+  return out.join(" ").replace(/\s{2,}/g, " ").trim();
+}
+
 const LINK_HUB_WORDS = [
   "github", "linkedin", "portfolio", "email", "website", "phone",
   "contact", "blog", "twitter", "behance", "dribbble",
@@ -333,8 +379,8 @@ export function renderQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   if (isTemplatedEvidence(raw) || isLinkHubDebris(raw)) return "";
 
-  const scrubbed = stripLetterSpacedRuns(
-    stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim(),
+  const scrubbed = stripSpacedBanners(
+    stripLetterSpacedRuns(stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim()),
   );
   if (!scrubbed) return "";
 
