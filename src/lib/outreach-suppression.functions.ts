@@ -134,28 +134,30 @@ export const getContactStatus = createServerFn({ method: "GET" })
         );
     }
 
-    const verdicts: ChannelVerdict[] = [];
-    for (const channel of SUPPRESSION_CHANNELS) {
-      const { data: verdict, error } = await supabase.rpc("outreach_contact_allowed", {
-        _org: data.organization_id,
-        _candidate_profile_id: data.candidate_profile_id,
-        _channel: channel,
-      });
-      if (error || !verdict) {
+    // One round-trip per channel, and they do not depend on each other — this
+    // was a serial loop, so the contact badges on every admin candidate page
+    // waited for four sequential database calls instead of one round-trip's
+    // worth of time. Order is preserved by Promise.all.
+    const verdicts: ChannelVerdict[] = await Promise.all(
+      SUPPRESSION_CHANNELS.map(async (channel): Promise<ChannelVerdict> => {
+        const { data: verdict, error } = await supabase.rpc("outreach_contact_allowed", {
+          _org: data.organization_id,
+          _candidate_profile_id: data.candidate_profile_id,
+          _channel: channel,
+        });
         // Fail closed: an unreadable verdict blocks sending.
-        verdicts.push(failClosedVerdict(channel as SuppressionChannel));
-        continue;
-      }
-      const v = verdict as { allowed: boolean; reason: string | null };
-      verdicts.push({
-        channel: channel as SuppressionChannel,
-        label: CHANNEL_LABEL[channel] ?? channel,
-        allowed: !!v.allowed,
-        reason: v.reason ?? null,
-        reasonLabel: v.reason ? (BLOCK_LABEL[v.reason] ?? v.reason) : null,
-        explanation: v.reason ? (BLOCK_EXPLANATION[v.reason] ?? null) : null,
-      });
-    }
+        if (error || !verdict) return failClosedVerdict(channel as SuppressionChannel);
+        const v = verdict as { allowed: boolean; reason: string | null };
+        return {
+          channel: channel as SuppressionChannel,
+          label: CHANNEL_LABEL[channel] ?? channel,
+          allowed: !!v.allowed,
+          reason: v.reason ?? null,
+          reasonLabel: v.reason ? (BLOCK_LABEL[v.reason] ?? v.reason) : null,
+          explanation: v.reason ? (BLOCK_EXPLANATION[v.reason] ?? null) : null,
+        };
+      }),
+    );
 
     return {
       candidate_profile_id: data.candidate_profile_id,

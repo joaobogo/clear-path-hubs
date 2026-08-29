@@ -468,8 +468,16 @@ function OperationsPage() {
                             )}
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
-                                  <MoreHorizontal className="h-4 w-4" />
+                                {/* Icon-only trigger: without a name it is an
+                                    unlabelled button to a screen reader and to
+                                    keyboard navigation. */}
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 w-7 p-0"
+                                  aria-label="More actions for this item"
+                                >
+                                  <MoreHorizontal className="h-4 w-4" aria-hidden />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-52">
