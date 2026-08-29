@@ -5,6 +5,7 @@ import { AdminScoreNumber, rubricVersionNumber } from "@/components/admin/admin-
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { resolveParseFailure } from "@/lib/parse-failure/parse-failure-codes";
 import { ScanText } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { CvPreviewDialog } from "@/components/cv-preview-dialog";
@@ -181,12 +182,23 @@ function WorkspaceHeader({
 
         return (
           <Alert variant={failedNow ? "destructive" : "default"}>
+            {/* The raw code was the heading, so this box read "cv_unreadable"
+                above a message that also began with the code — the same token
+                twice, neither of them a sentence (audit #4, H1). The failure
+                catalogue already has a written label for every code. */}
             <AlertTitle>
               {m.processing_error_code === "engine_error"
                 ? "Hiring Intelligence"
-                : (m.processing_error_code ?? "Processing error")}
+                : m.processing_error_code
+                  ? resolveParseFailure(String(m.processing_error_code)).label
+                  : "Processing error"}
             </AlertTitle>
-            <AlertDescription>{message}</AlertDescription>
+            <AlertDescription>
+              {/* A bare code in the message slot becomes its written cause. */}
+              {/^[a-z0-9]+(_[a-z0-9]+)*$/.test(message.trim())
+                ? `${resolveParseFailure(message.trim()).cause} ${resolveParseFailure(message.trim()).nextAction}`
+                : message}
+            </AlertDescription>
           </Alert>
         );
       })()}
