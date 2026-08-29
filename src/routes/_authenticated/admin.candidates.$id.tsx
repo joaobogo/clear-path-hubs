@@ -339,6 +339,7 @@ function CandidateWorkspace() {
                     matchId={id}
                     cp={cp}
                     insights={evidence?.extracted?.insights ?? null}
+                    parsed={evidence?.extracted ?? null}
                     capped={publishedRun?.contradiction_status === "disqualifying_answer"}
                   />
                 )}

@@ -114,12 +114,15 @@ export function CvTab({
   matchId,
   cp,
   insights,
+  parsed,
   capped = false,
 }: {
   cv: Any;
   matchId: string;
   cp: Any;
   insights: Any;
+  /** The enrichment snapshot, so the CV snapshot can fall back to it. */
+  parsed?: Any;
   /**
    * True when the published run is dealbreaker-capped. The Profile tab's
    * briefing already withholds the model's read for a disqualified candidate;
@@ -135,10 +138,16 @@ export function CvTab({
         No CV on file for this candidate.
       </div>
     );
-  const skills: string[] = Array.isArray(cp?.skills) ? cp.skills : [];
-  const experience: Any[] = Array.isArray(cp?.experience) ? cp.experience : [];
-  const education: Any[] = Array.isArray(cp?.education) ? cp.education : [];
-  const languages: Any[] = Array.isArray(cp?.languages) ? cp.languages : [];
+  // Profile first, enrichment snapshot second — the same order the Enrichment
+  // tab uses, so the two cannot disagree about the same candidate (audit #4, M5).
+  const pick = (...lists: unknown[]): Any[] => {
+    for (const l of lists) if (Array.isArray(l) && l.length > 0) return l as Any[];
+    return [];
+  };
+  const skills: string[] = pick(cp?.skills, parsed?.skills) as string[];
+  const experience: Any[] = pick(cp?.experience, parsed?.experience);
+  const education: Any[] = pick(cp?.education, parsed?.education);
+  const languages: Any[] = pick(cp?.languages, parsed?.languages);
   const currentRole = experience[0];
   const pitchTone = String(insights?.pitch_tone ?? "balanced");
   return (
@@ -318,10 +327,21 @@ export function CvTab({
 
 // ── Enrichment ─────────────────────────────────────────────────────────────
 export function EnrichmentTab({ cp, evidence }: { cp: Any; evidence: Any }) {
-  const skills: string[] = Array.isArray(cp?.skills) ? cp.skills : [];
-  const experience: Any[] = Array.isArray(cp?.experience) ? cp.experience : [];
-  const education: Any[] = Array.isArray(cp?.education) ? cp.education : [];
-  const languages: Any[] = Array.isArray(cp?.languages) ? cp.languages : [];
+  // This tab read the candidate PROFILE while the evidence record read the
+  // enrichment SNAPSHOT, so the two disagreed on the same candidate seconds
+  // after an enrichment run: "Languages None extracted." here, three named
+  // languages there (audit #4, M5). The profile still wins when it has the
+  // field — a human may have corrected it — and the snapshot fills the gap
+  // rather than leaving the tab claiming nothing was found.
+  const extracted = evidence?.extracted ?? null;
+  const firstNonEmpty = (...lists: unknown[]): Any[] => {
+    for (const l of lists) if (Array.isArray(l) && l.length > 0) return l as Any[];
+    return [];
+  };
+  const skills: string[] = firstNonEmpty(cp?.skills, extracted?.skills) as string[];
+  const experience: Any[] = firstNonEmpty(cp?.experience, extracted?.experience);
+  const education: Any[] = firstNonEmpty(cp?.education, extracted?.education);
+  const languages: Any[] = firstNonEmpty(cp?.languages, extracted?.languages);
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <div className="rounded-lg border bg-card p-5">
