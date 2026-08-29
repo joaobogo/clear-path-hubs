@@ -995,10 +995,13 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
         <FitHero candidate={dto} />
         <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-12">
           <div className="space-y-8 lg:col-span-8">
-            <WhyWeShortlisted candidate={dto} />
-            <RequirementCoverage candidate={dto} />
-            <WhyThisCandidate candidate={dto} />
-            <WhatNeedsValidation candidate={dto} />
+            {/* ONE requirement list, exactly as the client route renders it.
+                The preview stacked three views of the same eight rows —
+                "Why this candidate stands out", "Requirement coverage" and
+                "Why this candidate for …" — which is both noise and an
+                unfaithful preview (audit #4, M13). */}
+            <WhyThisCandidate candidate={dto} withCoverage />
+            <WhatNeedsValidation candidate={dto} preferredLimit={2} />
             <ExperienceTimeline candidate={dto} />
             <SkillsAndEducation candidate={dto} />
           </div>

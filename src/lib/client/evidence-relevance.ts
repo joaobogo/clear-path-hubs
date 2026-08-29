@@ -1,3 +1,4 @@
+import { expandTerm } from "@/lib/scoring/term-synonyms";
 /**
  * A quoted passage is only evidence for a requirement when it actually talks
  * about that requirement. Runs sometimes attach a generic CV sentence to every
@@ -68,13 +69,20 @@ const GENERIC = new Set([
   "projects",
 ]);
 
+/**
+ * Two-letter terms that are real subjects, not noise. The blanket 3-character
+ * floor below deleted them, so "Understanding of good UX/UI principles" had NO
+ * subject tokens at all and no passage could ever support it (audit #4, M14).
+ */
+const SHORT_SUBJECTS = new Set(["ux", "ui", "ai", "ml", "qa", "bi", "go", "r", "c"]);
+
 function tokens(text: string): string[] {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9+#.\- ]+/g, " ")
     .split(/[\s.]+/)
     .map((t) => t.replace(/^[-+.]+|[-+.]+$/g, ""))
-    .filter((t) => t.length >= 3 && !GENERIC.has(t));
+    .filter((t) => (t.length >= 3 || SHORT_SUBJECTS.has(t)) && !GENERIC.has(t));
 }
 
 /** Loose stem so "founder"/"founders" and "scale"/"scaling" still match. */
@@ -153,6 +161,17 @@ function looseMatch(w: string, have: Set<string>): boolean {
   // Allow compound forms: "row-level" vs "rowlevel", "founder-led" vs "founderled".
   for (const h of have) {
     if (h.length >= 5 && (h.includes(w) || w.includes(h))) return true;
+  }
+  // The ENGINE credited this passage through its synonym table (which knows
+  // "segurança" is security and "k8s" is kubernetes). This display-side check
+  // must not then drop the quote for lacking an English token, or the client
+  // reads "not evidenced" for a requirement the run scored as met — which is
+  // exactly what happened to both Portuguese CVs (audit #4, M14).
+  for (const form of expandTerm(w)) {
+    if (have.has(form)) return true;
+    for (const h of have) {
+      if (h.length >= 5 && (h.includes(form) || form.includes(h))) return true;
+    }
   }
   return false;
 }

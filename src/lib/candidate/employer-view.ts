@@ -74,6 +74,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
     note: "Your name is shortened to first name plus last initial until you agree to contact release.",
   },
   { key: "match_id", group: "identity", label: "Internal reference for this shortlist entry", hidden: true },
+  {
+    key: "published",
+    group: "identity",
+    label: "Whether this assessment has been published to the employer",
+    hidden: true,
+  },
   { key: "position", group: "identity", label: "The role you applied for" },
 
   // experience
