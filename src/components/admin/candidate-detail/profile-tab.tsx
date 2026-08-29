@@ -11,6 +11,7 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/dat
 import { formatWorkAuthorization } from "@/lib/human-labels";
 import { updateCandidateProfileField } from "@/lib/admin-candidates.functions";
 import { IntroVideoCard } from "@/components/admin/candidate-detail/intro-video-card";
+import { scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -84,7 +85,18 @@ function ProfileTab({
   const insights = evidence?.extracted?.insights as Any | null;
   return (
     <div className="space-y-4">
-      {insights && <InsightsBriefing insights={insights} capped={capped} />}
+      {/* An AI read of byte soup is not a read. The CV that produced these
+          insights was later found unreadable, yet the briefing still wore
+          "AI Read: Consider · confidence 70%" (audit #4, H1). Suppressed for
+          the same reason a dealbreaker suppresses it: the verdict cannot be
+          supported by what it was drawn from. */}
+      {insights && (
+        <InsightsBriefing
+          insights={insights}
+          capped={capped}
+          unreadable={scoreVoidedByUnreadableCv(m)}
+        />
+      )}
       <IntroVideoCard matchId={m.id} currentUrl={m.intro_video_url ?? null} />
       <div className="grid gap-4 lg:grid-cols-2">
 
@@ -245,7 +257,19 @@ function EditableRow({
   );
 }
 
-function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?: boolean }) {
+function InsightsBriefing({
+  insights,
+  capped = false,
+  unreadable = false,
+}: {
+  insights: Any;
+  capped?: boolean;
+  /** The CV these insights were drawn from turned out to be unreadable. */
+  unreadable?: boolean;
+}) {
+  // Both conditions suppress the model's read for the same reason: the verdict
+  // is not supportable by what produced it. They differ only in wording.
+  const suppressed = capped || unreadable;
   const rec = String(insights?.overall_recommendation ?? "consider");
   const recTone =
     rec === "advance" ? "bg-success/15 text-success dark:text-success"
@@ -265,16 +289,18 @@ function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?
             header saying "24 · Not recommended", and a dealbreaker-capped
             candidate wore "Consider · confidence 85%" (audit #3, #11). A
             capped candidate's verdict is the disqualification, full stop. */}
-        {capped ? (
+        {suppressed ? (
           <span className="inline-flex items-center rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-medium text-destructive">
-            Disqualified by screening — AI read suppressed
+            {capped
+              ? "Disqualified by screening — AI read suppressed"
+              : "CV unreadable — AI read suppressed"}
           </span>
         ) : (
           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${recTone}`}>
             AI read: {rec}
           </span>
         )}
-        {!capped && typeof insights?.confidence === "number" && (
+        {!suppressed && typeof insights?.confidence === "number" && (
           <span className="text-xs text-muted-foreground">
             confidence {Math.round(insights.confidence * 100)}%
           </span>
@@ -283,16 +309,17 @@ function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?
       {/* Suppressed means suppressed: the chip alone was rendered while the
           full "compelling candidate" read followed underneath it on a
           disqualified candidate (audit #4, M4). */}
-      {capped && (
+      {suppressed && (
         <p className="mt-2 text-sm text-muted-foreground">
-          The model's read is withheld for a disqualified candidate. Review the
-          screening answer on the Screening tab.
+          {capped
+            ? "The model's read is withheld for a disqualified candidate. Review the screening answer on the Screening tab."
+            : "The model read this candidate's CV before the text was found to be unreadable, so its conclusions are not supportable. Run OCR or ask for a clean copy, then reassess."}
         </p>
       )}
-      {!capped && insights?.headline_suggested && (
+      {!suppressed && insights?.headline_suggested && (
         <p className="mt-2 text-sm font-medium text-foreground">{insights.headline_suggested}</p>
       )}
-      {!capped && insights?.pitch_summary && (
+      {!suppressed && insights?.pitch_summary && (
         <div
           className={`mt-3 rounded-md border-l-4 p-3 text-sm leading-relaxed ${
             insights.pitch_tone === "sell"
@@ -314,12 +341,12 @@ function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?
           {insights.pitch_summary}
         </div>
       )}
-      {!capped && insights?.narrative && (
+      {!suppressed && insights?.narrative && (
         <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
           {insights.narrative}
         </div>
       )}
-      {!capped && highlights.length > 0 && (
+      {!suppressed && highlights.length > 0 && (
         <>
           <h3 className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Highlights
@@ -329,7 +356,7 @@ function InsightsBriefing({ insights, capped = false }: { insights: Any; capped?
           </ul>
         </>
       )}
-      {!capped && (strengths.length > 0 || concerns.length > 0) && (
+      {!suppressed && (strengths.length > 0 || concerns.length > 0) && (
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div className="rounded-md border bg-background/60 p-3">
             <h4 className="text-xs font-semibold uppercase text-success dark:text-success">

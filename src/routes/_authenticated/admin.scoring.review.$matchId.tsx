@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
 import { scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
+import { resolveParseFailure } from "@/lib/parse-failure/parse-failure-codes";
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -403,12 +404,33 @@ function ReviewWorkspace() {
         </Alert>
       ) : null}
 
-      {match.processing_state === "failed" || doc?.parse_state === "failed" ? (
+      {/* `ocr_required` was not in this condition, so a CV that extracted into
+          byte soup got no explanation here at all — and the message itself was
+          printed raw, giving "cv_unreadable" where a sentence belongs (audit
+          #4, H1). The failure catalogue already writes the cause and the next
+          action for every code. */}
+      {match.processing_state === "failed" ||
+      match.processing_state === "ocr_required" ||
+      doc?.parse_state === "failed" ? (
         <Alert variant="destructive">
           <AlertTriangle className="size-4" />
-          <AlertTitle>Document could not be parsed</AlertTitle>
+          <AlertTitle>
+            {match.processing_state === "ocr_required"
+              ? "This document could not be read as text"
+              : "Document could not be parsed"}
+          </AlertTitle>
           <AlertDescription>
-            {fmt(match.processing_error_message ?? doc?.parse_error)}
+            {(() => {
+              const raw = String(
+                match.processing_error_message ?? doc?.parse_error ?? doc?.parse_error_code ?? "",
+              );
+              // A bare code becomes its written cause; a real sentence is left
+              // exactly as it was written.
+              const looksLikeCode = /^[a-z0-9]+(_[a-z0-9]+)*$/.test(raw.trim());
+              if (!looksLikeCode) return fmt(raw);
+              const failure = resolveParseFailure(raw.trim());
+              return `${failure.cause} ${failure.nextAction}`;
+            })()}
           </AlertDescription>
         </Alert>
       ) : null}

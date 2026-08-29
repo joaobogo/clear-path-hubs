@@ -16,12 +16,13 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { getAdminMatch, downloadEvidenceRecord } from "@/lib/processing.functions";
-import { resolvePublishedRun } from "@/lib/scoring/published-score";
+import { resolvePublishedRun, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
+import { renderQuote } from "@/lib/evidence/quote-hygiene";
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/$id_/evidence")({
   loader: async ({ context, params }) => {
@@ -69,6 +70,7 @@ function EvidenceViewer() {
   // approved run, so its "Score" tile could disagree with the list and the
   // client for any candidate whose approval predates a rescore.
   const currentRun = resolvePublishedRun(runs as Any[], match) as Any | null;
+  const scoreVoided = scoreVoidedByUnreadableCv(match);
   const result = currentRun?.result ?? {};
   const insights = evidence?.extracted?.insights ?? null;
   const parsed = evidence?.extracted ?? null;
@@ -217,11 +219,23 @@ function EvidenceViewer() {
 
       {/* Provenance summary */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Tile label="Score" value={currentRun?.score != null ? String(currentRun.score) : "—"} />
+        {/* A score computed from text that proved unreadable is not a score.
+            This record showed "SCORE 41.4" and a fit band for a candidate whose
+            state said ocr_required (audit #4, H1/item 13). */}
+        <Tile
+          label="Score"
+          value={
+            scoreVoided ? "No score" : currentRun?.score != null ? String(currentRun.score) : "—"
+          }
+        />
         <Tile
           label="Fit"
           value={
-            currentRun ? toFitPresentation(currentRun.fit_label, currentRun.score).headline : "—"
+            scoreVoided
+              ? "CV unreadable"
+              : currentRun
+                ? toFitPresentation(currentRun.fit_label, currentRun.score).headline
+                : "—"
           }
         />
         <Tile
@@ -346,7 +360,9 @@ function EvidenceViewer() {
                     <ul className="mt-2 space-y-1 border-l-2 border-primary/30 pl-3 text-xs text-muted-foreground">
                       {(r.evidence as Any[]).map((e, j) => (
                         <li key={j}>
-                          "…{e.snippet}…"{" "}
+                          {/* Byte soup from an unreadable CV was quoted here
+                              verbatim as evidence (audit #4, H1/item 13). */}
+                          "…{renderQuote(String(e.snippet ?? "")) || "passage unreadable"}…"{" "}
                           {e.location && <code className="opacity-60">{e.location}</code>}
                         </li>
                       ))}
@@ -354,7 +370,7 @@ function EvidenceViewer() {
                   )}
                   {verdict?.cv_quote && (
                     <blockquote className="mt-2 border-l-2 border-info/40 pl-3 text-xs italic text-muted-foreground">
-                      AI verdict: <b className="capitalize">{verdict.verdict}</b> — "{verdict.cv_quote}"
+                      AI verdict: <b className="capitalize">{verdict.verdict}</b> — "{renderQuote(verdict.cv_quote) || "passage unreadable"}"
                       {verdict.rationale && (
                         <span className="not-italic"> · {verdict.rationale}</span>
                       )}

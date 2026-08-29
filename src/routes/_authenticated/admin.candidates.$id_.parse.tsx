@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { isGarbageCvText } from "@/lib/cv/parse-facts";
 import { ArrowLeft, ExternalLink, FileText, RotateCcw, Check, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -74,6 +75,7 @@ function ParseReview() {
   const fields: Any[] = data?.fields ?? [];
   const items: Any[] = data?.items ?? [];
   const cvText: string = data?.cv?.text ?? "";
+  const cvTextUnreadable = isGarbageCvText(cvText);
 
   const selectedField = useMemo(
     () => fields.find((f) => f.path === selected) ?? null,
@@ -160,9 +162,18 @@ function ParseReview() {
           <h1 className="text-xl font-semibold tracking-tight">
             Parse review — {data.match.candidate_name ?? "Candidate"}
           </h1>
+          {/* "1 of 2 fields read" beside an unreadable document reads as a
+              partial success. Nothing was read (audit #4, H1). */}
           <p className="text-sm text-muted-foreground">
-            {data.match.position_title ?? "—"} · {s.filled} of {s.total} fields read
-            {s.unlocated > 0 && ` · ${s.unlocated} not found in the document`}
+            {data.match.position_title ?? "—"} ·{" "}
+            {cvTextUnreadable ? (
+              <span className="font-medium text-destructive">document could not be read</span>
+            ) : (
+              <>
+                {s.filled} of {s.total} fields read
+                {s.unlocated > 0 && ` · ${s.unlocated} not found in the document`}
+              </>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -213,7 +224,23 @@ function ParseReview() {
             ref={docRef}
             className="max-h-[70vh] overflow-y-auto px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap"
           >
-            {cvText ? (
+            {/* Extraction can "succeed" and return the raw PDF stream. This
+                panel rendered "%PDF-1.7 4 0 obj > stream x��}I…" as the
+                document a reviewer was meant to check fields against, and the
+                header counted it as "1 of 2 fields read" (audit #4, H1). Say
+                what happened instead of showing bytes. */}
+            {cvTextUnreadable ? (
+              <div className="space-y-2">
+                <p className="font-medium text-foreground">
+                  This document could not be read as text.
+                </p>
+                <p className="text-muted-foreground">
+                  Extraction returned the file's raw bytes rather than readable language, so there
+                  is nothing here to check the parsed fields against. Run OCR, or ask the candidate
+                  for a clean copy.
+                </p>
+              </div>
+            ) : cvText ? (
               docParts.map((p, i) => (
                 <span
                   key={i}
