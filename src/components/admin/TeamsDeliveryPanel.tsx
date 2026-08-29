@@ -68,6 +68,12 @@ export function TeamsDeliveryPanel() {
               </div>
             </li>
           ))}
+          {/* Same rule as the email panel: a capped list says so. */}
+          {(data?.items.length ?? 0) > 15 && (
+            <li className="py-2 text-xs text-muted-foreground">
+              Showing the 15 most recent of {data!.items.length} posts.
+            </li>
+          )}
         </ul>
       </PanelState>
     </section>

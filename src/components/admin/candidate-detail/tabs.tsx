@@ -237,10 +237,16 @@ export function CvTab({
                 <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                   Top skills
                 </div>
+                {/* A capped list must say it is capped. This showed 20 of a
+                    candidate's 42 skills with nothing to indicate the rest
+                    existed, so the snapshot read as the whole record. */}
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   {skills.slice(0, 20).map((s, i) => (
                     <Badge key={i} variant="secondary">{s}</Badge>
                   ))}
+                  {skills.length > 20 && (
+                    <Badge variant="outline">+{skills.length - 20} more</Badge>
+                  )}
                 </div>
               </div>
             )}
@@ -262,6 +268,12 @@ export function CvTab({
                       </div>
                     </li>
                   ))}
+                  {experience.length > 5 && (
+                    <li className="pl-3 text-xs text-muted-foreground">
+                      +{experience.length - 5} earlier role
+                      {experience.length - 5 === 1 ? "" : "s"} — see the Enrichment tab
+                    </li>
+                  )}
                 </ul>
               </div>
             )}
@@ -280,6 +292,11 @@ export function CvTab({
                       </span>
                     </li>
                   ))}
+                  {education.length > 4 && (
+                    <li className="text-xs text-muted-foreground">
+                      +{education.length - 4} more — see the Enrichment tab
+                    </li>
+                  )}
                 </ul>
               </div>
             )}
@@ -459,11 +476,24 @@ export function EvidenceTab({
 
   return (
     <div className="space-y-4">
+      {/* The raw status token ("screening contradicts cv") was the whole
+          explanation here, exactly as it was on the evidence record before it
+          was fixed. Name the pair the run recorded; a flag with nothing to
+          resolve cannot be resolved. */}
       {contradictions && (
         <Alert variant="destructive">
           <AlertTitle>Contradiction detected</AlertTitle>
           <AlertDescription>
-            {String(contradictions).replace(/_/g, " ")} — review evidence before publishing.
+            {Array.isArray((result as Any)?.contradiction_rows) &&
+            ((result as Any).contradiction_rows as Any[]).length > 0
+              ? `${((result as Any).contradiction_rows as Any[])
+                  .slice(0, 2)
+                  .map(
+                    (r: Any) =>
+                      `answered yes to “${r.question}” but the CV does not back up “${r.requirement}”`,
+                  )
+                  .join("; ")} — review the evidence before publishing.`
+              : "A screening answer and the CV disagree — review the evidence before publishing."}
           </AlertDescription>
         </Alert>
       )}

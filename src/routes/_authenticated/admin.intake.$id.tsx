@@ -91,6 +91,11 @@ function IntakeDetail() {
     onError: (e) => toastError(e, { fallback: "Failed to send." }),
   });
 
+  // Hooks run before any early return: this sat below the "Intake not found"
+  // branch, so a render that hit it called one hook fewer than the render
+  // before and React threw "Rendered fewer hooks than expected".
+  useDetailCrumb(data?.organization?.name ?? data?.position?.title ?? null);
+
   if (!data) {
     return (
       <div className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
@@ -99,7 +104,6 @@ function IntakeDetail() {
     );
   }
   const { intake, organization, position, audit, duplicates, completeness } = data;
-  useDetailCrumb(organization?.name ?? position?.title ?? null);
   const payload = intake.payload ?? {};
   const attachments = Array.isArray(payload.attachments) ? payload.attachments : [];
 

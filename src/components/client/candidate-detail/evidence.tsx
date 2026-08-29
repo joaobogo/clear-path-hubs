@@ -261,14 +261,10 @@ export const FitHero = memo(function FitHero({
       </section>
     );
   }
-  const dashArray = 251.2; // 2π·40
-  // The ring encodes the fit band, not the internal number — a percentage arc
-  // would leak engine precision onto an employer surface.
-  const BAND_FILL: Record<string, number> = {
-    exceptional: 1, top: 0.85, strong: 0.7, consider: 0.5, not_recommended: 0.15,
-  };
-  const dashOffset = dashArray * (1 - (BAND_FILL[fit.band] ?? 0.4));
-
+  // The fit ring that used to live here was disabled with `{false && …}` and
+  // left in place: 33 lines of unreachable SVG, plus the arc maths and the
+  // `accentToRing` lookup feeding it. Removed with its dead inputs — the band
+  // is stated in words directly above, which is what the employer reads.
   return (
     <section
       aria-labelledby="fit-heading"
@@ -328,39 +324,6 @@ export const FitHero = memo(function FitHero({
             </p>
           )}
         </div>
-        {false && candidate.fit_label != null && (
-          <div className="flex items-center gap-4">
-            <div
-              role="img"
-              aria-label={`Fit for this role: ${fit.headline} — ${fit.recommendation}`}
-              className="relative"
-            >
-              <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden>
-                <circle cx="48" cy="48" r="40" fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="8" />
-                <circle
-                  cx="48"
-                  cy="48"
-                  r="40"
-                  fill="none"
-                  className={ring.stroke}
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  strokeDasharray={dashArray}
-                  strokeDashoffset={dashOffset}
-                  transform="rotate(-90 48 48)"
-                />
-              </svg>
-              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
-                <span className="text-xs font-semibold leading-tight">
-                  {fit.headline}
-                </span>
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  fit
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );
@@ -701,6 +664,13 @@ export const WhatNeedsValidation = memo(function WhatNeedsValidation({
   preferredLimit?: number;
   onInterviewGuideClick?: () => void;
 }) {
+  // Every hook runs before any early return. `useState` used to sit BELOW the
+  // guard, so the render where a candidate became hired (or ran out of
+  // validation items) called fewer hooks than the render before it — React
+  // throws "Rendered fewer hooks than expected" and the client's candidate
+  // page white-screens at the exact moment they hire someone.
+  const [showAll, setShowAll] = useState(false);
+
   // Derived from the same coverage statuses rendered by RequirementCoverage, so
   // a badge and its validation sentence can never disagree.
   const items = buildValidationList(candidate.requirement_rows, candidate.concerns);
@@ -708,7 +678,6 @@ export const WhatNeedsValidation = memo(function WhatNeedsValidation({
   // stale advice — hide the section for hired candidates.
   if (items.length === 0 || candidate.stage === "hired") return null;
 
-  const [showAll, setShowAll] = useState(false);
   const rowById = new Map(candidate.requirement_rows.map((r) => [r.id, r]));
   const isMustHave = (item: ValidationItem) => {
     const label = item.label;

@@ -193,10 +193,13 @@ function ClientDetail() {
     queryKey: ["admin-client", id],
     queryFn: () => getClient({ data: { id } }),
   });
-  if (!data) return null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const org = data.organization as any;
+  const org = (data?.organization ?? null) as any;
+  // Hooks run before any early return: this sat below `if (!data) return null`,
+  // so a render where the query resolved to nothing called one hook fewer than
+  // the render before it and React threw "Rendered fewer hooks than expected".
   useDetailCrumb(org?.name ?? null);
+  if (!data) return null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const members = data.members as any[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

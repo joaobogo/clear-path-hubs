@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { toastError } from "@/lib/toast-error";
+import { toast } from "sonner";
 import {
   Briefcase,
   Users,
@@ -59,8 +60,17 @@ export function ClientOnboardingModal({
   const finish = useMutation({
     mutationFn: async () => {
       // Persist preferences and mark onboarding complete.
+      //
+      // These used to be `.catch(() => null)`, which made the onError handler
+      // below unreachable for either of them: a failed timezone or notification
+      // save resolved to null, the modal closed, and the client was left
+      // believing settings had been stored that never were. Failures are
+      // collected instead, so what did not save can be named.
+      const failed: string[] = [];
       await Promise.all([
-        saveTz({ data: { orgId, timezone: tz } }).catch(() => null),
+        saveTz({ data: { orgId, timezone: tz } }).catch(() => {
+          failed.push("your timezone");
+        }),
         saveNotifs({
           data: {
             orgId,
@@ -72,15 +82,30 @@ export function ClientOnboardingModal({
             email_enabled: emailOptIn,
             digest: "immediate",
           },
-        }).catch(() => null),
+        }).catch(() => {
+          failed.push("your email preferences");
+        }),
+        // Dismissal is the one part that must not be swallowed: if it fails,
+        // the client sees this modal again on every visit.
         dismiss(),
       ]);
+      return { failed };
+    },
+    onSuccess: ({ failed }) => {
+      if (failed.length === 0) return;
+      // Onboarding still completed — say precisely what did not, and where to
+      // put it right, rather than claiming everything saved.
+      toast.warning(
+        `We couldn't save ${failed.join(" or ")}. You can set ${
+          failed.length === 1 ? "it" : "them"
+        } in Account → Settings.`,
+      );
     },
     onSettled: async () => {
       await qc.invalidateQueries({ queryKey: ["client-context"] });
       setOpen(false);
     },
-  
+
     // Failure must be visible: a silent rejection reads as success.
     onError: (e: unknown) =>
       toastError(e, { fallback: "We couldn't finish. Nothing was saved — please try again." }),

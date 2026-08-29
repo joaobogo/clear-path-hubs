@@ -75,7 +75,12 @@ export function useIncludeTestRecords(): boolean {
 }
 
 export function useScopedIncludeTest(explicit?: boolean): boolean {
-  return explicit ?? useAdminTestScope().includeTest;
+  // `??` short-circuits, so writing `explicit ?? useAdminTestScope()…` skipped
+  // the hook entirely whenever a caller passed a value. A caller whose
+  // argument moves between defined and undefined across renders then changes
+  // the hook order and React throws. Read first, choose second.
+  const scoped = useAdminTestScope().includeTest;
+  return explicit ?? scoped;
 }
 
 /** The acting admin's user id, for the "Mine" scope. Presentation-only read. */

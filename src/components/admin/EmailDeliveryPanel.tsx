@@ -111,6 +111,13 @@ export function EmailDeliveryPanel() {
                 </div>
               </li>
             ))}
+            {/* A capped list must say it is capped, or the panel reads as the
+                whole delivery history when it is the most recent 40 rows. */}
+            {data.items.length > 40 && (
+              <li className="py-2 text-xs text-muted-foreground">
+                Showing the 40 most recent of {data.items.length} events.
+              </li>
+            )}
           </ul>
         ) : (
           <p className="mt-3 text-sm text-muted-foreground">{data?.reason}</p>
