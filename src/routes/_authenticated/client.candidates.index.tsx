@@ -31,6 +31,7 @@ import { STAGE_OPTIONS, FIT_OPTIONS, CRITICAL_OPTIONS, REVIEW_OPTIONS } from "@/
 import { HiringSnapshot } from "@/components/client/candidates/hiring-snapshot";
 import { CandidatesFiltersPanel } from "@/components/client/candidates/filters-panel";
 import { CandidatesEmptyState } from "@/components/client/candidates/candidates-empty-state";
+import { InReviewStrip } from "@/components/client/candidates/in-review-strip";
 import { CompactList } from "@/components/client/candidates/compact-list";
 import { BulkCvDownloadButton } from "@/components/client/candidates/bulk-cv-download";
 import { CandidatesBoardView } from "@/components/client/candidates/board-view";
@@ -478,6 +479,14 @@ function CandidatesPage() {
     resultCount={filtered.length}
     totalCount={(rowsRaw as ClientCandidateDTO[]).length}
   />
+
+  {/* Applications still in assessment, stated above the rows. The empty
+      state says this too, but only when there is nothing to show — so a
+      workspace with one delivered candidate and eleven in review read as
+      "1 candidate" and nothing else (audit #4, item 49). */}
+  {!listPanel.loading && !listPanel.isError && filtered.length > 0 && (
+    <InReviewStrip orgId={orgId} positionId={search.position || undefined} />
+  )}
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
   {listPanel.loading ? (

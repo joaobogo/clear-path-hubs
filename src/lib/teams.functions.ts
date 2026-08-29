@@ -227,11 +227,23 @@ export const listTeamsDeliveries = createServerFn({ method: "GET" })
         .limit(50),
       supabaseAdmin.from("teams_channel_links").select("organization_id, enabled"),
     ]);
-    const failures = (rows ?? []).filter((r) => r.status !== "delivered").length;
+    // "Anything not delivered is a failure" counted recorded-by-design
+    // outcomes as failures, so a demo workspace whose messages are recorded
+    // rather than posted showed "10 failed" on the health page while the
+    // delivery desk — which reads the same rows through `deliveryReason` —
+    // correctly counted none (audit #4, item 38). One reason table decides.
+    const { deliveryReason } = await import("@/lib/notifications/delivery-reasons");
+    const undelivered = (rows ?? []).filter((r) => r.status !== "delivered");
+    const failures = undelivered.filter(
+      (r) => deliveryReason(r.error_code, r.error_code).countsAsFailure !== false,
+    ).length;
+    const recorded = undelivered.length - failures;
     return {
       items: rows ?? [],
       connected: (links ?? []).length,
       active: (links ?? []).filter((l) => l.enabled).length,
       failures,
+      /** Not sent, but not a fault — a demo workspace, a held configuration. */
+      recorded,
     };
   });

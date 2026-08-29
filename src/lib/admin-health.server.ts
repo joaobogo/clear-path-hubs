@@ -189,10 +189,18 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
   }
   for (const r of (jobsRes as { data: Any[] }).data ?? []) {
     const seenAt = (r.started_at as string) ?? (r.created_at as string);
+    // The exception board already resolves the candidate and the role; this
+    // panel threw both away and rendered "Job: score", so an operator had to
+    // open /admin/operations to learn WHO was stuck — the same rows, named
+    // properly one page over (audit #4, item 40).
+    const who = (r.candidate_name as string | null) ?? null;
+    const role = (r.position_title as string | null) ?? null;
     issues.push({
       id: r.job_id as string,
       kind: "processing",
-      label: `Job: ${r.job_type ?? "processing"}`,
+      label: who
+        ? `${who}${role ? ` · ${role}` : ""} — ${String(r.job_type ?? "processing")}`
+        : `Job: ${r.job_type ?? "processing"}`,
       detail: `${r.status} since ${formatDateTime(seenAt)} — ${r.attempts ?? 0} attempt(s)`,
       last_error: (r.error_message as string) ?? (r.error_code as string) ?? null,
       occurred_at: seenAt,

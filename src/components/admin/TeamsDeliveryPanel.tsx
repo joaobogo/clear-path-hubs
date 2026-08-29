@@ -28,6 +28,12 @@ export function TeamsDeliveryPanel() {
             <Badge variant={data.failures > 0 ? "destructive" : "secondary"}>
               {data.failures} failed
             </Badge>
+            {/* Recorded-by-design rows used to be counted as failures here
+                (audit #4, item 38). They are still worth showing — just not
+                as something broken. */}
+            {(data.recorded ?? 0) > 0 && (
+              <Badge variant="outline">{data.recorded} recorded, not sent</Badge>
+            )}
           </div>
         ) : null}
       </div>
