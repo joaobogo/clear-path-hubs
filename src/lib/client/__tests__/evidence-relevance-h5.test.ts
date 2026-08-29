@@ -74,6 +74,41 @@ describe("passageSupportsRequirement — M14 must not regress", () => {
     ).toBe(true);
   });
 
+  /**
+   * audit #4, M14 — accents were stripped BEFORE folding, so "inglês" was cut
+   * into "ingl" and "s" and no synonym could reach it. Every Portuguese quote
+   * for a language, a specialisation or a tool was dropped from the client's
+   * evidence, and Partial rows with real quotes rendered as "Not evidenced".
+   */
+  describe("accented Portuguese quotes reach the client", () => {
+    it("matches a language named in Portuguese", () => {
+      expect(
+        passageSupportsRequirement("Inglês intermediário, Espanhol básico, Alemão básico.", "Fluent English"),
+      ).toBe(true);
+      expect(
+        passageSupportsRequirement("Idiomas: Inglês – Intermediário; Espanhol – Intermediário.", "Fluent English"),
+      ).toBe(true);
+    });
+
+    it("matches a tool category named in Portuguese", () => {
+      expect(
+        passageSupportsRequirement(
+          "Uso ferramentas de IA no meu fluxo de trabalho diário.",
+          "Comfortable using AI tools",
+        ),
+      ).toBe(true);
+    });
+
+    it("does not start matching unrelated Portuguese prose", () => {
+      expect(
+        passageSupportsRequirement(
+          "Responsável pela gestão de contratos e faturamento mensal.",
+          "Fluent English",
+        ),
+      ).toBe(false);
+    });
+  });
+
   it("a two-letter subject must match as a whole word, not inside another", () => {
     // "ui" lives inside "requirements" and "building"; neither is UI work.
     expect(

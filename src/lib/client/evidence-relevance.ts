@@ -74,11 +74,31 @@ const GENERIC = new Set([
  * floor below deleted them, so "Understanding of good UX/UI principles" had NO
  * subject tokens at all and no passage could ever support it (audit #4, M14).
  */
-const SHORT_SUBJECTS = new Set(["ux", "ui", "ai", "ml", "qa", "bi", "go", "r", "c"]);
+const SHORT_SUBJECTS = new Set([
+  "ux", "ui", "ai", "ml", "qa", "bi", "go", "r", "c",
+  // Portuguese abbreviations of the same disciplines. "IA" is how a Brazilian
+  // CV writes AI, and the blanket three-character floor deleted it, so a
+  // passage naming AI tools in Portuguese had nothing left to match on
+  // (audit #4, M14).
+  "ia", "ux/ui", "bd",
+]);
+
+/**
+ * Strip diacritics so "inglês" and "ingles" are the same token.
+ *
+ * The character class below removes anything outside [a-z0-9], and it ran
+ * BEFORE any folding — so "inglês" was cut into "ingl" and "s", and no amount
+ * of synonym expansion could match it. Every Portuguese quote for a language,
+ * a specialisation or a tool was silently dropped from the client's evidence,
+ * which is why Partial rows with real quotes rendered as "Not evidenced yet"
+ * (audit #4, M14).
+ */
+function foldAccents(text: string): string {
+  return text.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
 
 function tokens(text: string): string[] {
-  return text
-    .toLowerCase()
+  return foldAccents(text.toLowerCase())
     .replace(/[^a-z0-9+#.\- ]+/g, " ")
     .split(/[\s.]+/)
     .map((t) => t.replace(/^[-+.]+|[-+.]+$/g, ""))
@@ -210,8 +230,19 @@ function looseMatch(w: string, have: Set<string>): boolean {
   // must not then drop the quote for lacking an English token, or the client
   // reads "not evidenced" for a requirement the run scored as met — which is
   // exactly what happened to both Portuguese CVs (audit #4, M14).
-  for (const form of expandTerm(w)) {
+  for (const raw of expandTerm(w)) {
+    // The table stores accented surface forms ("inglês", "experiência do
+    // usuário"); `have` is folded AND stemmed, so the forms must be too or
+    // "ferramentas" can never meet the stored "ferramenta".
+    const form = stem(foldAccents(raw));
     if (have.has(form)) return true;
+    // A multi-word alias ("fluxo de trabalho") never equals a single token —
+    // check whether the passage contains all of its parts instead.
+    if (form.includes(" ")) {
+      const parts = form.split(/\s+/).map(stem).filter((p) => p.length >= 3);
+      if (parts.length > 0 && parts.every((p) => have.has(p))) return true;
+      continue;
+    }
     // Same needle-length rule as above: an expanded form is still a term.
     if (form.length < MIN_SUBSTRING_TERM) continue;
     for (const h of have) {

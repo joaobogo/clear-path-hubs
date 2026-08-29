@@ -69,7 +69,7 @@ import {
   ChevronRight,
   Info,
 } from "lucide-react";
-import { FitHero, WhyWeShortlisted, RequirementCoverage, WhyThisCandidate, WhatNeedsValidation } from "@/components/client/candidate-detail/evidence";
+import { FitHero, WhyThisCandidate, WhatNeedsValidation } from "@/components/client/candidate-detail/evidence";
 import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
 import { IntroVideoPanel } from "@/components/client/intro-video-panel";
