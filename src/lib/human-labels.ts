@@ -192,7 +192,15 @@ export function formatLanguageEntry(entry: unknown): string {
   }
   if (typeof entry !== "object") return String(entry);
   const e = entry as Record<string, unknown>;
-  const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+  // A stored name can be present and still say nothing — "?", "-", "n/a", or
+  // a replacement character left by a bad decode. Those rendered literally as
+  // "? · Intermediário" (audit #4, item 33). A name has to contain a letter.
+  const str = (v: unknown) => {
+    if (typeof v !== "string") return "";
+    const t = v.trim();
+    if (!t || !/\p{L}/u.test(t) || t.includes("�")) return "";
+    return /^(n\/?a|unknown|none|null|undefined)$/i.test(t) ? "" : t;
+  };
   const name =
     str(e.language) || str(e.name) || str(e.label) || str(e.lang) || str(e.title);
   const level = str(e.level) || str(e.proficiency) || str(e.fluency) || str(e.cefr);

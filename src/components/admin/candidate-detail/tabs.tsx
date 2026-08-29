@@ -109,7 +109,26 @@ import { reconcileExplanationBand } from "@/lib/scoring/explanation-band";
 
 
 // ── CV & parsed ────────────────────────────────────────────────────────────
-export function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string; cp: Any; insights: Any }) {
+export function CvTab({
+  cv,
+  matchId,
+  cp,
+  insights,
+  capped = false,
+}: {
+  cv: Any;
+  matchId: string;
+  cp: Any;
+  insights: Any;
+  /**
+   * True when the published run is dealbreaker-capped. The Profile tab's
+   * briefing already withholds the model's read for a disqualified candidate;
+   * this tab printed the very same "Balanced view … a compelling candidate"
+   * pitch with no such gate (audit #4, item 27). Suppressed means suppressed
+   * on every tab, not just the one where it was noticed.
+   */
+  capped?: boolean;
+}) {
   if (!cv)
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
@@ -137,7 +156,17 @@ export function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string;
         </Link>
       </div>
 
-      {insights?.pitch_summary && (
+      {capped && insights?.pitch_summary && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm">
+          <p className="font-medium">Disqualified by screening — AI read suppressed</p>
+          <p className="mt-1 text-muted-foreground">
+            The model's read is withheld for a disqualified candidate. Review the screening answer
+            on the Screening tab.
+          </p>
+        </div>
+      )}
+
+      {!capped && insights?.pitch_summary && (
         <div
           className={`rounded-lg border-l-4 p-4 text-sm leading-relaxed ${
             pitchTone === "sell"

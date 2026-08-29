@@ -339,6 +339,7 @@ function CandidateWorkspace() {
                     matchId={id}
                     cp={cp}
                     insights={evidence?.extracted?.insights ?? null}
+                    capped={publishedRun?.contradiction_status === "disqualifying_answer"}
                   />
                 )}
                 {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}

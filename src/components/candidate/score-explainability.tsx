@@ -3,6 +3,7 @@ import { DEFAULT_WEIGHTS } from "@/lib/scoring/score-composition";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, GitCommit, History, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
+import { renderQuote } from "@/lib/evidence/quote-hygiene";
 
 // Evidence-first score explainability panel.
 //
@@ -166,9 +167,14 @@ export function ScoreExplainability({
                     {v.verdict}
                   </Badge>
                 </div>
-                {v.cv_quote && (
+                {/* The model returns raw CV slices, so these bypassed the
+                    hygiene every other quote goes through: letter-spaced
+                    mastheads ("F U L L S T A C K D E V E L O P E R"),
+                    link-hub strips and mid-word cuts ("by trac", "systems
+                    aut") were rendered verbatim (audit #4, item 30). */}
+                {renderQuote(v.cv_quote) && (
                   <blockquote className="mt-2 border-l-2 border-primary/30 pl-3 text-xs italic text-muted-foreground">
-                    “{v.cv_quote}”
+                    “{renderQuote(v.cv_quote)}”
                   </blockquote>
                 )}
                 {v.rationale && (

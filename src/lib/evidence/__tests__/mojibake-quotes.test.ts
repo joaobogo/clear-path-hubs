@@ -49,6 +49,37 @@ describe("isMojibake", () => {
   });
 });
 
+/**
+ * audit #4, item 30 / L2 — letter-spaced CV mastheads survived the
+ * single-letter-run regex whenever a pair fused ("E D U C AT I O N") or a
+ * separator split the run ("D E V E L O P E R | T E C H N I C A L").
+ */
+describe("renderQuote strips letter-spaced banners", () => {
+  it("drops a pipe-separated masthead", () => {
+    const out = renderQuote(
+      "F U L L S T A C K D E V E L O P E R | T E C H N I C A L Led a team of five engineers building a multi-tenant SaaS platform with isolation.",
+    );
+    expect(out).not.toMatch(/[A-Z] [A-Z] [A-Z]/);
+    expect(out).toContain("multi-tenant SaaS platform");
+  });
+
+  it("drops a banner whose extraction fused a pair of letters", () => {
+    const out = renderQuote(
+      "E D U C AT I O N Master of Engineering in Distributed Systems, completed with distinction in 2019.",
+    );
+    expect(out).not.toContain("E D U C");
+    expect(out).toContain("Master of Engineering");
+  });
+
+  it("leaves ordinary short words alone", () => {
+    // Six one-and-two letter tokens in a row, but real prose.
+    const out = renderQuote(
+      "It is up to me to do it well, and I own the outcome end to end on every project.",
+    );
+    expect(out).toContain("own the outcome");
+  });
+});
+
 describe("renderQuote drops unreadable passages", () => {
   it("returns nothing for byte soup", () => {
     expect(renderQuote("M���_�ҡ�� potato quote text here")).toBe(

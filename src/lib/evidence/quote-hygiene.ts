@@ -57,6 +57,11 @@ function spacedTokenLetters(token: string): string | null {
   return letters;
 }
 
+/** A lone separator between banner words: "D E V E L O P E R | T E C H…". */
+function isSeparatorToken(token: string): boolean {
+  return /^[|·•/\\\-–—,:;]+$/.test(token);
+}
+
 function stripSpacedBanners(text: string): string {
   const parts = text.split(/\s+/).filter(Boolean);
   const out: string[] = [];
@@ -64,14 +69,24 @@ function stripSpacedBanners(text: string): string {
   while (i < parts.length) {
     let end = i;
     let singles = 0;
+    let lastLetterEnd = i; // never let a run end on a trailing separator
     while (end < parts.length) {
-      const letters = spacedTokenLetters(parts[end]!);
+      const token = parts[end]!;
+      // A bare separator continues the banner without counting toward it, so
+      // "F U L L S T A C K | T E C H N I C A L" stays one run rather than two
+      // halves that each fall under the threshold (audit #4, item 30).
+      if (isSeparatorToken(token)) {
+        end += 1;
+        continue;
+      }
+      const letters = spacedTokenLetters(token);
       if (letters === null) break;
       if (letters.length === 1) singles += 1;
       end += 1;
+      lastLetterEnd = end;
     }
-    if (end - i >= 6 && singles >= 5) {
-      i = end; // drop the whole banner
+    if (lastLetterEnd - i >= 6 && singles >= 5) {
+      i = lastLetterEnd; // drop the whole banner
       continue;
     }
     out.push(parts[i]!);

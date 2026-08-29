@@ -23,6 +23,15 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
+/**
+ * Roles for which staleness is not a fact worth reporting. The Operations
+ * "Stale scores" tile has always excluded these — a role nobody is hiring for
+ * cannot have a stale deliverable, and the Recompute the chip offers can only
+ * fail against an archived position. The list had no way to apply the same
+ * rule, so it chipped rows the tile did not count (audit #4, item 48).
+ */
+const NOT_HIRING = new Set(["archived", "closed"]);
+
 export function freshnessFromRow(
   row: {
     scored_at?: string | null;
@@ -32,8 +41,17 @@ export function freshnessFromRow(
     brief_updated_at?: string | null;
     scored_calibration_version?: string | null;
     criteria_updated_at?: string | null;
+    position_status?: string | null;
   } & StoredStaleness,
 ): Freshness {
+  if (NOT_HIRING.has(String(row.position_status ?? ""))) {
+    return {
+      state: "current",
+      reasons: [],
+      summary: "This role is no longer being hired for.",
+      offer_rescore: false,
+    };
+  }
   const inferred = assessFreshness({
     ...(row as FreshnessInput),
     // Compared against what is running today: an older engine or calibration
@@ -81,8 +99,16 @@ export function ScoreStalenessChip({
             <Icon className="h-3 w-3" aria-hidden />
             {/* Always worded: an icon-plus-colour-only indicator failed the
                 accessibility spot-check (audit X-04/S-10) — dense rows get the
-                short word, full rows the full label. */}
-            <span>{compact ? "Stale" : unknown ? "Unverified age" : "Stale"}</span>
+                short word, full rows the full label.
+
+                The compact branch came FIRST in this ternary, so it said
+                "Stale" for the unknown state too. On the candidates index —
+                where the rows carry no staleness columns and every state is
+                therefore unknown — that put a "Stale" chip on 22 rows while
+                the Operations tile, reading the real columns, counted 7
+                (audit #4, item 48). "We don't know" must not read as "it is
+                out of date". */}
+            <span>{unknown ? (compact ? "Unverified" : "Unverified age") : "Stale"}</span>
           </span>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs space-y-1 text-xs">
