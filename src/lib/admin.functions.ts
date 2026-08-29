@@ -1634,9 +1634,15 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
     // cutoff. The previous filter used a status value the database does not have
     // ("stuck_queued"), so the query errored and the section reported "0" beside
     // a bucket showing dozens of rows.
+    // Bounded to 30 days. Unbounded, this list grew forever and the page said
+    // it was "the same rows" as the 7-day Processing-exceptions panel while
+    // showing 27 beside its 4 (audit #4, M9). The panel's copy now states this
+    // window; the query has to actually enforce it.
+    const jobsWindowStart = new Date(Date.now() - 30 * 86400_000).toISOString();
     const { data: failedJobs, error: failedJobsError } = await s
       .from("processing_jobs")
       .select("id,job_type,status,attempts,error_code,error_message,trace_id,created_at,started_at,entity_id")
+      .gte("created_at", jobsWindowStart)
       .or(`status.eq.failed,and(status.in.(queued,running),created_at.lt.${staleCutoff})`)
       .order("created_at", { ascending: false })
       .limit(100);

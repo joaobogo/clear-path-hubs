@@ -144,9 +144,14 @@ function HealthPage() {
         <h2 className="font-semibold">
           Jobs in trouble ({data.failed_jobs.length})
         </h2>
+        {/* This claimed to be "the same rows counted by Processing exceptions
+            above" and showed 27 beside that panel's 4 (audit #4, M9). It is a
+            different set: a wider window, and it does not exclude test
+            records. Say so rather than assert an equality that does not hold. */}
         <p className="mb-2 text-xs text-muted-foreground">
-          Failed jobs, plus jobs still queued or running for more than 24 hours — the same
-          rows counted by “Processing exceptions” above.
+          Every failed job from the last 30 days, plus jobs still queued or running for more than
+          24 hours. Wider than “Processing exceptions” above, which counts only the last 7 days and
+          excludes test records — so these two numbers are not meant to match.
         </p>
         <div className="rounded-lg border overflow-x-auto">
           <table className="w-full text-sm">

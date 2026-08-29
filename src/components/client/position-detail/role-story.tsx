@@ -3,6 +3,7 @@ import { ArrowRight, CalendarClock } from "lucide-react";
 import type { RoleStory } from "@/lib/client/role-story";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { FIT_OPTIONS } from "@/components/client/candidates/constants";
+import { InReviewStrip } from "@/components/client/candidates/in-review-strip";
 
 /**
  * The story of the search, in three figures: requirement coverage across the
@@ -79,6 +80,13 @@ export function RoleStoryPanel({
       <h2 id="role-story-heading" className="sr-only">
         What this search shows so far
       </h2>
+
+      {/* What this search shows so far has to include the work still in
+          progress. This page reported on the delivered shortlist only, so a
+          role with one delivered candidate and eleven applications in
+          assessment read as a search that had found one person (audit #4,
+          M11). */}
+      <InReviewStrip orgId={org ?? undefined} positionId={positionId} />
 
       <div className={`grid gap-4 ${hideCoverage ? 'lg:grid-cols-1' : 'lg:grid-cols-3'}`}>
         {/* 1. Requirement coverage across the shortlist */}
