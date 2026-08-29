@@ -284,9 +284,30 @@ async function applyScreeningQuestions(admin: Admin, positionId: string, bp: Rol
     const matched = mustHaves.find((m) => m && words.includes(m.toLowerCase().slice(0, 18)));
     return (matched ?? mustHaves[0] ?? "").trim();
   };
+  // A pay question drafted as free text can state a range the role does not
+  // have: the screening dealbreaker asked about "R$3,500–R$4,500" while the
+  // job page and the client brief both advertised "R$3,500 – R$5,000", so a
+  // candidate could be disqualified against a ceiling nobody published
+  // (audit #4, M12). When the role has a stored range, the question is written
+  // from it, so the two cannot disagree.
+  const compQuestion = (original: string): string => {
+    const isPayQuestion =
+      /\b(compensation|salary|pay|remuneration|remunera|sal[áa]rio)\b/i.test(original);
+    if (!isPayQuestion) return original;
+    const min = bp.compensation?.min;
+    const max = bp.compensation?.max;
+    if (min == null || max == null) return original;
+    const cur = String(bp.compensation?.currency ?? "").trim();
+    const money = (n: number) => `${cur ? `${cur} ` : ""}${Number(n).toLocaleString("en-US")}`;
+    return (
+      `This role pays ${money(Number(min))}–${money(Number(max))} per month. ` +
+      `Does that work for you?`
+    );
+  };
+
   const rows = bp.screening_questions.map((q, i) => ({
     position_id: positionId,
-    question: q.question,
+    question: q.dealbreaker ? compQuestion(q.question) : q.question,
     answer_type: q.answer_type,
     required: q.required,
     dealbreaker: q.dealbreaker,

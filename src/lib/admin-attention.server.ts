@@ -27,7 +27,8 @@ export type AttentionReason =
   | "zero_submissions"
   | "no_client_decision"
   | "published_without_owner"
-  | "payment_gate";
+  | "payment_gate"
+  | "pay_range_mismatch";
 
 export const REASON_LABEL: Record<AttentionReason, string> = {
   no_new_candidates: `No new candidate in ${ATTENTION_RULES.noNewCandidateDays} days`,
@@ -35,6 +36,11 @@ export const REASON_LABEL: Record<AttentionReason, string> = {
   no_client_decision: `Submitted, no client decision in ${ATTENTION_RULES.noClientDecisionDays} days`,
   published_without_owner: "Published without an owner",
   payment_gate: "Payment gate blocking publish",
+  // A screening dealbreaker asked about a "R$3,500–R$4,500" monthly range
+  // while the job page and the client brief both advertised
+  // "R$3,500 – R$5,000", so a candidate could be disqualified against a
+  // ceiling nobody published (audit #4, M12).
+  pay_range_mismatch: "Pay question disagrees with the role's stated range",
 };
 
 export type AttentionRow = {
@@ -92,7 +98,7 @@ export async function loadAttentionQueue(
   const posQuery = a
     .from("positions")
     .select(
-      "id, title, status, visibility, payment_status, published_at, created_at, owner_user_id, organization_id, is_test_record",
+      "id, title, status, visibility, payment_status, published_at, created_at, owner_user_id, organization_id, is_test_record, compensation",
     )
     .in("status", OPEN_STATUSES as unknown as string[]);
   if (!opts.includeTest) posQuery.eq("is_test_record", false);
@@ -114,6 +120,39 @@ export async function loadAttentionQueue(
   const checked = positions.length;
   if (checked === 0) {
     return { rows: [], checked: 0, reviewed_today: 0, generated_at: new Date().toISOString() };
+  }
+
+  // Pay dealbreakers whose stated range does not match the role's own.
+  // Questions created before the generator wrote them from the stored range
+  // still carry whatever free text was drafted (audit #4, M12), so the
+  // disagreement is surfaced rather than left to disqualify people quietly.
+  const payMismatch = new Set<string>();
+  {
+    const { data: payQuestions } = await a
+      .from("screening_questions")
+      .select("position_id, question, dealbreaker")
+      .in("position_id", positions.map((p) => String(p["id"])))
+      .eq("dealbreaker", true);
+    const compByPosition = new Map(
+      positions.map((p) => [String(p["id"]), (p["compensation"] ?? {}) as Record<string, unknown>]),
+    );
+    for (const q of (payQuestions ?? []) as Array<Record<string, any>>) {
+      const text = String(q["question"] ?? "");
+      if (!/\b(compensation|salary|pay|remuneration|remunera|sal[áa]rio)\b/i.test(text)) continue;
+      const comp = compByPosition.get(String(q["position_id"]));
+      const min = Number(comp?.["min"]);
+      const max = Number(comp?.["max"]);
+      if (!Number.isFinite(min) || !Number.isFinite(max)) continue;
+      // Every number the question states, ignoring thousands separators.
+      const stated = (text.match(/\d[\d.,]*/g) ?? [])
+        .map((n) => Number(n.replace(/[.,](?=\d{3}\b)/g, "").replace(/,/g, ".")))
+        .filter((n) => Number.isFinite(n) && n >= 100);
+      if (stated.length < 2) continue;
+      // The question is consistent when the role's own figures are the ones it
+      // quotes. Anything else is a range the role never agreed to.
+      const quotesRole = stated.includes(min) && stated.includes(max);
+      if (!quotesRole) payMismatch.add(String(q["position_id"]));
+    }
   }
 
   const reviewed = new Set(
@@ -251,6 +290,7 @@ export async function loadAttentionQueue(
     if (!p['published_at'] && (pay === "unpaid" || pay === "pending")) {
       reasons.push("payment_gate");
     }
+    if (payMismatch.has(String(p['id']))) reasons.push("pay_range_mismatch");
 
     if (reasons.length === 0) continue;
     if (reviewed.has(pid)) continue;

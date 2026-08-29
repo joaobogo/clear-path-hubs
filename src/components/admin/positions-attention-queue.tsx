@@ -39,6 +39,7 @@ const REASON_TEXT: Record<Reason, string> = {
   no_client_decision: "No client decision in 5 days",
   published_without_owner: "Published without an owner",
   payment_gate: "Payment gate blocking publish",
+  pay_range_mismatch: "Pay question disagrees with the role's range",
 };
 
 const UNASSIGNED = "__unassigned__";
