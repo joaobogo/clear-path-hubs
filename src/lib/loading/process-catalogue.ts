@@ -327,7 +327,28 @@ export function announcement(status: ProcessStatus): string {
  * vocabulary. Everything here is derived from the record — no timers, no
  * guessed stages — and describes only supported stages in product language.
  */
-export function candidateProcessStatus(state: string): ProcessStatus | null {
+export function candidateProcessStatus(
+  state: string,
+  opts: {
+    /**
+     * True when the candidate already has a completed assessment.
+     *
+     * `manual_review_required` covers two very different situations: nothing
+     * could be assessed, and everything WAS assessed and then parked for a
+     * human decision (a dealbreaker cap is the common case). Mapping both to
+     * "Evidence extraction did not complete" put that sentence directly under
+     * a banner reading "Disqualified by screening answer … The assessment
+     * itself completed" — two of the three status banners on the page were
+     * wrong (audit #4, M4).
+     */
+    hasAssessment?: boolean;
+  } = {},
+): ProcessStatus | null {
+  if (state === "manual_review_required" && opts.hasAssessment) {
+    // The scoring ran to completion. WHY it is parked is stated by the
+    // disqualification banner; this strip only reports the process.
+    return { process: "scoring", phase: "done" };
+  }
   switch (state) {
     case "queued":
       return { process: "evidence", phase: "background", stageIndex: 0 };

@@ -180,6 +180,13 @@ function WorkspaceHeader({
         const activeOrDone = m.processing_state === "scored" || m.processing_state === "parsed";
         if (activeOrDone || terminal) return null;
 
+        // A dealbreaker cap parks a fully-assessed candidate in
+        // manual_review_required. The disqualification banner above already
+        // says so, in the words the reviewer needs; repeating the pipeline's
+        // internal message underneath it made three status banners disagree on
+        // one screen (audit #4, M4).
+        if (currentRun?.contradiction_status === "disqualifying_answer") return null;
+
         return (
           <Alert variant={failedNow ? "destructive" : "default"}>
             {/* The raw code was the heading, so this box read "cv_unreadable"
@@ -203,7 +210,9 @@ function WorkspaceHeader({
         );
       })()}
           {(() => {
-        const status = candidateProcessStatus(String(m.processing_state));
+        const status = candidateProcessStatus(String(m.processing_state), {
+          hasAssessment: currentRun?.status === "completed" || currentRun?.score != null,
+        });
         return status && status.phase !== "done" ? (
           <ProcessState compact status={status} />
         ) : null;

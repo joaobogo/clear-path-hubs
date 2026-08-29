@@ -79,6 +79,9 @@ function EvidenceViewer() {
     result?.contradiction_status && result.contradiction_status !== "none"
       ? result.contradiction_status
       : null;
+  const contradictionRows: Any[] = Array.isArray(result?.contradiction_rows)
+    ? (result.contradiction_rows as Any[])
+    : [];
 
   const downloadFn = useServerFn(downloadEvidenceRecord);
   const [downloading, setDownloading] = useState(false);
@@ -184,7 +187,19 @@ function EvidenceViewer() {
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Contradiction detected</AlertTitle>
           <AlertDescription>
-            {String(contradictions).replace(/_/g, " ")} —{" "}
+            {/* The raw status token ("screening contradicts cv") was the
+                whole explanation. Name the pair the run actually recorded
+                (audit #4, M2). */}
+            {contradictionRows.length > 0
+              ? contradictionRows
+                  .slice(0, 2)
+                  .map(
+                    (r: Any) =>
+                      `answered yes to “${r.question}” but the CV does not back up “${r.requirement}”`,
+                  )
+                  .join("; ")
+              : "A screening answer and the CV disagree"}
+            {" — "}
             {match.client_visibility === "visible"
               ? "this candidate is already live for the client; approve a newer run or correct the evidence to clear it."
               : "resolve before publishing to the client."}
