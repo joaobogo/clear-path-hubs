@@ -153,14 +153,57 @@ const SOFT = new Set(
     "software",
     "people",
     "person",
+    // Framing words: they say how well the candidate should know the subject,
+    // never what the subject is. "Understanding of good UX/UI principles"
+    // matched a passage about understanding CLIENT REQUIREMENTS purely on the
+    // word "understand" (audit #4, H5).
+    "understanding",
+    "understand",
+    "understands",
+    "knowledge",
+    "familiarity",
+    "awareness",
+    "grasp",
+    "appreciation",
+    "exposure",
+    "proficiency",
+    "competence",
+    "principles",
+    "fundamentals",
+    "basics",
   ].map(stem),
 );
+
+/**
+ * A subject term specific enough to carry a passage on its own.
+ *
+ * "Understanding of practical web security fundamentals" shares the token
+ * "web" with "building web applications using React" — a passage about
+ * frontend work, offered to a client as proof of security knowledge (audit #4,
+ * H5). A short, common token is real but weak: on its own it means the passage
+ * merely touches the same area, so a second hit is required. A long token, or
+ * a named discipline like UX, is specific enough by itself.
+ */
+function isSpecific(term: string): boolean {
+  return term.length >= 6 || SHORT_SUBJECTS.has(term);
+}
+
+/**
+ * Substring matching is for compound forms ("row-level" vs "rowlevel"), and it
+ * needs a long enough needle to mean anything. Applied to two-letter terms it
+ * found "ui" inside "req(ui)rements" and "b(ui)lding", which is how a passage
+ * about understanding client requirements became proof of UX/UI principles
+ * (audit #4, H5). Short terms must match as whole words.
+ */
+const MIN_SUBSTRING_TERM = 4;
 
 function looseMatch(w: string, have: Set<string>): boolean {
   if (have.has(w)) return true;
   // Allow compound forms: "row-level" vs "rowlevel", "founder-led" vs "founderled".
-  for (const h of have) {
-    if (h.length >= 5 && (h.includes(w) || w.includes(h))) return true;
+  if (w.length >= MIN_SUBSTRING_TERM) {
+    for (const h of have) {
+      if (h.length >= 5 && (h.includes(w) || w.includes(h))) return true;
+    }
   }
   // The ENGINE credited this passage through its synonym table (which knows
   // "segurança" is security and "k8s" is kubernetes). This display-side check
@@ -169,6 +212,8 @@ function looseMatch(w: string, have: Set<string>): boolean {
   // exactly what happened to both Portuguese CVs (audit #4, M14).
   for (const form of expandTerm(w)) {
     if (have.has(form)) return true;
+    // Same needle-length rule as above: an expanded form is still a term.
+    if (form.length < MIN_SUBSTRING_TERM) continue;
     for (const h of have) {
       if (h.length >= 5 && (h.includes(form) || form.includes(h))) return true;
     }
@@ -188,11 +233,16 @@ export function passageSupportsRequirement(
   if (wanted.size === 0) return true; // nothing specific to check against
   const have = new Set(tokens(passage).map(stem));
 
-  // The requirement's subject terms. When it has any, the passage must hit one
-  // of them; attitude words on their own never carry a quote.
+  // The requirement's subject terms. When it has any, the passage must hit
+  // them; attitude and framing words on their own never carry a quote.
   const subject = [...wanted].filter((w) => !SOFT.has(w));
   if (subject.length > 0) {
-    return subject.some((w) => looseMatch(w, have));
+    const matched = subject.filter((w) => looseMatch(w, have));
+    if (matched.length === 0) return false;
+    // One specific term is proof enough. One weak, common term is not — it
+    // only says the passage is in the same neighbourhood, so a second subject
+    // hit has to back it up.
+    return matched.some(isSpecific) || matched.length >= 2;
   }
 
   for (const w of wanted) {
