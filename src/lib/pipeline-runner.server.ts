@@ -8,6 +8,7 @@
 import { extractCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
 import { parseCvFacts, isGarbageCvText } from "./cv/parse-facts";
+import { decideStateAfterEnrichment } from "./scoring/enrichment-state-policy";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
 import { generateCandidateInsights, type CandidateInsights } from "./candidate-insights.server";
@@ -179,6 +180,7 @@ async function loadCtx(s: Any, matchId: string) {
 }
 
 const TRANSIENT_STATES = new Set(["parsing", "enriching", "scoring"]);
+
 const MAX_ATTEMPTS = 3;
 
 async function countRecentFailures(s: Any, matchId: string): Promise<number> {
@@ -641,7 +643,25 @@ export async function runEnrichmentOnly(
       await setState(s, matchId, "manual_review_required", { trace_id, code: "requirements_missing", message: "Position has no structured requirements to score against." });
       return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [...steps, { step: "enrich", ok: true }] };
     }
-    await setState(s, matchId, "ready_to_score", { trace_id });
+    // Refreshing evidence must not walk an already-scored candidate backwards
+    // (audit #4, L15). See `decideStateAfterEnrichment` for the rule.
+    const decision = decideStateAfterEnrichment(ctx.match.processing_state);
+    if (decision.keepState) {
+      await s
+        .rpc("mark_matches_score_stale", { _match_ids: [matchId], _reason: "evidence_refreshed" })
+        .then(
+          () => undefined,
+          (e: unknown) => console.error("[enrich] could not flag score as stale", e),
+        );
+      return {
+        match_id: matchId,
+        trace_id,
+        final_state: String(ctx.match.processing_state) as PipelineOutcome["final_state"],
+        steps: [...steps, { step: "enrich", ok: true, note: "evidence_refreshed_score_kept" }],
+      };
+    }
+
+    await setState(s, matchId, decision.nextState, { trace_id });
     return { match_id: matchId, trace_id, final_state: "ready_to_score", steps: [...steps, { step: "enrich", ok: true }] };
   } catch (err) {
     const msg = (err as Error).message ?? "enrich_error";

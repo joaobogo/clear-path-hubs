@@ -210,6 +210,12 @@ function CandidateWorkspace() {
     // just acted still saw the pre-action DTO — banner insisting the score was
     // not approved yet, seconds after they approved it.
     await qc.invalidateQueries({ queryKey: ["client-preview", id] });
+    // Same problem, same page: the next-action bar has its own query and was
+    // not in this list, so after a repair action the header rendered the new
+    // state ("Assessing against the role") while the bar under it still showed
+    // the step from before ("Approve the score for client release") — one
+    // screen asserting two states at once (audit #4, L15).
+    await qc.invalidateQueries({ queryKey: ["candidate-next-action", id] });
     await router.invalidate();
   };
 
@@ -219,16 +225,28 @@ function CandidateWorkspace() {
     opts?: { onError?: (err: Error) => void; onSuccess?: () => void },
   ) => {
     setBusy(label);
+    // Acknowledge the click immediately. These repair actions run the pipeline
+    // synchronously and can take minutes; with feedback only on resolution,
+    // the menu closed and nothing happened on screen, so the action read as a
+    // dead click and got pressed two or three more times (audit #4, L14). The
+    // toast is claimed here and resolved in place, so there is never a silent
+    // window and never a second toast for the same run.
+    const toastId = toast.loading(`${label} — running…`);
     try {
       const r = await fn();
       toast.success(
         `${label} → ${r?.state ?? r?.action ?? "done"}${r?.trace_id ? ` (${r.trace_id})` : ""}`,
+        { id: toastId },
       );
       opts?.onSuccess?.();
       await invalidate();
     } catch (e) {
-      if (opts?.onError) opts.onError(e as Error);
-      else toast.error(`${label} failed: ${(e as Error).message}`);
+      if (opts?.onError) {
+        toast.dismiss(toastId);
+        opts.onError(e as Error);
+      } else {
+        toast.error(`${label} failed: ${(e as Error).message}`, { id: toastId });
+      }
     } finally {
       setBusy(null);
     }
