@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -42,6 +43,15 @@ export const Route = createFileRoute("/_authenticated/admin/scoring/review/")({
       },
     ],
   }),
+  // This route reads through a suspense query, which THROWS on failure. With
+  // no error component the throw escaped to the parent boundary and blanked
+  // the workspace instead of showing the review centre with a retry. The
+  // repo's route-state guard only inspected non-suspense reads, so it never
+  // saw this one; it now covers both.
+  errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.scoring.review.index.tsx",
+  ),
   component: ReviewCenter,
 });
 

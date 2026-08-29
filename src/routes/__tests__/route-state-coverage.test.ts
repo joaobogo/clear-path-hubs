@@ -23,8 +23,18 @@ const STATE_OWNERS = [
   "loadFailed",
 ];
 
+/**
+ * Source with comments stripped.
+ *
+ * The checks below are substring matches, so a comment that merely NAMES a
+ * hook used to count as calling it — a note reading "the guard only matched
+ * useQuery(" pulled its own file into the audit and failed the build. The
+ * guard measures code, not prose.
+ */
 function read(file: string) {
-  return readFileSync(join(DIR, file), "utf8");
+  return readFileSync(join(DIR, file), "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/.*$/gm, "$1");
 }
 
 describe("authenticated route read states", () => {
@@ -60,6 +70,24 @@ describe("authenticated route read states", () => {
       expect(
         loaderSeeded || (showsFailure && recoverable),
         `${file} cannot present a failed read with a retry`,
+      ).toBe(true);
+    },
+  );
+
+  /**
+   * The case above only matched `useQuery(`. A route reading through
+   * `useSuspenseQuery` has no isError branch to find — the hook THROWS — so it
+   * passed the audit by having nothing to audit, and one route shipped with no
+   * error component at all: a failed read blanked the workspace instead of
+   * offering a retry.
+   */
+  it.each(files.filter((f) => read(f).includes("useSuspenseQuery(")))(
+    "%s handles a thrown read with a route error component",
+    (file) => {
+      const src = read(file);
+      expect(
+        src.includes("errorComponent"),
+        `${file} reads with useSuspenseQuery, which throws on failure, but declares no errorComponent`,
       ).toBe(true);
     },
   );

@@ -147,6 +147,23 @@ export function RoleFitPanel({ orgId }: { orgId?: string }) {
             <Skeleton className="h-20 w-full" />
             <Skeleton className="h-28 w-full" />
           </div>
+        ) : fit.isError ? (
+          /* A failed read used to fall into the `!summary → null` branch below
+             and render an empty titled card: the client saw a heading with
+             nothing under it and no way to recover. Failure is not emptiness. */
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              We couldn't check your library against this role just now.
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => void fit.refetch()}
+              disabled={fit.isFetching}
+            >
+              {fit.isFetching ? "Retrying…" : "Try again"}
+            </Button>
+          </div>
         ) : !summary ? null : (
           <>
             <div className="grid gap-4 rounded-lg border bg-muted/30 p-4 sm:grid-cols-4">

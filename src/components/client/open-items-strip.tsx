@@ -26,7 +26,7 @@ const ICON: Record<OpenItemKind, typeof ClipboardList> = {
 export function OpenItemsStrip({ orgId }: { orgId: string | null | undefined }) {
   const fn = useServerFn(getClientOpenItems);
   const [expanded, setExpanded] = useState(false);
-  const { data, isError } = useQuery({
+  const { data, isError, isFetching, refetch } = useQuery({
     queryKey: ["client-open-items", orgId],
     queryFn: () => withQueryTimeout(fn({ data: { orgId: orgId! } })),
     enabled: !!orgId,
@@ -36,7 +36,25 @@ export function OpenItemsStrip({ orgId }: { orgId: string | null | undefined }) 
   const counts = useMemo(() => countByKind(items), [items]);
   const overdue = items.filter((i) => i.overdue).length;
 
-  if (isError || items.length === 0) return null;
+  // A failed read used to hide this strip entirely, which reads as "you have
+  // nothing open" — the opposite of what we actually know. Say we could not
+  // check, and offer the retry.
+  if (isError) {
+    return (
+      <Card className="border-border/70">
+        <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5">
+          <p className="text-sm text-muted-foreground">
+            We couldn't load your open items. Nothing has been lost — this is a display problem.
+          </p>
+          <Button size="sm" variant="outline" onClick={() => void refetch()} disabled={isFetching}>
+            {isFetching ? "Retrying…" : "Try again"}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (items.length === 0) return null;
   const visible = expanded ? items : items.slice(0, 4);
 
   return (
