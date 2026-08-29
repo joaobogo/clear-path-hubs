@@ -1,10 +1,20 @@
 /**
  * Bounded client reads.
  *
- * A hung server function used to render as eternal loading: no data, no error,
- * nothing to retry. Every client query that a section's loading state depends
- * on is wrapped here, so an unresolved request becomes a real failure with a
- * Retry inside a bounded time instead of a permanent skeleton.
+ * A hung server function renders as eternal loading: no data, no error,
+ * nothing to retry. Wrapping a query here turns an unresolved request into a
+ * real failure with a Retry inside a bounded time, instead of a permanent
+ * skeleton.
+ *
+ * COVERAGE IS PARTIAL, and the wording here used to claim otherwise — "every
+ * client query that a section's loading state depends on is wrapped here" was
+ * true of about fifteen of them. The overview and the other high-traffic
+ * dashboard reads are bounded; most panels, dialogs and settings tabs are not.
+ *
+ * Wrapping the rest is a deliberate trade, not an obvious win: a 12s cap would
+ * turn a slow-but-successful analytics read on a poor connection into a
+ * failure. If you extend coverage, raise the ceiling for the heavy reads
+ * rather than applying this default everywhere.
  */
 
 export const QUERY_TIMEOUT_MS = 12_000;
