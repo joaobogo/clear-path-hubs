@@ -149,14 +149,39 @@ function resultRank(result: string | null): 2 | 1 | 0 {
   return r ? 1 : 0;
 }
 
-function statusFor(sources: EvidenceSourceView[]): CriterionStatus {
+/**
+ * A quote that is not a quote.
+ *
+ * The audit found accepted evidence rows whose "passage" was the requirement's
+ * own name, the word "correct", or a bare "100%" — and a candidate then read
+ * "7 of 7 must-have criteria fully evidenced" while the scoring run said two
+ * of those requirements were missing (audit #4, H7). A passage that cannot
+ * support a claim must not raise a criterion to "supported".
+ */
+const MIN_PASSAGE_CHARS = 25;
+function isUsablePassage(snippet: string | null | undefined, label: string): boolean {
+  const s = (snippet ?? "").trim();
+  if (s.length < MIN_PASSAGE_CHARS) return false;
+  // The requirement's own text restated is not evidence of it.
+  const norm = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (norm(s) === norm(label)) return false;
+  // A bare figure or verdict word ("100%", "correct", "yes").
+  if (/^[\d\s%.,·-]+$/.test(s)) return false;
+  return true;
+}
+
+function statusFor(sources: EvidenceSourceView[], label = ""): CriterionStatus {
   let best = 0;
   for (const s of sources) {
     const rank = resultRank(s.result);
     const usable = rank > 0 || !!s.snippet;
     if (!usable) continue;
     if (s.reviewerStatus === "rejected" || s.integrityOk === false) continue;
-    best = Math.max(best, rank === 0 ? 1 : rank);
+    // "Fully evidenced" requires a passage a human can read and check. A
+    // strong verdict with an unusable passage is thin, never supported.
+    const effective =
+      rank >= 2 && !isUsablePassage(s.snippet, label) ? 1 : rank === 0 ? 1 : rank;
+    best = Math.max(best, effective);
   }
   if (best >= 2) return "supported";
   if (best === 1) return "thin";
@@ -221,7 +246,7 @@ export function buildCompletenessReport(input: {
       key,
       label: req.label,
       required: req.required,
-      status: statusFor(sources),
+      status: statusFor(sources, req.label),
       sources,
       override: overrideByKey.get(key) ?? null,
     });

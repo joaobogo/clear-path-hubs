@@ -411,6 +411,12 @@ function CandidateDetailPage() {
   .join(" for ");
 
   const verdictTrusted = true;
+  // An unpublished candidate has no assessment to show. Staff org-preview can
+  // reach one by URL, and the page rendered the intro video plus a stale
+  // "Earlier assessment" block ("2 of 8 evidenced", English not evidenced)
+  // that contradicted the current run — beside a notice saying the assessment
+  // was still in review (audit #4, H6).
+  const assessmentVisible = (candidate as AnyRow).published !== false;
 
 
  return (
@@ -436,14 +442,26 @@ function CandidateDetailPage() {
 
  <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-12">
  <div className="space-y-4 lg:col-span-8">
- {/* A short recruiter introduction, when one is attached. */}
+ {/* A short recruiter introduction, when one is attached. Nothing about an
+     unpublished candidate reaches the client — including their video. */}
+ {assessmentVisible && (
  <IntroVideoPanel
   matchId={candidate.match_id}
   video={candidate.intro_video}
   candidateName={candidate.candidate.display_name}
  />
+ )}
  {/* 2 — THE VERDICT */}
- {verdictTrusted ? (
+ {!assessmentVisible ? (
+  <div className="rounded-xl border bg-muted/30 p-5">
+   <h2 className="text-lg font-semibold">Assessment in review</h2>
+   <p className="mt-1 text-sm text-muted-foreground">
+    We're finishing this candidate's assessment. The fit verdict, the
+    evidence behind it and their introduction appear here once our team
+    approves and publishes them.
+   </p>
+  </div>
+ ) : verdictTrusted ? (
  <div id="sec-fit" className="scroll-mt-24 space-y-3">
   <FitHero candidate={candidate} />
  </div>
@@ -454,6 +472,7 @@ function CandidateDetailPage() {
 
  )}
 
+  {assessmentVisible && (
   <JumpNav
    items={[
     { id: "sec-score", label: "Score" },
@@ -465,13 +484,16 @@ function CandidateDetailPage() {
     { id: "sec-profile", label: "Profile" },
    ]}
   />
+  )}
 
   {/* 3 — THE NUMBER EXPLAINED: sits directly under the verdict it explains.
       It used to sit below the evidence and the interview checklist, so the
       figure and the reasoning behind it were a scroll apart. */}
+  {assessmentVisible && (
   <div id="sec-score" className="scroll-mt-24">
   <ScoreBreakdown candidate={candidate} hideRequirementRows />
   </div>
+  )}
 
   {/* 4 — THE DEAL-BREAKER FACTS: pay and availability decide as many rejections
       as the evidence does, so they are answered before the long read rather
@@ -492,12 +514,14 @@ function CandidateDetailPage() {
   </div>
 
   {/* 5 — THE EVIDENCE: requirements listed once, with coverage folded in */}
+  {assessmentVisible && (
   <div id="sec-evidence" className="scroll-mt-24 space-y-4">
   <WhyThisCandidate candidate={candidate} withCoverage />
   </div>
+  )}
 
   {/* 6 — WHAT TO CONFIRM: hidden once the hiring decision is made */}
-  {candidate.stage !== "hired" && (
+  {assessmentVisible && candidate.stage !== "hired" && (
   <div id="sec-confirm" className="scroll-mt-24">
   <WhatNeedsValidation
     candidate={candidate}

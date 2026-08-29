@@ -355,6 +355,20 @@ export function DecisionQueue({
         </span>
       </div>
 
+      {/* Work in progress is news whether or not the queue is clear. Gating
+          this on an empty queue meant a client with one pending decision was
+          never told that eleven more applications were being assessed
+          (audit #4, M11). */}
+      {inReviewByTaasflow > 0 && (
+        <p className="rounded-lg border border-dashed bg-muted/30 px-4 py-2 text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">
+            {inReviewByTaasflow} application{inReviewByTaasflow === 1 ? "" : "s"}
+          </span>{" "}
+          {inReviewByTaasflow === 1 ? "is" : "are"} in review with TaaSFlow right now —
+          nothing for you to do until we publish them.
+        </p>
+      )}
+
       {pending ? <UndoBar until={pending.until} onUndo={undo} /> : null}
 
       {overdue.length > 0 && (

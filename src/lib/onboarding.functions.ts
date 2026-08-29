@@ -438,10 +438,18 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     });
 
     const nextIncomplete = nextIncompleteStep(complete);
-    const current =
+    // A stale draft pointer must never send the client back to a step that is
+    // already done. The wizard read "Step 2 of 10 · Define the first role"
+    // from a 22-Aug draft while the role had been live for days (audit #4,
+    // M8) — the earlier fix picked the right POSITION but this line still
+    // preferred the saved cursor. Real state wins; the draft only decides
+    // where to resume among steps that are genuinely outstanding.
+    const draftStep =
       draft.current_step && ONBOARDING_STEP_IDS.includes(draft.current_step)
         ? draft.current_step
-        : nextIncomplete;
+        : null;
+    const current =
+      draftStep && !complete.includes(draftStep) ? draftStep : nextIncomplete;
 
     return {
       organization_id: org,

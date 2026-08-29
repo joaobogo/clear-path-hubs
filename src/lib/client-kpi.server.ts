@@ -444,6 +444,8 @@ export type ClientCandidateDTO = {
    * offered only when this is true — the server re-checks it regardless.
    */
   contact_released: boolean;
+  /** True only when the match is client-visible (published). */
+  published: boolean;
   /** When this candidate entered its current stage — powers the age badge. */
   stage_entered_at: string | null;
   last_updated: string | null;
@@ -909,7 +911,7 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
  * detail view and the candidate's "what employers see" preview so the two can
  * never select different columns.
  */
-export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by, contact_release_reason,
+export const CLIENT_CANDIDATE_SELECT = `id, stage, client_visibility, admin_status, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by, contact_release_reason,
          intro_video_url,
          canonical_state, processing_state, processing_updated_at, submitted_to_client_at,
          score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
@@ -1128,6 +1130,14 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     client_decided: Boolean(row.client_decided),
     hire_confirmed: Boolean(row.hire_confirmed),
     contact_released: released,
+    /**
+     * True only when this candidate has actually been published to the
+     * client. Staff org-preview can open an unpublished match, and the page
+     * rendered its intro video and a stale "Earlier assessment" block beside
+     * the "Assessment in review" notice (audit #4, H6). Every assessment
+     * surface gates on this.
+     */
+    published: row.client_visibility === "visible",
 
     stage_entered_at:
       row.stage === "delivered"
