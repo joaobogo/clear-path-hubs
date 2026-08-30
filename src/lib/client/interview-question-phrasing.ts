@@ -46,6 +46,13 @@ const ADJECTIVES = new Set([
   "eager", "available", "autonomous", "hands-on", "pragmatic", "curious",
 ]);
 
+/** Ordinary vocabulary the synonym table carries for matching, not naming. */
+const GENERIC_TERMS = new Set([
+  "tools", "tool", "tooling", "workflow", "workflows", "machine", "rest",
+  "experience", "knowledge", "security", "accounting", "interface",
+  "interfaces", "principles", "fundamentals",
+]);
+
 /**
  * Job-ad framing that belongs to the advert, not to the requirement. Left in,
  * it lands inside the question ("...your experience with must have 5+ years of
@@ -54,11 +61,43 @@ const ADJECTIVES = new Set([
 const OBLIGATION_PREFIX =
   /^(?:you(?:'ll| will)?\s+(?:be\s+)?(?:expected\s+to|need\s+to)?|we(?:'re| are)\s+looking\s+for|looking\s+for|seeking|must\s+have|should\s+have|nice\s+to\s+have|required?:?|requirement:?|essential:?|desirable:?)\s+/i;
 
+/**
+ * "Understanding of X", "Knowledge of X", "Familiarity with X" — the head noun
+ * frames how well the candidate should know X; the subject is X. Leaving it in
+ * produced "Tell me about understanding of practical web security
+ * fundamentals." (audit #6, 2.9j). Stripped, the noun frame below reads
+ * correctly: "…your experience with practical web security fundamentals?".
+ */
+const FRAMING_NOUN_PREFIX =
+  /^(?:a\s+)?(?:solid|strong|good|deep|basic|practical|working)?\s*(?:understanding|knowledge|awareness|familiarity|grasp|command|appreciation)\s+(?:of|with|in)\s+/i;
+
 function clean(label: string): string {
   const base = label.replace(/\s+/g, " ").trim().replace(/[.?!]+$/, "");
-  const stripped = base.replace(OBLIGATION_PREFIX, "").trim();
+  const stripped = base
+    .replace(OBLIGATION_PREFIX, "")
+    .replace(FRAMING_NOUN_PREFIX, "")
+    .trim();
   // Never strip the whole label away — a label that IS the prefix stays as-is.
   return stripped || base;
+}
+
+/**
+ * Nouns that head a requirement phrase. When a label ENDS in one of these it
+ * is a noun phrase however it starts, so a leading adjective is attributive
+ * rather than predicative: "Fluent professional English speaking and
+ * communication skills" is a thing, not a state, and "Tell me about a time you
+ * were fluent … communication skills" is not English (audit #6, 2.9j).
+ */
+const NOUN_PHRASE_HEADS = new Set([
+  "skills", "skill", "knowledge", "experience", "ability", "abilities",
+  "communication", "principles", "fundamentals", "basics", "practices",
+  "standards", "background", "expertise", "proficiency", "fluency",
+  "understanding", "awareness", "familiarity", "exposure", "literacy",
+]);
+
+function isNounPhrase(label: string): boolean {
+  const last = label.split(/[\s/]+/).filter(Boolean).pop() ?? "";
+  return NOUN_PHRASE_HEADS.has(last.toLowerCase().replace(/[^a-z]/g, ""));
 }
 
 /**
@@ -72,7 +111,12 @@ function clean(label: string): string {
 const KNOWN_PRODUCTS = new Set(
   Object.entries(SYNONYM_TABLE)
     .flatMap(([canonical, aliases]) => [canonical, ...aliases])
-    .map((t) => t.toLowerCase()),
+    .map((t) => t.toLowerCase())
+    // The synonym table also holds capability and framing words ("fluent",
+    // "tools", "workflow") because the ENGINE needs to match them. They are
+    // not proper nouns: treating them as such kept "Fluent" capitalised
+    // mid-sentence (audit #6, 2.9j).
+    .filter((t) => !ADJECTIVES.has(t) && !GENERIC_TERMS.has(t)),
 );
 
 function lowerFirst(text: string): string {
@@ -107,6 +151,13 @@ export function phraseInterviewQuestion(rawLabel: string): string {
 
   const parts = words(label);
   const first = parts[0]!.toLowerCase().replace(/[^a-z-]/g, "");
+
+  // A label that ENDS in a head noun is a noun phrase whatever it starts with,
+  // so none of the verb/adjective frames below apply. Checked before them.
+  // "Ability to …" keeps its own frame — it is followed by a verb, not a noun.
+  if (isNounPhrase(label) && first !== "ability" && first !== "able") {
+    return `Can you walk me through your experience with ${lowerFirst(label)}?`;
+  }
 
   // "Ability to ..." / "Able to ..."
   if (first === "ability" || first === "able") {

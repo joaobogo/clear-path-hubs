@@ -9,7 +9,7 @@ import { CvDownloadAudit } from "@/components/cv-download-audit";
  */
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { humanizeAuditAction, humanizeCode } from "@/lib/humanize-codes";
-import { formatLanguageEntry } from "@/lib/human-labels";
+import { formatLanguageEntry, formatAnswerValue } from "@/lib/human-labels";
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { RecordActivityTab } from "@/components/admin/record-activity-tab";
@@ -840,7 +840,10 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
                   <div className="min-w-0">
                     <div className="text-sm font-medium">{s.question}</div>
                     <div className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
-                      {safeNode(s.normalized_value || s.answer) ?? "—"}
+                      {/* Through the shared formatter so a boolean stored as
+                          text reads "Yes"/"No" here and on the review page
+                          alike (audit #6, 2.5b). */}
+                      {formatAnswerValue(s.normalized_value ?? s.answer)}
                     </div>
                   </div>
                   <Badge
@@ -884,7 +887,7 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
         <ul className="space-y-2">
           {rawAnswers.map((a, i) => {
             const llm = analysisById.get(String(a.question_id ?? ""));
-            const val = safeNode(a.value) ?? "—";
+            const val = formatAnswerValue(a.value);
             return (
               <li key={i} className="rounded-lg border bg-card p-4">
                 <div className="text-sm font-medium">{a.question}</div>

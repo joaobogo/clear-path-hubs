@@ -28,6 +28,7 @@ import {
 } from "@/lib/client-fit-presentation";
 import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
 import { contradictionSentence, displayConcern } from "@/lib/client/contradiction-copy";
+import { formatAnswerValue } from "@/lib/human-labels";
 import {
   clientMethodLabel,
   normalizeEvaluationMethod,
@@ -961,15 +962,13 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
   if (!Array.isArray(raw)) return [];
   return raw.map((a: AnyRow) => {
     const q = a?.screening_questions?.question ?? a?.question ?? "";
+    // Through the shared formatter: this hand-rolled branch passed a
+    // string-stored boolean straight through, so a client workspace showed
+    // "true" as the candidate's answer (audit #6, 2.5b). It also fell back to
+    // JSON.stringify, which can only ever print machine output at a client.
     const ans = a?.answer;
-    let text = "";
-    if (ans == null) text = "";
-    else if (typeof ans === "string") text = ans;
-    else if (typeof ans === "boolean") text = ans ? "Yes" : "No";
-    else if (typeof ans === "number") text = String(ans);
-    else if (Array.isArray(ans)) text = ans.join(", ");
-    else text = ans?.value ?? ans?.text ?? JSON.stringify(ans);
-    return { question: String(q), answer: String(text) };
+    const text = ans == null || ans === "" ? "" : formatAnswerValue(ans);
+    return { question: String(q), answer: text === "—" ? "" : text };
   }).filter((a) => a.question);
 }
 

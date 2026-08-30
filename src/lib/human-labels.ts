@@ -155,7 +155,16 @@ export function formatWorkAuthorization(raw: unknown): string | null {
  */
 export function formatAnswerValue(raw: unknown): string {
   if (raw == null || raw === "") return "—";
-  if (typeof raw === "string") return sanitizeInternalMarkers(raw) ?? "—";
+  if (typeof raw === "string") {
+    // A boolean answer stored AS TEXT is still a boolean answer. Handling only
+    // the JS boolean below let "true" reach a client workspace verbatim, and
+    // lowercase "yes"/"no" reach the admin Screening tab beside a review page
+    // showing "Yes"/"No" for the same answer (audit #6, 2.5b).
+    const t = raw.trim().toLowerCase();
+    if (t === "true" || t === "yes" || t === "y") return "Yes";
+    if (t === "false" || t === "no" || t === "n") return "No";
+    return sanitizeInternalMarkers(raw) ?? "—";
+  }
   // A yes/no answer must read as an answer, not as a JSON literal — this
   // formatter once let dealbreaker answers reach review pages as "true".
   if (typeof raw === "boolean") return raw ? "Yes" : "No";
