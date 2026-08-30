@@ -199,18 +199,35 @@ export const listReviewQueue = createServerFn({ method: "POST" })
     if (matchIds.length > 0) {
       const { data: videoRows } = await s
         .from("candidate_matches")
-        .select("id,intro_video_url")
+        .select("id,intro_video_url,processing_state")
         .in("id", matchIds);
-      const { VIDEO_INTRO_BONUS_PTS, hasVideoIntro } = await import(
+      const { VIDEO_INTRO_BONUS_PTS, hasVideoIntro, scoreVoidedByUnreadableCv } = await import(
         "@/lib/scoring/published-score"
       );
-      const withVideo = new Set(
-        ((videoRows ?? []) as AnyRow[]).filter(hasVideoIntro).map((v) => String(v.id)),
-      );
+      const { classifyBand } = await import("@/lib/scoring/bands");
+      const rowsById = new Map(((videoRows ?? []) as AnyRow[]).map((v) => [String(v.id), v]));
+
       for (const r of queueRows) {
-        if (r.final_score != null && withVideo.has(String(r.match_id))) {
-          r.final_score = Number(r.final_score) + VIDEO_INTRO_BONUS_PTS;
+        const match = rowsById.get(String(r.match_id));
+        // A score from an unreadable CV is not a score on this surface either.
+        if (scoreVoidedByUnreadableCv(match)) {
+          r.final_score = null;
+          r.score = null;
+          r.score_band = null;
+          continue;
         }
+        if (!hasVideoIntro(match)) continue;
+        // The bonus used to be added to `final_score` alone, so a run that
+        // stores its number in `score` kept the raw figure — and the BAND was
+        // never recomputed, so the queue read "Consider · 67" while every
+        // other surface said "77 Strong" (audit #6, A6-02).
+        const base = Number(r.final_score ?? r.score);
+        if (!Number.isFinite(base)) continue;
+        const total = base + VIDEO_INTRO_BONUS_PTS;
+        r.final_score = total;
+        if (r.score != null) r.score = total;
+        // Same band table every other surface bands through.
+        r.score_band = classifyBand(total);
       }
     }
     return { rows: queueRows, total: count ?? 0, limit, offset };
@@ -341,6 +358,13 @@ export const getReviewRecord = createServerFn({ method: "POST" })
         .eq("id", currentRun.rubric_version_id)
         .maybeSingle();
       rubric = rv ?? null;
+      // The run itself carries only `rubric_version_id`, so the shared label
+      // helper fell back to "scored against an earlier criteria version" while
+      // the candidate header said "criteria version 1" for the same run
+      // (audit #6, 2.1d). We have just resolved the number — hand it over.
+      if (currentRun && rubric?.version_number != null) {
+        currentRun.rubric_version_number = rubric.version_number;
+      }
     }
 
     return {

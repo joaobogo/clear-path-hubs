@@ -102,6 +102,15 @@ export function publishedRunEmbed(extraColumns = ""): string {
 /** Collapses the two embedded runs into `score_runs` — approved wins, video bonus folded. */
 export function withPublishedRun<T extends Record<string, unknown>>(row: T) {
   const { approved_run, current_run, ...rest } = row as Record<string, unknown>;
+  // A score built on text that later proved unreadable is not a score, and the
+  // void has to happen HERE rather than on each surface that renders one.
+  // Applied per-surface, it reached the workspace header and the evidence
+  // record while the candidate list, the work queue, the Score tab and the
+  // client preview all went on showing "41 · Not recommended" for a CV nothing
+  // could be read from (audit #6, A6-03).
+  if (scoreVoidedByUnreadableCv(rest as { processing_state?: string | null })) {
+    return { ...rest, score_runs: null } as T & { score_runs: Record<string, unknown> | null };
+  }
   const run = (approved_run ?? current_run ?? null) as PublishedScoreRun;
   return { ...rest, score_runs: withVideoIntroBonus(run, hasVideoIntro(rest)) } as T & {
     score_runs: Record<string, unknown> | null;

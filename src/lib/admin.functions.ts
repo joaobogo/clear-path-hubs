@@ -258,7 +258,10 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       s
         .from("candidate_matches")
         .select(
-          `id,updated_at,is_test_record,organization_id,position_id,intro_video_url,candidate_profiles(full_name),positions(title,organizations(name)),${publishedRunEmbed()}`,
+          // processing_state is required: `withPublishedRun` voids the score of
+          // a candidate whose CV proved unreadable, and without this column it
+          // cannot tell (audit #6, A6-03).
+          `id,updated_at,is_test_record,organization_id,position_id,processing_state,intro_video_url,candidate_profiles(full_name),positions(title,organizations(name)),${publishedRunEmbed()}`,
         )
         .eq("processing_state", "scored")
         .eq("admin_status", "pending")

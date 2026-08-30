@@ -73,7 +73,7 @@ import { FitHero, WhyThisCandidate, WhatNeedsValidation } from "@/components/cli
 import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
 import { IntroVideoPanel } from "@/components/client/intro-video-panel";
-import { VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
+import { VIDEO_INTRO_BONUS_PTS, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 
 
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
@@ -655,6 +655,21 @@ export function ScoreTab({
   /** Needed to show the video-intro bonus as its own line. */
   match?: Any;
 }) {
+  // The workspace header says "No score — CV unreadable" while this tab went
+  // on rendering "41 Not recommended · must-have coverage 36%" for the same
+  // candidate, complete with a "Demonstrated:" list drawn from byte soup
+  // (audit #6, A6-03). One state per candidate.
+  if (scoreVoidedByUnreadableCv(match)) {
+    return (
+      <div className="rounded-lg border border-dashed p-10 text-center text-sm">
+        <p className="font-medium">No score — this candidate's CV could not be read</p>
+        <p className="mt-1 text-muted-foreground">
+          The figures previously shown here were computed from unreadable text. Run OCR or ask for
+          a clean copy, then rescore.
+        </p>
+      </div>
+    );
+  }
   if (!currentRun)
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">

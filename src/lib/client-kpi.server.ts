@@ -8,7 +8,7 @@ import { APP_LOCALE } from "@/lib/format/datetime";
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
 import { parseLoomLink } from "@/lib/media/loom-link";
 import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
-import { publishedBand, publishedScore, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus, VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
+import { publishedBand, publishedScore, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus, scoreVoidedByUnreadableCv, VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { countRowsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
@@ -996,7 +996,12 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const pos = row.positions ?? null;
   // The published figure includes the Loom introduction bonus; every panel
   // below reads from this adjusted run so no surface can show the pre-bonus one.
-  const run = withVideoIntroBonus(row.score_runs ?? null, hasVideoIntro(row));
+  // A score computed from text that later proved unreadable is not a score.
+  // The admin workspace header said so while the client preview still showed
+  // "41 out of 100 · Not recommended" for the same candidate (audit #6, A6-03).
+  const run = scoreVoidedByUnreadableCv(row as { processing_state?: string | null })
+    ? null
+    : withVideoIntroBonus(row.score_runs ?? null, hasVideoIntro(row));
   const coverage = run?.requirement_coverage ?? null;
 
   const fullName: string = (cp.full_name ?? "").trim() || "Candidate";

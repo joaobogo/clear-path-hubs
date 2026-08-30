@@ -1134,10 +1134,14 @@ export const getAdminMatch = createServerFn({ method: "GET" })
     const [runsRes, decisionsRes, jobsRes, evidenceRes, fileRes, siblingsRes, answersRes] = await Promise.all([
       supabase
         .from("score_runs")
+        // The rubric join belongs in BOTH shapes. Without it the header chip
+        // resolved to "criteria set not recorded" on first paint and changed
+        // to "v1" once the heavy query landed — the same header contradicting
+        // itself between tabs on the same candidate (audit #6, 2.1d).
         .select(
           heavy
-            ? "id,score,confidence,evidence_confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash"
-            : "id,score,confidence,evidence_confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,completed_at,engine_version,input_hash",
+            ? "id,score,confidence,evidence_confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash,rubric_version_id,rubric_versions(label,version_number)"
+            : "id,score,confidence,evidence_confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,completed_at,engine_version,input_hash,rubric_version_id,rubric_versions(label,version_number)",
         )
         .eq("candidate_match_id", data.id)
         .order("completed_at", { ascending: false }),
