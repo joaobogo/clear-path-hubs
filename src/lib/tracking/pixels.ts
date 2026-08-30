@@ -80,17 +80,18 @@ export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
         },
       ]
     : []),
-  // RB2B: business-visitor identification. Boots unconditionally from the
-  // server-rendered head so identification starts on the very first pageview,
-  // before hydration and independent of any consent UI.
-  ...(RB2B_ID
-    ? [
-        {
-          key: "rb2b" as TrackerKey,
-          children: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var first=document.getElementsByTagName("script")[0];first.parentNode.insertBefore(s,first);}(${JSON.stringify(RB2B_ID)});`,
-        },
-      ]
-    : []),
+  // RB2B is NOT booted here.
+  //
+  // It used to be, "independent of any consent UI" — which contradicted both
+  // the comment directly above this array and the consent banner's own promise
+  // that "trackers are only injected once their consent category is granted".
+  // A visitor who clicked "Decline all" still had the de-anonymisation script
+  // and its API call fire on the next page (audit #6, A6-04).
+  //
+  // RB2B is a marketing tracker under CONSENT_CATEGORY below, so it loads
+  // through `initRB2B`, which runs only once marketing consent is granted.
+  // This costs identification on the first pageview of a declining visitor.
+  // That is the point.
 ];
 
 /** True when a tag's script is already in the document (head snippet ran). */
@@ -184,15 +185,13 @@ function syncGA4Consent() {
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
-  // Already booted by the server-rendered head snippet — never double-load.
+  // Guards against a stale document that still carries the old head snippet.
   if (alreadyInDocument("rb2b")) {
     loaded.add("rb2b");
     return;
   }
-  // Primary boot is the inline snippet in the server-rendered head, so
-  // identification starts while the document parses, before hydration and
-  // before any consent choice. This is the fallback for anything the head
-  // snippet missed; it never double-loads.
+  // This is now the ONLY path that loads RB2B, and it runs only after
+  // marketing consent is granted (see HEAD_BOOT_SNIPPETS).
   if (loaded.has("rb2b") || !RB2B_ID) return;
   loaded.add("rb2b");
   if (typeof window !== "undefined" && window.reb2b) return;
@@ -300,13 +299,17 @@ export function initializeTrackers() {
   // GA4 is special: it boots early but restricted.
   safe(initGA4);
 
-  // RB2B identifies businesses, not people, and runs on every pageview with no
-  // consent prompt — the head snippet is primary, this is the fallback.
-  safe(initRB2B);
-
-  // Other trackers only boot if explicitly allowed.
+  // RB2B was exempted from the consent loop below on the reasoning that it
+  // "identifies businesses, not people". It still de-anonymises the visitor
+  // and calls its own API, the banner promises trackers load only once their
+  // category is granted, and a visitor who chose "Decline all" still had it
+  // fire (audit #6, A6-04). It is a marketing tracker like any other now.
+  //
+  // Every tracker except GA4 boots only if its category is allowed. GA4 stays
+  // special: it loads in Consent Mode v2 with storage denied, and upgrades
+  // when analytics consent arrives.
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
-    if (key === "ga4" || key === "rb2b") continue;
+    if (key === "ga4") continue;
     const category = TRACKER_CATEGORY[key];
     if (isTrackerAllowed(key, category)) {
       safe(INITIALISERS[key]);

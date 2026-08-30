@@ -160,7 +160,13 @@ export function ConsentBanner() {
           <p className="text-xs leading-snug text-muted-foreground">
             {slim
               ? "We use analytics and business tools to understand how the site is used. Turn optional tracking off at any time."
-              : "Trackers are only injected once their consent category is granted. GA4 boots restricted and upgrades if allowed."}{" "}
+              : // The old wording — "Trackers are only injected once their
+                // consent category is granted" — was not true of Google
+                // Analytics, which loads on every page in consent mode with
+                // storage denied and still contacts Google (audit #6, A6-04).
+                // A promise a reader can disprove with their network tab is
+                // worse than no promise. Say what actually happens.
+                "Nothing that identifies you loads until you allow it. Google Analytics runs on every page with storage switched off — it sets no cookies and cannot identify you — and only starts full measurement if you allow analytics."}{" "}
             <a href="/privacy" className="underline">
               Privacy policy
             </a>
