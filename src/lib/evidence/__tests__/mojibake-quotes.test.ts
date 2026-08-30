@@ -80,6 +80,29 @@ describe("renderQuote strips letter-spaced banners", () => {
   });
 });
 
+/**
+ * audit #6, 2.3d — "Links: GitHub Website Puro Doce Website Jun 2026 -
+ * Present…" reached a PUBLISHED client page as evidence for a requirement. It
+ * named only two known platforms, one under the three-hit floor.
+ */
+describe("renderQuote drops link strips", () => {
+  it("drops a passage that opens by announcing links", () => {
+    expect(
+      renderQuote("Links: GitHub Website Puro Doce Website Jun 2026 - Present Built and deployed"),
+    ).toBe("");
+    expect(renderQuote("Link: doces-flame.vercel.app EDUCATION & LANGUAGES Bachiller - IPU")).toBe(
+      "",
+    );
+  });
+
+  it("keeps prose that merely mentions a link", () => {
+    const out = renderQuote(
+      "Built and deployed the storefront myself, and the link to the live site is in my portfolio.",
+    );
+    expect(out).toContain("Built and deployed");
+  });
+});
+
 describe("renderQuote drops unreadable passages", () => {
   it("returns nothing for byte soup", () => {
     expect(renderQuote("M���_�ҡ�� potato quote text here")).toBe(

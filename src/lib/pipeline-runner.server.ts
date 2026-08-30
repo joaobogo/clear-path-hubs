@@ -595,7 +595,7 @@ export async function runEnrichmentOnly(
     }
     const { data: freshProfile } = await s
       .from("candidate_profiles")
-      .select("id,skills,experience,headline,location,consent")
+      .select("id,skills,experience,headline,location,consent,languages,years_experience")
       .eq("id", ctx.match.candidate_profile_id).maybeSingle();
     const screening = buildScreening(ctx.answers);
     const { insights, insights_error } = await buildInsights({
@@ -633,6 +633,35 @@ export async function runEnrichmentOnly(
       } as unknown as Json,
       raw_text_sample: cvText.slice(0, 800),
     }, { onConflict: "candidate_match_id,engine_version" });
+
+    // Backfill facts the CV gave us onto the PROFILE, which is what the client
+    // workspace reads. Without this the parsed languages lived only in the
+    // enrichment snapshot: a client page said "Languages — Not provided" while
+    // quoting "Languages: Spanish (Native) English…" from the same CV three
+    // lines below (audit #6, 2.9i).
+    //
+    // Only ever fills a gap. A profile field a human or the candidate has set
+    // is never overwritten by the parser.
+    const profileBackfill: Record<string, unknown> = {};
+    if (
+      !Array.isArray(freshProfile?.languages) ||
+      (freshProfile?.languages as unknown[]).length === 0
+    ) {
+      if (cvFacts.languages.length > 0) profileBackfill.languages = cvFacts.languages;
+    }
+    if (!Array.isArray(freshProfile?.skills) || (freshProfile?.skills as unknown[]).length === 0) {
+      if (cvFacts.skills.length > 0) profileBackfill.skills = cvFacts.skills;
+    }
+    if (freshProfile?.years_experience == null && cvFacts.years_experience != null) {
+      profileBackfill.years_experience = cvFacts.years_experience;
+    }
+    if (Object.keys(profileBackfill).length > 0) {
+      await s
+        .from("candidate_profiles")
+        .update(profileBackfill)
+        .eq("id", ctx.match.candidate_profile_id);
+    }
+
     await recordJob(s, matchId, "enrich", "completed", trace_id);
     const pos = ctx.position;
     if (!pos || pos.status !== "active") {

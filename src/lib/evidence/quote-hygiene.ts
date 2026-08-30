@@ -112,8 +112,37 @@ export function isLinkHubDebris(raw: string | null | undefined): boolean {
   if (!raw) return false;
   const t = String(raw).toLowerCase();
   const hits = LINK_HUB_WORDS.filter((w) => new RegExp(`\\b${w}\\b`).test(t)).length;
+  const prose = (t.match(PROSE_MARKERS) ?? []).length;
+
   if (hits < 3) return false;
-  return (t.match(PROSE_MARKERS) ?? []).length <= 1;
+  return prose <= 1;
+}
+
+/**
+ * Remove a leading "Links: …" run from a quote.
+ *
+ * A CV's links section bleeds into whatever follows it, and the resulting
+ * slice reached a PUBLISHED client page as evidence: "Links: GitHub Website
+ * Puro Doce Website Jun 2026 - Present Built and deployed…" (audit #6, 2.3d).
+ * `isLinkHubDebris` could not catch it — it names only two known platforms,
+ * one under the three-hit floor, and the prose at the tail disqualified it.
+ *
+ * So the strip is removed rather than the quote dropped: everything from the
+ * opening "Links:" up to the first word that reads as prose. What remains
+ * faces the ordinary minimum-length rule, which discards the stub in practice.
+ */
+function stripLeadingLinkStrip(text: string): string {
+  if (!/^\s*links?\s*[:\-–—]/i.test(text)) return text;
+  const tokens = text.trim().split(/\s+/);
+  let i = 1; // skip the "Links:" token itself
+  while (i < tokens.length) {
+    const tok = tokens[i]!;
+    const bare = tok.replace(/[^A-Za-zÀ-ÿ]/g, "");
+    // A lowercase word of real length is where the prose starts.
+    if (bare.length >= 3 && bare === bare.toLowerCase()) break;
+    i += 1;
+  }
+  return tokens.slice(i).join(" ").trim();
 }
 
 const PHONE_RE_GLOBAL = /\+?\d[\d\s().-]{6,}\d/g;
@@ -418,13 +447,27 @@ function renderCapAtWord(text: string): string {
  *
  * Use this for any component that renders a CV-derived evidence snippet.
  */
+/**
+ * A quotable passage contains prose. One with no lowercase word of any length
+ * is a run of CV section headers or a bare technology list —
+ * "EDUCATION & LANGUAGES Bachiller - IPU", "CSS3 Tailwind CSS Bootstrap HTML5
+ * React Hooks Redux" — both of which reached client pages as the evidence
+ * behind a "Met" (audit #6, 2.3b/2.3d). A list of nouns proves nothing about
+ * what the candidate did with them.
+ */
+function hasProse(text: string): boolean {
+  return /\b[a-zà-ÿ]{3,}\b/.test(text);
+}
+
 export function renderQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   if (isTemplatedEvidence(raw) || isLinkHubDebris(raw)) return "";
   if (isMojibake(raw)) return "";
 
-  const scrubbed = stripSpacedBanners(
-    stripLetterSpacedRuns(stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim()),
+  const scrubbed = stripLeadingLinkStrip(
+    stripSpacedBanners(
+      stripLetterSpacedRuns(stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim()),
+    ),
   );
   if (!scrubbed) return "";
 
@@ -436,6 +479,8 @@ export function renderQuote(raw: string | null | undefined): string {
   const started = ended.length >= 40 ? trimmedStart : base;
   let out = renderCapAtWord(renderSnapEnd(started)).trim();
   if (out.length < QUOTE_MIN_CHARS) return "";
+  // A run of section headers or a bare technology list is not a passage.
+  if (!hasProse(out)) return "";
   if (/^[a-z]/.test(out)) out = `…${out}`;
   return out;
 }

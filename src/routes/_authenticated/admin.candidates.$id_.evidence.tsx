@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
+import { isGarbageCvText } from "@/lib/cv/parse-facts";
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/$id_/evidence")({
   loader: async ({ context, params }) => {
@@ -270,7 +271,19 @@ function EvidenceViewer() {
 
       {/* CV excerpt */}
       <Section icon={FileText} title="CV excerpt" caption={cv?.filename ?? "No CV on file"}>
-        {cvExcerpt ? (
+        {/* This printed "%PDF-1.7 4 0 obj > stream x��}I…" for thousands of
+            characters when extraction returned the file's raw bytes — a wall
+            of binary presented as the candidate's CV (audit #6, 2.2d). The
+            same gate the pipeline uses decides whether there is text here. */}
+        {cvExcerpt && isGarbageCvText(cvExcerpt) ? (
+          <div className="rounded-md border border-warning/40 bg-warning/10 p-4 text-sm">
+            <p className="font-medium">This document could not be read as text.</p>
+            <p className="mt-1 text-muted-foreground">
+              Extraction returned the file's raw bytes rather than readable language, so there is
+              no excerpt to show. Run OCR or ask the candidate for a clean copy.
+            </p>
+          </div>
+        ) : cvExcerpt ? (
           <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md border bg-muted/30 p-4 text-xs leading-relaxed">
             {cvExcerpt.slice(0, 8000)}
             {cvExcerpt.length > 8000 && "\n\n… truncated in preview; full text in the downloaded record."}
