@@ -155,15 +155,45 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     // Active interviews, same definition as the "Interviewing" KPI tile, so the
     // list can agree with the tile even before the stage is moved.
     const activeInterviews = new Set<string>();
+    // Requested but not yet timed. toClientCandidateDTO derives
+    // interview_awaiting_time from interview_needs_confirmation, and this path
+    // never set it — so the flag was permanently false on the candidate LIST
+    // and CandidatePrimaryAction went on offering "Request interview" to a
+    // client whose request was already sitting in the staff queue as
+    // "requested · awaiting a time" (audit #8, TF8-08). The mechanism for this
+    // was added in audit #6 (A6-23); it was simply never fed here.
+    const awaitingTime = new Set<string>();
+    // Cancelled with nothing held. The stage stays at interview_process after a
+    // cancellation, so the client was shown "Interviewing · Make offer" for a
+    // candidate whose only interview was called off (audit #8, TF8-08). A
+    // COMPLETED interview is a normal interview_process state and must not
+    // land here — which is why the query below can no longer filter to the
+    // three live statuses.
+    const heldOrLive = new Set<string>();
+    const everCancelled = new Set<string>();
     if (matchIds.length > 0) {
+      const { interviewNeedsTimeConfirmed } = await import("@/lib/client/interviews-to-confirm");
       const { data: ivs } = await context.supabase
         .from("interviews")
         .select("candidate_match_id, status, proposed_times, scheduled_at, availability_expires_at")
-        .in("candidate_match_id", matchIds)
-        .in("status", ["requested", "scheduling", "scheduled"]);
+        .in("candidate_match_id", matchIds);
       for (const iv of ((ivs as AnyRow[]) ?? [])) {
-        if (iv.candidate_match_id && isActiveInterview(iv)) {
-          activeInterviews.add(iv.candidate_match_id as string);
+        if (!iv.candidate_match_id) continue;
+        const id = iv.candidate_match_id as string;
+        const status = String(iv.status ?? "");
+        if (status === "cancelled" || status === "no_show") {
+          everCancelled.add(id);
+          continue;
+        }
+        if (status === "completed") {
+          heldOrLive.add(id);
+          continue;
+        }
+        if (isActiveInterview(iv)) {
+          activeInterviews.add(id);
+          heldOrLive.add(id);
+          // Same predicate the admin "Awaiting a time" queue counts by.
+          if (interviewNeedsTimeConfirmed(status)) awaitingTime.add(id);
         }
       }
     }
@@ -194,6 +224,9 @@ export const getClientCandidates = createServerFn({ method: "GET" })
       toClientCandidateDTO({
         ...r,
         interview_active: activeInterviews.has(r.id as string),
+        interview_needs_confirmation: awaitingTime.has(r.id as string),
+        interview_called_off:
+          everCancelled.has(r.id as string) && !heldOrLive.has(r.id as string),
         client_decided: decidedMatches.has(r.id as string),
         hire_confirmed:
           confirmedHires.matchIds.has(String(r.id)) ||

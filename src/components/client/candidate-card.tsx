@@ -93,7 +93,15 @@ export function CandidateCard({
           evidence={c.evidence_support}
           unicorn={c.unicorn}
         />
-        <span className="text-xs text-muted-foreground">{clientStageLabel(c.stage)}</span>
+        {/* Same three-way read as the compact list, so the card and the table
+            cannot describe one candidate differently (audit #8, TF8-08). */}
+        <span className="text-xs text-muted-foreground">
+          {c.interview_awaiting_time
+            ? "Interview requested"
+            : c.interview_called_off && c.stage === "interview_process"
+              ? "Interview cancelled"
+              : clientStageLabel(c.stage)}
+        </span>
       </div>
 
       <div className="mt-3">

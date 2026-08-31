@@ -126,7 +126,13 @@ export function CompactList({
                 <td data-label="Stage" className="py-3 px-3 text-muted-foreground align-middle whitespace-nowrap">
                   {c.interview_awaiting_time
                     ? "Interview requested"
-                    : clientStageLabel(c.stage)}
+                    : c.interview_called_off && c.stage === "interview_process"
+                      ? /* The stage stays at interview_process after a
+                           cancellation, so the word alone read "Interviewing"
+                           for someone whose only interview was called off
+                           (audit #8, TF8-08). */
+                        "Interview cancelled"
+                      : clientStageLabel(c.stage)}
                 </td>
                 <td data-label="Action" className="py-3 px-3 text-right align-middle">
                   {orgId ? (

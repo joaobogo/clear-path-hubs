@@ -175,6 +175,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
     note: "The employer sees that they have asked for the interview and that we are arranging it.",
   },
   {
+    key: "interview_called_off",
+    group: "process",
+    label: "Whether the interview the employer arranged was cancelled",
+    note: "The employer sees that the interview did not go ahead, rather than being told you are still interviewing.",
+  },
+  {
     key: "contact_released",
     group: "process",
     label: "Whether the employer may see your contact details and CV file",

@@ -442,6 +442,14 @@ export type ClientCandidateDTO = {
    */
   interview_awaiting_time: boolean;
   /**
+   * An interview existed and was cancelled, and none was held. The stage stays
+   * at interview_process, so without this the client was shown "Interviewing"
+   * with a "Make offer" action for someone whose only interview was called off
+   * (audit #8, TF8-08). False for a COMPLETED interview — that is a normal
+   * interview_process state and must keep reading as Interviewing.
+   */
+  interview_called_off: boolean;
+  /**
    * True when the client has already recorded a decision on this candidate.
    * Carried so the snapshot tiles can apply the one "awaiting your review"
    * rule (delivered, undecided) instead of counting the delivered stage.
@@ -1226,6 +1234,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       (row as AnyRow).interview_needs_confirmation ??
         ((row as AnyRow).interview_requested_at && !(row as AnyRow).next_interview_at),
     ),
+    interview_called_off: Boolean((row as AnyRow).interview_called_off),
     client_decided: Boolean(row.client_decided),
     hire_confirmed: Boolean(row.hire_confirmed),
     contact_released: released,
