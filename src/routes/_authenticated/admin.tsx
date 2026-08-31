@@ -58,7 +58,12 @@ export const Route = createFileRoute("/_authenticated/admin")({
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (e && typeof e === "object" && (e as any).isRedirect) throw e;
-      throw redirect({ to: "/access-denied", search: { reason: "permission" } });
+      // Failing to CHECK is not the same as being denied. This caught every
+      // error — including a timeout on the staff-access read — and told the
+      // person their seat lacked permission, so an admin intermittently lost
+      // admin with nothing to indicate it was a glitch (audit #7, TF7-09).
+      // Still fails closed; it just stops misreporting why.
+      throw redirect({ to: "/access-denied", search: { reason: "unavailable" } });
     }
   },
 

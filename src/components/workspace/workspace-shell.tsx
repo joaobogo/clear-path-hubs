@@ -9,6 +9,11 @@ import {
   X,
 } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
+import { activeTab, type SectionTab } from "@/components/workspace/section-tabs";
+import {
+  ADMIN_SECTION_GROUPS,
+  CLIENT_SECTION_GROUPS,
+} from "@/config/workspace-sections";
 import { SignOutButton } from "@/components/sign-out-button";
 import {
   DropdownMenu,
@@ -118,7 +123,29 @@ function useSidebarState() {
   return { collapsed, toggle, mobileOpen, setMobileOpen };
 }
 
-function buildBreadcrumbs(
+/**
+ * Section tabs flattened into the shape buildBreadcrumbs matches on. Exact by
+ * design: a tab names its own screen, not a subtree, so a detail page below it
+ * still resolves against the sidebar entry that owns the subtree.
+ *
+ * One entry per group, chosen by the same activeTab the tab strip highlights
+ * with — several client tabs share /client/account and differ only by search
+ * param, so a path-only match would name the Team screen "Workspace".
+ */
+export function sectionTabsAsCrumbSources(
+  role: WorkspaceRole,
+  pathname: string,
+  search?: Record<string, unknown>,
+): WorkspaceNavItem[] {
+  const groups =
+    role === "admin" ? ADMIN_SECTION_GROUPS : role === "client" ? CLIENT_SECTION_GROUPS : [];
+  return groups
+    .map((g) => activeTab(pathname, g.tabs, search))
+    .filter((t): t is SectionTab => t !== null)
+    .map((t) => ({ to: t.to, label: t.label, exact: true }) as WorkspaceNavItem);
+}
+
+export function buildBreadcrumbs(
   pathname: string,
   navItems: WorkspaceNavItem[],
   detailLabel?: string | null,
@@ -347,9 +374,22 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
     headerSlot,
   } = props;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const search = useRouterState({ select: (s) => s.location.search }) as Record<string, unknown>;
   const { collapsed, toggle, mobileOpen, setMobileOpen } = useSidebarState();
   const detailLabel = useCrumbLabel();
-  const crumbs = buildBreadcrumbs(pathname, navItems, detailLabel);
+  // Breadcrumbs used to be built from the sidebar alone, but most admin desks
+  // are reached through the section tabs and are not sidebar entries at all —
+  // Agent operations, Unreadable docs, Data health and a dozen others. With no
+  // match, buildBreadcrumbs returned nothing and the top bar fell back to the
+  // workspace label, so every one of those screens announced itself as
+  // "Admin" (audit #6, A6-29). Tabs are navigation too, so they name the page.
+  // Tabs first: where both name the same route, the sidebar entry names the
+  // GROUP and the tab names the SCREEN. /admin/scoring/review is the Quality
+  // group's landing tab, so sidebar-first made the top bar read "Quality"
+  // while the tab strip under it read "Scoring review". Tab sources are exact,
+  // so a detail page below still falls through to the sidebar entry.
+  const crumbSources = [...sectionTabsAsCrumbSources(role, pathname, search), ...navItems];
+  const crumbs = buildBreadcrumbs(pathname, crumbSources, detailLabel);
   const lastCrumb = crumbs[crumbs.length - 1];
   const currentPage =
     typeof lastCrumb?.label === "string" ? lastCrumb.label : contextLabel;

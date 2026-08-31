@@ -42,12 +42,15 @@ export function TestRecordsToggle() {
       // every admin query has to refetch when the scope changes. Invalidate
       // rather than reset: resetQueries cancels queries a suspended component is
       // already waiting on, and that CancelledError blanks the page.
-      await queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === "admin" ||
-          query.queryKey[0] === "admin-overview" ||
-          String(query.queryKey[0]).startsWith("admin-"),
-      });
+      //
+      // Invalidate EVERYTHING, not just keys beginning "admin". Most admin
+      // queries are not named that way — "publish-desk-groups",
+      // "pipeline-health", "review-record", "ops-health", "candidate-next-
+      // action" — so the predicate missed them and the toggle looked dead:
+      // flipping it left the page and its "Test and internal organizations are
+      // hidden" note unchanged (audit #7, §6). The scope is global, so the
+      // invalidation has to be.
+      await queryClient.invalidateQueries();
       await router.invalidate();
 
     },

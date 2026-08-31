@@ -281,8 +281,14 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
                 <ListChecks className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
                 {g.title}
               </h3>
+              {/* The split, not just the total. This read "6 of 6 evidenced"
+                  four lines under "5 of 6 weighted points" on the same card,
+                  and nothing on screen let the reader reconcile them — both
+                  are true, because a partly evidenced requirement counts once
+                  here and half there (audit #7, TF7-07). */}
               <span className="text-xs tabular-nums text-muted-foreground">
                 {g.met + g.partial} of {g.total} evidenced
+                {g.partial > 0 && ` (${g.met} fully, ${g.partial} partly)`}
               </span>
               {g.total > 0 && (
                 <span className="flex flex-wrap gap-1.5">

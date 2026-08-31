@@ -43,8 +43,17 @@ export const Route = createFileRoute("/_authenticated/admin/dashboard-requests")
   component: DashboardRequestsPage,
 });
 
+// The default was "gbp", so a total of quotes priced in BRL or USD rendered
+// as "£0" — a currency nothing on this desk was actually quoted in (audit #7,
+// A6-29). The server now reports the shared currency, or "mixed" when the
+// quotes disagree; summing across currencies is meaningless, so in that case
+// the figure is shown without a symbol rather than under a wrong one.
 function money(cents: number, currency = "gbp") {
-  return (cents / 100).toLocaleString("en-GB", {
+  const amount = cents / 100;
+  if (currency.toLowerCase() === "mixed") {
+    return amount.toLocaleString("en-GB", { maximumFractionDigits: 0 });
+  }
+  return amount.toLocaleString("en-GB", {
     style: "currency",
     currency: currency.toUpperCase(),
     maximumFractionDigits: 0,
@@ -143,8 +152,11 @@ function DashboardRequestsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{money(data.revenue.quotedCents)}</p>
-            <p className="text-xs text-muted-foreground">{open.length} open requests</p>
+            <p className="text-3xl font-semibold">{money(data.revenue.quotedCents, data.revenue.currency)}</p>
+            <p className="text-xs text-muted-foreground">
+              {open.length} open requests
+              {data.revenue.currency === "mixed" ? " · quoted in more than one currency" : ""}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -152,7 +164,7 @@ function DashboardRequestsPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Delivered</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{money(data.revenue.deliveredCents)}</p>
+            <p className="text-3xl font-semibold">{money(data.revenue.deliveredCents, data.revenue.currency)}</p>
             <p className="text-xs text-muted-foreground">{data.grants.length} accounts with access</p>
           </CardContent>
         </Card>

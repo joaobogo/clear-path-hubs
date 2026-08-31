@@ -77,6 +77,14 @@ export const getStaffDashboardDesk = createServerFn({ method: "GET" })
       const deliveredCents = reqRows
         .filter((r) => r.status === "delivered")
         .reduce((s, r) => s + Number(r.quote_amount_cents ?? 0), 0);
+      const quotedCurrencies = new Set(
+        reqRows
+          .filter((r) => Number(r.quote_amount_cents ?? 0) > 0)
+          .map((r) => String(r.quote_currency ?? "").toLowerCase())
+          .filter(Boolean),
+      );
+      const revenueCurrency =
+        quotedCurrencies.size === 1 ? [...quotedCurrencies][0]! : "mixed";
 
       return {
         requests: reqRows.map((r) => ({
@@ -101,7 +109,12 @@ export const getStaffDashboardDesk = createServerFn({ method: "GET" })
           expiresAt: g.expires_at,
           createdAt: g.created_at,
         })),
-        revenue: { quotedCents, deliveredCents, currency: "gbp" },
+        // Was hardcoded "gbp", so the desk showed totals in £ whatever the
+        // quotes were actually priced in (audit #7, A6-29). Sums across
+        // currencies are meaningless anyway, so this reports the currency only
+        // when every quoted row agrees, and "mixed" when they do not — the UI
+        // then declines to put a symbol on a number it cannot label.
+        revenue: { quotedCents, deliveredCents, currency: revenueCurrency },
       };
     },
   );

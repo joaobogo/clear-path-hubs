@@ -18,7 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
  * button instead.
  */
 const searchSchema = z.object({
-  reason: z.enum(["membership", "organization", "permission"]).optional(),
+  reason: z.enum(["membership", "organization", "permission", "unavailable"]).optional(),
 });
 
 const ACCESS_DENIED_DESCRIPTION =
