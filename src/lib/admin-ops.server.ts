@@ -42,6 +42,10 @@ const pubRun = (m: { approved_run?: unknown; current_run?: unknown; intro_video_
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
 const HOUR = 3_600_000;
+// How many scored matches the staleness scan reads before it stops. The rule
+// cannot be expressed in SQL (it compares two engine versions and the position
+// status), so it runs in JS over this window and reports saturation.
+const STALE_SCAN_LIMIT = 500;
 const PREVIEW_LIMIT = 8;
 const DAY = 24 * HOUR;
 
@@ -64,6 +68,12 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   );
   const { loadIntakeAging } = await import("./admin-intake-aging.server");
   const scope = await loadTestScope(s, opts.includeTest ?? false);
+
+  // Both decision queues below read the same backlog. Load it once.
+  const decisionBacklog = (async () => {
+    const { loadDecisionBacklog } = await import("./admin-decision-backlog.server");
+    return loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
+  })();
 
   const [unpaid, setup, review, readyForDecision, delivered, interviews, blocked, agingIntakes, stale] = await Promise.all([
     // 1 — submitted roles that have not been paid for (or are stuck mid-checkout).
@@ -111,22 +121,17 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
     // 3.5 — ready for client decision (admin already approved).
     // Derived from matches in delivered+ status with no client decision row.
-    (async () => {
-      const { loadDecisionBacklog } = await import("./admin-decision-backlog.server");
-      const backlog = await loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
-      return { data: [], count: backlog.rows.length };
-    })(),
+    // Shares one backlog read with queue 4 below: these were two identical
+    // round trips on every load of the busiest admin desk.
+    decisionBacklog.then((backlog) => ({ data: [], count: backlog.rows.length })),
 
     // 4 — shared with the client, no decision recorded yet.
     // The work-queue "Client decisions overdue" tile uses this.
     // We slice to 8 for the preview list but the count reflects the whole backlog.
-    (async () => {
-      const { loadDecisionBacklog } = await import("./admin-decision-backlog.server");
-      const backlog = await loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
-      // P-015: Filter to only truly overdue decisions (e.g. delivered > 48h ago) 
-      // if specific logic existed, but for now we reconcile by using the same loader.
-      return { data: backlog.rows, count: backlog.rows.length };
-    })(),
+    decisionBacklog.then((backlog) => ({
+      data: backlog.rows,
+      count: backlog.rows.length,
+    })),
 
 
 
@@ -184,10 +189,13 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
           )
           .not("current_score_run_id", "is", null)
           .order("score_stale_at", { ascending: true, nullsFirst: false })
-          .limit(500),
+          .limit(STALE_SCAN_LIMIT),
         scope,
       );
-      if (error) return { data: [], count: 0 };
+      // A failed read used to render as "Stale scores 0" — the one wrong
+      // answer that reads as GOOD news, so nobody would ever investigate it.
+      // Report it as uncountable instead.
+      if (error) return { data: [], count: 0, failed: true, saturated: false };
       const { ENGINE_VERSION } = await import("@/lib/scoring/engine-version");
       const ARCHIVED = new Set(["archived", "closed"]);
       const rows = ((data ?? []) as Any[]).filter((m) => {
@@ -205,10 +213,30 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
           (m.approved_score_run_id ? approvedEngine !== ENGINE_VERSION : false);
         return m.score_stale === true || engineStale;
       });
-      return { data: rows.slice(0, PREVIEW_LIMIT), count: rows.length };
+      // The staleness rule needs both engine versions and the position status,
+      // so it is applied in JS over a bounded scan rather than in SQL. That
+      // makes the count a floor once the scan saturates: past STALE_SCAN_LIMIT
+      // matches the tile would silently undercount with nothing on screen
+      // saying so. Say so.
+      const saturated = (data ?? []).length >= STALE_SCAN_LIMIT;
+      return { data: rows.slice(0, PREVIEW_LIMIT), count: rows.length, failed: false, saturated };
     })(),
   ]);
 
+
+  /**
+   * A read that failed is not a queue that is empty.
+   *
+   * Every one of these panels derived its count from `res.count ?? 0` with no
+   * check on `res.error`, so a failed query rendered as "0" — the single
+   * wrong answer that reads as GOOD news, which is why nobody would ever go
+   * looking for it. The count still shows 0 because there is nothing truthful
+   * to put there, but the badge says the number cannot be trusted.
+   */
+  const failedBadge = (res: { error?: unknown } | null | undefined) =>
+    res && (res as { error?: unknown }).error
+      ? { label: "Could not be counted", tone: "danger" as const }
+      : null;
 
   const overdue = (delivered.data ?? []) as any[];
 
@@ -322,6 +350,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       label: "Unpaid submissions",
       description: "Roles submitted but not paid for. Nothing publishes until this clears.",
       count: unpaid.count ?? 0,
+      secondary_badge: failedBadge(unpaid),
       action_hint: "Open the role to chase payment or grant an exemption.",
       see_all: { to: "/admin/payments" },
       items: ((unpaid.data ?? []) as Any[]).slice(0, PREVIEW_LIMIT).map((p) => ({
@@ -344,6 +373,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       label: "Roles awaiting setup",
       description: "Paid or exempt roles that still need approval and configuration.",
       count: setup.count ?? 0,
+      secondary_badge: failedBadge(setup),
       action_hint: "Open the role, complete setup, approve it.",
       see_all: { to: "/admin/publish" },
       items: ((setup.data ?? []) as any[]).map((p) => ({
@@ -369,7 +399,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       count: review.count ?? 0,
       action_hint: "Review evidence and recorded fit labels to make a decision.",
       see_all: { to: "/admin/candidates" },
-      secondary_badge: {
+      // A failed read outranks the ready-for-decision split: reporting
+      // "3 ready for decision" beside a count that could not be computed
+      // states a confident fact about numbers we do not have.
+      secondary_badge: failedBadge(review) ?? {
         label: `${readyForDecision.count ?? 0} ready for decision`,
         tone: (readyForDecision.count ?? 0) > 0 ? "default" : "neutral",
       },
@@ -499,6 +532,11 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       label: "Stale scores",
       description: "Candidates whose score inputs changed after assessment.",
       count: stale.count ?? 0,
+      secondary_badge: stale.failed
+        ? { label: "Could not be counted", tone: "danger" as const }
+        : stale.saturated
+          ? { label: `at least ${stale.count}`, tone: "warning" as const }
+          : null,
       action_hint: "Recompute scores to clear out-of-date banners.",
       see_all: { to: "/admin/scoring/review" as any },
       items: ((stale.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((m) => ({
