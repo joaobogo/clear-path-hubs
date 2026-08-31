@@ -102,7 +102,10 @@ export const InterviewGuide = memo(function InterviewGuide({
               {qs.map((q, i) => (
                 <li key={q.id} className="rounded-md border bg-background/40 p-3">
                   <p className="font-medium text-sm">
-                    <span className="mr-2 text-muted-foreground">{i + 1}.</span>
+                    {/* A literal space as well as the margin: copied text and
+                        screen readers read "1.Tell me about…" without it
+                        (audit #6, A6-13). */}
+                    <span className="mr-2 text-muted-foreground">{i + 1}.</span>{" "}
                     {q.question}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">

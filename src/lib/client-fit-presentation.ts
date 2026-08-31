@@ -501,11 +501,19 @@ export function buildInterviewGuide(args: {
   workAuth: string | null;
 }): InterviewGuideItem[] {
   const { rows, concerns } = args;
-  
+
+  // The guide read `r.status` — the RUN's raw verdict — while the evidence
+  // list on the very same page renders `resolveRequirementStatus`, which also
+  // requires a quotable passage. So the guide said "We found partial evidence
+  // for 'Comfortable using AI tools' — worth confirming" directly beneath an
+  // evidence section reading "Comfortable using AI tools — Not evidenced"
+  // (audit #6, A6-13/A6-01). One resolver, one verdict per requirement.
+  const resolved = rows.map((r) => ({ row: r, status: resolveRequirementStatus(r) }));
+
   // HONESTY GATE: Only ask about things that aren't fully evidenced.
-  return rows
-    .filter((r) => r.status !== "met" || r.evidence.length === 0)
-    .map((r) => ({
+  return resolved
+    .filter(({ status }) => status !== "met" && status !== "not_applicable")
+    .map(({ row: r, status }) => ({
       id: r.id,
       requirement_label: r.label,
       importance: r.importance,
@@ -513,14 +521,14 @@ export function buildInterviewGuide(args: {
       why: (() => {
         const match = concerns.find((c) => c.toLowerCase().includes(r.label.toLowerCase()));
         if (match) return humanizeConcernSentence(match);
-        if (r.status === "contradicted") return "The evidence here conflicts — worth clarifying.";
-        if (r.status === "partial") return "We found partial evidence for this — worth confirming.";
+        if (status === "contradicted") return "The evidence here conflicts — worth clarifying.";
+        if (status === "partial") return "We found partial evidence for this — worth confirming.";
         return "We found no direct evidence for this.";
       })(),
       indicators: ["Specific project examples", "Quantifiable results", "Duration of experience"],
       followUp: null,
       group: r.importance === "must_have" ? "Core Requirements" : "Preferred Skills",
-      status: r.status,
+      status,
     }));
 }
 

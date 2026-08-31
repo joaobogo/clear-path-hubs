@@ -24,6 +24,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
 import { isGarbageCvText } from "@/lib/cv/parse-facts";
+import { passageSupportsRequirement } from "@/lib/client/evidence-relevance";
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/$id_/evidence")({
   loader: async ({ context, params }) => {
@@ -109,6 +110,24 @@ function EvidenceViewer() {
   }
 
   const reqItems: Any[] = result?.requirement_assessment ?? result?.evidence ?? [];
+
+  // Which rows the CLIENT will read differently from this record. Resolved
+  // through the same guard the client DTO uses, so the two cannot drift: a
+  // verdict whose passages do not survive quote hygiene and relevance reaches
+  // the client as "not evidenced" however the run scored it (audit #6, A6-01).
+  const clientDowngraded = new Set<string>(
+    reqItems
+      .filter((r: Any) => {
+        if (r?.status !== "met" && r?.status !== "partial") return false;
+        const label = String(r.text ?? r.requirement_text ?? r.label ?? "");
+        const quotable = (Array.isArray(r.evidence) ? (r.evidence as Any[]) : []).some((e: Any) => {
+          const q = renderQuote(String(e?.snippet ?? ""));
+          return q.length > 0 && passageSupportsRequirement(q, label);
+        });
+        return !quotable;
+      })
+      .map((r: Any, i: number) => String(r.id ?? r.text ?? i)),
+  );
   const llmVerdicts: Any[] = Array.isArray(insights?.requirement_verdicts)
     ? insights.requirement_verdicts
     : [];
@@ -388,6 +407,19 @@ function EvidenceViewer() {
                       </Badge>
                     )}
                   </div>
+                  {/* The run's verdict is not always what the client is
+                      shown: a "Met" whose quotes cannot be rendered as
+                      supporting passages reaches them as "Not evidenced", and
+                      a reviewer comparing this record with the preview saw two
+                      different answers for the same run (audit #6, A6-01).
+                      Say which rows differ, and why. */}
+                  {clientDowngraded.has(String(r.id ?? r.text ?? i)) && (
+                    <p className="mt-2 rounded border border-warning/30 bg-warning/10 p-2 text-xs">
+                      The client sees this as <b>not evidenced</b>: no passage on file supports it
+                      in a form we will quote to them. Correct or add evidence to change what they
+                      see.
+                    </p>
+                  )}
                   {(r.evidence ?? []).length > 0 && (
                     <ul className="mt-2 space-y-1 border-l-2 border-primary/30 pl-3 text-xs text-muted-foreground">
                       {(r.evidence as Any[]).map((e, j) => (
