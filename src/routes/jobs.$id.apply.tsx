@@ -177,7 +177,12 @@ function ApplyPage() {
   const [consent, setConsent] = useState(false);
   const [network, setNetwork] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<{ message: string; trace_id?: string } | null>(
+  const [serverError, setServerError] = useState<{
+    message: string;
+    trace_id?: string;
+    /** Server failure code, so the banner can offer the right next step. */
+    code?: string;
+  } | null>(
     null,
   );
   // A repeat application is not an error: we show the candidate their own
@@ -766,7 +771,7 @@ function ApplyPage() {
         if (result.code === "already_applied") {
           toast.error(result.message, { duration: 6000 });
         } else {
-          setServerError({ message: result.message, trace_id: result.trace_id });
+          setServerError({ message: result.message, trace_id: result.trace_id, code: result.code });
         }
         setPhase("idle");
         setSubmitting(false);
@@ -967,10 +972,27 @@ function ApplyPage() {
             <AlertTitle>No application was created</AlertTitle>
             <AlertDescription>
               {serverError.message}
-              <span className="block mt-1">
-                Nothing was sent and nothing was lost — your answers are still here. Press submit
-                again when you're ready.
-              </span>
+              {/* "Press submit again when you're ready" was told to EVERY
+                  failure, including the test-record guard — where pressing
+                  submit again fails identically, forever. Retrying only helps
+                  when the cause was transient, so only that case is offered
+                  it; a rejection gets a way to reach a human instead
+                  (audit #6, A6-27). */}
+              {serverError.code === "qa_fixture_blocked" ? (
+                <span className="block mt-1">
+                  Your answers are still here, but submitting again will give the same result. If
+                  this is a genuine application, email{" "}
+                  <a className="underline" href="mailto:hello@taasflow.com">
+                    hello@taasflow.com
+                  </a>{" "}
+                  quoting the reference below and we will sort it out.
+                </span>
+              ) : (
+                <span className="block mt-1">
+                  Nothing was sent and nothing was lost — your answers are still here. Press submit
+                  again when you're ready.
+                </span>
+              )}
               {serverError.trace_id && (
                 <span className="block mt-1 text-xs opacity-70">
                   Reference: {serverError.trace_id}
@@ -1062,16 +1084,6 @@ function ApplyPage() {
         >
           {step === 1 && (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
-              {serverError && (
-                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
-                  <p className="font-semibold">Submission failed</p>
-                  <p>{serverError.message}</p>
-                  {serverError.trace_id && (
-                    <p className="mt-1 text-xs opacity-80">Reference: {serverError.trace_id.slice(0, 8).toUpperCase()}</p>
-                  )}
-                </div>
-              )}
-
               {/* State the cost of applying before it is paid, so nobody
                   starts on a phone without the one file they will need. */}
               <section
@@ -1844,16 +1856,6 @@ function ApplyPage() {
               <div className="rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground">
                 Submissions are final. We'll email you when there's a decision or a next step.
               </div>
-            </div>
-          )}
-
-          {serverError && (
-            <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
-              <p className="font-semibold">Submission failed</p>
-              <p>{serverError.message}</p>
-              {serverError.trace_id && (
-                <p className="mt-1 text-xs opacity-80">Reference: {serverError.trace_id.slice(0, 8).toUpperCase()}</p>
-              )}
             </div>
           )}
 

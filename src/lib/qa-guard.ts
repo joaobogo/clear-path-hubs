@@ -9,10 +9,28 @@
 
 const FORBIDDEN = ["qa", "test", "ignore", "browser-test", "disregard"];
 
+/**
+ * Markers are matched as WHOLE WORDS, not substrings.
+ *
+ * Substring matching rejected any value containing the letters — so a real
+ * applicant named Testa or Costa, an address at protest.org, or the word
+ * "latest" in a headline would be turned away from a live role and told their
+ * application "looks like a test record" (audit #6, A6-27).
+ *
+ * Our own fixtures are named with these as words ("QA Test", "browser-test",
+ * "+qa@"), so the guard still catches what it exists to catch. A separator —
+ * space, hyphen, underscore, dot, plus, digit — counts as a boundary, which is
+ * what makes "joao+qa@…" and "browser-test" match while "Testa" does not.
+ */
+const BOUNDARY = "[^a-z]";
+
 function hasForbiddenMarker(value: string | null | undefined): boolean {
   if (!value) return false;
   const lower = value.toLowerCase();
-  return FORBIDDEN.some((marker) => lower.includes(marker));
+  return FORBIDDEN.some((marker) => {
+    const m = marker.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(^|${BOUNDARY})${m}($|${BOUNDARY})`).test(lower);
+  });
 }
 
 export function qaGuardValues(values: Array<string | null | undefined>): {
