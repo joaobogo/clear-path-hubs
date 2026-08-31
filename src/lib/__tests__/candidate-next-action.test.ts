@@ -93,6 +93,32 @@ describe("stage/visibility contradictions are reported, not guessed", () => {
   }
 });
 
+describe("never invites an approval mid-recompute", () => {
+  // Approving a score that is being replaced is the one irreversible mistake
+  // this screen can invite. Every state where the pipeline still owns the
+  // record must own the next action too.
+  const IN_FLIGHT = ["queued", "parsing", "parsed", "enriching", "ready_to_score", "scoring"];
+
+  for (const state of IN_FLIGHT) {
+    it(`offers no approval while processing_state is "${state}"`, () => {
+      const a = deriveNextAction(
+        facts({ processing_state: state, admin_status: "pending", has_score_run: true }),
+      );
+      expect(a.step).toBe("processing_running");
+      expect(a.owner).toBe("system");
+      expect(a.action.kind).not.toBe("approve_score");
+    });
+  }
+
+  it("does offer approval once scoring has finished", () => {
+    const a = deriveNextAction(
+      facts({ processing_state: "scored", admin_status: "pending", has_score_run: true }),
+    );
+    expect(a.step).toBe("approve_score");
+    expect(a.action).toEqual({ kind: "approve_score" });
+  });
+});
+
 describe("invariants", () => {
   it("returns exactly one action for every stage in the vocabulary", () => {
     for (const stage of Object.keys(PIPELINE_STAGE_VOCABULARY)) {

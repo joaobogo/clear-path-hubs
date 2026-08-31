@@ -84,7 +84,21 @@ export function ownerLabel(owner: OwnerSide): string {
  * Approving a number that is mid-recompute is the one irreversible mistake
  * this screen can invite.
  */
-const IN_FLIGHT = new Set(["queued", "parsing", "parsed", "enriching", "ready_to_score"]);
+const IN_FLIGHT = new Set([
+  "queued",
+  "parsing",
+  "parsed",
+  "enriching",
+  "ready_to_score",
+  // "scoring" was missing — the same defect this comment describes for
+  // "parsed", left behind for the one state where it matters most. A candidate
+  // mid-recompute is neither in flight nor in need of repair, so it fell
+  // through to "Approve the score for client release" with a live Approve
+  // button while scoring-service was actively writing a new run. Every other
+  // in-flight list in the codebase (pipeline-runner, freshness-reconcile,
+  // empty-state-signals) already includes it.
+  "scoring",
+]);
 const NEEDS_REPAIR = new Set([
   "failed",
   "provider_blocked",
