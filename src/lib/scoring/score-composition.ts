@@ -1,3 +1,4 @@
+import { resolveRequirementStatus } from "@/lib/client/requirement-status";
 /**
  * Score composition — the three published weightings behind a fit score.
  *
@@ -233,8 +234,24 @@ export type RequirementBasis = {
   valuePct: number;
 };
 
+/**
+ * The weighted counts behind a percentage, as the requirement LIST shows them.
+ *
+ * This classified on the raw `status` column while the list beneath it
+ * classifies through resolveRequirementStatus — which downgrades a "met" row
+ * carrying no quoted passage to "not evidenced", because a verdict without a
+ * quote is not evidence. The two therefore described different lists, and this
+ * caption claimed to explain a list it had not read (audit #8, TF8-06).
+ */
 export function requirementBasis(
-  rows: Array<{ status: string; importance?: string }>,
+  rows: Array<{
+    status: string;
+    importance?: string;
+    evidence?: unknown;
+    contradictions?: unknown;
+    context?: unknown;
+    label?: string | null;
+  }>,
   importance: "must_have" | "preferred",
 ): RequirementBasis | null {
   const scoped = rows.filter((r) =>
@@ -244,8 +261,12 @@ export function requirementBasis(
   ).filter((r) => r.status !== "not_applicable");
   const total = scoped.length;
   if (total === 0) return null;
-  const met = scoped.filter((r) => r.status === "met").length;
-  const partial = scoped.filter((r) => r.status === "partial").length;
+  // Same resolver the rendered list uses, so the caption describes that list.
+  const statuses = scoped.map((r) =>
+    resolveRequirementStatus(r as Parameters<typeof resolveRequirementStatus>[0]),
+  );
+  const met = statuses.filter((st) => st === "met").length;
+  const partial = statuses.filter((st) => st === "partial").length;
   const missing = total - met - partial;
   const points = Math.round((met + partial * 0.5) * 10) / 10;
   return {

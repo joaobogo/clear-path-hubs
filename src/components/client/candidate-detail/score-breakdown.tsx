@@ -63,7 +63,13 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
       : k.key === "screening_alignment" && answers > 0
         ? `from ${answers} screening ${answers === 1 ? "answer" : "answers"}`
         : null;
-    return { ...k, basisLabel };
+    // What the requirement list actually shows, when it disagrees with the
+    // assessment. A client read "Must-have coverage 100% · 60 pts" four lines
+    // above "5 of 6 evidenced", beside a panel naming the very requirement
+    // nobody found evidence for (audit #8, TF8-06). The percentage stays —
+    // it is what produced the score — but it no longer stands unqualified.
+    const listBasis = candidateBasis && !basis ? candidateBasis : null;
+    return { ...k, basisLabel, listBasis };
   });
   // Rounding happens once, on the total; the parts are whole points apportioned
   // to add up to it exactly. A Loom introduction adds its own line on top.
@@ -91,6 +97,11 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
                 {k.key === "review_adjustment"
                   ? "Recorded when a reviewer checked this assessment"
                   : k.basisLabel ?? `${k.valuePct}%`}
+                {k.listBasis && (
+                  <span className="mt-0.5 block text-[11px] italic">
+                    the evidence list below shows {formatBasis(k.listBasis)}
+                  </span>
+                )}
               </td>
               <td data-label="Points" className="py-1.5 text-right tabular-nums">
                 <Tooltip>
@@ -146,10 +157,18 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
             below even when the display-side evidence check had re-graded rows
             and the stored share no longer matched (66.7% above 2+2-of-6 rows,
             audit S-18). Claim row provenance only when it is true. */}
+        {/* The previous wording explained a disagreement by saying the
+            assessment had "settled a requirement the list still shows as
+            pending confirmation". There is no such status: a requirement is
+            met, partly met, not evidenced, contradicted or not applicable. So
+            that sentence could never be the true reason, and it was shown for
+            Filipe Rocha beside a list reading "Not evidenced" and a panel
+            saying the same requirement held the score down (audit #8, TF8-06).
+            Where the two figures disagree, say that they disagree. */}
         {lines.some(
-          (k) => (k.key === "must_have" || k.key === "preferred") && !k.basisLabel,
+          (k) => (k.key === "must_have" || k.key === "preferred") && k.listBasis,
         )
-          ? "Percentages come from the assessment itself. A percentage can sit above a plain count of the list below when the assessment settled a requirement the list still shows as pending confirmation."
+          ? "The percentages above come from the assessment that produced this score. They do not match the evidence list below, shown beside each one. Where the two differ, the list is what we can show you a quote for."
           : "Percentages are weighted counts of the requirements listed below: a fully evidenced requirement scores one point, a partly evidenced one half."}
         {` The parts add up to ${totalPts}, the score shown above.`}
       </p>
