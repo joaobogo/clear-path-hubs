@@ -2,6 +2,8 @@ import {
   makeRouteErrorComponent,
   makeRouteNotFoundComponent,
 } from "@/components/workspace/route-states";
+import { useEffect, useState } from "react";
+import { setWorkspaceTimezone } from "@/lib/format/datetime";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
@@ -94,6 +96,20 @@ function AdminLayout() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctx = Route.useRouteContext() as any;
   const staffAccess = ctx.staffAccess;
+
+  // Only the CLIENT shell ever set the workspace timezone, so every admin
+  // surface stayed on the "UTC" default and printed times three hours off the
+  // São Paulo team's own clock (audit #6, A6-24). Staff work across many
+  // workspaces, so the right zone here is the reader's own — set once, on the
+  // client, after hydration, so server and client render agree.
+  const [zoneApplied, setZoneApplied] = useState(false);
+  useEffect(() => {
+    const browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (!browserZone) return;
+    setWorkspaceTimezone(browserZone);
+    setZoneApplied(true);
+  }, []);
+  void zoneApplied; // re-renders the console once the zone is applied
   // Nav comes from the same predicate the gate and the server functions use.
   const navItems = staffAccess.platformAdmin
     ? ADMIN_NAV

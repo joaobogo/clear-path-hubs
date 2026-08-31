@@ -70,7 +70,21 @@ function formatter(zone: string, options: Intl.DateTimeFormatOptions): Intl.Date
 /** F4: Standardised on 05 Aug 2026 */
 const DATE_ONLY_OPTS = { day: "2-digit", month: "short", year: "numeric" } as const;
 
-/** Standardised date-time for audit logs and lists. */
+/**
+ * Standardised date-time for audit logs and lists.
+ *
+ * The zone is ALWAYS named. Only the client route ever calls
+ * `setWorkspaceTimezone`, so every admin surface stayed on the "UTC" default
+ * and printed times three hours off the São Paulo team's own clock with
+ * nothing on screen saying so — "Measured 29 Aug 2026, 16:58" read at 13:58
+ * local (audit #6, A6-24).
+ *
+ * A label is the honest fix rather than switching to the browser's zone: the
+ * workspace zone is deliberate (a Lisbon workspace read from a Brazilian
+ * laptop must still show Lisbon times), and a browser-derived label would
+ * differ between server and client render. Once a workspace sets its zone the
+ * times become local AND labelled; until then they are at least unambiguous.
+ */
 const DATE_TIME_OPTS = {
   day: "2-digit",
   month: "short",
@@ -78,9 +92,15 @@ const DATE_TIME_OPTS = {
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
+  timeZoneName: "short",
 } as const;
 
-const TIME_ONLY_OPTS = { hour: "2-digit", minute: "2-digit", hour12: false } as const;
+const TIME_ONLY_OPTS = {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZoneName: "short",
+} as const;
 
 const WEEKDAY_ONLY_OPTS = { weekday: "short" } as const;
 

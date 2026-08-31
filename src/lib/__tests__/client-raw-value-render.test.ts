@@ -23,7 +23,8 @@ describe("client workspace value rendering", () => {
   it("renders the repro instant in workspace time, not as an ISO string", () => {
     const iso = "2026-08-15T01:25:06.186+00:00";
     expect(looksLikeIsoTimestamp(iso)).toBe(true);
-    expect(formatDateTime(iso)).toBe("14 Aug 2026, 22:25");
+    // The zone is named on every timestamp (audit #6, A6-24).
+    expect(formatDateTime(iso)).toBe("14 Aug 2026, 22:25 GMT-3");
     expect(looksLikeIsoTimestamp(formatDateTime(iso))).toBe(false);
   });
 
