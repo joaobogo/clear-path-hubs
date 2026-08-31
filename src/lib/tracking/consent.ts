@@ -125,7 +125,23 @@ export function onTrackingPolicyChange(handler: (p: TrackingPolicy) => void): ()
  * (audit #7, 2.1). It resolves individual visitors; it is not essential, and it
  * is not ours to run without permission.
  */
-const ALWAYS_ON_TRACKERS = ["ga4"] as const;
+/*
+ * GA4 has now come off this list too, for the same reason RB2B did.
+ *
+ * While it was here, isTrackerAllowed("ga4", "analytics") returned true no
+ * matter what the visitor chose. syncGA4Consent then sent
+ * analytics_storage: "granted" and reconfigured GA WITHOUT client_storage:
+ * "none", so a visitor who clicked "Decline all" had _ga and _ga_<id> written
+ * afterwards, carrying a persistent client id and a session count — while the
+ * banner beside them read "it sets no cookies and cannot identify you"
+ * (audit #8, TF8-05).
+ *
+ * It also contradicted the app's own published policy, which the workspace
+ * stores as {"essentialTrackers":[],"requirePriorOptInEverywhere":true}.
+ * Nothing is always-on. Anything genuinely necessary belongs in that policy,
+ * where it is visible and auditable, not in a constant here.
+ */
+const ALWAYS_ON_TRACKERS = [] as const;
 
 /** Whether a specific tracker is strictly necessary or on the always-on list. */
 export function isTrackerEssential(key: string): boolean {

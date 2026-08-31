@@ -19,6 +19,48 @@ import { resolveConversion } from "./conversion-map";
 
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
+
+/**
+ * The signed-in workspace. No analytics runs here, at all.
+ *
+ * ONE definition. The inline head snippet below is a string of JavaScript, so
+ * it cannot import this — it is built from the same array instead, and
+ * pixels-workspace-gate.test.ts asserts the two agree. A second hand-written
+ * copy of the path list would be free to drift out of step with the React gate
+ * in __root.tsx, which is how GA came to run inside the workspace at all.
+ */
+export const WORKSPACE_PATH_PREFIXES = ["admin", "client", "me"] as const;
+
+export function isWorkspacePath(pathname: string): boolean {
+  return WORKSPACE_PATH_PREFIXES.some(
+    (p) => pathname === `/${p}` || pathname.startsWith(`/${p}/`),
+  );
+}
+
+/** The same test, as source, for the inline snippet that runs before React. */
+const WORKSPACE_TEST_JS = `[${WORKSPACE_PATH_PREFIXES.map((p) => JSON.stringify(`/${p}`)).join(
+  ",",
+)}].some(function(p){var l=location.pathname;return l===p||l.indexOf(p+"/")===0})`;
+
+/** GA4's documented kill switch. Set before gtag.js loads, it never sends. */
+export function gaDisableFlag(): string {
+  return `ga-disable-${GA_ID}`;
+}
+
+/**
+ * Stop or resume GA for the current route.
+ *
+ * The head snippet boots GA before any React gate can run, so route-gating the
+ * observer and the banner was not enough: gtag.js still loaded on /admin,
+ * /client and /me and Consent Mode still transmitted, carrying the workspace
+ * URL — including the client organisation id in the query string — to Google
+ * (audit #8, TF8-03 and TF8-04). This is also the only thing that helps after
+ * a client-side navigation from a public page, where gtag is already resident.
+ */
+export function setAnalyticsDisabledForRoute(disabled: boolean): void {
+  if (typeof window === "undefined") return;
+  (window as unknown as Record<string, unknown>)[gaDisableFlag()] = disabled;
+}
 /** Exported so the root document head can boot RB2B before hydration. */
 export const RB2B_ID = import.meta.env.VITE_RB2B_ID || "1N5W0H7RVEO5";
 const META_ID = import.meta.env.VITE_META_PIXEL_ID || "";
@@ -76,7 +118,7 @@ export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
     ? [
         {
           key: "ga4" as TrackerKey,
-          children: `(function(id){if(window.__tfGa4)return;window.__tfGa4=1;window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('js',new Date());gtag('config',id,{send_page_view:false,anonymize_ip:true,client_storage:'none'});var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','ga4');s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);})(${JSON.stringify(GA_ID)});`,
+          children: `(function(id){if(window.__tfGa4)return;if(${WORKSPACE_TEST_JS}){window["ga-disable-"+id]=true;return;}window.__tfGa4=1;window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('js',new Date());gtag('config',id,{send_page_view:false,anonymize_ip:true,client_storage:'none'});var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','ga4');s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);})(${JSON.stringify(GA_ID)});`,
         },
       ]
     : []),
@@ -178,6 +220,37 @@ function syncGA4Consent() {
       send_page_view: false,
       anonymize_ip: true,
     });
+    return;
+  }
+  // Denying analytics_storage stops GA writing NEW cookies; it does not remove
+  // ones already on the origin, so a visitor who declined kept a _ga carrying
+  // a persistent client id and a session count, and the next hit sent that id
+  // (audit #8, TF8-05). Withdrawing consent has to undo what consent created.
+  clearGaCookies();
+}
+
+/** Remove GA's own cookies (_ga and _ga_<measurement id>) from this origin. */
+function clearGaCookies(): void {
+  if (typeof document === "undefined") return;
+  try {
+    const names = document.cookie
+      .split(";")
+      .map((c) => c.split("=")[0]?.trim() ?? "")
+      .filter((n) => n === "_ga" || n.startsWith("_ga_"));
+    // GA writes on the registrable domain, so clearing has to be attempted on
+    // each parent of the current host as well as the bare host.
+    const host = window.location.hostname;
+    const parts = host.split(".");
+    const domains = ["", host, ...parts.map((_, i) => "." + parts.slice(i).join("."))];
+    for (const name of new Set(names)) {
+      for (const domain of new Set(domains)) {
+        document.cookie =
+          `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/` +
+          (domain ? `; domain=${domain}` : "");
+      }
+    }
+  } catch {
+    /* tracking must never break the app */
   }
 }
 

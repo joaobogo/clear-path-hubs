@@ -44,13 +44,20 @@ describe("consent gating", () => {
    * on an "always on" list that still contained it, so "Decline all" was
    * overruled before either of the other two fixes ran (audit #7, 2.1).
    */
-  it("treats only GA4 as always-on", () => {
+  it("treats nothing as always-on", () => {
+    // GA4 has since come off this list too. While it was on it,
+    // isTrackerAllowed("ga4", …) returned true whatever the visitor chose, so
+    // syncGA4Consent granted analytics_storage and reconfigured GA without
+    // client_storage:"none" — writing _ga and _ga_<id> AFTER a "Decline all",
+    // beside a banner reading "it sets no cookies and cannot identify you"
+    // (audit #8, TF8-05). Anything genuinely necessary belongs in the stored
+    // tracking policy, where it is visible and auditable.
     const consent = readFileSync(join(process.cwd(), "src/lib/tracking/consent.ts"), "utf8")
       .replace(/\/\*[\s\S]*?\*\//g, " ")
       .replace(/(^|[^:])\/\/.*$/gm, "$1");
     const list = /ALWAYS_ON_TRACKERS\s*=\s*\[([^\]]*)\]/.exec(consent)?.[1] ?? "";
     const keys = [...list.matchAll(/"([a-z0-9]+)"/g)].map((m) => m[1]);
-    expect(keys).toEqual(["ga4"]);
+    expect(keys).toEqual([]);
   });
 
   it("keeps every non-analytics tracker in a consent category", () => {

@@ -28,7 +28,12 @@ const NOTICE_DISMISSED_KEY = "taasflow_consent_notice_dismissed_v1";
 export function ConsentBanner() {
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState(false);
-  const [analytics, setAnalytics] = useState(true);
+  // Off until chosen. This defaulted to true, so the details panel opened with
+  // Analytics reporting aria-checked="true" before any decision was recorded —
+  // a pre-ticked consent control is not consent, and the stored policy
+  // (requirePriorOptInEverywhere) says so explicitly (audit #8, TF8-09).
+  // Marketing on the line below already did this correctly.
+  const [analytics, setAnalytics] = useState(() => !requiresPriorOptIn());
   const [marketing, setMarketing] = useState(false);
   const [optIn, setOptIn] = useState(true);
   const [forced, setForced] = useState(false);
@@ -57,7 +62,7 @@ export function ConsentBanner() {
 
     const reopen = () => {
       const current = readConsent();
-      setAnalytics(current?.analytics ?? true);
+      setAnalytics(current?.analytics ?? !requiresPriorOptIn());
       setMarketing(current?.marketing ?? !requiresPriorOptIn());
       setDetails(true);
       setForced(true);
@@ -198,6 +203,7 @@ export function ConsentBanner() {
                   </span>
                 </span>
                 <Switch
+                  {...(details ? { ref: firstControl } : {})}
                   checked={analytics}
                   onCheckedChange={setAnalytics}
                   aria-label="Allow analytics tracking"
@@ -258,8 +264,12 @@ export function ConsentBanner() {
                   silently lost, leaving the banner up and nothing written
                   (audit #7, TF7-03). `writeConsent` is idempotent, so the
                   follow-up click is harmless. */}
+              {/* Focus used to land here when the panel opened — the third
+                  control in tab order, past both toggles, so a keyboard user
+                  met "Decline all" before they could see what they were
+                  deciding about (audit #8, TF8-09). The panel focuses its
+                  Analytics switch now. */}
               <Button
-                ref={details ? firstControl : undefined}
                 variant="outline"
                 size="sm"
                 onPointerDown={rejectAll}

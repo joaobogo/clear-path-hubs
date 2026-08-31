@@ -12,7 +12,11 @@ import { Toaster } from "@/components/ui/sonner";
 import { BRAND_ONE_LINER, PRODUCT_CATEGORY } from "@/config/product-language";
 import { resetStaleBrowserStorage } from "@/lib/storage-epoch";
 import { captureFirstTouch } from "@/lib/crm/attribution";
-import { HEAD_BOOT_SNIPPETS } from "@/lib/tracking/pixels";
+import {
+  HEAD_BOOT_SNIPPETS,
+  isWorkspacePath,
+  setAnalyticsDisabledForRoute,
+} from "@/lib/tracking/pixels";
 import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { GlobalRouteError } from "@/components/global-error";

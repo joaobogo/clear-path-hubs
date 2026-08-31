@@ -83,8 +83,16 @@ export const getStaffDashboardDesk = createServerFn({ method: "GET" })
           .map((r) => String(r.quote_currency ?? "").toLowerCase())
           .filter(Boolean),
       );
+      // Zero quotes is not a currency conflict. Treating size !== 1 as "mixed"
+      // fired the suppression notice on an empty desk — "0 open requests ·
+      // quoted in more than one currency" with no requests at all — which
+      // makes the note meaningless on the day it matters (audit #8, TF8-12).
       const revenueCurrency =
-        quotedCurrencies.size === 1 ? [...quotedCurrencies][0]! : "mixed";
+        quotedCurrencies.size === 0
+          ? "none"
+          : quotedCurrencies.size === 1
+            ? [...quotedCurrencies][0]!
+            : "mixed";
 
       return {
         requests: reqRows.map((r) => ({

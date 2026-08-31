@@ -50,7 +50,9 @@ export const Route = createFileRoute("/_authenticated/admin/dashboard-requests")
 // the figure is shown without a symbol rather than under a wrong one.
 function money(cents: number, currency = "gbp") {
   const amount = cents / 100;
-  if (currency.toLowerCase() === "mixed") {
+  // "none" (nothing quoted) and "mixed" (quotes disagree) both mean we cannot
+  // name a currency, but only one of them is worth telling the reader about.
+  if (currency.toLowerCase() === "mixed" || currency.toLowerCase() === "none") {
     return amount.toLocaleString("en-GB", { maximumFractionDigits: 0 });
   }
   return amount.toLocaleString("en-GB", {
