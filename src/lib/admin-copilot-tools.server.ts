@@ -4,6 +4,33 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { evaluatePublishGate, type PublishBlocker } from "./publish-gate";
+import { ACCOUNT_OPEN_POSITION_STATUSES } from "./admin-account-view";
+import { PIPELINE_STAGE_VOCABULARY } from "./vocabulary";
+
+/**
+ * Stage sets for the copilot, named off the canonical vocabulary.
+ *
+ * These were written as string literals that do not exist: "interview" (the
+ * stage is interview_process), "shortlist" (it is shortlisted) and, for
+ * positions, "open" (never a value of the position_status enum, which is
+ * draft/submitted/needs_clarification/under_review/approved/active/paused/
+ * filled/closed/archived). Every comparison against them was dead, so the
+ * client weekly update reported 0 open roles, 0 interviewing, and a shortlist
+ * figure that in fact counted offers only. Deriving the keys from the
+ * vocabulary means a stage rename breaks the build instead of the numbers.
+ */
+const STAGE = PIPELINE_STAGE_VOCABULARY;
+const INTERVIEWING_STAGES = [
+  "interview_process" satisfies keyof typeof STAGE,
+] as const;
+// Exactly the three the draft names. A hire is a good outcome, not a candidate
+// still "on shortlist / interview / offer", and quietly folding it in would
+// make the sentence untrue.
+const SHORTLIST_INTERVIEW_OFFER_STAGES = [
+  "shortlisted",
+  "interview_process",
+  "offer",
+] as const satisfies readonly (keyof typeof STAGE)[];
 type Sb = any;
 
 export interface Citation {
@@ -208,7 +235,7 @@ export async function stalledInterviews(supabase: Sb): Promise<CopilotToolResult
   const { data } = await supabase
     .from("candidate_matches")
     .select("id, stage, updated_at, candidate_profiles(full_name), positions(title), organizations(name)")
-    .eq("stage", "interview")
+    .in("stage", INTERVIEWING_STAGES as unknown as string[])
     .lt("updated_at", cutoff)
     .order("updated_at", { ascending: true })
     .limit(30);
@@ -315,9 +342,14 @@ export async function draftClientUpdate(
 
   const pos = (positions ?? []) as any[];
   const m = (matches ?? []) as any[];
-  const open = pos.filter((p) => p.status === "open").length;
-  const shortlisted = m.filter((x) => ["shortlist", "interview", "offer"].includes(x.stage)).length;
-  const interviewing = m.filter((x) => x.stage === "interview").length;
+  const openStatuses = new Set<string>(ACCOUNT_OPEN_POSITION_STATUSES);
+  const open = pos.filter((p) => openStatuses.has(String(p.status))).length;
+  const shortlisted = m.filter((x) =>
+    (SHORTLIST_INTERVIEW_OFFER_STAGES as readonly string[]).includes(String(x.stage)),
+  ).length;
+  const interviewing = m.filter((x) =>
+    (INTERVIEWING_STAGES as readonly string[]).includes(String(x.stage)),
+  ).length;
 
   const draft =
     `Hi ${org.name} team,\n\n` +

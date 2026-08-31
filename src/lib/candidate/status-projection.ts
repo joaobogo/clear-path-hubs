@@ -127,8 +127,11 @@ export function candidateLifecycleFacts(
       visible?.stage ??
       (matches.some((m) => m.stage === "not_moving_forward")
         ? "not_moving_forward"
-        : matches.some((m) => m.stage === "archived")
-          ? "archived"
+        : // "archived" is a position status, never a pipeline stage, so this
+          // arm was dead and a candidate who WITHDREW projected as having no
+          // terminal stage at all.
+          matches.some((m) => m.stage === "withdrawn")
+          ? "withdrawn"
           : null),
     matchVisible: Boolean(visible),
     interviewState: candidateInterviewState(interviews),

@@ -45,8 +45,12 @@ export function assignmentBlockedReason(input: {
   if (input.stage === "not_moving_forward") {
     return "This candidate has been declined, so there is nothing left to interview for.";
   }
-  if (input.stage === "archived") {
-    return "This candidate is archived. Reopen the role before assigning an interviewer.";
+  // Was "archived", which is a POSITION status and never a pipeline stage, so
+  // the guard could not fire — and the stage that belongs here, "withdrawn",
+  // was missing entirely. An interviewer could be assigned to a candidate who
+  // had already withdrawn.
+  if (input.stage === "withdrawn") {
+    return "This candidate withdrew, so there is nothing left to interview for.";
   }
   if (input.stage === "hired") {
     return "This candidate has been hired, so interview access is no longer granted.";

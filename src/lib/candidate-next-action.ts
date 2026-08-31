@@ -91,9 +91,29 @@ const NEEDS_REPAIR = new Set([
   "manual_review_required",
   "ocr_required",
 ]);
-const CLOSED_STAGES = new Set(["not_moving_forward", "archived"]);
+/**
+ * Stages where nothing is owed by anyone.
+ *
+ * "archived" is not a pipeline stage — it is a POSITION status. The guard
+ * could never fire, and the stage that actually belongs here, "withdrawn", was
+ * missing: a candidate who withdrew fell through to the rest of the engine and
+ * was handed a next action, so the platform asked someone to chase a person
+ * who had already left the process.
+ */
+/** Stages that precede delivery, from PIPELINE_STAGE_VOCABULARY. */
+const PRE_DELIVERY_STAGES = new Set(["new", "sourced", "screening", "in_review"]);
+const CLOSED_STAGES = new Set(["not_moving_forward", "withdrawn"]);
 
-const ADVANCE_DECISIONS = new Set(["shortlist", "advance", "interview", "offer", "hire", "hired"]);
+/**
+ * Client decisions that move a candidate forward.
+ *
+ * Values are from the client_decision_type enum: shortlist, request_interview,
+ * request_information, not_moving_forward, hire, offer. Four of the six
+ * entries here ("advance", "interview", "hired", and the absent
+ * "request_interview") meant the most common advancing decision a client can
+ * take — requesting an interview — was not counted as advancing at all.
+ */
+const ADVANCE_DECISIONS = new Set(["shortlist", "request_interview", "offer", "hire"]);
 
 function firstTs(...values: Array<string | null | undefined>): string | null {
   for (const v of values) if (v) return v;
@@ -129,8 +149,8 @@ export function deriveNextAction(f: NextActionFacts): NextAction {
       owner: "none",
       step_label: "No action required",
       because:
-        f.stage === "archived"
-          ? "This candidate is archived for this role."
+        f.stage === "withdrawn"
+          ? "This candidate withdrew from the process."
           : "This candidate is marked as not moving forward.",
       waiting_since: null,
       action: { kind: "none" },
@@ -402,9 +422,12 @@ export function deriveNextAction(f: NextActionFacts): NextAction {
     };
   }
 
-  // Delivered / new / reviewing with the candidate already visible to the client.
+  // Visible to the client while the stage still says pre-delivery. "reviewing"
+  // is not a stage (the real ones are screening and in_review), so only "new"
+  // ever reached this — a candidate stuck at screening or in_review while the
+  // client could already see them went unreported.
   if (!decision) {
-    if (f.stage === "new" || f.stage === "reviewing") {
+    if (PRE_DELIVERY_STAGES.has(f.stage)) {
       return {
         ...base,
         step: "delivered_stage_lagging",
