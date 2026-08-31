@@ -38,6 +38,21 @@ describe("consent gating", () => {
     expect(exempted).toEqual(["ga4"]);
   });
 
+  /**
+   * The third gate. Removing RB2B's head snippet and its by-name exemption
+   * from the initialiser loop was not enough: `isTrackerAllowed` short-circuits
+   * on an "always on" list that still contained it, so "Decline all" was
+   * overruled before either of the other two fixes ran (audit #7, 2.1).
+   */
+  it("treats only GA4 as always-on", () => {
+    const consent = readFileSync(join(process.cwd(), "src/lib/tracking/consent.ts"), "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/.*$/gm, "$1");
+    const list = /ALWAYS_ON_TRACKERS\s*=\s*\[([^\]]*)\]/.exec(consent)?.[1] ?? "";
+    const keys = [...list.matchAll(/"([a-z0-9]+)"/g)].map((m) => m[1]);
+    expect(keys).toEqual(["ga4"]);
+  });
+
   it("keeps every non-analytics tracker in a consent category", () => {
     // A tracker with no category cannot be gated.
     const block = CODE.slice(

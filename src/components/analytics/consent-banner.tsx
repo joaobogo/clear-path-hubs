@@ -82,8 +82,21 @@ export function ConsentBanner() {
 
   const slim = !optIn && !details && !forced;
 
+  // Focus ONCE per opening, not on every re-render of an already-open banner.
+  // Re-running this moved focus while a click was in flight, which — together
+  // with the ResizeObserver below republishing the bar's height — swapped the
+  // element under the cursor between pointer-down and pointer-up and lost the
+  // first click (audit #7, TF7-03).
+  const focusedFor = useRef<string | null>(null);
   useEffect(() => {
-    if (open) firstControl.current?.focus({ preventScroll: true });
+    if (!open) {
+      focusedFor.current = null;
+      return;
+    }
+    const key = String(details);
+    if (focusedFor.current === key) return;
+    focusedFor.current = key;
+    firstControl.current?.focus({ preventScroll: true });
   }, [open, details]);
 
   // The bar sits *below* the workspace action layer (z-55 vs z-60) and never
@@ -238,20 +251,28 @@ export function ConsentBanner() {
                   Manage
                 </Button>
               )}
+              {/* Committed on pointer-DOWN as well as click. A consent choice
+                  is not destructive, and this banner republishes its own
+                  height while open — so the element under the cursor can move
+                  between pointer-down and pointer-up and the choice is
+                  silently lost, leaving the banner up and nothing written
+                  (audit #7, TF7-03). `writeConsent` is idempotent, so the
+                  follow-up click is harmless. */}
               <Button
                 ref={details ? firstControl : undefined}
                 variant="outline"
                 size="sm"
+                onPointerDown={rejectAll}
                 onClick={rejectAll}
               >
                 Decline all
               </Button>
               {details ? (
-                <Button size="sm" onClick={saveChoice}>
+                <Button size="sm" onPointerDown={saveChoice} onClick={saveChoice}>
                   Save choice
                 </Button>
               ) : (
-                <Button size="sm" onClick={acceptAll}>
+                <Button size="sm" onPointerDown={acceptAll} onClick={acceptAll}>
                   Accept all
                 </Button>
               )}

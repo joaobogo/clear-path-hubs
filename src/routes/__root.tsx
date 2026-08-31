@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   useRouter,
+  useRouterState,
 } from "@tanstack/react-router";
 import type { QueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
@@ -172,13 +173,30 @@ function RootComponent() {
     captureFirstTouch();
   }, []);
 
+  // Third-party trackers have no business on an authenticated workspace. The
+  // admin candidate list alone renders 29 candidate email addresses, and RB2B
+  // — an identity-resolution vendor — was loading over it, with the public
+  // cookie banner rendered on top of the admin UI (audit #7, TF7-02).
+  //
+  // Gated by ROUTE, not by consent state: no consent a visitor gives on the
+  // public site is consent to run a tracker across someone else's candidate
+  // data. Marketing pages, the job board and the apply flow are unaffected.
+  // From router state, not window.location: the latter is not reactive across
+  // client navigation and differs between the server and client render.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isWorkspace = /^\/(admin|client|me)(\/|$)/.test(pathname);
+
   return (
     <>
       <Outlet />
       {/* The ONLY caller of initializeTrackers()/onConsentChange — without it
           mounted, consent could be granted and nothing ever injected. */}
-      <TrackingRouteObserver />
-      <ConsentBanner />
+      {!isWorkspace && (
+        <>
+          <TrackingRouteObserver />
+          <ConsentBanner />
+        </>
+      )}
       <Toaster position="bottom-right" richColors closeButton />
     </>
   );

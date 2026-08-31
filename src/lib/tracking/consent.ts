@@ -112,13 +112,20 @@ export function onTrackingPolicyChange(handler: (p: TrackingPolicy) => void): ()
 }
 
 /**
- * Trackers that always run, whatever the visitor chose and before any choice is
- * made: RB2B (company-level visitor identification) and GA4. They boot from the
- * server-rendered head and keep reporting after a rejection. GA4 still runs
- * cookieless until analytics consent is granted — Consent Mode decides storage,
- * not whether the tag measures.
+ * Trackers that always run, whatever the visitor chose.
+ *
+ * GA4 only. It runs in Consent Mode with storage denied: the tag measures
+ * cookielessly and cannot identify anyone until analytics consent is granted.
+ *
+ * RB2B WAS on this list, which is the third and deepest gate it was slipping
+ * through. Removing its head-boot snippet and its by-name exemption from the
+ * initialiser loop was not enough, because `isTrackerAllowed("rb2b", …)`
+ * returned true here before either of those ever ran — so a visitor who chose
+ * "Decline all" still had the identity-resolution script and its API call fire
+ * (audit #7, 2.1). It resolves individual visitors; it is not essential, and it
+ * is not ours to run without permission.
  */
-const ALWAYS_ON_TRACKERS = ["rb2b", "ga4"] as const;
+const ALWAYS_ON_TRACKERS = ["ga4"] as const;
 
 /** Whether a specific tracker is strictly necessary or on the always-on list. */
 export function isTrackerEssential(key: string): boolean {
