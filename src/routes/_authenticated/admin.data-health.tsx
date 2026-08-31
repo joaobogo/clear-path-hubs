@@ -135,9 +135,12 @@ function DataHealthMetrics() {
           }
           detail={
             data.extraction.unreadable_cvs > 0
-              ? `${data.extraction.files_failed} of ${data.extraction.files_total} files · ${data.extraction.unreadable_cvs} CV${
-                  data.extraction.unreadable_cvs === 1 ? "" : "s"
-                } need OCR`
+              ? // The verb has to agree too: "1 CV need OCR" (audit #7, A6-29).
+                `${data.extraction.files_failed} of ${data.extraction.files_total} files · ${
+                  data.extraction.unreadable_cvs === 1
+                    ? "1 CV needs OCR"
+                    : `${data.extraction.unreadable_cvs} CVs need OCR`
+                }`
               : `${data.extraction.files_failed} of ${data.extraction.files_total} files`
           }
         />

@@ -1339,7 +1339,11 @@ function ApplyPage() {
                   </span>
                 </div>
                 <p id="cv-help" className="mt-1 text-xs text-muted-foreground">
-                  Opens your phone's file picker — Files, Drive and iCloud all work.
+                  {/* Said "your phone's file picker — Files, Drive and iCloud"
+                      to everyone, including desktop applicants who have none of
+                      those (audit #7, A6-29). Device-neutral wording covers
+                      both without a user-agent sniff. */}
+                  Opens your file picker — local files and cloud storage both work.
                 </p>
 
 
@@ -1575,9 +1579,17 @@ function ApplyPage() {
                       q.answer_type === "long_text" || q.answer_type === "text";
                     const used = typeof val === "string" ? val.length : 0;
                     return (
-                      <fieldset key={q.id} className="space-y-1 border-0 p-0 m-0">
-                        <legend className="sr-only">{q.question}</legend>
-                        <Label htmlFor={q.id}>
+                      /* The fieldset carried an sr-only <legend> repeating the
+                         question the <Label> already states, so a screen reader
+                         announced every question twice and the text of the page
+                         contained each label twice (audit #7, A6-29). The group
+                         is named by the visible label instead. */
+                      <fieldset
+                        key={q.id}
+                        className="space-y-1 border-0 p-0 m-0"
+                        aria-labelledby={`${q.id}-label`}
+                      >
+                        <Label id={`${q.id}-label`} htmlFor={q.id}>
                           {q.question}
                           {q.required && " *"}
                         </Label>

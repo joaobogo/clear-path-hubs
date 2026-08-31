@@ -282,9 +282,14 @@ function InsightsBriefing({
     <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-transparent p-5">
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="text-sm font-semibold">Candidate briefing</h2>
-        <Badge variant="secondary" className="capitalize">
-          {String(insights?.seniority ?? "unknown")}
-        </Badge>
+        {/* Seniority is a model READ, so it is suppressed with the rest of the
+            briefing: an unreadable CV still wore a confident "Mid" badge
+            (audit #7, A6-29). */}
+        {!suppressed && (
+          <Badge variant="secondary" className="capitalize">
+            {String(insights?.seniority ?? "unknown")}
+          </Badge>
+        )}
         {/* The model's read, clearly labelled — it sat unlabelled beside a
             header saying "24 · Not recommended", and a dealbreaker-capped
             candidate wore "Consider · confidence 85%" (audit #3, #11). A

@@ -27,9 +27,12 @@ export function UnicornMarker({
 
   if (!show) return null;
 
+  // `ml-1` so the marker never sits flush against the name it decorates:
+  // lists rendered "Helena Carvalho🦄" (audit #7, A6-29). Callers that need
+  // different spacing override it through `className`, which comes last.
   return (
     <span
-      className={`shrink-0 ${className}`}
+      className={`ml-1 shrink-0 ${className}`}
       aria-label="Unicorn candidate"
       title="Unicorn candidate — 95+ fit score"
       role="img"

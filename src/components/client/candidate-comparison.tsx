@@ -117,9 +117,19 @@ function buildObservations(cands: ClientCandidateDTO[]): string[] {
   const maxConcerns = Math.max(...concerns.map((x) => x.k));
   const minConcerns = Math.min(...concerns.map((x) => x.k));
   if (maxConcerns !== minConcerns) {
-    const most = concerns.find((x) => x.k === maxConcerns)!;
+    // `.find` named only the first candidate on the tie, so the note read
+    // "Vasco Santos has 4 areas to validate" beside a table showing Catarina
+    // Ribeiro with 4 as well (audit #7, A6-29). The coverage note above
+    // already handles ties; this one now does too.
+    const most = concerns.filter((x) => x.k === maxConcerns);
+    const who =
+      most.length === 1
+        ? most[0]!.n
+        : `${most.slice(0, -1).map((m) => m.n).join(", ")} and ${most[most.length - 1]!.n}`;
     notes.push(
-      `Validation load differs — ${most.n} has ${most.k} area${most.k === 1 ? "" : "s"} to validate before decision.`,
+      `Validation load differs — ${who} ${most.length === 1 ? "has" : "each have"} ${maxConcerns} area${
+        maxConcerns === 1 ? "" : "s"
+      } to validate before decision.`,
     );
   }
 

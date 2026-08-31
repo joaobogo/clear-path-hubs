@@ -361,8 +361,22 @@ function EvidenceViewer() {
           // "no enrichment on file" seconds after a successful enrichment run
           // reads as a failure (audit #4, M5).
           <EmptyLine>
-            Enrichment ran on {fmtDate(evidence.created_at)}; this candidate has no
-            model narrative attached. Parsed facts above are the extracted record.
+            {/* This section reads `enrichment`, but the model's briefing is
+                stored under `insights` — so it claimed "no model narrative
+                attached" for a candidate whose Profile tab was showing a full
+                briefing (audit #7, A6-29). Check before denying. */}
+            {insights ? (
+              <>
+                Enrichment ran on {fmtDate(evidence.created_at)}. The model's briefing for this
+                candidate is on the Profile tab; the parsed facts above are the extracted
+                record.
+              </>
+            ) : (
+              <>
+                Enrichment ran on {fmtDate(evidence.created_at)}; this candidate has no model
+                narrative attached. Parsed facts above are the extracted record.
+              </>
+            )}
           </EmptyLine>
         ) : (
           <EmptyLine>No enrichment on file.</EmptyLine>
