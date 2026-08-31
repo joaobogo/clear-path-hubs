@@ -236,6 +236,25 @@ export function PlanPanel({
         <div className="mt-4">
           <SkeletonRows rows={2} />
         </div>
+      ) : state.isError && !state.data ? (
+        /* A failed read is not "no plan". Falling through rendered "No plan on
+           record yet" and "None held — each role is paid for when the role
+           goes live" to a client on a subscription: the same invented
+           commercial arrangement the note below already guards against
+           (audit C-05), just via the error path rather than the data path. */
+        <div
+          className="mt-4 rounded-lg border taas-bd-warning taas-bg-warning-soft px-4 py-3 text-sm"
+          role="alert"
+        >
+          <p className="font-medium">We could not load your plan</p>
+          <p className="mt-1 text-muted-foreground">
+            Nothing has changed about your account — this is a problem reading it. Your existing
+            plan and role allowance are unaffected.
+          </p>
+          <Button size="sm" variant="outline" className="mt-3" onClick={refresh}>
+            Retry
+          </Button>
+        </div>
       ) : (
         <div className="mt-4 grid gap-5 sm:grid-cols-3">
           <div>

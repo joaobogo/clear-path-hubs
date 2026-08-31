@@ -46,7 +46,11 @@ export function UndoWindow({
   const [now, setNow] = React.useState(() => Date.now());
   const [pending, setPending] = React.useState(false);
 
-  const { data: rows = [] } = useQuery({
+  const {
+    data: rows = [],
+    isError: reversibleUnknown,
+    refetch: recheckReversible,
+  } = useQuery({
     queryKey: ["client-reversible", orgId],
     queryFn: () => listFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
@@ -61,6 +65,24 @@ export function UndoWindow({
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, [entry]);
+
+  // A failed read defaulted rows to [], so no entry was found and this
+  // rendered nothing — indistinguishable from "the window has closed". A
+  // client who had just decided something would conclude it was final, when in
+  // fact it was still reversible and we simply could not check.
+  if (reversibleUnknown && orgId) {
+    return (
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed bg-muted/30 px-3 py-2 text-xs">
+        <span className="text-muted-foreground">
+          We could not check whether this decision can still be taken back. It may still be
+          reversible — your recruiter can confirm.
+        </span>
+        <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => recheckReversible()}>
+          Check again
+        </Button>
+      </div>
+    );
+  }
 
   if (!entry || msLeft <= 0 || !orgId) return null;
 
