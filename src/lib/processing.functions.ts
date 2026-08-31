@@ -478,10 +478,18 @@ export const rescoreAllScored = createServerFn({ method: "POST" })
     let q = supabase
       .from("candidate_matches")
       .select(
-        "id, current_score_run_id, positions(status), score_runs!candidate_matches_current_score_run_id_fkey(engine_version)",
+        "id, current_score_run_id, positions!inner(status), score_runs!candidate_matches_current_score_run_id_fkey!inner(engine_version)",
       )
       .in("processing_state", ["scored", "manual_review_required"])
       .not("current_score_run_id", "is", null)
+      // Archived/closed roles cannot be scored. Excluding them here stops a
+      // batch full of them from returning rescored:0 and halting the drain.
+      .not("positions.status", "in", "(archived,closed)")
+      // Filter staleness in the QUERY, not after the fetch. Without this each
+      // pass re-fetched the same first N rows, so once those were current the
+      // drain stopped and every remaining stale match stayed on the old engine.
+      .neq("score_runs.engine_version", ENGINE_VERSION)
+      .order("id", { ascending: true })
       .limit(data.limit);
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
     const { data: rows, error } = await q;
