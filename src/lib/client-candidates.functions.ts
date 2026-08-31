@@ -311,8 +311,35 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const evidenceItems =
       (await loadClientEvidenceItems(context.supabase, [data.matchId])).get(data.matchId) ?? [];
 
+    // Parsed CV facts, as a FALLBACK for profile fields nobody has filled.
+    //
+    // Enrichment backfills languages and skills onto the profile, but only
+    // from the run that follows the backfill shipping — so a candidate
+    // enriched before it showed "Languages — Not provided" on their client
+    // page while the admin Enrichment tab, reading the snapshot directly,
+    // listed "English: Fluent / Portuguese: Native" for the same person
+    // (audit #7, 2.8). The client should not depend on when a backfill ran.
+    const { data: snapshot } = await context.supabase
+      .from("candidate_evidence")
+      .select("extracted")
+      .eq("candidate_match_id", data.matchId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const parsedFacts = ((snapshot as AnyRow)?.extracted ?? null) as AnyRow | null;
+
+    const profile = (hydratedMatch as AnyRow).candidate_profiles as AnyRow | null;
+    const hasList = (v: unknown) => Array.isArray(v) && v.length > 0;
+
     const matchWithAnswers = {
       ...(hydratedMatch as AnyRow),
+      candidate_profiles: profile
+        ? {
+            ...profile,
+            languages: hasList(profile.languages) ? profile.languages : (parsedFacts?.languages ?? profile.languages),
+            skills: hasList(profile.skills) ? profile.skills : (parsedFacts?.skills ?? profile.skills),
+          }
+        : profile,
       // Same definition as the list and the "Interviewing" KPI tile.
       interview_active: ((interviews as AnyRow[]) ?? []).some(isActiveInterview),
       evidence_items: evidenceItems,

@@ -73,7 +73,7 @@ import { FitHero, WhyThisCandidate, WhatNeedsValidation } from "@/components/cli
 import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
 import { IntroVideoPanel } from "@/components/client/intro-video-panel";
-import { VIDEO_INTRO_BONUS_PTS, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
+import { VIDEO_INTRO_BONUS_PTS, scoreVoidedByUnreadableCv, resolvePublishedRun } from "@/lib/scoring/published-score";
 
 
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
@@ -701,6 +701,26 @@ export function ScoreTab({
         </div>
         {/* Staff-only number: always with its confidence and rubric version. */}
         <AdminScoreNumber run={currentRun} size="lg" className="mt-4" />
+        {/* This tab shows the LATEST run; the header, the list and the client
+            all show the APPROVED one. That is deliberate — a client must never
+            see a number no human approved — but with both on screen and
+            nothing distinguishing them, one candidate read "90 · Top" in the
+            header and "93 · Top" here, and another changed band entirely
+            (audit #7, TF7-01). Say which is which, and what the client sees. */}
+        {(() => {
+          const published = resolvePublishedRun(runs ?? [], match) as Any | null;
+          if (!published || String(published.id) === String(currentRun.id)) return null;
+          const shown = Math.round(Number(published.final_score ?? published.score ?? 0));
+          return (
+            <p className="mt-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-xs">
+              This is the newest assessment and <b>nobody has approved it</b>. The client and
+              every list still show the approved run — <b>{shown}</b>, scored{" "}
+              {published.completed_at ? formatDateTime(published.completed_at) : "earlier"} on
+              engine {published.engine_version ?? "an earlier version"}. Approve this run to
+              change what they see.
+            </p>
+          );
+        })()}
         {/* Show the bonus as its own line, and never let the engine's stored
             sentence ("worth considering — score 67.1/100") contradict the
             post-bonus header above it (audit #4, H3/M3). */}
