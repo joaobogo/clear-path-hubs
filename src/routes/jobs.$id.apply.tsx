@@ -1613,19 +1613,39 @@ function ApplyPage() {
                             }
                           />
                         ) : (
-                          <Input
+                          /* A single-line input for a free-text answer invites a
+                             one-line answer and hides how much has been typed.
+                             The question that produced the truncated answers in
+                             the audit was authored as plain `text` but asks for
+                             an example (audit #6, A6-18). Same limit, room to
+                             see it. */
+                          <Textarea
                             id={q.id}
-                            type="text"
                             aria-describedby={reason ? `${q.id}-why` : undefined}
                             maxLength={SCREENING_ANSWER_MAX}
                             value={(val as string) ?? ""}
                             onChange={(e) => setAnswer(q.id, e.target.value)}
+                            rows={3}
                           />
                         )}
-                        {isFreeText && used > SCREENING_ANSWER_MAX - 60 && (
-                          <p className="text-xs text-muted-foreground">
-                            {SCREENING_ANSWER_MAX - used} characters left — a sentence or
-                            two is enough.
+                        {/* The counter only appeared in the last 60 characters,
+                            so a candidate writing a considered answer got no
+                            warning until they were nearly out — and none at all
+                            that they had been cut off (audit #6, A6-18). The
+                            limit is now stated from the first keystroke. */}
+                        {isFreeText && (
+                          <p
+                            className={`text-xs ${
+                              used >= SCREENING_ANSWER_MAX
+                                ? "font-medium text-destructive"
+                                : "text-muted-foreground"
+                            }`}
+                          >
+                            {used >= SCREENING_ANSWER_MAX
+                              ? `You've reached the ${SCREENING_ANSWER_MAX.toLocaleString(APP_LOCALE)}-character limit — shorten it a little so nothing is cut off.`
+                              : used > 0
+                                ? `${(SCREENING_ANSWER_MAX - used).toLocaleString(APP_LOCALE)} characters left — a few sentences is plenty.`
+                                : `Up to ${SCREENING_ANSWER_MAX.toLocaleString(APP_LOCALE)} characters. A few sentences is plenty.`}
                           </p>
                         )}
                         {err && <p className="mt-1 text-xs text-destructive">{err}</p>}

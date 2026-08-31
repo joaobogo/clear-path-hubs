@@ -9,8 +9,19 @@
  */
 export const SCREENING_MAX_QUESTIONS = 5;
 export const SCREENING_MAX_REQUIRED = 4;
-/** Free-text screening answers are capped: short answers, not essays. */
-export const SCREENING_ANSWER_MAX = 300;
+/**
+ * Free-text screening answers are capped: short answers, not essays.
+ *
+ * Was 300, which is not "short" — it is mid-sentence. Real stored answers ended
+ * "…looking to achieve with thi" and "…I traced the data flow and fixed both",
+ * because a question like "Can you provide an example…" cannot be answered in
+ * 300 characters and the field simply stopped accepting input (audit #6,
+ * A6-18). A candidate who is cut off mid-word has been failed by the form, and
+ * the reviewer reads a fragment.
+ *
+ * 1,000 still rules out essays while letting someone finish a thought.
+ */
+export const SCREENING_ANSWER_MAX = 1000;
 
 export function countRequired(qs: { required?: boolean }[]): number {
   return qs.filter((q) => q.required).length;
