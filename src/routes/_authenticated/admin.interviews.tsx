@@ -6,6 +6,7 @@ import { getAdminInterviews } from "@/lib/admin.functions";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 import { formatDateTime } from "@/lib/format/datetime";
 
 /**
@@ -90,9 +91,20 @@ function InterviewsPage() {
         </p>
         {!query.isLoading && !query.isError && (
           <p className="mt-1 text-sm text-muted-foreground">
-            {interviews.length === 0
-              ? "No interviews yet."
-              : `${interviews.length} interview${interviews.length === 1 ? "" : "s"} in total.`}
+            {interviews.length === 0 ? (
+              <>
+                {/* "No interviews yet." under a header promising "grouped by
+                    what needs doing next" left the reader unsure whether this
+                    desk was waiting on them (audit #6, A6-29). Clients open
+                    interviews; staff coordinate them. Say so, and say when the
+                    list is empty only because test records are hidden. */}
+                No interviews yet. Clients request these from their shortlist — nothing here is
+                waiting on you.
+                <TestScopeEmptyNote className="mt-1 text-xs" />
+              </>
+            ) : (
+              `${interviews.length} interview${interviews.length === 1 ? "" : "s"} in total.`
+            )}
           </p>
         )}
       </header>

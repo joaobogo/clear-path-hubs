@@ -38,6 +38,7 @@ import { AlertCircle, ArrowUpRight, Building2, MapPin } from "lucide-react";
 import { ErrorState } from "@/components/ds";
 import { PositionsAttentionQueue } from "@/components/admin/positions-attention-queue";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
+import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   BulkConfirmDialog,
@@ -484,6 +485,10 @@ function PositionsPage() {
                 <tr>
                   <td colSpan={11} className="px-4 py-10 text-center text-muted-foreground">
                     No positions match these filters.
+                    {/* The test-record scope is a filter too, and an invisible
+                        one: a filtered-to-nothing list otherwise reads as an
+                        empty pipeline (audit #6, A6-29). */}
+                    <TestScopeEmptyNote className="mt-1 text-xs" />
                   </td>
                 </tr>
               ) : (
@@ -590,6 +595,7 @@ function PositionsPage() {
           ) : rows.length === 0 ? (
             <div className="p-6 text-center text-sm text-muted-foreground">
               No positions match these filters.
+              <TestScopeEmptyNote className="mt-1 text-xs" />
             </div>
           ) : (
             rows.map((p) => (
