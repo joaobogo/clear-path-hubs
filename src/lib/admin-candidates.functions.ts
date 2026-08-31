@@ -624,13 +624,24 @@ export const updateCandidateProfileField = createServerFn({ method: "POST" })
 
     const patch: Record<string, unknown> = {};
     if (data.linkedin_url !== undefined) patch.linkedin_url = data.linkedin_url || null;
-    if (data.location !== undefined) patch.location = data.location || null;
+    if (data.location !== undefined) {
+      patch.location = data.location || null;
+      // candidate_profiles.location is DERIVED from city/region/country at
+      // apply time, but this edit only ever wrote the text — so after a staff
+      // correction the two disagreed, and surfaces composing from the
+      // structured parts kept showing the old place while the profile showed
+      // the new one (audit #6, A6-29). Clearing the parts leaves exactly one
+      // answer; re-applying or re-parsing repopulates them together.
+      patch.city = null;
+      patch.region = null;
+      patch.country = null;
+    }
 
     if (Object.keys(patch).length === 0) return { ok: true as const, updated: [] as string[] };
 
     const { data: before } = await s
       .from("candidate_profiles")
-      .select("id,linkedin_url,location")
+      .select("id,linkedin_url,location,city,region,country")
       .eq("id", data.candidate_profile_id)
       .maybeSingle();
 
@@ -645,7 +656,13 @@ export const updateCandidateProfileField = createServerFn({ method: "POST" })
       entity_type: "candidate_profiles",
       entity_id: data.candidate_profile_id,
       action: "admin_profile_field_edit",
-      before_state: { linkedin_url: before?.linkedin_url ?? null, location: before?.location ?? null } as never,
+      before_state: {
+        linkedin_url: before?.linkedin_url ?? null,
+        location: before?.location ?? null,
+        city: before?.city ?? null,
+        region: before?.region ?? null,
+        country: before?.country ?? null,
+      } as never,
       after_state: patch as never,
     });
 

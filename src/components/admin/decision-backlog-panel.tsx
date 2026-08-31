@@ -104,9 +104,14 @@ export function DecisionBacklogPanel({
    * shows the recipient plus the exact message. Cancel is the safe default.
    */
   async function confirmNudge(r: Row) {
+    // Only people who are still on the account. The list is a history of who
+    // was notified, and it included contacts who have since left — so the
+    // dialog promised a follow-up to someone who cannot receive one
+    // (audit #6, A6-29).
+    const reachable = r.notified.filter((n) => n.still_a_member);
     const recipients =
-      r.notified.length > 0
-        ? r.notified.map((n) => n.name).join(", ")
+      reachable.length > 0
+        ? reachable.map((n) => n.name).join(", ")
         : "everyone on the client team with decision notifications on";
     const result = await confirm({
       title: "Send a follow-up to the client",
@@ -300,7 +305,17 @@ export function DecisionBacklogPanel({
                     <td className="max-w-[14rem] px-3 py-2 text-xs text-muted-foreground">
                       {r.notified.length === 0
                         ? "No client notification recorded"
-                        : r.notified.map((n) => n.name).join(", ")}
+                        : r.notified.map((n, i) => (
+                            <span key={n.name}>
+                              {i > 0 ? ", " : ""}
+                              {n.name}
+                              {/* Still listed — the notification was really
+                                  sent — but not someone we are waiting on. */}
+                              {n.still_a_member ? null : (
+                                <span className="italic"> (no longer on the account)</span>
+                              )}
+                            </span>
+                          ))}
                     </td>
                     <td className="px-3 py-2 text-xs text-muted-foreground">
                       {r.last_nudge_at ? (

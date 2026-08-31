@@ -9,7 +9,7 @@ import { CvDownloadAudit } from "@/components/cv-download-audit";
  */
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { humanizeAuditAction, humanizeCode } from "@/lib/humanize-codes";
-import { formatLanguageEntry, formatAnswerValue } from "@/lib/human-labels";
+import { formatLanguageEntry, formatAnswerValue, formatEducationEntry } from "@/lib/human-labels";
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { RecordActivityTab } from "@/components/admin/record-activity-tab";
@@ -284,14 +284,18 @@ export function CvTab({
                   Education
                 </div>
                 <ul className="mt-1.5 space-y-1 text-sm">
-                  {education.slice(0, 4).map((e, i) => (
-                    <li key={i}>
-                      {e.degree ?? "Degree"} · {e.institution ?? e.school ?? "—"}{" "}
-                      <span className="text-xs text-muted-foreground">
-                        {e.start_date ?? ""}—{e.end_date ?? ""}
-                      </span>
-                    </li>
-                  ))}
+                  {education.slice(0, 4).map((e, i) => {
+                    const { headline, period } = formatEducationEntry(e);
+                    if (!headline && !period) return null;
+                    return (
+                      <li key={i}>
+                        {headline ?? <span className="text-muted-foreground">Not recorded</span>}
+                        {period ? (
+                          <span className="ml-1 text-xs text-muted-foreground">{period}</span>
+                        ) : null}
+                      </li>
+                    );
+                  })}
                   {education.length > 4 && (
                     <li className="text-xs text-muted-foreground">
                       +{education.length - 4} more — see the Enrichment tab
@@ -414,14 +418,18 @@ export function EnrichmentTab({ cp, evidence }: { cp: Any; evidence: Any }) {
           <p className="mt-2 text-sm text-muted-foreground">No education parsed.</p>
         ) : (
           <ul className="mt-2 space-y-1 text-sm">
-            {education.map((e, i) => (
-              <li key={i}>
-                {e.degree ?? "Degree"} · {e.institution ?? e.school ?? "—"}{" "}
-                <span className="text-xs text-muted-foreground">
-                  {e.start_date ?? ""}—{e.end_date ?? ""}
-                </span>
-              </li>
-            ))}
+            {education.map((e, i) => {
+              const { headline, period } = formatEducationEntry(e);
+              if (!headline && !period) return null;
+              return (
+                <li key={i}>
+                  {headline ?? <span className="text-muted-foreground">Not recorded</span>}
+                  {period ? (
+                    <span className="ml-1 text-xs text-muted-foreground">{period}</span>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

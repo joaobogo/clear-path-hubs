@@ -218,3 +218,36 @@ export function formatLanguageEntry(entry: unknown): string {
   if (level) return `Level ${level} (language not recorded)`;
   return "";
 }
+
+/**
+ * One education entry as two display strings.
+ *
+ * The admin candidate tabs built these inline as
+ * `${e.degree ?? "Degree"} · ${e.institution ?? e.school ?? "—"}`, so a
+ * record missing either half rendered the literal word "Degree" as if it were
+ * the qualification, or a dangling separator before an em dash, and a record
+ * with no dates showed a bare "—" (audit #6, A6-29). Absent facts should read
+ * as absent, so parts are filtered before they are joined and an entry with
+ * nothing to say returns null for the caller to skip.
+ */
+export function formatEducationEntry(entry: unknown): {
+  headline: string | null;
+  period: string | null;
+} {
+  const e = (entry ?? {}) as Record<string, unknown>;
+  const text = (v: unknown) => {
+    const t = typeof v === "string" ? v.trim() : v == null ? "" : String(v).trim();
+    return t.length > 0 ? t : null;
+  };
+
+  const degree = text(e.degree);
+  const institution = text(e.institution) ?? text(e.school);
+  const headline = [degree, institution].filter(Boolean).join(" · ") || null;
+
+  const start = text(e.start_date);
+  const end = text(e.end_date);
+  // An open range is real information ("2019—"); two blanks are not.
+  const period = start && end ? `${start}—${end}` : (start ?? end);
+
+  return { headline, period };
+}

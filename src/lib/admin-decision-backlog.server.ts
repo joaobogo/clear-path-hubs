@@ -41,7 +41,7 @@ export type DecisionBacklogRow = {
   stage: string;
   submitted_at: string;
   days_waiting: number;
-  notified: readonly { name: string; notified_at: string }[];
+  notified: readonly { name: string; notified_at: string; still_a_member: boolean }[];
   last_nudge_at: string | null;
   last_nudge_by: string | null;
   /** Server-computed: can a nudge be sent right now. */
@@ -172,6 +172,25 @@ export async function loadDecisionBacklog(
   if ((profRes as { error?: { message: string } | null }).error) {
     throw new Error((profRes as { error: { message: string } }).error.message);
   }
+  // Who among those recipients can still act. A notification is a historical
+  // fact and stays listed, but the backlog reads as "who is sitting on this
+  // decision" — and a client contact who has since left the account was being
+  // counted as someone we are waiting on (audit #6, A6-29). Marking them keeps
+  // the record honest without pretending the message was never sent.
+  const memberRes = recipientIds.length
+    ? await a
+        .from("memberships")
+        .select("user_id")
+        .eq("status", "active")
+        .in("user_id", recipientIds)
+    : { data: [], error: null };
+  if ((memberRes as { error?: { message: string } | null }).error) {
+    throw new Error((memberRes as { error: { message: string } }).error.message);
+  }
+  const activeMembers = new Set(
+    ((memberRes.data ?? []) as Array<{ user_id: string }>).map((m) => m.user_id),
+  );
+
   const personName = new Map(
     (
       (profRes.data ?? []) as Array<{
@@ -182,7 +201,10 @@ export async function loadDecisionBacklog(
     ).map((p) => [p.auth_user_id, p.full_name || p.email || "Unknown user"]),
   );
 
-  const notifiedByMatch = new Map<string, Array<{ name: string; notified_at: string }>>();
+  const notifiedByMatch = new Map<
+    string,
+    Array<{ name: string; notified_at: string; still_a_member: boolean }>
+  >();
   for (const n of notifRows) {
     const event = n["notification_events"] as Record<string, unknown> | null;
     const matchId = event ? event["candidate_match_id"] : null;
@@ -191,7 +213,11 @@ export async function loadDecisionBacklog(
     const list = notifiedByMatch.get(matchId) ?? [];
     const name = typeof uid === "string" ? (personName.get(uid) ?? "Client user") : "Client user";
     if (!list.some((x) => x.name === name)) {
-      list.push({ name, notified_at: String(n["created_at"]) });
+      list.push({
+        name,
+        notified_at: String(n["created_at"]),
+        still_a_member: typeof uid === "string" ? activeMembers.has(uid) : false,
+      });
     }
     notifiedByMatch.set(matchId, list);
   }
