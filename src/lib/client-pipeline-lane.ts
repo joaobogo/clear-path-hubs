@@ -40,6 +40,33 @@ function isLane(value: string): value is PipelineLane {
 }
 
 /**
+ * Stages a client-visible candidate can hold that deliberately have no lane.
+ *
+ * loadKpiRows selects every match with client_visibility = "visible"
+ * regardless of stage, so these rows DO reach the counting layer. Without this
+ * list they fell through laneFor as "unknown" and were dropped from every tile,
+ * board column and roll-up in silence — the same tile-versus-column
+ * disagreement this module was written to end, arriving through the back door.
+ *
+ * They are still excluded: a withdrawn or paused candidate is not work in any
+ * lane. The difference is that the exclusion is now a decision on the record,
+ * and stage-vocabulary-is-real.test.ts fails if a new stage appears that is
+ * neither a lane nor listed here.
+ */
+export const STAGES_WITHOUT_LANE = [
+  "new",
+  "sourced",
+  "screening",
+  "in_review",
+  "on_hold",
+  "withdrawn",
+] as const;
+
+function isDeliberatelyExcluded(value: string): boolean {
+  return (STAGES_WITHOUT_LANE as readonly string[]).includes(value);
+}
+
+/**
  * The lane a candidate belongs to, or `null` when the stored stage is not one
  * the client pipeline knows. Callers surface unknown rows rather than dropping
  * them silently.
@@ -63,21 +90,26 @@ export function rowsInLane<T extends LaneRow>(rows: T[], lane: PipelineLane): T[
 /** Count per lane plus the rows carrying an unknown stage. */
 export function countLanes<T extends LaneRow>(
   rows: T[],
-): { counts: Record<PipelineLane, number>; unplaced: T[] } {
+): { counts: Record<PipelineLane, number>; unplaced: T[]; excluded: T[] } {
   const counts = Object.fromEntries(PIPELINE_LANES.map((l) => [l, 0])) as Record<
     PipelineLane,
     number
   >;
   const unplaced: T[] = [];
+  const excluded: T[] = [];
   for (const row of rows) {
     const lane = laneFor(row);
     if (!lane) {
-      unplaced.push(row);
+      // "Not counted on purpose" and "we do not recognise this stage" are
+      // different facts. Both were reported as unplaced, and every caller
+      // discarded unplaced, so a genuinely unknown stage looked identical to a
+      // withdrawal.
+      (isDeliberatelyExcluded(String(row.stage)) ? excluded : unplaced).push(row);
       continue;
     }
     counts[lane] += 1;
   }
-  return { counts, unplaced };
+  return { counts, unplaced, excluded };
 }
 
 /** Group rows into lane buckets, board order preserved by the caller. */
