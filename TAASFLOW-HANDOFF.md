@@ -114,24 +114,18 @@ unreadable-CV handling, contradiction copy, one date formatter, ~40 smaller item
 - Quotes that do not support the requirement — same dependency.
 - Archived-role candidates carry "Stale" chips — needs the migration.
 
-**Open code work, roughly by value:**
+**Fixed since this document was first written** (all pushed, all with tests
+where the defect could silently return):
+
+A6-01, A6-13, A6-14, A6-15, A6-16, A6-17, A6-18, A6-21, A6-23, A6-24, A6-25,
+A6-26, A6-27.
+
+**Still open:**
 
 | ID | Problem |
 |---|---|
-| A6-01 | Client preview and client candidate page disagree — same run, different verdicts and different quotes |
-| A6-13 | Interview guide contradicts the evidence on the same page |
-| A6-14 | Client role brief renders **raw Markdown**; pay range and dealbreaker contradict the screening question |
-| A6-15 | Setup tab is static — every workspace reads "Step 2 of 10 · Progress saved 22 Aug 2026" |
-| A6-16 | Publish desk "awaiting review 0 / blocked 17" vs work queue "8"; blocked reasons expose raw enums |
-| A6-17 | Repair actions leave half-states with false progress banners; re-enrichment silently flips the AI read |
-| A6-18 | Screening free-text silently capped at 300 chars in a single-line input; stored answers end mid-word |
-| A6-21 | Team page says both open roles have no owner; Positions page says every role has an active owner |
-| A6-23 | "Shortlisted — Request interview" shown for candidates whose interview is already requested |
-| A6-24 | All timestamps rendered in UTC with no zone label; the admin is in São Paulo (UTC-3) |
-| A6-25 | Decimal scores leak beside whole-number scores (`confidence 0.9` vs `90%`) |
-| A6-26 | Raw codes and job ids in human copy |
-| A6-27 | Test-record guard rejects an application but tells the applicant "Press submit again" |
-| A6-29 | Assorted copy and data-hygiene nits |
+| A6-29 | Assorted copy and data-hygiene nits — not yet worked through |
+| A6-14 (part) | The pay range in the screening QUESTION disagrees with the role's stored range. New questions are generated from the range and a `pay_range_mismatch` reason now surfaces on the positions attention queue, but the existing question's text is a data fix and the owner has to confirm the intended number |
 
 Full detail with exact on-screen strings is in the audit #6 PDF at
 `C:\Users\bmadu\Downloads\TaaSFlow_Audit6_Report.pdf`. Extract it with the repo's
