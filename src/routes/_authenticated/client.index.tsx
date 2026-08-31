@@ -23,22 +23,15 @@ import { AlertTriangle, ChevronDown, RefreshCw } from "lucide-react";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { DensityToggle } from "@/components/client/density-toggle";
 import { useDensity } from "@/lib/use-density";
-import { supabase } from "@/integrations/supabase/client";
-import { SystemStatusStrip } from "@/components/client/control-room/system-status-strip";
-import { LiveTicker } from "@/components/client/control-room/live-ticker";
-import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 import { HiringHealthLine } from "@/components/client/hiring-health-line";
 import { applyOverdueAndRiskSignals } from "@/lib/client-hiring-health";
-import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 import { DecisionQueue } from "@/components/client/decision-queue";
-import { OpenItemsStrip } from "@/components/client/open-items-strip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-import { NextMilestones, type MilestoneRow } from "@/components/client/next-milestones";
 import type { QueueRow } from "@/lib/client-decision-queue";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { RoleStatusList } from "@/components/client/overview/role-status-list";
-import { SinceLastVisit, RecentMessages } from "@/components/client/overview/activity-panels";
+import { SinceLastVisit } from "@/components/client/overview/activity-panels";
 import { EmptyWelcome } from "@/components/client/overview/section-primitives";
 import { CandidatesReleasedSection } from "@/components/client/overview/candidates-released-section";
 import { relTime } from "@/components/client/overview/utils";
@@ -135,6 +128,21 @@ function OverviewPage() {
     await refetch();
   };
 
+  // Refresh means the page, not one query of four. This invalidated only
+  // "client-overview", so the two banners that block a client from being able
+  // to do anything — roles awaiting payment, roles missing brief details —
+  // kept showing a resolved state after a refresh, and the spinner said the
+  // page had been brought up to date.
+  const refreshingAll =
+    isFetching || pendingRolesQuery.isFetching || incompleteQuery.isFetching || ctxQuery.isFetching;
+  const refreshAll = () =>
+    Promise.all([
+      qc.invalidateQueries({ queryKey: ["client-overview", orgId] }),
+      qc.invalidateQueries({ queryKey: ["client", "pending-payment-roles", orgId] }),
+      qc.invalidateQueries({ queryKey: ["client", "roles-needing-details", orgId] }),
+      qc.invalidateQueries({ queryKey: ["client-context", orgSearch ?? null] }),
+    ]);
+
 
   // One readiness summary for the four independent queries on this page.
   const readiness = panelReadiness([
@@ -149,10 +157,24 @@ function OverviewPage() {
   const kpis = data?.kpis;
   const blockedSummary = (data as Any)?.blocked_summary ?? null;
   const roles: Any[] = data?.whats_next ?? [];
-  const messages: Any[] = data?.recent_messages ?? [];
   const activity: Any[] = data?.recent_activity ?? [];
 
   const selectedRole = (search as Any)?.role ?? "";
+  // The role filter lives inside the collapsed "Detail" section, but it scopes
+  // the decision queue and the health headline ABOVE it, and it persists in the
+  // URL. So a client could return to a bookmarked link and read "nothing needs
+  // you" while three other roles waited — with the control that caused it
+  // folded out of sight. The chip below puts the filter where its effects are.
+  const selectedRoleTitle = useMemo(
+    () => roles.find((r) => r.position_id === selectedRole)?.title ?? null,
+    [roles, selectedRole],
+  );
+  // A role id that matches nothing — a stale bookmark, or a role since closed —
+  // filtered every panel to empty and read as "all clear" rather than as a
+  // filter pointing at nothing.
+  const filterIsStale = Boolean(selectedRole) && !selectedRoleTitle && roles.length > 0;
+  const clearRoleFilter = () =>
+    navigate({ search: ((prev: Any) => ({ ...prev, role: undefined })) as never });
   const visibleRoles = useMemo(
     () => (selectedRole ? roles.filter((r) => r.position_id === selectedRole) : roles),
     [roles, selectedRole],
@@ -197,8 +219,20 @@ function OverviewPage() {
   // hidden exactly when it was needed (audit #4, M15).
   const hasSubmittedRole =
     pendingRoles.length > 0 || rolesNeedingDetails.length > 0 || visibleRoles.length > 0;
+  // Both signals that disprove "brand new workspace" arrive from their own
+  // queries, and an unsettled query looks exactly like an empty one. So the
+  // fix above held once the data landed but not before it: a client with a
+  // role awaiting payment still saw "Your workspace is ready · Add your first
+  // role" flash first, which is the one message that is wrong for them.
+  // Nothing is claimed until the evidence is in.
+  const submittedRoleEvidenceIn =
+    (!PAYMENTS_ENABLED || pendingRolesQuery.isSuccess) && incompleteQuery.isSuccess;
   const showOnboarding =
-    !!kpis && kpis.active_positions === 0 && kpis.delivered === 0 && !hasSubmittedRole;
+    !!kpis &&
+    submittedRoleEvidenceIn &&
+    kpis.active_positions === 0 &&
+    kpis.delivered === 0 &&
+    !hasSubmittedRole;
 
   // The headline reads from the same signals as the decision queue and the
   // role at-risk lines on this page, so the three can never disagree.
@@ -226,12 +260,12 @@ function OverviewPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => qc.invalidateQueries({ queryKey: ["client-overview", orgId] })}
-            disabled={isFetching}
+            onClick={refreshAll}
+            disabled={refreshingAll}
             aria-label="Refresh overview"
             className="min-h-11 min-w-11"
           >
-            <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 ${refreshingAll ? "animate-spin" : ""}`} />
           </Button>
           <Button
             variant="outline"
@@ -247,6 +281,31 @@ function OverviewPage() {
 
       {/* One aggregate signal for the four independent panels on this page. */}
       <DegradedPanelsBanner retrying={readiness.retrying} panels={readiness.signals} />
+
+      {selectedRole && !showOnboarding && (
+        <div
+          className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed bg-muted/40 px-3 py-2 text-sm"
+          role="status"
+        >
+          {filterIsStale ? (
+            <>
+              <AlertTriangle className="h-4 w-4 shrink-0 taas-fg-warning" aria-hidden />
+              <span className="flex-1">
+                Filtered to a role that is no longer on this workspace, so everything below is
+                empty for that reason — not because nothing needs you.
+              </span>
+            </>
+          ) : (
+            <span className="flex-1">
+              Showing <b>{selectedRoleTitle}</b> only. Everything on this page — including the
+              decision queue and the headline above — counts this role alone.
+            </span>
+          )}
+          <Button variant="outline" size="sm" onClick={clearRoleFilter}>
+            Show all roles
+          </Button>
+        </div>
+      )}
 
       {overviewPanel.isError && (
         <QueryErrorCard

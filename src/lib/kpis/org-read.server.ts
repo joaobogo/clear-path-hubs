@@ -68,6 +68,22 @@ export async function readOrgRows(
   }
   let query = db.from(table).select(select as never).eq("organization_id", orgId);
   if (refine) query = refine(query);
-  const { data } = await query;
+  const { data, error } = await query;
+  // This discarded the error and returned [], so a failed read was
+  // indistinguishable from an account with nothing in it. Every KPI built on
+  // this reader — open roles, candidates in play, interviews, the portfolio
+  // rollup — then reported 0 with total confidence, and on the client overview
+  // a zero role count is one of the conditions for showing "Your workspace is
+  // ready · Add your first role". A transient database error could therefore
+  // tell a paying client they had no roles.
+  //
+  // Throwing is the honest outcome: every caller runs inside a server function
+  // whose failure the client surfaces as "We couldn’t load your overview"
+  // with a Retry, which is true, unlike a zero.
+  if (error) {
+    throw new Error(
+      `org_read_failed: ${table} for organization ${orgId}: ${(error as AnyRow)?.message ?? "unknown error"}`,
+    );
+  }
   return ((data as AnyRow[]) ?? []) as AnyRow[];
 }
