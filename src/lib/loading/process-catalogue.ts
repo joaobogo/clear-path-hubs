@@ -354,12 +354,18 @@ export function candidateProcessStatus(
       return { process: "evidence", phase: "background", stageIndex: 0 };
     case "parsing":
       return { process: "evidence", phase: "background", stageIndex: 0 };
+    // `parsed` and `ready_to_score` are RESTING states: a step finished and
+    // the next has not been triggered. Reporting them as "background" printed
+    // "Extracting evidence — Stage 2 of 4 · Running in the background — safe
+    // to leave this screen" over a pipeline that had stopped, and it was still
+    // there after three and a half minutes and a reload (audit #6, A6-17).
+    // Nothing is running, so the strip says nothing.
     case "parsed":
-      return { process: "evidence", phase: "background", stageIndex: 1 };
+      return { process: "evidence", phase: "idle", stageIndex: 1 };
     case "enriching":
       return { process: "evidence", phase: "background", stageIndex: 2 };
     case "ready_to_score":
-      return { process: "scoring", phase: "background", stageIndex: 0 };
+      return { process: "scoring", phase: "idle", stageIndex: 0 };
     case "scoring":
       return { process: "scoring", phase: "background", stageIndex: 1 };
     case "scored":

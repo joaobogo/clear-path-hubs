@@ -75,7 +75,16 @@ export function ownerLabel(owner: OwnerSide): string {
   return OWNER_LABEL[owner] ?? owner;
 }
 
-const IN_FLIGHT = new Set(["queued", "parsing", "enriching", "ready_to_score"]);
+/**
+ * States where the pipeline has not finished, so no score is final.
+ *
+ * `parsed` was missing, so after a Retry parse the header went on offering
+ * "Approve the score for client release" — with a live Approve button — for a
+ * score the very next pipeline step was about to replace (audit #6, A6-17).
+ * Approving a number that is mid-recompute is the one irreversible mistake
+ * this screen can invite.
+ */
+const IN_FLIGHT = new Set(["queued", "parsing", "parsed", "enriching", "ready_to_score"]);
 const NEEDS_REPAIR = new Set([
   "failed",
   "provider_blocked",
@@ -191,12 +200,24 @@ export function deriveNextAction(f: NextActionFacts): NextAction {
   }
 
   if (IN_FLIGHT.has(f.processing_state)) {
+    // "Processing in progress" is only true while something is running.
+    // `parsed` and `ready_to_score` are RESTING states — a step finished and
+    // the next has not started — and calling them in-progress is how a
+    // candidate sat for minutes under a banner promising work that was not
+    // happening (audit #6, A6-17). Say which step is owed.
+    const resting = f.processing_state === "parsed" || f.processing_state === "ready_to_score";
     return {
       ...base,
       step: "processing_running",
       owner: "system",
-      step_label: "Processing in progress — no action yet",
-      because: humanizeReason(f.processing_state),
+      step_label: resting
+        ? f.processing_state === "parsed"
+          ? "CV read — evidence extraction has not started"
+          : "Evidence ready — scoring has not started"
+        : "Processing in progress — no action yet",
+      because: resting
+        ? "The previous step finished and the next one has not been picked up. It runs on its own shortly; you can start it now from Repair & processing."
+        : humanizeReason(f.processing_state),
       waiting_since: firstTs(f.processing_updated_at, f.created_at),
       action: { kind: "navigate", tab: "cv" },
       action_label: "Open CV & parsed",
