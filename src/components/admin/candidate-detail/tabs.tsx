@@ -116,6 +116,7 @@ export function CvTab({
   insights,
   parsed,
   capped = false,
+  unreadable = false,
 }: {
   cv: Any;
   matchId: string;
@@ -131,6 +132,17 @@ export function CvTab({
    * on every tab, not just the one where it was noticed.
    */
   capped?: boolean;
+  /**
+   * The CV yielded no usable text (ocr_required). The Profile tab already
+   * withholds the model's read in this case; this tab did not, so a candidate
+   * whose own header said "No score — CV unreadable" carried a full narrative
+   * asserting demonstrated experience — drawn from a document that produced no
+   * text, so nothing in it can have a quote behind it (audit #8, TF8-01).
+   *
+   * The note above about dealbreakers says it: suppressed means suppressed on
+   * every tab, not just the one where it was noticed.
+   */
+  unreadable?: boolean;
 }) {
   if (!cv)
     return (
@@ -175,7 +187,14 @@ export function CvTab({
         </div>
       )}
 
-      {!capped && insights?.pitch_summary && (
+      {unreadable && insights?.pitch_summary && (
+        <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+          The model's read is withheld: this CV produced no readable text, so nothing in it
+          can be traced to the document. Run OCR from Repair &amp; processing first.
+        </div>
+      )}
+
+      {!capped && !unreadable && insights?.pitch_summary && (
         <div
           className={`rounded-lg border-l-4 p-4 text-sm leading-relaxed ${
             pitchTone === "sell"

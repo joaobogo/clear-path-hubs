@@ -82,7 +82,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
-import { publishedScoreDisplay } from "@/lib/scoring/published-score";
+import { publishedScoreDisplay, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
+// These call sites pass the RUN, which carries no processing_state, so the
+// resolver cannot void an unreadable-CV score for them — the match must
+// (audit #8, TF8-01).
+const scoreOf = (m: { score_runs?: unknown; processing_state?: string | null }) =>
+  scoreVoidedByUnreadableCv(m)
+    ? null
+    : publishedScoreDisplay(m.score_runs as Parameters<typeof publishedScoreDisplay>[0]);
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -509,9 +516,7 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                       {m.candidate_profiles?.full_name ?? "Unknown"}
                     </span>
                     <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                      {publishedScoreDisplay(m.score_runs) != null
-                        ? publishedScoreDisplay(m.score_runs)
-                        : "—"}
+                      {scoreOf(m) ?? "—"}
                     </span>
                   </Link>
                 </li>
@@ -559,7 +564,7 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                   {(m.client_visibility ?? "—").replace(/_/g, " ")}
                 </td>
                 <td className="px-3 py-2 tabular-nums">
-                  {publishedScoreDisplay(m.score_runs) ?? "—"}
+                  {scoreOf(m) ?? "—"}
                 </td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
                   {m.updated_at ? formatDate(m.updated_at) : "—"}

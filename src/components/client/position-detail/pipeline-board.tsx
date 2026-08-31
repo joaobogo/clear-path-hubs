@@ -10,7 +10,11 @@ import { Users } from "lucide-react";
 import { plural } from "@/lib/format/plural";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { isUnicornMatch } from "@/lib/scoring/bands";
-import { publishedScore, publishedScoreDisplay } from "@/lib/scoring/published-score";
+import {
+  publishedScore,
+  publishedScoreDisplay,
+  scoreVoidedByUnreadableCv,
+} from "@/lib/scoring/published-score";
 import { type MatchStage } from "@/lib/client-match-stage";
 import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "./constants";
 
@@ -151,13 +155,18 @@ export function PipelineBoard({
                         </div>
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        {/* This passes the RUN, which carries no
+                            processing_state, so the resolver cannot void it
+                            for us — the match does. A client must not be shown
+                            a number, or a unicorn, derived from a CV that
+                            produced no readable text (audit #8, TF8-01). */}
                         <CandidateScoreBadge
-                          score={publishedScoreDisplay(m.score_runs)}
-                          fitLabel={m.score_runs?.fit_label ?? null}
+                          score={scoreVoidedByUnreadableCv(m) ? null : publishedScoreDisplay(m.score_runs)}
+                          fitLabel={scoreVoidedByUnreadableCv(m) ? null : (m.score_runs?.fit_label ?? null)}
                           unicorn={isUnicornMatch({
                             // The published number, so a human-adjusted score
                             // reads the same here as on the candidate page.
-                            score: publishedScore(m.score_runs),
+                            score: scoreVoidedByUnreadableCv(m) ? null : publishedScore(m.score_runs),
                             hired: m.stage === "hired",
                           })}
                           hideEvidenceChip

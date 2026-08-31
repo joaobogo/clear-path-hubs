@@ -10,7 +10,7 @@ import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-quer
 import { lazy, Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getAdminMatch, getMatchHeavyDetail } from "@/lib/processing.functions";
-import { resolvePublishedRun } from "@/lib/scoring/published-score";
+import { resolvePublishedRun, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 import {
   User,
   FileText,
@@ -341,6 +341,7 @@ function CandidateWorkspace() {
                     insights={evidence?.extracted?.insights ?? null}
                     parsed={evidence?.extracted ?? null}
                     capped={publishedRun?.contradiction_status === "disqualifying_answer"}
+                    unreadable={scoreVoidedByUnreadableCv(m)}
                   />
                 )}
                 {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}

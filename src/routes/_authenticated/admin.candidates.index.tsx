@@ -53,7 +53,11 @@ import { ExportControl } from "@/components/admin/export-control";
 import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { UnicornMarker } from "@/components/unicorn-marker";
-import { publishedBand, publishedScoreDisplay } from "@/lib/scoring/published-score";
+import {
+  publishedBand,
+  publishedScoreDisplay,
+  scoreVoidedByUnreadableCv,
+} from "@/lib/scoring/published-score";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, pluralize, formatNumber } from "@/lib/format/datetime";
 
 /** Dense list label: band + confidence, no bare number (rubric lives on detail). */
@@ -859,8 +863,16 @@ function CandidatesPage() {
           </thead>
           <tbody className="divide-y">
             {rows.map((m) => {
-              const score = publishedScoreDisplay(m);
-              const band = publishedBand(m);
+              // A score built on text that later proved unreadable is not a
+              // score. Every other surface already voids it — the detail
+              // header, the profile tab, the client KPIs, the review queue —
+              // but this list did not, so a candidate whose own page read
+              // "No score — CV unreadable" sat in the list as "41 · not
+              // recommended", which is what a recruiter actually acts on
+              // (audit #8, TF8-01).
+              const unreadable = scoreVoidedByUnreadableCv(m);
+              const score = unreadable ? null : publishedScoreDisplay(m);
+              const band = unreadable ? null : publishedBand(m);
               const updated = m.updated_at ? new Date(m.updated_at) : null;
               return (
                 <tr

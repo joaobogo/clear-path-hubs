@@ -22,6 +22,12 @@ export type PublishedScoreRun = {
   final_score?: number | string | null;
   fit_label?: string | null;
   fit_band?: string | null;
+  /**
+   * Present when the caller passes a MATCH row (with its run embedded) rather
+   * than a bare run. When it is, the resolver can void the score itself — see
+   * publishedScore.
+   */
+  processing_state?: string | null;
 } | null | undefined;
 
 function num(value: unknown): number | null {
@@ -65,6 +71,14 @@ export function withVideoIntroBonus<T extends PublishedScoreRun>(run: T, hasVide
  */
 export function publishedScore(run: PublishedScoreRun): number | null {
   if (!run) return null;
+  // A score built on text that proved unreadable is not a score, and this is
+  // the one place every surface passes through. Voiding here means a caller
+  // that hands us a match row cannot forget: /admin/candidates showed
+  // "41 · not recommended" for a candidate whose own detail page read
+  // "No score — CV unreadable", because the void lived at the call sites and
+  // that one had been missed (audit #8, TF8-01). Callers that pass a bare run
+  // carry no processing_state and are unaffected; they must still check.
+  if (scoreVoidedByUnreadableCv(run)) return null;
   return num(run.final_score) ?? num(run.score);
 }
 

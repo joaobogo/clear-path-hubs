@@ -30,7 +30,7 @@ import { INTAKE_AGING_TIER_DAYS } from "@/lib/intake-aging";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
 import { deliveryReason } from "./notifications/delivery-reasons";
 import { qualifiesAsHire } from "./offer-hire";
-import { publishedRunEmbed, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus } from "@/lib/scoring/published-score";
+import { publishedRunEmbed, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 
 /** Approved run wins over current so admin and client read one number; the Loom bonus folds in here. */
 const pubRun = (m: { approved_run?: unknown; current_run?: unknown; intro_video_url?: unknown }) =>
@@ -416,7 +416,11 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
           posRef(m.positions?.id, m.positions?.title),
           orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
         ],
-        meta: publishedScoreDisplay(pubRun(m)) != null ? `score ${publishedScoreDisplay(pubRun(m))}` : null,
+        // pubRun returns the RUN, which has no processing_state, so the
+        // resolver cannot void it here — the match does (audit #8, TF8-01).
+        meta: scoreVoidedByUnreadableCv(m) || publishedScoreDisplay(pubRun(m)) == null
+          ? null
+          : `score ${publishedScoreDisplay(pubRun(m))}`,
         waiting_since: m.updated_at,
         target: { kind: "review" as const, matchId: m.id },
         action_label: "Review",
