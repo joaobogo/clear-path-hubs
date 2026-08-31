@@ -16,6 +16,7 @@
  * Grouping is always derived from these values — never stored, never manual.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { reviewRowScore } from "@/lib/scoring/review-row-score";
 
 type Admin = SupabaseClient<never, never, never>;
 
@@ -196,6 +197,29 @@ export async function loadReviewTriage(
     }
   }
 
+  // The view carries the run's stored figure but not the match facts that
+  // change what may be shown: the intro-video bonus and whether the CV was
+  // readable at all. Without them this list rendered "Consider · 67" for a
+  // candidate the record and every other surface call "77 · Strong" — a gap
+  // that crosses a band boundary (audit #8, TF8-02).
+  const scoreMatchById = new Map<string, { intro_video_url: string | null; processing_state: string | null }>();
+  const viewMatchIds = view
+    .map((r) => String(r["match_id"] ?? ""))
+    .filter((id) => id.length > 0);
+  if (viewMatchIds.length > 0) {
+    const { data: scoreMatches, error: scoreMatchErr } = await a
+      .from("candidate_matches")
+      .select("id, intro_video_url, processing_state")
+      .in("id", viewMatchIds);
+    if (scoreMatchErr) throw new Error(scoreMatchErr.message);
+    for (const m of (scoreMatches ?? []) as Array<Record<string, unknown>>) {
+      scoreMatchById.set(String(m["id"]), {
+        intro_video_url: (m["intro_video_url"] as string | null) ?? null,
+        processing_state: (m["processing_state"] as string | null) ?? null,
+      });
+    }
+  }
+
   const rows: TriageRow[] = view.map((r) => {
     const matchId = String(r["match_id"]);
     const positionId = typeof r["position_id"] === "string" ? r["position_id"] : null;
@@ -216,13 +240,15 @@ export async function loadReviewTriage(
       candidate_name: String(r["full_name"] ?? "Unnamed candidate"),
       position_title: String(r["position_title"] ?? "—"),
       client_name: String(r["org_name"] ?? "—"),
-      score_band: bandOf(r),
-      final_score:
+      // One derivation, shared with the main review queue reader.
+      ...reviewRowScore(
         r["final_score"] != null
           ? Number(r["final_score"])
           : r["score"] != null
             ? Number(r["score"])
             : null,
+        scoreMatchById.get(matchId),
+      ),
       evidence_items: items,
       evidence_resolved: Math.max(0, items - unresolved),
       evidence_completeness: items > 0 ? Math.max(0, items - unresolved) / items : null,

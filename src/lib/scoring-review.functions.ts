@@ -201,33 +201,23 @@ export const listReviewQueue = createServerFn({ method: "POST" })
         .from("candidate_matches")
         .select("id,intro_video_url,processing_state")
         .in("id", matchIds);
-      const { VIDEO_INTRO_BONUS_PTS, hasVideoIntro, scoreVoidedByUnreadableCv } = await import(
-        "@/lib/scoring/published-score"
-      );
-      const { classifyBand } = await import("@/lib/scoring/bands");
+      const { reviewRowScore } = await import("@/lib/scoring/review-row-score");
       const rowsById = new Map(((videoRows ?? []) as AnyRow[]).map((v) => [String(v.id), v]));
 
       for (const r of queueRows) {
-        const match = rowsById.get(String(r.match_id));
-        // A score from an unreadable CV is not a score on this surface either.
-        if (scoreVoidedByUnreadableCv(match)) {
-          r.final_score = null;
-          r.score = null;
-          r.score_band = null;
-          continue;
-        }
-        if (!hasVideoIntro(match)) continue;
-        // The bonus used to be added to `final_score` alone, so a run that
-        // stores its number in `score` kept the raw figure — and the BAND was
-        // never recomputed, so the queue read "Consider · 67" while every
-        // other surface said "77 Strong" (audit #6, A6-02).
-        const base = Number(r.final_score ?? r.score);
-        if (!Number.isFinite(base)) continue;
-        const total = base + VIDEO_INTRO_BONUS_PTS;
-        r.final_score = total;
-        if (r.score != null) r.score = total;
-        // Same band table every other surface bands through.
-        r.score_band = classifyBand(total);
+        // One derivation, shared with the triage reader behind "Blocking a
+        // client deliverable". This logic used to live here alone, so when the
+        // bonus and the band recompute were fixed (audit #6, A6-02) the second
+        // reader kept showing the pre-bonus figure and its stale band — the
+        // same candidate reading "Consider · 67" on one queue and "77 · Strong"
+        // on the record (audit #8, TF8-02).
+        const { final_score, score_band } = reviewRowScore(
+          r.final_score ?? r.score,
+          rowsById.get(String(r.match_id)),
+        );
+        r.final_score = final_score;
+        if (r.score != null) r.score = final_score;
+        r.score_band = score_band;
       }
     }
     return { rows: queueRows, total: count ?? 0, limit, offset };
