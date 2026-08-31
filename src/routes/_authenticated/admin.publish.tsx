@@ -65,7 +65,7 @@ type Readiness = {
 function readinessOf(r: Any): Readiness {
   return (r._readiness ?? {
     hasScore: false, evidenceOk: false, contradictionOk: true, clientSafeOk: false,
-    adminApproved: false, orgOk: true, canPublish: false, blockedReasons: [],
+    adminApproved: false, orgOk: true, canPublish: false, blockedReasons: [], pendingReasons: [],
   }) as Readiness;
 }
 

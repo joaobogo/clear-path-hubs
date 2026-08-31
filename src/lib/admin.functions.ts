@@ -6,6 +6,7 @@ import { pilotEndsAt } from "@/lib/pilot-state";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { humanizeCode } from "@/lib/humanize-codes";
 import {
   publishedRunEmbed,
   publishedScore,
@@ -2651,7 +2652,15 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
       // Approved-run evidence
       const evidenceArr = Array.isArray(approved?.evidence) ? approved!.evidence : [];
       const evidenceOk = hasApprovedRun && evidenceArr.length > 0;
-      if (hasCurrentScore && !approved) reasons.push("Score not approved — review evidence and approve");
+      // "Not approved yet" is not a BLOCKER — it is the queue. Pushing it into
+      // `reasons` sent every scored-and-waiting candidate to the blocked
+      // bucket, so the desk read "awaiting review 0 · blocked 17" while the
+      // work queue and the scoring review both said 8 were awaiting a decision
+      // (audit #6, A6-16). Kept separate so the tiles can agree.
+      const pendingDecision: string[] = [];
+      if (hasCurrentScore && !approved) {
+        pendingDecision.push("Scored — waiting for an admin decision");
+      }
       if (hasApprovedRun && !evidenceOk) reasons.push("Approved run has no evidence array");
 
       // Contradictions
@@ -2659,7 +2668,18 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
         approved?.contradiction_status ?? current?.contradiction_status ?? "none",
       );
       const contradictionOk = ["none", "resolved", "cleared"].includes(contradictionStatus);
-      if (!contradictionOk) reasons.push(`Contradiction unresolved (${contradictionStatus})`);
+      if (!contradictionOk) {
+        // The raw enum was the whole reason — "Contradiction unresolved
+        // (screening_contradicts_cv)" (audit #6, A6-16). Say what it means and
+        // what clears it.
+        reasons.push(
+          contradictionStatus === "screening_contradicts_cv"
+            ? "A screening answer and the CV disagree — resolve it on the scoring review before publishing"
+            : contradictionStatus === "disqualifying_answer"
+              ? "A screening answer tripped one of this role's dealbreakers — approve or reject on the scoring review"
+              : "An unresolved contradiction is recorded on this run — open the scoring review",
+        );
+      }
 
       // Client-safe DTO
       const missing: string[] = [];
@@ -2670,8 +2690,15 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
 
       // Admin approval
       const adminApproved = r.admin_status === "approved";
-      if (!adminApproved && r.admin_status !== "on_hold")
-        reasons.push(`Admin review ${r.admin_status ?? "pending"}`);
+      if (!adminApproved && r.admin_status !== "on_hold") {
+        // Same as above: pending review is the queue, not a fault. It also
+        // printed the raw status token straight into the reason.
+        pendingDecision.push(
+          r.admin_status && r.admin_status !== "pending"
+            ? `Admin review: ${humanizeCode(String(r.admin_status))}`
+            : "Waiting for an admin decision",
+        );
+      }
 
       // Organization / position / identity bindings
       const orgMismatch =
@@ -2721,9 +2748,15 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
         orgOk: !orgMismatch && !posMismatch && !identityMismatch,
         canPublish,
         blockedReasons: reasons,
+        /** Why it is waiting on a person, as opposed to what is broken. */
+        pendingReasons: pendingDecision,
       };
       const enriched: AnyRow = { ...r, _readiness: readiness, score_runs: approved ?? current };
 
+      // Blocked means SOMETHING IS WRONG. Waiting for a person is not wrong —
+      // it is the desk's whole purpose, and it now lands in needs_review so
+      // this tile matches the work queue's "awaiting decision" (audit #6,
+      // A6-16).
       let group: Group;
       if (r.client_visibility === "visible") group = "published";
       else if (r.admin_status === "on_hold") group = "held";
