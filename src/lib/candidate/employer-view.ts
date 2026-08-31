@@ -169,6 +169,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
   { key: "delivered_at", group: "process", label: "Date you were shared with the employer" },
   { key: "interview_active", group: "process", label: "Whether an interview has been requested or held" },
   {
+    key: "interview_awaiting_time",
+    group: "process",
+    label: "Whether your interview is waiting on us to confirm a time",
+    note: "The employer sees that they have asked for the interview and that we are arranging it.",
+  },
+  {
     key: "contact_released",
     group: "process",
     label: "Whether the employer may see your contact details and CV file",

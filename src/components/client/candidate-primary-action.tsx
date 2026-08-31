@@ -34,7 +34,25 @@ const UNDO_TOAST_MS = 12_000;
 
 type AdvanceStep = { action: PrimaryActionKey; label: string; done: string };
 
-export function advanceFor(stage: MatchStage): AdvanceStep | null {
+/**
+ * The next decision for a candidate.
+ *
+ * `interviewRequested` is not cosmetic: a candidate sits at stage
+ * `shortlisted` from the moment an interview is asked for until a time is
+ * confirmed, so deriving the action from the stage alone offered "Request
+ * interview" for two candidates the overview was simultaneously asking the
+ * client to *confirm a time* for, and whom /admin/interviews listed as
+ * "requested · awaiting a time" (audit #6, A6-23). Asking twice for something
+ * already asked for is the client's most confusing possible state.
+ */
+export function advanceFor(
+  stage: MatchStage,
+  interviewRequested = false,
+): AdvanceStep | null {
+  if (stage === "shortlisted" && interviewRequested) {
+    // The ball is with us, not with them. No advance action is offered.
+    return null;
+  }
   return (
     {
       delivered: { action: "shortlist", label: "Shortlist", done: "Added to your shortlist" },
@@ -68,6 +86,7 @@ export function CandidatePrimaryAction({
   size = "sm",
   fitLabel = null,
   score = null,
+  interviewRequested = false,
 }: {
   orgId: string;
   matchId: string;
@@ -78,6 +97,8 @@ export function CandidatePrimaryAction({
   fitLabel?: string | null;
   /** Fit score 0-100, when the surface has it. */
   score?: number | null;
+  /** An interview has been asked for and is waiting on a confirmed time. */
+  interviewRequested?: boolean;
 }) {
   const queryClient = useQueryClient();
   const search = useSearch({ strict: false }) as { org?: string };
@@ -96,7 +117,7 @@ export function CandidatePrimaryAction({
   React.useEffect(() => setOptimistic(null), [stage]);
 
   const shownStage = optimistic ?? stage;
-  const advance = advanceFor(shownStage);
+  const advance = advanceFor(shownStage, interviewRequested);
   const notRecommended = isNotRecommendedFit(fitLabel, score);
 
   async function runUndo(fromStage: MatchStage) {
@@ -174,6 +195,17 @@ export function CandidatePrimaryAction({
       <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
         <Check className="h-3.5 w-3.5" aria-hidden />
         {settled}
+      </span>
+    );
+  }
+
+  // Say where it actually stands rather than leaving the cell blank: the
+  // client asked for this interview and is waiting on us for a time, which is
+  // exactly what the overview tells them on the same visit (audit #6, A6-23).
+  if (stage === "shortlisted" && interviewRequested) {
+    return (
+      <span className="inline-flex items-center whitespace-nowrap rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+        Interview requested — we're confirming a time
       </span>
     );
   }

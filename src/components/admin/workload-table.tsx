@@ -58,9 +58,16 @@ export function WorkloadTable({ includeTest: explicit }: { includeTest?: boolean
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 className="text-lg font-medium">Workload</h2>
+          {/* "Open" here means approved, active or paused — roles with live
+              work. Ownership &amp; coverage on /admin/positions counts a wider
+              set (it includes roles still in intake), so the two totals differ
+              legitimately. Saying which is which stops them reading as a
+              contradiction (audit #6, A6-21). */}
           <p className="mt-1 text-sm text-muted-foreground">
             Open roles owned, active candidates, and what has gone quiet. Counts
-            come straight from positions, matches and tasks.
+            come straight from positions, matches and tasks. "Open" means approved,
+            active or paused — roles still in intake are counted under Ownership
+            &amp; coverage on Positions, not here.
           </p>
         </div>
         {q.data && (

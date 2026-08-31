@@ -119,8 +119,14 @@ export function CompactList({
                     hideEvidenceChip
                   />
                 </td>
+                {/* The stage word alone said "Shortlisted" for a candidate
+                    whose interview had already been requested, while the
+                    overview asked the client to confirm a time for that same
+                    person (audit #6, A6-23). */}
                 <td data-label="Stage" className="py-3 px-3 text-muted-foreground align-middle whitespace-nowrap">
-                  {clientStageLabel(c.stage)}
+                  {c.interview_awaiting_time
+                    ? "Interview requested"
+                    : clientStageLabel(c.stage)}
                 </td>
                 <td data-label="Action" className="py-3 px-3 text-right align-middle">
                   {orgId ? (
@@ -131,6 +137,7 @@ export function CompactList({
                       candidateName={c.candidate.display_name}
                       fitLabel={c.fit_label}
                       score={c.score}
+                      interviewRequested={c.interview_awaiting_time}
                       size="sm"
                     />
                   ) : (

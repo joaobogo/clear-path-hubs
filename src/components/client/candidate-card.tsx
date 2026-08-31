@@ -105,6 +105,7 @@ export function CandidateCard({
             candidateName={c.candidate.display_name}
             fitLabel={c.fit_label}
             score={c.score}
+            interviewRequested={c.interview_awaiting_time}
           />
         ) : (
           <Link

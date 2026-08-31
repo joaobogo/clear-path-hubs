@@ -432,6 +432,16 @@ export type ClientCandidateDTO = {
    */
   interview_active: boolean;
   /**
+   * An interview has been asked for and is still waiting on a confirmed time.
+   *
+   * `interview_active` is true for every interview state including scheduled
+   * and completed, so it cannot answer "is the ball with us?". Without this
+   * distinction the candidates list offered "Request interview" for two
+   * candidates the overview was, on the same visit, asking the client to
+   * confirm a time for (audit #6, A6-23).
+   */
+  interview_awaiting_time: boolean;
+  /**
    * True when the client has already recorded a decision on this candidate.
    * Carried so the snapshot tiles can apply the one "awaiting your review"
    * rule (delivered, undecided) instead of counting the delivered stage.
@@ -1211,6 +1221,11 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     intro_video,
     delivered_at: row.delivered_at ?? null,
     interview_active: Boolean(row.interview_active),
+    // Requested, but no time confirmed yet — the ball is with us.
+    interview_awaiting_time: Boolean(
+      (row as AnyRow).interview_needs_confirmation ??
+        ((row as AnyRow).interview_requested_at && !(row as AnyRow).next_interview_at),
+    ),
     client_decided: Boolean(row.client_decided),
     hire_confirmed: Boolean(row.hire_confirmed),
     contact_released: released,

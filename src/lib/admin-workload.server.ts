@@ -81,16 +81,23 @@ export async function loadWorkloadTable(
     .in("status", OPEN_STATUSES as unknown as string[]);
   if (!opts.includeTest) posQuery.eq("is_test_record", false);
 
-  const [posRes, staffRes] = await Promise.all([
-    posQuery,
-    a
-      .from("memberships")
-      .select("user_id, role, status")
-      .eq("status", "active")
-      .in("role", ["platform_admin", "operations"]),
-  ]);
+  // ONE ownership rule, shared with /admin/positions "Ownership & coverage".
+  //
+  // This page ran its own membership query — active membership only, no check
+  // on the profile's own status — while the coverage panel resolved staff
+  // through `loadStaffOptions`. The two sets differed, so /admin/team reported
+  // "Unassigned or inactive owner · 2 open roles" while /admin/positions
+  // reported "0 without owner … All open roles have an active owner" about the
+  // same roles (audit #6, A6-21).
+  const { loadStaffOptions } = await import("./position-ownership.server");
+  const [posRes, staffOptions] = await Promise.all([posQuery, loadStaffOptions(a)]);
   if (posRes.error) throw new Error(posRes.error.message);
-  if (staffRes.error) throw new Error(staffRes.error.message);
+  const staffRes = {
+    data: staffOptions
+      .filter((s) => s.is_active)
+      .map((s) => ({ user_id: s.user_id, role: s.role })),
+    error: null as null,
+  };
 
   const positions = (posRes.data ?? []) as Array<Record<string, unknown>>;
   const staff = (staffRes.data ?? []) as Array<{ user_id: string; role: string }>;
@@ -318,14 +325,11 @@ export async function loadOwnedPositions(
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   if (owner === UNASSIGNED_KEY) {
-    const { data: staffRows, error: staffError } = await a
-      .from("memberships")
-      .select("user_id")
-      .eq("status", "active")
-      .in("role", ["platform_admin", "operations"]);
-    if (staffError) throw new Error(staffError.message);
+    // Same shared resolver as the table above — a drill-down that disagreed
+    // with the row it was opened from would be worse than the original bug.
+    const { loadStaffOptions } = await import("./position-ownership.server");
     const staffIds = new Set(
-      ((staffRows ?? []) as Array<{ user_id: string }>).map((s) => s.user_id),
+      (await loadStaffOptions(a)).filter((s) => s.is_active).map((s) => s.user_id),
     );
     const filtered = ((data ?? []) as Array<Record<string, unknown>>).filter(
       (p) => !p['owner_user_id'] || !staffIds.has(String(p['owner_user_id'])),
