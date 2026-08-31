@@ -12,7 +12,13 @@ import { describe, expect, it } from "vitest";
 import { requirementBasis, formatBasis } from "@/lib/scoring/score-composition";
 import { resolveRequirementStatus } from "@/lib/client/requirement-status";
 
-const quote = [{ source: "cv", snippet: "Ran the platform for six years." }];
+/** The fixtures are plain literals; the resolver wants the full row type. */
+const statusOf = (row: unknown) =>
+  resolveRequirementStatus(row as Parameters<typeof resolveRequirementStatus>[0]);
+
+const quote = [
+  { label: "CV", source: "cv", snippet: "Ran the platform for six years." },
+];
 
 const req = (over: Record<string, unknown> = {}) => ({
   id: String(Math.abs(Number(over.id ?? 1))),
@@ -20,6 +26,7 @@ const req = (over: Record<string, unknown> = {}) => ({
   importance: "must_have",
   status: "met",
   evidence: quote,
+  contradictions: [],
   ...over,
 });
 
@@ -39,7 +46,7 @@ describe("requirementBasis counts what the list shows", () => {
     // The rendered list calls this "Not evidenced"; the basis used to call it
     // met, so the caption and the list disagreed on the same card.
     const rows = [req({ id: 1 }), req({ id: 2, status: "met", evidence: [] })];
-    expect(resolveRequirementStatus(rows[1]!)).toBe("not_evidenced");
+    expect(statusOf(rows[1]!)).toBe("not_evidenced");
 
     const b = requirementBasis(rows, "must_have")!;
     expect(b.met).toBe(1);
@@ -55,7 +62,7 @@ describe("requirementBasis counts what the list shows", () => {
       req({ id: 4, status: "contradicted" }),
     ];
     const b = requirementBasis(rows, "must_have")!;
-    const resolved = rows.map((r) => resolveRequirementStatus(r));
+    const resolved = rows.map((r) => statusOf(r));
 
     expect(b.met).toBe(resolved.filter((s) => s === "met").length);
     expect(b.partial).toBe(resolved.filter((s) => s === "partial").length);

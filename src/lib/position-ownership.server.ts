@@ -148,6 +148,22 @@ type PositionRow = {
   reassignment_reason: string | null;
 };
 
+/**
+ * Names and active-status for owner ids.
+ *
+ * "Active" here means ACTIVE STAFF, resolved through loadStaffOptions — the
+ * same set /admin/team judges ownership by. This function used to accept any
+ * active membership regardless of role, so a role owned by someone whose only
+ * membership is a client one read "active owner · 0 without owner · All open
+ * roles have an active owner" on /admin/positions while /admin/team put the
+ * same roles under "Unassigned or inactive owner" with 13 active candidates
+ * behind them (audit #8, TF8-07).
+ *
+ * Audit #6 (A6-21) fixed this disagreement by pointing /admin/team at
+ * loadStaffOptions. This side kept its own rule, so the two drifted straight
+ * back apart. Names still resolve for a non-staff owner — we want to be able
+ * to say who it is — only is_active is decided by the staff set.
+ */
 async function resolvePeople(
   admin: Admin,
   ids: string[],
@@ -156,21 +172,18 @@ async function resolvePeople(
   const unique = Array.from(new Set(ids.filter(Boolean)));
   if (unique.length === 0) return out;
 
-  const [profRes, memRes] = await Promise.all([
+  const [profRes, staffOptions] = await Promise.all([
     admin
       .from("profiles")
       .select("auth_user_id, full_name, email, status")
       .in("auth_user_id", unique),
-    admin.from("memberships").select("user_id, status").in("user_id", unique),
+    loadStaffOptions(admin),
   ]);
   if (profRes.error) throw new Error(profRes.error.message);
-  if (memRes.error) throw new Error(memRes.error.message);
 
-  const memActive = new Set(
-    ((memRes.data ?? []) as Array<{ user_id: string; status: string }>)
-      .filter((m) => m.status === "active")
-      .map((m) => m.user_id),
-  );
+  // The one staff set. Anyone outside it cannot be an active owner, whatever
+  // memberships they hold elsewhere.
+  const activeStaff = new Set(staffOptions.filter((o) => o.is_active).map((o) => o.user_id));
 
   for (const id of unique) out.set(id, { name: "Unknown user", is_active: false });
 
@@ -182,7 +195,7 @@ async function resolvePeople(
   }>) {
     out.set(p.auth_user_id, {
       name: displayName(p, "Unknown user"),
-      is_active: p.status === "active" && memActive.has(p.auth_user_id),
+      is_active: p.status === "active" && activeStaff.has(p.auth_user_id),
     });
   }
   return out;

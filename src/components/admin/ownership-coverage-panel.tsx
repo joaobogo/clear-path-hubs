@@ -99,7 +99,25 @@ export function OwnershipCoveragePanel({
         query={q}
         isEmpty={(q.data?.rows ?? []).length === 0}
         className="mt-4"
-        empty={<PanelEmpty className="mt-4" title="All open roles have an active owner" description="Nothing needs reassignment right now." />}
+        empty={
+          /* The header counts "N without backup", but the table only ever
+             lists roles that are flagged or uncovered — so a role with an
+             owner and no backup is counted and never shown, and the panel
+             declared "Nothing needs reassignment right now" beside its own
+             count of 3 (audit #8, TF8-07). The count now has a route to the
+             surface, and "Show all open roles" is where it leads. */
+          <PanelEmpty
+            className="mt-4"
+            title="All open roles have an active owner"
+            description={
+              (q.data?.totals.no_backup ?? 0) > 0
+                ? `Nothing needs reassignment right now. ${q.data!.totals.no_backup} open ${
+                    q.data!.totals.no_backup === 1 ? "role has" : "roles have"
+                  } no backup owner — use "Show all open roles" to assign one.`
+                : "Nothing needs reassignment right now."
+            }
+          />
+        }
       >
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[900px] text-sm">
