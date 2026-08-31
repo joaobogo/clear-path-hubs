@@ -26,6 +26,9 @@ export type QueueMeta = {
   checked: number;
   overdue: number;
   next_expected_at: string | null;
+  /** How many rows the server sent, and how many exist. */
+  shown?: number;
+  total?: number;
 };
 
 function fmtDate(iso: string | null): string {
@@ -354,6 +357,18 @@ export function DecisionQueue({
           {visible.length} item{visible.length === 1 ? "" : "s"}, longest waiting first
         </span>
       </div>
+
+      {/* Never let a cap read as a total: this list is trimmed for display, and
+          a client with more open items than fit had no way to know. */}
+      {meta?.total != null && meta?.shown != null && meta.total > meta.shown && (
+        <p className="text-xs text-muted-foreground">
+          Showing the {meta.shown} longest waiting of{" "}
+          <span className="font-medium text-foreground">{meta.total}</span> open items.{" "}
+          <Link to="/client/candidates" search={search as never} className="underline">
+            See all
+          </Link>
+        </p>
+      )}
 
       {/* Work in progress is news whether or not the queue is clear. Gating
           this on an empty queue meant a client with one pending decision was

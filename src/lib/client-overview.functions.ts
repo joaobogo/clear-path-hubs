@@ -1,6 +1,9 @@
 // Client overview read (health, queue, milestones, KPIs).
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
+
+/** Rows the overview queue renders. The rest are counted and reported. */
+const QUEUE_DISPLAY_LIMIT = 10;
 import { POSITION_STATUSES_HIRING } from "@/lib/vocabulary";
 import { excludeTestRecords } from "@/lib/client/test-record-filter";
 import { CLIENT_RELEVANT_ACTIONS } from "@/lib/client-activity-actions";
@@ -473,9 +476,16 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     }));
 
     const queueGroups = buildQueue([...otherQueueItems, ...feedbackQueueItems]);
-    const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming].slice(0, 10);
+    // The queue is capped for display. It was capped silently, so a client
+    // with fourteen open items read "10 items, longest waiting first" and had
+    // no way to know four more were waiting — their own to-do list, truncated
+    // without a word.
+    const queueAll = [...queueGroups.overdue, ...queueGroups.upcoming];
+    const decision_queue = queueAll.slice(0, QUEUE_DISPLAY_LIMIT);
     const decision_queue_meta = {
       checked: otherQueueItems.length + feedbackQueueItems.length,
+      shown: decision_queue.length,
+      total: queueAll.length,
       overdue: queueGroups.overdue.length,
       next_expected_at:
         Array.from(promisedByPosition.values())

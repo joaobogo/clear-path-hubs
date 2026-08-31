@@ -27,7 +27,13 @@ export async function countConfirmedHiresPlatformWide(
 ): Promise<number> {
   const { normalizeOfferRecords } = await import("@/lib/hires/confirmed");
   const { selectConfirmedHires } = await import("@/lib/hires/confirmed");
-  const { data } = await supabase.from("hire_records").select("id, status");
+  const { data, error } = await supabase.from("hire_records").select("id, status");
+  // A failed read returned zero hires — reported on the operations desk as a
+  // reconciliation figure, where "0 hires" is a claim about the business
+  // rather than a missing number.
+  if (error) {
+    throw new Error(`hire_records_read_failed: ${(error as { message?: string })?.message ?? "unknown error"}`);
+  }
   return selectConfirmedHires(
     normalizeOfferRecords(((data as AnyClient[]) ?? []) as AnyClient[]) as Array<{
       status: string;

@@ -20,11 +20,17 @@ async function readSeatLimit(supabase: AnyRow, orgId: string): Promise<number | 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     db = supabaseAdmin;
   }
-  const { data } = await db
+  const { data, error } = await db
     .from("organizations")
     .select("client_seat_limit")
     .eq("id", orgId)
     .maybeSingle();
+  // null is a real answer here — the account has no custom limit and takes the
+  // default. A failed read is not that answer, and silently becoming "default
+  // plan" is the wrong way for a billing number to degrade.
+  if (error) {
+    throw new Error(`seat_limit_read_failed: ${orgId}: ${(error as { message?: string })?.message ?? "unknown error"}`);
+  }
   return ((data as AnyRow)?.client_seat_limit as number | null) ?? null;
 }
 
