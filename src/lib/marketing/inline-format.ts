@@ -79,13 +79,74 @@ export function stripInlineMarkup(input: string): string {
 }
 
 /**
+ * Convert Markdown syntax into the three permitted inline tags.
+ *
+ * Role descriptions are drafted as MARKDOWN, but this module only ever knew
+ * about HTML tags — so `# Technical Product Developer`, `**Junior to
+ * Mid-Level**` and `## About the Role` rendered as literal text on the client
+ * role brief and the public job page (audit #6, A6-14).
+ *
+ * The output stays inside the same three-style vocabulary: a heading becomes
+ * bold on its own line, emphasis becomes `<strong>`/`<em>`, a bullet becomes a
+ * real bullet character. Nothing new can be expressed, so nothing new can be
+ * injected.
+ *
+ * Deliberately conservative:
+ *   - only `#` at the START of a line is a heading; a `#` mid-sentence is a
+ *     hashtag or a C# reference and is left alone;
+ *   - `*`/`_` emphasis must hug non-space text, so `2 * 3 * 4` and
+ *     `snake_case_name` survive;
+ *   - link syntax keeps the LABEL and drops the target — this module has never
+ *     rendered links, and a bare URL in a brief is noise.
+ */
+export function markdownToInlineMarkup(input: string): string {
+  let out = (input ?? "").replace(/\r\n/g, "\n");
+
+  // Fenced code fences carry no meaning here; keep the contents, drop the rail.
+  out = out.replace(/^```[^\n]*\n?/gm, "").replace(/^```$/gm, "");
+
+  // Headings: bold, on their own line.
+  out = out.replace(/^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$/gm, "<strong>$2</strong>");
+
+  // Horizontal rules add nothing to a brief.
+  out = out.replace(/^[ \t]{0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/gm, "");
+
+  // Blockquote markers.
+  out = out.replace(/^[ \t]{0,3}>[ \t]?/gm, "");
+
+  // Bullets and numbered items become readable list lines.
+  out = out.replace(/^[ \t]{0,6}[-*+][ \t]+/gm, "• ");
+  out = out.replace(/^[ \t]{0,6}(\d+)\.[ \t]+/gm, "$1. ");
+
+  // Links and images: keep the label, drop the target.
+  out = out.replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1");
+  out = out.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1");
+
+  // Emphasis. Bold before italic so `***x***` resolves outermost-first.
+  out = out.replace(/\*\*\*(?!\s)([\s\S]+?)(?<!\s)\*\*\*/g, "<strong><em>$1</em></strong>");
+  out = out.replace(/\*\*(?!\s)([\s\S]+?)(?<!\s)\*\*/g, "<strong>$1</strong>");
+  out = out.replace(/__(?!\s)([\s\S]+?)(?<!\s)__/g, "<strong>$1</strong>");
+  out = out.replace(/(^|[^\w*])\*(?!\s)([^*\n]+?)(?<!\s)\*(?!\w)/g, "$1<em>$2</em>");
+  out = out.replace(/(^|[^\w_])_(?!\s)([^_\n]+?)(?<!\s)_(?!\w)/g, "$1<em>$2</em>");
+
+  // Inline code: keep the text, drop the backticks.
+  out = out.replace(/`([^`\n]+)`/g, "$1");
+
+  return out.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+/**
  * Split a stored string into styled runs so React can render it without
  * `dangerouslySetInnerHTML`.
  */
 export function parseInlineMarkup(input: string): InlineSegment[] {
   const segments: InlineSegment[] = [];
   const open: Tag[] = [];
-  const source = input ?? "";
+  // Markdown is converted HERE, at render, rather than only on the way in:
+  // descriptions already stored as Markdown would otherwise keep rendering
+  // "## About the Role" as literal text until someone re-saved them
+  // (audit #6, A6-14).
+  const source = markdownToInlineMarkup(input ?? "");
   const token = /<(\/?)(strong|em|u|b|i|ins)\s*>/gi;
   let index = 0;
 

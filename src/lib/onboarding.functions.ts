@@ -103,9 +103,29 @@ async function markOnboardingProgress(
 /* Draft persistence — namespaced inside the existing intake draft row */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Setup progress belongs to the ORGANISATION, not to the person looking at it.
+ *
+ * The draft row is keyed on `user_id` alone, so a single staff or multi-org
+ * user carried one cursor and one "Progress saved" timestamp across every
+ * workspace they opened: all three orgs read "Step 2 of 10 · Define the first
+ * role · Progress saved 22 Aug 2026, 14:50", including one whose role had been
+ * live for days and whose admin record said "Setup complete" (audit #6, A6-15).
+ *
+ * The row stays per-user — that is the table's primary key and changing it is a
+ * migration — but the payload is now namespaced per organisation, so each
+ * workspace has its own cursor and its own saved-at stamp. A draft written
+ * before this change lives under the bare namespace and is read once as a
+ * fallback, so nobody loses a genuinely in-progress setup.
+ */
+function draftKey(orgId: string | null | undefined): string {
+  return orgId ? `${DRAFT_NAMESPACE}:${orgId}` : DRAFT_NAMESPACE;
+}
+
 async function readDraft(
   supabase: Db,
   userId: string,
+  orgId?: string | null,
 ): Promise<{ payload: Record<string, unknown>; draft: DraftShape; updatedAt: string | null }> {
   const { data } = await supabase
     .from("intake_drafts")
@@ -113,13 +133,27 @@ async function readDraft(
     .eq("user_id", userId)
     .maybeSingle();
   const payload = (data?.payload ?? {}) as Record<string, unknown>;
-  const draft = (payload[DRAFT_NAMESPACE] ?? {}) as DraftShape;
-  return { payload, draft, updatedAt: (data?.updated_at ?? null) as string | null };
+  const scoped = payload[draftKey(orgId)] as DraftShape | undefined;
+  // Legacy single-namespace draft, only when this org has none of its own.
+  const legacy = (payload[DRAFT_NAMESPACE] ?? {}) as DraftShape;
+  const draft = scoped ?? legacy;
+  // A saved-at stamp is only meaningful when there is a draft it belongs to.
+  const hasDraft = Boolean(draft && Object.keys(draft).length > 0);
+  return {
+    payload,
+    draft,
+    updatedAt: hasDraft ? ((data?.updated_at ?? null) as string | null) : null,
+  };
 }
 
-async function writeDraft(supabase: Db, userId: string, next: DraftShape) {
-  const { payload } = await readDraft(supabase, userId);
-  const merged = { ...payload, [DRAFT_NAMESPACE]: next };
+async function writeDraft(
+  supabase: Db,
+  userId: string,
+  next: DraftShape,
+  orgId?: string | null,
+) {
+  const { payload } = await readDraft(supabase, userId, orgId);
+  const merged = { ...payload, [draftKey(orgId)]: next };
   const { error } = await supabase.from("intake_drafts").upsert(
     { user_id: userId, payload: merged, updated_at: new Date().toISOString() },
     { onConflict: "user_id" },
@@ -275,7 +309,7 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     let org = data.organization_id ?? null;
     if (!org) org = await resolveOwnWorkspace(supabase, userId);
 
-    const { draft, updatedAt } = await readDraft(supabase, userId);
+    const { draft, updatedAt } = await readDraft(supabase, userId, org);
 
     if (!org) {
       return emptyOnboardingState(updatedAt);
@@ -499,12 +533,12 @@ export const saveOnboardingPlace = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as { supabase: Db; userId: string };
-    const { draft } = await readDraft(supabase, userId);
+    const { draft } = await readDraft(supabase, userId, data.organization_id ?? null);
     const savedAt = await writeDraft(supabase, userId, {
       ...draft,
       current_step: data.current_step as OnboardingStepId,
       position_id: data.position_id ?? draft.position_id ?? null,
-    });
+    }, data.organization_id ?? null);
     if (data.organization_id) {
       await assertMember(supabase, userId, data.organization_id);
       await markOnboardingProgress(supabase, data.organization_id);
@@ -525,12 +559,12 @@ export const confirmOnboardingStep = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as { supabase: Db; userId: string };
     await assertMember(supabase, userId, data.organization_id);
-    const { draft } = await readDraft(supabase, userId);
+    const { draft } = await readDraft(supabase, userId, data.organization_id);
     const step = data.step as OnboardingStepId;
     const savedAt = await writeDraft(supabase, userId, {
       ...draft,
       confirmed: { ...(draft.confirmed ?? {}), [step]: new Date().toISOString() },
-    });
+    }, data.organization_id);
 
     // Finishing the sequence flips the workspace out of first-run, but only
     // when an admin does it and only if it is still pending.
@@ -578,11 +612,11 @@ export const saveOnboardingWorkspace = createServerFn({ method: "POST" })
       })
       .eq("id", data.organization_id);
     if (error) throw new Error(error.message);
-    const { draft } = await readDraft(supabase, userId);
+    const { draft } = await readDraft(supabase, userId, data.organization_id);
     await writeDraft(supabase, userId, {
       ...draft,
       confirmed: { ...(draft.confirmed ?? {}), workspace: new Date().toISOString() },
-    });
+    }, data.organization_id);
     await markOnboardingProgress(supabase, data.organization_id);
     return { ok: true as const };
   });
@@ -672,8 +706,8 @@ export const saveOnboardingRole = createServerFn({ method: "POST" })
       positionId = (created as { id: string }).id;
     }
 
-    const { draft } = await readDraft(supabase, userId);
-    await writeDraft(supabase, userId, { ...draft, position_id: positionId });
+    const { draft } = await readDraft(supabase, userId, data.organization_id);
+    await writeDraft(supabase, userId, { ...draft, position_id: positionId }, data.organization_id);
     await markOnboardingProgress(supabase, data.organization_id);
     return { position_id: positionId };
   });
