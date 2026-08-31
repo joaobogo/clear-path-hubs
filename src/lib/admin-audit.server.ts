@@ -61,8 +61,13 @@ export async function loadRecordAudit(
     query = base().in("entity_id", ids);
   }
 
+  // id breaks ties so pagination is stable: several audit rows share a
+  // created_at (one action writing several events), and without a total order
+  // a tied row could appear on two pages while another was skipped
+  // (audit #6, A6-29).
   const { data, count, error } = await query
     .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
     .range(offset, offset + limit - 1);
   if (error) throw error;
 

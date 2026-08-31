@@ -58,7 +58,12 @@ export async function listClientVisibleMatches(
     .select("*")
     .eq("organization_id", opts.organizationId)
     .order("final_score", { ascending: false })
-    .order("scored_at", { ascending: false });
+    .order("scored_at", { ascending: false })
+    // Scores are integers, so ties are the norm rather than the exception on
+    // this list — and it is the client shortlist. Without a unique final key
+    // the same candidate could appear on two pages while another vanished
+    // (audit #6, A6-29).
+    .order("candidate_match_id", { ascending: true });
 
   if (opts.positionId) query = query.eq("position_id", opts.positionId);
   if (opts.limit) query = query.limit(opts.limit);

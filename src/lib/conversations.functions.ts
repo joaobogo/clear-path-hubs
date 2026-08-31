@@ -741,6 +741,9 @@ export async function _listMessageHistoryHandler({
     )
     .eq("conversations.organization_id", data.orgId)
     .order("created_at", { ascending: false })
+    // Messages posted in the same second are common; id makes the order total
+    // so paging back through a thread cannot repeat or drop one.
+    .order("id", { ascending: false })
     .range(from, to);
 
   if (error) throw new Error(error.message);

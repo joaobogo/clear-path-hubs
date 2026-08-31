@@ -857,6 +857,14 @@ export const listPositions = createServerFn({ method: "GET" })
     else if (sort === "title_asc") base = base.order("title", { ascending: true });
     else if (sort === "title_desc") base = base.order("title", { ascending: false });
     else base = base.order("updated_at", { ascending: false });
+    // Every sort key here is non-unique — several positions share an
+    // updated_at (a bulk edit) or a title (two openings for the same role).
+    // Postgres is free to order ties differently between queries, and each
+    // page is a separate query, so a tied row could land on page 1 and again
+    // on page 2 while another was skipped entirely: the list showed the same
+    // position twice (audit #6, A6-29). id is unique and immutable, so adding
+    // it as the final key makes the ordering total and pagination stable.
+    base = base.order("id", { ascending: true });
 
     const isPostFilterSort = sort === "delivered_desc" || sort === "action_desc";
 
@@ -2021,6 +2029,8 @@ export const searchCandidateMatches = createServerFn({ method: "POST" })
     else if (sort === "updated_asc") q = q.order("updated_at", { ascending: true });
     else if (sort === "created_desc") q = q.order("created_at", { ascending: false });
 
+    // Total order, so a tied row cannot land on two pages (audit #6, A6-29).
+    q = q.order("id", { ascending: true });
     q = q.range(offset, offset + limit - 1);
 
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
