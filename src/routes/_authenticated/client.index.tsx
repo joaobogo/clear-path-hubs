@@ -454,7 +454,13 @@ function OverviewPage() {
               </div>
 
               {/* ROLE STATUS — plain language, real dates, honest risk */}
-              <RoleStatusList roles={visibleRoles} loading={overviewPanel.loading} compact={compact} />
+              <RoleStatusList
+                roles={visibleRoles}
+                loading={overviewPanel.loading}
+                compact={compact}
+                isError={overviewPanel.isError}
+                filtered={Boolean(selectedRole)}
+              />
 
               {/* CANDIDATES WAITING ON YOU */}
               <CandidatesReleasedSection

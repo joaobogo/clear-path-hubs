@@ -16,10 +16,16 @@ export function RoleStatusList({
   roles,
   loading,
   compact,
+  isError,
+  filtered,
 }: {
   roles: Any[];
   loading: boolean;
   compact?: boolean;
+  /** The overview read failed — an empty list here means nothing. */
+  isError?: boolean;
+  /** A role filter is narrowing the list, so empty is the filter talking. */
+  filtered?: boolean;
 }) {
   if (loading) {
     return (
@@ -29,6 +35,15 @@ export function RoleStatusList({
         ))}
       </div>
     );
+  }
+  // An empty list has three causes and they are not interchangeable. Saying
+  // "Submit a role" to a client whose roles simply failed to load — or who has
+  // a filter applied — is telling them their work is missing.
+  if (isError) {
+    return <EmptyBlock text="We could not load your roles. Nothing has changed — retry above." />;
+  }
+  if (roles.length === 0 && filtered) {
+    return <EmptyBlock text="No role matches the filter above." />;
   }
   if (roles.length === 0) {
     return (
