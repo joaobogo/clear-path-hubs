@@ -230,7 +230,11 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
 export const getPositionClosure = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
-    const supabase = publicClient();
+    // EXECUTE on public_position_closure is granted to service_role only
+    // (anon was revoked deliberately), so run it server-side. The function
+    // itself returns only public-safe fields for non-active public roles.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabase = supabaseAdmin;
     const { data: row, error } = await (
       supabase.rpc as unknown as (
         fn: string,
