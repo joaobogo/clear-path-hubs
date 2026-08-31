@@ -2649,9 +2649,21 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
       const hasApprovedRun = !!approved && approved.status === "completed";
       if (!hasCurrentScore && !hasApprovedRun) reasons.push("Score incomplete — run scoring");
 
-      // Approved-run evidence
-      const evidenceArr = Array.isArray(approved?.evidence) ? approved!.evidence : [];
-      const evidenceOk = hasApprovedRun && evidenceArr.length > 0;
+      // Evidence on the run we actually have.
+      //
+      // This required an APPROVED run, so every candidate merely waiting for a
+      // decision failed the Evidence check — all 18 blocked rows showed
+      // "✗ Evidence" while no row listed evidence as a reason, because the
+      // reason below only fires once a run IS approved (audit #7, TF7-05).
+      // "We have not approved it yet" is not "it has no evidence"; approval is
+      // already tracked separately by `adminApproved`.
+      const evidenceRun = approved ?? current;
+      const evidenceArr = Array.isArray(evidenceRun?.evidence) ? evidenceRun!.evidence : [];
+      const evidenceOk = evidenceArr.length > 0;
+      // Publishing still requires the APPROVED run to carry evidence.
+      const approvedEvidenceOk = hasApprovedRun && Array.isArray(approved?.evidence)
+        ? (approved!.evidence as unknown[]).length > 0
+        : false;
       // "Not approved yet" is not a BLOCKER — it is the queue. Pushing it into
       // `reasons` sent every scored-and-waiting candidate to the blocked
       // bucket, so the desk read "awaiting review 0 · blocked 17" while the
@@ -2661,7 +2673,9 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
       if (hasCurrentScore && !approved) {
         pendingDecision.push("Scored — waiting for an admin decision");
       }
-      if (hasApprovedRun && !evidenceOk) reasons.push("Approved run has no evidence array");
+      if (hasApprovedRun && !approvedEvidenceOk) {
+        reasons.push("The approved run carries no evidence — re-approve after adding it");
+      }
 
       // Contradictions
       const contradictionStatus = String(
@@ -2726,10 +2740,12 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
         reasons.push("Score math invariant broken");
       }
 
+      // Publishing gates on the APPROVED run's evidence, which is stricter
+      // than the displayed check — loosening the display must not loosen this.
       const canPublish =
         adminApproved &&
         hasApprovedRun &&
-        evidenceOk &&
+        approvedEvidenceOk &&
         contradictionOk &&
         !missing.length &&
         !orgMismatch &&

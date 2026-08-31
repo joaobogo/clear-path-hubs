@@ -280,9 +280,11 @@ function EvidenceViewer() {
         <Tile
           label="Must-have coverage"
           value={
-            currentRun?.must_have_coverage != null
-              ? `${Math.round(currentRun.must_have_coverage * 100)}%`
-              : "—"
+            scoreVoided
+              ? "—"
+              : currentRun?.must_have_coverage != null
+                ? `${Math.round(currentRun.must_have_coverage * 100)}%`
+                : "—"
           }
         />
         <Tile
@@ -373,7 +375,16 @@ function EvidenceViewer() {
         title="Requirement mapping"
         caption="Every declared requirement, mapped to the evidence we found."
       >
-        {reqItems.length === 0 ? (
+        {scoreVoided ? (
+          /* Every verdict here was computed from text that proved unreadable,
+             and the passages behind them render as "…passage unreadable…".
+             The Score tab and the client preview already say so; this section
+             went on marking requirements Met (audit #7, TF7-04). */
+          <EmptyLine>
+            No requirement assessment to show — these verdicts were computed from unreadable
+            text. Run OCR or ask for a clean copy, then rescore.
+          </EmptyLine>
+        ) : reqItems.length === 0 ? (
           <EmptyLine>No requirement assessment yet.</EmptyLine>
         ) : (
           <ul className="space-y-2">

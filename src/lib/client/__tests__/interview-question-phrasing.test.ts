@@ -102,6 +102,17 @@ describe("phraseInterviewQuestion", () => {
       );
     });
 
+    // audit #7, TF7-08 — "Tell me about a time you were comfortable using AI
+    // tools as part of the development workflow." The adjective is fine; the
+    // activity that follows it is what breaks the frame.
+    it("drops the state frame when the phrase continues into an activity", () => {
+      expect(
+        phraseInterviewQuestion("Comfortable using AI tools as part of the development workflow"),
+      ).toBe(
+        "Can you walk me through your experience using AI tools as part of the development workflow?",
+      );
+    });
+
     it("still lets a predicative adjective take the past frame", () => {
       // "Comfortable with ambiguity" IS a state, not a noun phrase.
       expect(phraseInterviewQuestion("Comfortable with ambiguity")).toBe(

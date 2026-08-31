@@ -26,9 +26,22 @@ export const Route = createFileRoute("/_authenticated/admin/intake/$id")({
       queryFn: () => getIntakeSubmission({ data: { id: params.id } }),
     }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.intake.$id.tsx"),
+  // Was a bare sentence with no heading, explanation or way back, while every
+  // other 404 in the console gets a full card (audit #7, TF7-06).
   notFoundComponent: () => (
-    <div className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
-      Intake not found.
+    <div className="rounded-lg border bg-card p-6">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">Intake record</p>
+      <h1 className="mt-1 text-lg font-semibold">We couldn't find this intake</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
+        No intake exists for the record you opened. It may have been converted to a role or
+        deleted.
+      </p>
+      <Link
+        to="/admin/intake"
+        className="mt-4 inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted"
+      >
+        Back to intake
+      </Link>
     </div>
   ),
   head: () => ({
@@ -98,8 +111,19 @@ function IntakeDetail() {
 
   if (!data) {
     return (
-      <div className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
-        Intake not found.
+      <div className="rounded-lg border bg-card p-6">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">Intake record</p>
+        <h1 className="mt-1 text-lg font-semibold">We couldn't find this intake</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          No intake exists for the record you opened. It may have been converted to a role or
+          deleted.
+        </p>
+        <Link
+          to="/admin/intake"
+          className="mt-4 inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted"
+        >
+          Back to intake
+        </Link>
       </div>
     );
   }

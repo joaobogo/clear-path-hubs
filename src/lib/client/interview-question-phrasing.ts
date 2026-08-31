@@ -165,6 +165,18 @@ export function phraseInterviewQuestion(rawLabel: string): string {
   }
 
   if (ADJECTIVES.has(first)) {
+    // "a time you were X" only reads when X is a STATE the person was in:
+    // "comfortable with ambiguity", "available at short notice". Once the
+    // phrase continues into an activity — "comfortable using AI tools as part
+    // of the development workflow" — it stops being a state and the frame
+    // grates (audit #7, TF7-08). A gerund after the adjective is the tell.
+    const continuesIntoActivity = parts.slice(1).some((w) => isGerund(w));
+    if (continuesIntoActivity) {
+      return `Can you walk me through your experience ${lowerFirst(label).replace(
+        new RegExp(`^${first}\\s+`, "i"),
+        "",
+      )}?`;
+    }
     return `Tell me about a time you were ${lowerFirst(label)}.`;
   }
 
