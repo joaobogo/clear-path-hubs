@@ -102,4 +102,7 @@ export function buildJourney(state: CandidateStateKey, i: StatusInputs): Journey
   }));
 }
 
-export const OPEN_POSITION_STATUSES = ["active", "approved", "paused", "draft"];
+// Removed: an unused export that counted "draft" as open. Nothing imported it,
+// and anything that had would have accepted applications to unpublished roles.
+// The two real definitions live in vocabulary.ts as POSITION_STATUSES_IN_PLAY
+// and POSITION_STATUSES_HIRING.

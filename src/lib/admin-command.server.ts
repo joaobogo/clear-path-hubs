@@ -6,6 +6,7 @@
  * derived "trends", no sampled estimates.
  */
 import { attachMemberProfiles } from "@/lib/membership-profiles.server";
+import { POSITION_STATUSES_HIRING } from "@/lib/vocabulary";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,7 +75,8 @@ const AGING_HOURS = 24;
 
 const PIPELINE_STATES = ["queued", "parsing", "enriching", "ready_to_score", "parsed"];
 const FAILED_STATES = ["failed", "provider_blocked", "ocr_required", "manual_review_required"];
-const OPEN_POSITION_STATES = ["approved", "active"];
+// The narrower of the two senses: live and taking candidates now.
+const OPEN_POSITION_STATES = POSITION_STATUSES_HIRING as unknown as string[];
 
 function iso(d: Date) {
   return d.toISOString();

@@ -19,14 +19,7 @@ type Any = any;
 const DAY = 86_400_000;
 
 /** Positions that are live work for the delivery team. */
-const OPEN_POSITION_STATUSES = [
-  "submitted",
-  "under_review",
-  "needs_clarification",
-  "approved",
-  "active",
-  "paused",
-] as const;
+import { POSITION_STATUSES_IN_PLAY as OPEN_POSITION_STATUSES } from "@/lib/vocabulary";
 
 export type HealthBand = "at_risk" | "watch" | "healthy";
 

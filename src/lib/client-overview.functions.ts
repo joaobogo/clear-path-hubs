@@ -1,6 +1,7 @@
 // Client overview read (health, queue, milestones, KPIs).
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
+import { POSITION_STATUSES_HIRING } from "@/lib/vocabulary";
 import { excludeTestRecords } from "@/lib/client/test-record-filter";
 import { CLIENT_RELEVANT_ACTIONS } from "@/lib/client-activity-actions";
 import { briefField } from "@/lib/position-info-requests";
@@ -153,7 +154,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
           .eq("organization_id", data.orgId)
           // Active work only: a closed or on-hold role must leave every count
           // and the decision queue in the same refresh.
-          .in("status", ["active", "approved"]),
+          .in("status", POSITION_STATUSES_HIRING),
       ).order("updated_at", { ascending: false }),
       // Open roles: the one reader decides the number.
       countOpenRolesForOrg(context.supabase, data.orgId),

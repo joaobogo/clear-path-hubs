@@ -9,14 +9,10 @@
 /** Position statuses that count as live delivery work (same as portfolio health). */
 import { formatMoneyFromCents } from "@/lib/money";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
-export const ACCOUNT_OPEN_POSITION_STATUSES = [
-  "submitted",
-  "under_review",
-  "needs_clarification",
-  "approved",
-  "active",
-  "paused",
-] as const;
+// One definition, in vocabulary.ts. This list existed here and byte-identically
+// in admin-portfolio.server.ts, with two narrower variants elsewhere — four
+// answers to "which positions are open" that could drift apart silently.
+export { POSITION_STATUSES_IN_PLAY as ACCOUNT_OPEN_POSITION_STATUSES } from "@/lib/vocabulary";
 
 /** Match stages that are still live pipeline (everything not terminal). */
 export const ACCOUNT_TERMINAL_MATCH_STAGES = [

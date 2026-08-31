@@ -55,7 +55,62 @@ export const PIPELINE_STAGE_VOCABULARY = {
 
 export type PipelineStageKey = keyof typeof PIPELINE_STAGE_VOCABULARY;
 
-/** Position lifecycle. */
+/**
+ * The position_status values that actually exist in the database.
+ *
+ * POSITION_STATUS_VOCABULARY below is a DISPLAY registry: it carries legacy and
+ * alias keys so an old row still renders as English, and it is not the domain.
+ * Reading it as the domain is how `p.status === "open"` was written into the
+ * client weekly update — "open" is a label in that map but has never been a
+ * value of the enum, so the draft reported "Open roles: 0" to every client.
+ *
+ * Compare against THIS list. It is pinned to the migrations by
+ * tests/unit/position-status-enum.test.ts, so adding a value to the database
+ * without adding it here fails the build.
+ */
+export const POSITION_STATUS_VALUES = [
+  "draft",
+  "submitted",
+  "needs_clarification",
+  "under_review",
+  "approved",
+  "active",
+  "paused",
+  "filled",
+  "closed",
+  "archived",
+] as const;
+
+export type PositionStatus = (typeof POSITION_STATUS_VALUES)[number];
+
+/**
+ * "Which positions are open" had five different answers across the codebase —
+ * two byte-identical copies, a narrower pair, an inline literal, and a dead
+ * export that also counted drafts. Two meanings are actually needed, so they
+ * are named here and nowhere else.
+ *
+ * IN_PLAY: the account has this role open with us — anything not draft, filled,
+ * closed or archived. Use for "roles on this account".
+ */
+export const POSITION_STATUSES_IN_PLAY = [
+  "submitted",
+  "under_review",
+  "needs_clarification",
+  "approved",
+  "active",
+  "paused",
+] as const satisfies readonly PositionStatus[];
+
+/**
+ * HIRING: live and taking candidates right now. Narrower than IN_PLAY — a role
+ * awaiting clarification is open with us but is not receiving anybody.
+ */
+export const POSITION_STATUSES_HIRING = [
+  "approved",
+  "active",
+] as const satisfies readonly PositionStatus[];
+
+/** Position lifecycle — DISPLAY LABELS ONLY. See POSITION_STATUS_VALUES. */
 export const POSITION_STATUS_VOCABULARY = {
   draft: { label: "Draft" },
   intake: { label: "Intake" },
