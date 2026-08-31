@@ -551,6 +551,16 @@ export function CompareSheet({
                   {c.concerns.slice(0, 4).map((s, i) => (
                     <li key={i}>{humanizeConcernSentence(s)}</li>
                   ))}
+                  {/* A comparison that hides concerns unevenly is worse than
+                      no comparison: a candidate with nine flagged concerns and
+                      one with four both showed four, side by side, with
+                      nothing to distinguish them. Skills below already counted
+                      its overflow; this did not. */}
+                  {c.concerns.length > 4 && (
+                    <li className="list-none text-muted-foreground">
+                      +{c.concerns.length - 4} more — open the candidate to read them all
+                    </li>
+                  )}
                   {c.concerns.length === 0 && (
                     <li className="list-none text-muted-foreground">None flagged.</li>
                   )}
@@ -592,6 +602,9 @@ export function CompareSheet({
                       )}
                     </li>
                   ))}
+                  {c.education.length > 3 && (
+                    <li className="text-muted-foreground">+{c.education.length - 3} more</li>
+                  )}
                   {c.education.length === 0 && (
                     <li className="text-muted-foreground">Not provided</li>
                   )}
@@ -622,6 +635,11 @@ export function CompareSheet({
                         {c.interview_guide.slice(0, 3).map((q, i) => (
                           <li key={i}>{q.question}</li>
                         ))}
+                        {c.interview_guide.length > 3 && (
+                          <li className="list-none text-muted-foreground">
+                            +{c.interview_guide.length - 3} more on the candidate page
+                          </li>
+                        )}
                         {c.interview_guide.length === 0 && (
                           <li className="list-none text-muted-foreground">No suggestions available.</li>
                         )}
