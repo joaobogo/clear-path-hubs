@@ -45,6 +45,20 @@ describe("breadcrumbs cover every section tab", () => {
     });
   }
 
+  it("names an unmatched path rather than the workspace", () => {
+    // A mistyped or retired URL owned by no nav entry and no tab used to fall
+    // back to the workspace label, so /admin/publish-desk rendered "We could
+    // not find that record" under a top bar reading "Admin" (audit #8).
+    const sources = [...sectionTabsAsCrumbSources("admin", "/admin/publish-desk", {}), ...ADMIN_NAV];
+    const crumbs = buildBreadcrumbs("/admin/publish-desk", sources);
+    expect(crumbs).toHaveLength(1);
+    expect(crumbs[0]?.label).toBe("Publish Desk");
+  });
+
+  it("still returns nothing for a bare workspace root it does not own", () => {
+    expect(buildBreadcrumbs("/nowhere", [])).toEqual([]);
+  });
+
   it("a detail page below a tab still resolves against the subtree owner", () => {
     // The tab sources are exact matches on purpose: /admin/candidates/<id>
     // must keep resolving to the sidebar entry that owns the subtree, so the

@@ -145,6 +145,15 @@ export function sectionTabsAsCrumbSources(
     .map((t) => ({ to: t.to, label: t.label, exact: true }) as WorkspaceNavItem);
 }
 
+/** "publish-desk" -> "Publish Desk". One definition, used by both branches. */
+function titleCase(value: string): string {
+  return value
+    .replace(/[-_]/g, " ")
+    .split(" ")
+    .map((w) => (w ? w[0]!.toUpperCase() + w.slice(1) : w))
+    .join(" ");
+}
+
 export function buildBreadcrumbs(
   pathname: string,
   navItems: WorkspaceNavItem[],
@@ -155,7 +164,17 @@ export function buildBreadcrumbs(
   const section = sorted.find((n) =>
     n.exact ? pathname === n.to : pathname === n.to || pathname.startsWith(n.to + "/"),
   );
-  if (!section) return [];
+  if (!section) {
+    // No nav entry and no tab owns this path — a mistyped or retired URL. The
+    // shell used to fall back to the workspace label, so /admin/publish-desk
+    // rendered "We could not find that record" under a top bar reading
+    // "Admin" (audit #8). Naming the path the reader actually asked for is
+    // both more useful and more honest than naming the workspace.
+    const segments = pathname.split("/").filter(Boolean).slice(1);
+    const tail = segments[segments.length - 1];
+    if (!tail) return [];
+    return [{ label: titleCase(tail) }];
+  }
   if (pathname === section.to) return [{ label: section.label }];
   // Add a trailing crumb from the remaining path segments (Title-cased last segment).
   const tail = pathname.slice(section.to.length).split("/").filter(Boolean);
@@ -165,11 +184,6 @@ export function buildBreadcrumbs(
   // A detail page publishes the record's own name; only fall back to the raw
   // segment (a uuid, which reads as gibberish) when nothing was published.
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(last);
-  const titleCase = (s: string) =>
-    s
-      .replace(/[-_]/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-
   // A raw uuid with no published label means the record is still loading.
   // Show a skeleton crumb rather than a generic entity-type literal.
   // Verb segments like /new are URL grammar, not record names: read them as

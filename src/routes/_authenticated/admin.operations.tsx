@@ -711,11 +711,23 @@ function RescoreAllButton({ onDone }: { onDone: (msg: string) => void }) {
       const skipped = r.skippedArchived
         ? ` · ${r.skippedArchived} skipped (archived role)`
         : "";
+      // Say what a successful run did NOT do. Score runs are immutable and
+      // land unapproved, so a re-score changes no list, no client workspace
+      // and no Stale chip until someone approves the new runs. The old message
+      // read as "finished", and 19 Stale chips survived a run it called
+      // successful (audit #8, TF8-11).
+      const needsApproval =
+        r.rescored > 0
+          ? ` ${r.rescored} new run${r.rescored === 1 ? "" : "s"} ${
+              r.rescored === 1 ? "is" : "are"
+            } waiting for approval — nothing changes for clients, and no stale marker clears, until they are approved in Scoring review.`
+          : "";
       onDone(
         r.rescored === 0
           ? `Every candidate is already scored on ${ENGINE_VERSION.replace(/^taasflow-scoring-/, "")} — nothing to do.${skipped}`
           : `Re-scored ${r.rescored} candidate${r.rescored === 1 ? "" : "s"} on the current engine${skipped}` +
-              (r.failed ? ` · ${r.failed} failed, see Operations incidents` : ""),
+              (r.failed ? ` · ${r.failed} failed, see Operations incidents` : "") +
+              `.${needsApproval}`,
       );
       await qc.invalidateQueries({ queryKey: ["pipeline-health"] });
       await qc.invalidateQueries({ queryKey: ["admin-processing"] });

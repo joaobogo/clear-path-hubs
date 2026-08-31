@@ -40,30 +40,47 @@ const STATUS_TONE: Record<string, string> = {
   cancelled: "bg-muted text-muted-foreground",
 };
 
-const GROUPS: Array<{ key: string; title: string; statuses: string[]; hint: string }> = [
+const GROUPS: Array<{
+  key: string;
+  title: string;
+  statuses: string[];
+  hint: string;
+  /**
+   * What an empty group means. Every group carried a real explanation of what
+   * it holds, and then rendered a bare "Nothing here." when it held nothing —
+   * so "Scheduled · 0" read as reassurance while three interviews sat in
+   * "Awaiting a time" (audit #8, TF8-13).
+   */
+  empty: string;
+}> = [
   {
     key: "coordinate",
     title: "Awaiting a time",
     statuses: ["requested", "scheduling"],
     hint: "The client asked to interview — propose or confirm a slot.",
+    empty: "No outstanding requests. Nothing is waiting on you here.",
   },
   {
     key: "scheduled",
     title: "Scheduled",
     statuses: ["scheduled"],
     hint: "Confirmed and on the calendar.",
+    empty:
+      "Nothing is booked. Any interview still waiting on a time is in “Awaiting a time” above.",
   },
   {
     key: "done",
     title: "Recently completed",
     statuses: ["completed"],
     hint: "Held — chase feedback if the scorecard is still missing.",
+    empty: "No interviews have been held yet.",
   },
   {
     key: "cancelled",
     title: "Cancelled",
     statuses: ["cancelled"],
     hint: "Called off. Kept on the page so the counts account for every interview.",
+    empty: "Nothing has been cancelled.",
   },
 ];
 
@@ -141,6 +158,10 @@ function InterviewsPage() {
                     key: "other",
                     title: "Other statuses",
                     hint: "Not in a stage above — shown so no interview is hidden.",
+                    // Only built when ungrouped rows exist, so this never
+                    // renders — but the shape has to match or the group list
+                    // loses its type.
+                    empty: "Every interview is in one of the stages above.",
                     rows: ungrouped,
                   },
                 ]
@@ -156,7 +177,7 @@ function InterviewsPage() {
                   </span>
                 </div>
                 {rows.length === 0 ? (
-                  <Card className="p-4 text-sm text-muted-foreground">Nothing here.</Card>
+                  <Card className="p-4 text-sm text-muted-foreground">{g.empty}</Card>
                 ) : (
                   <div className="space-y-2">
                     {rows.map((iv) => {

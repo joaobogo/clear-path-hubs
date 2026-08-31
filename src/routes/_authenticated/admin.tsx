@@ -130,7 +130,12 @@ function AdminLayout() {
   // the email for the same session (audit X-07).
   const user = ctx.user;
   const userId = (user?.id as string | null) ?? null;
+  // The account record first. auth user_metadata is self-set at sign-up and
+  // drifts from the profiles row that /admin/team lists as the staff record:
+  // one session read "Joao Luciano" here, "John Kasprzak" in the client shell
+  // and on /me, and "Admin" in the account menu (audit #8, TF8-14).
   const displayIdentity =
+    (staffAccess?.displayName as string | undefined) ??
     (user?.user_metadata?.full_name as string | undefined) ??
     (user?.user_metadata?.name as string | undefined) ??
     (user?.email as string | undefined) ??
@@ -149,6 +154,7 @@ function AdminLayout() {
         contextKicker="TaaSFlow"
         contextLabel="Admin"
         contextSubLabel={displayIdentity ?? undefined}
+        accountLabel={displayIdentity ?? undefined}
         navItems={navItems}
         searchScope="admin"
         headerSlot={
