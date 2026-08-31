@@ -280,6 +280,8 @@ export const FitHero = memo(function FitHero({
             <div className="mt-3">
               <div className="text-5xl font-semibold tracking-tight tabular-nums">
                 {Math.round(candidate.score)}
+                {/* A literal space as well as the margin: copied text and
+                    screen readers read "77out of 100" without it. */}{" "}
                 <span className="ml-1.5 text-lg font-medium text-muted-foreground">
                   out of 100
                 </span>

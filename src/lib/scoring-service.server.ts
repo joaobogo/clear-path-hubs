@@ -663,7 +663,11 @@ function buildExplanation(r: ScoringResult, caps: Array<{ reason: string; cap: n
   // "worth considering — score 82.9/100" under a header reading
   // "83 · Strong" (audit #4, M3). One band table, one word.
   const parts = [
-    `${classifyScoreBand(r.score).label} — score ${r.score.toFixed(1)}/100`,
+    // The header shows a whole number, so the sentence beneath it must too:
+    // "Strong — score 82.9/100" sat under a header reading "83", and
+    // "Not recommended — score 45.7/100" under "46" (audit #6, A6-25). The
+    // engine keeps its precision; only the sentence rounds.
+    `${classifyScoreBand(r.score).label} — score ${Math.round(r.score)}/100`,
     `must-have coverage ${(r.must_have_coverage * 100).toFixed(0)}%`,
     `preferred coverage ${(r.preferred_coverage * 100).toFixed(0)}%`,
   ];

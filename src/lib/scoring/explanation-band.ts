@@ -31,8 +31,12 @@ export function reconcileExplanationBand(explanation: string | null | undefined)
   if (!Number.isFinite(score)) return text;
 
   const canonical = classifyScoreBand(score).label;
-  // Already agrees — leave the exact stored bytes alone.
-  if (m[1]!.trim().toLowerCase() === canonical.toLowerCase()) return text;
+  // The header shows a whole number, so this sentence must too — stored runs
+  // carry "score 82.9/100" under a header reading "83" (audit #6, A6-25).
+  const whole = String(Math.round(score));
+  const agrees = m[1]!.trim().toLowerCase() === canonical.toLowerCase();
+  // Already agrees on both counts — leave the exact stored bytes alone.
+  if (agrees && m[2] === whole) return text;
 
-  return text.replace(LEADING_CLAUSE, `${canonical} — score ${m[2]}/100`);
+  return text.replace(LEADING_CLAUSE, `${canonical} — score ${whole}/100`);
 }

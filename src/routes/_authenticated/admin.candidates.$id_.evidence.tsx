@@ -241,7 +241,11 @@ function EvidenceViewer() {
         <Tile
           label="Score"
           value={
-            scoreVoided ? "No score" : currentRun?.score != null ? String(currentRun.score) : "—"
+            scoreVoided
+              ? "No score"
+              : currentRun?.score != null
+                ? String(Math.round(Number(currentRun.final_score ?? currentRun.score)))
+                : "—"
           }
         />
         <Tile

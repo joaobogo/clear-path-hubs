@@ -134,6 +134,12 @@ function fmt(v: unknown) {
   return /[a-z]/.test(s) && /^[a-z0-9]+([_.][a-z0-9]+)+$/.test(s) ? humanizeCode(s) : s;
 }
 
+/** A score as the whole number every other surface shows. */
+function wholeScore(v: unknown): string {
+  const n = typeof v === "number" ? v : Number(v);
+  return v == null || !Number.isFinite(n) ? "—" : String(Math.round(n));
+}
+
 /** A stored 0-1 coverage ratio as the whole percentage every surface shows. */
 function pctOfRatio(v: unknown): string {
   const n = typeof v === "number" ? v : Number(v);
@@ -650,7 +656,13 @@ function ReviewWorkspace() {
                           <Badge variant="outline">{item.supporting_role}</Badge>
                         ) : null}
                         <span className="text-xs text-muted-foreground">
-                          confidence {item.confidence ?? "—"}
+                          {/* A bare 0-1 decimal here read "confidence 0.9"
+                              while /admin/review showed "confidence 90%" for
+                              the same item (audit #6, A6-25). */}
+                          confidence{" "}
+                          {item.confidence == null
+                            ? "—"
+                            : `${Math.round(Number(item.confidence) * 100)}%`}
                         </span>
                         {item.integrity_ok === false ? (
                           <Badge variant="destructive">flagged</Badge>
@@ -866,12 +878,15 @@ function ReviewWorkspace() {
               <dl className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Current</dt>
-                  <dd>{fmt(currentRun.final_score ?? currentRun.score)}</dd>
+                  {/* Whole numbers, like every other surface: this read
+                      "Current 77.1" beside a header saying 77 (audit #6,
+                      A6-25). */}
+                  <dd>{wholeScore(currentRun.final_score ?? currentRun.score)}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Previous</dt>
                   <dd>
-                    {previousRun ? fmt(previousRun.final_score ?? previousRun.score) : "—"}
+                    {previousRun ? wholeScore(previousRun.final_score ?? previousRun.score) : "—"}
                   </dd>
                 </div>
                 {scoreDelta != null ? (
