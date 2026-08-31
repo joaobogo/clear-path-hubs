@@ -153,6 +153,52 @@ const DICTIONARY: Record<string, string> = {
 export const ENUM_LABELS: Readonly<Record<string, string>> = DICTIONARY;
 
 /**
+ * A failure REASON as a sentence, for anywhere a person reads why something
+ * stopped.
+ *
+ * `humanizeCode` labels an enum ("Ocr Required"); this answers "why did this
+ * not happen, and what now". Admin surfaces were printing the raw token
+ * instead — "Why: position_status:archived.", "Blocked:
+ * position_status:archived", "Unclassified failure — position_status:archived",
+ * "match_not_found." (audit #6, A6-26).
+ *
+ * Codes may carry a `key:value` shape, which `humanizeCode` mangles into
+ * "Position Status Archived". Those are matched whole first.
+ */
+const REASON_SENTENCES: Record<string, string> = {
+  "position_status:archived":
+    "The role is archived, so this candidate cannot be scored or published.",
+  "position_status:closed": "The role is closed, so this candidate cannot be published.",
+  match_not_found: "That candidate record no longer exists.",
+  position_inactive: "The role is not live, so scoring cannot run against it.",
+  requirements_missing: "The role has no structured requirements to score against.",
+  cv_unreadable: "The CV could not be read as text — run OCR or ask for a clean copy.",
+  missing_usable_cv: "There is no usable CV on file for this candidate.",
+  provider_error: "An upstream service refused the request, so nothing was recorded.",
+  engine_error: "The scoring engine stopped before it finished.",
+  sandbox_workspace:
+    "This is a demo workspace, so the message was recorded rather than sent.",
+  screening_contradicts_cv: "A screening answer and the CV disagree.",
+  disqualifying_answer: "A screening answer tripped one of this role's dealbreakers.",
+  storage_unreadable: "The uploaded file could not be read back from storage.",
+  extract_empty: "No text could be extracted from the document.",
+  text_layer_missing: "The document is a scan with no text layer — it needs OCR.",
+};
+
+export function humanizeReason(code: string | null | undefined): string {
+  if (!code) return "No reason recorded.";
+  const raw = String(code).trim();
+  const key = raw.toLowerCase();
+  if (REASON_SENTENCES[key]) return REASON_SENTENCES[key];
+  // `key:value` — try the key alone before falling back.
+  const head = key.split(":")[0]!;
+  if (head !== key && REASON_SENTENCES[head]) return REASON_SENTENCES[head];
+  // Not a code at all — a written sentence passes through untouched.
+  if (/\s/.test(raw) && !/^[a-z0-9_:.-]+$/i.test(raw)) return raw;
+  return `${humanizeCode(raw)}.`;
+}
+
+/**
  * Humanize a code or enum value.
  * If not in the dictionary, falls back to start_case (replacing underscores with spaces).
  */
@@ -354,6 +400,13 @@ export function humanizeTechnicalError(raw: string | null | undefined): string |
 
   if (s.includes("unique or exclusion constraint")) {
     return "Record already exists (duplicate key).";
+  }
+
+  // A bare reason code — "position_status:archived", "match_not_found" — fell
+  // through to the "keep the leading clause" branch below and was printed
+  // verbatim on Operations, Health and in toasts (audit #6, A6-26).
+  if (/^[a-z0-9_.:-]+$/i.test(s) && REASON_SENTENCES[s.toLowerCase()]) {
+    return REASON_SENTENCES[s.toLowerCase()]!;
   }
 
   // Prefer an explicit machine code carried in the payload.

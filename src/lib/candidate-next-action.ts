@@ -8,6 +8,7 @@
  *
  * Deliberately absent: any AI recommendation and any confidence percentage.
  */
+import { humanizeReason } from "@/lib/humanize-codes";
 
 export type OwnerSide = "us" | "client" | "candidate" | "system" | "none" | "unclear";
 
@@ -180,7 +181,9 @@ export function deriveNextAction(f: NextActionFacts): NextAction {
       step: "repair_processing",
       owner: "us",
       step_label: "Repair processing and review evidence",
-      because: `Processing stopped in state "${f.processing_state}", so there is no usable score yet.`,
+      // The raw state token was the explanation — "Processing stopped in
+      // state \"ocr_required\"" (audit #6, A6-26).
+      because: `${humanizeReason(f.processing_state)} There is no usable score yet.`,
       waiting_since: firstTs(f.processing_updated_at, f.created_at),
       action: { kind: "navigate", tab: "evidence" },
       action_label: "Review evidence",
@@ -193,7 +196,7 @@ export function deriveNextAction(f: NextActionFacts): NextAction {
       step: "processing_running",
       owner: "system",
       step_label: "Processing in progress — no action yet",
-      because: `The CV pipeline is in state "${f.processing_state}".`,
+      because: humanizeReason(f.processing_state),
       waiting_since: firstTs(f.processing_updated_at, f.created_at),
       action: { kind: "navigate", tab: "cv" },
       action_label: "Open CV & parsed",
