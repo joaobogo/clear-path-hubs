@@ -15,8 +15,22 @@ export type Provenance = {
   window_start: string | null;
   /** End of the observation window, ISO string. Null when up to now. */
   window_end: string | null;
-  /** How many underlying records went into it. */
+  /**
+   * How many underlying records went into it.
+   *
+   * The number COUNTED, never the number read. The people tile displayed 32
+   * while its own provenance panel said "Records: 1,000" — a round thousand
+   * being the signature of a query cap rendered as a record count — so the one
+   * panel built to justify a figure was the one number in it that could not be
+   * trusted (audit 1 Sep, F22).
+   */
   record_count: number;
+  /**
+   * Set only when a query cap actually bound, so the reader knows the figure is
+   * a floor. Absent means the count is complete, which is the common case and
+   * must stay silent.
+   */
+  capped_at?: number;
   /** How many distinct closed searches, where that is the honest unit. */
   closed_searches?: number;
   /** When the figure itself was computed. */

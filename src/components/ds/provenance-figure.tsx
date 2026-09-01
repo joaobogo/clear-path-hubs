@@ -54,6 +54,19 @@ export function ProvenanceFigure({
                   {provenance.record_count.toLocaleString(APP_LOCALE)}
                 </dd>
               </div>
+              {/* A cap is only worth saying when it actually bound. Silence
+                  here means the count is complete, which is the common case;
+                  the alternative — printing the cap as the record count — is
+                  what made this panel untrustworthy (audit 1 Sep, F22). */}
+              {typeof provenance.capped_at === "number" && (
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted-foreground">Scan limit reached</dt>
+                  <dd className="font-medium tabular-nums">
+                    {provenance.capped_at.toLocaleString(APP_LOCALE)} rows — this figure is a
+                    floor
+                  </dd>
+                </div>
+              )}
               {typeof provenance.closed_searches === "number" && (
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Closed searches</dt>

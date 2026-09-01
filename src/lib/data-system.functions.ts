@@ -1,4 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
+
+/** Graph edges scanned to count distinct people. Reported when it binds. */
+const TALENT_GRAPH_SCAN_LIMIT = 20000;
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
@@ -93,7 +96,7 @@ export const getDataAdvantage = createServerFn({ method: "GET" })
       .from("talent_graph_edges")
       .select("person_id, edge_kind, occurred_at, position_id")
       .eq("organization_id", data.organization_id)
-      .limit(20000);
+      .limit(TALENT_GRAPH_SCAN_LIMIT);
 
     const rows: Array<{
       person_id: string;
@@ -144,7 +147,11 @@ export const getDataAdvantage = createServerFn({ method: "GET" })
         sources: ["talent_graph_edges", "talent_persons"],
         window_start: null,
         window_end: null,
-        record_count: rows.length,
+        // The count the tile SHOWS — distinct people — not the number of graph
+        // edges read to reach it. The panel said "Records: 1,000" beside a tile
+        // reading 32 (audit 1 Sep, F22).
+        record_count: people.size,
+        capped_at: rows.length >= TALENT_GRAPH_SCAN_LIMIT ? TALENT_GRAPH_SCAN_LIMIT : undefined,
       }),
       evidence_items: sourced(evidenceCount ?? 0, {
         computed_from:
