@@ -1,4 +1,5 @@
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
+import { buildInfo } from "@/lib/build-info";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -689,6 +690,7 @@ function CategoryPill({
  * looks like a hung button.
  */
 function RescoreAllButton({ onDone }: { onDone: (msg: string) => void }) {
+  const build = buildInfo();
   const qc = useQueryClient();
   const { confirm, confirmDialog } = useConfirmAction();
   const rescoreFn = useServerFn(rescoreAllScored);
@@ -770,6 +772,16 @@ function RescoreAllButton({ onDone }: { onDone: (msg: string) => void }) {
     <span className="ml-2 text-xs text-muted-foreground">
       Engine running today:{" "}
       <span className="font-mono">{ENGINE_VERSION.replace(/^taasflow-scoring-/, "")}</span>
+      {/* The engine version answers "which scoring rules", not "which build".
+          It only moves when scoring SEMANTICS move, so sixteen commits of
+          interface and derivation fixes shipped under v1.5.2 after audit #8
+          gated on v1.5.2 — and the one question every audit opens with, "am I
+          testing the code I am reading?", had no answer on this page. */}
+      {" · "}
+      <span className="font-mono" title={build.builtAt ?? "build time unknown"}>
+        {build.label}
+      </span>
+      {build.builtAt ? ` · deployed ${formatDateTime(build.builtAt)}` : ""}
     </span>
     </>
   );

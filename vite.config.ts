@@ -35,6 +35,34 @@ function publicVocabularyGuard() {
 }
 
 
+/**
+ * Stamp the build so a served page can say which commit it came from.
+ *
+ * ENGINE_VERSION only moves when scoring semantics move, so it cannot answer
+ * "is this the build I am reading?" — sixteen commits shipped under v1.5.2
+ * after audit #8 gated on v1.5.2. Falls back through the CI-provided sha
+ * variables, then to "unknown", which build-info.ts renders as "not stamped"
+ * rather than inventing an identifier.
+ */
+function buildStamp(): { sha: string; time: string } {
+  const fromEnv =
+    process.env.LOVABLE_COMMIT_SHA ||
+    process.env.CF_PAGES_COMMIT_SHA ||
+    process.env.VERCEL_GIT_COMMIT_SHA ||
+    process.env.GITHUB_SHA ||
+    "";
+  if (fromEnv) return { sha: fromEnv.slice(0, 7), time: new Date().toISOString() };
+
+  const git = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
+    cwd: import.meta.dirname,
+    encoding: "utf8",
+  });
+  const sha = git.status === 0 ? git.stdout.trim() : "unknown";
+  return { sha, time: new Date().toISOString() };
+}
+
+const STAMP = buildStamp();
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
@@ -42,6 +70,10 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    define: {
+      __BUILD_SHA__: JSON.stringify(STAMP.sha),
+      __BUILD_TIME__: JSON.stringify(STAMP.time),
+    },
     plugins: [publicVocabularyGuard(), imagetools(), mcpPlugin()],
     resolve: {
       alias: {
