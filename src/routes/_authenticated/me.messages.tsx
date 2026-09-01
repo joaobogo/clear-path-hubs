@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -23,11 +24,15 @@ export const Route = createFileRoute("/_authenticated/me/messages")({
  queryKey: ["me-messages"],
  queryFn: () => listMyMessages(),
  }),
+ // Bounded: a route-specific skeleton REPLACES the bounded router default,
+ // so it carries its own timeout (audit 1 Sep, F11).
  pendingComponent: () => (
+ <SkeletonTimeout>
  <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
  <div className="h-8 w-40 animate-pulse rounded bg-muted" />
  <div className="h-64 animate-pulse rounded-lg bg-muted" />
  </div>
+ </SkeletonTimeout>
  ),
  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.messages.tsx"),
  notFoundComponent: () => <div className="p-8">Not found.</div>,

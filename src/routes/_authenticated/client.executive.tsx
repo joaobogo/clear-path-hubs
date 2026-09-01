@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -36,11 +37,16 @@ export const Route = createFileRoute("/_authenticated/client/executive")({
   notFoundComponent: makeRouteNotFoundComponent("client"),
   // First paint was a bare white page for seconds (audit C-03/X-02).
   pendingComponent: () => (
+    // Bounded: a route-specific skeleton REPLACES the bounded router
+    // default, so it has to carry its own timeout or a hung loader shows an
+    // unbounded skeleton again (audit 1 Sep, F11).
+    <SkeletonTimeout>
     <div className="mx-auto max-w-6xl space-y-4 p-6" aria-busy="true">
       <SkeletonStats />
       <SkeletonStats />
       <span className="sr-only">Loading insights…</span>
     </div>
+    </SkeletonTimeout>
   ),
   component: ExecutivePage,
 });

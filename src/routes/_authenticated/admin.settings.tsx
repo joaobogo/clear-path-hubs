@@ -2,10 +2,25 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, AlertTriangle, Ban, Copy, Wrench } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { BusinessRulesPanel, BUSINESS_RULES_QUERY } from "@/components/admin/business-rules-panel";
+import { BusinessRulesPanel } from "@/components/admin/business-rules-panel";
+import { DeferredBlock } from "@/components/ds/deferred-block";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(BUSINESS_RULES_QUERY),
+  // No blocking loader.
+  //
+  // This route awaited ensureQueryData(BUSINESS_RULES_QUERY) before rendering
+  // anything, and BusinessRulesPanel below reads the same query through
+  // useSuspenseQuery. When that read did not settle, the page rendered its
+  // shell and then grey skeletons indefinitely — three visits, 6s, 10s and
+  // 12s, no h1, no content, no error, no retry, nothing in the console. An
+  // entire desk in the sidebar was unreachable, and a permanent skeleton is
+  // the worst of both worlds: it looks healthy and never resolves
+  // (audit 1 Sep, F11).
+  //
+  // The registry table below this is static and has no reason to wait on a
+  // network read at all. The panel now loads inside a bounded DeferredBlock,
+  // which is the pattern the admin layout already uses, so a hung or failing
+  // read becomes a visible error with a Retry beside a page that rendered.
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.settings.tsx"),
   head: () => ({
     meta: [
@@ -189,7 +204,12 @@ function SettingsPage() {
             recorded in the change log below.
           </p>
         </div>
-        <BusinessRulesPanel />
+        <DeferredBlock
+          timeoutMs={10_000}
+          errorTitle="Business rules could not be loaded"
+        >
+          <BusinessRulesPanel />
+        </DeferredBlock>
       </section>
     </div>
   );

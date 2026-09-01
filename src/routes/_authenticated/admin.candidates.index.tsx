@@ -1,4 +1,5 @@
 import { createFileRoute, Link, stripSearchParams } from "@tanstack/react-router";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import {
   makeRouteErrorComponent,
   makeRouteNotFoundComponent,
@@ -160,6 +161,10 @@ function buildFilters(search: SearchState) {
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/")({
   pendingComponent: () => (
+    // Bounded: a route-specific skeleton REPLACES the bounded router
+    // default, so it has to carry its own timeout or a hung loader shows an
+    // unbounded skeleton again (audit 1 Sep, F11).
+    <SkeletonTimeout>
     <div className="space-y-6">
       <div className="h-8 w-48 animate-pulse rounded bg-muted" />
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -169,6 +174,7 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/")({
       </div>
       <div className="h-[600px] w-full animate-pulse rounded-lg bg-muted" />
     </div>
+    </SkeletonTimeout>
   ),
 
   validateSearch: zodValidator(searchSchema),

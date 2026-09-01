@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
@@ -40,6 +41,10 @@ export const Route = createFileRoute("/_authenticated/admin/")({
   validateSearch: (raw: Record<string, unknown>): { scope?: QueueScope } =>
     raw["scope"] === "mine" ? { scope: "mine" } : {},
   pendingComponent: () => (
+    // Bounded: a route-specific skeleton REPLACES the bounded router
+    // default, so it has to carry its own timeout or a hung loader shows an
+    // unbounded skeleton again (audit 1 Sep, F11).
+    <SkeletonTimeout>
     <div className="space-y-6">
       <div className="space-y-2">
         <div className="h-8 w-48 animate-pulse rounded bg-muted" />
@@ -56,6 +61,7 @@ export const Route = createFileRoute("/_authenticated/admin/")({
         ))}
       </div>
     </div>
+    </SkeletonTimeout>
   ),
 
   // The loader primes with the default scope (test records hidden). The

@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import {
   useMutation,
@@ -69,7 +70,12 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id")({
   },
   // Fast navigations never flash a skeleton; slow ones get the real layout.
   pendingMs: 150,
-  pendingComponent: PositionDetailPending,
+  pendingComponent: () => (
+    // Bounded — see route-pending.tsx (audit 1 Sep, F11).
+    <SkeletonTimeout>
+      <PositionDetailPending />
+    </SkeletonTimeout>
+  ),
   notFoundComponent: () => <div className="p-8">Role not found.</div>,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.$id.tsx"),
   component: PositionDetailPage,

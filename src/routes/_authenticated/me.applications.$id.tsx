@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -53,6 +54,10 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
       queryFn: () => getMyApplication({ data: { id: params.id } }),
     }),
   pendingComponent: () => (
+    // Bounded: a route-specific skeleton REPLACES the bounded router
+    // default, so it has to carry its own timeout or a hung loader shows an
+    // unbounded skeleton again (audit 1 Sep, F11).
+    <SkeletonTimeout>
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4">
       <div className="h-8 w-2/3 animate-pulse rounded bg-muted" />
       <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
@@ -63,6 +68,7 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
         <div className="h-10 animate-pulse rounded bg-muted" />
       </div>
     </div>
+    </SkeletonTimeout>
   ),
   errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.applications.$id.tsx"),
   notFoundComponent: () => (

@@ -1,4 +1,5 @@
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { pluralize } from "@/lib/format/datetime";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
@@ -111,6 +112,10 @@ function isStatus(value: string): value is Status {
 export const Route = createFileRoute("/_authenticated/admin/clients/")({
   validateSearch: zodValidator(searchSchema),
   pendingComponent: () => (
+    // Bounded: a route-specific skeleton REPLACES the bounded router
+    // default, so it has to carry its own timeout or a hung loader shows an
+    // unbounded skeleton again (audit 1 Sep, F11).
+    <SkeletonTimeout>
     <div className="space-y-6">
       <div className="flex justify-between">
         <div className="h-8 w-32 animate-pulse rounded bg-muted" />
@@ -119,6 +124,7 @@ export const Route = createFileRoute("/_authenticated/admin/clients/")({
       <div className="h-12 w-full animate-pulse rounded bg-muted" />
       <div className="h-[400px] w-full animate-pulse rounded-lg bg-muted" />
     </div>
+    </SkeletonTimeout>
   ),
   errorComponent: makeRouteErrorComponent(
     "admin",

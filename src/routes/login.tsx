@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { FormShell } from "@/components/marketing/form-shell";
 import { useState, useEffect } from "react";
@@ -59,7 +60,12 @@ export const Route = createFileRoute("/login")({
     links: [{ rel: "canonical", href: "https://taasflow.com/login" }],
   }),
   component: LoginPage,
-  pendingComponent: LoginFallback,
+  pendingComponent: () => (
+    // Bounded — see route-pending.tsx (audit 1 Sep, F11).
+    <SkeletonTimeout>
+      <LoginFallback />
+    </SkeletonTimeout>
+  ),
   errorComponent: LoginFallback,
   notFoundComponent: makeRouteNotFoundComponent("public"),
 });

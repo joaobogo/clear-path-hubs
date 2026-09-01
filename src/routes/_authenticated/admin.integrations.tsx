@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -25,6 +26,12 @@ export const healthQuery = {
 };
 
 export const Route = createFileRoute("/_authenticated/admin/integrations")({
+  // A blocking loader plus useSuspenseQuery renders a skeleton for as long as
+  // the read takes, and errorComponent below only catches a REJECTED read. A
+  // read that simply never settles produced a permanent skeleton with no error
+  // and no retry — /admin/settings was unreachable that way for three visits
+  // (audit 1 Sep, F11). This bounds the wait so a hang becomes visible.
+  pendingComponent: () => <SkeletonTimeout timeoutMs={10_000} label="Loading integrations…" />,
   loader: ({ context }) => context.queryClient.ensureQueryData(healthQuery),
   head: () => ({ meta: [{ title: "Integration health · TaaSFlow admin" }] }),
   errorComponent: makeRouteErrorComponent(

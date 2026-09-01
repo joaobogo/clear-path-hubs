@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { useEffect } from "react";
 import { track } from "@/lib/candidate/funnel-events.functions";
 import { deviceBucket } from "@/lib/candidate/funnel-events";
@@ -136,7 +137,12 @@ export const Route = createFileRoute("/jobs/$id/")({
   // A failed load shows one error card for the whole page — never a partial
   // job with some facts missing, which reads as "the employer withheld this".
   errorComponent: makeRouteErrorComponent("public", "src/routes/jobs.$id.index.tsx"),
-  pendingComponent: JobDetailPending,
+  pendingComponent: () => (
+    // Bounded — see route-pending.tsx (audit 1 Sep, F11).
+    <SkeletonTimeout>
+      <JobDetailPending />
+    </SkeletonTimeout>
+  ),
 
   notFoundComponent: () => (
     <SiteShell>

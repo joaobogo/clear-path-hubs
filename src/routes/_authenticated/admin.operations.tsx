@@ -1,4 +1,5 @@
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { buildInfo } from "@/lib/build-info";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -47,6 +48,10 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/dat
 
 export const Route = createFileRoute("/_authenticated/admin/operations")({
   pendingComponent: () => (
+    // Bounded: a route-specific skeleton REPLACES the bounded router
+    // default, so it has to carry its own timeout or a hung loader shows an
+    // unbounded skeleton again (audit 1 Sep, F11).
+    <SkeletonTimeout>
     <div className="mx-auto max-w-[1600px] px-6 py-8 space-y-6">
       <div className="h-8 w-48 animate-pulse rounded bg-muted" />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -59,6 +64,7 @@ export const Route = createFileRoute("/_authenticated/admin/operations")({
         <div className="h-64 animate-pulse rounded-lg bg-muted" />
       </div>
     </div>
+    </SkeletonTimeout>
   ),
 
   loader: ({ context }) =>

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { FormShell } from "@/components/marketing/form-shell";
 import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -34,7 +35,12 @@ export const Route = createFileRoute("/apply/received/$applicationId")({
       { name: "description", content: "Your application has been received." },
     ],
   }),
-  pendingComponent: ReceivedSkeleton,
+  pendingComponent: () => (
+    // Bounded — see route-pending.tsx (audit 1 Sep, F11).
+    <SkeletonTimeout>
+      <ReceivedSkeleton />
+    </SkeletonTimeout>
+  ),
   errorComponent: ReceivedError,
   notFoundComponent: () => (
     <div className="p-16 text-center">
