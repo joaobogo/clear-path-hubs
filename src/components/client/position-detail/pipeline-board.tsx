@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { candidateLineFor } from "@/lib/client-fit-presentation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,21 +23,18 @@ import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "./constants";
 type AnyRow = any;
 
 function cardHeadline(m: AnyRow): string {
-  const title =
-    m.candidate_profiles?.headline ??
-    [m.candidate_profiles?.current_role, m.candidate_profiles?.current_company]
-      .filter(Boolean)
-      .join(" · ");
-  const meta = [
-    m.candidate_profiles?.years_experience != null
-      ? `${m.candidate_profiles.years_experience} yrs`
-      : null,
-    m.candidate_profiles?.location,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-  if (title && meta) return `${title} · ${meta}`;
-  return title || meta || "—";
+  // One resolver, shared with the candidate card and the compact list. This
+  // copy read `headline` straight off the profile row rather than the resolved
+  // DTO field, so the board and the list could describe one person differently
+  // — and a stored headline of the literal word "Candidate" survived both the
+  // ?? and the truthiness test beneath it (audit 1 Sep, F38).
+  return candidateLineFor({
+    headline: m.candidate_profiles?.headline ?? null,
+    current_role: m.candidate_profiles?.current_role ?? null,
+    current_company: m.candidate_profiles?.current_company ?? null,
+    years_experience: m.candidate_profiles?.years_experience ?? null,
+    location: m.candidate_profiles?.location ?? null,
+  });
 }
 
 export function PipelineBoard({

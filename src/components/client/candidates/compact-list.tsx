@@ -5,21 +5,22 @@ import { UnicornMarker } from "@/components/unicorn-marker";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { CandidatePrimaryAction } from "@/components/client/candidate-primary-action";
 import { clientStageLabel } from "@/lib/client-stage-labels";
+import { candidateLineFor } from "@/lib/client-fit-presentation";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 function candidateHeadline(c: ClientCandidateDTO): string {
-  const title =
-    c.candidate.headline ??
-    [c.candidate.current_role, c.candidate.current_company].filter(Boolean).join(" · ");
-  const meta = [
-    c.candidate.years_experience != null ? `${c.candidate.years_experience} yrs` : null,
-    c.candidate.location,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-  if (title && meta) return `${title} · ${meta}`;
-  return title || meta || "—";
+  // One resolver, shared with the compact list and the pipeline board — this
+  // copy also used ?? on a field that is "" when nothing is known, so its own
+  // fallback could never run (audit 1 Sep, F38).
+  return candidateLineFor({
+    headline: c.candidate.headline,
+    current_role: c.candidate.current_role,
+    current_company: c.candidate.current_company,
+    years_experience: c.candidate.years_experience,
+    location: c.candidate.location,
+  });
 }
+
 
 /**
  * Decision-first list for the client candidates page.

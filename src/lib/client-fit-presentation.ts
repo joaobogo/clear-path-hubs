@@ -583,16 +583,76 @@ export function buildInterviewGuide(args: {
  * where we have it), then nothing. A generic noun is never an answer — an
  * empty line lets the location and score speak instead.
  */
+/**
+ * Nouns that describe everyone on the page and therefore describe nobody.
+ *
+ * The first fix here assumed a missing headline was null. It can also be the
+ * word itself: a stored headline reading "Candidate" is truthy, so it was
+ * returned unchanged and the parsed job title underneath was never reached.
+ * That is why the board still showed "Matheus Poss De Oliveira · Candidate"
+ * beside rows carrying real titles, while his own detail page read "Freelance
+ * Developer | OAuth & API Integrations @ ByBooker".
+ */
+const PLACEHOLDER_HEADLINES = new Set([
+  "candidate",
+  "applicant",
+  "profile",
+  "n/a",
+  "na",
+  "none",
+  "unknown",
+  "not specified",
+  "candidato",
+  "candidata",
+]);
+
 export function prettifyHeadline(
   headline: string | null,
   fallback?: { role?: string | null; company?: string | null },
 ): string {
   const stored = (headline ?? "").trim();
-  if (stored) return stored.replace(/Match$/i, "Fit").trim();
+  if (stored && !PLACEHOLDER_HEADLINES.has(stored.toLowerCase())) {
+    return stored.replace(/Match$/i, "Fit").trim();
+  }
 
   const role = (fallback?.role ?? "").trim();
   const company = (fallback?.company ?? "").trim();
   if (role && company) return `${role} at ${company}`;
   if (role) return role;
   return "";
+}
+
+/**
+ * The one line under a name on every client list, board and card.
+ *
+ * Three components kept their own copy of this — candidate-card, compact-list
+ * and position-detail/pipeline-board — and the third read `headline` straight
+ * off the profile row rather than the resolved DTO field, so the board and the
+ * list could describe one person differently (audit 1 Sep, F38). Same shape as
+ * F3, F8 and F17: a resolver exists, and a second reader kept its own.
+ *
+ * `??` was also wrong in all three: prettifyHeadline returns "" for "nothing
+ * known", and `"" ?? x` is "", so the parsed-role fallback beneath it could
+ * never run.
+ */
+export function candidateLineFor(c: {
+  headline?: string | null;
+  current_role?: string | null;
+  current_company?: string | null;
+  years_experience?: number | null;
+  location?: string | null;
+}): string {
+  const title = prettifyHeadline(c.headline ?? null, {
+    role: c.current_role ?? null,
+    company: c.current_company ?? null,
+  });
+  const meta = [
+    c.years_experience != null ? `${c.years_experience} yrs` : null,
+    c.location,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  if (title && meta) return `${title} · ${meta}`;
+  // No generic noun: an empty line lets the location and score speak instead.
+  return title || meta || "—";
 }
