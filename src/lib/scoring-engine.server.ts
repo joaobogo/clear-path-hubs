@@ -644,6 +644,39 @@ export function scoreCandidate(input: {
       // Some mentions affirm and some qualify. The match is real, but so is
       // what the candidate said about their own level of it.
       if (affirmative.length < hits.length) qualified.push(kw);
+      // ...and what they said about it in a screening ANSWER counts the same.
+      //
+      // v1.5.3 added the negation test to the screening path, but only inside
+      // the `hits.length === 0` fallback — the branch for "the CV had nothing".
+      // So the guard reached the candidate whose CV was silent and missed the
+      // one whose CV lists the skill and whose screening answer then walks it
+      // back. That is the more common shape of the two, and it produced the
+      // same clean Met: the qualifying sentence was never read at all
+      // (audit 1 Sep rev 16, F3).
+      //
+      // A candidate qualifying their own claim is the most direct evidence
+      // there is about their level, whichever field they typed it into.
+      for (const sc of screeningCorpus) {
+        let qualifiedHere = false;
+        for (const form of surfaceForms) {
+          const scHits = findTermMatches(sc.text, form, cal.max_term_hits);
+          if (scHits.length === 0) continue;
+          if (scHits.every((at) => isNegatedMention(sc.text, at, cal))) {
+            qualified.push(kw);
+            localEvidence.push({
+              requirement_id: r.id,
+              requirement_text: r.text,
+              source: "screening",
+              matched_terms: [kw],
+              snippet: cleanQuote(sc.text) || sc.text.slice(0, 200),
+              location: `screening:${sc.question_id}`,
+            });
+            qualifiedHere = true;
+          }
+          break;
+        }
+        if (qualifiedHere) break;
+      }
       const sn = findSnippet(cv, matchedForm, affirmative[0], cal.snippet_radius_chars);
       if (sn) {
         localEvidence.push({

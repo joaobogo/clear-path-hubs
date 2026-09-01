@@ -99,4 +99,30 @@
  * named-product gate are unchanged otherwise: naming the product is still the
  * evidence, whatever the keyword ratio does.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.5.3";
+/**
+ * v1.5.4 — the same guard, one branch over (audit 1 Sep rev 16).
+ *
+ * v1.5.3 put the negation test on the screening path, and put it inside the
+ * `hits.length === 0` branch — the fallback for "the CV said nothing". So it
+ * covered the candidate whose CV is silent about Supabase and missed the one
+ * whose CV lists Supabase and whose screening answer then says "I'm less
+ * experienced with React/Supabase". That is the more common of the two shapes
+ * and it produced the identical false Met, because the qualifying sentence was
+ * never read at all.
+ *
+ * What that one row propped up, per the audit: the Score tab's headline
+ * "Preferred coverage 100%" and a named STRENGTH, "Demonstrated: Experience
+ * with Supabase", on the role's only preferred requirement. A false Met is
+ * rarely just one chip.
+ *
+ * A qualifying statement in a screening answer now caps a CV-matched
+ * requirement the same way a qualifying statement in the CV does: status falls
+ * from met to partial, needs_validation is set, and the passage is kept so a
+ * reviewer sees what was read. Scores move DOWN only for candidates who
+ * qualified their own claim; the golden corpus is unchanged.
+ *
+ * This is the fourth fix in this series applied to one branch while a sibling
+ * kept the old behaviour, so the guard test asserts the property across both
+ * branches rather than the branch that was wrong this time.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.5.4";
