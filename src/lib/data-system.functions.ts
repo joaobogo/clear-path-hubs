@@ -2,6 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 
 /** Graph edges scanned to count distinct people. Reported when it binds. */
 const TALENT_GRAPH_SCAN_LIMIT = 20000;
+/**
+ * Runs read when counting evidence passages. Same reasoning as the talent-graph
+ * limit above: bounded, and the tile discloses when it bites rather than
+ * silently reporting a truncated total as a complete one.
+ */
+const RUN_EVIDENCE_SCAN_LIMIT = 5000;
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
@@ -111,16 +117,34 @@ export const getDataAdvantage = createServerFn({ method: "GET" })
     );
     const interactions = rows.filter((r) => r.edge_kind === "interaction").length;
 
-    const { count: evidenceCount } = await supabase
-      .from("candidate_evidence_items")
-      .select("id", { count: "exact", head: true })
-      .eq("organization_id", data.organization_id);
-
-    const { count: evidenceThisMonth } = await supabase
-      .from("candidate_evidence_items")
-      .select("id", { count: "exact", head: true })
+    // Counted from the runs, which is where the evidence a client can actually
+    // read lives.
+    //
+    // This tile counted candidate_evidence_items, a table populated by a
+    // separate step that had never run for the demo workspace — so Northwind,
+    // the account shown to prospects, was told on a page titled "Your data
+    // advantage" that it held ZERO evidence items, while its own candidate
+    // pages quoted passages from every requirement (audit 1 Sep, F22).
+    //
+    // score_runs.evidence is the same source the evidence graph, the Score tab
+    // and the client candidate card all read, so the number on this page now
+    // agrees with the pages a client checks it against. The items table is
+    // still populated (see scripts/backfill-evidence-items.mjs) for the
+    // surfaces that index it, but nothing user-facing depends on that step
+    // having run.
+    const { data: runEvidence } = await supabase
+      .from("score_runs")
+      .select("evidence, completed_at")
       .eq("organization_id", data.organization_id)
-      .gte("created_at", since);
+      .not("evidence", "is", null)
+      .limit(RUN_EVIDENCE_SCAN_LIMIT);
+
+    const runRows: Array<{ evidence: unknown; completed_at: string | null }> = runEvidence ?? [];
+    const countOf = (v: unknown) => (Array.isArray(v) ? v.length : 0);
+    const evidenceCount = runRows.reduce((n, r) => n + countOf(r.evidence), 0);
+    const evidenceThisMonth = runRows
+      .filter((r) => (r.completed_at ?? "") >= since)
+      .reduce((n, r) => n + countOf(r.evidence), 0);
 
     const { data: signalRows } = await supabase
       .from("search_signals")
@@ -140,7 +164,7 @@ export const getDataAdvantage = createServerFn({ method: "GET" })
     return {
       organization_id: data.organization_id,
       joined_at: joined,
-      is_new_account: people.size === 0 && (evidenceCount ?? 0) === 0,
+      is_new_account: people.size === 0 && evidenceCount === 0,
       people: sourced(people.size, {
         computed_from:
           "Distinct people linked to your organisation in the talent graph. One row per human, not per application.",
@@ -153,13 +177,15 @@ export const getDataAdvantage = createServerFn({ method: "GET" })
         record_count: people.size,
         capped_at: rows.length >= TALENT_GRAPH_SCAN_LIMIT ? TALENT_GRAPH_SCAN_LIMIT : undefined,
       }),
-      evidence_items: sourced(evidenceCount ?? 0, {
+      evidence_items: sourced(evidenceCount, {
         computed_from:
-          "Evidence items extracted from CVs and reviewed against your role requirements.",
-        sources: ["candidate_evidence_items"],
+          "Verbatim passages the scoring runs quoted from CVs and screening answers against your role requirements — the same passages shown on each candidate page.",
+        sources: ["score_runs"],
         window_start: null,
         window_end: null,
-        record_count: evidenceCount ?? 0,
+        // The passages counted, not the runs read to reach them.
+        record_count: evidenceCount,
+        capped_at: runRows.length >= RUN_EVIDENCE_SCAN_LIMIT ? RUN_EVIDENCE_SCAN_LIMIT : undefined,
       }),
       roles_benchmarked: sourced(benchmarkedRoles.size, {
         computed_from:
@@ -187,7 +213,7 @@ export const getDataAdvantage = createServerFn({ method: "GET" })
       }),
       growth_this_month: {
         people: peopleThisMonth.size,
-        evidence_items: evidenceThisMonth ?? 0,
+        evidence_items: evidenceThisMonth,
         signals: signalsThisMonth,
         since,
       },

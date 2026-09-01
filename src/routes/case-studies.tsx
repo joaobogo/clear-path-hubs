@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { publishableMetrics } from "@/config/case-study-metrics";
 import {
   Hotel,
   Landmark,
@@ -194,28 +195,50 @@ const GLOBAL_CITIES = [
 
 // --- Sections -----------------------------------------------------------------
 
+const METRIC_ICONS = {
+  users: Users,
+  globe: Globe2,
+  clock: Clock,
+  trending: TrendingUp,
+  shield: ShieldCheck,
+  handshake: Handshake,
+} as const;
+
+/**
+ * Every figure carries its source, or it is not published.
+ *
+ * These six numbers went out with one page-level hedge and no source against
+ * any of them, on a domain whose Trust Center opens "stated only where we can
+ * prove it" (audit 1 Sep, F23). Provenance is a required field on the config
+ * now, and `publishableMetrics` withholds anything unattributed — so a number
+ * cannot reach this page without saying where it came from.
+ *
+ * The strip disappears entirely while nothing is attributed. That is the
+ * intended state: the page still has its engagements, verticals and narrative,
+ * and gains the figures back one at a time as each source is written.
+ */
 function HeroMetrics() {
-  const items = [
-    { icon: Users, value: "175+", label: "Positions delivered" },
-    { icon: Globe2, value: "18", label: "Cities engaged" },
-    { icon: Clock, value: "7d", label: "Median time to shortlist" },
-    { icon: TrendingUp, value: "9.1/10", label: "Client shortlist rating" },
-    { icon: ShieldCheck, value: "92%", label: "12-month retention" },
-    { icon: Handshake, value: "86%", label: "Offer acceptance" },
-  ];
+  const items = publishableMetrics();
+  if (items.length === 0) return null;
   return (
     <dl className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-      {items.map((m) => (
-        <div key={m.label} className="rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur">
-          <m.icon className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-          <dt className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
-            {m.label}
-          </dt>
-          <dd className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-            {m.value}
-          </dd>
-        </div>
-      ))}
+      {items.map((m) => {
+        const Icon = METRIC_ICONS[m.iconKey];
+        return (
+          <div key={m.label} className="rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur">
+            <Icon className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
+            <dt className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
+              {m.label}
+            </dt>
+            <dd className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+              {m.value}
+            </dd>
+            <p className="mt-1.5 text-[10px] leading-snug text-[color:var(--brand-navy)]/65">
+              {m.provenance}
+            </p>
+          </div>
+        );
+      })}
     </dl>
   );
 }
