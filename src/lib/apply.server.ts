@@ -260,15 +260,20 @@ export async function submitApplicationImpl(
         accountOutcome = "existing";
       }
 
-      if (!authUserId && data.password) {
+      // Creating a login is only offered when this submission is not touching
+      // someone else's stored profile: either the profile is brand new, or the
+      // caller is the verified owner. Otherwise a stranger could claim it.
+      const mayTouchAccount = profileIsNew || isProfileOwner;
+
+      if (!authUserId && data.password && mayTouchAccount) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const admin = supabaseAdmin as any;
         const { data: created, error: createErr } = await admin.auth.admin.createUser({
           email: emailLower,
           password: data.password,
-          // Confirmed on creation: the candidate proved control of the flow and
-          // must be able to sign in immediately to follow their application.
-          email_confirm: true,
+          // Ownership of the address must be proven by confirmation before the
+          // account counts as verified anywhere in the product.
+          email_confirm: false,
           user_metadata: { full_name: data.full_name, role: "candidate" },
         });
         if (createErr) {
@@ -292,12 +297,17 @@ export async function submitApplicationImpl(
       }
 
       if (authUserId) {
-        // Link the candidate profile and make sure a platform profile row exists.
-        await supabaseAdmin
-          .from("candidate_profiles")
-          .update({ user_id: authUserId })
-          .eq("id", candidateProfileId)
-          .is("user_id", null);
+        // Only link an account to this profile when the profile is new to this
+        // submission, the caller is its verified owner, or it is already linked.
+        const mayLink =
+          profileIsNew || isProfileOwner || existingCp?.user_id === authUserId;
+        if (mayLink) {
+          await supabaseAdmin
+            .from("candidate_profiles")
+            .update({ user_id: authUserId })
+            .eq("id", candidateProfileId)
+            .is("user_id", null);
+        }
         const { data: prof } = await supabaseAdmin
           .from("profiles")
           .select("id")
@@ -312,6 +322,7 @@ export async function submitApplicationImpl(
           });
         }
       }
+
 
 
       // 4. Idempotency short-circuit: an existing non-withdrawn application for this
