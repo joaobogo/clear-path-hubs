@@ -1,4 +1,8 @@
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getOnboardingState } from "@/lib/onboarding.functions";
+import { deriveOnboardingState } from "@/lib/account-state";
 import { createFileRoute } from "@tanstack/react-router";
 import { OnboardingWizard } from "@/components/client/onboarding/onboarding-wizard";
 import {
@@ -33,13 +37,45 @@ export const Route = createFileRoute("/_authenticated/client/onboarding")({
 });
 
 function OnboardingPage() {
+  // Same query the wizard runs — react-query dedupes it — read through the same
+  // derivation the ADMIN client record uses.
+  //
+  // Northwind's admin record said "Setup complete" while this page told the
+  // client "Step 2 of 10 · about 29 min left", on a workspace with an active
+  // role, 14 candidates, two offers and a confirmed hire. A client who has
+  // already hired somebody should not be told they are 20% through onboarding
+  // (audit 1 Sep, F38).
+  const fetchState = useServerFn(getOnboardingState);
+  const { data } = useQuery({
+    queryKey: ["onboarding-state", null],
+    queryFn: () => fetchState({ data: {} }),
+    staleTime: 10_000,
+  });
+  const derived = deriveOnboardingState({
+    storedStatus: data?.workspace?.onboarding_status ?? null,
+    stepsComplete: data?.complete?.length ?? 0,
+    stepsTotal: ONBOARDING_STEPS.length,
+  });
+  const live = derived.status === "live";
+
   return (
     <div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight">Set up your hiring system</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          {live ? "Your hiring system is set up" : "Set up your hiring system"}
+        </h1>
         <p className="max-w-2xl text-muted-foreground">
-          {ONBOARDING_STEPS.length} steps, {formatMinutes(ONBOARDING_TOTAL_MINUTES)} in total.
-          Everything saves as you go, so you can stop at any point and continue later.
+          {live ? (
+            <>
+              Your workspace is live and running. Anything below that is not ticked is optional —
+              it sharpens what we send you, but nothing is waiting on it.
+            </>
+          ) : (
+            <>
+              {ONBOARDING_STEPS.length} steps, {formatMinutes(ONBOARDING_TOTAL_MINUTES)} in total.
+              Everything saves as you go, so you can stop at any point and continue later.
+            </>
+          )}
         </p>
       </header>
       <OnboardingWizard />

@@ -569,7 +569,30 @@ export function buildInterviewGuide(args: {
     }));
 }
 
-export function prettifyHeadline(headline: string | null): string {
-  if (!headline) return "Candidate";
-  return headline.replace(/Match$/i, "Fit").trim();
+/**
+ * The line under a candidate's name, in the client's list and on their page.
+ *
+ * A missing headline fell back to the literal word "Candidate", which tells a
+ * client nothing and reads as a placeholder that escaped — and it sat beside
+ * rows carrying a real title, so on one board the two strongest-scoring people
+ * were the least described. Their own detail pages showed "Freelance Developer
+ * | OAuth & API Integrations @ ByBooker", because the two surfaces were
+ * reading different fields (audit 1 Sep, F37).
+ *
+ * Chain: stored headline, then the most recent parsed job title (with company
+ * where we have it), then nothing. A generic noun is never an answer — an
+ * empty line lets the location and score speak instead.
+ */
+export function prettifyHeadline(
+  headline: string | null,
+  fallback?: { role?: string | null; company?: string | null },
+): string {
+  const stored = (headline ?? "").trim();
+  if (stored) return stored.replace(/Match$/i, "Fit").trim();
+
+  const role = (fallback?.role ?? "").trim();
+  const company = (fallback?.company ?? "").trim();
+  if (role && company) return `${role} at ${company}`;
+  if (role) return role;
+  return "";
 }

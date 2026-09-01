@@ -1125,7 +1125,12 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     publishedScore(run),
   );
 
-  const prettyHeadline = prettifyHeadline(cp.headline ?? null);
+  // currentRole/currentCompany are already parsed above, which is what the
+  // detail page was showing while the list said "Candidate".
+  const prettyHeadline = prettifyHeadline(cp.headline ?? null, {
+    role: currentRole,
+    company: currentCompany,
+  });
   const chips: string[] = []; // Reconciled C1: no longer using derived chips here
 
   // Concern lines are stored on the run, so a run approved under an older
