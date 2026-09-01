@@ -155,7 +155,61 @@ export const PUBLISH_STATUS_VOCABULARY = {
   live: { label: "Live" },
 } as const satisfies Record<string, Entry>;
 
-/** CV / screening run processing state. */
+/**
+ * The processing_state values that actually exist in the database.
+ *
+ * PROCESSING_STATUS_VOCABULARY below knows five — queued, processing,
+ * completed, failed, skipped — of which only "queued" is real. Everything the
+ * product actually stores (parsing, parsed, enriching, ready_to_score,
+ * scoring, scored, manual_review_required, ocr_required, provider_blocked)
+ * falls through to sentenceCase(), which is why the UI reads "ocr required"
+ * rather than a designed label.
+ *
+ * Worse than the labels: filters were written by hand against a domain nothing
+ * pinned. The client overview's "in review with TaaSFlow" count listed eight
+ * states and omitted ocr_required, so a candidate blocked on an unreadable CV
+ * was counted in no bucket the client could see — not visible, not in review,
+ * nowhere (audit 1 Sep, F2 and F8).
+ *
+ * Pinned to the migrations by tests/unit/processing-state-enum.test.ts, the
+ * same way POSITION_STATUS_VALUES is.
+ */
+export const PROCESSING_STATE_VALUES = [
+  "queued",
+  "parsing",
+  "ocr_required",
+  "parsed",
+  "enriching",
+  "ready_to_score",
+  "scoring",
+  "scored",
+  "manual_review_required",
+  "provider_blocked",
+  "failed",
+] as const;
+
+export type ProcessingState = (typeof PROCESSING_STATE_VALUES)[number];
+
+/**
+ * Still working: the pipeline has not finished with this candidate, whether it
+ * is running, resting between steps, or blocked waiting on a human. Derived
+ * from the domain above rather than hand-listed, so a state added to the
+ * database cannot silently drop out of a client-facing count.
+ */
+export const PROCESSING_STATES_SETTLED = ["scored", "failed"] as const;
+
+export const PROCESSING_STATES_IN_PROGRESS = PROCESSING_STATE_VALUES.filter(
+  (v) => !(PROCESSING_STATES_SETTLED as readonly string[]).includes(v),
+) as readonly ProcessingState[];
+
+/** Blocked on something a person has to do before assessment can continue. */
+export const PROCESSING_STATES_BLOCKED = [
+  "ocr_required",
+  "manual_review_required",
+  "provider_blocked",
+] as const satisfies readonly ProcessingState[];
+
+/** CV / screening run processing state — DISPLAY LABELS ONLY. */
 export const PROCESSING_STATUS_VOCABULARY = {
   queued: { label: "Queued", candidate: "Under review" },
   processing: { label: "Processing", candidate: "Under review" },

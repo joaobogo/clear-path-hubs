@@ -20,6 +20,7 @@ import {
   hasVideoIntro,
   withVideoIntroBonus,
   type PublishedScoreRun,
+  scoreVoidedByUnreadableCv,
 } from "@/lib/scoring/published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -465,7 +466,9 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
         const delivered = new Date(m.delivered_at);
         if (delivered < w.start || delivered >= w.end) continue;
         const run = runById.get(m.approved_score_run_id);
-        const value = publishedScore(withVideoIntroBonus(run as PublishedScoreRun, hasVideoIntro(m)));
+        const value = scoreVoidedByUnreadableCv(m)
+          ? null
+          : publishedScore(withVideoIntroBonus(run as PublishedScoreRun, hasVideoIntro(m)));
         if (value != null) scores.push(value);
       }
       const avg = scores.length

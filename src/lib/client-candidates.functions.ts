@@ -169,32 +169,33 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     // COMPLETED interview is a normal interview_process state and must not
     // land here — which is why the query below can no longer filter to the
     // three live statuses.
-    const heldOrLive = new Set<string>();
     const everCancelled = new Set<string>();
     if (matchIds.length > 0) {
-      const { interviewNeedsTimeConfirmed } = await import("@/lib/client/interviews-to-confirm");
+      const { interviewNeedsTimeConfirmed, interviewCalledOffOnly } = await import(
+        "@/lib/client/interviews-to-confirm"
+      );
       const { data: ivs } = await context.supabase
         .from("interviews")
         .select("candidate_match_id, status, proposed_times, scheduled_at, availability_expires_at")
         .in("candidate_match_id", matchIds);
+      const statusesByMatch = new Map<string, string[]>();
       for (const iv of ((ivs as AnyRow[]) ?? [])) {
         if (!iv.candidate_match_id) continue;
         const id = iv.candidate_match_id as string;
         const status = String(iv.status ?? "");
-        if (status === "cancelled" || status === "no_show") {
-          everCancelled.add(id);
-          continue;
-        }
-        if (status === "completed") {
-          heldOrLive.add(id);
-          continue;
-        }
+        const list = statusesByMatch.get(id) ?? [];
+        list.push(status);
+        statusesByMatch.set(id, list);
         if (isActiveInterview(iv)) {
           activeInterviews.add(id);
-          heldOrLive.add(id);
           // Same predicate the admin "Awaiting a time" queue counts by.
           if (interviewNeedsTimeConfirmed(status)) awaitingTime.add(id);
         }
+      }
+      // One rule, shared with the KPI loader and the lane derivation, so the
+      // row label, the tile and the board column cannot disagree.
+      for (const [id, statuses] of statusesByMatch) {
+        if (interviewCalledOffOnly(statuses)) everCancelled.add(id);
       }
     }
 
@@ -225,8 +226,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         ...r,
         interview_active: activeInterviews.has(r.id as string),
         interview_needs_confirmation: awaitingTime.has(r.id as string),
-        interview_called_off:
-          everCancelled.has(r.id as string) && !heldOrLive.has(r.id as string),
+        interview_called_off: everCancelled.has(r.id as string),
         client_decided: decidedMatches.has(r.id as string),
         hire_confirmed:
           confirmedHires.matchIds.has(String(r.id)) ||

@@ -33,8 +33,20 @@ function sourceFiles(dir: string): string[] {
 
 const FILES = sourceFiles(join(process.cwd(), "src"));
 
-/** Files that turn a run into a number or a band for display. */
-const SCORE_RESOLVERS = /publishedScoreDisplay\(|publishedBand\(/;
+/**
+ * Files that turn a run into a number or a band.
+ *
+ * `publishedScore(` was missing from this list, and that is exactly how an
+ * eighth surface survived the sweep: getClientCandidatesForOrg resolved the
+ * score correctly through publishedScore but handed it the RUN, which carries
+ * no processing_state, so the void could not fire. The client-detail
+ * Candidates tab therefore printed "41.4 · Not recommended" for a candidate
+ * whose own workspace read "No score — CV unreadable" (audit 1 Sep, F1).
+ *
+ * The raw 41.4 was the tell: publishedScoreDisplay rounds, so a decimal on
+ * screen proves the display resolver was never called.
+ */
+const SCORE_RESOLVERS = /publishedScoreDisplay\(|publishedBand\(|publishedScore\(/;
 
 describe("unreadable CVs carry no score", () => {
   it("finds the surfaces it is guarding", () => {
@@ -51,6 +63,16 @@ describe("unreadable CVs carry no score", () => {
     const RUN_ONLY_PRIMITIVES = [
       join("components", "admin", "admin-score-number.tsx"),
       join("components", "unicorn-marker.tsx"),
+      // Predicates and accessors over a run. They receive no match and so
+      // cannot make this decision; their callers hold it and must.
+      join("lib", "scoring", "score-counts.ts"),
+      join("lib", "intelligence", "intelligence-builder.ts"),
+      join("lib", "intelligence", "recommendations.ts"),
+      // Sorts the list by score. Ordering a voided row is harmless — the row
+      // itself renders "—" through the list's own void, added in 09fd05a6.
+      join("lib", "admin-candidates.functions.ts"),
+      // Counts how many matches carry a run at all, not what any score is.
+      join("components", "admin", "position-detail", "overview-tab.tsx"),
     ];
 
     for (const file of FILES) {

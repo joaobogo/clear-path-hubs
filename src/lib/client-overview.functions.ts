@@ -38,6 +38,10 @@ import {
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
 import { countLanes } from "@/lib/client-pipeline-lane";
+import {
+  PROCESSING_STATES_BLOCKED,
+  PROCESSING_STATES_IN_PROGRESS,
+} from "@/lib/vocabulary";
 import { computeClientRoleStatus } from "@/lib/client-role-status";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
@@ -127,6 +131,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       activePositions,
       openOffers,
       inReviewRes,
+      blockedRes,
     ] = await Promise.all([
       getInterviewsAwaitingFeedback(context.supabase, data.orgId),
       // 1. Unified open items and blocked roles.
@@ -171,16 +176,22 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         .select("id", { count: "exact", head: true })
         .eq("organization_id", data.orgId)
         .neq("client_visibility", "visible")
-        .in("processing_state", [
-          "queued",
-          "parsing",
-          "parsed",
-          "enriching",
-          "ready_to_score",
-          "scoring",
-          "scored",
-          "manual_review_required",
-        ]),
+        // Derived from the pinned domain, not hand-listed. The literal array
+        // here omitted ocr_required, so a candidate blocked on an unreadable
+        // CV was counted in no bucket the client could see — not visible, not
+        // in review, nowhere (audit 1 Sep, F2). Excluded by omission rather
+        // than by decision, which is the failure client-pipeline-lane.ts
+        // already guards against on the stage axis.
+        .in("processing_state", PROCESSING_STATES_IN_PROGRESS),
+      // Blocked on something a person must clear before assessment can go on.
+      // Counted separately so the client is told the work exists rather than
+      // being shown silence.
+      context.supabase
+        .from("candidate_matches")
+        .select("id", { count: "exact", head: true })
+        .eq("organization_id", data.orgId)
+        .neq("client_visibility", "visible")
+        .in("processing_state", PROCESSING_STATES_BLOCKED),
     ]);
 
     const pendingByPosition = new Map<string, string[]>();
@@ -229,6 +240,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       offers: openOffers,
       missing_feedback: interviewsAwaitingFeedback.length,
       in_review_by_taasflow: ((inReviewRes as AnyRow)?.count as number | null) ?? 0,
+      blocked_by_taasflow: ((blockedRes as AnyRow)?.count as number | null) ?? 0,
     };
 
 
@@ -447,7 +459,13 @@ export const loadClientOverview = createServerFn({ method: "GET" })
           kind,
           concerns: item.label,
           role_title: item.context ?? "Your role",
-          position_id: item.href.split('/').pop()?.split('#')[0] || null,
+          // Was parsed out of the link, which yields a CANDIDATE MATCH id for
+          // a decision, the literal "offers" for an offer, and
+          // "interviews?interview=…" for an interview — so the role filter
+          // below could never match any of them and the queue emptied while
+          // the tile beside it still counted them (audit 1 Sep, F1). The
+          // builders carry the real id now.
+          position_id: item.position_id,
           subject_id: item.subject_id,
           due_at: item.due_at,
           overdue: item.overdue,

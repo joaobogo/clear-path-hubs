@@ -20,6 +20,20 @@ export type OpenItem = {
   label: string;
   /** Extra line: the role, or who asked. */
   context: string | null;
+  /**
+   * The role this item belongs to.
+   *
+   * Every builder already had it — it is what `context` is derived from — but
+   * it was never carried onto the item, so the client overview reconstructed
+   * one by parsing the link: `href.split("/").pop()`. For a pending decision
+   * that yields a CANDIDATE MATCH id, for an offer the literal string
+   * "offers", for an interview "interviews?interview=…". Only info requests
+   * produced a real position id, so filtering the decision queue by role could
+   * never match a decision, an offer or an interview — the overview rendered
+   * "Nothing needs you today" beside a tile reading "2 waiting on your
+   * decision" (audit 1 Sep, F1).
+   */
+  position_id: string | null;
   href: string;
   /** When it is due, if we committed to a date. */
   due_at: string | null;

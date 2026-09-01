@@ -13,6 +13,7 @@ import {
   withPublishedRun,
   withVideoIntroBonus,
   hasVideoIntro,
+  scoreVoidedByUnreadableCv,
 } from "@/lib/scoring/published-score";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import type { EventType } from "./events";
@@ -2350,7 +2351,17 @@ export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
     return ((rows ?? []) as AnyRow[]).map((r) => {
       const rawRun = (r.approved_run ?? r.current_run ?? null) as AnyRow | null;
       const run = withVideoIntroBonus(rawRun, hasVideoIntro(r));
-      const score = publishedScore(run);
+      // publishedScore was being handed the RUN, which carries no
+      // processing_state, so its unreadable-CV void could not fire here — this
+      // tab showed "41.4 · Not recommended" for a candidate whose own
+      // workspace read "No score — CV unreadable" (audit 1 Sep, F1). The void
+      // is a fact about the MATCH, so the match has to be the thing asked.
+      const unreadable = scoreVoidedByUnreadableCv(r);
+      // Rounded here, not at the call site. The raw figure reached the table
+      // as "41.4" while every other surface shows a whole number, which is how
+      // the auditor could tell this path bypassed publishedScoreDisplay.
+      const raw = unreadable ? null : publishedScore(run);
+      const score = raw === null ? null : Math.round(raw);
       const fit = toFitPresentation(
         (run?.fit_label ?? run?.fit_band ?? null) as string | null,
         score,
@@ -2359,7 +2370,7 @@ export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
         ...r,
         current_stage: r.stage ?? null,
         fit_score_final: score,
-        fit_band: score === null && !run ? null : fit.headline,
+        fit_band: unreadable || (score === null && !run) ? null : fit.headline,
       };
     }) as AnyRow[];
   });

@@ -48,10 +48,22 @@ type AdvanceStep = { action: PrimaryActionKey; label: string; done: string };
 export function advanceFor(
   stage: MatchStage,
   interviewRequested = false,
+  interviewCalledOff = false,
 ): AdvanceStep | null {
   if (stage === "shortlisted" && interviewRequested) {
     // The ball is with us, not with them. No advance action is offered.
     return null;
+  }
+  // A cancellation does not move the stage, so the stage still says
+  // interview_process and this offered "Make offer" for someone whose only
+  // interview was called off (audit 1 Sep, F6). The next step is to arrange
+  // another one, which is what the shortlisted step already is.
+  if (stage === "interview_process" && interviewCalledOff && !interviewRequested) {
+    return {
+      action: "request_interview",
+      label: "Request interview",
+      done: "Interview requested",
+    };
   }
   return (
     {
@@ -87,6 +99,7 @@ export function CandidatePrimaryAction({
   fitLabel = null,
   score = null,
   interviewRequested = false,
+  interviewCalledOff = false,
 }: {
   orgId: string;
   matchId: string;
@@ -99,6 +112,8 @@ export function CandidatePrimaryAction({
   score?: number | null;
   /** An interview has been asked for and is waiting on a confirmed time. */
   interviewRequested?: boolean;
+  /** Every interview was called off and none held. */
+  interviewCalledOff?: boolean;
 }) {
   const queryClient = useQueryClient();
   const search = useSearch({ strict: false }) as { org?: string };
@@ -117,7 +132,7 @@ export function CandidatePrimaryAction({
   React.useEffect(() => setOptimistic(null), [stage]);
 
   const shownStage = optimistic ?? stage;
-  const advance = advanceFor(shownStage, interviewRequested);
+  const advance = advanceFor(shownStage, interviewRequested, interviewCalledOff);
   const notRecommended = isNotRecommendedFit(fitLabel, score);
 
   async function runUndo(fromStage: MatchStage) {

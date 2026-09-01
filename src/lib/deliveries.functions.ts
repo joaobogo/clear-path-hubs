@@ -7,6 +7,7 @@ import {
   hasVideoIntro,
   withVideoIntroBonus,
   type PublishedScoreRun,
+  scoreVoidedByUnreadableCv,
 } from "@/lib/scoring/published-score";
 import { classifyBand } from "@/lib/scoring/bands";
 import { isStrongFitBand } from "@/lib/scoring/score-counts";
@@ -74,7 +75,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("candidate_matches")
       .select(
-        `id, position_id, delivered_at, updated_at, approved_score_run_id, intro_video_url, positions(title), score_runs!candidate_matches_approved_score_run_id_fkey(${PUBLISHED_SCORE_COLUMNS})`,
+        `id, position_id, delivered_at, updated_at, approved_score_run_id, processing_state, intro_video_url, positions(title), score_runs!candidate_matches_approved_score_run_id_fkey(${PUBLISHED_SCORE_COLUMNS})`,
       )
       .eq("organization_id", data.organization_id)
       .eq("client_visibility", "visible");
@@ -89,6 +90,8 @@ export const listDeliveries = createServerFn({ method: "GET" })
       position_id: string;
       delivered_at: string | null;
       updated_at: string;
+      /** Needed so an unreadable CV can be excluded from the average. */
+      processing_state?: string | null;
       intro_video_url?: string | null;
       positions?: { title: string } | null;
       score_runs?: PublishedScoreRun;
@@ -99,7 +102,11 @@ export const listDeliveries = createServerFn({ method: "GET" })
       const anchor = raw.delivered_at ?? raw.updated_at;
       const { key, start, end } = isoWeek(anchor);
       const bucketKey = `${key}::${raw.position_id}`;
-      const score = publishedScore(withVideoIntroBonus(raw.score_runs, hasVideoIntro(raw)));
+      // An unreadable CV has no score, so it must not be averaged into a
+      // weekly delivery figure either (audit 1 Sep, F1 class).
+      const score = scoreVoidedByUnreadableCv(raw)
+        ? null
+        : publishedScore(withVideoIntroBonus(raw.score_runs, hasVideoIntro(raw)));
 
       let b = buckets.get(bucketKey);
       if (!b) {

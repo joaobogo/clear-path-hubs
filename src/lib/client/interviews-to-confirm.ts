@@ -4,6 +4,41 @@
 
 export const CONFIRMATION_PENDING_STATUSES = ["requested", "scheduling"] as const;
 
+/** Statuses meaning the interview did not go ahead. */
+export const INTERVIEW_CALLED_OFF_STATUSES = ["cancelled", "no_show"] as const;
+
+/** Statuses meaning an interview was held, or is still live. */
+export const INTERVIEW_HELD_OR_LIVE_STATUSES = [
+  "requested",
+  "scheduling",
+  "proposed",
+  "scheduled",
+  "completed",
+] as const;
+
+/**
+ * True when every interview on a match was called off and none was held.
+ *
+ * A cancellation does not move the stage, so a match sits at
+ * interview_process with nothing live. Two surfaces then disagreed: the row
+ * label, computed from interview status, correctly read "Interview
+ * cancelled", while the INTERVIEWING tile — computed from the stage alone —
+ * counted the same person. One person interviewing, tile said two
+ * (audit 1 Sep, F6).
+ *
+ * A COMPLETED interview is emphatically not this: a candidate whose interview
+ * was held is still in the interview stage, awaiting feedback or a decision.
+ */
+export function interviewCalledOffOnly(statuses: readonly (string | null | undefined)[]): boolean {
+  let sawCancelled = false;
+  for (const raw of statuses) {
+    const status = String(raw ?? "");
+    if ((INTERVIEW_HELD_OR_LIVE_STATUSES as readonly string[]).includes(status)) return false;
+    if ((INTERVIEW_CALLED_OFF_STATUSES as readonly string[]).includes(status)) sawCancelled = true;
+  }
+  return sawCancelled;
+}
+
 /** True when an interview record still needs the client to confirm a time. */
 export function interviewNeedsTimeConfirmed(status: string | null | undefined): boolean {
   if (!status) return false;

@@ -18,6 +18,7 @@ import {
   publishedScore,
   withVideoIntroBonus,
   hasVideoIntro,
+  scoreVoidedByUnreadableCv,
 } from "@/lib/scoring/published-score";
 import type { Json } from "@/integrations/supabase/types";
 import {
@@ -1103,7 +1104,9 @@ export const listAdminMatches = createServerFn({ method: "GET" })
         // The published number, bonus folded in — the same figure the publish
         // queue beside this list shows. This used to read run.score raw, so
         // one match carried two different numbers on two adjacent admin tabs.
-        score: publishedScore(withVideoIntroBonus(sr ?? null, hasVideoIntro(m))),
+        score: scoreVoidedByUnreadableCv(m)
+          ? null
+          : publishedScore(withVideoIntroBonus(sr ?? null, hasVideoIntro(m))),
         fit_label: (sr?.fit_label as string) ?? null,
         must_have_coverage: (sr?.must_have_coverage as number) ?? null,
         contradiction_status: (sr?.contradiction_status as string) ?? null,

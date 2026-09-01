@@ -144,6 +144,7 @@ export function CompactList({
                       fitLabel={c.fit_label}
                       score={c.score}
                       interviewRequested={c.interview_awaiting_time}
+                      interviewCalledOff={c.interview_called_off}
                       size="sm"
                     />
                   ) : (

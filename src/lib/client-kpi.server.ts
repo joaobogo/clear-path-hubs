@@ -12,7 +12,10 @@ import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
 import { publishedBand, publishedScore, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus, scoreVoidedByUnreadableCv, VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
-import { countRowsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm";
+import {
+  countRowsAwaitingConfirmation,
+  interviewCalledOffOnly,
+} from "@/lib/client/interviews-to-confirm";
 import { cleanQuote, renderQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
 
 import {
@@ -131,6 +134,8 @@ export type KpiRow = {
   /** Stored band key of the approved run, when the writer recorded one. */
   approved_fit_band: string | null;
   interview_active: boolean;
+  /** Every interview was called off and none held — see interviewCalledOffOnly. */
+  interview_called_off: boolean;
   interview_scheduled: boolean;
   /** An interview exists that still needs the client to confirm a time. */
   interview_needs_confirmation: boolean;
@@ -224,13 +229,23 @@ export async function loadKpiRows(
   let evidenceByMatch = new Map<string, ClientEvidenceRow[]>();
 
 
+  const statusesByMatch = new Map<string, string[]>();
   if (matchIds.length > 0) {
+    // Every status, not just the live ones. Filtering to four statuses made a
+    // cancellation invisible here, so the lane could not know an interview had
+    // been called off and the INTERVIEWING tile went on counting the candidate
+    // (audit 1 Sep, F6).
     const { data: ivs } = await supabase
       .from("interviews")
       .select("id, candidate_match_id, status, scheduled_at, created_at")
-      .in("candidate_match_id", matchIds)
-      .in("status", ["requested", "scheduling", "scheduled", "completed"]);
+      .in("candidate_match_id", matchIds);
     for (const iv of (ivs as AnyRow[]) ?? []) {
+      const list = statusesByMatch.get(iv.candidate_match_id) ?? [];
+      list.push(String(iv.status ?? ""));
+      statusesByMatch.set(iv.candidate_match_id, list);
+      if (!["requested", "scheduling", "scheduled", "completed"].includes(String(iv.status))) {
+        continue;
+      }
       activeInterviews.add(iv.candidate_match_id);
       if (iv.status === "scheduled") {
         scheduledInterviews.add(iv.candidate_match_id);
@@ -300,6 +315,7 @@ export async function loadKpiRows(
     organization_name: m.organizations?.name ?? null,
     approved_fit_band: m.score_runs?.fit_band ?? null,
     interview_active: activeInterviews.has(m.id),
+    interview_called_off: interviewCalledOffOnly(statusesByMatch.get(m.id) ?? []),
     interview_scheduled: scheduledInterviews.has(m.id),
     next_interview_at: nextInterviewAt.get(m.id) ?? null,
     interview_requested_at: interviewRequestedAt.get(m.id) ?? null,

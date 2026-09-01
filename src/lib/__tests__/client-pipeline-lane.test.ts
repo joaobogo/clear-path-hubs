@@ -21,7 +21,11 @@ import {
 } from "@/lib/client-pipeline-lane";
 import { PIPELINE_STAGE_VOCABULARY } from "@/lib/vocabulary";
 
-const row = (stage: string, interview_active = false) => ({ stage, interview_active });
+const row = (stage: string, interview_active = false, interview_called_off = false) => ({
+  stage,
+  interview_active,
+  interview_called_off,
+});
 
 describe("lane coverage", () => {
   it("accounts for every stage in the vocabulary", () => {
@@ -104,5 +108,40 @@ describe("an interview is a milestone, not a lane move", () => {
     for (const lane of PIPELINE_LANES) {
       expect(rowsInLane(rows, lane).length, `${lane} disagreed`).toBe(counts[lane]);
     }
+  });
+});
+
+describe("a cancelled interview leaves the interview lane", () => {
+  // The rule "the stored stage decides the lane" is right for ENTERING an
+  // interview and wrong for leaving one. A cancellation does not move the
+  // stage, so the INTERVIEWING tile counted 2 while only one candidate was
+  // interviewing and the row label beside it read "Interview cancelled"
+  // (audit 1 Sep, F6).
+  it("puts a candidate whose only interview was cancelled back in shortlisted", () => {
+    expect(laneFor(row("interview_process", false, true))).toBe("shortlisted");
+  });
+
+  it("keeps a candidate whose interview was HELD in the interview lane", () => {
+    // interview_called_off is false for a completed interview: that candidate
+    // is still interviewing, awaiting feedback or a decision.
+    expect(laneFor(row("interview_process", false, false))).toBe("interview_process");
+  });
+
+  it("keeps a candidate with a live interview in the interview lane", () => {
+    expect(laneFor(row("interview_process", true, true))).toBe("interview_process");
+  });
+
+  it("does not move a cancellation out of any other stage", () => {
+    expect(laneFor(row("offer", false, true))).toBe("offer");
+    expect(laneFor(row("hired", false, true))).toBe("hired");
+  });
+
+  it("keeps the tile and the lane count in agreement", () => {
+    const rows = [
+      row("interview_process", true),
+      row("interview_process", false, true),
+    ];
+    expect(countLanes(rows).counts.interview_process).toBe(1);
+    expect(countLanes(rows).counts.shortlisted).toBe(1);
   });
 });

@@ -10,6 +10,7 @@ import {
   publishedScore,
   withVideoIntroBonus,
   hasVideoIntro,
+  scoreVoidedByUnreadableCv,
 } from "@/lib/scoring/published-score";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
@@ -466,7 +467,9 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         // The published number — human adjustment and video bonus folded in.
         // Read raw, this surface banded a candidate one way in the role story
         // and another on their own page.
-        score: publishedScore(withVideoIntroBonus(run, hasVideoIntro(m))),
+        score: scoreVoidedByUnreadableCv(m)
+          ? null
+          : publishedScore(withVideoIntroBonus(run, hasVideoIntro(m))),
         requirement_rows: buildRequirementRows(
           {
             requirements: (position.requirements as any[]) ?? [],

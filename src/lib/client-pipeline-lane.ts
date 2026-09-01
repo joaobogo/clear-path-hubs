@@ -33,6 +33,17 @@ export type LaneRow = {
   stage: string;
   /** An interview exists (requested, scheduling, scheduled or completed). */
   interview_active?: boolean | null;
+  /**
+   * Every interview on this match was called off and none was held.
+   *
+   * The rule below — the stored stage decides the lane — is right for ENTERING
+   * an interview and wrong for leaving one. A cancellation does not move the
+   * stage, so the lane kept counting a candidate as interviewing while the row
+   * label beside it, computed from interview status, correctly read "Interview
+   * cancelled": one person interviewing, the tile said two
+   * (audit 1 Sep, F6).
+   */
+  interview_called_off?: boolean | null;
 };
 
 function isLane(value: string): value is PipelineLane {
@@ -74,6 +85,14 @@ function isDeliberatelyExcluded(value: string): boolean {
 export function laneFor(row: LaneRow): PipelineLane | null {
   const stage = String(row.stage);
   if (!isLane(stage)) return null;
+  // The one exception to "the stage decides the lane". A candidate whose only
+  // interview was cancelled is back where they were before it was arranged —
+  // shortlisted — and every surface reads that from here, so the tile, the
+  // board column and the row label cannot disagree. A COMPLETED interview is
+  // not this case: that candidate is still in the interview stage.
+  if (stage === "interview_process" && row.interview_called_off && !row.interview_active) {
+    return "shortlisted";
+  }
   return stage;
 }
 
