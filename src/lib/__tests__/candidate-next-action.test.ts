@@ -137,3 +137,35 @@ describe("invariants", () => {
     }
   });
 });
+
+describe("a dealbreaker cap is an outcome, not a fault", () => {
+  // RT 1ecaf69b sat in manual_review_required with a banner reading
+  // "Disqualified by screening answer · The assessment itself completed",
+  // while the Next step card offered "Repair processing" for a pipeline that
+  // was not broken. manual_review_required carries two meanings — "a human
+  // must look" and "processing broke" — and the repair branch only knows the
+  // second (audit 1 Sep, F13).
+  it("offers the screening answer, not a repair, for a capped candidate", () => {
+    const a = deriveNextAction(
+      facts({ processing_state: "manual_review_required", disqualified_by_screening: true }),
+    );
+    expect(a.step).toBe("review_disqualification");
+    expect(a.action_label).toBe("Review the answer");
+  });
+
+  it("still offers repair when processing genuinely broke", () => {
+    const a = deriveNextAction(
+      facts({ processing_state: "manual_review_required", disqualified_by_screening: false }),
+    );
+    expect(a.step).toBe("repair_processing");
+  });
+
+  it("does not claim a repair is needed for any capped state", () => {
+    for (const state of ["failed", "provider_blocked", "manual_review_required", "ocr_required"]) {
+      const a = deriveNextAction(
+        facts({ processing_state: state, disqualified_by_screening: true }),
+      );
+      expect(a.step, state).toBe("review_disqualification");
+    }
+  });
+});

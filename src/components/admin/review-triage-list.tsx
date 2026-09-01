@@ -406,13 +406,25 @@ function Group({
                     : "Not scored"}
                   {r.final_score !== null ? ` · ${Math.round(r.final_score)}` : ""}
                 </Badge>
-                <span title="Evidence items resolved">
-                  evidence{" "}
-                  {r.evidence_completeness === null
-                    ? "—"
-                    : `${Math.round(r.evidence_completeness * 100)}%`}
-                  {r.evidence_items > 0 ? ` (${r.evidence_resolved}/${r.evidence_items})` : ""}
-                </span>
+                {/* Says what it counts.
+                    This read "evidence 100% (1/1)" beside a record whose own
+                    header said "evidence coverage 75%", because the two count
+                    different things: this is the REVIEW CHECKLIST — rows in
+                    candidate_evidence_items a reviewer has resolved — while
+                    the record counts REQUIREMENTS carrying a verified quote.
+                    Kendy Elisca had one checklist item resolved and two of
+                    eight requirements unevidenced, so "100%" was true of the
+                    checklist and actively misleading about the assessment
+                    (audit 1 Sep, F7).
+
+                    Also: seven of eight rows showed "evidence —" because they
+                    have no checklist rows at all. A dash reads as zero. A row
+                    with nothing to report now says nothing. */}
+                {r.evidence_items > 0 && (
+                  <span title="Review checklist items a reviewer has resolved. Not the same as the requirement coverage on the record.">
+                    checklist {r.evidence_resolved}/{r.evidence_items} resolved
+                  </span>
+                )}
                 <span className="inline-flex items-center gap-1" title="Hours since scored">
                   <Clock className="h-3 w-3" />
                   {r.hours_since_scored === null ? "not scored" : `${r.hours_since_scored}h`}

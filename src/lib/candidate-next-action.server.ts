@@ -52,7 +52,7 @@ export async function loadNextAction(
   const matchRes = await admin
     .from("candidate_matches")
     .select(
-      "id, organization_id, position_id, candidate_profile_id, stage, processing_state, processing_updated_at, admin_status, client_visibility, integrity_status, current_score_run_id, approved_score_run_id, delivered_at, created_at, updated_at, candidate_profiles(full_name), score_runs!candidate_matches_current_score_run_id_fkey(contradiction_status)",
+      "id, organization_id, position_id, candidate_profile_id, stage, processing_state, processing_updated_at, admin_status, client_visibility, integrity_status, current_score_run_id, approved_score_run_id, delivered_at, created_at, updated_at, candidate_profiles(full_name), score_runs!candidate_matches_current_score_run_id_fkey(contradiction_status), approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(contradiction_status)",
     )
     .eq("id", matchId)
     .maybeSingle();
@@ -143,9 +143,23 @@ export async function loadNextAction(
     },
     scorecards: ((scorecardRes.data ?? []) as unknown[]).length,
     hire_record: hireRow ? { status: hireRow.status, created_at: hireRow.created_at } : null,
-    disqualified_by_screening:
-      ((m as Record<string, unknown>)["score_runs"] as { contradiction_status?: string } | null)
-        ?.contradiction_status === "disqualifying_answer",
+    // The PUBLISHED run, approved-then-current — the same run the banner on
+    // this page reads. This looked at the current run alone, so a candidate
+    // whose approved run carries the cap read as not-disqualified here: the
+    // banner said "Disqualified by screening answer · The assessment itself
+    // completed" while the Next step card offered "Repair processing" for a
+    // pipeline that was not broken (audit 1 Sep, F13).
+    //
+    // A dealbreaker cap is an OUTCOME, not a fault. The branch that says so
+    // already runs before the repair branch; it was simply never reached.
+    disqualified_by_screening: [
+      (m as Record<string, unknown>)["approved_run"],
+      (m as Record<string, unknown>)["score_runs"],
+    ].some(
+      (run) =>
+        (run as { contradiction_status?: string } | null)?.contradiction_status ===
+        "disqualifying_answer",
+    ),
   };
 
   const tasks = (taskRes.data ?? []) as Array<{
