@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { UndoWindow } from "@/components/client/undo-window";
 import { IntroVideoPanel } from "@/components/client/intro-video-panel";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
@@ -554,6 +555,18 @@ function CandidateDetailPage() {
           activeInterviewId={activeInterview?.id ?? null}
           notRecommended={isNotRecommendedFit(candidate.fit_label, candidate.score)}
          />
+
+        {/* The server lets a client take a decision back for five minutes
+            (UNDO_WINDOW_MS). The only affordance for it was a twelve-second
+            toast, and UndoWindow — written so the Undo "survives a page
+            refresh instead of living only inside a toast" — was never mounted
+            anywhere. Four of those five minutes existed on the server and had
+            no route to the screen. */}
+        <UndoWindow
+          orgId={orgId ?? null}
+          matchId={candidate.match_id}
+          candidateName={candidate.candidate.display_name}
+        />
 
         {/* Contact and the CV controls sit right under the stage actions so
             they are visible without scrolling on desktop. */}
