@@ -29,6 +29,19 @@ export const INTERVIEW_HELD_OR_LIVE_STATUSES = [
  * A COMPLETED interview is emphatically not this: a candidate whose interview
  * was held is still in the interview stage, awaiting feedback or a decision.
  */
+/**
+ * True when an interview was actually HELD.
+ *
+ * "Make offer" was derived from the stage alone, so Marta Nunes — stage
+ * interview_process, one interview still awaiting a slot, none held — was
+ * offered the chance to make an offer to someone the client had never met
+ * (audit 1 Sep, F20b). Counting stays on the stage, as client-pipeline-lane.ts
+ * documents; the ACTION needs the interview record.
+ */
+export function interviewHeld(statuses: readonly (string | null | undefined)[]): boolean {
+  return statuses.some((s) => String(s ?? "") === "completed");
+}
+
 export function interviewCalledOffOnly(statuses: readonly (string | null | undefined)[]): boolean {
   let sawCancelled = false;
   for (const raw of statuses) {

@@ -181,6 +181,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
     note: "The employer sees that the interview did not go ahead, rather than being told you are still interviewing.",
   },
   {
+    key: "interview_completed",
+    group: "process",
+    label: "Whether an interview with the employer has been held",
+    note: "The employer only sees the option to make you an offer once an interview has actually happened.",
+  },
+  {
     key: "contact_released",
     group: "process",
     label: "Whether the employer may see your contact details and CV file",

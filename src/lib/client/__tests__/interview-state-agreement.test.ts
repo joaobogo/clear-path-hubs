@@ -101,3 +101,24 @@ describe("a cancelled interview does not read as interviewing", () => {
     ).toBe("Interview requested");
   });
 });
+
+describe("Make offer needs an interview to have happened", () => {
+  // Marta Nunes read "Interviewing / Make offer" with one interview still
+  // awaiting a slot and none held, so the client was invited to make an offer
+  // to someone they had never met (audit 1 Sep, F20b).
+  it("offers nothing while an interview is arranged but not held", () => {
+    expect(advanceFor("interview_process", false, false, false)).toBeNull();
+  });
+
+  it("offers Make offer once an interview has been held", () => {
+    expect(advanceFor("interview_process", false, false, true)?.action).toBe("offer");
+  });
+
+  it("still routes a cancelled interview to a fresh request", () => {
+    expect(advanceFor("interview_process", false, true, false)?.action).toBe("request_interview");
+  });
+
+  it("leaves the offer stage alone", () => {
+    expect(advanceFor("offer", false, false, false)?.action).toBe("hire");
+  });
+});

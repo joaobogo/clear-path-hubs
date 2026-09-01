@@ -15,6 +15,7 @@ import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import {
   countRowsAwaitingConfirmation,
   interviewCalledOffOnly,
+  interviewHeld,
 } from "@/lib/client/interviews-to-confirm";
 import { cleanQuote, renderQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
 
@@ -136,6 +137,8 @@ export type KpiRow = {
   interview_active: boolean;
   /** Every interview was called off and none held — see interviewCalledOffOnly. */
   interview_called_off: boolean;
+  /** An interview was actually held. Gates "Make offer" (audit 1 Sep, F20b). */
+  interview_completed: boolean;
   interview_scheduled: boolean;
   /** An interview exists that still needs the client to confirm a time. */
   interview_needs_confirmation: boolean;
@@ -316,6 +319,7 @@ export async function loadKpiRows(
     approved_fit_band: m.score_runs?.fit_band ?? null,
     interview_active: activeInterviews.has(m.id),
     interview_called_off: interviewCalledOffOnly(statusesByMatch.get(m.id) ?? []),
+    interview_completed: interviewHeld(statusesByMatch.get(m.id) ?? []),
     interview_scheduled: scheduledInterviews.has(m.id),
     next_interview_at: nextInterviewAt.get(m.id) ?? null,
     interview_requested_at: interviewRequestedAt.get(m.id) ?? null,
@@ -466,6 +470,8 @@ export type ClientCandidateDTO = {
    * interview_process state and must keep reading as Interviewing.
    */
   interview_called_off: boolean;
+  /** An interview was actually held. Gates "Make offer" (audit 1 Sep, F20b). */
+  interview_completed: boolean;
   /**
    * True when the client has already recorded a decision on this candidate.
    * Carried so the snapshot tiles can apply the one "awaiting your review"
@@ -1251,6 +1257,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         ((row as AnyRow).interview_requested_at && !(row as AnyRow).next_interview_at),
     ),
     interview_called_off: Boolean((row as AnyRow).interview_called_off),
+    interview_completed: Boolean((row as AnyRow).interview_completed),
     client_decided: Boolean(row.client_decided),
     hire_confirmed: Boolean(row.hire_confirmed),
     contact_released: released,

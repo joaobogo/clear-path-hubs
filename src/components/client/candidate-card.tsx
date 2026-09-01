@@ -115,6 +115,7 @@ export function CandidateCard({
             score={c.score}
             interviewRequested={c.interview_awaiting_time}
                       interviewCalledOff={c.interview_called_off}
+                      interviewCompleted={c.interview_completed}
           />
         ) : (
           <Link

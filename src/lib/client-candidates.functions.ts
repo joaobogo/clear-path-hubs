@@ -170,10 +170,11 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     // land here — which is why the query below can no longer filter to the
     // three live statuses.
     const everCancelled = new Set<string>();
+    // An interview that actually happened. "Make offer" is gated on this.
+    const held = new Set<string>();
     if (matchIds.length > 0) {
-      const { interviewNeedsTimeConfirmed, interviewCalledOffOnly } = await import(
-        "@/lib/client/interviews-to-confirm"
-      );
+      const { interviewNeedsTimeConfirmed, interviewCalledOffOnly, interviewHeld } =
+        await import("@/lib/client/interviews-to-confirm");
       const { data: ivs } = await context.supabase
         .from("interviews")
         .select("candidate_match_id, status, proposed_times, scheduled_at, availability_expires_at")
@@ -196,6 +197,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
       // row label, the tile and the board column cannot disagree.
       for (const [id, statuses] of statusesByMatch) {
         if (interviewCalledOffOnly(statuses)) everCancelled.add(id);
+        if (interviewHeld(statuses)) held.add(id);
       }
     }
 
@@ -227,6 +229,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         interview_active: activeInterviews.has(r.id as string),
         interview_needs_confirmation: awaitingTime.has(r.id as string),
         interview_called_off: everCancelled.has(r.id as string),
+        interview_completed: held.has(r.id as string),
         client_decided: decidedMatches.has(r.id as string),
         hire_confirmed:
           confirmedHires.matchIds.has(String(r.id)) ||

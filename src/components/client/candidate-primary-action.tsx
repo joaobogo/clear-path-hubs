@@ -49,6 +49,7 @@ export function advanceFor(
   stage: MatchStage,
   interviewRequested = false,
   interviewCalledOff = false,
+  interviewCompleted = false,
 ): AdvanceStep | null {
   if (stage === "shortlisted" && interviewRequested) {
     // The ball is with us, not with them. No advance action is offered.
@@ -58,6 +59,22 @@ export function advanceFor(
   // interview_process and this offered "Make offer" for someone whose only
   // interview was called off (audit 1 Sep, F6). The next step is to arrange
   // another one, which is what the shortlisted step already is.
+  // "Make offer" needs an interview to have HAPPENED.
+  //
+  // The action came from the stage alone, so a candidate at interview_process
+  // whose only interview was still awaiting a slot was offered the chance to
+  // make an offer to someone the client had never met (audit 1 Sep, F20b).
+  // Lane counting stays on the stage, as client-pipeline-lane.ts documents —
+  // that rule is right for counting and wrong for choosing the next action.
+  if (
+    stage === "interview_process" &&
+    !interviewCompleted &&
+    !interviewCalledOff &&
+    !interviewRequested
+  ) {
+    // An interview is arranged or under way. Nothing for the client to do.
+    return null;
+  }
   if (stage === "interview_process" && interviewCalledOff && !interviewRequested) {
     return {
       action: "request_interview",
@@ -100,6 +117,7 @@ export function CandidatePrimaryAction({
   score = null,
   interviewRequested = false,
   interviewCalledOff = false,
+  interviewCompleted = false,
 }: {
   orgId: string;
   matchId: string;
@@ -114,6 +132,8 @@ export function CandidatePrimaryAction({
   interviewRequested?: boolean;
   /** Every interview was called off and none held. */
   interviewCalledOff?: boolean;
+  /** An interview was actually held. */
+  interviewCompleted?: boolean;
 }) {
   const queryClient = useQueryClient();
   const search = useSearch({ strict: false }) as { org?: string };
@@ -132,7 +152,7 @@ export function CandidatePrimaryAction({
   React.useEffect(() => setOptimistic(null), [stage]);
 
   const shownStage = optimistic ?? stage;
-  const advance = advanceFor(shownStage, interviewRequested, interviewCalledOff);
+  const advance = advanceFor(shownStage, interviewRequested, interviewCalledOff, interviewCompleted);
   const notRecommended = isNotRecommendedFit(fitLabel, score);
 
   async function runUndo(fromStage: MatchStage) {
