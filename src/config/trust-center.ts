@@ -211,7 +211,26 @@ export const TRUST_SECTIONS: TrustSection[] = [
     id: "data-retention",
     title: "Data retention",
     summary: "Retention periods are published, not negotiated case by case.",
-    state: "documented",
+    /**
+     * Published policy, not yet automatic — so `in-progress`, not `documented`.
+     *
+     * Every claim below is badged PUBLISHED POLICY and traces to Privacy Notice
+     * §8, which is accurate about where the commitment comes from. But a reader
+     * takes a deletion timeline as operative, and no scheduled job enforces
+     * these: `retention_runs` and `retention_policies` have no writers and no
+     * readers anywhere in the application, and there is no cron. No CV has been
+     * purged at 90 days and no profile anonymised at two years by machinery
+     * (audit 1 Sep, F41).
+     *
+     * This page opens by promising "where something is not in place yet, it
+     * says so", and its "What we do not claim" section exists precisely to
+     * disclose gaps — it disclosed certification and pen-testing and not this
+     * one. Deleting customer data on a schedule is not a change to make without
+     * an owner's sign-off, so the page tells the truth today and the note says
+     * what actually happens in the meantime.
+     */
+    state: "in-progress",
+    note: "These periods are published policy and are honoured on request — a deletion or anonymisation request is recorded and actioned by the team. They are not yet enforced by a scheduled job, so a record may be held past its stated period until someone asks. Automating this is planned; until it ships, this section says so rather than implying the timers run themselves.",
     claims: [
       {
         text: "Candidate profiles: two years of inactivity, then deleted or anonymised unless consent is renewed.",
@@ -379,6 +398,15 @@ export const TRUST_SECTIONS: TrustSection[] = [
         text: "No claim of full GDPR, CCPA or PDPL 'compliance' as a status. The Privacy Notice describes how we process data under those laws; it does not certify us.",
         source: "legal",
         reference: "Privacy Notice §5",
+      },
+      // The gap this section exists to disclose, and did not (audit 1 Sep, F41).
+      // Certification and pen-testing were listed; automatic deletion was not,
+      // while the retention section above published four timelines a reader
+      // reasonably takes as operative.
+      {
+        text: "No automatic deletion. The retention periods above are published policy honoured on request, not timers enforced by a scheduled job — a record may be held past its stated period until someone asks.",
+        source: "doc",
+        reference: "Not yet implemented",
       },
     ],
   },
