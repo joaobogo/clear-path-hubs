@@ -80,7 +80,16 @@ export type EvidenceChainNode = {
 /** Sanity note the UI shows when the chain is incomplete. */
 export type EvidenceChainMeta = {
   total: number;
+  /** Quoted AND settled by that quote — met or partial. */
   verified: number;
+  /**
+   * Has passages attached that did not settle the requirement.
+   *
+   * Almost always the named-product gate: the run found generic overlap and no
+   * mention of the product the requirement names, so the status is missing or
+   * unknown while the passages remain attached and visible.
+   */
+  quotedNotSettled: number;
   missing: number;
   conflicting: number;
   userConfirmed: number;
@@ -305,10 +314,26 @@ export function buildEvidenceChain(input: {
   // single collapsed evidenceState — a reviewer-confirmed requirement is still
   // a quoted one, and a requirement with nothing behind it must still count as
   // "no evidence" (C2/C3) even after someone accepted the reading.
+  // A passage that did not settle the requirement is not a verified quote.
+  //
+  // `verified` counted having a quote, full stop. So "Experience with Lovable
+  // for rapid website and application development" — which the named-product
+  // gate now marks missing because the word Lovable appears nowhere, and whose
+  // attached passages quote MongoDB, Express and Jenkins — counted toward
+  // "8 requirements · 7 with verified quotes" (audit 1 Sep, F24). It was also
+  // counted in `missing` on the line below, so the 7 + 1 = 8 arithmetic
+  // reconciled by double-counting the one row that was wrong.
+  //
+  // The passages are still real and still shown; they are reported as what
+  // they are rather than dropped, so the three buckets still sum to the total.
+  const settled = (n: EvidenceChainNode) => n.status === "met" || n.status === "partial";
   const meta: EvidenceChainMeta = {
     total: nodes.length,
-    verified: nodes.filter((n) => n.sources.length > 0).length,
-    missing: nodes.filter((n) => n.status === "missing" || (n.sources.length === 0 && !n.interpretation)).length,
+    verified: nodes.filter((n) => n.sources.length > 0 && settled(n)).length,
+    quotedNotSettled: nodes.filter((n) => n.sources.length > 0 && !settled(n)).length,
+    missing: nodes.filter(
+      (n) => n.sources.length === 0 && (n.status === "missing" || !n.interpretation),
+    ).length,
     conflicting: nodes.filter(
       (n) => n.evidenceState === "conflicting" || n.status === "contradicted",
     ).length,

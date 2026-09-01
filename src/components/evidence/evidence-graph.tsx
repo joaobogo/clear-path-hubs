@@ -145,6 +145,11 @@ export function EvidenceGraph({
       <div className="flex flex-wrap gap-x-4 gap-y-1 border-b px-4 py-2 text-[11px] text-muted-foreground sm:px-5">
         <span>{meta.total} requirements</span>
         <span>{meta.verified} with verified quotes</span>
+        {meta.quotedNotSettled > 0 && (
+          <span title="Passages are attached, but none settles the requirement — usually because the product it names appears nowhere in them.">
+            {meta.quotedNotSettled} quoted but unsettled
+          </span>
+        )}
         <span>{meta.missing} with no evidence</span>
         {meta.conflicting > 0 && <span>{meta.conflicting} conflicting</span>}
         {meta.userConfirmed > 0 && <span>{meta.userConfirmed} reviewer-confirmed</span>}
