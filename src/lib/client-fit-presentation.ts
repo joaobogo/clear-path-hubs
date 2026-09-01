@@ -363,7 +363,44 @@ export function evidenceSupport(
           .filter((e, i, all) => all.findIndex((o) => o.snippet === e.snippet) === i)
           .slice(0, 2)
       : [];
-  const supporting = evidence.length > 0 ? evidence : rescued;
+  /**
+   * The run evidenced this requirement and attached quotes for it.
+   *
+   * passageSupportsRequirement is a keyword test, and it drops any quote whose
+   * words do not overlap the requirement label. That is right for choosing
+   * BETWEEN quotes and wrong as a veto: "Diagnosed and resolved critical
+   * issues involving Google OAuth, Auth.js, and account persistence" shares no
+   * literal term with "Ability to troubleshoot and solve technical problems
+   * independently", so both of the run's quotes were discarded and the client
+   * card read "We found no direct evidence" for a requirement staff saw as Met
+   * with two verbatim CV quotes and character offsets (audit 1 Sep, F19).
+   *
+   * The client was not falling back to what it could quote. It was discarding
+   * rows that WERE quoted, and presenting a candidate to a paying client as
+   * weaker than the record supports.
+   *
+   * So the filter refines presentation and never overturns the run: when it
+   * would empty a requirement the run itself marked met or partial, the run's
+   * own quotes stand.
+   */
+  const runEvidenced = declared?.status === "met" || declared?.status === "partial";
+  const attachedButFiltered =
+    evidence.length === 0 && runEvidenced
+      ? mine
+          .filter((e: any) => !e.contradiction && !isCandidateHeadline(evidenceSnippet(e)))
+          .map((e: any) => ({
+            label: e.label || "Evidence",
+            snippet: cleanQuote(evidenceSnippet(e)),
+            source: e.source || e.source_kind || null,
+            location: (e.source_location ?? e.location ?? null) as EvidenceLocation,
+          }))
+          .filter((e) => e.snippet.length > 0)
+          .filter((e, i, all) => all.findIndex((o) => o.snippet === e.snippet) === i)
+          .slice(0, 2)
+      : [];
+
+  const supporting =
+    evidence.length > 0 ? evidence : attachedButFiltered.length > 0 ? attachedButFiltered : rescued;
 
   const contradictions = mine
     .filter((e: any) => e.contradiction)
