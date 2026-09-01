@@ -146,10 +146,28 @@ export async function submitApplicationImpl(
 
       const { data: existingCp, error: cpFindErr } = await supabaseAdmin
         .from("candidate_profiles")
-        .select("id,current_cv_file_id,user_id")
+        .select(
+          "id,current_cv_file_id,user_id,full_name,phone,consent," +
+            "location,country,region,city,linkedin_url,portfolio_url,website_url",
+        )
         .ilike("email", emailLower)
         .maybeSingle();
       if (cpFindErr) throw cpFindErr;
+
+      // This endpoint is public and authenticates nobody. Matching an existing
+      // profile on the email STRING is not evidence that the submitter controls
+      // that address, so an application must never be able to rewrite somebody
+      // else's identity record (audit 1 Sep, F42).
+      //
+      // A profile carrying a user_id belongs to someone who has signed in and
+      // proved control of the address. It is read-only from here: the
+      // application still attaches to it, but no field on it is touched.
+      //
+      // An unclaimed profile is a stub an earlier application created. It may
+      // still be a different real person, so this fills BLANKS only and never
+      // overwrites a value that is already there — including `consent`, which
+      // is the record that answers "did this person agree to this".
+      const profileIsClaimed = Boolean(existingCp?.user_id);
 
       const locationText = composeLocation({
         city: data.city,
@@ -169,20 +187,38 @@ export async function submitApplicationImpl(
       let candidateProfileId: string;
       if (existingCp) {
         candidateProfileId = existingCp.id;
-        // Update returning-candidate fields we now have.
-        await supabaseAdmin
-          .from("candidate_profiles")
-          .update({
-            full_name: data.full_name,
-            phone: data.phone || null,
-            ...locationFields,
-            consent: {
+        if (!profileIsClaimed) {
+          // Blanks only. `blank` treats "" as unset so an empty string stored by
+          // an earlier partial submission still gets filled, but any real value
+          // stands.
+          const row = existingCp as Record<string, unknown>;
+          const blank = (col: string) => {
+            const v = row[col];
+            return v === null || v === undefined || (typeof v === "string" && v.trim() === "");
+          };
+          const patch: Record<string, unknown> = {};
+          if (blank("full_name") && data.full_name) patch.full_name = data.full_name;
+          if (blank("phone") && data.phone) patch.phone = data.phone;
+          for (const [col, value] of Object.entries(locationFields)) {
+            if (value && blank(col)) patch[col] = value;
+          }
+          if (blank("consent")) {
+            patch.consent = {
               terms: true,
               network_opt_in: data.network_opt_in,
-              updated_at: new Date().toISOString(),
-            },
-          })
-          .eq("id", candidateProfileId);
+              created_at: new Date().toISOString(),
+            };
+          }
+          if (Object.keys(patch).length > 0) {
+            await supabaseAdmin
+              .from("candidate_profiles")
+              .update(patch)
+              .eq("id", candidateProfileId)
+              // Re-assert unclaimed at write time: the profile may have been
+              // claimed between the read above and here.
+              .is("user_id", null);
+          }
+        }
       } else {
         const { data: cpNew, error: cpErr } = await supabaseAdmin
           .from("candidate_profiles")
@@ -447,11 +483,21 @@ export async function submitApplicationImpl(
 
 
 
-      // Point candidate profile at latest CV.
-      await supabaseAdmin
-        .from("candidate_profiles")
-        .update({ current_cv_file_id: fileId })
-        .eq("id", candidateProfileId);
+      // Point candidate profile at latest CV — but never on a claimed profile.
+      // This is the public endpoint: repointing a signed-in candidate's current
+      // CV at a document an anonymous submitter uploaded is what a client would
+      // then download from their profile (audit 1 Sep, F42).
+      //
+      // The application itself pins `cv_file_id` below, so THIS submission still
+      // carries the right document either way. Only the profile-level "current
+      // CV" pointer is left alone.
+      if (!profileIsClaimed) {
+        await supabaseAdmin
+          .from("candidate_profiles")
+          .update({ current_cv_file_id: fileId })
+          .eq("id", candidateProfileId)
+          .is("user_id", null);
+      }
 
       // 7. Create application (unique active constraint protects against races).
       const { data: appRow, error: appErr } = await supabaseAdmin

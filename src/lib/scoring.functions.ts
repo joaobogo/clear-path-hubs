@@ -94,7 +94,13 @@ export const resolveScoringOrphan = createServerFn({ method: "POST" })
     // rubric builder. For now, orphans can be acknowledged (left for
     // supersession by a future run) or marked failed at the match level.
     if (data.action === "mark_failed" && orphan.candidate_match_id) {
-      const { error: updErr } = await supabase
+      // canonical_state is not writable by the `authenticated` role — only
+      // `stage` is (see 20260901120000_candidate_matches_column_privileges).
+      // This handler is staff-gated above, and every comparable staff write in
+      // the codebase goes through the privileged client; this one did not, and
+      // would have started failing against the column grant.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { error: updErr } = await supabaseAdmin
         .from("candidate_matches")
         .update({ canonical_state: "failed" as CanonicalScoringState })
         .eq("id", orphan.candidate_match_id);
