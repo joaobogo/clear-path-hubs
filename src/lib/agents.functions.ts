@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { AGENT_KEYS, AGENT_REGISTRY, agentName, type AgentKey } from "@/lib/agents/registry";
+import { AGENT_KEYS, AGENT_REGISTRY, agentName, type AgentKey, agentStateLine } from "@/lib/agents/registry";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { stageLabel } from "@/lib/stage-aging";
 import { isQaFixtureTitle } from "@/lib/client/test-record-filter";
@@ -44,9 +44,22 @@ const AGENT_JOB_TYPES: Record<AgentKey, string[]> = {
 
 // Event types that Insights counts as "agent runs". Keep this in sync with
 // src/lib/intelligence/hiring-intelligence.functions.ts.
+/**
+ * Events that count as an agent PRODUCING something.
+ *
+ * Only positive outcomes. A cancellation, a rejection or a block is real
+ * activity and belongs in the exceptions line, not in "Produced this week" —
+ * the Scheduling card reported production of 1 for a week whose last recorded
+ * action was "An interview was cancelled", which reads as a cancellation being
+ * counted as output (audit 1 Sep, F21).
+ *
+ * candidate_stage_changed is deliberately NOT here: it fires for a move to
+ * not_moving_forward as readily as for a shortlisting, so counting it credits
+ * an agent for a rejection.
+ */
 const INSIGHTS_AGENT_RUN_TYPES = new Set([
-  "candidate_stage_changed",
   "candidate_published",
+  "client_shortlisted",
   "message_sent",
   "clarification_requested",
   "contact_released",
@@ -293,11 +306,17 @@ export const getAgentPanel = createServerFn({ method: "GET" })
         off_consequence: def.offConsequence,
         enabled,
         paused_at: pausedAt,
-        state_line: pausedAt
-          ? "Paused. It is not doing any work right now."
-          : enabled
-            ? "On and working."
-            : `Off. ${def.offConsequence}`,
+        // One derivation, shared with agentStateLine in the registry — this
+        // second copy said "On and working." from the enabled flag alone, which
+        // is how an agent that had never run once claimed to be working on a
+        // paying client's screen (audit 1 Sep, F21).
+        state_line: agentStateLine({
+          enabled,
+          pausedAt,
+          offConsequence: def.offConsequence,
+          lastActionAt: (s?.last_action_at as string | null) ?? latest?.occurred_at ?? null,
+          windowStart: since,
+        }),
         last_action_at: (s?.last_action_at as string | null) ?? latest?.occurred_at ?? null,
         last_action_summary: lastSummary,
         produced_this_week: produced + producedLegacy,

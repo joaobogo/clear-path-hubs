@@ -168,13 +168,46 @@ export function agentName(key: string): string {
   return getAgent(key)?.name ?? key;
 }
 
-/** Plain-language state line for a card. Never a status code. */
+/**
+ * Plain-language state line for a card. Never a status code.
+ *
+ * Derived from ACTIVITY, not from the on/off toggle.
+ *
+ * "On and working." came from the enabled flag alone, so an agent that had
+ * never run once was presented identically to one that ran this morning — and
+ * the page above it promises to show "what it is doing now". Sourcing and
+ * Market Research read "On and working." directly above "LAST THING IT DID:
+ * Nothing yet" and "PRODUCED THIS WEEK: 0", on a paying client's screen, while
+ * Operations attributed 33 of 33 candidates to the public job board — meaning
+ * Sourcing had never produced anything on that account at all
+ * (audit 1 Sep, F21).
+ *
+ * Nothing about it was dishonest; the status was wired to the wrong signal.
+ * But it told a customer that the part of the service they are buying was
+ * running when it never had, on the page they are most likely to screenshot in
+ * a dispute.
+ */
 export function agentStateLine(opts: {
   enabled: boolean;
   pausedAt: string | null;
   offConsequence: string;
+  /** When this agent last did something. Null when it never has. */
+  lastActionAt?: string | null;
+  /** Start of the reporting window the card covers. */
+  windowStart?: string | null;
+  /** Why there is nothing to do, when we can say. */
+  idleReason?: string | null;
 }): string {
   if (opts.pausedAt) return "Paused. It is not doing any work right now.";
   if (!opts.enabled) return `Off. ${opts.offConsequence}`;
-  return "On and working.";
+
+  if (!opts.lastActionAt) {
+    return "On, but it has not run yet. Nothing has needed it so far.";
+  }
+  const actedInWindow =
+    !opts.windowStart || String(opts.lastActionAt) >= String(opts.windowStart);
+  if (actedInWindow) return "On and working.";
+  return opts.idleReason
+    ? `On, with nothing to do right now — ${opts.idleReason}`
+    : "On, with nothing to do right now.";
 }
