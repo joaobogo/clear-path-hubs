@@ -73,7 +73,7 @@ import { FitHero, WhyThisCandidate, WhatNeedsValidation } from "@/components/cli
 import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
 import { IntroVideoPanel } from "@/components/client/intro-video-panel";
-import { VIDEO_INTRO_BONUS_PTS, scoreVoidedByUnreadableCv, resolvePublishedRun } from "@/lib/scoring/published-score";
+import { VIDEO_INTRO_BONUS_PTS, scoreVoidedByUnreadableCv, resolvePublishedRun, publishedScore } from "@/lib/scoring/published-score";
 
 
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
@@ -707,8 +707,13 @@ export function ScoreTab({
   // The run handed to this tab already has the bonus folded in (getAdminMatch
   // folds it once). Recover the raw figure so the arithmetic can be shown.
   const videoBonusPts = match?.intro_video_url ? VIDEO_INTRO_BONUS_PTS : 0;
-  const rawScore =
-    Number(currentRun.final_score ?? currentRun.score ?? 0) - videoBonusPts;
+  // Through the resolver, and null stays null. This read
+  // `final_score ?? score ?? 0`, so a run with no usable number — a failed
+  // scoring run, or one voided because the CV proved unreadable — became 0,
+  // and the reconciliation line below then rendered "Evidence score -10.0 +
+  // intro video +10 = 0". A negative evidence score is not a number we have.
+  const publishedTotal = publishedScore(currentRun);
+  const rawScore = publishedTotal === null ? null : publishedTotal - videoBonusPts;
   // Runs written before deriveStrengths() existed stored only strictly-met
   // requirements, so an evidenced candidate could read "None surfaced". Re-derive
   // from the assessment the run already carries — no rescore, no stored number
@@ -737,7 +742,11 @@ export function ScoreTab({
         {(() => {
           const published = resolvePublishedRun(runs ?? [], match) as Any | null;
           if (!published || String(published.id) === String(currentRun.id)) return null;
-          const shown = Math.round(Number(published.final_score ?? published.score ?? 0));
+          // Through the resolver: `?? 0` announced "the approved run shows 0"
+          // for an approved run carrying no usable number.
+          const shownRaw = publishedScore(published);
+          if (shownRaw === null) return null;
+          const shown = Math.round(shownRaw);
           return (
             <p className="mt-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-xs">
               This is the newest assessment and <b>nobody has approved it</b>. The client and
@@ -751,11 +760,11 @@ export function ScoreTab({
         {/* Show the bonus as its own line, and never let the engine's stored
             sentence ("worth considering — score 67.1/100") contradict the
             post-bonus header above it (audit #4, H3/M3). */}
-        {videoBonusPts > 0 && (
+        {videoBonusPts > 0 && rawScore !== null && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Evidence score {Number(rawScore).toFixed(1)} + intro video +{videoBonusPts} ={" "}
+            Evidence score {rawScore.toFixed(1)} + intro video +{videoBonusPts} ={" "}
             <span className="font-medium text-foreground">
-              {Math.round(Number(rawScore) + videoBonusPts)}
+              {Math.round(rawScore + videoBonusPts)}
             </span>
           </p>
         )}

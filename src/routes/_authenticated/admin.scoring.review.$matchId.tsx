@@ -29,7 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
-import { scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
+import { scoreVoidedByUnreadableCv, publishedScore } from "@/lib/scoring/published-score";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
 import { resolveParseFailure } from "@/lib/parse-failure/parse-failure-codes";
 import { UnicornMarker } from "@/components/unicorn-marker";
@@ -342,10 +342,14 @@ function ReviewWorkspace() {
     .map((r) => r.slice("disqualifying_answer:".length).trim())
     .filter(Boolean);
 
+  // A change between two numbers needs two numbers. Both sides defaulted to 0,
+  // so a run with no usable score produced a confident "Change +77" against
+  // nothing — and the delta is coloured green or red as if it meant something.
+  const currentPublished = publishedScore(currentRun);
+  const previousPublished = publishedScore(previousRun);
   const scoreDelta =
-    currentRun && previousRun
-      ? Number(currentRun.final_score ?? currentRun.score ?? 0) -
-        Number(previousRun.final_score ?? previousRun.score ?? 0)
+    currentPublished !== null && previousPublished !== null
+      ? currentPublished - previousPublished
       : null;
 
   return (
@@ -881,12 +885,17 @@ function ReviewWorkspace() {
                   {/* Whole numbers, like every other surface: this read
                       "Current 77.1" beside a header saying 77 (audit #6,
                       A6-25). */}
-                  <dd>{wholeScore(currentRun.final_score ?? currentRun.score)}</dd>
+                  {/* Through the resolver, and past the same scoreVoided this
+                      page already computes at the top: an inline
+                      final_score ?? score skips the unreadable-CV void, so this
+                      block still read "Current 41" on a record whose own
+                      header said "No score — CV unreadable". */}
+                  <dd>{scoreVoided ? "—" : wholeScore(publishedScore(currentRun))}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Previous</dt>
                   <dd>
-                    {previousRun ? wholeScore(previousRun.final_score ?? previousRun.score) : "—"}
+                    {previousRun && !scoreVoided ? wholeScore(publishedScore(previousRun)) : "—"}
                   </dd>
                 </div>
                 {scoreDelta != null ? (

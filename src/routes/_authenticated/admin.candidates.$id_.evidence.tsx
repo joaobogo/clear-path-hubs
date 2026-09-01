@@ -16,7 +16,11 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { getAdminMatch, downloadEvidenceRecord } from "@/lib/processing.functions";
-import { resolvePublishedRun, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
+import {
+  resolvePublishedRun,
+  scoreVoidedByUnreadableCv,
+  publishedScore,
+} from "@/lib/scoring/published-score";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -244,7 +248,9 @@ function EvidenceViewer() {
             <AlertTitle>A newer assessment is available</AlertTitle>
             <AlertDescription>
               The client is seeing the approved run. A newer completed run scored{" "}
-              <b>{Math.round(Number(newer.final_score ?? newer.score ?? 0))}</b> on engine{" "}
+              {/* `?? 0` printed "scored 0" for a run with no usable number. */}
+              <b>{publishedScore(newer) === null ? "no usable score" : Math.round(publishedScore(newer)!)}</b>{" "}
+              on engine{" "}
               {newer.engine_version}. Approve it from the candidate workspace to update what
               the client sees.
             </AlertDescription>
@@ -262,8 +268,12 @@ function EvidenceViewer() {
           value={
             scoreVoided
               ? "No score"
-              : currentRun?.score != null
-                ? String(Math.round(Number(currentRun.final_score ?? currentRun.score)))
+              : /* Gated on `score`, then read `final_score ?? score`. A run
+                   whose number came from a human adjustment stores final_score
+                   and leaves score null, so a real published figure rendered as
+                   "—". One resolver decides both questions. */
+                publishedScore(currentRun) !== null
+                ? String(Math.round(publishedScore(currentRun)!))
                 : "—"
           }
         />
