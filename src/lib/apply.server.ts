@@ -493,11 +493,16 @@ export async function submitApplicationImpl(
 
 
 
-      // Point candidate profile at latest CV.
-      await supabaseAdmin
-        .from("candidate_profiles")
-        .update({ current_cv_file_id: fileId })
-        .eq("id", candidateProfileId);
+      // Point candidate profile at latest CV — but never replace a stored CV on
+      // an existing profile unless the caller is its verified owner. The CV is
+      // always pinned to this application below either way.
+      if (profileIsNew || isProfileOwner || !existingCp?.current_cv_file_id) {
+        await supabaseAdmin
+          .from("candidate_profiles")
+          .update({ current_cv_file_id: fileId })
+          .eq("id", candidateProfileId);
+      }
+
 
       // 7. Create application (unique active constraint protects against races).
       const { data: appRow, error: appErr } = await supabaseAdmin
