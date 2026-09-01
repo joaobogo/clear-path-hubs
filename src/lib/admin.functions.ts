@@ -2623,7 +2623,16 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
           "current_score_run_id,approved_score_run_id",
           "candidate_profiles(id,full_name,email)",
           "positions(id,title,status,organization_id,approved_at,published_at,payment_status,description,employment_type,work_model,seniority,location,requirements,organizations(id,name))",
-          "current_run:score_runs!candidate_matches_current_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,position_id,candidate_profile_id,organization_id,application_id)",
+          // `evidence` was absent from THIS embed and present on approved_run
+          // below, so `evidenceRun = approved ?? current` read undefined for
+          // every unapproved candidate and the desk showed "✗ Evidence ·
+          // Blocked" for records that carry plenty of it. Two OMNIFLOW
+          // candidates — including the second-strongest in the roster — sat
+          // unpublished behind a blocker that did not exist, and both went
+          // through Approve → Publish with no override when someone finally
+          // tried (audit 1 Sep, F17). The fix for TF7-05 changed which RUN is
+          // consulted and did not notice the column was never fetched.
+          "current_run:score_runs!candidate_matches_current_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,evidence,position_id,candidate_profile_id,organization_id,application_id)",
           "approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,evidence,raw_score,applied_cap,final_score,position_id,candidate_profile_id,organization_id,application_id)",
         ].join(","),
       )
