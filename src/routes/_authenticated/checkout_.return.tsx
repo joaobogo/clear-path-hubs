@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { formatMoneyFromCents } from "@/lib/money";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -41,12 +42,12 @@ export const Route = createFileRoute("/_authenticated/checkout_/return")({
   component: CheckoutReturnPage,
 });
 
+// money.ts: "Never divide or multiply by 100 at a call site." This one also
+// omitted maximumFractionDigits, so the checkout receipt printed "$1,234.00"
+// where the rest of the product shows whole units.
 function money(cents: number | null, currency: string | null) {
   if (cents == null) return null;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: (currency ?? "usd").toUpperCase(),
-  }).format(cents / 100);
+  return formatMoneyFromCents(cents, currency);
 }
 
 function CheckoutReturnPage() {

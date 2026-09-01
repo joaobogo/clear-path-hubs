@@ -5,6 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { APP_LOCALE } from "@/lib/format/datetime";
+import { formatMoneyMajor } from "@/lib/money";
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
 import { parseLoomLink } from "@/lib/media/loom-link";
 import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
@@ -695,20 +696,19 @@ function normWorkAuth(raw: unknown): string | null {
 }
 
 
+/**
+ * Compensation, which may be a number or free text ("Competitive").
+ *
+ * The numeric path used to re-implement the shared formatter with its own
+ * default currency — USD here, EUR in money.ts — so the same unlabelled figure
+ * rendered as dollars on one surface and euros on another. Only the free-text
+ * passthrough is local now; the number goes through the one formatter.
+ */
 function formatMoney(v: unknown, currency?: string | null): string | null {
   if (v == null) return null;
   const n = typeof v === "number" ? v : Number(String(v).replace(/[^\d.-]/g, ""));
   if (!Number.isFinite(n) || n <= 0) return typeof v === "string" && v.trim().length ? v.trim() : null;
-  const cur = (currency ?? "USD").toUpperCase();
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: cur,
-      maximumFractionDigits: 0,
-    }).format(n);
-  } catch {
-    return `${cur} ${Math.round(n).toLocaleString(APP_LOCALE)}`;
-  }
+  return formatMoneyMajor(n, currency);
 }
 
 function normCompensationRange(raw: unknown): {

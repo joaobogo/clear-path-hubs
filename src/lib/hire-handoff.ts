@@ -15,6 +15,7 @@
  */
 
 import { addDays, guaranteeWindow, type GuaranteeWindow } from "./offer-hire";
+import { formatMoneyMajor } from "@/lib/money";
 
 export { guaranteeWindow, addDays };
 export type { GuaranteeWindow };
@@ -176,11 +177,9 @@ export function compensationLine(input: {
   if (amount === null) {
     return { amount: null, currency, period, label: null };
   }
-  const money = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: (currency ?? "USD").toUpperCase(),
-    maximumFractionDigits: 0,
-  }).format(amount);
+  // One formatter. This copy had no try/catch, so an unrecognised currency
+  // code threw a RangeError out of the handoff instead of falling back.
+  const money = formatMoneyMajor(amount, currency);
   const suffix =
     period === "hourly"
       ? " per hour"

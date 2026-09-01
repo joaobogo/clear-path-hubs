@@ -1,4 +1,5 @@
 import { extractOnsiteDays } from "./onsite-days";
+import { formatMoneyMajor } from "@/lib/money";
 import { canonicalLocation } from "./location-format";
 import { zoneDisplay } from "@/lib/time/zone-label";
 
@@ -44,17 +45,9 @@ const str = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
 const num = (v: unknown): number | null =>
   typeof v === "number" && Number.isFinite(v) ? v : null;
 
+/** One formatter — money.ts owns the rounding, the fallback and the default. */
 function formatAmount(value: number, currency: string): string {
-  const code = currency.toUpperCase();
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: code,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${code} ${value.toLocaleString("en-US")}`;
-  }
+  return formatMoneyMajor(value, currency);
 }
 
 /**

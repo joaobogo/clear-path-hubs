@@ -3,6 +3,7 @@
  * custom build, and what that pipeline is worth.
  */
 import { useState } from "react";
+import { formatMoneyFromCents } from "@/lib/money";
 import { formatDate } from "@/lib/format/datetime";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -49,17 +50,15 @@ export const Route = createFileRoute("/_authenticated/admin/dashboard-requests")
 // quotes disagree; summing across currencies is meaningless, so in that case
 // the figure is shown without a symbol rather than under a wrong one.
 function money(cents: number, currency = "gbp") {
-  const amount = cents / 100;
   // "none" (nothing quoted) and "mixed" (quotes disagree) both mean we cannot
   // name a currency, but only one of them is worth telling the reader about.
-  if (currency.toLowerCase() === "mixed" || currency.toLowerCase() === "none") {
-    return amount.toLocaleString("en-GB", { maximumFractionDigits: 0 });
+  // Everything else goes through the one formatter, which owns the rounding
+  // and the fallback for an unrecognised code.
+  const code = currency.toLowerCase();
+  if (code === "mixed" || code === "none") {
+    return (cents / 100).toLocaleString("en-GB", { maximumFractionDigits: 0 });
   }
-  return amount.toLocaleString("en-GB", {
-    style: "currency",
-    currency: currency.toUpperCase(),
-    maximumFractionDigits: 0,
-  });
+  return formatMoneyFromCents(cents, currency);
 }
 
 function DashboardRequestsPage() {

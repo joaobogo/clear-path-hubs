@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatMoneyFromCents } from "@/lib/money";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -43,12 +44,13 @@ export const Route = createFileRoute("/_authenticated/admin/payments")({
   component: AdminPaymentsPage,
 });
 
-function money(cents: number, currency: string) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency.toUpperCase(),
-  }).format(cents / 100);
-}
+// money.ts says it in its own docstring: "Never divide or multiply by 100 at a
+// call site — if you are reaching for / 100, you want formatMoneyFromCents."
+// This local copy also omitted maximumFractionDigits, so the payments desk
+// printed "$1,234.00" where every other surface rounds to whole units, and an
+// unrecognised currency code threw a RangeError out of the render instead of
+// falling back.
+const money = formatMoneyFromCents;
 
 function statusTone(status: string) {
   if (status === "paid") return "default";

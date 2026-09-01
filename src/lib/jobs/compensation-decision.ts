@@ -1,3 +1,4 @@
+import { formatMoneyMajor } from "@/lib/money";
 /**
  * Compensation as a decision, never a blank.
  *
@@ -41,17 +42,9 @@ const text = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
 const num = (v: unknown): number | null =>
   typeof v === "number" && Number.isFinite(v) && v > 0 ? v : null;
 
+/** One formatter — money.ts owns the rounding, the fallback and the default. */
 function money(value: number, currency: string): string {
-  const code = (currency || "USD").toUpperCase();
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: code,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${code} ${value.toLocaleString("en-US")}`;
-  }
+  return formatMoneyMajor(value, currency);
 }
 
 export function requiresPayDisclosure(jurisdictions: string[] | null | undefined): boolean {
