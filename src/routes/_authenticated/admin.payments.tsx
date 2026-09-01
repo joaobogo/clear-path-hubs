@@ -29,13 +29,13 @@ type Filter = "all" | "paid" | "failed" | "refunded";
 export const Route = createFileRoute("/_authenticated/admin/payments")({
   head: () => ({
     meta: [
-      { title: "Payments ledger — Admin | TaaSFlow" },
+      { title: "Payments ledger · TaaSFlow admin" },
       {
         name: "description",
         content:
           "Read-only ledger of every payment: organisation, role, amount, status, date and provider reference.",
       },
-      { property: "og:title", content: "Payments ledger — Admin | TaaSFlow" },
+      { property: "og:title", content: "Payments ledger · TaaSFlow admin" },
       { property: "og:description", content: "Read-only record of every TaaSFlow payment." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

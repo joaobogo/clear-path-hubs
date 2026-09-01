@@ -12,7 +12,7 @@ const authRoute = getRouteApi("/_authenticated");
 export const Route = createFileRoute("/_authenticated/admin/notifications")({
   head: () => ({
     meta: [
-      { title: "Delivery health · TaaSFlow" },
+      { title: "Delivery health · TaaSFlow admin" },
       {
         name: "description",
         content:

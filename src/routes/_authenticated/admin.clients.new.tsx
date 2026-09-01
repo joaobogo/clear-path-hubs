@@ -18,7 +18,7 @@ import { collectErrors, emailText, requiredText } from "@/lib/form-validation";
 export const Route = createFileRoute("/_authenticated/admin/clients/new")({
   ssr: false,
   head: () => ({
-    meta: [{ title: "New client — Admin · TaaSFlow" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "New client · TaaSFlow admin" }, { name: "robots", content: "noindex" }],
   }),
   component: NewClientPage,
 });

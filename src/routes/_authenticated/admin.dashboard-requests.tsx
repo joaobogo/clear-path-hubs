@@ -26,7 +26,7 @@ import { toastError } from "@/lib/toast-error";
 export const Route = createFileRoute("/_authenticated/admin/dashboard-requests")({
   head: () => ({
     meta: [
-      { title: "Dashboard requests and access | TaaSFlow staff" },
+      { title: "Dashboard requests and access · TaaSFlow admin" },
       {
         name: "description",
         content:

@@ -101,8 +101,12 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
     id: "comms",
     label: "Comms",
     tabs: [
-      { to: "/admin/messages", label: "Messages" },
-      { to: "/admin/notifications", label: "Notifications" },
+      // A nav label must be the name of the page it opens. "Messages" opened a
+      // page headed "Conversations" and "Notifications" opened one headed
+      // "Delivery health", so the sidebar and the h1 disagreed on what the
+      // screen is called (audit 1 Sep, F32).
+      { to: "/admin/messages", label: "Conversations" },
+      { to: "/admin/notifications", label: "Delivery health" },
     ],
   },
   {

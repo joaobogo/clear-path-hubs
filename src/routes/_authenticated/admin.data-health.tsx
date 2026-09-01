@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 export const Route = createFileRoute("/_authenticated/admin/data-health")({
   head: () => ({
     meta: [
-      { title: "Data health · Admin" },
+      { title: "Data health · TaaSFlow admin" },
       {
         name: "description",
         content:

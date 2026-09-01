@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/_authenticated/admin/qa-report")({
   head: () => ({
     meta: [
-      { title: "TaaSFlow — Scoring System QA Report" },
+      { title: "Scoring system QA report · TaaSFlow admin" },
       { name: "description", content: "Release-level audit of the scoring, publish, and evidence system status tracking." },
       { name: "robots", content: "noindex, nofollow" },
     ],

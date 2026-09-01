@@ -33,7 +33,7 @@ const searchSchema = z.object({ org: z.string().uuid().optional() });
 export const Route = createFileRoute("/_authenticated/admin/team")({
   validateSearch: searchSchema,
   head: () => ({
-    meta: [{ title: "Team — Admin · TaaSFlow" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Team · TaaSFlow admin" }, { name: "robots", content: "noindex" }],
   }),
   component: TeamPage,
 });

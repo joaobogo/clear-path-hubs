@@ -61,14 +61,17 @@ export const ADMIN_NAV: WorkspaceNavItem[] = [
 
   {
     to: "/admin/messages",
-    label: "Comms",
+    // The page is headed "Conversations". "Comms" is also the group name, so
+    // this entry read as a section rather than the screen it opens.
+    label: "Conversations",
     icon: MessageSquare,
     group: "Comms",
-    hint: "Messages and notifications",
+    hint: "Client and candidate threads",
   },
   {
     to: "/admin/notifications",
-    label: "Notifications",
+    // Matches the page heading — see workspace-sections.ts.
+    label: "Delivery health",
     icon: Bell,
     group: "Comms",
     hint: "Delivery failures and suppressed addresses",

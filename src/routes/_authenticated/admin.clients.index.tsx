@@ -110,6 +110,17 @@ function isStatus(value: string): value is Status {
 }
 
 export const Route = createFileRoute("/_authenticated/admin/clients/")({
+  // The clients desk is the one screen with a client's name on it, and the
+  // only admin desk that did not name itself — both /admin/clients and
+  // /admin/clients/$id titled as the generic "Admin · TaaSFlow", which is what
+  // a browser tab, a bookmark and a screen reader all announce
+  // (audit 1 Sep, F32).
+  head: () => ({
+    meta: [
+      { title: "Clients · TaaSFlow admin" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   validateSearch: zodValidator(searchSchema),
   pendingComponent: () => (
     // Bounded: a route-specific skeleton REPLACES the bounded router

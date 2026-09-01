@@ -23,7 +23,7 @@ import { PAYMENTS_ENABLED } from "@/config/commerce";
 export const Route = createFileRoute("/_authenticated/admin/pending-leads")({
   head: () => ({
     meta: [
-      { title: "Pending leads — calls and unpaid roles | TaaSFlow admin" },
+      { title: "Pending leads · TaaSFlow admin" },
       {
         name: "description",
         content:
