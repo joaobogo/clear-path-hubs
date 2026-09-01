@@ -38,8 +38,8 @@ findings (F23, F24), so everything from old-F23 onward shifted up by two.
 | F19 | Requirement Met to staff reads "no direct evidence" to the client | DONE | filter refines presentation, never overturns the run |
 | F20 | Client invited to request interviews that exist / offer to people never met | DONE | `interviews-to-confirm.ts` three shared predicates |
 | F21 | Six agents "On and working"; two have never run | DONE | `agents/registry.ts` — three states, sourced from last action |
-| F22 | "Your data advantage" reports zero evidence; provenance shows a query limit as a count | PARTIAL | provenance fixed; **evidence-items counter still reads empty for the demo workspace** |
-| F23 | Public /case-studies metrics the platform cannot support | **OWNER** | see below — highest business risk on this list |
+| F22 | "Your data advantage" reports zero evidence; provenance shows a query limit as a count | DONE | counter reads score_runs.evidence; scripts/backfill-evidence-items.mjs populates the table too |
+| F23 | Public /case-studies metrics the platform cannot support | DONE (needs your text) | provenance required, unattributed figures withheld — **6 source lines to write** |
 
 ## Minor
 
@@ -68,16 +68,24 @@ findings (F23, F24), so everything from old-F23 onward shifted up by two.
 
 ## Owner actions — not engineering calls
 
-1. **F23 — /case-studies.** The page publishes `POSITIONS DELIVERED 175+`,
-   `12-MONTH RETENTION 92%`, `OFFER ACCEPTANCE 86%`, `CLIENT SHORTLIST RATING 9.1/10`,
-   none sourced. The platform holds **one confirmed hire, starting 25 Sep 2026** — a
-   future date, so no twelve-month retention figure can exist from platform data, and
-   the Calibration desk itself says only 9 candidates have any recorded outcome.
-   The same domain's Trust Center runs the opposite standard ("stated only where we can
-   prove it", with a "What we do not claim" section). Two public pages, two standards.
-   Some figures may come from recruiting predating the platform — that is exactly the
-   point: nothing says so. **Decision needed: source each figure, or scope the page to
-   what the platform can evidence.** I have not touched the numbers.
+1. **F23 — write six provenance lines.** Mechanism shipped: provenance is a required
+   field and an unattributed figure does not render, so the strip is hidden right now.
+   Fill in `src/config/case-study-metrics.ts` — one sentence each and the figure
+   publishes. Shape: "Across 11 years of recruiting delivery, including engagements
+   predating this platform."
+
+   | Figure | Needs |
+   |---|---|
+   | Positions delivered 175+ | a source line |
+   | Cities engaged 18 | a source line |
+   | Median time to shortlist 7d | a source line |
+   | Client shortlist rating 9.1/10 | a source line, and where the ratings were collected |
+   | **12-month retention 92%** | **a decision, not a sentence** — it cannot be sourced to this platform at all: the only confirmed hire starts 25 Sep 2026 |
+   | Offer acceptance 86% | a source line |
+
+   I have not invented any attribution. The guard also rejects "internal data",
+   "various sources" and "representative data" — a provenance line exists so a reader
+   can check the number, and those let nobody check anything.
 2. **Publish.** ~40 commits are unpublished. Git push ≠ deploy. The build stamp added
    in 97ff7783 takes effect from the next publish, so nothing observed today reflects
    any of this work.
@@ -105,7 +113,6 @@ findings (F23, F24), so everything from old-F23 onward shifted up by two.
 
 | # | What is left | Why it is not done |
 |---|---|---|
-| F22 | The evidence-items counter reads an empty `candidate_evidence_items` for the demo workspace | Pointing the counter at the run’s evidence, or backfilling the demo data, is a choice about which table is the intended home. Northwind is the workspace shown to prospects, so getting that choice right matters more than getting it done fast. **Needs your call.** |
 | F33 | Two calibration views report different denominators | The audit itself files this as needing owner verification — the two desks may be measuring different things on purpose. |
 
 ## F40 — notification feed, analysis
