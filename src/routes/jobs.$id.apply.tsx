@@ -192,6 +192,31 @@ function ApplyPage() {
   >(null);
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  /**
+   * Bumped every time a submit fails, so the focus effect below runs again
+   * even when the same field fails twice.
+   *
+   * The visible copy was already good — it named the field and said nothing
+   * was lost — but "Check the highlighted fields below" is a purely visual
+   * instruction, no input carried aria-invalid, nothing linked a message to
+   * its field, the summary could not be tabbed to, and focus stayed on the
+   * Continue button. A keyboard or screen-reader applicant was told something
+   * was wrong and given no way to find it (audit 1 Sep, F18). This is the
+   * candidate-facing form, so it is the population least able to absorb that.
+   */
+  const [errorSeq, setErrorSeq] = useState(0);
+  const errorSummaryRef = useRef<HTMLDivElement | null>(null);
+
+  /** aria wiring for one field. Spread onto the input. */
+  const fieldAria = (field: string) =>
+    fieldErrors[field]
+      ? ({ "aria-invalid": true, "aria-describedby": `${field}-error` } as const)
+      : {};
+
+  const failValidation = (errs: Record<string, string>) => {
+    setFieldErrors(errs);
+    setErrorSeq((n) => n + 1);
+  };
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   // Set only when the browser refuses to keep the draft (private mode, full
   // quota). We say so instead of implying the answers are safe.
@@ -533,16 +558,35 @@ function ApplyPage() {
       // Only this question gates the next question. Later ones are not its
       // problem.
       const errs = questionIssues([pos!.questions[qCursor - 1]]);
+      if (Object.keys(errs).length > 0) return failValidation(errs);
       setFieldErrors(errs);
-      if (Object.keys(errs).length > 0) return;
       goTo({ q: qCursor + 1 });
       return;
     }
     const errs = stepIssues(step);
+    if (Object.keys(errs).length > 0) return failValidation(errs);
     setFieldErrors(errs);
-    if (Object.keys(errs).length > 0) return;
     setStep(Math.min(APPLY_STEPS, step + 1));
   };
+  // Focus follows the error. Document order, not object-key order, so the
+  // applicant is sent to the first problem ON THE PAGE rather than the first
+  // key the issues object happened to carry.
+  useEffect(() => {
+    if (errorSeq === 0) return;
+    if (typeof document === "undefined") return;
+    const keys = new Set(Object.keys(fieldErrors));
+    if (keys.size === 0) return;
+    const target = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-field]"),
+    ).find((n) => keys.has(n.dataset.field ?? ""));
+    const el = target ?? errorSummaryRef.current;
+    el?.scrollIntoView({ block: "center" });
+    el?.focus({ preventScroll: true });
+    // fieldErrors is intentionally not a dependency: re-running on every
+    // keystroke would drag focus back while the applicant is typing the fix.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorSeq]);
+
   const goBack = () => {
     setFieldErrors({});
     if (paginateQuestions && qCursor > 1) {
@@ -1004,11 +1048,41 @@ function ApplyPage() {
 
 
         {Object.keys(fieldErrors).length > 0 && (
-          <Alert variant="destructive" className="mt-6" data-testid="apply-step-error">
+          <Alert
+            variant="destructive"
+            className="mt-6"
+            data-testid="apply-step-error"
+            ref={errorSummaryRef}
+            tabIndex={-1}
+          >
             <AlertTitle>This step needs a little more</AlertTitle>
             <AlertDescription>
-              Check the highlighted fields below. Everything you have already entered is still
-              here — nothing was cleared.
+              {/* "Check the highlighted fields below" was the only instruction,
+                  and highlighting is a visual cue. The list names each field
+                  and jumps to it. */}
+              <span className="block">
+                Everything you have already entered is still here — nothing was cleared.
+              </span>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                {Object.entries(fieldErrors).map(([field, message]) => (
+                  <li key={field}>
+                    <button
+                      type="button"
+                      className="underline underline-offset-2"
+                      onClick={() => {
+                        const el =
+                          (document.querySelector(
+                            `[data-field="${field}"]`,
+                          ) as HTMLElement | null) ?? document.getElementById(field);
+                        el?.scrollIntoView({ block: "center" });
+                        el?.focus({ preventScroll: true });
+                      }}
+                    >
+                      {message}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </AlertDescription>
           </Alert>
         )}
@@ -1129,11 +1203,12 @@ function ApplyPage() {
                     id="full_name"
                     autoComplete="name"
                     data-field="full_name"
+                    {...fieldAria("full_name")}
                     value={form.full_name}
                     onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                   />
                   {fieldErrors.full_name && (
-                    <p className="mt-1 text-xs text-destructive">{fieldErrors.full_name}</p>
+                    <p id="full_name-error" className="mt-1 text-xs text-destructive">{fieldErrors.full_name}</p>
                   )}
                 </div>
                 <div>
@@ -1143,11 +1218,12 @@ function ApplyPage() {
                     type="email"
                     autoComplete="email" inputMode="email"
                     data-field="email"
+                    {...fieldAria("email")}
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                   />
                   {fieldErrors.email && (
-                    <p className="mt-1 text-xs text-destructive">{fieldErrors.email}</p>
+                    <p id="email-error" className="mt-1 text-xs text-destructive">{fieldErrors.email}</p>
                   )}
                 </div>
                 <div>
@@ -1157,12 +1233,13 @@ function ApplyPage() {
                     type="tel"
                     autoComplete="tel" inputMode="tel"
                     data-field="phone"
+                    {...fieldAria("phone")}
                     placeholder={phonePlaceholder(pos.country_code)}
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   />
                   {fieldErrors.phone && (
-                    <p className="mt-1 text-xs text-destructive">{fieldErrors.phone}</p>
+                    <p id="phone-error" className="mt-1 text-xs text-destructive">{fieldErrors.phone}</p>
                   )}
                 </div>
                 <div>
@@ -1171,12 +1248,13 @@ function ApplyPage() {
                     id="country"
                     autoComplete="country-name"
                     data-field="country"
+                    {...fieldAria("country")}
                     placeholder="e.g. Portugal"
                     value={form.country}
                     onChange={(e) => setForm({ ...form, country: e.target.value })}
                   />
                   {fieldErrors.country && (
-                    <p className="mt-1 text-xs text-destructive">{fieldErrors.country}</p>
+                    <p id="country-error" className="mt-1 text-xs text-destructive">{fieldErrors.country}</p>
                   )}
                 </div>
                 <div>
@@ -1185,12 +1263,13 @@ function ApplyPage() {
                     id="region"
                     autoComplete="address-level1"
                     data-field="region"
+                    {...fieldAria("region")}
                     placeholder="Optional"
                     value={form.region}
                     onChange={(e) => setForm({ ...form, region: e.target.value })}
                   />
                   {fieldErrors.region && (
-                    <p className="mt-1 text-xs text-destructive">{fieldErrors.region}</p>
+                    <p id="region-error" className="mt-1 text-xs text-destructive">{fieldErrors.region}</p>
                   )}
                 </div>
                 <div>
@@ -1199,12 +1278,13 @@ function ApplyPage() {
                     id="city"
                     autoComplete="address-level2"
                     data-field="city"
+                    {...fieldAria("city")}
                     placeholder="e.g. Lisbon"
                     value={form.city}
                     onChange={(e) => setForm({ ...form, city: e.target.value })}
                   />
                   {fieldErrors.city && (
-                    <p className="mt-1 text-xs text-destructive">{fieldErrors.city}</p>
+                    <p id="city-error" className="mt-1 text-xs text-destructive">{fieldErrors.city}</p>
                   )}
                 </div>
               </div>
@@ -1237,12 +1317,13 @@ function ApplyPage() {
                         type="password"
                         autoComplete="new-password"
                         data-field="password"
+                        {...fieldAria("password")}
                         placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
                       {fieldErrors.password && (
-                        <p className="mt-1 text-xs text-destructive">{fieldErrors.password}</p>
+                        <p id="password-error" className="mt-1 text-xs text-destructive">{fieldErrors.password}</p>
                       )}
                     </div>
                     <div>
@@ -1319,6 +1400,7 @@ function ApplyPage() {
                   ref={cvInputRef}
                   type="file"
                   data-field="cv"
+                  {...fieldAria("cv")}
                   accept="application/pdf,.pdf"
                   aria-describedby="cv-help"
                   className="sr-only"
@@ -1400,7 +1482,7 @@ function ApplyPage() {
                     </div>
                   </div>
                 ) : fieldErrors.cv ? (
-                  <p className="mt-1 text-xs text-destructive">{fieldErrors.cv}</p>
+                  <p id="cv-error" className="mt-1 text-xs text-destructive">{fieldErrors.cv}</p>
                 ) : null}
 
                 {cvFile && !cvError && !cvChecking && (
@@ -1449,7 +1531,7 @@ function ApplyPage() {
                     id="cover_letter"
                     rows={4}
                     data-field="cover_letter"
-                    aria-describedby="cover_letter-help cover_letter-count"
+                                        aria-describedby="cover_letter-help cover_letter-count"
                     maxLength={COVER_NOTE_MAX}
                     placeholder="In two or three sentences, what makes this role a fit for you?"
                     className="mt-1 max-h-[40vh] min-h-[6.5rem] resize-none overflow-y-auto"
@@ -1479,12 +1561,13 @@ function ApplyPage() {
                       id="linkedin_url"
                       inputMode="url"
                       data-field="linkedin_url"
+                      {...fieldAria("linkedin_url")}
                       placeholder="https://linkedin.com/in/…"
                       value={form.linkedin_url}
                       onChange={(e) => setForm({ ...form, linkedin_url: e.target.value })}
                     />
                     {fieldErrors.linkedin_url && (
-                      <p className="mt-1 text-xs text-destructive">{fieldErrors.linkedin_url}</p>
+                      <p id="linkedin_url-error" className="mt-1 text-xs text-destructive">{fieldErrors.linkedin_url}</p>
                     )}
                   </div>
                   <div>
@@ -1493,12 +1576,13 @@ function ApplyPage() {
                       id="portfolio_url"
                       inputMode="url"
                       data-field="portfolio_url"
+                      {...fieldAria("portfolio_url")}
                       placeholder="https://…"
                       value={form.portfolio_url}
                       onChange={(e) => setForm({ ...form, portfolio_url: e.target.value })}
                     />
                     {fieldErrors.portfolio_url && (
-                      <p className="mt-1 text-xs text-destructive">{fieldErrors.portfolio_url}</p>
+                      <p id="portfolio_url-error" className="mt-1 text-xs text-destructive">{fieldErrors.portfolio_url}</p>
                     )}
                   </div>
                   <div className="md:col-span-2">
@@ -1507,12 +1591,13 @@ function ApplyPage() {
                       id="website_url"
                       inputMode="url"
                       data-field="website_url"
+                      {...fieldAria("website_url")}
                       placeholder="https://…"
                       value={form.website_url}
                       onChange={(e) => setForm({ ...form, website_url: e.target.value })}
                     />
                     {fieldErrors.website_url && (
-                      <p className="mt-1 text-xs text-destructive">{fieldErrors.website_url}</p>
+                      <p id="website_url-error" className="mt-1 text-xs text-destructive">{fieldErrors.website_url}</p>
                     )}
                   </div>
                 </div>
@@ -1534,6 +1619,7 @@ function ApplyPage() {
                     id="loom_url"
                     inputMode="url"
                     data-field="loom_url"
+                    {...fieldAria("loom_url")}
                     aria-describedby="loom_url-help"
                     placeholder="https://www.loom.com/share/…"
                     className="mt-2"
@@ -1541,7 +1627,7 @@ function ApplyPage() {
                     onChange={(e) => setForm({ ...form, loom_url: e.target.value })}
                   />
                   {fieldErrors.loom_url ? (
-                    <p className="mt-1 text-xs text-destructive">{fieldErrors.loom_url}</p>
+                    <p id="loom_url-error" className="mt-1 text-xs text-destructive">{fieldErrors.loom_url}</p>
                   ) : (
                     <p className="mt-1 text-xs text-muted-foreground">{LOOM_LINK_HINT}</p>
                   )}
@@ -1727,6 +1813,7 @@ function ApplyPage() {
                     checked={consent}
                     onCheckedChange={(v) => setConsent(v === true)}
                     data-field="consent"
+                    {...(fieldErrors.consent_terms ? { "aria-invalid": true, "aria-describedby": "consent-error" } as const : {})}
                     aria-label="I agree to the terms"
 
                   />
@@ -1738,7 +1825,7 @@ function ApplyPage() {
                   </span>
                 </label>
                 {fieldErrors.consent_terms && (
-                  <p className="text-xs text-destructive">{fieldErrors.consent_terms}</p>
+                  <p id="consent-error" className="text-xs text-destructive">{fieldErrors.consent_terms}</p>
                 )}
                 <label className="flex items-start gap-3 text-sm">
                   <Checkbox
@@ -1761,7 +1848,7 @@ function ApplyPage() {
                   id="accommodation_request"
                   rows={3}
                   data-field="accommodation_request"
-                  placeholder="Let us know if you need any adjustments during the process."
+                                    placeholder="Let us know if you need any adjustments during the process."
                   value={form.accommodation_request}
                   onChange={(e) => setForm({ ...form, accommodation_request: e.target.value })}
                 />
