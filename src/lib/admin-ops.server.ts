@@ -159,10 +159,56 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     (async () => {
       const { loadDeliveryFailures } = await import("./notification-failures.server");
       const failures = await loadDeliveryFailures(s);
-      const items = failures.items.filter((f) => f.retryable);
+      const retryable = failures.items.filter((f) => f.retryable);
+
+      // One broken integration is ONE item of work, not 150.
+      //
+      // 150 of the 187 items on this desk were the same internal Teams webhook
+      // failing, the same candidate appearing more than once, and every
+      // genuine item — 1 approval, 8 decisions, 7 overdue clients, 3
+      // interviews — numerically drowned by it. The tile's own description
+      // promises failures "where a retry can still get through", and retrying
+      // a webhook 150 times will not fix a webhook (audit 1 Sep, F10/F28).
+      //
+      // loadDeliveryFailures already groups these: summary.systemicFailures is
+      // one entry per (channel, reason) with 5+ rows in the window. The desk
+      // simply was not reading it, while /admin/notifications was.
+      const systemic = failures.summary.systemicFailures ?? [];
+      const isSystemic = (f: Any) =>
+        systemic.some(
+          (g: Any) => g.channel === f.channel && g.reason === f.reason,
+        );
+      const individual = retryable.filter((f) => !isSystemic(f));
+
+      // One synthetic row per systemic group, carrying its occurrence count,
+      // so the cause is named once and stays actionable.
+      const grouped = systemic.map((g: Any) => {
+        const rows = retryable.filter(
+          (f) => f.channel === g.channel && f.reason === g.reason,
+        );
+        const newest = rows.reduce(
+          (acc: string | null, f: Any) =>
+            !acc || String(f.lastAttemptAt) > acc ? String(f.lastAttemptAt) : acc,
+          null as string | null,
+        );
+        return {
+          id: `systemic:${g.channel}:${g.reason}`,
+          title: `${g.channel} — ${rows[0]?.reasonLabel ?? g.reason}`,
+          reasonSentence: `${rows.length} deliveries failed the same way. This is one integration to fix, not ${rows.length} retries.`,
+          audience: rows[0]?.audience ?? null,
+          lastAttemptAt: newest,
+          systemic: true,
+          occurrences: rows.length,
+        };
+      });
+
       return {
-        data: items,
-        count: failures.summary.retryable,
+        // Grouped causes first: they are the largest single piece of work.
+        data: [...grouped, ...individual],
+        // The headline counts WORK, not rows.
+        count: grouped.length + individual.length,
+        rawRows: failures.summary.retryable,
+        systemicGroups: grouped.length,
         blockedAddresses: failures.summary.blockedAddresses.length,
         blockedDeliveries: failures.summary.blockedNotSent,
       };
@@ -515,15 +561,25 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       count: blocked.count ?? 0,
       action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/notifications" },
+      // A systemic group is the biggest thing on this desk when it exists, so
+      // it outranks the blocked-address note: 150 rows collapsing to one cause
+      // is the fact a reader needs first (audit 1 Sep, F10).
       secondary_badge:
-        ((blocked as any).blockedAddresses ?? 0) > 0
+        ((blocked as Any).systemicGroups ?? 0) > 0
           ? {
-              label: `${(blocked as any).blockedAddresses} blocked address${
-                (blocked as any).blockedAddresses === 1 ? "" : "es"
-              } — retry won't help`,
-              tone: "warning" as const,
+              label: `${(blocked as Any).rawRows} deliveries, ${
+                (blocked as Any).systemicGroups
+              } shared cause${(blocked as Any).systemicGroups === 1 ? "" : "s"}`,
+              tone: "danger" as const,
             }
-          : undefined,
+          : ((blocked as Any).blockedAddresses ?? 0) > 0
+            ? {
+                label: `${(blocked as Any).blockedAddresses} blocked address${
+                  (blocked as Any).blockedAddresses === 1 ? "" : "es"
+                } — retry won't help`,
+                tone: "warning" as const,
+              }
+            : undefined,
       items: ((blocked.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((d) => ({
         id: d.id,
         title: d.title ?? "Delivery failure",
