@@ -1,3 +1,4 @@
+import { screenDealBreakers, usableDealBreakers } from "@/lib/deal-breaker-screening";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import * as React from "react";
@@ -499,7 +500,10 @@ function ExpressIntakePage() {
         targetDaysToOffer: state.targetDaysToOffer,
         decisionMaker: state.decisionMaker,
         decisionMakerEmail: state.decisionMakerEmail,
-        dealBreakers: normalizeDealBreakers(state.dealBreakerList),
+        // Only the rules we will actually apply. The review screen used to
+        // list a flagged entry among the accepted ones, which a client
+        // reasonably reads as "this will be used" (audit 1 Sep, F12).
+        dealBreakers: usableDealBreakers(normalizeDealBreakers(state.dealBreakerList)),
         companyName: state.companyName,
         companyWebsite: state.companyWebsite,
         companyLinkedin: state.companyLinkedin,
@@ -1368,6 +1372,15 @@ function ExpressIntakePage() {
    */
   const dealBreakerIssues = React.useMemo(
     () => validateDealBreakers(state.dealBreakerList),
+    [state.dealBreakerList],
+  );
+  // The field promises that anything tied to a protected characteristic is
+  // removed before sourcing, and nothing enforced it: entries were stored
+  // verbatim and shown back on the review screen as accepted rules
+  // (audit 1 Sep, F12). Non-blocking on purpose — a false positive must never
+  // stop a client submitting a role.
+  const dealBreakerFlags = React.useMemo(
+    () => screenDealBreakers(state.dealBreakerList),
     [state.dealBreakerList],
   );
 
@@ -2876,6 +2889,18 @@ function ExpressIntakePage() {
                           className="mt-1 text-xs text-[color:var(--brand-danger)]"
                         >
                           {rowError}
+                        </p>
+                      )}
+                      {dealBreakerFlags[index] && (
+                        <p
+                          role="status"
+                          className="mt-1 rounded-md border border-dashed px-2 py-1.5 text-xs leading-relaxed text-[color:var(--brand-navy)]/75"
+                        >
+                          <span className="font-medium">Will not be used. </span>
+                          {dealBreakerFlags[index]!.message}
+                          {dealBreakerFlags[index]!.suggestion
+                            ? ` ${dealBreakerFlags[index]!.suggestion}`
+                            : ""}
                         </p>
                       )}
                     </div>
