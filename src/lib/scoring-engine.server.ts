@@ -583,20 +583,39 @@ export function scoreCandidate(input: {
       }
       if (hits.length === 0) {
         // Not in the CV — check the screening answers before giving up.
+        //
+        // The negation test used to run on the CV path ONLY. A term found in a
+        // screening answer was pushed straight into `matched`, so
+        // "I'm less experienced with React/Supabase" — the exact sentence
+        // engine-version.ts names as a self-deprecating qualifier under
+        // v1.5.1 — credited Supabase as Met. The cue list was right and the
+        // window logic was right; neither was ever asked about this corpus
+        // (audit 1 Sep, F3). Screening answers are where a candidate is most
+        // likely to qualify a claim, which makes this the corpus that needed
+        // it most.
         let found = false;
         for (const sc of screeningCorpus) {
           for (const form of surfaceForms) {
-            const at = findTermMatches(sc.text, form, 1)[0];
-            if (at === undefined) continue;
-            matched.push(kw);
-            localEvidence.push({
+            const scHits = findTermMatches(sc.text, form, cal.max_term_hits);
+            if (scHits.length === 0) continue;
+            const affirmativeInAnswer = scHits.filter(
+              (at) => !isNegatedMention(sc.text, at, cal),
+            );
+            const snippet = cleanQuote(sc.text) || sc.text.slice(0, 200);
+            const ref: EvidenceRef = {
               requirement_id: r.id,
               requirement_text: r.text,
               source: "screening",
               matched_terms: [kw],
-              snippet: cleanQuote(sc.text) || sc.text.slice(0, 200),
+              snippet,
               location: `screening:${sc.question_id}`,
-            });
+            };
+            // Same rule as the CV: every mention negated means the answer
+            // denies the requirement rather than evidencing it. The passage is
+            // still recorded so a reviewer can see what was read.
+            if (affirmativeInAnswer.length === 0) negated.push(kw);
+            else matched.push(kw);
+            localEvidence.push(ref);
             found = true;
             break;
           }
@@ -654,7 +673,14 @@ export function scoreCandidate(input: {
     // Sentence-initial words are excluded — they are capitalised by grammar.
     const namedProducts = r.keywords.filter((kw) => {
       const capitalised = kw[0]!.toUpperCase() + kw.slice(1);
-      return new RegExp(`[^.!?]\\s${escapeRe(capitalised)}\\b`).test(r.text);
+      // `^` included: the old pattern required a character and a space before
+      // the name, so a product written FIRST ("React and Kubernetes and
+      // Terraform") was invisible to the gate. Harmless while the gate only
+      // demoted "met"; fatal once it can reject, because matching React would
+      // then count as matching no product at all. Sentence-initial framing
+      // words are not a risk: extractKeywordsFromRequirement has already
+      // dropped them, so a surviving first-word keyword is content.
+      return new RegExp(`(^|[^.!?]\\s)${escapeRe(capitalised)}\\b`).test(r.text);
     });
 
     let status: RequirementAssessment["status"];
@@ -703,9 +729,25 @@ export function scoreCandidate(input: {
         matched.some((kw) => kw.toLowerCase() === p.toLowerCase()),
       );
       if (namedHit) {
-        status = "met";
-      } else if (status === "met") {
-        status = "partial";
+        // Naming the product IS the evidence — but only when the requirement
+        // names ONE. "React and Kubernetes and Terraform" asks for three, and
+        // matching one of them is a partial answer, not a complete one; an
+        // alternatives list ("Cloudflare, Netlify, or Vercel") is already
+        // promoted above by isAlternativesList, which is the case this
+        // promotion was written for.
+        if (namedProducts.length === 1) status = "met";
+      } else {
+        // The gate only demoted MET, so a requirement that never reached met
+        // in the first place sailed through: "Experience with Lovable for
+        // rapid website and application development" came back PARTIAL on the
+        // framing words "application" and "development", quoting MongoDB,
+        // Express and Jenkins — passages with nothing to do with Lovable
+        // (audit 1 Sep, F4).
+        //
+        // Generic overlap is not evidence of a named tool at ANY status. If
+        // the CV is thin the honest answer is "we could not tell"; otherwise
+        // the product is simply absent.
+        status = cvIsThin ? "unknown" : "missing";
         needs_validation = true;
       }
     }

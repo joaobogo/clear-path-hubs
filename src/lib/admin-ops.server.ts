@@ -185,7 +185,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         s
           .from("candidate_matches")
           .select(
-            "id,score_stale,score_stale_at,score_stale_reasons,current_score_run_id,approved_score_run_id,approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(engine_version),score_runs!candidate_matches_current_score_run_id_fkey(engine_version),candidate_profiles(full_name),positions(id,title,status,owner_user_id,organizations(id,name))",
+            "id,score_stale,score_stale_at,score_stale_reasons,processing_state,current_score_run_id,approved_score_run_id,approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(engine_version),score_runs!candidate_matches_current_score_run_id_fkey(engine_version),candidate_profiles(full_name),positions(id,title,status,owner_user_id,organizations(id,name))",
           )
           .not("current_score_run_id", "is", null)
           .order("score_stale_at", { ascending: true, nullsFirst: false })
@@ -202,6 +202,13 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         // A role nobody is hiring for cannot have a stale deliverable, and its
         // Recompute can only fail (audit #4, M1/M10).
         if (ARCHIVED.has(String(m.positions?.status ?? ""))) return false;
+        // Nor can a score that does not exist be "assessed with an older
+        // engine version". A candidate whose CV could not be read was listed
+        // as Stale with a Recompute action that cannot succeed — the document
+        // has to be OCR d first, and Unreadable docs is the queue that offers
+        // that (audit 1 Sep, F9). Same guard the resolver uses, so membership
+        // and the score itself answer to one rule.
+        if (scoreVoidedByUnreadableCv(m)) return false;
         // Same rule the LIST CHIP applies: the run the client sees (approved)
         // or the current run was produced by an older engine. The tile read 7
         // while 22 rows wore a chip because it only checked the current run

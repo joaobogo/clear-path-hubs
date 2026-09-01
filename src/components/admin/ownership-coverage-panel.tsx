@@ -84,9 +84,10 @@ export function OwnershipCoveragePanel({
         <div className="flex items-center gap-2">
           {q.data && (
             <p className="text-xs text-muted-foreground">
-              {q.data.totals.flagged} flagged · {q.data.totals.no_owner} without owner ·{" "}
-              {q.data.totals.inactive_owner} inactive owner · {q.data.totals.no_backup} without
-              backup
+              {q.data.totals.flagged} flagged · {q.data.totals.no_owner} without a staff owner
+              {q.data.totals.unassigned > 0 ? ` (${q.data.totals.unassigned} unassigned)` : ""} ·{" "}
+              {q.data.totals.inactive_owner} owned by a non-staff or inactive user ·{" "}
+              {q.data.totals.no_backup} without backup
             </p>
           )}
           <Button variant="outline" size="sm" onClick={() => setShowAll((v) => !v)}>

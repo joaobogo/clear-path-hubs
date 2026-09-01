@@ -62,7 +62,10 @@ export type CoverageQueue = {
   totals: {
     open_roles: number;
     flagged: number;
+    /** No ACTIVE STAFF owner — includes a role owned by a non-staff user. */
     no_owner: number;
+    /** The owner column is null. A subset of no_owner. */
+    unassigned: number;
     inactive_owner: number;
     no_backup: number;
   };
@@ -273,10 +276,24 @@ export async function loadCoverageQueue(
     };
   });
 
+  // "Without owner" means no ACTIVE STAFF OWNER, not merely a null column.
+  //
+  // owner_user_id is populated on these roles — with the client's primary
+  // contact. James Cameron owns nothing at TaaSFlow; he is Northwind's contact.
+  // So the panel reported "0 without owner" while /admin/team, which resolves
+  // through loadStaffOptions, correctly bucketed every open role under
+  // "No owner assigned". Counting the column made the answer true and useless:
+  // nobody at TaaSFlow owned any open role, and the number said the opposite
+  // (audit 1 Sep, F8).
+  //
+  // Splitting it keeps the distinction visible rather than merging the two
+  // into one bucket: a role with no owner at all and a role owned by someone
+  // who is not staff need different fixes.
   const totals = {
     open_roles: all.length,
     flagged: all.filter((r) => r.needs_reassignment).length,
-    no_owner: all.filter((r) => !r.owner_user_id).length,
+    no_owner: all.filter((r) => !r.owner_user_id || !r.owner_is_active).length,
+    unassigned: all.filter((r) => !r.owner_user_id).length,
     inactive_owner: all.filter((r) => r.owner_user_id && !r.owner_is_active).length,
     no_backup: all.filter((r) => !r.backup_owner_user_id).length,
   };

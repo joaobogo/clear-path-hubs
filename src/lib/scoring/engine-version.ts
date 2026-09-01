@@ -72,4 +72,31 @@
  *      now "unknown · needs validation", which is what they actually are.
  * Scores move DOWN for requirements that were credited without a passage.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.5.2";
+/**
+ * v1.5.3 — the guards above, applied where they were needed (audit 1 Sep).
+ *
+ * Neither of these is a new rule. Both are rules v1.5.0 and v1.5.1 already
+ * declared, reaching a case they never actually covered — which is why an
+ * auditor found them still live on a record scored under v1.5.2, and why the
+ * Supabase sentence below had already been reported in audit #5.
+ *
+ *   1. The negation and self-deprecating-qualifier test ran on the CV ONLY.
+ *      A term found in a SCREENING ANSWER was credited without it, so
+ *      "I'm less experienced with React/Supabase" — the exact sentence the
+ *      v1.5.1 note names — went out as Supabase · Met. Screening answers are
+ *      where a candidate is most likely to qualify a claim, so this was the
+ *      corpus the guard was needed on most.
+ *   2. The named-product gate demoted "met" to "partial" when none of the
+ *      products a requirement names appeared, and left an existing "partial"
+ *      untouched. A requirement that never reached met therefore kept credit
+ *      it had earned on framing words: "Experience with Lovable for rapid
+ *      website and application development" was Partial on "application" and
+ *      "development", quoted against MongoDB, Express and Jenkins. Generic
+ *      overlap is not evidence of a named tool at any status.
+ *
+ * Scores move DOWN for requirements credited from a qualified screening answer
+ * or from framing words around a product name. Both directions of the
+ * named-product gate are unchanged otherwise: naming the product is still the
+ * evidence, whatever the keyword ratio does.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.5.3";
