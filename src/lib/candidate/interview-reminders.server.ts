@@ -70,6 +70,8 @@ export function isNoShow(i: {
   return (i.now ?? new Date()).getTime() - start >= NO_SHOW_GRACE_MS;
 }
 
+import { INTERVIEW_NO_OUTCOME_TITLE } from "@/lib/notifications/reconcile-actionable";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
 
@@ -137,7 +139,10 @@ export async function runInterviewReminders(limit = 200): Promise<ReminderSweepR
           await supabaseAdmin.rpc("notify_platform_staff", {
             _organization_id: row.organization_id,
             _event_type: "approval_needed",
-            _title: "Interview slot passed with no outcome",
+            // Shared with the reconciler that retires this task once the
+            // interview has an outcome — two copies of this string is how the
+            // sweep would keep raising items nothing ever clears.
+            _title: INTERVIEW_NO_OUTCOME_TITLE,
             _body: `${cp?.full_name ?? "A candidate"} — ${pos?.title ?? "role"}. Nobody marked it complete or cancelled. Confirm what happened and offer a rebooking.`,
             _link_path: `/admin/candidates/${match?.id}?tab=journey`,
           });

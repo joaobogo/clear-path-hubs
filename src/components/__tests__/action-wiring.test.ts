@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
-import { execSync } from "node:child_process";
+import { join } from "node:path";
+import { filesMatching, formatHits, grepSource } from "@tests/helpers/scan-source";
 
 /**
  * Action-wiring contract for every dashboard action (shortlist, reject,
@@ -15,13 +16,14 @@ import { execSync } from "node:child_process";
  *   4. never announce success for a server result that reported failure.
  */
 
-const list = (cmd: string) =>
-  execSync(cmd, { encoding: "utf8" })
-    .trim()
-    .split("\n")
-    .filter(Boolean);
+// Walked with node:fs rather than shelled out to ripgrep. The shell-out form
+// threw on Windows (`spawnSync ENOENT`), so this entire contract — every
+// dashboard action's server-function, pending, error and success wiring —
+// silently checked nothing there and reported as an environmental failure.
+const SRC = join(process.cwd(), "src");
+const NO_TESTS = { exclude: [/__tests__/] };
 
-const mutationFiles = list("rg -l 'useMutation' src -g'!**/__tests__/**'");
+const mutationFiles = filesMatching(SRC, /useMutation/, NO_TESTS);
 
 type Block = { file: string; line: number; name: string; block: string };
 
@@ -89,16 +91,17 @@ describe("dashboard action wiring", () => {
   });
 
   it("never writes to the database straight from a component or route", () => {
-    const direct = list(
-      "rg -n --no-heading \"supabase\\.from\\(\" src/components src/routes -g'!**/__tests__/**' || true",
-    ).filter((l) => /\.(insert|update|upsert|delete)\(/.test(l));
-    expect(direct, "client-side writes bypass server-side validation").toEqual([]);
+    const direct = [
+      ...grepSource(join(SRC, "components"), /supabase\.from\(/, NO_TESTS),
+      ...grepSource(join(SRC, "routes"), /supabase\.from\(/, NO_TESTS),
+    ].filter((h) => /\.(insert|update|upsert|delete)\(/.test(h.text));
+    expect(formatHits(direct), "client-side writes bypass server-side validation").toBe("");
   });
 
   it("does not announce success for a server result that reported failure", () => {
     // Server functions that resolve with a failure payload instead of throwing.
     const softFail = new Set<string>();
-    for (const file of list("rg -l 'createServerFn' src -g'!**/__tests__/**'")) {
+    for (const file of filesMatching(SRC, /createServerFn/, NO_TESTS)) {
       const s = readFileSync(file, "utf8");
       const re = /export const ([A-Za-z0-9_$]+)\s*=\s*createServerFn/g;
       let m: RegExpExecArray | null;

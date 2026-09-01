@@ -416,6 +416,13 @@ function NotificationRow({
               +{extra} more in {rule.group.toLowerCase()}
             </span>
           )}
+          {/* Repeats on ONE record, counted. Three "CV parsing failed" rows on
+              the admin feed read as one problem happening three times when they
+              were three separate documents; the reverse misreading is just as
+              easy, so a genuine repeat says how many (audit 1 Sep, F40). */}
+          {extra > 0 && (
+            <span className="text-[10px] text-muted-foreground">· {items.length} times</span>
+          )}
         </div>
 
         {/* What happened */}

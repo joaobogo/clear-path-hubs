@@ -8,6 +8,7 @@ import {
   copyFor,
   eventKey,
 } from "./events";
+import { subjectBody } from "./notifications/subject-body";
 
 /**
  * emitEventFromServer
@@ -29,6 +30,21 @@ export async function emitEventFromServer(args: {
   // Explicit recipients. If omitted for audience 'client', fans out to org members.
   recipients?: Array<{ user_id: string; audience: Audience; link_path?: string }>;
   link_path?: string;
+  /**
+   * Names the record this notification is about, for the STAFF feed only.
+   *
+   * Three "CV parsing failed — A CV could not be parsed and needs attention"
+   * items sat on the admin feed, none naming its document. Idempotency is per
+   * match, so those were three different candidates — but the operator could
+   * not tell that from the feed, and read it against a parse-failure queue of
+   * one and a health tile of two with no way to reconcile the three numbers
+   * (audit 1 Sep, F40). The copy was generic because the tier rule's `affects`
+   * is a static class string; nothing ever carried the subject.
+   *
+   * Applied to admin rows ONLY. Client and candidate copy must never name a
+   * candidate — that rule predates this and is enforced by the guard test.
+   */
+  subject_label?: string | null;
 }) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -214,10 +230,13 @@ export async function emitEventFromServer(args: {
 
         // A clarification request is worthless without the question itself, so
         // the typed question travels as the notification body.
-        body:
+        body: subjectBody(
+          r.audience,
           typeof args.payload?.["note"] === "string" && (args.payload["note"] as string).trim()
             ? (args.payload["note"] as string).trim()
             : copy.body ?? null,
+          args.subject_label ?? null,
+        ),
         link_path: r.link_path ?? args.link_path ?? (r.audience === "client" && args.candidate_match_id ? `/client/candidates/${args.candidate_match_id}` : args.candidate_match_id ? `/admin/review/${args.candidate_match_id}` : null),
         // Point every notification at the exact record it is about.
         entity_type: args.candidate_match_id
@@ -329,33 +348,65 @@ export const listMyNotifications = createServerFn({ method: "GET" })
     // already has a client decision recorded.
     const { data: openActionables } = await context.supabase
       .from("notifications")
-      .select("id, entity_id, entity_type")
+      .select("id, entity_id, entity_type, title")
       .eq("recipient_user_id", context.userId)
       .eq("event_type", "approval_needed")
       .is("resolved_at", null);
 
     if (openActionables && openActionables.length > 0) {
-      const matchIds = openActionables
-        .filter(n => n.entity_type === "candidate_match" && n.entity_id)
-        .map(n => n.entity_id as string);
-      
+      const {
+        INTERVIEW_NO_OUTCOME_TITLE,
+        interviewHasOutcome,
+        resolvedActionableIds,
+        subjectIds,
+      } = await import("./notifications/reconcile-actionable");
+      const matchIds = subjectIds(openActionables, "candidate_match");
+
       if (matchIds.length > 0) {
+        // The client decided: that answers every approval_needed on the match.
         const { data: decidedMatches } = await context.supabase
           .from("client_decisions")
           .select("candidate_match_id")
           .in("candidate_match_id", matchIds);
-        
-        const decidedSet = new Set((decidedMatches ?? []).map(d => d.candidate_match_id as string).filter(Boolean));
-        const toResolve = openActionables
-          .filter(n => n.entity_type === "candidate_match" && n.entity_id && decidedSet.has(n.entity_id))
-          .map(n => n.id);
-        
+        const decided = new Set(
+          (decidedMatches ?? []).map((d) => d.candidate_match_id as string).filter(Boolean),
+        );
+
+        // The interview has an outcome: that answers the no-show task, and
+        // only that task.
+        //
+        // The sweep raises "Interview slot passed with no outcome — nobody
+        // marked it complete or cancelled" and nothing retired it when somebody
+        // did. Rui Almeida's interview was cancelled and staff kept a task
+        // saying it had not been, while the client row for the same person read
+        // "Interview cancelled" (audit 1 Sep, F40). The mechanism was already
+        // here, watching one condition.
+        const { data: interviews } = await context.supabase
+          .from("interviews")
+          .select("candidate_match_id,status,completed_at,cancelled_at")
+          .in("candidate_match_id", matchIds);
+        const accounted = new Set<string>();
+        for (const iv of interviews ?? []) {
+          if (iv.candidate_match_id && interviewHasOutcome(iv)) {
+            accounted.add(iv.candidate_match_id as string);
+          }
+        }
+
+        const toResolve = [
+          ...resolvedActionableIds(openActionables, "candidate_match", decided),
+          ...resolvedActionableIds(
+            openActionables,
+            "candidate_match",
+            accounted,
+            INTERVIEW_NO_OUTCOME_TITLE,
+          ),
+        ];
         if (toResolve.length > 0) {
           const now = new Date().toISOString();
           await supabaseAdmin
             .from("notifications")
             .update({ resolved_at: now, read_at: now } as any)
-            .in("id", toResolve);
+            .in("id", [...new Set(toResolve)]);
         }
       }
     }

@@ -201,6 +201,27 @@ async function countRecentFailures(s: Any, matchId: string): Promise<number> {
  * failed CV sat in the queue with no bell anywhere. One emit per match per
  * outcome — idempotency is by (event, scope).
  */
+/**
+ * "GGM.pdf, attempt 6" — the document, named the way the parse-failure desk
+ * names it, so the feed and the queue describe one file the same way.
+ */
+async function parseFailureSubject(s: Any, match: Any): Promise<string | null> {
+  const { attemptLabel } = await import("./notifications/subject-body");
+  const cvFileId = match?.candidate_profiles?.current_cv_file_id as string | null | undefined;
+  if (!cvFileId) return null;
+  const { data: file } = await s
+    .from("files")
+    .select("filename,extraction_attempts")
+    .eq("id", cvFileId)
+    .maybeSingle();
+  // No invented ceiling: the desk shows a bare attempt count, so this does too.
+  return attemptLabel(
+    (file?.filename as string | null) ?? null,
+    (file?.extraction_attempts as number | null) ?? null,
+    null,
+  );
+}
+
 async function notifyPipelineOutcome(s: Any, outcome: PipelineOutcome) {
   const terminal =
     outcome.final_state === "scored"
@@ -212,9 +233,25 @@ async function notifyPipelineOutcome(s: Any, outcome: PipelineOutcome) {
   try {
     const { data: match } = await s
       .from("candidate_matches")
-      .select("id, organization_id, position_id, application_id, candidate_profile_id")
+      .select(
+        "id, organization_id, position_id, application_id, candidate_profile_id, candidate_profiles(current_cv_file_id)",
+      )
       .eq("id", outcome.match_id)
       .maybeSingle();
+    // Name the document on the staff feed. Three unnamed "CV parsing failed"
+    // items read as one problem repeated, and could not be reconciled against
+    // a parse-failure queue of one (audit 1 Sep, F40). They were three
+    // candidates: idempotency is per match, so the feed was accurate and
+    // unreadable at the same time.
+    //
+    // The filename and the attempt count are read from `files` — the same row
+    // and the same two columns /admin/parse-failures lists. Deriving a second
+    // attempt counter here (countRecentFailures over processing_jobs is right
+    // there and would have been easier) is how the feed and the desk would end
+    // up reporting different numbers for one document, which is the defect
+    // class this finding belongs to.
+    const subject_label =
+      terminal === "cv_parse_failed" ? await parseFailureSubject(s, match) : null;
     const { emitEventFromServer } = await import("./notifications.functions");
     await emitEventFromServer({
       event: terminal,
@@ -225,6 +262,7 @@ async function notifyPipelineOutcome(s: Any, outcome: PipelineOutcome) {
       candidate_match_id: outcome.match_id,
       candidate_profile_id: (match?.candidate_profile_id as string | null) ?? null,
       link_path: `/admin/candidates/${outcome.match_id}`,
+      subject_label,
     });
   } catch (e) {
     console.error("[pipeline] outcome notify failed", e);

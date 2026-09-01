@@ -1,11 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { execSync } from "node:child_process";
+import { join } from "node:path";
+import { formatHits, grepSource } from "@tests/helpers/scan-source";
 import { APP_LOCALE, formatDate, formatDateTime } from "../datetime";
 
 /**
  * The UI is English. A screen must never mix languages inside its date
  * strings, so no call site may inherit the browser locale.
+ *
+ * The two source scans below shelled out to ripgrep through `/bin/bash` and so
+ * threw `spawnSync ENOENT` on Windows rather than checking anything. They read
+ * as environmental failures for long enough to stop being read at all — a
+ * guard that cannot fire, which is the class of defect these guards exist to
+ * catch. They now walk the tree with node:fs.
  */
+const SRC = join(process.cwd(), "src");
+
 describe("date locale pinning", () => {
   it("formats dates in the app locale and workspace timezone", () => {
     expect(APP_LOCALE).toBe("en-GB");
@@ -25,20 +34,18 @@ describe("date locale pinning", () => {
   });
 
   it("has no browser-locale date formatting left in src", () => {
-    const hits = run(
-      `rg -n --glob '!**/__tests__/**' "toLocale(Date|Time)String\\(\\s*(undefined|\\))|Intl\\.DateTimeFormat\\(\\s*undefined" src || true`,
+    const hits = grepSource(
+      SRC,
+      /toLocale(Date|Time)String\(\s*(undefined|\))|Intl\.DateTimeFormat\(\s*undefined/,
+      { exclude: [/__tests__/] },
     );
-    expect(hits).toBe("");
+    expect(formatHits(hits)).toBe("");
   });
 
   it("never pins a non-English locale for display", () => {
-    const hits = run(
-      `rg -n --glob '!**/__tests__/**' "toLocale(Date|Time)String\\(\\s*[\\"']pt" src || true`,
-    );
-    expect(hits).toBe("");
+    const hits = grepSource(SRC, /toLocale(Date|Time)String\(\s*["']pt/, {
+      exclude: [/__tests__/],
+    });
+    expect(formatHits(hits)).toBe("");
   });
 });
-
-function run(cmd: string): string {
-  return execSync(cmd, { encoding: "utf8", shell: "/bin/bash" }).trim();
-}
