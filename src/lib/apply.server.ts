@@ -146,10 +146,19 @@ export async function submitApplicationImpl(
 
       const { data: existingCp, error: cpFindErr } = await supabaseAdmin
         .from("candidate_profiles")
-        .select("id,current_cv_file_id,user_id")
+        .select(
+          "id,current_cv_file_id,user_id,full_name,phone,location,country,region,city,linkedin_url,portfolio_url,website_url",
+        )
         .ilike("email", emailLower)
         .maybeSingle();
       if (cpFindErr) throw cpFindErr;
+
+      // An anonymous submission proves nothing about who owns this address, so
+      // it must never overwrite an existing profile's personal details. Only a
+      // signed-in caller with a confirmed matching address is the owner.
+      const { getCallerEmail } = await import("@/lib/auth/caller-identity.server");
+      const callerEmail = await getCallerEmail();
+      const isProfileOwner = !!existingCp && callerEmail === emailLower;
 
       const locationText = composeLocation({
         city: data.city,
@@ -169,20 +178,44 @@ export async function submitApplicationImpl(
       let candidateProfileId: string;
       if (existingCp) {
         candidateProfileId = existingCp.id;
-        // Update returning-candidate fields we now have.
-        await supabaseAdmin
-          .from("candidate_profiles")
-          .update({
-            full_name: data.full_name,
-            phone: data.phone || null,
-            ...locationFields,
+        const proposed: Record<string, unknown> = {
+          full_name: data.full_name,
+          phone: data.phone || null,
+          ...locationFields,
+        };
+        let patch: Record<string, unknown>;
+        if (isProfileOwner) {
+          // Verified owner: a returning candidate may update their own details.
+          patch = {
+            ...proposed,
             consent: {
               terms: true,
               network_opt_in: data.network_opt_in,
               updated_at: new Date().toISOString(),
             },
-          })
-          .eq("id", candidateProfileId);
+          };
+        } else {
+          // Unverified submitter: fill blanks only, never replace stored values.
+          const row = existingCp as unknown as Record<string, unknown>;
+          patch = {};
+          for (const [key, value] of Object.entries(proposed)) {
+            const current = row[key];
+            const isBlank =
+              current === null ||
+              current === undefined ||
+              (typeof current === "string" && current.trim() === "");
+            if (isBlank && value !== null && value !== undefined && value !== "") {
+              patch[key] = value;
+            }
+          }
+        }
+        if (Object.keys(patch).length > 0) {
+          await supabaseAdmin
+            .from("candidate_profiles")
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .update(patch as any)
+            .eq("id", candidateProfileId);
+        }
       } else {
         const { data: cpNew, error: cpErr } = await supabaseAdmin
           .from("candidate_profiles")
@@ -202,6 +235,8 @@ export async function submitApplicationImpl(
         if (cpErr) throw cpErr;
         candidateProfileId = cpNew.id;
       }
+      const profileIsNew = !existingCp;
+
 
       // 3b. Candidate account. An applicant who is not signed in may set a
       // password here so they can track this application in their portal.
