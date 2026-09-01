@@ -11,7 +11,7 @@
  * call site — if you are reaching for `/ 100`, you want `formatMoneyFromCents`.
  */
 
-const DEFAULT_CURRENCY = "EUR";
+const DEFAULT_CURRENCY = "USD";
 
 function format(amountMajor: number, currency: string | null | undefined): string {
   const cur = (currency || DEFAULT_CURRENCY).toUpperCase();

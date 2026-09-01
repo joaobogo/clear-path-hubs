@@ -30,7 +30,6 @@ import {
  ShieldCheck,
  User,
 } from "lucide-react";
-import { TeamsConnectionCard } from "@/components/client/teams-connection-card";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
 import { BannerAmber, SectionCard, Field } from "@/components/client/account/shared";

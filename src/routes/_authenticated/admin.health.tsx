@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { OperationalHealthPanel } from "@/components/admin/OperationalHealthPanel";
-import { TeamsDeliveryPanel } from "@/components/admin/TeamsDeliveryPanel";
 import { EmailDeliveryPanel } from "@/components/admin/EmailDeliveryPanel";
 import { TrackingConfigPanel } from "@/components/admin/TrackingConfigPanel";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
@@ -87,8 +86,6 @@ function HealthPage() {
       {feedback && <Alert><AlertDescription>{feedback}</AlertDescription></Alert>}
 
       <OperationalHealthPanel />
-
-      <TeamsDeliveryPanel />
 
       <EmailDeliveryPanel />
 

@@ -298,37 +298,6 @@ export async function emitEventFromServer(args: {
       console.error("[emitEventFromServer] email dispatch failed", e);
     }
 
-    // Teams channel: one post per workspace, only when that workspace has
-    // connected a channel and selected this event. A shared channel is an
-    // audience whose individual permissions we cannot verify, so anything
-    // carrying candidate-specific detail is withheld from it.
-    const { isSafeForUncertainAudience } = await import("./notifications/notification-tiers");
-    if (
-      args.organization_id &&
-      notifs.some((n) => n.organization_id) &&
-      isSafeForUncertainAudience(args.event)
-    ) {
-      try {
-        const { notifyOrgTeamsSafe } = await import("./teams-notify.server");
-        const first = notifs[0];
-        notifyOrgTeamsSafe({
-          organizationId: args.organization_id,
-          eventType: args.event,
-          notice: {
-            title: (first.title as string) ?? "TaaSFlow update",
-            subtitle: (first.body as string | null) ?? undefined,
-            linkPath: (first.link_path as string | null) ?? "/client",
-            linkLabel: "Open in TaaSFlow",
-          },
-          candidateMatchId: args.candidate_match_id ?? null,
-          actions: args.candidate_match_id
-            ? ["shortlist", "hold", "not_moving_forward"]
-            : undefined,
-        });
-      } catch (e) {
-        console.error("[emitEventFromServer] teams dispatch failed", e);
-      }
-    }
   }
 
   return { event_id: eventId, delivered: notifs?.length ?? 0 };

@@ -374,23 +374,6 @@ async function notifyReady(admin: Admin, input: BlueprintRunInput, bp: RoleBluep
     console.error("[blueprint] client email failed", err);
   }
 
-  // Team channel.
-  try {
-    const { notifyTeamsSafe } = await import("@/lib/teams-notify.server");
-    notifyTeamsSafe({
-      title: "Role blueprint ready",
-      subtitle: `${input.companyName} · ${bp.role.title}`,
-      facts: [
-        { label: "Confidence", value: `${Math.round(bp.confidence.overall * 100)}%` },
-        { label: "Must-haves", value: String(bp.must_have_skills.length) },
-        { label: "Screening questions", value: String(bp.screening_questions.length) },
-      ],
-      linkPath: `/admin/positions/${input.positionId}`,
-      linkLabel: "Open role",
-    });
-  } catch (err) {
-    console.error("[blueprint] teams notify failed", err);
-  }
 }
 
 export function absoluteUrl(path: string): string {

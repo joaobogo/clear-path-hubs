@@ -5,12 +5,11 @@
  * the website. Processing order is fixed and each step is independent:
  *
  *   1. Persist the ledger row (idempotent on the lead event key).
- *   2. Post the Microsoft Teams card.
- *   3. Send the internal email alert to the configured recipients.
- *   4. Record per-channel success/failure so delivery is traceable and retryable.
+ *   2. Send the internal email alert to the configured recipients.
+ *   3. Record per-channel success/failure so delivery is traceable and retryable.
  *
  * A failure in any channel never throws into the caller: the lead's own
- * primary record and the visitor's confirmation must never depend on Teams or
+ * primary record and the visitor's confirmation must never depend on
  * email being healthy.
  */
 import {
@@ -38,37 +37,7 @@ const PRIORITY_PREFIX = {
   standard: "🟢 New",
 } as const;
 
-function teamsNotice(event: NormalizedLeadEvent) {
-  const label = LEAD_TYPE_LABEL[event.leadType];
-  return {
-    title: `${PRIORITY_PREFIX[event.priority]} lead — ${label}`,
-    subtitle: [event.fullName, event.company].filter(Boolean).join(" · ") || label,
-    facts: [
-      { label: "Email", value: event.email },
-      { label: "Phone", value: event.phone },
-      { label: "Company", value: event.company },
-      ...event.facts,
-      { label: "Source", value: event.source },
-      { label: "Page", value: event.sourcePage },
-      { label: "Owner", value: event.ownerEmail },
-      { label: "Received", value: new Date().toISOString() },
-      { label: "Message", value: event.message },
-      { label: "Reference", value: event.recordId },
-    ],
-    linkPath: event.linkPath,
-    linkLabel: "Open in TaaSFlow",
-  };
-}
 
-async function sendTeams(event: NormalizedLeadEvent) {
-  try {
-    const { notifyTeams } = await import("@/lib/teams-notify.server");
-    const res = await notifyTeams(teamsNotice(event));
-    return { ok: res.ok, detail: res.ok ? null : (res.reason ?? "unknown") };
-  } catch (err) {
-    return { ok: false, detail: err instanceof Error ? err.message.slice(0, 400) : "throw" };
-  }
-}
 
 async function sendEmail(event: NormalizedLeadEvent, recipients: string[]) {
   try {
