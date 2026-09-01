@@ -9,6 +9,7 @@
  */
 
 import { arrangementGaps, type ArrangementInput } from "./arrangement-statement";
+import { screeningPayDrift } from "@/lib/jobs/screening-pay-drift";
 import { resolveCompensationDecision, type CompensationDecisionInput } from "./compensation-decision";
 import { authorisationStatement, type WorkAuthorisationInput } from "./work-authorisation";
 import type { BriefRequirement } from "./brief-requirements";
@@ -32,6 +33,18 @@ export type PublishGateInput = {
   outcomes?: unknown[] | null;
   /** The client explicitly chose not to publish a blocking field. */
   waived?: string[] | null;
+  /**
+   * Screening question text, checked against the role's own pay range.
+   *
+   * Question text is authored once at role setup with the figure baked into the
+   * prose, and nothing re-checks it when the range moves. Position bf2a3410
+   * published "R$3,500 to R$5,000 per month" on the job board, the public role
+   * page and the client compensation card, while screening question 3 asked
+   * every applicant to confirm alignment with "R$3,500–R$4,500" — a ceiling
+   * R$500 below the one they were recruited on, with the yes/no answer stored
+   * and fed into scoring (audit 1 Sep, F14).
+   */
+  screening_questions?: Array<{ id?: string | null; question?: string | null }> | null;
 };
 
 const text = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
@@ -43,6 +56,25 @@ export function publishGaps(input: PublishGateInput): PublishGap[] {
   const comp = resolveCompensationDecision(input.compensation);
   if (!comp.ok) {
     gaps.push({ key: "compensation", question: comp.blocker, group: "blocking", owner: "client" });
+  }
+
+  // A question that quotes a pay range the role does not offer must not reach
+  // an applicant. Blocking rather than advisory: the answer is stored as
+  // agreement to terms, and it is the number a candidate is most likely to
+  // hold us to. Ours to fix, not the client's: they recorded a correct range
+  // and the question drifted from it.
+  for (const q of input.screening_questions ?? []) {
+    const drift = screeningPayDrift(q?.question ?? "", {
+      min: input.compensation?.min ?? null,
+      max: input.compensation?.max ?? null,
+    });
+    if (!drift) continue;
+    gaps.push({
+      key: "screening_pay." + String(q?.id ?? "question"),
+      question: drift.message,
+      group: "blocking",
+      owner: "taasflow",
+    });
   }
 
   for (const g of arrangementGaps(input.arrangement)) {
