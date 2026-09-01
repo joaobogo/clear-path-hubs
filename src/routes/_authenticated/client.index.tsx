@@ -429,7 +429,15 @@ function OverviewPage() {
                   <NotCurrentChip reason={readiness.reasonFor("Hiring overview")} />
                 )}
                 <span className="h-px flex-1 bg-border" />
-                {roles.length > 1 && (
+                {/* Shown whenever a filter is ACTIVE, not only when there is
+                    more than one role to choose between. A ?role= in the URL
+                    takes effect on a single-role workspace too, and gating the
+                    control on roles.length > 1 left no way to see or clear it
+                    from this section — while the accordion above still
+                    promises "role filters" (audit 1 Sep, F24). The chip at the
+                    top of the page can clear it; this makes the control itself
+                    reachable where the label says it lives. */}
+                {(roles.length > 1 || selectedRole) && (
                   <select
                     aria-label="Filter by role"
                     value={selectedRole}

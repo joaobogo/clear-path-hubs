@@ -186,7 +186,13 @@ export function buildIntakeReview(input: {
     row("remoteTimezones", remoteBoundary),
     row("sponsorshipAvailable", s.sponsorshipLabel),
     row("salaryMin", s.compensationLine),
-    row("workAuthorization", s.workAuthorizationLabel),
+    // workAuthorization is DERIVED from the sponsorship answer — the intake
+    // form says so at the point it sets it: "the same answer in other words,
+    // so it is derived rather than asked twice". Reviewing it as its own row
+    // printed one answer under two names with identical values, which reads as
+    // two separate commitments and pads the list a client is asked to check
+    // carefully (audit 1 Sep, F31). The free-text NOTE is genuinely extra
+    // information and stays.
     row("workAuthorizationNote", s.workAuthorizationNote),
     row("targetStartDate", s.targetStartDate),
     row("interviewStages", s.interviewStageLines.join(" → ")),
