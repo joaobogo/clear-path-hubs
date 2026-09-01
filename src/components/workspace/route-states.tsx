@@ -120,6 +120,16 @@ export function makeRouteNotFoundComponent(tone: AudienceTone) {
 
     // Unknown routes → neutral "page not found". Missing records (URL has an
     // identifier) → "no longer available" so the copy matches reality.
+    //
+    // The DESCRIPTION already branched this way; the TITLE did not, and the
+    // taxonomy's admin 404 title is record-flavoured. So /admin/missing-evidence
+    // — a mistyped route, no record requested — headlined "We couldn't find that
+    // record" and, in the admin voice, "It may have been archived, merged, or
+    // deleted", inviting staff to go hunting for data loss that never happened
+    // (audit 1 Sep, F34). On a platform whose audit history is entirely about
+    // numbers disagreeing, a spurious "deleted" is an expensive false alarm.
+    const title = identifier ? normalized.title : "We couldn't find that page";
+
     const description =
       tone === "public"
         ? normalized.description
@@ -132,7 +142,7 @@ export function makeRouteNotFoundComponent(tone: AudienceTone) {
     return (
       <div className="p-6">
         <ErrorState
-          title={normalized.title}
+          title={title}
           description={description}
           action={<HomeLink tone={tone} search={linkSearch} />}
         />

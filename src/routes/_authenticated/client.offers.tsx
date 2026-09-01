@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { MIN_SAMPLE } from "@/lib/compensation-signal";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -160,6 +161,14 @@ function OffersPage() {
           const hiresCount = report?.totals?.hires_confirmed;
           const openCount = report?.totals?.open_offers;
           const acceptanceRate = report?.totals?.acceptance_rate;
+          // A rate from one decided offer is not a rate. Both tiles below sat
+          // on n=1 and said "100%" and "€72K" with no denominator, while
+          // Insights — one click away, same account — states "Based on 1 of 2
+          // open offers with compensation recorded" and the Calibration desk
+          // refuses to conclude below its own minimum. The product knows how
+          // to do this; this board did not (audit 1 Sep, F33).
+          const decided = report?.totals?.decided_offers ?? 0;
+          const thinSample = decided > 0 && decided < MIN_SAMPLE;
 
           return (
             <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -178,14 +187,18 @@ function OffersPage() {
                 value={
                   pendingReport
                     ? "—"
-                    : acceptanceRate == null
+                    : acceptanceRate == null || thinSample
                       ? "Not enough data"
                       : `${Math.round(acceptanceRate * 100)}%`
                 }
                 hint={
-                  acceptanceRate == null && !pendingReport
-                    ? "No offers have been decided yet"
-                    : "Accepted ÷ decided"
+                  pendingReport
+                    ? "Accepted ÷ decided"
+                    : acceptanceRate == null
+                      ? "No offers have been decided yet"
+                      : thinSample
+                        ? `Only ${plural(decided, "offer")} decided so far — too few to read as a rate`
+                        : `Accepted ÷ decided (${plural(decided, "decided offer")})`
                 }
               />
               <Kpi
