@@ -1,4 +1,5 @@
 import { formatEnumLabel } from "@/lib/human-labels";
+import { deriveOnboardingState } from "@/lib/account-state";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -173,11 +174,34 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
   return (
     <div id="ob-wizard" className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
       <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
-        <SequenceProgress
-          complete={state.complete}
-          remaining={remainingMinutes(state.complete)}
-          active={active}
-        />
+        {/* The admin client record reads "Setup complete" through
+            deriveOnboardingState, which treats a stored "live" as finished.
+            This panel counted ticked steps instead, so Northwind — active
+            role, 14 candidates, two offers, a confirmed hire — was told
+            "Step 2 of 10 · about 29 min left" while staff saw the account as
+            done. A client who has already hired somebody should not be shown a
+            progress bar implying their account is unfinished
+            (audit 1 Sep, F38). The steps stay: they sharpen what we send. They
+            stop reading as outstanding work. */}
+        {deriveOnboardingState({
+          storedStatus: state.workspace?.onboarding_status ?? null,
+          stepsComplete: state.complete.length,
+          stepsTotal: ONBOARDING_STEPS.length,
+        }).status === "live" ? (
+          <div className="rounded-lg border taas-bd-success taas-bg-success-soft p-3 text-sm">
+            <p className="font-medium">Your workspace is live</p>
+            <p className="mt-1 text-muted-foreground">
+              Anything below that is not ticked is optional — it sharpens what we send you,
+              and nothing is waiting on it.
+            </p>
+          </div>
+        ) : (
+          <SequenceProgress
+            complete={state.complete}
+            remaining={remainingMinutes(state.complete)}
+            active={active}
+          />
+        )}
 
         <StepRail
           steps={ONBOARDING_STEPS}
