@@ -2425,6 +2425,7 @@ function ExpressIntakePage() {
                     : "…or paste the job description here."
                 }
                 aria-invalid={Boolean(errors.jobDescriptionText)}
+                aria-describedby={errors.jobDescriptionText ? "intake-jobDescriptionText-error" : undefined}
               />
               {!jdFile && (
                 <p className="mt-1 text-xs text-[color:var(--brand-navy)]/75">
@@ -2434,7 +2435,7 @@ function ExpressIntakePage() {
 
             </div>
             {errors.jobDescriptionText && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+              <p id="intake-jobDescriptionText-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.jobDescriptionText}
               </p>
             )}
@@ -2519,6 +2520,7 @@ function ExpressIntakePage() {
                   onChange={(e) => onWorkModelChange(e.target.value as FormState["workModel"])}
                   className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
                   aria-invalid={Boolean(errors.workModel)}
+                aria-describedby={errors.workModel ? "intake-workModel-error" : undefined}
                 >
                   <option value="">Choose one</option>
                   {WORK_MODELS.map((m) => (
@@ -2602,7 +2604,7 @@ function ExpressIntakePage() {
                   </div>
                 )}
                 {errors.remoteTimezones && (
-                  <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                  <p id="intake-remoteTimezones-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                     {errors.remoteTimezones}
                   </p>
                 )}
@@ -2656,7 +2658,7 @@ function ExpressIntakePage() {
                 </label>
               ))}
               {errors.sponsorshipAvailable && (
-                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                <p id="intake-sponsorshipAvailable-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                   {errors.sponsorshipAvailable}
                 </p>
               )}
@@ -2772,7 +2774,7 @@ function ExpressIntakePage() {
                   </span>
                 </label>
                 {errors.compensationUndecided && (
-                  <p className="text-sm text-red-600" data-field-error="true">
+                  <p id="intake-compensationUndecided-error" className="text-sm text-red-600" data-field-error="true">
                     {errors.compensationUndecided}
                   </p>
                 )}
@@ -3059,7 +3061,7 @@ function ExpressIntakePage() {
                 </div>
               )}
               {errors.interviewStages && (
-                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                <p id="intake-interviewStages-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                   {errors.interviewStages}
                 </p>
               )}
@@ -3340,6 +3342,7 @@ function ExpressIntakePage() {
                 onCheckedChange={(v) => set("pilotAcknowledgement", v === true)}
                 className="mt-0.5"
                 aria-invalid={Boolean(errors.pilotAcknowledgement)}
+                aria-describedby={errors.pilotAcknowledgement ? "intake-pilotAcknowledgement-error" : undefined}
               />
               <span aria-hidden="true" className="order-last text-sm text-[color:var(--brand-navy)]/70">
                 *
@@ -3366,7 +3369,7 @@ function ExpressIntakePage() {
             </div>
 
             {errors.pilotAcknowledgement && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+              <p id="intake-pilotAcknowledgement-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.pilotAcknowledgement}
               </p>
             )}
@@ -3391,6 +3394,7 @@ function ExpressIntakePage() {
                 onCheckedChange={(v) => set("consent", v === true)}
                 className="mt-0.5"
                 aria-invalid={Boolean(errors.consent)}
+                aria-describedby={errors.consent ? "intake-consent-error" : undefined}
               />
               <span aria-hidden="true" className="order-last text-sm text-[color:var(--brand-navy)]/70">
                 *
@@ -3408,7 +3412,7 @@ function ExpressIntakePage() {
               </label>
             </div>
             {errors.consent && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+              <p id="intake-consent-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.consent}
               </p>
             )}
