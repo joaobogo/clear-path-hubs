@@ -45,24 +45,24 @@ findings (F23, F24), so everything from old-F23 onward shifted up by two.
 
 | # | Finding | Status | Where |
 |---|---------|--------|-------|
-| F24 | Three evidence percentages on one page, measuring three things | OPEN | `?tab=evidence` — 97% / 88% / "3 of 7" |
-| F25 | Publish desk repeats one cause eight times, names it zero times | OPEN | `/admin/publish` |
+| F24 | Three evidence percentages on one page, measuring three things | DONE | `evidence-graph.ts` — verified now means settled; double count removed |
+| F25 | Publish desk repeats one cause eight times, names it zero times | DONE | `Readiness` type was missing `pendingReasons` |
 | F26 | Processing states have no pinned domain; label map drifted | DONE | `processing-state-enum.test.ts` |
-| F27 | Role filter hidden on a single-role workspace, URL param still applies | OPEN | `client.index.tsx` |
+| F27 | Role filter hidden on a single-role workspace, URL param still applies | DONE | already fixed under its old id |
 | F28 | Money falls back to EUR nobody recorded | **OWNER** | `money.ts` `DEFAULT_CURRENCY` — product call |
-| F29 | Architecture doc marked PASS describes a read path the code does not take | OPEN | `docs/architecture/dashboard-read-models.md` |
-| F30 | Work queue says it includes test records, then shows the same numbers | OPEN | `/admin` |
+| F29 | Architecture doc marked PASS describes a read path the code does not take | DONE | **none of the 9 views has a reader** — status now DRIFT, guarded |
+| F30 | Work queue says it includes test records, then shows the same numbers | DONE | inclusion side now discloses like the hidden side |
 | F31 | Delivery health groups the systemic failure; work queue counts it 150× | DONE | same fix as F10 |
-| F32 | Screen naming: two desks unnamed, three title formats, one duplicated route | OPEN | multiple admin routes |
+| F32 | Screen naming: two desks unnamed, three title formats, one duplicated route | DONE | one format, guarded structurally; nav labels match headings |
 | F33 | Two calibration views report different denominators | **VERIFY** | needs owner confirmation of intent |
-| F34 | Intake review prints one answer twice under two names | OPEN | visa sponsorship = work authorisation |
-| F35 | Legacy branch can publish compensation without `compensation_visibility` public | OPEN | `jobs/public-facts.ts` |
-| F36 | 100% acceptance and an average salary, both from n=1, uncaveated | OPEN | `/client/offers`, `/client/executive` |
-| F37 | Unknown admin URL says a record was archived, merged or deleted | OPEN | unmatched `/admin/*` |
-| F38 | Some candidates described to the client as "Candidate" | OPEN | headline falls back to a non-title |
+| F34 | Intake review prints one answer twice under two names | DONE | already fixed under its old id |
+| F35 | Legacy branch can publish compensation without `compensation_visibility` public | DONE | already fixed under its old id |
+| F36 | 100% acceptance and an average salary, both from n=1, uncaveated | DONE | sample floor already in; headline now says (hired) vs (offered) |
+| F37 | Unknown admin URL says a record was archived, merged or deleted | DONE | already fixed under its old id |
+| F38 | Some candidates described to the client as "Candidate" | DONE | `candidateLineFor` — one resolver, placeholder nouns rejected |
 | F39 | Staff see "Setup complete"; client sees 29 minutes left | DONE | `onboarding-wizard.tsx` `ddb2f9a89` |
-| F40 | Notification feed gives one interview a fourth account; repeats an unnamed failure | WIP | see analysis below |
-| F41 | Published retention promises with no job that enforces them | **VERIFY** | then implement or disclose |
+| F40 | Notification feed gives one interview a fourth account; repeats an unnamed failure | DONE | reconciler conditions are a list; staff rows name the subject |
+| F41 | Published retention promises with no job that enforces them | DONE | disclosed — no machinery exists; **owner: implement or leave disclosed** |
 
 ---
 
@@ -78,14 +78,35 @@ findings (F23, F24), so everything from old-F23 onward shifted up by two.
    Some figures may come from recruiting predating the platform — that is exactly the
    point: nothing says so. **Decision needed: source each figure, or scope the page to
    what the platform can evidence.** I have not touched the numbers.
-2. **Publish.** ~30 commits are unpublished. Git push ≠ deploy.
-3. **Re-score** under v1.5.4 — F3 and F4 only take effect on new runs.
+2. **Publish.** ~40 commits are unpublished. Git push ≠ deploy. The build stamp added
+   in 97ff7783 takes effect from the next publish, so nothing observed today reflects
+   any of this work.
+3. **Re-score** under v1.5.4 — F3 and F4 only take effect on NEW runs. Sequence:
+   confirm v1.5.4 is deployed → re-score → review the new numbers against what
+   OmniFlow has already seen → approve. New runs land unapproved, so published
+   scores hold until someone approves them. MPO (5afc1b56) carries both corrected
+   cases and his 79 should fall. OmniFlow has had these ten candidates since 10:40
+   on 1 Sep, so decide whether they see the corrected numbers before or after they
+   start reviewing.
 4. **Teams webhook** (F15/F31) — the integration is down, not miswired.
 5. **Regenerate bf2a3410's screening question** — the drift guard blocks it going forward
    but does not rewrite the existing text.
 6. **Legal read of the protected-characteristic term list** in `deal-breaker-screening.ts`.
 7. **F28** — what currency should an amount with no recorded currency display as?
    Current answer is a silent EUR.
+
+8. **F41 — retention.** The /security page now discloses that the four published
+   deletion timelines are honoured on request rather than enforced by a job. That
+   makes the page true today. Implementing the job (90-day CV purge, two-year profile
+   anonymisation, 12-month log retention) is yours to schedule — it deletes customer
+   data, so I have not shipped it unasked.
+
+## Still open
+
+| # | What is left | Why it is not done |
+|---|---|---|
+| F22 | The evidence-items counter reads an empty `candidate_evidence_items` for the demo workspace | Pointing the counter at the run’s evidence, or backfilling the demo data, is a choice about which table is the intended home. Northwind is the workspace shown to prospects, so getting that choice right matters more than getting it done fast. **Needs your call.** |
+| F33 | Two calibration views report different denominators | The audit itself files this as needing owner verification — the two desks may be measuring different things on purpose. |
 
 ## F40 — notification feed, analysis
 
