@@ -62,11 +62,22 @@ export function resolveCompensation(
   const c = (compensation ?? {}) as CompensationJson;
   const isPublic = visibility === "public";
 
-  // Legacy explicit-approval shape still wins when present.
+  // Visibility first, always.
+  //
+  // The legacy branch used to return BEFORE this check, so any record carrying
+  // approved: true and a display string published a pay figure regardless of
+  // compensation_visibility — bypassing the rule this module states three
+  // lines above its own signature, and disagreeing with resolvePublicSalary
+  // below, which has always checked visibility first (audit 1 Sep, F27).
+  //
+  // Unproven in live data, and it stays unprovable now: no combination of
+  // inputs returns a number unless visibility is exactly "public".
+  if (!isPublic) return { display: null, line: RANGE_ON_CALL };
+
+  // Legacy explicit-approval shape still wins when present — within a role
+  // whose compensation is public.
   const legacy = str(c.display);
   if (c.approved === true && legacy) return { display: legacy, line: legacy };
-
-  if (!isPublic) return { display: null, line: RANGE_ON_CALL };
 
   // A structured range beats the free-text summary: the summary often carries
   // caveats ("depends on portfolio") that belong in the description, not in a
