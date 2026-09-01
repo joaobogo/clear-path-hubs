@@ -27,15 +27,8 @@ import { normalizeLeadEvent, type LeadEventInput, type NormalizedLeadEvent } fro
 export type LeadDispatchResult = {
   leadNotificationId: string | null;
   duplicate: boolean;
-  teams: { ok: boolean; detail: string | null };
   email: { ok: boolean; detail: string | null; recipients: string[] };
 };
-
-const PRIORITY_PREFIX = {
-  urgent: "🔴 Urgent",
-  high: "🟠 Priority",
-  standard: "🟢 New",
-} as const;
 
 
 
@@ -124,7 +117,6 @@ export async function processLeadEvent(input: LeadEventInput): Promise<LeadDispa
   const result: LeadDispatchResult = {
     leadNotificationId: null,
     duplicate: false,
-    teams: { ok: false, detail: "not_attempted" },
     email: { ok: false, detail: "not_attempted", recipients: [] },
   };
 
@@ -189,15 +181,11 @@ export async function processLeadEvent(input: LeadEventInput): Promise<LeadDispa
 
   if (await isSandboxLeadEvent(admin, event)) {
     const now = new Date().toISOString();
-    result.teams = { ok: true, detail: "suppressed_for_demo_workspace" };
     result.email = { ok: true, detail: "suppressed_for_demo_workspace", recipients };
     if (result.leadNotificationId) {
       await admin
         .from("lead_notifications")
         .update({
-          teams_status: "suppressed",
-          teams_detail: "Recorded for a test or demo workspace instead of posting to Teams.",
-          teams_at: now,
           email_status: "suppressed",
           email_detail: "Recorded for a test or demo workspace instead of sending email.",
           email_at: now,
@@ -207,20 +195,16 @@ export async function processLeadEvent(input: LeadEventInput): Promise<LeadDispa
     return result;
   }
 
-  // 2 + 3) Channels, independent of one another.
-  const [teams, email] = await Promise.all([sendTeams(event), sendEmail(event, recipients)]);
-  result.teams = teams;
+  // 2) Email.
+  const email = await sendEmail(event, recipients);
   result.email = { ...email, recipients };
 
-  // 4) Delivery record.
+  // 3) Delivery record.
   if (result.leadNotificationId) {
     const now = new Date().toISOString();
     await admin
       .from("lead_notifications")
       .update({
-        teams_status: teams.ok ? "delivered" : "failed",
-        teams_detail: teams.detail,
-        teams_at: now,
         // "suppressed" is terminal: the retry sweep skips it, so a blocked
         // address can no longer regenerate a failure on every pass.
         email_status: email.allSuppressed ? "suppressed" : email.ok ? "sent" : "failed",
@@ -246,14 +230,14 @@ export function processLeadEventSafe(input: LeadEventInput): void {
  */
 export async function retryLeadNotification(
   id: string,
-): Promise<{ ok: boolean; teams: boolean | null; email: boolean | null; error?: string }> {
+): Promise<{ ok: boolean; email: boolean | null; error?: string }> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: row, error } = await supabaseAdmin
     .from("lead_notifications")
     .select("*")
     .eq("id", id)
     .maybeSingle();
-  if (error || !row) return { ok: false, teams: null, email: null, error: "not_found" };
+  if (error || !row) return { ok: false, email: null, error: "not_found" };
 
   const payload = (row.payload ?? {}) as {
     facts?: Array<{ label: string; value: string }>;
@@ -294,21 +278,16 @@ export async function retryLeadNotification(
       .update({
         attempts: (row.attempts ?? 0) + 1,
         last_attempt_at: now,
-        teams_status: "suppressed",
-        teams_detail: "Recorded for a test or demo workspace instead of posting to Teams.",
-        teams_at: now,
         email_status: "suppressed",
         email_detail: "Recorded for a test or demo workspace instead of sending email.",
         email_at: now,
       })
       .eq("id", id);
-    return { ok: true, teams: null, email: null };
+    return { ok: true, email: null };
   }
 
-  const needsTeams = row.teams_status !== "delivered";
   const needsEmail = row.email_status !== "sent" && row.email_status !== "suppressed";
 
-  const teams = needsTeams ? await sendTeams(event) : null;
   // A retry is a new send attempt, so it needs a distinct idempotency key.
   const email = needsEmail
     ? await sendEmail(
@@ -323,13 +302,6 @@ export async function retryLeadNotification(
     .update({
       attempts: (row.attempts ?? 0) + 1,
       last_attempt_at: now,
-      ...(teams
-        ? {
-            teams_status: teams.ok ? "delivered" : "failed",
-            teams_detail: teams.detail,
-            teams_at: now,
-          }
-        : {}),
       ...(email
         ? {
             email_status: email.allSuppressed ? "suppressed" : email.ok ? "sent" : "failed",
@@ -340,5 +312,5 @@ export async function retryLeadNotification(
     })
     .eq("id", id);
 
-  return { ok: (teams?.ok ?? true) && (email?.ok ?? true), teams: teams?.ok ?? null, email: email?.ok ?? null };
+  return { ok: email?.ok ?? true, email: email?.ok ?? null };
 }

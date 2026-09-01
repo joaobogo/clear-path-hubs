@@ -219,9 +219,9 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     admin
       .from("lead_notifications")
       .select(
-        "id, lead_type, source, source_page, email, full_name, company, owner_email, email_status, email_detail, email_recipients, teams_status, teams_detail, attempts, created_at, last_attempt_at, updated_at, payload, record_table, record_id, organization_id, position_id",
+        "id, lead_type, source, source_page, email, full_name, company, owner_email, email_status, email_detail, email_recipients, attempts, created_at, last_attempt_at, updated_at, payload, record_table, record_id, organization_id, position_id",
       )
-      .or("email_status.eq.failed,email_status.eq.suppressed,teams_status.eq.failed")
+      .or("email_status.eq.failed,email_status.eq.suppressed")
       .gte("created_at", cutoff)
       .order("created_at", { ascending: false })
       .limit(200),
@@ -348,8 +348,6 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
         email_recipients: l["email_recipients"],
         email_status: l["email_status"],
         email_detail: l["email_detail"],
-        teams_status: l["teams_status"],
-        teams_detail: l["teams_detail"],
         record_table: l["record_table"],
         record_id: l["record_id"],
       }, null, 2),

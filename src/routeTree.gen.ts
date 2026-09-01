@@ -185,7 +185,6 @@ import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/a
 import { Route as ApiPublicBookingRemindersRouteImport } from './routes/api/public/booking.reminders'
 import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/api/public/booking/calendly-webhook'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
-import { Route as AuthenticatedTeamsActTokenRouteImport } from './routes/_authenticated/teams.act.$token'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsNewRouteImport } from './routes/_authenticated/client.positions.new'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
@@ -1161,12 +1160,6 @@ const ApiPublicBlueprintStatusIntakeIdRoute =
     path: '/api/public/blueprint-status/$intakeId',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AuthenticatedTeamsActTokenRoute =
-  AuthenticatedTeamsActTokenRouteImport.update({
-    id: '/teams/act/$token',
-    path: '/teams/act/$token',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedMeApplicationsIdRoute =
   AuthenticatedMeApplicationsIdRouteImport.update({
     id: '/$id',
@@ -1466,7 +1459,6 @@ export interface FileRoutesByFullPath {
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
-  '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
@@ -1656,7 +1648,6 @@ export interface FileRoutesByTo {
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
-  '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
@@ -1858,7 +1849,6 @@ export interface FileRoutesById {
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
-  '/_authenticated/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
@@ -2060,7 +2050,6 @@ export interface FileRouteTypes {
     | '/client/positions/$id'
     | '/client/positions/new'
     | '/me/applications/$id'
-    | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
@@ -2250,7 +2239,6 @@ export interface FileRouteTypes {
     | '/client/positions/$id'
     | '/client/positions/new'
     | '/me/applications/$id'
-    | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
@@ -2451,7 +2439,6 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/client/positions/new'
     | '/_authenticated/me/applications/$id'
-    | '/_authenticated/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
@@ -3820,13 +3807,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBlueprintStatusIntakeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/teams/act/$token': {
-      id: '/_authenticated/teams/act/$token'
-      path: '/teams/act/$token'
-      fullPath: '/teams/act/$token'
-      preLoaderRoute: typeof AuthenticatedTeamsActTokenRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/me/applications/$id': {
       id: '/_authenticated/me/applications/$id'
       path: '/$id'
@@ -4315,7 +4295,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
   AuthenticatedCheckoutReturnRoute: typeof AuthenticatedCheckoutReturnRoute
-  AuthenticatedTeamsActTokenRoute: typeof AuthenticatedTeamsActTokenRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -4327,7 +4306,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,
   AuthenticatedCheckoutReturnRoute: AuthenticatedCheckoutReturnRoute,
-  AuthenticatedTeamsActTokenRoute: AuthenticatedTeamsActTokenRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -26,8 +26,6 @@ export type LeadNotificationRow = {
   company: string | null;
   ownerEmail: string | null;
   linkPath: string | null;
-  teamsStatus: string;
-  teamsDetail: string | null;
   emailStatus: string;
   emailDetail: string | null;
   emailRecipients: string[];
@@ -54,7 +52,7 @@ export const listLeadNotifications = createServerFn({ method: "GET" })
       .limit(data.limit ?? 50);
 
     if (data.onlyFailed) {
-      query = query.or("teams_status.eq.failed,email_status.eq.failed");
+      query = query.eq("email_status", "failed");
     }
 
     const { data: rows, error } = await query;
@@ -72,8 +70,6 @@ export const listLeadNotifications = createServerFn({ method: "GET" })
       company: r.company,
       ownerEmail: r.owner_email,
       linkPath: ((r.payload ?? {}) as { link_path?: string }).link_path ?? null,
-      teamsStatus: r.teams_status,
-      teamsDetail: r.teams_detail,
       emailStatus: r.email_status,
       emailDetail: r.email_detail,
       emailRecipients: (r.email_recipients as string[] | null) ?? [],
@@ -82,9 +78,7 @@ export const listLeadNotifications = createServerFn({ method: "GET" })
       lastAttemptAt: r.last_attempt_at,
     }));
 
-    const failed = items.filter(
-      (i) => i.teamsStatus === "failed" || i.emailStatus === "failed",
-    ).length;
+    const failed = items.filter((i) => i.emailStatus === "failed").length;
 
     return { items, failed };
   });
@@ -116,5 +110,5 @@ export const sendLeadNotificationTest = createServerFn({ method: "POST" })
       linkPath: "/admin/lead-delivery",
       priority: "standard",
     });
-    return { teams: res.teams, email: res.email };
+    return { email: res.email };
   });

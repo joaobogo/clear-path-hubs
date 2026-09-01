@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/admin/lead-delivery")({
       {
         name: "description",
         content:
-          "Every lead captured on the website with the delivery result of its Teams message and internal email alert.",
+          "Every lead captured on the website with the delivery result of its internal email alert.",
       },
     ],
   }),
@@ -66,11 +66,11 @@ function LeadDeliveryPage() {
   const test = useMutation({
     mutationFn: () => sendLeadNotificationTest({}),
     onSuccess: (res) => {
-      const parts = [
-        `Teams: ${res.teams.ok ? "delivered" : `failed (${res.teams.detail ?? "unknown"})`}`,
-        `Email: ${res.email.ok ? `sent to ${res.email.recipients.join(", ")}` : `failed (${res.email.detail ?? "unknown"})`}`,
-      ];
-      toast[res.teams.ok && res.email.ok ? "success" : "error"](parts.join(" · "));
+      toast[res.email.ok ? "success" : "error"](
+        res.email.ok
+          ? `Email sent to ${res.email.recipients.join(", ")}`
+          : `Email failed (${res.email.detail ?? "unknown"})`,
+      );
       void queryClient.invalidateQueries({ queryKey: ["admin-lead-delivery"] });
     },
     onError: () => toast.error("Test could not be sent."),
@@ -84,9 +84,8 @@ function LeadDeliveryPage() {
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold">Lead delivery</h1>
           <p className="text-sm text-muted-foreground">
-            Every lead captured on the website, with the real result of its Teams message and
-            internal email alert. Nothing here is inferred — each row is a recorded delivery
-            attempt.
+            Every lead captured on the website, with the real result of its internal email
+            alert. Nothing here is inferred — each row is a recorded delivery attempt.
           </p>
         </div>
         <div className="flex gap-2">
@@ -156,7 +155,6 @@ function LeadDeliveryPage() {
                     <th className="p-3">Received</th>
                     <th className="p-3">Lead</th>
                     <th className="p-3">Type</th>
-                    <th className="p-3">Teams</th>
                     <th className="p-3">Email</th>
                     <th className="p-3">CRM</th>
                     <th className="p-3">Detail</th>
@@ -186,9 +184,6 @@ function LeadDeliveryPage() {
                         <span className="block text-xs text-muted-foreground">{row.source}</span>
                       </td>
                       <td className="p-3">
-                        <StatusBadge status={row.teamsStatus} />
-                      </td>
-                      <td className="p-3">
                         <StatusBadge status={row.emailStatus} />
                         <span className="block text-xs text-muted-foreground">
                           {row.emailRecipients.join(", ")}
@@ -196,10 +191,10 @@ function LeadDeliveryPage() {
                       </td>
                       <td className="p-3 text-xs text-muted-foreground">{row.crmStatus}</td>
                       <td className="p-3 text-xs text-muted-foreground max-w-[22rem]">
-                        {[row.teamsDetail, row.emailDetail].filter(Boolean).join(" · ") || "—"}
+                        {row.emailDetail || "—"}
                       </td>
                       <td className="p-3">
-                        {row.teamsStatus === "failed" || row.emailStatus === "failed" ? (
+                        {row.emailStatus === "failed" ? (
                           <Button
                             size="sm"
                             variant="outline"
