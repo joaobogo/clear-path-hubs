@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
+import { TestScopeEmptyNote, TestScopeIncludedNote } from "@/components/admin/test-records-toggle";
 import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -137,7 +137,11 @@ function Header({
               positions across all clients · 3 hidden as test/internal" — and
               that is what makes a zero effect provably zero rather than
               suspicious (audit 1 Sep, F27). */}
-          {!showTest && <TestScopeEmptyNote className="mt-1 text-xs" />}
+          {showTest ? (
+            <TestScopeIncludedNote className="mt-1 text-xs" />
+          ) : (
+            <TestScopeEmptyNote className="mt-1 text-xs" />
+          )}
         </p>
       </div>
       <div className="flex items-center gap-2">

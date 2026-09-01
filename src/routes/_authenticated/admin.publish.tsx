@@ -60,6 +60,15 @@ type Readiness = {
   orgOk: boolean;
   canPublish: boolean;
   blockedReasons: string[];
+  /**
+   * Why it is waiting on a person, as opposed to what is broken.
+   *
+   * The server has always sent this and the local default object always listed
+   * it; the type did not, so the desk could not read it and fell back to
+   * "Readiness checks have not all passed yet" on every row whose only reason
+   * to be blocked lives here (audit 1 Sep, F25).
+   */
+  pendingReasons: string[];
 };
 
 function readinessOf(r: Any): Readiness {
@@ -142,10 +151,16 @@ function PublishDesk() {
   const sharedBlocker = useMemo(() => {
     const blocked = rows.map(readinessOf).filter((rd) => !rd.canPublish);
     if (blocked.length < 2) return null;
-    const first = blocked[0]!.blockedReasons;
+    // The same fallback the rows use. Grouping only on `blockedReasons` meant
+    // the case that produced this finding — eight rows all waiting on the same
+    // admin decision, which lives in `pendingReasons` — never grouped, and the
+    // banner stayed silent on the one occasion it was most needed.
+    const reasonsOf = (rd: (typeof blocked)[number]) =>
+      rd.blockedReasons.length > 0 ? rd.blockedReasons : rd.pendingReasons;
+    const first = reasonsOf(blocked[0]!);
     if (first.length === 0) return null;
     const shared = first.filter((reason) =>
-      blocked.every((rd) => rd.blockedReasons.includes(reason)),
+      blocked.every((rd) => reasonsOf(rd).includes(reason)),
     );
     if (shared.length === 0) return null;
     return { reason: shared[0]!, count: blocked.length };
@@ -388,10 +403,31 @@ function PublishDesk() {
                           </Button>
                         ) : (
                           <BlockedReason
+                            /**
+                             * The pending reason before the generic one.
+                             *
+                             * A row can be un-publishable with no entry in
+                             * `blockedReasons` at all: "not approved yet" is
+                             * deliberately kept in `pendingReasons` because it
+                             * is the queue rather than a fault (A6-16), and
+                             * `approvedEvidenceOk` is false whenever there is
+                             * no approved run without pushing a reason of its
+                             * own. Both land here, so all eight OMNIFLOW rows
+                             * printed "Readiness checks have not all passed
+                             * yet" — a sentence that restates the column
+                             * header and names nothing — while the record
+                             * itself gave a real cause (audit 1 Sep, F25).
+                             *
+                             * "Waiting for an admin decision" is both true and
+                             * actionable. The generic line survives only for a
+                             * row that offers neither, which should not happen.
+                             */
                             reasons={
                               rd.blockedReasons.length > 0
                                 ? rd.blockedReasons
-                                : ["Readiness checks have not all passed yet."]
+                                : rd.pendingReasons.length > 0
+                                  ? rd.pendingReasons
+                                  : ["Readiness checks have not all passed yet."]
                             }
                             resolve={{
                               to: "/admin/candidates/$id",

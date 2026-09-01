@@ -202,7 +202,13 @@ function OffersPage() {
                 }
               />
               <Kpi
-                label="Avg salary"
+                // "(hired)" pairs with Insights' "Avg salary (offered)". Both
+                // screens headlined AVG SALARY and showed different numbers —
+                // €72K here across confirmed hires, €74,000 there across open
+                // offers — with only the sub-label distinguishing them. A
+                // reader comparing two tabs compares the headlines
+                // (audit 1 Sep, F36).
+                label="Avg salary (hired)"
                 value={
                   pendingReport
                     ? "—"

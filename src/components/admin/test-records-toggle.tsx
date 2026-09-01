@@ -102,3 +102,33 @@ export function TestScopeEmptyNote({ className }: { className?: string }) {
     </p>
   );
 }
+
+/**
+ * The same disclosure, for the side that says it is INCLUDING them.
+ *
+ * The hidden case already stated the size of what it was hiding; the included
+ * case asserted inclusion and left every figure identical, which is
+ * indistinguishable from a filter that was never applied. On a work queue
+ * whose entire audit history is about numbers disagreeing, "no change" has to
+ * be provable rather than merely claimed (audit 1 Sep, F30).
+ *
+ * A genuine zero now reads as a genuine zero: "no test organisations or
+ * positions exist to include", not silence.
+ */
+export function TestScopeIncludedNote({ className }: { className?: string }) {
+  const q = useTestScopeState();
+  const s = q.data;
+  if (!s || !s.show_test_records) return null;
+  const total = s.excluded_orgs + s.excluded_positions;
+  const cls = className ?? "mt-1 text-xs text-muted-foreground";
+  if (total === 0) {
+    return <p className={cls}>No test or internal records exist to include.</p>;
+  }
+  return (
+    <p className={cls}>
+      Including {s.excluded_orgs} test organisation
+      {s.excluded_orgs === 1 ? "" : "s"} and {s.excluded_positions} test position
+      {s.excluded_positions === 1 ? "" : "s"}. Figures that do not move have none in scope.
+    </p>
+  );
+}

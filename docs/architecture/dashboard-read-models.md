@@ -1,6 +1,6 @@
 # TaaSFlow V2 — Dashboard Read Model Layer
 
-**Status:** PASS
+**Status:** DRIFT — design of record, not the code as built. See Implementation status.
 **Owner:** Data Architecture
 **Depends on:** `docs/architecture/canonical-entity-model.md`,
 `docs/architecture/source-of-truth-rules.md`
@@ -212,6 +212,39 @@ Every model is documented below with the same shape.
 - Downloading `files.extracted_text` or `score_runs.evidence` into a
   list projection.
 
+## Implementation status
+
+**None of the thirteen views below is read by application code.** Every
+dashboard surface issues direct `.from()` reads against base tables —
+`candidate_matches`, `positions`, `interviews`, `position_commitments` and
+others — and aggregates in TypeScript.
+
+Verified 1 Sep 2026 by searching the whole of `src` for each view name,
+excluding the generated `integrations/supabase/types.ts`:
+
+| View the table names as a primary aggregate | Readers in `src` |
+|---|---|
+| `client_dashboard_kpis` | 0 |
+| `client_positions_view` | 0 |
+| `client_kanban_view` | 0 |
+| `client_candidate_matches_view` | 0 |
+| `admin_pipeline_health` | 0 |
+| `admin_work_inbox` | 0 |
+| `admin_candidate_matches_view` | 0 |
+| `candidate_my_applications` | 0 |
+| `candidate_messages_view` | 0 |
+
+`duplicate-source-report.md` flags the same drift independently.
+
+This document therefore describes the **intended** read-model layer, not the
+code as built. Everything below the table — filters, tenancy, dedup, refresh,
+realtime — is a specification to implement against, not a description of what
+runs today. Treat any claim here as unverified until a view has a reader.
+
+The practical consequence is the one the audit named: because each surface
+aggregates by hand, two surfaces can answer the same question differently, and
+did. That is the defect class behind F1, F5, F7, F8 and F17.
+
 ## Verification
 
 - `rg -n "\.select\(" src/lib | rg -v "sel\(|\.rpc\(|admin_|client_|candidate_"`
@@ -220,4 +253,19 @@ Every model is documented below with the same shape.
 - No `SELECT extracted_text|evidence` in any `*.functions.ts` used by
   list routes.
 
-**Verdict: PASS**
+**Verdict: DRIFT.** The verification commands above were never re-run against
+the code as built. Had they been, they would have returned nothing for all
+thirteen views — which is what "all list surfaces route through documented
+views or services" was supposed to establish.
+
+A PASS verdict on a document that no longer matches the code is not a
+harmless staleness. Two of the audit findings this repository spent a week on
+— the client dashboard reporting "Nothing needs you today" while candidates
+waited (F1), and the client counts silently dropping an unreadable candidate
+(F5) — were both hand-written aggregate reads on surfaces this document says
+are served by a view. Anyone reasoning from this page would not have thought
+to look there.
+
+The guard in tests/unit/architecture-doc-matches-code.test.ts now holds the two
+together: while a documented view has no readers, this document may not claim
+PASS, and if the views are implemented the guard fails and points here.
