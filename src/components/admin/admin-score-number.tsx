@@ -78,10 +78,18 @@ export function confidenceLabel(run: RunLike | null | undefined): string {
       : `data completeness ${Math.round(Number(run.confidence) * 100)}%`;
   // Both facts travel together: how complete the source data was, and how much
   // of the role's criteria the evidence could actually settle.
+  //
+  // Named for what it measures, not "evidence coverage". Three figures on the
+  // evidence record used that word for three different denominators — this
+  // run-level share, "3 of 7 must-have criteria fully evidenced", and
+  // "8 requirements · 7 with verified quotes" — and a reader had no way to
+  // tell them apart (audit 1 Sep, F21). This one is a stored share from the
+  // run and carries no denominator we can print here, so at minimum it must
+  // not borrow the wording of the counts that do.
   const evidence =
     run?.evidence_confidence == null
       ? null
-      : `evidence coverage ${Math.round(Number(run.evidence_confidence))}%`;
+      : `criteria settled by evidence ${Math.round(Number(run.evidence_confidence))}%`;
   return evidence ? `${overall} · ${evidence}` : overall;
 }
 

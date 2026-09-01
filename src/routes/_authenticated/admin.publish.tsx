@@ -130,6 +130,27 @@ function PublishDesk() {
     });
   }, [buckets, group, query]);
 
+  /**
+   * The one reason every blocked row shares, when there is one.
+   *
+   * All eight OMNIFLOW candidates showed the identical string "Readiness
+   * checks have not all passed yet", and the real cause — a must-have with no
+   * supporting passage — was only visible after opening each record. Eight
+   * identical blockers on one requirement is a fact about the ROLE, not about
+   * eight candidates, and the desk never said so (audit 1 Sep, F22).
+   */
+  const sharedBlocker = useMemo(() => {
+    const blocked = rows.map(readinessOf).filter((rd) => !rd.canPublish);
+    if (blocked.length < 2) return null;
+    const first = blocked[0]!.blockedReasons;
+    if (first.length === 0) return null;
+    const shared = first.filter((reason) =>
+      blocked.every((rd) => rd.blockedReasons.includes(reason)),
+    );
+    if (shared.length === 0) return null;
+    return { reason: shared[0]!, count: blocked.length };
+  }, [rows]);
+
   // Enter runs the row's single primary action: publish, unpublish, or nothing
   // when the row is blocked (the reason is already visible in the row).
   const runPrimary = useCallback(
@@ -244,6 +265,21 @@ function PublishDesk() {
             />
           </div>
         ) : (
+          <>
+          {sharedBlocker && (
+            <div
+              role="status"
+              className="m-3 rounded-lg border taas-bd-warning taas-bg-warning-soft px-4 py-3 text-sm"
+            >
+              <p className="font-medium">
+                {sharedBlocker.count} of these candidates are blocked for the same reason
+              </p>
+              <p className="mt-1 text-muted-foreground">
+                {sharedBlocker.reason} When every candidate fails on one requirement, the
+                requirement is usually what needs the decision — not the candidates.
+              </p>
+            </div>
+          )}
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
               <tr>
@@ -394,6 +430,7 @@ function PublishDesk() {
               })}
             </tbody>
           </table>
+          </>
         )}
       </div>
 
