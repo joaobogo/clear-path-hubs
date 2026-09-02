@@ -14525,6 +14525,7 @@ export type Database = {
           organization_id: string | null
           phone: string | null
           position_id: string | null
+          position_status: string | null
           position_title: string | null
           processing_state: string | null
           profile_updated_at: string | null
@@ -14533,6 +14534,9 @@ export type Database = {
           score: number | null
           score_band: string | null
           score_run_id: string | null
+          score_stale: boolean | null
+          score_stale_at: string | null
+          score_stale_reasons: string[] | null
           scored_at: string | null
           scored_engine_version: string | null
           scored_input_hash: string | null
