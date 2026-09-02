@@ -146,29 +146,19 @@ export async function submitApplicationImpl(
 
       const { data: existingCp, error: cpFindErr } = await supabaseAdmin
         .from("candidate_profiles")
-        // One string literal, not a concatenation: supabase-js infers the row
-        // type from the literal, and `a + b` defeats that inference — every
-        // field below then resolves to GenericStringError and the reads on it
-        // become type errors.
-        .select("id,current_cv_file_id,user_id,full_name,phone,consent,location,country,region,city,linkedin_url,portfolio_url,website_url")
+        .select(
+          "id,current_cv_file_id,user_id,full_name,phone,location,country,region,city,linkedin_url,portfolio_url,website_url",
+        )
         .ilike("email", emailLower)
         .maybeSingle();
       if (cpFindErr) throw cpFindErr;
 
-      // This endpoint is public and authenticates nobody. Matching an existing
-      // profile on the email STRING is not evidence that the submitter controls
-      // that address, so an application must never be able to rewrite somebody
-      // else's identity record (audit 1 Sep, F42).
-      //
-      // A profile carrying a user_id belongs to someone who has signed in and
-      // proved control of the address. It is read-only from here: the
-      // application still attaches to it, but no field on it is touched.
-      //
-      // An unclaimed profile is a stub an earlier application created. It may
-      // still be a different real person, so this fills BLANKS only and never
-      // overwrites a value that is already there — including `consent`, which
-      // is the record that answers "did this person agree to this".
-      const profileIsClaimed = Boolean(existingCp?.user_id);
+      // An anonymous submission proves nothing about who owns this address, so
+      // it must never overwrite an existing profile's personal details. Only a
+      // signed-in caller with a confirmed matching address is the owner.
+      const { getCallerEmail } = await import("@/lib/auth/caller-identity.server");
+      const callerEmail = await getCallerEmail();
+      const isProfileOwner = !!existingCp && callerEmail === emailLower;
 
       const locationText = composeLocation({
         city: data.city,
@@ -188,40 +178,43 @@ export async function submitApplicationImpl(
       let candidateProfileId: string;
       if (existingCp) {
         candidateProfileId = existingCp.id;
-        if (!profileIsClaimed) {
-          // Blanks only. `blank` treats "" as unset so an empty string stored by
-          // an earlier partial submission still gets filled, but any real value
-          // stands.
-          const row = existingCp as Record<string, unknown>;
-          const blank = (col: string) => {
-            const v = row[col];
-            return v === null || v === undefined || (typeof v === "string" && v.trim() === "");
-          };
-          // Built key by key below, so it cannot be typed as the table's Update
-          // shape up front; narrowed at the call site instead of widening the
-          // update signature.
-          const patch: Record<string, unknown> = {};
-          if (blank("full_name") && data.full_name) patch.full_name = data.full_name;
-          if (blank("phone") && data.phone) patch.phone = data.phone;
-          for (const [col, value] of Object.entries(locationFields)) {
-            if (value && blank(col)) patch[col] = value;
-          }
-          if (blank("consent")) {
-            patch.consent = {
+        const proposed: Record<string, unknown> = {
+          full_name: data.full_name,
+          phone: data.phone || null,
+          ...locationFields,
+        };
+        let patch: Record<string, unknown>;
+        if (isProfileOwner) {
+          // Verified owner: a returning candidate may update their own details.
+          patch = {
+            ...proposed,
+            consent: {
               terms: true,
               network_opt_in: data.network_opt_in,
-              created_at: new Date().toISOString(),
-            };
+              updated_at: new Date().toISOString(),
+            },
+          };
+        } else {
+          // Unverified submitter: fill blanks only, never replace stored values.
+          const row = existingCp as unknown as Record<string, unknown>;
+          patch = {};
+          for (const [key, value] of Object.entries(proposed)) {
+            const current = row[key];
+            const isBlank =
+              current === null ||
+              current === undefined ||
+              (typeof current === "string" && current.trim() === "");
+            if (isBlank && value !== null && value !== undefined && value !== "") {
+              patch[key] = value;
+            }
           }
-          if (Object.keys(patch).length > 0) {
-            await supabaseAdmin
-              .from("candidate_profiles")
-              .update(patch as never)
-              .eq("id", candidateProfileId)
-              // Re-assert unclaimed at write time: the profile may have been
-              // claimed between the read above and here.
-              .is("user_id", null);
-          }
+        }
+        if (Object.keys(patch).length > 0) {
+          await supabaseAdmin
+            .from("candidate_profiles")
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .update(patch as any)
+            .eq("id", candidateProfileId);
         }
       } else {
         const { data: cpNew, error: cpErr } = await supabaseAdmin
@@ -242,6 +235,8 @@ export async function submitApplicationImpl(
         if (cpErr) throw cpErr;
         candidateProfileId = cpNew.id;
       }
+      const profileIsNew = !existingCp;
+
 
       // 3b. Candidate account. An applicant who is not signed in may set a
       // password here so they can track this application in their portal.
@@ -265,15 +260,20 @@ export async function submitApplicationImpl(
         accountOutcome = "existing";
       }
 
-      if (!authUserId && data.password) {
+      // Creating a login is only offered when this submission is not touching
+      // someone else's stored profile: either the profile is brand new, or the
+      // caller is the verified owner. Otherwise a stranger could claim it.
+      const mayTouchAccount = profileIsNew || isProfileOwner;
+
+      if (!authUserId && data.password && mayTouchAccount) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const admin = supabaseAdmin as any;
         const { data: created, error: createErr } = await admin.auth.admin.createUser({
           email: emailLower,
           password: data.password,
-          // Confirmed on creation: the candidate proved control of the flow and
-          // must be able to sign in immediately to follow their application.
-          email_confirm: true,
+          // Ownership of the address must be proven by confirmation before the
+          // account counts as verified anywhere in the product.
+          email_confirm: false,
           user_metadata: { full_name: data.full_name, role: "candidate" },
         });
         if (createErr) {
@@ -297,12 +297,17 @@ export async function submitApplicationImpl(
       }
 
       if (authUserId) {
-        // Link the candidate profile and make sure a platform profile row exists.
-        await supabaseAdmin
-          .from("candidate_profiles")
-          .update({ user_id: authUserId })
-          .eq("id", candidateProfileId)
-          .is("user_id", null);
+        // Only link an account to this profile when the profile is new to this
+        // submission, the caller is its verified owner, or it is already linked.
+        const mayLink =
+          profileIsNew || isProfileOwner || existingCp?.user_id === authUserId;
+        if (mayLink) {
+          await supabaseAdmin
+            .from("candidate_profiles")
+            .update({ user_id: authUserId })
+            .eq("id", candidateProfileId)
+            .is("user_id", null);
+        }
         const { data: prof } = await supabaseAdmin
           .from("profiles")
           .select("id")
@@ -317,6 +322,7 @@ export async function submitApplicationImpl(
           });
         }
       }
+
 
 
       // 4. Idempotency short-circuit: an existing non-withdrawn application for this
@@ -487,21 +493,16 @@ export async function submitApplicationImpl(
 
 
 
-      // Point candidate profile at latest CV — but never on a claimed profile.
-      // This is the public endpoint: repointing a signed-in candidate's current
-      // CV at a document an anonymous submitter uploaded is what a client would
-      // then download from their profile (audit 1 Sep, F42).
-      //
-      // The application itself pins `cv_file_id` below, so THIS submission still
-      // carries the right document either way. Only the profile-level "current
-      // CV" pointer is left alone.
-      if (!profileIsClaimed) {
+      // Point candidate profile at latest CV — but never replace a stored CV on
+      // an existing profile unless the caller is its verified owner. The CV is
+      // always pinned to this application below either way.
+      if (profileIsNew || isProfileOwner || !existingCp?.current_cv_file_id) {
         await supabaseAdmin
           .from("candidate_profiles")
           .update({ current_cv_file_id: fileId })
-          .eq("id", candidateProfileId)
-          .is("user_id", null);
+          .eq("id", candidateProfileId);
       }
+
 
       // 7. Create application (unique active constraint protects against races).
       const { data: appRow, error: appErr } = await supabaseAdmin

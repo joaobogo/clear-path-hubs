@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.guard_candidate_matches_client_columns() FROM PUBLIC, anon, authenticated;
