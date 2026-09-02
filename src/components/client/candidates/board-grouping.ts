@@ -17,9 +17,17 @@ export type StageBuckets<T> = Record<string, T[]>;
  * Placement uses the canonical lane derivation, not the raw stage, so a column
  * count can never disagree with the KPI tile that counts the same people.
  */
-export function groupRowsByStage<T extends { stage: string; interview_active?: boolean | null }>(
-  rows: T[],
-): { byStage: StageBuckets<T>; unplaced: T[] } {
+/**
+ * `interview_called_off` is REQUIRED, not optional. laneFor needs it to move a
+ * cancelled interview back to Shortlisted, and when it was optional the board's
+ * row mapper simply omitted it — so laneFor read undefined and returned the raw
+ * stage. The board bucketed by stage for as long as that was allowed, while
+ * looking like it applied the lane rule. Requiring the field means a mapper
+ * that forgets it fails to compile instead.
+ */
+export function groupRowsByStage<
+  T extends { stage: string; interview_active?: boolean | null; interview_called_off: boolean | null },
+>(rows: T[]): { byStage: StageBuckets<T>; unplaced: T[] } {
   const byStage: StageBuckets<T> = {};
   for (const col of KANBAN_COLUMNS) byStage[col.key] = [];
   const unplaced: T[] = [];

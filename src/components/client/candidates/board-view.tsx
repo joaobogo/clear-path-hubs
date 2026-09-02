@@ -20,10 +20,35 @@ import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 type AnyRow = any;
 
 /** DTO → the row shape the board reads. Display only. */
-function toBoardRow(c: ClientCandidateDTO): AnyRow {
+/**
+ * Typed on purpose. This used to return AnyRow, and `any` satisfies every
+ * constraint — so groupRowsByStage requiring the interview flags would still
+ * not have caught them being dropped here. PipelineBoard takes AnyRow[], which
+ * this widens to at the call site; the narrow type exists to make the mapper
+ * itself checkable.
+ */
+type BoardRow = {
+  id: string;
+  stage: string;
+  interview_active: boolean | null;
+  interview_called_off: boolean | null;
+  candidate_profiles: Record<string, unknown>;
+  score_runs: Record<string, unknown>;
+  position: { title: string } | null;
+};
+
+function toBoardRow(c: ClientCandidateDTO): BoardRow {
   return {
     id: c.match_id,
     stage: c.stage,
+    // laneFor needs BOTH of these to place a cancelled interview back in
+    // Shortlisted. They were dropped here, and because this returns AnyRow
+    // nothing caught it: groupRowsByStage called laneFor, laneFor saw
+    // undefined, and fell through to the raw stage. The board has been
+    // bucketing by stage while appearing to use the lane rule — a call that
+    // could never do anything (launch pass round 2/3).
+    interview_active: c.interview_active,
+    interview_called_off: c.interview_called_off,
     candidate_profiles: {
       full_name: c.candidate.display_name,
       headline: c.candidate.headline,
