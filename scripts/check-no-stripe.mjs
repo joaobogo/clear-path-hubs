@@ -35,6 +35,11 @@ const SKIP_DIRS = new Set([
   "test-results",
   ".vercel",
   ".wrangler",
+  // Agent scratch, including git worktrees under .claude/worktrees. Gitignored
+  // and never shipped, but this walks the filesystem rather than the index, so
+  // a leftover worktree containing an old copy of the tree failed the build on
+  // files that do not exist in it. The check polices copy that ships.
+  ".claude",
 ]);
 
 const SKIP_FILES = new Set([
