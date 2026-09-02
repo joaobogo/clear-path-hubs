@@ -1498,6 +1498,13 @@ export const getPublishQueue = createServerFn({ method: "GET" })
       .eq("processing_state", "scored")
       .in("admin_status", ["pending", "approved", "on_hold"])
       .neq("client_visibility", "visible")
+      // A candidate who has been rejected or archived is not awaiting
+      // publication. This queue filtered on processing state, admin status and
+      // visibility but never on stage, so a rejected AND archived candidate was
+      // still counted under "Candidates blocked" with "Open the record to clear
+      // this" — an action nobody can take, on a record that is already closed
+      // (launch pass round 4). A terminal stage is the answer, not a blocker.
+      .not("stage", "in", "(archived,not_moving_forward)")
       .order("updated_at", { ascending: false })
       .limit(100);
     return ((data ?? []) as AnyRow[]).map(withPublishedRun);

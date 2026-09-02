@@ -179,6 +179,7 @@ export function PlanPanel({
 
   const sub = state.data?.subscription ?? null;
   const allowance = state.data?.allowance ?? null;
+  const plan = state.data?.plan ?? null;
   const catalogue = plans.data ?? [];
   const subscriptions = catalogue.filter((p) => p.kind === "subscription");
   const packages = catalogue.filter((p) => p.kind === "package");
@@ -263,13 +264,21 @@ export function PlanPanel({
               {/* Never invent a commercial arrangement: with no subscription
                   and no package on record, "Pay per role" told the client
                   they were on a plan the admin record says does not exist
-                  (audit C-05). Say what is true. */}
+                  (audit C-05). Say what is true.
+
+                  But "true" includes a plan recorded on the workspace itself.
+                  Reading only the subscription and the package told a client
+                  "No plan on record yet" while the admin Access tab for the
+                  same organisation read "on Bronze" (launch pass round 3).
+                  `plan` comes from readAccountState — the same reader every
+                  admin surface uses — and is still null when there genuinely
+                  is no plan, so C-05 holds. */}
               {sub?.label ??
                 (allowance?.source === "package"
                   ? allowance.label
-                  : "No plan on record yet")}
+                  : (plan?.label ?? "No plan on record yet"))}
             </div>
-            {!sub && allowance?.source !== "package" && (
+            {!sub && allowance?.source !== "package" && !plan?.label && (
               <p className="mt-1 text-xs text-muted-foreground">
                 Your team will confirm your commercial setup — ask them any time.
               </p>

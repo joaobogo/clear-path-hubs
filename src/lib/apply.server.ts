@@ -146,10 +146,11 @@ export async function submitApplicationImpl(
 
       const { data: existingCp, error: cpFindErr } = await supabaseAdmin
         .from("candidate_profiles")
-        .select(
-          "id,current_cv_file_id,user_id,full_name,phone,consent," +
-            "location,country,region,city,linkedin_url,portfolio_url,website_url",
-        )
+        // One string literal, not a concatenation: supabase-js infers the row
+        // type from the literal, and `a + b` defeats that inference — every
+        // field below then resolves to GenericStringError and the reads on it
+        // become type errors.
+        .select("id,current_cv_file_id,user_id,full_name,phone,consent,location,country,region,city,linkedin_url,portfolio_url,website_url")
         .ilike("email", emailLower)
         .maybeSingle();
       if (cpFindErr) throw cpFindErr;
@@ -196,6 +197,9 @@ export async function submitApplicationImpl(
             const v = row[col];
             return v === null || v === undefined || (typeof v === "string" && v.trim() === "");
           };
+          // Built key by key below, so it cannot be typed as the table's Update
+          // shape up front; narrowed at the call site instead of widening the
+          // update signature.
           const patch: Record<string, unknown> = {};
           if (blank("full_name") && data.full_name) patch.full_name = data.full_name;
           if (blank("phone") && data.phone) patch.phone = data.phone;
@@ -212,7 +216,7 @@ export async function submitApplicationImpl(
           if (Object.keys(patch).length > 0) {
             await supabaseAdmin
               .from("candidate_profiles")
-              .update(patch)
+              .update(patch as never)
               .eq("id", candidateProfileId)
               // Re-assert unclaimed at write time: the profile may have been
               // claimed between the read above and here.

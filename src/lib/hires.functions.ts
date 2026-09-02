@@ -6,6 +6,7 @@
 import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { persistStage } from "@/lib/client/persist-stage";
 import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 import { countConfirmedHires, normalizeOfferRecord } from "@/lib/hires/confirmed";
@@ -589,11 +590,16 @@ export const transitionHire = createServerFn({ method: "POST" })
     // coherent with the offer/hire outcome.
     const nextStage = candidateStageForHireStatus(data.to);
     if (nextStage && current.candidate_match_id) {
-      await context.supabase
-        .from("candidate_matches")
-        .update({ stage: nextStage as never })
-        .eq("id", current.candidate_match_id)
-        .eq("organization_id", data.orgId);
+      // This did not check `error` at all, and would not have caught the real
+      // failure anyway: an update RLS filters to zero rows reports no error.
+      // A hire whose candidate never left its old stage puts the Offers board
+      // and the candidate's own record in disagreement, which is the pairing
+      // this file already exists to keep aligned.
+      await persistStage(context.supabase, {
+        matchId: current.candidate_match_id,
+        orgId: data.orgId,
+        toStage: nextStage,
+      });
     }
 
 

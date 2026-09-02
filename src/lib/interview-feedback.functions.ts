@@ -6,6 +6,7 @@
 // interview, not emailed around.
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { persistStage } from "@/lib/client/persist-stage";
 import { z } from "zod";
 import {
   DECLINE_CONCERN_MIN,
@@ -321,12 +322,19 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
         not_moving_forward: ["shortlisted"],
       };
       if (from && from !== targetStage && (allowed[from] ?? []).includes(targetStage)) {
-        const { error: moveErr } = await context.supabase
-          .from("candidate_matches")
-          .update({ stage: targetStage } as never)
-          .eq("id", matchId)
-          .eq("organization_id", data.orgId);
-        if (!moveErr) {
+        // `movedTo` is reported back to the caller, so it must reflect a move
+        // that actually happened. A no-error/zero-row update set it anyway.
+        let moved = true;
+        try {
+          await persistStage(context.supabase, {
+            matchId,
+            orgId: data.orgId,
+            toStage: targetStage,
+          });
+        } catch {
+          moved = false;
+        }
+        if (moved) {
           movedTo = targetStage;
           await context.supabase.from("client_decisions").insert({
             candidate_match_id: matchId,

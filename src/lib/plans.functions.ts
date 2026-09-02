@@ -21,6 +21,8 @@ import {
   getStripeErrorMessage,
 } from "@/lib/stripe.server";
 import { PLAN_CATALOGUE, findPlan, allowanceSentence } from "@/lib/payments-catalog";
+import { readAccountState } from "@/lib/account-state.server";
+import type { AccountPlanState } from "@/lib/account-state";
 
 type AnySupabase = {
   from: (t: string) => any;
@@ -97,6 +99,24 @@ export type PlanState = {
     expiresAt: string | null;
     source: "package" | "subscription";
   } | null;
+  /**
+   * The workspace's plan as every OTHER surface reports it.
+   *
+   * This type carried `subscription` and `allowance` and nothing else, so the
+   * client Account page could only see a plan that came from a subscription or
+   * a role package. A plan recorded on the workspace itself
+   * (`organizations.plan_name`) was invisible to it, and the client was told
+   * "No plan on record yet · Your team will confirm your commercial setup"
+   * while the admin Access tab for the same organisation read "on Bronze"
+   * (launch pass round 3).
+   *
+   * `account-state.ts` exists precisely to stop this — its docstring opens on
+   * the same defect, a single record reading "No plan" on one screen and a
+   * current plan on another. The client panel had never been moved onto it.
+   * `readAccountState` resolves subscription → entitlement → workspace in
+   * priority order, so this is the same value the admin surfaces render.
+   */
+  plan: AccountPlanState;
 };
 
 export const getPlanState = createServerFn({ method: "POST" })
@@ -157,6 +177,8 @@ export const getPlanState = createServerFn({ method: "POST" })
             source: ent.source,
           }
         : null,
+      // Same reader the admin surfaces use, so the two cannot disagree.
+      plan: (await readAccountState(supabase, data.organizationId)).plan,
     };
   });
 

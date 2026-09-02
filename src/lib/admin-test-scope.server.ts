@@ -68,10 +68,28 @@ export async function loadTestScope(
   }
 
 
+  // A workspace is out of scope if ANY of the three non-production flags is
+  // set, not just is_test_record. That is what `isQaSafeOrg` in
+  // qa-guard.ts means by non-production, and what notification-email.server and
+  // notifications.functions already check before they treat an org as real.
+  // This filter read one flag of the three.
+  //
+  // The consequence was that the demo workspace shown to prospects — flagged
+  // is_demo, which the seeder REQUIRES before it will run, and deliberately not
+  // is_test_record — counted as a real customer in every staff rollup: 14 of 24
+  // published candidates, 5 of 15 overdue client decisions, all 3 interviews to
+  // coordinate, and the only confirmed hire, salary and start date on the
+  // Offers desk (launch pass round 5). Every launch metric was inflated by a
+  // workspace that does not exist.
+  //
+  // Client-facing reads are unaffected: they filter on the ROW-level
+  // is_test_record, which the seeder sets to false on every demo record and
+  // asserts. Two different flags with two different audiences — excluding the
+  // org here does not empty the demo for a prospect.
   const { data: orgs } = await s
     .from("organizations")
     .select("id")
-    .eq("is_test_record", true)
+    .or("is_test_record.eq.true,is_demo.eq.true,is_qa.eq.true")
     .limit(1000);
   const orgIds = ((orgs ?? []) as Any[]).map((o) => o.id as string);
 

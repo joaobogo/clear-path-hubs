@@ -8,7 +8,19 @@ import {
 import { KANBAN_COLUMNS, STAGE_GRAPH } from "@/components/client/position-detail/constants";
 import type { MatchStage } from "@/lib/client-match-stage";
 
-const row = (id: string, stage: string) => ({ id, stage });
+/**
+ * `interview_called_off` is required by groupRowsByStage rather than optional,
+ * because the board's row mapper silently omitted it while it was optional —
+ * laneFor then read undefined and bucketed by raw stage, so a cancelled
+ * interview stayed in Interviewing while every other surface moved it back to
+ * Shortlisted. These rows carry it explicitly for the same reason.
+ */
+const row = (id: string, stage: string, interviewCalledOff = false) => ({
+  id,
+  stage,
+  interview_active: false,
+  interview_called_off: interviewCalledOff,
+});
 
 describe("groupRowsByStage", () => {
   it("keeps every filtered row and never invents a column", () => {
@@ -42,6 +54,15 @@ describe("groupRowsByStage", () => {
       row("3", "shortlisted"),
     ]);
     expect(byStage["shortlisted"]!.map((r) => r.id)).toEqual(["1", "2", "3"]);
+  });
+
+  it("puts a cancelled interview in Shortlisted, not Interviewing", () => {
+    // The stage still reads interview_process after a cancellation, so the
+    // board must apply laneFor rather than the raw stage. It called laneFor all
+    // along, but its row mapper dropped the flag, so the call did nothing.
+    const { byStage } = groupRowsByStage([row("cancelled", "interview_process", true)]);
+    expect(byStage["shortlisted"]!.map((r) => r.id)).toEqual(["cancelled"]);
+    expect(byStage["interview_process"]).toEqual([]);
   });
 
   it("reports rows with an unknown stage instead of dropping them silently", () => {

@@ -3,6 +3,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { persistStage } from "@/lib/client/persist-stage";
 import { z } from "zod";
 import { staleStateError } from "@/lib/decision-concurrency";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
@@ -220,12 +221,14 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       });
       if (gate.blocked) throw advanceGateError(gate.missing);
     }
-    const { error: updateError } = await context.supabase
-      .from("candidate_matches")
-      .update({ stage: data.toStage })
-      .eq("id", data.matchId)
-      .eq("organization_id", data.orgId);
-    if (updateError) throw new Error(updateError.message);
+    // Asserts a row actually moved. `update()` reports error: null when RLS
+    // filters the target row out and it matches nothing, which is how this
+    // returned ok:true while the stage never changed (launch pass round 7).
+    await persistStage(context.supabase, {
+      matchId: data.matchId,
+      orgId: data.orgId,
+      toStage: data.toStage,
+    });
 
     await reconcileHireRecordForStage(context.supabase, {
       matchId: data.matchId,
@@ -431,12 +434,11 @@ export const undoClientDecision = createServerFn({ method: "POST" })
     const backTo = ((recent as AnyRow).from_stage as MatchStage | null) ?? data.toStage;
 
     if (from !== backTo) {
-      const { error } = await context.supabase
-        .from("candidate_matches")
-        .update({ stage: backTo })
-        .eq("id", data.matchId)
-        .eq("organization_id", data.orgId);
-      if (error) throw new Error(error.message);
+      await persistStage(context.supabase, {
+        matchId: data.matchId,
+        orgId: data.orgId,
+        toStage: backTo,
+      });
     }
 
     // An interview requested by the undone decision (or one that existed while leaving interview_process) must not survive it.
@@ -652,11 +654,11 @@ export const clientAction = createServerFn({ method: "POST" })
       if (!allowed.includes(nextStage)) {
         throw new Error(`invalid_transition:${match.stage}->${nextStage}`);
       }
-      const { error } = await context.supabase
-        .from("candidate_matches")
-        .update({ stage: nextStage })
-        .eq("id", data.matchId)
-        .eq("organization_id", data.orgId);
+      await persistStage(context.supabase, {
+        matchId: data.matchId,
+        orgId: data.orgId,
+        toStage: nextStage,
+      });
       // The buttons and the kanban must leave the same records behind. This
       // path used to skip the hire_records reconciliation, so "Make offer"
       // put nobody on the Offers board and "Confirm hire" reached no finance
