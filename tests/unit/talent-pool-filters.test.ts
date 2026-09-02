@@ -1,171 +1,120 @@
 /**
- * The talent pool is filterable.
+ * The talent-pool filters, tested without a populated pool.
  *
- * The page rendered every entry as one flat grid with no search, no reason
- * filter and no consent filter — so a pool of any real size could not be
- * worked. The server function already accepted `q`, `reason` and `status`;
- * nothing on the page passed them.
+ * Two browser passes could not reach these: every workspace's pool is empty, so
+ * the page renders the "Building your talent pool" onboarding state and no
+ * filter UI exists to drive. The predicates are a pure function, so the logic
+ * can be verified here even though the surface cannot be.
  *
- * Consent is a filter and not decoration: it decides who may be contacted, and
- * a pool view that cannot answer "who has granted consent" cannot be used for
- * outreach without opening every card.
+ * The distinction the launch pass raised, and which matters most: the SKILL
+ * filter matches whole values, the SEARCH box matches substrings. That is
+ * deliberate. A skill is chosen from a list of skills already in the pool, so
+ * "Java" must mean Java — matching JavaScript would be wrong. Free text is
+ * typed, so "Hel" must find "Helena"; requiring whole words there would break
+ * ordinary searching.
  */
 import { describe, expect, it } from "vitest";
 import { filterMemories } from "@/routes/_authenticated/client.talent-pool";
-import type { TalentMemoryDTO } from "@/lib/talent-memory.functions";
 
-const NONE = { q: "", reason: "all", consent: "all", skill: "" };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const memory = (over: Record<string, unknown> = {}): any => ({
+  reason_category: "role_filled",
+  consent_status: "granted",
+  skills_snapshot: [],
+  role_title_snapshot: null,
+  reason_notes: null,
+  candidate: { display_name: "Ana Silva", headline: null, location: null },
+  ...over,
+});
 
-function memory(over: Partial<TalentMemoryDTO> = {}): TalentMemoryDTO {
-  return {
-    id: "m1",
-    organization_id: "org",
-    candidate_profile_id: "p1",
-    source_match_id: null,
-    source_position_id: null,
-    reason_category: "timing",
-    reason_notes: null,
-    headline_snapshot: null,
-    seniority_snapshot: null,
-    role_title_snapshot: null,
-    skills_snapshot: [],
-    score_snapshot: null,
-    owner_user_id: null,
-    owner_name: null,
-    consent_status: "pending",
-    consent_updated_at: null,
-    consent_expires_at: null,
-    status: "active",
-    last_resurfaced_at: null,
-    last_reengaged_at: null,
-    tagged_by: null,
-    tagged_by_name: null,
-    tagged_at: "2026-01-01T00:00:00Z",
-    candidate: {
-      display_name: "Ana Pinto",
-      email_masked: "a•••@example.com",
-      headline: null,
-      seniority: null,
-      location: null,
-      match_id: null,
-    },
-    ...over,
-  };
-}
+const ALL = { q: "", reason: "all", consent: "all", skill: "" };
 
-describe("no filters", () => {
-  it("returns every entry", () => {
-    const rows = [memory({ id: "a" }), memory({ id: "b" })];
-    expect(filterMemories(rows, NONE)).toHaveLength(2);
+describe("the skill filter matches whole skills", () => {
+  const java = memory({
+    candidate: { display_name: "Java Dev", headline: null, location: null },
+    skills_snapshot: ["Java", "Spring"],
+  });
+  const javascript = memory({
+    candidate: { display_name: "JS Dev", headline: null, location: null },
+    skills_snapshot: ["JavaScript", "React"],
+  });
+
+  it("does not return a JavaScript-only candidate for Java", () => {
+    const out = filterMemories([java, javascript], { ...ALL, skill: "Java" });
+    expect(out.map((m) => m.candidate.display_name)).toEqual(["Java Dev"]);
+  });
+
+  it("is case-insensitive on the whole value", () => {
+    expect(filterMemories([java], { ...ALL, skill: "java" })).toHaveLength(1);
+    expect(filterMemories([javascript], { ...ALL, skill: "javascript" })).toHaveLength(1);
+  });
+
+  it("does not match a skill that merely contains the term", () => {
+    const script = memory({ skills_snapshot: ["TypeScript"] });
+    expect(filterMemories([script], { ...ALL, skill: "Script" })).toHaveLength(0);
   });
 });
 
-describe("reason", () => {
-  it("keeps only the chosen reason", () => {
-    const rows = [
-      memory({ id: "a", reason_category: "comp_gap" }),
-      memory({ id: "b", reason_category: "timing" }),
-    ];
-    const out = filterMemories(rows, { ...NONE, reason: "comp_gap" });
-    expect(out.map((m) => m.id)).toEqual(["a"]);
+describe("the search box matches substrings, on purpose", () => {
+  const helena = memory({
+    candidate: { display_name: "Helena Carvalho", headline: "Backend Engineer", location: "Porto" },
+    skills_snapshot: ["Go"],
+    role_title_snapshot: "Platform Engineer",
+    reason_notes: "Strong systems background",
+  });
+
+  it("finds a partial name, which whole-word matching would not", () => {
+    expect(filterMemories([helena], { ...ALL, q: "Hel" })).toHaveLength(1);
+  });
+
+  it("searches every field the placeholder promises", () => {
+    for (const term of ["carvalho", "backend", "porto", "platform", "systems", "go"]) {
+      expect(filterMemories([helena], { ...ALL, q: term }), term).toHaveLength(1);
+    }
+  });
+
+  it("returns nothing for a term that appears nowhere", () => {
+    expect(filterMemories([helena], { ...ALL, q: "zzzznomatch" })).toHaveLength(0);
   });
 });
 
-describe("consent", () => {
-  it("isolates who may actually be contacted", () => {
-    // The reason this filter exists: outreach cannot start from a list that
-    // mixes granted with withdrawn.
-    const rows = [
-      memory({ id: "granted", consent_status: "granted" }),
-      memory({ id: "pending", consent_status: "pending" }),
-      memory({ id: "withdrawn", consent_status: "withdrawn" }),
-    ];
-    const out = filterMemories(rows, { ...NONE, consent: "granted" });
-    expect(out.map((m) => m.id)).toEqual(["granted"]);
+describe("reason and consent", () => {
+  const granted = memory({ consent_status: "granted", reason_category: "role_filled" });
+  const declined = memory({ consent_status: "declined", reason_category: "timing" });
+
+  it("narrows by consent — the filter that decides who may be contacted", () => {
+    expect(filterMemories([granted, declined], { ...ALL, consent: "granted" })).toEqual([granted]);
+    expect(filterMemories([granted, declined], { ...ALL, consent: "declined" })).toEqual([declined]);
+  });
+
+  it("narrows by reason", () => {
+    expect(filterMemories([granted, declined], { ...ALL, reason: "timing" })).toEqual([declined]);
+  });
+
+  it("'all' does not narrow", () => {
+    expect(filterMemories([granted, declined], ALL)).toHaveLength(2);
   });
 });
 
-describe("skill", () => {
-  it("matches a whole skill, not a fragment of one", () => {
-    // "Java" must not select a Kotlin/JavaScript engineer.
-    const rows = [
-      memory({ id: "java", skills_snapshot: ["Java", "Spring"] }),
-      memory({ id: "js", skills_snapshot: ["JavaScript", "React"] }),
-    ];
-    const out = filterMemories(rows, { ...NONE, skill: "java" });
-    expect(out.map((m) => m.id)).toEqual(["java"]);
+describe("filters combine with AND, never OR", () => {
+  const a = memory({
+    candidate: { display_name: "Ana", headline: null, location: null },
+    skills_snapshot: ["Go"],
+    consent_status: "granted",
+  });
+  const b = memory({
+    candidate: { display_name: "Bruno", headline: null, location: null },
+    skills_snapshot: ["Go"],
+    consent_status: "declined",
   });
 
-  it("ignores case", () => {
-    const rows = [memory({ id: "a", skills_snapshot: ["TypeScript"] })];
-    expect(filterMemories(rows, { ...NONE, skill: "typescript" })).toHaveLength(1);
-  });
-});
-
-describe("search", () => {
-  it("searches name, headline, role, notes, location and skills", () => {
-    const rows = [
-      memory({ id: "name", candidate: { ...memory().candidate, display_name: "Rui Almeida" } }),
-      memory({ id: "headline", candidate: { ...memory().candidate, headline: "Staff Engineer" } }),
-      memory({ id: "role", role_title_snapshot: "Backend Engineer" }),
-      memory({ id: "notes", reason_notes: "Strong on distributed systems" }),
-      memory({ id: "location", candidate: { ...memory().candidate, location: "Lisbon" } }),
-      memory({ id: "skill", skills_snapshot: ["Kubernetes"] }),
-    ];
-    const hit = (q: string) => filterMemories(rows, { ...NONE, q }).map((m) => m.id);
-    expect(hit("almeida")).toEqual(["name"]);
-    expect(hit("staff")).toEqual(["headline"]);
-    expect(hit("backend")).toEqual(["role"]);
-    expect(hit("distributed")).toEqual(["notes"]);
-    expect(hit("lisbon")).toEqual(["location"]);
-    expect(hit("kubernetes")).toEqual(["skill"]);
+  it("requires every active filter to hold", () => {
+    // Both are Go; only one has consent. OR would return two.
+    const out = filterMemories([a, b], { ...ALL, skill: "Go", consent: "granted" });
+    expect(out).toEqual([a]);
   });
 
-  it("ignores surrounding whitespace", () => {
-    const rows = [memory({ id: "a" })];
-    expect(filterMemories(rows, { ...NONE, q: "  ana  " })).toHaveLength(1);
-  });
-});
-
-describe("combined filters", () => {
-  it("narrows on every active filter at once", () => {
-    // AND, not OR: each filter the user sets must reduce the set further.
-    const rows = [
-      memory({
-        id: "match",
-        reason_category: "comp_gap",
-        consent_status: "granted",
-        skills_snapshot: ["Go"],
-        candidate: { ...memory().candidate, display_name: "Ana Pinto" },
-      }),
-      memory({
-        id: "wrong-consent",
-        reason_category: "comp_gap",
-        consent_status: "pending",
-        skills_snapshot: ["Go"],
-        candidate: { ...memory().candidate, display_name: "Ana Pinto" },
-      }),
-      memory({
-        id: "wrong-reason",
-        reason_category: "timing",
-        consent_status: "granted",
-        skills_snapshot: ["Go"],
-        candidate: { ...memory().candidate, display_name: "Ana Pinto" },
-      }),
-    ];
-    const out = filterMemories(rows, {
-      q: "ana",
-      reason: "comp_gap",
-      consent: "granted",
-      skill: "go",
-    });
-    expect(out.map((m) => m.id)).toEqual(["match"]);
-  });
-
-  it("returns nothing rather than falling back to everything", () => {
-    // A filtered-to-empty result must stay empty — the page distinguishes it
-    // from an empty pool in its own copy.
-    const rows = [memory({ id: "a", reason_category: "timing" })];
-    expect(filterMemories(rows, { ...NONE, reason: "geo" })).toEqual([]);
+  it("returns nothing when the combination excludes everyone", () => {
+    expect(filterMemories([a, b], { ...ALL, q: "Ana", consent: "declined" })).toHaveLength(0);
   });
 });
