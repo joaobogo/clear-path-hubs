@@ -9,6 +9,7 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
+    "typecheck": "node --max-old-space-size=8192 node_modules/typescript/bin/tsc --noEmit",
     "format": "prettier --write .",
     "seed:demo": "tsx scripts/seed-demo-candidates.ts",
     "generate:robots": "bun run scripts/generate-robots-txt.ts",
