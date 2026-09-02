@@ -133,6 +133,33 @@ Two defects, different causes.
   document" and the body never names anyone. `cv_parse_failed` is already withheld from
   client audiences, so naming the candidate on the admin feed is safe.
 
+## Security findings (2 Sep 2026 — reported by owner, then swept)
+
+Not from the rev-17 audit. F42 and F43 were reported directly; F44–F47 were found by
+sweeping the same defect classes across the schema. All six are fixed with guard tests.
+
+| # | Finding | Status | Where |
+|---|---------|--------|-------|
+| F42 | Public job application could rewrite another person's candidate profile | DONE | `apply.server.ts` — claimed profiles read-only; unclaimed fill blanks only |
+| F43 | Client editors could write every column on a published match | DONE | migration `20260901120000` — `GRANT UPDATE (stage)`; `canonical_state` pinned in WITH CHECK |
+| F44 | A column-level SELECT grant was silently reverted by a later broad GRANT | DONE | same migration — five internal columns withheld again |
+| F45 | A suspended user could reactivate themselves | DONE | migration `20260901140000` — `profiles.status` no longer self-writable |
+| F46 | A workspace admin could write their own seats, plan, billing and pilot terms | DONE | same migration — `organizations` narrowed to presentation columns |
+| F47 | `candidate_profiles` narrowed to the self-service editor's columns | DONE | same migration — `email` withheld (account-linking key) |
+
+**Cleared on inspection, recorded so they are not re-audited:** `memberships` (role pinned
+to client-only values in both USING and WITH CHECK, plus an INSERT/UPDATE/DELETE trigger);
+the public `qa-seed` route (gated on `import.meta.env.DEV`, so the enabling branch is dead
+code in any production build); `intake.ts` and `express-intake.ts` (both refuse with a
+conflict unless `callerUserId` matches the account found by email — the guard `apply.server`
+was missing).
+
+**Not applied.** Both migrations are committed but not run. They are privilege changes
+against live data: applying them starts refusing any user-scoped write not in the grant.
+The guards say there are none, and they scan `src` whole-file with patch-identifier
+resolution — but they cannot see an edge function or a raw PostgREST call from outside this
+repo. Diff against staging first.
+
 ## Standing note
 
 Four defect classes recur: two surfaces answering one question differently; a guard that
