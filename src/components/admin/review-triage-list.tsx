@@ -23,7 +23,11 @@ import {
   releaseStaleScoringClaims,
   bulkRecomputeQueue,
 } from "@/lib/scoring-review-triage.functions";
-import { recomputeScore } from "@/lib/scoring-review.functions";
+import {
+  recomputeScore,
+  REVIEW_QUEUES,
+  type ReviewQueueId,
+} from "@/lib/scoring-review.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ds";
@@ -187,7 +191,18 @@ export function ReviewTriageList({
   const blocking = ordered.filter((r) => r.blocking);
   const standard = ordered.filter((r) => !r.blocking);
   const pages = Math.max(1, Math.ceil(data.total / pageSize));
-  const activeFilters = q.trim() ? [`Search: ${q.trim()}`] : [];
+  // The queue facet IS a filter, and it was not reported as one. With a facet
+  // selected and no rows in it, the empty state fell through to "Every record
+  // that would appear here has been handled · Expected — there is nothing
+  // outstanding" — while the facet counters directly above read 29, 8, 8, 7, 3,
+  // 1, including two rows blocking a client deliverable 29 days overdue
+  // (launch test pass, 2 Sep). Staff were told the desk was clear by a page
+  // that was displaying one slice of it.
+  const queueLabel = REVIEW_QUEUES[queue as ReviewQueueId]?.label;
+  const activeFilters = [
+    ...(queueLabel ? [`Queue: ${queueLabel}`] : []),
+    ...(q.trim() ? [`Search: ${q.trim()}`] : []),
+  ];
   const variant = resolveQueueVariant({
     isError: false,
     rowCount: data.rows.length,

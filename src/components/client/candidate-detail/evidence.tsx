@@ -551,6 +551,17 @@ export const RequirementCoverage = memo(function RequirementCoverage({
                 </span>
               </div>
               <Progress value={pct} className="mt-1" />
+              {/* This counts whether a passage was FOUND; the line above counts
+                  how far each requirement was MET. A partly-evidenced
+                  requirement still has a quote, so "9 fully met · 1 partly
+                  evidenced" sitting above "10 of 10" is not a contradiction —
+                  but nothing said so, and it read as one (launch pass, 2 Sep). */}
+              {quoted === total && counts.met < total && (
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Every requirement has a supporting quote. How fully each one is met is
+                  the separate figure above.
+                </p>
+              )}
             </>
           );
         })()}

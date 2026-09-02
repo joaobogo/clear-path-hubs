@@ -1,5 +1,6 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { isStrongFitBand } from "@/lib/scoring/score-counts";
+import { laneFor } from "@/lib/client-pipeline-lane";
 
 export type ClientCandidateKpis = {
   delivered: number;
@@ -70,7 +71,15 @@ export function computeCandidateKpis(
     // The canonical awaiting rule: delivered and no decision recorded.
     if (row.stage === "delivered" && !row.client_decided) awaitingDecision += 1;
     if (row.hire_confirmed) rowHires += 1;
-    switch (row.stage) {
+    // The LANE, not the raw stage. A candidate whose only interview was called
+    // off is back where they were before it was arranged — shortlisted — and
+    // `laneFor` is the one place that rule lives. Switching on `row.stage` here
+    // meant this tile counted that person as interviewing while the role page,
+    // the board column and the candidate's own row label all read shortlisted:
+    // one person interviewing, the tile said two, and the shortlist count was
+    // short by one on every client surface that reads this (launch test pass,
+    // 2 Sep). It is the exact failure the laneFor docstring was written about.
+    switch (laneFor(row)) {
       case "delivered":
         part.awaiting += 1;
         break;

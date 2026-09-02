@@ -280,7 +280,21 @@ function OperationsPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Stat label="Aging in pipeline" value={health.stale} tone={health.stale > 0 ? "warn" : "ok"} />
-        <Stat label="Failed jobs" value={jobs.length} tone={jobs.length > 0 ? "warn" : "ok"} />
+        {/* "Failed jobs 5" sat beside a "Retry all 4" button with nothing
+            explaining the gap: only some failure types can be repaired in-app
+            (isRetryable above). Both numbers were right and the pair read as a
+            bug (launch pass, 2 Sep), so the tile now states the difference. */}
+        <Stat
+          label="Failed jobs"
+          value={jobs.length}
+          tone={jobs.length > 0 ? "warn" : "ok"}
+          note={(() => {
+            const retryable = jobs.filter((j: AnyRow) => isRetryable(categorize(j))).length;
+            if (jobs.length === 0) return undefined;
+            if (retryable === jobs.length) return "All retryable from here.";
+            return `${retryable} retryable from here · ${jobs.length - retryable} need a code fix.`;
+          })()}
+        />
         <Stat
           label="Delivery failures (7d)"
           value={deliveryFailureCount}
@@ -643,7 +657,18 @@ function OperationsPage() {
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: number; tone?: "warn" | "ok" }) {
+function Stat({
+  label,
+  value,
+  tone,
+  note,
+}: {
+  label: string;
+  value: number;
+  tone?: "warn" | "ok";
+  /** Reconciles this figure with a different one shown nearby. */
+  note?: string;
+}) {
   return (
     <div className="rounded-lg border bg-card p-4">
       <div className="text-xs text-muted-foreground">{label}</div>
@@ -656,6 +681,7 @@ function Stat({ label, value, tone }: { label: string; value: number; tone?: "wa
       >
         {value}
       </div>
+      {note ? <div className="mt-1 text-[11px] text-muted-foreground">{note}</div> : null}
     </div>
   );
 }
