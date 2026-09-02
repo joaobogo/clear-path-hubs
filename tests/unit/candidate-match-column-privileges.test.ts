@@ -26,7 +26,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { sourceFiles } from "@tests/helpers/scan-source";
+import { userScopedWrites } from "@tests/helpers/user-scoped-writes";
 
 const MIGRATIONS = join(process.cwd(), "supabase", "migrations");
 
@@ -105,63 +105,26 @@ describe("candidate_matches read privileges", () => {
 
 describe("the assumption the grant rests on", () => {
   it("no user-scoped path writes any column but stage", () => {
-    // Staff writes go through supabaseAdmin (service_role) and are unaffected by
-    // grants to `authenticated`. User-scoped writes go through context.supabase
-    // and will now FAIL for any column but stage — so a new one must be caught
-    // here, not in production.
-    // Scanned over whole file contents, NOT line by line: the pattern spans a
-    // line break, so a per-line scan would match nothing and pass vacuously.
-    const offenders: string[] = [];
-    const CALL = /(\w+)\s*\n?\s*\.from\("candidate_matches"\)\s*\n\s*\.update\(\s*\{([\s\S]*?)\}\s*(?:as never\s*)?\)/g;
-
-    for (const file of sourceFiles("src/lib")) {
-      const body = readFileSync(file, "utf8");
-      for (const m of body.matchAll(CALL)) {
-        const receiver = m[1];
-        const patch = m[2];
-        const cols = [...patch.matchAll(/(\w+)\s*:/g)].map((c) => c[1]);
-        const nonStage = cols.filter((c) => c !== "stage");
-        if (nonStage.length === 0) continue;
-
-        // Only a write carried on the USER'S JWT is subject to the grant.
-        // service_role — supabaseAdmin, getAdmin(), an admin client passed in
-        // as a parameter — bypasses grants entirely.
-        //
-        // The receiver NAME proves nothing either way: processing.functions.ts
-        // binds `const supabase = await getAdmin()` (service_role, despite the
-        // name) while scoring.functions.ts had `const { supabase } = context`
-        // (a user JWT, same name). So resolve the binding, and flag only what
-        // is genuinely user-scoped.
-        const before = body.slice(0, m.index);
-        const bind = (re: RegExp) => [...before.matchAll(re)].pop()?.[0];
-        const lastAssign = bind(
-          new RegExp(`\\b(?:const|let)\\s+${receiver}\\s*=\\s*[^;\\n]+`, "g"),
-        );
-        const lastDestructure = bind(
-          new RegExp(`\\b(?:const|let)\\s*\\{[^}]*\\b${receiver}\\b[^}]*\\}\\s*=\\s*[^;\\n]+`, "g"),
-        );
-        // Whichever binding is nearest the call site wins.
-        const nearest = [lastAssign, lastDestructure]
-          .filter((b): b is string => b !== undefined)
-          .sort((a, b) => before.lastIndexOf(a) - before.lastIndexOf(b))
-          .pop();
-
-        const userScoped =
-          receiver === "context.supabase" ||
-          (nearest !== undefined && /=\s*context\b|\bcontext\.supabase\b/.test(nearest));
-        if (!userScoped) continue;
-
-        const line = body.slice(0, m.index).split("\n").length;
-        offenders.push(
-          `${file.replace(process.cwd(), "").replace(/\\/g, "/")}:${line} ` +
-            `(${receiver}) writes ${nonStage.join(", ")}`,
-        );
-      }
-    }
+    // Staff writes go through the service_role client and are unaffected by
+    // grants to `authenticated`. User-scoped writes will now be REFUSED for any
+    // column but stage — so a new one has to be caught here, not in production.
+    //
+    // The scan lives in a helper because getting it right took three attempts:
+    // a line-by-line scan matched nothing (the call spans newlines) and passed
+    // vacuously; exempting on the receiver NAME marked a real user-scoped write
+    // safe; and a literal-only patch reader cannot see `.update(patch)`.
+    const offenders = userScopedWrites("candidate_matches")
+      .map((w) => {
+        if (w.unresolved) return `${w.file}:${w.line} patch could not be resolved`;
+        const over = w.columns.filter((c) => c !== "stage");
+        return over.length > 0 ? `${w.file}:${w.line} (${w.receiver}) writes ${over.join(", ")}` : null;
+      })
+      .filter((x): x is string => x !== null);
 
     expect(
       offenders,
-      "these writes will be refused by the column grant — widen the grant deliberately or route through the server client:\n" +
+      "these writes will be refused by the column grant — widen the grant deliberately " +
+        "or route through the server client:\n" +
         offenders.join("\n"),
     ).toEqual([]);
   });
