@@ -182,7 +182,11 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         // in review, nowhere (audit 1 Sep, F2). Excluded by omission rather
         // than by decision, which is the failure client-pipeline-lane.ts
         // already guards against on the stage axis.
-        .in("processing_state", PROCESSING_STATES_IN_PROGRESS),
+        // "scored" belongs here too: assessment is finished but the candidate
+        // is still with us awaiting approval/release, so the client should be
+        // told the work exists rather than shown silence. Only "failed" is
+        // excluded — nothing is in progress there.
+        .in("processing_state", [...PROCESSING_STATES_IN_PROGRESS, "scored"]),
       // Blocked on something a person must clear before assessment can go on.
       // Counted separately so the client is told the work exists rather than
       // being shown silence.
