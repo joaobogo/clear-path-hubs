@@ -175,18 +175,25 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         .from("candidate_matches")
         .select("id", { count: "exact", head: true })
         .eq("organization_id", data.orgId)
-        .neq("client_visibility", "visible")
+        // Hidden, not archived: an archived match is finished business, and
+        // counting it kept telling the client work was under way for weeks.
+        .eq("client_visibility", "hidden")
         // Derived from the pinned domain, not hand-listed. The literal array
         // here omitted ocr_required, so a candidate blocked on an unreadable
         // CV was counted in no bucket the client could see — not visible, not
         // in review, nowhere (audit 1 Sep, F2). Excluded by omission rather
         // than by decision, which is the failure client-pipeline-lane.ts
         // already guards against on the stage axis.
-        // "scored" belongs here too: assessment is finished but the candidate
-        // is still with us awaiting approval/release, so the client should be
-        // told the work exists rather than shown silence. Only "failed" is
-        // excluded — nothing is in progress there.
-        .in("processing_state", [...PROCESSING_STATES_IN_PROGRESS, "scored"]),
+        // "scored" belongs here ONLY while admin review is still pending:
+        // assessment is finished but the candidate is still with us awaiting
+        // approval/release. A scored match already rejected by us is not in
+        // review and must not be counted (same pairing as the admin
+        // awaiting-review readers). "failed" is excluded outright.
+        .or(
+          `processing_state.in.(${PROCESSING_STATES_IN_PROGRESS.join(",")}),` +
+            `and(processing_state.eq.scored,admin_status.eq.pending)`,
+        ),
+
       // Blocked on something a person must clear before assessment can go on.
       // Counted separately so the client is told the work exists rather than
       // being shown silence.
