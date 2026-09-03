@@ -505,6 +505,7 @@ function CandidatesPage() {
   ) : filtered.length === 0 ? (
   <CandidatesEmptyState
              hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
+             workspaceDelivered={overview?.kpis?.delivered ?? 0}
              activeFilters={activeFilters}
              onClear={clearFilters}
              orgId={orgId}

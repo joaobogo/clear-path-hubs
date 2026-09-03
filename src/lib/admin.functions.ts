@@ -2655,6 +2655,14 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
     const { evaluatePublishGate, PUBLISH_BLOCKER_LABEL } = await import("./publish-gate");
 
     for (const r of rows) {
+      // A record that has been rejected or archived is settled. It was still
+      // counted under "Candidates blocked" with "Open the record to clear this"
+      // — an action nobody can take on a closed record — because this loader
+      // reads the last 500 matches and groups them with no status filter at all
+      // (audit #8, item 11: a rejected AND archived demo candidate was the
+      // first of the nine). A terminal record is an answer, not a blocker.
+      if (r.admin_status === "rejected" || r.client_visibility === "archived") continue;
+
       const approved = (r.approved_run ?? null) as AnyRow | null;
       const current = (r.current_run ?? null) as AnyRow | null;
       const pos = (r.positions ?? null) as AnyRow | null;
