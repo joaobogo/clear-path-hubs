@@ -704,17 +704,38 @@ export function scoreCandidate(input: {
     // Keywords the requirement names as a specific product/tool: capitalised
     // mid-sentence in the requirement text (Lovable, Cloudflare, Supabase).
     // Sentence-initial words are excluded — they are capitalised by grammar.
-    const namedProducts = r.keywords.filter((kw) => {
+    // Capitalised MID-SENTENCE: grammar cannot explain it, so it names a thing.
+    const midSentenceProducts = r.keywords.filter((kw) => {
       const capitalised = kw[0]!.toUpperCase() + kw.slice(1);
-      // `^` included: the old pattern required a character and a space before
-      // the name, so a product written FIRST ("React and Kubernetes and
-      // Terraform") was invisible to the gate. Harmless while the gate only
-      // demoted "met"; fatal once it can reject, because matching React would
-      // then count as matching no product at all. Sentence-initial framing
-      // words are not a risk: extractKeywordsFromRequirement has already
-      // dropped them, so a surviving first-word keyword is content.
-      return new RegExp(`(^|[^.!?]\\s)${escapeRe(capitalised)}\\b`).test(r.text);
+      return new RegExp(`[^.!?]\\s${escapeRe(capitalised)}\\b`).test(r.text);
     });
+
+    // Capitalised only because it starts the sentence. `^` was added to the
+    // pattern so a product written FIRST ("React and Kubernetes and Terraform")
+    // was visible to the gate — correct, but it also swept up ordinary words
+    // that happen to open a requirement, and the gate can REJECT. "Owns
+    // features end to end, from schema design to shipped UI" made `Owns` a
+    // named product, so a CV saying "I own features end to end" matched six of
+    // the seven terms and was still hard-MISSING, because it never contained
+    // the literal word "Owns". Same for "Exposure to AI ...". A client writes
+    // requirements as sentences; every one of them starts with a capital.
+    //
+    // A first word is only a product name when the requirement names another
+    // one mid-sentence — which is exactly the "React and Kubernetes" case the
+    // `^` was added for, and never the case for a sentence that simply begins
+    // with a verb.
+    const sentenceInitial = r.keywords.filter((kw) => {
+      const capitalised = kw[0]!.toUpperCase() + kw.slice(1);
+      return (
+        !midSentenceProducts.includes(kw) &&
+        new RegExp(`^${escapeRe(capitalised)}\\b`).test(r.text)
+      );
+    });
+
+    const namedProducts =
+      midSentenceProducts.length > 0
+        ? [...midSentenceProducts, ...sentenceInitial]
+        : midSentenceProducts;
 
     let status: RequirementAssessment["status"];
     let needs_validation = false;

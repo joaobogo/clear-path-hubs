@@ -24,7 +24,7 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import fontkit from "@pdf-lib/fontkit";
 import { PDFDocument, rgb } from "pdf-lib";
 import type { CvDoc, CvLayout } from "./types";
@@ -48,12 +48,40 @@ const FONT_QUERY: Record<Family, { regular: string; bold: string; italic: string
   },
 };
 
+/**
+ * Metric-compatible stand-ins for the Liberation faces, used when fontconfig is
+ * not present. Liberation Sans matches Arial and Liberation Serif matches Times
+ * New Roman by design, so line breaks and page counts stay where they were.
+ *
+ * `fc-match` ships with fontconfig, which is a Linux thing: on Windows it exits
+ * ENOENT and CV rendering died before drawing a page. Falling back keeps the
+ * seeder and any fixture script usable off Linux.
+ */
+const FONT_FALLBACKS: Record<string, string[]> = {
+  "Liberation Sans": ["C:/Windows/Fonts/arial.ttf", "/Library/Fonts/Arial.ttf"],
+  "Liberation Sans:bold": ["C:/Windows/Fonts/arialbd.ttf", "/Library/Fonts/Arial Bold.ttf"],
+  "Liberation Sans:italic": ["C:/Windows/Fonts/ariali.ttf", "/Library/Fonts/Arial Italic.ttf"],
+  "Liberation Serif": ["C:/Windows/Fonts/times.ttf", "/Library/Fonts/Times New Roman.ttf"],
+  "Liberation Serif:bold": ["C:/Windows/Fonts/timesbd.ttf", "/Library/Fonts/Times New Roman Bold.ttf"],
+  "Liberation Serif:italic": ["C:/Windows/Fonts/timesi.ttf", "/Library/Fonts/Times New Roman Italic.ttf"],
+};
+
 const fontCache = new Map<string, Uint8Array>();
 function fontBytes(query: string): Uint8Array {
   const hit = fontCache.get(query);
   if (hit) return hit;
-  const file = execFileSync("fc-match", ["-f", "%{file}", query], { encoding: "utf8" }).trim();
+
+  let file = "";
+  try {
+    file = execFileSync("fc-match", ["-f", "%{file}", query], { encoding: "utf8" }).trim();
+  } catch {
+    file = "";
+  }
+  if (!file) {
+    file = (FONT_FALLBACKS[query] ?? []).find((p) => existsSync(p)) ?? "";
+  }
   if (!file) throw new Error(`font_not_found: ${query}`);
+
   const bytes = new Uint8Array(readFileSync(file));
   fontCache.set(query, bytes);
   return bytes;
