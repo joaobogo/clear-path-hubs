@@ -1017,7 +1017,26 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
  * detail view and the candidate's "what employers see" preview so the two can
  * never select different columns.
  */
-export const CLIENT_CANDIDATE_SELECT = `id, stage, client_visibility, admin_status, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by, contact_release_reason,
+/**
+ * `contact_release_reason` is NOT selected here, deliberately.
+ *
+ * It is internal justification prose for releasing a candidate's contact
+ * details, withheld from the `authenticated` role by the column-level SELECT
+ * grant on candidate_matches. Asking for it on a client-scoped read makes
+ * Postgres refuse the whole statement — "permission denied for table
+ * candidate_matches" — which took out the client's candidate list, board,
+ * stage counts and every candidate detail page at once (audit #8, 3 Sep).
+ *
+ * Nothing consumed the value; it was selected and discarded. The fix is to
+ * stop asking for internal prose on a client read, not to grant it.
+ *
+ * If you add a column here, check it against the GRANT SELECT list in
+ * supabase/migrations/20260901120000_candidate_matches_column_privileges.sql.
+ * A column-grant denial is not a row-level failure: it returns no rows at all,
+ * wrapped in an HTTP 200, so neither status-code monitoring nor an empty-state
+ * check will show it.
+ */
+export const CLIENT_CANDIDATE_SELECT = `id, stage, client_visibility, admin_status, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by,
          intro_video_url,
          canonical_state, processing_state, processing_updated_at, submitted_to_client_at,
          score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
