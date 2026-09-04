@@ -150,3 +150,23 @@
   /* Ensure revealed content is always visible. */
   [data-reveal] { opacity: 1 !important; transform: none !important; }
 }
+
+/*
+ * Global loading bar (components/ds/global-loading-bar.tsx).
+ *
+ * A sliding segment rather than a percentage: the app cannot know how far
+ * through a request it is, and a bar that pretends to would be inventing
+ * progress. Respects reduced-motion by holding still and staying visible —
+ * the point is to say "working", which a static bar still does.
+ */
+@keyframes loading-slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[loading-slide_1\.1s_ease-in-out_infinite\] {
+    animation: none;
+    width: 100%;
+  }
+}

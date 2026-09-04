@@ -1,3 +1,4 @@
+import { GlobalLoadingBar } from "@/components/ds/global-loading-bar";
 import { ReactNode, useEffect } from "react";
 import {
   createRootRouteWithContext,
@@ -192,6 +193,8 @@ function RootComponent() {
 
   return (
     <>
+      {/* Workspace only: a marketing page has no dashboard to be loading. */}
+      {isWorkspace && <GlobalLoadingBar />}
       <Outlet />
       {/* The ONLY caller of initializeTrackers()/onConsentChange — without it
           mounted, consent could be granted and nothing ever injected. */}
