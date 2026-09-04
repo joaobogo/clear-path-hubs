@@ -14,12 +14,6 @@ import { renderQuote } from "@/lib/evidence/quote-hygiene";
 
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import { buildValidationList, type ValidationItem } from "@/lib/client/validation-list";
@@ -420,12 +414,20 @@ export const RequirementRowView = memo(function RequirementRowView({
   // "Show evidence (1)" in Why this candidate for the same requirement
   // (audit S-22). A quote matching the claim is verbatim corroboration —
   // it renders with its Verified tag; only the explanation line dedupes.
-  const evidence = presentEvidenceList(row.evidence, [safeExplanation]);
-  const context = presentEvidenceList(row.context, [
-    safeClaim,
-    safeExplanation,
-    ...evidence.map((e) => e.quote),
-  ]);
+  // ONE line per requirement, and no expander.
+  //
+  // The row used to show a summary line and, beneath it, a "Show evidence"
+  // dropdown containing the same sentence again with a source label. Every
+  // requirement on the page repeated itself, and the two never reliably
+  // deduped against each other because they arrive from different places and
+  // are trimmed differently.
+  //
+  // Rather than keep tuning a text comparison, the row now states the evidence
+  // once. The summary is preferred when the requirement carries one; otherwise
+  // the strongest quote stands in, so a row is never left blank.
+  const evidence = presentEvidenceList(row.evidence, []);
+  const shownExplanation = safeExplanation ?? evidence[0]?.quote ?? null;
+
   return (
     <li className="rounded-md border bg-background/40 p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -436,8 +438,8 @@ export const RequirementRowView = memo(function RequirementRowView({
               {row.importance === "must_have" ? "Must-have" : "Preferred"}
             </Badge>
           </div>
-          {safeExplanation && (
-            <p className="mt-1 text-sm text-muted-foreground">{safeExplanation}</p>
+          {shownExplanation && (
+            <p className="mt-1 text-sm text-muted-foreground">{shownExplanation}</p>
           )}
         </div>
         <span
@@ -454,57 +456,7 @@ export const RequirementRowView = memo(function RequirementRowView({
       {safeClaim && (
         <p className="mt-2 text-sm text-foreground/90">{safeClaim}</p>
       )}
-      {(evidence.length > 0 || context.length > 0) && (
-        <Accordion type="single" collapsible className="mt-2">
-          <AccordionItem value="evidence" className="border-none">
-            <AccordionTrigger className="py-1 text-xs text-muted-foreground hover:no-underline">
-              {evidence.length > 0
-                ? `Show evidence (${evidence.length})`
-                : "Show context"}
-            </AccordionTrigger>
-            <AccordionContent>
-              {evidence.length > 0 && (
-                <ul className="mt-1 space-y-2 border-l-2 border-primary/30 pl-3 text-sm">
-                  {evidence.map((e, i) => (
-                    <li key={i}>
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                          {e.sourceLine}
-                        </div>
-                        <span className="text-[10px] taas-fg-success font-medium">Verified</span>
-                      </div>
-                      <div className="text-foreground/90">{e.quote}</div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {evidence.length === 0 && status === "not_evidenced" && (
-                <p className="text-sm text-muted-foreground italic">
-                  Not evidenced in this candidate's record.
-                </p>
-              )}
-              {context.length > 0 && (
-                <div className="mt-3">
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                    Candidate context
-                  </div>
-                  <ul className="mt-1 space-y-2 border-l-2 border-muted pl-3 text-sm">
-                    {context.map((e, i) => (
-                      <li key={i}>
-                        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                          {e.sourceLine}
-                        </div>
-                        <div className="text-muted-foreground">{e.quote}</div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      )}
-      {evidence.length === 0 && context.length === 0 && status === "not_evidenced" && (
+      {evidence.length === 0 && !shownExplanation && status === "not_evidenced" && (
         <p className="mt-2 text-sm text-muted-foreground italic">
           Not evidenced in this candidate's record.
         </p>

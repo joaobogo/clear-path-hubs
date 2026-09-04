@@ -70,13 +70,28 @@ export function IntroVideoPanel({
         </h2>
         {length && <span className="text-xs text-muted-foreground">{length}</span>}
       </div>
+      {/* Warm the connection before the iframe asks for anything: the DNS
+          lookup, TCP handshake and TLS negotiation to Loom all happen while
+          the rest of the page is still rendering, so the player has a live
+          connection waiting rather than starting from cold. */}
+      <link rel="preconnect" href="https://www.loom.com" />
+      <link rel="preconnect" href="https://cdn.loom.com" crossOrigin="" />
+      <link rel="dns-prefetch" href="https://www.loom.com" />
       <div className="relative mt-3 aspect-video w-full bg-muted">
         <iframe
           src={video.embed_url}
           title={`Video introduction from ${candidateName}`}
           allow="fullscreen; picture-in-picture"
           allowFullScreen
-          loading="lazy"
+          // Eager, not lazy. This panel only renders when a candidate HAS an
+          // introduction, and it is one of the first things a client wants to
+          // watch — deferring it until it scrolls into view meant waiting for
+          // the player at the exact moment of clicking.
+          loading="eager"
+          // The player is the point of this panel, so it gets priority over
+          // the images further down the page.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...({ fetchpriority: "high" } as any)}
           className="absolute inset-0 h-full w-full border-0"
         />
       </div>
