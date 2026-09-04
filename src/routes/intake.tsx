@@ -2477,9 +2477,9 @@ function ExpressIntakePage() {
                 void fetchSuggestions(jd, state.roleTitle);
               }}
             />
-          </SectionGroup>
-
-          <SectionGroup title="Example must-haves">
+            {/* The example helper belongs INSIDE Requirements. As its own
+                section it read as a second requirements question and made the
+                step look twice as long as it is. */}
             <FieldExamples
               field="must_haves"
               roleTitle={state.roleTitle}
@@ -2821,9 +2821,12 @@ function ExpressIntakePage() {
             </div>
           </SectionGroup>
 
-          <SectionGroup title="Start date">
+          {/* No "Start date" group heading above a field labelled "Ideal start
+              date": one field does not need a group, and the two together
+              simply said the same thing twice. */}
+          <SectionGroup title={intakeFieldLabel("startDate")}>
             <Field
-              label={intakeFieldLabel("startDate")}
+              label="When would you like them to start?"
               error={errors.targetStartDate}
               required={req["targetStartDate"]}
               hint="We will tell you honestly if it is achievable."

@@ -423,3 +423,60 @@ describe("location, on-site expectation and work authorisation", () => {
     expect(brief.missing).not.toContain("Where the role is based");
   });
 });
+
+/**
+ * A client filling in a role should be shown what the form actually requires,
+ * not everything that would make a nicer brief. All seven completeness fields
+ * were reported identically, so someone who had answered every mandatory
+ * question still saw work authorisation, interview process, decision maker and
+ * deal-breakers listed as "still missing" — none of which the form requires.
+ * Optional questions presented as outstanding make a short form feel long and
+ * a finished submission feel unfinished.
+ */
+describe("briefCompleteness separates required from optional", () => {
+  const onsite = {
+    location: "Lisbon, Portugal",
+    workModel: "onsite",
+    salaryMin: 60000,
+  };
+
+  it("a brief with the required answers is complete", () => {
+    const b = briefCompleteness(onsite);
+    expect(b.missing).toEqual([]);
+    expect(b.complete).toBe(true);
+  });
+
+  it("optional gaps never appear as outstanding", () => {
+    const b = briefCompleteness(onsite);
+    for (const label of [
+      "Work authorisation",
+      "How you interview",
+      "Who makes the final decision",
+      "What rules someone out",
+    ]) {
+      expect(b.missing, `${label} is optional and must not read as missing`).not.toContain(label);
+      expect(b.optional).toContain(label);
+    }
+  });
+
+  it("still reports a required answer that is genuinely absent", () => {
+    expect(briefCompleteness({ ...onsite, salaryMin: 0 }).missing).toContain("Compensation range");
+    expect(briefCompleteness({ ...onsite, workModel: "" }).missing).toContain(
+      "Remote, hybrid or on site",
+    );
+  });
+
+  it("does not ask a remote role where it is based", () => {
+    // The question does not apply, and asking it made a correctly-filled remote
+    // brief look incomplete.
+    const b = briefCompleteness({ workModel: "remote", salaryMin: 60000, location: "" });
+    expect(b.missing).not.toContain("Where the role is based");
+    expect(b.complete).toBe(true);
+  });
+
+  it("still asks an on-site role where it is based", () => {
+    expect(briefCompleteness({ workModel: "onsite", salaryMin: 60000, location: "" }).missing).toContain(
+      "Where the role is based",
+    );
+  });
+});

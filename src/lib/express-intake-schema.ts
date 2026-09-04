@@ -980,14 +980,32 @@ export const INTAKE_REQUIRED_LEGEND =
 
 
 /** The answers that make a brief complete, in the words the client saw. */
-export const BRIEF_COMPLETENESS_FIELDS: Array<{ field: string; label: string }> = [
-  { field: "location", label: "Where the role is based" },
-  { field: "workModel", label: "Remote, hybrid or on site" },
-  { field: "salaryMin", label: "Compensation range" },
-  { field: "workAuthorization", label: "Work authorisation" },
-  { field: "interviewProcess", label: "How you interview" },
-  { field: "decisionMaker", label: "Who makes the final decision" },
-  { field: "dealBreakers", label: "What rules someone out" },
+/**
+ * `required` marks the answers a brief cannot do without. Everything else
+ * sharpens a brief and is welcome later.
+ *
+ * All seven used to be reported the same way, so a client who had answered
+ * every mandatory question still saw a list of things "still missing" —
+ * work authorisation, interview process, decision maker, deal-breakers — none
+ * of which the form actually requires. Optional questions presented as
+ * outstanding work read as an incomplete submission and made a short form feel
+ * long.
+ *
+ * The required three mirror the field registry (`requiredAtIntake`): the work
+ * model, the budget, and — for a role that is not remote — where it is based.
+ */
+export const BRIEF_COMPLETENESS_FIELDS: Array<{
+  field: string;
+  label: string;
+  required: boolean;
+}> = [
+  { field: "location", label: "Where the role is based", required: true },
+  { field: "workModel", label: "Remote, hybrid or on site", required: true },
+  { field: "salaryMin", label: "Compensation range", required: true },
+  { field: "workAuthorization", label: "Work authorisation", required: false },
+  { field: "interviewProcess", label: "How you interview", required: false },
+  { field: "decisionMaker", label: "Who makes the final decision", required: false },
+  { field: "dealBreakers", label: "What rules someone out", required: false },
 ];
 
 /**
@@ -996,18 +1014,23 @@ export const BRIEF_COMPLETENESS_FIELDS: Array<{ field: string; label: string }> 
  */
 export function briefCompleteness(values: Record<string, unknown>): {
   complete: boolean;
+  /** Required answers still outstanding. Rendered as work to do. */
   missing: string[];
+  /** Optional answers not given. Never rendered as outstanding. */
+  optional: string[];
 } {
   const missing: string[] = [];
+  const optional: string[] = [];
   /**
    * A remote role bounded by timezones or an explicit "anywhere in the country"
    * counts as answered, even without a city.
    */
-  const remoteBounded =
-    values["workModel"] === "remote" &&
-    (Array.isArray(values["remoteTimezones"]) && values["remoteTimezones"].length > 0
-      ? true
-      : values["remoteAnywhereInCountry"] === true);
+  // A remote role does not need a place. It used to count as answered only if
+  // timezones or an explicit "anywhere in the country" had been given, so a
+  // straightforwardly remote role was told it was missing "where the role is
+  // based" — a question that does not apply to it. Timezones remain worth
+  // asking and are not required.
+  const remoteBounded = values["workModel"] === "remote";
   /** A named list answers "what rules someone out" as well as free text does. */
   const hasDealBreakers = normalizeDealBreakers(values["dealBreakerList"]).length > 0;
   /** A named stage list answers "how you interview" as well as free text does. */
@@ -1016,7 +1039,7 @@ export function briefCompleteness(values: Record<string, unknown>): {
     (values["interviewStages"] as unknown[]).some(
       (s) => typeof (s as { name?: string })?.name === "string" && (s as { name: string }).name.trim().length > 0,
     );
-  for (const { field, label } of BRIEF_COMPLETENESS_FIELDS) {
+  for (const { field, label, required } of BRIEF_COMPLETENESS_FIELDS) {
     const raw = values[field];
     const filled =
       field === "location" && remoteBounded
@@ -1030,10 +1053,15 @@ export function briefCompleteness(values: Record<string, unknown>): {
             : typeof raw === "string"
               ? raw.trim().length > 0
               : Boolean(raw);
-    if (!filled) missing.push(label);
+    if (filled) continue;
+    if (required) missing.push(label);
+    else optional.push(label);
   }
 
-  return { complete: missing.length === 0, missing };
+  // `missing` stays required-only, because every surface renders it as work
+  // still to do. `optional` is offered separately for anywhere that wants to
+  // invite a better brief without implying something is wrong.
+  return { complete: missing.length === 0, missing, optional };
 }
 
 export function jdFileExt(name: string): string {
