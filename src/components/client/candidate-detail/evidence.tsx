@@ -387,7 +387,25 @@ export const WhyWeShortlisted = memo(function WhyWeShortlisted({
   );
 });
 
+/** Text identity for dedupe: case, punctuation and ellipsis insensitive. */
+function norm(s: string | null | undefined): string {
+  return (s ?? "")
+    .toLowerCase()
+    .replace(/[\u2026]|\.\.\./g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+/** True when the two lines say the same thing, or one is a slice of the other. */
+function saysTheSame(a: string | null, b: string | null): boolean {
+  const x = norm(a);
+  const y = norm(b);
+  if (!x || !y) return false;
+  return x === y || x.includes(y) || y.includes(x);
+}
+
 export const RequirementRowView = memo(function RequirementRowView({
+
   row,
   claim = null,
 }: {
