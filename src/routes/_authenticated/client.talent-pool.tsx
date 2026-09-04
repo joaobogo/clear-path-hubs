@@ -66,10 +66,14 @@ function TalentPoolPage() {
   } = useQuery({
     // Version the result shape so clients cannot keep the older cached list
     // that omitted saved candidates who were still active on their source role.
-    queryKey: ["talent-pool", "all-saved-v2", orgId, search.status],
-    queryFn: () => poolFn({ data: { orgId: orgId!, status: search.status } }),
+    queryKey: ["talent-pool", "all-saved-v3", orgId, search.status],
+    queryFn: () => {
+      if (!orgId) throw new Error("Organization not available");
+      return poolFn({ data: { orgId, status: search.status } });
+    },
     enabled: !!orgId,
     placeholderData: (prev) => prev,
+    refetchOnMount: "always",
   });
 
   const allMemories = useMemo(() => pool?.memories ?? [], [pool]);
