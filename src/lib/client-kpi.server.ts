@@ -1192,7 +1192,13 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     result: (run?.result as Record<string, unknown> | null) ?? null,
     displayedScore: publishedScore(run),
     requirementRows: requirement_rows,
-    videoBonusPts: hasVideoIntro(row) ? VIDEO_INTRO_BONUS_PTS : 0,
+    // The points awarded to THIS run, not the constant: close to the top only
+    // the remaining headroom is given, and the breakdown must show what was
+    // received rather than a figure it then has to correct.
+    videoBonusPts: hasVideoIntro(row)
+      ? ((run as { video_bonus_awarded?: number | null } | null)?.video_bonus_awarded ??
+         VIDEO_INTRO_BONUS_PTS)
+      : 0,
   });
 
   const workAuth = normWorkAuth(cp.work_authorization);

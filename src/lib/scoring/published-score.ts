@@ -40,6 +40,8 @@ export type PublishedScoreRun = {
    * surface show what the parts really were and label the difference honestly.
    */
   score_uncapped?: number | null;
+  /** Points the video introduction actually contributed to this run. */
+  video_bonus_awarded?: number | null;
 } | null | undefined;
 
 function num(value: unknown): number | null {
@@ -74,11 +76,22 @@ export function clampScore(value: number | null): number | null {
 /**
  * Points a genuine Loom introduction adds on top of the three weighted
  * components. Awarded once per match, derived at read time from
- * `candidate_matches.intro_video_url`: present link → +10, removed link → gone.
- * The result is capped at SCORE_MAX, so the bonus lifts a mid score and cannot
- * push any score past the top of the scale.
+ * `candidate_matches.intro_video_url`: present link → the bonus, removed link →
+ * gone.
+ *
+ * Awarded only up to the headroom left beneath SCORE_MAX. Capping the TOTAL
+ * instead meant a candidate on 95 was shown "+10" and then a second line taking
+ * 5 back off, which is arithmetic nobody should have to follow to understand
+ * their own score. Awarding what actually fits means the bonus line is the
+ * points the candidate received, and no correction line is needed.
  */
-export const VIDEO_INTRO_BONUS_PTS = 10;
+export const VIDEO_INTRO_BONUS_PTS = 5;
+
+/** The bonus this run can actually receive, given how close it already is to the top. */
+export function videoBonusFor(baseScore: number | null): number {
+  if (baseScore === null || !Number.isFinite(baseScore)) return 0;
+  return Math.max(0, Math.min(VIDEO_INTRO_BONUS_PTS, SCORE_MAX - baseScore));
+}
 
 /** True when the match carries a stored intro video link (validated at write). */
 export function hasVideoIntro(
@@ -94,20 +107,23 @@ export function hasVideoIntro(
  */
 export function withVideoIntroBonus<T extends PublishedScoreRun>(run: T, hasVideo: boolean): T {
   if (!run || !hasVideo) return run as T;
+  // One award for the run, sized to the headroom of the figure actually
+  // published, so both score columns move by the same amount and the bonus line
+  // in the breakdown is the points received.
+  const base = num(run.final_score) ?? num(run.score);
+  const awarded = videoBonusFor(base);
   const shift = (v: unknown) => {
     const n = num(v);
-    // Clamped here as well as on read: callers that take `run.score` straight
-    // off the returned object must not see a number off the scale either.
-    return n === null ? v : clampScore(n + VIDEO_INTRO_BONUS_PTS);
+    return n === null ? v : clampScore(n + awarded);
   };
-  // What the parts actually summed to, kept so a breakdown can decompose the
-  // published figure instead of inferring a component by subtraction.
-  const uncapped = num(run.final_score) ?? num(run.score);
   return {
     ...run,
     score: shift(run.score),
     final_score: shift(run.final_score),
-    score_uncapped: uncapped === null ? null : uncapped + VIDEO_INTRO_BONUS_PTS,
+    // Equal to the published figure now that the award fits: kept so a
+    // breakdown never has to infer a component by subtraction.
+    score_uncapped: base === null ? null : base + awarded,
+    video_bonus_awarded: awarded,
   } as T;
 }
 

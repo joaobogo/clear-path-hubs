@@ -21,12 +21,14 @@ import {
  *
  * The second is the nastier one: the code looks correct, and the number is
  * quietly wrong. A reviewer saw "64 · Consider" beside a client preview
- * reading "74 · Strong" — a ten-point gap, exactly the video bonus, on the
+ * reading a higher number — a gap exactly the size of the video bonus, on the
  * one figure the whole product is built on.
  *
  * These tests pin the arithmetic AND the selects, because a select is where
  * this breaks without anyone noticing.
  */
+
+import { classifyBand } from "@/lib/scoring/bands";
 
 const read = (p: string) => readFileSync(p, "utf8");
 
@@ -36,7 +38,8 @@ describe("published score arithmetic", () => {
   it("adds the video bonus exactly once", () => {
     const folded = withVideoIntroBonus(run, true);
     expect(publishedScore(folded)).toBe(64 + VIDEO_INTRO_BONUS_PTS);
-    expect(publishedScore(withVideoIntroBonus(folded, false))).toBe(74);
+    // Folding a second time with no video must not add again.
+    expect(publishedScore(withVideoIntroBonus(folded, false))).toBe(64 + VIDEO_INTRO_BONUS_PTS);
   });
 
   it("does not add it when there is no video", () => {
@@ -46,12 +49,18 @@ describe("published score arithmetic", () => {
   it("prefers a human adjustment over the engine score, and still folds the bonus", () => {
     const adjusted = { ...run, final_score: 80 };
     expect(publishedScore(adjusted)).toBe(80);
-    expect(publishedScore(withVideoIntroBonus(adjusted, true))).toBe(90);
+    expect(publishedScore(withVideoIntroBonus(adjusted, true))).toBe(80 + VIDEO_INTRO_BONUS_PTS);
   });
 
   it("bands from the published number, not the raw one", () => {
-    // 64 and 74 sit in different bands — this gap is what the client saw.
-    expect(publishedBand(run)).not.toBe(publishedBand(withVideoIntroBonus(run, true)));
+    // The bonus can move a score across a band boundary, and the band must
+    // follow the published number. Pinned at a score that straddles one rather
+    // than at a literal, so the bonus size can change without rewriting this.
+    const straddling = { ...run, score: 64 };
+    const lifted = withVideoIntroBonus(straddling, true);
+    expect(publishedScore(lifted)).toBe(64 + VIDEO_INTRO_BONUS_PTS);
+    expect(publishedBand(lifted)).toBe(classifyBand(64 + VIDEO_INTRO_BONUS_PTS));
+    expect(publishedBand(straddling)).toBe(classifyBand(64));
   });
 
   it("reads the video flag off the match row, not the run", () => {

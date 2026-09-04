@@ -67,9 +67,18 @@ describe("clampScore", () => {
 });
 
 describe("the video bonus cannot push a score past the ceiling", () => {
-  it("caps the run the moment the bonus is folded in", () => {
-    // 97 + 10 = 107 — the exact example the old comment gave.
+  it("awards only the headroom, so no correction line is ever needed", () => {
+    // 97 with a 5-point bonus receives 3. Awarding the full 5 and capping the
+    // total showed "+5" and then took 2 back off on a second line, which is
+    // arithmetic nobody should follow to understand their own score.
     const run = withVideoIntroBonus({ score: 97, final_score: null }, true);
+    expect(run.score).toBe(SCORE_MAX);
+    expect((run as { video_bonus_awarded?: number }).video_bonus_awarded).toBe(3);
+  });
+
+  it("awards nothing to a run already at the top", () => {
+    const run = withVideoIntroBonus({ score: 100, final_score: null }, true);
+    expect((run as { video_bonus_awarded?: number }).video_bonus_awarded).toBe(0);
     expect(run.score).toBe(SCORE_MAX);
   });
 
@@ -83,6 +92,9 @@ describe("the video bonus cannot push a score past the ceiling", () => {
     // Capping must not make the bonus pointless.
     const run = withVideoIntroBonus({ score: 62, final_score: null }, true);
     expect(run.score).toBe(62 + VIDEO_INTRO_BONUS_PTS);
+    expect((run as { video_bonus_awarded?: number }).video_bonus_awarded).toBe(
+      VIDEO_INTRO_BONUS_PTS,
+    );
   });
 
   it("leaves a candidate without a video untouched", () => {
@@ -134,21 +146,18 @@ describe("a capped score can still be decomposed truthfully", () => {
     // about the evidence by 8, while still "adding up".
     const run = withVideoIntroBonus({ score: 98, final_score: null }, true);
     expect(publishedScore(run)).toBe(100);
-    expect(
-      (run as { score_uncapped?: number | null }).score_uncapped,
-      "the pre-ceiling total is what makes an honest breakdown possible",
-    ).toBe(108);
-
-    const evidence = (run as unknown as { score_uncapped: number }).score_uncapped - VIDEO_INTRO_BONUS_PTS;
-    expect(evidence, "the evidence figure is the one the engine produced").toBe(98);
+    // 98 + the 2 points that fit. The parts equal the published figure, so a
+    // breakdown decomposes rather than corrects.
+    expect((run as { score_uncapped?: number | null }).score_uncapped).toBe(100);
+    const awarded = (run as { video_bonus_awarded?: number }).video_bonus_awarded ?? 0;
+    expect(awarded).toBe(2);
+    expect(100 - awarded, "the evidence figure is the one the engine produced").toBe(98);
   });
 
   it("is absent when no cap was involved, so old arithmetic still holds", () => {
     const run = withVideoIntroBonus({ score: 62, final_score: null }, true);
-    const uncapped = (run as { score_uncapped?: number | null }).score_uncapped;
-    // Present, and equal to the published figure — subtraction is correct here.
-    expect(uncapped).toBe(72);
-    expect(publishedScore(run)).toBe(72);
+    expect((run as { score_uncapped?: number | null }).score_uncapped).toBe(67);
+    expect(publishedScore(run)).toBe(67);
   });
 });
 

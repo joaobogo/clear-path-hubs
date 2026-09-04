@@ -719,7 +719,15 @@ export function ScoreTab({
   const catBreakdown = result?.category_breakdown ?? {};
   // The run handed to this tab already has the bonus folded in (getAdminMatch
   // folds it once). Recover the raw figure so the arithmetic can be shown.
-  const videoBonusPts = match?.intro_video_url ? VIDEO_INTRO_BONUS_PTS : 0;
+  // The points actually AWARDED, not the headline constant. A candidate close
+  // to the top receives only the headroom that was left, and showing the full
+  // constant meant the breakdown then had to take the difference back off on a
+  // second line — arithmetic nobody should follow to understand their own
+  // score.
+  const videoBonusPts = match?.intro_video_url
+    ? ((currentRun as { video_bonus_awarded?: number | null } | null)?.video_bonus_awarded ??
+       VIDEO_INTRO_BONUS_PTS)
+    : 0;
   // Through the resolver, and null stays null. This read
   // `final_score ?? score ?? 0`, so a run with no usable number — a failed
   // scoring run, or one voided because the CV proved unreadable — became 0,

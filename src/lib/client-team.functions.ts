@@ -270,7 +270,39 @@ export const inviteClientMember = createServerFn({ method: "POST" })
           },
         });
       } catch (e) {
-        console.error("[inviteClientMember] invitation email failed", e);
+        // Delivery matters more than personalisation. generateLink creates the
+        // account WITHOUT sending anything, so a failure here used to mean the
+        // invitee received nothing at all and the seat sat waiting on an email
+        // that never came. Fall back to Supabase's own invitation - plainer,
+        // but it arrives.
+        console.error("[inviteClientMember] branded invitation failed, falling back", e);
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (supabaseAdmin as any).auth.admin.inviteUserByEmail(data.email, {
+            data: { invited_org_id: data.orgId },
+          });
+        } catch (fallbackErr) {
+          console.error("[inviteClientMember] fallback invitation failed", fallbackErr);
+          throw new Error(
+            "The seat was created but we could not email the invitation. " +
+              "Resend it from their row, or check the email address.",
+          );
+        }
+      }
+    } else {
+      // No action link means generateLink did not return one. Rather than
+      // create a seat nobody is told about, send Supabase's invitation.
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabaseAdmin as any).auth.admin.inviteUserByEmail(data.email, {
+          data: { invited_org_id: data.orgId },
+        });
+      } catch (e) {
+        console.error("[inviteClientMember] invitation could not be sent", e);
+        throw new Error(
+          "The seat was created but we could not email the invitation. " +
+            "Resend it from their row, or check the email address.",
+        );
       }
     }
 

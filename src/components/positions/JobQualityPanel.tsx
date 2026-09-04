@@ -118,9 +118,13 @@ export function JobQualityPanel({
       <p className="text-sm font-medium">{view.summary}</p>
       {!compact && (
         <div className="mt-3 space-y-3">
+          {/* Blocking only. The panel used to list all three groups, so a role
+              with ONE required answer outstanding showed eight items with
+              "Fix ..." beside each — seven of which nothing depends on. A
+              checklist that mixes what you must do with what you could do
+              stops reading as a checklist, and the one thing actually holding
+              up the role gets lost among the suggestions. */}
           <GapList title="Required to submit" gaps={view.blocking} onJumpToStep={onJumpToStep} editTo={editTo} />
-          <GapList title="Improves ranking (optional)" gaps={view.degrades} onJumpToStep={onJumpToStep} editTo={editTo} />
-          <GapList title="Nice to have (optional)" gaps={view.optional} onJumpToStep={onJumpToStep} editTo={editTo} />
         </div>
       )}
     </div>
