@@ -87,8 +87,11 @@ export function RequirementsList({
 
   return (
     <div className="space-y-4" data-field="Requirements">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <p className="text-sm font-medium">Requirements</p>
+      {/* No "Requirements" label here: this list is always rendered inside a
+          section already titled Requirements, so the two stacked and the step
+          read "Requirements / Requirements". The count is the part that is
+          worth saying twice, and it is not a repeat of anything. */}
+      <div className="flex flex-wrap items-baseline justify-end gap-2">
         <p
           className={
             overMustHaveCap
