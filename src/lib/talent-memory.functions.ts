@@ -4,12 +4,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { writeAudit } from "@/lib/admin.functions";
-import {
-  ACTIVE_MATCH_STAGES,
-  excludeStillInPlay,
-  isActiveMatchStage,
-  pairKey,
-} from "@/lib/talent/active-stage";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -365,35 +359,11 @@ export const listSilverMedalists = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     const raw = (rows as AnyRow[]) ?? [];
 
-    // A candidate still in play for a role is not passed over for that role.
-    // Drop those memories so the pool never contradicts Candidates/Interviews.
-    const activePairs = new Set<string>();
-    const profileIds = Array.from(new Set(raw.map((r) => r.candidate_profile_id).filter(Boolean)));
-    if (profileIds.length > 0) {
-      const { data: liveMatches } = await context.supabase
-        .from("candidate_matches")
-        .select("candidate_profile_id, position_id, stage")
-        .eq("organization_id", data.orgId)
-        .in("candidate_profile_id", profileIds)
-        .in("stage", [...ACTIVE_MATCH_STAGES]);
-      for (const m of ((liveMatches as AnyRow[]) ?? [])) {
-        if (isActiveMatchStage(m.stage)) {
-          activePairs.add(pairKey(String(m.candidate_profile_id), m.position_id ?? null));
-        }
-      }
-    }
-
-    const decorated = await decorateMemories(
-      context.supabase,
-      excludeStillInPlay(
-        raw as unknown as Array<{
-          candidate_profile_id: string;
-          source_position_id: string | null;
-          reason_category?: string | null;
-        }>,
-        activePairs,
-      ) as unknown as AnyRow[],
-    );
+    // Keeping a candidate for the future is a record the client made, so the
+    // pool always shows it — including while that candidate is still live on
+    // the role they were kept from. The resurface panel is where a still-live
+    // candidate would contradict the role, and it filters separately.
+    const decorated = await decorateMemories(context.supabase, raw);
     const term = data.q?.trim().toLowerCase();
 
     const filtered = term
