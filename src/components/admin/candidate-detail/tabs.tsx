@@ -713,7 +713,20 @@ export function ScoreTab({
   // and the reconciliation line below then rendered "Evidence score -10.0 +
   // intro video +10 = 0". A negative evidence score is not a number we have.
   const publishedTotal = publishedScore(currentRun);
-  const rawScore = publishedTotal === null ? null : publishedTotal - videoBonusPts;
+  // The evidence figure is what the parts SUMMED to, not what is left after
+  // subtracting the bonus from a capped headline. Once scores are held at 100,
+  // subtraction turns a genuine 98 + 10 into "Evidence 90 + intro video 10",
+  // which adds up and is wrong about the evidence. `score_uncapped` carries the
+  // pre-ceiling total for exactly this; it is absent when no cap was involved,
+  // and the old arithmetic is then correct.
+  const uncappedTotal = (currentRun as { score_uncapped?: number | null } | null)?.score_uncapped;
+  const totalForParts =
+    typeof uncappedTotal === "number" && Number.isFinite(uncappedTotal)
+      ? uncappedTotal
+      : publishedTotal;
+  const rawScore = totalForParts === null || totalForParts === undefined
+    ? null
+    : totalForParts - videoBonusPts;
   // Runs written before deriveStrengths() existed stored only strictly-met
   // requirements, so an evidenced candidate could read "None surfaced". Re-derive
   // from the assessment the run already carries — no rescore, no stored number

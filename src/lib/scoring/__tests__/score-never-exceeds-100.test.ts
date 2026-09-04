@@ -126,3 +126,54 @@ describe("the breakdown still adds up when the ceiling bites", () => {
     expect(c.grandTotalPts).toBe(100);
   });
 });
+
+describe("a capped score can still be decomposed truthfully", () => {
+  it("keeps what the parts summed to, so a breakdown need not infer one", () => {
+    // 98 evidence + 10 video = 108, published at 100. A surface that recovers
+    // the evidence figure as (published - bonus) would print 90 and be wrong
+    // about the evidence by 8, while still "adding up".
+    const run = withVideoIntroBonus({ score: 98, final_score: null }, true);
+    expect(publishedScore(run)).toBe(100);
+    expect(
+      (run as { score_uncapped?: number | null }).score_uncapped,
+      "the pre-ceiling total is what makes an honest breakdown possible",
+    ).toBe(108);
+
+    const evidence = (run as { score_uncapped: number }).score_uncapped - VIDEO_INTRO_BONUS_PTS;
+    expect(evidence, "the evidence figure is the one the engine produced").toBe(98);
+  });
+
+  it("is absent when no cap was involved, so old arithmetic still holds", () => {
+    const run = withVideoIntroBonus({ score: 62, final_score: null }, true);
+    const uncapped = (run as { score_uncapped?: number | null }).score_uncapped;
+    // Present, and equal to the published figure — subtraction is correct here.
+    expect(uncapped).toBe(72);
+    expect(publishedScore(run)).toBe(72);
+  });
+});
+
+describe("the breakdown reconciles across the whole scale", () => {
+  const cases: Array<[string, number, number, number, number, number]> = [
+    ["perfect with video",        1,    1,     1,   100, VIDEO_INTRO_BONUS_PTS],
+    ["near-perfect with video",   1,    0.95,  1,   100, VIDEO_INTRO_BONUS_PTS],
+    ["perfect without video",     1,    1,     1,   100, 0],
+    ["mid with video",            0.75, 0.5,   0.6, 77,  VIDEO_INTRO_BONUS_PTS],
+    ["low without video",         0.3,  0.2,   0.4, 27,  0],
+    ["human adjusted downward",   1,    1,     1,   84,  0],
+  ];
+
+  for (const [name, mh, pr, sa, displayed, bonus] of cases) {
+    it(`${name}: components sum to the headline, and the headline is on the scale`, () => {
+      const c = buildScoreComposition({
+        coverage: { must_have: mh, preferred: pr, screening_alignment: sa, category_weights: weights },
+        result: null,
+        displayedScore: displayed,
+        videoBonusPts: bonus,
+      })!;
+      const sum = c.components.reduce((n, k) => n + k.displayPts, 0) + c.videoBonusPts;
+      expect(sum, "the parts must add up to the number printed beside them").toBe(c.grandTotalPts);
+      expect(c.grandTotalPts).toBe(displayed);
+      expect(c.grandTotalPts).toBeLessThanOrEqual(SCORE_MAX);
+    });
+  }
+});

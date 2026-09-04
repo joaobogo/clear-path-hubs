@@ -28,6 +28,18 @@ export type PublishedScoreRun = {
    * publishedScore.
    */
   processing_state?: string | null;
+  /**
+   * The post-bonus total BEFORE the ceiling was applied, set by
+   * withVideoIntroBonus when the cap bit.
+   *
+   * A breakdown has to decompose the published number, and clamping destroys
+   * the information needed to do that: the admin Score tab recovered the
+   * evidence figure as `published - videoBonus`, which after capping turned a
+   * genuine 98 + 10 into "Evidence 90 + intro video 10 = 100". The total added
+   * up and the component was invented. Keeping the uncapped sum here lets a
+   * surface show what the parts really were and label the difference honestly.
+   */
+  score_uncapped?: number | null;
 } | null | undefined;
 
 function num(value: unknown): number | null {
@@ -88,7 +100,15 @@ export function withVideoIntroBonus<T extends PublishedScoreRun>(run: T, hasVide
     // off the returned object must not see a number off the scale either.
     return n === null ? v : clampScore(n + VIDEO_INTRO_BONUS_PTS);
   };
-  return { ...run, score: shift(run.score), final_score: shift(run.final_score) } as T;
+  // What the parts actually summed to, kept so a breakdown can decompose the
+  // published figure instead of inferring a component by subtraction.
+  const uncapped = num(run.final_score) ?? num(run.score);
+  return {
+    ...run,
+    score: shift(run.score),
+    final_score: shift(run.final_score),
+    score_uncapped: uncapped === null ? null : uncapped + VIDEO_INTRO_BONUS_PTS,
+  } as T;
 }
 
 /**
