@@ -293,6 +293,34 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   const overdue = (delivered.data ?? []) as any[];
 
+  // Unanswered client messages. A client writing to their recruiter reached the
+  // notification bell and nothing else: the work queues covered approvals,
+  // intakes, payment, setup, review, decisions, interviews, delivery, stale
+  // scores and hires, and had no entry for someone waiting on a reply. So a
+  // message sat unanswered while the dashboard showed a clear desk.
+  //
+  // "Unanswered" = an unread message whose sender is not staff. Staff ids are
+  // resolved once; a message from the team is a reply, not a request.
+  const [staffRows, unreadMsgs] = await Promise.all([
+    s.from("memberships").select("user_id").eq("status", "active").in("role", ["platform_admin", "operations"]),
+    s
+      .from("messages")
+      .select(
+        "id, body, created_at, sender_user_id, conversation_id, conversations(id, subject, organization_id, position_id, candidate_match_id, organizations(id, name), positions(id, title, owner_user_id))",
+        { count: "exact" },
+      )
+      .is("read_at", null)
+      .order("created_at", { ascending: true })
+      .limit(50),
+  ]);
+
+  const staffIds = new Set(((staffRows.data ?? []) as any[]).map((r) => String(r.user_id)));
+  const clientMessages = ((unreadMsgs.data ?? []) as any[])
+    .filter((m) => m.sender_user_id && !staffIds.has(String(m.sender_user_id)))
+    // A conversation is one item however many messages are waiting in it.
+    .filter((m, i, all) => all.findIndex((o) => o.conversation_id === m.conversation_id) === i);
+
+
   // 11. Reconciliation: Identify hired candidates to ensure rollup agreement.
   const { countConfirmedHiresPlatformWide } = await import(
     "@/lib/kpis/confirmed-hires.server"
@@ -632,6 +660,31 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         tone: "warning" as const,
       })),
     },
+    {
+      key: "client_messages",
+      label: "Client messages to answer",
+      description: "A client wrote and nobody on the team has replied yet.",
+      count: clientMessages.length,
+      action_hint: "Open the thread and reply — they are waiting on us.",
+      see_all: { to: "/admin/messages" },
+      items: clientMessages.slice(0, 8).map((m) => ({
+        id: String(m.id),
+        title: String(m.conversations?.subject ?? "Message"),
+        subtitle: `${m.conversations?.positions?.title ?? "—"} · ${m.conversations?.organizations?.name ?? "—"}`,
+        subtitle_refs: [
+          posRef(m.conversations?.positions?.id, m.conversations?.positions?.title),
+          orgRef(m.conversations?.organization_id, m.conversations?.organizations?.name),
+        ],
+        meta: String(m.body ?? "").slice(0, 80),
+        waiting_since: m.created_at,
+        target: { kind: "conversation" as const, id: String(m.conversation_id) },
+        action_label: "Reply",
+        owner: owner(m.conversations?.positions?.owner_user_id),
+        claim: positionClaim(m.conversations?.positions?.id),
+        tone: ageTone(m.created_at, 1, 2),
+      })),
+    },
+
     {
       key: "hires_pending",
       // No "(Total)": the count follows the page's scope filter like every

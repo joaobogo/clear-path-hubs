@@ -19,7 +19,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { formatPeriod } from "@/lib/format/datetime";
@@ -34,9 +33,10 @@ export const InterviewGuide = memo(function InterviewGuide({
   const guide = candidate.interview_guide;
   const [copied, setCopied] = useState(false);
   const copy = () => {
-    const header = "Look for in every answer: Specific project examples; Quantifiable results; Duration of experience.\n\n";
+    // No "look for in every answer" preamble: the checkboxes it mirrored
+    // have been removed, and copied text that does not match the screen is
+    // its own small betrayal.
     const text =
-      header +
       guide
         .map(
           (q) =>
@@ -79,19 +79,6 @@ export const InterviewGuide = memo(function InterviewGuide({
       }
     >
       <div className="space-y-4">
-        <div className="rounded-md border bg-background/40 p-3">
-          <p className="mb-2 text-xs font-medium text-muted-foreground">
-            Look for in every answer:
-          </p>
-          <div className="flex flex-wrap gap-x-4 gap-y-2">
-            {["Specific project examples", "Quantifiable results", "Duration of experience"].map((label) => (
-              <label key={label} className="flex items-center gap-2 text-sm">
-                <Checkbox defaultChecked={false} />
-                <span>{label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
 
         {Object.entries(groups).map(([group, qs]) => (
           <div key={group}>

@@ -60,9 +60,6 @@ import {
 
 
 import {
-  ActivitySection,
-  AuditTrailSection,
-  JourneySection,
   TalentMemoryAction,
 } from "@/components/client/candidate-detail/activity";
 import {
@@ -623,12 +620,11 @@ function CandidateDetailPage() {
  </aside>
  </div>
 
- {/* BELOW THE FOLD — three tabs, everything else lives inside them. */}
+ {/* BELOW THE FOLD — two tabs, everything else lives inside them. */}
  <Tabs id="sec-profile" value={activeTab} onValueChange={setActiveTab} className="mt-8 scroll-mt-24">
   <TabsList className="flex w-full flex-wrap justify-start">
   <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
   <TabsTrigger value="interview">Interview</TabsTrigger>
-  <TabsTrigger value="activity">Activity</TabsTrigger>
   </TabsList>
 
 <TabsContent value="summary" className="mt-4 space-y-4">
@@ -679,13 +675,6 @@ function CandidateDetailPage() {
  </div>
   </TabsContent>
 
-  <TabsContent value="activity" className="mt-4 space-y-4">
- {(interviews.length > 0 || decisions.length > 0) && (
- <ActivitySection interviews={interviews} decisions={decisions} />
- )}
- <JourneySection matchId={candidate.match_id} />
- <AuditTrailSection candidate={candidate} />
- </TabsContent>
  </Tabs>
 
 

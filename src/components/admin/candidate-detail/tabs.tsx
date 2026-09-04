@@ -38,6 +38,7 @@ import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
+import { isNearDuplicate } from "@/lib/evidence/evidence-presentation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -591,11 +592,23 @@ export function EvidenceTab({
                   })}
                 </ul>
               )}
-              {r.snippet && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  "…{r.snippet}…"
-                </p>
-              )}
+              {/* The primary snippet is usually ALSO the first item in
+                  r.evidence, so printing both showed the requirement, its
+                  evidence, and then the same evidence again — the complaint
+                  this row generated. It is only worth showing when it says
+                  something the list above does not, which is the same rule the
+                  client surface applies through presentEvidenceList. */}
+              {(() => {
+                const snippet = renderQuote(r.snippet);
+                if (!snippet) return null;
+                const alreadyShown = ((r.evidence ?? []) as Any[]).some((e) =>
+                  isNearDuplicate(renderQuote(e.snippet) ?? "", snippet),
+                );
+                if (alreadyShown) return null;
+                return (
+                  <p className="mt-2 text-xs text-muted-foreground">"{snippet}"</p>
+                );
+              })()}
             </li>
           ))}
         </ul>

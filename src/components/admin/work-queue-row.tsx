@@ -93,6 +93,13 @@ function TargetLink({ target, children }: { target: QueueTarget; children: React
           {children}
         </Link>
       );
+    case "conversation":
+      // Opens the thread itself, so replying is one click from the dashboard.
+      return (
+        <Link to="/admin/messages" search={{ conversationId: target.id }}>
+          {children}
+        </Link>
+      );
     case "approval":
       if (target.target_kind === "position") {
         return (
