@@ -471,7 +471,7 @@ export const RequirementRowView = memo(function RequirementRowView({
           {badge.label}
         </span>
       </div>
-      {safeClaim && norm(safeClaim) !== norm(shownExplanation) && (
+      {safeClaim && !saysTheSame(safeClaim, shownExplanation) && (
         <p className="mt-2 text-sm text-foreground/90">{safeClaim}</p>
       )}
 
