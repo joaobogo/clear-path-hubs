@@ -1,3 +1,4 @@
+import { SCORE_MAX } from "./published-score";
 import { resolveRequirementStatus } from "@/lib/client/requirement-status";
 /**
  * Score composition — the three published weightings behind a fit score.
@@ -20,7 +21,8 @@ export type ScoreComponentKey =
    * after review. It is a real, named part of the score — not a fudge — so the
    * parts always add up to the number the client is looking at.
    */
-  | "review_adjustment";
+  | "review_adjustment"
+  | "score_ceiling";
 
 export type ScoreComponent = {
   key: ScoreComponentKey;
@@ -64,16 +66,17 @@ const LABELS: Record<ScoreComponentKey, string> = {
   preferred: "Nice-to-have signal",
   screening_alignment: "Screening alignment",
   review_adjustment: "Adjustment made in review",
+  score_ceiling: "Held at the top of the scale",
 };
 
 /** Published weightings. The run's own weights win when it stored them. */
-export const DEFAULT_WEIGHTS: Record<Exclude<ScoreComponentKey, "review_adjustment">, number> = {
+export const DEFAULT_WEIGHTS: Record<Exclude<ScoreComponentKey, "review_adjustment" | "score_ceiling">, number> = {
   must_have: 0.6,
   preferred: 0.2,
   screening_alignment: 0.2,
 };
 
-const KEYS: Array<Exclude<ScoreComponentKey, "review_adjustment">> = [
+const KEYS: Array<Exclude<ScoreComponentKey, "review_adjustment" | "score_ceiling">> = [
   "must_have",
   "preferred",
   "screening_alignment",
@@ -193,9 +196,16 @@ export function buildScoreComposition(input: {
   });
 
   if (adjustmentPts !== 0) {
+    // A negative adjustment that lands exactly on the top of the scale is the
+    // ceiling, not a human decision. Labelling it "Adjustment made in review"
+    // would credit a recruiter with a change nobody made — and the breakdown is
+    // read precisely to understand where a number came from.
+    const cappedAtCeiling =
+      adjustmentPts < 0 && displayedScore === SCORE_MAX && totalPts + videoBonusPts > SCORE_MAX;
+    const key = cappedAtCeiling ? ("score_ceiling" as const) : ("review_adjustment" as const);
     components.push({
-      key: "review_adjustment",
-      label: LABELS.review_adjustment,
+      key,
+      label: LABELS[key],
       valuePct: 0,
       weightPct: 0,
       contributionPts: adjustmentPts,

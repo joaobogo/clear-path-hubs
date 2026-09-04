@@ -8,9 +8,9 @@ import type { CvDoc } from "./seed-northwind-demo/types";
 export const cv: CvDoc = {
   layout: "T1",
   targetPages: 2,
-  name: "Inês Marques Barbosa",
+  name: "João Kasprzak",
   title: "Principal Full-Stack Engineer",
-  contact: "Lisbon, Portugal · ines.barbosa@example.com · +351 913 002 118 · linkedin.com/in/ines-marques-barbosa",
+  contact: "Lisbon, Portugal · joao.kasprzak@example.com · +351 913 002 118 · linkedin.com/in/joao-kasprzak",
 
   // R1, R2, R3, R4, R5 and P1 all stated plainly, each as a capability rather
   // than a mirror of the requirement's phrasing.

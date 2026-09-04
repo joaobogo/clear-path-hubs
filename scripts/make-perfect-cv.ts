@@ -64,7 +64,7 @@ const outFlag = process.argv.indexOf("--out");
 const out =
   outFlag !== -1 && process.argv[outFlag + 1]
     ? process.argv[outFlag + 1]
-    : "Ines-Marques-Barbosa-CV.pdf";
+    : "Joao-Kasprzak-CV.pdf";
 
 const bytes = await renderCvPdf(cv);
 writeFileSync(out, bytes);

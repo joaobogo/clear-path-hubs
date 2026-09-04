@@ -37,10 +37,34 @@ function num(value: unknown): number | null {
 }
 
 /**
+ * The scale every published score is reported on. A candidate is scored out of
+ * 100 and is never shown as more than 100.
+ *
+ * This used to be untrue on purpose: the video bonus was added after the engine
+ * had already produced a 0-100 composite, and the note here read "the total may
+ * exceed 100 (97 + video = 107); bands clamp for colour only". So a strong
+ * candidate with an introduction video published as 107 — a figure that reads
+ * as a bug to anyone who has been told the scale is out of 100, and which no
+ * band could describe. Capping is now the rule.
+ *
+ * The cap does not silently swallow the difference. When it bites, the score
+ * composition shows it as its own line, so the breakdown still adds up to the
+ * number printed beside it.
+ */
+export const SCORE_MAX = 100;
+
+/** Hold a score on the scale. Null passes through — absent is not zero. */
+export function clampScore(value: number | null): number | null {
+  if (value === null || !Number.isFinite(value)) return null;
+  return Math.min(SCORE_MAX, Math.max(0, value));
+}
+
+/**
  * Points a genuine Loom introduction adds on top of the three weighted
  * components. Awarded once per match, derived at read time from
  * `candidate_matches.intro_video_url`: present link → +10, removed link → gone.
- * The total may exceed 100 (97 + video = 107); bands clamp for colour only.
+ * The result is capped at SCORE_MAX, so the bonus lifts a mid score and cannot
+ * push any score past the top of the scale.
  */
 export const VIDEO_INTRO_BONUS_PTS = 10;
 
@@ -60,7 +84,9 @@ export function withVideoIntroBonus<T extends PublishedScoreRun>(run: T, hasVide
   if (!run || !hasVideo) return run as T;
   const shift = (v: unknown) => {
     const n = num(v);
-    return n === null ? v : n + VIDEO_INTRO_BONUS_PTS;
+    // Clamped here as well as on read: callers that take `run.score` straight
+    // off the returned object must not see a number off the scale either.
+    return n === null ? v : clampScore(n + VIDEO_INTRO_BONUS_PTS);
   };
   return { ...run, score: shift(run.score), final_score: shift(run.final_score) } as T;
 }
@@ -79,7 +105,10 @@ export function publishedScore(run: PublishedScoreRun): number | null {
   // that one had been missed (audit #8, TF8-01). Callers that pass a bare run
   // carry no processing_state and are unaffected; they must still check.
   if (scoreVoidedByUnreadableCv(run)) return null;
-  return num(run.final_score) ?? num(run.score);
+  // Every surface reads through here, so the ceiling holds even for a score
+  // that arrived above it from somewhere this module does not control - a
+  // stored final_score written by an older build, or a future adjustment.
+  return clampScore(num(run.final_score) ?? num(run.score));
 }
 
 /** Whole-number figure for display. Same rounding on every surface. */
