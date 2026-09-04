@@ -64,7 +64,9 @@ function TalentPoolPage() {
     isError: poolError,
     refetch: refetchPool,
   } = useQuery({
-    queryKey: ["talent-pool", orgId, search.status],
+    // Version the result shape so clients cannot keep the older cached list
+    // that omitted saved candidates who were still active on their source role.
+    queryKey: ["talent-pool", "all-saved-v2", orgId, search.status],
     queryFn: () => poolFn({ data: { orgId: orgId!, status: search.status } }),
     enabled: !!orgId,
     placeholderData: (prev) => prev,
