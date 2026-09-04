@@ -139,7 +139,7 @@ describe("a capped score can still be decomposed truthfully", () => {
       "the pre-ceiling total is what makes an honest breakdown possible",
     ).toBe(108);
 
-    const evidence = (run as { score_uncapped: number }).score_uncapped - VIDEO_INTRO_BONUS_PTS;
+    const evidence = (run as unknown as { score_uncapped: number }).score_uncapped - VIDEO_INTRO_BONUS_PTS;
     expect(evidence, "the evidence figure is the one the engine produced").toBe(98);
   });
 

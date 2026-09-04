@@ -1,3 +1,4 @@
+import { invalidateTalentMemory } from "@/lib/talent-memory/invalidate";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -60,7 +61,7 @@ export function MemorySheet({
       updateFn({ data: patch }),
     onSuccess: () => {
       toast.success("Updated");
-      qc.invalidateQueries({ queryKey: ["talent-memory"] });
+      invalidateTalentMemory(qc);
     },
     onError: (e: Error) => toastError(e),
   });
@@ -69,7 +70,7 @@ export function MemorySheet({
     mutationFn: (memId: string) => reengageFn({ data: { orgId, id: memId } }),
     onSuccess: () => {
       toast.success("Re-engagement logged");
-      qc.invalidateQueries({ queryKey: ["talent-memory"] });
+      invalidateTalentMemory(qc);
     },
   
     // Failure must be visible: a silent rejection reads as success.

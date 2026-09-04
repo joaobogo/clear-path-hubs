@@ -42,15 +42,61 @@ function splitList(line: string): string[] {
     .filter((s) => s.length >= 2 && s.length <= 60);
 }
 
-/** "6+ years of experience" / "6 anos de experiência" → 6. Largest claim wins. */
+/** Spelled-out counts. CVs write "eleven years" as often as "11 years". */
+const WORD_NUMBERS: Record<string, number> = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
+  nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14,
+  fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19,
+  twenty: 20, thirty: 30,
+  um: 1, dois: 2, três: 3, tres: 3, quatro: 4, cinco: 5, seis: 6, sete: 7,
+  oito: 8, nove: 9, dez: 10, onze: 11, doze: 12, quinze: 15, vinte: 20,
+};
+
+const COUNT = `(\\d{1,2}|${Object.keys(WORD_NUMBERS).join("|")})`;
+
+/**
+ * Doing-words that make "N years <x>" a claim about working, not about
+ * anything else a span of years could describe. Kept to professional activity
+ * on purpose: "three years at university" and "two years ago" must not read as
+ * experience, which is why this is a list rather than "any word".
+ */
+const DOING =
+  "building|leading|running|developing|delivering|designing|engineering|" +
+  "shipping|working|writing|managing|owning|maintaining|architecting|" +
+  "consulting|contracting|programming|coding|construindo|liderando|trabalhando";
+
+/**
+ * "6+ years of experience", "eleven years building production React",
+ * "9 anos de experiência" → the number. Largest claim wins.
+ *
+ * The pattern used to require the literal phrase "years of experience", and
+ * digits only. A CV reading "eleven years building production React and
+ * TypeScript applications" — which is the better sentence, and how strong CVs
+ * are actually written — yielded nothing, so the profile had no years and the
+ * candidate's row rendered without the "N yrs" line every other row carries.
+ * It looked like a rendering bug on one candidate; it was the parser declining
+ * to read ordinary English.
+ */
 export function extractYearsExperience(cvText: string): number | null {
-  const re =
-    /(\d{1,2})\s*\+?\s*(?:years?|anos?)\s+(?:of\s+|de\s+)?(?:professional\s+|profissional\s+)?(?:experience|experi[êe]ncia)/gi;
+  const patterns = [
+    // "…N years of professional experience" — the original, now word-aware.
+    new RegExp(
+      `${COUNT}\\s*\\+?\\s*(?:years?|anos?)\\s+(?:of\\s+|de\\s+)?` +
+        `(?:professional\\s+|profissional\\s+)?(?:experience|experi[êe]ncia)`,
+      "gi",
+    ),
+    // "…N years building X" — a span of years spent doing the work.
+    new RegExp(`${COUNT}\\s*\\+?\\s*(?:years?|anos?)\\s+(?:${DOING})\\b`, "gi"),
+  ];
+
   let best: number | null = null;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(cvText)) !== null) {
-    const n = Number(m[1]);
-    if (Number.isFinite(n) && n > 0 && n <= 60 && (best === null || n > best)) best = n;
+  for (const re of patterns) {
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(cvText)) !== null) {
+      const raw = m[1]!.toLowerCase();
+      const n = WORD_NUMBERS[raw] ?? Number(raw);
+      if (Number.isFinite(n) && n > 0 && n <= 60 && (best === null || n > best)) best = n;
+    }
   }
   return best;
 }

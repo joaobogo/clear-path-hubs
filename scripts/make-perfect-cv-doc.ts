@@ -15,7 +15,7 @@ export const cv: CvDoc = {
   // R1, R2, R3, R4, R5 and P1 all stated plainly, each as a capability rather
   // than a mirror of the requirement's phrasing.
   summary:
-    "Principal full-stack engineer with eleven years building production React and TypeScript applications for paying customers. " +
+    "Principal full-stack engineer with 11 years of professional experience building production React and TypeScript applications for paying customers. " +
     "I own features end to end, from Postgres schema design and migrations through to the shipped UI a finance team signs off on. " +
     "I write the SQL and the relational data modelling myself, and I keep multi-tenant products honest with row-level security that is tested policy by policy. " +
     "I maintain the automated tests that protect that work — unit and end-to-end — and I have shipped language-model features to production as a working part of the product.",

@@ -129,3 +129,45 @@ describe("isGarbageCvText (audit #3, finding 4)", () => {
     ).toBe(false);
   });
 });
+
+/**
+ * Years of experience is how every candidate row shows "N yrs" beneath the
+ * name. The pattern required the literal phrase "years of experience" and
+ * digits only, so a CV reading "eleven years building production React and
+ * TypeScript applications" produced nothing and that candidate's row rendered
+ * without the line every other row carried. It read as a rendering bug on one
+ * candidate; the parser was declining to read ordinary English.
+ */
+describe("extractYearsExperience reads how CVs are actually written", () => {
+  it("still reads the classic phrasing", () => {
+    expect(extractYearsExperience("6+ years of professional experience")).toBe(6);
+    expect(extractYearsExperience("9 anos de experiência")).toBe(9);
+  });
+
+  it("reads a spelled-out count", () => {
+    expect(extractYearsExperience("Eleven years of experience in payments")).toBe(11);
+  });
+
+  it("reads years spent DOING the work, not only the words 'of experience'", () => {
+    expect(
+      extractYearsExperience("eleven years building production React and TypeScript applications"),
+    ).toBe(11);
+    expect(extractYearsExperience("12 years leading engineering teams")).toBe(12);
+  });
+
+  it("takes the largest honest claim", () => {
+    expect(
+      extractYearsExperience("3 years building APIs. Fifteen years of experience overall."),
+    ).toBe(15);
+  });
+
+  it("does not count a span of years that is not work", () => {
+    // The reason the doing-words are a list rather than "any word".
+    expect(extractYearsExperience("Three years at university studying computer science")).toBeNull();
+    expect(extractYearsExperience("Left that role two years ago")).toBeNull();
+  });
+
+  it("returns nothing when the CV never says", () => {
+    expect(extractYearsExperience("Senior engineer. Postgres, React, testing.")).toBeNull();
+  });
+});

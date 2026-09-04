@@ -1,3 +1,4 @@
+import { invalidateTalentMemory } from "@/lib/talent-memory/invalidate";
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -48,7 +49,7 @@ export function ResurfacePanel({
       reengageFn({ data: { orgId, id, position_id: positionId } }),
     onSuccess: () => {
       toast.success("Re-engagement logged");
-      qc.invalidateQueries({ queryKey: ["talent-memory"] });
+      invalidateTalentMemory(qc);
     },
     onError: (e: Error) => toastError(e),
   });
