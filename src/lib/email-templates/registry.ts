@@ -13,6 +13,7 @@ import { template as internalLeadAlertTemplate } from './internal-lead-alert'
 import { template as intakeResumeTemplate } from './intake-resume'
 import { template as interviewReminderTemplate } from './interview-reminder'
 import { template as profileIncompleteTemplate } from './profile-incomplete'
+import { template as teamInviteTemplate } from './team-invite'
 
 
 
@@ -44,6 +45,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'payment-receipt': paymentReceiptTemplate,
   'client-weekly-digest': clientWeeklyDigestTemplate,
   'application-received': applicationReceivedTemplate,
+  'team-invite': teamInviteTemplate,
   'application-closed': applicationClosedTemplate,
   'internal-lead-alert': internalLeadAlertTemplate,
   'interview-reminder': interviewReminderTemplate,

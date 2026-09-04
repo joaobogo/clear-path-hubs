@@ -169,6 +169,8 @@ export const inviteClientMember = createServerFn({ method: "POST" })
     // Resolve the person first: if they are already on this team we say so
     // without sending them another email.
     let authUserId: string | null = null;
+    /** Supabase action link — where the invitee sets their password. */
+    let inviteActionUrl: string | null = null;
     const { data: existingProfile } = await supabaseAdmin
       .from("profiles")
       .select("auth_user_id")
@@ -199,10 +201,19 @@ export const inviteClientMember = createServerFn({ method: "POST" })
         );
       }
     } else {
-      const { data: invite, error: invErr } = await supabaseAdmin.auth.admin.inviteUserByEmail(
-        data.email,
-        { data: { invited_org_id: data.orgId } },
-      );
+      // generateLink rather than inviteUserByEmail: it creates the account and
+      // returns the action link WITHOUT sending Supabase's own message, so the
+      // invitation can be sent from here with the sender's name and the
+      // workspace on it. Supabase auth templates cannot carry custom variables,
+      // which is why the previous invitation could only say "You've been
+      // invited to TaaSFlow" — an anonymous email that reads like something to
+      // ignore, to people who have usually been told to expect it by name.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: invite, error: invErr } = await (supabaseAdmin as any).auth.admin.generateLink({
+        type: "invite",
+        email: data.email,
+        options: { data: { invited_org_id: data.orgId } },
+      });
       if (invErr || !invite?.user?.id)
         throw new Error(
           invErr?.message
@@ -210,22 +221,59 @@ export const inviteClientMember = createServerFn({ method: "POST" })
             : "We couldn't send that invitation. Check the email address and try again.",
         );
       authUserId = invite.user.id;
+      inviteActionUrl =
+        invite?.properties?.action_link ?? invite?.action_link ?? null;
       await supabaseAdmin
         .from("profiles")
         .upsert(
-          { auth_user_id: authUserId, email: data.email, status: "active" },
+          { auth_user_id: authUserId!, email: data.email, status: "active" },
           { onConflict: "auth_user_id" },
         );
     }
 
 
     const { error: mErr } = await supabaseAdmin.from("memberships").insert({
-      user_id: authUserId,
+      user_id: authUserId!,
       organization_id: data.orgId,
       role: data.role,
       status: "invited",
     });
     if (mErr) throw new Error(mErr.message);
+
+    // The invitation itself: named sender, named workspace, and the link that
+    // lets them choose a password. Never blocks the invite — a membership that
+    // exists with no email sent is recoverable by resending; an exception here
+    // would leave the seat half-created.
+    if (inviteActionUrl) {
+      try {
+        const [{ data: org }, { data: inviter }] = await Promise.all([
+          supabaseAdmin.from("organizations").select("name").eq("id", data.orgId).maybeSingle(),
+          supabaseAdmin
+            .from("profiles")
+            .select("full_name")
+            .eq("auth_user_id", context.userId)
+            .maybeSingle(),
+        ]);
+        const roleLabel =
+          data.role === "client_admin"
+            ? "an admin"
+            : data.role === "client_editor"
+              ? "an editor"
+              : "a viewer";
+        const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+        await sendTemplateEmail("team-invite", data.email, {
+          templateData: {
+            inviterName: (inviter?.full_name as string | null) ?? null,
+            workspaceName: (org?.name as string | null) ?? null,
+            roleLabel,
+            actionUrl: inviteActionUrl,
+          },
+        });
+      } catch (e) {
+        console.error("[inviteClientMember] invitation email failed", e);
+      }
+    }
+
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
       await emitEventFromServer({
