@@ -453,9 +453,10 @@ export const RequirementRowView = memo(function RequirementRowView({
           {badge.label}
         </span>
       </div>
-      {safeClaim && (
+      {safeClaim && norm(safeClaim) !== norm(shownExplanation) && (
         <p className="mt-2 text-sm text-foreground/90">{safeClaim}</p>
       )}
+
       {evidence.length === 0 && !shownExplanation && status === "not_evidenced" && (
         <p className="mt-2 text-sm text-muted-foreground italic">
           Not evidenced in this candidate's record.
