@@ -30,14 +30,26 @@ async function writeCookie(value: boolean) {
   });
 }
 
+/**
+ * How many records the hidden scope actually covers.
+ *
+ * This counted `is_test_record` alone, while the filter that does the hiding
+ * (`loadTestScope`) excludes `is_test_record OR is_demo OR is_qa`. The demo
+ * workspace is flagged `is_demo` and deliberately NOT `is_test_record`, so the
+ * banner reported "0 organisations excluded" while an organisation was in fact
+ * being excluded — and a reader checking whether the demo was still inflating
+ * staff metrics was told, wrongly, that nothing was hidden (audit #9, item 24).
+ *
+ * Delegating means the number and the filter can never disagree again.
+ * `"never"` forces the hidden-scope computation regardless of the caller's own
+ * toggle: the banner must always report the size of the excluded set, and
+ * passing `false` would fall through to the cookie and return zeros whenever
+ * the toggle is on.
+ */
 async function countExcluded(admin: unknown): Promise<{ orgs: number; positions: number }> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const s = admin as any;
-  const [orgs, positions] = await Promise.all([
-    s.from("organizations").select("id", { count: "exact", head: true }).eq("is_test_record", true),
-    s.from("positions").select("id", { count: "exact", head: true }).eq("is_test_record", true),
-  ]);
-  return { orgs: orgs.count ?? 0, positions: positions.count ?? 0 };
+  const { loadTestScope } = await import("./admin-test-scope.server");
+  const scope = await loadTestScope(admin as never, "never");
+  return { orgs: scope.excludedOrgs, positions: scope.excludedPositions };
 }
 
 export const getTestScopeState = createServerFn({ method: "GET" })

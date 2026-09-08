@@ -12,8 +12,12 @@ import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 import { loadConfirmedHires } from "@/lib/kpis/confirmed-hires.server";
 import { loadOpenRoles, loadOrgRoles } from "@/lib/kpis/open-roles.server";
 import { loadKpiRows, computeKpis, isAwaitingClientDecision } from "@/lib/client-kpi.server";
-import { loadInterviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm.server";
+import {
+  awaitingClient,
+  loadInterviewsAwaitingConfirmation,
+} from "@/lib/client/interviews-to-confirm.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
+import { laneFor } from "@/lib/client-pipeline-lane";
 import {
   PUBLISHED_SCORE_COLUMNS,
   publishedScore,
@@ -193,13 +197,21 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     // and the client board read, so a team row can never claim a hire the
     // Overview does not, or show nothing to decide while the board shows ten.
     const kpiRows = await loadKpiRows(s, orgId);
+    // The lane per match, from the rows that actually carry the interview
+    // fields. `matchRows` below is a raw candidate_matches select with no join
+    // to interviews, so `laneFor` cannot run on it — which is why every
+    // aggregate here fell back to the raw stage and Insights printed
+    // "Shortlisted 5" beside a Candidates tab reading 6 (audit #9, item 12).
+    const laneByMatch = new Map(kpiRows.map((r) => [String(r.id), laneFor(r)]));
     const hiredMatchIds = new Set(
       kpiRows.filter((r) => r.hire_confirmed).map((r) => String(r.id)),
     );
     // "Needs your input" is a union, matching its caption: candidates waiting
     // on a decision plus interviews waiting on the client to confirm a time.
     // A candidate in both states is counted once.
-    const awaitingConfirmation = await loadInterviewsAwaitingConfirmation(s, orgId);
+    const awaitingConfirmation = awaitingClient(
+      await loadInterviewsAwaitingConfirmation(s, orgId),
+    );
     const awaitingDecisionMatchIds = new Set(
       kpiRows.filter(isAwaitingClientDecision).map((r) => String(r.id)),
     );
@@ -256,7 +268,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
 
       if (isActive) v.active_candidates += 1;
       if (isDelivered) v.delivered += 1;
-      if (stage === "shortlisted") v.shortlisted += 1;
+      if ((laneByMatch.get(String(m.id)) ?? stage) === "shortlisted") v.shortlisted += 1;
       if (isHired) v.hired += 1;
       if (awaitingDecisionMatchIds.has(String(m.id))) v.awaiting_decision += 1;
       if (["failed", "error"].includes(String(m.processing_state ?? ""))) v.blocked += 1;
@@ -319,7 +331,9 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
 
     const stageBuckets = new Map<string, number[]>();
     for (const m of matchRows) {
-      const stage = String(m.stage ?? "unassigned");
+      // Same lane rule as every other stage-shaped figure, so "Interviewing"
+      // here cannot disagree with the Interviewing tile.
+      const stage = laneByMatch.get(String(m.id)) ?? String(m.stage ?? "unassigned");
       // P16: Exclude terminal stages from "Time in stage" buckets so the sum 
       // matches the active population and avoids double-counting.
       if (["hired", "rejected", "withdrawn", "not_moving_forward"].includes(stage)) continue;
@@ -557,15 +571,27 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const { countOpenOffers } = await import("@/lib/kpis/candidates-in-play.server");
     const openOfferCount = await countOpenOffers(s, orgId);
 
+    // "N of M" is only true when the N rows are a subset of the M offers, and
+    // they are not: M counts the pipeline, N counts hire_records, and a
+    // compensation figure can outlive the open offer that carried it. The card
+    // printed "Based on 1 of 0 open offers" (audit #9) — an arithmetic no
+    // reader can make sense of.
+    //
+    // With no open offer there is no open-offer value, so the money figures go
+    // with the count rather than contradicting it.
+    const compRows = withComp(openOfferRows);
+    const compCount = Math.min(compRows.length, openOfferCount);
+    const hasOpenOffers = openOfferCount > 0 && compCount > 0;
+
     const finance_summary = {
       hires_30d,
       hires_90d,
       hires_ytd,
       open_offers: openOfferCount,
-      open_offer_value: sumSalary(openOfferRows),
-      open_offers_with_compensation: withComp(openOfferRows).length,
-      avg_salary: avgSalary(openOfferRows),
-      salary_currency: currencyOf(openOfferRows),
+      open_offer_value: hasOpenOffers ? sumSalary(compRows) : null,
+      open_offers_with_compensation: compCount,
+      avg_salary: hasOpenOffers ? avgSalary(compRows) : null,
+      salary_currency: hasOpenOffers ? currencyOf(compRows) : null,
 
       projected_hires_next_30d: Math.min(
         openOfferCount,

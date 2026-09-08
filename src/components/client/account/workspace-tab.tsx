@@ -473,7 +473,7 @@ function TimezoneSection({
  <SelectTrigger id="tz-select" className="w-full max-w-sm">
  <SelectValue />
  </SelectTrigger>
-                <SelectContent className="max-h-72">
+                <SelectContent>
                   {options.map((tz) => (
                     <SelectItem key={tz} value={tz}>
                       {tz}

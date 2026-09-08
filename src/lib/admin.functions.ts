@@ -2120,7 +2120,12 @@ export const listPositionOptions = createServerFn({ method: "POST" })
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
     if (!showTest) {
       q = excludeTestOrgs(q, scope);
-      q = excludeTestPositions(q, scope);
+      // "id", not the helper's default "position_id": this query is on the
+      // positions table itself, which has no position_id column. Filtering a
+      // column that does not exist makes PostgREST reject the whole request,
+      // and the `?? []` below turned that into an empty picker — a refusal
+      // rendered as "no roles".
+      q = excludeTestPositions(q, scope, "id");
     }
 
     const { data: rows } = await q;
@@ -2621,7 +2626,15 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
-    const { data } = await s
+    // The publish desk counted the demo workspace as a real customer: 15 of
+    // its 25 "Published candidates" were Northwind, and staff triaged against
+    // a number that included a workspace built for prospects (audit #9, item
+    // 24). Every other attention surface already scopes; this one never did.
+    const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs, excludeTestPositions } =
+      await import("./admin-test-scope.server");
+    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+    const scope = await loadTestScope(s, showTest);
+    let q = s
       .from("candidate_matches")
       .select(
         [
@@ -2645,6 +2658,11 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
       )
       .order("updated_at", { ascending: false })
       .limit(500);
+    if (!showTest) {
+      q = excludeTestOrgs(q, scope);
+      q = excludeTestPositions(q, scope);
+    }
+    const { data } = await q;
     const rows = (data ?? []) as AnyRow[];
 
     type Group = "needs_review" | "blocked" | "ready" | "published" | "held";

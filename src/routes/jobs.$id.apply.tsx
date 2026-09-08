@@ -51,6 +51,9 @@ import { Loader2 } from "lucide-react";
 import { track } from "@/lib/candidate/funnel-events.functions";
 import { deviceBucket } from "@/lib/candidate/funnel-events";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
+// The number candidates are promised comes from the engine, not from copy.
+// This page said "10 points" long after the award became 5 (audit #9).
+import { VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 
 
 const EMPTY_FORM = {
@@ -1612,8 +1615,9 @@ function ApplyPage() {
                       label, so the old "skip it if you'd rather" line was cut. */}
                   <p id="loom_url-help" className="mt-1 text-xs text-muted-foreground">
                     Record a 1–5 minute Loom in English introducing yourself and what you do
-                    best, then paste the link below. A video adds 10 points to your profile and
-                    helps recruiters and clients get to know you even better.
+                    best, then paste the link below. A video adds up to{" "}
+                    {VIDEO_INTRO_BONUS_PTS} points to your profile and helps recruiters and
+                    clients get to know you even better.
                   </p>
                   <Input
                     id="loom_url"

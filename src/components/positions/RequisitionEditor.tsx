@@ -49,6 +49,7 @@ import {
   explainWeights,
   locationLabel,
   requisitionMetaSchema,
+  TIMEZONE_ANCHOR_SUGGESTIONS,
   type EvaluationWeights,
   type RequisitionLocation,
 } from "@/lib/requisition-schema";
@@ -99,6 +100,24 @@ type Form = {
   locations: RequisitionLocation[];
   change_reason: string;
 };
+
+/**
+ * Shared by both timezone inputs. A datalist rather than a closed dropdown:
+ * the field accepts any zone `normalizeTimezoneAnchor` can read, so existing
+ * values keep working while a hirer who does not know the IANA spelling gets
+ * the eight bands to pick from (audit #9, item 18).
+ */
+const TIMEZONE_SUGGESTION_LIST_ID = "requisition-timezone-suggestions";
+
+function TimezoneSuggestions() {
+  return (
+    <datalist id={TIMEZONE_SUGGESTION_LIST_ID}>
+      {TIMEZONE_ANCHOR_SUGGESTIONS.map((t) => (
+        <option key={t.value} value={t.value} label={t.label} />
+      ))}
+    </datalist>
+  );
+}
 
 export function RequisitionEditor({
   positionId,
@@ -231,6 +250,7 @@ export function RequisitionEditor({
 
   return (
     <div className="space-y-6">
+      <TimezoneSuggestions />
       {meta.rescore_state !== "current" && (
         <div className="rounded-md border border-[hsl(var(--warning,45_90%_45%))]/40 bg-muted/50 p-3">
           <p className="text-sm font-medium">Detail that affects matching changed (v{meta.content_version})</p>
@@ -336,7 +356,8 @@ export function RequisitionEditor({
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label className="text-xs">Local timezone</Label>
                   <Input
-                    placeholder="e.g. Europe/Berlin"
+                    list={TIMEZONE_SUGGESTION_LIST_ID}
+                    placeholder="Pick a band or type a zone — e.g. Europe/Berlin"
                     value={l.timezone}
                     onChange={(e) => setLoc(i, { timezone: e.target.value })}
                   />
@@ -411,12 +432,16 @@ export function RequisitionEditor({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Anchor timezone</Label>
+            <Label className="text-xs">Anchor timezone (optional)</Label>
             <Input
-              placeholder="e.g. UTC+1 / America/New_York"
+              list={TIMEZONE_SUGGESTION_LIST_ID}
+              placeholder="Pick a band or type a zone — e.g. UTC+1"
               value={form.primary_timezone}
               onChange={(e) => set("primary_timezone", e.target.value)}
             />
+            <p className="text-xs text-muted-foreground">
+              Optional. Remote roles score better with an anchor, but it no longer blocks saving.
+            </p>
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Required overlap (hours/day)</Label>

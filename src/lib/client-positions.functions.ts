@@ -138,9 +138,15 @@ export const getClientPositions = createServerFn({ method: "GET" })
     const rows = await loadKpiRows(context.supabase, data.orgId);
     // Interviews awaiting a time: the one reader, indexed by role, so the Roles
     // list banner and the Overview queue can never print different numbers.
-    const { loadInterviewsAwaitingTime } = await import("@/lib/kpis/interviews.server");
+    const { loadInterviewsAwaitingTime, awaitingClient } = await import(
+      "@/lib/kpis/interviews.server"
+    );
     const pendingByRole = new Map<string, number>();
-    for (const iv of await loadInterviewsAwaitingTime(context.supabase, data.orgId)) {
+    // Only what the client can act on: the Roles list badge says "Confirm a
+    // time", which is not something they can do for a slot nobody sent.
+    for (const iv of awaitingClient(
+      await loadInterviewsAwaitingTime(context.supabase, data.orgId),
+    )) {
       if (!iv.position_id) continue;
       pendingByRole.set(iv.position_id, (pendingByRole.get(iv.position_id) ?? 0) + 1);
     }
@@ -259,12 +265,11 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const roleKpiRows = (await loadKpiRows(context.supabase, data.orgId)).filter(
       (r) => r.position_id === data.positionId,
     );
-    const { loadInterviewsAwaitingTime: loadAwaitingTime } = await import(
-      "@/lib/kpis/interviews.server"
-    );
-    const awaitingTimeForRole = (
-      await loadAwaitingTime(context.supabase, data.orgId)
-    ).filter((iv: AnyRow) => String(iv.position_id ?? "") === data.positionId).length;
+    const { loadInterviewsAwaitingTime: loadAwaitingTime, awaitingClient: ownedByClient } =
+      await import("@/lib/kpis/interviews.server");
+    const awaitingTimeForRole = ownedByClient(
+      await loadAwaitingTime(context.supabase, data.orgId),
+    ).filter((iv) => String(iv.position_id ?? "") === data.positionId).length;
     const roleKpis = computeKpis(roleKpiRows, 0, {
       interviews_to_confirm: awaitingTimeForRole,
     });

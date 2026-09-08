@@ -12,6 +12,7 @@
  */
 import { readOrgRows } from "@/lib/kpis/org-read.server";
 import { CONFIRMATION_PENDING_STATUSES } from "@/lib/client/interviews-to-confirm";
+import { interviewHolder } from "@/lib/client/interview-holder";
 import { WEEKLY_WINDOW_DAYS } from "@/lib/client-weekly-update";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +25,14 @@ export type PendingConfirmationInterview = {
   status: string;
   requested_at: string | null;
   proposed_times: string[];
+  /**
+   * Required to decide WHOSE move it is. Without it `interviewHolder` cannot
+   * tell "slots sent and lapsed" from "slots on the table", so every caller
+   * was left equating "status is pending" with "the client owes us" — which is
+   * how the overview came to say "3 waiting on you" about three interviews the
+   * interviews page itself labels "Waiting on TaaSFlow" (audit #9, item 13b).
+   */
+  availability_expires_at: string | null;
 };
 
 /**
@@ -47,6 +56,7 @@ export function dedupeAwaitingByMatch(rows: readonly AnyRow[]): PendingConfirmat
       proposed_times: Array.isArray(row.proposed_times)
         ? (row.proposed_times as string[])
         : [],
+      availability_expires_at: (row.availability_expires_at as string | null) ?? null,
     };
     const prev = byMatch.get(matchId);
     if (
@@ -67,17 +77,42 @@ export async function loadInterviewsAwaitingTime(
     supabase,
     orgId,
     "interviews",
-    "id, candidate_match_id, position_id, status, requested_at, created_at, proposed_times",
+    "id, candidate_match_id, position_id, status, requested_at, created_at, proposed_times, availability_expires_at",
     (q) => q.in("status", CONFIRMATION_PENDING_STATUSES as unknown as string[]),
   );
   return dedupeAwaitingByMatch(rows);
 }
 
+/**
+ * Of the pending interviews, the ones the CLIENT can actually act on — live
+ * slots are on the table. A client cannot confirm a time that was never sent,
+ * and telling them otherwise reports our own delay as their inaction.
+ */
+export function awaitingClient(
+  rows: readonly PendingConfirmationInterview[],
+): PendingConfirmationInterview[] {
+  return rows.filter((iv) => interviewHolder(iv).holder === "client");
+}
+
+/** The ones TaaSFlow owes a move on. Never client work. */
+export function awaitingUs(
+  rows: readonly PendingConfirmationInterview[],
+): PendingConfirmationInterview[] {
+  return rows.filter((iv) => interviewHolder(iv).holder === "us");
+}
+
+/**
+ * The count behind every "waiting on you · confirm a time" figure.
+ *
+ * Counts only what the client owns. It used to count every pending interview,
+ * so an interview where we had sent nothing was reported to the client as
+ * theirs to confirm.
+ */
 export async function countInterviewsAwaitingTime(
   supabase: AnyRow,
   orgId: string,
 ): Promise<number> {
-  return (await loadInterviewsAwaitingTime(supabase, orgId)).length;
+  return awaitingClient(await loadInterviewsAwaitingTime(supabase, orgId)).length;
 }
 
 export function interviewWindow(

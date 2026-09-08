@@ -38,7 +38,15 @@ const SelectScrollUpButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
-    className={cn("flex cursor-default items-center justify-center py-1", className)}
+    // Sticky, not in normal flow. Radix mounts and unmounts these as the list
+    // scrolls, and in flow each mount added ~24px at the TOP -- most of a row
+    // -- pushing every option down while the pointer was already over its
+    // target, so a click landed on the neighbour above (audit #9: aiming at
+    // America/New_York selected America/Mexico_City).
+    className={cn(
+      "sticky top-0 z-10 flex cursor-default items-center justify-center bg-popover py-1",
+      className,
+    )}
     {...props}
   >
     <ChevronUp className="h-4 w-4" />
@@ -52,7 +60,10 @@ const SelectScrollDownButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
-    className={cn("flex cursor-default items-center justify-center py-1", className)}
+    className={cn(
+      "sticky bottom-0 z-10 flex cursor-default items-center justify-center bg-popover py-1",
+      className,
+    )}
     {...props}
   >
     <ChevronDown className="h-4 w-4" />
@@ -68,7 +79,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-(--radix-select-content-transform-origin)",
+        "relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-(--radix-select-content-transform-origin)",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className,
@@ -80,8 +91,11 @@ const SelectContent = React.forwardRef<
       <SelectPrimitive.Viewport
         className={cn(
           "p-1",
-          position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
+          // NOT h-[--radix-select-trigger-height]: pinning the viewport to the
+          // trigger's height made it a second scroller whose height only
+          // resolves after floating-ui positions the popup, so the list
+          // shifted under the cursor after first paint.
+          position === "popper" && "w-full min-w-[var(--radix-select-trigger-width)]",
         )}
       >
         {children}

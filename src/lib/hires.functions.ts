@@ -134,6 +134,12 @@ export interface TimeToHireReport {
     acceptance_rate: number | null;
     avg_salary: number | null;
     total_salary_value: number | null;
+    /**
+     * Currency of the salary figures above; null when no hire has comp on
+     * record. Without it the Offers KPI fell back to USD and printed "$72K"
+     * above cards reading "EUR 72,000/year" (audit #9, item 14).
+     */
+    salary_currency: string | null;
     salary_report_incomplete: boolean;
     decided_offers: number;
     accepted_offers: number;
@@ -669,7 +675,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const rows = await loadOfferRecords(
       context.supabase,
       data.orgId,
-      "id, organization_id, position_id, candidate_match_id, candidate_profile_id, owner_user_id, status, close_reason, salary_amount, sent_at, accepted_at, hired_at, positions:position_id(title), applications:application_id(applied_at)",
+      "id, organization_id, position_id, candidate_match_id, candidate_profile_id, owner_user_id, status, close_reason, salary_amount, salary_currency, sent_at, accepted_at, hired_at, positions:position_id(title), applications:application_id(applied_at)",
     );
 
     const days = (from: unknown, to: unknown): number | null => {
@@ -741,6 +747,15 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       confirmedHiresWithComp.length > 0
         ? totalSalaryValue / confirmedHiresWithComp.length
         : null;
+    // One currency for the strip. Mixed currencies would make the average
+    // meaningless, so we report none rather than label a sum in a currency
+    // only some of it is in.
+    const currencies = new Set(
+      confirmedHiresWithComp
+        .map((r) => (r.salary_currency as string | null) ?? null)
+        .filter((c): c is string => Boolean(c)),
+    );
+    const salaryCurrency = currencies.size === 1 ? [...currencies][0] : null;
 
     const salaryReportIncomplete =
       hires.length > 0 && confirmedHiresWithComp.length < hires.length;
@@ -875,6 +890,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         acceptance_rate: acceptanceRate,
         avg_salary: avgSalary,
         total_salary_value: totalSalaryValue,
+        salary_currency: salaryCurrency,
         salary_report_incomplete: salaryReportIncomplete,
         decided_offers: decidedOffers.length,
         accepted_offers: acceptedOffers.length,

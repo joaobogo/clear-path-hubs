@@ -78,8 +78,16 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
           role: inviteRole as "client_admin" | "client_editor" | "client_viewer",
         },
       }),
-    onSuccess: async () => {
-      toast.success("Invitation sent");
+    // Same reason as the client team tab: a reserved seat is not a delivered
+    // invitation, and staff need to know which one happened.
+    onSuccess: async (res: { emailDelivered?: boolean } | undefined) => {
+      if (res?.emailDelivered === false) {
+        toast.warning("Seat reserved, but the invitation email was not sent", {
+          description: "Resend from their row, or check the address.",
+        });
+      } else {
+        toast.success("Invitation sent");
+      }
       setInviteOpen(false);
       setEmail("");
       await refresh();

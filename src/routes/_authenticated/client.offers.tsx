@@ -214,7 +214,7 @@ function OffersPage() {
                     ? "—"
                     : report?.totals.avg_salary == null
                       ? "Not enough data"
-                      : `${formatMoneyMajorCompact(report.totals.avg_salary)}${reportIncomplete ? "*" : ""}`
+                      : `${formatMoneyMajorCompact(report.totals.avg_salary, report.totals.salary_currency)}${reportIncomplete ? "*" : ""}`
                 }
                 hint={
                   !pendingReport && report?.totals.avg_salary == null

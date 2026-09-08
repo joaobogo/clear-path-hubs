@@ -32,7 +32,7 @@ import {
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
-import { countLanes } from "@/lib/client-pipeline-lane";
+import { countLanes, laneFor } from "@/lib/client-pipeline-lane";
 import { computeClientRoleStatus } from "@/lib/client-role-status";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
@@ -131,7 +131,10 @@ export const brandingSchema = z.object({
 
 /** Map canonical rows onto the client-language vocabulary. */
 export function pipelineLanguageInput(rows: KpiRow[], status: string): PipelineStatusInput {
-  const scheduled = rows.filter((r) => r.stage === "interview_process" && r.interview_scheduled);
+  // Lane, not raw stage — a cancelled interview is not an interview.
+  const scheduled = rows.filter(
+    (r) => laneFor(r) === "interview_process" && r.interview_scheduled,
+  );
   const nextInterviewAt =
     scheduled
       .map((r) => r.next_interview_at)
@@ -147,7 +150,11 @@ export function pipelineLanguageInput(rows: KpiRow[], status: string): PipelineS
     interviewsScheduled: scheduled.length,
     nextInterviewAt,
     offers: counts.offer,
-    hires: counts.hired,
+    // A CONFIRMED hire, the same selector the Hires cell in the same table row
+    // uses. This counted candidates parked in the Hired column instead, so the
+    // prose under a role title read "3 hires confirmed" beside a Hires cell
+    // reading 1 — one row, one page, two answers (audit #9, item 12).
+    hires: rows.filter((r) => r.hire_confirmed).length,
     totalCandidates: rows.length,
   };
 }

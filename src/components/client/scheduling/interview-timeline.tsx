@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { interviewBuckets } from "@/lib/client/interview-buckets";
+import { interviewHolder } from "@/lib/client/interview-holder";
 import { SlotProposer, type ProposalSubmission } from "./slot-proposer";
 import { AgeBadge } from "@/components/client/age-badge";
 import {
@@ -298,15 +299,26 @@ function TimelineItem({
         ) : null}
 
         <div className="mt-3 flex flex-wrap gap-2">
+          {/* "Confirm a time" only when there IS a time to confirm.
+              This button opens the slot PROPOSER, and it was labelled
+              "Confirm a time" on rows the same page heads "Waiting on
+              TaaSFlow" — so the client was offered an action they cannot take,
+              on work we owe them, while the overview counted it against them
+              (audit #9, item 13b). The holder decides the wording. */}
           {!readOnly && !proposing && iv.status === "requested" && onStartPropose ? (
             <Button
               size="sm"
               className="min-h-11 sm:min-h-9"
               disabled={busy}
               onClick={onStartPropose}
-              aria-label={`Confirm a time for ${subject}`}
+              aria-label={
+                interviewHolder(iv).holder === "client"
+                  ? `Confirm a time for ${subject}`
+                  : `Propose times for ${subject}`
+              }
             >
-              <Clock className="mr-1.5 h-4 w-4" /> Confirm a time
+              <Clock className="mr-1.5 h-4 w-4" />
+              {interviewHolder(iv).holder === "client" ? "Confirm a time" : "Propose times"}
             </Button>
           ) : null}
           {!readOnly && !proposing && iv.status === "requested" ? (

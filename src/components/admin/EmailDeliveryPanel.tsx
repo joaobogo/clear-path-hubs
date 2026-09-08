@@ -84,7 +84,14 @@ export function EmailDeliveryPanel() {
       >
         {data?.available ? (
           <ul className="mt-3 divide-y text-sm">
-            {data.items.slice(0, 40).map((row, i) => (
+            {/* Newest first, THEN truncate. Slicing an unsorted list showed
+                the oldest 40 events, so a healthy pipeline read as "nothing
+                has sent since 07:00" and an audit reported transactional email
+                as down (audit #9, "beyond the brief"). */}
+            {[...data.items]
+              .sort((a, b) => String(b.timestamp ?? "").localeCompare(String(a.timestamp ?? "")))
+              .slice(0, 40)
+              .map((row, i) => (
               <li
                 key={`${row.messageId ?? "e"}-${row.timestamp}-${i}`}
                 className="flex items-start justify-between gap-4 py-2"

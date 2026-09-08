@@ -11,10 +11,23 @@ import {
   Award,
   History,
   RotateCw,
+  Trash2,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   getSilverMedalist,
   updateSilverMedalist,
+  removeSilverMedalist,
   logReengagement,
   REASON_LABELS,
   type SilverConsent,
@@ -43,6 +56,7 @@ export function MemorySheet({
   const getFn = useServerFn(getSilverMedalist);
   const updateFn = useServerFn(updateSilverMedalist);
   const reengageFn = useServerFn(logReengagement);
+  const removeFn = useServerFn(removeSilverMedalist);
 
   const {
     data,
@@ -64,6 +78,20 @@ export function MemorySheet({
       invalidateTalentMemory(qc);
     },
     onError: (e: Error) => toastError(e),
+  });
+
+  // Keeping a candidate was a one-way door: Archive hides the record, it does
+  // not undo the decision, so an accidental keep could not be reversed by the
+  // person who made it (audit #9).
+  const remove = useMutation({
+    mutationFn: (memId: string) => removeFn({ data: { orgId, id: memId } }),
+    onSuccess: () => {
+      toast.success("Removed from the talent pool");
+      invalidateTalentMemory(qc);
+      onClose();
+    },
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't remove this candidate — please try again." }),
   });
 
   const reengage = useMutation({
@@ -267,6 +295,36 @@ export function MemorySheet({
                       Re-open
                     </Button>
                   )}
+                  {/* The undo. Archive hides; this removes. Behind a confirm
+                      because it erases the reason, the notes and the timeline. */}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive"
+                        disabled={readOnly || remove.isPending}
+                      >
+                        <Trash2 className="mr-1 h-3.5 w-3.5" />
+                        Remove from pool
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Remove this candidate from your talent pool?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This erases the reason they were kept, any notes, and their timeline.
+                          It cannot be undone. To keep the record but hide it, use Archive instead.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep them</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => remove.mutate(m.id)}>
+                          Remove
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </div>

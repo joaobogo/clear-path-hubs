@@ -105,7 +105,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     // positions, profile hydration ← matches) stay sequential.
     const [
       { getInterviewsAwaitingFeedback },
-      { loadInterviewsAwaitingConfirmation },
+      { loadInterviewsAwaitingConfirmation, awaitingClient },
       { readSeatsForOrg },
       { loadClientWeekActivity },
       { countOpenRolesForOrg },
@@ -139,7 +139,9 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       loadKpiRows(s, data.orgId),
       // Interviews still waiting on a confirmed time — the one shared query
       // the Overview queue and the Interviews page read.
-      loadInterviewsAwaitingConfirmation(context.supabase, data.orgId),
+      // Client-owned only. "Interviews to confirm" is a promise that the
+      // client can act; an interview we never sent times for is ours.
+      loadInterviewsAwaitingConfirmation(context.supabase, data.orgId).then(awaitingClient),
       // Seats come from the one reader, so Overview, Account, Team & roles
       // and the staff account summary print the same figure.
       readSeatsForOrg(context.supabase, data.orgId),

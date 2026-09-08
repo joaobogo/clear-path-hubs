@@ -50,14 +50,51 @@ function row(over: Partial<ClientCandidateDTO> & { id: string }): ClientCandidat
 }
 
 describe("client candidate list filters", () => {
-  it("interview drill-through counts an active interview regardless of stage", () => {
-    const shortlistedWithInterview = row({ id: "a", stage: "shortlisted", interview_active: true });
-    expect(matchesInterviewTile(shortlistedWithInterview)).toBe(true);
-    const out = filterCandidates(
-      [shortlistedWithInterview, row({ id: "b", stage: "shortlisted" })],
-      { ...BASE, filter: "interview_pipeline" },
-    );
+  /**
+   * The drill-through must return exactly what the tile counted.
+   *
+   * This used to assert the opposite: that a SHORTLISTED candidate with an
+   * active interview belongs in the interview drill-through. The tile does not
+   * count them — `computeCandidateKpis` switches on `laneFor`, and so does
+   * `isInInterview`, which this predicate's comment claimed to mirror but did
+   * not. It matched `interview_active || stage === "interview_process" ||
+   * stage === "offer"`, folding in the offer lane as well, so the Interviewing
+   * tile said 1, this list said 2, and a third surface said 3 (audit #9, item
+   * 12). The lane is the contract; a stage that has not been moved is not an
+   * interview, and moving it is what makes it one.
+   */
+  it("interview drill-through returns exactly what the Interviewing tile counted", () => {
+    const interviewing = row({ id: "a", stage: "interview_process" });
+    const shortlistedWithInterview = row({ id: "b", stage: "shortlisted", interview_active: true });
+    const offered = row({ id: "c", stage: "offer" });
+    expect(matchesInterviewTile(interviewing)).toBe(true);
+    expect(matchesInterviewTile(shortlistedWithInterview), "stage not moved").toBe(false);
+    expect(matchesInterviewTile(offered), "the offer lane is not the interview lane").toBe(false);
+
+    const out = filterCandidates([interviewing, shortlistedWithInterview, offered], {
+      ...BASE,
+      filter: "interview_pipeline",
+    });
     expect(out.map((r) => r.match_id)).toEqual(["a"]);
+  });
+
+  it("a cancelled interview drops out of interviewing and into shortlisted", () => {
+    // The canonical lane rule, applied to BOTH the tile and this list.
+    const calledOff = row({
+      id: "a",
+      stage: "interview_process",
+      interview_called_off: true,
+      interview_active: false,
+    });
+    expect(matchesInterviewTile(calledOff)).toBe(false);
+    expect(
+      filterCandidates([calledOff], { ...BASE, stage: "shortlisted" }).map((r) => r.match_id),
+      "a stage=shortlisted drill-through must find them",
+    ).toEqual(["a"]);
+    expect(
+      filterCandidates([calledOff], { ...BASE, stage: "interview_process" }),
+      "and the interview_process drill-through must not",
+    ).toEqual([]);
   });
 
   it("top drill-through uses the presentation band only", () => {

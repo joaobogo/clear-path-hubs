@@ -6,7 +6,10 @@ import { buildOfferRow } from "@/lib/client-offer-holder";
 import { stageEnteredAt } from "@/lib/offer-stall";
 
 import { roleGaps } from "@/lib/position-readiness";
-import { loadInterviewsAwaitingConfirmation } from "@/lib/client/interviews-to-confirm.server";
+import {
+  awaitingClient,
+  loadInterviewsAwaitingConfirmation,
+} from "@/lib/client/interviews-to-confirm.server";
 
 export type BlockedRole = {
   position_id: string;
@@ -88,8 +91,15 @@ export async function loadClientOpenItems(
   }
 
   // Interviews that still need a time come from the one shared query the Roles
-  // banner uses.
-  const pendingConfirmations = await loadInterviewsAwaitingConfirmation(supabase, orgId);
+  // banner uses — narrowed to the ones the CLIENT can actually act on.
+  //
+  // This queue is headed "waiting on you". Every pending interview used to
+  // land in it, including the ones where we had never sent a slot, so the
+  // client was shown our own eleven-day delay as three things they owed us
+  // (audit #9, item 13b).
+  const pendingConfirmations = awaitingClient(
+    await loadInterviewsAwaitingConfirmation(supabase, orgId),
+  );
 
   // Candidate names for the rows that act on one person, so interview and offer
   // rows read like the feedback rows ("… for Carla Nunes").

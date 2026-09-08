@@ -8,5 +8,10 @@
 export {
   loadInterviewsAwaitingTime as loadInterviewsAwaitingConfirmation,
   countInterviewsAwaitingTime as countInterviewsAwaitingConfirmation,
+  // Whose move it is. A caller that puts an interview in front of the CLIENT
+  // must filter with `awaitingClient` — the loader returns everything pending,
+  // including the interviews we have not sent times for.
+  awaitingClient,
+  awaitingUs,
   type PendingConfirmationInterview,
 } from "@/lib/kpis/interviews.server";

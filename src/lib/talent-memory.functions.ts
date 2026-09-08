@@ -568,6 +568,70 @@ export const updateSilverMedalist = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ─── Remove from the pool entirely ───────────────────────────────────────────
+
+/**
+ * Take a candidate back out of the talent pool.
+ *
+ * There was no way to do this. Keeping a candidate "for the future" was a
+ * one-way action for a client: the only control was Archive, which hides the
+ * record rather than undoing the decision, so an accidental keep — or one the
+ * candidate later asked to have undone — could not be reversed by the person
+ * who made it (audit #9, "beyond the brief"). An auditor hit exactly this and
+ * had to leave a test candidate in a live workspace.
+ *
+ * Deletes BOTH rows. `tagSilverMedalist` writes a `talent_pool_members` row
+ * beside the `talent_memory` one, and removing only the memory would leave the
+ * candidate visible on /client/talent-pool — two surfaces, one question.
+ */
+export const removeSilverMedalist = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; id: string }) =>
+    z.object({ orgId: z.string().uuid(), id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertOrgEditor(context.supabase, context.userId, data.orgId);
+
+    // Read first: the pool row is keyed by candidate, not by memory id, and
+    // once the memory row is gone there is nothing left to find it by.
+    const { data: memory, error: readErr } = await context.supabase
+      .from("talent_memory")
+      .select("id, candidate_profile_id")
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    if (readErr) throw new Error(readErr.message);
+    if (!memory) throw new Error("That talent pool entry no longer exists.");
+
+    const candidateProfileId = (memory as AnyRow).candidate_profile_id as string | null;
+    if (candidateProfileId) {
+      const { error: poolErr } = await context.supabase
+        .from("talent_pool_members")
+        .delete()
+        .eq("organization_id", data.orgId)
+        .eq("candidate_profile_id", candidateProfileId);
+      if (poolErr) throw new Error(poolErr.message);
+    }
+
+    // Events cascade with the memory row.
+    const { error: delErr } = await context.supabase
+      .from("talent_memory")
+      .delete()
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId);
+    if (delErr) throw new Error(delErr.message);
+
+    await writeAudit({
+      actor: context.userId,
+      action: "talent_memory.removed",
+      entity_type: "talent_memory",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      before: { candidate_profile_id: candidateProfileId },
+    });
+    return { ok: true };
+  });
+
 // ─── Log a re-engagement or note event ───────────────────────────────────────
 
 export const logReengagement = createServerFn({ method: "POST" })

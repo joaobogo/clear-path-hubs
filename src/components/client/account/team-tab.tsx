@@ -947,8 +947,19 @@ function InviteDialog({
   const inviteFn = useServerFn(inviteClientMember);
   const invite = useMutation({
   mutationFn: () => inviteFn({ data: { orgId, email: email.trim(), role } }),
-  onSuccess: () => {
-  toast.success("Invitation sent");
+  // The seat and the email are two outcomes, and this used to report the
+  // first as if it were both: "Invitation sent" appeared over an invite the
+  // provider never dispatched (audit #9, item 22). The server now says which
+  // happened.
+  onSuccess: (res: { emailDelivered?: boolean } | undefined) => {
+  const invited = email.trim();
+  if (res?.emailDelivered === false) {
+    toast.warning(`Seat reserved, but we could not email ${invited}`, {
+      description: "Use Resend on their row, or check the address.",
+    });
+  } else {
+    toast.success("Invitation sent");
+  }
   setEmail("");
   setFailure(null);
   setOpen(false);

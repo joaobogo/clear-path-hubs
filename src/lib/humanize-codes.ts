@@ -46,6 +46,18 @@ const DICTIONARY: Record<string, string> = {
   platform_staff: "Staff",
   hiring_manager: "Hiring manager",
   recruiter: "Recruiter",
+
+  // Refusals raised by the database as bare tokens. Without an entry here the
+  // toast is the literal word — a client who pressed Delete on their own draft
+  // got a bottom-right toast reading "forbidden", which reads as nothing
+  // happening at all (audit #9, item 21). Each value must contain a space or
+  // toast-error skips it as a code rather than a sentence.
+  forbidden: "You do not have permission to do that in this workspace.",
+  position_not_draft:
+    "This role has already been submitted, so it can only be archived, not deleted.",
+  position_has_candidates:
+    "This role already has candidates attached, so it can only be archived, not deleted.",
+  position_not_found: "We could not find that role.",
   
   // Pipeline
   application_intake: "Intake",

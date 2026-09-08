@@ -132,6 +132,109 @@ export const getClientTeam = createServerFn({ method: "GET" })
     })) as AnyRow[];
   });
 
+/** What actually happened to the invitation email, so no caller can assume. */
+export type InviteDelivery = { delivered: boolean; reason: string | null };
+
+const ROLE_LABEL: Record<string, string> = {
+  client_admin: "an admin",
+  client_editor: "an editor",
+  client_viewer: "a viewer",
+};
+
+/**
+ * Send the invitation. ONE dispatch path, used by every exit of
+ * `inviteClientMember`.
+ *
+ * The invite had three ways to reserve a seat and report success while
+ * emailing nobody (audit #9, item 22 — the auditor's invite reserved a seat,
+ * toasted "Invitation sent", and never arrived):
+ *
+ *  1. Re-inviting someone previously removed flipped the membership back to
+ *     `invited` and returned early, above every line of email code.
+ *  2. An address the provider refuses comes back from `sendTemplateEmail` as
+ *     `{ sent: false, reason: "recipient_suppressed" }` — a RETURN, not a
+ *     throw — and the result was discarded, so the catch never ran.
+ *  3. An address that already had an auth user got no action link at all
+ *     (`generateLink` is only called in the new-user branch), so it fell to
+ *     `inviteUserByEmail`, which fails for an already-registered address.
+ *
+ * Whatever happens here is reported back to the caller rather than swallowed.
+ * Never throws: a seat that exists with no email is recoverable by resending,
+ * while an exception would leave the membership half-created.
+ */
+async function deliverTeamInvite(args: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any;
+  orgId: string;
+  email: string;
+  role: "client_admin" | "client_editor" | "client_viewer";
+  actorUserId: string;
+  /** A link already minted upstream; otherwise one is minted here. */
+  actionUrl?: string | null;
+  /** Invite links only work for NEW users; an existing one needs a magic link. */
+  userExists: boolean;
+}): Promise<InviteDelivery> {
+  const { supabaseAdmin } = args;
+  let actionUrl = args.actionUrl ?? null;
+
+  if (!actionUrl) {
+    try {
+      const { data: link } = await supabaseAdmin.auth.admin.generateLink({
+        type: args.userExists ? "magiclink" : "invite",
+        email: args.email,
+        options: { data: { invited_org_id: args.orgId } },
+      });
+      actionUrl = link?.properties?.action_link ?? link?.action_link ?? null;
+    } catch (e) {
+      console.error("[deliverTeamInvite] generateLink failed", e);
+    }
+  }
+
+  if (actionUrl) {
+    try {
+      const [{ data: org }, { data: inviter }] = await Promise.all([
+        supabaseAdmin.from("organizations").select("name").eq("id", args.orgId).maybeSingle(),
+        supabaseAdmin
+          .from("profiles")
+          .select("full_name")
+          .eq("auth_user_id", args.actorUserId)
+          .maybeSingle(),
+      ]);
+      const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+      // The RESULT is checked. `sendTemplateEmail` returns `{ sent: false }`
+      // for a suppressed recipient instead of throwing.
+      const res = await sendTemplateEmail("team-invite", args.email, {
+        templateData: {
+          inviterName: (inviter?.full_name as string | null) ?? null,
+          workspaceName: (org?.name as string | null) ?? null,
+          roleLabel: ROLE_LABEL[args.role] ?? "a member",
+          actionUrl,
+        },
+      });
+      if (res?.sent) return { delivered: true, reason: null };
+      console.error("[deliverTeamInvite] provider did not send", res?.reason);
+      return { delivered: false, reason: res?.reason ?? "not_sent" };
+    } catch (e) {
+      console.error("[deliverTeamInvite] branded invitation failed, falling back", e);
+    }
+  }
+
+  // Fallback: Supabase's own plainer invitation. Only meaningful for an
+  // address with no auth user — it errors for one that already exists.
+  if (!args.userExists) {
+    try {
+      await supabaseAdmin.auth.admin.inviteUserByEmail(args.email, {
+        data: { invited_org_id: args.orgId },
+      });
+      return { delivered: true, reason: "fallback_supabase_invite" };
+    } catch (e) {
+      console.error("[deliverTeamInvite] fallback invitation failed", e);
+      return { delivered: false, reason: e instanceof Error ? e.message : "send_failed" };
+    }
+  }
+  return { delivered: false, reason: actionUrl ? "send_failed" : "no_action_link" };
+}
+
 export const inviteClientMember = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
@@ -192,7 +295,23 @@ export const inviteClientMember = createServerFn({ method: "POST" })
             .update({ status: "invited", role: data.role })
             .eq("id", existing.id);
           if (uErr) throw new Error(uErr.message);
-          return { ok: true, reactivated: true };
+          // Re-inviting is still inviting. This used to return here, above
+          // every line of email code, so the seat came back and the person was
+          // never told (audit #9, item 22).
+          const delivery = await deliverTeamInvite({
+            supabaseAdmin,
+            orgId: data.orgId,
+            email: data.email,
+            role: data.role,
+            actorUserId: context.userId,
+            userExists: true,
+          });
+          return {
+            ok: true,
+            reactivated: true,
+            emailDelivered: delivery.delivered,
+            deliveryReason: delivery.reason,
+          };
         }
         throw new Error(
           existing.status === "invited"
@@ -241,70 +360,18 @@ export const inviteClientMember = createServerFn({ method: "POST" })
     if (mErr) throw new Error(mErr.message);
 
     // The invitation itself: named sender, named workspace, and the link that
-    // lets them choose a password. Never blocks the invite — a membership that
-    // exists with no email sent is recoverable by resending; an exception here
-    // would leave the seat half-created.
-    if (inviteActionUrl) {
-      try {
-        const [{ data: org }, { data: inviter }] = await Promise.all([
-          supabaseAdmin.from("organizations").select("name").eq("id", data.orgId).maybeSingle(),
-          supabaseAdmin
-            .from("profiles")
-            .select("full_name")
-            .eq("auth_user_id", context.userId)
-            .maybeSingle(),
-        ]);
-        const roleLabel =
-          data.role === "client_admin"
-            ? "an admin"
-            : data.role === "client_editor"
-              ? "an editor"
-              : "a viewer";
-        const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-        await sendTemplateEmail("team-invite", data.email, {
-          templateData: {
-            inviterName: (inviter?.full_name as string | null) ?? null,
-            workspaceName: (org?.name as string | null) ?? null,
-            roleLabel,
-            actionUrl: inviteActionUrl,
-          },
-        });
-      } catch (e) {
-        // Delivery matters more than personalisation. generateLink creates the
-        // account WITHOUT sending anything, so a failure here used to mean the
-        // invitee received nothing at all and the seat sat waiting on an email
-        // that never came. Fall back to Supabase's own invitation - plainer,
-        // but it arrives.
-        console.error("[inviteClientMember] branded invitation failed, falling back", e);
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (supabaseAdmin as any).auth.admin.inviteUserByEmail(data.email, {
-            data: { invited_org_id: data.orgId },
-          });
-        } catch (fallbackErr) {
-          console.error("[inviteClientMember] fallback invitation failed", fallbackErr);
-          throw new Error(
-            "The seat was created but we could not email the invitation. " +
-              "Resend it from their row, or check the email address.",
-          );
-        }
-      }
-    } else {
-      // No action link means generateLink did not return one. Rather than
-      // create a seat nobody is told about, send Supabase's invitation.
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabaseAdmin as any).auth.admin.inviteUserByEmail(data.email, {
-          data: { invited_org_id: data.orgId },
-        });
-      } catch (e) {
-        console.error("[inviteClientMember] invitation could not be sent", e);
-        throw new Error(
-          "The seat was created but we could not email the invitation. " +
-            "Resend it from their row, or check the email address.",
-        );
-      }
-    }
+    // lets them choose a password. One path, whether or not this address
+    // already had an auth user, and the outcome is returned rather than
+    // assumed.
+    const delivery = await deliverTeamInvite({
+      supabaseAdmin,
+      orgId: data.orgId,
+      email: data.email,
+      role: data.role,
+      actorUserId: context.userId,
+      actionUrl: inviteActionUrl,
+      userExists: Boolean(existingProfile?.auth_user_id),
+    });
 
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
@@ -319,7 +386,13 @@ export const inviteClientMember = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("[inviteClientMember] emit failed", e);
     }
-    return { ok: true };
+    // The caller is told whether the person was actually emailed. "Invitation
+    // sent" over a seat nobody was told about is the defect this returns.
+    return {
+      ok: true,
+      emailDelivered: delivery.delivered,
+      deliveryReason: delivery.reason,
+    };
   });
 
 export const resendClientInvitation = createServerFn({ method: "POST" })

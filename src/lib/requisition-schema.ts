@@ -147,6 +147,30 @@ export function normalizeTimezoneAnchor(raw: unknown): string {
 
 
 
+/**
+ * Timezone suggestions for the role editor, one per intake band.
+ *
+ * Both timezone inputs were plain free text with no suggestions, so a
+ * non-technical hirer had to know that "Europe/Berlin" is the expected shape —
+ * and a remote role could not be saved without one (audit #9, item 18). The
+ * labels are the eight bands the intake form already offers; the VALUE is a
+ * representative zone, because `normalizeTimezoneAnchor` accepts IANA zones
+ * and UTC offsets, not band tokens like "uk_ireland".
+ *
+ * Suggestions, not a closed list: the field still accepts any zone the
+ * normaliser can read, so existing values keep working.
+ */
+export const TIMEZONE_ANCHOR_SUGGESTIONS: ReadonlyArray<{ value: string; label: string }> = [
+  { value: "America/Los_Angeles", label: "Americas West (UTC−8 to UTC−6)" },
+  { value: "America/New_York", label: "Americas East (UTC−5 to UTC−3)" },
+  { value: "Europe/London", label: "UK and Ireland (UTC+0 to UTC+1)" },
+  { value: "Europe/Berlin", label: "Europe Central (UTC+1 to UTC+3)" },
+  { value: "Africa/Nairobi", label: "Middle East and Africa (UTC+2 to UTC+4)" },
+  { value: "Asia/Kolkata", label: "South Asia (UTC+5 to UTC+6)" },
+  { value: "Asia/Singapore", label: "Asia Pacific (UTC+7 to UTC+9)" },
+  { value: "Australia/Sydney", label: "Australia and New Zealand (UTC+10 to UTC+13)" },
+];
+
 export const COMPENSATION_VISIBILITY = [
   { value: "internal", label: "TaaSFlow team only" },
   { value: "client", label: "Client hiring team" },
@@ -301,7 +325,6 @@ export const requisitionMetaSchema = z
     change_reason: z.string().trim().max(500).default(""),
   })
   .superRefine((v, ctx) => {
-    const remoteOnly = v.locations.length > 0 && v.locations.every((l) => l.work_model === "remote");
     if (v.locations.length === 0) {
       ctx.addIssue({
         code: "custom",
@@ -341,13 +364,15 @@ export const requisitionMetaSchema = z
         });
       }
     }
-    if (remoteOnly && v.timezone_overlap_hours === null && !v.primary_timezone.trim()) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["primary_timezone"],
-        message: "Fully remote roles need a timezone anchor or a required overlap window.",
-      });
-    }
+    // A remote role no longer BLOCKS on a timezone anchor.
+    //
+    // "Fully remote roles need a timezone anchor or a required overlap window"
+    // stopped the save, and both timezone inputs were free text with no
+    // suggestions — so a client who chose Remote (and was correctly told they
+    // needed no location) hit a wall on a field they had no way to fill
+    // confidently, and only discovered it on Save (audit #9, item 18).
+    // Timezone is optional here; the non-blocking quality gap below still
+    // nudges for it, which is the right place for a nudge.
     // A value the normaliser cannot read used to be accepted here, written to
     // the row, and then silently blanked by the next read — the field looked
     // like it forgot what was typed. If it will not survive the round-trip,

@@ -6,6 +6,11 @@
 // with the chips and the tile that linked here?".
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { isStrongFitBand, isUnicornScore } from "@/lib/scoring/score-counts";
+// The lane, not the raw stage. The tiles above this list are lane counts, so
+// filtering the list by raw stage made a tile and the list it links to answer
+// the same question differently — "Shortlisted 6" opening a list of 5 (audit
+// #9, item 12). A cancelled interview is shortlisted; that rule lives here.
+import { laneFor } from "@/lib/client-pipeline-lane";
 
 // Fit-band ordering for the "Highest approved fit" sort. Employer surfaces have
 // no numeric rating to sort on — the band is the contract.
@@ -50,12 +55,13 @@ export function matchesTopTile(c: ClientCandidateDTO): boolean {
  * even when the stage has not been moved yet.
  */
 export function matchesInterviewTile(c: ClientCandidateDTO): boolean {
-  return c.interview_active || c.stage === "interview_process" || c.stage === "offer";
+  return laneFor(c) === "interview_process";
 }
 
 export function reviewGroup(c: ClientCandidateDTO): "awaiting" | "closed" | "in_progress" {
-  if (c.stage === "delivered") return "awaiting";
-  if (c.stage === "hired" || c.stage === "not_moving_forward") return "closed";
+  const lane = laneFor(c) ?? c.stage;
+  if (lane === "delivered") return "awaiting";
+  if (lane === "hired" || lane === "not_moving_forward") return "closed";
   return "in_progress";
 }
 
@@ -69,7 +75,7 @@ export function filterCandidates(
     if (s.filter === "top" && !matchesTopTile(c)) return false;
     if (s.filter === "interview_pipeline" && !matchesInterviewTile(c)) return false;
     if (s.unicorn === "1" && !isUnicornScore(c.score)) return false;
-    if (s.stage !== "all" && c.stage !== s.stage) return false;
+    if (s.stage !== "all" && laneFor(c) !== s.stage) return false;
     if (s.fit !== "all" && c.fit.band !== s.fit) return false;
     if (s.critical !== "all") {
       const missingEvidence = c.requirement_rows.some(
@@ -126,7 +132,7 @@ export function sortCandidates(
         return bv - av;
       }
       case "stage":
-        return STAGE_ORDER[a.stage] - STAGE_ORDER[b.stage];
+        return STAGE_ORDER[laneFor(a) ?? a.stage] - STAGE_ORDER[laneFor(b) ?? b.stage];
       case "name":
         return a.candidate.display_name.localeCompare(b.candidate.display_name);
       case "recent":

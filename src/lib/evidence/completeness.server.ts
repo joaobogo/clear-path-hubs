@@ -12,6 +12,7 @@ import {
   type RawGateOverride,
   type RawRequirement,
 } from "./completeness";
+import { isNearDuplicate } from "./evidence-presentation";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Client = any;
@@ -61,10 +62,46 @@ function toAssessments(runResult: unknown, insights: unknown): RawAssessment[] {
     }
   };
   const result = (runResult ?? {}) as Record<string, unknown>;
-  collect(result["requirement_assessment"]);
-  collect(result["evidence"]);
+  // `result.evidence` is the FLATTENED UNION of every
+  // requirement_assessment[].evidence — the scoring engine pushes the same
+  // objects into both. Collecting both printed each passage at least twice,
+  // and with the LLM verdict on top the admin evidence panel showed one CV
+  // sentence three to five times per requirement, 34 rows across 10
+  // requirements (audit #9, item 28). One or the other, never both; the
+  // evidence tab already picks the same way.
+  const assessed = result["requirement_assessment"];
+  if (Array.isArray(assessed) && assessed.length > 0) collect(assessed);
+  else collect(result["evidence"]);
   collect((insights as Record<string, unknown> | null)?.["requirement_verdicts"]);
-  return out;
+
+  // The engine snippet and the LLM's cv_quote are usually the same passage cut
+  // to different lengths, so the union above still leaves near-duplicates.
+  // Keep the fullest wording of each distinct quote per requirement.
+  const deduped: RawAssessment[] = [];
+  for (const entry of out) {
+    const twin = deduped.findIndex(
+      (k) =>
+        k.label === entry.label &&
+        k.snippet &&
+        entry.snippet &&
+        isNearDuplicate(k.snippet, entry.snippet),
+    );
+    if (twin === -1) {
+      deduped.push(entry);
+      continue;
+    }
+    // Prefer the longer quote, and never lose a verdict or a confidence the
+    // shorter copy carried.
+    const kept = deduped[twin];
+    deduped[twin] = {
+      label: kept.label,
+      result: kept.result ?? entry.result,
+      snippet:
+        (entry.snippet?.length ?? 0) > (kept.snippet?.length ?? 0) ? entry.snippet : kept.snippet,
+      confidence: kept.confidence ?? entry.confidence,
+    };
+  }
+  return deduped;
 }
 
 export interface CompletenessPayload {
