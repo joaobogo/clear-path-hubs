@@ -11,8 +11,10 @@
 import { describe, expect, it } from "vitest";
 import { interviewHolder } from "@/lib/client/interview-holder";
 
-const future = (days: number) =>
-  new Date(Date.parse("2026-09-01T10:00:00.000Z") + days * 86_400_000).toISOString();
+// Anchored to the real clock, because the code under test is. A fixed anchor
+// ("2026-09-01") made every "future" slot silently past once that date went
+// by, and the test began failing without anything having changed.
+const future = (days: number) => new Date(Date.now() + days * 86_400_000).toISOString();
 const past = (days: number) => future(-days);
 
 describe("interviewHolder", () => {
