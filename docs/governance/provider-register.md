@@ -12,7 +12,7 @@ Every external processor that touches TaaSFlow data. Minimize data sent — neve
 | Cloudflare (edge compute, CDN, WAF, DNS) | Hosting, WAF | Request metadata (IP, UA, path) | Global edge | 7-day access logs | Automatic failover per Cloudflare | N/A (infrastructure) | N/A |
 | Stripe | Payments, invoicing, tax calculation | Buyer email, org name, billing address, amounts | USA / Global | Per Stripe retention policy | Checkout blocked; position stays unpaid | Customer delete via Stripe API | Never send candidate data |
 | Apollo.io | Sourcing, contact enrichment, B2B outreach | Prospect business contact data | USA | Provider policy | Outreach paused; no user impact | Delete-on-request | Never send candidate CV or scores |
-| RB2B | Business-visitor identification (consent-gated) | Marketing page visit metadata | USA | Provider policy | Tracker no-ops | Delete-on-request | Loads only after affirmative consent |
+| RB2B | Business-visitor identification on all public pages (always on; legitimate interest) | Public page visit metadata | USA | Provider policy | Tracker no-ops | Delete-on-request | Runs on every public page regardless of consent; never on /admin, /client, /me |
 | Calendly | Discovery-call scheduling | Booker name, email, notes | USA | Provider policy | Lead still written to `sales_calls` | Delete-on-request | Never send candidate data |
 | Attio | CRM for client and lead records | Company, contact, deal metadata | UK / EU | Provider policy | Sync retried; lead retained locally | Delete-on-request | Never send candidate CV or scores |
 | Microsoft 365 | Internal mail, Teams communications | Operational correspondence | USA / Global | Tenant policy | N/A | Tenant-managed | Never paste CVs into chat |

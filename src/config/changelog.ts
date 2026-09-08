@@ -81,7 +81,7 @@ export const CHANGELOG_RELEASES: ChangelogRelease[] = [
         area: "Security & Trust",
         summary: "Analytics and advertising pixels load only after you accept them.",
         impact:
-          "Nothing is loaded before a choice is made, and if the consent setting cannot be read the trackers stay off rather than defaulting on.",
+          "Advertising pixels wait for your choice, and Google Analytics runs cookieless until you allow analytics. Our business-visitor identification tool runs on every public page.",
         availability: "Live on every public page.",
         docHref: "/security",
         docLabel: "Trust Center",

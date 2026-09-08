@@ -283,7 +283,7 @@ export const INTEGRATIONS: Integration[] = [
     purpose:
       "Measures how the public site performs so we can fix what confuses visitors. Applies to taasflow.com, not to your hiring data.",
     connectionMethod:
-      "Browser tags loaded only after the regional consent gate allows the relevant category. Declining consent means the tags never load.",
+      "Analytics and advertising tags load only after the regional consent gate allows their category. Our business-visitor identification tool (RB2B) and cookieless Google Analytics run on every public page.",
     dataExchanged:
       "Outbound: page views, referrer and anonymous interaction events. Consent state is sent with every measurement call.",
     permissions: "Your own consent choice, changeable at any time.",

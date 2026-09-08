@@ -30,7 +30,10 @@ function AuthPage() {
       try {
         const session = await ctx();
         if (!mounted) return;
-        navigate({ to: landingPathForRole(session.primary_role), replace: true });
+        // Full document load, not navigate(): /auth is a public path, so the
+        // RB2B tag is in this document, and a client-side hand-off would leave
+        // it resident on /admin, /client or /me.
+        window.location.replace(landingPathForRole(session.primary_role));
       } catch {
         if (!mounted) return;
         navigate({ to: "/login", replace: true });

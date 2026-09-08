@@ -4,8 +4,10 @@
  * Single source of truth for whether non-essential tracking may run.
  *
  * Rules:
- *  - Regional gate. In the EU/EEA, UK and Switzerland nothing except strictly
- *    necessary tooling runs before an affirmative choice. Everywhere else the
+ *  - RB2B always runs on public pages (ALWAYS_ON_TRACKERS below). Owner's
+ *    decision; see the note there.
+ *  - Regional gate for everything else. In the EU/EEA, UK and Switzerland
+ *    nothing optional runs before an affirmative choice. Everywhere else the
  *    optional categories are permitted by default and the visitor can turn
  *    them off at any time; an explicit stored decision always wins.
  *  - Two categories are offered: `analytics` (product + traffic measurement)
@@ -136,36 +138,28 @@ export function onTrackingPolicyChange(handler: (p: TrackingPolicy) => void): ()
 }
 
 /**
- * Trackers that always run, whatever the visitor chose.
+ * Trackers that always run, whatever the visitor chose and wherever they are.
  *
- * GA4 only. It runs in Consent Mode with storage denied: the tag measures
- * cookielessly and cannot identify anyone until analytics consent is granted.
+ * RB2B, by the owner's decision (2026-09-07). It is the lead-identification
+ * tool; it had been taken off this list, out of the head, and out of the
+ * initialiser loop over three audits (#6 A6-04, #7 2.1) on privacy grounds,
+ * and the net effect was that it never fired. The owner has chosen to run it
+ * unconditionally on public pages and accepts the privacy trade-off. The
+ * privacy policy lists it under legitimate interest. It still does not run on
+ * the signed-in workspace — see WORKSPACE_PATH_PREFIXES in ./pixels.
  *
- * RB2B WAS on this list, which is the third and deepest gate it was slipping
- * through. Removing its head-boot snippet and its by-name exemption from the
- * initialiser loop was not enough, because `isTrackerAllowed("rb2b", …)`
- * returned true here before either of those ever ran — so a visitor who chose
- * "Decline all" still had the identity-resolution script and its API call fire
- * (audit #7, 2.1). It resolves individual visitors; it is not essential, and it
- * is not ours to run without permission.
+ * GA4 is NOT here. While it was, isTrackerAllowed("ga4", "analytics")
+ * returned true whatever the visitor chose, so syncGA4Consent granted
+ * analytics_storage and wrote _ga cookies after a "Decline all", beside a
+ * banner reading "it sets no cookies" (audit #8, TF8-05). GA4 runs in Consent
+ * Mode with storage denied until analytics is allowed, which needs no
+ * exemption here.
+ *
+ * Exported so the admin tracking page can show these as always-on rather than
+ * "waits for consent" — two surfaces answering one question differently is
+ * how this codebase's defects usually start.
  */
-/*
- * GA4 has now come off this list too, for the same reason RB2B did.
- *
- * While it was here, isTrackerAllowed("ga4", "analytics") returned true no
- * matter what the visitor chose. syncGA4Consent then sent
- * analytics_storage: "granted" and reconfigured GA WITHOUT client_storage:
- * "none", so a visitor who clicked "Decline all" had _ga and _ga_<id> written
- * afterwards, carrying a persistent client id and a session count — while the
- * banner beside them read "it sets no cookies and cannot identify you"
- * (audit #8, TF8-05).
- *
- * It also contradicted the app's own published policy, which the workspace
- * stores as {"essentialTrackers":[],"requirePriorOptInEverywhere":true}.
- * Nothing is always-on. Anything genuinely necessary belongs in that policy,
- * where it is visible and auditable, not in a constant here.
- */
-const ALWAYS_ON_TRACKERS = [] as const;
+export const ALWAYS_ON_TRACKERS = ["rb2b"] as const;
 
 /** Whether a specific tracker is strictly necessary or on the always-on list. */
 export function isTrackerEssential(key: string): boolean {

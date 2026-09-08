@@ -17,6 +17,8 @@ import { captureFirstTouch } from "@/lib/crm/attribution";
 import {
   HEAD_BOOT_SNIPPETS,
   isWorkspacePath,
+  rb2bHeadLinks,
+  rb2bHeadScripts,
   setAnalyticsDisabledForRoute,
 } from "@/lib/tracking/pixels";
 import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
@@ -28,7 +30,14 @@ import "@/styles.css";
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
-  head: () => ({
+  head: (ctx) => {
+    // The path this document is being rendered for, known on the SERVER. RB2B
+    // is excluded from workspace HTML here rather than guarded at runtime, so
+    // /admin, /client and /me never carry the tag at all.
+    const pathname =
+      ctx.matches?.[ctx.matches.length - 1]?.pathname ??
+      (typeof window === "undefined" ? "/" : window.location.pathname);
+    return {
     meta: [
       {
         charSet: "utf-8",
@@ -87,6 +96,10 @@ export const Route = createRootRouteWithContext<{
         rel: "manifest",
         href: "/site.webmanifest",
       },
+      // RB2B first, and BEFORE the stylesheets below: links are emitted in
+      // order, so the preload starts the vendor fetch while the CSS is still
+      // in flight instead of after it.
+      ...rb2bHeadLinks(pathname),
       {
         rel: "preconnect",
         href: "https://fonts.googleapis.com",
@@ -104,10 +117,15 @@ export const Route = createRootRouteWithContext<{
     // NOTE: the key is `scripts` — TanStack ignores a `script` key silently,
     // which is why this sitewide graph was absent from the served HTML.
     scripts: [
-      // Tracker boot snippets (GA4 consent-default + RB2B). These were
-      // exported from pixels.ts but never referenced, so /admin/health read
-      // "connected · not injected" for every tracker while ad budget ran
-      // (audit A-04). GA4 boots with consent DENIED until the banner grants.
+      // RB2B: external and async, so the preload scanner fetches it during
+      // initial parse and it executes on arrival rather than waiting for the
+      // stylesheets an inline loader would have to wait for. Absent entirely
+      // on workspace paths.
+      ...rb2bHeadScripts(pathname),
+      // Tracker boot snippets (GA4 consent-default). These were exported from
+      // pixels.ts but never referenced, so /admin/health read "connected ·
+      // not injected" for every tracker while ad budget ran (audit A-04).
+      // GA4 boots with consent DENIED until the banner grants.
       ...HEAD_BOOT_SNIPPETS.map((s) => ({ children: s.children })),
       {
         type: "application/ld+json",
@@ -152,7 +170,8 @@ export const Route = createRootRouteWithContext<{
         }),
       },
     ],
-  }),
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   errorComponent: GlobalRouteError,
@@ -195,7 +214,11 @@ function RootComponent() {
   // From router state, not window.location: the latter is not reactive across
   // client navigation and differs between the server and client render.
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isWorkspace = /^\/(admin|client|me)(\/|$)/.test(pathname);
+  // isWorkspacePath, not a fourth hand-written regex. The copy that used to
+  // live here was case-sensitive while the router is not, so /Client?org=<id>
+  // mounted the public tracking observer and the cookie banner on top of a
+  // workspace page.
+  const isWorkspace = isWorkspacePath(pathname);
 
   return (
     <>

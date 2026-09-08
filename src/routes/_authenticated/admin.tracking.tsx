@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { TRACKER_CATEGORY } from "@/lib/tracking/pixels";
-import { setTrackingPolicy } from "@/lib/tracking/consent";
+import { ALWAYS_ON_TRACKERS, setTrackingPolicy } from "@/lib/tracking/consent";
 import { toastError } from "@/lib/toast-error";
 import {
   fetchTrackingPolicy,
@@ -108,8 +108,10 @@ function TrackingPolicyPage() {
           In the EU/EEA, UK and Switzerland nothing optional loads until the visitor
           decides. Elsewhere optional trackers run by default and the visitor can turn
           them off, unless you require prior opt-in everywhere below. Trackers marked
-          strictly necessary load before any choice. The choice is stored in the
-          visitor's browser and applies on every page and every reload.
+          strictly necessary load before any choice. RB2B is always on: it runs on
+          every public page whatever the region or choice, by decision, and cannot be
+          switched off here. The choice is stored in the visitor's browser and applies
+          on every page and every reload.
         </p>
       </header>
 
@@ -158,14 +160,19 @@ function TrackingPolicyPage() {
 
         <ul className="divide-y divide-border rounded-[var(--brand-radius-lg)] border border-border">
           {TRACKERS.map((t) => {
-            const on = essential.includes(t.key);
+            // Hard-wired in code, not a policy choice: shown as such, so this
+            // page cannot say "waits for consent" about a tag that never does.
+            const alwaysOn = (ALWAYS_ON_TRACKERS as readonly string[]).includes(t.key);
+            const on = alwaysOn || essential.includes(t.key);
             return (
               <li key={t.key} className="flex items-center justify-between gap-4 p-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">{t.name}</p>
                     <Badge variant="outline">{TRACKER_CATEGORY[t.key]}</Badge>
-                    {on ? (
+                    {alwaysOn ? (
+                      <Badge>Always on</Badge>
+                    ) : on ? (
                       <Badge>Loads before consent</Badge>
                     ) : (
                       <Badge variant="secondary">Waits for consent</Badge>
@@ -175,8 +182,13 @@ function TrackingPolicyPage() {
                 </div>
                 <Switch
                   checked={on}
+                  disabled={alwaysOn}
                   onCheckedChange={(v) => toggle(t.key, v)}
-                  aria-label={`Treat ${t.name} as strictly necessary`}
+                  aria-label={
+                    alwaysOn
+                      ? `${t.name} is always on and cannot be changed here`
+                      : `Treat ${t.name} as strictly necessary`
+                  }
                 />
               </li>
             );

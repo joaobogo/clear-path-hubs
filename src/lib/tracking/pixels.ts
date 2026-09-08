@@ -1,15 +1,17 @@
 /**
  * TaaSFlow tracking pixels.
  *
- * CONSENT: no tag (except GA4 in restricted mode) boots until its consent
- * category is permitted. Whether a category is permitted BEFORE the visitor
- * decides is the regional rule in ./consent — prior opt-in in the EU/EEA, UK
- * and Switzerland, permitted by default elsewhere. GA4 is initialized with
- * 'denied' by default and updated once allowed.
+ * CONSENT: RB2B is exempt — it runs on every public page whatever the visitor
+ * chose (owner's decision, 2026-09-07; see rb2bHeadLinks below and
+ * ALWAYS_ON_TRACKERS in ./consent). GA4 boots restricted by Consent Mode with
+ * storage denied and upgrades only if analytics is allowed. Every OTHER tag
+ * waits for its consent category, where "permitted before the visitor decides"
+ * is the regional rule in ./consent — prior opt-in in the EU/EEA, UK and
+ * Switzerland, permitted by default elsewhere.
  *
- * Single source of truth for every third-party tag. All injection happens on
- * the client after hydration. Every function is wrapped so a blocked or
- * failing tag can never break the app.
+ * Single source of truth for every third-party tag. RB2B is a server-rendered
+ * head tag; everything else is injected on the client. Every function is
+ * wrapped so a blocked or failing tag can never break the app.
  *
  * Live: GA4, RB2B (Retention.com), LinkedIn Insight Tag.
  * Dormant until their env var is set: Meta, Clarity, Hotjar.
@@ -34,15 +36,18 @@ const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
 export const WORKSPACE_PATH_PREFIXES = ["admin", "client", "me"] as const;
 
 export function isWorkspacePath(pathname: string): boolean {
-  return WORKSPACE_PATH_PREFIXES.some(
-    (p) => pathname === `/${p}` || pathname.startsWith(`/${p}/`),
-  );
+  // Case-INSENSITIVE, because the router is: TanStack matches routes with
+  // caseSensitive false by default, so /Client?org=<uuid> and /ADMIN/candidates
+  // serve the workspace. A case-sensitive guard let those URLs through and ran
+  // trackers over a page carrying an organisation id.
+  const l = pathname.toLowerCase();
+  return WORKSPACE_PATH_PREFIXES.some((p) => l === `/${p}` || l.startsWith(`/${p}/`));
 }
 
 /** The same test, as source, for the inline snippet that runs before React. */
 const WORKSPACE_TEST_JS = `[${WORKSPACE_PATH_PREFIXES.map((p) => JSON.stringify(`/${p}`)).join(
   ",",
-)}].some(function(p){var l=location.pathname;return l===p||l.indexOf(p+"/")===0})`;
+)}].some(function(p){var l=location.pathname.toLowerCase();return l===p||l.indexOf(p+"/")===0})`;
 
 /** GA4's documented kill switch. Set before gtag.js loads, it never sends. */
 export function gaDisableFlag(): string {
@@ -105,13 +110,74 @@ declare global {
   }
 }
 
+/** RB2B's CDN and API — preconnected from the root head so the boot is not waiting on DNS/TLS. */
+export const RB2B_ORIGINS = ["https://ddwl4m2hdecbv.cloudfront.net", "https://app.rb2b.com"] as const;
+
+/** The vendor script for this account. */
+export const RB2B_SRC = RB2B_ID
+  ? `https://ddwl4m2hdecbv.cloudfront.net/b/${RB2B_ID}/${RB2B_ID}.js.gz`
+  : "";
+
+/**
+ * RB2B's head tags for a path — the ONLY place it is booted on a document load.
+ *
+ * RB2B runs unconditionally on public pages: before hydration, before the
+ * tracking policy is read, whatever the visitor's region or consent choice.
+ * Owner's decision (2026-09-07): it is the lead-identification tool, a visitor
+ * who bounces early is exactly the one worth identifying, and the consent gate
+ * had kept it from firing at all.
+ *
+ * Two deliberate choices about HOW:
+ *
+ * 1. An external `async` script, not an inline loader. An inline script cannot
+ *    execute while a stylesheet is still loading, and this head links the
+ *    Google Fonts CSS — so an inline RB2B loader waited on a cold
+ *    fonts.googleapis.com round trip before it could even reveal the vendor
+ *    URL. An external tag is found by the preload scanner during initial parse
+ *    and, being async, executes the moment it arrives. The `preload` link
+ *    below sits ahead of the stylesheets in the head, so the fetch starts
+ *    first.
+ *
+ * 2. The workspace exclusion is decided HERE, on the server, from the matched
+ *    path — so the tag is simply absent from /admin, /client and /me HTML
+ *    rather than present-but-guarded. A visit there is never a lead and those
+ *    URLs carry organisation and candidate ids.
+ */
+type HeadLink = {
+  rel: string;
+  href: string;
+  as?: string;
+  fetchPriority?: "high" | "low" | "auto";
+};
+
+type HeadScript = { src: string; async: boolean; "data-tracker": string };
+
+export function rb2bHeadLinks(pathname: string): HeadLink[] {
+  if (!RB2B_SRC || isWorkspacePath(pathname)) return [];
+  return [
+    ...RB2B_ORIGINS.flatMap((href): HeadLink[] => [
+      { rel: "preconnect", href },
+      { rel: "dns-prefetch", href },
+    ]),
+    { rel: "preload", as: "script", href: RB2B_SRC, fetchPriority: "high" },
+  ];
+}
+
+export function rb2bHeadScripts(pathname: string): HeadScript[] {
+  if (!RB2B_SRC || isWorkspacePath(pathname)) return [];
+  // data-tracker is what `alreadyInDocument` looks for, so the client
+  // initialiser sees this tag and never loads a second copy.
+  return [{ src: RB2B_SRC, async: true, "data-tracker": "rb2b" }];
+}
+
 /**
  * Inline snippets rendered into the server-rendered `<head>` (see
  * `src/routes/__root.tsx`).
  *
- * GA4 starts immediately but restricted by Consent Mode v2 (denied by default).
- * Other trackers (RB2B, LinkedIn, Meta) are now injected dynamically
- * by the client-side initialisers ONLY after consent is granted.
+ * GA4 only. It starts immediately but restricted by Consent Mode v2 (denied by
+ * default). RB2B is not here — it is an external tag, see above. Every other
+ * tracker (LinkedIn, Meta, Clarity, Hotjar) is injected by the client-side
+ * initialisers only once its category is permitted.
  */
 export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
   // GA4: define dataLayer/gtag and consent state before gtag.js arrives.
@@ -124,18 +190,6 @@ export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
         },
       ]
     : []),
-  // RB2B is NOT booted here.
-  //
-  // It used to be, "independent of any consent UI" — which contradicted both
-  // the comment directly above this array and the consent banner's own promise
-  // that "trackers are only injected once their consent category is granted".
-  // A visitor who clicked "Decline all" still had the de-anonymisation script
-  // and its API call fire on the next page (audit #6, A6-04).
-  //
-  // RB2B is a marketing tracker under CONSENT_CATEGORY below, so it loads
-  // through `initRB2B`, which runs only once marketing consent is granted.
-  // This costs identification on the first pageview of a declining visitor.
-  // That is the point.
 ];
 
 /** True when a tag's script is already in the document (head snippet ran). */
@@ -260,20 +314,20 @@ function clearGaCookies(): void {
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
-  // Guards against a stale document that still carries the old head snippet.
+  // The normal case: the server-rendered head tag is already there.
   if (alreadyInDocument("rb2b")) {
     loaded.add("rb2b");
     return;
   }
-  // This is now the ONLY path that loads RB2B, and it runs only after
-  // marketing consent is granted (see HEAD_BOOT_SNIPPETS).
-  if (loaded.has("rb2b") || !RB2B_ID) return;
+  // Fallback only — a document served WITHOUT the tag, which means the head
+  // was rendered for a workspace path. Reached when the visitor then navigates
+  // client-side to a public page. RB2B is always-on, so the consent loop
+  // always calls this; the guard above is what prevents a second copy.
+  if (loaded.has("rb2b") || !RB2B_SRC) return;
+  if (typeof window === "undefined" || isWorkspacePath(window.location.pathname)) return;
   loaded.add("rb2b");
-  if (typeof window !== "undefined" && window.reb2b) return;
-  injectScript("rb2b", {
-    // Current RB2B snippet (CloudFront delivery).
-    text: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var first=document.getElementsByTagName("script")[0];first.parentNode.insertBefore(s,first);}("${RB2B_ID}");`,
-  });
+  if (window.reb2b) return;
+  injectScript("rb2b", { src: RB2B_SRC, async: true });
 }
 
 
@@ -374,15 +428,11 @@ export function initializeTrackers() {
   // GA4 is special: it boots early but restricted.
   safe(initGA4);
 
-  // RB2B was exempted from the consent loop below on the reasoning that it
-  // "identifies businesses, not people". It still de-anonymises the visitor
-  // and calls its own API, the banner promises trackers load only once their
-  // category is granted, and a visitor who chose "Decline all" still had it
-  // fire (audit #6, A6-04). It is a marketing tracker like any other now.
-  //
-  // Every tracker except GA4 boots only if its category is allowed. GA4 stays
-  // special: it loads in Consent Mode v2 with storage denied, and upgrades
-  // when analytics consent arrives.
+  // Every tracker except GA4 boots only if `isTrackerAllowed` says so. GA4
+  // stays special: it loads in Consent Mode v2 with storage denied, and
+  // upgrades when analytics consent arrives. RB2B passes the gate always — it
+  // is on ALWAYS_ON_TRACKERS in ./consent — and has normally been booted by
+  // the head snippet already, so its initialiser is a no-op here.
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
     if (key === "ga4") continue;
     const category = TRACKER_CATEGORY[key];
@@ -399,7 +449,9 @@ export function initializeTrackers() {
 
 function trackerForUri(uri: string): string {
   if (/google-analytics|googletagmanager/.test(uri)) return "ga4";
-  if (/b2bjsstore|ddwl4m2hdecbv|liadm|usbrowserspeed/.test(uri)) return "rb2b";
+  // app.rb2b.com is the API the vendor script calls once loaded; without it a
+  // CSP violation on the newly declared origin would be logged as "unknown".
+  if (/b2bjsstore|ddwl4m2hdecbv|rb2b\.com|liadm|usbrowserspeed/.test(uri)) return "rb2b";
   if (/facebook|fbcdn/.test(uri)) return "meta";
   if (/licdn/.test(uri)) return "linkedin";
   if (/clarity\.ms/.test(uri)) return "clarity";
@@ -607,14 +659,22 @@ function notifyRouteChange(params: Record<string, unknown>) {
   );
 
   // RB2B: re-trigger identification for the new page.
+  //
+  // This used to call `r.identify()`, fall back to `r.push(["identify"])`, and
+  // fall back again to array push. The vendor object exposes NONE of those —
+  // it is a frozen `{loaded, assignIdentity, collect}` — so all three branches
+  // were silent no-ops and RB2B only ever saw the landing page. On a SPA that
+  // means a visitor who arrives on / and reads three more pages counted once.
+  // `collect` is the method it actually exposes.
+  //
+  // Guarded on the path: the vendor script can still be resident after a
+  // client-side navigation into the workspace (sign-in hands off that way),
+  // and a re-collect there would carry a URL with an organisation id.
   safe(() => {
-    const r = window.reb2b as
-      | (Record<string, unknown> & { push?: (a: unknown) => void })
-      | undefined;
-    if (!r) return;
-    if (typeof r.identify === "function") (r.identify as () => void)();
-    else if (Array.isArray(r)) (r as unknown[]).push(["identify"]);
-    else r.push?.(["identify"]);
+    const r = window.reb2b as { collect?: () => void } | undefined;
+    if (!r || typeof r.collect !== "function") return;
+    if (isWorkspacePath(path || window.location.pathname)) return;
+    r.collect();
   });
 
   // LinkedIn Insight Tag only reports on script load, so reload it per route.
@@ -678,9 +738,9 @@ export function verifyTrackers(): Record<TrackerKey, TrackerStatus> {
     if (ready) return { status: "loaded", id, detail: "global present" };
     if (has(key)) return { status: "pending", id, detail: "script injected, global not ready" };
 
-    // RB2B used to be exempt here, a leftover from when it was always-on. It
-    // is gated like every other marketing tag now, and the diagnostic must say
-    // "blocked by consent" when that is the reason, not "not injected".
+    // RB2B always passes the gate (ALWAYS_ON_TRACKERS), so `allowed` is true
+    // for it and a missing RB2B correctly reads "not injected" — which on a
+    // workspace path is the intended state, not a fault.
     if (!allowed && key !== "ga4") {
       return { status: "missing", id, detail: `blocked by ${category} consent` };
     }

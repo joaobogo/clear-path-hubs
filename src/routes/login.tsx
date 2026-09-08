@@ -262,7 +262,13 @@ function LoginPage() {
         return;
       }
       const org = clientOrgs[0];
-      navigate({ to: "/client", search: org?.organization_id ? { org: org.organization_id } : {} });
+      // A full document load, like every other branch here. A client-side
+      // navigate() would carry the already-booted RB2B tag from /login into
+      // the workspace; a real navigation re-renders the head, which excludes
+      // it on /client.
+      window.location.assign(
+        org?.organization_id ? `/client?org=${encodeURIComponent(org.organization_id)}` : "/client",
+      );
       return;
     }
     window.location.assign(landingPathForRole(primary));
@@ -400,10 +406,12 @@ function LoginPage() {
                 <button
                   key={m.membership_id}
                   onClick={() =>
-                    navigate({
-                      to: "/client",
-                      search: { org: m.organization_id ?? undefined },
-                    })
+                    // Full load, for the same reason as routeToDest above.
+                    window.location.assign(
+                      m.organization_id
+                        ? `/client?org=${encodeURIComponent(m.organization_id)}`
+                        : "/client",
+                    )
                   }
                   className="w-full rounded border px-3 py-2 text-left text-sm hover:bg-muted"
                 >

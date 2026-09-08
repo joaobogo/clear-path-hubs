@@ -189,8 +189,8 @@ export function ConsentBanner() {
                 // via "Manage", so "nothing loads until you allow it" would
                 // be false there.
                 optIn
-                ? "Nothing that identifies you loads until you allow it. Google Analytics runs on every page with storage switched off — it sets no cookies and cannot identify you — and only starts full measurement if you allow analytics."
-                : "Analytics and business tools run by default where you are. Turn either off below; the choice is kept on this device and applies on every page."}{" "}
+                ? "Our business-visitor tool (RB2B) runs on every page. Google Analytics runs with storage switched off — it sets no cookies — and only starts full measurement if you allow analytics. Advertising tags wait for your choice."
+                : "Our business-visitor tool (RB2B) runs on every page. Analytics and advertising run by default where you are; turn either off below and the choice is kept on this device."}{" "}
             <a href="/privacy" className="underline">
               Privacy policy
             </a>
@@ -219,7 +219,7 @@ export function ConsentBanner() {
                 <span className="text-sm">
                   <span className="font-medium text-foreground">Marketing</span>
                   <span className="block text-muted-foreground">
-                    Advertising measurement on Meta and LinkedIn, plus our business visitor tool (RB2B).
+                    Advertising measurement on Meta and LinkedIn.
                   </span>
                 </span>
                 <Switch
@@ -229,8 +229,9 @@ export function ConsentBanner() {
                 />
               </label>
               <p className="text-xs text-muted-foreground">
-                Strictly necessary tooling — sign-in, security, saving this
-                choice, and restricted traffic counts — always runs.
+                Always on — sign-in, security, saving this choice, restricted
+                traffic counts, and our business-visitor identification tool
+                (RB2B).
               </p>
             </div>
           )}

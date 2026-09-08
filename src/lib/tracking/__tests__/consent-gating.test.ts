@@ -3,16 +3,20 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 /**
- * Consent has to be honoured by the code, not just by the banner.
+ * Consent has to be honoured by the code, not just by the banner — for every
+ * tracker except the one the owner has deliberately exempted.
  *
- * A visitor who chose "Decline all" still had RB2B — a de-anonymisation
- * tracker — load on the next page and call its API, because it was booted
- * from the server-rendered head "independent of any consent UI" and then
- * exempted a second time from the consent loop (audit #6, A6-04).
+ * A visitor who chose "Decline all" once had RB2B load on the next page and
+ * call its API, because it was booted from the server-rendered head
+ * "independent of any consent UI" and then exempted a second time from the
+ * consent loop (audit #6, A6-04). Three audits later the owner reversed that:
+ * RB2B is always-on by decision (2026-09-07, see ALWAYS_ON_TRACKERS), and the
+ * tests below now hold that exemption to RB2B ALONE. Nothing else may slip
+ * through the same three gates.
  *
- * These are source-level assertions on purpose: the defect was two `continue`
- * statements and a head snippet, none of which a unit test of the public API
- * would have caught.
+ * These are source-level assertions on purpose: the original defect was two
+ * `continue` statements and a head snippet, none of which a unit test of the
+ * public API would have caught.
  */
 const PIXELS = readFileSync(join(process.cwd(), "src/lib/tracking/pixels.ts"), "utf8");
 
@@ -20,14 +24,16 @@ const PIXELS = readFileSync(join(process.cwd(), "src/lib/tracking/pixels.ts"), "
 const CODE = PIXELS.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
 
 describe("consent gating", () => {
-  it("boots no marketing tracker from the server-rendered head", () => {
+  it("boots no marketing tracker from the inline head snippets", () => {
+    // RB2B is in the head too, but as an EXTERNAL tag (rb2bHeadScripts) so a
+    // pending stylesheet cannot delay it — see rb2b-always-on.test.ts. The
+    // inline snippets are GA4's alone.
     const head = CODE.slice(
-      CODE.indexOf("HEAD_BOOT_SNIPPETS"),
+      CODE.indexOf("export const HEAD_BOOT_SNIPPETS"),
       CODE.indexOf("function alreadyInDocument"),
     );
-    expect(head).not.toMatch(/rb2b/i);
     expect(head).not.toMatch(/reb2b/i);
-    expect(head).not.toMatch(/meta|facebook|licdn/i);
+    expect(head).not.toMatch(/facebook|fbevents|licdn|clarity\.ms|hotjar/i);
   });
 
   it("exempts only GA4 from the consent loop", () => {
@@ -39,25 +45,19 @@ describe("consent gating", () => {
   });
 
   /**
-   * The third gate. Removing RB2B's head snippet and its by-name exemption
-   * from the initialiser loop was not enough: `isTrackerAllowed` short-circuits
-   * on an "always on" list that still contained it, so "Decline all" was
-   * overruled before either of the other two fixes ran (audit #7, 2.1).
+   * The third gate. `isTrackerAllowed` short-circuits on the always-on list
+   * before any consent or region check runs (audit #7, 2.1). RB2B is on it by
+   * decision; GA4 must never be — while it was, syncGA4Consent granted
+   * analytics_storage and wrote _ga cookies AFTER a "Decline all", beside a
+   * banner reading "it sets no cookies" (audit #8, TF8-05).
    */
-  it("treats nothing as always-on", () => {
-    // GA4 has since come off this list too. While it was on it,
-    // isTrackerAllowed("ga4", …) returned true whatever the visitor chose, so
-    // syncGA4Consent granted analytics_storage and reconfigured GA without
-    // client_storage:"none" — writing _ga and _ga_<id> AFTER a "Decline all",
-    // beside a banner reading "it sets no cookies and cannot identify you"
-    // (audit #8, TF8-05). Anything genuinely necessary belongs in the stored
-    // tracking policy, where it is visible and auditable.
+  it("treats RB2B, and only RB2B, as always-on", () => {
     const consent = readFileSync(join(process.cwd(), "src/lib/tracking/consent.ts"), "utf8")
       .replace(/\/\*[\s\S]*?\*\//g, " ")
       .replace(/(^|[^:])\/\/.*$/gm, "$1");
     const list = /ALWAYS_ON_TRACKERS\s*=\s*\[([^\]]*)\]/.exec(consent)?.[1] ?? "";
     const keys = [...list.matchAll(/"([a-z0-9]+)"/g)].map((m) => m[1]);
-    expect(keys).toEqual([]);
+    expect(keys).toEqual(["rb2b"]);
   });
 
   it("keeps every non-analytics tracker in a consent category", () => {
