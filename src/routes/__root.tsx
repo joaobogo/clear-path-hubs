@@ -11,6 +11,7 @@ import {
 import type { QueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { BRAND_ONE_LINER, PRODUCT_CATEGORY } from "@/config/product-language";
+import { GOOGLE_SITE_VERIFICATION } from "@/config/site-verification";
 import { resetStaleBrowserStorage } from "@/lib/storage-epoch";
 import { captureFirstTouch } from "@/lib/crm/attribution";
 import {
@@ -63,6 +64,11 @@ export const Route = createRootRouteWithContext<{
         name: "twitter:site",
         content: "@taasflow",
       },
+      // Google Search Console ownership. Rendered only when a token is set —
+      // an empty tag verifies nothing and reads as a mistake in the source.
+      ...(GOOGLE_SITE_VERIFICATION
+        ? [{ name: "google-site-verification", content: GOOGLE_SITE_VERIFICATION }]
+        : []),
     ],
     links: [
       // Only files that exist in /public — /favicon.svg and

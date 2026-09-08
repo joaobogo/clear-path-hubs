@@ -54,9 +54,10 @@ export function TrackingConfigPanel() {
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Tracking configuration</CardTitle>
         <p className="text-xs text-muted-foreground">
-          Trackers are only injected once their consent category is granted.
-          GA4 boots restricted and upgrades if allowed. Consent recorded in this
-          browser: {consent}.
+          Optional trackers wait for consent in the EU/EEA, UK and Switzerland
+          and run by default elsewhere, unless the policy requires prior opt-in
+          everywhere. GA4 boots restricted and upgrades if allowed. Consent
+          recorded in this browser: {consent}.
         </p>
       </CardHeader>
       <CardContent className="space-y-2">

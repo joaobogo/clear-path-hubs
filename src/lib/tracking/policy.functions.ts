@@ -10,6 +10,7 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
+import { DEFAULT_TRACKING_POLICY } from "./consent";
 
 export type TrackingPolicyRecord = {
   essentialTrackers: string[];
@@ -37,11 +38,11 @@ function publicClient() {
 
 export const fetchTrackingPolicy = createServerFn({ method: "GET" }).handler(
   async (): Promise<TrackingPolicyRecord> => {
-    const fallback: TrackingPolicyRecord = {
-      essentialTrackers: [],
-      requirePriorOptInEverywhere: true,
-      updatedAt: null,
-    };
+    // One definition of the fallback, shared with the browser side. A second
+    // copy here said `requirePriorOptInEverywhere: true` while the client
+    // default said otherwise, so a slow or failed read silently switched the
+    // whole site to the strict gate.
+    const fallback: TrackingPolicyRecord = { ...DEFAULT_TRACKING_POLICY, updatedAt: null };
     try {
       const { data } = await publicClient()
         .from("tracking_policy")
@@ -57,7 +58,7 @@ export const fetchTrackingPolicy = createServerFn({ method: "GET" }).handler(
         updatedAt: data.updated_at ?? null,
       };
     } catch {
-      // Fail closed: nothing non-essential runs when the policy can't be read.
+      // The regional default applies when the policy can't be read.
       return fallback;
     }
   },

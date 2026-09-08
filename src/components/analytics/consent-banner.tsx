@@ -183,8 +183,14 @@ export function ConsentBanner() {
                 // Analytics, which loads on every page in consent mode with
                 // storage denied and still contacts Google (audit #6, A6-04).
                 // A promise a reader can disprove with their network tab is
-                // worse than no promise. Say what actually happens.
-                "Nothing that identifies you loads until you allow it. Google Analytics runs on every page with storage switched off — it sets no cookies and cannot identify you — and only starts full measurement if you allow analytics."}{" "}
+                // worse than no promise. Say what actually happens — and what
+                // happens differs by region: outside the opt-in regions the
+                // optional tools are already running when this panel opens
+                // via "Manage", so "nothing loads until you allow it" would
+                // be false there.
+                optIn
+                ? "Nothing that identifies you loads until you allow it. Google Analytics runs on every page with storage switched off — it sets no cookies and cannot identify you — and only starts full measurement if you allow analytics."
+                : "Analytics and business tools run by default where you are. Turn either off below; the choice is kept on this device and applies on every page."}{" "}
             <a href="/privacy" className="underline">
               Privacy policy
             </a>

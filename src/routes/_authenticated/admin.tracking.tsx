@@ -105,9 +105,11 @@ function TrackingPolicyPage() {
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold">Consent and tracking</h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
-          Nothing loads until a visitor decides, except the trackers you mark strictly
-          necessary here. The choice is stored in the visitor's browser and applies on
-          every page and every reload.
+          In the EU/EEA, UK and Switzerland nothing optional loads until the visitor
+          decides. Elsewhere optional trackers run by default and the visitor can turn
+          them off, unless you require prior opt-in everywhere below. Trackers marked
+          strictly necessary load before any choice. The choice is stored in the
+          visitor's browser and applies on every page and every reload.
         </p>
       </header>
 

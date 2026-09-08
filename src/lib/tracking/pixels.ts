@@ -2,8 +2,10 @@
  * TaaSFlow tracking pixels.
  *
  * CONSENT: no tag (except GA4 in restricted mode) boots until its consent
- * category is granted. GA4 is initialized with 'denied' by default and
- * updated once allowed.
+ * category is permitted. Whether a category is permitted BEFORE the visitor
+ * decides is the regional rule in ./consent — prior opt-in in the EU/EEA, UK
+ * and Switzerland, permitted by default elsewhere. GA4 is initialized with
+ * 'denied' by default and updated once allowed.
  *
  * Single source of truth for every third-party tag. All injection happens on
  * the client after hydration. Every function is wrapped so a blocked or
@@ -669,12 +671,19 @@ export function verifyTrackers(): Record<TrackerKey, TrackerStatus> {
     const category = TRACKER_CATEGORY[key];
     const allowed = isTrackerAllowed(key, category);
 
-    if (!allowed && key !== "ga4" && key !== "rb2b") {
-      return { status: "missing", id, detail: `blocked by ${category} consent` };
-    }
-
+    // What is actually running comes first. A tag that booted under an
+    // earlier policy, or before consent was withdrawn, is still running — a
+    // diagnostic that reads "blocked by consent" for a script that is present
+    // and executing would be describing the rule, not the page.
     if (ready) return { status: "loaded", id, detail: "global present" };
     if (has(key)) return { status: "pending", id, detail: "script injected, global not ready" };
+
+    // RB2B used to be exempt here, a leftover from when it was always-on. It
+    // is gated like every other marketing tag now, and the diagnostic must say
+    // "blocked by consent" when that is the reason, not "not injected".
+    if (!allowed && key !== "ga4") {
+      return { status: "missing", id, detail: `blocked by ${category} consent` };
+    }
     return { status: "missing", id, detail: "not injected" };
   };
 

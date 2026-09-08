@@ -4,8 +4,10 @@
  * Single source of truth for whether non-essential tracking may run.
  *
  * Rules:
- *  - Nothing except strictly necessary tooling runs before an affirmative
- *    choice. Trackers are never initialised "optimistically".
+ *  - Regional gate. In the EU/EEA, UK and Switzerland nothing except strictly
+ *    necessary tooling runs before an affirmative choice. Everywhere else the
+ *    optional categories are permitted by default and the visitor can turn
+ *    them off at any time; an explicit stored decision always wins.
  *  - Two categories are offered: `analytics` (product + traffic measurement)
  *    and `marketing` (advertising, retargeting, visitor identification).
  *  - The decision is stored locally with a version stamp so the banner can be
@@ -46,13 +48,24 @@ export type TrackingPolicy = {
 };
 
 /**
- * Fail-closed default: nothing is essential and prior opt-in is required
- * everywhere, so no non-essential script can initialise before the policy is
- * known and the visitor has made a choice.
+ * The policy in force when the stored one is not yet known: nothing is
+ * essential, and prior opt-in is required only where the law requires it.
+ *
+ * This used to say `requirePriorOptInEverywhere: true` — and so did the seeded
+ * database row it stands in for — which put every visitor on earth behind the
+ * EU gate. RB2B and the LinkedIn tag then loaded only for the visitors who
+ * clicked "Accept all", and on a B2B site that is nearly nobody: RB2B saw no
+ * traffic at all for weeks while the tag was "installed". The regional rule
+ * in `requiresPriorOptIn` is the one agreed for launch; this default and the
+ * database default (migration 20260907230000) now both say so, and
+ * regional-consent-gate.test.ts holds them together.
+ *
+ * The server-side fallback in policy.functions.ts imports THIS object rather
+ * than restating it, so the two cannot disagree.
  */
 export const DEFAULT_TRACKING_POLICY: TrackingPolicy = {
   essentialTrackers: [],
-  requirePriorOptInEverywhere: true,
+  requirePriorOptInEverywhere: false,
 };
 
 let policy: TrackingPolicy | null = null;
@@ -89,6 +102,17 @@ export function getTrackingPolicy(): TrackingPolicy {
 /** True once the authoritative policy has been fetched this page life. */
 export function isTrackingPolicyLoaded(): boolean {
   return policyLoaded;
+}
+
+/**
+ * True when this browser already holds a copy of the stored policy — fetched
+ * this page life, or cached from an earlier one. On a first visit it is false,
+ * and the caller should not boot optional trackers on the regional default
+ * until the stored policy has been read: that policy may require prior opt-in
+ * everywhere, and a tag booted before it arrives cannot be un-booted.
+ */
+export function hasCachedTrackingPolicy(): boolean {
+  return policy !== null || readCachedPolicy() !== null;
 }
 
 export function setTrackingPolicy(next: TrackingPolicy) {

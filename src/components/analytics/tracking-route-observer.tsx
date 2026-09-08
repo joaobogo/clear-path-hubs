@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { initializeTrackers, trackEvent, trackPageView } from "@/lib/tracking/pixels";
 import {
+  hasCachedTrackingPolicy,
   onConsentChange,
   onTrackingPolicyChange,
   setTrackingPolicy,
@@ -44,13 +45,21 @@ export function TrackingRouteObserver() {
   useEffect(() => {
     let cancelled = false;
 
-    // Boot immediately so consent-independent tags (RB2B) fire on the very
-    // first pageview, even if the policy fetch is slow or fails.
-    initializeTrackers();
-
+    // Boot now only on a policy this browser has already seen, so a tag the
+    // regional rule permits fires at hydration on every return visit rather
+    // than after the policy round-trip.
+    //
+    // NOT on a first visit. The code default is permissive by region, and a
+    // tag booted on it cannot be un-booted when the stored policy arrives a
+    // moment later saying "require prior opt-in everywhere" — the admin switch
+    // would be a no-op for exactly the visit it exists for. Wait for the read;
+    // it is one small request, and the regional default still applies if it
+    // fails (below).
+    if (hasCachedTrackingPolicy()) initializeTrackers();
 
     // The admin-configured policy decides which trackers count as strictly
-    // necessary. Until it lands, no script initialises at all.
+    // necessary and whether the strict gate applies everywhere. When it lands,
+    // initializeTrackers runs again (below) and boots anything newly permitted.
     void fetchTrackingPolicy()
       .then((p) => {
         if (cancelled) return;
@@ -60,7 +69,11 @@ export function TrackingRouteObserver() {
         });
       })
       .catch(() => {
-        /* fail closed — nothing boots */
+        // The read failed: apply the regional default rather than nothing.
+        // This used to "fail closed", which with a strict default was the
+        // same thing; with the regional default it would silently switch
+        // every visitor to the EU gate whenever the policy read hiccupped.
+        if (!cancelled) initializeTrackers();
       });
 
     // Re-run on both consent and policy changes; loaded tags are skipped.
