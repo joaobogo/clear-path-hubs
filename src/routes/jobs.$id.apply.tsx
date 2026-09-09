@@ -49,6 +49,9 @@ import { ReturningApplicantCard } from "@/components/candidate/returning-applica
 import type { ExistingApplicationSummary } from "@/lib/candidate/existing-application.server";
 import { Loader2 } from "lucide-react";
 import { track } from "@/lib/candidate/funnel-events.functions";
+// The server funnel log above records a database row and reaches no pixel;
+// this is what GA4, Meta and LinkedIn see.
+import { trackEvent } from "@/lib/tracking/pixels";
 import { deviceBucket } from "@/lib/candidate/funnel-events";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 // The number candidates are promised comes from the engine, not from copy.
@@ -237,6 +240,14 @@ function ApplyPage() {
   // When this form first became usable. The gap to a successful submit is the
   // only honest source for the time we quote to the next candidate.
   const startedAtRef = useRef<number>(Date.now());
+
+  // Top of the candidate funnel. Once per mount, so a step change or a draft
+  // restore cannot inflate it. `application_started` has a Meta mapping that
+  // nothing raised until now.
+  useEffect(() => {
+    trackEvent("application_started", { position_id: id, page_path: window.location.pathname });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
 
@@ -463,6 +474,10 @@ function ApplyPage() {
     }
     setCvFile(f);
     setCvStatus(`Attached ${f.name}, ${formatFileSize(f.size)}.`);
+    // Attaching a CV is the strongest mid-funnel signal on this page — it is
+    // where drop-off is measured from. No file name or size: the event name is
+    // the signal, the file is the candidate's.
+    trackEvent("cv_selected", { position_id: id, page_path: window.location.pathname });
   };
 
   const clearCv = () => {
@@ -831,6 +846,17 @@ function ApplyPage() {
         toast.success("Application submitted successfully!");
       }
       track("apply_submitted", { position_id: id, device: deviceBucket(window.innerWidth) });
+      // The candidate-side conversion. `track` above is the SERVER funnel log
+      // (a row in the database); it reaches no pixel. Until this line the
+      // single most important candidate action on the site fired nothing to
+      // GA4, Meta or LinkedIn, while `application_submitted` sat in the
+      // conversion map with a Meta mapping nothing ever raised.
+      //
+      // Fired only after a server-confirmed submission, never on click.
+      trackEvent("application_submitted", {
+        position_id: id,
+        page_path: window.location.pathname,
+      });
       try {
         localStorage.removeItem(draftKey);
       } catch { /* ignore */ }
