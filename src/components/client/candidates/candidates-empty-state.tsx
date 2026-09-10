@@ -26,7 +26,12 @@ export function CandidatesEmptyState({
   /** When the list is filtered to one role, signals are scoped to that role. */
   positionId?: string;
 }) {
-  const filteredOut = hasCandidates && activeFilters.length > 0;
+  // Any active filter explains an empty list on its own — the list query
+  // succeeded, it simply matched nothing. `hasCandidates` is derived from the
+  // very query that comes back empty when a server-side filter (role, fit)
+  // excludes everything, so it must NOT gate this branch, or a legitimate
+  // no-match result renders as a failure card.
+  const filteredOut = activeFilters.length > 0;
 
   const { signals, resolved, isError, error, refetch, retrying } = useEmptyStateSignalsQuery(orgId, {
     enabled: !filteredOut,
