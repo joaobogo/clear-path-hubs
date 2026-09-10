@@ -14,4 +14,5 @@
  * Console could not be tied to the property.
  */
 export const GOOGLE_SITE_VERIFICATION: string =
-  import.meta.env.VITE_GOOGLE_SITE_VERIFICATION || "";
+  import.meta.env.VITE_GOOGLE_SITE_VERIFICATION ||
+  "-VkOIeDOuOUNh6V0IGv0S4fOFtH2F6EU4PEfTWfvY14";
