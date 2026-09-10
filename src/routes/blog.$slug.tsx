@@ -10,7 +10,7 @@ import {
   estimateReadMinutes,
   getBlogPost,
 } from "@/lib/marketing/content";
-import { marketingHead } from "@/lib/marketing/head";
+import { articleScript, marketingHead } from "@/lib/marketing/head";
 import {
   BLOG_CATEGORY_SLUGS,
   BLOG_METADATA,
@@ -40,24 +40,58 @@ export const Route = createFileRoute("/blog/$slug")({
     const patched = { ...entry, meta: { ...entry.meta, "og:type": "article" } };
     // Same rule the page body uses: legacy taasflow.com asset URLs aren't
     // served here, so they must not be shared as a cover either.
-    const rawHero = (entry.meta as Record<string, string | undefined>)["og:image"];
+    const metaBag = entry.meta as Record<string, string | undefined>;
+    const rawHero = metaBag["og:image"];
     const cover =
       rawHero && !rawHero.startsWith("https://taasflow.com/assets") ? rawHero : undefined;
+    // The manifest carries the authored headline and summary for every post, so
+    // a post whose markdown front matter is thin still shares a real title and
+    // description instead of its URL slug.
+    const manifest = BLOG_METADATA[params.slug] as
+      | { title?: string; description?: string }
+      | undefined;
+    const headline = metaBag.title || manifest?.title || params.slug;
+    const summary = metaBag.description || manifest?.description;
+    const author = resolveBlogAuthor(metaBag.author);
     return marketingHead(
       patched,
       `/blog/${params.slug}`,
       {
-        title: `${params.slug} — TaaSFlow Blog`,
-        description: "TaaSFlow blog article.",
+        title: manifest?.title
+          ? `${manifest.title} — TaaSFlow`
+          : `${params.slug} — TaaSFlow Blog`,
+        description: manifest?.description ?? "TaaSFlow blog article.",
       },
       {
         image: cover,
         breadcrumbs: [
           { name: "Blog", path: "/blog" },
           {
-            name: entry.meta.title || params.slug,
+            name: headline,
             path: `/blog/${params.slug}`,
           },
+        ],
+        scripts: [
+          articleScript({
+            headline,
+            ...(summary ? { description: summary } : {}),
+            path: `/blog/${params.slug}`,
+            ...(cover ? { image: cover } : {}),
+            ...(metaBag["article:published_time"]
+              ? { datePublished: metaBag["article:published_time"] }
+              : {}),
+            ...(metaBag["article:modified_time"] || metaBag["article:published_time"]
+              ? {
+                  dateModified:
+                    metaBag["article:modified_time"] ?? metaBag["article:published_time"]!,
+                }
+              : {}),
+            author: {
+              name: author.name,
+              type: author.type,
+              ...(author.url ? { url: author.url } : {}),
+            },
+          }),
         ],
       },
     );
