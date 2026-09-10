@@ -331,7 +331,7 @@ const ctaKeySchema = z.enum(CTA_KEYS);
 
 const packageSchema = z
   .object({
-    id: z.enum(["pilot", "multi", "sprint", "enterprise"]),
+    id: z.enum(["pilot", "growth", "scale", "volume", "enterprise"]),
     name: z.string().min(1),
     eyebrow: z.string().min(1),
     minRoles: z.number().int().positive(),
@@ -348,7 +348,7 @@ const packageSchema = z
 
 const subscriptionSchema = z
   .object({
-    id: z.enum(["bronze", "silver", "gold", "enterprise"]),
+    id: z.enum(["pilot", "growth", "scale", "volume", "enterprise"]),
     name: z.string().min(1),
     priceUsdMonthly: z.number().int().nonnegative().nullable(),
     priceDisplay: z.string().min(1),
