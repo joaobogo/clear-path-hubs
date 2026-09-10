@@ -152,6 +152,51 @@ export function serviceScript(input: {
   };
 }
 
+/**
+ * Article JSON-LD for one blog post. Only fields the post actually declares
+ * are emitted — a missing date or cover is omitted, never invented.
+ */
+export function articleScript(input: {
+  headline: string;
+  description?: string;
+  path: string;
+  image?: string;
+  datePublished?: string;
+  dateModified?: string;
+  author: { name: string; type: "Person" | "Organization"; url?: string };
+}) {
+  const image = absoluteShareImage(input.image);
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: input.headline,
+      ...(input.description ? { description: input.description } : {}),
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": `${CANONICAL_ORIGIN}${input.path}`,
+      },
+      url: `${CANONICAL_ORIGIN}${input.path}`,
+      ...(image ? { image: [image] } : {}),
+      ...(input.datePublished ? { datePublished: input.datePublished } : {}),
+      ...(input.dateModified ? { dateModified: input.dateModified } : {}),
+      author: {
+        "@type": input.author.type,
+        name: input.author.name,
+        ...(input.author.url
+          ? {
+              url: input.author.url.startsWith("http")
+                ? input.author.url
+                : `${CANONICAL_ORIGIN}${input.author.url}`,
+            }
+          : {}),
+      },
+      publisher: { "@id": "https://taasflow.com/#organization" },
+    }),
+  };
+}
+
 export function marketingHead(
   entry: ContentEntry | undefined,
   path: string,
