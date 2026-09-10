@@ -157,6 +157,7 @@ export const INCLUDED_BLOG_SLUGS: readonly string[] = [
   "skills-based-organizations-future",
   "skills-gap-analysis-guide",
   "skills-taxonomy-building-guide",
+  "what-is-talent-as-a-service",
 ] as const;
 
 export const BLOG_METADATA: Record<string, { category: string; tags: string[] }> = {
@@ -235,6 +236,7 @@ export const BLOG_METADATA: Record<string, { category: string; tags: string[] }>
   "skills-based-organizations-future": { category: "Skills & Assessment", tags: ["skills", "organizations", "based", "future"] },
   "skills-gap-analysis-guide": { category: "Skills & Assessment", tags: ["skills", "guide", "analysis", "gap"] },
   "skills-taxonomy-building-guide": { category: "Skills & Assessment", tags: ["skills", "taxonomy", "guide", "building"] },
+  "what-is-talent-as-a-service": { category: "Talent Strategy", tags: ["taas", "talent-as-a-service", "guide", "hiring-models"] },
 };
 
 export const EXCLUDED_BLOG_SLUGS = {
