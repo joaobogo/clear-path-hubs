@@ -32,6 +32,7 @@ type BoardRow = {
   stage: string;
   interview_active: boolean | null;
   interview_called_off: boolean | null;
+  hire_confirmed: boolean | null;
   candidate_profiles: Record<string, unknown>;
   score_runs: Record<string, unknown>;
   position: { title: string } | null;
@@ -49,6 +50,9 @@ function toBoardRow(c: ClientCandidateDTO): BoardRow {
     // could never do anything (launch pass round 2/3).
     interview_active: c.interview_active,
     interview_called_off: c.interview_called_off,
+    // And laneFor needs this one to keep an unconfirmed hire out of the Hired
+    // column — the same class of omission, one lane along.
+    hire_confirmed: c.hire_confirmed,
     candidate_profiles: {
       full_name: c.candidate.display_name,
       headline: c.candidate.headline,

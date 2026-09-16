@@ -128,6 +128,7 @@ import { PAYMENTS_ENABLED } from "@/config/commerce";
 import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
+import { intakeSubmitBlockers } from "@/lib/intake-submit-blockers";
 import { CARRY_NOTICE, type CarryForward } from "@/lib/intake-carry";
 import {
   COMPENSATION_STALE_DAYS,
@@ -1680,14 +1681,27 @@ function ExpressIntakePage() {
     }
   };
 
-  const submit = async (intent: "pay" | "call" = PAYMENTS_ENABLED ? "pay" : "call") => {
+  /**
+   * The exact object submit sends, built from form state alone.
+   *
+   * Extracted so the review panel can validate the real payload rather than a
+   * hand-copied subset of the rules. The review used to list only UNANSWERED
+   * required fields, which structurally cannot describe a CONFLICT between two
+   * fields that are both answered: with every listed item cleared the summary
+   * read as complete and the submit button enabled, yet clicking it only
+   * auto-saved, because "Not decided yet" was ticked while a salary range was
+   * still filled in (audit 16 Sep, INT-001). Re-deriving the blockers from this
+   * payload means the panel and the button can never disagree with submit —
+   * they ask the same schema the same question.
+   */
+  const buildSubmitPayload = (idempotencyKey: string) => {
     // Blank rows the client added and never filled in are dropped, not sent.
     const submittedStages = state.interviewStages.filter(
       (s) => (s.name ?? "").trim().length > 0,
     );
-    const payload = {
+    return {
 
-      idempotencyKey: idem.current || newIdempotencyKey(),
+      idempotencyKey,
       companyName: state.companyName,
       companyWebsite: state.companyWebsite,
       companyLinkedin: state.companyLinkedin,
@@ -1766,6 +1780,44 @@ function ExpressIntakePage() {
       source: "express_onboarding",
       companyFax: state.companyFax,
     };
+  };
+
+  /**
+   * Everything that would stop submit RIGHT NOW, beyond the unanswered
+   * required fields the review already names.
+   *
+   * Derived from the same schema the submit handler parses, so a rule can
+   * never exist in one place and not the other — which is how the
+   * compensation conflict came to block submit while appearing nowhere in the
+   * review (INT-001). Fields already listed as missing are skipped so the
+   * client sees each problem once.
+   *
+   * `placementErrors` and `processErrors` are pure reads of form state and are
+   * applied by submit too, so they belong in the same list.
+   */
+  const submitBlockers = React.useMemo(() => {
+    const proc = processErrors();
+    return intakeSubmitBlockers(
+      // A syntactically valid placeholder: the real key is minted at submit and
+      // has no bearing on whether the brief itself is acceptable.
+      buildSubmitPayload(idem.current || "intakereview01"),
+      review.missing.map((m) => m.field),
+      {
+        ...placementErrors(),
+        interviewStages:
+          proc.listError ??
+          (Object.keys(proc.rowErrors).length > 0 ? "Check your interview stages" : undefined),
+        targetDaysToOffer: proc.targetError,
+        decisionMakerEmail: proc.decisionMakerEmail,
+      },
+    );
+    // `state`, `jdFile` and `authed` are what the payload and both error
+    // helpers read; `review.missing` decides what is already named above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, jdFile, authed, review.missing]);
+
+  const submit = async (intent: "pay" | "call" = PAYMENTS_ENABLED ? "pay" : "call") => {
+    const payload = buildSubmitPayload(idem.current || newIdempotencyKey());
 
     const parsed = expressIntakeSchema.safeParse(payload);
     if (!parsed.success) {
@@ -3683,7 +3735,7 @@ function ExpressIntakePage() {
                       type="button"
                       data-testid="intake-submit-pay"
                       onClick={() => void submit("pay")}
-                      disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
+                      disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
                       className="min-h-12 w-full"
                     >
                       {submitting ? (
@@ -3700,7 +3752,7 @@ function ExpressIntakePage() {
                       variant="outline"
                       data-testid="intake-submit-call"
                       onClick={() => void submit("call")}
-                      disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
+                      disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
                       className="min-h-12 w-full"
                     >
                       Book a call first
@@ -3711,7 +3763,7 @@ function ExpressIntakePage() {
                     type="button"
                     data-testid="intake-submit-call"
                     onClick={() => void submit("call")}
-                    disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
+                    disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
                     className="min-h-12 w-full"
                   >
                     {submitting ? (
@@ -3729,6 +3781,31 @@ function ExpressIntakePage() {
                 <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
                   Submit unlocks once the required answers named in the review above are filled in.
                 </p>
+              )}
+              {/*
+                Blockers that are not missing answers — two fields that
+                contradict each other, a value the brief cannot accept. The
+                review's "still missing" list can only describe emptiness, so
+                these were invisible: the summary read as cleared, the button
+                looked enabled, and clicking it did nothing (INT-001). They are
+                named here, in full, next to the button they are holding.
+              */}
+              {submitBlockers.length > 0 && (
+                <div
+                  role="status"
+                  className="mt-3 rounded-lg border border-[color:var(--brand-danger)]/35 bg-[color:var(--brand-danger)]/6 p-3 text-sm"
+                >
+                  <p className="font-semibold text-[color:var(--brand-danger)]">
+                    {submitBlockers.length === 1
+                      ? "One answer still needs fixing before you can submit:"
+                      : `${submitBlockers.length} answers still need fixing before you can submit:`}
+                  </p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-[color:var(--brand-navy)]/85">
+                    {submitBlockers.map((b) => (
+                      <li key={b.field}>{b.message}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
               {dupBlockers.length > 0 && (
                 <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">

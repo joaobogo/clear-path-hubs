@@ -26,7 +26,18 @@ export type StageBuckets<T> = Record<string, T[]>;
  * that forgets it fails to compile instead.
  */
 export function groupRowsByStage<
-  T extends { stage: string; interview_active?: boolean | null; interview_called_off: boolean | null },
+  T extends {
+    stage: string;
+    interview_active?: boolean | null;
+    interview_called_off: boolean | null;
+    /**
+     * Required for the same reason, and with the same history: laneFor keeps a
+     * candidate out of the Hired column until an offer record confirms the
+     * hire. Omitted here, the column would count three hires while the Offers
+     * page counted one (audit 16 Sep, CLI-001).
+     */
+    hire_confirmed: boolean | null;
+  },
 >(rows: T[]): { byStage: StageBuckets<T>; unplaced: T[] } {
   const byStage: StageBuckets<T> = {};
   for (const col of KANBAN_COLUMNS) byStage[col.key] = [];

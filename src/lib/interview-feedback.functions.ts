@@ -7,6 +7,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { persistStage } from "@/lib/client/persist-stage";
+import { reconcileHireRecordForStage } from "@/lib/hires/stage-reconcile.server";
+import type { MatchStage } from "@/lib/client-match-stage";
 import { z } from "zod";
 import {
   DECLINE_CONCERN_MIN,
@@ -308,7 +310,7 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
     if (targetStage) {
       const { data: match } = await context.supabase
         .from("candidate_matches")
-        .select(sel("id, stage"))
+        .select(sel("id, stage, position_id, candidate_profile_id"))
         .eq("id", matchId)
         .eq("organization_id", data.orgId)
         .maybeSingle();
@@ -336,6 +338,27 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
         }
         if (moved) {
           movedTo = targetStage;
+          // The third path that moves a stage, and the one the shared helper's
+          // docstring warned about. "Make an offer" from interview feedback
+          // left no hire_records row, so the candidate sat in the Offer column
+          // while the Offers board — which reads hire_records — showed nobody.
+          //
+          // The feedback itself is already committed above, so a failure here
+          // must not report the whole submission as failed and invite a
+          // double-submit. On failure this simply leaves the behaviour that
+          // shipped before; on success the two records agree.
+          try {
+            await reconcileHireRecordForStage(context.supabase, {
+              matchId,
+              orgId: data.orgId,
+              positionId: ((match as AnyRow)?.position_id as string | null) ?? null,
+              candidateProfileId:
+                ((match as AnyRow)?.candidate_profile_id as string | null) ?? null,
+              toStage: targetStage as MatchStage,
+            });
+          } catch {
+            // Reconciliation is best-effort here, deliberately.
+          }
           await context.supabase.from("client_decisions").insert({
             candidate_match_id: matchId,
             organization_id: data.orgId,

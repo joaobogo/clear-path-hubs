@@ -44,6 +44,24 @@ export type LaneRow = {
    * (audit 1 Sep, F6).
    */
   interview_called_off?: boolean | null;
+  /**
+   * A confirmed offer record exists for this candidate.
+   *
+   * REQUIRED, like `interview_called_off` and for the same reason: the rule
+   * below cannot fire on a field the caller forgot to map, and an optional one
+   * fails silently rather than at compile time.
+   *
+   * `hires/confirmed.ts` states the rule this implements — "the offer record's
+   * own outcome decides whether someone is a confirmed hire; nothing else
+   * (pipeline stage, KPI rollups, view aggregates) may override it" — but the
+   * lane derivation was the one counting layer that never read it. The demo
+   * client had three candidates parked in the `hired` stage whose offers were
+   * still drafted or merely sent, so /client/candidates reported HIRED 3 while
+   * /client/positions, /client/executive and /client/offers all reported 1
+   * (audit 16 Sep, CLI-001). A finance-facing hire count that is three times
+   * the truth is the kind of number a client escalates on.
+   */
+  hire_confirmed: boolean | null;
 };
 
 function isLane(value: string): value is PipelineLane {
@@ -92,6 +110,23 @@ export function laneFor(row: LaneRow): PipelineLane | null {
   // not this case: that candidate is still in the interview stage.
   if (stage === "interview_process" && row.interview_called_off && !row.interview_active) {
     return "shortlisted";
+  }
+  // The second exception, and the same shape as the first: the stage alone may
+  // not claim an outcome the record behind it does not support. A candidate
+  // parked in `hired` whose offer is still drafted, sent or negotiating has an
+  // OPEN offer, so that is the lane they are in — and the board column, the
+  // stage tile and the Offers page then describe the same person the same way.
+  //
+  // Only an explicit `false` demotes. `null` means the caller could not read
+  // the offer record, and a missing read must not silently un-hire anyone.
+  //
+  // Self-healing by construction: every path that moves a candidate INTO
+  // `hired` reconciles the hire record in the same request
+  // (`reconcileHireRecordForStage`), so a hire confirmed today lands in this
+  // lane immediately. Only rows that drifted apart before that reconciliation
+  // existed are corrected here.
+  if (stage === "hired" && row.hire_confirmed === false) {
+    return "offer";
   }
   return stage;
 }

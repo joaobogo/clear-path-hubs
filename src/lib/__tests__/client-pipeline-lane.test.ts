@@ -21,10 +21,21 @@ import {
 } from "@/lib/client-pipeline-lane";
 import { PIPELINE_STAGE_VOCABULARY } from "@/lib/vocabulary";
 
-const row = (stage: string, interview_active = false, interview_called_off = false) => ({
+/**
+ * `hire_confirmed` defaults to true so that every pre-existing assertion below
+ * still describes a genuine hire. The rows that exercise the new rule pass it
+ * explicitly.
+ */
+const row = (
+  stage: string,
+  interview_active = false,
+  interview_called_off = false,
+  hire_confirmed: boolean | null = true,
+) => ({
   stage,
   interview_active,
   interview_called_off,
+  hire_confirmed,
 });
 
 describe("lane coverage", () => {
@@ -143,5 +154,58 @@ describe("a cancelled interview leaves the interview lane", () => {
     ];
     expect(countLanes(rows).counts.interview_process).toBe(1);
     expect(countLanes(rows).counts.shortlisted).toBe(1);
+  });
+});
+
+describe("the offer record decides a hire, never the stage", () => {
+  // /client/candidates reported HIRED 3 while /client/positions,
+  // /client/executive and /client/offers all reported 1: two of the three had
+  // offers that were merely drafted or sent, and the lane derivation was the
+  // one counting layer that never read the offer record (audit 16 Sep,
+  // CLI-001).
+  it("keeps a candidate with an unconfirmed offer out of the hired lane", () => {
+    expect(laneFor(row("hired", false, false, false))).toBe("offer");
+  });
+
+  it("leaves a confirmed hire in the hired lane", () => {
+    expect(laneFor(row("hired", false, false, true))).toBe("hired");
+  });
+
+  it("does not un-hire anyone when the offer record could not be read", () => {
+    // `null` is "we do not know", and a failed read must not silently reduce a
+    // client's hire count.
+    expect(laneFor(row("hired", false, false, null))).toBe("hired");
+  });
+
+  it("touches no other stage", () => {
+    for (const stage of ["delivered", "shortlisted", "interview_process", "offer", "not_moving_forward"]) {
+      expect(laneFor(row(stage, false, false, false)), stage).toBe(stage);
+    }
+  });
+
+  it("still places everyone exactly once — the partition holds", () => {
+    const rows = [
+      row("hired", false, false, true),
+      row("hired", false, false, false),
+      row("hired", false, false, false),
+    ];
+    const { counts, unplaced, excluded } = countLanes(rows);
+    expect(unplaced).toEqual([]);
+    expect(excluded).toEqual([]);
+    expect(counts.hired).toBe(1);
+    expect(counts.offer).toBe(2);
+    expect(Object.values(counts).reduce((a, b) => a + b, 0)).toBe(rows.length);
+  });
+
+  it("agrees with the confirmed-hire count the other client surfaces read", () => {
+    // The exact Northwind shape: three in the hired stage, one confirmed offer.
+    // The lane count and the figure /client/offers shows must be one number.
+    const rows = [
+      row("hired", false, false, true),
+      row("hired", false, false, false),
+      row("hired", false, false, false),
+    ];
+    const confirmedHires = rows.filter((r) => r.hire_confirmed).length;
+    expect(countLanes(rows).counts.hired).toBe(confirmedHires);
   });
 });

@@ -143,6 +143,23 @@ describe("the description is read before anything is asked about the role", () =
     expect(intake).toMatch(/id="section-jd" title="The job description" step=\{1\}/);
   });
 
+  it("holds submit on the conflicts too, not only on missing answers", () => {
+    // The review's "still missing" list can only describe an unanswered field.
+    // Gating the buttons on that alone is what let a compensation conflict
+    // leave an enabled-looking button that did nothing when clicked
+    // (audit 16 Sep, INT-001). Every submit button must consult both lists.
+    const buttons = intake.match(/disabled=\{submitting[^}]*\}/g) ?? [];
+    const submitButtons = buttons.filter((b) => b.includes("review.missing"));
+    expect(submitButtons.length, "no gated submit button found").toBeGreaterThan(0);
+    for (const b of submitButtons) {
+      expect(b, "a submit button ignores the conflict list").toContain("submitBlockers.length");
+    }
+  });
+
+  it("names those conflicts on screen rather than only beside the button", () => {
+    expect(intake).toMatch(/submitBlockers\.map\(/);
+  });
+
   it("derives the website without asking", () => {
     expect(intake).toMatch(/companyWebsiteFromEmail\(state\.workEmail\)/);
     expect(intake, "never over an answer the client gave").toMatch(
