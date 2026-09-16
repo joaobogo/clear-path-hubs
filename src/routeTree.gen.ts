@@ -68,6 +68,7 @@ import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApplyStatusRouteImport } from './routes/apply.status'
 import { Route as ApplyEligibilityOutcomeRouteImport } from './routes/apply.eligibility-outcome'
+import { Route as AdminPlatformRouteImport } from './routes/admin.platform'
 import { Route as AdminApprovalsRouteImport } from './routes/admin.approvals'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
@@ -500,6 +501,11 @@ const ApplyStatusRoute = ApplyStatusRouteImport.update({
 const ApplyEligibilityOutcomeRoute = ApplyEligibilityOutcomeRouteImport.update({
   id: '/apply/eligibility-outcome',
   path: '/apply/eligibility-outcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPlatformRoute = AdminPlatformRouteImport.update({
+  id: '/admin/platform',
+  path: '/admin/platform',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminApprovalsRoute = AdminApprovalsRouteImport.update({
@@ -1345,6 +1351,7 @@ export interface FileRoutesByFullPath {
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/platform': typeof AdminPlatformRoute
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -1541,6 +1548,7 @@ export interface FileRoutesByTo {
   '/brand-center': typeof AuthenticatedBrandCenterRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/platform': typeof AdminPlatformRoute
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -1735,6 +1743,7 @@ export interface FileRoutesById {
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/platform': typeof AdminPlatformRoute
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -1936,6 +1945,7 @@ export interface FileRouteTypes {
     | '/client'
     | '/me'
     | '/admin/approvals'
+    | '/admin/platform'
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
@@ -2132,6 +2142,7 @@ export interface FileRouteTypes {
     | '/brand-center'
     | '/checkout'
     | '/admin/approvals'
+    | '/admin/platform'
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
@@ -2325,6 +2336,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client'
     | '/_authenticated/me'
     | '/admin/approvals'
+    | '/admin/platform'
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
@@ -2519,6 +2531,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   AdminApprovalsRoute: typeof AdminApprovalsRoute
+  AdminPlatformRoute: typeof AdminPlatformRoute
   ApplyEligibilityOutcomeRoute: typeof ApplyEligibilityOutcomeRoute
   ApplyStatusRoute: typeof ApplyStatusRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -2986,6 +2999,13 @@ declare module '@tanstack/react-router' {
       path: '/apply/eligibility-outcome'
       fullPath: '/apply/eligibility-outcome'
       preLoaderRoute: typeof ApplyEligibilityOutcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/platform': {
+      id: '/admin/platform'
+      path: '/admin/platform'
+      fullPath: '/admin/platform'
+      preLoaderRoute: typeof AdminPlatformRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/approvals': {
@@ -4358,6 +4378,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   AdminApprovalsRoute: AdminApprovalsRoute,
+  AdminPlatformRoute: AdminPlatformRoute,
   ApplyEligibilityOutcomeRoute: ApplyEligibilityOutcomeRoute,
   ApplyStatusRoute: ApplyStatusRoute,
   BlogSlugRoute: BlogSlugRoute,

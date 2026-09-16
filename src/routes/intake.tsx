@@ -93,10 +93,12 @@ import {
   interviewProcessSummary,
   validateInterviewStages,
   type InterviewStage,
+  JD_REPARSE_DELAY_MS,
 } from "@/lib/express-intake-schema";
 
 import { FieldExamples } from "@/components/intake/field-examples";
 import { RequirementsList, type SuggestionState } from "@/components/intake/requirements-list";
+import type { JdBlueprint } from "@/lib/jd-blueprint";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { clearIntakeDraft } from "@/lib/intake-draft.functions";
@@ -1263,20 +1265,103 @@ function ExpressIntakePage() {
    * Asks for requirement suggestions from the pasted job description once the
    * client reaches step 2. Failure is non-fatal: the list still works by hand.
    */
-  const fetchSuggestions = React.useCallback(
-    async (jd: string, roleTitle: string) => {
+  /**
+   * Fills the fields the job description answered — and only those.
+   *
+   * The rule is the same one `applyDraftPayload` uses for a restored draft:
+   * anything in `editedRef` is the client's own answer and is never touched.
+   * On top of that, a field that already holds a value is left alone, so a
+   * re-parse after an edit adds what is missing instead of overwriting what is
+   * there. That is what makes re-parsing on every change safe (INT-012).
+   *
+   * `currency` and `compensationPeriod` are the two exceptions: they ship with
+   * defaults ("USD", "year") that nobody chose, so a value read out of the JD
+   * may replace them — until the client edits them, at which point the
+   * editedRef guard takes over.
+   */
+  const applyBlueprint = React.useCallback((bp: JdBlueprint) => {
+    const DEFAULTED = new Set(["currency", "compensationPeriod"]);
+    setState((s) => {
+      const next: Partial<FormState> = {};
+      const put = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+        if (editedRef.current.has(key as string)) return;
+        const current = s[key];
+        const isEmpty =
+          current === "" || current === null || current === undefined ||
+          (Array.isArray(current) && current.length === 0);
+        if (!isEmpty && !DEFAULTED.has(key as string)) return;
+        next[key] = value;
+      };
+
+      if (bp.title) put("roleTitle", bp.title.value);
+      if (bp.location) put("location", bp.location.value);
+      if (bp.workModel) put("workModel", bp.workModel.value);
+      if (bp.team) put("team", bp.team.value);
+      if (bp.salaryMin) put("salaryMin", String(bp.salaryMin.value));
+      if (bp.salaryMax) put("salaryMax", String(bp.salaryMax.value));
+      if (bp.currency) put("currency", bp.currency.value);
+      if (bp.compensationPeriod) put("compensationPeriod", bp.compensationPeriod.value);
+      if (bp.targetStartDate) put("targetStartDate", bp.targetStartDate.value);
+      // A description that states the employer will not sponsor answers the
+      // visa question, so the client is not asked it twice (INT-015).
+      if (bp.requiresExistingWorkAuth?.value === true) put("sponsorshipAvailable", "no");
+      if (Object.keys(next).length === 0) return s;
+      return { ...s, ...next };
+    });
+  }, []);
+
+  /**
+   * Reads the job description, however it arrived.
+   *
+   * One call for all three inputs: pasted text, an uploaded file, or a link.
+   * Uploads used to be ignored entirely here — the file attached, nothing was
+   * extracted, and the page still promised "upload the job description and
+   * TaaSFlow will build the complete role blueprint" (audit 15 Sep, INT-010).
+   *
+   * Failure stays non-fatal: the list works by hand, exactly as before.
+   */
+  const runJdParse = React.useCallback(
+    async (input: {
+      text?: string;
+      file?: { filename: string; mime: string; base64: string };
+      url?: string;
+      roleTitle: string;
+    }) => {
       setSuggestions({ kind: "loading" });
       try {
         const res = await fetch("/api/public/jd-requirements", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ roleTitle, jobDescriptionText: jd }),
+          body: JSON.stringify({
+            roleTitle: input.roleTitle,
+            jobDescriptionText: input.text ?? "",
+            file: input.file,
+            url: input.url,
+          }),
         });
         const json = (await res.json()) as {
           ok?: boolean;
           suggestions?: RequirementItem[];
+          blueprint?: JdBlueprint;
+          text?: string;
+          message?: string;
         };
-        if (json.ok && Array.isArray(json.suggestions) && json.suggestions.length > 0) {
+        if (!json.ok) {
+          // A file we genuinely could not read is worth saying out loud; every
+          // other failure stays quiet and the client just types.
+          if (json.message) toast.error(json.message);
+          setSuggestions({ kind: "idle" });
+          return;
+        }
+        // Text read out of a file or a link becomes the draft's job
+        // description, so it persists, submits and re-parses like pasted text.
+        if (json.text && json.text.trim().length > 0) {
+          setState((s) =>
+            s.jobDescriptionText.trim().length > 0 ? s : { ...s, jobDescriptionText: json.text! },
+          );
+        }
+        if (json.blueprint) applyBlueprint(json.blueprint);
+        if (Array.isArray(json.suggestions) && json.suggestions.length > 0) {
           setSuggestions({ kind: "ready", items: json.suggestions });
         } else {
           setSuggestions({ kind: "idle" });
@@ -1285,20 +1370,29 @@ function ExpressIntakePage() {
         setSuggestions({ kind: "idle" });
       }
     },
-    [],
+    [applyBlueprint],
   );
 
+  /**
+   * Re-reads the description whenever it changes, not only on a page reload.
+   *
+   * Keyed on the CONTENT, not its length: replacing a job description with a
+   * different one of the same length used to leave the old suggestions in
+   * place (INT-012/INT-016). Debounced so typing does not bill a model call
+   * per keystroke.
+   */
   useEffect(() => {
     if (stepIndex !== 1) return;
     const jd = state.jobDescriptionText.trim();
-    // Only the pasted text can be read here; an uploaded file is parsed after
-    // submit, so the list simply starts blank in that case.
     if (jd.length < MIN_JD_TEXT) return;
-    const signature = `${state.roleTitle.trim()}::${jd.length}`;
+    const signature = `text:${state.roleTitle.trim()}::${jd}`;
     if (suggestedForRef.current === signature) return;
-    suggestedForRef.current = signature;
-    void fetchSuggestions(jd, state.roleTitle);
-  }, [stepIndex, state.jobDescriptionText, state.roleTitle, fetchSuggestions]);
+    const timer = window.setTimeout(() => {
+      suggestedForRef.current = signature;
+      void runJdParse({ text: jd, roleTitle: state.roleTitle });
+    }, JD_REPARSE_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [stepIndex, state.jobDescriptionText, state.roleTitle, runJdParse]);
 
   const setRequirements = (next: RequirementItem[]) => {
     if (!startedRef.current) {
@@ -1529,14 +1623,18 @@ function ExpressIntakePage() {
     }
     try {
       const base64 = await fileToBase64(file);
-      setJdFile({
-        filename: file.name,
-        mime: file.type || "application/octet-stream",
-        base64,
-        size: file.size,
-      });
+      const mime = file.type || "application/octet-stream";
+      setJdFile({ filename: file.name, mime, base64, size: file.size });
       setErrors((e) => ({ ...e, jobDescriptionText: "" }));
       trackEvent("job_description_selected", { flow: "express_onboarding", kind: ext });
+      // Read it now. The file used to attach and sit there: nothing was
+      // extracted, no field was filled, and the requirement suggestions kept
+      // showing whatever had been pasted earlier (audit 15 Sep, INT-010).
+      suggestedForRef.current = `file:${file.name}::${file.size}`;
+      void runJdParse({
+        file: { filename: file.name, mime, base64 },
+        roleTitle: state.roleTitle,
+      });
     } catch {
       toast.error("We couldn't read that file. Try another one.");
     }
@@ -2471,10 +2569,19 @@ function ExpressIntakePage() {
               roleTitle={state.roleTitle}
               suggestions={suggestions}
               onRetrySuggestions={() => {
+                // Re-analyse reads whatever the client gave us, in the same
+                // order the parser does: an attached file first, then the text.
+                suggestedForRef.current = "";
+                if (jdFile) {
+                  void runJdParse({
+                    file: { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 },
+                    roleTitle: state.roleTitle,
+                  });
+                  return;
+                }
                 const jd = state.jobDescriptionText.trim();
                 if (jd.length < MIN_JD_TEXT) return;
-                suggestedForRef.current = "";
-                void fetchSuggestions(jd, state.roleTitle);
+                void runJdParse({ text: jd, roleTitle: state.roleTitle });
               }}
             />
             {/* The example helper belongs INSIDE Requirements. As its own

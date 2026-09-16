@@ -32,6 +32,13 @@ export const JD_ACCEPT_LABEL = "PDF, DOCX, TXT or RTF, up to 10 MB";
 
 /** No length floor on pasted JD text — any text (or a file) is enough. */
 export const MIN_JD_TEXT = 1;
+
+/**
+ * How long the intake waits after the job description stops changing before
+ * re-reading it. Long enough that typing does not bill a model call per
+ * keystroke, short enough that a paste feels immediate.
+ */
+export const JD_REPARSE_DELAY_MS = 1_500;
 export const MIN_ACCOUNT_PASSWORD = 8;
 
 /** Role-brief minimums. Enforced identically on the client and the server. */

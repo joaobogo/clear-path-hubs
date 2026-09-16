@@ -1350,8 +1350,14 @@ function Home() {
                 ))}
               </ul>
               <div className="flex flex-wrap items-center gap-3 pt-1">
+                {/* /intake, not /pilot. "Open your first role" is the action
+                    the label promises, and /intake is free to start with the
+                    workspace opening right away; sending it to the $699 pilot
+                    sales page added a click and a paywall feeling before the
+                    visitor had done anything (audit 15 Sep, GEN-004). /pilot
+                    stays reachable from pricing and the nav. */}
                 <Link
-                  to="/pilot"
+                  to="/intake"
                   aria-label="Open your first role"
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-6 py-3 text-base font-semibold text-white shadow-[var(--brand-shadow-sm)] hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
