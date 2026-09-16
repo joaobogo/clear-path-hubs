@@ -95,6 +95,7 @@ import {
   type InterviewStage,
   JD_REPARSE_DELAY_MS,
   type EmploymentType,
+  companyWebsiteFromEmail,
 } from "@/lib/express-intake-schema";
 
 import { FieldExamples } from "@/components/intake/field-examples";
@@ -675,9 +676,15 @@ function ExpressIntakePage() {
     // fields" then points at something the client cannot see.
     let firstRowMessage: string | null = null;
     if (key === "company") {
+      // The description is asked here now, so it is checked here.
+      const jd = state.jobDescriptionText.trim();
+      if (!jdFile && jd.length < MIN_JD_TEXT) {
+        next.jobDescriptionText = jd.length
+          ? "Paste the job description or upload the file"
+          : "Upload a job description file or paste the description";
+      }
       const res = stepValidators.company.safeParse({
         companyName: state.companyName,
-        companyWebsite: state.companyWebsite,
         firstName: state.firstName,
         lastName: state.lastName,
         workEmail: state.workEmail,
@@ -693,18 +700,13 @@ function ExpressIntakePage() {
     if (key === "role") {
       const res = stepValidators.role.safeParse({
         roleTitle: state.roleTitle,
+        companyWebsite: state.companyWebsite,
       });
       if (!res.success) {
         for (const issue of res.error.issues) {
           const f = String(issue.path[0] ?? "form");
           if (!next[f]) next[f] = issue.message;
         }
-      }
-      const jd = state.jobDescriptionText.trim();
-      if (!jdFile && jd.length < MIN_JD_TEXT) {
-        next.jobDescriptionText = jd.length
-          ? "Paste the job description or upload the file"
-          : "Upload a job description file or paste the description";
       }
     }
     if (key === "role") {
@@ -1298,6 +1300,22 @@ function ExpressIntakePage() {
    * may replace them — until the client edits them, at which point the
    * editedRef guard takes over.
    */
+  /**
+   * The company website comes from the work email, not from a question.
+   *
+   * Step 1 used to ask for it outright — a field whose answer was already in
+   * the address typed two rows above (audit 15 Sep, INT-001). Derived only
+   * while the client has not set one themselves, and never for a free-mail
+   * address, where the domain says nothing about the company.
+   */
+  useEffect(() => {
+    if (editedRef.current.has("companyWebsite")) return;
+    if (state.companyWebsite.trim().length > 0) return;
+    const derived = companyWebsiteFromEmail(state.workEmail);
+    if (!derived) return;
+    setState((s) => (s.companyWebsite.trim() ? s : { ...s, companyWebsite: derived }));
+  }, [state.workEmail, state.companyWebsite]);
+
   const applyBlueprint = React.useCallback((bp: JdBlueprint) => {
     const DEFAULTED = new Set(["currency", "compensationPeriod"]);
     setState((s) => {
@@ -2202,20 +2220,6 @@ function ExpressIntakePage() {
               autoComplete="organization"
             />
           </Field>
-          <Field
-            label="Company website" carried={isCarried("companyWebsite")}
-            error={errors.companyWebsite}
-            required={req["companyWebsite"]}
-            hint="We read only your public pages."
-          >
-            <Input
-              value={state.companyWebsite}
-              onChange={(e) => set("companyWebsite", e.target.value)}
-              placeholder="northwindhealth.com"
-              autoComplete="url"
-              inputMode="url"
-            />
-          </Field>
           <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
             <summary className="cursor-pointer text-sm font-medium">
               Add company LinkedIn{" "}
@@ -2426,26 +2430,12 @@ function ExpressIntakePage() {
 
 
 
-        {step === 2 && (
-        <Section id="section-role" title="The role" step={2}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label={intakeFieldLabel("roleTitle")} error={errors.roleTitle} required={req["roleTitle"]}>
-              <Input
-                value={state.roleTitle}
-                onChange={(e) => set("roleTitle", e.target.value)}
-                placeholder="Clinical Operations Manager"
-              />
-            </Field>
-            <Field label={intakeFieldLabel("team")} error={errors.team} required={req["team"]} hint={intakeFieldHint("team")}>
-              <Input
-                value={state.team}
-                onChange={(e) => set("team", e.target.value)}
-                placeholder="Clinical Operations"
-              />
-            </Field>
-          </div>
-
-
+        {step === 1 && (
+        <Section id="section-jd" title="The job description" step={1}>
+          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+            Give us the description and we read the role out of it — the title, the
+            requirements, where it sits, what it pays. You confirm it on the next screen.
+          </p>
           <div className="space-y-3">
             <div className="flex items-baseline">
               <Label htmlFor="jd-text" className="text-sm font-medium">
@@ -2612,6 +2602,49 @@ function ExpressIntakePage() {
               </p>
             )}
           </div>
+        </Section>
+        )}
+
+        {step === 2 && (
+        <Section id="section-role" title="The role" step={2}>
+          {/* Only a free-mail address gets asked this. A company domain
+              already answered it on step 1 without a question being put
+              (audit 15 Sep, INT-001). */}
+          {!companyWebsiteFromEmail(state.workEmail) && (
+            <Field
+              label="Company website"
+              carried={isCarried("companyWebsite")}
+              error={errors.companyWebsite}
+              required={req["companyWebsite"]}
+              hint="Your email domain did not tell us this one. We read only your public pages."
+            >
+              <Input
+                value={state.companyWebsite}
+                onChange={(e) => set("companyWebsite", e.target.value)}
+                placeholder="northwindhealth.com"
+                autoComplete="url"
+                inputMode="url"
+              />
+            </Field>
+          )}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label={intakeFieldLabel("roleTitle")} error={errors.roleTitle} required={req["roleTitle"]}>
+              <Input
+                value={state.roleTitle}
+                onChange={(e) => set("roleTitle", e.target.value)}
+                placeholder="Clinical Operations Manager"
+              />
+            </Field>
+            <Field label={intakeFieldLabel("team")} error={errors.team} required={req["team"]} hint={intakeFieldHint("team")}>
+              <Input
+                value={state.team}
+                onChange={(e) => set("team", e.target.value)}
+                placeholder="Clinical Operations"
+              />
+            </Field>
+          </div>
+
+
         </Section>
         )}
 

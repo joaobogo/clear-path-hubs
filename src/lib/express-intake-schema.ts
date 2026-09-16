@@ -54,6 +54,33 @@ export const MAX_REQUIREMENTS = 30;
 export const MIN_DEAL_BREAKERS = 20;
 export const MIN_INTERVIEW_PROCESS = 20;
 
+/**
+ * Mail domains that say nothing about the company, so enrichment must not run
+ * on them and the website has to be asked for once instead.
+ */
+export const FREE_MAIL_DOMAINS = new Set([
+  "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com",
+  "protonmail.com", "proton.me", "aol.com", "live.com", "me.com", "msn.com",
+  "gmx.com", "mail.com", "yandex.com", "zoho.com",
+]);
+
+/**
+ * The company website, read off the work email.
+ *
+ * Step 1 used to ask for the website outright, which is a field the client
+ * should never have to fill: it is already in the address they just typed
+ * (audit 15 Sep, INT-001). Returns null for a free-mail address, where the
+ * domain means nothing and the question is still worth asking — once, later.
+ */
+export function companyWebsiteFromEmail(email: string): string | null {
+  const at = (email ?? "").trim().toLowerCase().lastIndexOf("@");
+  if (at === -1) return null;
+  const domain = email.trim().toLowerCase().slice(at + 1);
+  if (!domain || !/^[\w-]+(\.[\w-]+)+$/.test(domain)) return null;
+  if (FREE_MAIL_DOMAINS.has(domain)) return null;
+  return domain;
+}
+
 export const WORK_MODELS = ["remote", "hybrid", "onsite"] as const;
 
 /**
@@ -809,16 +836,16 @@ export const EXPRESS_STEP_KEY = "taasflow.express.intake.step.v1";
 export const INTAKE_STEPS = [
   {
     key: "company",
-    title: "You and your company",
-    blurb: "Who you are and where you work, then your account so nothing is lost.",
+    title: "You and the job description",
+    blurb: "Who you are, your account, and the description we read the role out of.",
     minutes: 2,
     required: true,
   },
   {
     key: "role",
-    title: "The role",
-    blurb: "What the job is, why it exists, and what a candidate must have.",
-    minutes: 3,
+    title: "What we read",
+    blurb: "The role as the description states it. Change anything that is not right.",
+    minutes: 2,
     required: true,
   },
   {
@@ -839,6 +866,10 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
   company: [
     "companyName",
     "companyWebsite",
+    // The job description is asked on step 1 now: it is what the rest of the
+    // brief is read out of, so asking for it later meant every field it could
+    // have filled was typed by hand first (audit 15 Sep, INT-001).
+    "jobDescriptionText",
     "companyLinkedin",
     "firstName",
     "lastName",
@@ -854,7 +885,6 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
   role: [
     "roleTitle",
     "team",
-    "jobDescriptionText",
     "requirements",
     "mustHaves",
     "niceToHaves",
@@ -897,13 +927,16 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
 export const stepValidators = {
   company: z.object({
     companyName: z.string().trim().min(2, "Enter your company name").max(200),
-    companyWebsite: z.string().trim().min(3, "Enter your company website").max(300),
+    // Not here: the website is derived from the work email, and only asked on
+    // the review step when a free-mail address makes that impossible. Step 1
+    // must not fail on a field it no longer shows.
     firstName: z.string().trim().min(1, "Enter your first name").max(100),
     lastName: z.string().trim().min(1, "Enter your last name").max(100),
     workEmail: z.string().trim().email("Enter a valid work email"),
   }),
   role: z.object({
     roleTitle: z.string().trim().min(2, "Enter the job title").max(160),
+    companyWebsite: z.string().trim().min(3, "Enter your company website").max(300),
   }),
   people: z.object({
     mustHaves: z
