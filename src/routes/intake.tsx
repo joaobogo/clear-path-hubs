@@ -94,6 +94,7 @@ import {
   validateInterviewStages,
   type InterviewStage,
   JD_REPARSE_DELAY_MS,
+  type EmploymentType,
 } from "@/lib/express-intake-schema";
 
 import { FieldExamples } from "@/components/intake/field-examples";
@@ -196,6 +197,19 @@ type FormState = {
 
   location: string;
   workModel: "remote" | "hybrid" | "onsite" | "";
+  /**
+   * Read from the job description, never asked on screen. The admin publish
+   * gate requires both and the client flow asked for neither, so every brief
+   * arrived under-specified (audit 15 Sep, INT-002).
+   */
+  seniority: string;
+  employmentType: EmploymentType | "";
+  /**
+   * The file the description was read out of, if it came from one. Name only:
+   * the text itself is already in jobDescriptionText, and carrying 10 MB of
+   * base64 in a draft row to redraw one chip is not a trade worth making.
+   */
+  jdSourceName: string;
   onsiteDays: string;
   remoteTimezones: string[];
   remoteAnywhereInCountry: boolean;
@@ -251,6 +265,9 @@ const EMPTY: FormState = {
 
   location: "",
   workModel: "",
+  seniority: "",
+  employmentType: "",
+  jdSourceName: "",
   onsiteDays: "",
   remoteTimezones: [],
   remoteAnywhereInCountry: false,
@@ -394,6 +411,8 @@ function ExpressIntakePage() {
   >({});
 
   const [suggestions, setSuggestions] = useState<SuggestionState>({ kind: "idle" });
+  /** The link the client asked us to read. Not part of the brief itself. */
+  const [jdUrl, setJdUrl] = useState("");
   const suggestedForRef = useRef<string>("");
   const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
@@ -1296,6 +1315,8 @@ function ExpressIntakePage() {
       if (bp.title) put("roleTitle", bp.title.value);
       if (bp.location) put("location", bp.location.value);
       if (bp.workModel) put("workModel", bp.workModel.value);
+      if (bp.seniority) put("seniority", bp.seniority.value);
+      if (bp.employmentType) put("employmentType", bp.employmentType.value);
       if (bp.team) put("team", bp.team.value);
       if (bp.salaryMin) put("salaryMin", String(bp.salaryMin.value));
       if (bp.salaryMax) put("salaryMax", String(bp.salaryMax.value));
@@ -1631,6 +1652,7 @@ function ExpressIntakePage() {
       // extracted, no field was filled, and the requirement suggestions kept
       // showing whatever had been pasted earlier (audit 15 Sep, INT-010).
       suggestedForRef.current = `file:${file.name}::${file.size}`;
+      set("jdSourceName", file.name);
       void runJdParse({
         file: { filename: file.name, mime, base64 },
         roleTitle: state.roleTitle,
@@ -1675,6 +1697,11 @@ function ExpressIntakePage() {
 
       location: state.location,
       workModel: state.workModel,
+      // Read from the job description rather than asked. Employment type falls
+      // back to full-time, which is what the overwhelming majority of briefs
+      // are and what the publish gate needs to see; the admin can change it.
+      seniority: state.seniority,
+      employmentType: state.employmentType || "full_time",
       // Hidden fields submit nothing, not a stale earlier answer.
       onsiteDays:
         state.workModel === "hybrid" && state.onsiteDays !== ""
@@ -2434,6 +2461,12 @@ function ExpressIntakePage() {
                 </span>
               )}
             </div>
+            {!jdFile && state.jdSourceName && state.jobDescriptionText.trim().length > 0 && (
+              <p className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3 text-xs text-[color:var(--brand-navy)]/80">
+                Read from <span className="font-medium">{state.jdSourceName}</span>. The text is
+                saved with your draft and shown below — re-upload the file only if it has changed.
+              </p>
+            )}
             {jdFile ? (
               <div className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3">
                 <div className="flex min-w-0 items-center gap-3">
@@ -2527,10 +2560,51 @@ function ExpressIntakePage() {
               />
               {!jdFile && (
                 <p className="mt-1 text-xs text-[color:var(--brand-navy)]/75">
-                  Paste the job description, or upload the file instead.
+                  Paste the job description, upload the file, or paste a link to it.
                 </p>
               )}
 
+            </div>
+            {/* The third way in. A client whose role is already posted on
+                LinkedIn, Indeed or their own careers page has the description
+                at a URL, and retyping it is work we can do for them (audit
+                15 Sep, INT-014). Never required, and a site that blocks us
+                falls back to pasting without losing anything already entered. */}
+            <div className="space-y-1.5">
+              <Label htmlFor="jd-url" className="text-xs">
+                Or paste a link to the job posting
+              </Label>
+              <div className="flex flex-wrap items-center gap-2">
+                <Input
+                  id="jd-url"
+                  type="url"
+                  inputMode="url"
+                  value={jdUrl}
+                  onChange={(e) => setJdUrl(e.target.value)}
+                  placeholder="https://…"
+                  className="min-w-0 flex-1"
+                  aria-describedby="jd-url-help"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="min-h-11"
+                  disabled={!jdUrl.trim() || suggestions.kind === "loading"}
+                  onClick={() => {
+                    const url = jdUrl.trim();
+                    if (!url) return;
+                    suggestedForRef.current = `url:${url}`;
+                    set("jdSourceName", url);
+                    void runJdParse({ url, roleTitle: state.roleTitle });
+                  }}
+                >
+                  {suggestions.kind === "loading" ? "Reading…" : "Read the link"}
+                </Button>
+              </div>
+              <p id="jd-url-help" className="text-xs text-[color:var(--brand-navy)]/75">
+                We read the page and fill in what it says. If the site blocks us, paste the text
+                instead.
+              </p>
             </div>
             {errors.jobDescriptionText && (
               <p id="intake-jobDescriptionText-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">

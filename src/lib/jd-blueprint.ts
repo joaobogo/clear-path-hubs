@@ -19,11 +19,13 @@
 import {
   COMP_CURRENCIES,
   COMP_PERIODS,
+  EMPLOYMENT_TYPES,
   MAX_REQUIREMENT_CHARS,
   MIN_REQUIREMENT_CHARS,
   REQUIREMENT_TAGS,
   WORK_MODELS,
   normalizeRequirementKey,
+  type EmploymentType,
   type RequirementTag,
 } from "@/lib/express-intake-schema";
 
@@ -44,14 +46,13 @@ export const BLUEPRINT_SENIORITY = [
 ] as const;
 export type BlueprintSeniority = (typeof BLUEPRINT_SENIORITY)[number];
 
-export const BLUEPRINT_EMPLOYMENT = [
-  "full_time",
-  "part_time",
-  "contract",
-  "temporary",
-  "internship",
-] as const;
-export type BlueprintEmployment = (typeof BLUEPRINT_EMPLOYMENT)[number];
+/**
+ * The employment vocabulary is the intake schema's, re-exported rather than
+ * restated. Two copies of an enum is how a parser starts emitting a value the
+ * database will refuse.
+ */
+export const BLUEPRINT_EMPLOYMENT = EMPLOYMENT_TYPES;
+export type BlueprintEmployment = EmploymentType;
 
 /** One read field: the value, and how sure the reader was. */
 export type BlueprintField<T> = { value: T; confidence: BlueprintConfidence };

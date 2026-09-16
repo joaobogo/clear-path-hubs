@@ -581,6 +581,12 @@ export const Route = createFileRoute("/api/public/express-intake")({
             title: data.roleTitle.trim(),
             department: (data.team ?? "").trim() || null,
             work_model: data.workModel || null,
+            // Both come from the job description, not from a question the
+            // client was asked. The publish gate requires them, so a brief
+            // that carries them arrives ready instead of going back for
+            // details (audit 15 Sep, INT-002).
+            seniority: (data.seniority ?? "").trim() || null,
+            employment_type: data.employmentType || "full_time",
             location: locationText || null,
             description: (data.jobDescriptionText ?? "").trim() || null,
             // Must-haves filter the shortlist and drive the evidence bullets the

@@ -55,6 +55,20 @@ export const MIN_DEAL_BREAKERS = 20;
 export const MIN_INTERVIEW_PROCESS = 20;
 
 export const WORK_MODELS = ["remote", "hybrid", "onsite"] as const;
+
+/**
+ * Employment types, matching the database enum exactly. A value outside this
+ * list would be rejected by Postgres at insert, so the parser and the intake
+ * both speak it and nothing else.
+ */
+export const EMPLOYMENT_TYPES = [
+  "full_time",
+  "part_time",
+  "contract",
+  "temporary",
+  "internship",
+] as const;
+export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
 export const COMP_CURRENCIES = ["USD", "EUR", "GBP", "BRL", "CAD", "AUD"] as const;
 export const COMP_PERIODS = ["year", "month", "hour"] as const;
 
@@ -563,6 +577,18 @@ export const expressIntakeSchema = z
     // client at the door.
     location: z.string().trim().max(160).optional().or(z.literal("")),
     workModel: z.enum(WORK_MODELS).optional().or(z.literal("")),
+    /**
+     * Read from the job description, never asked.
+     *
+     * The admin publish gate requires a seniority and an employment type, and
+     * the client flow asked for neither — so every brief arrived
+     * under-specified and an admin had to chase or fill them before the role
+     * could go live (audit 15 Sep, INT-002). The parser now supplies both; the
+     * client only sees them if they open the role editor. Still optional here:
+     * a description that states neither must not block submission.
+     */
+    seniority: z.string().trim().max(40).optional().or(z.literal("")),
+    employmentType: z.enum(EMPLOYMENT_TYPES).optional().or(z.literal("")),
     onsiteDays: z.coerce.number().int().min(0).max(7).optional(),
     /** Remote only: acceptable working-hours bands. */
     remoteTimezones: z.array(z.enum(TIMEZONE_BAND_VALUES)).max(8).optional().default([]),
