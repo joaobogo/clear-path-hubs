@@ -57,6 +57,11 @@ describe("step 1 asks for the description, and does not ask for the website", ()
     );
   });
 
+  it("assigns the fallback website question to step 2", () => {
+    expect(STEP_FIELDS.company).not.toContain("companyWebsite");
+    expect(STEP_FIELDS.role).toContain("companyWebsite");
+  });
+
   it("does not block step 1 on the website", () => {
     // The field is not on screen there any more, so failing step 1 on it would
     // stop the client on something they were never shown.
