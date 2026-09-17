@@ -94,7 +94,7 @@ export type IntakeReview = {
 const FIELD_META: Record<string, { label: string; step: number; focusLabel: string | null }> = {
   roleTitle: { label: "Job title", step: 1, focusLabel: "Job title" },
   team: { label: "Team", step: 1, focusLabel: "Team" },
-  jobDescriptionText: { label: "Job description", step: 1, focusLabel: null },
+  jobDescriptionText: { label: "Job description", step: 0, focusLabel: null },
   requirements: { label: "What you need", step: 1, focusLabel: null },
   mustHaves: { label: "Must have", step: 1, focusLabel: null },
   niceToHaves: { label: "Nice to have", step: 1, focusLabel: null },
@@ -119,7 +119,7 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   decisionMakerEmail: { label: "Decision maker email", step: 2, focusLabel: "Their email" },
   dealBreakerList: { label: "Rules someone out", step: 2, focusLabel: null },
   companyName: { label: "Company", step: 0, focusLabel: "Company name" },
-  companyWebsite: { label: "Website", step: 0, focusLabel: "Company website" },
+  companyWebsite: { label: "Website", step: 1, focusLabel: "Company website" },
   companyLinkedin: { label: "Company LinkedIn", step: 0, focusLabel: "Company LinkedIn" },
   firstName: { label: "First name", step: 0, focusLabel: "First name" },
   lastName: { label: "Last name", step: 0, focusLabel: "Last name" },
@@ -139,7 +139,7 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
  * a stale extra title silently mislabels every group and sends "Edit the role"
  * to the wrong step.
  */
-const GROUP_TITLES = ["You and your company", "The role", "Details and confirm"];
+const GROUP_TITLES = ["You and the job description", "What we read", "Details and confirm"];
 
 function row(field: string, value: string): IntakeReviewRow | null {
   const meta = FIELD_META[field];

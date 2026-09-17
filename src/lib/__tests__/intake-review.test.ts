@@ -93,4 +93,20 @@ describe("intake review", () => {
     });
     expect(rows.find((x) => x.field === "decisionMaker")).toMatchObject({ step: 2 });
   });
+
+  it("sends reshuffled fields back to their current steps", () => {
+    const r = buildIntakeReview({
+      snapshot: {
+        ...EMPTY,
+        jobDescriptionText: "Lead the operations team.",
+        companyWebsite: "northwindhealth.com",
+      },
+      required: {},
+    });
+    const rows = r.groups.flatMap((g) => g.rows);
+
+    expect(rows.find((x) => x.field === "jobDescriptionText")).toMatchObject({ step: 0 });
+    expect(rows.find((x) => x.field === "companyWebsite")).toMatchObject({ step: 1 });
+    expect(r.groups.map((g) => g.title)).toEqual(["You and the job description", "What we read"]);
+  });
 });
