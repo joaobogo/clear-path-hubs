@@ -35,6 +35,23 @@ function HomeLink({
 
 
 /**
+ * The recovery link must not hand back the value that just failed.
+ *
+ * On a search-validation failure TanStack leaves the RAW query on the match,
+ * so `useSearch({ strict: false })` still returns the junk `?org=`. "Back to
+ * dashboard" then rebuilt the same broken URL and the page failed again — a
+ * loop with no way out but editing the address bar (audit 16 Sep, finding 10).
+ */
+const WORKSPACE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function workspaceLinkSearch(
+  search: Record<string, string | undefined>,
+): { org: string; preview: string | undefined } | undefined {
+  if (!search.org || !WORKSPACE_ID.test(search.org)) return undefined;
+  return { org: search.org, preview: search.preview };
+}
+
+/**
  * Section-level route error boundary. Any child route without its own
  * errorComponent lands here, so a failing page never blanks the workspace.
  * Copy tone follows the audience; technical detail stays in private logs.
@@ -44,7 +61,7 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
     const router = useRouter();
     const search = useSearch({ strict: false }) as Record<string, string | undefined>;
     const normalized = normalizeError(error, { tone });
-    const linkSearch = search.org ? { org: search.org, preview: search.preview } : undefined;
+    const linkSearch = workspaceLinkSearch(search);
 
     useEffect(() => {
       logTechnical(error, normalized, { surface });
@@ -111,7 +128,7 @@ export function makeRouteNotFoundComponent(tone: AudienceTone) {
   return function RouteNotFound() {
     const search = useSearch({ strict: false }) as Record<string, string | undefined>;
     const normalized = normalizeError({ status: 404 }, { tone });
-    const linkSearch = search.org ? { org: search.org, preview: search.preview } : undefined;
+    const linkSearch = workspaceLinkSearch(search);
 
     const params = useParams({ strict: false }) as Record<string, string | undefined>;
     const identifier = Object.values(params ?? {}).find(

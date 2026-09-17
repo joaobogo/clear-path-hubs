@@ -17,6 +17,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getWorkspaceTimezone, setWorkspaceTimezone } from "@/lib/format/datetime";
 import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getActiveSupportSession } from "@/lib/support-audit.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,19 +55,35 @@ import { OrgSwitcher } from "@/components/workspace/org-switcher";
 import { EmptyState, PermissionDenied } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 
-const emptyToUndef = (v: unknown) => (v === "" ? undefined : v);
+/**
+ * A bad workspace id in the URL is a bad LINK, not a page failure.
+ *
+ * This was a bare zod object, so a malformed `?org=` threw out of
+ * `validateSearch`. TanStack wraps that as a SearchParamError whose message is
+ * the raw zod JSON, the error taxonomy sees the word "validation" in it, and
+ * the client workspace rendered a FORM error — "Some details need fixing /
+ * Check the highlighted fields. Everything you typed was kept." — on a page
+ * with no form and nothing typed (audit 16 Sep, finding 10). `/client` is the
+ * layout for every `/client/*` page, so one junk query string took out the
+ * whole subtree.
+ *
+ * `fallback()` is the form the eleven sibling routes already use: an
+ * unparseable field is dropped and the page loads on the caller's own active
+ * workspace. Per field, deliberately — an object-level `.catch({})` would
+ * throw away a VALID org because `preview` was junk.
+ */
 const searchSchema = z.object({
- org: z.preprocess(emptyToUndef, z.string().uuid().optional()),
- preview: z.preprocess(
- emptyToUndef,
+ org: fallback(z.string().uuid().optional(), undefined),
+ preview: fallback(
  z.enum(["client_admin", "client_editor", "client_viewer"]).optional(),
+ undefined,
  ),
 });
 
 export const Route = createFileRoute("/_authenticated/client")({
   errorComponent: makeRouteErrorComponent("client", "/_authenticated/client"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
-  validateSearch: searchSchema,
+  validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
       { title: "Client workspace" },
