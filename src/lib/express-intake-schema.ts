@@ -865,7 +865,6 @@ export const INTAKE_TOTAL_MINUTES = INTAKE_STEPS.reduce((sum, s) => sum + s.minu
 export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
   company: [
     "companyName",
-    "companyWebsite",
     // The job description is asked on step 1 now: it is what the rest of the
     // brief is read out of, so asking for it later meant every field it could
     // have filled was typed by hand first (audit 15 Sep, INT-001).
@@ -884,6 +883,7 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
   ],
   role: [
     "roleTitle",
+    "companyWebsite",
     "team",
     "requirements",
     "mustHaves",
