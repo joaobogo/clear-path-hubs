@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -17,8 +18,16 @@ import { supabase } from "@/integrations/supabase/client";
  * The `membership` case offers an explicit "Sign out and switch account"
  * button instead.
  */
+// A bad or stale value in the URL is a bad LINK, not a rejected form. A bare
+// zod schema THROWS out of validateSearch, and the router wraps that as an
+// error whose message is raw zod JSON — which the taxonomy reads as
+// "validation" and renders as form-submission copy on a page with no form
+// (audit 17 Sep, item 1). fallback() drops the offending field instead.
 const searchSchema = z.object({
-  reason: z.enum(["membership", "organization", "permission", "unavailable"]).optional(),
+  reason: fallback(
+    z.enum(["membership", "organization", "permission", "unavailable"]).optional(),
+    undefined,
+  ),
 });
 
 const ACCESS_DENIED_DESCRIPTION =
@@ -26,7 +35,7 @@ const ACCESS_DENIED_DESCRIPTION =
 
 export const Route = createFileRoute("/access-denied")({
   ssr: false,
-  validateSearch: searchSchema,
+  validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
       { title: "Access denied — TaaSFlow" },

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { FormShell } from "@/components/marketing/form-shell";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,10 +28,12 @@ import { PrivacySummaryNote } from "@/components/candidate/candidate-notes";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
-const searchSchema = z.object({ ref: z.string().optional() });
+// fallback() rather than a bare schema: a bare one THROWS, and the router
+// renders that as form-submission copy on a page with no form (audit 17 Sep).
+const searchSchema = z.object({ ref: fallback(z.string().optional(), undefined) });
 
 export const Route = createFileRoute("/apply/status")({
-  validateSearch: searchSchema,
+  validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
       { title: "Check your application status · TaaSFlow" },

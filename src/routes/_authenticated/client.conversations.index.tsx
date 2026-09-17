@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -27,12 +28,14 @@ const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "
 export const Route = createFileRoute("/_authenticated/client/conversations/")({
 	pendingMs: 150,
 	pendingComponent: RoutePending,
-  validateSearch: z.object({
-    org: z.string().uuid().optional(),
-    box: z.string().optional(),
-    view: z.string().optional(),
-    filter: z.string().optional(),
-  }),
+  validateSearch: zodValidator(
+    z.object({
+      org: fallback(z.string().uuid().optional(), undefined),
+      box: fallback(z.string().optional(), undefined),
+      view: fallback(z.string().optional(), undefined),
+      filter: fallback(z.string().optional(), undefined),
+    }),
+  ),
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.conversations.index.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({

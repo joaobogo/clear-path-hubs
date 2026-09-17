@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { FormShell } from "@/components/marketing/form-shell";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BLUEPRINT_STAGES } from "@/lib/express-intake-schema";
@@ -10,8 +11,13 @@ import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment
 import { buildDeliveryCommitment, type StoredCommitment } from "@/lib/delivery-commitment";
 import { KickoffBookingCard } from "@/components/booking/kickoff-booking-card";
 
+// A bad or stale value in the URL is a bad LINK, not a rejected form. A bare
+// zod schema THROWS out of validateSearch, and the router wraps that as an
+// error whose message is raw zod JSON — which the taxonomy reads as
+// "validation" and renders as form-submission copy on a page with no form
+// (audit 17 Sep, item 1). fallback() drops the offending field instead.
 const searchSchema = z.object({
-  intake_id: z.string().uuid().optional(),
+  intake_id: fallback(z.string().uuid().optional(), undefined),
 });
 
 type StatusBody = {
@@ -30,7 +36,7 @@ type StatusBody = {
 };
 
 export const Route = createFileRoute("/intake_/confirmation")({
-  validateSearch: (s) => searchSchema.parse(s),
+  validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
       { title: "Preparing your role — TaaSFlow" },

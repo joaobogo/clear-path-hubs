@@ -15,6 +15,7 @@ import { toastError } from "@/lib/toast-error";
 import { FieldError } from "@/components/ui/field-error";
 import { collectErrors, emailText, requiredText } from "@/lib/form-validation";
 import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Eye, EyeOff } from "lucide-react";
 import {
   getSessionContext,
@@ -31,7 +32,12 @@ import {
 
 import { sanitizeRedirect } from "@/lib/safe-redirect";
 
-const searchSchema = z.object({ redirect: z.string().optional(), reason: z.string().optional() });
+// fallback() rather than a bare schema: a bare one THROWS, and the router
+// renders that as form-submission copy on a page with no form (audit 17 Sep).
+const searchSchema = z.object({
+  redirect: fallback(z.string().optional(), undefined),
+  reason: fallback(z.string().optional(), undefined),
+});
 
 const QA_DISABLED = { enabled: false, personas: [] as Array<{ key: Persona; label: string }> };
 type Persona =
@@ -42,7 +48,7 @@ type Persona =
   | "client_viewer";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: searchSchema,
+  validateSearch: zodValidator(searchSchema),
   ssr: false,
   // No loader here on purpose. The QA persona list is a convenience and is
   // fetched from the component after mount, so a slow or unauthorised call can

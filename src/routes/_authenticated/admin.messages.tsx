@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tansta
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { listAllConversations, getConversation } from "@/lib/conversations.functions";
@@ -36,12 +37,17 @@ import {
   X,
 } from "lucide-react";
 
+// A bad or stale value in the URL is a bad LINK, not a rejected form. A bare
+// zod schema THROWS out of validateSearch, and the router wraps that as an
+// error whose message is raw zod JSON — which the taxonomy reads as
+// "validation" and renders as form-submission copy on a page with no form
+// (audit 17 Sep, item 1). fallback() drops the offending field instead.
 const searchSchema = z.object({
-  conversationId: z.string().uuid().optional(),
+  conversationId: fallback(z.string().uuid().optional(), undefined),
 });
 
 export const Route = createFileRoute("/_authenticated/admin/messages")({
-  validateSearch: searchSchema,
+  validateSearch: zodValidator(searchSchema),
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.ensureQueryData({
