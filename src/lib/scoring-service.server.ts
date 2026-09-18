@@ -634,12 +634,25 @@ export async function executeScoring(
     await releaseLock(s, matchId, finalState, trace_id);
     await recordJob(s, matchId, "completed", trace_id, 1);
 
-    // A fresh run describes today's facts: the staleness record is cleared so
-    // no surface keeps warning about a change that has now been accounted for.
-    if (!reused) {
-      const { clearScoreStaleness } = await import("./scoring/freshness-reconcile.server");
-      await clearScoreStaleness(matchId);
-    }
+    // A completed run describes today's facts: the staleness record is cleared
+    // so no surface keeps warning about a change that has now been accounted
+    // for.
+    //
+    // This covers the `reused` branch as well, and must. Reuse is only taken
+    // when input_hash AND rubric_version_id both match an active completed run
+    // — and computeInputHash covers engine_version, calibration_version,
+    // cv_text, requirements and screening. Identical on all of those plus the
+    // same governing rubric means the stored number IS the current answer.
+    //
+    // Skipping the clear here is why a match flagged stale for a reason that
+    // does not move input_hash — `evidence_changed`
+    // (evidence/completeness.functions.ts) or `evidence_refreshed`
+    // (pipeline-runner.server.ts) — could never leave the stale set: the
+    // nightly reconciler re-queued it, the drain re-ran it, scoring reused the
+    // run, the flag survived, and the loop repeated every 6h forever
+    // (TF-A-025).
+    const { clearScoreStaleness } = await import("./scoring/freshness-reconcile.server");
+    await clearScoreStaleness(matchId);
 
     return {
       ok: true, run_id: runId, match_id: matchId, trace_id,

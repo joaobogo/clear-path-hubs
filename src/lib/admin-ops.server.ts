@@ -665,6 +665,27 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       label: "Client messages to answer",
       description: "A client wrote and nobody on the team has replied yet.",
       count: clientMessages.length,
+      // A bare count reads the same on day one and on day fifteen: a client
+      // question sat unanswered for 15 days behind a tile that said "1"
+      // (audit TF-A-039). How long the oldest one has waited is what decides
+      // whether this queue is fine or embarrassing, so it rides in the badge —
+      // the same way intake aging, interviews and stale scores surface theirs.
+      // `unreadMsgs` is ordered created_at ascending and the per-conversation
+      // dedupe keeps the first row, so clientMessages[0] IS the oldest
+      // unanswered message. No additional query.
+      secondary_badge: (() => {
+        const oldest = clientMessages[0]?.created_at as string | undefined;
+        if (!oldest) return null;
+        const ms = Date.now() - new Date(oldest).getTime();
+        // An unreadable timestamp is not "fresh" — say nothing rather than
+        // print a reassuring figure we cannot stand behind.
+        if (!Number.isFinite(ms)) return null;
+        const days = Math.floor(ms / DAY);
+        return {
+          label: days >= 1 ? `oldest waiting ${days}d` : "oldest waiting under a day",
+          tone: ageTone(oldest, 1, 2),
+        };
+      })(),
       action_hint: "Open the thread and reply — they are waiting on us.",
       see_all: { to: "/admin/messages" },
       items: clientMessages.slice(0, 8).map((m) => ({

@@ -1,6 +1,4 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { SectionTabs } from "@/components/workspace/section-tabs";
-import { Building2, Briefcase, UserCheck, ClipboardCheck, ShieldCheck } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -56,26 +54,6 @@ function NewClientPage() {
     onError: (e: Error) => toastError(e),
   });
 
-  const sectionGroups = [
-    {
-      id: "command",
-      label: "Command",
-      tabs: [{ to: "/admin" as any, label: "Overview", exact: true }],
-    },
-    {
-      id: "delivery",
-      label: "Delivery",
-      tabs: [
-        { to: "/admin/intake" as any, label: "Intake" },
-        { to: "/admin/clients" as any, label: "Clients" },
-        { to: "/admin/positions" as any, label: "Positions" },
-        { to: "/admin/candidates" as any, label: "Candidates" },
-        { to: "/admin/publish" as any, label: "Publish desk" },
-        { to: "/admin/decision-backlog" as any, label: "Decision backlog" },
-      ],
-    },
-  ];
-
   return (
     <div className="space-y-6">
       <div className="border-b bg-card px-6 py-4">
@@ -84,10 +62,6 @@ function NewClientPage() {
           <span>/</span>
           <span className="text-foreground font-medium">New</span>
         </div>
-      </div>
-
-      <div className="px-6">
-        <SectionTabs groups={sectionGroups} />
       </div>
 
       <div className="mx-auto max-w-3xl px-6 pb-8 space-y-6">
@@ -114,6 +88,33 @@ function NewClientPageContent({
   mut, 
   navigate 
 }: any) {
+  // One source of truth for what each required field checks, so the submit
+  // pass and the as-you-type recheck can never disagree.
+  const VALIDATORS: Record<string, (value: string) => string | null> = {
+    company_name: (v) => requiredText(v),
+    primary_contact_name: (v) => requiredText(v),
+    primary_contact_email: (v) => emailText(v),
+  };
+  // A field that is already showing an error rechecks itself on every
+  // keystroke, so a corrected field stops reading as invalid — and stops
+  // reporting aria-invalid to a screen reader — immediately, instead of
+  // carrying a stale message until the next submit. Fields that have never
+  // failed stay silent, so nothing shouts at a half-typed value.
+  const setField = (name: string, value: string) => {
+    setForm({ ...form, [name]: value });
+    const check = VALIDATORS[name];
+    if (!check) return;
+    setErrors((prev: Record<string, string>) => {
+      if (!prev[name]) return prev;
+      const message = check(value);
+      if (message === prev[name]) return prev;
+      const next = { ...prev };
+      if (message) next[name] = message;
+      else delete next[name];
+      return next;
+    });
+  };
+
   return (
     <div className="space-y-6">
       <header>
@@ -132,9 +133,9 @@ function NewClientPageContent({
           onSubmit={(e) => {
             e.preventDefault();
             const next = collectErrors({
-              company_name: requiredText(form.company_name),
-              primary_contact_name: requiredText(form.primary_contact_name),
-              primary_contact_email: emailText(form.primary_contact_email),
+              company_name: VALIDATORS.company_name(form.company_name),
+              primary_contact_name: VALIDATORS.primary_contact_name(form.primary_contact_name),
+              primary_contact_email: VALIDATORS.primary_contact_email(form.primary_contact_email),
             });
             setErrors(next);
             if (Object.keys(next).length > 0) return;
@@ -147,7 +148,7 @@ function NewClientPageContent({
               id="company_name"
               aria-invalid={!!errors.company_name}
               value={form.company_name}
-              onChange={(e) => setForm({ ...form, company_name: e.target.value })}
+              onChange={(e) => setField("company_name", e.target.value)}
             />
             <FieldError message={errors.company_name} />
           </div>
@@ -157,7 +158,7 @@ function NewClientPageContent({
               id="primary_contact_name"
               aria-invalid={!!errors.primary_contact_name}
               value={form.primary_contact_name}
-              onChange={(e) => setForm({ ...form, primary_contact_name: e.target.value })}
+              onChange={(e) => setField("primary_contact_name", e.target.value)}
             />
             <FieldError message={errors.primary_contact_name} />
           </div>
@@ -168,7 +169,7 @@ function NewClientPageContent({
               type="email"
               aria-invalid={!!errors.primary_contact_email}
               value={form.primary_contact_email}
-              onChange={(e) => setForm({ ...form, primary_contact_email: e.target.value })}
+              onChange={(e) => setField("primary_contact_email", e.target.value)}
             />
             <FieldError message={errors.primary_contact_email} />
           </div>

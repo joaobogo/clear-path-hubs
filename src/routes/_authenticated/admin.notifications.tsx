@@ -50,10 +50,11 @@ function NotificationsPage() {
     | null
     | undefined;
   const volume = query.data?.volume as
-    | { emailSent: number; inAppDelivered: number }
+    | { emailSent: number | null; inAppDelivered: number }
     | undefined;
 
-  const num = (value: number | undefined) =>
+  // `null` means "we could not find out", and it must render "—", not "0".
+  const num = (value: number | null | undefined) =>
     query.data && typeof value === "number" ? value.toLocaleString(APP_LOCALE) : "—";
 
   const tiles = [

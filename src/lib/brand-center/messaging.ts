@@ -11,7 +11,7 @@ export const IDENTITY = {
   brandId: "taasflow",
   name: "TaaSFlow",
   legalNote:
-    "Use “TaaSFlow” in running copy. Capitalisation is fixed: capital T, lower a, lower a, capital S, capital F. Never “TaaSFlow”, “TAASflow” or “Taas Flow”.",
+    "Use “TaaSFlow” in running copy. Capitalisation is fixed: capital T, lower a, lower a, capital S, capital F. Never “Taasflow”, “TAASflow” or “Taas Flow”.",
   category: "Recruiting subscription, ATS/workspace, and Talent as a Service.",
   promise: "Your whole hiring stack, all in one.",
   tagline: "ATS + recruiting + outreach.",

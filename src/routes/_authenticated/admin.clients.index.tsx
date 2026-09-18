@@ -198,6 +198,12 @@ function ClientsPage() {
       listClients({
         data: {
           include_test: includeTest,
+          // Ask for every organisation and let the archived filtering below do its
+          // documented job. Omitting `status` took the server default "active",
+          // which drops archived orgs that have no open roles (admin.functions.ts
+          // :421,:531) — so "Include archived" and the search-includes-archived
+          // rule at lines 268-272 filtered over rows the server had removed.
+          status: "all",
           sort: isSort(search.sort) ? search.sort : "activity_desc",
         },
       }),
@@ -222,12 +228,13 @@ function ClientsPage() {
     return t;
   }, [search.org_type, includeTest]);
 
-  // Redirect an invalid QA/Internal URL when the toggle hides test records.
-  useEffect(() => {
-    if (!includeTest && (search.org_type === "qa" || search.org_type === "internal")) {
-      navigate({ search: { ...search, org_type: "client_demo", page: 1 } });
-    }
-  }, [includeTest, search.org_type, navigate, search]);
+  // No URL rewrite for a QA/Internal org_type when test records are hidden.
+  // AdminTestScopeProvider reports includeTest:false until its preference query
+  // resolves AND the hydration flag flips (admin-test-scope.tsx:62), so this
+  // effect fired on the first committed render of every page load and
+  // permanently rewrote ?org_type=qa back to client_demo even with the toggle
+  // on. `effectiveOrgType` above already falls back for filtering, which is all
+  // this needed to do, and it re-evaluates once the preference arrives.
 
   const filtered = useMemo(() => {
     const raw = (data?.items ?? []) as ClientRow[];
@@ -466,7 +473,7 @@ function ClientsPage() {
           </Select>
 
           <Select
-            value={search.org_type || "client_demo"}
+            value={effectiveOrgType}
             onValueChange={(v) => navigate({ search: { ...search, org_type: v, page: 1 } })}
           >
             <SelectTrigger className="w-36" data-qa-action="clients-filter-type">

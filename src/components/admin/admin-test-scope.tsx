@@ -35,7 +35,10 @@ const TestScopeContext = createContext<AdminTestScope>(HIDDEN);
 export function AdminTestScopeProvider({ children }: { children: ReactNode }) {
   const fetchScope = useServerFn(getTestScopeState);
   const { data } = useQuery({
-    queryKey: ["admin-test-scope"],
+    // Must stay identical to TEST_SCOPE_QUERY_KEY in test-records-toggle.tsx: two
+    // keys for one preference meant the switch's optimistic setQueryData moved the
+    // switch but not this context, so lists refetched with the stale flag.
+    queryKey: ["admin", "test-scope"],
     queryFn: () => fetchScope(),
     staleTime: 60_000,
     retry: 1,

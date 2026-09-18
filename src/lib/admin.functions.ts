@@ -2770,11 +2770,23 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
       if (!adminApproved && r.admin_status !== "on_hold") {
         // Same as above: pending review is the queue, not a fault. It also
         // printed the raw status token straight into the reason.
-        pendingDecision.push(
-          r.admin_status && r.admin_status !== "pending"
-            ? `Admin review: ${humanizeCode(String(r.admin_status))}`
-            : "Waiting for an admin decision",
-        );
+        const namedStatus = Boolean(r.admin_status) && r.admin_status !== "pending";
+        // One missing decision is ONE reason. The scored branch above already
+        // pushed "Scored — waiting for an admin decision" for exactly this
+        // candidate — scored, unapproved, status pending — and adding the bare
+        // line underneath made the publish desk read "Blocked — 2 reasons" and
+        // then print the same fact twice (audit TF-A-016). Guarded on the
+        // CONDITIONS, not on the copy, so rewording either line cannot bring
+        // the duplicate back. A named status (rejected, needs_info) is a
+        // different fact and still gets its own line.
+        const alreadyStated = !namedStatus && hasCurrentScore && !approved;
+        if (!alreadyStated) {
+          pendingDecision.push(
+            namedStatus
+              ? `Admin review: ${humanizeCode(String(r.admin_status))}`
+              : "Waiting for an admin decision",
+          );
+        }
       }
 
       // Organization / position / identity bindings

@@ -29,7 +29,11 @@ async function loadPosition(positionId: string) {
   const s = await getAdmin();
   const { data: pos } = await s
     .from("positions")
-    .select("id,organization_id,title,status")
+    // The audit trail diffs before_state against after_state, and after_state is
+    // the full row (select("*")). A four-column before made every other column
+    // look newly set — ~75 bogus "field changes" on every brief save, which is
+    // what the "…and N more field changes" tail was counting.
+    .select("*")
     .eq("id", positionId)
     .maybeSingle();
   if (!pos) throw new Error("position_not_found");
@@ -468,7 +472,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     // Preserve unknown intake_context/compensation/work_authorization fields
     const { data: existing } = await s
       .from("positions")
-      .select("intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers")
+      .select("intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers,location")
       .eq("id", data.id)
       .maybeSingle();
     const priorCtx = (existing?.intake_context ?? {}) as AnyRow;
@@ -487,11 +491,22 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       });
     };
     const priorBrief = (priorCtx.brief ?? {}) as AnyRow;
+    // Step 3 owns positions.location: saveRequisitionMeta mirrors the primary
+    // structured location (position_locations) into this column. Step 1 has had
+    // no location input since locations moved to step 3, so `data.location` is
+    // only ever a stale echo of whatever was loaded, and writing it back blanked
+    // a location the user had just saved. That is how the role-page banner
+    // ("Ready to submit", computed from position_locations by assessJobQuality)
+    // and the Publish desk ("Location missing", computed from this column by
+    // evaluatePublishGate) ended up disagreeing about the same role. Fall back to
+    // the wizard value only when the column is empty, so a legacy role whose
+    // location lives in intake_context still gets backfilled on save.
+    const nextLocation = (existing?.location as string | null) || data.location || null;
 
     const patch: AnyRow = {
       title: data.title,
       department: data.department || null,
-      location: data.location || null,
+      location: nextLocation,
       work_model: data.work_model,
       employment_type: data.employment_type || null,
       seniority: data.seniority || null,
@@ -537,7 +552,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
           ...priorBrief,
           roleTitle: data.title,
           team: data.department || "",
-          location: data.location || "",
+          location: nextLocation ?? "",
           workModel: data.work_model,
           employmentType: data.employment_type || "",
           seniority: data.seniority || "",

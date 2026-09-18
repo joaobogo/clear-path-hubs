@@ -11,7 +11,7 @@ import {
   DIAGNOSABLE_STAGES,
   MIN_COMPARABLE_ROLES,
   diagnoseBottleneck,
-  median,
+  sampleHonestMedian,
   stageDurations,
   type BottleneckDiagnosis,
   type StageTransition,
@@ -143,7 +143,13 @@ export async function loadPositionBottleneck(
         nowMs,
       );
       for (const stage of DIAGNOSABLE_STAGES) {
-        orgMedians.set(stage, median(durations.get(stage) ?? []));
+        // Same guard as the role's own column. MIN_COMPARABLE_ROLES gates how
+        // many closed ROLES exist, not how many candidates actually passed
+        // through this stage across them — three closed roles that touched
+        // Offer once between them still produced a comparison number. Without
+        // this, suppressing the left column just moves the unsupported figure
+        // one cell right: "— vs 7".
+        orgMedians.set(stage, sampleHonestMedian(durations.get(stage) ?? []));
       }
     }
   }

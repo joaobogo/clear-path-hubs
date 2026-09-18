@@ -693,18 +693,31 @@ export async function loadDeliveryHealth(admin: Admin) {
     counts[k] = (counts[k] ?? 0) + 1;
   }
 
-  // Sent volume is not derivable from the failure ledger, so read it from the
-  // delivery table directly over the same window.
+  // In-app delivery is recorded only in our own ledger
+  // (notifications.functions.ts:271), so it is counted here. Email is NOT:
+  // application confirmations, lead alerts, weekly digests, team invites,
+  // closure notices, interview reminders, intake mail and receipts all send
+  // through sendTemplateEmail (email-templates/send-email.ts) and never write
+  // a notification_deliveries row. Counting the ledger made this tile read
+  // "Emails sent (7d): 0" while the provider log on /admin/health listed
+  // dozens of sends in the same window (audit TF-A-027).
+  //
+  // `emailSent` is left UNKNOWN here and filled in from the provider log by
+  // getDeliveryFailureMetric, the only caller that renders it. The other
+  // caller — admin.functions.ts:172, the /admin work queue — reads
+  // summary.retryable only and must not pay for a provider round-trip.
   const since = new Date(Date.now() - failures.windowDays * 86_400_000).toISOString();
-  const volume = { emailSent: 0, inAppDelivered: 0 };
+  const volume: { emailSent: number | null; inAppDelivered: number } = {
+    emailSent: null,
+    inAppDelivered: 0,
+  };
   const { data: sentRows } = await admin
     .from("notification_deliveries")
     .select("channel, status")
     .gte("created_at", since)
     .in("status", ["provider_accepted", "delivered"]);
   for (const row of (sentRows ?? []) as Array<{ channel: string; status: string }>) {
-    if (row.channel === "email") volume.emailSent += 1;
-    else if (row.channel === "in_app") volume.inAppDelivered += 1;
+    if (row.channel === "in_app") volume.inAppDelivered += 1;
   }
 
   const cfg = readEmailConfig();
@@ -719,4 +732,47 @@ export async function loadDeliveryHealth(admin: Admin) {
     // Never expose keys — only whether a provider is usable and why not.
     email: { configured: cfg.configured, reason: cfg.reason },
   };
+}
+
+/**
+ * How many emails the PROVIDER accepted over this module's window.
+ *
+ * Deliberately NOT part of loadDeliveryHealth: that function is also on the
+ * /admin work-queue path (admin.functions.ts:172), which reads
+ * summary.retryable only. A provider round-trip belongs to the one surface
+ * that renders the figure.
+ *
+ * Returns null, never 0, when the provider cannot be read — unknown is not
+ * zero, and the tile renders "—".
+ */
+export async function loadEmailSentVolume(
+  windowDays: number = WINDOW_DAYS,
+): Promise<number | null> {
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) return null;
+  const since = new Date(Date.now() - windowDays * 86_400_000).toISOString();
+  try {
+    const { listEmailLogs } = await import("@lovable.dev/email-js");
+    let cursor: string | undefined;
+    let sent = 0;
+    // The provider pages at 100; walk the window so a busy week is not
+    // silently truncated to "100 sends". Bounded so a stuck cursor cannot spin.
+    for (let page = 0; page < 10; page += 1) {
+      const log = await listEmailLogs(
+        { since, limit: 100, ...(cursor ? { cursor } : {}) },
+        { apiKey },
+      );
+      // "sent" ONLY — the same event the integration probe counts
+      // (integration-health.server.ts:329). Also counting "delivered" would
+      // double every message for which the provider emits both.
+      for (const event of log.data ?? []) if (event.event_type === "sent") sent += 1;
+      const next = log.pagination?.next_cursor;
+      if (!log.pagination?.has_more || !next) break;
+      cursor = next;
+    }
+    return sent;
+  } catch (err) {
+    console.error("[loadEmailSentVolume] email log unavailable", err);
+    return null;
+  }
 }

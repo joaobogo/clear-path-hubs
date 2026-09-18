@@ -48,6 +48,7 @@ import {
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
 import { OwnershipCoveragePanel } from "@/components/admin/ownership-coverage-panel";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
+import { canonicalLocation } from "@/lib/jobs/location-format";
 
 
 const searchSchema = z.object({
@@ -538,7 +539,10 @@ function PositionsPage() {
                       )}
                     </td>
                     <td className="min-w-[8rem] px-4 py-3 text-muted-foreground">
-                      {p.location ?? "—"}
+                      {/* One shape for every row: canonicalLocation rebuilds
+                          "City, Country" from whatever was stored, resolving
+                          country codes and never mixing a code with a name. */}
+                      {canonicalLocation(p.location) || "—"}
                     </td>
                     <td className="px-4 py-3">
                       <Badge className={cn("whitespace-nowrap", STATUS_COLOR[p.status] ?? "bg-muted")}>
@@ -621,10 +625,10 @@ function PositionsPage() {
                         <Building2 className="h-3 w-3" />
                         {p.organizations?.name ?? "—"}
                       </span>
-                      {p.location && (
+                      {canonicalLocation(p.location) && (
                         <span className="inline-flex items-center gap-1">
                           <MapPin className="h-3 w-3" />
-                          {p.location}
+                          {canonicalLocation(p.location)}
                         </span>
                       )}
                     </div>

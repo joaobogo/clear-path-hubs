@@ -16,8 +16,14 @@ export const getDeliveryFailureMetric = createServerFn({ method: "GET" })
     const { assertPlatformStaff } = await import("./authz.server");
     await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { loadDeliveryHealth } = await import("./notification-failures.server");
-    return loadDeliveryHealth(supabaseAdmin);
+    const { loadDeliveryHealth, loadEmailSentVolume } = await import(
+      "./notification-failures.server"
+    );
+    const health = await loadDeliveryHealth(supabaseAdmin);
+    // Only /admin/notifications renders the volume tiles, so only this call
+    // path reads the provider log. Same window as the rest of the payload.
+    const emailSent = await loadEmailSentVolume(health.windowDays);
+    return { ...health, volume: { ...health.volume, emailSent } };
   });
 
 /** @deprecated Use getDeliveryFailureMetric — same payload, same cache key. */

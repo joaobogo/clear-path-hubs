@@ -35,7 +35,7 @@ import {
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AdminScoreNumber } from "@/components/admin/admin-score-number";
+import { AdminScoreNumber, runApprovalLabel } from "@/components/admin/admin-score-number";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
 import { isNearDuplicate } from "@/lib/evidence/evidence-presentation";
@@ -766,7 +766,12 @@ export function ScoreTab({
           </span>
         </div>
         {/* Staff-only number: always with its confidence and rubric version. */}
-        <AdminScoreNumber run={currentRun} size="lg" className="mt-4" />
+        <AdminScoreNumber
+          run={currentRun}
+          size="lg"
+          className="mt-4"
+          runLabel={runApprovalLabel(currentRun, match)}
+        />
         {/* This tab shows the LATEST run; the header, the list and the client
             all show the APPROVED one. That is deliberate — a client must never
             see a number no human approved — but with both on screen and

@@ -13,6 +13,7 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { formatDate } from "@/lib/format/datetime";
+import { waitingFor } from "@/lib/candidate-next-action";
 
 type Admin = SupabaseClient<never, never, never>;
 
@@ -298,6 +299,8 @@ export async function loadSlaBreaches(
     let worst: {
       overMs: number;
       dueMs: number;
+      /** The instant the clock stopped — slots offered, or now. */
+      endMs: number;
       actualHours: number;
       requestedAt: string;
       responded: boolean;
@@ -318,6 +321,7 @@ export async function loadSlaBreaches(
       const candidate = {
         overMs: endMs - dueMs,
         dueMs,
+        endMs,
         actualHours: (endMs - requestedMs) / HOUR,
         requestedAt,
         responded: Boolean(respondedAtRaw),
@@ -332,7 +336,11 @@ export async function loadSlaBreaches(
         target_unit: "hours",
         target_label: `${slotHours}h`,
         actual_value: Math.round(worst.actualHours * 10) / 10,
-        actual_label: `${num(worst.actualHours)}h${worst.responded ? "" : " (still open)"}`,
+        // "556.8h" is a machine reading nobody converts in their head. The
+        // same humanised wait the next-action bar shows ("23d 4h") is used
+        // here. actual_value below stays in hours, unchanged, so the maths and
+        // the unit comparison against target_value are untouched.
+        actual_label: `${waitingFor(worst.requestedAt, worst.endMs) ?? `${num(worst.actualHours)}h`}${worst.responded ? "" : " (still open)"}`,
         days_over: daysOver(worst.dueMs, nowMs),
         first_breach_at: new Date(worst.dueMs).toISOString(),
         basis: `Interview requested ${formatDate(worst.requestedAt)}, slots ${worst.responded ? "offered late" : "not offered yet"} against a ${slotHours}h promise`,

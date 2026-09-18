@@ -2,7 +2,7 @@
 // Three steps: Requisition → Candidate profile & gates → Locations.
 // Job-post personalisation lives on the publish flow, not here.
 import * as React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   SCREENING_MAX_QUESTIONS,
   screeningTopicIssue,
@@ -350,6 +350,25 @@ export function PositionEditWizard({
     onError: (e) => toastError(e, { fallback: "Save failed" }),
   });
 
+  // Step 3 used to show two adjacent primary saves with overlapping scope
+  // ("Save locations and priorities" in the card footer, "Save role brief" in
+  // the page footer). The brief save writes the position row without touching
+  // the structured locations, so a user who added a location and then clicked
+  // the page-footer button lost it, and clicking both in quick succession raced
+  // two mutations against the same row. RequisitionEditor now hands its save up
+  // here, so step 3 has one control that runs both, in order, never concurrently.
+  const reqSaveRef = useRef<(() => Promise<unknown>) | null>(null);
+  const stepSaveMutation = useMutation({
+    mutationFn: async () => {
+      // Locations first: saveRequisitionMeta mirrors the primary location onto
+      // the position row, so the brief save must not run before it.
+      if (reqDirty && reqSaveRef.current) await reqSaveRef.current();
+      if (contentDirty) await saveMutation.mutateAsync();
+    },
+    // Both inner mutations already surface their own failure toast; an onError
+    // here would show the same error twice.
+  });
+
   const progress = useMemo(() => Math.round(((step - 1) / (STEPS.length - 1)) * 100), [step]);
 
   // Focus the first offending field, but only right after a submit attempt —
@@ -404,7 +423,10 @@ export function PositionEditWizard({
   const lifecycleFn = useServerFn(setPositionLifecycle);
   const submitMutation = useMutation({
     mutationFn: async () => {
-      if (contentDirty || reqDirty) await saveMutation.mutateAsync();
+      // reqDirty used to trigger a brief save, which does not write locations at
+      // all — unsaved location edits were silently dropped on submit.
+      if (reqDirty && reqSaveRef.current) await reqSaveRef.current();
+      if (contentDirty) await saveMutation.mutateAsync();
       return lifecycleFn({ data: { positionId: state.id, action: "submit" } });
     },
     onSuccess: async () => {
@@ -1120,6 +1142,7 @@ export function PositionEditWizard({
                 <RequisitionEditor
                   positionId={state.id}
                   onDirtyChange={setReqDirty}
+                  saveRef={reqSaveRef}
                   audience={audience}
                   openWorldwide={state.open_worldwide}
                   workModel={state.work_model}
@@ -1151,10 +1174,12 @@ export function PositionEditWizard({
                 <Button
                   type="button"
                   variant={canSubmit ? "outline" : "default"}
-                  onClick={() => saveMutation.mutate()}
-                  disabled={saveMutation.isPending || !contentDirty}
+                  onClick={() => stepSaveMutation.mutate()}
+                  disabled={stepSaveMutation.isPending || saveMutation.isPending || !dirty}
                 >
-                  {saveMutation.isPending ? "Saving…" : "Save role brief"}
+                  {stepSaveMutation.isPending || saveMutation.isPending
+                    ? "Saving…"
+                    : "Save this role"}
                 </Button>
                 {canSubmit && (
                   <Button

@@ -210,7 +210,20 @@ function AdminConversationsPage() {
                       <div className="min-w-0 flex-1">
                         <div className="flex min-w-0 items-center gap-2">
                           <span className="min-w-0 truncate text-sm font-medium">{t.organization_name}</span>
-                          <Badge variant="secondary" className="max-w-[120px] shrink-0 truncate">{t.subject}</Badge>
+                          {/* `truncate` on the Badge itself does nothing: Badge is
+                              inline-flex (src/components/ui/badge.tsx:7), so the
+                              text is an anonymous flex item and text-overflow —
+                              which is not inherited — falls back to `clip`. The
+                              subject was cut mid-word with no ellipsis. Truncate
+                              a real inner span instead, and carry the full
+                              subject in a title so it stays readable. */}
+                          <Badge
+                            variant="secondary"
+                            className="max-w-[120px] shrink-0 overflow-hidden"
+                            title={t.subject}
+                          >
+                            <span className="min-w-0 truncate">{t.subject}</span>
+                          </Badge>
                           {empty && <Badge variant="outline">empty</Badge>}
                         </div>
                         <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">

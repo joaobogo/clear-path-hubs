@@ -73,6 +73,29 @@ export function median(values: number[]): number | null {
     : (s[mid] as number);
 }
 
+/**
+ * Minimum stage passes before a median is reported at all.
+ *
+ * Same policy the milestone report states — below the threshold the figure is
+ * suppressed, not estimated — but a constant of its own, because that one is
+ * defined for completed milestone instances and retuning it must not silently
+ * retune these medians.
+ */
+export const MIN_STAGE_DURATION_SAMPLE = 5;
+
+/**
+ * A median only when the sample can support one.
+ *
+ * In/out/now are scoped to the 14-day flow window while these durations are
+ * all-time, so a stage one candidate passed through months ago rendered
+ * "Offer: IN 0 · OUT 0 · NOW 0 · MEDIAN DAYS 7" — a typical duration with
+ * almost nothing behind it, under a header that says "flow over the last 14
+ * days" (audit TF-A-029). The card already renders null as "—".
+ */
+export function sampleHonestMedian(values: number[]): number | null {
+  return values.length >= MIN_STAGE_DURATION_SAMPLE ? median(values) : null;
+}
+
 const DAY = 86_400_000;
 
 /**
@@ -147,7 +170,7 @@ export function diagnoseBottleneck(input: {
       exited,
       current,
       ratio: entered === 0 ? 0 : entered / Math.max(exited, 1),
-      median_days: median(durations.get(stage) ?? []),
+      median_days: sampleHonestMedian(durations.get(stage) ?? []),
       org_median_days: input.orgMedians.get(stage) ?? null,
     };
   });

@@ -74,13 +74,17 @@ export async function reconcileScoreFreshness(
 
     const now = new Date().toISOString();
     try {
-      await s.from("processing_jobs").insert({
-        entity_type: "candidate_match",
-        entity_id: row.id,
-        job_type: "rescore",
-        status: "queued",
-        trace_id,
-      });
+      // No processing_jobs row here — deliberately.
+      //
+      // The queue a rescore is actually drained from is
+      // candidate_matches.processing_state: drainQueue step 2 selects
+      // `ready_to_score` rows every two minutes, so the update below IS the
+      // enqueue. A processing_jobs{job_type:'rescore'} row had no consumer at
+      // all — drainApplicationJobs claims only parse_and_score/application —
+      // so reapUnconsumableJobs cancelled every one of them as `no_worker`
+      // thirty minutes later. The ledger reported a nightly batch of dead jobs
+      // for work that had in fact run (TF-A-025). The audit event below stays
+      // the durable record of what was queued and why.
       await s
         .from("candidate_matches")
         .update({ rescore_queued_at: now, processing_state: "ready_to_score" })

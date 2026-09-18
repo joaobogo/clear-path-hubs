@@ -319,7 +319,14 @@ async function checkEmail(): Promise<CheckResult> {
     };
   }
 
-  const items = ((run.value as { items?: { event_type?: string; status?: string }[] })?.items ??
+  // `.items` does not exist on ListEmailLogsResponse — it is `.data`
+  // (@lovable.dev/email-js/dist/index.d.ts). Reading `items` made this array
+  // permanently empty, so the empty-history branch below always fired and the
+  // probe could never report the provider's own counts. Harmless while the
+  // Notifications tile also read the ledger; the moment that tile reads the
+  // provider log, this probe would say "no send has been recorded yet" beside
+  // a tile saying 30 (audit TF-A-027). Not optional alongside the edits above.
+  const items = ((run.value as { data?: { event_type?: string; status?: string }[] })?.data ??
     []) as { event_type?: string; status?: string }[];
   const counts: Record<string, number> = {};
   for (const item of items) {

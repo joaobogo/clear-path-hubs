@@ -128,7 +128,8 @@ export function TestScopeIncludedNote({ className }: { className?: string }) {
     <p className={cls}>
       Including {s.excluded_orgs} test organisation
       {s.excluded_orgs === 1 ? "" : "s"} and {s.excluded_positions} test position
-      {s.excluded_positions === 1 ? "" : "s"}. Figures that do not move have none in scope.
+      {s.excluded_positions === 1 ? "" : "s"}. Any figure that did not change has no test
+      records in it.
     </p>
   );
 }

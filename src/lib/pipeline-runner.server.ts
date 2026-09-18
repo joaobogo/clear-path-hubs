@@ -943,12 +943,24 @@ export async function drainApplicationJobs(
         .eq("application_id", row.entity_id)
         .maybeSingle();
       if (!match) {
+        // No worker pass can conjure a candidate_match — the candidate record
+        // is gone. Landing on `failed` parked the job in /admin/health "Jobs in
+        // trouble" permanently, behind a Retry that resets attempts to 0 and
+        // re-queues it to fail again (audit TF-A-034). The attempts still run,
+        // because a match created moments after the application is a real
+        // race, but the TERMINAL state is `cancelled` — the same verdict the
+        // deleted-application branch above reaches — not a failure someone is
+        // expected to repair.
         const terminal = attempts >= JOB_MAX_ATTEMPTS;
-        await finishJob(s, row.id, terminal ? "failed" : "queued", {
+        await finishJob(s, row.id, terminal ? "cancelled" : "queued", {
           code: "match_missing",
-          message: `No candidate_match exists for application ${row.entity_id}.`,
+          message: `No candidate_match exists for application ${row.entity_id} — nothing left to process.`,
         });
-        out.push({ ...base, status: terminal ? "failed" : "skipped", error_code: "match_missing" });
+        out.push({
+          ...base,
+          status: terminal ? "cancelled" : "skipped",
+          error_code: "match_missing",
+        });
         continue;
       }
 

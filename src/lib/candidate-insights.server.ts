@@ -8,7 +8,20 @@
 export type Verdict = "met" | "partial" | "missing" | "contradicted";
 export type CvSupport = "yes" | "no" | "unclear";
 export type Recommendation = "advance" | "consider" | "reject";
-export type Seniority = "junior" | "mid" | "senior" | "lead" | "executive" | "unknown";
+// "principal" was missing, so a CV titled "Principal Full-Stack Engineer" had
+// no correct token to land on and the model was pushed to a neighbouring band.
+// The role-side list in src/lib/position-seniority.ts has carried "Principal"
+// all along; these taxonomies had drifted apart. (src/lib/blueprint-engine
+// .server.ts:258 carries a third copy of the old list — separate path, not
+// touched here.)
+export type Seniority =
+  | "junior"
+  | "mid"
+  | "senior"
+  | "principal"
+  | "lead"
+  | "executive"
+  | "unknown";
 
 export interface RequirementVerdict {
   requirement_id: string;
@@ -68,7 +81,7 @@ const SCHEMA_HINT = `{
   "pitch_tone": "sell|balanced|cautious",
   "narrative": "2-3 paragraphs",
   "headline_suggested": "one-line professional headline",
-  "seniority": "junior|mid|senior|lead|executive|unknown",
+  "seniority": "junior|mid|senior|principal|lead|executive|unknown",
   "highlights": ["achievement 1", "achievement 2"],
   "strengths": [{"title": "short", "detail": "why this matters for the role", "cv_quote": "verbatim <=200 chars or null"}],
   "concerns": [{"title": "short", "detail": "specific gap vs the position"}],
@@ -201,7 +214,7 @@ export async function generateCandidateInsights(
         : "balanced"),
       narrative: clampStr(parsed.narrative, 2400),
       headline_suggested: typeof parsed.headline_suggested === "string" ? parsed.headline_suggested.slice(0, 160) : null,
-      seniority: (["junior", "mid", "senior", "lead", "executive"].includes(String(parsed.seniority))
+      seniority: (["junior", "mid", "senior", "principal", "lead", "executive"].includes(String(parsed.seniority))
         ? (parsed.seniority as Seniority)
         : "unknown"),
       highlights: arr(parsed.highlights).map((x) => clampStr(x, 280)).filter(Boolean).slice(0, 8),

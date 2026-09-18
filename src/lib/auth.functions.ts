@@ -469,7 +469,7 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
 // ─────────────────────────────────────────────────────────────
 export const listOrganizationTeam = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((raw) => z.object({ organization_id: z.string().uuid() }).parse(raw))
+  .inputValidator((raw) => z.object({ organization_id: z.string().uuid().nullable() }).parse(raw))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertPlatformAdmin(supabase, userId);
@@ -477,7 +477,7 @@ export const listOrganizationTeam = createServerFn({ method: "GET" })
     const { data: mems, error } = await supabaseAdmin
       .from("memberships")
       .select("id, role, status, created_at, user_id")
-      .eq("organization_id", data.organization_id)
+      .filter("organization_id", data.organization_id ? "eq" : "is", data.organization_id ?? null)
       .order("created_at", { ascending: true });
     if (error) throw error;
     const authIds = Array.from(new Set((mems ?? []).map((m) => m.user_id as string)));

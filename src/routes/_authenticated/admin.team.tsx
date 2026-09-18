@@ -108,11 +108,10 @@ function TeamPage() {
 
         <div className="space-y-6">
           <CreateUserPanel organizationId={org ?? null} />
-          {org ? (
-            <OrgTeamList organizationId={org} />
-          ) : (
-            <PlatformStaffList />
-          )}
+          <OrgTeamList
+            organizationId={org ?? null}
+            title={org ? "Team members" : "Platform staff"}
+          />
         </div>
       </div>
     </div>
@@ -284,7 +283,13 @@ function CreateUserPanel({ organizationId }: { organizationId: string | null }) 
 }
 
 // ─────────────────────────────────────────────────────────────
-function OrgTeamList({ organizationId }: { organizationId: string }) {
+function OrgTeamList({
+  organizationId,
+  title = "Team members",
+}: {
+  organizationId: string | null;
+  title?: string;
+}) {
   const runList = useServerFn(listOrganizationTeam);
   const runDeact = useServerFn(deactivateMember);
   const runReact = useServerFn(reactivateMember);
@@ -293,7 +298,9 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
   const qc = useQueryClient();
 
   const q = useQuery({
-    queryKey: ["org-team", organizationId],
+    // The platform scope gets its own cache key rather than a bare `null` that
+    // would read as "no scope" next to a client organisation's list.
+    queryKey: ["org-team", organizationId ?? "platform"],
     queryFn: () => runList({ data: { organization_id: organizationId } }),
   });
 
@@ -303,7 +310,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
       mutationFn: (i: T) => fn(i),
       onSuccess: () => {
         toast.success(msg);
-        qc.invalidateQueries({ queryKey: ["org-team", organizationId] });
+        qc.invalidateQueries({ queryKey: ["org-team", organizationId ?? "platform"] });
       },
       onError: (e: Error) => toastError(e),
     });
@@ -323,7 +330,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
 
   return (
     <Card className="p-5">
-      <h2 className="text-lg font-medium">Team members</h2>
+      <h2 className="text-lg font-medium">{title}</h2>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-left text-xs uppercase text-muted-foreground">
@@ -385,8 +392,9 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
                       const r = await confirm({
                         title: "Remove member",
                         object: `${m.full_name ?? m.email} · ${humanizeCode(m.role)}`,
-                        description:
-                          "This person loses access to this client workspace immediately.",
+                        description: organizationId
+                          ? "This person loses access to this client workspace immediately."
+                          : "This person loses their platform staff access immediately.",
                         impact: [
                           "Their seat is freed for another teammate",
                           "Shortlists, decisions and comments they made are kept",
@@ -421,7 +429,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
             ) : (q.data ?? []).length === 0 ? (
               <tr>
                 <td colSpan={5} className="py-12 text-center text-muted-foreground">
-                  No members yet. Create a client user above to give someone access.
+                  No members yet. Use the create form above to give someone access.
                 </td>
               </tr>
             ) : null}

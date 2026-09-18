@@ -1,7 +1,7 @@
 // Structured requisition layer: multi-country locations, evaluation priorities,
 // ownership, compensation permissioning, job-quality gaps, version history and
 // controlled rescore. Saves independently of the intake wizard content.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -122,6 +122,7 @@ function TimezoneSuggestions() {
 export function RequisitionEditor({
   positionId,
   onDirtyChange,
+  saveRef,
   audience = "admin",
   openWorldwide = false,
   workModel = "",
@@ -133,6 +134,12 @@ export function RequisitionEditor({
 }: {
   positionId: string;
   onDirtyChange?: (dirty: boolean) => void;
+  /**
+   * When the parent passes a ref, this editor hands its save up instead of
+   * rendering its own button, so the step has exactly one primary save and the
+   * two saves can never run concurrently against the same position row.
+   */
+  saveRef?: { current: (() => Promise<unknown>) | null };
   audience?: "admin" | "client";
   openWorldwide?: boolean;
   workModel?: WorkModel;
@@ -154,7 +161,8 @@ export function RequisitionEditor({
 
   const [form, setForm] = useState<Form | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
-  const initialFormRef = useRef<Form | null>(null);
+  // No frozen baseline: `dirty` below compares the form against the current
+  // server read, so a successful save clears it without any extra bookkeeping.
 
   useEffect(() => {
     if (!meta) return;
@@ -177,19 +185,25 @@ export function RequisitionEditor({
       change_reason: "",
     };
     setForm(next);
-    if (!initialFormRef.current) {
-      initialFormRef.current = next;
-    }
   }, [meta, openWorldwide, workModel, location]);
 
-  const dirty = useMemo(
-    () =>
-      form && initialFormRef.current
-        ? JSON.stringify(form.locations) + JSON.stringify(form.evaluation_weights) !==
-          JSON.stringify(initialFormRef.current.locations) + JSON.stringify(initialFormRef.current.evaluation_weights)
-        : false,
-    [form],
-  );
+  // Measured against the current server read, not a snapshot frozen at first
+  // load. The old code seeded a ref once and never moved it, so `dirty` stayed
+  // true forever after the first successful save: the footer kept reading
+  // "Unsaved changes to locations or priorities", and the wizard's useBlocker
+  // fired a native window.confirm on every navigation — including its own
+  // post-save redirect, which Cancel then aborted. Comparing against `meta`
+  // cannot get stuck: whatever the server last returned is the baseline.
+  const dirty = useMemo(() => {
+    if (!form || !meta) return false;
+    const saved = meta.locations.length
+      ? meta.locations
+      : [seededLocation(openWorldwide, workModel, location)];
+    return (
+      JSON.stringify(form.locations) + JSON.stringify(form.evaluation_weights) !==
+      JSON.stringify(saved) + JSON.stringify(meta.evaluation_weights)
+    );
+  }, [form, meta, openWorldwide, workModel, location]);
   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setForm((f) => (f ? { ...f, [k]: v } : f));
@@ -242,6 +256,17 @@ export function RequisitionEditor({
       ]);
     },
     onError: (e) => toastError(e, { fallback: "Could not start rescore" }),
+  });
+
+  // No dependency array on purpose: useMutation returns a fresh object every
+  // render, and the closure handed up must always call the current one. Placed
+  // above the early return so hook order stays stable.
+  useEffect(() => {
+    if (!saveRef) return;
+    saveRef.current = () => saveMutation.mutateAsync();
+    return () => {
+      saveRef.current = null;
+    };
   });
 
   if (isLoading || !form || !meta) {
@@ -641,9 +666,11 @@ export function RequisitionEditor({
         <p className="text-xs text-muted-foreground">
           {dirty ? "Unsaved changes to locations or priorities." : "Locations and priorities saved."}
         </p>
-        <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-          {saveMutation.isPending ? "Saving…" : "Save locations and priorities"}
-        </Button>
+        {!saveRef && (
+          <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
+            {saveMutation.isPending ? "Saving…" : "Save locations and priorities"}
+          </Button>
+        )}
       </div>
     </div>
   );

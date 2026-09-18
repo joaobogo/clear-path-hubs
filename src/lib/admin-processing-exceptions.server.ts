@@ -84,7 +84,15 @@ function classify(job: Any): ExceptionReason[] {
   if (job.status === "failed") reasons.push("failed");
   if (job.status === "queued" && minutesSince(job.created_at) >= STUCK_QUEUED_MINUTES)
     reasons.push("stuck_queued");
-  if (Number(job.attempts ?? 0) >= JOB_ATTEMPT_CEILING && job.status !== "completed")
+  // `cancelled` and `superseded` are terminal verdicts, not open exceptions. A
+  // job closed because its entity no longer exists still carries its spent
+  // attempts, so counting those as "at the ceiling" put it straight back on
+  // this board the moment it was closed — /admin/health would clear while this
+  // board still listed the same job (audit TF-A-034).
+  if (
+    Number(job.attempts ?? 0) >= JOB_ATTEMPT_CEILING &&
+    !["completed", "cancelled", "superseded"].includes(String(job.status))
+  )
     reasons.push("attempt_ceiling");
   return reasons;
 }

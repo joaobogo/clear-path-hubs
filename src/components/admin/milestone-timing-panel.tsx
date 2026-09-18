@@ -67,7 +67,7 @@ export function MilestoneTimingPanel() {
   const fn = useServerFn(getMilestoneTimingReport);
 
   const q = useQuery({
-    queryKey: ["milestone-timings", period],
+    queryKey: ["milestone-timings", period, includeTest],
     queryFn: () => fn({ data: { period_days: period, include_test: includeTest } }),
   });
 

@@ -776,9 +776,21 @@ function humanizeDiff(before: unknown, after: unknown): string[] {
     const bv = b[k];
     const av = a[k];
     if (JSON.stringify(bv) === JSON.stringify(av)) continue;
+    // An event whose before_state is null, or whose after_state is a partial
+    // patch, leaves a key undefined on one side and null (or "") on the other.
+    // JSON.stringify compares the value `undefined` against the string "null"
+    // and lets it through, but both sides render "—": a change that never
+    // happened. That is where "region: — → —" lines come from. Compared on
+    // blankness rather than on the rendered text, because fmt truncates long
+    // strings to 57 characters and two different descriptions sharing a prefix
+    // would otherwise be dropped from an immutable trail. Objects and arrays
+    // are never blank, so "compensation: updated → updated" still shows.
+    const blank = (v: Any) => v == null || (typeof v === "string" && v.trim() === "");
+    if (blank(bv) && blank(av)) continue;
     const fmt = (v: Any) => {
       if (v == null) return "—";
-      if (typeof v === "string") return v.length > 60 ? v.slice(0, 57) + "…" : v;
+      if (typeof v === "string")
+        return v.trim() === "" ? "—" : v.length > 60 ? v.slice(0, 57) + "…" : v;
       if (typeof v === "number" || typeof v === "boolean") return String(v);
       if (Array.isArray(v)) return `${v.length} item${v.length === 1 ? "" : "s"}`;
       return "updated";

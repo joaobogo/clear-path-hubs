@@ -1,7 +1,11 @@
 // Extracted from the candidate detail route so first paint ships less code.
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
-import { AdminScoreNumber, rubricVersionNumber } from "@/components/admin/admin-score-number";
+import {
+  AdminScoreNumber,
+  rubricVersionNumber,
+  runApprovalLabel,
+} from "@/components/admin/admin-score-number";
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -14,6 +18,7 @@ import { scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 import { ProcessState } from "@/components/ds/process-state";
 import { candidateProcessStatus } from "@/lib/loading/process-catalogue";
 import { isSupersededError } from "@/lib/agent-ops/agent-ops";
+import { formatPersonName } from "@/lib/candidate/display-name";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -56,7 +61,7 @@ function WorkspaceHeader({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="truncate text-2xl font-semibold tracking-tight">
-              {cp?.full_name ?? "Unknown candidate"}
+              {formatPersonName(cp?.full_name) || "Unknown candidate"}
             </h1>
             <UnicornMarker score={currentRun} />
             {currentRun?.score != null && (
@@ -105,7 +110,12 @@ function WorkspaceHeader({
             </p>
           ) : (
             currentRun?.score != null && (
-              <AdminScoreNumber run={currentRun} size="lg" className="mt-3" />
+              <AdminScoreNumber
+                run={currentRun}
+                size="lg"
+                className="mt-3"
+                runLabel={runApprovalLabel(currentRun, m)}
+              />
             )
           )}
           <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">

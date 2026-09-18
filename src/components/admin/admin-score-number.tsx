@@ -93,23 +93,55 @@ export function confidenceLabel(run: RunLike | null | undefined): string {
   return evidence ? `${overall} · ${evidence}` : overall;
 }
 
+/**
+ * Whether a displayed figure came from the APPROVED run.
+ *
+ * The workspace header shows the approved run and the Score tab the newest
+ * one — deliberately, because a client must never see a number no human
+ * approved. Both are correct and both may differ, so one candidate read
+ * "data completeness 98%" in the header and 99% in the tab with nothing on
+ * screen saying they were different runs (audit TF-A-008). Neither figure is
+ * changed; each just says whose it is.
+ *
+ * Deliberately NOT keyed on `current_score_run_id`: scoring-service.server.ts
+ * repoints that at every new run, so "current" and "newest" are the same row
+ * and neither word tells a reviewer what they need to know. Approved or not
+ * is the fact. Returns null when the caller has no match to check against —
+ * a guess here would be worse than no label.
+ */
+export function runApprovalLabel(
+  run: { id?: unknown } | null | undefined,
+  match: { approved_score_run_id?: string | null } | null | undefined,
+): string | null {
+  if (!run?.id || !match) return null;
+  return match.approved_score_run_id &&
+    String(match.approved_score_run_id) === String(run.id)
+    ? "approved run"
+    : "not approved yet";
+}
+
 
 /** Inline staff-only score: number + confidence + rubric version, always together. */
 export function AdminScoreNumber({
   run,
   size = "sm",
   className = "",
+  runLabel = null,
 }: {
   run: RunLike | null | undefined;
   size?: "sm" | "lg";
   className?: string;
+  /** Which run this is — see runApprovalLabel. Omitted on history rows. */
+  runLabel?: string | null;
 }) {
   const score = publishedScore(run);
   const display = publishedScoreDisplay(run);
   if (score == null || display == null) {
     return <span className={`text-sm text-muted-foreground ${className}`}>Not scored</span>;
   }
-  const meta = `${confidenceLabel(run)} · ${rubricVersionLabel(run)} · ${engineVersionLabel(run)}`;
+  const meta = `${confidenceLabel(run)} · ${rubricVersionLabel(run)} · ${engineVersionLabel(run)}${
+    runLabel ? ` · ${runLabel}` : ""
+  }`;
   const scoreLabel = `Score ${display}`;
   // The band comes from the ONE shared helper (score decides the band), never
   // from the stored engine label — otherwise 100 reads "strong fit" here and
