@@ -124,7 +124,7 @@ export function StraightAnswers() {
           Still want to talk it through?{" "}
           <Link
             to="/book"
-            className="font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
+            className="font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] py-1"
           >
             Book a call →
           </Link>

@@ -44,7 +44,7 @@ const SOLUTIONS = [
   {
     icon: Building2,
     title: "Enterprise programs",
-    body: "Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — we integrate.",
+    body: "Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — TaaSFlow runs alongside it and hands over at the point you decide. Direct ATS sync is planned, not built.",
     cta: { to: "/enterprise", label: "Enterprise details" },
   },
   {
@@ -56,7 +56,7 @@ const SOLUTIONS = [
   {
     icon: ClipboardList,
     title: "Structured intake",
-    body: "5-step consultation captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.",
+    body: "A 3-step intake, about 6 minutes, captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.",
     cta: { to: "/how-it-works", label: "How it works" },
   },
   {

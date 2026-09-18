@@ -38,12 +38,12 @@ export const Route = createFileRoute("/blog/$slug")({
       };
     }
     const patched = { ...entry, meta: { ...entry.meta, "og:type": "article" } };
-    // Same rule the page body uses: legacy taasflow.com asset URLs aren't
+    // Same rule the page body uses (see `heroImage` below): taasflow.com URLs aren't
     // served here, so they must not be shared as a cover either.
     const metaBag = entry.meta as Record<string, string | undefined>;
     const rawHero = metaBag["og:image"];
     const cover =
-      rawHero && !rawHero.startsWith("https://taasflow.com/assets") ? rawHero : undefined;
+      rawHero && !rawHero.startsWith("https://taasflow.com") ? rawHero : undefined;
     // The manifest carries the authored headline and summary for every post, so
     // a post whose markdown front matter is thin still shares a real title and
     // description instead of its URL slug.

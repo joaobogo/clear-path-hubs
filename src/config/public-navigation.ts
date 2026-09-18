@@ -188,7 +188,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
     links: [
       { to: "/about",   label: "About" },
       { to: "/journey", label: "Journey" },
-      { to: "/trust",   label: "Trust" },
+      { to: "/trust",   label: "Trust Pack" },
       { to: "/contact", label: "Contact" },
     ],
   },
@@ -199,7 +199,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
       { to: "/status",      label: "Status" },
       { to: "/privacy",     label: "Privacy" },
       { to: "/terms",       label: "Terms" },
-      { to: "/sitemap.xml", label: "Sitemap", external: true },
+      { to: "/sitemap",     label: "Sitemap" },
     ],
   },
 ];

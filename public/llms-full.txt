@@ -271,9 +271,9 @@ Which engagement fits a given hiring situation.
 - Solutions — AI Hiring Intelligence for every hiring need
 - Pilot a single hire, scale volume hiring, run enterprise hiring or hire globally. One platform, one monthly fee, ranked candidates in days.
 - Pick the package that covers your open roles and pay one monthly total. Hires within that capacity are included. Your workspace tracks every requisition in one place.
-- Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — we integrate.
+- Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — TaaSFlow runs alongside it and hands over at the point you decide. Direct ATS sync is planned, not built.
 - 50+ countries covered. Timezone-aware shortlisting, work-authorisation screening, and remote-first evidence.
-- 5-step consultation captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.
+- A 3-step intake, about 6 minutes, captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.
 - Consent tracking, retention policies, and full audit trail. GDPR-aligned. Your data stays yours.
 - From a single pilot hire to enterprise programs across 50+ countries — TaaSFlow adapts to the shape of your team.
 - Book a 20-minute consultation — we'll map your open roles to the right plan.

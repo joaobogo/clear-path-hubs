@@ -107,7 +107,7 @@ function Announcement() {
       aria-label="Site announcement"
       className="relative w-full bg-[color:var(--brand-navy)] px-4 py-2 text-center text-xs text-white/90 sm:text-sm"
     >
-      <Link to={ANNOUNCEMENT_LINK} className="inline-flex items-center gap-1 hover:text-white">
+      <Link to={ANNOUNCEMENT_LINK} className="inline-flex items-center gap-1 py-1 -my-1 hover:text-white">
         <span>{ANNOUNCEMENT_TEXT}</span>
         <ChevronRight className="h-3.5 w-3.5" aria-hidden />
       </Link>

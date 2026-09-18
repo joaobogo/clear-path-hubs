@@ -801,6 +801,12 @@ function ExpressIntakePage() {
     // "Finish this later" skips the checks on an optional step; Continue never does.
     if (!skipValidation && !validateStep(stepIndex)) return;
 
+    // The step the client just cleared, named by its step key. Raised after
+    // validation so a Continue that was blocked never counts as completed.
+    // Both call sites are gated on stepIndex < last, so this only ever reports
+    // "company" and "role" — the details step is measured by the submit event.
+    trackFgv(FGV_EVENTS.jobIntakeStep, { intake_step: INTAKE_STEPS[stepIndex].key });
+
     if (returnToReview) {
       // Came here from the review panel: go back to it, not to the next step.
       setReturnToReview(false);
@@ -844,6 +850,14 @@ function ExpressIntakePage() {
         const container = focusLabel
           ? document.querySelector<HTMLElement>(`[data-field="${focusLabel}"]`)
           : null;
+        // Optional answers live inside collapsed <details> disclosures. A
+        // closed one hides its subtree, so the scroll below is a no-op and
+        // focus() is refused — the review's Edit link did nothing at all.
+        let disclosure = container?.closest("details") ?? null;
+        while (disclosure) {
+          disclosure.open = true;
+          disclosure = disclosure.parentElement?.closest("details") ?? null;
+        }
         const el = container ?? document.querySelector<HTMLElement>("form, main");
         if (!el) return;
         el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -2308,14 +2322,6 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
-          <Field label="Your job title" carried={isCarried("contactTitle")} error={errors.contactTitle} required={req["contactTitle"]}>
-            <Input
-              value={state.contactTitle}
-              onChange={(e) => set("contactTitle", e.target.value)}
-              placeholder="Head of Talent"
-              autoComplete="organization-title"
-            />
-          </Field>
           <Field label="Work email" carried={isCarried("workEmail")} error={errors.workEmail} required={req["workEmail"]}>
             <Input
               type="email"
@@ -2331,9 +2337,19 @@ function ExpressIntakePage() {
           </Field>
           <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
             <summary className="cursor-pointer text-sm font-medium">
-              Add phone and LinkedIn{" "}
+              Add your job title, phone and LinkedIn{" "}
               <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
             </summary>
+            <div className="mt-3">
+              <Field label="Your job title" carried={isCarried("contactTitle")} error={errors.contactTitle} required={req["contactTitle"]}>
+                <Input
+                  value={state.contactTitle}
+                  onChange={(e) => set("contactTitle", e.target.value)}
+                  placeholder="Head of Talent"
+                  autoComplete="organization-title"
+                />
+              </Field>
+            </div>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
               <Field label="Phone" carried={isCarried("phone")} error={errors.phone} required={req["phone"]}>
                 <Input

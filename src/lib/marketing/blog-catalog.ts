@@ -42,7 +42,14 @@ function readMeta(slug: string): BlogRow | null {
     tags: curated?.tags ?? e.tags ?? [],
     publishedAt: meta["article:published_time"],
     readMinutes: estimateReadMinutes(e.markdown),
-    heroImage: meta["og:image"] || undefined,
+    // Legacy taasflow.com image URLs are not served by this app — a
+    // /blog/<name>.jpg request falls through to the /blog/$slug route and
+    // 404s as HTML — so a list card must not try to render one. Same
+    // predicate as blog.$slug.tsx (head and body).
+    heroImage:
+      meta["og:image"] && !meta["og:image"].startsWith("https://taasflow.com")
+        ? meta["og:image"]
+        : undefined,
     industry: e.industry,
   };
 }

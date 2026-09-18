@@ -1104,7 +1104,7 @@ function ClientCandidateDelivery() {
             </span>
             <button
               type="button"
-              className="inline-flex items-center gap-1 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-0.5 font-medium text-[color:var(--brand-navy)]/80 hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="relative inline-flex items-center gap-1 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-0.5 font-medium text-[color:var(--brand-navy)]/80 after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               <FileText className="h-3.5 w-3.5" aria-hidden /> View CV
             </button>
@@ -1374,7 +1374,7 @@ function Home() {
                 Looking for a job instead?{" "}
                 <Link
                   to="/jobs"
-                  className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"
+                  className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded py-1 -my-1"
                 >
                   Browse open jobs <ArrowRight className="h-3 w-3" aria-hidden />
                 </Link>

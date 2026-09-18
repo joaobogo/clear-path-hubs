@@ -53,7 +53,7 @@ export const Route = createFileRoute("/pitch")({
 const PLACEMENT_FAILS = [
   {
     title: "You pay for the last mile",
-    body: "Placement fees compound with salary — a €120k hire runs €24–36k on top. You pay again for the next role, and the one after that.",
+    body: "Placement fees compound with salary — a $120k hire runs $24–36k on top. You pay again for the next role, and the one after that.",
   },
   {
     title: "You get a resume, not a rubric",
@@ -410,7 +410,7 @@ function PitchPage() {
             ))}
           </div>
           <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
-            Compare to placement: a single €120k hire at a 20% fee equals more than five Hiring Sprints.
+            Compare to placement: a single $120k hire at a 20% fee equals more than five Hiring Sprints.
           </p>
         </PublicPage>
       </PublicSection>

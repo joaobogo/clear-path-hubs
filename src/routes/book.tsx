@@ -301,6 +301,14 @@ function BookPage() {
   async function onPickSlot(slot: Slot) {
     setErrors({});
     setSlotsError(null);
+    // Raised before the contact details are validated: picking a time is the
+    // interaction, and the clients who pick one and then bounce off the
+    // validation are exactly the drop-off this event exists to find.
+    trackBooking(BOOKING_EVENTS.timeSelected, {
+      meetingType,
+      bookingSessionId: sessionId,
+      step: "pick_slot",
+    });
 
     const parsed = quickBookingSchema.safeParse(values);
     if (!parsed.success) {
