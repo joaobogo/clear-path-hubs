@@ -13,6 +13,8 @@ import {
   PACKAGE_10,
   PACKAGE_20,
   PACKAGE_30,
+  PACKAGE_40,
+  PACKAGE_100,
   ABOVE_MAX_DISPLAY,
   PILOT_ROLES_LABEL,
   ABOVE_MAX_ROLES_LABEL,
@@ -139,11 +141,27 @@ const ECONOMICS: Array<{
     price: PACKAGE_30.totalDisplay,
     unit: "",
     fits: PACKAGE_30.capacityLabel,
-    line: "Portfolio hiring in the largest published package.",
+    line: "Portfolio hiring across teams in one package.",
+  },
+  // Same omission as /enterprise and /trust: the ladder grew and this page did
+  // not (audit 17 Sep, item 4). Lines are the approved `bestFor` copy.
+  {
+    tier: PACKAGE_40.capacityLabel,
+    price: PACKAGE_40.totalDisplay,
+    unit: "",
+    fits: PACKAGE_40.capacityLabel,
+    line: "Portfolio hiring across business units.",
+  },
+  {
+    tier: PACKAGE_100.capacityLabel,
+    price: PACKAGE_100.totalDisplay,
+    unit: "",
+    fits: PACKAGE_100.capacityLabel,
+    line: "A continuous hiring programme run as one package.",
   },
 
   {
-    tier: "More than 30 positions",
+    tier: ABOVE_MAX_ROLES_LABEL,
     price: ABOVE_MAX_DISPLAY,
     unit: "",
     fits: ABOVE_MAX_ROLES_LABEL,

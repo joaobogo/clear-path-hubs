@@ -1,3 +1,22 @@
+-- ============================================================
+-- DO NOT RUN. Superseded 18 Sep 2026.
+--
+-- This script put the Northwind demo role on the public job board as a real,
+-- applyable posting, and stripped "(Demo)" from the organisation name so
+-- candidates could not tell. That is the exact exposure audit 17 Sep item 5
+-- reported: real people applying into a demo workspace, where nobody would
+-- ever answer them.
+--
+-- The public board gate now excludes demo, QA and internal organisations
+-- (supabase/migrations/20260918090000_public_board_excludes_demo_orgs.sql), so
+-- this script can no longer achieve what it says. Its own verification column
+-- (`will_appear_on_job_board`) hardcodes the pre-fix rule and would report TRUE
+-- for a role that will not appear.
+--
+-- Kept for history. If a demo role is ever wanted on the board again, that is a
+-- change to the gate, not a rename of an org.
+-- ============================================================
+
 -- Put the demo role on the public job board as a real, applyable posting.
 --
 -- Run in the Supabase SQL editor. Idempotent: safe to run more than once.

@@ -26,6 +26,8 @@ import {
   PACKAGE_10,
   PACKAGE_20,
   PACKAGE_30,
+  PACKAGE_40,
+  PACKAGE_100,
   ABOVE_MAX_DISPLAY,
   MAX_POSITIONS,
 } from "@/config/pricing-core";
@@ -97,6 +99,29 @@ const VOLUME_BANDS = [
     cadence: "Twice-weekly delivery across the portfolio",
     agentCapacity: "Enterprise-scale agent capacity",
     fit: "Portfolio hiring across teams in one package.",
+  },
+  // The two bands above 30 were added to the ladder in August and never
+  // reached this page, so /enterprise stopped at $21,600 while /pricing
+  // published up to $64,000 — a large buyer, on the page written for them,
+  // was shown no price for their volume at all (audit 17 Sep, item 4).
+  //
+  // `fit` is the approved `bestFor` line from src/content/pricing.ts. Cadence
+  // and capacity repeat the 30-position row deliberately: the approved tier
+  // content gives portfolio and program the SAME included list as volume, so
+  // repeating it commits to nothing these packages do not already promise.
+  {
+    band: PACKAGE_40.capacityLabel,
+    price: PACKAGE_40.totalDisplay,
+    cadence: "Twice-weekly delivery across the portfolio",
+    agentCapacity: "Enterprise-scale agent capacity",
+    fit: "Portfolio hiring across business units.",
+  },
+  {
+    band: PACKAGE_100.capacityLabel,
+    price: PACKAGE_100.totalDisplay,
+    cadence: "Twice-weekly delivery across the portfolio",
+    agentCapacity: "Enterprise-scale agent capacity",
+    fit: "A continuous hiring programme run as one package.",
   },
 
   {

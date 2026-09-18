@@ -20,6 +20,22 @@ export const submitApplication = createServerFn({ method: "POST" })
   .inputValidator((input: unknown): ApplyInput => applySchema.parse(input))
   .handler(async ({ data }): Promise<SubmitApplicationResult> => {
     throttlePublicFn("apply_submit");
+    // A role the public board would not show is a role the public may not
+    // apply to. This endpoint had no organisation gate of any kind, so a demo
+    // tenant's listing accepted real applications from real candidates who
+    // would never hear back (audit 17 Sep, item 5).
+    //
+    // The check sits in the wrapper, not in submitApplicationImpl: the demo
+    // seeder calls the impl directly to create its own fixture applications.
+    const { isPubliclyApplyable } = await import("@/lib/jobs/public-applyable.server");
+    if (!(await isPubliclyApplyable(data.position_id))) {
+      return {
+        ok: false,
+        trace_id: `ap_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`,
+        code: "position_unavailable",
+        message: "This role is no longer accepting applications.",
+      };
+    }
     const { submitApplicationImpl } = await import("./apply.server");
     return await submitApplicationImpl(data);
   });

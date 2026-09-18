@@ -289,6 +289,7 @@ Security, procurement, seats and audit requirements for larger programmes.
 - Multi-business-unit hiring with executive reporting.
 - Twice-weekly delivery across the portfolio
 - Portfolio hiring across teams in one package.
+- A continuous hiring programme run as one package.
 - Continuous hiring where volume shifts by quarter.
 - No search starts until must-haves, nice-to-haves and weightings are signed off in writing at intake.
 - Each score line carries the source text it came from, so a hiring committee can check the reasoning.
@@ -319,9 +320,8 @@ Security, procurement, seats and audit requirements for larger programmes.
 - Business units, teams, and hiring managers modeled explicitly so requisitions, permissions, and reporting line up with how you actually operate.
 - Dedicated agent capacity per role family or business unit. Standards stay consistent as volume changes and new requisitions open.
 - Every open role is a separate pipeline inside the same Client workspace — no context switching between tools per requisition.
+- Requisition portfolio view for TA leadership
 - Role-scoped pipelines for hiring managers
-- Business-unit rollups for people partners
-- Role-based access so people see the pipelines they own
 
 ## Integrations — https://taasflow.com/integrations
 
@@ -350,6 +350,7 @@ Access control, data handling and hosting posture.
 Commitments on data, screening and how decisions are recorded.
 
 - The commercial trust pack for TaaSFlow. How pricing works, what you keep, how scoring works, candidate privacy, and where the line runs between TaaSFlow and your team.
+- Every candidate profile, evidence, and score you have seen — permanently.
 - Your role blueprints, rubrics, screening questions, and scoring logic.
 - Talent pools, previously shortlisted candidates, and rediscovery data.
 - Every decision, comment, and hire record — with a full history of who changed what.
@@ -388,7 +389,6 @@ Commitments on data, screening and how decisions are recorded.
 - In an isolated, per-organization workspace with row-level security. Encrypted at rest. Access is scoped to your team and, when granted, our staff — every read is logged.
 - Per-organization workspace with row-level security on every table.
 - Least-privilege roles: platform admin, client admin, editor, viewer. All access audited.
-- TLS in transit. Encrypted at rest. Private storage for CVs and evidence.
 
 ## Global talent — https://taasflow.com/global-talent
 

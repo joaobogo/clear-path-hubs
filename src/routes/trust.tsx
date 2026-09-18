@@ -14,6 +14,8 @@ import {
   ABOVE_MAX_DISPLAY,
   PILOT_ROLES_LABEL,
   ABOVE_MAX_ROLES_LABEL,
+  PACKAGE_40,
+  PACKAGE_100,
 } from "@/config/pricing-core";
 
 import {
@@ -75,11 +77,27 @@ const PRICING_LINES = [
     label: PACKAGE_30.capacityLabel,
     price: PACKAGE_30.totalDisplay,
     scope: PACKAGE_30.capacityLabel,
-    detail: "The largest published package. Thirty positions is the maximum.",
+    detail: "Portfolio hiring across teams in one package.",
+  },
+  // These two bands existed on /pricing for weeks while this page still said
+  // thirty was the ceiling — a trust page asserting something untrue about our
+  // own pricing (audit 17 Sep, item 4). Details are the approved `bestFor`
+  // lines from src/content/pricing.ts.
+  {
+    label: PACKAGE_40.capacityLabel,
+    price: PACKAGE_40.totalDisplay,
+    scope: PACKAGE_40.capacityLabel,
+    detail: "Portfolio hiring across business units.",
+  },
+  {
+    label: PACKAGE_100.capacityLabel,
+    price: PACKAGE_100.totalDisplay,
+    scope: PACKAGE_100.capacityLabel,
+    detail: "The largest published package. A continuous hiring programme run as one package.",
   },
 
   {
-    label: "More than 30 positions",
+    label: ABOVE_MAX_ROLES_LABEL,
     price: ABOVE_MAX_DISPLAY,
     scope: ABOVE_MAX_ROLES_LABEL,
     detail: "No published price — we scope it with you.",

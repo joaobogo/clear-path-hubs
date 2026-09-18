@@ -121,17 +121,14 @@ function throwingFields(code: string): string[] {
 }
 
 /**
- * Routes still allowed to throw, with the reason.
+ * Routes still allowed to throw, with the reason. Empty, and meant to stay so.
  *
- * `client.conversations.new` genuinely needs an org and a scope — it has
- * nothing to render without them — so falling back to undefined is not the
- * answer. What a bare visit should do (redirect to the Messages list, or show
- * a "pick a conversation" state) is a product decision, not an engineering
- * one. Listed here rather than quietly fixed the wrong way.
+ * `client.conversations.new` was the last entry: it needs an org and a scope
+ * and has nothing to render without them. It now falls back and sends an
+ * incomplete link to the conversations list, which is what a broken link
+ * deserves — so the exemption was removed rather than left to rot.
  */
-const ALLOWED_TO_THROW = new Set([
-  "src/routes/_authenticated/client.conversations.new.tsx",
-]);
+const ALLOWED_TO_THROW = new Set<string>([]);
 
 describe("no route rejects a URL the way it rejects a form", () => {
   const files = routeFiles(ROUTES);
@@ -155,8 +152,9 @@ describe("no route rejects a URL the way it rejects a form", () => {
   });
 
   it("the allowlist stays honest — a listed route really does still throw", () => {
-    // If someone fixes the listed route, this fails and the entry gets removed,
-    // so the list cannot rot into a permanent exemption.
+    // An exemption that no longer applies is worse than none: it hides a route
+    // that has since been fixed, and invites the next one to be added beside
+    // it. If a listed route stops throwing, this fails until it is delisted.
     for (const listed of ALLOWED_TO_THROW) {
       const code = readFileSync(join(process.cwd(), listed), "utf8");
       expect(
@@ -164,6 +162,18 @@ describe("no route rejects a URL the way it rejects a form", () => {
         `${listed} no longer throws — remove it from ALLOWED_TO_THROW`,
       ).toBeGreaterThan(0);
     }
+  });
+
+  it("client/conversations/new sends an incomplete link to the list", () => {
+    // It was the one route allowed to throw. A bare visit must now navigate,
+    // not error.
+    const code = readFileSync(
+      join(process.cwd(), "src/routes/_authenticated/client.conversations.new.tsx"),
+      "utf8",
+    );
+    expect(throwingFields(code)).toEqual([]);
+    expect(code).toMatch(/linkIsComplete/);
+    expect(code).toMatch(/to="\/client\/conversations"/);
   });
 });
 

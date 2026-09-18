@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -10,17 +11,23 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { QueryErrorCard } from "@/components/client/query-error";
 
+// A conversation needs a workspace and something to be about. Those two were
+// REQUIRED here with no fallback, so a bare /client/conversations/new — or any
+// truncated link — threw out of validateSearch and rendered the
+// form-submission error boundary on a page with no form (audit 17 Sep, item 1).
+// They fall back now, and the component sends an incomplete link to the
+// conversations list instead of failing at it.
 const searchSchema = z.object({
-  org: z.string().uuid(),
-  scope: z.enum(["organization", "position", "candidate"]),
-  positionId: z.string().uuid().optional(),
-  candidateMatchId: z.string().uuid().optional(),
-  subject: z.string().optional(),
-  preview: z.string().optional(),
+  org: fallback(z.string().uuid().optional(), undefined),
+  scope: fallback(z.enum(["organization", "position", "candidate"]).optional(), undefined),
+  positionId: fallback(z.string().uuid().optional(), undefined),
+  candidateMatchId: fallback(z.string().uuid().optional(), undefined),
+  subject: fallback(z.string().optional(), undefined),
+  preview: fallback(z.string().optional(), undefined),
 });
 
 export const Route = createFileRoute("/_authenticated/client/conversations/new")({
-  validateSearch: (search) => searchSchema.parse(search),
+  validateSearch: zodValidator(searchSchema),
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.conversations.new.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({
@@ -41,22 +48,39 @@ function NewConversation() {
   const orgSearch = useClientOrgSearch();
   const findFn = useServerFn(findConversation);
 
+  // Both are guaranteed present by `enabled`; the assertions below only tell
+  // TypeScript what the guard already decided.
+  const linkIsComplete = Boolean(search.org && search.scope);
+
   const findQuery = useQuery({
     queryKey: ["find-conversation", search],
     queryFn: () =>
       findFn({
         data: {
-          orgId: search.org,
-          scope: search.scope,
+          orgId: search.org!,
+          scope: search.scope!,
           positionId: search.positionId,
           candidateMatchId: search.candidateMatchId,
           subject: search.subject,
         },
       }),
+    enabled: linkIsComplete,
     staleTime: 5 * 60 * 1000,
   });
 
   const resolvedOrg = orgSearch ?? search.org;
+
+  // An incomplete link is a link, not a rejected form. Send them to the list
+  // they were trying to start a conversation from.
+  if (!linkIsComplete) {
+    return (
+      <Navigate
+        to="/client/conversations"
+        search={resolvedOrg ? { org: resolvedOrg } : {}}
+        replace
+      />
+    );
+  }
 
   if (findQuery.data?.id) {
     return (
@@ -98,8 +122,8 @@ function NewConversation() {
         />
       ) : (
         <DraftConversationThread
-          orgId={search.org}
-          scope={search.scope}
+          orgId={search.org!}
+          scope={search.scope!}
           positionId={search.positionId}
           candidateMatchId={search.candidateMatchId}
           subject={search.subject}
