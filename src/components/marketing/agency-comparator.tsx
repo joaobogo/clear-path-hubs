@@ -279,12 +279,22 @@ function SliderField({
           {display}
         </span>
       </div>
+      {/*
+        The wrapping <label> already names this implicitly, but it wraps the
+        VALUE span too, so a screen reader announced the metric and the number
+        run together as one name, and re-announced the whole string on every
+        drag. aria-label names the metric alone; aria-valuetext reads the
+        formatted figure ("$85,000") instead of the raw number
+        (audit 18 Sep, TF-C-017). Attribute-only — nothing visible changes.
+      */}
       <input
         type="range"
         min={min}
         max={max}
         step={step}
         value={value}
+        aria-label={label}
+        aria-valuetext={display}
         onChange={(e) => onChange(Number(e.target.value))}
         className="w-full accent-[color:var(--brand-navy)]"
       />
@@ -319,12 +329,22 @@ function StaticField({
           {display}
         </span>
       </div>
+      {/*
+        The wrapping <label> already names this implicitly, but it wraps the
+        VALUE span too, so a screen reader announced the metric and the number
+        run together as one name, and re-announced the whole string on every
+        drag. aria-label names the metric alone; aria-valuetext reads the
+        formatted figure ("$85,000") instead of the raw number
+        (audit 18 Sep, TF-C-017). Attribute-only — nothing visible changes.
+      */}
       <input
         type="range"
         min={min}
         max={max}
         step={step}
         value={value}
+        aria-label={label}
+        aria-valuetext={display}
         onChange={(e) => onChange(Number(e.target.value))}
         className="w-full accent-[color:var(--brand-navy)]"
       />

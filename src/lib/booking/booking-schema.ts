@@ -177,9 +177,9 @@ export function intakeAnswers(intake: BookingIntake): Record<string, string> {
 }
 
 /**
- * Quick booking — the one-screen path. A visitor gives only the four facts a
- * human needs to run the call (name, email, phone) and picks a time. Everything
- * else in the full intake is recorded as "Not provided yet" rather than guessed,
+ * Quick booking — the one-screen path. A visitor gives only the facts a human
+ * needs to run the call (name and email; a phone number if they want to give
+ * one) and picks a time. Everything else in the full intake is recorded as "Not provided yet" rather than guessed,
  * so nothing invented reaches the CRM or the internal summary.
  */
 export const quickBookingSchema = z.object({
@@ -189,7 +189,23 @@ export const quickBookingSchema = z.object({
     .min(1, "Enter your email")
     .email("Enter a valid email address")
     .transform((v) => v.toLowerCase()),
-  phone: text(40).min(6, "Enter a phone number we can reach you on"),
+  /**
+   * Optional, deliberately.
+   *
+   * The call is 20 minutes and online, and the confirmation says so — "link in
+   * your confirmation" — so the meeting reaches the visitor by email whether or
+   * not we hold a number. Requiring it put a hard stop on the highest-intent
+   * form on the site, and the requirement only surfaced AFTER a slot was picked,
+   * as an error above a fold the visitor had already scrolled past
+   * (audit 18 Sep, TF-C-009).
+   *
+   * Still validated when given: a three-digit stub is worse than nothing,
+   * because it reads as a number somebody can actually call.
+   */
+  phone: z.union([
+    z.literal(""),
+    text(40).min(6, "Enter a phone number we can reach you on, or leave it blank"),
+  ]),
   /** Honeypot — must stay empty. */
   website: optional(200),
 });

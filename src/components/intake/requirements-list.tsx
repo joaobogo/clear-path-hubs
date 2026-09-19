@@ -292,6 +292,16 @@ export function RequirementsList({
         )}
       </div>
 
+      {/*
+        The message and the control that resolves it live in ONE [data-field].
+        focusFirstError scrolls to [data-field-error] and then focuses the
+        input inside the surrounding [data-field] — with these as loose
+        siblings it found no input, so it fell back to focusing the <p>, which
+        is not focusable. The message was scrolled into view and the checkbox
+        that clears it was not focused, so Continue read as silently doing
+        nothing on a list twenty rows long (audit 18 Sep, TF-C-023).
+      */}
+      <div data-field="requirements-confirm" className="contents">
       {listError && (
         <p
           data-field-error="true"
@@ -316,6 +326,7 @@ export function RequirementsList({
           </span>
         </label>
       )}
+      </div>
     </div>
   );
 }

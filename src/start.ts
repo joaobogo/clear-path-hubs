@@ -44,6 +44,55 @@ const canonicalHostMiddleware = createMiddleware().server(async ({ next, request
 });
 
 /**
+ * One canonical CASE for a path, for the same reason there is one canonical
+ * host.
+ *
+ * `/PRICING` served a 200 with the pricing page and a canonical tag pointing
+ * at `/pricing`. The tag keeps the duplicate out of the index, but every link,
+ * share and analytics hit against the variant lands on its own URL and the
+ * signal splits (audit 18 Sep, TF-C-029).
+ *
+ * Deliberately NOT a blanket lowercase. These paths carry values where case is
+ * meaningful, or is not ours to change:
+ *
+ *   /share/    — an opaque share token. Lowercasing it breaks the link.
+ *   /apply/    — carries application ids in receipt URLs.
+ *   /lovable/  — Lovable's own routes; never intercepted anywhere in this file.
+ *   /api/      — callers send what they send.
+ *   /assets/, /_  — build output, case-sensitive on disk.
+ *   anything with a file extension — same reason.
+ *
+ * Everything else in this app is lowercase by construction: blog, industries
+ * and resources slugs are generated lowercase, and Postgres renders uuids
+ * lowercase, so an uppercase variant of those is a hand-typed URL rather than
+ * one we ever emitted.
+ */
+const CASE_SENSITIVE_PREFIXES = ["/share/", "/apply/", "/lovable/", "/api/", "/assets/", "/_"];
+
+export function canonicalPathFor(pathname: string): string | null {
+  const lower = pathname.toLowerCase();
+  if (lower === pathname) return null;
+  if (CASE_SENSITIVE_PREFIXES.some((p) => lower.startsWith(p))) return null;
+  // A file extension means a static asset, and those are case-sensitive.
+  if (/\.[a-z0-9]{2,5}$/i.test(pathname)) return null;
+  return lower;
+}
+
+const canonicalPathMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const url = new URL(request.url);
+  const canonical = canonicalPathFor(url.pathname);
+  if (canonical) {
+    url.pathname = canonical;
+    const status = request.method === "GET" || request.method === "HEAD" ? 301 : 308;
+    return new Response(null, {
+      status,
+      headers: { location: url.toString(), "cache-control": "public, max-age=3600" },
+    });
+  }
+  return next();
+});
+
+/**
  * Clickjacking defence. /admin and /client carry one-click controls, so no
  * origin may frame this app.
  *
@@ -93,5 +142,10 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next, reque
 
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [canonicalHostMiddleware, securityHeadersMiddleware, errorMiddleware],
+  requestMiddleware: [
+    canonicalHostMiddleware,
+    canonicalPathMiddleware,
+    securityHeadersMiddleware,
+    errorMiddleware,
+  ],
 }));

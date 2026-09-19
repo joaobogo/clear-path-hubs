@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { z } from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Search } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
@@ -13,7 +15,25 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetim
 
 const entry = getPage("blog");
 
+/**
+ * The page number lives in the URL, not in component state.
+ *
+ * "Next" used to be a button that moved local state, so page 2 had no address:
+ * it could not be linked, bookmarked, shared or crawled, and the back button
+ * did not return to it (audit 18 Sep, TF-C-026). The controls below are real
+ * anchors for the same reason — a crawler that does not run our JavaScript
+ * still has to be able to walk the archive.
+ *
+ * The text filter and the category chip stay in component state deliberately:
+ * they change on every keystroke, and putting them here would push a history
+ * entry per character.
+ */
+const searchSchema = z.object({
+  page: fallback(z.coerce.number().int().min(1).optional(), undefined),
+});
+
 export const Route = createFileRoute("/blog/")({
+  validateSearch: zodValidator(searchSchema),
   head: () =>
     marketingHead(entry, "/blog", {
       title: "TaaSFlow Blog — Talent strategy, hiring guides & market data",
@@ -28,7 +48,18 @@ const PAGE_SIZE = 24;
 function BlogIndex() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("");
-  const [page, setPage] = useState(1);
+  const navigate = useNavigate();
+  const page = Route.useSearch().page ?? 1;
+  // Page 1 is written as an absent parameter, never ?page=1, so the archive
+  // has exactly one canonical address.
+  const setPage = (next: number | ((p: number) => number)) => {
+    const value = typeof next === "function" ? next(page) : next;
+    void navigate({
+      to: "/blog",
+      search: value > 1 ? { page: value } : {},
+      replace: value === 1,
+    });
+  };
 
   const all = useMemo(() => listAllBlogRows(), []);
 
@@ -268,23 +299,35 @@ function BlogIndex() {
             aria-label="Pagination"
             className="mt-10 flex items-center justify-center gap-2"
           >
-            <button
-              disabled={current === 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="rounded-md border border-border/60 px-3 py-1.5 text-sm disabled:opacity-40"
-            >
-              ← Previous
-            </button>
+            {current === 1 ? (
+              <span className="rounded-md border border-border/60 px-3 py-1.5 text-sm opacity-40">
+                ← Previous
+              </span>
+            ) : (
+              <Link
+                to="/blog"
+                search={current - 1 > 1 ? { page: current - 1 } : {}}
+                className="rounded-md border border-border/60 px-3 py-1.5 text-sm"
+              >
+                ← Previous
+              </Link>
+            )}
             <span className="text-sm text-muted-foreground">
               Page {current} of {pages}
             </span>
-            <button
-              disabled={current === pages}
-              onClick={() => setPage((p) => Math.min(pages, p + 1))}
-              className="rounded-md border border-border/60 px-3 py-1.5 text-sm disabled:opacity-40"
-            >
-              Next →
-            </button>
+            {current === pages ? (
+              <span className="rounded-md border border-border/60 px-3 py-1.5 text-sm opacity-40">
+                Next →
+              </span>
+            ) : (
+              <Link
+                to="/blog"
+                search={{ page: current + 1 }}
+                className="rounded-md border border-border/60 px-3 py-1.5 text-sm"
+              >
+                Next →
+              </Link>
+            )}
           </nav>
         )}
       </section>

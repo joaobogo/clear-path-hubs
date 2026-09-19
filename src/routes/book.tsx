@@ -88,7 +88,9 @@ const FIELDS: { name: keyof ContactValues; label: string; type?: string; autoCom
   { name: "firstName", label: "First name", autoComplete: "given-name" },
   { name: "lastName", label: "Last name", autoComplete: "family-name" },
   { name: "email", label: "Email", type: "email", autoComplete: "email" },
-  { name: "phone", label: "Phone number", type: "tel", autoComplete: "tel" },
+  // Optional: the call is online and the link arrives by email, so a missing
+  // number never blocks a booking (audit 18 Sep, TF-C-009).
+  { name: "phone", label: "Phone number (optional)", type: "tel", autoComplete: "tel" },
 ];
 
 function readStoredContact(): Partial<ContactValues> | null {
