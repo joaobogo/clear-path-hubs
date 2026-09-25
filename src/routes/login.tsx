@@ -30,7 +30,7 @@ import {
   type SessionMembership,
 } from "@/lib/roles";
 
-import { sanitizeRedirect } from "@/lib/safe-redirect";
+import { sanitizeRedirect, sanitizeRedirectForRole } from "@/lib/safe-redirect";
 
 // fallback() rather than a bare schema: a bare one THROWS, and the router
 // renders that as form-submission copy on a page with no form (audit 17 Sep).
@@ -102,6 +102,7 @@ export function LoginFallback() {
 
 // Generic messages — never disclose whether an email exists.
 const GENERIC_SIGNIN_ERROR = "Email or password is incorrect.";
+const TEMPORARY_SIGNIN_ERROR = "Sign-in is temporarily unavailable. Please try again in a moment.";
 const GENERIC_RESET_MESSAGE =
   "If an account exists for that email, we've sent a password reset link.";
 const GENERIC_CONFIRM_MESSAGE =
@@ -245,7 +246,7 @@ function LoginPage() {
   }, []);
 
   function routeToDest(mems: SessionMembership[], primary: MembershipRole | null) {
-    const dest = sanitizeRedirect(redirect);
+    const dest = sanitizeRedirectForRole(redirect, primary);
     if (dest) {
       window.location.assign(dest);
       return;
@@ -292,7 +293,8 @@ function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        toast.error(GENERIC_SIGNIN_ERROR);
+        const status = typeof error.status === "number" ? error.status : 0;
+        toast.error(status >= 500 ? TEMPORARY_SIGNIN_ERROR : GENERIC_SIGNIN_ERROR);
         return;
       }
       if (!(await ensureVerified())) return;

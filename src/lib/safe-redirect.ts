@@ -43,3 +43,33 @@ export function sanitizeRedirect(value: unknown): string | null {
 
   return path;
 }
+
+type RedirectRole =
+  | "platform_admin"
+  | "operations"
+  | "client_admin"
+  | "client_editor"
+  | "client_viewer"
+  | "candidate"
+  | null;
+
+/** Ignore a safe but stale destination when the signed-in role cannot open it. */
+export function sanitizeRedirectForRole(value: unknown, role: RedirectRole): string | null {
+  const path = sanitizeRedirect(value);
+  if (!path) return null;
+
+  const pathname = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return role === "platform_admin" || role === "operations" ? path : null;
+  }
+  if (pathname === "/client" || pathname.startsWith("/client/")) {
+    return role === "client_admin" || role === "client_editor" || role === "client_viewer"
+      ? path
+      : null;
+  }
+  if (pathname === "/me" || pathname.startsWith("/me/")) {
+    return role === "candidate" ? path : null;
+  }
+
+  return path;
+}
