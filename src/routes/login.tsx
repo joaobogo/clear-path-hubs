@@ -30,7 +30,7 @@ import {
   type SessionMembership,
 } from "@/lib/roles";
 
-import { sanitizeRedirect } from "@/lib/safe-redirect";
+import { sanitizeRedirect, sanitizeRedirectForRole } from "@/lib/safe-redirect";
 
 // fallback() rather than a bare schema: a bare one THROWS, and the router
 // renders that as form-submission copy on a page with no form (audit 17 Sep).
@@ -245,7 +245,7 @@ function LoginPage() {
   }, []);
 
   function routeToDest(mems: SessionMembership[], primary: MembershipRole | null) {
-    const dest = sanitizeRedirect(redirect);
+    const dest = sanitizeRedirectForRole(redirect, primary);
     if (dest) {
       window.location.assign(dest);
       return;

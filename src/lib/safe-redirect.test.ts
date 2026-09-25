@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sanitizeRedirect } from "@/lib/safe-redirect";
+import { sanitizeRedirect, sanitizeRedirectForRole } from "@/lib/safe-redirect";
 
 describe("sanitizeRedirect", () => {
   it("keeps ordinary same-origin destinations", () => {
@@ -34,5 +34,30 @@ describe("sanitizeRedirect", () => {
     expect(sanitizeRedirect(null)).toBeNull();
     expect(sanitizeRedirect("")).toBeNull();
     expect(sanitizeRedirect(42)).toBeNull();
+  });
+});
+
+describe("sanitizeRedirectForRole", () => {
+  it("drops a stale client destination for platform staff", () => {
+    expect(sanitizeRedirectForRole("/client?org=old", "platform_admin")).toBeNull();
+    expect(sanitizeRedirectForRole("/client/candidates/123", "operations")).toBeNull();
+  });
+
+  it("drops an admin destination for a client", () => {
+    expect(sanitizeRedirectForRole("/admin", "client_admin")).toBeNull();
+  });
+
+  it("keeps destinations that match the signed-in role", () => {
+    expect(sanitizeRedirectForRole("/admin/candidates/123", "platform_admin")).toBe(
+      "/admin/candidates/123",
+    );
+    expect(sanitizeRedirectForRole("/client?org=abc", "client_admin")).toBe(
+      "/client?org=abc",
+    );
+    expect(sanitizeRedirectForRole("/me/applications", "candidate")).toBe("/me/applications");
+  });
+
+  it("keeps safe public destinations for every role", () => {
+    expect(sanitizeRedirectForRole("/pricing", "platform_admin")).toBe("/pricing");
   });
 });
