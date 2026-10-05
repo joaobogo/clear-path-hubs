@@ -189,8 +189,8 @@ export function ConsentBanner() {
                 // via "Manage", so "nothing loads until you allow it" would
                 // be false there.
                 optIn
-                ? "Our business-visitor tool (RB2B) runs on every page. Google Analytics runs with storage switched off — it sets no cookies — and only starts full measurement if you allow analytics. Advertising tags wait for your choice."
-                : "Our business-visitor tool (RB2B) runs on every page. Analytics and advertising run by default where you are; turn either off below and the choice is kept on this device."}{" "}
+                ? "Google Analytics can run in restricted consent mode with storage switched off. Business-visitor identification (RB2B), advertising tags, and full analytics wait for your choice."
+                : "Analytics and marketing tools, including business-visitor identification (RB2B), are permitted by default where you are. Turn either category off below and the choice is kept on this device."}{" "}
             <a href="/privacy" className="underline">
               Privacy policy
             </a>
@@ -219,7 +219,7 @@ export function ConsentBanner() {
                 <span className="text-sm">
                   <span className="font-medium text-foreground">Marketing</span>
                   <span className="block text-muted-foreground">
-                    Advertising measurement on Meta and LinkedIn.
+                    Business-visitor identification (RB2B), plus advertising measurement on Meta and LinkedIn.
                   </span>
                 </span>
                 <Switch
@@ -229,9 +229,9 @@ export function ConsentBanner() {
                 />
               </label>
               <p className="text-xs text-muted-foreground">
-                Always on — sign-in, security, saving this choice, restricted
-                traffic counts, and our business-visitor identification tool
-                (RB2B).
+                Always on — sign-in, security, saving this choice, and restricted
+                Google Analytics consent-mode traffic measurement. Marketing
+                identification is controlled by the Marketing choice above.
               </p>
             </div>
           )}
