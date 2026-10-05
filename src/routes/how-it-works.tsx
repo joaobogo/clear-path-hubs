@@ -22,7 +22,7 @@ const entry = getPage("how-it-works");
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
     marketingHead(entry, "/how-it-works", {
-      title: "How it works — AI Hiring Intelligence Platform | TaaSFlow",
+      title: "How TaaSFlow Works: Sourcing, Scoring and Human Review",
       description:
         "The operational explainer: Blueprint Compiler, Agent Layer discovery, Evidence Graph review, Scoring Engine ranking and Decision Workspace delivery.",
     }),
@@ -125,7 +125,7 @@ function HowItWorksPage() {
                 {[
                   "Digital, direct, AI-driven, inbound, offline — five families of channels working in parallel per role",
                   "AI intent scanning surfaces high-intent passive candidates other tools never see",
-                  "Named-target outreach + a 20,000-strong talent network + past finalists brought back in",
+                  "Named-target outreach, direct sourcing, and previously engaged candidates where the client has the right to re-engage them",
                   "Universities, staffing partners, referrals, events, PR, radio and OOH when a role warrants it",
                   "Whatever the channel — LinkedIn or a billboard — the candidate is scored on the same rubric",
                 ].map((t) => (
