@@ -77,8 +77,8 @@ export const PRICING_TIERS: PricingTier[] = [
     rolesIncluded: PILOT_ROLES_LABEL,
     turnaround: TURNAROUND_LABEL,
     included: BASE_INCLUDED,
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    ctaLabel: "Start your first role — $699",
+    ctaTo: "/intake",
   },
   {
     id: "growth",
