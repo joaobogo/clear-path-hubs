@@ -654,8 +654,8 @@ function EnterprisePage() {
             />
             <Pillar
               icon={<Eye className="h-5 w-5" aria-hidden />}
-              title="Named recruiter contact"
-              body="You always know who to talk to. Your platform expert is a direct message in the workspace — not a ticket queue."
+              title="Human recruiting contact"
+              body="A person on the TaaSFlow team owns the client conversation and the shortlist-review handoff — not an anonymous ticket queue."
             />
             <Pillar
               icon={<MessagesSquare className="h-5 w-5" aria-hidden />}
@@ -832,7 +832,7 @@ function MockChrome({ title, children }: { title: string; children: React.ReactN
         </span>
         <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
-          Live
+          Representative example
         </span>
       </div>
       <div className="p-4 sm:p-5">{children}</div>
