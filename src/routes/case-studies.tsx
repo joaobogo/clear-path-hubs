@@ -34,9 +34,9 @@ const entry = getPage("case-studies");
 export const Route = createFileRoute("/case-studies")({
   head: () =>
     marketingHead(entry, "/case-studies", {
-      title: "Case studies — hiring outcomes | TaaSFlow",
+      title: "Example Recruiting Engagements | TaaSFlow",
       description:
-        "Hospitality, finance, healthcare, tech, consumer and industrial engagements — evidence-backed shortlists produced by the AI Hiring Intelligence Platform.",
+        "Illustrative recruiting scenarios across hospitality, finance, healthcare, technology, consumer and industrial hiring. No client-result claims without documented proof.",
     }),
   component: CaseStudiesPage,
 });
@@ -244,18 +244,11 @@ function HeroMetrics() {
 }
 
 function TrustStrip() {
-  const items = [
-    "3 hospitality groups",
-    "2 PE funds",
-    "1 clinic network",
-    "1 Series C platform",
-    "1 DTC scale-up",
-    "1 industrial group",
-  ];
+  const items = ["Hospitality", "Finance", "Healthcare", "Technology", "Consumer & Retail", "Industrial & Energy"];
   return (
     <div className="mt-8 rounded-2xl border border-border/60 bg-muted/20 p-5">
       <p className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
-        Active or recent engagements represented on this page
+        Example sectors represented on this page
       </p>
       <ul className="mt-3 flex flex-wrap gap-2">
         {items.map((i) => (
@@ -316,7 +309,7 @@ function StudyCard({ study }: { study: Study }) {
               </div>
               {study.representative !== false && (
                 <span className="inline-flex items-center rounded-full border border-[color:var(--brand-on-dark)]/30 px-2.5 py-1 text-[10px] font-medium uppercase tracking-widest text-[color:var(--brand-on-dark)]/80">
-                  Representative engagement
+                  Example engagement
                 </span>
               )}
             </div>
