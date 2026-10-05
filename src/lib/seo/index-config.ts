@@ -42,7 +42,6 @@ export const STATIC_PATHS = [
   "/case-studies",
   "/global-talent",
   "/employer-onboarding",
-  "/knowledge-base",
   "/talent-network",
   "/partnerships/staffing",
   "/privacy",
@@ -57,15 +56,8 @@ export const STATIC_PATHS = [
   "/system",
   "/trust",
   "/security",
-  "/status",
-  "/changelog",
 
-  "/intake",
-  "/book",
-  "/talent-marketplace",
   "/candidate-join",
-  "/candidate-success",
-  "/pitch",
 ] as const;
 
 export type SitemapEntry = { path: string; priority: string };
@@ -107,7 +99,6 @@ export function buildSitemapXml(): string {
     [
       "  <url>",
       `    <loc>${BASE_URL}${e.path}</loc>`,
-      "    <changefreq>weekly</changefreq>",
       `    <priority>${e.priority}</priority>`,
       "  </url>",
     ].join("\n"),
