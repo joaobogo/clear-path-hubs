@@ -33,6 +33,7 @@ export const STATIC_PATHS = [
   "/how-it-works",
   "/journey",
   "/pricing",
+  "/compare",
   "/about",
   "/enterprise",
   "/pilot",
