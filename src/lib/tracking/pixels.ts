@@ -1,20 +1,12 @@
 /**
  * TaaSFlow tracking pixels.
  *
- * CONSENT: RB2B is exempt — it runs on every public page whatever the visitor
- * chose (owner's decision, 2026-09-07; see rb2bHeadLinks below and
- * ALWAYS_ON_TRACKERS in ./consent). GA4 boots restricted by Consent Mode with
- * storage denied and upgrades only if analytics is allowed. Every OTHER tag
- * waits for its consent category, where "permitted before the visitor decides"
- * is the regional rule in ./consent — prior opt-in in the EU/EEA, UK and
- * Switzerland, permitted by default elsewhere.
- *
- * Single source of truth for every third-party tag. RB2B is a server-rendered
- * head tag; everything else is injected on the client. Every function is
- * wrapped so a blocked or failing tag can never break the app.
- *
- * Live: GA4, RB2B (Retention.com), LinkedIn Insight Tag.
- * Dormant until their env var is set: Meta, Clarity, Hotjar.
+ * CONSENT: RB2B is a marketing tracker. It is injected client-side only after
+ * the regional consent policy allows marketing: prior opt-in in the EU/EEA,
+ * UK and Switzerland, permitted by default elsewhere until the visitor opts
+ * out. GA4 boots restricted by Consent Mode with storage denied and upgrades
+ * only when analytics is allowed. Signed-in workspace routes never run public
+ * marketing analytics.
  */
 
 import { type ConsentCategory, isTrackerAllowed } from "./consent";
@@ -152,22 +144,16 @@ type HeadLink = {
 
 type HeadScript = { src: string; async: boolean; "data-tracker": string };
 
-export function rb2bHeadLinks(pathname: string): HeadLink[] {
-  if (!RB2B_SRC || isWorkspacePath(pathname)) return [];
-  return [
-    ...RB2B_ORIGINS.flatMap((href): HeadLink[] => [
-      { rel: "preconnect", href },
-      { rel: "dns-prefetch", href },
-    ]),
-    { rel: "preload", as: "script", href: RB2B_SRC, fetchPriority: "high" },
-  ];
+export function rb2bHeadLinks(_pathname: string): HeadLink[] {
+  // Do not preconnect or preload: either can disclose a visit before the
+  // marketing-consent decision in prior-opt-in regions.
+  return [];
 }
 
-export function rb2bHeadScripts(pathname: string): HeadScript[] {
-  if (!RB2B_SRC || isWorkspacePath(pathname)) return [];
-  // data-tracker is what `alreadyInDocument` looks for, so the client
-  // initialiser sees this tag and never loads a second copy.
-  return [{ src: RB2B_SRC, async: true, "data-tracker": "rb2b" }];
+export function rb2bHeadScripts(_pathname: string): HeadScript[] {
+  // RB2B is injected by initRB2B only after isTrackerAllowed("rb2b",
+  // "marketing") passes. Never server-render this marketing tag.
+  return [];
 }
 
 /**
@@ -314,15 +300,12 @@ function clearGaCookies(): void {
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
-  // The normal case: the server-rendered head tag is already there.
+  // RB2B is never server-rendered. The client consent loop calls this only
+  // after marketing is permitted for the visitor's region and choice.
   if (alreadyInDocument("rb2b")) {
     loaded.add("rb2b");
     return;
   }
-  // Fallback only — a document served WITHOUT the tag, which means the head
-  // was rendered for a workspace path. Reached when the visitor then navigates
-  // client-side to a public page. RB2B is always-on, so the consent loop
-  // always calls this; the guard above is what prevents a second copy.
   if (loaded.has("rb2b") || !RB2B_SRC) return;
   if (typeof window === "undefined" || isWorkspacePath(window.location.pathname)) return;
   loaded.add("rb2b");
@@ -430,9 +413,8 @@ export function initializeTrackers() {
 
   // Every tracker except GA4 boots only if `isTrackerAllowed` says so. GA4
   // stays special: it loads in Consent Mode v2 with storage denied, and
-  // upgrades when analytics consent arrives. RB2B passes the gate always — it
-  // is on ALWAYS_ON_TRACKERS in ./consent — and has normally been booted by
-  // the head snippet already, so its initialiser is a no-op here.
+  // upgrades when analytics consent arrives. RB2B is treated as marketing and
+  // therefore waits for prior consent in EU/EEA, UK and Switzerland.
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
     if (key === "ga4") continue;
     const category = TRACKER_CATEGORY[key];
