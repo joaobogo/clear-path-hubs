@@ -58,7 +58,7 @@ const BASE_INCLUDED = [
 const PARALLEL_INCLUDED = [
   "Ranked shortlist refreshed weekly",
   "Top 10 candidates per position",
-  "All positions worked in parallel",
+  "Activate position credits when you need them",
   "Ranked shortlist per position",
   "Evidence-backed scoring with fit notes",
   "Criteria-based ethical ranking",
@@ -87,7 +87,7 @@ export const PRICING_TIERS: PricingTier[] = [
     oneTime: PACKAGE_10.totalUsd,
     priceDisplay: PACKAGE_10.totalDisplay,
     pricePer: "billed once",
-    bestFor: "Run parallel searches with shared intake context.",
+    bestFor: "Prepay up to 10 position credits and activate them whenever you need them.",
     rolesIncluded: PACKAGE_10.capacityLabel,
     turnaround: TURNAROUND_LABEL,
     included: PARALLEL_INCLUDED,
@@ -102,7 +102,7 @@ export const PRICING_TIERS: PricingTier[] = [
     oneTime: PACKAGE_20.totalUsd,
     priceDisplay: PACKAGE_20.totalDisplay,
     pricePer: "billed once",
-    bestFor: "Concurrent hiring across functions with priority support.",
+    bestFor: "Prepay up to 20 position credits. Use them across the year as hiring needs appear.",
     rolesIncluded: PACKAGE_20.capacityLabel,
     turnaround: TURNAROUND_LABEL,
     included: [...PARALLEL_INCLUDED, "Priority support"],
@@ -116,7 +116,7 @@ export const PRICING_TIERS: PricingTier[] = [
     oneTime: PACKAGE_30.totalUsd,
     priceDisplay: PACKAGE_30.totalDisplay,
     pricePer: "billed once",
-    bestFor: "Portfolio hiring across teams in one package.",
+    bestFor: "Prepay up to 30 position credits for hiring across teams and business units.",
     rolesIncluded: PACKAGE_30.capacityLabel,
     turnaround: TURNAROUND_LABEL,
     included: [
@@ -135,7 +135,7 @@ export const PRICING_TIERS: PricingTier[] = [
     oneTime: PACKAGE_40.totalUsd,
     priceDisplay: PACKAGE_40.totalDisplay,
     pricePer: "billed once",
-    bestFor: "Portfolio hiring across business units.",
+    bestFor: "Prepay up to 40 position credits and draw them down as roles open.",
     rolesIncluded: PACKAGE_40.capacityLabel,
     turnaround: TURNAROUND_LABEL,
     included: [
@@ -154,7 +154,7 @@ export const PRICING_TIERS: PricingTier[] = [
     oneTime: PACKAGE_100.totalUsd,
     priceDisplay: PACKAGE_100.totalDisplay,
     pricePer: "billed once",
-    bestFor: "A continuous hiring programme run as one package.",
+    bestFor: "Prepay up to 100 position credits for a large hiring programme; unused credits can roll over.",
     rolesIncluded: PACKAGE_100.capacityLabel,
     turnaround: TURNAROUND_LABEL,
     included: [
@@ -196,7 +196,7 @@ export const PRICING_TIERS: PricingTier[] = [
 export const PRICING_GUARANTEES: string[] = [
   "No hidden fees",
   "You keep all candidates",
-  "Run a pilot before you subscribe",
+  "Choose prepaid credits or continuous subscription",
 ];
 
 /**
