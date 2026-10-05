@@ -137,6 +137,7 @@ export function serviceScript(input: {
   description: string;
   path: string;
   serviceType?: string;
+  priceUsd?: number;
 }) {
   return {
     type: "application/ld+json",
@@ -147,6 +148,7 @@ export function serviceScript(input: {
       description: input.description,
       url: `${CANONICAL_ORIGIN}${input.path}`,
       ...(input.serviceType ? { serviceType: input.serviceType } : {}),
+      ...(input.priceUsd != null ? { offers: { "@type": "Offer", priceCurrency: "USD", price: input.priceUsd, url: `${CANONICAL_ORIGIN}${input.path}` } } : {}),
       provider: { "@id": "https://taasflow.com/#organization" },
     }),
   };
