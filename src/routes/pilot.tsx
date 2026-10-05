@@ -74,7 +74,7 @@ const AFTER = [
 
 function PilotPage() {
   return (
-    <SiteShell>
+    <SiteShell hideLinkHub>
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
