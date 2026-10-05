@@ -92,8 +92,8 @@ export function SkipNav() {
 /* ---------------------------------------------------------------- Announcement */
 
 const ANNOUNCEMENT_KEY = "taasflow.announcement.v1";
-const ANNOUNCEMENT_TEXT = "The category we're building: ATS + recruiting execution, in one system.";
-const ANNOUNCEMENT_LINK = "/platform";
+const ANNOUNCEMENT_TEXT = "One role. $699. Guaranteed top 10 candidates.";
+const ANNOUNCEMENT_LINK = "/pilot";
 
 function Announcement() {
   const [dismissed, setDismissed] = useState(true);
@@ -224,7 +224,7 @@ function Header() {
   // Close mobile sheet when route changes.
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  const candidateMode = isCandidateJourneyPath(pathname);
+  const candidateMode = isCandidateJourneyPath(pathname);\n  if (pathname === "/") return null;
   const ctaPrimary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
   const ctaSecondary = candidateMode ? CANDIDATE_SECONDARY_CTA : BOOK_CALL_CTA;
 
