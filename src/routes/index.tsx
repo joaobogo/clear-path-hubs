@@ -1365,7 +1365,7 @@ function Home() {
                   aria-label={`Start your first role for ${PRICE_PILOT_USD}`}
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-6 py-3 text-base font-semibold text-white shadow-[var(--brand-shadow-sm)] hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Start your first role — ${PRICE_PILOT_USD} <ArrowRight className="h-4 w-4" aria-hidden />
+                  Start your first role — {"$" + PRICE_PILOT_USD} <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
                   to="/book"
