@@ -35,7 +35,7 @@ export type PrimaryItem =
 
 export const PRIMARY_CTA: NavLink = {
   to: "/intake",
-  label: `Start your first role — ${PRICE_PILOT_USD}`,
+  label: `Start your first role — $${PRICE_PILOT_USD}`,
   description: "One role, one-time pilot, guaranteed top 10",
 };
 
