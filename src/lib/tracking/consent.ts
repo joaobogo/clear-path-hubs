@@ -4,9 +4,9 @@
  * Single source of truth for whether non-essential tracking may run.
  *
  * Rules:
- *  - RB2B always runs on public pages (ALWAYS_ON_TRACKERS below). Owner's
- *    decision; see the note there.
- *  - Regional gate for everything else. In the EU/EEA, UK and Switzerland
+ *  - Business-visitor identification (RB2B) is a marketing tracker and follows
+ *    the same regional consent gate as other marketing tools.
+ *  - In the EU/EEA, UK and Switzerland
  *    nothing optional runs before an affirmative choice. Everywhere else the
  *    optional categories are permitted by default and the visitor can turn
  *    them off at any time; an explicit stored decision always wins.
@@ -33,7 +33,7 @@ export type ConsentDecision = {
 };
 
 /** Bump when trackers are added or their purpose changes. */
-export const CONSENT_VERSION = 1;
+export const CONSENT_VERSION = 2;
 
 const STORAGE_KEY = "taasflow_consent_v1";
 const EVENT = "taasflow:consent-change";
@@ -138,28 +138,12 @@ export function onTrackingPolicyChange(handler: (p: TrackingPolicy) => void): ()
 }
 
 /**
- * Trackers that always run, whatever the visitor chose and wherever they are.
+ * No marketing or analytics tracker is hard-coded as always on.
  *
- * RB2B, by the owner's decision (2026-09-07). It is the lead-identification
- * tool; it had been taken off this list, out of the head, and out of the
- * initialiser loop over three audits (#6 A6-04, #7 2.1) on privacy grounds,
- * and the net effect was that it never fired. The owner has chosen to run it
- * unconditionally on public pages and accepts the privacy trade-off. The
- * privacy policy lists it under legitimate interest. It still does not run on
- * the signed-in workspace — see WORKSPACE_PATH_PREFIXES in ./pixels.
- *
- * GA4 is NOT here. While it was, isTrackerAllowed("ga4", "analytics")
- * returned true whatever the visitor chose, so syncGA4Consent granted
- * analytics_storage and wrote _ga cookies after a "Decline all", beside a
- * banner reading "it sets no cookies" (audit #8, TF8-05). GA4 runs in Consent
- * Mode with storage denied until analytics is allowed, which needs no
- * exemption here.
- *
- * Exported so the admin tracking page can show these as always-on rather than
- * "waits for consent" — two surfaces answering one question differently is
- * how this codebase's defects usually start.
+ * The admin policy may classify genuinely essential tooling, but RB2B is
+ * deliberately excluded from that escape hatch in isTrackerAllowed below.
  */
-export const ALWAYS_ON_TRACKERS = ["rb2b"] as const;
+export const ALWAYS_ON_TRACKERS = [] as const;
 
 /** Whether a specific tracker is strictly necessary or on the always-on list. */
 export function isTrackerEssential(key: string): boolean {
@@ -172,6 +156,10 @@ export function isTrackerEssential(key: string): boolean {
  * trackers run always; everything else needs its consent category permitted.
  */
 export function isTrackerAllowed(key: string, category: ConsentCategory): boolean {
+  // RB2B performs business-visitor identification, so it must always follow
+  // the visitor-facing marketing choice. It may never be promoted to
+  // "essential" by an admin policy and thereby bypass prior-consent regions.
+  if (key === "rb2b") return isAllowed("marketing");
   if (isTrackerEssential(key)) return true;
   return isAllowed(category);
 }
