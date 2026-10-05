@@ -66,8 +66,8 @@ const BASE_TIERS: SubscriptionTier[] = [
     bestFor: "One position, the full workflow.",
     rolesIncluded: PILOT_ROLES_LABEL,
     included: BASE,
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    ctaLabel: "Start your first role — $699",
+    ctaTo: "/intake",
   },
   {
     id: "growth",
