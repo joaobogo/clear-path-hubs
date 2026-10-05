@@ -63,6 +63,8 @@ import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
 import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
 import { RiskProof } from "@/components/marketing/risk-proof";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
+import { HomepageLeadBar } from "@/components/marketing/homepage-lead-bar";
+import { PILOT_GUARANTEE, PILOT_TIMELINE_LINE } from "@/config/commercial-truth";
 
 // Homepage metadata is authored inline (guardrail: the legacy JSON content entry
 // contains unapproved "14 days" and totals claims). The content bundle is
@@ -76,8 +78,8 @@ export const Route = createFileRoute("/")({
       undefined,
       "/",
       {
-        title: `TaaSFlow | ${BRAND_DESCRIPTOR}`,
-        description: `${BRAND_ONE_LINER} ${SYSTEM_CLAIM} Ranked candidates in a live ${MODULES.workspace} — no placement fees.`,
+        title: `Flat-Fee Recruiting: Your Top 10 for $699 | TaaSFlow`,
+        description: `Submit one role and get a guaranteed top 10, scored against your criteria. First ranked top 10 in 5 business days; full market view by day 15.`,
       },
       {
         // Every Q&A visible on this page, so answer engines quote the page's
@@ -1321,24 +1323,26 @@ function Home() {
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Your Talent
+                Give us the role.
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">Management Solution</span>
+                <span className="text-[color:var(--brand-ocean-text)]">Get your top 10.</span>
 
               </h1>
-              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-danger)]">
-                Human first, AI enabled
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
+                One role. $699. No placement fee.
               </p>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                TaaSFlow is a complete Talent Management solution capable of
-                running continuous sourcing, creating live talent pipelines
-                — supported by full ATS functionality.
+                TaaSFlow runs multi-channel recruiting, scores candidates against your approved criteria,
+                and delivers a guaranteed top 10. A senior recruiter approves the shortlist before you see it.
+              </p>
+              <p className="max-w-xl text-sm font-medium text-[color:var(--brand-navy)]/75">
+                {PILOT_TIMELINE_LINE}
               </p>
               <ul className="flex flex-wrap gap-2 pt-1">
                 {[
-                  "For companies hiring 1 to 100+ roles a month",
-                  "Only Fair Flat Fees - Always",
-                  `$${PRICE_PILOT_USD} pilot available`,
+                  "Guaranteed top 10 candidates",
+                  "Full scored market view by day 15",
+                  `${PRICE_PILOT_USD} one-time pilot · one role`,
                 ].map((t) => (
                   <li
                     key={t}
@@ -1636,7 +1640,7 @@ function Home() {
           <PublicPage>
             <SectionHead
               eyebrow="Industries"
-              title="A Talent Management solution tuned to your industry."
+              title="Flat-fee recruiting, tuned to your industry."
               lead="Every intake, evidence file, and shortlist is scoped to the hiring reality of the industry — not a generic recruiter template."
             />
             <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -1782,10 +1786,10 @@ function Home() {
       {/* 13 — FINAL CTA */}
       <CtaSection
         eyebrow="Ready to hire?"
-        title="Start with one role. See a ranked shortlist by Friday."
-        description="Open a role and get evidence per requirement, a live workspace your whole team can see, and package-based pricing instead of placement fees."
-        primary={{ to: "/pilot", label: `Start a $${PRICE_PILOT_USD} Pilot` }}
-        secondary={{ to: "/how-it-works", label: "See how it works" }}
+        title="Start with one role. Get your guaranteed top 10."
+        description={`${PILOT_TIMELINE_LINE} ${PILOT_GUARANTEE}`}
+        primary={{ to: "/intake", label: `Start your first role — ${PRICE_PILOT_USD}` }}
+        secondary={{ to: "/book", label: "Book a 20-minute call" }}
       />
       <FgvEndorsement className="mx-auto max-w-[1200px] px-4 pt-8 text-center text-xs text-[color:var(--brand-navy)]/70 sm:px-6 lg:px-8" />
           <PageConnections
@@ -1795,6 +1799,7 @@ function Home() {
         audience={{ to: "/enterprise", label: "For enterprise teams", desc: "Governance, security, and multi-role rollouts." }}
       />
 
+      <HomepageLeadBar />
     </SiteShell>
   );
 }
