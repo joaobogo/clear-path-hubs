@@ -160,7 +160,7 @@ export function SourcingEcosystemMap() {
       heading: "Digital & professional networks",
       caption: "Where the passive market lives.",
       channels: [
-        { label: "LinkedIn deep sourcing", note: "Boolean + narrative screens across 900M profiles", icon: <Linkedin className="h-4 w-4" aria-hidden /> },
+        { label: "LinkedIn deep sourcing", note: "Targeted search by role, location and approved criteria", icon: <Linkedin className="h-4 w-4" aria-hidden /> },
         { label: "LinkedIn sponsored ads", note: "Targeted role-specific campaigns to passive talent", icon: <Megaphone className="h-4 w-4" aria-hidden /> },
         { label: "GitHub / Stack Overflow", note: "Signal-based sourcing for technical roles", icon: <Github className="h-4 w-4" aria-hidden /> },
         { label: "Niche communities", note: "Slack, Discord, sub-industry forums", icon: <Users className="h-4 w-4" aria-hidden /> },
@@ -171,9 +171,9 @@ export function SourcingEcosystemMap() {
       caption: "Recruiter-owned reach, not rented lists.",
       channels: [
         { label: "Named-target outreach", note: "Precision headhunting by named account", icon: <UserPlus className="h-4 w-4" aria-hidden /> },
-        { label: "Talent network", note: "Curated pool from 20,000+ prior placements", icon: <Network className="h-4 w-4" aria-hidden /> },
-        { label: "Past finalists", note: "Strong runners-up from previous roles, brought back in", icon: <Archive className="h-4 w-4" aria-hidden /> },
-        { label: "Executive oversight bench", note: "20+ senior hiring experts across geographies", icon: <Briefcase className="h-4 w-4" aria-hidden /> },
+        { label: "Talent network", note: "Previously engaged talent where reuse is permitted", icon: <Network className="h-4 w-4" aria-hidden /> },
+        { label: "Past finalists", note: "Prior finalists re-engaged only where the client has the right to do so", icon: <Archive className="h-4 w-4" aria-hidden /> },
+        { label: "Human shortlist review", note: "A recruiter reviews candidates before client delivery", icon: <Briefcase className="h-4 w-4" aria-hidden /> },
       ],
     },
     {
@@ -181,8 +181,8 @@ export function SourcingEcosystemMap() {
       caption: "Where high-intent signals surface first.",
       channels: [
         { label: "Web-scale intent scanning", note: "Public signals: posts, layoffs, moves, launches", icon: <Radar className="h-4 w-4" aria-hidden /> },
-        { label: "AI passive-market mining", note: "Semantic match across 2M+ candidate data points", icon: <Sparkles className="h-4 w-4" aria-hidden /> },
-        { label: "Compensation & market data", note: "Live benchmarks per region and function", icon: <BarChart3 className="h-4 w-4" aria-hidden /> },
+        { label: "AI passive-market mining", note: "Semantic matching across role-relevant candidate evidence", icon: <Sparkles className="h-4 w-4" aria-hidden /> },
+        { label: "Compensation & market data", note: "Market context from documented research and closed-search evidence", icon: <BarChart3 className="h-4 w-4" aria-hidden /> },
       ],
     },
     {
@@ -200,9 +200,9 @@ export function SourcingEcosystemMap() {
       caption: "Real-world reach most tech tools skip.",
       channels: [
         { label: "University partnerships", note: "Early-career pipelines with target schools", icon: <GraduationCap className="h-4 w-4" aria-hidden /> },
-        { label: "Staffing & agency partners", note: "Whitelabel bench across 50+ countries", icon: <Handshake className="h-4 w-4" aria-hidden /> },
+        { label: "Staffing & agency partners", note: "Approved staffing and recruiting partners when a search calls for them", icon: <Handshake className="h-4 w-4" aria-hidden /> },
         { label: "Cold outreach team", note: "Phone, WhatsApp, email — human, calibrated", icon: <Phone className="h-4 w-4" aria-hidden /> },
-        { label: "Job boards & aggregators", note: "Indeed, Otta, Wellfound, regional boards", icon: <Signpost className="h-4 w-4" aria-hidden /> },
+        { label: "Job boards & aggregators", note: "Inbound applicants and client-authorised job-board activity; no implied direct feed", icon: <Signpost className="h-4 w-4" aria-hidden /> },
         { label: "Referrals & network intros", note: "Curated warm intros with attribution", icon: <MessagesSquare className="h-4 w-4" aria-hidden /> },
         { label: "Events, meetups, conferences", note: "In-person sourcing where the domain gathers", icon: <MapPin className="h-4 w-4" aria-hidden /> },
         { label: "Radio, billboards & OOH", note: "For high-volume, geo-anchored campaigns", icon: <Radio className="h-4 w-4" aria-hidden /> },
