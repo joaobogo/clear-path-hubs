@@ -38,6 +38,7 @@ export const STATIC_PATHS = [
   "/recruiting-as-a-service",
   "/recruitment-agency-alternative",
   "/ai-recruiting-agency",
+  "/ai-hiring-compliance",
   "/recruiter-fees",
   "/about",
   "/enterprise",
