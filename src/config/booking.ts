@@ -55,9 +55,9 @@ export const MEETING_TYPES: Record<MeetingTypeId, MeetingType> = {
   demo: {
     id: "demo",
     name: "Platform walkthrough",
-    durationLabel: "30 minutes",
+    durationLabel: "20 minutes",
     summary:
-      "A live walkthrough of the workspace: intake, evidence extraction, scoring, and the decision queue.",
+      "A focused walkthrough of the workspace: intake, evidence extraction, scoring, and the decision queue.",
     agenda: [
       "Role intake and blueprint generation",
       "Evidence extraction from real CVs",
