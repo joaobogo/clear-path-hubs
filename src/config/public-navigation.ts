@@ -118,6 +118,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
     links: [
       { to: "/about", label: "About" },
       { to: "/security", label: "Security" },
+      { to: "/ai-hiring-compliance", label: "AI in hiring" },
       { to: "/trust", label: "Trust" },
       { to: "/contact", label: "Contact" },
       { to: "/jobs", label: "Open roles" },
