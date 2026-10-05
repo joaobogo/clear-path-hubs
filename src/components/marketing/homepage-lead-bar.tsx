@@ -1,6 +1,7 @@
 import * as React from "react";
 import { MessageCircle, Send, X } from "lucide-react";
 import { submitToCrm } from "@/lib/crm/submit-form";
+import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 
 type LeadState = {
   bestTime: string;
@@ -36,6 +37,10 @@ export function HomepageLeadBar() {
     }
 
     setStatus("sending");
+    trackFgv(FGV_EVENTS.formSubmit, {
+      form_type: "homepage_sticky_lead",
+      service_interest: "recruiting_subscription",
+    });
     const result = await submitToCrm({
       formId: "website-message",
       email: values.email.trim(),
@@ -51,9 +56,19 @@ export function HomepageLeadBar() {
     });
 
     if (result.ok) {
+      trackConfirmedConversion({
+        formType: "homepage_sticky_lead",
+        serviceInterest: "recruiting_subscription",
+        destinationBrand: "taasflow",
+        submissionId: result.submissionId,
+      });
       setStatus("done");
       setValues(EMPTY);
     } else {
+      trackFgv(FGV_EVENTS.formError, {
+        form_type: "homepage_sticky_lead",
+        error_code: result.error,
+      });
       setStatus("error");
     }
   }
