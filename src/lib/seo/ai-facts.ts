@@ -22,7 +22,6 @@ import {
   PACKAGE_30,
 
   MAX_POSITIONS,
-  TURNAROUND_LABEL,
 } from "@/config/pricing-core";
 
 export const AI_FACTS = {
