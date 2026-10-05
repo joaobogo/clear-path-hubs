@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, Minus } from "lucide-react";
 import { PublicPage, PublicSection, SiteShell, CtaSection } from "@/components/marketing/site-shell";
@@ -30,7 +31,7 @@ const rows = [
   { label: "Human review", taasflow: "A senior recruiter approves the shortlist before client delivery.", agency: "Human recruiter-led.", software: "Depends on your internal process." },
 ] as const;
 
-function Cell({ children, positive = false }: { children: React.ReactNode; positive?: boolean }) {
+function Cell({ children, positive = false }: { children: ReactNode; positive?: boolean }) {
   return (
     <div className="flex gap-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
       {positive ? <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]" aria-hidden /> : <Minus className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/40" aria-hidden />}
