@@ -150,7 +150,7 @@ export const ROSTER: readonly RosterEntry[] = [
     events: ["Who verified or rejected each item, and when"],
     representative: {
       status: "Needs attention",
-      activity: "2 requirements on candidate A-1042 have no supporting evidence.",
+      activity: "2 requirements on fictional candidate E-2187 have no supporting evidence.",
     },
   },
   {
