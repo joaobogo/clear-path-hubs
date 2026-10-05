@@ -15,9 +15,11 @@ import { readJsonWithLimit } from "@/lib/public-api/body-limit";
 import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
 
 /**
- * Inline account creation for the intake flow. The visitor never leaves the
- * page: we create (or recognise) the account here, then the browser signs in
- * with the password it already holds and the draft is persisted server-side.
+ * Account creation for the employer intake flow.
+ *
+ * New visitors reach this only after their role brief has already been captured.
+ * Existing accounts are recognised rather than overwritten, and the browser
+ * signs in before the pending brief can be released into a workspace.
  */
 
 const bodySchema = z.discriminatedUnion("mode", [
