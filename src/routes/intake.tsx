@@ -166,6 +166,7 @@ export const Route = createFileRoute("/intake")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://taasflow.com/intake" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: "https://taasflow.com/intake" }],
   }),
