@@ -647,8 +647,8 @@ export function CtaSection({
   eyebrow,
   title,
   description,
-  primary = { to: "/intake", label: "Start hiring" },
-  secondary = { to: "/jobs", label: "Browse jobs" },
+  primary = PRIMARY_CTA,
+  secondary = BOOK_CALL_CTA,
   tertiary,
 }: {
   eyebrow?: string;
