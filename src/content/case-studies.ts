@@ -1,10 +1,9 @@
 // -----------------------------------------------------------------------------
-// Canonical case-study data. Single source of truth shared by the /case-studies
-// route and the CaseStudyPreviews marketing component. Numbers reflect
-// aggregate performance ranges observed across the TaaSFlow delivery model.
-// Named studies with written client approval are added individually as
-// clients sign off; until then, clients are labeled by industry + company
-// type rather than name.
+// Public engagement examples.
+//
+// These are illustrative scenarios, not client results. We deliberately keep
+// performance figures out until a named or anonymised client engagement has a
+// documented source and publication approval.
 // -----------------------------------------------------------------------------
 
 export type CaseStudyTestimonial = {
@@ -19,183 +18,125 @@ export type CaseStudy = {
   companyType: string;
   region: string;
   headline: string;
-  /** Client situation: what state the client was in before engaging TaaSFlow. */
   situation: string;
-  /** Roles needed for the engagement. */
   rolesNeeded: string[];
-  /** Timeline to first shortlist and beyond. */
   timeline: { day: string; label: string }[];
   timeToFirstShortlist: string;
-  /** Candidate quality signal — how the client knew the shortlist was strong. */
   qualitySignal: { label: string; value: string; sub?: string }[];
-  /** Outcome: what happened after the client paid / engaged. */
   outcome: string;
   outcomeHighlight: string;
-  /** Only present where a real testimonial exists; omit rather than invent. */
   testimonial?: CaseStudyTestimonial;
-  /**
-   * True (the default) when the study is anonymized and its figures reflect
-   * representative delivery performance rather than one named, approved
-   * client. Set to false only for named studies with written client approval.
-   */
   representative?: boolean;
 };
+
+const STANDARD_TIMELINE = [
+  { day: "Step 1", label: "Role brief and scoring criteria confirmed" },
+  { day: "Step 2", label: "Multi-channel sourcing and outreach begins" },
+  { day: "Step 3", label: "Candidates are scored against the approved criteria" },
+  { day: "Step 4", label: "Senior recruiter reviews before client delivery" },
+];
 
 export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: "hospitality-luxury-group",
     industry: "Hospitality",
-    companyType: "Luxury hotel group, 6 properties",
-    region: "Europe · Middle East",
-    headline: "Staffing a luxury hotel group across 6 properties",
+    companyType: "Multi-property hospitality operator",
+    region: "Global",
+    headline: "Example: multi-property hospitality hiring",
     situation:
-      "Pre-opening pipeline for 6 flagship properties. Front-of-house, F&B leadership, revenue management, spa — all under one calendar with a hard opening date.",
-    rolesNeeded: ["Hotel General Manager", "F&B Director", "Revenue Manager", "Executive Chef", "Spa Director", "Front Office Manager", "Director of Sales", "Rooms Division Manager"],
-    timeline: [
-      { day: "Day 0", label: "Intake · 6 briefs captured" },
-      { day: "Day 4", label: "First evidence-scored shortlists" },
-      { day: "Day 12", label: "First 8 offers signed" },
-      { day: "Day 84", label: "All 42 roles closed" },
-    ],
-    timeToFirstShortlist: "4 days",
-    qualitySignal: [
-      { label: "Positions filled", value: "42", sub: "across 6 properties" },
-      { label: "Time to shortlist", value: "6d", sub: "median per role" },
-      { label: "Offer acceptance", value: "88%", sub: "shortlist → hire" },
-      { label: "12-mo retention", value: "91%", sub: "of placements" },
-    ],
+      "A hospitality group needs leadership and operations roles across several properties while keeping one consistent evidence bar.",
+    rolesNeeded: ["Hotel General Manager", "F&B Director", "Revenue Manager", "Executive Chef"],
+    timeline: STANDARD_TIMELINE,
+    timeToFirstShortlist: "the published pilot timeline",
+    qualitySignal: [],
     outcome:
-      "After sign-off, parallel intake ran across all 6 properties on a shared, location-scored candidate pool. All 42 roles closed by Day 84 with zero missed pre-opening dates, and 91% of placements were still in seat 12 months later.",
-    outcomeHighlight: "0 missed pre-opening dates across 6 sites",
+      "This example shows how TaaSFlow can organise several hospitality searches around one role brief, one scoring method and one client-owned workspace.",
+    outcomeHighlight: "Illustrative engagement — not a reported client result",
+    representative: true,
   },
   {
     slug: "finance-mid-market-pe",
     industry: "Finance",
-    companyType: "Mid-market private equity fund, $400M AUM",
-    region: "Americas · APAC",
-    headline: "Building a mid-market private equity investment team",
+    companyType: "Private-equity and investment team",
+    region: "Global",
+    headline: "Example: investment-team recruiting",
     situation:
-      "A newly-raised $400M fund needed a senior investment team stood up in 12 weeks, plus operating partners across two portfolio companies.",
-    rolesNeeded: ["Investment Director", "Vice President, Investments", "Portfolio Operating Partner", "Head of Value Creation", "Senior Associate", "Deal Origination Lead", "Head of IR"],
-    timeline: [
-      { day: "Day 0", label: "Fund charter → role scoping" },
-      { day: "Day 7", label: "First shortlist delivered" },
-      { day: "Day 21", label: "First signed offer" },
-      { day: "Day 84", label: "Full team + operating partners in seat" },
-    ],
-    timeToFirstShortlist: "7 days",
-    qualitySignal: [
-      { label: "Positions filled", value: "18", sub: "senior + operating" },
-      { label: "Days to first hire", value: "21", sub: "signed offer" },
-      { label: "Shortlist quality", value: "9.1/10", sub: "client rating" },
-      { label: "Diversity mix", value: "44%", sub: "underrepresented" },
-    ],
+      "An investment team needs candidates assessed against deal experience, sector exposure, seniority and geography rather than generic finance keywords.",
+    rolesNeeded: ["Investment Director", "Vice President", "Operating Partner", "Senior Associate"],
+    timeline: STANDARD_TIMELINE,
+    timeToFirstShortlist: "the published pilot timeline",
+    qualitySignal: [],
     outcome:
-      "Deal-experience evidence scoring and reference validation were built into the shortlist gate. The IC signed its first offer by Day 21 and had the full investment team plus operating partners in seat by Day 84.",
-    outcomeHighlight: "Full team + operating partners in seat in 12 weeks",
+      "This example illustrates an evidence-led search where every candidate is scored against the investment criteria the client approves.",
+    outcomeHighlight: "Illustrative engagement — not a reported client result",
+    representative: true,
   },
   {
     slug: "healthcare-clinical-network",
     industry: "Healthcare",
-    companyType: "Specialty clinic network, 11 sites",
-    region: "Europe · North America",
-    headline: "Scaling a multi-site clinical network",
+    companyType: "Multi-site healthcare operator",
+    region: "Global",
+    headline: "Example: healthcare leadership hiring",
     situation:
-      "A specialty clinic network needed clinical, operational, and digital-health leadership across 11 sites — with credentialing verified before shortlist.",
-    rolesNeeded: ["Chief Medical Officer", "Clinic Director", "Head of Digital Health", "Director of Nursing", "Head of Patient Operations", "Regulatory & Compliance Lead"],
-    timeline: [
-      { day: "Day 0", label: "Credential taxonomy locked" },
-      { day: "Day 9", label: "First site director shortlisted" },
-      { day: "Day 30", label: "8 sites fully staffed at leadership" },
-      { day: "Day 120", label: "All 11 sites live" },
-    ],
-    timeToFirstShortlist: "9 days",
-    qualitySignal: [
-      { label: "Positions filled", value: "34", sub: "clinical + ops" },
-      { label: "Credential pass", value: "100%", sub: "pre-shortlist gate" },
-      { label: "Retention @ 12mo", value: "94%", sub: "of placements" },
-      { label: "Sites covered", value: "11", sub: "across 3 countries" },
-    ],
+      "A healthcare operator needs clinical and operational leadership while keeping licensing and credential checks explicit in the role brief.",
+    rolesNeeded: ["Clinic Director", "Director of Nursing", "Operations Lead", "Compliance Lead"],
+    timeline: STANDARD_TIMELINE,
+    timeToFirstShortlist: "the published pilot timeline",
+    qualitySignal: [],
     outcome:
-      "Every shortlisted candidate had board certifications, licensure, and patient-outcome evidence verified before the client opened a profile. 8 of 11 sites were fully staffed at leadership level by Day 30; all 11 were live by Day 120.",
-    outcomeHighlight: "100% credential pass rate before shortlist, every time",
+      "This example shows how required credentials can be captured as explicit criteria while the client retains responsibility for final verification and hiring decisions.",
+    outcomeHighlight: "Illustrative engagement — not a reported client result",
+    representative: true,
   },
   {
     slug: "tech-series-c-platform",
     industry: "Technology",
-    companyType: "Series C infrastructure platform company",
-    region: "North America · Europe",
-    headline: "Series C platform team — engineers, PMs, and design",
+    companyType: "Scaling software company",
+    region: "Global",
+    headline: "Example: product and engineering hiring",
     situation:
-      "A Series C infra platform company needed to double engineering and stand up a product-led design org in two quarters, without diluting their bar.",
-    rolesNeeded: ["Staff Engineer, Platform", "Principal PM", "Head of Design", "Engineering Manager", "Senior Backend Engineer", "Design Systems Lead"],
-    timeline: [
-      { day: "Day 0", label: "Skill graph + rubric locked" },
-      { day: "Day 5", label: "First shortlist across 3 tracks" },
-      { day: "Day 42", label: "12 offers signed" },
-      { day: "Day 90", label: "Full 27 seats closed" },
-    ],
-    timeToFirstShortlist: "5 days",
-    qualitySignal: [
-      { label: "Positions filled", value: "27", sub: "eng · PM · design" },
-      { label: "Interview-to-offer", value: "3.2x", sub: "vs. prior baseline" },
-      { label: "Pass through loop", value: "62%", sub: "shortlist → onsite" },
-      { label: "Diversity mix", value: "48%", sub: "underrepresented" },
-    ],
+      "A scaling software company needs technical candidates compared consistently across experience, scope, architecture and leadership requirements.",
+    rolesNeeded: ["Staff Engineer", "Engineering Manager", "Product Manager", "Design Lead"],
+    timeline: STANDARD_TIMELINE,
+    timeToFirstShortlist: "the published pilot timeline",
+    qualitySignal: [],
     outcome:
-      "Skill-graph evidence scoring on real project artifacts (PRs, RFCs, portfolios) fed structured, standardized panels across regions. 12 offers were signed by Day 42, and all 27 seats were closed by Day 90.",
-    outcomeHighlight: "3.2x faster interview-to-offer than their prior baseline",
+      "This example illustrates a role-specific search with evidence attached to each score so hiring managers can compare candidates side by side.",
+    outcomeHighlight: "Illustrative engagement — not a reported client result",
+    representative: true,
   },
   {
     slug: "consumer-dtc-scaleup",
     industry: "Consumer & Retail",
-    companyType: "DTC consumer brand, omnichannel scale-up",
-    region: "Europe · Americas",
-    headline: "Scaling a DTC brand into omnichannel retail",
+    companyType: "Omnichannel consumer brand",
+    region: "Global",
+    headline: "Example: commercial and operations hiring",
     situation:
-      "A fast-growing DTC brand needed leadership across retail expansion, supply chain, brand, and performance marketing — while protecting margin discipline.",
-    rolesNeeded: ["Chief Retail Officer", "VP Supply Chain", "Head of Brand", "Director of Performance Marketing", "Head of Category", "Regional GM"],
-    timeline: [
-      { day: "Day 0", label: "Growth plan → role map" },
-      { day: "Day 6", label: "First commercial shortlist" },
-      { day: "Day 45", label: "Retail leadership in seat" },
-      { day: "Day 180", label: "4 new markets operational" },
-    ],
-    timeToFirstShortlist: "6 days",
-    qualitySignal: [
-      { label: "Positions filled", value: "23", sub: "commercial + ops" },
-      { label: "Median time-to-hire", value: "31d", sub: "brief → signed" },
-      { label: "Cost-per-hire", value: "-42%", sub: "vs. prior agency" },
-      { label: "Markets opened", value: "4", sub: "in 9 months" },
-    ],
+      "A consumer brand needs leaders across retail, supply chain and growth while keeping the search tied to business scale and channel experience.",
+    rolesNeeded: ["Retail Director", "Supply Chain Lead", "Head of Brand", "Growth Director"],
+    timeline: STANDARD_TIMELINE,
+    timeToFirstShortlist: "the published pilot timeline",
+    qualitySignal: [],
     outcome:
-      "Every senior shortlist required documented category ownership, margin, and channel results at comparable scale. Retail leadership was in seat by Day 45, and 4 new markets were operational within 9 months.",
-    outcomeHighlight: "Cost-per-hire down 42% vs. their prior agency",
+      "This example shows how TaaSFlow can turn business context into role criteria, source broadly and return a scored candidate view.",
+    outcomeHighlight: "Illustrative engagement — not a reported client result",
+    representative: true,
   },
   {
     slug: "industrial-energy-transition",
     industry: "Industrial & Energy",
-    companyType: "Heavy-industry group, low-carbon division",
-    region: "Europe · Middle East · APAC",
-    headline: "Energy-transition leadership across 3 continents",
+    companyType: "Industrial and energy business",
+    region: "Global",
+    headline: "Example: technical and project leadership hiring",
     situation:
-      "A heavy-industry group building out a low-carbon business needed engineering, EPC, and commercial leadership across sites on three continents.",
-    rolesNeeded: ["Head of Low-Carbon Projects", "VP Engineering", "EPC Program Director", "Commissioning Manager", "Head of HSE", "Commercial Director"],
-    timeline: [
-      { day: "Day 0", label: "Program charter · 3 regions" },
-      { day: "Day 10", label: "First regional shortlists" },
-      { day: "Day 60", label: "18 senior seats filled" },
-      { day: "Day 150", label: "All 31 roles closed" },
-    ],
-    timeToFirstShortlist: "10 days",
-    qualitySignal: [
-      { label: "Positions filled", value: "31", sub: "engineering + commercial" },
-      { label: "Sites staffed", value: "9", sub: "on 3 continents" },
-      { label: "Time to shortlist", value: "7d", sub: "median per role" },
-      { label: "Offer acceptance", value: "84%", sub: "shortlist → hire" },
-    ],
+      "An industrial business needs project, engineering and commercial leaders with specific delivery environments, safety experience and geographic constraints.",
+    rolesNeeded: ["Engineering Director", "Program Director", "HSE Lead", "Commercial Director"],
+    timeline: STANDARD_TIMELINE,
+    timeToFirstShortlist: "the published pilot timeline",
+    qualitySignal: [],
     outcome:
-      "Safety records, EPC delivery track record, and commissioning experience were mandatory shortlist gates. 18 senior seats were filled by Day 60, and all 31 roles across 9 sites were closed by Day 150.",
-    outcomeHighlight: "9 sites staffed across 3 continents in 5 months",
+      "This example illustrates how technical constraints become explicit scoring criteria instead of being buried in recruiter notes.",
+    outcomeHighlight: "Illustrative engagement — not a reported client result",
+    representative: true,
   },
 ];
