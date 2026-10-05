@@ -145,7 +145,7 @@ export const ROI_REFERENCE_PACKAGE_USD = PACKAGE_10.totalUsd;
 export const ROI_REFERENCE_PACKAGE_LABEL = PACKAGE_10.capacityLabel;
 
 /** Turnaround guarantee shared across every published package. */
-export const TURNAROUND_LABEL = "5-day turnaround";
+export const TURNAROUND_LABEL = "Top 10 in 5 business days";
 
 /**
  * The one discount we publish: pay twelve months up front, save 10%.
