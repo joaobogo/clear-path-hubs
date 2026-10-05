@@ -80,12 +80,12 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
     id: "active_roles",
     label: "Active roles under management",
     description:
-      "Roles that are open in the workspace and being worked by the agent layer at the same time.",
+      "Position credits purchased up front. Activate them when roles open; unused credits can roll over instead of expiring at year-end.",
     plans: {
-      pilot: value("1"),
-      growth: value("Up to 10"),
-      scale: value("Up to 20"),
-      volume: value("Up to 30"),
+      pilot: value("1 position credit"),
+      growth: value("Up to 10 position credits"),
+      scale: value("Up to 20 position credits"),
+      volume: value("Up to 30 position credits"),
       enterprise: value("Scoped", "Set with your plan"),
     },
   },
@@ -416,21 +416,21 @@ export type PolicyItem = { id: string; question: string; answer: string };
 export const ENTITLEMENT_POLICY: PolicyItem[] = [
   {
     id: "active-role",
-    question: "What counts as an active role?",
+    question: "How do prepaid packages work?",
     answer:
-      "An active role is one role in your workspace that is open and being worked by the agent layer — intake compiled, discovery running, evidence and scoring produced. Roles you have paused, filled or closed do not count against the entitlement. One role means one job opening, not one hire: multiple hires against the same opening stay inside the same active role.",
+      "A prepaid package is a bank of position credits. Buy the capacity up front, then activate each position when you need it rather than opening every role at once. Unused credits can roll over instead of disappearing at year-end. One position means one job opening, not one hire.",
   },
   {
     id: "limits",
-    question: "What happens when limits are reached?",
+    question: "How does subscription capacity work?",
     answer:
-      "Nothing breaks and nothing is charged automatically. When you reach your active-role entitlement, new roles queue as drafts in the workspace until a role closes or you move to the next package. We will tell you which roles are counting and what your options are before anything changes.",
+      "A subscription is continuous recruiting capacity. You can keep roles moving month after month, rotate in new positions as priorities change, and keep sourcing and pipeline-building active. Nothing is charged beyond the selected package automatically; moving to a larger capacity still requires an agreed plan.",
   },
   {
     id: "billing",
     question: "How often are we billed?",
     answer:
-      "We sell packages. The pilot is a flat fee for one position, billed once. Each larger package states a capacity and one total — one-off and subscription use the same packages at the same prices, with subscriptions billed monthly at the start of the month. Paying twelve months up front saves 10% on the annual total; the monthly price itself never changes. Exact billing terms for your plan are on your quote — nothing on this page changes what you agreed.",
+      "The pilot is a one-time $699 first-role engagement. Larger prepaid packages use the published total once for a bank of position credits. Subscription uses the same published capacity bands as a monthly fee for continuous recruiting capacity. Paying twelve subscription months up front saves 10% on the annual total. Exact billing terms on your quote remain the authority.",
   },
   {
     id: "upgrade",
