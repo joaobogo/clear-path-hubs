@@ -182,13 +182,13 @@ function AgentsPage() {
       {/* INTRO */}
       <EditorialHero
         eyebrow={PRODUCT_CATEGORY}
-        title="Eight agents run the search. Twenty-three run the channels."
+        title="Six switchable recruiting agents, supported by system automations."
         lead="Agents work inside role rules, a frozen rubric and approval gates. Every action they take is recorded."
         image={agentsHero}
         imageAlt="A recruiter reviewing candidate evidence at a desk in the evening"
         stats={[
-          { value: "6", label: "Agents you control" },
-          { value: "2", label: "System automations" },
+          { value: "6", label: "Switchable agent functions" },
+          { value: "3", label: "Always-on system automations" },
           { value: String(CHANNEL_AGENT_COUNT), label: "Talent signal streams with a dedicated agent" },
         ]}
         primary={{ to: "/intake", label: "Start a role" }}
@@ -196,8 +196,8 @@ function AgentsPage() {
       >
         <ul className="grid gap-2 sm:grid-cols-3">
           {[
-            "Six agents you switch on or pause",
-            "Two always-on system automations",
+            "Six recruiting agent functions you can control",
+            "Three always-on system automations in the public roster",
             `A dedicated agent on each of ${CHANNEL_AGENT_COUNT} talent signal streams`,
           ].map((t) => (
             <li
