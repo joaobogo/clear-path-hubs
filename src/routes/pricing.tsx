@@ -71,7 +71,7 @@ function PricingPage() {
   const [mode, setMode] = useState<"oneoff" | "subscription">("oneoff");
 
   return (
-    <SiteShell>
+    <SiteShell hideLinkHub>
       {/* Hero — mirrors taasflow.com/pricing */}
       <EditorialHero
         eyebrow="Plans & Entitlements"
