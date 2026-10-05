@@ -35,16 +35,16 @@ export type PrimaryItem =
 /* -------------------------------------------------------------- CTAs */
 
 export const PRIMARY_CTA: NavLink = {
-  to: "/pilot",
-  label: `Start a $${PRICE_PILOT_USD} pilot`,
-  description: "Run one role end-to-end before subscribing",
+  to: "/intake",
+  label: `Start your first role — ${PRICE_PILOT_USD}`,
+  description: "One role, one-time pilot, guaranteed top 10",
 };
 
 /** Secondary header CTA — rendered next to the primary CTA. */
 export const BOOK_CALL_CTA: NavLink = {
   to: BOOKING_ROUTE,
-  label: "Book call",
-  description: "Talk to a founder about your roles",
+  label: "Book a 20-minute call",
+  description: "Bring one role. We will show you how we would run it.",
 };
 
 export const SECONDARY_CTAS: NavLink[] = [
