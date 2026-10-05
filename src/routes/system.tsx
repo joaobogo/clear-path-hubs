@@ -32,7 +32,7 @@ export const Route = createFileRoute("/system")({
     marketingHead(undefined, "/system", {
       title: "The TaaSFlow System — agents, evidence, scoring, workspace",
       description:
-        "TaaSFlow is an AI Hiring Intelligence Platform: multi-channel discovery, evidence extraction, versioned scoring rubrics and a live Decision Workspace — with expert approval gates, never unattended AI.",
+        "TaaSFlow is a flat-fee recruiting service supported by AI agents: multi-channel discovery, evidence extraction, versioned scoring rubrics and a live Decision Workspace — with human approval gates, never unattended AI.",
     }),
   component: SystemPage,
 });
@@ -270,7 +270,7 @@ function SystemPage() {
 
       <CtaSection
         eyebrow="See the system on your role"
-        title="30-minute walkthrough on a live workspace."
+        title="20-minute walkthrough on a live workspace."
         description="We open the pipeline, the scoring rubric, the evidence record, and the audit trail — with a real role, not a demo."
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/trust", label: "Read the trust pack" }}
