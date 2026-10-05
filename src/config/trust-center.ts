@@ -307,7 +307,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
       },
     ],
     links: [{ label: "View the subprocessor register", to: "/privacy" }],
-    note: "The register and the international-transfer wording are pending review by our legal counsel. Corrections are welcome at privacy@taasflow.com.",
+    note: "The current register and international-transfer wording are published in the Privacy Notice. Questions or corrections can be sent to privacy@taasflow.com.",
   },
   {
     id: "data-residency",
