@@ -18,6 +18,8 @@ import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import {
   PRICE_PILOT_DISPLAY,
   ANNUAL_DISCOUNT_NOTE,
+  PREPAID_PACKAGE_NOTE,
+  SUBSCRIPTION_MODEL_NOTE,
   MAX_POSITIONS,
 } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
@@ -141,8 +143,8 @@ function PricingPage() {
           </div>
           <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/80">
             {mode === "oneoff"
-              ? "A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now."
-              : `Continuous capacity, billed monthly — the same rates as one-off, one position up to ${MAX_POSITIONS}.`}
+              ? PREPAID_PACKAGE_NOTE
+              : SUBSCRIPTION_MODEL_NOTE}
           </p>
         </PublicPage>
       </PublicSection>
@@ -200,8 +202,7 @@ function PricingPage() {
             What each plan entitles you to
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
-            The platform is the same on every plan. These are the entitlements that
-            differ — capacity, access and governance, not hours of labour.
+            The recruiting system is the same on every plan. Prepaid packages give you position credits to use when needed; subscriptions give you continuously renewable recruiting capacity.
           </p>
           <div className="mt-6">
             {mode === "oneoff" ? (
@@ -382,7 +383,7 @@ function PricingPage() {
       </PublicSection>
       <PageConnections
         commercial={{ to: "/intake", label: `Start your first role — ${PRICE_PILOT_DISPLAY}`, desc: "One role, one-time pilot, guaranteed top 10." }}
-        explainer={{ to: "/how-it-works", label: "How delivery works", desc: "What each subscription actually includes each week." }}
+        explainer={{ to: "/how-it-works", label: "How delivery works", desc: "How prepaid credits and continuous subscription capacity work." }}
         resource={{ to: "/faq", label: "Pricing questions answered", desc: "Overages, holds, cancellation, and enterprise terms." }}
         audience={{ to: "/enterprise", label: "Enterprise pricing", desc: "Volume, procurement, and MSA-ready terms." }}
       />
