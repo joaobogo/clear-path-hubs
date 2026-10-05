@@ -3302,32 +3302,26 @@ function ExpressIntakePage() {
             <div className="rounded-lg bg-[color:var(--brand-navy)]/4 p-4">
               <p className="text-sm font-semibold">What happens after you submit</p>
               <ol className="mt-2 space-y-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                <li>1. Your account and workspace are created — free.</li>
-                <li>2. We review the role and confirm we can deliver it.</li>
+                <li>1. Your role brief is received and saved — before any account setup.</li>
+                <li>2. You secure the workspace with the same work email.</li>
+                <li>3. We attach the brief to your workspace and prepare the role.</li>
                 {PAYMENTS_ENABLED ? (
                   <li>
-                    3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot window starts
+                    4. Only after that do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot window starts
                     when the search goes live.
                   </li>
                 ) : (
                   <li>
-                    3. You pick a time on the next screen. We agree the plan on the call, then the search goes live.
+                    4. You pick a time. We agree the plan on the call, then the search goes live.
                   </li>
                 )}
               </ol>
               <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                {authed && PAYMENTS_ENABLED ? (
-                  <>
-                    One active role, any industry, anywhere in the world, no placement fees.{" "}
-                    {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5 days after
-                    go-live.
-                  </>
-                ) : (
-                  <>
-                    One active role, any industry, anywhere in the world. Your workspace opens immediately.
-                    First candidate activity usually begins within 3–5 days after we agree the plan on the call.
-                  </>
-                )}
+                <>
+                  One role, any industry, anywhere in the world, with no placement fee.{" "}
+                  {PILOT_ONE_PER_COMPANY} The first ranked top 10 is targeted within 5 business days,
+                  with the full scored market view by day 15.
+                </>
               </p>
             </div>
 
@@ -3344,20 +3338,18 @@ function ExpressIntakePage() {
                 *
               </span>
               <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
-                {PAYMENTS_ENABLED ? (
+                {authed && PAYMENTS_ENABLED ? (
                   <>
-                    I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time
-                    pilot is billed only after my account is created and the role is accepted. The pilot
-                    can be used once per company, for one position — a second sign-up or a new email does
-                    not create a new pilot. Separate locations, franchises and subsidiaries are reviewed
-                    case by case.
+                    I understand there is no charge to submit this role brief. Account setup happens after
+                    submission, and the ${PRICE_PILOT_USD} one-time pilot is billed only after the workspace
+                    is secured and the role is accepted. The pilot can be used once per company, for one
+                    position — a second sign-up or a new email does not create a new pilot.
                   </>
                 ) : (
                   <>
-                    I understand this is free to start today, that my workspace opens immediately, and that we
-                    agree the plan on the call before the search goes live. This initial role can be started
-                    once per company — a second sign-up or a new email does not create a new start. Separate
-                    locations, franchises and subsidiaries are reviewed case by case.
+                    I understand the role brief is submitted before account setup, and that we agree the plan
+                    before the search goes live. This introductory role can be started once per company —
+                    a second sign-up or a new email does not create a new start.
                   </>
                 )}
               </label>
