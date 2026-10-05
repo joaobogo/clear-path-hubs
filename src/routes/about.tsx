@@ -52,7 +52,7 @@ const PRIOR_EXPERIENCE_DISCLAIMER =
 
 
 const WHY_NOW =
-  "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — an AI Hiring Intelligence Platform that runs the search end to end, priced like software, with configurable expert oversight on every shortlist.";
+  "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — a flat-fee recruiting service that runs sourcing and scoring end to end, with human review before every shortlist.";
 
 const PRINCIPLES = [
   {
@@ -94,9 +94,9 @@ export const Route = createFileRoute("/about")({
       undefined,
       "/about",
       {
-        title: "About TaaSFlow — the AI Hiring Intelligence Platform",
+        title: "About TaaSFlow — Flat-Fee Recruiting With Human Review",
         description:
-          "TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.",
+          "TaaSFlow was founded to make recruiting explainable: multi-channel sourcing, evidence-backed scoring, a live workspace, and flat-fee pricing with no placement fee.",
       },
       {
         // Named leadership, matching the on-page cards exactly. Only fields
@@ -148,7 +148,7 @@ function AboutPage() {
           <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow is an on-demand recruiting function delivered through a
             transparent product — human recruiters, AI-supported structure,
-            and a live workspace on a flat subscription. Every shortlist,
+            and a live workspace under a flat-fee recruiting model. Every shortlist,
             every score, every decision traces to the evidence behind it,
             because hiring should never be a black box.
           </p>
@@ -334,7 +334,7 @@ function AboutPage() {
       />
           <PageConnections
         commercial={{ to: "/how-it-works", label: "See the model", desc: "The operational spine behind TaaSFlow." }}
-        explainer={{ to: "/journey", label: "Our journey", desc: "Why we built a subscription recruiting product." }}
+        explainer={{ to: "/journey", label: "Our journey", desc: "Why we built a flat-fee recruiting service." }}
         resource={{ to: "/case-studies", label: "Proof, not claims", desc: "Named outcomes from real teams." }}
         audience={{ to: "/enterprise", label: "Working with enterprise", desc: "How large orgs adopt TaaSFlow." }}
       />
