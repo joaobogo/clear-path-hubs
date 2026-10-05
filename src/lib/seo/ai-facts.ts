@@ -72,6 +72,7 @@ export const AI_FACTS = {
     { path: "/enterprise", title: "Enterprise", note: "Security, procurement, seats and audit requirements for larger programmes." },
     { path: "/integrations", title: "Integrations", note: "Calendars, video interviews and email that connect to the workspace." },
     { path: "/security", title: "Security", note: "Access control, data handling and hosting posture.", summary: false },
+    { path: "/ai-hiring-compliance", title: "AI in hiring", note: "What AI processes, where human review happens, and how candidates can request review.", summary: false },
     { path: "/trust", title: "Trust", note: "Commitments on data, screening and how decisions are recorded.", summary: false },
     { path: "/global-talent", title: "Global talent", note: "Hiring across regions, remote-ready and compliance considerations.", summary: false },
     { path: "/terms", title: "Terms", note: "Contract terms for the subscription and pilot.", summary: false },
