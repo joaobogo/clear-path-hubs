@@ -3,15 +3,16 @@ import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
+import { PILOT_GUARANTEE, PILOT_OWNERSHIP, PILOT_SCOPE_NOTE, PILOT_TIMELINE_LINE } from "@/config/commercial-truth";
 
 const entry = getPage("pilot");
 
 export const Route = createFileRoute("/pilot")({
   head: () =>
     marketingHead(entry, "/pilot", {
-      title: `${PRICE_PILOT_DISPLAY} Hiring Intelligence Pilot | TaaSFlow`,
+      title: `Recruiting Pilot: One Role, Top 10 Candidates, ${PRICE_PILOT_DISPLAY} | TaaSFlow`,
       description:
-        "Validate candidate quality before you subscribe. One role, intake to a ranked, evidence-backed shortlist in a live Decision Workspace.",
+        "One role, run end to end for $699. Guaranteed top 10, first ranked delivery in 5 business days, and a full scored market view by day 15.",
     }),
   component: PilotPage,
 });
@@ -20,21 +21,21 @@ const TIMELINE = [
   {
     n: "01",
     title: "Intake",
-    when: "Day 1–2",
+    when: "Day 1",
     body:
       "You create your workspace and upload the job description. TaaSFlow builds the role blueprint, screening criteria and sourcing plan automatically, and you review or edit every detail before the search goes live.",
   },
   {
     n: "02",
     title: "Sourcing and scoring",
-    when: "Day 3–10",
+    when: "Days 1–15",
     body:
       "Sourcing agents continuously identify candidates across talent signals, then the Scoring Engine scores every candidate against your rubric. Each score is tied to evidence pulled from the CV, so you can see why a candidate ranks where they do.",
   },
   {
     n: "03",
     title: "Ranked shortlist review",
-    when: "Within days",
+    when: "By Day 5",
     body:
       "Reviewed, evidence-backed candidates are published to your dashboard, ranked. You review, message your platform experts, and give feedback that shapes the next round.",
   },
@@ -43,7 +44,7 @@ const TIMELINE = [
 const RECEIVE = [
   "One role scoped end-to-end with our team",
   "A live client dashboard with pipeline, messages, and status",
-  "A ranked shortlist of pre-screened candidates",
+  "A guaranteed top 10 candidates, ranked against your approved criteria",
   "Evidence per requirement, tied to CV quotes",
   "Full candidate profiles and CV downloads",
   "Configurable expert oversight, reachable in the workspace",
@@ -80,13 +81,12 @@ function PilotPage() {
             {PRICE_PILOT_DISPLAY} one-time pilot · one role · one per company
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Run one role end-to-end for {PRICE_PILOT_DISPLAY}.
+            Your first role for {PRICE_PILOT_DISPLAY}.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            The pilot is a one-time, single-role engagement that runs the full TaaSFlow process —
-            intake, sourcing, evidence-based scoring, and a ranked shortlist in a live dashboard — so
-            you can judge candidate quality on real work before committing to a subscription. Each
-            company can run it once.
+            One company. One pilot. One role. We run the search, score the market against your
+            approved criteria, and guarantee a ranked top 10. {PILOT_TIMELINE_LINE} Each company can run
+            the pilot once.
           </p>
           <div className="mt-6 max-w-2xl rounded-xl border border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/5 p-4 text-sm text-[color:var(--brand-navy)]/80">
             <span className="font-semibold text-[color:var(--brand-navy)]">Best for:</span>{" "}
@@ -100,11 +100,32 @@ function PilotPage() {
               Start the pilot intake
             </Link>
             <Link
-              to="/contact"
+              to="/book"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              Send us a message
+              Book a 20-minute call
             </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      <PublicSection className="py-6">
+        <PublicPage>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">Guaranteed deliverable</p>
+              <p className="mt-2 text-lg font-semibold">Top 10 candidates</p>
+              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{PILOT_TIMELINE_LINE}</p>
+            </div>
+            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">90+ score guarantee</p>
+              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{PILOT_GUARANTEE}</p>
+              <p className="mt-2 text-xs text-[color:var(--brand-navy)]/65">{PILOT_SCOPE_NOTE}</p>
+            </div>
+            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">Your pipeline</p>
+              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{PILOT_OWNERSHIP}</p>
+            </div>
           </div>
         </PublicPage>
       </PublicSection>
@@ -213,10 +234,10 @@ function PilotPage() {
 
       <CtaSection
         eyebrow="Next step"
-        title={`Submit a role to start your ${PRICE_PILOT_DISPLAY} pilot.`}
-        description="The intake walks through every question we need. We reply to schedule alignment."
-        primary={{ to: "/intake", label: "Start intake" }}
-        secondary={{ to: "/how-it-works", label: "See the process" }}
+        title={`Start one role for ${PRICE_PILOT_DISPLAY}.`}
+        description={PILOT_TIMELINE_LINE}
+        primary={{ to: "/intake", label: `Start your first role — ${PRICE_PILOT_DISPLAY}` }}
+        secondary={{ to: "/book", label: "Book a 20-minute call" }}
       />
     </SiteShell>
   );
