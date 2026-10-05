@@ -1,15 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { marketingHead } from "@/lib/marketing/head";
 import { PublicPage, PublicSection, SiteShell } from "@/components/marketing/site-shell";
 import { EditorialHero } from "@/components/marketing/editorial-hero";
 import faqHero from "@/assets/page-faq-hero.jpg";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { ArrowRight, Link as LinkIcon, Search } from "lucide-react";
 
 type QA = { q: string; a: string; more?: string; id: string };
@@ -36,12 +30,12 @@ const RAW_GROUPS: Array<{
     items: [
       {
         q: "What is TaaSFlow?",
-        a: "A hiring operating system. You submit roles through a structured intake, our delivery team runs sourcing and screening, and candidates are delivered inside a shared workspace with evidence against every requirement.",
-        more: "Think of it as hiring infrastructure you subscribe to: agents run the search, evidence backs every score, and expert oversight approves what reaches you — the same workspace and the same context across every role you run.",
+        a: "A flat-fee recruiting service run by AI agents and recruiters. You submit a role, TaaSFlow runs sourcing and outreach, candidates are scored against your approved criteria, and the ranked shortlist is delivered in a shared workspace.",
+        more: "For the first role, the $699 pilot gives you a guaranteed top 10 candidates. The first ranked top 10 is targeted within five business days and the pilot continues through day 15 for a deeper scored view of the market."
       },
       {
         q: "How is TaaSFlow different from an agency?",
-        a: "You get a workspace instead of a PDF, a flat subscription instead of placement fees, and evidence instead of a verdict. Delivery is not contingent on placement.",
+        a: "TaaSFlow charges a flat fee instead of a percentage-of-salary placement fee. It also gives your team a live workspace, evidence behind candidate scores, and a candidate pipeline you keep."
       },
       {
         q: "Who operates the delivery?",
@@ -53,19 +47,19 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "Can we start with a single role?",
-        a: "Yes. Most clients start with one or two roles to see how delivery works before scaling. Pilot scope and cadence are agreed together.",
+        a: "Yes. The pilot is $699, paid once, for one role, and is available once per company."
       },
     ],
   },
   {
     id: "pricing",
     title: "Pricing",
-    blurb: "Flat subscription, no placement fees, and how the commercial model actually behaves.",
+    blurb: "The one-time $699 first-role pilot, published packages, and no placement fees."
     items: [
       {
         q: "How does TaaSFlow charge?",
-        a: "A flat monthly subscription. No placement fees, no per-hire commissions. The subscription covers sourcing, screening, evidence, and workspace delivery for the roles in scope.",
-        more: "Tiers scale by concurrent role volume. You can pause, resize, or add roles between billing cycles — the workspace and history stay intact.",
+        a: "The first-role pilot is $699, paid once, for one role and available once per company. Larger packages are published on the Pricing page. TaaSFlow does not charge a percentage-of-salary placement fee."
+        more: "Package scope grows with role volume. Commercial cadence for larger packages is stated in the applicable order form or contract; the $699 pilot itself is one-time."
       },
       {
         q: "Are there placement fees?",
@@ -73,11 +67,11 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "How is billing handled?",
-        a: "Monthly, on the terms agreed with your account team and documented in your contract.",
+        a: "The $699 pilot is billed once. Billing terms for larger packages are documented in the applicable commercial agreement."
       },
       {
         q: "Where can I see pricing?",
-        a: "The Pricing page shows tiers and typical monthly ranges. Exact scope is confirmed in the commercial conversation.",
+        a: "The Pricing page publishes the $699 pilot and package totals for up to 10, 20, 30, 40 and 100 positions."
       },
     ],
   },
@@ -92,15 +86,15 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "How many candidates should we expect?",
-        a: "Shortlists are sized to the role and the market. We favour signal over volume — usually a small, hand-reviewed shortlist per cadence rather than a firehose.",
+        a: "The pilot guarantees a ranked top 10 candidates for the role criteria you approved."
       },
       {
         q: "How fast do candidates start arriving?",
-        a: "The first ranked candidates typically arrive within days of the intake being finalised, with regular batches after that.",
+        a: "The first ranked top 10 is targeted within five business days. The pilot runs for 15 days so you also get a deeper, scored view of the market and pipeline."
       },
       {
         q: "Can we request more candidates?",
-        a: "Yes. Feedback in the workspace shapes the next batch. You can also open new requirement variants without restarting the intake.",
+        a: "If none of the delivered top 10 scores above 90 against the approved criteria, TaaSFlow reruns the search at no cost. If the shortlist matches the agreed criteria and your preference changes later, the existing candidates remain yours to reuse."
       },
     ],
   },
@@ -253,9 +247,9 @@ export const GROUPS: Group[] = RAW_GROUPS.map((g) => ({
 export const Route = createFileRoute("/faq")({
   head: () => {
     const base = marketingHead(undefined, "/faq", {
-      title: "FAQ — AI Hiring Intelligence Platform | TaaSFlow",
+      title: "Recruiting FAQ: Pricing, Delivery and Scoring | TaaSFlow",
       description:
-        "Clear answers on the TaaSFlow platform: pricing, candidate delivery, evidence-backed scoring, the Decision Workspace, enterprise, partnerships and privacy.",
+        "Clear answers on TaaSFlow flat-fee recruiting: the $699 first-role pilot, guaranteed top 10, 5-day first delivery, 15-day market view, scoring and candidate ownership.",
     });
     const faqJsonLd = {
       "@context": "https://schema.org",
@@ -282,21 +276,7 @@ export const Route = createFileRoute("/faq")({
 });
 
 function FaqPage() {
-  const initial = useMemo(() => {
-    if (typeof window === "undefined") return undefined;
-    const hash = window.location.hash.replace(/^#/, "");
-    if (!hash) return undefined;
-    const match = GROUPS.flatMap((g) => g.items).find((it) => it.id === hash);
-    return match?.id;
-  }, []);
-  const [openItem, setOpenItem] = useState<string | undefined>(initial);
   const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    if (!initial) return;
-    const el = document.getElementById(initial);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [initial]);
 
   const q = query.trim().toLowerCase();
   const filteredGroups = useMemo(() => {
@@ -319,8 +299,8 @@ function FaqPage() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <EditorialHero
         eyebrow="FAQ"
-        title="Straight answers, before you ask."
-        lead="The questions buyers and candidates ask most — answered without hedging."
+        title="Straight answers on the offer, delivery, and workspace."
+        lead="The questions buyers and candidates ask most, with the same commercial facts used across the rest of the site."
         image={faqHero}
         imageAlt="Two colleagues talking across a meeting table in a bright office"
         tone="warm"
@@ -396,29 +376,16 @@ function FaqPage() {
                       {group.blurb}
                     </p>
                   </div>
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white px-6"
-                    value={openItem}
-                    onValueChange={(v) => setOpenItem(v || undefined)}
-                  >
+                  <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white px-6">
                     {group.items.map((it) => (
-                      <AccordionItem key={it.id} value={it.id} id={it.id}>
-                        <AccordionTrigger className="text-left text-base font-semibold">
-                          <span>{it.q}</span>
-                        </AccordionTrigger>
-                        <AccordionContent>
+                      <details key={it.id} id={it.id} className="border-b border-[color:var(--brand-navy)]/10 py-1 last:border-0">
+                        <summary className="cursor-pointer py-4 text-left text-base font-semibold">
+                          {it.q}
+                        </summary>
+                        <div className="pb-5">
                           <p className="text-[color:var(--brand-navy)]/80">{it.a}</p>
                           {it.more && (
-                            <details className="mt-3">
-                              <summary className="cursor-pointer text-xs font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]">
-                                Read the deeper explanation
-                              </summary>
-                              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
-                                {it.more}
-                              </p>
-                            </details>
+                            <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">{it.more}</p>
                           )}
                           <a
                             href={`#${it.id}`}
@@ -428,10 +395,10 @@ function FaqPage() {
                             <LinkIcon className="h-3 w-3" />
                             Direct link
                           </a>
-                        </AccordionContent>
-                      </AccordionItem>
+                        </div>
+                      </details>
                     ))}
-                  </Accordion>
+                  </div>
                 </section>
               ))}
             </div>
