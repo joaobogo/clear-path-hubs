@@ -12,7 +12,7 @@ export const Route = createFileRoute("/recruitment-agency-alternative")({
   }, {
     breadcrumbs: [{ name: "Home", path: "/" }, { name: page.eyebrow, path: page.path }],
     scripts: [
-      serviceScript({ name: page.h1, description: page.directAnswer, path: page.path, serviceType: "Recruiting" }),
+      serviceScript({ name: page.h1, description: page.directAnswer, path: page.path, serviceType: "Recruiting", priceUsd: 699 }),
       faqScript(page.faqs),
     ],
   }),
