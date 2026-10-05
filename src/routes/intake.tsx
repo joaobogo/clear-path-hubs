@@ -1728,7 +1728,8 @@ function ExpressIntakePage() {
         const token = sess.session?.access_token;
         if (token) headers.Authorization = `Bearer ${token}`;
       }
-      const res = await fetch("/api/public/express-intake", {
+      const endpoint = authed ? "/api/public/express-intake" : "/api/public/pending-intake";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers,
         body: JSON.stringify(parsed.data),
@@ -1779,44 +1780,28 @@ function ExpressIntakePage() {
 
       trackEvent("express_intake_submitted", {
         flow: "express_onboarding",
+        stage: authed ? "workspace_created" : "brief_captured",
         pilot_eligible: body.pilotEligible !== false,
       });
-      if (body.accountCreated) {
-        trackEvent("account_created_from_intake", { flow: "express_onboarding" });
-        trackDashboardSignup({ method: "email_password", plan: "express_onboarding" });
-      }
-      else trackEvent("existing_account_detected", { flow: "express_onboarding" });
-      if (body.pilotEligible === false)
-        trackEvent("pilot_ineligible", { reason: String(body.pilotReason ?? "unknown") });
       if (body.positionId) trackEvent("role_created", { flow: "express_onboarding" });
-      if (jdFile)
+      if (jdFile && authed) {
         trackEvent(body.jdStored === false ? "document_upload_failed" : "document_upload_succeeded", {
           flow: "express_onboarding",
         });
-
-      // Sign the client straight into their new workspace.
-      let signedIn = authed;
-      if (!authed && parsed.data.password) {
-        try {
-          const { error } = await supabase.auth.signInWithPassword({
-            email: parsed.data.workEmail,
-            password: parsed.data.password,
-          });
-          signedIn = !error;
-        } catch {
-          signedIn = false;
-        }
       }
 
-      // Kick off blueprint preparation. Deliberately not awaited — the role
-      // page shows real progress while it runs.
-      if (body.intakeId) {
+      // Blueprint preparation starts only after an authenticated workspace
+      // exists. For a new visitor that happens on the confirmation screen,
+      // after the brief has already been captured.
+      if (authed && body.intakeId) {
         void fetch("/api/public/blueprint-run", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ intakeId: body.intakeId }),
         }).catch(() => undefined);
       }
+
+      const signedIn = authed;
 
       // The brief is in: mark the draft submitted so a stale tab can never
       // resurrect it, and clear the account copy.
@@ -1830,23 +1815,47 @@ function ExpressIntakePage() {
 
 
       const proceed = () => {
-        if (signedIn && body.positionId) {
-          // Role stays a draft either way — payment (or a conversation) comes next.
+        if (!authed) {
+          if (!body.pendingId) {
+            setSubmitError("Your brief was received, but we could not open the secure account step. Please retry.");
+            setSubmitting(false);
+            return;
+          }
+          try {
+            sessionStorage.setItem(
+              `tf_pending_intake_${body.pendingId}`,
+              JSON.stringify({
+                email: parsed.data.workEmail,
+                companyName: parsed.data.companyName,
+                roleTitle: parsed.data.roleTitle,
+              }),
+            );
+          } catch {
+            /* The account screen can still ask for the email manually. */
+          }
+          navigate({
+            to: "/intake/confirmation",
+            search: { pending_id: body.pendingId },
+          });
+          return;
+        }
+
+        if (body.positionId) {
           trackEvent("intake_path_chosen", { flow: "express_onboarding", path: intent });
           if (PAYMENTS_ENABLED && intent === "pay") {
             navigate({ to: "/checkout", search: { position: body.positionId } });
           } else {
-            navigate({ to: "/book", search: { cta: "intake" } });
+            navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
           }
           return;
         }
+
         navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
       };
 
-      // The pilot runs once per company. If it has already been used — including
-      // under a different account — say so plainly before moving them on, rather
-      // than letting them believe they are on a pilot.
-      if (body.pilotEligible === false) {
+      // Pilot eligibility is known only once an authenticated company workspace
+      // exists. New visitors see this, if applicable, after account setup.
+      if (authed && body.pilotEligible === false) {
         setPilotNotice(() => proceed);
         setSubmitting(false);
         return;
@@ -1877,7 +1886,7 @@ function ExpressIntakePage() {
         width="lg"
         eyebrow="Start hiring"
         title="Launch a role in minutes."
-        description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
+        description="Submit the role first. Account setup comes after we receive the brief, so there is no password wall before you convert."
       >
         <div className="space-y-4" aria-busy="true" data-testid="intake-loading">
           <p className="flex items-center gap-2 text-sm text-[color:var(--brand-navy)]/75">
@@ -1900,7 +1909,7 @@ function ExpressIntakePage() {
       width="lg"
       eyebrow="Start hiring"
       title="Launch a role in minutes."
-      description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
+      description="Submit the role first. Account setup comes after we receive the brief, so there is no password wall before you convert."
     >
       <div
         className="space-y-6"
@@ -1940,17 +1949,16 @@ function ExpressIntakePage() {
               No payment today. Nothing is charged to start.
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your workspace and share the role first. You only pay once your account is created
-              and we've accepted the role — and you can walk away before that at no cost.
+              Submit the role brief first. We ask you to secure the workspace only after the brief is safely received, and nothing is charged before that.
             </p>
           </div>
         ) : (
           <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
             <p className="text-sm font-semibold">
-              Free to start. Your workspace opens right away.
+              Free to submit. No account required yet.
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your account, share the role, then pick a time. We agree the plan together on the call.
+              Share the role first. After we receive it, secure the workspace with the same work email and pick the next step.
             </p>
           </div>
         )}
@@ -3308,7 +3316,7 @@ function ExpressIntakePage() {
                 )}
               </ol>
               <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                {PAYMENTS_ENABLED ? (
+                {authed && PAYMENTS_ENABLED ? (
                   <>
                     One active role, any industry, anywhere in the world, no placement fees.{" "}
                     {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5 days after
@@ -3440,12 +3448,14 @@ function ExpressIntakePage() {
 
             <div className="rounded-xl border border-[color:var(--brand-navy)]/12 p-4">
               <p className="text-sm font-semibold">
-                {PAYMENTS_ENABLED ? "Choose how you'd like to start" : "Create your workspace and pick a time"}
+                {authed && PAYMENTS_ENABLED ? "Choose how you'd like to start" : authed ? "Create your workspace and pick a time" : "Submit your role brief"}
               </p>
               <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-                {PAYMENTS_ENABLED
+                {authed && PAYMENTS_ENABLED
                   ? "Both create your workspace and analyse the role. One publishes today; the other keeps it saved until we've spoken."
-                  : "Your workspace opens immediately. We agree the plan on the call and activate the search once you're ready."}
+                  : authed
+                    ? "Your workspace opens immediately. We agree the plan on the call and activate the search once you're ready."
+                    : "Your role is captured first. The next screen secures your workspace with the same work email — no account friction before submission."}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {PAYMENTS_ENABLED ? (
@@ -3488,10 +3498,10 @@ function ExpressIntakePage() {
                     {submitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                        Creating your workspace…
+                        {authed ? "Creating your workspace…" : "Submitting your role…"}
                       </>
                     ) : (
-                      "Create my workspace and pick a time"
+                      authed ? "Create my workspace and pick a time" : "Submit my role brief"
                     )}
                   </Button>
                 )}
@@ -3532,16 +3542,18 @@ function ExpressIntakePage() {
                 </p>
               )}
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
-                {PAYMENTS_ENABLED
-                  ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
-                  : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."}
+                {authed
+                  ? PAYMENTS_ENABLED
+                    ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
+                    : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."
+                  : "Your brief is saved before account setup. Creating or signing into the workspace on the next screen will not make you re-enter anything."}
               </p>
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
                 Your information stays inside TaaSFlow, part of Flow Group Ventures, and is never sold or passed to third parties.
               </p>
             </div>
             <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
-              {["Role live in your workspace", "Blueprint built for you", "Every answer editable"].map((t) => (
+              {["Role brief saved first", "No password before submission", "Every answer carries into your workspace"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
                   {t}
