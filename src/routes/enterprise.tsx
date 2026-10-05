@@ -40,7 +40,7 @@ export const Route = createFileRoute("/enterprise")({
     marketingHead(undefined, "/enterprise", {
       title: "Enterprise Hiring Intelligence | TaaSFlow",
       description:
-        "The AI Hiring Intelligence Platform for teams hiring at scale: ranked, evidence-backed shortlists, governance controls and audit trails in one workspace.",
+        "Flat-fee recruiting for teams hiring at scale: ranked, evidence-backed shortlists, governance controls and audit trails in one workspace.",
     }, {
       breadcrumbs: [
         { name: "Home", path: "/" },
@@ -225,7 +225,7 @@ function EnterprisePage() {
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Every open role, every ranked candidate, every piece of evidence —
             in a single account your TA, hiring managers, and executives share.
-            Agents run the search, with configurable expert oversight. Flat subscription;
+            Agents run the search, with human review before shortlist delivery. Flat-fee packages;
             direct handover after shortlist.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -350,12 +350,12 @@ function EnterprisePage() {
             <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
 
               <caption className="sr-only">
-                Subscription bands by number of active roles
+                Published package bands by role volume
               </caption>
               <thead>
                 <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Subscription option</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Monthly</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Package</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Billing terms</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">System operating cadence</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Agent capacity and oversight</th>
                 </tr>
@@ -530,7 +530,7 @@ function EnterprisePage() {
                 Transparency & reporting
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
-                Live account view — not a monthly export.
+                Live account view — not a static export.
               </h2>
               <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 The workspace is the report. Requisition health, stage distribution,
@@ -677,7 +677,7 @@ function EnterprisePage() {
             <Scale className="mt-1 h-5 w-5 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
             <p className="text-sm text-[color:var(--brand-navy)]/80">
               At enterprise volume the difference is structural: a placement fee scales with every
-              hire and every salary. A subscription does not.
+              hire and every salary. A flat-fee recruiting package does not.
             </p>
           </div>
           <div className="mt-8">
