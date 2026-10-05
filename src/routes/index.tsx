@@ -1362,16 +1362,16 @@ function Home() {
                     stays reachable from pricing and the nav. */}
                 <Link
                   to="/intake"
-                  aria-label="Open your first role"
+                  aria-label={`Start your first role for ${PRICE_PILOT_USD}`}
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-6 py-3 text-base font-semibold text-white shadow-[var(--brand-shadow-sm)] hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Open your first role <ArrowRight className="h-4 w-4" aria-hidden />
+                  Start your first role — ${PRICE_PILOT_USD} <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
-                  to="/how-it-works"
+                  to="/book"
                   className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/85 underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  See the platform
+                  Book a 20-minute call
                 </Link>
               </div>
               <div className="text-xs text-[color:var(--brand-navy)]/80">
