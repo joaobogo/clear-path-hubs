@@ -3338,7 +3338,7 @@ function ExpressIntakePage() {
                 *
               </span>
               <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
-                {authed && PAYMENTS_ENABLED ? (
+                {PAYMENTS_ENABLED ? (
                   <>
                     I understand there is no charge to submit this role brief. Account setup happens after
                     submission, and the ${PRICE_PILOT_USD} one-time pilot is billed only after the workspace
@@ -3450,7 +3450,7 @@ function ExpressIntakePage() {
                     : "Your role is captured first. The next screen secures your workspace with the same work email — no account friction before submission."}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {PAYMENTS_ENABLED ? (
+                {authed && PAYMENTS_ENABLED ? (
                   <>
                     <Button
                       type="button"
