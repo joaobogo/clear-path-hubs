@@ -499,7 +499,7 @@ function MobileCtaBar() {
     <div
       data-consent-offset
       className={cn(
-        "fixed inset-x-0 z-40 border-t border-[color:var(--brand-navy)]/10 bg-white/95 backdrop-blur transition-transform duration-200 motion-reduce:transition-none md:hidden",
+        "fixed inset-x-0 bottom-0 z-40 border-t border-[color:var(--brand-navy)]/10 bg-white/95 backdrop-blur transition-transform duration-200 motion-reduce:transition-none md:hidden",
         "pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2",
         shown ? "translate-y-0" : "pointer-events-none translate-y-[200%]",
       )}
