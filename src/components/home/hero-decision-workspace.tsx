@@ -1,19 +1,20 @@
 import * as React from "react";
+import { PREVIEW_TOP_SCORE, REPRESENTATIVE_LABEL } from "@/lib/previews/representative-fixtures";
 import { Activity, ArrowRight, Bot, CheckCircle2, ShieldCheck } from "lucide-react";
 
 /**
  * Compact Decision Workspace panel for the homepage hero.
- * All values below are representative (non-live) and labelled as such in the UI.
+ * All values below are example data and labelled as such in the UI.
  */
 
 const ROLE_HEALTH = [
   { label: "Coverage", value: "92%", note: "requirements evidenced" },
-  { label: "Time in stage", value: "3d", note: "vs 7d commitment" },
-  { label: "Decisions due", value: "2", note: "awaiting approval" },
+  { label: "Time in stage", value: "3d", note: "in current stage" },
+  { label: "Decisions due", value: "2", note: "awaiting your decision" },
 ];
 
 const AGENT_RUNS = [
-  { name: "Sourcing agent", status: "Running", detail: "418 profiles matched · rubric v4" },
+  { name: "Sourcing agent", status: "Running", detail: "418 profiles matched" },
   { name: "Screening agent", status: "Running", detail: "26 CVs parsed · 12 evidenced" },
   { name: "Scoring agent", status: "Complete", detail: "12 scored · audit written" },
 ];
@@ -32,9 +33,9 @@ const PIPELINE = [
 ];
 
 const ACTIVITY = [
-  { at: "09:41", text: "Scoring run 4c1 completed · rubric v4 locked" },
-  { at: "09:12", text: "Evidence verified on 3 requirements" },
-  { at: "08:55", text: "Shortlist published to Decision Workspace" },
+  { at: "09:41", text: "Scoring completed · criteria locked" },
+  { at: "09:12", text: "Evidence checked on 3 requirements" },
+  { at: "08:55", text: "Shortlist published to the workspace" },
 ];
 
 export function HeroDecisionWorkspace() {
@@ -42,7 +43,7 @@ export function HeroDecisionWorkspace() {
 
   return (
     <div
-      aria-label="Representative view of the TaaSFlow Decision Workspace"
+      aria-label="Example view of the TaaSFlow shared workspace"
       className="min-w-0 rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-3 shadow-[var(--brand-shadow-lg)] sm:p-4"
     >
       {/* Chrome */}
@@ -54,12 +55,12 @@ export function HeroDecisionWorkspace() {
             <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--chrome-dot-expand)]" />
           </div>
           <span className="truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
-            Decision Workspace · Senior Product Designer
+            Shared workspace · Senior Product Designer
           </span>
         </div>
         <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/[0.04] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
           <ShieldCheck className="h-3 w-3" aria-hidden />
-          Representative data
+          {REPRESENTATIVE_LABEL}
         </span>
       </div>
 
@@ -84,10 +85,10 @@ export function HeroDecisionWorkspace() {
       <div className="mt-3 grid gap-3 lg:grid-cols-2">
         {/* Agent runs */}
         <section className="min-w-0 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3">
-          <h2 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
             <Bot className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             Active agent runs
-          </h2>
+          </p>
           <ul className="mt-2 space-y-2">
             {AGENT_RUNS.map((r) => (
               <li key={r.name} className="min-w-0">
@@ -124,16 +125,16 @@ export function HeroDecisionWorkspace() {
         <section className="min-w-0 rounded-xl border border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/[0.03] p-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="truncate text-[12px] font-semibold text-[color:var(--brand-navy)]">
+              <p className="truncate text-[12px] font-semibold text-[color:var(--brand-navy)]">
                 Alex R. · A-1042
-              </h3>
+              </p>
               <p className="truncate text-[10px] text-[color:var(--brand-navy)]/70">
-                Shortlisted · rubric v4 · 4 requirements
+                Shortlisted · 4 requirements
               </p>
             </div>
             <div className="shrink-0 rounded-md bg-[color:var(--brand-ocean)]/12 px-2.5 py-1 text-center">
               <div className="text-base font-semibold tabular-nums leading-none text-[color:var(--brand-ocean-text)]">
-                94
+                {PREVIEW_TOP_SCORE}
               </div>
               <div className="text-[9px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
                 score
@@ -168,10 +169,10 @@ export function HeroDecisionWorkspace() {
 
         {/* Pipeline movement */}
         <section className="min-w-0 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3">
-          <h2 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
             <ArrowRight className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-            Pipeline movement · last 7 days
-          </h2>
+            Pipeline movement
+          </p>
           <ul className="mt-2 space-y-1.5">
             {PIPELINE.map((p) => (
               <li key={p.stage} className="flex items-center gap-2">
@@ -195,10 +196,10 @@ export function HeroDecisionWorkspace() {
 
         {/* Recent system activity */}
         <section className="min-w-0 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-3">
-          <h2 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
             <Activity className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             Recent system activity
-          </h2>
+          </p>
           <ul className="mt-2 space-y-1.5">
             {ACTIVITY.map((a) => (
               <li key={a.at} className="flex min-w-0 gap-2">

@@ -10,6 +10,7 @@ import { getSessionContext } from "@/lib/auth.functions";
 import { landingPathForRole } from "@/lib/roles";
 
 import { brand } from "@/config/brand";
+import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ import { EcosystemFooterRow } from "@/components/marketing/ecosystem-footer-row"
 import { ConsentPreferencesLink } from "@/components/analytics/consent-banner";
 import { cn } from "@/lib/utils";
 import {
-  NAV_GROUPS,
   PRIMARY_ITEMS,
   PRIMARY_NAV as CONFIG_PRIMARY_NAV,
   PRIMARY_CTA,
@@ -86,43 +86,6 @@ export function SkipNav() {
     >
       Skip to main content
     </a>
-  );
-}
-
-/* ---------------------------------------------------------------- Announcement */
-
-const ANNOUNCEMENT_KEY = "taasflow.announcement.v1";
-const ANNOUNCEMENT_TEXT = "The category we're building: ATS + recruiting execution, in one system.";
-const ANNOUNCEMENT_LINK = "/platform";
-
-function Announcement() {
-  const [dismissed, setDismissed] = useState(true);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    setDismissed(window.sessionStorage.getItem(ANNOUNCEMENT_KEY) === "1");
-  }, []);
-  if (dismissed) return null;
-  return (
-    <aside
-      aria-label="Site announcement"
-      className="relative w-full bg-[color:var(--brand-navy)] px-4 py-2 text-center text-xs text-white/90 sm:text-sm"
-    >
-      <Link to={ANNOUNCEMENT_LINK} className="inline-flex items-center gap-1 py-1 -my-1 hover:text-white">
-        <span>{ANNOUNCEMENT_TEXT}</span>
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden />
-      </Link>
-      <button
-        type="button"
-        aria-label="Dismiss announcement"
-        onClick={() => {
-          window.sessionStorage.setItem(ANNOUNCEMENT_KEY, "1");
-          setDismissed(true);
-        }}
-        className="absolute right-1 top-1/2 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M18 6 6 18M6 6l12 12" /></svg>
-      </button>
-    </aside>
   );
 }
 
@@ -230,11 +193,10 @@ function Header() {
 
   const sessionCta = useSessionCta();
   const signIn = sessionCta ?? (SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" });
-  const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse Jobs") ?? { to: "/jobs", label: "Browse Jobs" };
+  const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse jobs") ?? { to: "/jobs", label: "Browse jobs" };
 
   return (
     <>
-      <Announcement />
       <header className="sticky top-0 z-40 w-full border-b border-[color:var(--brand-navy)]/10 bg-white/85 backdrop-blur supports-[backdrop-filter]:bg-white/70">
         <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-4 px-4 sm:px-6 lg:px-8">
           <BrandMark />
@@ -361,14 +323,6 @@ function Header() {
                   >
                     {browseJobs.label}
                   </Link>
-                  {!candidateMode ? (
-                    <Link
-                      to="/intake"
-                      className="mt-2 flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-                    >
-                      Start hiring
-                    </Link>
-                  ) : null}
                 </div>
               </div>
               <div className="space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
@@ -442,8 +396,8 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)]">
       <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-6">
-          <div className="lg:col-span-2">
+        <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+          <div className="sm:col-span-2 md:col-span-3 lg:col-span-6">
             <BrandMark lazy />
             <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/80">
               {FOOTER_DESCRIPTION}
@@ -505,34 +459,53 @@ export function SiteFooter() {
 /* ------------------------------------------------- Mobile sticky CTA bar */
 
 /**
- * One-handed action bar for phones. Stays out of the way until the visitor has
- * scrolled past the hero, then offers the two next steps for their journey.
+ * One-handed action bar for phones. It shows the primary action only, after the
+ * visitor has scrolled past the first screen. It sits above the consent banner
+ * (which pushes `[data-consent-offset]` elements up by its height), keeps the bottom safe
+ * area, and hides while a form field is focused so it never covers an input
+ * or the on-screen keyboard's target.
  */
 function MobileCtaBar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [shown, setShown] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [typing, setTyping] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setShown(window.scrollY > 520);
+    const onScroll = () => setScrolled(window.scrollY > 520);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const isField = (el: EventTarget | null) =>
+      el instanceof HTMLElement &&
+      (el.matches("input, textarea, select") || el.isContentEditable);
+    const onIn = (e: FocusEvent) => setTyping(isField(e.target));
+    const onOut = () => setTyping(false);
+    document.addEventListener("focusin", onIn);
+    document.addEventListener("focusout", onOut);
+    return () => {
+      document.removeEventListener("focusin", onIn);
+      document.removeEventListener("focusout", onOut);
+    };
+  }, []);
+
   const candidateMode = isCandidateJourneyPath(pathname);
   const primary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
-  const secondary = candidateMode ? CANDIDATE_SECONDARY_CTA : BOOK_CALL_CTA;
+  const shown = scrolled && !typing;
 
   return (
     <div
+      data-consent-offset
       className={cn(
-        "fixed inset-x-0 bottom-0 z-40 border-t border-[color:var(--brand-navy)]/10 bg-white/95 backdrop-blur transition-transform duration-200 md:hidden",
+        "fixed inset-x-0 z-40 border-t border-[color:var(--brand-navy)]/10 bg-white/95 backdrop-blur transition-transform duration-200 motion-reduce:transition-none md:hidden",
         "pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2",
-        shown ? "translate-y-0" : "pointer-events-none translate-y-full",
+        shown ? "translate-y-0" : "pointer-events-none translate-y-[200%]",
       )}
       aria-hidden={!shown}
     >
-      <div className="mx-auto flex max-w-[1200px] items-center gap-2 px-4">
+      <div className="mx-auto flex max-w-[1200px] items-center px-4">
         <Link
           to={primary.to}
           tabIndex={shown ? undefined : -1}
@@ -540,15 +513,6 @@ function MobileCtaBar() {
         >
           {primary.label}
         </Link>
-        {secondary ? (
-          <Link
-            to={secondary.to}
-            tabIndex={shown ? undefined : -1}
-            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl border border-[color:var(--brand-navy)]/15 bg-white px-4 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-          >
-            {secondary.label}
-          </Link>
-        ) : null}
       </div>
     </div>
   );
@@ -647,8 +611,8 @@ export function CtaSection({
   eyebrow,
   title,
   description,
-  primary = { to: "/intake", label: "Start hiring" },
-  secondary = { to: "/jobs", label: "Browse jobs" },
+  primary = { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label },
+  secondary = { to: CTA_BOOK.to, label: CTA_BOOK.label },
   tertiary,
 }: {
   eyebrow?: string;

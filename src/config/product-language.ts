@@ -9,8 +9,14 @@
  * oversight, an approval gate, an escalation path, or a governance control.
  */
 
-/** The category we compete in. Use verbatim. */
-export const PRODUCT_CATEGORY = "AI Hiring Intelligence Platform" as const;
+import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
+
+/**
+ * The category name on public pages. Same string as `OFFER_CATEGORY` in
+ * `offer-facts.ts`. Only public marketing routes and the root schema read it;
+ * the admin dashboard and client workspace do not.
+ */
+export const PRODUCT_CATEGORY = OFFER_CATEGORY;
 
 /**
  * The canonical brand one-liner, reused verbatim network-wide (title tags,
@@ -25,9 +31,8 @@ export const BRAND_ONE_LINER =
 export const BRAND_DESCRIPTOR =
   "Recruiting Subscription & Hiring Infrastructure" as const;
 
-/** The one-line system claim. Use verbatim. */
-export const SYSTEM_CLAIM =
-  "Agents run the search. Evidence backs every score." as const;
+/** The one-line system claim. Same sentence as `WHO_RUNS_THE_SEARCH_SHORT`. */
+export const SYSTEM_CLAIM = WHO_RUNS_THE_SEARCH_SHORT;
 
 /** Canonical module names. Never rename in copy. */
 export const MODULES = {

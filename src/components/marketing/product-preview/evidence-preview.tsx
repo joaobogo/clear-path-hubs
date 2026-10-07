@@ -15,7 +15,7 @@ export function EvidencePreview({
 }) {
   return (
     <PreviewFrame
-      title={`Evidence graph · ${PREVIEW_ROLE.title}`}
+      title={`Evidence by requirement · ${PREVIEW_ROLE.title}`}
       caption="Requirement → quote → score. Unquoted requirements are never counted as met."
       className={className}
     >
@@ -25,7 +25,7 @@ export function EvidencePreview({
         variant="compact"
         representative
         idPrefix={idPrefix}
-        title="Evidence graph"
+        title="Evidence by requirement"
       />
     </PreviewFrame>
   );

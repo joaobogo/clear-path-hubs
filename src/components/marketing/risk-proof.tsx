@@ -1,15 +1,17 @@
 /**
- * "Proof that lowers hiring risk" — three concrete artefacts a buyer receives,
+ * "Samples" — three concrete artefacts a buyer receives,
  * shown as labelled samples. No customer logos, no unverifiable claims, no
  * fabricated testimonials.
  */
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarClock, FileText, Quote } from "lucide-react";
+import { FIRST_SHORTLIST_TIMING_SHORT, PROCESS_STEPS } from "@/config/offer-facts";
+import { PREVIEW_TOP_SCORE } from "@/lib/previews/representative-fixtures";
 
 const SCORECARD = {
   role: "Senior Product Designer",
   candidate: "Candidate A-1042",
-  total: 94,
+  total: PREVIEW_TOP_SCORE,
   lines: [
     { label: "Role Fit", value: 96, note: "Owned a design-system rollout across three product lines." },
     { label: "Evidence", value: 93, note: "Six years of B2B SaaS work, verifiable in the CV and portfolio." },
@@ -25,10 +27,10 @@ const NARRATIVE = [
 ];
 
 const TIMELINE = [
-  { when: "Day 1", what: "Intake locked", detail: "Job description completed/ uploaded and scoring model defined. Your User Account set up on the platform - Welcome!" },
-  { when: "Day 1", what: "Sourcing and screening starts", detail: "Monitoring of CVs and scoring results — adjust scoring model if required." },
-  { when: "Day 2–14", what: "Your candidate dashboard is live", detail: "Review your candidates' evidence-based scoring. 24/7." },
-  { when: "Daily/Weekly activity", what: "Interviews and ATS", detail: "Start interviews with candidates and manage all interview activities in the ATS space." },
+  { when: "Step 1", what: PROCESS_STEPS[0].title, detail: PROCESS_STEPS[0].body },
+  { when: "Step 2", what: PROCESS_STEPS[1].title, detail: PROCESS_STEPS[1].body },
+  { when: "Step 3", what: PROCESS_STEPS[2].title, detail: PROCESS_STEPS[2].body },
+  { when: FIRST_SHORTLIST_TIMING_SHORT, what: PROCESS_STEPS[3].title, detail: PROCESS_STEPS[3].body },
 ];
 
 export function RiskProof({ className = "" }: { className?: string }) {
@@ -36,15 +38,15 @@ export function RiskProof({ className = "" }: { className?: string }) {
     <div className={className}>
       <div className="max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-          Proof that lowers hiring risk
+          Samples
         </p>
         <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
-          Try before you buy, no strings attached.
+          See what you receive before you commit.
         </h2>
         <p className="mt-4 text-base text-[color:var(--brand-navy)]/80">
-          Three artefacts you receive on every engagement — a scored candidate,
-          a recruiter's written judgement, and a delivery rhythm you can plan
-          against. Samples below use anonymized example data.
+          Three things you receive on every role: a scored candidate, a recruiter's
+          written assessment, and a timeline you can plan around. The samples
+          below use example data.
         </p>
       </div>
 
@@ -109,8 +111,7 @@ export function RiskProof({ className = "" }: { className?: string }) {
             </h3>
           </div>
           <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
-            Written by the recruiter who read the CV — not generated and shipped
-            unread.
+            A recruiter reviews the CV and the scores before a shortlist reaches you.
           </p>
           <ul className="mt-4 space-y-3 border-l-2 border-[color:var(--brand-ocean)]/30 pl-4">
             {NARRATIVE.map((n) => (
@@ -132,7 +133,7 @@ export function RiskProof({ className = "" }: { className?: string }) {
           <div className="flex items-center gap-2">
             <CalendarClock className="h-4 w-4 text-[color:var(--brand-ocean-text)]" aria-hidden />
             <h3 className="text-sm font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
-              Sample delivery timeline
+              How a role runs
             </h3>
           </div>
           <ol className="mt-4 space-y-4">

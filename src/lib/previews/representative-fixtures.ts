@@ -16,16 +16,16 @@ import type { IntelligenceMetric } from "@/lib/intelligence/hiring-intelligence"
 import type { RoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle";
 import { REPRESENTATIVE_CHAIN } from "@/lib/evidence/evidence-graph";
 
-export const REPRESENTATIVE_LABEL = "Representative data";
+export const REPRESENTATIVE_LABEL = "Example data";
 
 export const REPRESENTATIVE_NOTICE =
-  "Representative data — a worked example of the product, not a live account. No candidate information is shown.";
+  "Example data: a worked example of the product, not a live account. No real candidate information is shown.";
 
 /** The one role every preview on the marketing site talks about. */
 export const PREVIEW_ROLE = {
   title: "Senior Platform Engineer",
   reference: "Example role",
-  rubric: "Rubric v4 · locked",
+  rubric: "Criteria locked",
 } as const;
 
 /** Reused so the evidence preview and the workspace preview agree. */
@@ -43,10 +43,16 @@ export type PreviewCandidate = {
   gap: string;
 };
 
+/**
+ * The one score the top example candidate carries on every marketing surface
+ * (home hero, decision preview, risk-proof panel). Change it here only.
+ */
+export const PREVIEW_TOP_SCORE = 94;
+
 export const PREVIEW_DECISION_QUEUE: PreviewCandidate[] = [
   {
     ref: "Candidate ref 4F2K9Q",
-    score: 98,
+    score: PREVIEW_TOP_SCORE,
     band: "Top fit",
     stage: "Awaiting your decision",
     requirementsMet: "7 of 8 requirements evidenced",
@@ -95,7 +101,7 @@ export const PREVIEW_AGENT_RUNS: PreviewAgentRun[] = [
     status: "Complete",
     detail: "Compiled 8 requirements from intake + JD",
     at: "09:02",
-    result: "Rubric v4 locked",
+    result: "Criteria locked",
   },
   {
     agent: "Discovery agent",
@@ -114,7 +120,7 @@ export const PREVIEW_AGENT_RUNS: PreviewAgentRun[] = [
   {
     agent: "Scoring agent",
     status: "Complete",
-    detail: "12 scored under rubric v4",
+    detail: "12 scored against the approved criteria",
     at: "09:41",
     result: "Score run written to audit trail",
   },
@@ -256,7 +262,7 @@ export const PREVIEW_LIFECYCLE: RoleLifecycle = {
       startedAt: "2026-07-27T09:20:00.000Z",
       completedAt: "2026-07-27T09:24:00.000Z",
       inputs: ["Intake record", "Job description"],
-      outputs: ["8 requirements", "Rubric v4 (locked)"],
+      outputs: ["8 requirements", "Approved criteria (locked)"],
       blockers: [],
       pendingApprovals: [],
       nextAction: null,
@@ -271,7 +277,7 @@ export const PREVIEW_LIFECYCLE: RoleLifecycle = {
       ownerKind: "agent",
       startedAt: "2026-07-28T08:00:00.000Z",
       completedAt: "2026-07-31T17:00:00.000Z",
-      inputs: ["Rubric v4"],
+      inputs: ["Approved criteria"],
       outputs: ["418 profiles assessed", "26 taken to screening"],
       blockers: [],
       pendingApprovals: [],
@@ -303,7 +309,7 @@ export const PREVIEW_LIFECYCLE: RoleLifecycle = {
       ownerKind: "agent",
       startedAt: "2026-08-03T09:35:00.000Z",
       completedAt: "2026-08-03T09:41:00.000Z",
-      inputs: ["Verified evidence", "Rubric v4"],
+      inputs: ["Verified evidence", "Approved criteria"],
       outputs: ["12 scored candidates", "Audit record per score"],
       blockers: [],
       pendingApprovals: [],

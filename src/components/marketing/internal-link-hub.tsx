@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { CTA_PRIMARY } from "@/config/cta";
 import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
@@ -12,11 +13,11 @@ import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
  */
 
 const SOLUTION_LINKS = [
-  { to: "/", label: "TaaSFlow — subscription recruiting", desc: "The homepage" },
-  { to: "/solutions", label: "For Series A–C operators", desc: "On-demand recruiting for scaling teams" },
-  { to: "/enterprise", label: "Enterprise recruiting", desc: "Compliance, scale, and security" },
-  { to: "/how-it-works", label: "How it works", desc: "Evidence-first ranking, weekly delivery" },
-  { to: "/pricing", label: "Pricing", desc: "Fixed monthly subscription" },
+  { to: "/", label: "TaaSFlow home", desc: "The homepage" },
+  { to: "/solutions", label: "Solutions", desc: "How teams use TaaSFlow as they grow" },
+  { to: "/enterprise", label: "Enterprise", desc: "Scale, controls and procurement" },
+  { to: "/how-it-works", label: "How it works", desc: "Four steps from role brief to shortlist" },
+  { to: "/pricing", label: "Pricing", desc: "The pilot and package pricing" },
   { to: "/partnerships/staffing", label: "Staffing partnerships", desc: "White-label and referrals" },
   { to: "/global-talent", label: "Global talent", desc: "Hire across borders" },
   { to: "/talent-marketplace", label: "Talent marketplace", desc: "Vetted specialist bench" },
@@ -26,17 +27,14 @@ const RESOURCE_LINKS = [
   { to: "/blog", label: "Talent strategy blog" },
   { to: "/case-studies", label: "Case studies & outcomes" },
   { to: "/resources", label: "Playbooks & templates" },
-  { to: "/knowledge-base", label: "Knowledge base" },
   { to: "/faq", label: "Frequently asked questions" },
   { to: "/about", label: "About TaaSFlow" },
-  { to: "/journey", label: "Our journey" },
   { to: "/contact", label: "Message the team" },
 ] as const;
 
 const CANDIDATE_LINKS = [
   { to: "/jobs", label: "Browse open roles" },
-  { to: "/talent-network", label: "How the Talent Network works" },
-  { to: "/candidate-success", label: "Candidate success stories" },
+  { to: "/talent-network", label: "How the talent network works" },
 ] as const;
 
 // Deterministic top-24 industries + "view all"; ensures every page anchors
@@ -80,7 +78,7 @@ export function InternalLinkHub() {
 
   return (
     <section
-      aria-labelledby="internal-link-hub-heading"
+      aria-label="Site links"
       className="border-t border-[color:var(--brand-navy)]/10 bg-white"
     >
       <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
@@ -90,18 +88,14 @@ export function InternalLinkHub() {
             <span className="font-semibold text-[color:var(--brand-navy)]">
               Ready when you are.
             </span>{" "}
-            Launch a role in minutes, or explore how{" "}
-            <Link to="/" className="underline underline-offset-4 hover:opacity-80">
-              TaaSFlow
-            </Link>{" "}
-            delivers ranked candidates every week.
+            Start with one role, or see how TaaSFlow works first.
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              to="/intake"
+              to={CTA_PRIMARY.to}
               className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
             >
-              Start hiring
+              {CTA_PRIMARY.label}
             </Link>
             <Link
               to="/how-it-works"
@@ -111,13 +105,6 @@ export function InternalLinkHub() {
             </Link>
           </div>
         </div>
-
-        <h2
-          id="internal-link-hub-heading"
-          className="sr-only"
-        >
-          Explore TaaSFlow
-        </h2>
 
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -147,7 +134,7 @@ export function InternalLinkHub() {
                 to="/industries"
                 className="text-xs font-semibold text-[color:var(--brand-navy)]/80 underline underline-offset-4 hover:opacity-80"
               >
-                All 57 →
+                All industries →
               </Link>
             </div>
             <ul className="mt-2 grid grid-cols-2 gap-x-4 sm:mt-4 sm:grid-cols-3">

@@ -1,0 +1,83 @@
+import { describe, expect, it } from "vitest";
+import {
+  BOOK_CALL_CTA,
+  CANDIDATE_PRIMARY_CTA,
+  FOOTER_GROUPS,
+  PRIMARY_CTA,
+  PRIMARY_ITEMS,
+  SECONDARY_CTAS,
+  allNavHrefs,
+} from "@/config/public-navigation";
+import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { HOMEPAGE_FAQ } from "@/lib/homepage-faq";
+import { SYSTEM_CLAIM } from "@/config/product-language";
+import { WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
+import { PREVIEW_DECISION_QUEUE, PREVIEW_TOP_SCORE } from "@/lib/previews/representative-fixtures";
+
+const RETIRED = [
+  "Open your first role",
+  "Start hiring",
+  "Start a role",
+  "Start a $699 pilot",
+  "Book call",
+  "Book a call with the founders",
+  "Book a discovery call",
+  "See the platform",
+  "Candidate Sign In",
+];
+
+describe("public navigation", () => {
+  it("uses the shared CTA vocabulary", () => {
+    expect(PRIMARY_CTA.label).toBe(CTA_PRIMARY.label);
+    expect(PRIMARY_CTA.to).toBe("/pilot");
+    expect(BOOK_CALL_CTA.label).toBe(CTA_BOOK.label);
+    expect(BOOK_CALL_CTA.to).toBe("/book");
+  });
+
+  it("keeps the candidate CTA split unchanged", () => {
+    expect(CANDIDATE_PRIMARY_CTA.to).toBe("/jobs");
+    expect(SECONDARY_CTAS.map((c) => c.to)).toEqual(["/jobs", "/login"]);
+  });
+
+  it("has five header items", () => {
+    expect(PRIMARY_ITEMS.map((i) => i.label)).toEqual([
+      "How it works",
+      "Pricing",
+      "Industries",
+      "Resources",
+      "Security",
+    ]);
+  });
+
+  it("footer has the agreed columns and no retired pages", () => {
+    expect(FOOTER_GROUPS.map((g) => g.label)).toEqual([
+      "Product",
+      "For companies",
+      "Industries",
+      "For candidates",
+      "Resources",
+      "Company",
+      "Legal",
+    ]);
+    const hrefs = allNavHrefs();
+    for (const gone of ["/status", "/changelog", "/candidate-success", "/knowledge-base", "/journey", "/sitemap"]) {
+      expect(hrefs).not.toContain(gone);
+    }
+    const labels = FOOTER_GROUPS.flatMap((g) => g.links.map((l) => l.label));
+    for (const r of RETIRED) expect(labels).not.toContain(r);
+    expect(labels).toContain("Trust pack");
+  });
+
+  it("homepage FAQ has the six agreed questions", () => {
+    expect(HOMEPAGE_FAQ).toHaveLength(6);
+    expect(HOMEPAGE_FAQ[2].a).toContain("A recruiter reviews every shortlist");
+  });
+
+  it("system claim matches the who-runs-the-search sentence", () => {
+    expect(SYSTEM_CLAIM).toBe(WHO_RUNS_THE_SEARCH_SHORT);
+  });
+
+  it("the preview candidate carries one score", () => {
+    expect(PREVIEW_DECISION_QUEUE[0].score).toBe(PREVIEW_TOP_SCORE);
+  });
+});

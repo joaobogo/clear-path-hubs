@@ -12,8 +12,8 @@ type CaseStudyPreviewsProps = {
 
 export function CaseStudyPreviews({
   className = "",
-  title = "Real engagements, real timelines.",
-  intro = "A sample of the outcomes clients see after they start an intake — by industry and company type.",
+  title = "Example engagements by industry.",
+  intro = "Short summaries by industry and company type. Each links to the full write-up.",
   count = 3,
 }: CaseStudyPreviewsProps) {
   const studies = CASE_STUDIES.slice(0, count);
