@@ -39,11 +39,12 @@ describe("public navigation", () => {
     expect(SECONDARY_CTAS.map((c) => c.to)).toEqual(["/jobs", "/login"]);
   });
 
-  it("has five header items", () => {
+  it("has six header items", () => {
     expect(PRIMARY_ITEMS.map((i) => i.label)).toEqual([
       "How it works",
       "Pricing",
       "Industries",
+      "Compare",
       "Resources",
       "Security",
     ]);
@@ -60,12 +61,15 @@ describe("public navigation", () => {
       "Legal",
     ]);
     const hrefs = allNavHrefs();
-    for (const gone of ["/status", "/changelog", "/candidate-success", "/knowledge-base", "/journey", "/sitemap"]) {
+    for (const gone of ["/status", "/changelog", "/candidate-success", "/knowledge-base", "/journey", "/sitemap", "/platform", "/system", "/employer-onboarding", "/trust"]) {
       expect(hrefs).not.toContain(gone);
     }
     const labels = FOOTER_GROUPS.flatMap((g) => g.links.map((l) => l.label));
     for (const r of RETIRED) expect(labels).not.toContain(r);
-    expect(labels).toContain("Trust pack");
+    for (const l of ["For HR teams", "For founders", "Compare", "Security"]) expect(labels).toContain(l);
+    for (const gone of ["Trust pack", "Trust Center", "Employer onboarding", "Platform", "Intelligence"]) {
+      expect(labels).not.toContain(gone);
+    }
   });
 
   it("homepage FAQ has the six agreed questions", () => {

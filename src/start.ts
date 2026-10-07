@@ -1,6 +1,7 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
+import { legacyRedirectTarget } from "@/config/legacy-redirects";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 import {
   NON_PRODUCTION_ROBOTS,
@@ -59,6 +60,27 @@ const legacyBookingMiddleware = createMiddleware().server(async ({ next, request
   const target = legacyBookingRedirectFor(url.pathname);
   if (target) {
     url.pathname = target;
+    const status = request.method === "GET" || request.method === "HEAD" ? 301 : 308;
+    return new Response(null, {
+      status,
+      headers: { location: url.toString(), "cache-control": "public, max-age=3600" },
+    });
+  }
+  return next();
+});
+
+/**
+ * Merged pages (/platform, /system, /employer-onboarding, /trust, /journey)
+ * 301 to the page and section that now carries their content. The table lives
+ * in `src/config/legacy-redirects.ts`; the query string is kept.
+ */
+const legacyPageMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const url = new URL(request.url);
+  const target = legacyRedirectTarget(url.pathname);
+  if (target) {
+    const [path, hash] = target.split("#");
+    url.pathname = path!;
+    url.hash = hash ? `#${hash}` : "";
     const status = request.method === "GET" || request.method === "HEAD" ? 301 : 308;
     return new Response(null, {
       status,
@@ -149,7 +171,7 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next, reque
   const extra: Array<[string, string]> = [...SECURITY_HEADERS];
   // Preview and other non-production hosts must never compete with the
   // canonical domain in search. Canonical tags still point at taasflow.com.
-  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? url.host;
+  const host = request.headers.get("host") ?? url.host;
   if (!isIndexableHost(host)) extra.push(["x-robots-tag", NON_PRODUCTION_ROBOTS]);
   // HTML must revalidate so a CDN cannot serve a stale copy of a public page.
   const cacheControl = htmlCacheControlFor({
@@ -185,6 +207,7 @@ export const startInstance = createStart(() => ({
   requestMiddleware: [
     canonicalHostMiddleware,
     legacyBookingMiddleware,
+    legacyPageMiddleware,
     canonicalPathMiddleware,
     securityHeadersMiddleware,
     errorMiddleware,

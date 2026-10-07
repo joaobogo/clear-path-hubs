@@ -186,7 +186,7 @@ function AgentsPage() {
       {/* INTRO */}
       <EditorialHero
         eyebrow={PRODUCT_CATEGORY}
-        title={`${countWordCapitalised(ROSTER_COUNTS.total)} agents run the search, across ${CHANNEL_AGENT_COUNT} channels.`}
+        title={`${countWordCapitalised(ROSTER_COUNTS.total)} agents source and score candidates, across ${CHANNEL_AGENT_COUNT} channels.`}
         lead="Agents work inside role rules, a frozen rubric and approval gates. Every action they take is recorded."
         image={agentsHero}
         imageAlt="A recruiter reviewing candidate evidence at a desk in the evening"
@@ -374,7 +374,7 @@ function AgentsPage() {
             {related.map((m) => (
               <li key={m.anchor}>
                 <Link
-                  to="/platform"
+                  to="/how-it-works"
                   hash={m.anchor}
                   className="group block h-full rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4 transition-colors hover:border-[color:var(--brand-navy)]/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >

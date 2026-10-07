@@ -78,7 +78,6 @@ describe("legal and trust copy is final", () => {
     "src/routes/privacy.tsx",
     "src/routes/terms.tsx",
     "src/routes/security.tsx",
-    "src/routes/trust.tsx",
     "src/config/trust-center.ts",
   ];
   for (const f of files) {
@@ -99,8 +98,8 @@ describe("legal and trust copy is final", () => {
     });
   }
 
-  it("trust page has no dead Founders link or try-before-you-buy wording", () => {
-    const t = read("src/routes/trust.tsx");
+  it("security page has no dead Founders link or try-before-you-buy wording", () => {
+    const t = read("src/routes/security.tsx");
     expect(t).not.toMatch(/Founders/);
     expect(t).not.toMatch(/try before you buy|no strings/i);
     expect(t).toContain("RECORDS_NOTE");

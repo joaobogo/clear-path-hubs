@@ -1,5 +1,5 @@
 /**
- * Interactive system architecture for /platform.
+ * Interactive system architecture, shown in the workspace section of /how-it-works.
  *
  * Every entry below is traceable to shipped code. `surface` names the real
  * in-product surface. Nothing here describes functionality that does not
@@ -214,7 +214,7 @@ export function PlatformArchitecture() {
   const [activeKey, setActiveKey] = React.useState<string>(NODES[0]!.key);
   const active = NODES.find((n) => n.key === activeKey) ?? NODES[0]!;
 
-  // Deep links from the site navigation (/platform#agent-layer) select a module.
+  // Deep links from the site navigation (/how-it-works#agent-layer) select a module.
   React.useEffect(() => {
     const sync = () => {
       const hash = window.location.hash.replace("#", "");

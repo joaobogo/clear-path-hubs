@@ -75,20 +75,26 @@ const PRINCIPLES = [
   },
 ];
 
-const SERVES = [
+const STORY = [
   {
-    who: "Series A–C operators",
-    body: "Growing teams that need predictable throughput without building an internal recruiting team overnight.",
+    label: "What was broken",
+    title: "Hiring had no shared surface.",
+    body: "Agencies delivered names without reasoning, outsourced recruiting added process without improving quality, and every search started from a fresh set of spreadsheets. There was no shared place where the rubric, the evidence and the decisions lived together.",
   },
   {
-    who: "50–5,000-employee businesses",
-    body: "Established teams running multiple parallel searches that need one operating model, not five separate vendor contracts.",
+    label: "Why the fee model failed",
+    title: "Incentives pointed at the wrong outcome.",
+    body: "Contingent fees reward speed to placement, not quality of match. A recruiter paid on placement has every reason to push a candidate over the line and little reason to explain why. Clients paid per placement and still had to trust a summary paragraph.",
   },
   {
-    who: "Founders leading a hire personally",
-    body: "Operators who want to run the search themselves without losing their week to sourcing.",
+    label: "What TaaSFlow changed",
+    title: "A recruiting function, delivered as a product.",
+    body: "Instead of a contingent fee, a flat one-time price per package. Instead of a private inbox, a workspace for each role. Instead of a summary paragraph, a rubric with citations. The model is deliberately plain: a clear process beats heroics.",
   },
-];
+] as const;
+
+const FUTURE =
+  "Every hire has a rubric behind it. Every rejection has a reason. Every candidate record can be exported by the company that paid for it. A recruiter stays in the loop, and the reasoning is visible. That is the version of hiring we want to work in.";
 
 export const Route = createFileRoute("/about")({
   head: () =>
@@ -257,14 +263,8 @@ function AboutPage() {
             <p className="mt-4 text-[color:var(--brand-navy)]/80">{WHY_NOW}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                to="/journey"
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-              >
-                Read the full journey
-              </Link>
-              <Link
                 to="/how-it-works"
-                className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
               >
                 See how it works
               </Link>
@@ -303,24 +303,46 @@ function AboutPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Who TaaSFlow serves */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
+      {/* Company story (folded in from the retired /journey page) */}
+      <PublicSection id="story" className="scroll-mt-24 border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
         <PublicPage>
-          <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-            Who TaaSFlow serves
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
+            Our story
+          </p>
+          <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+            Why we built a better recruiting model.
           </h2>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {SERVES.map((s) => (
-              <div
-                key={s.who}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-              >
-                <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                  {s.who}
-                </h3>
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
-              </div>
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
+            TaaSFlow was not built to be another agency with a nicer landing page. It was built to fix the specific things that go wrong when companies hire.
+          </p>
+          <div className="mt-10 space-y-10">
+            {STORY.map((c, i) => (
+              <article key={c.label} className="grid gap-4 md:grid-cols-[auto_1fr] md:gap-10">
+                <div className="flex items-start gap-4 md:flex-col md:items-start">
+                  <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold text-[color:var(--brand-ocean-text)]">
+                    0{i + 1}
+                  </span>
+                  <p className="pt-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
+                    {c.label}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
+                    {c.title}
+                  </h3>
+                  <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">{c.body}</p>
+                </div>
+              </article>
             ))}
+          </div>
+          <p className="mt-10 max-w-3xl text-[color:var(--brand-navy)]/80">{FUTURE}</p>
+          <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
+            <Link to="/pricing" className="text-[color:var(--brand-navy)] underline underline-offset-4">
+              See pricing
+            </Link>
+            <Link to="/solutions" className="text-[color:var(--brand-navy)] underline underline-offset-4">
+              Who TaaSFlow is for
+            </Link>
           </div>
         </PublicPage>
       </PublicSection>
@@ -334,7 +356,7 @@ function AboutPage() {
       />
           <PageConnections
         commercial={{ to: "/how-it-works", label: "See how it works", desc: "The four steps behind TaaSFlow." }}
-        explainer={{ to: "/journey", label: "Our journey", desc: "Why we built a recruiting platform with managed execution." }}
+        explainer={{ to: "/solutions", label: "Who TaaSFlow is for", desc: "HR teams, operators, founders and staffing agencies." }}
         resource={{ to: "/case-studies", label: "Example engagements", desc: "Example engagements and how we measure them." }}
         audience={{ to: "/enterprise", label: "Working with enterprise", desc: "How large orgs adopt TaaSFlow." }}
       />

@@ -25,7 +25,7 @@ export const Route = createFileRoute("/ai-in-hiring")({
       {
         breadcrumbs: [
           { name: "Home", path: "/" },
-          { name: "Trust pack", path: "/trust" },
+          { name: "Security and trust", path: "/security" },
           { name: AI_PAGE_TITLE, path: "/ai-in-hiring" },
         ],
       },

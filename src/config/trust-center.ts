@@ -441,16 +441,10 @@ export const TRUST_SECTIONS: TrustSection[] = [
         source: "legal",
         reference: "/terms",
       },
-      {
-        text: "Commercial trust pack — how pricing works, what happens to your records, and how scoring works.",
-        source: "legal",
-        reference: "/trust",
-      },
     ],
     links: [
       { label: "Privacy Notice", to: "/privacy" },
       { label: "Terms of Service", to: "/terms" },
-      { label: "Commercial trust pack", to: "/trust" },
       { label: "How AI is used in hiring", to: "/ai-in-hiring" },
     ],
     note: "A Data Processing Agreement and a security questionnaire response pack are in progress. Ask us and we will send the current draft rather than a marketing summary.",

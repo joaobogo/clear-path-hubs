@@ -12,7 +12,7 @@ import { SOURCING_GROUPS } from "@/components/marketing/how-it-works-deep";
 describe("public marketing facts derive from config", () => {
   it("how-it-works channel groups match the channel-agent families", () => {
     expect(SOURCING_GROUPS.map((g) => g.channels.length)).toEqual(
-      CHANNEL_FAMILIES.map((f) => f.agents),
+      CHANNEL_FAMILIES.map((f) => f.channels),
     );
     const total = SOURCING_GROUPS.reduce((n, g) => n + g.channels.length, 0);
     expect(total).toBe(CHANNEL_AGENT_COUNT);

@@ -319,7 +319,7 @@ function IntegrationsPage() {
         title="Need a connection that is not listed?"
         description="Tell us which system you run and what should flow between it and TaaSFlow. We build integrations by demand, and we will tell you honestly whether it is on the roadmap."
         primary={CTA_MESSAGE}
-        secondary={{ to: "/platform", label: "See the platform" }}
+        secondary={{ to: "/how-it-works", label: "See how it works" }}
       />
     </SiteShell>
   );

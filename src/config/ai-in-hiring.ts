@@ -115,7 +115,6 @@ export const AI_LAWS = [
 export const AI_RELATED_LINKS = [
   { label: "Privacy Notice", to: "/privacy" },
   { label: "Security", to: "/security" },
-  { label: "Trust pack", to: "/trust" },
 ] as const;
 
 /** Every sentence the page may render. The smoke test checks the DOM against this. */

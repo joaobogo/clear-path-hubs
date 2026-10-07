@@ -14,7 +14,7 @@ import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 const SOLUTION_LINKS = [
   { to: "/", label: "TaaSFlow home", desc: "The homepage" },
-  { to: "/solutions", label: "Solutions", desc: "How teams use TaaSFlow as they grow" },
+  { to: "/solutions", label: "Who TaaSFlow is for", desc: "HR teams, operators, founders and agencies" },
   { to: "/enterprise", label: "Enterprise", desc: "Scale, controls and procurement" },
   { to: "/how-it-works", label: "How it works", desc: "Four steps from role brief to shortlist" },
   { to: "/pricing", label: "Pricing", desc: "The pilot and package pricing" },

@@ -1,4 +1,3 @@
-import { MODULE_SECTIONS } from "@/config/product-language";
 import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
@@ -85,31 +84,17 @@ export function isCandidateJourneyPath(pathname: string): boolean {
 /* -------------------------------------------------------------- Primary nav (ordered) */
 
 /**
- * The header carries five items. The old "Platform" dropdown contents stay
- * reachable from the How it works page and from the footer Product column.
+ * The header carries six items. The old "Platform" dropdown contents now live in
+ * the workspace section of the How it works page.
  */
 export const PRIMARY_ITEMS: PrimaryItem[] = [
   { kind: "link", to: "/how-it-works", label: "How it works" },
   { kind: "link", to: "/pricing", label: "Pricing" },
   { kind: "link", to: "/industries", label: "Industries" },
+  { kind: "link", to: "/compare", label: "Compare" },
   { kind: "link", to: "/resources", label: "Resources" },
   { kind: "link", to: "/security", label: "Security" },
 ];
-
-/**
- * The module directory that used to sit in the Platform dropdown. Not rendered
- * in the header any more; kept for pages and the footer that link to a module.
- */
-export const PLATFORM_LINKS: NavLink[] = [
-  { to: "/platform", label: "Platform overview", description: "The whole system, module by module" },
-  ...MODULE_SECTIONS.map((m) => ({
-    to: "/platform",
-    hash: m.anchor,
-    label: m.name,
-    description: m.description,
-  })),
-];
-
 
 /* Legacy exports retained for older imports — derived from PRIMARY_ITEMS. */
 
@@ -127,9 +112,8 @@ export const FOOTER_GROUPS: NavGroup[] = [
   {
     label: "Product",
     links: [
-      { to: "/platform", label: "Platform" },
+      { to: "/how-it-works", label: "How it works" },
       { to: "/agents", label: "Agents" },
-      { to: "/system", label: "Intelligence" },
       { to: "/integrations", label: "Integrations" },
       { to: "/security", label: "Security" },
     ],
@@ -137,12 +121,13 @@ export const FOOTER_GROUPS: NavGroup[] = [
   {
     label: "For companies",
     links: [
-      { to: "/how-it-works", label: "How it works" },
       { to: "/pricing", label: "Pricing" },
+      { to: "/compare", label: "Compare" },
+      { to: "/for-hr-teams", label: "For HR teams" },
+      { to: "/for-founders", label: "For founders" },
       { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label },
       { to: CTA_BOOK.to, label: CTA_BOOK.label },
       { to: "/enterprise", label: "Enterprise" },
-      { to: "/employer-onboarding", label: "Employer onboarding" },
       { to: "/partnerships/staffing", label: "Staffing partnerships" },
       { to: "/login", label: "Sign in" },
     ],
@@ -181,7 +166,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
     label: "Company",
     links: [
       { to: "/about", label: "About" },
-      { to: "/trust", label: "Trust pack" },
+      { to: "/solutions", label: "Who we are for" },
       { to: "/contact", label: "Contact" },
     ],
   },

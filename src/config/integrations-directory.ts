@@ -124,7 +124,7 @@ export const INTEGRATIONS: Integration[] = [
     healthVisibility: false,
     healthNote:
       "No health panel yet. A failed connection surfaces as an error in your assistant.",
-    docs: { label: "Platform overview", to: "/platform" },
+    docs: { label: "How it works", to: "/how-it-works" },
   },
   {
     id: "intake-api",
@@ -319,7 +319,7 @@ export const INTEGRATIONS: Integration[] = [
     healthVisibility: true,
     healthNote:
       "Every metric states its own freshness and says so plainly when there is not enough data to answer.",
-    docs: { label: "Hiring intelligence", to: "/system" },
+    docs: { label: "How scoring works", to: "/how-it-works" },
   },
 
   /* ------------------------------------------------------ planned */
