@@ -10,7 +10,8 @@ import { isIndexableHost } from "@/lib/seo/edge-policy";
 export const getHostIndexability = createServerFn({ method: "GET" }).handler(async () => {
   let host: string | undefined;
   try {
-    host = getRequestHeader("x-forwarded-host") ?? getRequestHeader("host") ?? undefined;
+    // `x-forwarded-host` is client-controlled, so only the Host header counts.
+    host = getRequestHeader("host") ?? undefined;
   } catch {
     host = undefined;
   }

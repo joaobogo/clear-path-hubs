@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   HTML_CACHE_CONTROL,
   htmlCacheControlFor,
+  PRIVATE_HTML_CACHE_CONTROL,
   isIndexableHost,
   legacyBookingRedirectFor,
 } from "@/lib/seo/edge-policy";
@@ -27,7 +28,11 @@ describe("preview host indexing", () => {
     expect(isIndexableHost("taasflow.com:443")).toBe(true);
     expect(isIndexableHost("id-preview--abc.lovable.app")).toBe(false);
     expect(isIndexableHost("clear-path-hubs.lovable.app")).toBe(false);
-    expect(isIndexableHost("evil-taasflow.com")).toBe(false);
+    expect(isIndexableHost("evil-taasflow.com")).toBe(true); // fails open: unknown hosts are never noindexed
+    expect(isIndexableHost("taasflow.com.")).toBe(true);
+    expect(isIndexableHost("origin.workers.dev")).toBe(true);
+    expect(isIndexableHost("Foo.Lovable.App:8080")).toBe(false);
+    expect(isIndexableHost("x.lovableproject.com")).toBe(false);
   });
 });
 
@@ -44,6 +49,8 @@ describe("html cache policy", () => {
   });
   it("leaves APIs, assets, workspace pages, redirects, and explicit caching alone", () => {
     expect(htmlCacheControlFor({ ...base, pathname: "/api/x" })).toBeNull();
+    expect(htmlCacheControlFor({ ...base, pathname: "/login" })).toBe(PRIVATE_HTML_CACHE_CONTROL);
+    expect(htmlCacheControlFor({ ...base, pathname: "/book-call" })).toBe(PRIVATE_HTML_CACHE_CONTROL);
     expect(htmlCacheControlFor({ ...base, pathname: "/assets/a.js" })).toBeNull();
     expect(htmlCacheControlFor({ ...base, pathname: "/admin/candidates" })).toBeNull();
     expect(htmlCacheControlFor({ ...base, pathname: "/client" })).toBeNull();

@@ -22,6 +22,7 @@ export const NOINDEX_STATIC_PATHS = [
   "/sitemap",
   "/book",
   "/intake",
+  "/sample-shortlist",
 ] as const;
 
 /**

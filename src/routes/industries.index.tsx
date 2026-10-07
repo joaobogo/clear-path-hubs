@@ -44,7 +44,7 @@ export const Route = createFileRoute("/industries/")({
   },
   head: () =>
     marketingHead(undefined, "/industries", {
-      title: "Industries — AI Hiring Intelligence by sector | TaaSFlow",
+      title: "Recruiting by Industry | TaaSFlow",
       description:
         "Browse the industries TaaSFlow recruits for and open the page for the sector you hire in. Each page covers the roles, evidence and boundaries for that sector.",
     }),

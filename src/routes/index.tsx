@@ -16,6 +16,7 @@ import { PublicPage, PublicSection, SiteShell } from "@/components/marketing/sit
 import { CTA_BOOK, CTA_HOW_IT_WORKS, CTA_PRICING, CTA_PRIMARY } from "@/config/cta";
 import {
   OFFER_EYEBROW,
+  OFFER_LAST_UPDATED_LABEL,
   PILOT_IS_PAID_NOTE,
   PROCESS_STEPS,
   SHORTLIST_LABEL,
@@ -181,6 +182,17 @@ function Home() {
                   {CTA_HOW_IT_WORKS.label}
                 </Link>
               </div>
+              <p className="text-sm">
+                <Link
+                  to="/sample-shortlist"
+                  className={
+                    "inline-flex min-h-11 items-center rounded font-semibold text-[color:var(--brand-ocean-text)] underline underline-offset-4 hover:text-[color:var(--brand-navy)] " +
+                    focusRing
+                  }
+                >
+                  See a sample top 10
+                </Link>
+              </p>
               <p className="text-xs text-[color:var(--brand-navy)]/80">
                 Looking for a job instead?{" "}
                 <Link
@@ -405,6 +417,9 @@ function Home() {
                     FAQ page
                   </Link>
                   .
+                </p>
+                <p className="mt-3 text-xs text-[color:var(--brand-navy)]/70" data-testid="last-updated">
+                  {OFFER_LAST_UPDATED_LABEL}
                 </p>
               </div>
               <div className="min-w-0 divide-y divide-[color:var(--brand-navy)]/10 rounded-2xl border border-[color:var(--brand-navy)]/10">

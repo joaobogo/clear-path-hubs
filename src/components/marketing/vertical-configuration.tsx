@@ -20,7 +20,7 @@ import {
   resolveVerticalConfig,
   type VerticalConfig,
 } from "@/config/vertical-configuration";
-import { AVAILABILITY_LABEL, INTEGRATIONS } from "@/config/integrations-directory";
+import { AVAILABILITY_LABEL, PUBLIC_INTEGRATIONS } from "@/config/integrations-directory";
 
 function Card({
   title,
@@ -90,8 +90,8 @@ export function VerticalConfigurationSection({
 }) {
   const config = resolveVerticalConfig(slug);
   const integrations = config.integrations
-    .map((id) => INTEGRATIONS.find((i) => i.id === id))
-    .filter((i): i is (typeof INTEGRATIONS)[number] => Boolean(i));
+    .map((id) => PUBLIC_INTEGRATIONS.find((i) => i.id === id))
+    .filter((i): i is (typeof PUBLIC_INTEGRATIONS)[number] => Boolean(i));
 
   return (
     <PublicSection className="bg-[color:var(--brand-mist)]/30 py-14">

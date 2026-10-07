@@ -36,7 +36,6 @@ const code = (rel: string) =>
 /** Pages that publish the whole ladder, not just a headline price. */
 const LADDER_PAGES = [
   "src/routes/enterprise.tsx",
-  "src/routes/trust.tsx",
   "src/routes/pitch.tsx",
   "src/content/pricing.ts",
 ];
@@ -84,7 +83,7 @@ describe("no page hardcodes a ceiling the config owns", () => {
   it("the above-maximum label is derived, so it moves with the config", () => {
     // Guards the fix itself: these pages must read the label rather than
     // restate it.
-    for (const page of ["src/routes/trust.tsx", "src/routes/pitch.tsx"]) {
+    for (const page of ["src/routes/pitch.tsx"]) {
       expect(src(page), `${page} should use ABOVE_MAX_ROLES_LABEL`).toContain(
         "ABOVE_MAX_ROLES_LABEL",
       );

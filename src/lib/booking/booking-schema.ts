@@ -206,6 +206,20 @@ export const quickBookingSchema = z.object({
     z.literal(""),
     text(40).min(6, "Enter a phone number we can reach you on, or leave it blank"),
   ]),
+  /**
+   * Optional: "Which role do you need to fill?" Carried into the stored intake
+   * as `rolesHiring` and `additionalContext`, so the CRM note and notification
+   * text name it. Markup characters and control characters are stripped.
+   */
+  role: z
+    .string()
+    .max(120)
+    .optional()
+    .nullable()
+    .transform((v) =>
+      // eslint-disable-next-line no-control-regex
+      (v ?? "").replace(/[<>\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim(),
+    ),
   /** Honeypot — must stay empty. */
   website: optional(200),
 });
@@ -228,12 +242,12 @@ export function quickBookingToIntake(input: QuickBooking): BookingIntake {
     companySize: "1–10",
     openRoles: "1",
     hiringVolume: "Not sure yet",
-    rolesHiring: NOT_PROVIDED,
+    rolesHiring: input.role && input.role.length >= 2 ? input.role : NOT_PROVIDED,
     hiringChallenge: "To be discussed on the call.",
     currentProcess: "A mix of the above",
     hiringTimeline: "Exploring / no date yet",
     heardAbout: "Other",
-    additionalContext: null,
+    additionalContext: input.role ? `Role to fill: ${input.role}` : null,
     website: null,
   };
 }

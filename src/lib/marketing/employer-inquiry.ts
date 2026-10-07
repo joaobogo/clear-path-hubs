@@ -50,6 +50,15 @@ export function normalisePhone(value: string | null | undefined): string | null 
   return `${v.startsWith("+") ? "+" : ""}${digits}`;
 }
 
+/**
+ * Strips control characters only. Stored text stays RAW: every surface that
+ * renders it (React, email templates) escapes at render time, so escaping here
+ * would double-escape names like O'Brien in the admin queue.
+ */
+export function sanitizeText(value: string): string {
+  return value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "");
+}
+
 /** Escapes characters that are unsafe if the text is ever rendered as HTML. */
 export function escapeText(value: string): string {
   return value
@@ -121,18 +130,18 @@ export type CleanInquiry = {
 };
 
 /**
- * Normalises and escapes validated input for storage. Returns null when the
+ * Normalises validated input for storage (raw text, control characters removed). Returns null when the
  * phone number is not plausible, so the caller can reject it.
  */
 export function prepareInquiry(input: EmployerInquiryInputT): CleanInquiry | null {
   const phone = normalisePhone(input.phone ?? "");
   if (phone === null) return null;
   return {
-    firstName: escapeText(cleanLine(input.firstName)),
+    firstName: sanitizeText(cleanLine(input.firstName)),
     email: normaliseEmail(input.email),
     phone: phone || null,
-    position: escapeText(cleanLine(input.position)),
-    source: escapeText(cleanLine(input.source ?? "")) || "unknown",
+    position: sanitizeText(cleanLine(input.position)),
+    source: sanitizeText(cleanLine(input.source ?? "")) || "unknown",
     idempotencyKey: input.idempotencyKey,
   };
 }

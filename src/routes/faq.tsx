@@ -33,7 +33,7 @@ const RAW_GROUPS: Array<{
       {
         q: "What is TaaSFlow?",
         a: "A hiring operating system. You submit roles through a structured intake, our delivery team runs sourcing and screening, and candidates are delivered inside a shared workspace with evidence against every requirement.",
-        more: "Think of it as hiring infrastructure you subscribe to: agents run the search, evidence backs every score, and expert oversight approves what reaches you — the same workspace and the same context across every role you run.",
+        more: "Think of it as a recruiting service you can subscribe to: agents source and score candidates, a recruiter reviews every shortlist, and you make the hiring decision — in the same workspace across every role you run.",
       },
       {
         q: "How is TaaSFlow different from an agency?",

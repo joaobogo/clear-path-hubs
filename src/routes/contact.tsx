@@ -103,7 +103,7 @@ const INTENTS: IntentSpec[] = [
     tagline: "Press, partnerships, anything else.",
     icon: MessageSquare,
     primaryCta: { label: CTA_MESSAGE.label, anchor: "#contact-form-general", icon: ArrowRight },
-    secondaryCta: { label: "See our journey", to: "/journey" },
+    secondaryCta: { label: "About TaaSFlow", to: "/about" },
     backup: "Press: press@taasflow.com · Partnerships: partners@taasflow.com",
     fields: ["name", "email", "company", "message"],
     formHeading: "General inquiry",

@@ -54,12 +54,12 @@ describe("server input and preparation", () => {
     expect(normaliseEmail(" A@B.CO ")).toBe("a@b.co");
   });
 
-  it("escapes stored text", () => {
+  it("stores raw text without HTML entities and strips control characters", () => {
     const clean = prepareInquiry(
-      EmployerInquiryInput.parse({ ...input, position: `<script>alert("x")</script> & co` }),
+      EmployerInquiryInput.parse({ ...input, firstName: "O'Brien", position: "R&D Engineer\u0007" }),
     )!;
-    expect(clean.position).not.toContain("<");
-    expect(clean.position).toContain("&lt;script&gt;");
+    expect(clean.firstName).toBe("O'Brien");
+    expect(clean.position).toBe("R&D Engineer");
     expect(escapeText("a'b")).toBe("a&#39;b");
   });
 

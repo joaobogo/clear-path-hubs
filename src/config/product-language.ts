@@ -25,11 +25,11 @@ export const PRODUCT_CATEGORY = OFFER_CATEGORY;
  * keeping the platform positioning.
  */
 export const BRAND_ONE_LINER =
-  "Recruiting subscription and hiring infrastructure, powered by AI hiring intelligence." as const;
+  "A recruiting platform with managed execution: agents source and score candidates, a recruiter reviews, and you decide." as const;
 
 /** Short form of the one-liner, for titles where length is capped. */
 export const BRAND_DESCRIPTOR =
-  "Recruiting Subscription & Hiring Infrastructure" as const;
+  "Recruiting Platform with Managed Execution" as const;
 
 /** The one-line system claim. Same sentence as `WHO_RUNS_THE_SEARCH_SHORT`. */
 export const SYSTEM_CLAIM = WHO_RUNS_THE_SEARCH_SHORT;
@@ -62,7 +62,7 @@ export const MODULE_LIST = [
 ] as const;
 
 /**
- * Public module directory. `anchor` is the section id rendered on /platform,
+ * Public module directory. `anchor` is the section id used inside the module overview on /how-it-works,
  * so navigation and page content can never drift apart. Descriptions state
  * what the module does — no forward-looking or unverifiable claims.
  */

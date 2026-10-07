@@ -429,3 +429,155 @@ export const PREVIEW_ONBOARDING: PreviewOnboardingStep[] = [
     elapsed: "From first delivery",
   },
 ];
+
+// ── Sample shortlist (hospitality) ───────────────────────────────────────────
+//
+// Ten fictional example candidates for one hospitality role, used only by the
+// /sample-shortlist page. Everything here is invented example data. There is no
+// real person, employer or property. Each candidate has ONE overall score, the
+// rounded mean of the five requirement scores, computed in one place below.
+
+export const SAMPLE_SHORTLIST_ROLE = "Hotel General Manager" as const;
+
+export const SAMPLE_SHORTLIST_LABEL = "Example shortlist (example data, not a client result)" as const;
+
+export const SAMPLE_SHORTLIST_NOTICE =
+  "Every candidate, score and evidence line on this page is invented to show the format. No real person, employer or client appears here." as const;
+
+export const SAMPLE_SHORTLIST_REQUIREMENTS = [
+  { key: "ops", label: "Hotel operations leadership" },
+  { key: "pnl", label: "P&L and budget ownership" },
+  { key: "guest", label: "Guest satisfaction results" },
+  { key: "team", label: "Team leadership and retention" },
+  { key: "brand", label: "Brand and licence standards" },
+] as const;
+
+export type SampleRequirementKey = (typeof SAMPLE_SHORTLIST_REQUIREMENTS)[number]["key"];
+
+type SampleRequirementResult = { score: number; evidence: string };
+
+type SampleCandidateInput = {
+  ref: string;
+  results: Record<SampleRequirementKey, SampleRequirementResult>;
+};
+
+export type SampleShortlistCandidate = {
+  rank: number;
+  ref: string;
+  /** The one score for this candidate: rounded mean of the requirement scores. */
+  score: number;
+  results: Record<SampleRequirementKey, SampleRequirementResult>;
+};
+
+const r = (score: number, evidence: string): SampleRequirementResult => ({ score, evidence });
+
+const SAMPLE_CANDIDATE_INPUTS: SampleCandidateInput[] = [
+  {
+    ref: "Example candidate A1",
+    results: {
+      ops: r(96, "Ran a 240-room city hotel with rooms, F&B and events reporting to them."),
+      pnl: r(93, "Owned a stated annual budget and the monthly forecast for five years."),
+      guest: r(92, "CV cites lifting the guest review score over two consecutive years."),
+      team: r(90, "Led a department-head team of eight; promoted three from within."),
+      brand: r(94, "Passed two brand standards audits as the accountable manager."),
+    },
+  },
+  {
+    ref: "Example candidate B2",
+    results: {
+      ops: r(91, "General manager of a 180-room resort with a spa and two restaurants."),
+      pnl: r(90, "Delivered a cost-reduction plan against budget; figures stated in the CV."),
+      guest: r(88, "Describes a service recovery programme and the review trend that followed."),
+      team: r(89, "Reduced front-line turnover during a seasonal peak, with the method stated."),
+      brand: r(86, "Opened the hotel under an international brand programme."),
+    },
+  },
+  {
+    ref: "Example candidate C3",
+    results: {
+      ops: r(89, "Resident manager of a 300-room convention hotel for four years."),
+      pnl: r(84, "Shared budget ownership with a finance director; own share is not quantified."),
+      guest: r(90, "Quotes guest feedback targets and the actions taken to meet them."),
+      team: r(86, "Managed a team of about 120 across four departments."),
+      brand: r(83, "Brand standards work mentioned, no audit result given."),
+    },
+  },
+  {
+    ref: "Example candidate D4",
+    results: {
+      ops: r(87, "Director of operations for a three-hotel group in one city."),
+      pnl: r(88, "Group-level P&L responsibility with a stated revenue range."),
+      guest: r(81, "Guest scores mentioned for one property only."),
+      team: r(85, "Built a regional training programme, with attendance figures."),
+      brand: r(80, "Works across independent hotels; limited brand-programme evidence."),
+    },
+  },
+  {
+    ref: "Example candidate E5",
+    results: {
+      ops: r(84, "Hotel manager of a 120-room boutique property for three years."),
+      pnl: r(82, "Owned the property budget; the size is not stated."),
+      guest: r(86, "Cites top-ranked status on a travel review site for the property."),
+      team: r(80, "Led a team of 45; no retention evidence in the CV."),
+      brand: r(76, "Independent property, so no brand standards to evidence."),
+    },
+  },
+  {
+    ref: "Example candidate F6",
+    results: {
+      ops: r(82, "Assistant general manager at a 200-room hotel, deputising for the GM."),
+      pnl: r(76, "Prepared budgets for rooms and F&B; final sign-off sat with the GM."),
+      guest: r(83, "Led the guest complaints process and reported its results monthly."),
+      team: r(81, "Ran hiring and training for the front office and housekeeping."),
+      brand: r(78, "Coordinated a brand audit as the delegate for the GM."),
+    },
+  },
+  {
+    ref: "Example candidate G7",
+    results: {
+      ops: r(79, "Rooms division manager at a large airport hotel."),
+      pnl: r(72, "Rooms revenue targets owned; F&B and overall P&L were not."),
+      guest: r(80, "Front-desk service scores stated for the rooms division."),
+      team: r(78, "Managed about 60 staff in the rooms division."),
+      brand: r(75, "Worked to brand standards daily; no audit ownership shown."),
+    },
+  },
+  {
+    ref: "Example candidate H8",
+    results: {
+      ops: r(76, "Food and beverage director with some rooms-division exposure."),
+      pnl: r(74, "Owned the F&B budget for a 150-room hotel."),
+      guest: r(77, "Restaurant review scores quoted; no whole-hotel figure."),
+      team: r(75, "Led a kitchen and service team of around 70."),
+      brand: r(68, "Brand standards evidence is limited to F&B."),
+    },
+  },
+  {
+    ref: "Example candidate I9",
+    results: {
+      ops: r(72, "Hotel manager at a serviced-apartment operator, a related format."),
+      pnl: r(71, "Owned an occupancy and cost target; scale is smaller than this role."),
+      guest: r(70, "Guest satisfaction is mentioned without a figure."),
+      team: r(69, "Managed a team of 20; the scale is below the role requirement."),
+      brand: r(66, "No international brand programme in the work history."),
+    },
+  },
+  {
+    ref: "Example candidate J10",
+    results: {
+      ops: r(68, "Operations manager at a resort, seasonal contracts only."),
+      pnl: r(63, "Budget responsibility is described in general terms."),
+      guest: r(66, "Guest feedback is mentioned, with no source or result."),
+      team: r(64, "Led seasonal teams; the size is not stated."),
+      brand: r(61, "No brand or licence standards evidence found."),
+    },
+  },
+];
+
+export const SAMPLE_SHORTLIST: SampleShortlistCandidate[] = SAMPLE_CANDIDATE_INPUTS.map(
+  (c, i) => {
+    const scores = SAMPLE_SHORTLIST_REQUIREMENTS.map((q) => c.results[q.key].score);
+    const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+    return { rank: i + 1, ref: c.ref, score: Math.round(mean), results: c.results };
+  },
+);

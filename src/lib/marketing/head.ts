@@ -230,7 +230,7 @@ export function serviceScript(input: {
 }
 
 /**
- * WebApplication JSON-LD. Emitted only on /platform (by `marketingHead`), the
+ * WebApplication JSON-LD. Emitted only on /how-it-works (by `marketingHead`), the
  * page that describes the software, never sitewide.
  */
 export function webApplicationScript() {
@@ -239,13 +239,13 @@ export function webApplicationScript() {
     children: JSON.stringify({
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "@id": `${CANONICAL_ORIGIN}/platform/#software`,
+      "@id": `${CANONICAL_ORIGIN}/how-it-works/#software`,
       name: "TaaSFlow",
       applicationCategory: "BusinessApplication",
       applicationSubCategory: PRODUCT_CATEGORY,
       operatingSystem: "Web",
-      url: `${CANONICAL_ORIGIN}/platform`,
-      description: `${BRAND_ONE_LINER} Intake Engine, Blueprint Compiler, Agent Layer, Evidence Graph, Scoring Engine and Decision Workspace in one governed system.`,
+      url: `${CANONICAL_ORIGIN}/how-it-works`,
+      description: `TaaSFlow is a ${PRODUCT_CATEGORY.toLowerCase()}. Intake Engine, Blueprint Compiler, Agent Layer, Evidence Graph, Scoring Engine and Decision Workspace in one governed system.`,
       publisher: { "@id": `${CANONICAL_ORIGIN}/#organization` },
     }),
   };
@@ -337,7 +337,7 @@ export function marketingHead(
     absoluteShareImage(options?.image) ?? absoluteShareImage(DEFAULT_SHARE_IMAGE);
   const scripts = [
     ...(options?.breadcrumbs?.length ? [breadcrumbScript(options.breadcrumbs)] : []),
-    ...(path === "/platform" ? [webApplicationScript()] : []),
+    ...(path === "/how-it-works" ? [webApplicationScript()] : []),
     ...(options?.scripts ?? []),
   ];
   return {

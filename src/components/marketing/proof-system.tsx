@@ -1,15 +1,6 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { ATS_NOTE, SHORTLIST_SIZE, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
-/** Agency benchmark used in the cost comparison. Contingency fees typically
- *  run 20–25% of first-year salary; we quote the midpoint and show the math. */
-const AGENCY_FEE_PCT = 22;
-const BENCHMARK_SALARY_USD = 150_000;
-const AGENCY_FEE_USD = Math.round((BENCHMARK_SALARY_USD * AGENCY_FEE_PCT) / 100);
-/** Comparison figure: the pilot price for one role. */
-const COST_DIFFERENCE_USD = AGENCY_FEE_USD - PRICE_PILOT_USD;
-const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
 
 
 import {
@@ -25,7 +16,6 @@ import {
   Target,
   UserCheck,
   Users,
-  Wallet,
   ChevronDown,
 } from "lucide-react";
 
@@ -105,10 +95,6 @@ const FAQ = [
   {
     q: "How is this different from an AI sourcing tool?",
     a: WHO_RUNS_THE_SEARCH,
-  },
-  {
-    q: "Is our data used to train models?",
-    a: "No. CVs are stored in a private bucket with row-level security. LLM calls run on evidence extraction only, and prompts are not used for model training.",
   },
 ] as const;
 
@@ -260,55 +246,6 @@ export function ProofSystem() {
               className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
             >
               Tour the workspace <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
-        </div>
-
-        {/* 5 — Calculator math */}
-        <div className="mt-14 grid gap-6">
-          {/* Calculator math */}
-          <div className="rounded-2xl border border-[color:var(--brand-ocean)]/25 bg-gradient-to-br from-[color:var(--brand-sky)]/40 to-[color:var(--brand-paper)] p-6 sm:p-8">
-            <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
-              <Wallet className="h-3.5 w-3.5" aria-hidden />
-              The math, without a call
-            </span>
-            <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-2xl font-semibold leading-tight text-[color:var(--brand-navy)]">
-              A $150k role.
-              <br />
-              Two cost paths.
-            </h3>
-            <dl className="mt-6 space-y-3 text-sm">
-              <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
-                <dt className="text-[color:var(--brand-navy)]/80">
-                  Contingency agency ({AGENCY_FEE_PCT}% of first-year salary)
-                </dt>
-                <dd className="font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                  {usd(AGENCY_FEE_USD)}
-                </dd>
-              </div>
-              <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
-                <dt className="text-[color:var(--brand-navy)]/80">
-                  TaaSFlow pilot (one role, one time)
-                </dt>
-                <dd className="font-semibold tabular-nums text-[color:var(--brand-ocean-text)]">
-                  {usd(PRICE_PILOT_USD)}
-                </dd>
-              </div>
-              <div className="flex items-baseline justify-between gap-4">
-                <dt className="text-sm font-semibold text-[color:var(--brand-navy)]">
-                  Difference in fees
-                </dt>
-                <dd className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                  {usd(COST_DIFFERENCE_USD)}
-                </dd>
-              </div>
-
-            </dl>
-            <Link
-              to="/pricing"
-              className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
-            >
-              See pricing <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>
         </div>

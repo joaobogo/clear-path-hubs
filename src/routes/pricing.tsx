@@ -25,7 +25,7 @@ import {
   MAX_POSITIONS,
   PACKAGE_10,
 } from "@/config/pricing-core";
-import { OFFER_CATEGORY, PILOT_IS_PAID_NOTE, SEATS_NOTE, TIMING_FINE_PRINT } from "@/config/offer-facts";
+import { OFFER_CATEGORY, OFFER_LAST_UPDATED_LABEL, PILOT_IS_PAID_NOTE, SEATS_NOTE, TIMING_FINE_PRINT } from "@/config/offer-facts";
 import { CTA_PRIMARY, CTA_BOOK } from "@/config/cta";
 import { LargerPackagesTable } from "@/components/marketing/larger-packages-table";
 import { Check, X } from "lucide-react";
@@ -59,7 +59,7 @@ export const Route = createFileRoute("/pricing")({
         serviceScript({
           name: "TaaSFlow recruiting packages",
           description:
-            `${OFFER_CATEGORY}, sold as flat-fee packages by number of positions. A ${PRICE_PILOT_DISPLAY} pilot covers one role, once per company. No placement fees.`,
+            `${OFFER_CATEGORY}, sold as packages by number of positions: one-off (paid once) or as a subscription billed monthly. A ${PRICE_PILOT_DISPLAY} pilot covers one role, once per company. No placement fees.`,
           path: "/pricing",
           serviceType: "Recruiting",
         }),
@@ -122,6 +122,9 @@ function PricingPage() {
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-xs text-[color:var(--brand-navy)]/70" data-testid="last-updated">
+          {OFFER_LAST_UPDATED_LABEL}
+        </p>
       </EditorialHero>
 
       {/* One-off vs recurring selector */}

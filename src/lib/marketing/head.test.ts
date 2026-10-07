@@ -117,8 +117,8 @@ describe("structured data scoping (P13)", () => {
       (s) => JSON.parse(s.children)["@type"],
     );
 
-  it("emits WebApplication only on /platform", () => {
-    expect(types("/platform")).toContain("WebApplication");
+  it("emits WebApplication only on /how-it-works", () => {
+    expect(types("/how-it-works")).toContain("WebApplication");
     expect(types("/")).not.toContain("WebApplication");
     expect(types("/pricing")).not.toContain("WebApplication");
   });

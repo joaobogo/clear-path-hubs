@@ -122,7 +122,9 @@ export function compareCosts(input: ComparisonInput): ComparisonResult {
     "Internal recruiter time is left out on both sides.",
   ];
 
-  const pkg = packageForPositions(positions);
+  // A subscription is never the one-off pilot: one position still maps to the
+  // smallest monthly package.
+  const pkg = packageForPositions(mode === "recurring" ? Math.max(positions, 2) : positions);
   if (!pkg) {
     return {
       status: "quote-only",

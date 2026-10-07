@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, Clock, Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import { CASE_STUDIES } from "@/content/case-studies";
 
 type CaseStudyPreviewsProps = {
@@ -22,7 +22,7 @@ export function CaseStudyPreviews({
     <section className={className}>
       <div className="max-w-2xl">
         <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
-          <Sparkles className="h-3.5 w-3.5" aria-hidden /> Case studies
+          <Sparkles className="h-3.5 w-3.5" aria-hidden /> Examples
         </p>
         <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
           {title}
@@ -59,17 +59,15 @@ export function CaseStudyPreviews({
               {study.rolesNeeded.length > 3 ? ", …" : ""}
             </p>
 
-            <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-[color:var(--brand-navy)]/80">
-              <Clock className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-              First shortlist in {study.timeToFirstShortlist}
+            <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
+              Example scenario
             </p>
-
-            <p className="mt-4 text-sm font-medium leading-relaxed">
-              {study.outcomeHighlight}
+            <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
+              {study.outcomeHighlight.replace(/^Illustrates\s+/i, "Shows ")}
             </p>
 
             <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)]">
-              Read the full story
+              Read the full example
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
             </span>
           </Link>

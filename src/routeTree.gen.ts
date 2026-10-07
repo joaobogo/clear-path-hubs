@@ -27,6 +27,8 @@ import { Route as EmployerOnboardingRouteImport } from './routes/employer-onboar
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as FlatFeeRecruitingRouteImport } from './routes/flat-fee-recruiting'
+import { Route as ForFoundersRouteImport } from './routes/for-founders'
+import { Route as ForHrTeamsRouteImport } from './routes/for-hr-teams'
 import { Route as GlobalTalentRouteImport } from './routes/global-talent'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as IntakeRouteImport } from './routes/intake'
@@ -41,10 +43,12 @@ import { Route as PitchRouteImport } from './routes/pitch'
 import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RecruiterFeesRouteImport } from './routes/recruiter-fees'
 import { Route as RecruitingAsAServiceRouteImport } from './routes/recruiting-as-a-service'
 import { Route as RecruitmentAgencyAlternativeRouteImport } from './routes/recruitment-agency-alternative'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SampleShortlistRouteImport } from './routes/sample-shortlist'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as SitemapRouteImport } from './routes/sitemap'
 import { Route as SitemapBlogDotxmlRouteImport } from './routes/sitemap-blog[.]xml'
@@ -75,6 +79,8 @@ import { Route as ApplyEligibilityOutcomeRouteImport } from './routes/apply.elig
 import { Route as ApplyStatusRouteImport } from './routes/apply.status'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as CompareIndexRouteImport } from './routes/compare.index'
+import { Route as CompareRecruitingAgenciesRouteImport } from './routes/compare.recruiting-agencies'
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as DevIndustryCoverageRouteImport } from './routes/dev.industry-coverage'
 import { Route as DevTrackingRouteImport } from './routes/dev.tracking'
@@ -307,6 +313,16 @@ const FlatFeeRecruitingRoute = FlatFeeRecruitingRouteImport.update({
   path: '/flat-fee-recruiting',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForFoundersRoute = ForFoundersRouteImport.update({
+  id: '/for-founders',
+  path: '/for-founders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForHrTeamsRoute = ForHrTeamsRouteImport.update({
+  id: '/for-hr-teams',
+  path: '/for-hr-teams',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GlobalTalentRoute = GlobalTalentRouteImport.update({
   id: '/global-talent',
   path: '/global-talent',
@@ -377,6 +393,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecruiterFeesRoute = RecruiterFeesRouteImport.update({
+  id: '/recruiter-fees',
+  path: '/recruiter-fees',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecruitingAsAServiceRoute = RecruitingAsAServiceRouteImport.update({
   id: '/recruiting-as-a-service',
   path: '/recruiting-as-a-service',
@@ -396,6 +417,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SampleShortlistRoute = SampleShortlistRouteImport.update({
+  id: '/sample-shortlist',
+  path: '/sample-shortlist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SecurityRoute = SecurityRouteImport.update({
@@ -551,6 +577,17 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompareIndexRoute = CompareIndexRouteImport.update({
+  id: '/compare/',
+  path: '/compare/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRecruitingAgenciesRoute =
+  CompareRecruitingAgenciesRouteImport.update({
+    id: '/compare/recruiting-agencies',
+    path: '/compare/recruiting-agencies',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DevCatalogueRoute = DevCatalogueRouteImport.update({
   id: '/dev/catalogue',
   path: '/dev/catalogue',
@@ -1372,6 +1409,8 @@ export interface FileRoutesByFullPath {
   '/enterprise': typeof EnterpriseRoute
   '/faq': typeof FaqRoute
   '/flat-fee-recruiting': typeof FlatFeeRecruitingRoute
+  '/for-founders': typeof ForFoundersRoute
+  '/for-hr-teams': typeof ForHrTeamsRoute
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
@@ -1386,10 +1425,12 @@ export interface FileRoutesByFullPath {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/recruiter-fees': typeof RecruiterFeesRoute
   '/recruiting-as-a-service': typeof RecruitingAsAServiceRoute
   '/recruitment-agency-alternative': typeof RecruitmentAgencyAlternativeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sample-shortlist': typeof SampleShortlistRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
@@ -1419,6 +1460,7 @@ export interface FileRoutesByFullPath {
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/compare/recruiting-agencies': typeof CompareRecruitingAgenciesRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/dev/tracking': typeof DevTrackingRoute
@@ -1430,6 +1472,7 @@ export interface FileRoutesByFullPath {
   '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
+  '/compare/': typeof CompareIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/resources/': typeof ResourcesIndexRoute
@@ -1581,6 +1624,8 @@ export interface FileRoutesByTo {
   '/enterprise': typeof EnterpriseRoute
   '/faq': typeof FaqRoute
   '/flat-fee-recruiting': typeof FlatFeeRecruitingRoute
+  '/for-founders': typeof ForFoundersRoute
+  '/for-hr-teams': typeof ForHrTeamsRoute
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
@@ -1595,10 +1640,12 @@ export interface FileRoutesByTo {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/recruiter-fees': typeof RecruiterFeesRoute
   '/recruiting-as-a-service': typeof RecruitingAsAServiceRoute
   '/recruitment-agency-alternative': typeof RecruitmentAgencyAlternativeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sample-shortlist': typeof SampleShortlistRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
@@ -1625,6 +1672,7 @@ export interface FileRoutesByTo {
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/compare/recruiting-agencies': typeof CompareRecruitingAgenciesRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/dev/tracking': typeof DevTrackingRoute
@@ -1636,6 +1684,7 @@ export interface FileRoutesByTo {
   '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog': typeof BlogIndexRoute
+  '/compare': typeof CompareIndexRoute
   '/industries': typeof IndustriesIndexRoute
   '/jobs': typeof JobsIndexRoute
   '/resources': typeof ResourcesIndexRoute
@@ -1782,6 +1831,8 @@ export interface FileRoutesById {
   '/enterprise': typeof EnterpriseRoute
   '/faq': typeof FaqRoute
   '/flat-fee-recruiting': typeof FlatFeeRecruitingRoute
+  '/for-founders': typeof ForFoundersRoute
+  '/for-hr-teams': typeof ForHrTeamsRoute
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
@@ -1796,10 +1847,12 @@ export interface FileRoutesById {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/recruiter-fees': typeof RecruiterFeesRoute
   '/recruiting-as-a-service': typeof RecruitingAsAServiceRoute
   '/recruitment-agency-alternative': typeof RecruitmentAgencyAlternativeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sample-shortlist': typeof SampleShortlistRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
@@ -1829,6 +1882,7 @@ export interface FileRoutesById {
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/compare/recruiting-agencies': typeof CompareRecruitingAgenciesRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/dev/tracking': typeof DevTrackingRoute
@@ -1840,6 +1894,7 @@ export interface FileRoutesById {
   '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
+  '/compare/': typeof CompareIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/resources/': typeof ResourcesIndexRoute
@@ -1993,6 +2048,8 @@ export interface FileRouteTypes {
     | '/enterprise'
     | '/faq'
     | '/flat-fee-recruiting'
+    | '/for-founders'
+    | '/for-hr-teams'
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
@@ -2007,10 +2064,12 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
+    | '/recruiter-fees'
     | '/recruiting-as-a-service'
     | '/recruitment-agency-alternative'
     | '/reset-password'
     | '/robots.txt'
+    | '/sample-shortlist'
     | '/security'
     | '/sitemap'
     | '/sitemap-blog.xml'
@@ -2040,6 +2099,7 @@ export interface FileRouteTypes {
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
+    | '/compare/recruiting-agencies'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
     | '/dev/tracking'
@@ -2051,6 +2111,7 @@ export interface FileRouteTypes {
     | '/resources/$slug'
     | '/share/$token'
     | '/blog/'
+    | '/compare/'
     | '/industries/'
     | '/jobs/'
     | '/resources/'
@@ -2202,6 +2263,8 @@ export interface FileRouteTypes {
     | '/enterprise'
     | '/faq'
     | '/flat-fee-recruiting'
+    | '/for-founders'
+    | '/for-hr-teams'
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
@@ -2216,10 +2279,12 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
+    | '/recruiter-fees'
     | '/recruiting-as-a-service'
     | '/recruitment-agency-alternative'
     | '/reset-password'
     | '/robots.txt'
+    | '/sample-shortlist'
     | '/security'
     | '/sitemap'
     | '/sitemap-blog.xml'
@@ -2246,6 +2311,7 @@ export interface FileRouteTypes {
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
+    | '/compare/recruiting-agencies'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
     | '/dev/tracking'
@@ -2257,6 +2323,7 @@ export interface FileRouteTypes {
     | '/resources/$slug'
     | '/share/$token'
     | '/blog'
+    | '/compare'
     | '/industries'
     | '/jobs'
     | '/resources'
@@ -2402,6 +2469,8 @@ export interface FileRouteTypes {
     | '/enterprise'
     | '/faq'
     | '/flat-fee-recruiting'
+    | '/for-founders'
+    | '/for-hr-teams'
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
@@ -2416,10 +2485,12 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
+    | '/recruiter-fees'
     | '/recruiting-as-a-service'
     | '/recruitment-agency-alternative'
     | '/reset-password'
     | '/robots.txt'
+    | '/sample-shortlist'
     | '/security'
     | '/sitemap'
     | '/sitemap-blog.xml'
@@ -2449,6 +2520,7 @@ export interface FileRouteTypes {
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
+    | '/compare/recruiting-agencies'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
     | '/dev/tracking'
@@ -2460,6 +2532,7 @@ export interface FileRouteTypes {
     | '/resources/$slug'
     | '/share/$token'
     | '/blog/'
+    | '/compare/'
     | '/industries/'
     | '/jobs/'
     | '/resources/'
@@ -2613,6 +2686,8 @@ export interface RootRouteChildren {
   EnterpriseRoute: typeof EnterpriseRoute
   FaqRoute: typeof FaqRoute
   FlatFeeRecruitingRoute: typeof FlatFeeRecruitingRoute
+  ForFoundersRoute: typeof ForFoundersRoute
+  ForHrTeamsRoute: typeof ForHrTeamsRoute
   GlobalTalentRoute: typeof GlobalTalentRoute
   HowItWorksRoute: typeof HowItWorksRoute
   IntakeRoute: typeof IntakeRoute
@@ -2627,10 +2702,12 @@ export interface RootRouteChildren {
   PlatformRoute: typeof PlatformRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  RecruiterFeesRoute: typeof RecruiterFeesRoute
   RecruitingAsAServiceRoute: typeof RecruitingAsAServiceRoute
   RecruitmentAgencyAlternativeRoute: typeof RecruitmentAgencyAlternativeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SampleShortlistRoute: typeof SampleShortlistRoute
   SecurityRoute: typeof SecurityRoute
   SitemapRoute: typeof SitemapRoute
   SitemapBlogDotxmlRoute: typeof SitemapBlogDotxmlRoute
@@ -2653,6 +2730,7 @@ export interface RootRouteChildren {
   ApplyEligibilityOutcomeRoute: typeof ApplyEligibilityOutcomeRoute
   ApplyStatusRoute: typeof ApplyStatusRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  CompareRecruitingAgenciesRoute: typeof CompareRecruitingAgenciesRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   DevIndustryCoverageRoute: typeof DevIndustryCoverageRoute
   DevTrackingRoute: typeof DevTrackingRoute
@@ -2664,6 +2742,7 @@ export interface RootRouteChildren {
   ResourcesSlugRoute: typeof ResourcesSlugRoute
   ShareTokenRoute: typeof ShareTokenRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  CompareIndexRoute: typeof CompareIndexRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
   ResourcesIndexRoute: typeof ResourcesIndexRoute
@@ -2832,6 +2911,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FlatFeeRecruitingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/for-founders': {
+      id: '/for-founders'
+      path: '/for-founders'
+      fullPath: '/for-founders'
+      preLoaderRoute: typeof ForFoundersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-hr-teams': {
+      id: '/for-hr-teams'
+      path: '/for-hr-teams'
+      fullPath: '/for-hr-teams'
+      preLoaderRoute: typeof ForHrTeamsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/global-talent': {
       id: '/global-talent'
       path: '/global-talent'
@@ -2930,6 +3023,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recruiter-fees': {
+      id: '/recruiter-fees'
+      path: '/recruiter-fees'
+      fullPath: '/recruiter-fees'
+      preLoaderRoute: typeof RecruiterFeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recruiting-as-a-service': {
       id: '/recruiting-as-a-service'
       path: '/recruiting-as-a-service'
@@ -2956,6 +3056,13 @@ declare module '@tanstack/react-router' {
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sample-shortlist': {
+      id: '/sample-shortlist'
+      path: '/sample-shortlist'
+      fullPath: '/sample-shortlist'
+      preLoaderRoute: typeof SampleShortlistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/security': {
@@ -3166,6 +3273,20 @@ declare module '@tanstack/react-router' {
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/': {
+      id: '/compare/'
+      path: '/compare'
+      fullPath: '/compare/'
+      preLoaderRoute: typeof CompareIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/recruiting-agencies': {
+      id: '/compare/recruiting-agencies'
+      path: '/compare/recruiting-agencies'
+      fullPath: '/compare/recruiting-agencies'
+      preLoaderRoute: typeof CompareRecruitingAgenciesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/catalogue': {
@@ -4531,6 +4652,8 @@ const rootRouteChildren: RootRouteChildren = {
   EnterpriseRoute: EnterpriseRoute,
   FaqRoute: FaqRoute,
   FlatFeeRecruitingRoute: FlatFeeRecruitingRoute,
+  ForFoundersRoute: ForFoundersRoute,
+  ForHrTeamsRoute: ForHrTeamsRoute,
   GlobalTalentRoute: GlobalTalentRoute,
   HowItWorksRoute: HowItWorksRoute,
   IntakeRoute: IntakeRoute,
@@ -4545,10 +4668,12 @@ const rootRouteChildren: RootRouteChildren = {
   PlatformRoute: PlatformRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  RecruiterFeesRoute: RecruiterFeesRoute,
   RecruitingAsAServiceRoute: RecruitingAsAServiceRoute,
   RecruitmentAgencyAlternativeRoute: RecruitmentAgencyAlternativeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SampleShortlistRoute: SampleShortlistRoute,
   SecurityRoute: SecurityRoute,
   SitemapRoute: SitemapRoute,
   SitemapBlogDotxmlRoute: SitemapBlogDotxmlRoute,
@@ -4572,6 +4697,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApplyEligibilityOutcomeRoute: ApplyEligibilityOutcomeRoute,
   ApplyStatusRoute: ApplyStatusRoute,
   BlogSlugRoute: BlogSlugRoute,
+  CompareRecruitingAgenciesRoute: CompareRecruitingAgenciesRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   DevIndustryCoverageRoute: DevIndustryCoverageRoute,
   DevTrackingRoute: DevTrackingRoute,
@@ -4583,6 +4709,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesSlugRoute: ResourcesSlugRoute,
   ShareTokenRoute: ShareTokenRoute,
   BlogIndexRoute: BlogIndexRoute,
+  CompareIndexRoute: CompareIndexRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
   ResourcesIndexRoute: ResourcesIndexRoute,

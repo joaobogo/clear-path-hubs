@@ -8,6 +8,7 @@ import { CTA_BOOK, CTA_FULL_INTAKE, CTA_PRICING } from "@/config/cta";
 import {
   FIRST_SHORTLIST_TIMING,
   HUMAN_OVERSIGHT_NOTE,
+  OFFER_LAST_UPDATED_LABEL,
   PILOT_IS_PAID_NOTE,
   PROCESS_STEPS,
   RECORDS_NOTE,
@@ -80,6 +81,14 @@ function PilotPage() {
                 <Link to={CTA_BOOK.to} className={linkClass}>
                   {CTA_BOOK.label}
                 </Link>
+              </p>
+              <p className="mt-3 text-sm">
+                <Link to="/sample-shortlist" className={linkClass}>
+                  See a sample top 10
+                </Link>
+              </p>
+              <p className="mt-3 text-xs text-[color:var(--brand-navy)]/70" data-testid="last-updated">
+                {OFFER_LAST_UPDATED_LABEL}
               </p>
             </div>
             <EmployerInquiryForm source="pilot-hero" idPrefix="pilot-hero" />

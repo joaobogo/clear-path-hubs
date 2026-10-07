@@ -11,7 +11,7 @@
  *   - One audience anchor (solutions / enterprise / staffing partnership)
  *   - A guaranteed "Start Hiring" CTA
  *
- * Consumed by `industry-template.tsx` — safe to call for every entry.
+ * Consumed by the industry pages — safe to call for every entry.
  */
 import { INDUSTRY_ENTRIES, type IndustryEntry, type IndustryRelated, type IndustryResource } from "@/content/industries-v2";
 import { listIndustryBlogPosts } from "@/lib/marketing/industry-blog";

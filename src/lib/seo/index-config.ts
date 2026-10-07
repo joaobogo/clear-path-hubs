@@ -6,6 +6,7 @@
  * missing from the other. The static public/robots.txt copy is regenerated at
  * build time from the same robots-config.ts source.
  */
+import { isNoindexBlogSlug } from "@/lib/seo/blog-noindex";
 import { blog, getPage, listIndustrySlugs } from "@/lib/marketing/content";
 import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
@@ -39,8 +40,12 @@ export { BASE_URL, SITEMAP_URL };
 export const STATIC_PATHS = [
   "/",
   "/solutions",
+  "/for-hr-teams",
+  "/for-founders",
+  "/compare",
+  "/compare/recruiting-agencies",
+  "/recruiter-fees",
   "/how-it-works",
-  "/journey",
   "/pricing",
   "/about",
   "/enterprise",
@@ -49,7 +54,6 @@ export const STATIC_PATHS = [
   "/faq",
   "/resources",
   "/case-studies",
-  "/employer-onboarding",
   "/talent-network",
   "/partnerships/staffing",
   "/privacy",
@@ -57,11 +61,8 @@ export const STATIC_PATHS = [
   "/industries",
   "/blog",
   "/jobs",
-  "/platform",
   "/agents",
   "/integrations",
-  "/system",
-  "/trust",
   "/security",
   "/ai-in-hiring",
   "/flat-fee-recruiting",
@@ -135,6 +136,7 @@ export function collectBlogEntries(): SitemapEntry[] {
   // Only posts the blog actually publishes — /blog/$slug 404s otherwise, and
   // listing them here would advertise soft-404s to crawlers.
   for (const row of listAllBlogRows()) {
+    if (isNoindexBlogSlug(row.slug)) continue;
     const meta = blog[row.slug]?.meta as Record<string, string | undefined> | undefined;
     entries.push({
       path: `/blog/${row.slug}`,

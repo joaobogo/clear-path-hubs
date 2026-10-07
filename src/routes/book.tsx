@@ -96,9 +96,19 @@ type Meeting = {
   joinUrl: string | null;
 };
 
-type ContactValues = Record<"firstName" | "lastName" | "email" | "phone" | "website", string>;
+type ContactValues = Record<
+  "firstName" | "lastName" | "email" | "phone" | "role" | "website",
+  string
+>;
 
-const EMPTY: ContactValues = { firstName: "", lastName: "", email: "", phone: "", website: "" };
+const EMPTY: ContactValues = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  role: "",
+  website: "",
+};
 
 const CONTACT_KEY = "taasflow.booking.contact";
 
@@ -109,6 +119,7 @@ const FIELDS: { name: keyof ContactValues; label: string; type?: string; autoCom
   // Optional: the call is online and the link arrives by email, so a missing
   // number never blocks a booking (audit 18 Sep, TF-C-009).
   { name: "phone", label: "Phone number (optional)", type: "tel", autoComplete: "tel" },
+  { name: "role", label: "Which role do you need to fill? (optional)", autoComplete: "off" },
 ];
 
 function readStoredContact(): Partial<ContactValues> | null {
@@ -443,13 +454,17 @@ function BookPage() {
                 </p>
               ) : null}
               {FIELDS.map((field) => (
-                <div key={field.name} className="space-y-1.5">
+                <div
+                  key={field.name}
+                  className={"space-y-1.5" + (field.name === "role" ? " sm:col-span-2" : "")}
+                >
                   <Label htmlFor={field.name}>{field.label}</Label>
                   <Input
                     id={field.name}
                     name={field.name}
                     type={field.type ?? "text"}
                     autoComplete={field.autoComplete}
+                    maxLength={field.name === "role" ? 120 : undefined}
                     value={values[field.name]}
                     onChange={(e) => setValues((v) => ({ ...v, [field.name]: e.target.value }))}
                     aria-invalid={Boolean(errors[field.name])}

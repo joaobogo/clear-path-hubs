@@ -24,6 +24,13 @@ describe("compareCosts", () => {
     expect(r.months).toBe(12);
   });
 
+  it("never prices a one-position subscription at the one-off pilot", () => {
+    const r = compareCosts({ mode: "recurring", hires: 1, positions: 1, months: 12, ...base });
+    if (r.status !== "ok") throw new Error("expected ok");
+    expect(r.taasTotalUsd).toBe(PACKAGE_10.totalUsd * 12);
+    expect(r.taasTotalUsd).not.toBe(PILOT_PACKAGE.totalUsd * 12);
+  });
+
   it("returns quote-only above 100 positions with no TaaSFlow price", () => {
     const r = compareCosts({ mode: "project", hires: 101, ...base });
     expect(r.status).toBe("quote-only");

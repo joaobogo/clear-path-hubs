@@ -107,3 +107,7 @@ export const JOB_BOARD_NOTE =
 /** Security / compliance honesty. */
 export const COMPLIANCE_NOTE =
   "We do not claim SOC 2, ISO 27001, HIPAA, or full GDPR, CCPA or PDPL compliance. See the security page for what we do and do not hold." as const;
+
+/** Date the public offer pages (pricing, pilot, homepage) were last reviewed for accuracy. */
+export const OFFER_LAST_REVIEWED = "7 October 2026" as const;
+export const OFFER_LAST_UPDATED_LABEL = `Last updated: ${OFFER_LAST_REVIEWED}` as const;

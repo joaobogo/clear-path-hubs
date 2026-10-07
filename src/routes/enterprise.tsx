@@ -82,28 +82,28 @@ const VOLUME_BANDS = [
   {
     band: "1 position",
     price: PRICE_PILOT_DISPLAY,
-    cadence: "Weekly ranked delivery",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "One agent capacity block",
     fit: "A single critical hire, run end to end.",
   },
   {
     band: PACKAGE_10.capacityLabel,
     price: PACKAGE_10.totalDisplay,
-    cadence: "Weekly delivery per role family",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Agent capacity per role family",
     fit: "One or two functions hiring in parallel with shared standards.",
   },
   {
     band: PACKAGE_20.capacityLabel,
     price: PACKAGE_20.totalDisplay,
-    cadence: "Twice-weekly delivery on priority roles",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Agent capacity plus a named account lead",
     fit: "Multi-business-unit hiring with executive reporting.",
   },
   {
     band: PACKAGE_30.capacityLabel,
     price: PACKAGE_30.totalDisplay,
-    cadence: "Twice-weekly delivery across the portfolio",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Enterprise-scale agent capacity",
     fit: "Portfolio hiring across teams in one package.",
   },
@@ -112,21 +112,21 @@ const VOLUME_BANDS = [
   // published up to $64,000 — a large buyer, on the page written for them,
   // was shown no price for their volume at all (audit 17 Sep, item 4).
   //
-  // `fit` is the approved `bestFor` line from src/content/pricing.ts. Cadence
-  // and capacity repeat the 30-position row deliberately: the approved tier
-  // content gives portfolio and program the SAME included list as volume, so
-  // repeating it commits to nothing these packages do not already promise.
+  // `fit` is the approved `bestFor` line from src/content/pricing.ts. Delivery
+  // timing is not promised per package: the schedule is confirmed with the
+  // buyer before work begins. Capacity repeats the 30-position row
+  // deliberately: portfolio and program share its approved included list.
   {
     band: PACKAGE_40.capacityLabel,
     price: PACKAGE_40.totalDisplay,
-    cadence: "Twice-weekly delivery across the portfolio",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Enterprise-scale agent capacity",
     fit: "Portfolio hiring across business units.",
   },
   {
     band: PACKAGE_100.capacityLabel,
     price: PACKAGE_100.totalDisplay,
-    cadence: "Twice-weekly delivery across the portfolio",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Enterprise-scale agent capacity",
     fit: "A continuous hiring programme run as one package.",
   },
@@ -134,7 +134,7 @@ const VOLUME_BANDS = [
   {
     band: `More than ${MAX_POSITIONS} positions`,
     price: ABOVE_MAX_DISPLAY,
-    cadence: "Cadence agreed per business unit",
+    cadence: "Schedule agreed per business unit",
     agentCapacity: "Scoped with you",
     fit: "Continuous hiring where volume shifts by quarter.",
   },
@@ -340,7 +340,7 @@ function EnterprisePage() {
                 <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">{b.fit}</p>
                 <dl className="mt-3 space-y-1.5 text-sm">
                   <div className="flex gap-2">
-                    <dt className="shrink-0 text-[color:var(--brand-navy)]/70">Cadence:</dt>
+                    <dt className="shrink-0 text-[color:var(--brand-navy)]/70">Delivery:</dt>
                     <dd className="text-[color:var(--brand-navy)]/85">{b.cadence}</dd>
                   </div>
                   <div className="flex gap-2">
@@ -361,8 +361,8 @@ function EnterprisePage() {
               <thead>
                 <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Package</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">One-time price</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Delivery rhythm</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Package price</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Delivery</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Capacity and oversight</th>
                 </tr>
               </thead>
