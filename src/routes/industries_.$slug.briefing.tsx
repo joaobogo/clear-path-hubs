@@ -21,6 +21,7 @@ import {
   toInternalSlug,
 } from "@/lib/marketing/industry-slug-aliases";
 import { breadcrumbScript, clampDescription } from "@/lib/marketing/head";
+import { INDUSTRY_NOINDEX_ROBOTS, isIndexableIndustrySlug } from "@/lib/seo/indexability";
 import { Button } from "@/components/ui/button";
 
 
@@ -61,6 +62,9 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
       meta: [
         { title },
         { name: "description", content: description },
+        ...(isIndexableIndustrySlug(params.slug)
+          ? []
+          : [{ name: "robots", content: INDUSTRY_NOINDEX_ROBOTS }]),
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },

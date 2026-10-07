@@ -1,7 +1,5 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { z } from "zod";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
@@ -11,6 +9,12 @@ import {
   BLOG_CATEGORY_SLUGS,
 } from "@/lib/marketing/blog-manifest";
 import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
+import {
+  blogPageCount,
+  blogPageHead,
+  paginateBlog,
+  resolveBlogPage,
+} from "@/lib/seo/blog-pagination";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 const entry = getPage("blog");
@@ -28,28 +32,59 @@ const entry = getPage("blog");
  * they change on every keystroke, and putting them here would push a history
  * entry per character.
  */
-const searchSchema = z.object({
-  page: fallback(z.coerce.number().int().min(1).optional(), undefined),
+/**
+ * The raw `?page=` value is kept as the router parsed it so `beforeLoad` can
+ * redirect junk (0, abc, 1.5) and out-of-range values instead of silently
+ * rendering a different page at the same URL.
+ */
+const validateSearch = (search: Record<string, unknown>): { page?: string | number } => ({
+  page:
+    typeof search.page === "string" || typeof search.page === "number" ? search.page : undefined,
 });
+
+const ARCHIVE_PAGES = blogPageCount(listAllBlogRows().length);
 
 export const Route = createFileRoute("/blog/")({
-  validateSearch: zodValidator(searchSchema),
-  head: () =>
-    marketingHead(entry, "/blog", {
-      title: "TaaSFlow Blog — Talent strategy, hiring guides & market data",
-      description:
-        "Strategies, playbooks, and market data for modern talent teams. Updated regularly.",
-    }),
+  validateSearch,
+  beforeLoad: ({ search }) => {
+    const resolved = resolveBlogPage(search.page, ARCHIVE_PAGES);
+    if (resolved.kind === "redirect") {
+      throw redirect({
+        to: "/blog",
+        search: resolved.page > 1 ? { page: resolved.page } : {},
+        statusCode: 301,
+      });
+    }
+  },
+  loaderDeps: ({ search }) => ({ page: search.page }),
+  loader: ({ deps }) => {
+    const resolved = resolveBlogPage(deps.page, ARCHIVE_PAGES);
+    return { page: resolved.page, pages: ARCHIVE_PAGES };
+  },
+  head: ({ loaderData }) => {
+    const page = loaderData?.page ?? 1;
+    const h = blogPageHead(page, loaderData?.pages ?? ARCHIVE_PAGES);
+    // Page 1 uses the content entry; page 2+ get their own title and
+    // description so archive pages are not duplicates of each other.
+    return marketingHead(
+      page === 1 ? entry : undefined,
+      h.path,
+      h.fallback ?? {
+        title: "TaaSFlow Blog — Talent strategy, hiring guides & market data",
+        description:
+          "Strategies, playbooks, and market data for modern talent teams. Updated regularly.",
+      },
+      { prevPath: h.prevPath, nextPath: h.nextPath },
+    );
+  },
   component: BlogIndex,
 });
-
-const PAGE_SIZE = 24;
 
 function BlogIndex() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("");
   const navigate = useNavigate();
-  const page = Route.useSearch().page ?? 1;
+  const { page } = Route.useLoaderData();
   // Page 1 is written as an absent parameter, never ?page=1, so the archive
   // has exactly one canonical address.
   const setPage = (next: number | ((p: number) => number)) => {
@@ -87,14 +122,15 @@ function BlogIndex() {
 
   const categoriesToShow = dynamicCategories;
 
-  const isBrowsing = q.trim() === "" && cat === "" && page === 1;
-  const featured = isBrowsing ? all[0] : null;
-  const listSource = featured ? filtered.filter((p) => p.slug !== featured.slug) : filtered;
-
-  const total = listSource.length;
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const current = Math.min(page, pages);
-  const paged = listSource.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  // Unfiltered archive: the newest post is featured on page 1 and is excluded
+  // from the list on every page (see `paginateBlog`).
+  const isBrowsing = q.trim() === "" && cat === "";
+  const {
+    featured,
+    items: paged,
+    page: current,
+    pages,
+  } = paginateBlog(filtered, page, { withFeatured: isBrowsing });
 
   return (
     <SiteShell>

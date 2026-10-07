@@ -48,7 +48,7 @@ export const Route = createFileRoute("/blog/$slug")({
     // a post whose markdown front matter is thin still shares a real title and
     // description instead of its URL slug.
     const manifest = BLOG_METADATA[params.slug] as
-      | { title?: string; description?: string }
+      | { title?: string; description?: string; category?: string; tags?: readonly string[] }
       | undefined;
     const headline = metaBag.title || manifest?.title || params.slug;
     const summary = metaBag.description || manifest?.description;
@@ -77,6 +77,8 @@ export const Route = createFileRoute("/blog/$slug")({
             ...(summary ? { description: summary } : {}),
             path: `/blog/${params.slug}`,
             ...(cover ? { image: cover } : {}),
+            ...(manifest?.category ? { articleSection: manifest.category } : {}),
+            ...(manifest?.tags?.length ? { keywords: manifest.tags } : {}),
             ...(metaBag["article:published_time"]
               ? { datePublished: metaBag["article:published_time"] }
               : {}),
@@ -212,18 +214,6 @@ function BlogPost() {
       .filter(Boolean)
       .slice(0, 3) as typeof INDUSTRY_ENTRIES;
   }, [entryAny.industry, title, description, tags]);
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: title,
-    datePublished: published,
-    dateModified: updated,
-    author: { "@type": author.type, name: author.name, ...(author.url ? { url: author.url } : {}) },
-    publisher: { "@type": "Organization", name: "TaaSFlow" },
-    articleSection: category,
-    keywords: tags.join(", "),
-  };
 
   return (
     <SiteShell>
@@ -492,12 +482,6 @@ function BlogPost() {
           )}
         </div>
       </div>
-
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
     </SiteShell>
   );
 }

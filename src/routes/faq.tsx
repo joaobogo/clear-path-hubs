@@ -1,16 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { marketingHead } from "@/lib/marketing/head";
+import { FIRST_SHORTLIST_TIMING, SEATS_NOTE } from "@/config/offer-facts";
 import { PublicPage, PublicSection, SiteShell } from "@/components/marketing/site-shell";
 import { EditorialHero } from "@/components/marketing/editorial-hero";
 import faqHero from "@/assets/page-faq-hero.jpg";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ArrowRight, Link as LinkIcon, Search } from "lucide-react";
+import { ArrowRight, ChevronDown, Link as LinkIcon, Search } from "lucide-react";
 
 type QA = { q: string; a: string; more?: string; id: string };
 type Group = { id: string; title: string; blurb: string; items: QA[] };
@@ -60,7 +55,7 @@ const RAW_GROUPS: Array<{
   {
     id: "pricing",
     title: "Pricing",
-    blurb: "Flat subscription, no placement fees, and how the commercial model actually behaves.",
+    blurb: "Flat subscription, no placement fees, and how the commercial model works in practice.",
     items: [
       {
         q: "How does TaaSFlow charge?",
@@ -96,7 +91,7 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "How fast do candidates start arriving?",
-        a: "The first ranked candidates typically arrive within days of the intake being finalised, with regular batches after that.",
+        a: `${FIRST_SHORTLIST_TIMING} Later batches follow on the cadence agreed for your role.`,
       },
       {
         q: "Can we request more candidates?",
@@ -139,7 +134,7 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "Can multiple teammates review candidates?",
-        a: "Yes. Invite as many teammates as needed with role-appropriate access — reviewers, editors, hiring managers, admins.",
+        a: `Yes, within the seats on your package. ${SEATS_NOTE}`,
       },
       {
         q: "What can we see about progress?",
@@ -162,7 +157,7 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "Do you support SSO and enterprise access controls?",
-        a: "Enterprise access, provisioning, audit logs, and security details are agreed as part of the enterprise consultation.",
+        a: "Enterprise access, provisioning, audit logs, and security details are agreed on a 20-minute call.",
       },
       {
         q: "How is reporting handled at scale?",
@@ -170,7 +165,7 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "How do we start an enterprise engagement?",
-        a: "Book an enterprise consultation from the Enterprise page and we'll scope it with your TA and Procurement leads.",
+        a: "Book a 20-minute call and we'll scope it with your TA and Procurement leads.",
       },
     ],
   },
@@ -396,19 +391,30 @@ function FaqPage() {
                       {group.blurb}
                     </p>
                   </div>
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white px-6"
-                    value={openItem}
-                    onValueChange={(v) => setOpenItem(v || undefined)}
-                  >
+                  {/* Native <details>: every answer is in the server HTML, so
+                      crawlers and no-JS readers see it, and the summary is
+                      keyboard-operable (Enter / Space) without a script. */}
+                  <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white px-6">
                     {group.items.map((it) => (
-                      <AccordionItem key={it.id} value={it.id} id={it.id}>
-                        <AccordionTrigger className="text-left text-base font-semibold">
+                      <details
+                        key={it.id}
+                        id={it.id}
+                        className="group border-b border-[color:var(--brand-navy)]/10 last:border-b-0"
+                        open={openItem === it.id}
+                        onToggle={(e) => {
+                          const isOpen = e.currentTarget.open;
+                          if (isOpen) setOpenItem(it.id);
+                          else if (openItem === it.id) setOpenItem(undefined);
+                        }}
+                      >
+                        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-left text-base font-semibold hover:underline [&::-webkit-details-marker]:hidden">
                           <span>{it.q}</span>
-                        </AccordionTrigger>
-                        <AccordionContent>
+                          <ChevronDown
+                            aria-hidden="true"
+                            className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+                          />
+                        </summary>
+                        <div className="pb-4 pt-0 text-sm">
                           <p className="text-[color:var(--brand-navy)]/80">{it.a}</p>
                           {it.more && (
                             <details className="mt-3">
@@ -428,10 +434,10 @@ function FaqPage() {
                             <LinkIcon className="h-3 w-3" />
                             Direct link
                           </a>
-                        </AccordionContent>
-                      </AccordionItem>
+                        </div>
+                      </details>
                     ))}
-                  </Accordion>
+                  </div>
                 </section>
               ))}
             </div>

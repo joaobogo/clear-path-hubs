@@ -20,7 +20,8 @@ const EXPECTED = {
   "/jobs": ["ItemList"],
   "/pricing": [],
   "/industries/technology": [],
-  "/blog/ai-in-recruitment": ["BlogPosting"],
+  "/blog/ai-in-recruitment": ["Article"],
+  "/platform": ["WebApplication"],
 };
 
 const LD_RE = /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g;
@@ -47,6 +48,20 @@ const collectTypes = (node, out = []) => {
   return out;
 };
 
+/** Schema types that must appear on exactly one page (or a stated set of pages). */
+const ONLY_ON = { WebApplication: ["/platform"] };
+
+/** Every node in a JSON-LD tree that carries @type or @id, flattened. */
+const collectNodes = (node, out = []) => {
+  if (Array.isArray(node)) {
+    for (const n of node) collectNodes(n, out);
+  } else if (node && typeof node === "object") {
+    if (node["@type"] || node["@id"]) out.push(node);
+    for (const v of Object.values(node)) collectNodes(v, out);
+  }
+  return out;
+};
+
 for (const [path, expected] of Object.entries(EXPECTED)) {
   let html;
   try {
@@ -68,11 +83,39 @@ for (const [path, expected] of Object.entries(EXPECTED)) {
   }
 
   const types = [];
+  const nodes = [];
   for (const raw of blocks) {
     try {
-      types.push(...collectTypes(JSON.parse(decode(raw))));
+      const parsed = JSON.parse(decode(raw));
+      types.push(...collectTypes(parsed));
+      nodes.push(...collectNodes(parsed));
     } catch (e) {
       errors.push(`${path}: JSON-LD does not parse (${e.message}).`);
+    }
+  }
+
+  // Duplicate definitions: the same @id declared in full more than once. A bare
+  // reference such as { "@id": "..." } is fine and is not counted.
+  const defined = new Map();
+  for (const n of nodes) {
+    const id = n["@id"];
+    if (typeof id !== "string") continue;
+    if (Object.keys(n).filter((k) => k !== "@id").length === 0) continue;
+    defined.set(id, (defined.get(id) ?? 0) + 1);
+  }
+  for (const [id, count] of defined) {
+    if (count > 1) errors.push(`${path}: @id ${id} is defined ${count} times in the served JSON-LD.`);
+  }
+  // One article node per page: Article and BlogPosting together describe the
+  // same post twice.
+  if (types.includes("Article") && types.includes("BlogPosting")) {
+    errors.push(`${path}: both Article and BlogPosting are present; keep one.`);
+  }
+  const articleCount = types.filter((t) => t === "Article" || t === "BlogPosting").length;
+  if (articleCount > 1) errors.push(`${path}: ${articleCount} article nodes in the served JSON-LD; expected at most one.`);
+  for (const [type, allowed] of Object.entries(ONLY_ON)) {
+    if (types.includes(type) && !allowed.includes(path)) {
+      errors.push(`${path}: ${type} is emitted here but is only allowed on ${allowed.join(", ")}.`);
     }
   }
   for (const want of expected) {

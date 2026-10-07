@@ -1,6 +1,8 @@
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import type { ContentEntry } from "@/lib/marketing/content";
-import { BRAND_ONE_LINER } from "@/config/product-language";
+import { BRAND_ONE_LINER, PRODUCT_CATEGORY } from "@/config/product-language";
+import { PRICE_PILOT_USD } from "@/config/pricing-core";
+import { PILOT_SUMMARY } from "@/config/offer-facts";
 
 /**
  * Branded 1200x630 share card, served from the canonical domain. Every route
@@ -9,13 +11,62 @@ import { BRAND_ONE_LINER } from "@/config/product-language";
  */
 export const DEFAULT_SHARE_IMAGE = "/og-image.png";
 
-// Canonical production origin. Preview subdomains must not
-// compete with the primary domain in search — its canonical URLs point
-// here, and `<Root>` injects `noindex` at runtime when served from any
-// other host. Single host: bare domain (matches robots.txt + sitemap).
+// Canonical production origin. Preview subdomains must not compete with the
+// primary domain in search: canonical URLs and og:url always point at
+// CANONICAL_ORIGIN, while `__root.tsx` adds `robots: noindex, nofollow` to the
+// served HTML and `src/start.ts` sends `X-Robots-Tag` on any non-production
+// host (see `src/lib/seo/edge-policy.ts`). Single host: bare domain (matches
+// robots.txt + sitemap).
+//
+// Metadata precedence: a content entry's own `meta.title`/`meta.description`
+// always wins; `meta["og:title"]`/`["og:description"]` come next; a route's
+// `fallback` is used only when the entry says nothing; the brand one-liner is
+// the last resort.
 
 /** Longest meta description search engines render without truncation. */
 const MAX_DESCRIPTION = 158;
+
+/** Warn thresholds used by the audit test and by dev-time warnings. */
+export const TITLE_WARN_LENGTH = 60;
+export const DESCRIPTION_WARN_LENGTH = 160;
+
+export type ClampResult = {
+  text: string;
+  /** True when the clamp removed any words from the authored text. */
+  clamped: boolean;
+  /** The authored text, whitespace-normalised, before clamping. */
+  original: string;
+};
+
+/** A human-readable warning for each field that had to be shortened. */
+export function lengthWarnings(
+  result: { title: ClampResult; description: ClampResult },
+  path: string,
+): string[] {
+  const out: string[] = [];
+  if (result.title.clamped) {
+    out.push(
+      `[head] ${path}: title is ${result.title.original.length} characters and was shortened to "${result.title.text}". Original: "${result.title.original}". Shorten the authored title so no qualifier is dropped.`,
+    );
+  }
+  if (result.description.clamped) {
+    out.push(
+      `[head] ${path}: description is ${result.description.original.length} characters and was shortened. Shorten the authored description so no qualifier is dropped.`,
+    );
+  }
+  return out;
+}
+
+const warnedPaths = new Set<string>();
+
+/** Dev and test only; never throws and never runs in production builds. */
+function warnOnce(path: string, messages: string[]) {
+  if (messages.length === 0 || warnedPaths.has(path)) return;
+  const env = (import.meta as unknown as { env?: { DEV?: boolean; MODE?: string } }).env;
+  if (!env?.DEV && env?.MODE !== "test") return;
+  warnedPaths.add(path);
+  for (const m of messages) console.warn(m);
+}
 
 /**
  * Trim a description to the SERP-visible length on a word boundary.
@@ -25,15 +76,20 @@ const MAX_DESCRIPTION = 158;
  * without editing approved copy.
  */
 export function clampDescription(text: string, max = MAX_DESCRIPTION): string {
+  return clampDescriptionDetailed(text, max).text;
+}
+
+/** Same clamp as `clampDescription`, but reports whether it removed anything. */
+export function clampDescriptionDetailed(text: string, max = MAX_DESCRIPTION): ClampResult {
   const clean = text.replace(/\s+/g, " ").trim();
-  if (clean.length <= max) return clean;
+  if (clean.length <= max) return { text: clean, clamped: false, original: clean };
   const cut = clean.slice(0, max - 1);
   const lastBreak = Math.max(cut.lastIndexOf(" "), cut.lastIndexOf("—"), cut.lastIndexOf(","));
   const base = (lastBreak > max * 0.6 ? cut.slice(0, lastBreak) : cut).replace(
     /[\s,;:—–-]+$/,
     "",
   );
-  return `${base}…`;
+  return { text: `${base}…`, clamped: true, original: clean };
 }
 
 /** Longest <title> Google renders in full on desktop and mobile SERPs. */
@@ -50,8 +106,13 @@ const MAX_TITLE = 59;
  * <h1> comes from `meta.h1` and is untouched.
  */
 export function clampTitle(text: string, max = MAX_TITLE): string {
+  return clampTitleDetailed(text, max).text;
+}
+
+/** Same clamp as `clampTitle`, but reports whether it removed anything. */
+export function clampTitleDetailed(text: string, max = MAX_TITLE): ClampResult {
   const clean = text.replace(/\s+/g, " ").trim();
-  if (clean.length <= max) return clean;
+  if (clean.length <= max) return { text: clean, clamped: false, original: clean };
 
   // Longest leading segment that still fits, e.g.
   // "Cost-Per-Hire Calculator: How to Find …" -> "Cost-Per-Hire Calculator".
@@ -61,7 +122,7 @@ export function clampTitle(text: string, max = MAX_TITLE): string {
     if (head.length <= max && head.length > best.length) best = head;
   }
   // Guard against a stub like "2026" winning over real words.
-  if (best.length >= 16) return best;
+  if (best.length >= 16) return { text: best, clamped: true, original: clean };
 
   const cut = clean.slice(0, max - 1);
   const lastSpace = cut.lastIndexOf(" ");
@@ -69,7 +130,7 @@ export function clampTitle(text: string, max = MAX_TITLE): string {
     /[\s,;:|–—-]+$/,
     "",
   );
-  return `${base}…`;
+  return { text: `${base}…`, clamped: true, original: clean };
 }
 /**
  * Absolute https URL for a share image.
@@ -138,6 +199,21 @@ export function serviceScript(input: {
   path: string;
   serviceType?: string;
 }) {
+  // The only price published in structured data is the one-time pilot, from
+  // pricing-core. Package totals and per-position prices are never emitted.
+  const offers =
+    input.path === "/pricing"
+      ? {
+          offers: {
+            "@type": "Offer",
+            name: "TaaSFlow pilot",
+            description: PILOT_SUMMARY,
+            price: String(PRICE_PILOT_USD),
+            priceCurrency: "USD",
+            url: `${CANONICAL_ORIGIN}/pilot`,
+          },
+        }
+      : {};
   return {
     type: "application/ld+json",
     children: JSON.stringify({
@@ -147,7 +223,30 @@ export function serviceScript(input: {
       description: input.description,
       url: `${CANONICAL_ORIGIN}${input.path}`,
       ...(input.serviceType ? { serviceType: input.serviceType } : {}),
+      ...offers,
       provider: { "@id": "https://taasflow.com/#organization" },
+    }),
+  };
+}
+
+/**
+ * WebApplication JSON-LD. Emitted only on /platform (by `marketingHead`), the
+ * page that describes the software, never sitewide.
+ */
+export function webApplicationScript() {
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "@id": `${CANONICAL_ORIGIN}/platform/#software`,
+      name: "TaaSFlow",
+      applicationCategory: "BusinessApplication",
+      applicationSubCategory: PRODUCT_CATEGORY,
+      operatingSystem: "Web",
+      url: `${CANONICAL_ORIGIN}/platform`,
+      description: `${BRAND_ONE_LINER} Intake Engine, Blueprint Compiler, Agent Layer, Evidence Graph, Scoring Engine and Decision Workspace in one governed system.`,
+      publisher: { "@id": `${CANONICAL_ORIGIN}/#organization` },
     }),
   };
 }
@@ -163,6 +262,8 @@ export function articleScript(input: {
   image?: string;
   datePublished?: string;
   dateModified?: string;
+  articleSection?: string;
+  keywords?: readonly string[];
   author: { name: string; type: "Person" | "Organization"; url?: string };
 }) {
   const image = absoluteShareImage(input.image);
@@ -179,6 +280,8 @@ export function articleScript(input: {
       },
       url: `${CANONICAL_ORIGIN}${input.path}`,
       ...(image ? { image: [image] } : {}),
+      ...(input.articleSection ? { articleSection: input.articleSection } : {}),
+      ...(input.keywords?.length ? { keywords: input.keywords.join(", ") } : {}),
       ...(input.datePublished ? { datePublished: input.datePublished } : {}),
       ...(input.dateModified ? { dateModified: input.dateModified } : {}),
       author: {
@@ -206,19 +309,27 @@ export function marketingHead(
     image?: string;
     /** Extra JSON-LD blocks (Service, FAQPage, …) for this page only. */
     scripts?: { type: string; children: string }[];
+    /** Robots directive for this page, e.g. "noindex, follow". Omit for indexable pages. */
+    robots?: string;
+    /** Archive pagination: emitted as rel=prev / rel=next. */
+    prevPath?: string;
+    nextPath?: string;
   },
 ) {
   // Page-specific title/description always win. og:* is only a fallback so a
   // generic share string can never become the page <title>.
-  const title = clampTitle(
+  const titleResult = clampTitleDetailed(
     entry?.meta.title || entry?.meta["og:title"] || fallback?.title || "TaaSFlow",
   );
-  const description = clampDescription(
+  const descriptionResult = clampDescriptionDetailed(
     entry?.meta.description ||
       entry?.meta["og:description"] ||
       fallback?.description ||
       BRAND_ONE_LINER,
   );
+  warnOnce(path, lengthWarnings({ title: titleResult, description: descriptionResult }, path));
+  const title = titleResult.text;
+  const description = descriptionResult.text;
   const url = `${CANONICAL_ORIGIN}${path}`;
   // The page's own hero/cover wins; otherwise the branded card on this domain.
   // Never a preview-host URL, and never an empty share preview.
@@ -226,12 +337,14 @@ export function marketingHead(
     absoluteShareImage(options?.image) ?? absoluteShareImage(DEFAULT_SHARE_IMAGE);
   const scripts = [
     ...(options?.breadcrumbs?.length ? [breadcrumbScript(options.breadcrumbs)] : []),
+    ...(path === "/platform" ? [webApplicationScript()] : []),
     ...(options?.scripts ?? []),
   ];
   return {
     meta: [
       { title },
       { name: "description", content: description },
+      ...(options?.robots ? [{ name: "robots", content: options.robots }] : []),
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:url", content: url },
@@ -247,7 +360,15 @@ export function marketingHead(
         : []),
     ],
 
-    links: [{ rel: "canonical", href: url }],
+    links: [
+      { rel: "canonical", href: url },
+      ...(options?.prevPath
+        ? [{ rel: "prev", href: `${CANONICAL_ORIGIN}${options.prevPath}` }]
+        : []),
+      ...(options?.nextPath
+        ? [{ rel: "next", href: `${CANONICAL_ORIGIN}${options.nextPath}` }]
+        : []),
+    ],
     ...(scripts.length ? { scripts } : {}),
   };
 }

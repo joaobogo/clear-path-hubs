@@ -1,6 +1,7 @@
 import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
+import { CTA_BOOK, CTA_FULL_INTAKE, CTA_PRIMARY } from "@/config/cta";
 
 type Group = {
   title: string;
@@ -17,6 +18,19 @@ const GROUPS: Group[] = [
       { label: "About", to: "/about" },
       { label: "Journey", to: "/journey" },
       { label: "Contact", to: "/contact" },
+      { label: "Book a call", to: CTA_BOOK.to },
+    ],
+  },
+  {
+    title: "Product",
+    description: "What the platform does and how it is run.",
+    links: [
+      { label: "Platform", to: "/platform" },
+      { label: "System", to: "/system" },
+      { label: "Agents", to: "/agents" },
+      { label: "Solutions", to: "/solutions" },
+      { label: "Integrations", to: "/integrations" },
+      { label: "Global talent", to: "/global-talent" },
     ],
   },
   {
@@ -51,24 +65,29 @@ const GROUPS: Group[] = [
     title: "Candidates",
     description: "For candidates exploring roles.",
     links: [
-      { label: "Browse jobs", to: "/jobs" },
+      { label: "Job board", to: "/jobs" },
       { label: "Talent network", to: "/talent-network" },
     ],
   },
   {
     title: "Get started",
-    description: "Start hiring or sign in to your workspace.",
+    description: "Request the pilot, start an intake or sign in to your workspace.",
     links: [
-      { label: "Start hiring", to: "/intake" },
+      { label: CTA_PRIMARY.label, to: CTA_PRIMARY.to },
+      { label: CTA_FULL_INTAKE.label, to: CTA_FULL_INTAKE.to },
       { label: "Sign in", to: "/login" },
     ],
   },
   {
-    title: "Legal",
-    description: "Policies governing use of TaaSFlow.",
+    title: "Legal and trust",
+    description: "Policies, security and platform status.",
     links: [
       { label: "Privacy Notice", to: "/privacy" },
       { label: "Terms of Service", to: "/terms" },
+      { label: "Security", to: "/security" },
+      { label: "Trust Center", to: "/trust" },
+      { label: "System status", to: "/status" },
+      { label: "Changelog", to: "/changelog" },
     ],
   },
 ];
@@ -76,13 +95,13 @@ const GROUPS: Group[] = [
 export const Route = createFileRoute("/sitemap")({
   head: () => ({
     meta: [
-      { title: "Sitemap — TaaSFlow" },
+      { title: "Site map | TaaSFlow" },
       {
         name: "description",
         content:
           "Every public page on TaaSFlow, grouped by section. Machine-readable version available at /sitemap.xml.",
       },
-      { property: "og:title", content: "Sitemap — TaaSFlow" },
+      { property: "og:title", content: "Site map | TaaSFlow" },
       {
         property: "og:description",
         content: "Every public page on TaaSFlow, grouped by section.",
@@ -90,6 +109,7 @@ export const Route = createFileRoute("/sitemap")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: canonicalUrl("/sitemap") },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, follow" },
     ],
     links: [
       { rel: "canonical", href: canonicalUrl("/sitemap") },
@@ -104,13 +124,13 @@ function SitemapPage() {
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         <header className="max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-            Sitemap
+            Pages
           </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            Every page on TaaSFlow
+            Site map
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Grouped by section. Search engines can also read the machine
+            Every page on TaaSFlow, grouped by section. Search engines can also read the machine
             version at{" "}
             <a
               href="/sitemap.xml"
