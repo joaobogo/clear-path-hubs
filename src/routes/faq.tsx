@@ -1,3 +1,4 @@
+import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { marketingHead } from "@/lib/marketing/head";
@@ -248,9 +249,9 @@ export const GROUPS: Group[] = RAW_GROUPS.map((g) => ({
 export const Route = createFileRoute("/faq")({
   head: () => {
     const base = marketingHead(undefined, "/faq", {
-      title: "FAQ — AI Hiring Intelligence Platform | TaaSFlow",
+      title: "Recruiting FAQ: Pricing, Pilot and Process | TaaSFlow",
       description:
-        "Clear answers on the TaaSFlow platform: pricing, candidate delivery, evidence-backed scoring, the Decision Workspace, enterprise, partnerships and privacy.",
+        `Answers on TaaSFlow pricing, the $${PRICE_PILOT_USD} pilot, how candidates are sourced and scored, who owns candidate records, enterprise, partnerships and privacy.`,
     });
     const faqJsonLd = {
       "@context": "https://schema.org",
