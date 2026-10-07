@@ -1,3 +1,5 @@
+import { FIRST_SHORTLIST_TIMING } from "@/config/offer-facts";
+
 /**
  * TaaSFlow V2 — Industry template data.
  *
@@ -34,6 +36,8 @@ export type IndustryEntry = {
   relatedIndustries?: IndustryRelated[];
   resources?: IndustryResource[];
   faqs?: IndustryFAQ[];
+  /** Optional plain statement of what TaaSFlow does not do for this sector. Rendered under the hero. */
+  boundary?: { title: string; body: string };
   cta: { title: string; description: string };
 };
 
@@ -111,7 +115,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     regulatedRequirements: [
       "SOC 2 program experience for platform/security hires",
       "PCI-DSS scope experience for payments-adjacent engineers",
-      "HIPAA-aware handling for healthtech engineers",
+      "Health-data exposure stated on the CV, quoted for your review (healthtech engineers)",
       "GDPR-aware data handling for EU/UK-facing systems",
     ],
     signals: ["Rubric per role level", "Technical-evidence validation from the CV", "Ranked shortlist in your workspace"],
@@ -274,7 +278,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     certifications: ["Snowflake SnowPro", "Databricks Certified Data Engineer", "GCP Professional Data Engineer", "AWS Data Analytics Specialty", "Azure Data Engineer Associate"],
     regulatedRequirements: [
       "GDPR-aware data handling for EU/UK datasets",
-      "HIPAA-aware handling for health data",
+      "Health-data exposure stated on the CV, quoted for your review (health data)",
       "SOX-aware controls for financial reporting pipelines",
       "PCI-DSS scope for payments data",
     ],
@@ -363,7 +367,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       "SOC 2 programme experience",
       "ISO 27001 implementation ownership",
       "PCI-DSS scope experience for payments teams",
-      "HIPAA-aware handling for health-related products",
+      "Health-data exposure stated on the CV, quoted for your review (health-related products)",
       "GDPR / UK-GDPR privacy exposure",
     ],
     signals: ["Domain-specific rubric", "Evidence quotes from the CV", "Private, tenant-isolated workspace"],
@@ -724,14 +728,18 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     summary:
       "Clinical and nonclinical hiring across providers, payers and health-tech — with licensing and specialty context captured as first-class signals.",
     meta: {
-      title: "Healthcare hiring — TaaSFlow",
+      title: "Healthcare Recruiting Support | TaaSFlow",
       description:
-        "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems, specialties and licensing worked with.",
+        "Explore TaaSFlow recruiting support for healthcare teams. Discuss your role requirements, workflow and pilot suitability.",
     },
     hero: {
-      title: "Healthcare hiring, calibrated per setting, specialty and licensing context.",
+      title: "Recruiting support for your healthcare hiring needs",
       subtitle:
-        "Clinical, operational and technical hires, scored on care setting, specialty, systems and licensing.",
+        "Clinical, operational and technical hires, scored on care setting, specialty, systems and the licensing claims on the CV.",
+    },
+    boundary: {
+      title: "What TaaSFlow does and does not do for healthcare teams",
+      body: "TaaSFlow supports sourcing, screening and ranking. It does not perform licensure verification, clinical credentialing or background checks unless separately agreed. We surface what each CV states, and your team verifies licences, credentials and clearances before an offer or a start date. TaaSFlow does not hold a HIPAA certification, so keep patient information out of any role brief.",
     },
     challenges: [
       { title: "Setting and specialty fit", body: "Acute, ambulatory, primary care, behavioural health and health-tech each need distinct evidence. Our rubric captures the settings and specialties the candidate has worked in — not generic 'healthcare experience'." },
@@ -743,7 +751,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { title: "Setting and specialty rubrics", body: "Acute, ambulatory, primary care, behavioural health, home care and health-tech scored separately." },
       { title: "EHR and workflow-aware scoring", body: "Epic, Cerner, Meditech, athenahealth and NHS-Spine exposure captured with production years." },
       { title: "Licensure-transparent shortlists", body: "License, certification and scope-of-practice claims are surfaced with the CV line — never asserted by us." },
-      { title: "Compliance-aware handling", body: "HIPAA / GDPR-aware pipelines and workspace-scoped candidate context." },
+      { title: "Workspace-scoped candidate data", body: "Candidate CVs sit in your private workspace with scoped access. See the security page for what we do and do not hold." },
     ],
     roleFamilies: [
       { name: "Clinical", blurb: "Physicians, nurses and allied health.", roles: ["Physicians and specialists", "Advanced practice providers (NP, PA)", "Registered nurses and specialist nurses", "Allied health professionals"] },
@@ -770,16 +778,15 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { title: "EHR / systems", body: "Epic, Cerner, Meditech, athenahealth, NHS-Spine — production years and modules." },
       { title: "Licensure claims", body: "State/board licenses, certifications and DEA — captured verbatim for your verification." },
       { title: "Quality & outcomes", body: "HEDIS, Star, CAHPS or clinical outcomes owned." },
-      { title: "Regulatory context", body: "HIPAA, HITECH, GDPR-Health, MHRA, FDA where relevant." },
+      { title: "Regulatory context", body: "Regulatory frameworks the candidate says they have worked under, quoted from the CV." },
     ],
     skills: ["Clinical documentation", "Care coordination", "Revenue cycle management", "Prior authorisation", "Value-based care", "Health economics", "Clinical trial design", "Regulatory affairs"],
     tools: ["Epic", "Cerner", "Meditech", "athenahealth", "NextGen", "Allscripts", "NHS-Spine", "Snowflake for health data", "Tableau"],
     certifications: ["RN / NP / PA licensure", "MD / DO", "PMP for programme roles", "CPHIMS", "RHIA / RHIT", "Epic / Cerner certifications"],
     regulatedRequirements: [
-      "HIPAA / HITECH awareness (US)",
-      "State-specific medical licensure verification",
-      "GDPR-health data handling (EU/UK)",
-      "MHRA / FDA context for MedTech roles",
+      "Licensure and registration claims captured from the CV for your team to verify",
+      "Regulatory frameworks the candidate says they have worked under",
+      "Jurisdiction and scope-of-practice context captured at intake",
     ],
     signals: ["Setting and specialty rubric per role", "Systems, workflow and licensure captured in intake", "Human review before publication"],
     relatedIndustries: [
@@ -789,13 +796,13 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     ],
     resources: DEFAULT_RESOURCES,
     faqs: [
-      { q: "Do you verify clinical licensure?", a: "No — we surface what the CV states as structured signals so your credentialing or licensure team can verify through the appropriate primary source." },
+      { q: "Do you verify clinical licensure?", a: "No. We surface what the CV states as structured signals so your credentialing or licensure team can verify through the appropriate primary source. TaaSFlow does not perform clinical credentialing or background checks unless separately agreed." },
       { q: "Can you hire across US and UK/EU healthcare?", a: "Yes. Jurisdiction is captured in intake and drives the rubric (state licensure vs GMC / NMC context, EHR ecosystems and payer models)." },
-      { q: "How do you handle sensitive candidate data?", a: "Workspace-scoped tenant isolation, private CV storage, short-lived signed URLs and audit trails. HIPAA-aware handling is a default posture." },
+      { q: "How do you handle sensitive candidate data?", a: "Workspace-scoped tenant isolation, private CV storage, short-lived signed URLs and audit trails. TaaSFlow does not hold a HIPAA certification; see the security page for what we do and do not hold, and keep patient information out of role briefs." },
       { q: "Do you cover payer as well as provider roles?", a: "Yes. Payer operations, claims and provider-network roles have their own rubric family distinct from provider operations." },
       { q: "Can you support health-tech product hires?", a: "Yes. Health-tech PM and engineering hires get a clinical-context rubric — regulated dev, QMS and safety cases scored where relevant." },
     ],
-    cta: { title: "Hiring in healthcare?", description: "Submit the role — one workspace per requisition, ranked and reviewed." },
+    cta: { title: "Hiring in healthcare?", description: "Tell us the role. " + FIRST_SHORTLIST_TIMING + " A recruiter reviews every shortlist before you see it." },
   },
 
   {
@@ -1755,12 +1762,12 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     summary:
       "Hotels, food and beverage, guest experience, events, multi-location operations and seasonal demand — with property-type and service-level precision.",
     meta: {
-      title: "Hospitality & events hiring — TaaSFlow",
+      title: "Hospitality Recruiting Support | TaaSFlow",
       description:
-        "Structured sourcing for hotels, restaurants, F&B groups and event operators. Ranked shortlists with evidence of property type, service level, event format and multi-location operations.",
+        "Explore TaaSFlow recruiting support for hotels, restaurants and event teams. Discuss your role requirements, property type and pilot suitability.",
     },
     hero: {
-      title: "Hospitality and events hiring, calibrated per property and format.",
+      title: "Recruiting support for your hospitality and events hiring",
       subtitle:
         "Property leadership, F&B, guest experience and events hires, scored on property type, service level and seasonality.",
     },

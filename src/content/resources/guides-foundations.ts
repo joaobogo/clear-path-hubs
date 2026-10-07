@@ -1,141 +1,11 @@
 import type { ResourceGuide } from "./types";
 
-/** Foundations — what the category is and how it works. */
+/**
+ * Foundations — what the category is and how it works.
+ * The "recruiting-as-a-service" guide moved to /recruiting-as-a-service
+ * (src/content/money-pages.ts); its old URL redirects permanently.
+ */
 export const FOUNDATION_GUIDES: ResourceGuide[] = [
-  {
-    slug: "recruiting-as-a-service",
-    title: "Recruiting as a Service",
-    h1: "Recruiting as a Service: the complete guide",
-    metaTitle: "Recruiting as a Service: How It Works | TaaSFlow",
-    metaDescription:
-      "What Recruiting as a Service is, how the subscription model works, where it fits against agencies and in-house teams, and how to run it well.",
-    category: "Foundations",
-    summary:
-      "A subscription operating model for hiring: fixed cost, continuous search capacity, and a system of record you keep.",
-    updated: "2026-02-10",
-    audience: "Founders, HR leads and hiring managers evaluating hiring models",
-    sections: [
-      {
-        heading: "What Recruiting as a Service actually means",
-        blocks: [
-          {
-            kind: "p",
-            text: "Recruiting as a Service (RaaS) replaces per-hire fees with a subscription. You buy search capacity and hiring infrastructure for a period of time, not a single placement.",
-          },
-          {
-            kind: "bullets",
-            items: [
-              "Fixed, forecastable cost instead of a percentage of salary",
-              "Continuous sourcing across every open role, not one requisition at a time",
-              "The pipeline, evidence and history stay in your workspace",
-            ],
-          },
-        ],
-      },
-      {
-        heading: "The three components you are buying",
-        blocks: [
-          {
-            kind: "steps",
-            items: [
-              {
-                label: "Search capacity",
-                text: "Sourcing and outreach that runs every day the role is open, across channels rather than a single job board.",
-              },
-              {
-                label: "Screening and evidence",
-                text: "Structured review against the role requirements, so every recommendation carries the reasoning behind it.",
-              },
-              {
-                label: "A decision surface",
-                text: "One place where shortlists, interviews, feedback and offers are tracked — and stay searchable after the hire.",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        heading: "Where the model fits — and where it does not",
-        blocks: [
-          {
-            kind: "table",
-            columns: ["Situation", "Fit"],
-            rows: [
-              ["Two or more roles open at once", "Strong — capacity is shared across roles"],
-              ["Repeating role families you hire every quarter", "Strong — the pipeline compounds"],
-              ["One senior, highly confidential search", "Depends — retained search may fit better"],
-              ["A single junior hire, once a year", "Weak — a one-off package is cheaper"],
-            ],
-          },
-        ],
-      },
-      {
-        heading: "How to run it well in the first 30 days",
-        blocks: [
-          {
-            kind: "steps",
-            items: [
-              {
-                label: "Week 1 — define the bar",
-                text: "Write requirements as observable evidence: what a candidate must have done, not adjectives.",
-              },
-              {
-                label: "Week 2 — calibrate on real profiles",
-                text: "Review the first shortlist and correct the rubric. Calibration is the highest-leverage hour you will spend.",
-              },
-              {
-                label: "Weeks 3–4 — protect decision speed",
-                text: "Name one decision owner per role and hold a standing slot for interviews. Most lost candidates are lost to waiting.",
-              },
-            ],
-          },
-          {
-            kind: "callout",
-            title: "The failure mode to watch",
-            text: "Subscription capacity cannot fix an undefined bar or an absent decision maker. Fix those first; they dominate every other variable.",
-          },
-        ],
-      },
-    ],
-    faqs: [
-      {
-        q: "Is Recruiting as a Service the same as RPO?",
-        a: "No. RPO usually outsources an entire hiring function on a long contract. RaaS is a shorter-cycle subscription for search capacity and hiring infrastructure, and you keep the pipeline.",
-      },
-      {
-        q: "Do I still pay a placement fee?",
-        a: "Not in a subscription model. The subscription covers the search; there is no percentage of salary at offer stage.",
-      },
-      {
-        q: "What happens to candidates I do not hire?",
-        a: "They stay in your talent pool with the evidence attached, so the next similar role starts from a warm pipeline instead of zero.",
-      },
-      {
-        q: "How many roles can one subscription cover?",
-        a: "That depends on the tier you choose. Capacity is banded by the number of roles you want active at the same time.",
-      },
-    ],
-    product: {
-      heading: "How TaaSFlow implements this",
-      points: [
-        "Agents run sourcing and outreach continuously while a role is open",
-        "Every candidate score is backed by extracted evidence you can read",
-        "Shortlists, interviews and offers live in one Decision Workspace",
-        "Your talent pool and its evidence remain searchable after each hire",
-      ],
-    },
-    related: [
-      "subscription-recruiting-vs-contingency",
-      "internal-recruiter-vs-recruiting-subscription",
-      "choosing-a-recruiting-partner",
-    ],
-    onward: [
-      { to: "/how-it-works", label: "How it works", desc: "The seven-stage process, with typical timing." },
-      { to: "/pricing", label: "Pricing", desc: "Subscription tiers and one-off packages." },
-      { to: "/platform", label: "The platform", desc: "The workspace where decisions get made." },
-    ],
-  },
-
   {
     slug: "ai-recruiting-agents",
     title: "AI recruiting agents",
@@ -238,7 +108,7 @@ export const FOUNDATION_GUIDES: ResourceGuide[] = [
         "Candidate-facing copy describes screening — never an internal score",
       ],
     },
-    related: ["ats-vs-hiring-intelligence", "multichannel-candidate-outreach", "recruiting-as-a-service"],
+    related: ["ats-vs-hiring-intelligence", "multichannel-candidate-outreach"],
     onward: [
       { to: "/agents", label: "The agent roster", desc: "Which agents run which part of the search." },
       { to: "/trust", label: "Trust centre", desc: "Data handling, retention and access." },
@@ -354,7 +224,7 @@ export const FOUNDATION_GUIDES: ResourceGuide[] = [
         "Availability is re-confirmed before a candidate is presented",
       ],
     },
-    related: ["hard-to-fill-roles", "hiring-for-multiple-open-roles", "recruiting-as-a-service"],
+    related: ["hard-to-fill-roles", "hiring-for-multiple-open-roles"],
     onward: [
       { to: "/talent-network", label: "Talent network", desc: "How candidates enter and stay reachable." },
       { to: "/platform", label: "The platform", desc: "Where pipelines and evidence live." },
