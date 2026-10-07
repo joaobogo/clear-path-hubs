@@ -21,7 +21,7 @@ const EXPECTED = {
   "/pricing": [],
   "/industries/technology": [],
   "/blog/ai-in-recruitment": ["Article"],
-  "/platform": ["WebApplication"],
+  "/how-it-works": ["WebApplication"],
 };
 
 const LD_RE = /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g;
