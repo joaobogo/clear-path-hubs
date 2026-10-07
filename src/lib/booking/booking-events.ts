@@ -14,6 +14,8 @@ export const BOOKING_EVENTS = {
   schedulerLoaded: "scheduler_loaded",
   timeSelected: "time_selected",
   completed: "booking_completed",
+  /** The scheduler confirmed the slot. Fires once per booking session. */
+  confirmed: "booking_confirmed",
   failed: "booking_failed",
   abandoned: "booking_abandoned",
   rescheduled: "booking_rescheduled",
@@ -38,6 +40,7 @@ const DEDUPE_KEY = "taasflow.booking.events";
 const ONCE: readonly BookingEventName[] = [
   BOOKING_EVENTS.intakeCompleted,
   BOOKING_EVENTS.completed,
+  BOOKING_EVENTS.confirmed,
 ];
 
 function firedSet(): Set<string> {

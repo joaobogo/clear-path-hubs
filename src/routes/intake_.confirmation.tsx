@@ -9,6 +9,11 @@ import { BLUEPRINT_STAGES } from "@/lib/express-intake-schema";
 import { CheckCircle2, CircleDashed, Loader2, TriangleAlert } from "lucide-react";
 import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
 import { buildDeliveryCommitment, type StoredCommitment } from "@/lib/delivery-commitment";
+import {
+  FIRST_SHORTLIST_TIMING,
+  RESPONSE_TIME_SENTENCE,
+  TIMING_FINE_PRINT,
+} from "@/config/offer-facts";
 import { KickoffBookingCard } from "@/components/booking/kickoff-booking-card";
 
 // A bad or stale value in the URL is a bad LINK, not a rejected form. A bare
@@ -125,6 +130,14 @@ function ConfirmationPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-5 text-sm">
+          <div className="rounded-lg border bg-muted/40 p-4" data-testid="intake-next-steps">
+            <p className="font-medium">What happens next</p>
+            <p className="mt-1 text-muted-foreground">
+              A TaaSFlow team member will reply to the email you used. {RESPONSE_TIME_SENTENCE} We
+              confirm the role, the criteria and the pilot scope with you before any sourcing begins.{" "}
+              {FIRST_SHORTLIST_TIMING} {TIMING_FINE_PRINT}
+            </p>
+          </div>
           {!intake_id && (
             <p className="text-muted-foreground">
               We didn't receive a submission reference. If you just submitted and see this page, email{" "}

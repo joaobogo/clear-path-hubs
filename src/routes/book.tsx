@@ -39,6 +39,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteFooter } from "@/components/marketing/site-shell";
+import { CALL_NAME } from "@/config/offer-facts";
+import { SALES_EMAIL } from "@/config/booking";
+
+const BOOK_TITLE = `Book a ${CALL_NAME} | TaaSFlow`;
+const BOOK_DESCRIPTION =
+  "Choose a time for a 20-minute call. We look at one role you need to fill and show how we would run it.";
+
+/** Visitor expectations shown before the scheduler. */
+export const BOOK_EXPECTATIONS = [
+  "We look at one role you need to fill.",
+  "We show how we would run it.",
+  "You see how a ranked shortlist looks in the workspace.",
+] as const;
+
+/** Analytics must never block or break a booking. */
+function safeTrackBooking(...args: Parameters<typeof trackBooking>) {
+  try {
+    trackBooking(...args);
+  } catch {
+    /* swallow */
+  }
+}
+
+const SLOT_LOAD_TIMEOUT_MS = 15_000;
 
 export const Route = createFileRoute("/book")({
   validateSearch: (
@@ -50,17 +74,11 @@ export const Route = createFileRoute("/book")({
   }),
   head: () => ({
     meta: [
-      { title: "Book a hiring call — real times | TaaSFlow" },
-      {
-        name: "description",
-        content:
-          "Name, email, phone and a live slot from our calendar — all on one screen. Your confirmation arrives straight away.",
-      },
-      { property: "og:title", content: "Book a hiring call — real times | TaaSFlow" },
-      {
-        property: "og:description",
-        content: "Give us four details and pick a real time in our calendar.",
-      },
+      { title: BOOK_TITLE },
+      { name: "description", content: BOOK_DESCRIPTION },
+      { name: "robots", content: "noindex, follow" },
+      { property: "og:title", content: BOOK_TITLE },
+      { property: "og:description", content: BOOK_DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: canonicalUrl("/book") },
       { name: "twitter:card", content: "summary" },
@@ -158,7 +176,7 @@ function BookPage() {
   useEffect(() => setTz(detectTimezone()), []);
 
   useEffect(() => {
-    trackBooking(BOOKING_EVENTS.pageViewed, { meetingType, ctaLocation: cta ?? null });
+    safeTrackBooking(BOOKING_EVENTS.pageViewed, { meetingType, ctaLocation: cta ?? null });
   }, [meetingType, cta]);
 
   // Autofill: the signed-in account first, then this device's last booking.
@@ -230,11 +248,16 @@ function BookPage() {
     async (id: string | null) => {
       setSlotsError(null);
       try {
-        const result = await loadSlots({ data: { sessionId: id } });
+        const result = await Promise.race([
+          loadSlots({ data: { sessionId: id } }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("slots_timeout")), SLOT_LOAD_TIMEOUT_MS),
+          ),
+        ]);
         setSlots(result.slots);
       } catch {
         setSlots(null);
-        setSlotsError("We couldn't load available times. Please try again.");
+        setSlotsError("We could not load available times.");
       }
     },
     [loadSlots],
@@ -292,7 +315,7 @@ function BookPage() {
     });
     if (result.sessionId) {
       setSessionId(result.sessionId);
-      trackBooking(BOOKING_EVENTS.intakeCompleted, {
+      safeTrackBooking(BOOKING_EVENTS.intakeCompleted, {
         meetingType,
         bookingSessionId: result.sessionId,
       });
@@ -306,7 +329,7 @@ function BookPage() {
     // Raised before the contact details are validated: picking a time is the
     // interaction, and the clients who pick one and then bounce off the
     // validation are exactly the drop-off this event exists to find.
-    trackBooking(BOOKING_EVENTS.timeSelected, {
+    safeTrackBooking(BOOKING_EVENTS.timeSelected, {
       meetingType,
       bookingSessionId: sessionId,
       step: "pick_slot",
@@ -352,7 +375,9 @@ function BookPage() {
       });
       setCancelled(false);
       setStep("done");
-      trackBooking(BOOKING_EVENTS.completed, { meetingType, bookingSessionId: id });
+      // The scheduler confirmed the slot: one de-duplicated event per booking.
+      safeTrackBooking(BOOKING_EVENTS.confirmed, { meetingType, bookingSessionId: id });
+      safeTrackBooking(BOOKING_EVENTS.completed, { meetingType, bookingSessionId: id });
     } catch {
       setSlotsError("We couldn't confirm that time. Please try again.");
     } finally {
@@ -386,19 +411,27 @@ function BookPage() {
     <>
     <main className="mx-auto max-w-3xl px-6 py-14">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-        {meeting.durationLabel} · {meeting.name}
+        {meeting.name}
       </p>
       <h1 className="mt-3 text-3xl font-semibold tracking-tight">
-        {step === "done" ? "You're booked" : "Book your hiring call"}
+        {step === "done" ? "You're booked" : `Book a ${CALL_NAME}`}
       </h1>
       <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
         {step === "done"
           ? "Your call is confirmed. You can reschedule or cancel from this page at any time."
-          : "Four details and a time. Every slot below is one we actually hold open, shown in your timezone."}
+          : "Your name, email and a time. Phone is optional. Every slot below is one we hold open, shown in your timezone."}
       </p>
 
       {step === "book" ? (
         <div className="mt-8 space-y-6">
+          <section aria-label="What to expect" data-testid="booking-expectations">
+            <h2 className="text-base font-semibold">On the call</h2>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              {BOOK_EXPECTATIONS.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
           <Card id="booking-contact">
             <CardHeader>
               <CardTitle className="text-base">Your details</CardTitle>
@@ -433,7 +466,7 @@ function BookPage() {
                 tabIndex={-1}
                 autoComplete="off"
                 aria-hidden="true"
-                className="hidden"
+                style={{ display: "none" }}
                 value={values.website}
                 onChange={(e) => setValues((v) => ({ ...v, website: e.target.value }))}
               />
@@ -449,7 +482,27 @@ function BookPage() {
               </p>
             ) : null}
 
-            {slotsError ? <p className="mb-4 text-sm text-destructive">{slotsError}</p> : null}
+            {slotsError ? (
+              <div className="mb-4 space-y-2 text-sm" role="alert">
+                <p className="text-destructive">{slotsError}</p>
+                {slots === null ? (
+                  <p className="text-muted-foreground">
+                    <button
+                      type="button"
+                      className="underline"
+                      onClick={() => void refreshSlots(sessionId)}
+                    >
+                      Try again
+                    </button>
+                    , or email{" "}
+                    <a className="underline" href={`mailto:${SALES_EMAIL}`}>
+                      {SALES_EMAIL}
+                    </a>{" "}
+                    and we will arrange a time with you.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
 
             {slots === null && !slotsError ? (
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -459,7 +512,11 @@ function BookPage() {
 
             {slots !== null && slots.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                Every slot in the next three weeks is taken. Email us and we'll open a time for you.
+                Every slot in the next three weeks is taken. Email{" "}
+                <a className="underline" href={`mailto:${SALES_EMAIL}`}>
+                  {SALES_EMAIL}
+                </a>{" "}
+                and we will open a time for you.
               </p>
             ) : null}
 

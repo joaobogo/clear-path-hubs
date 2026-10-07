@@ -24,6 +24,8 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { submitInquiry } from "@/lib/inquiry.functions";
 import { BOOKING_ROUTE } from "@/config/booking";
+import { CALL_NAME, FIRST_SHORTLIST_TIMING_SHORT, RESPONSE_TIME_SENTENCE } from "@/config/offer-facts";
+import { CTA_BOOK, CTA_MESSAGE } from "@/config/cta";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import {
@@ -68,10 +70,10 @@ export function BookACallDialog({
           <DialogTitle className="font-[family-name:var(--brand-font-display)] text-xl">
             {common.industryName
               ? `Talk to us about ${common.industryName} hiring`
-              : "Talk to a TaaSFlow recruiter"}
+              : "Talk to TaaSFlow"}
           </DialogTitle>
           <DialogDescription className="text-sm text-[color:var(--brand-navy)]/80">
-            Pick a call slot or send a message — we reply within one business day.
+            Book a {CALL_NAME} or send us a message. {RESPONSE_TIME_SENTENCE}
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[75vh] overflow-y-auto px-6 py-6">
@@ -128,25 +130,25 @@ export function BookACallSection({
           </h2>
           <p className="mt-4 max-w-lg text-white/80">
             {description ??
-              "Book a 20-minute call with a TaaSFlow recruiter or send us a short brief. We'll confirm the role, timeline, and shortlist plan before you commit to anything."}
+              `Book a ${CALL_NAME} or send us a short brief. We confirm the role, the timeline and the shortlist plan before work begins.`}
           </p>
           <ul className="mt-8 space-y-3 text-sm text-white/85">
             <li className="flex items-start gap-3">
               <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light)]" />
               <span>
-                20-minute discovery call — role, must-haves, timeline, budget.
+                {CALL_NAME}: the role, the must-haves and the timeline.
               </span>
             </li>
             <li className="flex items-start gap-3">
               <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light)]" />
               <span>
-                Ranked shortlist in days — with evidence quoted from every CV.
+                {FIRST_SHORTLIST_TIMING_SHORT}, with the evidence behind each score.
               </span>
             </li>
             <li className="flex items-start gap-3">
               <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light)]" />
               <span>
-                Flat subscription — no percentage-of-salary fees, ever.
+                No percentage-of-salary fees.
               </span>
             </li>
           </ul>
@@ -176,11 +178,11 @@ function BookACallTabs({
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="call" className="gap-2">
           <CalendarDays className="h-4 w-4" />
-          Book a call
+          {CTA_BOOK.label}
         </TabsTrigger>
         <TabsTrigger value="message" className="gap-2">
           <MessageSquare className="h-4 w-4" />
-          Send a message
+          {CTA_MESSAGE.label}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="call" className="mt-5">
@@ -281,7 +283,7 @@ function CallForm({
     <form noValidate onSubmit={onSubmit} className="space-y-5">
       <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-mist)]/50 px-4 py-3">
         <p className="flex items-center gap-2 text-sm font-medium text-[color:var(--brand-navy)]">
-          <Clock className="h-4 w-4" /> 20-minute discovery call
+          <Clock className="h-4 w-4" /> {CALL_NAME}
         </p>
         <p className="mt-1 text-[13px] text-[color:var(--brand-navy)]/80">
           Tell us about the role, then choose a live slot in our calendar. You get the
@@ -340,8 +342,8 @@ function CallForm({
         name="website"
         tabIndex={-1}
         autoComplete="off"
-        aria-hidden
-        className="absolute left-[-9999px] h-0 w-0 opacity-0"
+        aria-hidden="true"
+        style={{ display: "none" }}
       />
       <Button
         type="submit"
@@ -435,7 +437,7 @@ function MessageForm({
           });
         }
       });
-      toast.success("Message sent — we'll reply within one business day.");
+      toast.success(`Message sent. ${RESPONSE_TIME_SENTENCE}`);
       (e.currentTarget as HTMLFormElement).reset();
       onSuccess?.();
     } catch (err) {
@@ -497,8 +499,8 @@ function MessageForm({
         name="website"
         tabIndex={-1}
         autoComplete="off"
-        aria-hidden
-        className="absolute left-[-9999px] h-0 w-0 opacity-0"
+        aria-hidden="true"
+        style={{ display: "none" }}
       />
       <Button
         type="submit"
@@ -511,7 +513,7 @@ function MessageForm({
           </>
         ) : (
           <>
-            <Mail className="mr-2 h-4 w-4" /> Send message
+            <Mail className="mr-2 h-4 w-4" /> {CTA_MESSAGE.label}
           </>
         )}
       </Button>

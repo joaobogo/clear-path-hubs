@@ -10,6 +10,8 @@
  * message"), never "Book a call".
  */
 
+import { CALL_MINUTES, CALL_NAME } from "@/config/offer-facts";
+
 export const BOOKING_ROUTE = "/book" as const;
 
 /** Legacy/duplicate paths that must land on the canonical flow. */
@@ -36,28 +38,27 @@ export type MeetingType = {
 export const MEETING_TYPES: Record<MeetingTypeId, MeetingType> = {
   discovery: {
     id: "discovery",
-    name: "Hiring discovery call",
-    durationLabel: "20 minutes",
+    name: CALL_NAME,
+    durationLabel: `${CALL_MINUTES} minutes`,
     summary:
-      "We map the roles you're hiring, the evidence bar for each, and how TaaSFlow would run them.",
+      "We look at one role you need to fill and show how we would run it.",
     agenda: [
-      "The roles you need filled and by when",
-      "What good actually looks like for each role",
-      "How our evidence scoring would rank your inbound",
+      "The role you need to fill and by when",
+      "What a strong candidate looks like for that role",
+      "How a ranked shortlist looks in the workspace",
       "Timeline, seats, and what a pilot would cover",
     ],
     prepare: [
       "A job description or role outline, if you have one",
-      "Roughly how many hires you expect this quarter",
       "Any hard requirements a candidate must prove",
     ],
   },
   demo: {
     id: "demo",
-    name: "Platform walkthrough",
+    name: "Product demo",
     durationLabel: "30 minutes",
     summary:
-      "A live walkthrough of the workspace: intake, evidence extraction, scoring, and the decision queue.",
+      "A live demo of the workspace: intake, evidence extraction, scoring, and the decision queue.",
     agenda: [
       "Role intake and blueprint generation",
       "Evidence extraction from real CVs",
@@ -141,3 +142,9 @@ export const HEARD_ABOUT = [
   "Event or webinar",
   "Other",
 ] as const;
+
+/**
+ * The one sales address used as the fallback whenever a form or the scheduler
+ * cannot complete. Same address the contact page lists.
+ */
+export const SALES_EMAIL = "sales@taasflow.com" as const;

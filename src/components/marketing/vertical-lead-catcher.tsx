@@ -40,8 +40,8 @@ import {
   packageForPositions,
   ABOVE_MAX_ROLES_LABEL,
   MAX_POSITIONS,
-  TURNAROUND_LABEL,
 } from "@/config/pricing-core";
+import { FIRST_SHORTLIST_TIMING_SHORT, RESPONSE_TIME_SENTENCE, TIMING_FINE_PRINT } from "@/config/offer-facts";
 
 type Props = {
   verticalSlug: string;
@@ -193,7 +193,7 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
             <TabsTrigger value="enquiry" className="gap-2 text-sm"><Send className="h-4 w-4" />Scoped enquiry</TabsTrigger>
             <TabsTrigger value="estimate" className="gap-2 text-sm"><Calculator className="h-4 w-4" />Cost &amp; time estimate</TabsTrigger>
             <TabsTrigger value="briefing" className="gap-2 text-sm"><Download className="h-4 w-4" />Sector briefing</TabsTrigger>
-            <TabsTrigger value="call" className="gap-2 text-sm"><CalendarDays className="h-4 w-4" />Book a call</TabsTrigger>
+            <TabsTrigger value="call" className="gap-2 text-sm"><CalendarDays className="h-4 w-4" />Book a 20-minute call</TabsTrigger>
           </TabsList>
 
           {/* ---------------- Shared scoped fields ---------------- */}
@@ -258,8 +258,8 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
                 <Stat label="TaaSFlow package" value={pkg.usd ? money(pkg.usd) : "Custom"} note={`${pkg.label}. ${pkg.note}`} />
                 <Stat
                   label="Time to first shortlist"
-                  value={TURNAROUND_LABEL}
-                  note="Our published commitment for every tier. Actual delivery per role is tracked against it in your workspace."
+                  value={FIRST_SHORTLIST_TIMING_SHORT}
+                  note={TIMING_FINE_PRINT}
                 />
               </div>
               <p className="mt-3 text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
@@ -314,16 +314,16 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
           <TabsContent value="call" className="mt-6">
             <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
               <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold text-[color:var(--brand-navy)]">
-                Speak to the person who would run your {verticalName.toLowerCase()} search
+                Book a 20-minute call about your {verticalName.toLowerCase()} search
               </h3>
               <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                Twenty minutes, no deck. We'll tell you if we're not the right fit.
+                We look at one role you need to fill and show how we would run it. We will tell you if we are not the right fit.
               </p>
               <BookACallDialog
                 industrySlug={verticalSlug}
                 industryName={verticalName}
                 roleTitle={form.roleTitle || undefined}
-                trigger={<Button className="mt-5">Pick a time</Button>}
+                trigger={<Button className="mt-5">Choose a time</Button>}
               />
             </div>
           </TabsContent>
@@ -453,7 +453,7 @@ function Stat({ label, value, note }: { label: string; value: string; note: stri
 function Confirmation() {
   return (
     <p className="mt-3 flex items-center gap-2 text-sm text-[color:var(--brand-navy)]/75">
-      <Check className="h-4 w-4" /> Received. We reply within one business day — sooner if you said it's urgent.
+      <Check className="h-4 w-4" /> Received. {RESPONSE_TIME_SENTENCE}
     </p>
   );
 }

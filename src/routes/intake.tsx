@@ -1,5 +1,5 @@
 import { screenDealBreakers, usableDealBreakers } from "@/lib/deal-breaker-screening";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import { useEffect, useId, useRef, useState } from "react";
@@ -59,7 +59,6 @@ import {
 
   UNREADABLE_JD_EXT,
   JD_ACCEPT_ATTR,
-  JD_ACCEPT_LABEL,
 
   EXPRESS_IDEMPOTENCY_KEY,
   INTAKE_STEPS,
@@ -125,6 +124,15 @@ import { trackDashboardSignup } from "@/lib/tracking/conversions";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
+import { CTA_BOOK } from "@/config/cta";
+import {
+  ACCEPTED_UPLOADS,
+  FIRST_SHORTLIST_TIMING,
+  PILOT_IS_PAID_NOTE,
+  PILOT_SUMMARY,
+  PROCESS_STEPS,
+  TIMING_FINE_PRINT,
+} from "@/config/offer-facts";
 import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
@@ -165,6 +173,7 @@ export const Route = createFileRoute("/intake")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://taasflow.com/intake" },
+      { name: "robots", content: "noindex, follow" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://taasflow.com/intake" }],
@@ -1667,7 +1676,7 @@ function ExpressIntakePage() {
       return;
     }
     if (!ALLOWED_JD_EXT.has(ext)) {
-      toast.error("Upload a PDF, DOCX, TXT or RTF file.");
+      toast.error(`Upload a file in one of these formats: ${ACCEPTED_UPLOADS}.`);
       return;
     }
 
@@ -2065,8 +2074,8 @@ function ExpressIntakePage() {
     return (
       <FormShell
         width="lg"
-        eyebrow="Start hiring"
-        title="Launch a role in minutes."
+        eyebrow="Full role intake"
+        title={`Share your role in about ${INTAKE_TOTAL_MINUTES} minutes.`}
         description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
       >
         <div className="space-y-4" aria-busy="true" data-testid="intake-loading">
@@ -2088,8 +2097,8 @@ function ExpressIntakePage() {
   return (
     <FormShell
       width="lg"
-      eyebrow="Start hiring"
-      title="Launch a role in minutes."
+      eyebrow="Full role intake"
+      title={`Share your role in about ${INTAKE_TOTAL_MINUTES} minutes.`}
       description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
     >
       <div
@@ -2127,23 +2136,26 @@ function ExpressIntakePage() {
         {PAYMENTS_ENABLED ? (
           <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
             <p className="text-sm font-semibold">
-              No payment today. Nothing is charged to start.
+              You choose when to pay. Nothing is charged while you fill this in.
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your workspace and share the role first. You only pay once your account is created
-              and we've accepted the role — and you can walk away before that at no cost.
+              Create your workspace and share the role first. Payment is taken only if you choose
+              “Submit the role and pay” at the end. {PILOT_IS_PAID_NOTE}
             </p>
           </div>
         ) : (
           <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
             <p className="text-sm font-semibold">
-              Free to start. Your workspace opens right away.
+              No payment is taken on this page. Your workspace opens right away.
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your account, share the role, then pick a time. We agree the plan together on the call.
+              Create your account, share the role, then pick a time. We agree the plan together
+              before the search goes live. {PILOT_IS_PAID_NOTE}
             </p>
           </div>
         )}
+
+        <IntakeSummaryPanel />
 
         {draftNotice && (
           <div
@@ -2581,7 +2593,7 @@ function ExpressIntakePage() {
                 <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/75" aria-hidden />
                 <span className="text-sm font-medium">Drop the job description here, or browse</span>
                 <span className="text-xs text-[color:var(--brand-navy)]/75">
-                  {JD_ACCEPT_LABEL}
+                  {ACCEPTED_UPLOADS}, up to 10 MB
                 </span>
               </button>
             )}
@@ -3608,13 +3620,12 @@ function ExpressIntakePage() {
                 {PAYMENTS_ENABLED ? (
                   <>
                     One active role, any industry, anywhere in the world, no placement fees.{" "}
-                    {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5 days after
-                    go-live.
+                    {PILOT_ONE_PER_COMPANY} {FIRST_SHORTLIST_TIMING} {TIMING_FINE_PRINT}
                   </>
                 ) : (
                   <>
                     One active role, any industry, anywhere in the world. Your workspace opens immediately.
-                    First candidate activity usually begins within 3–5 days after we agree the plan on the call.
+                    {FIRST_SHORTLIST_TIMING} {TIMING_FINE_PRINT}
                   </>
                 )}
               </p>
@@ -3643,7 +3654,7 @@ function ExpressIntakePage() {
                   </>
                 ) : (
                   <>
-                    I understand this is free to start today, that my workspace opens immediately, and that we
+                    I understand that no payment is taken today, that my workspace opens immediately, and that we
                     agree the plan on the call before the search goes live. This initial role can be started
                     once per company — a second sign-up or a new email does not create a new start. Separate
                     locations, franchises and subsidiaries are reviewed case by case.
@@ -3760,7 +3771,7 @@ function ExpressIntakePage() {
                           Creating your workspace…
                         </>
                       ) : (
-                        "Start now — pay and publish"
+                        "Submit the role and pay"
                       )}
                     </Button>
                     <Button
@@ -3832,6 +3843,11 @@ function ExpressIntakePage() {
                 {PAYMENTS_ENABLED
                   ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
                   : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."}
+              </p>
+              <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+                <Link to={CTA_BOOK.to} className="underline" data-testid="intake-book-link">
+                  Prefer to talk first? Book a call.
+                </Link>
               </p>
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
                 Your information stays inside TaaSFlow, part of Flow Group Ventures, and is never sold or passed to third parties.
@@ -4050,3 +4066,31 @@ function Field({
 }
 
 
+
+
+/** Static summary: price, timing and what happens next. Presentational only. */
+function IntakeSummaryPanel() {
+  return (
+    <aside
+      aria-label="Pilot summary"
+      className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-4 text-sm"
+      data-testid="intake-summary"
+    >
+      <p className="font-semibold">{PILOT_SUMMARY}</p>
+      <p className="mt-1 text-[color:var(--brand-navy)]/75">
+        {FIRST_SHORTLIST_TIMING} {TIMING_FINE_PRINT}
+      </p>
+      <p className="mt-3 font-semibold">What happens next</p>
+      <ol className="mt-1 list-decimal space-y-0.5 pl-5 text-[color:var(--brand-navy)]/75">
+        {PROCESS_STEPS.map((step) => (
+          <li key={step.title}>{step.title}</li>
+        ))}
+      </ol>
+      <p className="mt-3 text-[color:var(--brand-navy)]/75">
+        <Link to={CTA_BOOK.to} className="underline">
+          Prefer to talk first? Book a call.
+        </Link>
+      </p>
+    </aside>
+  );
+}
