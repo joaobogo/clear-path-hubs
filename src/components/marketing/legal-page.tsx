@@ -78,8 +78,8 @@ export function LegalPage({
 
         <section className="mb-8 rounded-lg border border-border/60 bg-muted/20 p-4 text-sm">
           <p className="text-muted-foreground">
-            This notice is under counsel review and may be amended. For the
-            current controller of record or a signed copy, contact{" "}
+            For the legal entity name, the current controller of record or a
+            signed copy, contact{" "}
             <Link
               to="/contact"
               className="font-medium text-foreground underline underline-offset-4"

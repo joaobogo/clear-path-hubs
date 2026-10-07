@@ -17,6 +17,8 @@ import {
   PACKAGE_40,
   PACKAGE_100,
 } from "@/config/pricing-core";
+import { CTA_PRIMARY } from "@/config/cta";
+import { RECORDS_NOTE, HUMAN_OVERSIGHT_NOTE, COMPLIANCE_NOTE, CALL_NAME } from "@/config/offer-facts";
 
 import {
   ShieldCheck,
@@ -40,8 +42,7 @@ import {
  *  - how candidate privacy works,
  *  - what TaaSFlow does vs what the client controls,
  *  - FAQs,
- *  - security & process language,
- *  - founder credibility.
+ *  - security & process language.
  */
 
 export const Route = createFileRoute("/trust")({
@@ -59,7 +60,7 @@ const PRICING_LINES = [
     label: "Pilot",
     price: PRICE_PILOT_DISPLAY,
     scope: PILOT_ROLES_LABEL,
-    detail: "Flat fee, billed once. See the system on a real role before scaling.",
+    detail: "Flat fee, billed once. A paid evaluation of one real role.",
   },
   {
     label: PACKAGE_10.capacityLabel,
@@ -105,18 +106,15 @@ const PRICING_LINES = [
 ];
 
 const CLIENT_KEEPS = [
-  "Every candidate profile, evidence, and score you have seen — permanently.",
+  "Candidate profiles, evidence and scores you have seen, available as an export.",
   "Your role blueprints, rubrics, screening questions, and scoring logic.",
-  "Talent pools, previously shortlisted candidates, and rediscovery data.",
-  "Every decision, comment, and hire record — with a full history of who changed what.",
+  "Every decision, comment, and hire record, with a history of who changed what.",
   "Exportable shortlists and share links for internal stakeholders.",
 ];
 
 const NEVER_CHARGED = [
   "No placement fees.",
   "No salary percentages.",
-  "No per-seat charges for internal reviewers.",
-  "No extra fees for rediscovery or hiring someone you shortlisted earlier.",
 ];
 
 const SCORING_LINES = [
@@ -143,10 +141,10 @@ const SCORING_LINES = [
 ];
 
 const PRIVACY_LINES = [
-  "Candidates own their data. They can request access, correction, and deletion at any time.",
+  "Candidates can request access, correction, and deletion at any time.",
   "CVs are stored in a private bucket with per-organization access, encrypted at rest.",
   "External stakeholder share links are token-gated, scoped to the shortlist, and revocable.",
-  "PII is never used to train third-party models. Model calls are per-request, stateless, and logged for audit.",
+  "The AI models used for CV parsing and role-fit scoring are named in the sub-processor register of the privacy notice.",
   "Consent and legal basis are recorded per candidate — with a full history of every access.",
 ];
 
@@ -175,14 +173,14 @@ const SPLIT: Split[] = [
   {
     area: "Data & records",
     taasflow: "We host the system of record and keep the full change history complete.",
-    client: "You own the data. Export, delete, or migrate at any time.",
+    client: "You can export your candidate records at any time. Workspace access for a one-off package lasts three months.",
   },
 ];
 
 const FAQ: { q: string; a: string }[] = [
   {
     q: "What happens if we stop working with TaaSFlow?",
-    a: "You keep every candidate, every profile, every score, and every record. We provide a full export on request. There are no clawbacks and no placement fees to unwind.",
+    a: `${RECORDS_NOTE} There are no placement fees to unwind.`,
   },
   {
     q: "Do you charge a percentage of salary?",
@@ -194,7 +192,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Can the AI make a hire or reject a candidate?",
-    a: "No. The system ranks and explains. A human on your team makes every progression, offer, and rejection decision. Every decision is logged with the person and the reason.",
+    a: `No. ${HUMAN_OVERSIGHT_NOTE} The system ranks and explains, and a recruiter and your team make the decisions. See how AI is used in hiring for the detail.`,
   },
   {
     q: "How are you different from an ATS or a recruiting agency?",
@@ -238,13 +236,12 @@ function TrustPage() {
           <nav className="mt-8 flex flex-wrap gap-2 text-sm">
             {[
               ["pricing", "Pricing"],
-              ["what-you-keep", "What you keep"],
+              ["what-you-keep", "Your records"],
               ["scoring", "How scoring works"],
               ["privacy", "Candidate privacy"],
               ["split", "TaaSFlow vs your controls"],
               ["faq", "FAQ"],
               ["security", "Security & process"],
-              ["founders", "Founders"],
             ].map(([id, label]) => (
               <a
                 key={id}
@@ -315,9 +312,9 @@ function TrustPage() {
         <PublicPage>
           <SectionHeader
             icon={Layers}
-            eyebrow="What you keep"
-            title="If you leave, nothing walks out the door."
-            lede="Everything the system produces is yours. Portable, exportable, permanent."
+            eyebrow="Your records"
+            title="Your candidate records are exportable."
+            lede={RECORDS_NOTE}
           />
           <ul className="mt-6 grid gap-3 sm:grid-cols-2">
             {CLIENT_KEEPS.map((c) => (
@@ -369,7 +366,8 @@ function TrustPage() {
           </ul>
           <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
             See the <Link to="/privacy" className="underline">privacy notice</Link> for
-            the full policy language.
+            the full policy language, and{" "}
+            <Link to="/ai-in-hiring" className="underline">how AI is used in hiring</Link>.
           </p>
         </PublicPage>
       </PublicSection></div>
@@ -474,19 +472,19 @@ function TrustPage() {
           <p className="mt-5 text-xs text-[color:var(--brand-navy)]/80">
             This page is maintained by the TaaSFlow team to answer common
             security and privacy questions about the platform. It is not a
-            certification. Enterprise buyers can request a full security
-            review as part of onboarding.
+            certification. {COMPLIANCE_NOTE}{" "}
+            <Link to="/security" className="underline">Read the security page</Link>.
           </p>
 
         </PublicPage>
       </PublicSection></div>
 
       <CtaSection
-        eyebrow="Buy with your eyes open"
-        title="Book a walkthrough of the trust pack."
-        description="30 minutes. We show pricing, scoring, evidence, and the full change history on a live workspace — with your role, not a demo."
-        primary={{ to: "/intake", label: "Start a role" }}
-        secondary={{ to: "/pricing", label: "See pricing detail" }}
+        eyebrow="Questions before you start"
+        title="Talk it through with us."
+        description={`A ${CALL_NAME} to go through pricing, scoring and records. Bring your questions.`}
+        primary={{ to: CTA_PRIMARY.to, label: CTA_PRIMARY.label }}
+        secondary={{ to: "/pricing", label: "See pricing" }}
       />
     </SiteShell>
   );

@@ -7,14 +7,16 @@ import {
   TRUST_SECTIONS,
   TRUST_CONTACTS,
   TRUST_LAST_REVIEWED,
+  NO_HIPAA_CERTIFICATION_NOTE,
   type TrustSection,
 } from "@/config/trust-center";
+import { COMPLIANCE_NOTE } from "@/config/offer-facts";
 import { ShieldCheck, FileText, Clock, ExternalLink, Mail, CircleDot } from "lucide-react";
 
 export const Route = createFileRoute("/security")({
   head: () =>
     marketingHead(undefined, "/security", {
-      title: "Trust Center — security & tenant isolation | TaaSFlow",
+      title: "Security | TaaSFlow",
       description:
         "Verified security and privacy information for TaaSFlow: row-level tenant isolation, access controls, encryption, retention, audit coverage, subprocessors and incident response — with dates and sources.",
     }),
@@ -23,7 +25,7 @@ export const Route = createFileRoute("/security")({
 
 const SOURCE_LABEL: Record<string, string> = {
   code: "Verified in the platform",
-  doc: "Internal certification",
+  doc: "Internal review",
   legal: "Published policy",
 };
 
@@ -38,7 +40,7 @@ function StateBadge({ state }: { state: TrustSection["state"] }) {
       }
     >
       <CircleDot className="h-3 w-3" aria-hidden />
-      {documented ? "Documented" : "Documentation in progress"}
+      {documented ? "Documented" : "Policy in preparation"}
     </span>
   );
 }
@@ -47,22 +49,29 @@ function TrustCenterPage() {
   return (
     <SiteShell>
       <EditorialHero
-        eyebrow="Trust Center"
+        eyebrow="Security"
         title="Security and privacy, stated only where we can prove it"
         lead="Every claim here traces to the platform, an internal control, or a published policy. Where something is not in place yet, it says so."
         image={securityHero}
         imageAlt="A secure data facility corridor lit by a single warm light"
         stats={[
-          { value: "EU", label: "Data residency" },
+          { value: "EU and US", label: "Processing regions" },
           { value: "Append-only", label: "Audit events" },
           { value: TRUST_LAST_REVIEWED, label: "Last reviewed" },
         ]}
         primary={{ to: "/privacy", label: "Read the Privacy Notice" }}
-        secondary={{ to: "/contact", label: "Ask our security team" }}
+        secondary={{ to: "/contact", label: "Send us a message" }}
       >
         <p className="max-w-3xl rounded-xl border border-[color:var(--brand-navy)]/10 bg-white/70 p-4 text-sm text-[color:var(--brand-navy)]/75">
           This page is our own account of how the system works — not an independent audit or a
           third-party verification.
+        </p>
+        <p className="mt-3 max-w-3xl text-sm text-[color:var(--brand-navy)]/75">
+          {COMPLIANCE_NOTE} {NO_HIPAA_CERTIFICATION_NOTE} See{" "}
+          <Link to="/ai-in-hiring" className="underline underline-offset-4">
+            how AI is used in hiring
+          </Link>
+          .
         </p>
 
       </EditorialHero>
@@ -153,6 +162,11 @@ function TrustCenterPage() {
             </h2>
             <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
               A real person reads these. Use the closest match rather than a general enquiry form.
+            </p>
+            <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/70">
+              There is no separate security mailbox yet. Vulnerability reports go to the same
+              privacy@taasflow.com mailbox as privacy requests, so please put "Security report" in
+              the subject line.
             </p>
             <dl className="mt-6 grid gap-6 sm:grid-cols-3">
               {TRUST_CONTACTS.map((c) => (
