@@ -16,7 +16,7 @@
  * internal configuration value may appear in this file.
  */
 
-export const INTEGRATIONS_LAST_REVIEWED = "4 August 2026";
+export const INTEGRATIONS_LAST_REVIEWED = "7 October 2026";
 
 export type Availability = "available" | "beta" | "custom" | "planned";
 
@@ -96,6 +96,14 @@ export interface Integration {
   docs: { label: string; to: string; hash?: string } | null;
   /** Only for `planned` listings: what has to be true before it ships. */
   plannedNote?: string;
+  /**
+   * `false` marks internal plumbing: systems TaaSFlow runs for itself that a
+   * buyer cannot connect to or use (our own CRM mirror, payment webhooks,
+   * website analytics, in-workspace analytics). They stay in this file for the
+   * code and the audit trail that read it, but the public integrations page
+   * lists only entries where this is not `false`. Omitted means public.
+   */
+  public?: boolean;
 }
 
 export const INTEGRATIONS: Integration[] = [
@@ -137,6 +145,7 @@ export const INTEGRATIONS: Integration[] = [
   },
   {
     id: "payment-webhooks",
+    public: false,
     name: "Payment webhooks",
     category: "webhooks",
     availability: "available",
@@ -172,6 +181,7 @@ export const INTEGRATIONS: Integration[] = [
   /* ------------------------------------------------------ crm / calendar */
   {
     id: "attio",
+    public: false,
     name: "Attio",
     category: "crm",
     availability: "available",
@@ -237,7 +247,7 @@ export const INTEGRATIONS: Integration[] = [
     permissions: "Post messages to the one channel you nominate.",
     healthVisibility: false,
     healthNote:
-      "No health probe yet. Failed posts are logged server-side and swallowed so nothing user-facing breaks.",
+      "No health probe yet. If a post fails, the application or enquiry still goes through.",
     docs: { label: "Ask us to enable it", to: "/contact" },
   },
 
@@ -246,7 +256,9 @@ export const INTEGRATIONS: Integration[] = [
     id: "stripe",
     name: "Payments",
     category: "payments",
-    availability: "available",
+    availability: "planned",
+    plannedNote:
+      "Online checkout is switched off for now. Packages are requested and invoiced by TaaSFlow directly. No date is promised for turning it on.",
     purpose:
       "Takes payment for a pilot or a plan before a role goes live, with tax calculated at checkout.",
     connectionMethod:
@@ -277,6 +289,7 @@ export const INTEGRATIONS: Integration[] = [
   /* ------------------------------------------------------ analytics */
   {
     id: "web-analytics",
+    public: false,
     name: "Website analytics and consent",
     category: "analytics",
     availability: "available",
@@ -293,6 +306,7 @@ export const INTEGRATIONS: Integration[] = [
   },
   {
     id: "workspace-analytics",
+    public: false,
     name: "In-workspace hiring analytics",
     category: "analytics",
     availability: "available",
@@ -374,4 +388,12 @@ export function integrationsByCategory(): {
 export const AVAILABILITY_COUNTS = INTEGRATIONS.reduce<Record<Availability, number>>(
   (acc, i) => ({ ...acc, [i.availability]: (acc[i.availability] ?? 0) + 1 }),
   { available: 0, beta: 0, custom: 0, planned: 0 },
+);
+
+/** What the public integrations page lists: everything except internal plumbing. */
+export const PUBLIC_INTEGRATIONS: Integration[] = INTEGRATIONS.filter((i) => i.public !== false);
+
+/** Connections a buyer can use today (available, beta or custom setup). */
+export const USABLE_INTEGRATIONS: Integration[] = PUBLIC_INTEGRATIONS.filter(
+  (i) => i.availability !== "planned",
 );

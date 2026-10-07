@@ -6,6 +6,8 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 import { PageConnections } from "@/components/marketing/page-connections";
 
 // ─── LEADERSHIP — single source of truth for the named leadership narrative ──
@@ -41,7 +43,7 @@ const LEADERS = [
     linkedin: "",
     quote:
       "The best candidates aren't looking. You need to know where they are and how to reach them.",
-    bio: "Former strategist for Hilton, Marriott, Four Seasons and Philips, and represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe and the Gulf, focused on employer branding, global talent markets and building real connections at scale.",
+    bio: "Former strategist for Hilton, Marriott, Four Seasons and Philips. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe and the Gulf, focused on employer branding, global talent markets and building real connections at scale.",
     tags: ["Global talent markets", "Employer branding", "Strategic partnerships", "Recruitment marketing"],
   },
 ] as const;
@@ -52,31 +54,31 @@ const PRIOR_EXPERIENCE_DISCLAIMER =
 
 
 const WHY_NOW =
-  "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — an AI Hiring Intelligence Platform that runs the search end to end, priced like software, with configurable expert oversight on every shortlist.";
+  `TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model: a recruiting platform with managed execution and fixed package prices. ${WHO_RUNS_THE_SEARCH}`;
 
 const PRINCIPLES = [
   {
     title: "Evidence over opinion",
-    body: "Every score cites the exact CV quote it came from. If we cannot cite it, we do not claim it.",
+    body: "Every score cites the CV passage it came from. If we cannot cite it, we do not claim it.",
   },
   {
     title: "Transparency by default",
-    body: "The workspace your client sees is the same workspace the platform runs on. Nothing lives in a private inbox.",
+    body: "The workspace you see is the same workspace we work in. Nothing lives in a private inbox.",
   },
   {
     title: "You own your pipeline",
-    body: "Every candidate the platform surfaces stays in your Talent Graph — even between roles. No gatekeeping, no lock-in.",
+    body: "You can export your candidate records at any time. No gatekeeping, no lock-in.",
   },
   {
     title: "Respect the candidate",
-    body: "Applicants get a real answer, real feedback, real timelines. Silence is not a delivery mode.",
+    body: "Candidates should hear back. Silence is not a delivery mode.",
   },
 ];
 
 const SERVES = [
   {
     who: "Series A–C operators",
-    body: "Scaling teams that need predictable throughput without building an internal recruiting org overnight.",
+    body: "Growing teams that need predictable throughput without building an internal recruiting team overnight.",
   },
   {
     who: "50–5,000-employee businesses",
@@ -94,9 +96,9 @@ export const Route = createFileRoute("/about")({
       undefined,
       "/about",
       {
-        title: "About TaaSFlow — the AI Hiring Intelligence Platform",
+        title: "About TaaSFlow | Recruiting Platform with Managed Execution",
         description:
-          "TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.",
+          "TaaSFlow is a recruiting platform with managed execution. Every shortlist comes with the evidence behind each score, and package prices are fixed.",
       },
       {
         // Named leadership, matching the on-page cards exactly. Only fields
@@ -143,14 +145,12 @@ function AboutPage() {
             About TaaSFlow
           </p>
           <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-            We exist to make recruiting explainable again.
+            The team behind TaaSFlow.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            TaaSFlow is an on-demand recruiting function delivered through a
-            transparent product — human recruiters, AI-supported structure,
-            and a live workspace on a flat subscription. Every shortlist,
-            every score, every decision traces to the evidence behind it,
-            because hiring should never be a black box.
+            {OFFER_CATEGORY}. We exist to make recruiting explainable again.
+            Every shortlist, every score and every decision traces to the
+            evidence behind it, because hiring should never be a black box.
           </p>
         </PublicPage>
       </PublicSection>
@@ -327,15 +327,15 @@ function AboutPage() {
 
       <CtaSection
         eyebrow="Ready when you are"
-        title="Start hiring with an evidence-first model."
-        description="Submit a role in the guided intake — your workspace is ready as soon as you finish."
-        primary={{ to: "/intake", label: "Start hiring" }}
-        secondary={{ to: "/journey", label: "Explore our journey" }}
+        title="Hire with an evidence-first model."
+        description="Request the pilot for one role, or book a call to talk it through first."
+        primary={CTA_PRIMARY}
+        secondary={CTA_BOOK}
       />
           <PageConnections
-        commercial={{ to: "/how-it-works", label: "See the model", desc: "The operational spine behind TaaSFlow." }}
-        explainer={{ to: "/journey", label: "Our journey", desc: "Why we built a subscription recruiting product." }}
-        resource={{ to: "/case-studies", label: "Proof, not claims", desc: "Named outcomes from real teams." }}
+        commercial={{ to: "/how-it-works", label: "See how it works", desc: "The four steps behind TaaSFlow." }}
+        explainer={{ to: "/journey", label: "Our journey", desc: "Why we built a recruiting platform with managed execution." }}
+        resource={{ to: "/case-studies", label: "Example engagements", desc: "Example engagements and how we measure them." }}
         audience={{ to: "/enterprise", label: "Working with enterprise", desc: "How large orgs adopt TaaSFlow." }}
       />
     </SiteShell>

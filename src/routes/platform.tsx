@@ -27,17 +27,17 @@ import { LifecyclePreview } from "@/components/marketing/product-preview/lifecyc
 import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
 import { REPRESENTATIVE_CHAIN } from "@/lib/evidence/evidence-graph";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
 import {
   PRODUCT_CATEGORY,
   SYSTEM_CLAIM,
   MODULES,
-  OVERSIGHT_LANGUAGE,
 } from "@/config/product-language";
 
 export const Route = createFileRoute("/platform")({
   head: () =>
     marketingHead(undefined, "/platform", {
-      title: "TaaSFlow Platform — AI Hiring Intelligence in one system",
+      title: "TaaSFlow Platform | Recruiting with managed execution",
       description:
         `${SYSTEM_CLAIM} ${MODULES.intake}, ${MODULES.blueprint}, ${MODULES.agents}, ${MODULES.evidence}, ${MODULES.scoring}, ${MODULES.workspace} and ${MODULES.talentGraph} — one governed system, with an audit trail on every decision.`,
     }),
@@ -74,7 +74,7 @@ const CONTROLS: readonly { title: string; detail: string }[] = [
   },
   {
     title: "Human escalation",
-    detail: OVERSIGHT_LANGUAGE.escalation + ".",
+    detail: "Escalation path to a recruiter inside the workspace.",
   },
 ];
 
@@ -115,7 +115,7 @@ const CATEGORIES: readonly { label: string; role: string; gap: string }[] = [
   {
     label: "Recruiting agency",
     role: "Delivers candidates.",
-    gap: "Doesn't leave a system behind — the pipeline goes with the vendor.",
+    gap: "Often leaves no system behind, so the pipeline can go with the vendor.",
   },
   {
     label: "AI sourcing tool",
@@ -146,8 +146,8 @@ function PlatformPage() {
           { value: "100%", label: "Scores rubric-versioned" },
           { value: "Append-only", label: "Audit trail" },
         ]}
-        primary={{ to: "/intake", label: "Open your first role" }}
-        secondary={{ to: "/agents", label: `See the ${MODULES.agents}` }}
+        primary={CTA_PRIMARY}
+        secondary={CTA_BOOK}
       >
         <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -232,7 +232,7 @@ function PlatformPage() {
               The same screens your team works in.
             </h2>
             <p className="mt-3 text-[color:var(--brand-navy)]/80">
-              A role moves through nine stages, and each one names its owner, its
+              A role moves through working stages, and each one names its owner, its
               outputs and what is blocking it. Decisions sit next to the evidence.
             </p>
           </div>
@@ -415,10 +415,10 @@ function PlatformPage() {
       {/* 5 — PRODUCT CTA */}
       <CtaSection
         eyebrow="Ready to see it"
-        title="Open a role. Watch the system run."
-        description="Submit intake and see the compiled rubric, agent runs, and first evidence-backed shortlist inside your workspace."
-        primary={{ to: "/intake", label: "Open your first role" }}
-        secondary={{ to: "/pricing", label: "View Pricing" }}
+        title="Share a role. See the system run."
+        description="Request the pilot for one role and see the rubric, the agent runs and your first evidence-backed shortlist in your workspace."
+        primary={CTA_PRIMARY}
+        secondary={CTA_BOOK}
       />
     </SiteShell>
   );

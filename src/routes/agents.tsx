@@ -27,6 +27,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
 import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero";
 import agentsHero from "@/assets/page-agents-hero.jpg";
 import bandOps from "@/assets/band-ops.jpg";
@@ -45,14 +46,17 @@ import {
   HANDOFFS,
   APPROVAL_LIMITS,
   AGENT_STATUSES,
+  ROSTER_COUNTS,
+  countWord,
+  countWordCapitalised,
   type RosterEntry,
 } from "@/config/agent-roster";
 
 export const Route = createFileRoute("/agents")({
   head: () =>
     marketingHead(undefined, "/agents", {
-      title: `${MODULES.agents} — the eight agents that run a TaaSFlow search`,
-      description: `${SYSTEM_CLAIM} A dedicated agent on every sourcing channel. Intake, blueprint, discovery, evidence, scoring, pipeline, coordination and governance agents — each with stated inputs, outputs, controls, approval gates and recorded events.`,
+      title: `${MODULES.agents}: the ${countWord(ROSTER_COUNTS.total)} agents behind a TaaSFlow search`,
+      description: `${SYSTEM_CLAIM} Intake, blueprint, discovery, evidence, scoring, pipeline, coordination and governance agents — each with stated inputs, outputs, controls, approval gates and recorded events.`,
     }),
   component: AgentsPage,
 });
@@ -182,23 +186,23 @@ function AgentsPage() {
       {/* INTRO */}
       <EditorialHero
         eyebrow={PRODUCT_CATEGORY}
-        title="Eight agents run the search. Twenty-three run the channels."
+        title={`${countWordCapitalised(ROSTER_COUNTS.total)} agents run the search, across ${CHANNEL_AGENT_COUNT} channels.`}
         lead="Agents work inside role rules, a frozen rubric and approval gates. Every action they take is recorded."
         image={agentsHero}
         imageAlt="A recruiter reviewing candidate evidence at a desk in the evening"
         stats={[
-          { value: "6", label: "Agents you control" },
-          { value: "2", label: "System automations" },
-          { value: String(CHANNEL_AGENT_COUNT), label: "Talent signal streams with a dedicated agent" },
+          { value: String(ROSTER_COUNTS.agents), label: "Agents you control" },
+          { value: String(ROSTER_COUNTS.automations), label: "Always-on system automations" },
+          { value: String(CHANNEL_AGENT_COUNT), label: "Channels covered" },
         ]}
-        primary={{ to: "/intake", label: "Start a role" }}
-        secondary={{ to: "/platform", label: "See the platform" }}
+        primary={CTA_PRIMARY}
+        secondary={CTA_BOOK}
       >
         <ul className="grid gap-2 sm:grid-cols-3">
           {[
-            "Six agents you switch on or pause",
-            "Two always-on system automations",
-            `A dedicated agent on each of ${CHANNEL_AGENT_COUNT} talent signal streams`,
+            `${countWordCapitalised(ROSTER_COUNTS.agents)} agents you switch on or pause`,
+            `${countWordCapitalised(ROSTER_COUNTS.automations)} always-on system automations`,
+            `Coverage across ${CHANNEL_AGENT_COUNT} channels, chosen per role`,
           ].map((t) => (
             <li
               key={t}
@@ -303,7 +307,7 @@ function AgentsPage() {
         eyebrow="Always on"
         caption="Agents keep working between your meetings — inside limits you set."
         stats={[
-          { value: "24/7", label: "Sourcing and screening" },
+          { value: "Per organisation", label: "Agents switched on or off" },
           { value: "Per role", label: "Weights and intensity" },
           { value: "Logged", label: "Every agent action" },
         ]}
@@ -320,7 +324,7 @@ function AgentsPage() {
               What no agent can do without approval.
             </h2>
             <p className="mt-3 text-[color:var(--brand-navy)]/80">
-              These are enforced in the system, not stated as policy.
+              These limits are built into the system.
             </p>
           </div>
 
@@ -344,7 +348,7 @@ function AgentsPage() {
           <div className="mt-8 grid gap-3 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-5 sm:grid-cols-3">
             {[
               OVERSIGHT_LANGUAGE.approvalGate,
-              OVERSIGHT_LANGUAGE.escalation,
+              "Escalation path to a TaaSFlow recruiter inside the workspace",
               OVERSIGHT_LANGUAGE.governance,
             ].map((c) => (
               <p
@@ -414,10 +418,10 @@ function AgentsPage() {
 
       <CtaSection
         eyebrow="Ready to see it"
-        title="Open a role and switch the agents on."
+        title="Share a role and choose which agents run."
         description="You choose which agents run, what they may send, and what must be approved before a candidate reaches you."
-        primary={{ to: "/intake", label: "Open your first role" }}
-        secondary={{ to: "/platform", label: "See the platform" }}
+        primary={CTA_PRIMARY}
+        secondary={CTA_BOOK}
       />
     </SiteShell>
   );

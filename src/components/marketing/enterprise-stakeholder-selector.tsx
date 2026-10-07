@@ -32,13 +32,13 @@ const STAKEHOLDERS: Stakeholder[] = [
     priorities: [
       "Consistent scoring rubric across role families",
       "Requisition portfolio at a glance",
-      "Cycle-time signals live, not lagged",
-      "Named oversight owners per role family",
+      "Cycle-time signals in the workspace",
+      "Oversight owners per role family",
     ],
     view: "Requisition portfolio · rollups by business unit · stage distribution · decision audit",
     proof: [
       "Same intake → same rubric → same evidence bar for every requisition.",
-      "Agent capacity aligned to role families keeps quality consistent as volume shifts.",
+      "Agent capacity aligned to role families helps keep quality consistent as volume shifts.",
       "Every stage change is time-stamped and attributable.",
     ],
   },
@@ -52,34 +52,34 @@ const STAKEHOLDERS: Stakeholder[] = [
     priorities: [
       "Ranked shortlist against the requirements you approved",
       "Evidence quotes from each CV",
-      "Interview prompts pre-drafted from the rubric",
-      "Direct thread with your platform experts",
+      "Interview prompts drafted from the rubric",
+      "A message thread with your TaaSFlow recruiter",
     ],
     view: "Role pipeline · candidate detail · evidence per requirement · fit summary · interview prompts",
     proof: [
       "Every score is anchored to a CV quote — no black-box rankings.",
       "Kanban stages with validation prevent silent drop-offs.",
-      "Feedback in the workspace triggers another sourcing round automatically.",
+      "Feedback in the workspace can trigger another sourcing round.",
     ],
   },
   {
     key: "finance",
     role: "Finance",
-    title: "Flat subscription. Predictable spend. No contingency surprise.",
+    title: "Fixed package prices. No contingency surprise.",
     icon: Calculator,
     headline:
-      "Recruiting becomes a line item you can plan. No success fees, no surprise agency invoice.",
+      "Recruiting becomes a line item you can plan. No success fees and no percentage of salary.",
     priorities: [
-      "Predictable monthly cost, published packages",
-      "Cost per hire visible against actual placements",
-      "Board-ready exports of pipeline and outcomes",
-      "One vendor invoice — not a spreadsheet of agencies",
+      "Published package prices, one-time per package",
+      "Pipeline and outcomes visible in the workspace",
+      "Candidate records you can export at any time",
+      "One vendor instead of a spreadsheet of agencies",
     ],
-    view: "Account cost summary · placements per month · export for board and audit",
+    view: "Package and billing summary · pipeline and outcomes · record export",
     proof: [
       "Pricing is published — no bespoke deal math needed to plan the quarter.",
       "The workspace is the report, not a stale month-end export.",
-      "Custom-volume tiers are quoted transparently against actual usage.",
+      "Above 100 positions we scope the package with you before anything starts.",
     ],
   },
   {
@@ -90,23 +90,22 @@ const STAKEHOLDERS: Stakeholder[] = [
     headline:
       "One accountable vendor instead of an agency panel. Every decision recorded with its reason.",
     priorities: [
-      "Single MSA covers all searches",
+      "One agreement covering your searches, scoped with you",
       "Tenant isolation and role-based access",
       "Decision audit trail per candidate",
-      "Named recruiter contact — not a ticket queue",
+      "A recruiter reviews every shortlist",
     ],
     view: "Access controls · decision audit · export for reviews · scoped contract terms",
     proof: [
       "Every enterprise account is tenant-isolated — your candidates stay in your account.",
       "Every advance, hold, and pass is captured with a reason.",
-      "Certifications, integrations, and SLAs are scoped in the enterprise consultation.",
+      "Security documentation, integrations and service terms are scoped with you before you commit.",
     ],
   },
 ];
 
 export function EnterpriseStakeholderSelector() {
   const [active, setActive] = React.useState<StakeholderKey>("ta");
-  const current = STAKEHOLDERS.find((s) => s.key === active)!;
 
   return (
     <div>
@@ -127,7 +126,22 @@ export function EnterpriseStakeholderSelector() {
               aria-selected={selected}
               aria-controls={`stakeholder-panel-${s.key}`}
               id={`stakeholder-tab-${s.key}`}
+              tabIndex={selected ? 0 : -1}
               onClick={() => setActive(s.key)}
+              onKeyDown={(e) => {
+                const i = STAKEHOLDERS.findIndex((x) => x.key === s.key);
+                const next =
+                  e.key === "ArrowRight"
+                    ? STAKEHOLDERS[(i + 1) % STAKEHOLDERS.length]
+                    : e.key === "ArrowLeft"
+                      ? STAKEHOLDERS[(i - 1 + STAKEHOLDERS.length) % STAKEHOLDERS.length]
+                      : null;
+                if (next) {
+                  e.preventDefault();
+                  setActive(next.key);
+                  document.getElementById(`stakeholder-tab-${next.key}`)?.focus();
+                }
+              }}
               className={cn(
                 "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition",
                 selected
@@ -142,12 +156,15 @@ export function EnterpriseStakeholderSelector() {
         })}
       </div>
 
-      {/* Panel */}
+      {/* Panels: all rendered in the server HTML; inactive ones carry `hidden`. */}
+      {STAKEHOLDERS.map((current) => (
       <div
+        key={current.key}
         id={`stakeholder-panel-${current.key}`}
         role="tabpanel"
         aria-labelledby={`stakeholder-tab-${current.key}`}
-        className="mt-6 grid gap-6 rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-6 lg:grid-cols-[1.15fr_1fr] lg:p-8"
+        hidden={current.key !== active}
+        className="mt-6 grid gap-6 rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-6 lg:grid-cols-[1.15fr_1fr] lg:p-8 [&[hidden]]:hidden"
       >
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
@@ -206,6 +223,7 @@ export function EnterpriseStakeholderSelector() {
           </div>
         </div>
       </div>
+      ))}
     </div>
   );
 }

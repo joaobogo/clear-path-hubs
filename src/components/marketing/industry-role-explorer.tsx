@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import type { IndustryEntry, IndustryRoleFamily } from "@/content/industries-v2";
 import { getRoleEvidence } from "@/content/industry-evidence-bank";
+import { CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
+import { FIRST_SHORTLIST_TIMING_SHORT } from "@/config/offer-facts";
 
 /**
  * Interactive role explorer. Two axes of selection:
@@ -126,7 +128,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
             <blockquote className="mt-2 rounded-xl bg-[color:var(--brand-mist)]/60 p-4 text-sm italic text-[color:var(--brand-navy)]/85">
               {view.evidence}
               <footer className="mt-2 not-italic text-xs text-[color:var(--brand-navy)]/80">
-                Illustrative — quoted from candidate CVs in the workspace.
+                Illustrative example, not a quote from a real candidate.
               </footer>
             </blockquote>
           </div>
@@ -135,16 +137,16 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
         <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[color:var(--brand-navy)]/10 pt-5">
           <p className="text-sm text-[color:var(--brand-navy)]/80">{view.cta}</p>
           <a
-            href="/intake"
+            href={CTA_PRIMARY.to}
             className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
           >
-            Brief this role
+            {CTA_PRIMARY.label}
           </a>
           <a
-            href="/how-it-works"
+            href={CTA_HOW_IT_WORKS.to}
             className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
           >
-            See how the platform sources it
+            {CTA_HOW_IT_WORKS.label}
           </a>
         </div>
       </div>
@@ -387,14 +389,8 @@ function buildEvidence(role: string, sen: Seniority, fn: RoleFunction, entry: In
   return `For a ${role} in ${entry.name.toLowerCase()}, a CV scores on the work it names, its scope and who can confirm it — not on a keyword list.`;
 }
 
-function buildCta(role: string, sen: Seniority): string {
-  if (sen === "Executive" || sen === "Director") {
-    return `Hiring a ${role}? Book a scoped call — leadership hires get a partner-led shortlist.`;
-  }
-  if (sen === "Manager" || sen === "Lead") {
-    return `Hiring a ${role}? Brief the role — first shortlist within 10 business days.`;
-  }
-  return `Hiring a ${role}? Brief the role — first shortlist within 7 business days.`;
+function buildCta(role: string, _sen: Seniority): string {
+  return `Hiring a ${role}? ${FIRST_SHORTLIST_TIMING_SHORT}.`;
 }
 
 function dedupe(arr: string[]): string[] {

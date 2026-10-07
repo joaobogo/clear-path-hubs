@@ -67,16 +67,16 @@ export const Route = createFileRoute("/jobs/")({
     const roles: PublicPositionSummary[] = (loaderData as PublicPositionSummary[] | undefined) ?? [];
     return ({
     meta: [
-      { title: "Open roles — TaaSFlow job board" },
+      { title: "Open roles | TaaSFlow job board" },
       {
         name: "description",
         content:
           "Browse roles open through TaaSFlow. Every application gets a structured screening against what the role asks for — apply in minutes, no account needed.",
       },
-      { property: "og:title", content: "Open roles — TaaSFlow" },
+      { property: "og:title", content: "Open roles | TaaSFlow job board" },
       {
         property: "og:description",
-        content: "Roles currently open through TaaSFlow. Apply in minutes.",
+        content: "Roles currently open on the TaaSFlow job board. Apply in minutes.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://taasflow.com/jobs" },

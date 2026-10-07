@@ -6,7 +6,10 @@ import {
   PublicSection,
   CtaSection,
 } from "@/components/marketing/site-shell";
-import { marketingHead } from "@/lib/marketing/head";
+import { noindexMarketingHead } from "@/lib/marketing/noindex-head";
+import { CTA_PRIMARY, CTA_HOW_IT_WORKS, CTA_BOOK } from "@/config/cta";
+import { FIRST_SHORTLIST_TIMING_SHORT, TIMING_FINE_PRINT, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
+import { INTAKE_TOTAL_MINUTES } from "@/lib/express-intake-schema";
 import { CheckCircle2, XCircle, Sparkles, ShieldCheck, LineChart, Users } from "lucide-react";
 import {
   PRICE_PILOT_DISPLAY,
@@ -40,10 +43,10 @@ const search = z.object({
 export const Route = createFileRoute("/pitch")({
   validateSearch: search,
   head: () =>
-    marketingHead(undefined, "/pitch", {
-      title: "TaaSFlow — AI Hiring Intelligence you can audit",
+    noindexMarketingHead(undefined, "/pitch", {
+      title: "TaaSFlow overview | Recruiting with managed execution",
       description:
-        "Why placement-fee hiring fails, how the TaaSFlow platform replaces it, and what an AI Hiring Intelligence subscription costs.",
+        "Why placement-fee hiring frustrates buyers, how TaaSFlow works instead, and what a one-time package costs.",
     }),
   component: PitchPage,
 });
@@ -53,7 +56,7 @@ export const Route = createFileRoute("/pitch")({
 const PLACEMENT_FAILS = [
   {
     title: "You pay for the last mile",
-    body: "Placement fees compound with salary — a $120k hire runs $24–36k on top. You pay again for the next role, and the one after that.",
+    body: "Placement fees scale with the salary of the hire. You pay again for the next role, and the one after that.",
   },
   {
     title: "You get a resume, not a rubric",
@@ -72,23 +75,23 @@ const PLACEMENT_FAILS = [
 const ENGINE_STEPS = [
   {
     n: "01",
-    title: "Intake in 12 minutes",
-    body: "Guided brief captures role, must-haves, evidence rubric, and hiring context. No follow-up calls needed.",
+    title: `Intake in about ${INTAKE_TOTAL_MINUTES} minutes`,
+    body: "A guided brief captures the role, must-haves and hiring context. We confirm the scope with you before sourcing starts.",
   },
   {
     n: "02",
-    title: "Sourced and scored, live",
-    body: "Sourcing agents identify, the Scoring Engine scores every applicant against the rubric. Each score cites the CV quote it came from.",
+    title: "Sourced and scored",
+    body: "Agents source and score candidates against your criteria. Each score cites the CV passage it came from.",
   },
   {
     n: "03",
-    title: "Ranked shortlist in days",
-    body: "Top candidates delivered with evidence, interview guide, and fit narrative. Strong runners-up stay in your workspace, not ours.",
+    title: "Ranked shortlist",
+    body: `Top candidates arrive with the evidence behind each score. A recruiter reviews the shortlist before you see it. ${FIRST_SHORTLIST_TIMING_SHORT}.`,
   },
   {
     n: "04",
-    title: "Hire, or rediscover",
-    body: "Every candidate you saw stays searchable in the talent pool. Next role starts with 40+ warm profiles you already evaluated.",
+    title: "Hire, or revisit",
+    body: "Candidates you have already reviewed stay in your workspace, so the next role does not start from zero.",
   },
 ];
 
@@ -96,7 +99,7 @@ const CONTROL = [
   { label: "Same workspace, same evidence", body: "The screen your team sees is the screen the platform runs on." },
   { label: "Score the score", body: "Override any candidate rating. The system logs your reasoning next to ours." },
   { label: "Move the pipeline", body: "Drag candidates through stages. Reject with reason. Trigger interview outreach." },
-  { label: "Share on your terms", body: "Send a stakeholder link with a 30-day expiry. Revoke anytime." },
+  { label: "Share on your terms", body: "Send a stakeholder link that expires. Revoke it anytime." },
 ];
 
 const DASHBOARDS = [
@@ -119,7 +122,7 @@ const ECONOMICS: Array<{
     price: PRICE_PILOT_DISPLAY,
     unit: " flat, one position",
     fits: PILOT_ROLES_LABEL,
-    line: "Test the model on one critical hire. 5-day turnaround.",
+    line: `Test the model on one critical hire. ${FIRST_SHORTLIST_TIMING_SHORT}.`,
   },
   {
     tier: PACKAGE_10.capacityLabel,
@@ -181,27 +184,26 @@ function PitchPage() {
       <PublicSection className="pt-16">
         <PublicPage className="max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
-            Overview · 2026
+            Overview
           </p>
           <h1 className="mt-4 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-            The recruiting engine you can see through.
+            Recruiting you can see through.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            A subscription recruiting function delivered as product. Human
-            recruiters, evidence-first scoring, and a workspace your team owns.
+            A recruiting platform with managed execution. {WHO_RUNS_THE_SEARCH}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
-              to="/intake"
+              to={CTA_PRIMARY.to}
               className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-5 text-sm font-semibold text-white hover:opacity-90"
             >
-              Start hiring
+              {CTA_PRIMARY.label}
             </Link>
             <Link
               to="/how-it-works"
               className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              See the model
+              {CTA_HOW_IT_WORKS.label}
             </Link>
           </div>
         </PublicPage>
@@ -240,11 +242,10 @@ function PitchPage() {
               The engine
             </p>
             <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-              A live hiring engine, not a batch delivery.
+              Every step is visible.
             </h2>
             <p className="mt-4 text-[color:var(--brand-navy)]/80">
-              Every stage is visible. Every score cites its evidence. The engine
-              runs continuously — you don't wait weeks to see progress.
+              Every score cites its evidence, and you can see progress in your workspace.
             </p>
           </div>
           <ol className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -380,11 +381,10 @@ function PitchPage() {
               Economics
             </p>
             <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-              Priced like software. Delivered by people.
+              Fixed prices. Delivered with people in the loop.
             </h2>
             <p className="mt-4 text-[color:var(--brand-navy)]/80">
-            A flat one-time fee per package — no salary percentages, no placement
-            fees, ever. Move to a custom continuous plan when volume warrants it.
+            A flat one-time fee per package, with no salary percentages and no placement fees. Above 100 positions we scope it with you.
           </p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-4">
@@ -410,18 +410,18 @@ function PitchPage() {
             ))}
           </div>
           <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
-            Compare to placement: a single $120k hire at a 20% fee equals more than five Hiring Sprints.
+            {TIMING_FINE_PRINT}
           </p>
         </PublicPage>
       </PublicSection>
 
       {!focus ? (
         <CtaSection
-          eyebrow="Start with TaaSFlow"
-          title="See the workspace on your own role."
-          description="Submit a role in the guided intake — your workspace is ready as soon as you finish."
-          primary={{ to: "/intake", label: "Start hiring" }}
-          secondary={{ to: "/how-it-works", label: "See how it works" }}
+          eyebrow="Next step"
+          title="See the process on your own role."
+          description="Request the pilot for one role, or book a call to talk it through first."
+          primary={CTA_PRIMARY}
+          secondary={CTA_BOOK}
         />
       ) : null}
     </div>

@@ -1,6 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import {
+  ATS_NOTE,
+  COMPLIANCE_NOTE,
+  FIRST_SHORTLIST_TIMING_SHORT,
+  WHO_RUNS_THE_SEARCH,
+} from "@/config/offer-facts";
+import { INTAKE_STEPS, INTAKE_TOTAL_MINUTES } from "@/lib/express-intake-schema";
 import { PRICING_PACKAGES, isTierPricePublic, formatUsd } from "@/config/public-pricing";
 import {
   Users,
@@ -21,9 +29,9 @@ const PILOT_PRICE_LABEL =
 export const Route = createFileRoute("/solutions")({
   head: () =>
     marketingHead(undefined, "/solutions", {
-      title: "Solutions — AI Hiring Intelligence for every hiring need",
+      title: "Solutions for every hiring need | TaaSFlow",
       description:
-        "Pilot a single hire, scale volume hiring, run enterprise hiring or hire globally. One platform, one monthly fee, ranked candidates in days.",
+        "Pilot a single hire, scale volume hiring, run enterprise hiring or hire globally. Fixed package prices and ranked, evidence-backed shortlists.",
     }),
   component: SolutionsPage,
 });
@@ -32,37 +40,37 @@ const SOLUTIONS = [
   {
     icon: Rocket,
     title: "Pilot a single hire",
-    body: `Test TaaSFlow on one role${PILOT_PRICE_LABEL}. Ranked shortlist delivered fast. If it isn't the best hiring experience you've had, you don't renew.`,
-    cta: { to: "/pilot", label: "Start a pilot" },
+    body: `Test TaaSFlow on one role${PILOT_PRICE_LABEL}. A paid evaluation, not a free trial. ${FIRST_SHORTLIST_TIMING_SHORT}.`,
+    cta: { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label },
   },
   {
     icon: Users,
     title: "Scale hiring teams",
-    body: "Pick the package that covers your open roles and pay one monthly total. Hires within that capacity are included. Your workspace tracks every requisition in one place.",
+    body: "Pick the package that covers your open positions and pay one fixed total. Your workspace tracks every requisition in one place.",
     cta: { to: "/pricing", label: "See pricing" },
   },
   {
     icon: Building2,
     title: "Enterprise programs",
-    body: "Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — TaaSFlow runs alongside it and hands over at the point you decide. Direct ATS sync is planned, not built.",
+    body: `Multi-department search, structured intake, access controls, an audit trail and agent capacity aligned to your role families. ${ATS_NOTE}`,
     cta: { to: "/enterprise", label: "Enterprise details" },
   },
   {
     icon: Globe2,
     title: "Global talent, remote-ready",
-    body: "50+ countries covered. Timezone-aware shortlisting, work-authorisation screening, and remote-first evidence.",
+    body: "Time-zone-aware shortlisting, work-authorisation screening and remote-first evidence, scoped to your role.",
     cta: { to: "/global-talent", label: "Global talent" },
   },
   {
     icon: ClipboardList,
     title: "Structured intake",
-    body: "A 3-step intake, about 6 minutes, captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.",
+    body: `A ${INTAKE_STEPS.length}-step intake, about ${INTAKE_TOTAL_MINUTES} minutes, captures role, requirements and hiring context. Every requirement is scored with evidence.`,
     cta: { to: "/how-it-works", label: "How it works" },
   },
   {
     icon: ShieldCheck,
     title: "Compliance & privacy",
-    body: "Consent tracking, retention policies, and full audit trail. GDPR-aligned. Your data stays yours.",
+    body: `Consent tracking, retention policies and an audit trail. Your candidate records are yours to export. ${COMPLIANCE_NOTE}`,
     cta: { to: "/privacy", label: "Privacy" },
   },
 ] as const;
@@ -79,8 +87,8 @@ function SolutionsPage() {
             One workspace. Every hiring model.
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            From a single pilot hire to enterprise programs across 50+ countries —
-            TaaSFlow adapts to the shape of your team.
+            From a single pilot hire to enterprise programs, TaaSFlow adapts to the
+            shape of your team. {WHO_RUNS_THE_SEARCH}
           </p>
         </div>
       </section>
@@ -110,29 +118,29 @@ function SolutionsPage() {
             Not sure which fits?
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Book a 20-minute consultation — we'll map your open roles to the right
-            plan.
+            Book a 20-minute call and we will map your open roles to the right
+            package.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
-              to="/contact"
+              to={CTA_BOOK.to}
               className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
-              Book a consultation
+              {CTA_BOOK.label}
             </Link>
             <Link
-              to="/intake"
+              to={CTA_PRIMARY.to}
               className="rounded-md border border-input px-5 py-3 text-sm font-semibold hover:bg-accent"
             >
-              Start a pilot
+              {CTA_PRIMARY.label}
             </Link>
           </div>
         </div>
       </section>
           <PageConnections
-        commercial={{ to: "/intake", label: "Start hiring", desc: "Open your first role in minutes." }}
-        explainer={{ to: "/how-it-works", label: "The delivery model", desc: "Evidence-first ranking, weekly cadence." }}
-        resource={{ to: "/case-studies", label: "Operator case studies", desc: "Series A–C teams shipping hires." }}
+        commercial={{ to: CTA_PRIMARY.to, label: CTA_PRIMARY.label, desc: "Share one role and see the process." }}
+        explainer={{ to: "/how-it-works", label: "How it works", desc: "Four steps, evidence-first ranking." }}
+        resource={{ to: "/case-studies", label: "Example engagements", desc: "Example engagements and how we measure them." }}
         audience={{ to: "/industries", label: "By industry", desc: "Role blueprints for your vertical." }}
       />
     </SiteShell>

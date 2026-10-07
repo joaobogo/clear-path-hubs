@@ -2,7 +2,7 @@ import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Rss, ExternalLink, ArrowRight } from "lucide-react";
 
-import { marketingHead } from "@/lib/marketing/head";
+import { noindexMarketingHead } from "@/lib/marketing/noindex-head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { AgentRunsPreview } from "@/components/marketing/product-preview/agent-runs-preview";
 import { IntelligencePreview } from "@/components/marketing/product-preview/intelligence-preview";
@@ -22,10 +22,10 @@ import {
 
 export const Route = createFileRoute("/changelog")({
   head: () =>
-    marketingHead(undefined, "/changelog", {
-      title: "Changelog — what shipped in the TaaSFlow platform",
+    noindexMarketingHead(undefined, "/changelog", {
+      title: "Changelog | What shipped in TaaSFlow",
       description:
-        "Verified releases for the TaaSFlow AI Hiring Intelligence Platform: what changed, what it affects, which product area it touches and who has access.",
+        "Verified releases for the TaaSFlow platform: what changed, what it affects, which product area it touches and who has access.",
     }),
   component: ChangelogPage,
 });

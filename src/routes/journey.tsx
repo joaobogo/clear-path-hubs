@@ -6,14 +6,16 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/journey")({
   head: () =>
     marketingHead(undefined, "/journey", {
-      title: "Our journey — building the AI Hiring Intelligence Platform",
+      title: "Our journey | TaaSFlow recruiting platform",
       description:
-        "The story behind TaaSFlow — from the operator insight that agencies were the wrong model, to an AI Hiring Intelligence Platform with ranked, evidence-backed candidates.",
+        "The story behind TaaSFlow: why we moved away from the agency model to a recruiting platform with managed execution and evidence-backed shortlists.",
     }),
   component: JourneyPage,
 });
@@ -50,7 +52,7 @@ function RankedShortlistMock() {
     { rank: 4, name: "Candidate D", score: 79, cite: "Rebuilt CI pipeline, deploys 5× faster" },
   ];
   return (
-    <MockChrome title="Requisition · Ranked shortlist">
+    <MockChrome title="Example · Ranked shortlist">
       <div className="space-y-2">
         {rows.map((r) => (
           <div
@@ -80,7 +82,7 @@ function RankedShortlistMock() {
 
 function EvidenceMock() {
   return (
-    <MockChrome title="Candidate · Evidence panel">
+    <MockChrome title="Example · Evidence panel">
       <div className="space-y-3">
         {[
           { req: "Kubernetes at scale", cite: "'Owned production K8s across 3 regions, 40+ services'" },
@@ -106,7 +108,7 @@ function EvidenceMock() {
 
 function WorkspaceMock() {
   return (
-    <MockChrome title="Client workspace · Overview">
+    <MockChrome title="Example · Client workspace overview">
       <div className="grid grid-cols-3 gap-3">
         {[
           { l: "Active", v: "5" },
@@ -147,7 +149,7 @@ function WorkspaceMock() {
 
 function DecisionMock() {
   return (
-    <MockChrome title="Client actions · Decision">
+    <MockChrome title="Example · Client decision">
       <div className="flex flex-wrap gap-2">
         {["Advance", "Request interview", "Hold", "Pass — reason"].map((a) => (
           <span
@@ -185,13 +187,13 @@ const CHAPTERS = [
     n: "02",
     label: "Why agencies failed",
     title: "Incentives were pointed at the wrong outcome.",
-    body: "Contingent fees rewarded speed to placement, not quality of match. Recruiters had every reason to push a candidate over the line and no reason to explain why. Clients paid five figures per hire and still had to trust a summary paragraph.",
+    body: "Contingent fees rewarded speed to placement, not quality of match. Recruiters had every reason to push a candidate over the line and no reason to explain why. Clients paid per placement and still had to trust a summary paragraph.",
   },
   {
     n: "03",
     label: "What TaaSFlow changed",
     title: "A recruiting function, delivered as product.",
-    body: "Instead of contingent fees, a subscription. Instead of a private inbox, a per-requisition workspace. Instead of a summary paragraph, a rubric with citations. The model is boring on purpose — cadence and clarity beat heroics.",
+    body: "Instead of contingent fees, a fixed one-time price per package. Instead of a private inbox, a per-requisition workspace. Instead of a summary paragraph, a rubric with citations. The model is boring on purpose — cadence and clarity beat heroics.",
   },
 ];
 
@@ -252,7 +254,7 @@ function JourneyPage() {
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
-                Chapter 05 — Ranking + evidence
+                Chapter 04 — Ranking and evidence
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 Every shortlist arrives ranked and cited.
@@ -274,7 +276,7 @@ function JourneyPage() {
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div className="md:order-2">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
-                Chapter 04 — The live workspace
+                Chapter 05 — The workspace
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 One workspace per requisition.
@@ -326,7 +328,7 @@ function JourneyPage() {
                 Evidence tied to the CV — not a summary paragraph.
               </h2>
               <ul className="mt-6 space-y-3 text-white/80">
-                <li>· Subscription pricing instead of placement-fee incentives.</li>
+                <li>· Fixed package prices instead of placement-fee incentives.</li>
                 <li>· Rubrics and citations instead of curated summaries.</li>
                 <li>· One shared workspace instead of private inboxes.</li>
                 <li>· Full pipeline ownership — the candidates are yours.</li>
@@ -348,13 +350,12 @@ function JourneyPage() {
                 Chapter 07 — Economics
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                Priced like software, not like a placement.
+                Priced per package, not per placement.
               </h2>
               <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/80">
-                A flat subscription instead of contingent fees. Predictable
-                per-role economics your finance team can model, and no
-                incentive to push a hire that doesn't fit. When the search
-                is done, the pipeline stays with you — not the recruiter.
+                A flat one-time fee per package instead of contingent fees.
+                Predictable per-role economics your finance team can model,
+                and no incentive to push a hire that does not fit. {WHO_RUNS_THE_SEARCH}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
@@ -367,10 +368,10 @@ function JourneyPage() {
             </div>
             <ul className="space-y-3 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
               {[
-                "Flat monthly subscription — no placement fees, no percentage of salary",
-                "Cancel anytime — no long-term lock-in",
-                "The candidates and evidence you paid for stay in your workspace",
-                "Finance can forecast recruiting cost like any SaaS line item",
+                "A flat one-time fee per package, with no placement fees and no percentage of salary",
+                "Prices are listed on the pricing page before you ask for anything",
+                "You can export your candidate records at any time",
+                "Finance can forecast recruiting cost per package",
               ].map((point) => (
                 <li key={point} className="flex gap-3 text-sm text-[color:var(--brand-navy)]/80">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-ocean)]" />
@@ -394,9 +395,9 @@ function JourneyPage() {
             </h2>
             <p className="mt-4 text-[color:var(--brand-navy)]/80">
               Every hire has a rubric behind it. Every rejection has a reason.
-              Every pipeline is owned by the company that paid for it. The
-              recruiter is still human — the reasoning is finally visible.
-              We think that's the version of hiring companies actually want.
+              Every candidate record can be exported by the company that paid for it.
+              A recruiter is still in the loop, and the reasoning is finally
+              visible. That is the version of hiring we want to work in.
             </p>
           </div>
         </PublicPage>
@@ -416,10 +417,10 @@ function JourneyPage() {
             </blockquote>
             <figcaption className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
               <span className="font-semibold text-[color:var(--brand-navy)]">
-                João Luciano, Christian Brogger & João Bogo
+                João Luciano, Christian Brøgger and João Bogo
               </span>
               <span className="text-[color:var(--brand-navy)]/80">
-                Co-founders, TaaSFlow
+                <span aria-hidden>— </span>Co-founders, TaaSFlow
               </span>
               <Link
                 to="/about"
@@ -435,16 +436,16 @@ function JourneyPage() {
 
       {/* Start with TaaSFlow */}
       <CtaSection
-        eyebrow="Start with TaaSFlow"
+        eyebrow="Next step"
         title="Bring your next hire into the workspace."
-        description="Submit a role in the guided intake — your workspace is ready as soon as you finish."
-        primary={{ to: "/intake", label: "Start hiring" }}
-        secondary={{ to: "/how-it-works", label: "See how it works" }}
+        description="Request the pilot for one role, or book a call to talk it through first."
+        primary={CTA_PRIMARY}
+        secondary={CTA_BOOK}
       />
           <PageConnections
         commercial={{ to: "/how-it-works", label: "See the model in action", desc: "The product built from this story." }}
         explainer={{ to: "/about", label: "Meet the team", desc: "Founders and operators behind TaaSFlow." }}
-        resource={{ to: "/case-studies", label: "Where it lands", desc: "Named outcomes from the current model." }}
+        resource={{ to: "/case-studies", label: "Example engagements", desc: "Example engagements and how we measure them." }}
         audience={{ to: "/industries", label: "By industry", desc: "How the model adapts to your vertical." }}
       />
     </SiteShell>

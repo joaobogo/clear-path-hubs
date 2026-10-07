@@ -6,10 +6,8 @@ import {
   BarChart3,
   Users,
   MessagesSquare,
-  Check,
   Quote,
   ArrowRight,
-  Building2,
   Linkedin,
   Globe,
   Network,
@@ -33,6 +31,12 @@ import {
   Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CHANNEL_AGENT_COUNT, CHANNEL_FAMILIES } from "@/config/channel-agents";
+import {
+  FIRST_SHORTLIST_TIMING_SHORT,
+  JOB_BOARD_NOTE,
+  PROCESS_STEPS,
+} from "@/config/offer-facts";
 
 /* ─────────────────────────── shared chrome ─────────────────────────── */
 
@@ -40,10 +44,12 @@ function MockChrome({
   title,
   children,
   tint = "white",
+  badge = "Fictional example",
 }: {
   title: string;
   children: React.ReactNode;
   tint?: "white" | "cream";
+  badge?: string;
 }) {
   return (
     <div
@@ -63,7 +69,7 @@ function MockChrome({
         </span>
         <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-semibold text-success">
           <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden />
-          Fictional example
+          {badge}
         </span>
       </div>
       <div className="p-4 sm:p-5">{children}</div>
@@ -150,71 +156,80 @@ export function RoleBlueprintMock() {
 
 /* ─────────────────────── 2 · Sourcing ecosystem map ──────────────────── */
 
-export function SourcingEcosystemMap() {
-  const groups: Array<{
-    heading: string;
-    caption: string;
-    channels: Array<{ label: string; note: string; icon: React.ReactNode }>;
-  }> = [
+type SourcingGroup = {
+  heading: string;
+  caption: string;
+  channels: Array<{ label: string; note: string; icon: React.ReactNode }>;
+};
+
+/**
+ * Channels TaaSFlow draws on, grouped by how candidates surface. Group sizes
+ * must match CHANNEL_FAMILIES (src/config/channel-agents.ts); a unit test
+ * enforces it so the count on this page can never drift from the config.
+ * No volume, vendor or database-size figures are stated here.
+ */
+export const SOURCING_GROUPS: SourcingGroup[] = [
     {
-      heading: "Digital & professional networks",
+      heading: CHANNEL_FAMILIES[0].name,
       caption: "Where the passive market lives.",
       channels: [
-        { label: "LinkedIn deep sourcing", note: "Boolean + narrative screens across 900M profiles", icon: <Linkedin className="h-4 w-4" aria-hidden /> },
+        { label: "LinkedIn searches", note: "Role-specific searches and screens on professional networks", icon: <Linkedin className="h-4 w-4" aria-hidden /> },
         { label: "LinkedIn sponsored ads", note: "Targeted role-specific campaigns to passive talent", icon: <Megaphone className="h-4 w-4" aria-hidden /> },
         { label: "GitHub / Stack Overflow", note: "Signal-based sourcing for technical roles", icon: <Github className="h-4 w-4" aria-hidden /> },
         { label: "Niche communities", note: "Slack, Discord, sub-industry forums", icon: <Users className="h-4 w-4" aria-hidden /> },
       ],
     },
     {
-      heading: "Direct & proprietary",
+      heading: CHANNEL_FAMILIES[1].name,
       caption: "Recruiter-owned reach, not rented lists.",
       channels: [
-        { label: "Named-target outreach", note: "Precision headhunting by named account", icon: <UserPlus className="h-4 w-4" aria-hidden /> },
-        { label: "Talent network", note: "Curated pool from 20,000+ prior placements", icon: <Network className="h-4 w-4" aria-hidden /> },
+        { label: "Named-target outreach", note: "Precision outreach by named account", icon: <UserPlus className="h-4 w-4" aria-hidden /> },
+        { label: "TaaSFlow talent network", note: "Candidates who have applied to TaaSFlow roles", icon: <Network className="h-4 w-4" aria-hidden /> },
         { label: "Past finalists", note: "Strong runners-up from previous roles, brought back in", icon: <Archive className="h-4 w-4" aria-hidden /> },
-        { label: "Executive oversight bench", note: "20+ senior hiring experts across geographies", icon: <Briefcase className="h-4 w-4" aria-hidden /> },
+        { label: "Recruiter oversight", note: "A recruiter reviews what the agents find", icon: <Briefcase className="h-4 w-4" aria-hidden /> },
       ],
     },
     {
-      heading: "AI & intent intelligence",
+      heading: CHANNEL_FAMILIES[2].name,
       caption: "Where high-intent signals surface first.",
       channels: [
-        { label: "Web-scale intent scanning", note: "Public signals: posts, layoffs, moves, launches", icon: <Radar className="h-4 w-4" aria-hidden /> },
-        { label: "AI passive-market mining", note: "Semantic match across 2M+ candidate data points", icon: <Sparkles className="h-4 w-4" aria-hidden /> },
-        { label: "Compensation & market data", note: "Live benchmarks per region and function", icon: <BarChart3 className="h-4 w-4" aria-hidden /> },
+        { label: "Public-signal scanning", note: "Public signals: posts, layoffs, moves, launches", icon: <Radar className="h-4 w-4" aria-hidden /> },
+        { label: "Passive-market matching", note: "Semantic matching of profiles to your rubric", icon: <Sparkles className="h-4 w-4" aria-hidden /> },
+        { label: "Compensation and market data", note: "Benchmarks per region and function", icon: <BarChart3 className="h-4 w-4" aria-hidden /> },
       ],
     },
     {
-      heading: "Inbound & marketing",
-      caption: "A funnel that keeps compounding.",
+      heading: CHANNEL_FAMILIES[3].name,
+      caption: "People who come to you.",
       channels: [
-        { label: "Public job board", note: "Applicants scored on the same rubric", icon: <Globe className="h-4 w-4" aria-hidden /> },
-        { label: "Email marketing", note: "Segmented nurture to opted-in talent", icon: <Mail className="h-4 w-4" aria-hidden /> },
+        { label: "TaaSFlow job board", note: "Applicants scored on the same rubric", icon: <Globe className="h-4 w-4" aria-hidden /> },
+        { label: "Email marketing", note: "Segmented messages to opted-in talent", icon: <Mail className="h-4 w-4" aria-hidden /> },
         { label: "Employer branding campaigns", note: "Client-branded landing pages and creative", icon: <Send className="h-4 w-4" aria-hidden /> },
-        { label: "YouTube & podcast presence", note: "Founders and clients on relevant shows", icon: <Podcast className="h-4 w-4" aria-hidden /> },
+        { label: "YouTube and podcast presence", note: "Founders and clients on relevant shows", icon: <Podcast className="h-4 w-4" aria-hidden /> },
       ],
     },
     {
-      heading: "Partnerships & offline",
+      heading: CHANNEL_FAMILIES[4].name,
       caption: "Real-world reach most tech tools skip.",
       channels: [
         { label: "University partnerships", note: "Early-career pipelines with target schools", icon: <GraduationCap className="h-4 w-4" aria-hidden /> },
-        { label: "Staffing & agency partners", note: "Whitelabel bench across 50+ countries", icon: <Handshake className="h-4 w-4" aria-hidden /> },
-        { label: "Cold outreach team", note: "Phone, WhatsApp, email — human, calibrated", icon: <Phone className="h-4 w-4" aria-hidden /> },
-        { label: "Job boards & aggregators", note: "Indeed, Otta, Wellfound, regional boards", icon: <Signpost className="h-4 w-4" aria-hidden /> },
-        { label: "Referrals & network intros", note: "Curated warm intros with attribution", icon: <MessagesSquare className="h-4 w-4" aria-hidden /> },
+        { label: "Staffing and agency partners", note: "Partner benches, when a role warrants it", icon: <Handshake className="h-4 w-4" aria-hidden /> },
+        { label: "Cold outreach", note: "Phone, WhatsApp and email, reviewed by a person", icon: <Phone className="h-4 w-4" aria-hidden /> },
+        { label: "External job boards", note: "Outbound distribution is planned, not built", icon: <Signpost className="h-4 w-4" aria-hidden /> },
+        { label: "Referrals and network intros", note: "Warm intros with attribution", icon: <MessagesSquare className="h-4 w-4" aria-hidden /> },
         { label: "Events, meetups, conferences", note: "In-person sourcing where the domain gathers", icon: <MapPin className="h-4 w-4" aria-hidden /> },
-        { label: "Radio, billboards & OOH", note: "For high-volume, geo-anchored campaigns", icon: <Radio className="h-4 w-4" aria-hidden /> },
-        { label: "PR & industry press", note: "Signal to senior talent through trusted outlets", icon: <Mic className="h-4 w-4" aria-hidden /> },
+        { label: "Radio, billboards and out-of-home", note: "For high-volume, geo-anchored campaigns", icon: <Radio className="h-4 w-4" aria-hidden /> },
+        { label: "PR and industry press", note: "Signal to senior talent through trusted outlets", icon: <Mic className="h-4 w-4" aria-hidden /> },
       ],
     },
-  ];
+];
 
+export function SourcingEcosystemMap() {
+  const groups = SOURCING_GROUPS;
   const total = groups.reduce((n, g) => n + g.channels.length, 0);
 
   return (
-    <MockChrome title={`Sourcing · ${total}+ channels feeding one rubric`} tint="cream">
+    <MockChrome title={`Sourcing · ${total} channels feeding one rubric`} tint="cream" badge="Channel overview">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]">
           <Sparkles className="h-3 w-3" aria-hidden />
@@ -249,9 +264,9 @@ export function SourcingEcosystemMap() {
       </div>
 
       <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
-        Each of these channels has its own agent, and every candidate —
-        regardless of channel — is evaluated against the same approved rubric. No side-doors that skip evidence. No channel gets a
-        shortcut past the scoring bar.
+        Channels are chosen per role. Every candidate, whichever channel they
+        come from, is scored against the same approved rubric, and no channel
+        skips the evidence step. {JOB_BOARD_NOTE}
       </p>
     </MockChrome>
   );
@@ -313,12 +328,12 @@ export function EvidenceReviewPanel() {
     },
   ];
   return (
-    <MockChrome title="Admin review · Evidence per requirement">
+    <MockChrome title="Recruiter review · Evidence per requirement">
       <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
-              Candidate #B-2178
+              Candidate B-2178
             </p>
             <p className="text-[11px] text-[color:var(--brand-navy)]/80">
               Reviewed by recruiter before publication
@@ -495,13 +510,14 @@ export function RankingDemo() {
                     )}
                   >
                     <span className="flex items-center gap-2 text-xs font-semibold text-[color:var(--brand-navy)]">
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/10 text-[10px]">
+                      <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/10 px-1.5 text-[10px]">
                         #{i + 1}
                       </span>
-                      Candidate {row.ref}
+                      <span aria-hidden>·</span>
+                      <span>{row.ref}</span>
                     </span>
                     <span className="rounded-md bg-[color:var(--brand-navy)] px-2 py-0.5 text-[11px] font-semibold text-white">
-                      {score}
+                      <span aria-hidden>· </span>Score {score}
                     </span>
                   </button>
                 </li>
@@ -511,7 +527,7 @@ export function RankingDemo() {
 
           <div className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-3">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
-              Fit summary · {activeRow.ref} · {activeScore}
+              Fit summary · {activeRow.ref} · Score {activeScore}
             </p>
             <p className="mt-1.5 text-xs text-[color:var(--brand-navy)]/80">
               {activeRow.fit}
@@ -644,20 +660,22 @@ export function ResponsibilityMatrix() {
 /* ─────────────────────── 7 · Numbered step rail ──────────────────────── */
 
 export function StepRail() {
-  // Timing labels mirror the /pilot day plan: Days 1–2 intake & blueprint,
-  // Days 3–10 sourcing/evidence/ranking, Days 10–14 client review, then
-  // hire & close (varies with candidate notice periods).
-  const steps = [
-    { n: "01", icon: <ClipboardList className="h-4 w-4" aria-hidden />, label: "Intake", timing: "Days 1–2" },
-    { n: "02", icon: <FileText className="h-4 w-4" aria-hidden />, label: "Blueprint", timing: "Days 1–2" },
-    { n: "03", icon: <Search className="h-4 w-4" aria-hidden />, label: "Sourcing", timing: "Days 3–10" },
-    { n: "04", icon: <Check className="h-4 w-4" aria-hidden />, label: "Evidence review", timing: "Days 3–10" },
-    { n: "05", icon: <BarChart3 className="h-4 w-4" aria-hidden />, label: "Ranked delivery", timing: "Days 3–10" },
-    { n: "06", icon: <Users className="h-4 w-4" aria-hidden />, label: "Client review", timing: "Days 10–14" },
-    { n: "07", icon: <Building2 className="h-4 w-4" aria-hidden />, label: "Hire & close", timing: "Varies" },
+  // One process, four steps: the same PROCESS_STEPS the homepage, pilot and
+  // FAQ use. Timing is stated once, on the shortlist step.
+  const icons = [
+    <ClipboardList key="a" className="h-4 w-4" aria-hidden />,
+    <FileText key="b" className="h-4 w-4" aria-hidden />,
+    <Search key="c" className="h-4 w-4" aria-hidden />,
+    <Users key="d" className="h-4 w-4" aria-hidden />,
   ];
+  const steps = PROCESS_STEPS.map((step, i) => ({
+    n: `0${i + 1}`,
+    icon: icons[i],
+    label: step.title,
+    timing: i === PROCESS_STEPS.length - 1 ? FIRST_SHORTLIST_TIMING_SHORT : null,
+  }));
   return (
-    <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+    <ol className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
       {steps.map((s, i) => (
         <li
           key={s.n}
@@ -669,13 +687,15 @@ export function StepRail() {
           <span className="flex min-w-0 flex-col gap-0.5">
             <span className="flex min-w-0 items-center gap-1.5">
               <span className="text-[color:var(--brand-navy)]/80">{s.icon}</span>
-              <span className="truncate text-xs font-semibold text-[color:var(--brand-navy)]">
+              <span className="text-xs font-semibold text-[color:var(--brand-navy)]">
                 {s.label}
               </span>
             </span>
-            <span className="text-[10px] font-medium uppercase tracking-wide text-[color:var(--brand-navy)]/70">
-              {s.timing}
-            </span>
+            {s.timing ? (
+              <span className="text-[10px] font-medium text-[color:var(--brand-navy)]/70">
+                {s.timing}
+              </span>
+            ) : null}
           </span>
           {i < steps.length - 1 ? (
             <ArrowRight

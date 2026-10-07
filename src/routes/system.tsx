@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_BOOK } from "@/config/cta";
+import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH, CALL_NAME } from "@/config/offer-facts";
 import { IntelligencePreview } from "@/components/marketing/product-preview/intelligence-preview";
 import {
   SiteShell,
@@ -30,9 +32,9 @@ import {
 export const Route = createFileRoute("/system")({
   head: () =>
     marketingHead(undefined, "/system", {
-      title: "The TaaSFlow System — agents, evidence, scoring, workspace",
+      title: "How the TaaSFlow system works | TaaSFlow",
       description:
-        "TaaSFlow is an AI Hiring Intelligence Platform: multi-channel discovery, evidence extraction, versioned scoring rubrics and a live Decision Workspace — with expert approval gates, never unattended AI.",
+        "TaaSFlow is a recruiting platform with managed execution: agents source and score, a recruiter reviews every shortlist, and you make every hiring decision.",
     }),
   component: SystemPage,
 });
@@ -44,23 +46,23 @@ const PILLARS = [
     eyebrow: "Multi-channel sourcing",
     title: "We don't wait for applicants.",
     body:
-      "The system reaches candidates across job boards, professional networks, communities, referrals, and our own talent memory in parallel. Every touch is logged, attributed, and measurable — reply rate, shortlist rate, hire rate per channel.",
+      "The system reaches candidates through professional networks, communities, referrals, our own talent network and the TaaSFlow job board, chosen per role. Every touch is logged and attributed to its channel. Outbound distribution to external job boards is planned, not built.",
     bullets: [
       "Inbound + outbound in one funnel",
-      "Channel attribution on every hire",
-      "Past finalists resurfaced automatically",
+      "Channel attribution on every candidate",
+      "Past finalists can be brought back in",
     ],
   },
   {
     id: "research",
     icon: Search,
-    eyebrow: "Web and database research",
-    title: "Context beyond the CV.",
+    eyebrow: "Research and verification",
+    title: "Claims are checked, not assumed.",
     body:
-      "For each candidate the system pulls signal from public profiles, prior companies, project trails, and our internal history with them. Researchers verify the important claims before anything reaches a client.",
+      "Scoring uses evidence from the material a candidate submits, such as their CV and application answers. A recruiter verifies the important claims before anything reaches you. No external data-enrichment source is connected today.",
     bullets: [
-      "Public web enrichment (structured, sourced)",
-      "Prior interactions and outcomes surfaced",
+      "Evidence taken from submitted material",
+      "Prior interactions and outcomes shown to your recruiter",
       "Every claim ties back to a source snippet",
     ],
   },
@@ -83,7 +85,7 @@ const PILLARS = [
     eyebrow: "Workflow automation",
     title: "The boring, repeatable work runs itself.",
     body:
-      "Parsing, deduping, screening questions, status changes, notifications, handoffs, reminders, publish gates — automated with audit trails. Operators approve, override, and unblock; the system does the mechanical work in between.",
+      "Parsing, deduping, screening questions, status changes, notifications, handoffs, reminders, publish gates — automated with audit trails. People approve, override and unblock; the system does the mechanical work in between.",
     bullets: [
       "Publish gates and approvals",
       "Status transitions with audit rows",
@@ -100,33 +102,33 @@ const PILLARS = [
     bullets: [
       "CV excerpt viewer with requirement mapping",
       "Timeline of parsing, scoring, and decisions",
-      "Downloadable evidence record for staff",
+      "Evidence record behind every score",
     ],
   },
   {
     id: "workspace",
     icon: MonitorCog,
     eyebrow: "Live workspace",
-    title: "You watch the pipeline move in real time.",
+    title: "You see the pipeline move.",
     body:
-      "Clients see the same board the platform runs on — no weekly PDF, no BCC threads. Kanban, decisions, offers, hire tracking, and pipeline activity all read from one system of record.",
+      "You see the same board we work in, with no weekly PDF and no BCC threads. Kanban, decisions, offers, hire tracking, and pipeline activity all read from one system of record.",
     bullets: [
       "Kanban + decision cockpit + offers board",
-      "Realtime refresh across every surface",
+      "Updates appear as work happens",
       "One system of record for the whole hire",
     ],
   },
   {
     id: "operators",
     icon: UserCheck,
-    eyebrow: "Expert operators in the loop",
+    eyebrow: "People in the loop",
     title: "Humans decide. The system removes drag.",
     body:
-      "Recruiters, sourcers, and researchers run the accounts. The system automates parsing, scoring math, evidence linking, and audit logging so operators spend their time on judgment — outreach quality, calibration, client conversations, hiring decisions.",
+      "A recruiter reviews every shortlist before you see it. The system automates parsing, scoring math, evidence linking and audit logging so people spend their time on judgment: outreach quality, calibration and your hiring decisions.",
     bullets: [
-      "Expert oversight owns calibration and escalation",
-      "Researchers verify claims before shortlist",
-      "Client success owns the relationship",
+      "A recruiter owns calibration and escalation",
+      "Claims are verified before the shortlist",
+      "You make every hiring decision",
     ],
   },
 ];
@@ -136,19 +138,19 @@ const HONESTY_LINES = [
     icon: Sparkles,
     title: "What the system does well",
     body:
-      "Parses, dedupes, structures evidence, scores against a shared rubric, runs the workflow, keeps the audit trail, and surfaces context — at a scale humans can't match.",
+      "Parses, dedupes, structures evidence, scores against a shared rubric, runs the workflow, keeps the audit trail and surfaces context.",
   },
   {
     icon: UserCheck,
     title: "What humans still own",
     body:
-      "Outreach voice, calibration on borderline candidates, client conversations, and the actual hire decision. We do not ship candidates unattended.",
+      "Outreach voice, calibration on borderline candidates and the hiring decision. A recruiter reviews every shortlist before you see it.",
   },
   {
     icon: ShieldCheck,
     title: "What we don't claim",
     body:
-      "No fully autonomous AI recruiter. No black-box magic. No promises the system can't back with evidence and an audit row.",
+      "No fully autonomous AI recruiter. No black-box magic. No promises the system cannot back with evidence and an audit row.",
   },
 ];
 
@@ -161,12 +163,11 @@ function SystemPage() {
             The TaaSFlow System
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
-            A proprietary recruiting system, run by expert operators.
+            Software and people, both visible.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            TaaSFlow is software plus people. The system sources, researches,
-            scores, and automates the mechanical work of hiring. Recruiters,
-            sourcers, and researchers run the loop. Both parts are visible.
+            {OFFER_CATEGORY}. {WHO_RUNS_THE_SEARCH} Both parts, the software and the people,
+            are visible.
           </p>
           <nav className="mt-8 flex flex-wrap gap-2 text-sm">
             {PILLARS.map((p) => (
@@ -257,8 +258,8 @@ function SystemPage() {
             </h2>
             <p className="mt-3 text-[color:var(--brand-navy)]/80">
               The workspace never draws a chart it does not have the data for. Below
-              is the same component, showing a live number, a partial sample and an
-              honest "not enough data" state.
+              is an example of the same component, showing a number, a partial sample and an
+              honest "not enough data" state. The figures are illustrative.
             </p>
           </div>
 
@@ -270,9 +271,9 @@ function SystemPage() {
 
       <CtaSection
         eyebrow="See the system on your role"
-        title="30-minute walkthrough on a live workspace."
-        description="We open the pipeline, the scoring rubric, the evidence record, and the audit trail — with a real role, not a demo."
-        primary={{ to: "/intake", label: "Start a role" }}
+        title={`A ${CALL_NAME} about your role.`}
+        description="We walk through the process, the scoring rubric, the evidence record and the audit trail, using your role as the example."
+        primary={CTA_BOOK}
         secondary={{ to: "/trust", label: "Read the trust pack" }}
       />
     </SiteShell>

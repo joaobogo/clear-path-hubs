@@ -6,6 +6,16 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_BOOK, CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
+import {
+  FIRST_SHORTLIST_TIMING,
+  PROCESS_STEPS,
+  PROCESS_STEP_COUNT,
+  SEATS_NOTE,
+  TIMING_FINE_PRINT,
+  WHO_RUNS_THE_SEARCH,
+} from "@/config/offer-facts";
+import { INTAKE_STEPS, INTAKE_TOTAL_MINUTES } from "@/lib/express-intake-schema";
 import { OnboardingPreview } from "@/components/marketing/product-preview/onboarding-preview";
 
 export const Route = createFileRoute("/employer-onboarding")({
@@ -13,7 +23,7 @@ export const Route = createFileRoute("/employer-onboarding")({
     marketingHead(undefined, "/employer-onboarding", {
       title: "Employer onboarding — what to expect | TaaSFlow",
       description:
-        "A clear walkthrough of what happens after you start with TaaSFlow: intake, workspace access, first ranked shortlist and ongoing cadence.",
+        "What happens after you share a role with TaaSFlow: the intake, plan approval, sourcing and screening, and your first ranked shortlist.",
     }),
   component: EmployerOnboardingPage,
 });
@@ -21,7 +31,7 @@ export const Route = createFileRoute("/employer-onboarding")({
 const EXPECT = [
   {
     title: "A guided intake, not a form graveyard",
-    body: "A structured 5-step intake captures the role, requirements, hiring context and screening questions — draft saving is on throughout.",
+    body: `A structured ${INTAKE_STEPS.length}-step intake, about ${INTAKE_TOTAL_MINUTES} minutes, captures the role, requirements and hiring context. Draft saving is on throughout.`,
   },
   {
     title: "A workspace per requisition",
@@ -29,48 +39,24 @@ const EXPECT = [
   },
   {
     title: "A predictable cadence",
-    body: "You know when the first shortlist lands, when reviews happen and where every candidate is in the process.",
+    body: `${FIRST_SHORTLIST_TIMING} You can see where every candidate is in the process.`,
   },
 ];
 
-const STEPS = [
-  {
-    n: "01",
-    label: "Submit the role",
-    title: "Guided intake",
-    body: "Complete the 5-step intake at /intake. Draft saving means you can pause and resume, and every field is tied to how we later score candidates.",
-  },
-  {
-    n: "02",
-    label: "Rubric review",
-    title: "Requirements confirmed",
-    body: "We turn the intake into a role-specific scoring rubric and share it back for confirmation. Nothing goes into scoring until you sign it off.",
-  },
-  {
-    n: "03",
-    label: "Workspace ready",
-    title: "Access provisioned",
-    body: "Your workspace opens with the requisition, the rubric, the sourcing plan and messaging enabled. Invite as many teammates as you need.",
-  },
-  {
-    n: "04",
-    label: "Sourcing live",
-    title: "Candidates flow in",
-    body: "Sourcing runs across our channels. Each applicant is parsed, evidence is extracted, and the rubric is applied before anyone reaches your shortlist.",
-  },
-  {
-    n: "05",
-    label: "First shortlist",
-    title: "Ranked delivery",
-    body: "You receive the first ranked, human-reviewed shortlist in the workspace — evidence attached to every score. Advance, hold or pass with a reason.",
-  },
-  {
-    n: "06",
-    label: "Ongoing cadence",
-    title: "Weekly review loop",
-    body: "We hold a weekly review to recalibrate the rubric, discuss trade-offs and keep the pipeline moving. Every action is captured in the audit trail.",
-  },
+// The same four steps used everywhere on the site (PROCESS_STEPS). The detail
+// line adds what onboarding means at each step.
+const STEP_DETAIL: readonly string[] = [
+  `Complete the ${INTAKE_STEPS.length}-step intake, about ${INTAKE_TOTAL_MINUTES} minutes. Draft saving means you can pause and resume, and every field is tied to how candidates are scored later.`,
+  "We turn the intake into a role-specific scoring rubric and share it back for confirmation. Nothing goes into scoring until you approve it. Your workspace opens with the role, the rubric and messaging enabled. " + SEATS_NOTE,
+  "Agents source candidates, each application is parsed and evidence is extracted, and the rubric is applied. A recruiter reviews the results before anyone reaches your shortlist.",
+  `You receive the first ranked shortlist in the workspace, with evidence attached to every score. ${FIRST_SHORTLIST_TIMING} Advance, hold or pass with a reason.`,
 ];
+
+const STEPS = PROCESS_STEPS.map((step, i) => ({
+  n: `0${i + 1}`,
+  title: step.title,
+  body: STEP_DETAIL[i] ?? step.body,
+}));
 
 const PREPARE = [
   {
@@ -87,7 +73,7 @@ const PREPARE = [
   },
   {
     title: "Interview loop outline",
-    body: "The stages, who owns each, and roughly how long. We map the workflow to those stages from day one.",
+    body: "The stages, who owns each, and roughly how long. We map the workflow to those stages.",
   },
   {
     title: "Screening questions",
@@ -101,11 +87,11 @@ const PREPARE = [
 
 const WE_DO = [
   "Build the role-specific scoring rubric from your intake",
-  "Run multi-channel sourcing and inbound triage",
+  "Run sourcing and inbound triage",
   "Parse every CV and extract structured evidence",
-  "Score candidates against the rubric and review manually",
+  "Score candidates against the rubric, with a recruiter reviewing the results",
   "Publish a ranked shortlist with citations attached",
-  "Facilitate weekly reviews and rubric recalibration",
+  "Recalibrate the rubric when you give feedback",
 ];
 
 const CLIENT_DO = [
@@ -113,7 +99,7 @@ const CLIENT_DO = [
   "Review ranked shortlists in the workspace",
   "Advance, hold or pass with a reason on each candidate",
   "Own scheduling and running the interview loop",
-  "Give feedback in the weekly review",
+  "Give feedback on each shortlist",
   "Make the final hiring decision",
 ];
 
@@ -132,20 +118,20 @@ function EmployerOnboardingPage() {
           <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             No mystery. From intake to first ranked shortlist, TaaSFlow gives
             you a predictable path and a workspace you and your team share
-            with your platform experts from day one.
+            with your TaaSFlow recruiter. {WHO_RUNS_THE_SEARCH}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              to="/intake"
+              to={CTA_PRIMARY.to}
               className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy)]/90"
             >
-              Start hiring
+              {CTA_PRIMARY.label}
             </Link>
             <Link
-              to="/how-it-works"
+              to={CTA_HOW_IT_WORKS.to}
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              See how it works
+              {CTA_HOW_IT_WORKS.label}
             </Link>
           </div>
 
@@ -186,8 +172,8 @@ function EmployerOnboardingPage() {
             Step-by-step onboarding journey
           </h2>
           <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Six stages from submission to steady state. Every stage has a
-            clear owner and a clear artefact.
+            {PROCESS_STEP_COUNT} steps from your first message to your first shortlist.
+            {" "}{TIMING_FINE_PRINT}
           </p>
           <ol className="mt-10 grid gap-5 md:grid-cols-2">
             {STEPS.map((s) => (
@@ -200,10 +186,7 @@ function EmployerOnboardingPage() {
                     {s.n}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-                      {s.label}
-                    </p>
-                    <h3 className="mt-1 text-lg font-semibold text-[color:var(--brand-navy)]">
+                    <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
                       {s.title}
                     </h3>
                     <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
@@ -225,7 +208,7 @@ function EmployerOnboardingPage() {
           </h2>
           <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
             None of this is mandatory upfront — the intake will guide you.
-            Having it ready just makes the first shortlist land sooner.
+            Having it ready just makes the first pass quicker.
           </p>
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {PREPARE.map((p) => (
@@ -254,7 +237,7 @@ function EmployerOnboardingPage() {
                 What TaaSFlow does
               </p>
               <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold">
-                We run the recruiting engine
+                We run the search
               </h3>
               <ul className="mt-6 space-y-3 text-sm text-white/85">
                 {WE_DO.map((t) => (
@@ -298,9 +281,8 @@ function EmployerOnboardingPage() {
               </h2>
               <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 As soon as the requisition is created, your account is
-                provisioned and you can invite reviewers, interviewers and
-                observers. Access is scoped to your organisation with
-                row-level tenant isolation; nothing leaks between accounts.
+                provisioned and you can invite your hiring team. {SEATS_NOTE} Access is scoped to your organisation, and
+                accounts are isolated from each other.
               </p>
               <ul className="mt-6 space-y-2 text-sm text-[color:var(--brand-navy)]/80">
                 <li>· One workspace per requisition</li>
@@ -317,15 +299,14 @@ function EmployerOnboardingPage() {
                 Your first ranked shortlist
               </h2>
               <p className="mt-4 text-[color:var(--brand-navy)]/80">
-                The first shortlist is human-reviewed before publication —
-                every candidate is ranked, every score has evidence citations
-                pulled directly from the CV, and every recruiter narrative is
-                written in plain language.
+                A recruiter reviews the first shortlist before you see it.
+                Every candidate is ranked, and every score has evidence
+                citations from the CV.
               </p>
               <ul className="mt-6 space-y-2 text-sm text-[color:var(--brand-navy)]/80">
                 <li>· Ranked list against the confirmed rubric</li>
                 <li>· Evidence panel per candidate</li>
-                <li>· Recruiter fit narrative</li>
+                <li>· Fit summary reviewed by a recruiter</li>
                 <li>· One-click advance, hold or pass with reason</li>
               </ul>
             </div>
@@ -336,10 +317,10 @@ function EmployerOnboardingPage() {
       {/* Final CTA */}
       <CtaSection
         eyebrow="Ready to onboard"
-        title="Bring your first role into the workspace."
-        description="Submit through the guided intake — draft saving is on, and your workspace opens as soon as you finish."
-        primary={{ to: "/intake", label: "Start hiring" }}
-        secondary={{ to: "/how-it-works", label: "See how it works" }}
+        title="Share your first role."
+        description="Request the pilot for one role, or book a call to talk it through first."
+        primary={CTA_PRIMARY}
+        secondary={CTA_BOOK}
       />
     </SiteShell>
   );

@@ -2,17 +2,22 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
-import { getPage } from "@/lib/marketing/content";
-import { marketingHead } from "@/lib/marketing/head";
-
-const entry = getPage("knowledge-base");
+import { noindexMarketingHead } from "@/lib/marketing/noindex-head";
+import { INTAKE_STEPS, INTAKE_TOTAL_MINUTES } from "@/lib/express-intake-schema";
+import { CTA_MESSAGE } from "@/config/cta";
+import {
+  FIRST_SHORTLIST_TIMING_SHORT,
+  PILOT_SUMMARY,
+  PROCESS_STEP_COUNT,
+  RESPONSE_TIME_SENTENCE,
+} from "@/config/offer-facts";
 
 export const Route = createFileRoute("/knowledge-base")({
   head: () =>
-    marketingHead(entry, "/knowledge-base", {
-      title: "Knowledge base — TaaSFlow",
+    noindexMarketingHead(undefined, "/knowledge-base", {
+      title: "Knowledge base | TaaSFlow",
       description:
-        "How-to guides and reference material for the TaaSFlow AI Hiring Intelligence Platform — for clients and candidates.",
+        "How-to guides and reference material for TaaSFlow clients and candidates.",
     }),
   component: KnowledgeBasePage,
 });
@@ -58,7 +63,7 @@ const CATEGORIES: Category[] = [
   {
     slug: "pricing-billing",
     name: "Pricing & billing",
-    description: "Subscription mechanics, pilots, and invoicing.",
+    description: "Package pricing, the pilot, and invoicing.",
   },
   {
     slug: "security-compliance",
@@ -74,7 +79,7 @@ const ARTICLES: Article[] = [
     category: "getting-started",
     title: "What is Talent-as-a-Service?",
     summary:
-      "A subscription model that combines agency-quality sourcing with in-house pipeline visibility, priced per role per month.",
+      "Recruiting delivered as a service: agents source and score, a recruiter reviews, you decide, at fixed package prices.",
     readMinutes: 3,
     visibility: "public",
   },
@@ -83,7 +88,7 @@ const ARTICLES: Article[] = [
     category: "getting-started",
     title: "How the process works",
     summary:
-      "From intake blueprint to ranked shortlist — the five stages every engagement runs through.",
+      `From your brief to a ranked shortlist: the ${PROCESS_STEP_COUNT} steps every engagement runs through.`,
     readMinutes: 5,
     visibility: "public",
   },
@@ -92,7 +97,7 @@ const ARTICLES: Article[] = [
     category: "getting-started",
     title: "Getting started as an employer",
     summary:
-      "Account setup, first intake, and what to expect during your first two weeks.",
+      "Account setup, your first intake, and what to expect after you share a role.",
     readMinutes: 4,
     visibility: "public",
   },
@@ -112,7 +117,7 @@ const ARTICLES: Article[] = [
     category: "for-employers",
     title: "How to complete the intake blueprint",
     summary:
-      "The 5-step wizard that translates a role into sourceable requirements and screening questions.",
+      `The ${INTAKE_STEPS.length}-step intake, about ${INTAKE_TOTAL_MINUTES} minutes, that turns a role into sourceable requirements.`,
     readMinutes: 5,
     visibility: "public",
   },
@@ -199,16 +204,16 @@ const ARTICLES: Article[] = [
     category: "pricing-billing",
     title: "How the paid pilot works",
     summary:
-      "One live role, one ranked shortlist in days, no placement fee if you hire.",
+      `${PILOT_SUMMARY} ${FIRST_SHORTLIST_TIMING_SHORT}. No placement fee.`,
     readMinutes: 3,
     visibility: "public",
   },
   {
     slug: "subscription-mechanics",
     category: "pricing-billing",
-    title: "How subscription pricing works",
+    title: "How package pricing works",
     summary:
-      "Per-role monthly pricing, add-ons, pausing engagements, and how billing differs from agency retainers.",
+      "Fixed one-time package prices by number of positions, and how that differs from agency fees.",
     readMinutes: 4,
     visibility: "public",
   },
@@ -410,14 +415,14 @@ function KnowledgeBasePage() {
         <aside className="mt-20 rounded-2xl border border-border/60 bg-muted/20 p-8">
           <h2 className="text-lg font-semibold">Can't find what you need?</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Reach out and we'll answer directly — usually within one business day.
+            Send us a message and we will answer directly. {RESPONSE_TIME_SENTENCE}
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link
               to="/contact"
               className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
-              Contact us
+              {CTA_MESSAGE.label}
             </Link>
             <Link
               to="/faq"

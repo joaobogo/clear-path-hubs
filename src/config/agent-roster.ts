@@ -12,6 +12,7 @@
  */
 
 import { AGENT_REGISTRY, type AgentKey } from "@/lib/agents/registry";
+import { ACCEPTED_UPLOADS } from "@/config/offer-facts";
 
 /** Statuses a run can be in. Used only for representative activity. */
 export const AGENT_STATUSES = [
@@ -44,6 +45,13 @@ export type RosterEntry = {
 
 const def = (key: AgentKey) => AGENT_REGISTRY.find((a) => a.key === key)!;
 
+/**
+ * The registry is read-only here and still says "PDF only" for CV uploads.
+ * Public copy states the accepted formats from one place instead.
+ */
+const publicFormats = (lines: readonly string[]): readonly string[] =>
+  lines.map((l) => l.replace(/PDF only/g, ACCEPTED_UPLOADS));
+
 export const ROSTER: readonly RosterEntry[] = [
   {
     id: "intake",
@@ -54,7 +62,7 @@ export const ROSTER: readonly RosterEntry[] = [
       "Turns a submitted role brief into a validated requisition, and moves each new application through parse, hydrate and enrich steps.",
     inputs: [
       "Role brief, must-haves and constraints",
-      "Job description and CV uploads (PDF only)",
+      `Job description and CV uploads (${ACCEPTED_UPLOADS})`,
     ],
     outputs: [
       "A validated requisition record",
@@ -108,7 +116,7 @@ export const ROSTER: readonly RosterEntry[] = [
     kind: "agent",
     registryKeys: ["sourcing", "market_research"],
     purpose: def("sourcing").job,
-    inputs: def("sourcing").inputs,
+    inputs: publicFormats(def("sourcing").inputs),
     outputs: def("sourcing").outputs,
     operatingState:
       "Switchable per organisation. Off by default; when off, longlists are built by hand.",
@@ -134,7 +142,7 @@ export const ROSTER: readonly RosterEntry[] = [
     registryKeys: ["screening"],
     purpose:
       "Reads each CV and records evidence for or against each stated requirement, with the source passage attached.",
-    inputs: def("screening").inputs,
+    inputs: publicFormats(def("screening").inputs),
     outputs: [
       "Evidence items with the source passage they came from",
       "Requirements flagged as unsupported or contradicted",
@@ -150,7 +158,7 @@ export const ROSTER: readonly RosterEntry[] = [
     events: ["Who verified or rejected each item, and when"],
     representative: {
       status: "Needs attention",
-      activity: "2 requirements on candidate A-1042 have no supporting evidence.",
+      activity: "2 requirements on candidate D-3317 have no supporting evidence.",
     },
   },
   {
@@ -187,7 +195,7 @@ export const ROSTER: readonly RosterEntry[] = [
     kind: "agent",
     registryKeys: ["pipeline_watch"],
     purpose: def("pipeline_watch").job,
-    inputs: def("pipeline_watch").inputs,
+    inputs: publicFormats(def("pipeline_watch").inputs),
     outputs: def("pipeline_watch").outputs,
     operatingState:
       "Switchable per organisation. When off, stalled roles are only spotted manually.",
@@ -271,3 +279,28 @@ export const HANDOFFS: readonly { from: string; payload: string; to: string }[] 
 export const APPROVAL_LIMITS: readonly string[] = Array.from(
   new Set(AGENT_REGISTRY.flatMap((a) => a.neverWithoutHuman)),
 );
+
+/** Public counts, derived from the roster above so copy can never drift from it. */
+export const ROSTER_COUNTS = {
+  total: ROSTER.length,
+  /** Agents an organisation can switch on, pause or switch off. */
+  agents: ROSTER.filter((r) => r.kind === "agent").length,
+  /** Always-on server pipelines. */
+  automations: ROSTER.filter((r) => r.kind === "automation").length,
+} as const;
+
+const NUMBER_WORDS = [
+  "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+  "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen",
+  "nineteen", "twenty", "twenty-one", "twenty-two", "twenty-three", "twenty-four", "twenty-five",
+] as const;
+
+/** "eight" for 8; falls back to digits above 25. */
+export function countWord(n: number): string {
+  return NUMBER_WORDS[n] ?? String(n);
+}
+
+export function countWordCapitalised(n: number): string {
+  const w = countWord(n);
+  return w.charAt(0).toUpperCase() + w.slice(1);
+}

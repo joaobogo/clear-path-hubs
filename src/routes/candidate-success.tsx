@@ -23,6 +23,7 @@ export const Route = createFileRoute("/candidate-success")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: CANONICAL },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
