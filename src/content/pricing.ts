@@ -19,8 +19,14 @@ import {
   ABOVE_MAX_CTA_LABEL,
   ROI_REFERENCE_PACKAGE_USD,
   ROI_REFERENCE_PACKAGE_LABEL as CORE_ROI_LABEL,
-  TURNAROUND_LABEL,
 } from "@/config/pricing-core";
+import {
+  SHORTLIST_LABEL,
+  FIRST_SHORTLIST_TIMING_SHORT,
+  PILOT_IS_PAID_NOTE,
+} from "@/config/offer-facts";
+import { CTA_PRIMARY, CTA_BOOK, CTA_ENTERPRISE } from "@/config/cta";
+import { publicSeatsLine, SCOPED_PUBLIC_LABEL } from "@/config/pricing-entitlements";
 
 export type PricingTier = {
   id: "pilot" | "growth" | "scale" | "volume" | "portfolio" | "program" | "enterprise";
@@ -30,13 +36,13 @@ export type PricingTier = {
   oneTime: number | null;
   /** Display string — the exact package total, or the talk-to-us label. */
   priceDisplay: string;
-  /** Billing line (e.g. "billed once"). Never a per-position figure. */
+  /** Billing in plain words ("Paid once"). Never a per-position figure. */
   pricePer?: string;
   /** Best-fit descriptor. */
   bestFor: string;
   /** Capacity sentence — always "up to" and a single number. */
   rolesIncluded: string;
-  /** Turnaround guarantee. */
+  /** When the first shortlist usually arrives. Never a guarantee. */
   turnaround: string;
   /** Included capabilities. */
   included: string[];
@@ -44,41 +50,61 @@ export type PricingTier = {
   ctaLabel: string;
   ctaTo: string;
   highlight?: boolean;
+  /** Shown as a card on /pricing; the rest go in the comparison table. */
+  card: boolean;
 };
 
-const BASE_INCLUDED = [
-  "Ranked shortlist refreshed weekly",
-  "Top 10 candidates per position",
-  "Ranked candidate shortlist",
+/**
+ * Every card lists the same things in the same order so cards can be compared:
+ * capacity, shortlist, timing, recruiter review, seats, records. Anything a
+ * package adds comes after.
+ */
+function includedFor(
+  planId: string,
+  capacity: string,
+  perPosition: boolean,
+  extras: string[] = [],
+): string[] {
+  return [
+    capacity,
+    perPosition ? `${SHORTLIST_LABEL} for each position` : SHORTLIST_LABEL,
+    FIRST_SHORTLIST_TIMING_SHORT,
+    "A recruiter reviews every shortlist before you see it",
+    planId === "enterprise" ? `Seats: ${SCOPED_PUBLIC_LABEL.toLowerCase()}` : `Seats: ${publicSeatsLine(planId)}`,
+    "Export your candidate records at any time; workspace access lasts three months",
+    "Evidence-backed scoring with fit notes",
+    "Hiring Intelligence reporting",
+    ...extras,
+  ];
+}
+
+/** What every package includes. Used for the "included on every plan" list. */
+export const INCLUDED_ON_EVERY_PLAN: string[] = [
+  SHORTLIST_LABEL + " per position",
+  "A recruiter reviews every shortlist before you see it",
   "Evidence-backed scoring with fit notes",
-  "Criteria-based ethical ranking",
-  "3 months candidate-record retention",
+  "Criteria-based ranking; you make every hiring decision",
+  "Export your candidate records at any time",
 ];
 
-const PARALLEL_INCLUDED = [
-  "Ranked shortlist refreshed weekly",
-  "Top 10 candidates per position",
-  "All positions worked in parallel",
-  "Ranked shortlist per position",
-  "Evidence-backed scoring with fit notes",
-  "Criteria-based ethical ranking",
-  "3 months candidate-record retention",
-];
+const PAID_ONCE = "Paid once";
 
 export const PRICING_TIERS: PricingTier[] = [
   {
     id: "pilot",
     name: "Pilot",
-    eyebrow: `One-time · ${PILOT_ROLES_LABEL} · 1 per company`,
+    eyebrow: `One role · ${PILOT_ROLES_LABEL} · 1 per company`,
     oneTime: PILOT_PACKAGE.totalUsd,
     priceDisplay: PILOT_PACKAGE.totalDisplay,
-    pricePer: "billed once",
-    bestFor: "Test the model on one critical hire, once.",
+    pricePer: `${PAID_ONCE}. One pilot per company.`,
+    bestFor: PILOT_IS_PAID_NOTE,
     rolesIncluded: PILOT_ROLES_LABEL,
-    turnaround: TURNAROUND_LABEL,
-    included: BASE_INCLUDED,
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    turnaround: FIRST_SHORTLIST_TIMING_SHORT,
+    included: includedFor("pilot", "1 position, one pilot per company", false),
+    ctaLabel: CTA_PRIMARY.label,
+    ctaTo: CTA_PRIMARY.to,
+    highlight: true,
+    card: true,
   },
   {
     id: "growth",
@@ -86,14 +112,14 @@ export const PRICING_TIERS: PricingTier[] = [
     eyebrow: PACKAGE_10.capacityLabel,
     oneTime: PACKAGE_10.totalUsd,
     priceDisplay: PACKAGE_10.totalDisplay,
-    pricePer: "billed once",
+    pricePer: PAID_ONCE,
     bestFor: "Run parallel searches with shared intake context.",
     rolesIncluded: PACKAGE_10.capacityLabel,
-    turnaround: TURNAROUND_LABEL,
-    included: PARALLEL_INCLUDED,
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
-    highlight: true,
+    turnaround: FIRST_SHORTLIST_TIMING_SHORT,
+    included: includedFor("growth", PACKAGE_10.capacityLabel, true),
+    ctaLabel: CTA_BOOK.label,
+    ctaTo: CTA_BOOK.to,
+    card: true,
   },
   {
     id: "scale",
@@ -101,13 +127,14 @@ export const PRICING_TIERS: PricingTier[] = [
     eyebrow: PACKAGE_20.capacityLabel,
     oneTime: PACKAGE_20.totalUsd,
     priceDisplay: PACKAGE_20.totalDisplay,
-    pricePer: "billed once",
+    pricePer: PAID_ONCE,
     bestFor: "Concurrent hiring across functions with priority support.",
     rolesIncluded: PACKAGE_20.capacityLabel,
-    turnaround: TURNAROUND_LABEL,
-    included: [...PARALLEL_INCLUDED, "Priority support"],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    turnaround: FIRST_SHORTLIST_TIMING_SHORT,
+    included: includedFor("scale", PACKAGE_20.capacityLabel, true, ["Priority support"]),
+    ctaLabel: CTA_BOOK.label,
+    ctaTo: CTA_BOOK.to,
+    card: true,
   },
   {
     id: "volume",
@@ -115,18 +142,18 @@ export const PRICING_TIERS: PricingTier[] = [
     eyebrow: PACKAGE_30.capacityLabel,
     oneTime: PACKAGE_30.totalUsd,
     priceDisplay: PACKAGE_30.totalDisplay,
-    pricePer: "billed once",
+    pricePer: PAID_ONCE,
     bestFor: "Portfolio hiring across teams in one package.",
     rolesIncluded: PACKAGE_30.capacityLabel,
-    turnaround: TURNAROUND_LABEL,
-    included: [
-      ...PARALLEL_INCLUDED,
+    turnaround: FIRST_SHORTLIST_TIMING_SHORT,
+    included: includedFor("volume", PACKAGE_30.capacityLabel, true, [
       "Priority support",
       "Dedicated account manager",
       "Executive portfolio dashboard",
-    ],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    ]),
+    ctaLabel: CTA_BOOK.label,
+    ctaTo: CTA_BOOK.to,
+    card: true,
   },
   {
     id: "portfolio",
@@ -134,18 +161,18 @@ export const PRICING_TIERS: PricingTier[] = [
     eyebrow: PACKAGE_40.capacityLabel,
     oneTime: PACKAGE_40.totalUsd,
     priceDisplay: PACKAGE_40.totalDisplay,
-    pricePer: "billed once",
+    pricePer: PAID_ONCE,
     bestFor: "Portfolio hiring across business units.",
     rolesIncluded: PACKAGE_40.capacityLabel,
-    turnaround: TURNAROUND_LABEL,
-    included: [
-      ...PARALLEL_INCLUDED,
+    turnaround: FIRST_SHORTLIST_TIMING_SHORT,
+    included: includedFor("portfolio", PACKAGE_40.capacityLabel, true, [
       "Priority support",
       "Dedicated account manager",
       "Executive portfolio dashboard",
-    ],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    ]),
+    ctaLabel: CTA_BOOK.label,
+    ctaTo: CTA_BOOK.to,
+    card: false,
   },
   {
     id: "program",
@@ -153,19 +180,19 @@ export const PRICING_TIERS: PricingTier[] = [
     eyebrow: PACKAGE_100.capacityLabel,
     oneTime: PACKAGE_100.totalUsd,
     priceDisplay: PACKAGE_100.totalDisplay,
-    pricePer: "billed once",
+    pricePer: PAID_ONCE,
     bestFor: "A continuous hiring programme run as one package.",
     rolesIncluded: PACKAGE_100.capacityLabel,
-    turnaround: TURNAROUND_LABEL,
-    included: [
-      ...PARALLEL_INCLUDED,
+    turnaround: FIRST_SHORTLIST_TIMING_SHORT,
+    included: includedFor("program", PACKAGE_100.capacityLabel, true, [
       "Priority support",
       "Dedicated account manager",
       "Executive portfolio dashboard",
       "Named executive sponsor",
-    ],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    ]),
+    ctaLabel: CTA_BOOK.label,
+    ctaTo: CTA_BOOK.to,
+    card: false,
   },
   {
     id: "enterprise",
@@ -173,20 +200,15 @@ export const PRICING_TIERS: PricingTier[] = [
     eyebrow: ABOVE_MAX_ROLES_LABEL,
     oneTime: null,
     priceDisplay: ABOVE_MAX_DISPLAY,
+    pricePer: SCOPED_PUBLIC_LABEL,
     bestFor:
-      "Continuous hiring across business units, geographies, or 50–5,000-employee operators.",
+      "Continuous hiring across business units or geographies, scoped with your account team.",
     rolesIncluded: ABOVE_MAX_ROLES_LABEL,
-    turnaround: "Custom system operating cadence",
-    included: [
-      `Everything in ${PACKAGE_100.capacityLabel}`,
-      "Dedicated account structure",
-      "Tailored billing and reporting",
-      "SLA-backed delivery",
-      "SSO, custom data residency, security review",
-      "Named executive sponsor",
-    ],
-    ctaLabel: ABOVE_MAX_CTA_LABEL,
-    ctaTo: "/enterprise",
+    turnaround: SCOPED_PUBLIC_LABEL,
+    included: includedFor("enterprise", `Everything in ${PACKAGE_100.capacityLabel}, scoped to your volume`, true),
+    ctaLabel: CTA_ENTERPRISE.label,
+    ctaTo: CTA_ENTERPRISE.to,
+    card: false,
   },
 ];
 
@@ -195,8 +217,7 @@ export const PRICING_TIERS: PricingTier[] = [
  */
 export const PRICING_GUARANTEES: string[] = [
   "No hidden fees",
-  "You keep all candidates",
-  "Run a pilot before you subscribe",
+  "No placement fee",
 ];
 
 /**

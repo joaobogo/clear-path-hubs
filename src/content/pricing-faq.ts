@@ -1,19 +1,25 @@
+import {
+  PILOT_IS_PAID_NOTE,
+  RECORDS_NOTE,
+  SEATS_NOTE,
+} from "@/config/offer-facts";
+
 export const PRICING_FAQ: { q: string; a: string }[] = [
   {
-    q: "How does subscription recruiting differ from an agency?",
-    a: "An agency charges a percentage of first-year salary once a candidate is placed. TaaSFlow charges one exact total, set by how many positions you are hiring for, for the search itself — the sourcing, the evaluation, the workspace. Every candidate the platform surfaces stays in your workspace whether they get hired or not.",
+    q: "How does recruiting with TaaSFlow differ from an agency?",
+    a: `An agency charges a percentage of first-year salary once a candidate is placed. TaaSFlow charges one exact total, set by how many positions you are hiring for, for the search itself: the sourcing, the evaluation and the workspace. ${RECORDS_NOTE}`,
   },
   {
     q: "Do prices go up if we hire multiple candidates?",
-    a: "No. The monthly fee covers the search capacity, not the outcome. Hire one, hire three, hire none — the invoice is the same. Your incentive to run a rigorous process is not fighting our incentive to close.",
+    a: "No. The package total covers the search capacity, not the outcome. For a one-off package that total is paid once. For a subscription it is charged each month. Either way, hire one, hire three or hire none and the total for your package stays the same.",
   },
   {
-    q: "Can we pause the subscription between roles?",
-    a: "Yes. Engagements can be paused with notice and resumed when the next roles are ready. Your workspace, candidates, and evidence stay in place while paused.",
+    q: "Can we pause a subscription between roles?",
+    a: "Subscriptions can be paused with notice and resumed when your next roles are ready. Exact terms are on your quote or agreement.",
   },
   {
     q: "What if we add positions mid-engagement?",
-    a: "Your total is recalculated from the new position count at the next billing cycle, and the total never falls as the count rises. The intake context, workspace, and reusable pipeline carry over. Removing positions works the same way.",
+    a: "Your total is recalculated from the new position count at the next billing cycle, and the total never falls as the count rises. The intake context and workspace carry over. Removing positions works the same way.",
   },
   {
     q: "Is there a contract minimum?",
@@ -21,6 +27,10 @@ export const PRICING_FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How does the pilot work?",
-    a: "The Pilot is a one-time, single-role engagement. Each company can run it once. You get the full workflow — intake, sourcing, scoring, and a ranked shortlist — for a fixed price. If it fits, move to a subscription. If it doesn't, walk away with every candidate the platform surfaced.",
+    a: `${PILOT_IS_PAID_NOTE} Each company can run it once. You get the full workflow for one role: intake, sourcing, scoring and a ranked shortlist, for a fixed price. If it fits, you can move to a larger package. ${RECORDS_NOTE}`,
+  },
+  {
+    q: "How many people can use the workspace?",
+    a: `${SEATS_NOTE} The comparison table on this page lists seats for every package.`,
   },
 ];

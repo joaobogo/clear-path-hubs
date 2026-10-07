@@ -5,12 +5,14 @@
  */
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import {
-  PRICE_PILOT_DISPLAY,
-  positionsTotalUsd,
-} from "@/config/pricing-core";
+import { CALCULATOR_DEFAULTS } from "@/config/public-pricing";
+import { CTA_PRIMARY, CTA_BOOK } from "@/config/cta";
+import { compareCosts } from "@/lib/pricing-comparison";
 
-const EXAMPLE_SALARY = 95_000;
+/** Same salary example as the calculator. An example, not an industry fact. */
+const EXAMPLE_SALARY = CALCULATOR_DEFAULTS.averageSalaryUsd;
+const FEE_LOW = 20;
+const FEE_HIGH = 25;
 
 const usd = (n: number) =>
   n.toLocaleString("en-US", {
@@ -19,15 +21,29 @@ const usd = (n: number) =>
     maximumFractionDigits: 0,
   });
 
+function scenario(hires: number, label: string, packageNote: string) {
+  const at = (pct: number) =>
+    compareCosts({ mode: "project", hires, agencyFeePct: pct, salaryUsd: EXAMPLE_SALARY });
+  const lo = at(FEE_LOW);
+  const hi = at(FEE_HIGH);
+  if (lo.status !== "ok" || hi.status !== "ok") throw new Error("example scenario must be priced");
+  return {
+    hires,
+    label,
+    package: packageNote,
+    cost: lo.taasTotalUsd,
+    low: lo.agencyTotalUsd,
+    high: hi.agencyTotalUsd,
+    savingLow: lo.differenceUsd,
+    savingHigh: hi.differenceUsd,
+  };
+}
+
 const SCENARIOS = [
-  { hires: 1, label: "1 hire", package: "Pilot — single position", cost: positionsTotalUsd(1)! },
-  { hires: 3, label: "3 hires", package: "3 positions", cost: positionsTotalUsd(3)! },
-  { hires: 10, label: "10 hires", package: "10 positions", cost: positionsTotalUsd(10)! },
-].map((s) => {
-  const low = s.hires * EXAMPLE_SALARY * 0.2;
-  const high = s.hires * EXAMPLE_SALARY * 0.25;
-  return { ...s, low, high, savingLow: low - s.cost, savingHigh: high - s.cost };
-});
+  scenario(1, "1 hire", "Pilot: one position, one per company"),
+  scenario(3, "3 hires", "3 hires fit inside the Up to 10 positions package"),
+  scenario(10, "10 hires", "Up to 10 positions package"),
+];
 
 export function AgencyFeeComparison() {
   return (
@@ -40,9 +56,9 @@ export function AgencyFeeComparison() {
           The same hires, without the percentage.
         </h2>
         <p className="mt-4 text-base text-[color:var(--brand-navy)]/80">
-          Example math on a {usd(EXAMPLE_SALARY)} average salary and a typical
-          agency fee of 20–25% of first-year salary. Your numbers will differ —
-          these are illustrative, not a quote.
+          Example math on a {usd(EXAMPLE_SALARY)} average salary and an agency
+          fee of {FEE_LOW}–{FEE_HIGH}% of first-year salary. Both are editable examples,
+          not industry facts. Your numbers will differ; this is illustrative, not a quote.
         </p>
       </div>
 
@@ -61,7 +77,7 @@ export function AgencyFeeComparison() {
             </p>
             <div className="mt-3 space-y-2 text-sm">
               <div className="flex items-baseline justify-between gap-3">
-                <span className="text-[color:var(--brand-navy)]/80">Agency fee (20–25%)</span>
+                <span className="text-[color:var(--brand-navy)]/80">Agency fee ({FEE_LOW}–{FEE_HIGH}%)</span>
                 <span className="shrink-0 tabular-nums text-[color:var(--brand-navy)]">
                   {usd(s.low)} – {usd(s.high)}
                 </span>
@@ -78,7 +94,7 @@ export function AgencyFeeComparison() {
                   Difference
                 </p>
                 <p className="mt-0.5 tabular-nums font-semibold text-[color:var(--brand-ocean-text)]">
-                  {usd(s.savingLow)} – {usd(s.savingHigh)} less
+                  {usd(s.savingLow)} – {usd(s.savingHigh)} less with TaaSFlow
                 </p>
               </div>
             </div>
@@ -91,13 +107,13 @@ export function AgencyFeeComparison() {
 
           <caption className="sr-only">
             Example cost comparison between agency placement fees at 20 to 25
-            percent of a {usd(EXAMPLE_SALARY)} salary and flat-fee TaaSFlow
+            percent of a {usd(EXAMPLE_SALARY)} example salary and flat-fee TaaSFlow
             packages, for 1, 3, and 10 hires.
           </caption>
           <thead>
             <tr className="border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
               <th scope="col" className="px-5 py-3">Scenario</th>
-              <th scope="col" className="px-5 py-3">Agency fee (20–25%)</th>
+              <th scope="col" className="px-5 py-3">Agency fee ({FEE_LOW}–{FEE_HIGH}%)</th>
               <th scope="col" className="px-5 py-3">TaaSFlow flat fee</th>
               <th scope="col" className="px-5 py-3">Difference</th>
             </tr>
@@ -129,7 +145,7 @@ export function AgencyFeeComparison() {
                 <td className="px-5 py-4 align-top tabular-nums font-semibold text-[color:var(--brand-ocean-text)]">
                   {usd(s.savingLow)} – {usd(s.savingHigh)}
                   <span className="mt-0.5 block text-xs font-normal text-[color:var(--brand-navy)]/80">
-                    Less, for the same number of hires
+                    Less with TaaSFlow, for the same number of hires
                   </span>
                 </td>
               </tr>
@@ -140,23 +156,23 @@ export function AgencyFeeComparison() {
 
       <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
         Examples only. Agency fees vary by market and seniority; TaaSFlow package
-        prices are fixed and published. The flat fee covers the search — you are
+        prices are fixed and published. The Up to 10 positions package covers up to 10 positions for one total. The flat fee covers the search — you are
         never charged a percentage of salary when someone is hired.
       </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <Link
-          to="/pilot"
+          to={CTA_PRIMARY.to}
           className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
         >
-          Start with a {PRICE_PILOT_DISPLAY} pilot{" "}
+          {CTA_PRIMARY.label}{" "}
           <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
         <Link
-          to="/book"
+          to={CTA_BOOK.to}
           className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
         >
-          Book a call
+          {CTA_BOOK.label}
         </Link>
       </div>
     </div>

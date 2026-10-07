@@ -1,353 +1,315 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
 /**
- * Homepage ROI calculator — "Editorial ledger" direction.
+ * Cost comparison calculator.
  *
- * Split layout: inputs on the left, a large navy savings card on the right
- * with the winning number set in italic display serif. Traditional vs
- * TaaSFlow ledger sits beneath the headline. Preserves the exact math and
- * tier mapping from src/content/pricing.ts (single source of truth).
+ * Compares the SAME hires over the SAME period on both sides: agency fees for
+ * those hires against the total of the one TaaSFlow package that covers them.
+ * The math lives in `src/lib/pricing-comparison.ts` (pure, unit-tested). Every
+ * default is an editable example, not an industry fact. Inputs never leave the
+ * browser and are not sent to analytics.
  */
 
-import { PRICING_TIERS } from "@/content/pricing";
+import { formatUsdExact } from "@/config/pricing-core";
+import { CTA_PRIMARY, CTA_BOOK, CTA_ENTERPRISE } from "@/config/cta";
 import {
-  MAX_POSITIONS,
-  positionsTotalUsd,
-  packageForPositions,
-  formatUsdExact,
-  ABOVE_MAX_DISPLAY,
-} from "@/config/pricing-core";
+  COMPARISON_DEFAULTS,
+  DEFAULT_LABEL,
+  MAX_COMPARISON_MONTHS,
+  compareCosts,
+  describeDifference,
+  type ComparisonMode,
+} from "@/lib/pricing-comparison";
 
-type TierMatch = {
-  label: string;
-  detail: string;
-  price: number | null; // null => above the maximum, talk to us
-};
-
-/**
- * One rule, one function: `packageForPositions()` in pricing-core returns the
- * package that covers a position count, and its one total. Nothing here is
- * hard-coded, and no per-position figure is ever shown.
- */
-/** Look tiers up by id — positional indexes break whenever a package is added. */
-function tierName(id: (typeof PRICING_TIERS)[number]["id"], fallback: string): string {
-  return PRICING_TIERS.find((t) => t.id === id)?.name ?? fallback;
-}
-
-function matchTier(positions: number): TierMatch {
-  if (positions <= 0) {
-    return { label: "—", detail: "Add at least 1 position", price: null };
-  }
-  const pkg = packageForPositions(positions);
-  const total = positionsTotalUsd(positions);
-  if (!pkg || total === null) {
-    return {
-      label: tierName("enterprise", ABOVE_MAX_DISPLAY),
-      detail: `More than ${MAX_POSITIONS} positions — let's talk it through`,
-      price: null,
-    };
-  }
-  if (positions === 1) {
-    return {
-      label: tierName("pilot", "Pilot"),
-      detail: "Flat pilot fee, billed once",
-      price: total,
-    };
-  }
-  return {
-    label: pkg.capacityLabel,
-    detail: `${pkg.capacityLabel} — one total`,
-    price: total,
-  };
-}
-
-
-function formatCompact(value: number): string {
-  return formatUsdExact(value);
-}
+const toNumber = (s: string) => (s.trim() === "" ? Number.NaN : Number(s));
 
 export function AgencyComparator() {
-  const [positions, setPositions] = useState(5);
-  const [agencyPct, setAgencyPct] = useState(20);
-  const [salary, setSalary] = useState(85000);
-  const [hourly, setHourly] = useState(40);
-  const [hours, setHours] = useState(25);
+  const [mode, setMode] = useState<ComparisonMode>(COMPARISON_DEFAULTS.mode);
+  const [hires, setHires] = useState(String(COMPARISON_DEFAULTS.hires));
+  const [positions, setPositions] = useState(String(COMPARISON_DEFAULTS.positions));
+  const [agencyPct, setAgencyPct] = useState(String(COMPARISON_DEFAULTS.agencyFeePct));
+  const [salary, setSalary] = useState(String(COMPARISON_DEFAULTS.salaryUsd));
+  const [months, setMonths] = useState(String(COMPARISON_DEFAULTS.months));
+  const ids = useId();
 
-  const tier = useMemo(() => matchTier(positions), [positions]);
+  const result = useMemo(
+    () =>
+      compareCosts({
+        mode,
+        hires: toNumber(hires),
+        positions: toNumber(positions),
+        agencyFeePct: toNumber(agencyPct),
+        salaryUsd: toNumber(salary),
+        months: toNumber(months),
+      }),
+    [mode, hires, positions, agencyPct, salary, months],
+  );
 
-  const agencyCost = positions * salary * (agencyPct / 100);
-  const sourcingCost = positions * hourly * hours;
-  const traditionalCost = agencyCost + sourcingCost;
-  const taasCost = tier.price ?? 0;
-  const savings = tier.price == null ? null : Math.max(traditionalCost - taasCost, 0);
-  const savingsPct =
-    savings == null || traditionalCost <= 0
-      ? null
-      : Math.round((savings / traditionalCost) * 100);
-  const isCustom = tier.price == null;
+  const quoteOnly = result.status === "quote-only";
 
   return (
     <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-8 lg:p-12">
       <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-14">
-        {/* -------- Inputs column (5/12) -------- */}
-        <div className="order-2 space-y-8 lg:order-1 lg:col-span-5">
-          <header className="space-y-3 sm:space-y-4">
+        {/* -------- Inputs column -------- */}
+        <div className="order-2 space-y-6 lg:order-1 lg:col-span-5">
+          <header className="space-y-3">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--brand-navy)]/80">
-              For hiring teams · ROI Calculator
+              Cost calculator
             </p>
-            <h3 className="font-[family-name:var(--brand-font-display)] text-3xl leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-4xl md:text-5xl">
-              Quantify your <span className="italic">hiring advantage.</span>
+            <h3 className="font-[family-name:var(--brand-font-display)] text-3xl leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              Compare agency fees with a flat package.
             </h3>
             <p className="max-w-sm text-sm text-[color:var(--brand-navy)]/80 sm:text-base">
-              Adjust the variables to compare traditional recruitment costs against the TaaSFlow model. Defaults from SHRM &amp; Ashby 2025 benchmarks.
+              Change any number to match your plan. {DEFAULT_LABEL} applies to every
+              starting value below. Nothing you type is saved or sent.
             </p>
           </header>
 
+          <fieldset>
+            <legend className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
+              What are you comparing?
+            </legend>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              {(
+                [
+                  ["project", "One hiring project, paid once"],
+                  ["recurring", "A recurring monthly package"],
+                ] as const
+              ).map(([value, text]) => (
+                <label
+                  key={value}
+                  className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm text-[color:var(--brand-navy)] has-[:checked]:border-[color:var(--brand-navy)] has-[:checked]:bg-[color:var(--brand-navy)]/[0.04] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[color:var(--brand-focus-ring)]"
+                >
+                  <input
+                    type="radio"
+                    name={`${ids}-mode`}
+                    value={value}
+                    checked={mode === value}
+                    onChange={() => setMode(value)}
+                    className="accent-[color:var(--brand-navy)]"
+                  />
+                  {text}
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
-          <div className="space-y-8">
-            <SliderField
-              label="Number of positions"
-              value={positions}
-              onChange={setPositions}
+          <div className="grid gap-5 sm:grid-cols-2">
+            <NumberField
+              id={`${ids}-hires`}
+              label={mode === "project" ? "Hires (and positions)" : "Hires in the period"}
+              value={hires}
+              onChange={setHires}
               min={1}
-              max={MAX_POSITIONS}
               step={1}
-              display={`${positions} ${positions === 1 ? "role" : "roles"}`}
+              hint="Whole number"
             />
-            <SliderField
-              label="Agency fee percentage"
+            {mode === "recurring" ? (
+              <NumberField
+                id={`${ids}-positions`}
+                label="Positions open at once"
+                value={positions}
+                onChange={setPositions}
+                min={1}
+                step={1}
+                hint="Decides the package"
+              />
+            ) : null}
+            {mode === "recurring" ? (
+              <NumberField
+                id={`${ids}-months`}
+                label="Months"
+                value={months}
+                onChange={setMonths}
+                min={1}
+                max={MAX_COMPARISON_MONTHS}
+                step={1}
+                hint={`1 to ${MAX_COMPARISON_MONTHS}`}
+              />
+            ) : null}
+            <NumberField
+              id={`${ids}-salary`}
+              label="Average salary (USD)"
+              value={salary}
+              onChange={setSalary}
+              min={1}
+              step={1000}
+              hint="Example value"
+            />
+            <NumberField
+              id={`${ids}-pct`}
+              label="Agency fee (% of salary)"
               value={agencyPct}
               onChange={setAgencyPct}
               min={0}
-              max={40}
+              max={100}
               step={1}
-              display={`${agencyPct}%`}
+              hint="Example value"
             />
-            <SliderField
-              label="Average salary"
-              value={salary}
-              onChange={setSalary}
-              min={20000}
-              max={400000}
-              step={5000}
-              display={formatCompact(salary)}
-            />
+          </div>
 
-            <div className="grid grid-cols-1 gap-6 pt-2 sm:grid-cols-2 sm:gap-8">
-              <StaticField
-                label="Hourly rate"
-                value={hourly}
-                onChange={setHourly}
-                min={0}
-                max={200}
-                step={5}
-                display={`$${hourly}`}
-              />
-              <StaticField
-                label="Hours per role"
-                value={hours}
-                onChange={setHours}
-                min={0}
-                max={120}
-                step={1}
-                display={`${hours} hrs`}
-              />
-            </div>
-
+          <div className="rounded-xl bg-[color:var(--brand-navy)]/[0.04] p-4 text-sm text-[color:var(--brand-navy)]/85">
+            <p className="font-semibold text-[color:var(--brand-navy)]">How it is worked out</p>
+            <p className="mt-1 leading-relaxed">
+              {result.status === "invalid"
+                ? "Agency fees = hires × average salary × agency fee percentage. TaaSFlow = the total of the package that covers your positions."
+                : result.formula}
+            </p>
+            {result.status !== "invalid" ? (
+              <ul className="mt-3 list-disc space-y-1 pl-5 leading-relaxed">
+                {result.assumptions.map((a) => (
+                  <li key={a}>{a}</li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </div>
 
-        {/* -------- Results column (7/12) -------- */}
+        {/* -------- Results column -------- */}
         <div className="order-1 min-w-0 lg:order-2 lg:col-span-7">
           <div
-            className="relative overflow-hidden rounded-2xl bg-[color:var(--brand-navy)] p-6 text-white shadow-2xl sm:p-10 md:p-12"
+            className="relative overflow-hidden rounded-2xl bg-[color:var(--brand-navy)] p-6 text-white shadow-2xl sm:p-10"
+            role="status"
             aria-live="polite"
             aria-atomic="true"
           >
-            {/* Decorative crosshair — hidden on very small screens */}
-            <div className="pointer-events-none absolute right-4 top-4 hidden opacity-[0.08] sm:right-6 sm:top-6 sm:block" aria-hidden>
-              <svg width="140" height="140" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.5">
-                <circle cx="50" cy="50" r="45" />
-                <path d="M50 5 L50 95 M5 50 L95 50" />
-              </svg>
-            </div>
+            <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80">
+              Estimated cost comparison for this hiring project
+            </span>
 
-            <div className="relative z-10">
-              <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] opacity-60">
-                {isCustom ? "Talk to us" : "Annual savings summary"}
-              </span>
-
-              <div className="mt-6 sm:mt-10">
-                <h4 className="break-words font-[family-name:var(--brand-font-display)] text-5xl italic leading-[0.95] tracking-tight tabular-nums sm:text-6xl md:text-7xl lg:text-8xl">
-                  {isCustom ? ABOVE_MAX_DISPLAY : formatCompact(savings ?? 0)}
+            {result.status === "invalid" ? (
+              <div className="mt-6">
+                <p className="font-[family-name:var(--brand-font-display)] text-3xl">
+                  Check your numbers
+                </p>
+                <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-white/90">
+                  {result.problems.map((p) => (
+                    <li key={p}>{p}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : result.status === "quote-only" ? (
+              <div className="mt-6">
+                <h4 className="font-[family-name:var(--brand-font-display)] text-4xl leading-tight sm:text-5xl">
+                  Scoped with your account team
                 </h4>
-                <p className="mt-3 max-w-md text-sm font-light opacity-80 sm:text-base">
-                  {isCustom
-                    ? `Above ${MAX_POSITIONS} positions we scope it with you — no savings figure is invented.`
-                    : savings != null && savings > 0
-                      ? `Total projected savings with TaaSFlow${savingsPct != null ? ` — ${savingsPct}% reduction` : ""}.`
-                      : "TaaSFlow doesn't beat your inputs here. Adjust volume, fee, or internal hours."}
+                <p className="mt-3 max-w-md text-sm text-white/90 sm:text-base">
+                  {result.explanation}
                 </p>
               </div>
-
-              {/* Ledger split */}
-              <div className="mt-10 grid grid-cols-1 gap-6 border-t border-white/20 pt-8 sm:grid-cols-2 sm:gap-10 sm:pt-10 md:mt-14">
-                <div className="min-w-0">
-                  <span className="block text-[10px] uppercase tracking-[0.18em] opacity-80">
-                    Traditional agency model
-                  </span>
-                  <p className="mt-3 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums text-white/90 sm:text-3xl md:text-4xl">
-                    {formatCompact(traditionalCost)}
-                  </p>
-                  <p className="mt-1 text-xs opacity-50">
-                    Agency {formatCompact(agencyCost)} · Sourcing {formatCompact(sourcingCost)}
-                  </p>
-                </div>
-                <div className="min-w-0">
-                  <span className="block text-[10px] uppercase tracking-[0.18em] text-white/70">
-                    TaaSFlow · {tier.label}
-                  </span>
-                  <p className="mt-3 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums sm:text-3xl md:text-4xl">
-                    {isCustom ? ABOVE_MAX_DISPLAY : formatCompact(taasCost)}
-                  </p>
-                  <p className="mt-1 text-xs opacity-50">{tier.detail}</p>
+            ) : (
+              <div className="mt-6">
+                <h4 className="break-words font-[family-name:var(--brand-font-display)] text-4xl leading-tight tabular-nums sm:text-5xl">
+                  {describeDifference(result.differenceUsd)}
+                </h4>
+                <p className="mt-3 max-w-md text-sm text-white/90 sm:text-base">
+                  {result.explanation}
+                </p>
+                <p className="mt-2 max-w-md text-xs text-white/75">
+                  A negative result is possible: when agency fees are low or hires are few,
+                  the agency can be the cheaper option.
+                </p>
+                <div className="mt-8 grid grid-cols-1 gap-6 border-t border-white/20 pt-6 sm:grid-cols-2 sm:gap-10">
+                  <div className="min-w-0">
+                    <span className="block text-[10px] uppercase tracking-[0.18em] text-white/80">
+                      Agency fees
+                    </span>
+                    <p className="mt-2 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums sm:text-3xl">
+                      {formatUsdExact(result.agencyTotalUsd)}
+                    </p>
+                  </div>
+                  <div className="min-w-0">
+                    <span className="block text-[10px] uppercase tracking-[0.18em] text-white/80">
+                      TaaSFlow · {result.packageLabel}
+                    </span>
+                    <p className="mt-2 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums sm:text-3xl">
+                      {formatUsdExact(result.taasTotalUsd)}
+                    </p>
+                    <p className="mt-1 text-xs text-white/75">
+                      {result.mode === "project"
+                        ? "Paid once"
+                        : `${formatUsdExact(result.taasTotalUsd / result.months)} a month × ${result.months}`}
+                    </p>
+                  </div>
                 </div>
               </div>
+            )}
 
-              {/* CTAs */}
-              <div className="mt-10 grid gap-3 sm:mt-14 sm:grid-cols-2">
-                <Link
-                  to="/intake"
-                  className="group inline-flex min-h-12 items-center justify-between gap-3 rounded-md bg-white px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)] transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:px-6 sm:py-4 sm:text-sm"
-                >
-                  <span>Start hiring</span>
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
-                </Link>
-                <Link
-                  to={isCustom ? "/contact" : "/pricing"}
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/30 px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-white hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:px-6 sm:py-4 sm:text-sm"
-                >
-                  {isCustom ? "Talk to founders" : "View pricing"}
-                </Link>
-              </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <Link
+                to={quoteOnly ? CTA_ENTERPRISE.to : CTA_PRIMARY.to}
+                className="inline-flex min-h-12 items-center justify-between gap-3 rounded-md bg-white px-5 py-3 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <span>{quoteOnly ? CTA_ENTERPRISE.label : CTA_PRIMARY.label}</span>
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+              <Link
+                to={CTA_BOOK.to}
+                className="inline-flex min-h-12 items-center justify-center rounded-md border border-white/40 px-5 py-3 text-sm font-semibold text-white hover:bg-white hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                {CTA_BOOK.label}
+              </Link>
             </div>
           </div>
 
-
-          {/* Footnote rule */}
-          <div className="mt-6 flex items-center gap-4 px-2">
-            <div className="h-px flex-1 bg-[color:var(--brand-navy)]/10" />
-            <p className="whitespace-nowrap text-[10px] uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
-              Directional · SHRM & Ashby 2025 benchmarks
-            </p>
-            <div className="h-px flex-1 bg-[color:var(--brand-navy)]/10" />
-          </div>
+          <p className="mt-4 px-2 text-xs uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
+            Illustrative
+          </p>
+          <p className="mt-1 px-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/80">
+            This is an estimate from the numbers you entered, not a quote. Agency fees, salaries and
+            hiring volume vary. The package total is the published price for the package that
+            covers your positions.
+          </p>
         </div>
       </div>
     </div>
   );
 }
 
-/* ---------- Field primitives ---------- */
-
-function SliderField({
+function NumberField({
+  id,
   label,
   value,
   onChange,
   min,
   max,
   step,
-  display,
+  hint,
 }: {
+  id: string;
   label: string;
-  value: number;
-  onChange: (v: number) => void;
+  value: string;
+  onChange: (v: string) => void;
   min: number;
-  max: number;
+  max?: number;
   step: number;
-  display: string;
+  hint: string;
 }) {
   return (
-    <label className="block space-y-3">
-      <div className="flex items-end justify-between gap-3">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-          {label}
-        </span>
-        <span className="font-[family-name:var(--brand-font-display)] text-xl font-medium tabular-nums text-[color:var(--brand-navy)]">
-          {display}
-        </span>
-      </div>
-      {/*
-        The wrapping <label> already names this implicitly, but it wraps the
-        VALUE span too, so a screen reader announced the metric and the number
-        run together as one name, and re-announced the whole string on every
-        drag. aria-label names the metric alone; aria-valuetext reads the
-        formatted figure ("$85,000") instead of the raw number
-        (audit 18 Sep, TF-C-017). Attribute-only — nothing visible changes.
-      */}
+    <div>
+      <label
+        htmlFor={id}
+        className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80"
+      >
+        {label}
+      </label>
       <input
-        type="range"
+        id={id}
+        type="number"
+        inputMode="decimal"
         min={min}
         max={max}
         step={step}
         value={value}
-        aria-label={label}
-        aria-valuetext={display}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-[color:var(--brand-navy)]"
+        aria-describedby={`${id}-hint`}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1.5 min-h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 py-2 text-base tabular-nums text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
       />
-    </label>
-  );
-}
-
-function StaticField({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  step,
-  display,
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  min: number;
-  max: number;
-  step: number;
-  display: string;
-}) {
-  return (
-    <label className="block space-y-3">
-      <div className="flex items-end justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-          {label}
-        </span>
-        <span className="font-[family-name:var(--brand-font-display)] text-xl font-medium tabular-nums text-[color:var(--brand-navy)]">
-          {display}
-        </span>
-      </div>
-      {/*
-        The wrapping <label> already names this implicitly, but it wraps the
-        VALUE span too, so a screen reader announced the metric and the number
-        run together as one name, and re-announced the whole string on every
-        drag. aria-label names the metric alone; aria-valuetext reads the
-        formatted figure ("$85,000") instead of the raw number
-        (audit 18 Sep, TF-C-017). Attribute-only — nothing visible changes.
-      */}
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        aria-label={label}
-        aria-valuetext={display}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-[color:var(--brand-navy)]"
-      />
-    </label>
+      <p id={`${id}-hint`} className="mt-1 text-xs text-[color:var(--brand-navy)]/70">
+        {hint}
+      </p>
+    </div>
   );
 }
