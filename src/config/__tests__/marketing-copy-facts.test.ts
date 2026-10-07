@@ -36,10 +36,11 @@ describe("public marketing facts derive from config", () => {
     expect(evidence.representative.activity).not.toContain("A-1042");
   });
 
-  it("roster inputs state the accepted upload formats, not PDF only", () => {
+  it("roster states job-description formats and keeps the registry's PDF-only rule for candidate CVs", () => {
     const all = ROSTER.flatMap((r) => r.inputs).join(" ");
-    expect(all).not.toMatch(/PDF only/);
-    expect(all).toContain(ACCEPTED_UPLOADS);
+    expect(all).toContain(`Job description uploads (${ACCEPTED_UPLOADS})`);
+    // Never claim DOCX/TXT/RTF for candidate CVs.
+    expect(all).not.toMatch(/CVs? \(PDF, DOCX/);
   });
 
   it("internal plumbing is kept out of the public integrations list", () => {

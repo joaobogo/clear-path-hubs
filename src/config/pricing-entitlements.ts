@@ -176,7 +176,7 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       growth: included(),
       scale: included(),
       volume: included(),
-      enterprise: value("Included + SSO and security review"),
+      enterprise: value("Included + security review"),
     },
   },
   {

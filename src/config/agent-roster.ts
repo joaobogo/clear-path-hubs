@@ -46,11 +46,11 @@ export type RosterEntry = {
 const def = (key: AgentKey) => AGENT_REGISTRY.find((a) => a.key === key)!;
 
 /**
- * The registry is read-only here and still says "PDF only" for CV uploads.
- * Public copy states the accepted formats from one place instead.
+ * Registry lines are passed through unchanged. The registry is the source of
+ * truth for candidate CV uploads (PDF only); job-description uploads accept the
+ * wider ACCEPTED_UPLOADS set and are worded separately below.
  */
-const publicFormats = (lines: readonly string[]): readonly string[] =>
-  lines.map((l) => l.replace(/PDF only/g, ACCEPTED_UPLOADS));
+const publicFormats = (lines: readonly string[]): readonly string[] => lines;
 
 export const ROSTER: readonly RosterEntry[] = [
   {
@@ -62,7 +62,7 @@ export const ROSTER: readonly RosterEntry[] = [
       "Turns a submitted role brief into a validated requisition, and moves each new application through parse, hydrate and enrich steps.",
     inputs: [
       "Role brief, must-haves and constraints",
-      `Job description and CV uploads (${ACCEPTED_UPLOADS})`,
+      `Job description uploads (${ACCEPTED_UPLOADS}); candidate CVs (PDF only)`,
     ],
     outputs: [
       "A validated requisition record",
