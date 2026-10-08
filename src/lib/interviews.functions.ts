@@ -1,3 +1,4 @@
+import { offSystemWorkflowRequired } from "@/lib/off-system-workflow";
 // Interview service — canonical server functions for the Client interviews
 // workspace. Every action is tenant-scoped via requireSupabaseAuth + explicit
 // organization_id checks. Client Viewers and read-only Admin support views are
@@ -341,7 +342,7 @@ export const requestInterview = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Interview booking is coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
@@ -499,7 +500,7 @@ export const proposeInterviewTimes = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Interview booking is coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -582,7 +583,7 @@ export const confirmInterviewTime = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Interview booking is coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -679,7 +680,7 @@ export const cancelInterview = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Interview scheduling is coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -743,7 +744,7 @@ export const markInterviewCompleted = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Interview scheduling is coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
