@@ -95,6 +95,7 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   roleTitle: { label: "Job title", step: 1, focusLabel: "Job title" },
   team: { label: "Team", step: 1, focusLabel: "Team" },
   jobDescriptionText: { label: "Job description", step: 0, focusLabel: null },
+  jdFilename: { label: "Uploaded file", step: 0, focusLabel: null },
   requirements: { label: "What you need", step: 1, focusLabel: null },
   mustHaves: { label: "Must have", step: 1, focusLabel: null },
   niceToHaves: { label: "Nice to have", step: 1, focusLabel: null },
@@ -173,10 +174,9 @@ export function buildIntakeReview(input: {
   const candidates: Array<IntakeReviewRow | null> = [
     row("roleTitle", s.roleTitle),
     row("team", s.team),
-    row(
-      "jobDescriptionText",
-      s.jdFilename ? s.jdFilename : s.jobDescriptionText.trim().slice(0, 400),
-    ),
+    // Review the complete source: never replace the JD body with a filename or truncate it.
+    row("jobDescriptionText", s.jobDescriptionText),
+    row("jdFilename", s.jdFilename ?? ""),
     row("mustHaves", tagged("must_have")),
     row("niceToHaves", tagged("nice_to_have")),
     row("trainable", tagged("trainable")),
