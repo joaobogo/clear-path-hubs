@@ -71,9 +71,9 @@ export function PortfolioSnapshot({
     {
       label: "Interview",
       value: data.interviewing,
-      href: "/client/interviews",
+      href: "/client/candidates?view=board&stage=interview_process",
     },
-    { label: "Offers", value: data.offers, href: "/client/offers" },
+    { label: "Offer stage", value: data.offers, href: "/client/candidates?view=board&stage=offer" },
     {
       label: "Hires",
       value: data.hires,
