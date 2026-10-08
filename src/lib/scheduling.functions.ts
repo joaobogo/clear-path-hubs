@@ -101,6 +101,7 @@ export const respondToInterview = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const { data: profile } = await context.supabase
       .from("candidate_profiles")
       .select("id")
@@ -315,6 +316,7 @@ export const requestInterviewChange = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const { data: profile } = await context.supabase
       .from("candidate_profiles")
       .select("id")
