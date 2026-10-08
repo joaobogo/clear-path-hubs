@@ -51,6 +51,9 @@ export function advanceFor(
   interviewCalledOff = false,
   interviewCompleted = false,
 ): AdvanceStep | null {
+  if (stage === "shortlisted" || stage === "interview_process") {
+    return null;
+  }
   if (stage === "shortlisted" && interviewRequested) {
     // The ball is with us, not with them. No advance action is offered.
     return null;
