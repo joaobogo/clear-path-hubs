@@ -28,7 +28,6 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { PrivacySummaryNote } from "@/components/candidate/candidate-notes";
 import { FileText } from "lucide-react";
-import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { useConfirmAction } from "@/components/ds";
 import {
   NOTHING_NEEDED_LINE,
@@ -398,9 +397,6 @@ function TrackPage() {
         </section>
       ) : null}
 
-      <div id="interviews" className="scroll-mt-24">
-        <InterviewResponseCard applicationId={id} />
-      </div>
 
 
       <section className="rounded-lg border bg-card p-5 mb-6">
