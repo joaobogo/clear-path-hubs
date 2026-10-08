@@ -35,7 +35,7 @@ const EMPTY: IntakeReviewSnapshot = {
 };
 
 describe("intake review", () => {
-  it("renders every answered field, grouped by its step", () => {
+  it("renders every answered field, grouped by topic with per-field step destinations", () => {
     const r = buildIntakeReview({
       snapshot: {
         ...EMPTY,
@@ -48,7 +48,7 @@ describe("intake review", () => {
     });
     const fields = r.groups.flatMap((g) => g.rows.map((row) => row.field));
     expect(fields).toEqual(["companyName", "roleTitle", "mustHaves", "location"]);
-    expect(r.groups.map((g) => g.step)).toEqual([0, 1, 2]);
+    expect(r.groups.map((g) => g.step)).toEqual([0, 1, 1, 2]);
     expect(r.answeredCount).toBe(4);
   });
 
@@ -58,7 +58,7 @@ describe("intake review", () => {
       required: {},
     });
     expect(r.groups).toHaveLength(1);
-    expect(r.groups[0]!.rows).toHaveLength(1);
+    expect(r.groups[0]?.rows).toHaveLength(1);
     expect(JSON.stringify(r)).not.toContain("Not provided");
   });
 
@@ -89,7 +89,7 @@ describe("intake review", () => {
     const rows = r.groups.flatMap((g) => g.rows);
     expect(rows.find((x) => x.field === "targetStartDate")).toMatchObject({
       step: 2,
-      focusLabel: "Ideal start date",
+      focusLabel: "When would you like them to start?",
     });
     expect(rows.find((x) => x.field === "decisionMaker")).toMatchObject({ step: 2 });
   });
@@ -107,6 +107,67 @@ describe("intake review", () => {
 
     expect(rows.find((x) => x.field === "jobDescriptionText")).toMatchObject({ step: 0 });
     expect(rows.find((x) => x.field === "companyWebsite")).toMatchObject({ step: 1 });
-    expect(r.groups.map((g) => g.title)).toEqual(["You and the job description", "What we read"]);
+    expect(r.groups.map((g) => g.title)).toEqual(["Company and hiring contact", "Role overview"]);
+  });
+});
+
+const rowsFor = (snapshot: Partial<IntakeReviewSnapshot>, required: Record<string, boolean> = {}) =>
+  buildIntakeReview({ snapshot: { ...EMPTY, ...snapshot }, required });
+const COMP = { salaryMin: "", salaryMax: "", currency: "EUR", period: "year", undecided: false, bonus: "", equity: "", flexible: false, note: "" };
+
+describe("complete hiring brief", () => {
+  it("keeps the entire description, original newlines, and attachment name", () => {
+    const text = "First paragraph\n\n" + "Long description. ".repeat(100) + "\nFinal line";
+    const r = rowsFor({ jobDescriptionText: text, jdFilename: "role.pdf" });
+    const rows = r.groups.flatMap((g) => g.rows);
+    expect(rows.find((r) => r.field === "jobDescriptionText")?.value).toBe(text);
+    expect(rows.find((r) => r.field === "jdFilename")?.value).toBe("role.pdf");
+  });
+  it.each([
+    ["70000", "", "EUR From 70,000 per year", "salaryMin", "From"],
+    ["", "85000", "EUR Up to 85,000 per year", "salaryMax", "To"],
+    ["70000", "85000", "EUR 70,000–85,000 per year", "salaryMin", "From"],
+  ])("shows explicit compensation bounds %s / %s", (min, max, value, field, focusLabel) => {
+    const r = rowsFor({ compensation: { ...COMP, salaryMin: min, salaryMax: max } });
+    expect(r.groups.flatMap((g) => g.rows).find((r) => r.field === field)).toMatchObject({ value, step: 2, focusLabel });
+  });
+  it("does not hide extras when compensation is undecided", () => {
+    const r = rowsFor({ compensation: { ...COMP, undecided: true, bonus: "10% annual", equity: "none", flexible: true, note: "Relocation available" } });
+    expect(r.groups.flatMap((g) => g.rows).map((r) => r.value)).toEqual(["Not decided yet", "10% annual", "No equity", "Flexible for the right person", "Relocation available"]);
+  });
+  it("never shows default currency or period when no compensation is provided", () => {
+    expect(rowsFor({ compensation: COMP }).groups).toEqual([]);
+  });
+  it.each([["month", "per month"], ["hour", "per hour"]])("uses the entered %s pay period", (period, label) => {
+    expect(JSON.stringify(rowsFor({ compensation: { ...COMP, salaryMin: "4000", period } }))).toContain(label);
+  });
+  it("preserves exact requirement text, order, and category", () => {
+    const r = rowsFor({ requirements: [{ text: "First · exact text", tag: "must_have" }, { text: "Second\nline", tag: "must_have" }, { text: "Optional", tag: "nice_to_have" }, { text: "Learnable", tag: "trainable" }], dealBreakers: ["Cannot work the stated shift"] });
+    const rows = r.groups.flatMap((g) => g.rows);
+    expect(rows.find((r) => r.field === "mustHaves")?.items).toEqual(["First · exact text", "Second\nline"]);
+    expect(rows.find((r) => r.field === "dealBreakerList")?.items).toEqual(["Cannot work the stated shift"]);
+  });
+  it("does not let nice-to-have or trainable rows satisfy required must-haves", () => {
+    const r = rowsFor({ requirements: [{ text: "Optional", tag: "nice_to_have" }] }, { requirements: true });
+    expect(r.missing).toEqual([expect.objectContaining({ field: "requirements", step: 1, focusLabel: "Requirements" })]);
+  });
+  it("does not let a surname hide a missing first name", () => {
+    expect(rowsFor({ lastName: "Smith" }, { firstName: true, lastName: true }).missing.map((m) => m.field)).toEqual(["firstName"]);
+  });
+  it("shows stage sequence, format and both owner fields", () => {
+    const r = rowsFor({ interviewStages: [{ name: "Intro", format: "phone_screen", ownerName: "Rita", ownerEmail: "rita@example.com" }, { name: "Panel", format: "panel" }] });
+    expect(r.groups.flatMap((g) => g.rows).find((r) => r.field === "interviewStages")).toMatchObject({ step: 2, focusLabel: "interviewStages", stages: [{ name: "Intro", format: "Phone screen", owner: "Rita — rita@example.com" }, { name: "Panel", format: "Panel", owner: "" }] });
+  });
+  it("shows collaborators only when people with meaningful emails are supplied", () => {
+    expect(rowsFor({ inviteCollaborators: true }).groups).toEqual([]);
+    expect(JSON.stringify(rowsFor({ collaborators: [{ name: "Rita", email: "rita@example.com" }], inviteCollaborators: false }))).toContain("No invitations requested");
+  });
+  it("humanises provided seniority and employment without inventing defaults", () => {
+    expect(rowsFor({ seniority: "senior", employmentType: "part_time" }).groups.flatMap((g) => g.rows).map((r) => r.value)).toEqual(["Senior", "Part time"]);
+  });
+  it("never serialises secrets from additional state fields", () => {
+    const snapshot = { ...EMPTY, roleTitle: "Engineer", password: "secret-value", confirmPassword: "secret-value", companyFax: "spam", access_token: "private-token" };
+    const result = JSON.stringify(buildIntakeReview({ snapshot, required: {} }));
+    for (const secret of ["secret-value", "private-token", "companyFax", "access_token"]) expect(result).not.toContain(secret);
   });
 });
