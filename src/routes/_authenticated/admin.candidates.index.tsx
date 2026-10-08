@@ -182,7 +182,7 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/")({
   search: { middlewares: [stripSearchParams(SEARCH_DEFAULTS)] },
   // Only the fields the query reads, so unrelated URL params never refetch.
   loaderDeps: ({ search }) => ({ filters: buildFilters(search) }),
-  loader: ({ context, deps }) =>
+  loader: ({ context, deps }: { context: { queryClient: import("@tanstack/react-query").QueryClient }; deps: { filters: ReturnType<typeof buildFilters> } }) =>
     context.queryClient.ensureQueryData({
       queryKey: ["candidate-index", deps.filters],
       queryFn: () => searchCandidateIndex({ data: deps.filters }),
