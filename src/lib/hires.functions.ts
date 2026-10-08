@@ -454,6 +454,7 @@ export const upsertOfferDraft = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Employment offers are coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatchForHire(context.supabase, data.orgId, data.matchId);
