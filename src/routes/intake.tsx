@@ -416,6 +416,9 @@ function ExpressIntakePage() {
   /** The link the client asked us to read. Not part of the brief itself. */
   const [jdUrl, setJdUrl] = useState("");
   const suggestedForRef = useRef<string>("");
+  const jdRequestSeqRef = useRef(0);
+  const latestJdTextRef = useRef(state.jobDescriptionText);
+  latestJdTextRef.current = state.jobDescriptionText;
   const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
   const { carry: carryParam, duplicate: duplicateParam } = Route.useSearch();
@@ -1393,6 +1396,8 @@ function ExpressIntakePage() {
       url?: string;
       roleTitle: string;
     }) => {
+      const requestId = ++jdRequestSeqRef.current;
+      const sourceText = input.text?.trim() ?? null;
       setSuggestions({ kind: "loading" });
       try {
         const res = await fetch("/api/public/jd-requirements", {
@@ -1412,6 +1417,12 @@ function ExpressIntakePage() {
           text?: string;
           message?: string;
         };
+        // Ignore responses to an older JD, even if that request finishes last.
+        // Manually edited fields are independently protected by editedRef.
+        if (
+          requestId !== jdRequestSeqRef.current ||
+          (sourceText !== null && latestJdTextRef.current.trim() !== sourceText)
+        ) return;
         if (!json.ok) {
           // A file we genuinely could not read is worth saying out loud; every
           // other failure stays quiet and the client just types.
@@ -1433,7 +1444,9 @@ function ExpressIntakePage() {
           setSuggestions({ kind: "idle" });
         }
       } catch {
-        setSuggestions({ kind: "idle" });
+        if (requestId === jdRequestSeqRef.current) {
+          setSuggestions({ kind: "idle" });
+        }
       }
     },
     [applyBlueprint],
@@ -1452,7 +1465,12 @@ function ExpressIntakePage() {
     // filled when the client reaches the next step. Keep edits fully manual.
     if (stepIndex > 1) return;
     const jd = state.jobDescriptionText.trim();
-    if (jd.length < MIN_JD_TEXT) return;
+    if (jd.length < MIN_JD_TEXT) {
+      jdRequestSeqRef.current++;
+      suggestedForRef.current = "";
+      setSuggestions({ kind: "idle" });
+      return;
+    }
     const signature = `text:${state.roleTitle.trim()}::${jd}`;
     if (suggestedForRef.current === signature) return;
     const timer = window.setTimeout(() => {
