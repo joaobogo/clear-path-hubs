@@ -37,17 +37,16 @@ export const ACTIONS_BY_STAGE: Record<MatchStage, { primary: ActionDef | null; m
   delivered: {
     primary: { key: "shortlist", label: "Shortlist" },
     more: [
-      { key: "request_interview", label: "Request interview" },
       ...COMMON_MORE,
       { key: "not_moving_forward", label: "Decline for this role" },
     ],
   },
   shortlisted: {
-    primary: { key: "request_interview", label: "Request interview" },
+    primary: null,
     more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
   },
   interview_process: {
-    primary: { key: "offer", label: "Extend offer" },
+    primary: null,
     more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
   },
   offer: {
