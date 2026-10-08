@@ -136,7 +136,7 @@ import {
 } from "@/lib/position-duplicate";
 import { getPositionDuplicateDraft } from "@/lib/position-duplicate.functions";
 import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
+import { WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/intake")({
   /**
@@ -393,7 +393,6 @@ function ExpressIntakePage() {
   >({ kind: "idle" });
   const [accountBusy, setAccountBusy] = useState(false);
   const [signInMode, setSignInMode] = useState(false);
-  const [reviewing, setReviewing] = useState(true);
   const [stepIndex, setStepIndex] = useState(0);
   // Set while the client is away editing one answer from the review panel, so
   // Continue takes them straight back to review instead of walking the steps.
@@ -476,28 +475,14 @@ function ExpressIntakePage() {
    * review can never show something different from what gets submitted.
    */
   const review = React.useMemo(() => {
-    const compensation = state.compensationUndecided
-      ? "Not decided yet"
-      : [
-          state.salaryMin && state.salaryMax
-            ? `${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)}–${Number(
-                state.salaryMax,
-              ).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-            : "",
-          state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
-          state.equity ? COMP_EQUITY_LABELS[state.equity as "none"] : "",
-          state.compensationFlexible ? "Flexible for the right person" : "",
-          state.compensationNote.trim(),
-        ]
-          .filter(Boolean)
-          .join(" · ");
-
     return buildIntakeReview({
       snapshot: {
         roleTitle: state.roleTitle,
         team: state.team,
+        seniority: state.seniority,
+        employmentType: state.employmentType,
         jobDescriptionText: state.jobDescriptionText,
-        jdFilename: jdFile ? jdFile.filename : null,
+        jdFilename: jdFile?.filename || state.jdSourceName || null,
         requirements: state.requirements.map((r) => ({ text: r.text, tag: String(r.tag) })),
         location: state.location,
         workModelLabel: state.workModel ? WORK_MODEL_LABELS[state.workModel] : "",
@@ -511,7 +496,13 @@ function ExpressIntakePage() {
         sponsorshipLabel: state.sponsorshipAvailable
           ? SPONSORSHIP_LABELS[state.sponsorshipAvailable]
           : "",
-        compensationLine: compensation,
+        compensationLine: "",
+        compensation: {
+          salaryMin: state.salaryMin, salaryMax: state.salaryMax,
+          currency: state.currency, period: state.compensationPeriod,
+          undecided: state.compensationUndecided, bonus: state.bonusStructure,
+          equity: state.equity, flexible: state.compensationFlexible, note: state.compensationNote,
+        },
         workAuthorizationLabel:
           WORK_AUTHORIZATION_OPTIONS.find((o) => o.value === state.workAuthorization)?.label ?? "",
         workAuthorizationNote: state.workAuthorizationNote,
@@ -519,6 +510,9 @@ function ExpressIntakePage() {
         interviewStageLines: state.interviewStages
           .filter((st) => st.name.trim())
           .map((st) => st.name.trim()),
+        interviewStages: state.interviewStages,
+        collaborators: collaboratorCandidates(state.interviewStages, { name: state.decisionMaker, email: state.decisionMakerEmail }),
+        inviteCollaborators: state.inviteCollaborators,
         interviewProcess: state.interviewProcess,
         targetDaysToOffer: state.targetDaysToOffer,
         decisionMaker: state.decisionMaker,
@@ -2504,7 +2498,7 @@ function ExpressIntakePage() {
             Give us the description and we read the role out of it — the title, the
             requirements, where it sits, what it pays. You confirm it on the next screen.
           </p>
-          <div className="space-y-3">
+          <div className="space-y-3" data-field="Job description">
             <div className="flex items-baseline">
               <Label htmlFor="jd-text" className="text-sm font-medium">
                 Job description
@@ -2833,7 +2827,7 @@ function ExpressIntakePage() {
 
             {/* Remote roles need a boundary: timezone bands, or the whole country. */}
             {state.workModel === "remote" && (
-              <fieldset className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
+              <fieldset data-field="remoteTimezones" className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
                 <legend className="text-sm font-medium">
                   Acceptable timezones
                   {req["remoteTimezones"] ? (
@@ -2896,6 +2890,7 @@ function ExpressIntakePage() {
 
           <SectionGroup title="Visa sponsorship">
             <fieldset
+              data-field="sponsorshipAvailable"
               className={`space-y-2 rounded-lg border p-4 ${
                 errors.sponsorshipAvailable
                   ? "border-[color:var(--brand-danger)] bg-[color:var(--brand-danger)]/5"
@@ -3078,7 +3073,7 @@ function ExpressIntakePage() {
                 </select>
               </Field>
 
-              <label className="flex cursor-pointer items-start gap-3 text-sm">
+              <label data-field="compensationFlexible" className="flex cursor-pointer items-start gap-3 text-sm">
                 <input
                   type="checkbox"
                   checked={state.compensationFlexible}
@@ -3416,7 +3411,7 @@ function ExpressIntakePage() {
                     <li key={c.email}>{c.name ? `${c.name} — ${c.email}` : c.email}</li>
                   ))}
                 </ul>
-                <div className="mt-3 flex items-start gap-3">
+                <div data-field="inviteCollaborators" className="mt-3 flex items-start gap-3">
                   <Checkbox
                     id="invite-collaborators"
                     checked={state.inviteCollaborators}
@@ -3446,22 +3441,7 @@ function ExpressIntakePage() {
 
         {step === 3 && (
           <>
-        <Card className="border-[color:var(--brand-navy)]/12">
-          <CardContent className="space-y-4 pt-6">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-base font-semibold">Review your role brief</h2>
-              <button
-                type="button"
-                className="text-sm underline text-[color:var(--brand-navy)]/70"
-                onClick={() => setReviewing((v) => !v)}
-              >
-                {reviewing ? "Hide" : "Show summary"}
-              </button>
-            </div>
-            <p className="text-sm text-[color:var(--brand-navy)]/70">
-              This is the last chance to correct anything before you submit.
-            </p>
-
+        <div className="min-w-0 space-y-6">
             {duplicateError && (
               <div
                 role="alert"
@@ -3564,13 +3544,13 @@ function ExpressIntakePage() {
                 )}
               </div>
             )}
-            {reviewing && (
               <IntakeReviewPanel
                 review={review}
                 loading={draftPhase === "restoring"}
                 onEdit={editFromReview}
+                issues={submitBlockers.map((blocker) => blocker.message)}
+                incomplete={brief.complete ? [] : brief.missing}
               />
-            )}
             {!brief.complete && (
               <div className="rounded-lg border border-[color:var(--brand-amber)]/30 bg-[color:var(--brand-navy)]/4 p-4">
                 <p className="text-sm font-semibold">
@@ -3583,8 +3563,7 @@ function ExpressIntakePage() {
                 </p>
               </div>
             )}
-          </CardContent>
-        </Card>
+        </div>
 
         <Card className="border-[color:var(--brand-navy)]/12">
           <CardContent className="space-y-4 pt-6">
