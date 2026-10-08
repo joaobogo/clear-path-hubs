@@ -83,8 +83,7 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
   const active = step ?? state?.current_step ?? "workspace";
   const activeStep = stepById(active);
 
-  const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: ["onboarding-state"] });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["onboarding-state"] });
 
   const savePlace = useServerFn(saveOnboardingPlace);
   const confirmStep = useServerFn(confirmOnboardingStep);
@@ -106,10 +105,12 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
       await confirmStep({ data: { organization_id: state.organization_id, step: id } });
     },
     onSuccess: invalidate,
-  
+
     // Failure must be visible: a silent rejection reads as success.
     onError: (e: unknown) =>
-      toastError(e, { fallback: "We couldn't mark confirmed. Nothing was saved — please try again." }),
+      toastError(e, {
+        fallback: "We couldn't mark confirmed. Nothing was saved — please try again.",
+      }),
   });
 
   const stepIndex = ONBOARDING_STEPS.findIndex((s) => s.id === active);
@@ -143,9 +144,7 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
       <ErrorState
         title="We could not load your setup"
         description="Your saved answers are safe. Try again in a moment."
-        detail={
-          stateQuery.error instanceof Error ? stateQuery.error.message : null
-        }
+        detail={stateQuery.error instanceof Error ? stateQuery.error.message : null}
         onRetry={() => void stateQuery.refetch()}
       />
     );
@@ -191,8 +190,8 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
           <div className="rounded-lg border taas-bd-success taas-bg-success-soft p-3 text-sm">
             <p className="font-medium">Your workspace is live</p>
             <p className="mt-1 text-muted-foreground">
-              Anything below that is not ticked is optional — it sharpens what we send you,
-              and nothing is waiting on it.
+              Anything below that is not ticked is optional — it sharpens what we send you, and
+              nothing is waiting on it.
             </p>
           </div>
         ) : (
@@ -300,8 +299,7 @@ function WorkspaceStep({ state, onDone, saveForLater }: BodyProps) {
     headquarters: state.workspace?.headquarters ?? "",
   });
   const mutation = useMutation({
-    mutationFn: () =>
-      save({ data: { organization_id: state.organization_id!, ...form } }),
+    mutationFn: () => save({ data: { organization_id: state.organization_id!, ...form } }),
     onSuccess: async () => {
       toast.success("Workspace confirmed.");
       await onDone();
@@ -676,8 +674,8 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       {status === "not_started" || status === "none" ? (
         <div className="space-y-4 rounded-lg border border-border/70 p-4">
           <p className="text-sm text-muted-foreground">
-            Nothing compiled yet. The system reads your requirements and the job description,
-            then proposes the requirements and a sourcing plan for you to check.
+            Nothing compiled yet. The system reads your requirements and the job description, then
+            proposes the requirements and a sourcing plan for you to check.
           </p>
           <Button type="button" onClick={() => compile.mutate()} disabled={compile.isPending}>
             {compile.isPending && <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />}
@@ -725,9 +723,7 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
         onContinue={() => accept.mutate()}
         saving={accept.isPending}
         continueDisabled={!["generated", "ready", "confirmed"].includes(status)}
-        continueLabel={
-          pos.blueprint_confirmed_at ? "Continue" : "This looks right — continue"
-        }
+        continueLabel={pos.blueprint_confirmed_at ? "Continue" : "This looks right — continue"}
         onSave={saveForLater}
       />
     </div>
@@ -739,9 +735,7 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
 function WeightsStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
   const save = useServerFn(saveOnboardingWeights);
   const pos = state.position;
-  const [weights, setWeights] = useState<EvaluationWeights>(
-    pos?.weights ?? { ...DEFAULT_WEIGHTS },
-  );
+  const [weights, setWeights] = useState<EvaluationWeights>(pos?.weights ?? { ...DEFAULT_WEIGHTS });
   const mutation = useMutation({
     mutationFn: () =>
       save({
@@ -780,9 +774,7 @@ function WeightsStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
 function AgentsStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
   const setIntensity = useServerFn(setRoleIntensity);
   const pos = state.position;
-  const [choice, setChoice] = useState<Intensity>(
-    (pos?.intensity as Intensity) ?? "standard",
-  );
+  const [choice, setChoice] = useState<Intensity>((pos?.intensity as Intensity) ?? "standard");
   const mutation = useMutation({
     mutationFn: () => setIntensity({ data: { positionId: pos!.id, intensity: choice } }),
     onSuccess: async () => {
@@ -808,9 +800,7 @@ function AgentsStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
               aria-pressed={selected}
               className={cn(
                 "rounded-xl border p-4 text-left transition-colors",
-                selected
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/40",
+                selected ? "border-primary bg-primary/5" : "border-border hover:border-primary/40",
               )}
             >
               <p className="font-medium">{preset.label}</p>
@@ -929,15 +919,17 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
         <div className="space-y-3 rounded-lg border border-border/70 p-4">
           <p className="text-sm font-medium">Nothing connected yet</p>
           <p className="text-sm text-muted-foreground">
-            Connections are optional. Clients and candidates coordinate conversations
-            and employment offers directly outside TAASFlow. Candidate progress is tracked on the Kanban.
+            Connections are optional. Clients and candidates coordinate conversations and employment
+            offers directly outside TAASFlow. Candidate progress is tracked on the Kanban.
           </p>
           <ul className="space-y-1 text-sm text-muted-foreground">
             <li>Email — candidate threads kept in your own inbox.</li>
             <li>Messaging — shortlist and decision alerts in your team channel.</li>
           </ul>
           <Button asChild type="button" variant="outline" size="sm">
-            <Link to="/client/account" search={{ tab: "workspace" }}>Connect a system</Link>
+            <Link to="/client/account" search={{ tab: "workspace" }}>
+              Connect a system
+            </Link>
           </Button>
         </div>
       ) : (
@@ -947,7 +939,7 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
               <span className="font-medium capitalize">{formatEnumLabel(i.id)}</span>
               <span className="text-muted-foreground">
                 {HEALTH_LABEL[i.status] ?? i.status}
-                {i.checked_at ? ` · checked ${formatDate((i.checked_at))}` : ""}
+                {i.checked_at ? ` · checked ${formatDate(i.checked_at)}` : ""}
               </span>
             </li>
           ))}
@@ -970,7 +962,6 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
     </div>
   );
 }
-
 
 /* ---------------------------------- 9 ---------------------------------- */
 
@@ -1010,7 +1001,9 @@ function RunStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
         </div>
         <div className="flex justify-between gap-3">
           <dt className="text-muted-foreground">Operating level</dt>
-          <dd className="font-medium">{INTENSITY_PRESETS[(pos.intensity as Intensity) ?? "standard"]?.label}</dd>
+          <dd className="font-medium">
+            {INTENSITY_PRESETS[(pos.intensity as Intensity) ?? "standard"]?.label}
+          </dd>
         </div>
         <div className="flex justify-between gap-3">
           <dt className="text-muted-foreground">Billing</dt>
@@ -1071,12 +1064,10 @@ function EntryStep({ state, onDone, back, goTo }: BodyProps) {
     },
     onSuccess: () => {
       void navigate(
-        pos
-          ? { to: "/client/positions/$id", params: { id: pos.id } }
-          : { to: "/client" },
+        pos ? { to: "/client/positions/$id", params: { id: pos.id } } : { to: "/client" },
       );
     },
-  
+
     // Failure must be visible: a silent rejection reads as success.
     onError: (e: unknown) =>
       toastError(e, { fallback: "We couldn't finish. Nothing was saved — please try again." }),
@@ -1104,7 +1095,9 @@ function EntryStep({ state, onDone, back, goTo }: BodyProps) {
           <ReviewRow
             label="Requirements"
             value={
-              pos ? `${pos.must_haves.length} must-haves, ${pos.dealbreakers.length} dealbreakers` : "Not set"
+              pos
+                ? `${pos.must_haves.length} must-haves, ${pos.dealbreakers.length} dealbreakers`
+                : "Not set"
             }
             done={state.complete.includes("requirements")}
             onEdit={() => goTo("requirements")}
@@ -1123,15 +1116,15 @@ function EntryStep({ state, onDone, back, goTo }: BodyProps) {
           />
           <ReviewRow
             label="Operating level"
-            value={INTENSITY_PRESETS[(pos?.intensity as Intensity) ?? "standard"]?.label ?? "Standard"}
+            value={
+              INTENSITY_PRESETS[(pos?.intensity as Intensity) ?? "standard"]?.label ?? "Standard"
+            }
             done={state.complete.includes("agents")}
             onEdit={() => goTo("agents")}
           />
           <ReviewRow
             label="Oversight choices"
-            value={
-              pos && Object.keys(pos.oversight).length > 0 ? "Configured" : "Not configured"
-            }
+            value={pos && Object.keys(pos.oversight).length > 0 ? "Configured" : "Not configured"}
             done={state.complete.includes("oversight")}
             onEdit={() => goTo("oversight")}
           />

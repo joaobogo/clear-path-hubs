@@ -26,8 +26,7 @@ import {
 } from "@/lib/express-intake-schema";
 
 const src = (rel: string) => readFileSync(join(process.cwd(), rel), "utf8");
-const strip = (s: string) =>
-  s.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
+const strip = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
 
 describe("the work email answers the website question", () => {
   it("derives the company domain", () => {
@@ -138,7 +137,10 @@ describe("the description is read before anything is asked about the role", () =
 
   it("validates the description on step 1", () => {
     const fn = intake.slice(intake.indexOf("const validateStep"), intake.indexOf("const goToStep"));
-    const companyBranch = fn.slice(fn.indexOf('if (key === "company")'), fn.indexOf('if (key === "role")'));
+    const companyBranch = fn.slice(
+      fn.indexOf('if (key === "company")'),
+      fn.indexOf('if (key === "role")'),
+    );
     expect(companyBranch, "the description is asked on step 1, so it is checked there").toMatch(
       /jobDescriptionText/,
     );

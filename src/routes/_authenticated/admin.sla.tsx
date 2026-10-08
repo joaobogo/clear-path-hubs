@@ -57,7 +57,11 @@ function SlaBreachPage() {
       </header>
 
       <SlaBreachPanel
-        data={query.data ? { ...query.data, rows: query.data.rows.filter((r) => r.metric !== "interview_slots") } : undefined}
+        data={
+          query.data
+            ? { ...query.data, rows: query.data.rows.filter((r) => r.metric !== "interview_slots") }
+            : undefined
+        }
         isLoading={query.isLoading}
         isError={query.isError}
         error={query.error}
