@@ -2940,6 +2940,9 @@ function ExpressIntakePage() {
                 </p>
               )}
             </fieldset>
+            <Field label="Authorisation note" error={errors.workAuthorizationNote}>
+              <Textarea value={state.workAuthorizationNote} onChange={(e) => set("workAuthorizationNote", e.target.value)} />
+            </Field>
           </SectionGroup>
 
           <SectionGroup title="Compensation">
@@ -3057,6 +3060,9 @@ function ExpressIntakePage() {
                 )}
               </div>
 
+              <Field label="Bonus" error={errors.bonusStructure}>
+                <Input value={state.bonusStructure} onChange={(e) => set("bonusStructure", e.target.value)} />
+              </Field>
               <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
                 <select
                   id="comp-equity"
@@ -3346,6 +3352,9 @@ function ExpressIntakePage() {
                 </p>
               )}
             </fieldset>
+            <Field label="Additional interview details" error={errors.interviewProcess}>
+              <Textarea value={state.interviewProcess} onChange={(e) => set("interviewProcess", e.target.value)} />
+            </Field>
           </SectionGroup>
 
           <SectionGroup title="Timeline">

@@ -138,15 +138,15 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   salaryMin: { label: "Compensation", step: 2, focusLabel: "From" },
   salaryMax: { label: "Compensation", step: 2, focusLabel: "To" },
   compensationUndecided: { label: "Compensation", step: 2, focusLabel: "compensationUndecided" },
-  bonusStructure: { label: "Bonus", step: 2, focusLabel: "Anything else about the package" },
+  bonusStructure: { label: "Bonus", step: 2, focusLabel: "Bonus" },
   equity: { label: "Equity", step: 2, focusLabel: "Equity" },
   compensationFlexible: { label: "Flexibility", step: 2, focusLabel: "compensationFlexible" },
   compensationNote: { label: "Anything else about the package", step: 2, focusLabel: "Anything else about the package" },
-  workAuthorization: { label: "Work authorisation", step: 2, focusLabel: null },
-  workAuthorizationNote: { label: "Authorisation note", step: 2, focusLabel: null },
+  workAuthorization: { label: "Work authorisation", step: 2, focusLabel: "sponsorshipAvailable" },
+  workAuthorizationNote: { label: "Authorisation note", step: 2, focusLabel: "Authorisation note" },
   targetStartDate: { label: "Ideal start", step: 2, focusLabel: "When would you like them to start?" },
   interviewStages: { label: "Interview stages", step: 2, focusLabel: "interviewStages" },
-  interviewProcess: { label: "Interview process", step: 2, focusLabel: "interviewStages" },
+  interviewProcess: { label: "Interview process", step: 2, focusLabel: "Additional interview details" },
   inviteCollaborators: { label: "Collaborator invitations", step: 2, focusLabel: "inviteCollaborators" },
   targetDaysToOffer: {
     label: "Shortlist to offer",
@@ -176,7 +176,7 @@ const SECTIONS = [
   { id: "company", title: "Company and hiring contact", fields: ["companyName", "companyWebsite", "companyLinkedin", "firstName", "contactTitle", "workEmail", "phone", "contactLinkedin"] },
   { id: "role", title: "Role overview", fields: ["roleTitle", "team", "seniority", "employmentType", "jdFilename", "jobDescriptionText"] },
   { id: "requirements", title: "Candidate requirements", fields: ["mustHaves", "niceToHaves", "trainable", "dealBreakerList"] },
-  { id: "practicalities", title: "Location & practicalities", fields: ["workModel", "location", "onsiteDays", "remoteTimezones", "sponsorshipAvailable", "workAuthorizationNote", "targetStartDate"] },
+  { id: "practicalities", title: "Location & practicalities", fields: ["workModel", "location", "onsiteDays", "remoteTimezones", "sponsorshipAvailable", "workAuthorization", "workAuthorizationNote", "targetStartDate"] },
   { id: "compensation", title: "Compensation", fields: ["compensationUndecided", "salaryMin", "salaryMax", "bonusStructure", "equity", "compensationFlexible", "compensationNote"] },
   { id: "workflow", title: "Hiring workflow", fields: ["interviewStages", "interviewProcess", "targetDaysToOffer", "decisionMaker", "decisionMakerEmail", "inviteCollaborators"] },
 ];
@@ -227,7 +227,7 @@ export function buildIntakeReview(input: {
     format: INTERVIEW_STAGE_FORMAT_LABELS[st.format] ?? "",
     owner: [st.ownerName, st.ownerEmail].filter((v) => v?.trim()).join(" — "),
   }));
-  const collaborators = s.collaborators ?? [];
+  const collaborators = (s.collaborators ?? []).filter((c) => c.name.trim() || c.email.trim());
 
   const remoteBoundary = [
     s.remoteAnywhereInCountry ? "Anywhere in the country" : "",
@@ -239,8 +239,8 @@ export function buildIntakeReview(input: {
   const candidates: Array<IntakeReviewRow | null> = [
     row("roleTitle", s.roleTitle),
     row("team", s.team),
-    row("seniority", formatEnumLabel(s.seniority), { editable: false }),
-    row("employmentType", formatEnumLabel(s.employmentType), { editable: false }),
+    row("seniority", formatEnumLabel(s.seniority)),
+    row("employmentType", formatEnumLabel(s.employmentType)),
     row("jdFilename", s.jdFilename ?? "", { fullWidth: true }),
     row("jobDescriptionText", s.jobDescriptionText, { fullWidth: true }),
     listRow("mustHaves", tagged("must_have")),
@@ -251,6 +251,7 @@ export function buildIntakeReview(input: {
     row("onsiteDays", s.onsiteDays ? `${s.onsiteDays} days a week` : ""),
     row("remoteTimezones", remoteBoundary),
     row("sponsorshipAvailable", s.sponsorshipLabel),
+    row("workAuthorization", s.sponsorshipLabel ? "" : s.workAuthorizationLabel),
     ...(s.compensation ? reviewCompensationRows(s.compensation) : [row("salaryMin", s.compensationLine)]),
     // workAuthorization is DERIVED from the sponsorship answer — the intake
     // form says so at the point it sets it: "the same answer in other words,
@@ -259,7 +260,7 @@ export function buildIntakeReview(input: {
     // two separate commitments and pads the list a client is asked to check
     // carefully (audit 1 Sep, F31). The free-text NOTE is genuinely extra
     // information and stays.
-    row("workAuthorizationNote", s.workAuthorizationNote),
+    row("workAuthorizationNote", s.workAuthorizationNote, { fullWidth: true }),
     row("targetStartDate", s.targetStartDate),
     stages.length ? row("interviewStages", stages.map((st) => [st.name, st.format, st.owner].filter(Boolean).join(" — ")).join("\n"), { stages, fullWidth: true }) : listRow("interviewStages", s.interviewStageLines),
     row("interviewProcess", s.interviewProcess, { fullWidth: true }),
@@ -267,7 +268,7 @@ export function buildIntakeReview(input: {
     row("decisionMaker", s.decisionMaker),
     row("decisionMakerEmail", s.decisionMakerEmail),
     listRow("dealBreakerList", s.dealBreakers),
-    row("inviteCollaborators", collaborators.length ? `${s.inviteCollaborators ? "Invitations requested after submission" : "No invitations requested"}\n${collaborators.map((c) => [c.name, c.email].filter(Boolean).join(" — ")).join("\n")}` : "", { fullWidth: true }),
+    row("inviteCollaborators", collaborators.length ? `${s.inviteCollaborators ? "Invite these people after the role is accepted" : "No invitations requested — nobody on this list will be emailed"}\n${collaborators.map((c) => [c.name, c.email].filter(Boolean).join(" — ")).join("\n")}` : "", { fullWidth: true }),
     row("companyName", s.companyName),
     row("companyWebsite", s.companyWebsite),
     row("companyLinkedin", s.companyLinkedin),
