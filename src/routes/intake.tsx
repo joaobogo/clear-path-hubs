@@ -2725,6 +2725,39 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <Field label="Seniority level" required={false}>
+              <select
+                aria-label="Seniority level"
+                value={state.seniority}
+                onChange={(e) => set("seniority", e.target.value)}
+                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+              >
+                <option value="">Not stated in the job description</option>
+                {BLUEPRINT_SENIORITY.map((level) => (
+                  <option key={level} value={level}>{level.charAt(0).toUpperCase() + level.slice(1)}</option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Employment type" required={false}>
+              <select
+                aria-label="Employment type"
+                value={state.employmentType}
+                onChange={(e) => set("employmentType", e.target.value as FormState["employmentType"])}
+                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+              >
+                <option value="">Not stated in the job description</option>
+                {EMPLOYMENT_TYPES.map((kind) => (
+                  <option key={kind} value={kind}>{kind.replaceAll("_", " ")}</option>
+                ))}
+              </select>
+            </Field>
+          </div>
+          {suggestions.kind === "loading" && (
+            <p role="status" className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+              Reading the job description. Any details we find will appear here automatically; you can edit them.
+            </p>
+          )}
 
 
         </Section>
