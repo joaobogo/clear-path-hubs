@@ -2,12 +2,11 @@
 
 All tags live in `src/lib/tracking/pixels.ts`.
 
-RB2B is a server-rendered `<head>` tag: an external async script, emitted only for
-public paths (`rb2bHeadScripts`), so it starts during initial parse and is absent
-from `/admin`, `/client` and `/me` HTML. It runs regardless of consent or region
-(owner's decision, 2026-09-07). Every other tag is injected client-side after
-hydration, once its consent category allows it; GA4 boots restricted via Consent
-Mode and upgrades if analytics is allowed.
+RB2B is a client-injected marketing tag. It is never emitted or preloaded from
+the server-rendered head. In the EU/EEA, UK and Switzerland it waits for an
+affirmative marketing-consent choice; elsewhere the regional policy permits it
+by default until the visitor opts out. It never runs on /admin, /client or /me.
+GA4 boots restricted via Consent Mode and upgrades only when analytics is allowed.
 
 ## Live by default
 | Tag | Env var | Default ID |

@@ -32,12 +32,21 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
 const canonicalHostMiddleware = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
   const host = url.hostname.toLowerCase();
-  if (host.startsWith("www.") && host.endsWith("taasflow.com")) {
-    url.hostname = host.slice(4);
+  const canonicalHost =
+    host === "clear-path-hubs.lovable.app"
+      ? "taasflow.com"
+      : host.startsWith("www.") && host.endsWith("taasflow.com")
+        ? host.slice(4)
+        : null;
+  if (canonicalHost) {
+    url.hostname = canonicalHost;
     const status = request.method === "GET" || request.method === "HEAD" ? 301 : 308;
     return new Response(null, {
       status,
-      headers: { location: url.toString(), "cache-control": "public, max-age=3600" },
+      headers: {
+        location: url.toString(),
+        "cache-control": "public, max-age=3600",
+      },
     });
   }
   return next();

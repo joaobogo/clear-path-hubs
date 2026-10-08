@@ -22,7 +22,7 @@ const entry = getPage("how-it-works");
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
     marketingHead(entry, "/how-it-works", {
-      title: "How it works — AI Hiring Intelligence Platform | TaaSFlow",
+      title: "How TaaSFlow Works: Sourcing, Scoring and Human Review",
       description:
         "The operational explainer: Blueprint Compiler, Agent Layer discovery, Evidence Graph review, Scoring Engine ranking and Decision Workspace delivery.",
     }),
@@ -118,14 +118,14 @@ function HowItWorksPage() {
             <div>
               <SectionHead
                 eyebrow="02 · Sourcing"
-                title="22 channels. One rubric. No side-doors."
+                title="Every sourcing channel. One rubric. No side-doors."
                 lead="LinkedIn, sponsored ads, university partnerships, email marketing, web-scale intent scanning, billboards, radio, cold calling, job boards, communities, staffing partners, executive recruiters, inbound applications — every source feeds the same evidence-first scoring bar."
               />
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/80">
                 {[
                   "Digital, direct, AI-driven, inbound, offline — five families of channels working in parallel per role",
-                  "AI intent scanning surfaces high-intent passive candidates other tools never see",
-                  "Named-target outreach + a 20,000-strong talent network + past finalists brought back in",
+                  "Research and intent signals help the team prioritise passive candidates without changing the scoring bar",
+                  "Named-target outreach, direct sourcing, and previously engaged candidates where the client has the right to re-engage them",
                   "Universities, staffing partners, referrals, events, PR, radio and OOH when a role warrants it",
                   "Whatever the channel — LinkedIn or a billboard — the candidate is scored on the same rubric",
                 ].map((t) => (
@@ -240,7 +240,7 @@ function HowItWorksPage() {
           <PageConnections
         commercial={{ to: "/intake", label: "Start a role", desc: "Kick off hiring in minutes with a guided intake." }}
         explainer={{ to: "/enterprise", label: "Enterprise mechanics", desc: "Governance and cross-role reporting." }}
-        resource={{ to: "/case-studies", label: "See it in production", desc: "Weekly delivery on named roles." }}
+        resource={{ to: "/case-studies", label: "See example engagements", desc: "Illustrative scenarios, clearly labelled as examples." }}
         audience={{ to: "/solutions", label: "Solutions by team stage", desc: "How Series A–C operators use TaaSFlow." }}
       />
     </SiteShell>

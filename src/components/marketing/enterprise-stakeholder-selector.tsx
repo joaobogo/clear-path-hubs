@@ -93,7 +93,7 @@ const STAKEHOLDERS: Stakeholder[] = [
       "Single MSA covers all searches",
       "Tenant isolation and role-based access",
       "Decision audit trail per candidate",
-      "Named recruiter contact — not a ticket queue",
+      "Human recruiting contact — not a ticket queue",
     ],
     view: "Access controls · decision audit · export for reviews · scoped contract terms",
     proof: [

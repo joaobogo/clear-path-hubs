@@ -46,23 +46,16 @@ import {
 } from "@/components/marketing/site-shell";
 
 import { marketingHead, faqScript } from "@/lib/marketing/head";
-import { AgencyComparator } from "@/components/marketing/agency-comparator";
-import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
 import { OperatingSystem } from "@/components/marketing/operating-system";
-import { WorkspaceTour } from "@/components/marketing/workspace-tour";
-import { AudienceSelector } from "@/components/marketing/audience-selector";
 import { TrustStrip } from "@/components/marketing/trust-strip";
 import { StraightAnswers, STRAIGHT_ANSWERS_FAQ } from "@/components/marketing/straight-answers";
 import { HOMEPAGE_FAQ } from "@/lib/homepage-faq";
-import { HiddenCostOfWaiting } from "@/components/marketing/hidden-cost-of-waiting";
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
-import { ProofSystem } from "@/components/marketing/proof-system";
-import { PageConnections } from "@/components/marketing/page-connections";
 import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
-import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
-import { RiskProof } from "@/components/marketing/risk-proof";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
+import { HomepageLeadBar } from "@/components/marketing/homepage-lead-bar";
+import { PILOT_GUARANTEE, PILOT_TIMELINE_LINE } from "@/config/commercial-truth";
 
 // Homepage metadata is authored inline (guardrail: the legacy JSON content entry
 // contains unapproved "14 days" and totals claims). The content bundle is
@@ -76,8 +69,8 @@ export const Route = createFileRoute("/")({
       undefined,
       "/",
       {
-        title: `TaaSFlow | ${BRAND_DESCRIPTOR}`,
-        description: `${BRAND_ONE_LINER} ${SYSTEM_CLAIM} Ranked candidates in a live ${MODULES.workspace} — no placement fees.`,
+        title: `Flat-Fee Recruiting: Your Top 10 for $699 | TaaSFlow`,
+        description: `Submit one role and get a guaranteed top 10, scored against your criteria. First ranked top 10 in 5 business days; full market view by day 15.`,
       },
       {
         // Every Q&A visible on this page, so answer engines quote the page's
@@ -169,7 +162,7 @@ const SUBSCRIPTION_REASONS = [
   {
     icon: Wallet,
     t: "Predictable pricing",
-    d: "A flat monthly fee per active role instead of a percentage of salary owed at hire.",
+    d: "A known flat fee for defined recruiting capacity instead of a percentage of salary at hire.",
   },
   {
     icon: Zap,
@@ -237,7 +230,7 @@ const WORKSPACES = [
 const AGENCY_COMPARE = [
   {
     axis: "Pricing model",
-    taasflow: "Flat monthly subscription per active role",
+    taasflow: "Flat-fee recruiting with published role packages",
     agency: "Percentage of first-year salary at placement",
   },
   {
@@ -332,7 +325,7 @@ const PROBLEM_ROWS = [
     label: "Commercial model",
     icon: Wallet,
     old: "Percentage-of-salary placement fees, paid on every hire.",
-    next: "Flat subscription. No placement fees per hire.",
+    next: "Flat-fee recruiting. No placement fee per hire.",
   },
   {
     label: "Sourcing",
@@ -1290,12 +1283,6 @@ function ClientCandidateDelivery() {
   );
 }
 
-/* ---------- Calculator + adaptive CTA bridge (Prompt 13) ---------- */
-
-function HomeCalculator() {
-  return <AgencyComparator />;
-}
-
 /* ---------- Component ---------- */
 
 
@@ -1321,24 +1308,26 @@ function Home() {
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Your Talent
+                Give us the role.
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">Management Solution</span>
+                <span className="text-[color:var(--brand-ocean-text)]">Get your top 10.</span>
 
               </h1>
-              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-danger)]">
-                Human first, AI enabled
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
+                One role. $699. No placement fee.
               </p>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                TaaSFlow is a complete Talent Management solution capable of
-                running continuous sourcing, creating live talent pipelines
-                — supported by full ATS functionality.
+                TaaSFlow runs multi-channel recruiting, scores candidates against your approved criteria,
+                and delivers a guaranteed top 10. A senior recruiter approves the shortlist before you see it.
+              </p>
+              <p className="max-w-xl text-sm font-medium text-[color:var(--brand-navy)]/75">
+                {PILOT_TIMELINE_LINE}
               </p>
               <ul className="flex flex-wrap gap-2 pt-1">
                 {[
-                  "For companies hiring 1 to 100+ roles a month",
-                  "Only Fair Flat Fees - Always",
-                  `$${PRICE_PILOT_USD} pilot available`,
+                  "Guaranteed top 10 candidates",
+                  "Full scored market view by day 15",
+                  `${PRICE_PILOT_USD} one-time pilot · one role`,
                 ].map((t) => (
                   <li
                     key={t}
@@ -1358,16 +1347,16 @@ function Home() {
                     stays reachable from pricing and the nav. */}
                 <Link
                   to="/intake"
-                  aria-label="Open your first role"
+                  aria-label={`Start your first role for ${PRICE_PILOT_USD}`}
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-6 py-3 text-base font-semibold text-white shadow-[var(--brand-shadow-sm)] hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Open your first role <ArrowRight className="h-4 w-4" aria-hidden />
+                  Start your first role — {"$" + PRICE_PILOT_USD} <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
-                  to="/how-it-works"
+                  to="/book"
                   className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/85 underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  See the platform
+                  Book a 20-minute call
                 </Link>
               </div>
               <div className="text-xs text-[color:var(--brand-navy)]/80">
@@ -1397,28 +1386,6 @@ function Home() {
       {/* 2b — STRAIGHT ANSWERS (sales-risk removal) */}
       <StraightAnswers />
 
-      {/* 2b2 — CALCULATOR (moved up: cost question answered early) */}
-      <section
-        id="roi-calculator"
-        className="scroll-mt-24 border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]"
-      >
-        <PublicSection>
-          <PublicPage>
-            <SectionHead
-              eyebrow="What it costs"
-              title="Do the math on your next hire."
-              lead="Compare package-based TaaSFlow pricing against contingency placement fees and internal recruiter loading — for your actual role mix. Numbers reference SHRM & Ashby 2025 benchmarks; adjust to your reality."
-            />
-
-            <div className="mt-8">
-              <HomeCalculator />
-            </div>
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-
-
       {/* 2c — PILOT */}
       <PublicSection>
         <PublicPage>
@@ -1429,15 +1396,14 @@ function Home() {
                   ${PRICE_PILOT_USD} pilot
                 </p>
                 <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
-                  Try one role before you subscribe.
+                  Start with one role for $699.
                 </h2>
                 <p className="mt-3 text-[color:var(--brand-navy)]/80">
-                  One role, run end-to-end: intake, sourcing and scoring, then a ranked shortlist in
-                  your dashboard. No placement fees, no commitment afterwards.
+                  One role, run end-to-end: intake, multi-channel sourcing, scoring, recruiter review, and a guaranteed ranked top 10. No placement fee.
                 </p>
                 <p className="mt-4 rounded-xl border border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/5 p-3 text-sm text-[color:var(--brand-navy)]/80">
                   <span className="font-semibold text-[color:var(--brand-navy)]">Best for:</span>{" "}
-                  teams that need to validate candidate quality before starting a monthly subscription.
+                  teams that want to validate the recruiting process on a real role before scaling.
                 </p>
                 <Link
                   to="/pilot"
@@ -1448,9 +1414,9 @@ function Home() {
               </div>
               <ol className="grid gap-4 sm:grid-cols-3">
                 {[
-                  { n: "01", when: "Day 1–2", t: "Intake", b: "Upload the job description. TaaSFlow builds the blueprint and search plan for you to review." },
-                  { n: "02", when: "Day 3–10", t: "Sourcing and scoring", b: "Multi-channel sourcing, then scoring against your rubric with evidence per requirement." },
-                  { n: "03", when: "Within days", t: "Ranked shortlist review", b: "Reviewed candidates published to your dashboard, ranked, with CVs and evidence." },
+                  { n: "01", when: "Day 1", t: "Confirm the role", b: "Upload or paste the job description. We turn it into the criteria and search plan you approve." },
+                  { n: "02", when: "By day 5", t: "Your ranked top 10", b: "Multi-channel sourcing and scoring produce your first guaranteed top 10, reviewed before delivery." },
+                  { n: "03", when: "By day 15", t: "Full scored market view", b: "The pilot keeps running so the pipeline reflects a deeper, evidence-backed view of the market." },
                 ].map((s) => (
                   <li key={s.n} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-5">
                     <div className="flex items-center gap-2">
@@ -1481,12 +1447,10 @@ function Home() {
               What you receive
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
-              Our deliverable to you: Real Candidate analytics and insight. Not a stack of CVs.
+              Ten ranked candidates, with the evidence behind every score.
             </h2>
             <p className="mt-3 text-[color:var(--brand-navy)]/80">
-              Pick a candidate. The fit recommendation, requirement coverage,
-              strengths, validations, interview prompts, and stage controls
-              update together — the same layout your team works in every week.
+              Compare candidates side by side. See requirement coverage, supporting evidence, interview prompts, and the next action in one workspace.
             </p>
           </div>
 
@@ -1506,71 +1470,6 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-
-      {/* 3b — DASHBOARD PREVIEW */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
-        <PublicSection>
-          <PublicPage>
-            <SectionHead
-              eyebrow="Decision Workspace"
-              title="Informed decision making, not just a pile of flat CVs"
-              lead="Evidence-first candidate cards, side-by-side comparison, and every decision reversible for five minutes. This is the product interface, running on representative data."
-            />
-
-            <div className="mt-10">
-              <DecisionWorkspacePreview />
-            </div>
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-      {/* 3c — PROOF THAT LOWERS HIRING RISK */}
-      <PublicSection>
-        <PublicPage>
-          <RiskProof />
-        </PublicPage>
-      </PublicSection>
-
-
-
-
-      {/* 5 — MODEL COMPARISON */}
-      <PublicSection>
-        <PublicPage>
-          <ModelComparisonTable />
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              to="/pricing"
-              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              See package pricing <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-            <Link
-              to="/book"
-              className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30"
-            >
-              Book a call with the founders
-            </Link>
-            <Link
-              to="/how-it-works"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
-            >
-              How the model works <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* 5b — WHAT YOU KEEP MISSING (status-quo tax) */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
-        <PublicSection>
-          <PublicPage>
-            <CaseStudyPreviews count={3} />
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-      <HiddenCostOfWaiting />
 
       {/* 6 — HOW IT WORKS */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
@@ -1600,43 +1499,13 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 7 — WORKSPACE TOUR */}
-      <section className="border-b border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-mist)]/30">
-        <PublicSection>
-          <PublicPage>
-            <SectionHead
-              eyebrow="Inside the workspace"
-              title="See what your team actually opens every day."
-              lead="Every open role, ranked candidate, and decision in one place — synchronized in realtime across admin, client and candidate views."
-            />
-            <div className="mt-10">
-              <WorkspaceTour />
-            </div>
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-      {/* 8 — AUDIENCE SELECTOR */}
-      <PublicSection>
-        <PublicPage>
-          <SectionHead
-            eyebrow="Built for your context"
-            title="Does this fit how you actually hire?"
-            lead="Pick your role. See exactly what TaaSFlow does for a founder, an in-house recruiter, a hiring manager, or an enterprise TA leader."
-          />
-          <div className="mt-10">
-            <AudienceSelector />
-          </div>
-        </PublicPage>
-      </PublicSection>
-
       {/* 9 — INDUSTRY PREVIEW */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
         <PublicSection>
           <PublicPage>
             <SectionHead
               eyebrow="Industries"
-              title="A Talent Management solution tuned to your industry."
+              title="Flat-fee recruiting, tuned to your industry."
               lead="Every intake, evidence file, and shortlist is scoped to the hiring reality of the industry — not a generic recruiter template."
             />
             <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -1686,67 +1555,18 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 10 — PROOF */}
-      <ProofSystem />
-
-      {/* 11 — RESOURCES */}
+      {/* 7 — EXAMPLE ENGAGEMENTS */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
         <PublicSection>
           <PublicPage>
-            <SectionHead
-              eyebrow="Resources"
-              title="Reading for hiring teams."
-              lead="Practical guides and analysis on how hiring is actually changing — written for the people running the process."
+            <CaseStudyPreviews
+              count={3}
+              title="See what a TaaSFlow engagement can look like."
+              intro="Illustrative role scenarios showing how we structure sourcing, scoring, and delivery. We publish client results only when the underlying engagement is documented and approved."
             />
-            <div className="mt-10 grid gap-5 md:grid-cols-3">
-              {HOMEPAGE_RESOURCES.map((r) => {
-                const Icon = r.icon;
-                return (
-                  <Link
-                    key={r.slug}
-                    to="/blog/$slug"
-                    params={{ slug: r.slug }}
-                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-[color:var(--brand-navy)]/10 bg-white transition hover:border-[color:var(--brand-ocean)]/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-ocean)]"
-                  >
-                    <div
-                      className={`relative flex h-40 items-center justify-center ${
-                        r.tone === "navy"
-                          ? "bg-gradient-to-br from-[color:var(--brand-navy)] to-[color:var(--brand-ocean)]"
-                          : "bg-gradient-to-br from-[color:var(--brand-ocean)]/90 to-[color:var(--brand-navy)]/80"
-                      }`}
-                    >
-                      <Icon className="h-12 w-12 text-white/90" aria-hidden />
-                      <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]">
-                        {r.type}
-                      </span>
-                    </div>
-                    <div className="flex flex-1 flex-col p-5">
-                      <h3 className="text-base font-semibold leading-snug text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean-text)]">
-                        {r.title}
-                      </h3>
-                      <p className="mt-2 flex-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
-                        {r.description}
-                      </p>
-                      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)]">
-                        Read {r.type.toLowerCase()} <ArrowRight className="h-4 w-4" aria-hidden />
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-            <div className="mt-8">
-              <Link
-                to="/resources"
-                className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
-              >
-                Browse all resources <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
           </PublicPage>
         </PublicSection>
       </section>
-
 
       {/* 12 — FAQ */}
       <PublicSection>
@@ -1782,19 +1602,15 @@ function Home() {
       {/* 13 — FINAL CTA */}
       <CtaSection
         eyebrow="Ready to hire?"
-        title="Start with one role. See a ranked shortlist by Friday."
-        description="Open a role and get evidence per requirement, a live workspace your whole team can see, and package-based pricing instead of placement fees."
-        primary={{ to: "/pilot", label: `Start a $${PRICE_PILOT_USD} Pilot` }}
-        secondary={{ to: "/how-it-works", label: "See how it works" }}
+        title="Start with one role. Get your guaranteed top 10."
+        description={`${PILOT_TIMELINE_LINE} ${PILOT_GUARANTEE}`}
+        primary={{ to: "/intake", label: `Start your first role — ${PRICE_PILOT_USD}` }}
+        secondary={{ to: "/book", label: "Book a 20-minute call" }}
       />
       <FgvEndorsement className="mx-auto max-w-[1200px] px-4 pt-8 text-center text-xs text-[color:var(--brand-navy)]/70 sm:px-6 lg:px-8" />
-          <PageConnections
-        commercial={{ to: "/pricing", label: "See pricing", desc: "Transparent packages, scoped to your role volume." }}
-        explainer={{ to: "/how-it-works", label: "How it works", desc: "Sourcing, evidence, ranking, delivery — step by step." }}
-        resource={{ to: "/case-studies", label: "Real outcomes", desc: "How teams cut cost per hire without losing quality." }}
-        audience={{ to: "/enterprise", label: "For enterprise teams", desc: "Governance, security, and multi-role rollouts." }}
-      />
 
+
+      <HomepageLeadBar />
     </SiteShell>
   );
 }

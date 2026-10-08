@@ -75,7 +75,6 @@ import {
   type RequirementItem,
 
   MAX_JD_BYTES,
-  MIN_ACCOUNT_PASSWORD,
   MIN_JD_TEXT,
   expressIntakeSchema,
   jdFileExt,
@@ -102,7 +101,6 @@ import { FieldExamples } from "@/components/intake/field-examples";
 import { RequirementsList, type SuggestionState } from "@/components/intake/requirements-list";
 import type { JdBlueprint } from "@/lib/jd-blueprint";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { clearIntakeDraft } from "@/lib/intake-draft.functions";
 import {
   clearDraftMirror,
@@ -121,11 +119,10 @@ import {
 } from "@/lib/intake-draft-shared";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
-import { trackDashboardSignup } from "@/lib/tracking/conversions";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
-import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
+import { Check, CheckCircle2, FileText, Loader2, Upload, X } from "lucide-react";
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
 import { intakeSubmitBlockers } from "@/lib/intake-submit-blockers";
@@ -155,17 +152,18 @@ export const Route = createFileRoute("/intake")({
       {
         name: "description",
         content:
-          "Tell us about your company, create your account and upload the job description. TaaSFlow builds the role blueprint, scoring rubric and sourcing plan for you.",
+          "Submit the role brief first. After we receive it, secure your workspace with the same work email. TaaSFlow then builds the role blueprint, scoring rubric and sourcing plan.",
       },
       { property: "og:title", content: "Start your hiring pilot — TaaSFlow" },
       {
         property: "og:description",
         content:
-          "Company details, your account, the job description. TaaSFlow builds the rest and shows you every step.",
+          "Company details and the job description first. Account setup comes after the brief is submitted.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://taasflow.com/intake" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: "https://taasflow.com/intake" }],
   }),
@@ -371,7 +369,6 @@ function ExpressIntakePage() {
   const [jdFile, setJdFile] = useState<JdFile | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [dragging, setDragging] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const idem = useRef<string>("");
@@ -388,11 +385,6 @@ function ExpressIntakePage() {
   const [resumeEmailState, setResumeEmailState] = useState<
     { kind: "idle" } | { kind: "sending" } | { kind: "sent"; email: string } | { kind: "error" }
   >({ kind: "idle" });
-  const [emailStatus, setEmailStatus] = useState<
-    { kind: "idle" } | { kind: "checking" } | { kind: "exists"; message: string } | { kind: "free" }
-  >({ kind: "idle" });
-  const [accountBusy, setAccountBusy] = useState(false);
-  const [signInMode, setSignInMode] = useState(false);
   const [reviewing, setReviewing] = useState(true);
   const [stepIndex, setStepIndex] = useState(0);
   // Set while the client is away editing one answer from the review panel, so
@@ -446,11 +438,11 @@ function ExpressIntakePage() {
       intakeRequiredness({
         hasJdFile: Boolean(jdFile),
         authed,
-        signInMode,
+        signInMode: false,
         workModel: state.workModel,
         remoteAnywhereInCountry: state.remoteAnywhereInCountry,
       }),
-    [jdFile, authed, signInMode, state.workModel, state.remoteAnywhereInCountry],
+    [jdFile, authed, state.workModel, state.remoteAnywhereInCountry],
   );
 
   // What is still missing from the brief, in the client's own words. Shown
@@ -1117,180 +1109,9 @@ function ExpressIntakePage() {
   };
 
 
-  // Recognise a returning client before they type a password.
-  const checkEmail = async () => {
-    const email = state.workEmail.trim().toLowerCase();
-    if (authed || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return;
-    setEmailStatus({ kind: "checking" });
-    try {
-      const res = await fetch("/api/public/intake-account", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "check", email }),
-      });
-      const body = await res.json();
-      if (body?.exists) {
-        setEmailStatus({ kind: "exists", message: body.message });
-        setSignInMode(true);
-      } else {
-        setEmailStatus({ kind: "free" });
-      }
-    } catch {
-      setEmailStatus({ kind: "idle" });
-    }
-  };
-
-  /**
-   * The account exists now, so the brief keeps going by itself: straight on to
-   * the role. If something on this step is still missing we stay put and show
-   * it, rather than carrying an incomplete answer forward.
-   */
-  const continueAfterAccount = () => {
-    if (stepIndex !== 0) return;
-    setTimeout(() => {
-      if (!validateStep(0)) return;
-      setStepIndex(1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 300);
-  };
-
-  const createAccountInline = async () => {
-    const email = state.workEmail.trim().toLowerCase();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      setErrors((e) => ({ ...e, workEmail: "Enter the work email you'd like to sign in with." }));
-      return;
-    }
-    if (state.password.length < MIN_ACCOUNT_PASSWORD) {
-      setErrors((e) => ({
-        ...e,
-        password: `Choose a password of at least ${MIN_ACCOUNT_PASSWORD} characters.`,
-      }));
-      return;
-    }
-    if (state.password !== state.confirmPassword) {
-      setErrors((e) => ({ ...e, confirmPassword: "The two passwords don't match yet." }));
-      return;
-    }
-    setAccountBusy(true);
-    try {
-      const res = await fetch("/api/public/intake-account", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: "create",
-          email,
-          password: state.password,
-          firstName: state.firstName,
-          lastName: state.lastName,
-        }),
-      });
-      const body = await res.json();
-      if (!res.ok || !body?.ok) {
-        if (body?.error === "account_exists") {
-          // A recognised client is not an error: point them at sign-in and keep
-          // every answer exactly where it is.
-          setEmailStatus({ kind: "exists", message: body.message });
-          setSignInMode(true);
-          toast.info(
-            body?.message ??
-              "That email already has an account. Sign in below — nothing you've typed is lost.",
-          );
-          return;
-        }
-        toast.error(body?.message ?? "We couldn't create your account. Please try again.");
-        return;
-      }
-
-      const { error } = await supabase.auth.signInWithPassword({ email, password: state.password });
-      if (error) {
-        toast.error("Account created, but we couldn't sign you in. Try signing in below.");
-        setSignInMode(true);
-        return;
-      }
-      setAuthed(true);
-      setAccountEmail(email);
-      trackEvent("account_created_from_intake", { flow: "express_onboarding" });
-      trackDashboardSignup({ method: "email_password", plan: "express_onboarding" });
-      toast.success("Account created. Everything you've typed is saved to it.");
-      continueAfterAccount();
-    } catch {
-      toast.error("Network problem. Please try again.");
-    } finally {
-      setAccountBusy(false);
-    }
-  };
-
-  const signInInline = async () => {
-    const email = state.workEmail.trim().toLowerCase();
-    if (!state.password) {
-      setErrors((e) => ({ ...e, password: "Enter your password to sign in." }));
-      return;
-    }
-    setAccountBusy(true);
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password: state.password });
-      if (error) {
-        toast.error("That email and password don't match. Try again or reset your password.");
-        return;
-      }
-      setAuthed(true);
-      setAccountEmail(email);
-      setEmailStatus({ kind: "idle" });
-      // The password has done its job — the session is the credential now.
-      // Leaving it in state dead-ended the whole form: submit sent
-      // password="what they typed" with confirmPassword="", the schema's
-      // match refine failed, and the failing fields were hidden because the
-      // user was signed in. "Both passwords must match", nothing to fix,
-      // no way through but a refresh.
-      setState((s) => ({ ...s, password: "", confirmPassword: "" }));
-      setErrors((e) => ({ ...e, password: "", confirmPassword: "" }));
-      toast.success("Signed in. This role will be added to your existing organisation.");
-      continueAfterAccount();
-    } catch {
-      toast.error("Network problem. Please try again.");
-    } finally {
-      setAccountBusy(false);
-    }
-  };
-
-  const googleSignIn = async () => {
-    setAccountBusy(true);
-    try {
-      // Come straight back to the account step of this form.
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/intake?resume=account`,
-      });
-      if (result.error) {
-        toast.error("Google sign-in didn't complete. Try again or use email.");
-        return;
-      }
-      if (result.redirected) return;
-      const { data } = await supabase.auth.getUser();
-      if (data?.user?.email) {
-        setAuthed(true);
-        setAccountEmail(data.user.email);
-        setState((s2) => ({ ...s2, workEmail: s2.workEmail || data.user!.email! }));
-        toast.success("Signed in with Google. Your draft is safe.");
-        continueAfterAccount();
-      }
-    } catch {
-      toast.error("Google sign-in didn't complete. Try again or use email.");
-    } finally {
-      setAccountBusy(false);
-    }
-  };
-
-  // After a full-page Google redirect, land back on the step that holds the
-  // account block so the brief carries on from exactly where it paused.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!new URLSearchParams(window.location.search).has("resume")) return;
-    setStepIndex(0);
-    const t = setTimeout(() => {
-      document.getElementById("account-step")?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 400);
-    return () => clearTimeout(t);
-  }, []);
+  // Account creation deliberately happens after the role brief is submitted.
+  // Existing signed-in clients still flow directly into their workspace; new
+  // visitors are never asked for a password before the conversion is captured.
 
   // Which step the client was on is part of the server-side draft, so it
   // survives a closed laptop rather than living in this browser only.
@@ -1727,8 +1548,8 @@ function ExpressIntakePage() {
       contactLinkedin: state.contactLinkedin,
       // Second line of defence for the same dead-end: an authed submitter has
       // no password step, so stale field values must never reach the schema.
-      password: authed ? "" : state.password,
-      confirmPassword: authed ? "" : state.confirmPassword,
+      password: "",
+      confirmPassword: "",
       roleTitle: state.roleTitle,
       team: state.team,
       jobDescriptionText: state.jobDescriptionText,
@@ -1840,17 +1661,6 @@ function ExpressIntakePage() {
         const key = String(issue.path[0] ?? "form");
         if (!next[key]) next[key] = issue.message;
       }
-      // Object-level password checks only run once every field parses, so we
-      // surface them here too — otherwise a mismatch stays invisible while
-      // another field is still empty.
-      if (!authed) {
-        if (state.password && state.password.length < MIN_ACCOUNT_PASSWORD) {
-          next.password = `Use at least ${MIN_ACCOUNT_PASSWORD} characters`;
-        }
-        if ((state.password ?? "") !== (state.confirmPassword ?? "")) {
-          next.confirmPassword = "Both passwords must match";
-        }
-      }
       // Same class of problem for the job description: the length rule lives in
       // an object-level refine, so a too-short paste stayed invisible while any
       // other field was still empty.
@@ -1918,7 +1728,8 @@ function ExpressIntakePage() {
         const token = sess.session?.access_token;
         if (token) headers.Authorization = `Bearer ${token}`;
       }
-      const res = await fetch("/api/public/express-intake", {
+      const endpoint = authed ? "/api/public/express-intake" : "/api/public/pending-intake";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers,
         body: JSON.stringify(parsed.data),
@@ -1969,44 +1780,28 @@ function ExpressIntakePage() {
 
       trackEvent("express_intake_submitted", {
         flow: "express_onboarding",
+        stage: authed ? "workspace_created" : "brief_captured",
         pilot_eligible: body.pilotEligible !== false,
       });
-      if (body.accountCreated) {
-        trackEvent("account_created_from_intake", { flow: "express_onboarding" });
-        trackDashboardSignup({ method: "email_password", plan: "express_onboarding" });
-      }
-      else trackEvent("existing_account_detected", { flow: "express_onboarding" });
-      if (body.pilotEligible === false)
-        trackEvent("pilot_ineligible", { reason: String(body.pilotReason ?? "unknown") });
       if (body.positionId) trackEvent("role_created", { flow: "express_onboarding" });
-      if (jdFile)
+      if (jdFile && authed) {
         trackEvent(body.jdStored === false ? "document_upload_failed" : "document_upload_succeeded", {
           flow: "express_onboarding",
         });
-
-      // Sign the client straight into their new workspace.
-      let signedIn = authed;
-      if (!authed && parsed.data.password) {
-        try {
-          const { error } = await supabase.auth.signInWithPassword({
-            email: parsed.data.workEmail,
-            password: parsed.data.password,
-          });
-          signedIn = !error;
-        } catch {
-          signedIn = false;
-        }
       }
 
-      // Kick off blueprint preparation. Deliberately not awaited — the role
-      // page shows real progress while it runs.
-      if (body.intakeId) {
+      // Blueprint preparation starts only after an authenticated workspace
+      // exists. For a new visitor that happens on the confirmation screen,
+      // after the brief has already been captured.
+      if (authed && body.intakeId) {
         void fetch("/api/public/blueprint-run", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ intakeId: body.intakeId }),
         }).catch(() => undefined);
       }
+
+      const signedIn = authed;
 
       // The brief is in: mark the draft submitted so a stale tab can never
       // resurrect it, and clear the account copy.
@@ -2020,23 +1815,47 @@ function ExpressIntakePage() {
 
 
       const proceed = () => {
-        if (signedIn && body.positionId) {
-          // Role stays a draft either way — payment (or a conversation) comes next.
+        if (!authed) {
+          if (!body.pendingId) {
+            setSubmitError("Your brief was received, but we could not open the secure account step. Please retry.");
+            setSubmitting(false);
+            return;
+          }
+          try {
+            sessionStorage.setItem(
+              `tf_pending_intake_${body.pendingId}`,
+              JSON.stringify({
+                email: parsed.data.workEmail,
+                companyName: parsed.data.companyName,
+                roleTitle: parsed.data.roleTitle,
+              }),
+            );
+          } catch {
+            /* The account screen can still ask for the email manually. */
+          }
+          navigate({
+            to: "/intake/confirmation",
+            search: { pending_id: body.pendingId },
+          });
+          return;
+        }
+
+        if (body.positionId) {
           trackEvent("intake_path_chosen", { flow: "express_onboarding", path: intent });
           if (PAYMENTS_ENABLED && intent === "pay") {
             navigate({ to: "/checkout", search: { position: body.positionId } });
           } else {
-            navigate({ to: "/book", search: { cta: "intake" } });
+            navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
           }
           return;
         }
+
         navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
       };
 
-      // The pilot runs once per company. If it has already been used — including
-      // under a different account — say so plainly before moving them on, rather
-      // than letting them believe they are on a pilot.
-      if (body.pilotEligible === false) {
+      // Pilot eligibility is known only once an authenticated company workspace
+      // exists. New visitors see this, if applicable, after account setup.
+      if (authed && body.pilotEligible === false) {
         setPilotNotice(() => proceed);
         setSubmitting(false);
         return;
@@ -2067,7 +1886,7 @@ function ExpressIntakePage() {
         width="lg"
         eyebrow="Start hiring"
         title="Launch a role in minutes."
-        description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
+        description="Submit the role first. Account setup comes after we receive the brief, so there is no password wall before you convert."
       >
         <div className="space-y-4" aria-busy="true" data-testid="intake-loading">
           <p className="flex items-center gap-2 text-sm text-[color:var(--brand-navy)]/75">
@@ -2090,7 +1909,7 @@ function ExpressIntakePage() {
       width="lg"
       eyebrow="Start hiring"
       title="Launch a role in minutes."
-      description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
+      description="Submit the role first. Account setup comes after we receive the brief, so there is no password wall before you convert."
     >
       <div
         className="space-y-6"
@@ -2130,17 +1949,16 @@ function ExpressIntakePage() {
               No payment today. Nothing is charged to start.
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your workspace and share the role first. You only pay once your account is created
-              and we've accepted the role — and you can walk away before that at no cost.
+              Submit the role brief first. We ask you to secure the workspace only after the brief is safely received, and nothing is charged before that.
             </p>
           </div>
         ) : (
           <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
             <p className="text-sm font-semibold">
-              Free to start. Your workspace opens right away.
+              Free to submit. No account required yet.
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your account, share the role, then pick a time. We agree the plan together on the call.
+              Share the role first. After we receive it, secure the workspace with the same work email and pick the next step.
             </p>
           </div>
         )}
@@ -2326,11 +2144,7 @@ function ExpressIntakePage() {
             <Input
               type="email"
               value={state.workEmail}
-              onChange={(e) => {
-                set("workEmail", e.target.value);
-                setEmailStatus({ kind: "idle" });
-              }}
-              onBlur={() => void checkEmail()}
+              onChange={(e) => set("workEmail", e.target.value)}
               autoComplete="email"
               inputMode="email"
             />
@@ -2372,127 +2186,24 @@ function ExpressIntakePage() {
 
         </Section>
 
-        <div id="account-step">
         {authed ? (
           <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal)]/30 bg-[color:var(--brand-teal)]/5 p-4">
             <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
             <p className="text-sm">
-              Signed in as <strong>{accountEmail}</strong>. This role will be added to your existing
-              organisation, and your answers are saved to your account as you type.
+              Signed in as <strong>{accountEmail}</strong>. This role can be attached directly to your existing workspace.
             </p>
           </section>
         ) : (
-        <Section title="Create your account" step={1}>
-          <p className="text-sm text-[color:var(--brand-navy)]/70">
-            Create it now and nothing you've typed can be lost — you stay on this page the whole time.
-          </p>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-11 w-full sm:w-auto"
-            disabled={accountBusy}
-            onClick={() => void googleSignIn()}
-          >
-            Continue with Google
-          </Button>
-
-          {emailStatus.kind === "exists" && (
-            <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/4 p-3 text-sm">
-              {emailStatus.message}
-            </div>
-          )}
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Password"
-              htmlFor="account-password"
-              error={errors.password}
-              required={req["password"]}
-              hint={signInMode ? "The password for your existing account." : `At least ${MIN_ACCOUNT_PASSWORD} characters.`}
-            >
-              <div className="relative">
-                <Input
-                  id="account-password"
-                  type={showPassword ? "text" : "password"}
-                  value={state.password}
-                  onChange={(e) => set("password", e.target.value)}
-                  autoComplete={signInMode ? "current-password" : "new-password"}
-                  className="pr-11"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/75 sm:h-9 sm:w-9 hover:text-[color:var(--brand-navy)]"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" aria-hidden />
-                  ) : (
-                    <Eye className="h-4 w-4" aria-hidden />
-                  )}
-                </button>
-              </div>
-            </Field>
-            {!signInMode && (
-              <Field
-                label="Confirm password"
-                error={errors.confirmPassword}
-                required={req["confirmPassword"]}
-                hint="Type it once more so we know it's right."
-              >
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  value={state.confirmPassword}
-                  onChange={(e) => set("confirmPassword", e.target.value)}
-                  autoComplete="new-password"
-                />
-              </Field>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11"
-              disabled={accountBusy}
-              onClick={() => void (signInMode ? signInInline() : createAccountInline())}
-            >
-              {accountBusy ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                  Working…
-                </>
-              ) : signInMode ? (
-                "Sign in and continue"
-              ) : (
-                "Create my account now (optional)"
-              )}
-            </Button>
-            <button
-              type="button"
-              className="text-sm underline text-[color:var(--brand-navy)]/70"
-              onClick={() => setSignInMode((v) => !v)}
-            >
-              {signInMode ? "I don't have an account yet" : "I already have an account"}
-            </button>
-          </div>
-          <p className="text-sm text-[color:var(--brand-navy)]/70">
-            You don't have to do this now — <strong>Continue</strong> at the bottom of this step is the
-            way forward, and we'll set the account up as you go.
-          </p>
-          <p className="text-sm text-[color:var(--brand-navy)]/70">
-            Prefer the full login screen?{" "}
-            <a href="/login" className="underline">
-              Sign in first
-            </a>{" "}
-            and come back — your answers stay saved.
-          </p>
-
-        </Section>
+          <section className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
+            <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
+              No account or password required yet.
+            </p>
+            <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
+              Finish the role brief first. Once it is submitted, we will ask you to secure the workspace with the same work email. Your brief is already safely received before that step.
+            </p>
+          </section>
         )}
-        </div>
+
           </>
         )}
 
@@ -3591,32 +3302,26 @@ function ExpressIntakePage() {
             <div className="rounded-lg bg-[color:var(--brand-navy)]/4 p-4">
               <p className="text-sm font-semibold">What happens after you submit</p>
               <ol className="mt-2 space-y-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                <li>1. Your account and workspace are created — free.</li>
-                <li>2. We review the role and confirm we can deliver it.</li>
+                <li>1. Your role brief is received and saved — before any account setup.</li>
+                <li>2. You secure the workspace with the same work email.</li>
+                <li>3. We attach the brief to your workspace and prepare the role.</li>
                 {PAYMENTS_ENABLED ? (
                   <li>
-                    3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot window starts
+                    4. Only after that do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot window starts
                     when the search goes live.
                   </li>
                 ) : (
                   <li>
-                    3. You pick a time on the next screen. We agree the plan on the call, then the search goes live.
+                    4. You pick a time. We agree the plan on the call, then the search goes live.
                   </li>
                 )}
               </ol>
               <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                {PAYMENTS_ENABLED ? (
-                  <>
-                    One active role, any industry, anywhere in the world, no placement fees.{" "}
-                    {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5 days after
-                    go-live.
-                  </>
-                ) : (
-                  <>
-                    One active role, any industry, anywhere in the world. Your workspace opens immediately.
-                    First candidate activity usually begins within 3–5 days after we agree the plan on the call.
-                  </>
-                )}
+                <>
+                  One role, any industry, anywhere in the world, with no placement fee.{" "}
+                  {PILOT_ONE_PER_COMPANY} The first ranked top 10 is targeted within 5 business days,
+                  with the full scored market view by day 15.
+                </>
               </p>
             </div>
 
@@ -3635,18 +3340,16 @@ function ExpressIntakePage() {
               <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
                 {PAYMENTS_ENABLED ? (
                   <>
-                    I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time
-                    pilot is billed only after my account is created and the role is accepted. The pilot
-                    can be used once per company, for one position — a second sign-up or a new email does
-                    not create a new pilot. Separate locations, franchises and subsidiaries are reviewed
-                    case by case.
+                    I understand there is no charge to submit this role brief. Account setup happens after
+                    submission, and the ${PRICE_PILOT_USD} one-time pilot is billed only after the workspace
+                    is secured and the role is accepted. The pilot can be used once per company, for one
+                    position — a second sign-up or a new email does not create a new pilot.
                   </>
                 ) : (
                   <>
-                    I understand this is free to start today, that my workspace opens immediately, and that we
-                    agree the plan on the call before the search goes live. This initial role can be started
-                    once per company — a second sign-up or a new email does not create a new start. Separate
-                    locations, franchises and subsidiaries are reviewed case by case.
+                    I understand the role brief is submitted before account setup, and that we agree the plan
+                    before the search goes live. This introductory role can be started once per company —
+                    a second sign-up or a new email does not create a new start.
                   </>
                 )}
               </label>
@@ -3737,15 +3440,17 @@ function ExpressIntakePage() {
 
             <div className="rounded-xl border border-[color:var(--brand-navy)]/12 p-4">
               <p className="text-sm font-semibold">
-                {PAYMENTS_ENABLED ? "Choose how you'd like to start" : "Create your workspace and pick a time"}
+                {authed && PAYMENTS_ENABLED ? "Choose how you'd like to start" : authed ? "Create your workspace and pick a time" : "Submit your role brief"}
               </p>
               <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-                {PAYMENTS_ENABLED
+                {authed && PAYMENTS_ENABLED
                   ? "Both create your workspace and analyse the role. One publishes today; the other keeps it saved until we've spoken."
-                  : "Your workspace opens immediately. We agree the plan on the call and activate the search once you're ready."}
+                  : authed
+                    ? "Your workspace opens immediately. We agree the plan on the call and activate the search once you're ready."
+                    : "Your role is captured first. The next screen secures your workspace with the same work email — no account friction before submission."}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {PAYMENTS_ENABLED ? (
+                {authed && PAYMENTS_ENABLED ? (
                   <>
                     <Button
                       type="button"
@@ -3785,10 +3490,10 @@ function ExpressIntakePage() {
                     {submitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                        Creating your workspace…
+                        {authed ? "Creating your workspace…" : "Submitting your role…"}
                       </>
                     ) : (
-                      "Create my workspace and pick a time"
+                      authed ? "Create my workspace and pick a time" : "Submit my role brief"
                     )}
                   </Button>
                 )}
@@ -3829,16 +3534,18 @@ function ExpressIntakePage() {
                 </p>
               )}
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
-                {PAYMENTS_ENABLED
-                  ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
-                  : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."}
+                {authed
+                  ? PAYMENTS_ENABLED
+                    ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
+                    : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."
+                  : "Your brief is saved before account setup. Creating or signing into the workspace on the next screen will not make you re-enter anything."}
               </p>
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
                 Your information stays inside TaaSFlow, part of Flow Group Ventures, and is never sold or passed to third parties.
               </p>
             </div>
             <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
-              {["Role live in your workspace", "Blueprint built for you", "Every answer editable"].map((t) => (
+              {["Role brief saved first", "No password before submission", "Every answer carries into your workspace"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
                   {t}

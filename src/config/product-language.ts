@@ -10,7 +10,7 @@
  */
 
 /** The category we compete in. Use verbatim. */
-export const PRODUCT_CATEGORY = "AI Hiring Intelligence Platform" as const;
+export const PRODUCT_CATEGORY = "Flat-fee recruiting" as const;
 
 /**
  * The canonical brand one-liner, reused verbatim network-wide (title tags,
@@ -19,15 +19,15 @@ export const PRODUCT_CATEGORY = "AI Hiring Intelligence Platform" as const;
  * keeping the platform positioning.
  */
 export const BRAND_ONE_LINER =
-  "Recruiting subscription and hiring infrastructure, powered by AI hiring intelligence." as const;
+  "Flat-fee recruiting run by AI agents and senior recruiters. Your top 10 candidates, scored against your criteria, with no placement fee." as const;
 
 /** Short form of the one-liner, for titles where length is capped. */
 export const BRAND_DESCRIPTOR =
-  "Recruiting Subscription & Hiring Infrastructure" as const;
+  "Flat-Fee Recruiting" as const;
 
 /** The one-line system claim. Use verbatim. */
 export const SYSTEM_CLAIM =
-  "Agents run the search. Evidence backs every score." as const;
+  "Agents run the outreach and scoring. Senior recruiters approve the shortlist." as const;
 
 /** Canonical module names. Never rename in copy. */
 export const MODULES = {

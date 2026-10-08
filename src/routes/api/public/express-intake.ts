@@ -467,14 +467,32 @@ export const Route = createFileRoute("/api/public/express-intake")({
 
         // ---------- Profile ----------
         {
-          const { data: prof } = await admin.from("profiles").select("id").eq("auth_user_id", authUserId).maybeSingle();
+          const fullName = `${data.firstName} ${data.lastName}`.trim();
+          const { data: prof } = await admin
+            .from("profiles")
+            .select("id")
+            .eq("auth_user_id", authUserId)
+            .maybeSingle();
           if (!prof) {
             await admin.from("profiles").insert({
               auth_user_id: authUserId,
               email: data.workEmail,
-              full_name: `${data.firstName} ${data.lastName}`.trim(),
+              full_name: fullName,
               status: "active",
             });
+          } else {
+            // Post-submit account creation may create the auth identity before
+            // the complete contact name is attached. The submitted brief is the
+            // source of truth, so refresh the profile here instead of leaving a
+            // blank or stale display name.
+            await admin
+              .from("profiles")
+              .update({
+                email: data.workEmail,
+                full_name: fullName,
+                status: "active",
+              })
+              .eq("auth_user_id", authUserId);
           }
         }
 

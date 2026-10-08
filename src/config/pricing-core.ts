@@ -1,7 +1,7 @@
 /**
  * TaaSFlow — Canonical price rule (single source of truth)
  * ========================================================
- * WE SELL PACKAGES, NOT POSITIONS.
+ * TWO WAYS TO BUY THE SAME CAPACITY: PREPAID PACKAGES OR SUBSCRIPTION.
  *
  * Each package states a capacity ("up to N positions") and one total price:
  *   • Pilot                    → 1 position, one time only, $699
@@ -18,10 +18,16 @@
  * the number out; it is never shown to a customer, never printed on a card,
  * never written in a caption and never used as a unit anywhere on the site.
  *
- * Subscriptions use exactly the same packages at exactly the same prices,
- * billed monthly instead of once. Paying twelve months up front takes 10% off
- * the annual total — the one discount we publish. The monthly package total
- * itself never changes.
+ * Prepaid packages are position credits bought up front. A client can activate
+ * those positions when they need them instead of opening every role at once;
+ * unused position credits can roll over rather than disappearing at year-end.
+ *
+ * Subscriptions use the same published capacity bands at the same prices, billed
+ * monthly. They are continuous recruiting capacity: roles can rotate as hiring
+ * priorities change while sourcing, outreach and pipeline-building keep running.
+ *
+ * Paying twelve subscription months up front takes 10% off the annual total —
+ * the one discount we publish. The monthly package total itself never changes.
  *
  * Never render a price preceded by "From", never describe a package as a range
  * between two counts, and never publish a per-position figure.
@@ -145,7 +151,7 @@ export const ROI_REFERENCE_PACKAGE_USD = PACKAGE_10.totalUsd;
 export const ROI_REFERENCE_PACKAGE_LABEL = PACKAGE_10.capacityLabel;
 
 /** Turnaround guarantee shared across every published package. */
-export const TURNAROUND_LABEL = "5-day turnaround";
+export const TURNAROUND_LABEL = "Top 10 in 5 business days";
 
 /**
  * The one discount we publish: pay twelve months up front, save 10%.
@@ -157,9 +163,17 @@ export const ANNUAL_DISCOUNT_PCT = 0.1;
 /** Rendered percentage, e.g. "10%". */
 export const ANNUAL_DISCOUNT_DISPLAY = `${Math.round(ANNUAL_DISCOUNT_PCT * 100)}%`;
 
-/** Billing note shown wherever packages are published. */
+/** Public explanation of the prepaid package model. */
+export const PREPAID_PACKAGE_NOTE =
+  "Buy position credits up front, activate them when you need them, and let unused credits roll over instead of expiring at year-end.";
+
+/** Public explanation of the subscription model. */
+export const SUBSCRIPTION_MODEL_NOTE =
+  "Continuous recruiting capacity billed monthly: rotate in new roles as priorities change while sourcing and pipeline-building keep running.";
+
+/** Subscription billing note. */
 export const ANNUAL_DISCOUNT_NOTE =
-  `One package, one price — billed once or monthly. Pay twelve months up front and save ${ANNUAL_DISCOUNT_DISPLAY}.`;
+  `Subscriptions are billed monthly at the published package price. Pay twelve months up front and save ${ANNUAL_DISCOUNT_DISPLAY}.`;
 
 export type SubscriptionTotals = {
   /** The package total, charged each month. */

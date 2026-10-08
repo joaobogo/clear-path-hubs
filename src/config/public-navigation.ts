@@ -1,6 +1,5 @@
 import { BOOKING_ROUTE } from "@/config/booking";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
-import { MODULE_SECTIONS } from "@/config/product-language";
 
 
 /**
@@ -35,16 +34,16 @@ export type PrimaryItem =
 /* -------------------------------------------------------------- CTAs */
 
 export const PRIMARY_CTA: NavLink = {
-  to: "/pilot",
-  label: `Start a $${PRICE_PILOT_USD} pilot`,
-  description: "Run one role end-to-end before subscribing",
+  to: "/intake",
+  label: `Start your first role — $${PRICE_PILOT_USD}`,
+  description: "One role, one-time pilot, guaranteed top 10",
 };
 
 /** Secondary header CTA — rendered next to the primary CTA. */
 export const BOOK_CALL_CTA: NavLink = {
   to: BOOKING_ROUTE,
-  label: "Book call",
-  description: "Talk to a founder about your roles",
+  label: "Book a 20-minute call",
+  description: "Bring one role. We will show you how we would run it.",
 };
 
 export const SECONDARY_CTAS: NavLink[] = [
@@ -84,31 +83,12 @@ export function isCandidateJourneyPath(pathname: string): boolean {
 /* -------------------------------------------------------------- Primary nav (ordered) */
 
 export const PRIMARY_ITEMS: PrimaryItem[] = [
-  {
-    kind: "group",
-    label: "Platform",
-    links: [
-      { to: "/platform", label: "Platform overview", description: "The whole system, module by module" },
-      ...MODULE_SECTIONS.map((m) => ({
-        to: "/platform",
-        hash: m.anchor,
-        label: m.name,
-        description: m.description,
-      })),
-      { to: "/how-it-works", label: "How It Works", description: "Intake, sourcing, scoring, decision — step by step" },
-      { to: "/solutions", label: "Solutions", description: "How teams deploy the platform as they scale" },
-      { to: "/industries", label: "Industries", description: "Role libraries and rubrics by sector" },
-      { to: "/enterprise", label: "Enterprise", description: "Scale, controls, and procurement requirements" },
-      { to: "/integrations", label: "Integrations", description: "Connections we support today, with data and permissions" },
-    ],
-  },
-  { kind: "link", to: "/agents", label: "Agents" },
-  { kind: "link", to: "/system", label: "Intelligence" },
+  { kind: "link", to: "/how-it-works", label: "How it works" },
   { kind: "link", to: "/pricing", label: "Pricing" },
-  { kind: "link", to: "/case-studies", label: "Customers" },
-  { kind: "link", to: "/security", label: "Security" },
+  { kind: "link", to: "/industries", label: "Industries" },
+  { kind: "link", to: "/compare", label: "Compare" },
+  { kind: "link", to: "/resources", label: "Resources" },
 ];
-
 
 /* Legacy exports retained for older imports — derived from PRIMARY_ITEMS. */
 
@@ -124,91 +104,39 @@ export const PRIMARY_NAV: NavLink[] = PRIMARY_ITEMS.filter(
 
 export const FOOTER_GROUPS: NavGroup[] = [
   {
-    // Product column.
-    label: "Product",
+    label: "Explore",
     links: [
-      { to: "/platform", label: "Platform" },
-      { to: "/agents",   label: "Agents" },
-      { to: "/system",   label: "Intelligence" },
-      { to: "/integrations", label: "Integrations" },
-      { to: "/security", label: "Security" },
-      { to: "/status",   label: "System Status" },
-      { to: "/changelog", label: "Changelog" },
-    ],
-  },
-
-
-  {
-
-    label: "For Companies",
-    links: [
-      { to: "/platform",              label: "Platform" },
-      { to: "/how-it-works",          label: "How It Works" },
-      { to: "/pricing",               label: "Pricing" },
-      { to: "/enterprise",            label: "Enterprise" },
-      { to: "/employer-onboarding",   label: "Employer Onboarding" },
-      { to: "/partnerships/staffing", label: "Staffing Partnerships" },
-      { to: "/intake",                label: "Start Hiring" },
-    ],
-  },
-  {
-    label: "Industries",
-    links: [
-      { to: "/industries/technology",       label: "Technology" },
-      { to: "/industries/saas",       label: "SaaS" },
-      { to: "/industries/finance",    label: "Finance" },
-      { to: "/industries/healthcare", label: "Healthcare" },
-      { to: "/industries/legal",      label: "Legal" },
-      { to: "/industries/consulting", label: "Consulting" },
-      { to: "/industries",            label: "View All Industries" },
-    ],
-  },
-  {
-    label: "For Candidates",
-    links: [
-      { to: "/jobs",              label: "Browse Jobs" },
-      { to: "/talent-network",    label: "Talent Network" },
-      { to: "/candidate-join",    label: "Join the Network" },
-      { to: "/login",             label: "Candidate Sign In" },
-      { to: "/candidate-success", label: "Candidate Stories" },
-    ],
-  },
-  {
-    label: "Resources",
-    links: [
-      { to: "/resources",      label: "Resources" },
-      { to: "/blog",           label: "Blog" },
-      { to: "/case-studies",   label: "Case Studies" },
-      { to: "/knowledge-base", label: "Knowledge Base" },
-      { to: "/faq",            label: "FAQ" },
+      { to: "/how-it-works", label: "How it works" },
+      { to: "/pricing", label: "Pricing" },
+      { to: "/industries", label: "Industries" },
+      { to: "/compare", label: "Compare" },
+      { to: "/resources", label: "Resources" },
     ],
   },
   {
     label: "Company",
     links: [
-      { to: "/about",   label: "About" },
-      { to: "/journey", label: "Journey" },
-      { to: "/trust",   label: "Trust Pack" },
+      { to: "/about", label: "About" },
+      { to: "/security", label: "Security" },
+      { to: "/ai-hiring-compliance", label: "AI in hiring" },
+      { to: "/trust", label: "Trust" },
       { to: "/contact", label: "Contact" },
+      { to: "/jobs", label: "Open roles" },
     ],
   },
   {
     label: "Legal",
     links: [
-      { to: "/security",    label: "Trust Center" },
-      { to: "/status",      label: "Status" },
-      { to: "/privacy",     label: "Privacy" },
-      { to: "/terms",       label: "Terms" },
-      { to: "/sitemap",     label: "Sitemap" },
+      { to: "/privacy", label: "Privacy" },
+      { to: "/terms", label: "Terms" },
     ],
   },
 ];
 
-
 // Canonical brand boilerplate — same one-liner used in title tags, meta
 // descriptions and Organization schema, reused verbatim network-wide.
 export const FOOTER_DESCRIPTION =
-  "TaaSFlow is recruiting subscription and hiring infrastructure, powered by AI hiring intelligence. Agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace for one flat fee.";
+  "Flat-fee recruiting run by AI agents and senior recruiters. Start with one $699 role, get a guaranteed top 10, and keep the candidates sourced for your company." as const;
 
 export const SOCIAL_LINKS = [
   { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn" },

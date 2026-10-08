@@ -37,37 +37,16 @@ export const DISALLOWED_PATHS = [
 ] as const;
 
 /**
- * Crawlers named explicitly so answer engines (ChatGPT, Claude, Perplexity,
- * Google AI surfaces, Copilot) get the same allow/disallow set as Googlebot
- * instead of relying on their handling of the wildcard group.
+ * One rule set for every compliant crawler. Keeping a single group prevents
+ * duplicated directives while leaving public content open to search and
+ * answer engines.
  */
-const NAMED_CRAWLERS = [
-  "Googlebot",
-  "Bingbot",
-  "Google-Extended",
-  "GPTBot",
-  "OAI-SearchBot",
-  "ChatGPT-User",
-  "ClaudeBot",
-  "Claude-User",
-  "anthropic-ai",
-  "PerplexityBot",
-  "Perplexity-User",
-  "Applebot",
-  "Applebot-Extended",
-  "CCBot",
-] as const;
-
 export function buildRobotsTxt(): string {
-  const group = (agent: string) => [
-    `User-agent: ${agent}`,
+  return [
+    "User-agent: *",
     "Allow: /",
     ...DISALLOWED_PATHS.map((p) => `Disallow: ${p}`),
     "",
-  ];
-  return [
-    ...group("*"),
-    ...NAMED_CRAWLERS.flatMap((agent) => group(agent)),
     `Sitemap: ${SITEMAP_URL}`,
     "",
   ].join("\n");

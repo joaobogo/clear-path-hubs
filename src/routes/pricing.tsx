@@ -18,6 +18,8 @@ import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import {
   PRICE_PILOT_DISPLAY,
   ANNUAL_DISCOUNT_NOTE,
+  PREPAID_PACKAGE_NOTE,
+  SUBSCRIPTION_MODEL_NOTE,
   MAX_POSITIONS,
 } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
@@ -43,9 +45,9 @@ import { PAYMENTS_ENABLED } from "@/config/commerce";
 export const Route = createFileRoute("/pricing")({
   head: () =>
     marketingHead(undefined, "/pricing", {
-      title: "Pricing & Plan Entitlements | TaaSFlow Platform",
+      title: "Pricing: $699 First Role, Packages from $8,000 | TaaSFlow",
       description:
-        `TaaSFlow platform packages, starting with the ${PRICE_PILOT_DISPLAY} pilot: active roles under management, agent capacity, Hiring Intelligence, Evidence Graph, governance and support — compared side by side.`,
+        `Flat-fee recruiting with public prices. $699 for one pilot role, then packages for up to 10, 20, 30, 40 or 100 positions. No placement fee.`,
     }, {
       breadcrumbs: [
         { name: "Home", path: "/" },
@@ -71,12 +73,12 @@ function PricingPage() {
   const [mode, setMode] = useState<"oneoff" | "subscription">("oneoff");
 
   return (
-    <SiteShell>
+    <SiteShell hideLinkHub>
       {/* Hero — mirrors taasflow.com/pricing */}
       <EditorialHero
         eyebrow="Plans & Entitlements"
-        title="One platform, Talent Management that scales."
-        lead={`Every plan is the full ${PRODUCT_CATEGORY}. What changes is capacity — active roles, agent runs, intelligence and governance.`}
+        title={`Flat-fee recruiting. ${PRICE_PILOT_DISPLAY} for your first role.`}
+        lead="Start with one role. Your pilot is paid once, one per company, and guarantees a scored top 10. Larger packages keep the same recruiting system at higher capacity."
         image={pricingHero}
         imageAlt="A hiring team planning roles together in a light-filled meeting room"
         stats={[
@@ -84,15 +86,15 @@ function PricingPage() {
           { value: "0%", label: "Of salary, ever" },
           { value: String(MAX_POSITIONS), label: "Positions, maximum" },
         ]}
-        primary={{ to: "/intake", label: "Start a role" }}
-        secondary={{ to: "/book", label: "Book a call" }}
+        primary={{ to: "/intake", label: `Start your first role — ${PRICE_PILOT_DISPLAY}` }}
+        secondary={{ to: "/book", label: "Book a 20-minute call" }}
       >
         <ul className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
           {[
             "No salary percentage fees",
             "Evidence-backed scoring on every candidate",
-            "Expert oversight included",
-            "Candidate records stay yours",
+            "Senior recruiter approval included",
+            "Candidates sourced for your role stay yours",
           ].map((x) => (
             <li key={x} className="flex items-start gap-2">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
@@ -141,8 +143,8 @@ function PricingPage() {
           </div>
           <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/80">
             {mode === "oneoff"
-              ? "A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now."
-              : `Continuous capacity, billed monthly — the same rates as one-off, one position up to ${MAX_POSITIONS}.`}
+              ? PREPAID_PACKAGE_NOTE
+              : SUBSCRIPTION_MODEL_NOTE}
           </p>
         </PublicPage>
       </PublicSection>
@@ -160,7 +162,7 @@ function PricingPage() {
               <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
                 Each active role returns a ranked, evidence-backed shortlist of the{" "}
                 <span className="font-semibold text-[color:var(--brand-navy)]">top 10</span>{" "}
-                candidates, refreshed weekly in your workspace.
+                candidates, with the first ranked top 10 targeted within 5 business days and the full scored market view by day 15.
               </p>
             </>
           ) : (
@@ -200,8 +202,7 @@ function PricingPage() {
             What each plan entitles you to
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
-            The platform is the same on every plan. These are the entitlements that
-            differ — capacity, access and governance, not hours of labour.
+            The recruiting system is the same on every plan. Prepaid packages give you position credits to use when needed; subscriptions give you continuously renewable recruiting capacity.
           </p>
           <div className="mt-6">
             {mode === "oneoff" ? (
@@ -381,8 +382,8 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
       <PageConnections
-        commercial={{ to: "/intake", label: "Start hiring", desc: "Pick a plan and open your first role." }}
-        explainer={{ to: "/how-it-works", label: "How delivery works", desc: "What each subscription actually includes each week." }}
+        commercial={{ to: "/intake", label: `Start your first role — ${PRICE_PILOT_DISPLAY}`, desc: "One role, one-time pilot, guaranteed top 10." }}
+        explainer={{ to: "/how-it-works", label: "How delivery works", desc: "How prepaid credits and continuous subscription capacity work." }}
         resource={{ to: "/faq", label: "Pricing questions answered", desc: "Overages, holds, cancellation, and enterprise terms." }}
         audience={{ to: "/enterprise", label: "Enterprise pricing", desc: "Volume, procurement, and MSA-ready terms." }}
       />

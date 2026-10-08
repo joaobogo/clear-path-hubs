@@ -296,7 +296,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
     state: "documented",
     claims: [
       {
-        text: "Currently disclosed: managed database, authentication, storage and realtime; edge hosting, CDN, WAF and DNS; payments and tax; analytics, tag management and the AI models used for CV parsing and scoring; transactional email; sourcing and contact enrichment; always-on business-visitor identification (legitimate interest); meeting scheduling; CRM; and productivity, mail and meetings.",
+        text: "Currently disclosed: managed database, authentication, storage and realtime; edge hosting, CDN, WAF and DNS; payments and tax; analytics, tag management and the AI models used for CV parsing and scoring; transactional email; sourcing and contact enrichment; business-visitor identification subject to the regional marketing-consent gate; meeting scheduling; CRM; and productivity, mail and meetings.",
         source: "legal",
         reference: "Privacy Notice §6",
       },
@@ -307,7 +307,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
       },
     ],
     links: [{ label: "View the subprocessor register", to: "/privacy" }],
-    note: "The register and the international-transfer wording are pending review by our legal counsel. Corrections are welcome at privacy@taasflow.com.",
+    note: "The current register and international-transfer wording are published in the Privacy Notice. Questions or corrections can be sent to privacy@taasflow.com.",
   },
   {
     id: "data-residency",

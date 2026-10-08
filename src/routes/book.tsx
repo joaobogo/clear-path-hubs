@@ -64,6 +64,7 @@ export const Route = createFileRoute("/book")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: canonicalUrl("/book") },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: canonicalUrl("/book") }],
   }),

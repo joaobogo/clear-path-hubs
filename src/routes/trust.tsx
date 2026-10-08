@@ -65,7 +65,7 @@ const PRICING_LINES = [
     label: PACKAGE_10.capacityLabel,
     price: PACKAGE_10.totalDisplay,
     scope: PACKAGE_10.capacityLabel,
-    detail: "One package, one total — billed once or monthly.",
+    detail: "One package, one published total. The applicable order form states the billing cadence.",
   },
   {
     label: PACKAGE_20.capacityLabel,
@@ -484,7 +484,7 @@ function TrustPage() {
       <CtaSection
         eyebrow="Buy with your eyes open"
         title="Book a walkthrough of the trust pack."
-        description="30 minutes. We show pricing, scoring, evidence, and the full change history on a live workspace — with your role, not a demo."
+        description="20 minutes. We show pricing, scoring, evidence, and the full change history on a live workspace — with your role, not a demo."
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/pricing", label: "See pricing detail" }}
       />

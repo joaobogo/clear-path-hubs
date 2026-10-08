@@ -7,7 +7,7 @@
  */
 
 /** Pilot length in days, measured from the moment the pilot role goes live. */
-export const PILOT_DURATION_DAYS = 14;
+export const PILOT_DURATION_DAYS = 15;
 
 /** What the pilot covers. Used on client-facing surfaces verbatim. */
 export const PILOT_INCLUDES = [

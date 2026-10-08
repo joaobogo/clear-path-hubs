@@ -48,7 +48,7 @@ export type SubscriptionTier = {
 
 const BASE = [
   "Top 10 candidates per position",
-  "Ranked shortlists refreshed weekly",
+  "Continuous sourcing and pipeline growth",
   "Evidence-backed scoring with fit notes",
   "Hiring Intelligence reporting",
   "3 months candidate-record retention",
@@ -66,8 +66,8 @@ const BASE_TIERS: SubscriptionTier[] = [
     bestFor: "One position, the full workflow.",
     rolesIncluded: PILOT_ROLES_LABEL,
     included: BASE,
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    ctaLabel: "Start your first role — $699",
+    ctaTo: "/intake",
   },
   {
     id: "growth",
@@ -77,7 +77,7 @@ const BASE_TIERS: SubscriptionTier[] = [
     priceDisplay: PACKAGE_10.totalDisplay,
     priceSuffix: "a month",
     billingNote: "Billed monthly",
-    bestFor: `${PACKAGE_10.capacityLabel} running together, every month.`,
+    bestFor: `${PACKAGE_10.capacityLabel} of continuous recruiting capacity, with roles rotating as priorities change.`,
     rolesIncluded: PACKAGE_10.capacityLabel,
     included: [...BASE, "Dedicated support"],
     ctaLabel: "Book a discovery call",
@@ -92,7 +92,7 @@ const BASE_TIERS: SubscriptionTier[] = [
     priceDisplay: PACKAGE_20.totalDisplay,
     priceSuffix: "a month",
     billingNote: "Billed monthly",
-    bestFor: `${PACKAGE_20.capacityLabel} running together, every month.`,
+    bestFor: `${PACKAGE_20.capacityLabel} of continuous recruiting capacity, refreshed month after month.`,
     rolesIncluded: PACKAGE_20.capacityLabel,
     included: [...BASE, "Priority support", "Faster calibration cycles"],
     ctaLabel: "Book a discovery call",
@@ -106,7 +106,7 @@ const BASE_TIERS: SubscriptionTier[] = [
     priceDisplay: PACKAGE_30.totalDisplay,
     priceSuffix: "a month",
     billingNote: "Billed monthly",
-    bestFor: `${PACKAGE_30.capacityLabel} running together, every month.`,
+    bestFor: `${PACKAGE_30.capacityLabel} of ongoing recruiting capacity across teams.`,
     rolesIncluded: PACKAGE_30.capacityLabel,
     included: [
       ...BASE,
@@ -125,7 +125,7 @@ const BASE_TIERS: SubscriptionTier[] = [
     priceDisplay: PACKAGE_40.totalDisplay,
     priceSuffix: "a month",
     billingNote: "Billed monthly",
-    bestFor: `${PACKAGE_40.capacityLabel} running together, every month.`,
+    bestFor: `${PACKAGE_40.capacityLabel} of ongoing recruiting capacity across business units.`,
     rolesIncluded: PACKAGE_40.capacityLabel,
     included: [
       ...BASE,
@@ -144,7 +144,7 @@ const BASE_TIERS: SubscriptionTier[] = [
     priceDisplay: PACKAGE_100.totalDisplay,
     priceSuffix: "a month",
     billingNote: "Billed monthly",
-    bestFor: `${PACKAGE_100.capacityLabel} running together, every month.`,
+    bestFor: `${PACKAGE_100.capacityLabel} of continuous recruiting capacity for large hiring programmes.`,
     rolesIncluded: PACKAGE_100.capacityLabel,
     included: [
       ...BASE,

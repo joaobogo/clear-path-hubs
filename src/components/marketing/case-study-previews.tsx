@@ -12,8 +12,8 @@ type CaseStudyPreviewsProps = {
 
 export function CaseStudyPreviews({
   className = "",
-  title = "Real engagements, real timelines.",
-  intro = "A sample of the outcomes clients see after they start an intake — by industry and company type.",
+  title = "See what an engagement can look like.",
+  intro = "Illustrative role scenarios showing how TaaSFlow structures sourcing, scoring and delivery. These are examples, not client-reported results.",
   count = 3,
 }: CaseStudyPreviewsProps) {
   const studies = CASE_STUDIES.slice(0, count);
@@ -22,7 +22,7 @@ export function CaseStudyPreviews({
     <section className={className}>
       <div className="max-w-2xl">
         <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
-          <Sparkles className="h-3.5 w-3.5" aria-hidden /> Case studies
+          <Sparkles className="h-3.5 w-3.5" aria-hidden /> Example engagements
         </p>
         <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
           {title}
@@ -32,8 +32,7 @@ export function CaseStudyPreviews({
             outcomes are published anonymised; client names only with written
             approval. */}
         <p className="mt-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
-          Engagements are shown anonymised by industry and company type. Client
-          names appear only with written approval.
+          We publish client results only when the underlying engagement is documented and approved for publication.
         </p>
       </div>
 
@@ -52,7 +51,7 @@ export function CaseStudyPreviews({
             </p>
 
             <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
-              Roles hired
+              Example roles
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80 line-clamp-2">
               {study.rolesNeeded.slice(0, 3).join(", ")}
@@ -61,7 +60,7 @@ export function CaseStudyPreviews({
 
             <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-[color:var(--brand-navy)]/80">
               <Clock className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-              First shortlist in {study.timeToFirstShortlist}
+              Pilot delivery follows {study.timeToFirstShortlist}
             </p>
 
             <p className="mt-4 text-sm font-medium leading-relaxed">
@@ -69,7 +68,7 @@ export function CaseStudyPreviews({
             </p>
 
             <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)]">
-              Read the full story
+              See the example
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
             </span>
           </Link>
