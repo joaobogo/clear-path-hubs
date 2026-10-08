@@ -6,11 +6,9 @@ import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
 import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-card";
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
-import { PositionOfferTrackingPanel } from "@/components/admin/offer-hire-panel";
 
 import {
   InterviewExceptionsBadge,
-  InterviewExceptionsPanel,
 } from "@/components/admin/interview-exceptions-panel";
 
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
