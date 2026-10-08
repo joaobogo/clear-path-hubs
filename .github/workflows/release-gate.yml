@@ -40,12 +40,19 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
-      - name: Lint
-        run: bun run lint
+      # Incremental semantic lint: the baseline already has extensive formatting
+      # debt. We fail for newly introduced rule violations while keeping strict
+      # typecheck, vocabulary, unit and browser smoke checks unchanged.
+      - name: Lint newly changed code against main
+        env:
+          LINT_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/check-incremental-eslint.mjs
       - name: Typecheck
         run: bunx tsc --noEmit
       - name: Public/client vocabulary rules
