@@ -35,30 +35,26 @@ export const COMMON_MORE: ActionDef[] = [
 
 export const ACTIONS_BY_STAGE: Record<MatchStage, { primary: ActionDef | null; more: ActionDef[] }> = {
   delivered: {
-    primary: { key: "shortlist", label: "Shortlist" },
+    primary: null,
     more: [
       ...COMMON_MORE,
-      { key: "not_moving_forward", label: "Decline for this role" },
     ],
   },
   shortlisted: {
     primary: null,
-    more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
+    more: [...COMMON_MORE],
   },
   interview_process: {
     primary: null,
-    more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
+    more: [...COMMON_MORE, ],
   },
   offer: {
-    primary: { key: "hire", label: "Mark hired" },
-    more: [
-      { key: "submit_feedback", label: "Add feedback" },
-      { key: "not_moving_forward", label: "Decline for this role" },
-    ],
+    primary: null,
+    more: [{ key: "submit_feedback", label: "Add feedback" }],
   },
   hired: { primary: null, more: [{ key: "submit_feedback", label: "Add feedback" }] },
   not_moving_forward: {
-    primary: { key: "shortlist", label: "Re-open — shortlist" },
+    primary: null,
     more: [{ key: "submit_feedback", label: "Add feedback" }],
   },
 };
