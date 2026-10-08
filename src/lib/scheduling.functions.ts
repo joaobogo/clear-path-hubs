@@ -263,6 +263,7 @@ export const saveSchedulingSettings = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     if (data.defaultTimezone && !isValidTimezone(data.defaultTimezone)) {
       throw new Error("invalid_timezone");
     }
