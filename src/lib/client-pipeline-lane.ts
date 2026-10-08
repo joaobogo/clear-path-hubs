@@ -103,14 +103,9 @@ function isDeliberatelyExcluded(value: string): boolean {
 export function laneFor(row: LaneRow): PipelineLane | null {
   const stage = String(row.stage);
   if (!isLane(stage)) return null;
-  // The one exception to "the stage decides the lane". A candidate whose only
-  // interview was cancelled is back where they were before it was arranged —
-  // shortlisted — and every surface reads that from here, so the tile, the
-  // board column and the row label cannot disagree. A COMPLETED interview is
-  // not this case: that candidate is still in the interview stage.
-  if (stage === "interview_process" && row.interview_called_off && !row.interview_active) {
-    return "shortlisted";
-  }
+  // Interview scheduling is handled outside TAASFlow. Historical cancellation
+  // rows cannot override a recruiter's explicit Kanban move to Interviewing.
+  // The stored stage is now authoritative for interview progress.
   // The second exception, and the same shape as the first: the stage alone may
   // not claim an outcome the record behind it does not support. A candidate
   // parked in `hired` whose offer is still drafted, sent or negotiating has an
