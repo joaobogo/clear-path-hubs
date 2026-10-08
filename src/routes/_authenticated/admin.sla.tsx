@@ -30,10 +30,6 @@ const DEFINITIONS = [
     title: "Shortlist size",
     body: "Target is the committed number of client-visible candidates by the same day-count deadline. Breached when the deadline has passed and fewer candidates are visible to the client.",
   },
-  {
-    title: "Interview slots",
-    body: "Target is the committed hours from an interview request to slots being offered or a time being booked. Breached when the oldest request is past that window, whether or not slots eventually went out.",
-  },
 ];
 
 function SlaBreachPage() {
@@ -61,7 +57,7 @@ function SlaBreachPage() {
       </header>
 
       <SlaBreachPanel
-        data={query.data}
+        data={query.data ? { ...query.data, rows: query.data.rows.filter((r) => r.metric !== "interview_slots") } : undefined}
         isLoading={query.isLoading}
         isError={query.isError}
         error={query.error}
@@ -73,7 +69,7 @@ function SlaBreachPage() {
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Commitment definitions</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-3">
+        <CardContent className="grid gap-4 sm:grid-cols-2">
           {DEFINITIONS.map((d) => (
             <div key={d.title} className="space-y-1">
               <p className="text-sm font-medium">{d.title}</p>
