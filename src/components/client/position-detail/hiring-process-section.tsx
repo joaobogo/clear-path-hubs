@@ -34,13 +34,13 @@ export function HiringProcessSection({
         <ProcessStep
           n={3}
           title="Interview"
-          body="Your team runs interviews. Schedule and outcomes are logged automatically."
+          body="Interviews take place directly outside TAASFlow. Their progress is tracked in the candidate Kanban."
           done={interviewingTotal > 0}
         />
         <ProcessStep
           n={4}
           title="Offer"
-          body="Extend an offer through TaaSFlow so we can track acceptance."
+          body="Offers are handled outside TAASFlow. Use the candidate Kanban to record the current stage."
           done={offersTotal > 0}
         />
         <ProcessStep
