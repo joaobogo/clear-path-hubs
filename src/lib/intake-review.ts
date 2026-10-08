@@ -3,7 +3,7 @@
  *
  * Clients send us briefs with a stale must-have or last year's salary because
  * they answered step 1 four steps ago and never saw it again. This module turns
- * the form state into a review model: every answered field, grouped by the step
+ * the form state into a review model: every answered field, grouped by topic
  * it came from, each row knowing which step and which control to send the
  * client back to.
  *
@@ -16,10 +16,28 @@
  * Pure — no React, no DOM, no form coupling beyond the snapshot type.
  */
 
+import { COMP_PERIOD_LABELS, COMP_EQUITY_LABELS, INTERVIEW_STAGE_FORMAT_LABELS, type InterviewStage } from "@/lib/express-intake-schema";
+import { APP_LOCALE } from "@/lib/format/datetime";
+import { formatEnumLabel } from "@/lib/human-labels";
+
+export type IntakeReviewCompensation = {
+  salaryMin: string;
+  salaryMax: string;
+  currency: string;
+  period: string;
+  undecided: boolean;
+  bonus: string;
+  equity: string;
+  flexible: boolean;
+  note: string;
+};
+
 export type IntakeReviewSnapshot = {
   // Role
   roleTitle: string;
   team: string;
+  seniority?: string;
+  employmentType?: string;
   jobDescriptionText: string;
   jdFilename: string | null;
   // People
@@ -32,11 +50,15 @@ export type IntakeReviewSnapshot = {
   remoteTimezoneLabels: string[];
   sponsorshipLabel: string;
   compensationLine: string;
+  compensation?: IntakeReviewCompensation;
   workAuthorizationLabel: string;
   workAuthorizationNote: string;
   targetStartDate: string;
   // Process
   interviewStageLines: string[];
+  interviewStages?: InterviewStage[];
+  collaborators?: Array<{ name: string; email: string }>;
+  inviteCollaborators?: boolean;
   interviewProcess: string;
   targetDaysToOffer: string;
   decisionMaker: string;
@@ -61,6 +83,10 @@ export type IntakeReviewRow = {
   label: string;
   /** The answer, already formatted for reading. */
   value: string;
+  items?: string[];
+  stages?: Array<{ name: string; format: string; owner: string }>;
+  fullWidth?: boolean;
+  editable?: boolean;
   /** Zero-based step the row lives on. */
   step: number;
   /**
@@ -72,6 +98,7 @@ export type IntakeReviewRow = {
 };
 
 export type IntakeReviewGroup = {
+  id: string;
   step: number;
   title: string;
   rows: IntakeReviewRow[];
@@ -88,28 +115,39 @@ export type IntakeReview = {
   groups: IntakeReviewGroup[];
   missing: IntakeMissingField[];
   answeredCount: number;
+  headline: string;
 };
 
 /** field → { label the client saw, step, control label to focus }. */
 const FIELD_META: Record<string, { label: string; step: number; focusLabel: string | null }> = {
   roleTitle: { label: "Job title", step: 1, focusLabel: "Job title" },
   team: { label: "Team", step: 1, focusLabel: "Team" },
-  jobDescriptionText: { label: "Job description", step: 0, focusLabel: null },
-  requirements: { label: "What you need", step: 1, focusLabel: null },
-  mustHaves: { label: "Must have", step: 1, focusLabel: null },
-  niceToHaves: { label: "Nice to have", step: 1, focusLabel: null },
-  trainable: { label: "Can be trained", step: 1, focusLabel: null },
+  seniority: { label: "Seniority", step: 0, focusLabel: "Job description" },
+  employmentType: { label: "Employment type", step: 0, focusLabel: "Job description" },
+  jdFilename: { label: "Attached job description", step: 0, focusLabel: "Job description" },
+  jobDescriptionText: { label: "Job description", step: 0, focusLabel: "Job description" },
+  requirements: { label: "Must-have requirements", step: 1, focusLabel: "Requirements" },
+  mustHaves: { label: "Must have", step: 1, focusLabel: "Requirements" },
+  niceToHaves: { label: "Nice to have", step: 1, focusLabel: "Requirements" },
+  trainable: { label: "Can be trained", step: 1, focusLabel: "Requirements" },
   location: { label: "Where it is based", step: 2, focusLabel: "Where is the role based?" },
   workModel: { label: "How it works", step: 2, focusLabel: "How does it work?" },
   onsiteDays: { label: "Days on site", step: 2, focusLabel: "Days on site each week" },
-  remoteTimezones: { label: "Remote boundary", step: 2, focusLabel: null },
-  sponsorshipAvailable: { label: "Visa sponsorship", step: 2, focusLabel: null },
+  remoteTimezones: { label: "Remote boundary", step: 2, focusLabel: "remoteTimezones" },
+  sponsorshipAvailable: { label: "Visa sponsorship", step: 2, focusLabel: "sponsorshipAvailable" },
   salaryMin: { label: "Compensation", step: 2, focusLabel: "From" },
+  salaryMax: { label: "Compensation", step: 2, focusLabel: "To" },
+  compensationUndecided: { label: "Compensation", step: 2, focusLabel: "compensationUndecided" },
+  bonusStructure: { label: "Bonus", step: 2, focusLabel: "Anything else about the package" },
+  equity: { label: "Equity", step: 2, focusLabel: "Equity" },
+  compensationFlexible: { label: "Flexibility", step: 2, focusLabel: "compensationFlexible" },
+  compensationNote: { label: "Anything else about the package", step: 2, focusLabel: "Anything else about the package" },
   workAuthorization: { label: "Work authorisation", step: 2, focusLabel: null },
   workAuthorizationNote: { label: "Authorisation note", step: 2, focusLabel: null },
-  targetStartDate: { label: "Ideal start", step: 2, focusLabel: "Ideal start date" },
-  interviewStages: { label: "Interview stages", step: 2, focusLabel: null },
-  interviewProcess: { label: "Interview process", step: 2, focusLabel: null },
+  targetStartDate: { label: "Ideal start", step: 2, focusLabel: "When would you like them to start?" },
+  interviewStages: { label: "Interview stages", step: 2, focusLabel: "interviewStages" },
+  interviewProcess: { label: "Interview process", step: 2, focusLabel: "interviewStages" },
+  inviteCollaborators: { label: "Collaborator invitations", step: 2, focusLabel: "inviteCollaborators" },
   targetDaysToOffer: {
     label: "Shortlist to offer",
     step: 2,
@@ -117,7 +155,7 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   },
   decisionMaker: { label: "Final decision", step: 2, focusLabel: "Who makes the final decision?" },
   decisionMakerEmail: { label: "Decision maker email", step: 2, focusLabel: "Their email" },
-  dealBreakerList: { label: "Rules someone out", step: 2, focusLabel: null },
+  dealBreakerList: { label: "Disqualifiers", step: 2, focusLabel: "dealBreakerList" },
   companyName: { label: "Company", step: 0, focusLabel: "Company name" },
   companyWebsite: { label: "Website", step: 1, focusLabel: "Company website" },
   companyLinkedin: { label: "Company LinkedIn", step: 0, focusLabel: "Company LinkedIn" },
@@ -139,14 +177,41 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
  * a stale extra title silently mislabels every group and sends "Edit the role"
  * to the wrong step.
  */
-const GROUP_TITLES = ["You and the job description", "What we read", "Details and confirm"];
+const SECTIONS = [
+  { id: "company", title: "Company and hiring contact", fields: ["companyName", "companyWebsite", "companyLinkedin", "firstName", "contactTitle", "workEmail", "phone", "contactLinkedin"] },
+  { id: "role", title: "Role overview", fields: ["roleTitle", "team", "seniority", "employmentType", "jdFilename", "jobDescriptionText"] },
+  { id: "requirements", title: "Candidate requirements", fields: ["mustHaves", "niceToHaves", "trainable", "dealBreakerList"] },
+  { id: "practicalities", title: "Location & practicalities", fields: ["workModel", "location", "onsiteDays", "remoteTimezones", "sponsorshipAvailable", "workAuthorizationNote", "targetStartDate"] },
+  { id: "compensation", title: "Compensation", fields: ["compensationUndecided", "salaryMin", "salaryMax", "bonusStructure", "equity", "compensationFlexible", "compensationNote"] },
+  { id: "workflow", title: "Hiring workflow", fields: ["interviewStages", "interviewProcess", "targetDaysToOffer", "decisionMaker", "decisionMakerEmail", "inviteCollaborators"] },
+];
 
-function row(field: string, value: string): IntakeReviewRow | null {
+function row(field: string, value: string, extra: Partial<IntakeReviewRow> = {}): IntakeReviewRow | null {
   const meta = FIELD_META[field];
   const clean = value.trim();
   // Skipped optional answers are omitted, never rendered as empty rows.
   if (!meta || !clean) return null;
-  return { field, label: meta.label, value: clean, step: meta.step, focusLabel: meta.focusLabel };
+  return { field, label: meta.label, value, step: meta.step, focusLabel: meta.focusLabel, ...extra };
+}
+
+export function reviewCompensationRows(c: IntakeReviewCompensation): Array<IntakeReviewRow | null> {
+  const amount = (raw: string) => {
+    if (!raw.trim()) return "";
+    const n = Number(raw);
+    return Number.isFinite(n) ? n.toLocaleString(APP_LOCALE) : raw;
+  };
+  const min = amount(c.salaryMin);
+  const max = amount(c.salaryMax);
+  const period = COMP_PERIOD_LABELS[c.period as keyof typeof COMP_PERIOD_LABELS] ?? "";
+  const range = min && max ? `${min}–${max}` : min ? `From ${min}` : max ? `Up to ${max}` : "";
+  return [
+    row("compensationUndecided", c.undecided ? "Not decided yet" : ""),
+    row(min ? "salaryMin" : "salaryMax", range ? [c.currency, range, period].filter(Boolean).join(" ") : ""),
+    row("bonusStructure", c.bonus),
+    row("equity", COMP_EQUITY_LABELS[c.equity as keyof typeof COMP_EQUITY_LABELS] ?? ""),
+    row("compensationFlexible", c.flexible ? "Flexible for the right person" : ""),
+    row("compensationNote", c.note, { fullWidth: true }),
+  ];
 }
 
 export function buildIntakeReview(input: {
@@ -160,8 +225,14 @@ export function buildIntakeReview(input: {
   const tagged = (tag: string) =>
     s.requirements
       .filter((r) => r.tag === tag && r.text.trim())
-      .map((r) => r.text.trim())
-      .join(" · ");
+      .map((r) => r.text);
+  const listRow = (field: string, items: string[]) => row(field, items.join("\n"), { items, fullWidth: true });
+  const stages = (s.interviewStages ?? []).filter((st) => st.name.trim() || st.ownerName?.trim() || st.ownerEmail?.trim()).map((st) => ({
+    name: st.name,
+    format: INTERVIEW_STAGE_FORMAT_LABELS[st.format] ?? "",
+    owner: [st.ownerName, st.ownerEmail].filter((v) => v?.trim()).join(" — "),
+  }));
+  const collaborators = s.collaborators ?? [];
 
   const remoteBoundary = [
     s.remoteAnywhereInCountry ? "Anywhere in the country" : "",
@@ -173,19 +244,19 @@ export function buildIntakeReview(input: {
   const candidates: Array<IntakeReviewRow | null> = [
     row("roleTitle", s.roleTitle),
     row("team", s.team),
-    row(
-      "jobDescriptionText",
-      s.jdFilename ? s.jdFilename : s.jobDescriptionText.trim().slice(0, 400),
-    ),
-    row("mustHaves", tagged("must_have")),
-    row("niceToHaves", tagged("nice_to_have")),
-    row("trainable", tagged("trainable")),
+    row("seniority", formatEnumLabel(s.seniority), { editable: false }),
+    row("employmentType", formatEnumLabel(s.employmentType), { editable: false }),
+    row("jdFilename", s.jdFilename ?? "", { fullWidth: true }),
+    row("jobDescriptionText", s.jobDescriptionText, { fullWidth: true }),
+    listRow("mustHaves", tagged("must_have")),
+    listRow("niceToHaves", tagged("nice_to_have")),
+    listRow("trainable", tagged("trainable")),
     row("location", s.location),
     row("workModel", s.workModelLabel),
     row("onsiteDays", s.onsiteDays ? `${s.onsiteDays} days a week` : ""),
     row("remoteTimezones", remoteBoundary),
     row("sponsorshipAvailable", s.sponsorshipLabel),
-    row("salaryMin", s.compensationLine),
+    ...(s.compensation ? reviewCompensationRows(s.compensation) : [row("salaryMin", s.compensationLine)]),
     // workAuthorization is DERIVED from the sponsorship answer — the intake
     // form says so at the point it sets it: "the same answer in other words,
     // so it is derived rather than asked twice". Reviewing it as its own row
@@ -195,16 +266,17 @@ export function buildIntakeReview(input: {
     // information and stays.
     row("workAuthorizationNote", s.workAuthorizationNote),
     row("targetStartDate", s.targetStartDate),
-    row("interviewStages", s.interviewStageLines.join(" → ")),
-    row("interviewProcess", s.interviewProcess),
+    stages.length ? row("interviewStages", stages.map((st) => [st.name, st.format, st.owner].filter(Boolean).join(" — ")).join("\n"), { stages, fullWidth: true }) : listRow("interviewStages", s.interviewStageLines),
+    row("interviewProcess", s.interviewProcess, { fullWidth: true }),
     row("targetDaysToOffer", s.targetDaysToOffer ? `${s.targetDaysToOffer} days` : ""),
     row("decisionMaker", s.decisionMaker),
     row("decisionMakerEmail", s.decisionMakerEmail),
-    row("dealBreakerList", s.dealBreakers.join(" · ")),
+    listRow("dealBreakerList", s.dealBreakers),
+    row("inviteCollaborators", collaborators.length ? `${s.inviteCollaborators ? "Invitations requested after submission" : "No invitations requested"}\n${collaborators.map((c) => [c.name, c.email].filter(Boolean).join(" — ")).join("\n")}` : "", { fullWidth: true }),
     row("companyName", s.companyName),
     row("companyWebsite", s.companyWebsite),
     row("companyLinkedin", s.companyLinkedin),
-    row("firstName", [s.firstName, s.lastName].filter(Boolean).join(" ")),
+    row("firstName", [s.firstName, s.lastName].filter(Boolean).join(" "), { label: "Hiring contact" }),
     row("contactTitle", s.contactTitle),
     row("workEmail", s.workEmail),
     row("phone", s.phone),
@@ -214,8 +286,11 @@ export function buildIntakeReview(input: {
   const rows = candidates.filter((r): r is IntakeReviewRow => r !== null);
   const answered = new Set(rows.map((r) => r.field));
   // Name and surname share one row, so surname counts as answered with it.
-  if (answered.has("firstName") && s.lastName.trim()) answered.add("lastName");
-  if (s.requirements.some((r) => r.text.trim())) answered.add("requirements");
+  if (!s.firstName.trim()) answered.delete("firstName");
+  if (s.lastName.trim()) answered.add("lastName");
+  if (s.requirements.some((r) => r.tag === "must_have" && r.text.trim())) answered.add("requirements");
+  if (s.compensation?.salaryMin.trim()) answered.add("salaryMin");
+  if (s.compensation?.salaryMax.trim()) answered.add("salaryMax");
 
   const satisfied = input.satisfied ?? {};
   const missing: IntakeMissingField[] = [];
@@ -228,11 +303,12 @@ export function buildIntakeReview(input: {
   }
   missing.sort((a, b) => a.step - b.step);
 
-  const groups: IntakeReviewGroup[] = GROUP_TITLES.map((title, step) => ({
-    step,
+  const groups: IntakeReviewGroup[] = SECTIONS.map(({ id, title, fields }) => ({
+    id,
+    step: rows.find((r) => fields.includes(r.field))?.step ?? 0,
     title,
-    rows: rows.filter((r) => r.step === step),
+    rows: fields.flatMap((field) => rows.filter((r) => r.field === field)),
   })).filter((g) => g.rows.length > 0);
 
-  return { groups, missing, answeredCount: rows.length };
+  return { groups, missing, answeredCount: rows.length, headline: [s.roleTitle, s.companyName].filter((v) => v.trim()).join(" · ") };
 }
