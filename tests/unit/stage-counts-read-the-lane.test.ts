@@ -41,15 +41,15 @@ const CALLED_OFF = row({
   interview_active: false,
 });
 
-describe("a called-off interview counts as shortlisted", () => {
-  it("is shortlisted, not interviewing", () => {
+describe("off-system interview status follows the candidate Kanban", () => {
+  it("stays Interviewing if the recruiter last moved it there", () => {
     const k = computeCandidateKpis([CALLED_OFF]);
-    expect(k.shortlisted, "the tile said interviewing while every other surface said shortlisted").toBe(1);
-    expect(k.interviewing).toBe(0);
+    expect(k.shortlisted).toBe(0);
+    expect(k.interviewing).toBe(1);
   });
 
   it("agrees with laneFor, which is where the rule lives", () => {
-    expect(laneFor(CALLED_OFF)).toBe("shortlisted");
+    expect(laneFor(CALLED_OFF)).toBe("interview_process");
   });
 
   it("reproduces the launch-pass tally exactly", () => {
@@ -67,8 +67,8 @@ describe("a called-off interview counts as shortlisted", () => {
     const k = computeCandidateKpis(rows);
     expect(k.delivered).toBe(14);
     // 3 stored shortlisted + the cancelled one = 4, matching /client/positions.
-    expect(k.shortlisted).toBe(4);
-    expect(k.interviewing).toBe(1);
+    expect(k.shortlisted).toBe(3);
+    expect(k.interviewing).toBe(2);
     expect(k.offers).toBe(2);
     // The partition must still sum to the list beneath the tiles.
     const p = k.stage_partition;
