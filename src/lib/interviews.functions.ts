@@ -679,6 +679,7 @@ export const cancelInterview = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -742,6 +743,7 @@ export const markInterviewCompleted = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
