@@ -197,7 +197,6 @@ function Overview() {
       qc.invalidateQueries({ queryKey: ["admin-portfolio-health"] }),
       qc.invalidateQueries({ queryKey: ["admin", "decision-backlog"] }),
       qc.invalidateQueries({ queryKey: ["admin", "approvals"] }),
-      qc.invalidateQueries({ queryKey: ["offer-hire-rollup"] }),
       qc.invalidateQueries({ queryKey: ["admin", "sla-breaches"] }),
     ]);
     await router.invalidate();
@@ -224,10 +223,6 @@ function Overview() {
           limit={8}
           ownerUserId={ownerScope}
         />
-      </AdminWidgetErrorBoundary>
-
-      <AdminWidgetErrorBoundary label="Offers and hires">
-        <OfferHireRollupPanel teamWideNote={teamWide} />
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Latest activity">
