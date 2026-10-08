@@ -80,6 +80,7 @@ export const saveAvailabilityWindows = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     const t = trace();
     await assertEditor(context.supabase, context.userId, data.orgId);
     if (!isValidTimezone(data.timezone)) throw new Error("invalid_timezone");
@@ -185,6 +186,7 @@ export const proposeFromAvailability = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     const t = trace();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -259,6 +261,7 @@ export const rescheduleInterview = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     const t = trace();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
