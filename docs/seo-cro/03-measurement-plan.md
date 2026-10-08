@@ -14,12 +14,12 @@ GA4 receives events through `trackEvent` in `src/lib/tracking/pixels.ts`. The ca
 | `lead_form_start` | First field change | Yes. `employer-inquiry-form.tsx:75` | Once per form mount. |
 | `lead_form_error` | Validation or submission failure | Yes. `employer-inquiry-form.tsx:87` (validation), `:106` (server rejected), `:126` (network or rate limited) | Only a category in `error_code`: `firstName_invalid`, `email_invalid`, `phone_invalid`, `position_invalid`, `multiple_fields`, `server_rejected`, `network_error`, `rate_limited`, `unknown`. Typed values are never sent. |
 | `generate_lead` | The server has stored a genuine inquiry and returned an id | Yes. `employer-inquiry-form.tsx:114` calls `trackConfirmedConversion` (`src/lib/tracking/fgv-events.ts:109`), which sends `fgv_form_success` and `form_submit` (GA4 `generate_lead`) with the opaque `submission_id` | The same helper also fires `generate_lead` for other forms: `form_type=employer_intake` (`src/routes/intake.tsx:1965`), `sales_contact` (`src/routes/contact.tsx:434`), `consultation` (`src/components/marketing/book-a-call.tsx:256`, `:427`, component not mounted today). Dashboards must filter by `form_type`. |
-| `booking_confirmed` | The scheduler confirms the slot | Yes. `src/routes/book.tsx:390` via `trackBooking` (`src/lib/booking/booking-events.ts`), de-duplicated once per `bookingSessionId`; `booking_completed` fires beside it (`book.tsx:391`) | The confirmation is the response of our own scheduler call in the browser, not a validated webhook. A client-side event can be lost if the tab closes right after the booking; the database booking record is the source of truth. |
+| `booking_confirmed` | Retired. TaaSFlow no longer offers booking, so this event is no longer raised by the public site and the `fgv_booking_*` names were removed from `FGV_EVENTS`. | n/a | Historical GA4 data stays; do not use it for new reporting. |
 | `qualified_lead` | Sales applies an agreed employer and role-fit rule | **Not wired.** A name `fgv_qualified_lead` is declared in `FGV_EVENTS` (`fgv-events.ts:37`) but nothing calls it. | Needs a server-side or CRM milestone and owner approval of the qualification rule. |
 | `pilot_paid` | A trusted invoice or payment record confirms payment | **Not wired.** Payments are off (`PAYMENTS_ENABLED=false`); packages are invoiced by TaaSFlow directly. | Needs a server-side milestone from the invoice record and owner approval. Do not fake a checkout event. |
 | `pilot_started` | Operational or CRM milestone confirmed | **Not wired as an analytics event.** The database records `pilot_started_at` on the organisation (`src/lib/admin.functions.ts:1296-1307`) but nothing sends it to analytics. | Needs a server-side emit and owner approval. |
 
-Other funnel events that exist and may be useful context: `booking_page_viewed` (`book.tsx:190`), `time_selected` (`:343`), `intake_completed` (`:329`), `fgv_job_intake_step` (`intake.tsx:817`), `fgv_pricing_*` names declared in `FGV_EVENTS`, `intake_path_chosen` (`intake.tsx:2032`). Their coverage was not audited.
+Other funnel events that exist and may be useful context: `intake_completed`, `fgv_job_intake_step` (`intake.tsx:817`), `fgv_pricing_*` names declared in `FGV_EVENTS`, `intake_path_chosen` (`intake.tsx:2032`). Their coverage was not audited.
 
 Approval gate: `qualified_lead`, `pilot_paid` and `pilot_started` are server-side or CRM milestones. They must not be added until the owner approves the definitions and the data source.
 
@@ -30,7 +30,7 @@ Hard rule, from the header of `src/lib/tracking/fgv-events.ts`: no names, emails
 | Layer | What it does | Where |
 | --- | --- | --- |
 | `sanitizeParams` (used by `trackFgv`, which carries all `fgv_*` and `lead_form_*` events) | Allow-list. Only these keys pass: `brand_key`, `source_domain`, `page_path`, `form_type`, `service_interest`, `destination_brand`, `referral_context`, `content_asset_id`, `webinar_id`, `assessment_type`, `intake_step`, `pricing_plan`, `fgv_journey_id`, `consent_state`, `submission_id`, `error_code`. Null and undefined are dropped. Strings matching `@` or a 7+ digit phone-like pattern are dropped. Strings are cut to 100 characters. Only strings, numbers and booleans pass. | `fgv-events.ts:47-81` |
-| `clean` inside `trackEvent` (applies to every event, including `trackBooking` and `trackFormSubmit`) | Deny-list. Drops keys such as `email`, `phone`, `name`, `fullName`, `cv`, `resume`, `score`, `candidateId`, `clientId`, `address`, `password`, `token`, `applicationId`, and any string that looks like an email. It does not filter phone numbers in string values. | `src/lib/tracking/pixels.ts:464-482` |
+| `clean` inside `trackEvent` (applies to every event, including `trackFormSubmit`) | Deny-list. Drops keys such as `email`, `phone`, `name`, `fullName`, `cv`, `resume`, `score`, `candidateId`, `clientId`, `address`, `password`, `token`, `applicationId`, and any string that looks like an email. It does not filter phone numbers in string values. | `src/lib/tracking/pixels.ts:464-482` |
 | Lead-form params | Built from the form type, the placement and an error category only | `src/lib/tracking/lead-form-events.ts:30` |
 
 Rules for new events:
@@ -43,7 +43,7 @@ Rules for new events:
 Known defects found while writing this plan:
 
 - `consent_state` is read from `localStorage["fgv.consent"]` (`fgv-events.ts:86`), but the consent banner stores its decision under `taasflow_consent_v1` (`src/lib/tracking/consent.ts:38`). Nothing writes `fgv.consent`, so `consent_state` is always `unknown`. Dashboards cannot currently split by consent state.
-- `trackBooking` and `trackFormSubmit` use the deny-list, not the allow-list; they only send ids and categories today, but nothing enforces that.
+- `trackFormSubmit` uses the deny-list, not the allow-list; they only send ids and categories today, but nothing enforces that.
 
 ## 3. Consent behaviour
 
@@ -65,8 +65,7 @@ The session denominator is a page-journey proxy; sales determines real employer 
 | Metric | Definition | Numerator source | Denominator source | Available today |
 | --- | --- | --- | --- | --- |
 | Qualified leads per employer-journey session | Qualified leads divided by employer-journey sessions after bot and internal filtering | `qualified_lead` (CRM) | GA4 sessions that touched an employer page | No: numerator not wired |
-| Booked calls per accepted lead | `booking_confirmed` divided by `generate_lead` (accepted inquiries) over the same window | GA4 `booking_confirmed` (or booking table) | GA4 `generate_lead` with `form_type=employer_inquiry` | Partly: both events exist; lead acceptance is only "server stored it", not sales acceptance |
-| Show rate | Calls held divided by calls booked | Meeting outcome | `booking_confirmed` | No: no held/no-show event or field was found. Unknown, owner to confirm where it is recorded. |
+| Contacted within one business day | Accepted leads the team contacted within one business day, divided by accepted leads | CRM / lead ledger | GA4 `generate_lead` with `form_type=employer_inquiry` | Partly: the lead is stored; the contact time is only known if the team logs it. Owner to confirm where it is recorded. |
 | Paid pilots per qualified lead | `pilot_paid` divided by `qualified_lead` | Invoice record | CRM | No |
 | Inquiry form conversion (diagnostic) | `generate_lead` (employer_inquiry) divided by `lead_form_view`, split by `referral_context` | GA4 | GA4 | Yes, subject to consent undercount |
 | Form friction | `lead_form_error` by `error_code` divided by `lead_form_start` | GA4 | GA4 | Yes |
@@ -86,4 +85,4 @@ Useful dimensions: source, medium, campaign, landing page category, form version
 
 ## 6. Data requests (from the audits)
 
-Search Console performance and coverage exports, GA4 events and landing-page reports, CRM funnel report (lead to qualified to booked to held to paid), server logs, backlink export, field Core Web Vitals. All Unknown until the owner provides them.
+Search Console performance and coverage exports, GA4 events and landing-page reports, CRM funnel report (lead to qualified to paid), server logs, backlink export, field Core Web Vitals. All Unknown until the owner provides them.

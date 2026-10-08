@@ -30,7 +30,7 @@ Statuses: **Done** (verified in the current code by search); **Done (needs owner
 | C2 | Old $399 pilot price in cache and intake consent | Done | One value `PRICE_PILOT_USD` in `src/config/pricing-core.ts`. No `$399` in public routes or config (only a salary range in a blog post). Re-check after purge. |
 | C3 | Retired plans ($2,100, $4,500, Bronze) on /enterprise, /trust, /pitch | Done | No retired plan strings in public routes; `/trust` redirects to `/security`; `/pitch` is `noindex` and out of the sitemap (`src/lib/seo/indexability.ts`). `Bronze` remains only in comments in client workspace files. |
 | C4 | One-time versus monthly price unclear on cards | Done | `src/components/marketing/pricing-tier-card.tsx` states how each card is billed; `src/routes/__tests__/pricing-page-claims.test.ts` |
-| C5 | Portuguese system-instruction and MVP-readiness text on /book | Done | No `INSTRUÇÃO` or `MVP readiness` string in `src/` or the public build output |
+| C5 | Portuguese system-instruction and MVP-readiness text on /book | Done (page since removed) | No `INSTRUÇÃO` or `MVP readiness` string in `src/` or the public build output |
 | C6 | Case-study totals (175+) not from real engagements | Done (needs owner fact) | `src/config/case-study-metrics.ts` renders a figure only with provenance; all six are empty so none render. Sources: `08` B3 |
 | C7 | /about links to 'Named outcomes' that name nobody | Done | No such text in `src/routes/about.tsx`; case studies are labelled examples |
 | C8 | '100% credential-verified' versus healthcare FAQ | Done | No `100% credential` string in source |
@@ -44,8 +44,8 @@ Statuses: **Done** (verified in the current code by search); **Done (needs owner
 | H4 | Heading 'Real engagements, real timelines' over example data | Done | No such heading; `/case-studies` titled 'Example Engagements' |
 | H5 | Mock enterprise dashboard labelled 'Live' | Done | `src/routes/enterprise.tsx`: badge 'Example dashboard', '(example figures)' |
 | H6 | /pricing sends single-role buyers to FlowPlaced | Done | Cross-sell text lives only in `src/config/ecosystem.ts`; `/pricing` does not import it |
-| H7 | All paid cards say 'Book a discovery call'; pilot has no primary button | Done | Pilot card uses `CTA_PRIMARY` (to `/pilot`), others `CTA_BOOK` (`src/content/pricing.ts`). Destination is `/pilot`, not `/intake` as the audit suggested |
-| H8 | Call buttons lead to /contact, which has no calendar | Done | All 'Book' labels use `CTA_BOOK` to `/book`; contact buttons say 'Send us a message' (`src/config/cta.ts`) |
+| H7 | All paid cards say 'Book a discovery call'; pilot has no primary button | Done | Pilot card uses `CTA_PRIMARY` (to `/pilot`), others `CTA_MESSAGE` (`src/content/pricing.ts`). Destination is `/pilot`, not `/intake` as the audit suggested |
+| H8 | Call buttons lead to /contact, which has no calendar | Done, then superseded | Booking was removed. The secondary action is 'Send us a message' to `/contact` (`CTA_MESSAGE`, `src/config/cta.ts`); retired booking URLs 301 to `/contact` |
 | H9 | /system walkthrough line with no button | Done | `/system` redirects to `/how-it-works#scoring` (`src/config/legacy-redirects.ts`) |
 | H10 | Agent counts do not match the roster | Done | Counts derived from `ROSTER` (`ROSTER_COUNTS` in `src/config/agent-roster.ts`); 8 entries, 5 agents, 3 always-on |
 | H11 | 22, 23 and 24 channels | Done | One derived count: `CHANNEL_AGENT_COUNT` = 23 (`src/config/channel-agents.ts`), guarded by `src/config/__tests__/marketing-copy-facts.test.ts` |
@@ -71,7 +71,7 @@ Statuses: **Done** (verified in the current code by search); **Done (needs owner
 | M7 | Honeypot fields 'Website' and 'Company fax' visible | Done | Hidden and `aria-hidden` in `src/routes/contact.tsx:507`, `src/routes/intake.tsx:3716`, `src/components/marketing/employer-inquiry-form.tsx:283` |
 | M8 | /enterprise persona tabs empty; unlabeled score | Unverified | Not checked in rendered HTML |
 | M9 | Demo rows read '#1 Candidate B-215485' | Unverified | Not checked in rendered HTML |
-| M10 | Call called discovery, hiring, consultation, walkthrough at 20 and 30 minutes | Done (public); internal copy still says 30-minute | `CALL_NAME`/`CALL_MINUTES` in `src/config/offer-facts.ts`; residual in `src/config/business-rules.ts:303` |
+| M10 | Call called discovery, hiring, consultation, walkthrough at 20 and 30 minutes | Superseded | Booking and the call were removed; `CALL_NAME`/`CALL_MINUTES` no longer exist. Public copy says we contact you within one business day (`RESPONSE_TIME_SENTENCE`, `INQUIRY_FOLLOWUP_SENTENCE` in `src/config/offer-facts.ts`) |
 | M11 | Nav label 'For Series A–C operators' | Done | No such label; `/solutions` audiences are HR, hospitality and frontline operators, founders, staffing agencies |
 | M12 | Same sample candidate with and without evidence on /agents | Done | No A-1042 text on `/agents`; A-1042 is reused as a labelled example in three components |
 | M13 | Footer has candidate sign-in only | Done | Generic 'Sign in' to `/login` for companies and candidates (`src/config/public-navigation.ts`) |
@@ -102,8 +102,8 @@ The positioning is: recruiting platform with managed execution; flat-fee pilot f
 3. Candidate CV upload is PDF only (`src/routes/jobs.$id.apply.tsx`) while `/agents` says job description and CV uploads accept PDF, DOCX, TXT or RTF.
 4. Enterprise pricing row says "Included + SSO and security review"; SSO is not confirmed.
 5. Conversions for the intake, contact and consultation forms still carry `service_interest=recruiting_subscription`.
-6. Workspace copy in `src/config/business-rules.ts` says "5-step intake wizard" and "30-minute discovery call".
-7. `/privacy` lists Calendly and says RB2B identifies organisations only, while `/book` is described as a native scheduler and RB2B is always on by owner decision.
+6. Workspace copy in `src/config/business-rules.ts` says "5-step intake wizard".
+7. `/privacy` lists Calendly (booking was removed; see owner decision A8) and says RB2B identifies organisations only, while RB2B is always on by owner decision.
 8. `consent_state` on analytics events is always `unknown` (reads a key nothing writes).
 9. `src/lib/seo/index-config.ts` says role pages carry `noindex`; open role pages are indexable.
 10. Healthcare vertical configuration still lists GMP and device-manufacturing roles.

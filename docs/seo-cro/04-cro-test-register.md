@@ -11,7 +11,7 @@ Last updated: 7 October 2026
 | Live experiments | None |
 | Feature-flag system in code | None. The spec below is a proposal; building it needs approval. |
 | Traffic baseline | Unknown. No GA4 or Search Console data is available to this repository. |
-| Event preconditions | `lead_form_view`, `lead_form_start`, `lead_form_error`, `generate_lead`, `booking_confirmed` fire today. `qualified_lead` and `pilot_paid` are not wired, so quality guardrails cannot be computed yet. See `03-measurement-plan.md`. |
+| Event preconditions | `lead_form_view`, `lead_form_start`, `lead_form_error`, `generate_lead` fire today. `qualified_lead` and `pilot_paid` are not wired, so quality guardrails cannot be computed yet. See `03-measurement-plan.md`. |
 | Recording tools (session replay, heat maps) | Not installed; installing one needs explicit authorisation. |
 
 ## 2. Preconditions before any test starts
@@ -35,7 +35,7 @@ Parameters shared by all tests: minimum detectable effect **to be set once traff
 | Variant | Primary CTA goes to `/intake` ("Start the full role intake" label), no inquiry form above the fold. The playbook labels this a conversion hypothesis, not proof. |
 | Audience | New employer visitors on `/`, `/pilot`, `/pricing`, `/for-founders`, `/for-hr-teams`. Exclude candidates, existing customers, internal traffic. |
 | Primary metric | Qualified leads per employer-journey session (needs `qualified_lead`). Until then, `generate_lead` per session as a diagnostic only. |
-| Guardrails | Booked calls per accepted lead; `lead_form_error` rate; share of leads that are spam or not employers; pilot paid per qualified lead once wired; no drop in lead delivery. |
+| Guardrails | Leads contacted within one business day; `lead_form_error` rate; share of leads that are spam or not employers; pilot paid per qualified lead once wired; no drop in lead delivery. |
 | Notes | The intake account step and step order are not changed by the SEO/CRO work (authentication risk). Both arms must keep the same price and timing text. |
 
 ### H-2 Outcome-led versus category-led hero
@@ -47,7 +47,7 @@ Parameters shared by all tests: minimum detectable effect **to be set once traff
 | Variant | Category-led headline and lead. Same form, same CTA, same price. |
 | Audience | New employer visitors on `/` only. |
 | Primary metric | `generate_lead` (employer_inquiry) per employer-journey session, then qualified leads per session. |
-| Guardrails | Booked calls per accepted lead; bounce proxy; organic landing-page title and H1 consistency (the homepage `<title>` comes from `src/content/pages/index.json`, not from the H1; do not change search metadata inside a copy test). |
+| Guardrails | Leads contacted within one business day; bounce proxy; organic landing-page title and H1 consistency (the homepage `<title>` comes from `src/content/pages/index.json`, not from the H1; do not change search metadata inside a copy test). |
 
 ### H-3 Pricing chooser versus the full matrix
 
@@ -58,7 +58,7 @@ Parameters shared by all tests: minimum detectable effect **to be set once traff
 | Variant | A three-question chooser that recommends the pilot or a package and then shows the same CTAs. The totals and entitlements stay exactly as in `src/config/pricing-core.ts` and `pricing-entitlements.ts`. |
 | Audience | New employer visitors reaching `/pricing`. |
 | Primary metric | Qualified leads per employer-journey session that visited `/pricing`. |
-| Guardrails | Pilot-versus-package mix; booked calls per accepted lead; support questions about scope; no price shown that is not in `pricing-core.ts`. |
+| Guardrails | Pilot-versus-package mix; leads contacted within one business day; support questions about scope; no price shown that is not in `pricing-core.ts`. |
 | Notes | Do not change price in the same test. A price test needs separate explicit approval. |
 
 ### H-4 Guarantee placement (only if a guarantee is approved)
@@ -96,7 +96,7 @@ Record negative and null results as well as wins.
 Traffic is Unknown, and a split test needs far more visitors than a handful of enquiries a week provides. Until a baseline exists, learn from people instead of from statistics. None of the following is a statistically significant lift; a handful of sessions only finds problems.
 
 1. **Five-second tests** on the homepage hero and the pilot page: show the page for five seconds to a target employer (a hotel general manager, a clinic director, a founder hiring a first recruiter), then ask what the company does, what it costs and what they would do next. Record answers verbatim. Success is that they can state the offer and the price.
-2. **Observed buyer sessions** (five to eight people who have a role to fill): ask them to find the price, request the pilot and book a call while thinking aloud. Note where they hesitate: the account step in `/intake`, the label "Request my $699 pilot" versus "Book a 20-minute call", missing recruiter profiles, missing legal entity.
+2. **Observed buyer sessions** (five to eight people who have a role to fill): ask them to find the price, request the pilot and send a message while thinking aloud. Note where they hesitate: the account step in `/intake`, the label "Request my $699 pilot" versus "Send us a message", missing recruiter profiles, missing legal entity.
 3. **Sales-feedback log**: for every accepted inquiry, sales records source page, whether it was a real employer, whether it qualified and why not. This becomes the `qualified_lead` rule once approved.
 4. **Privacy-safe abandonment review** using tools already approved: `lead_form_error` categories and `lead_form_start` versus `generate_lead`.
 5. Revisit this register when the baseline shows enough weekly employer inquiries to detect an effect of the size the owner cares about. That threshold is **to be set once traffic is known**.

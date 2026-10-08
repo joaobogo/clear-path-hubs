@@ -50,10 +50,10 @@ These need Supabase environment variables that are not present in a plain checko
 | --- | --- |
 | Sitemap is an index (`/sitemap.xml`) pointing at `/sitemap-pages.xml`, `/sitemap-industries.xml`, `/sitemap-blog.xml`. `lastmod` only when a real date exists; no `changefreq` or `priority`. | `src/lib/seo/index-config.ts` |
 | Static sitemap paths (33) are the `STATIC_PATHS` array; 11 `/resources/<slug>` guides are appended. | `index-config.ts` |
-| Static paths that emit `noindex` and stay out of the sitemap: `/status`, `/changelog`, `/candidate-success`, `/knowledge-base`, `/talent-marketplace`, `/global-talent`, `/pitch`, `/sitemap`, `/book`, `/intake`, `/sample-shortlist`. | `NOINDEX_STATIC_PATHS`, `src/lib/seo/indexability.ts` |
+| Static paths that emit `noindex` and stay out of the sitemap: `/status`, `/changelog`, `/candidate-success`, `/knowledge-base`, `/talent-marketplace`, `/global-talent`, `/pitch`, `/sitemap`, `/intake`, `/sample-shortlist`. | `NOINDEX_STATIC_PATHS`, `src/lib/seo/indexability.ts` |
 | Indexable industries: `hospitality`, `healthcare` (page and briefing). Every other industry page and briefing is `noindex, follow` and not in the sitemap. | `INDEXABLE_INDUSTRY_SLUGS` |
 | 26 blog posts are `noindex, follow` and excluded from `/sitemap-blog.xml`. | `src/lib/seo/blog-noindex.ts` |
-| One robots group (`User-agent: *`), AI crawlers allowed by design. Disallowed: `/admin`, `/client`, `/me`, `/boardroom`, `/login`, `/auth`, `/checkout`, `/book-call`, `/share/`, `/shortlist/`, `/api/`, `/_authenticated/`, `/reset-password`, `/access-denied`, `/unauthorized`, `/brand-center`, `/dev/`, `/dev.catalogue`, `/dev.industry-coverage`, `/lovable/`. | `src/lib/seo/robots-config.ts` |
+| One robots group (`User-agent: *`), AI crawlers allowed by design. Disallowed: `/admin`, `/client`, `/me`, `/boardroom`, `/login`, `/auth`, `/checkout`, `/share/`, `/shortlist/`, `/api/`, `/_authenticated/`, `/reset-password`, `/access-denied`, `/unauthorized`, `/brand-center`, `/dev/`, `/dev.catalogue`, `/dev.industry-coverage`, `/lovable/`. | `src/lib/seo/robots-config.ts` |
 | Sitemap size at time of writing (computed from the generator): 44 page URLs, 4 industry URLs, 78 blog URLs (21 category pages plus 57 posts; 83 rows minus 26 noindexed). | computed via `collectSitemapEntriesByGroup` |
 | Canonical tag is `https://taasflow.com` + path, built by `marketingHead()`. Titles are clamped to 59 characters and descriptions to 158 by the helper (see `05-metadata-and-schema-inventory.md`). | `src/lib/marketing/head.ts` |
 | Case-insensitive paths 301 to lower case (except `/share/`, `/apply/`, `/lovable/`, `/api/`, `/assets/`, `/_`, and anything with a file extension). | `src/start.ts` `canonicalPathFor` |
@@ -100,7 +100,7 @@ These need Supabase environment variables that are not present in a plain checko
 
 | Path | Template | Indexable | Canonical | Auth |
 | --- | --- | --- | --- | --- |
-| `/book` | Native scheduler | No: `noindex, follow` | self | None (prefills from the profile if signed in) |
+
 | `/intake` | Express intake (3 steps; step 1 includes account creation) | No: `noindex, follow` | self | Creates or signs in an account inside the form |
 | `/intake/confirmation` | Post-submit page | No | self | None to load; needs `intake_id` |
 | `/sample-shortlist` | Example shortlist (fictional data) | No: `noindex,follow` | self | None |
@@ -111,7 +111,7 @@ These need Supabase environment variables that are not present in a plain checko
 | `/auth` | Client-side redirect to `/login` (or role landing if signed in); disallowed in robots | No | none | n/a |
 | `/mvp-fix-plan` | Internal plan page | No: `noindex, nofollow` | none | None. Owner to confirm whether it should be public at all. |
 | `/dev/*` | Internal tooling | No: `noindex`; disallowed | none | None in the route files; confirm production gating. |
-| `/admin/*`, `/client/*`, `/me/*`, `/boardroom`, `/checkout`, `/book-call`, `/brand-center` | Workspace (`_authenticated`) | No; disallowed | none | Signed-in |
+| `/admin/*`, `/client/*`, `/me/*`, `/boardroom`, `/checkout`, `/brand-center` | Workspace (`_authenticated`) | No; disallowed | none | Signed-in |
 | `/mcp`, `/.well-known/*`, `/api/public/*`, `/lovable/*` | Machine endpoints | n/a | n/a | Own auth (MCP uses OAuth 2.1) |
 
 ## 5. Redirects
@@ -133,7 +133,7 @@ Source of truth: `LEGACY_REDIRECTS` in `src/config/legacy-redirects.ts`. Query s
 | From | To | Status | Where |
 | --- | --- | --- | --- |
 | `www.taasflow.com/*` | `taasflow.com/*` | 301 (308 for non-GET) | `src/start.ts` |
-| `/book-a-call`, `/schedule`, `/demo` | `/book` | 301 (308 non-GET) | `src/lib/seo/edge-policy.ts`, `src/config/booking.ts`. `/book-call` is the signed-in client page and is not redirected. |
+| `/book`, `/book-call`, `/book-a-call`, `/schedule`, `/demo` | `/contact` | 301 (308 non-GET) | `src/lib/seo/edge-policy.ts`, `src/config/booking.ts` (`LEGACY_BOOKING_PATHS`). Booking was removed; clients and candidates talk off system. |
 | Upper-case path variants | lower-case path | 301 (308 non-GET) | `src/start.ts` |
 | `/pilot/intake` | `/intake` | 301 | `src/routes/pilot_.intake.tsx` |
 | `/industries/non-profit` | `/industries/nonprofit` | 301 | `src/routes/industries.non-profit.tsx` |

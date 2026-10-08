@@ -46,7 +46,7 @@ Every page also carries the sitewide `Organization` and `WebSite` JSON-LD graph 
 7. **Price in structured data:** only `/pricing` emits an `Offer` (the pilot price from `pricing-core.ts`, currently 699 USD). Package totals are deliberately not emitted.
 8. **`/about` schema names two leaders** (`LEADERS` in `src/routes/about.tsx`: CEO and CMO) with bios; the CMO has no `sameAs`. The leader list and spellings need owner confirmation (see `08-owner-decisions-register.md`).
 9. **Industries:** `/industries/healthcare` and `/industries/hospitality` emit only `BreadcrumbList`; other industry pages are `noindex, follow`.
-10. `/book` and `/intake` are `noindex, follow` and out of the sitemap by design; their titles ("Book a 20-minute call", "Start your hiring pilot — TaaSFlow") are not search-facing.
+10. `/intake` is `noindex, follow` and out of the sitemap by design; its title ("Start your hiring pilot — TaaSFlow") is not search-facing. `/book` no longer exists as a page: it 301-redirects to `/contact`.
 
 ## How to re-run
 

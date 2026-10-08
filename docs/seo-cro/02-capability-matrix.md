@@ -27,7 +27,7 @@ Entries with `public: false` are internal plumbing and are not listed on `/integ
 | Outbound webhooks to your systems | Planned: "subscriber management, retries and signing are not built" | Yes | `/integrations` | Unknown |
 | Payment webhooks | Internal, available | No | none | Unknown |
 | Attio CRM mirror | Internal, available | No | none | Unknown |
-| Calendly | Live, as listed. Note: the public `/book` page is described as the native scheduler (`src/config/booking.ts`); the directory entry says "Managed connector authorised by TaaSFlow, plus an embedded scheduling flow". Owner to confirm which is current. | Yes | `/integrations`, `/book` | Unknown |
+| Calendly | Removed from the public integrations list when booking was removed. No public page offers scheduling. | No | n/a | n/a |
 | Transactional email | Live | Yes | `/integrations` | Unknown |
 | Microsoft Teams notifications | Live (beta) | Yes | `/integrations` | Unknown |
 | Online payments (card processor) | Planned / Unavailable: "Online checkout is switched off for now. Packages are requested and invoiced by TaaSFlow directly." | Yes | `/integrations`, `/pricing` | Unknown |

@@ -23,7 +23,7 @@ Last updated: 7 October 2026
 | 9 | Metadata lengths | `npx vitest run src/lib/seo/__tests__/head-length-audit.test.ts` | Reviewed; see `05-metadata-and-schema-inventory.md` |
 | 10 | Approvals | `08-owner-decisions-register.md` | No claim published that depends on an unresolved owner fact |
 | 11 | Durable lead test | Submit the `/pilot` inquiry on staging with a test email; confirm the row in `marketing_inquiries`, the Teams and internal notification, and the entry in `/admin/lead-delivery` | Lead arrives; no real candidate data used |
-| 12 | Booking test | Book a test slot on `/book` | Confirmation shown; booking record exists |
+| 12 | Contact test | Send a message on `/contact` and request the pilot on `/pilot` | Confirmation shown; the lead is stored; the team receives the notification |
 | 13 | Checkout stays disabled | Open `/checkout` and the intake end screen on staging | No payment form is offered to visitors |
 
 ### 1.1 Stale-string scan (built output)
@@ -74,7 +74,7 @@ HOST=https://taasflow.com
 for p in / /pricing /pilot /how-it-works /security /about /faq /case-studies /for-hr-teams /for-founders \
   /flat-fee-recruiting /subscription-recruiting /recruitment-agency-alternative /ai-recruiting-agency \
   /recruiting-as-a-service /compare /recruiter-fees /ai-in-hiring /industries/healthcare /industries/hospitality \
-  /book /intake /sample-shortlist /status /login; do
+  /intake /sample-shortlist /status /login; do
   html=$(curl -sS -L -o /tmp/p.html -w "%{http_code}" "$HOST$p")
   canon=$(grep -o '<link[^>]*rel="canonical"[^>]*>' /tmp/p.html | head -1)
   robots=$(grep -o '<meta[^>]*name="robots"[^>]*>' /tmp/p.html | head -1)
@@ -88,7 +88,7 @@ Expected:
 | Group | Status | Canonical | Robots meta | X-Robots-Tag |
 | --- | --- | --- | --- | --- |
 | The 20 key pages in `05-metadata-and-schema-inventory.md` | 200 | `https://taasflow.com` + path | none | none |
-| `/book`, `/intake`, `/sample-shortlist`, `/status`, `/login` | 200 | self | `noindex` (with `follow` except `/login`) | none |
+| `/intake`, `/sample-shortlist`, `/status`, `/login` | 200 | self | `noindex` (with `follow` except `/login`) | none |
 
 If any indexable page returns `noindex` or an `x-robots-tag`, the preview-host rule has leaked into production: stop and investigate (`src/lib/seo/edge-policy.ts`, `src/routes/__root.tsx`).
 
@@ -96,7 +96,7 @@ If any indexable page returns `noindex` or an `x-robots-tag`, the preview-host r
 
 ```sh
 HOST=https://taasflow.com
-for p in /platform /system /employer-onboarding /trust /journey /book-a-call /schedule /demo /pilot/intake \
+for p in /platform /system /employer-onboarding /trust /journey /book /book-call /book-a-call /schedule /demo /pilot/intake \
   /industries/non-profit /industries/tech /resources/recruiting-as-a-service /PRICING \
   /blog/accounting-hiring-benchmarks-2026; do
   echo "$p -> $(curl -sSI "$HOST$p" | awk 'NR==1{s=$2} tolower($1)=="location:"{l=$2} END{print s, l}' | tr -d '\r')"
@@ -104,7 +104,7 @@ done
 curl -sSI https://www.taasflow.com/pricing | head -3
 ```
 
-Expected: 301 with these locations: `/how-it-works#workspace`, `/how-it-works#scoring`, `/how-it-works#steps`, `/security`, `/about#story`, `/book` (three times), `/intake`, `/industries/nonprofit`, `/industries/technology`, `/recruiting-as-a-service`, `/pricing`, `/blog/accounting-hiring-guide-2026`; `www` redirects to `https://taasflow.com/pricing`. A fragment is not sent by `curl` in some builds of the redirect; confirm the `Location` header text. No redirect chains (one hop).
+Expected: 301 with these locations: `/how-it-works#workspace`, `/how-it-works#scoring`, `/how-it-works#steps`, `/security`, `/about#story`, `/contact` (five times, one for each retired booking URL), `/intake`, `/industries/nonprofit`, `/industries/technology`, `/recruiting-as-a-service`, `/pricing`, `/blog/accounting-hiring-guide-2026`; `www` redirects to `https://taasflow.com/pricing`. A fragment is not sent by `curl` in some builds of the redirect; confirm the `Location` header text. No redirect chains (one hop).
 
 ### 3.3 Sitemap and robots
 
@@ -117,7 +117,7 @@ curl -sS https://taasflow.com/sitemap-pages.xml | grep -c '<loc>'
 
 Expected: `robots.txt` has one `User-agent: *` group and a single `Sitemap: https://taasflow.com/sitemap.xml`; `/sitemap.xml` is a `<sitemapindex>` with three children, each returning 200; no `noindex` path (list in `00-baseline-and-route-manifest.md` section 3) appears in any child; no `<changefreq>` or `<priority>`. Counts computed from the generator at time of writing: 44 page URLs, 4 industry URLs, 78 blog URLs.
 
-Check that none of the noindex paths is listed: `for p in /book /intake /status /pitch /sample-shortlist; do curl -sS https://taasflow.com/sitemap-pages.xml | grep -c "taasflow.com$p<"; done` should print 0 each time.
+Check that none of the noindex paths is listed: `for p in /intake /status /pitch /sample-shortlist; do curl -sS https://taasflow.com/sitemap-pages.xml | grep -c "taasflow.com$p<"; done` should print 0 each time.
 
 ### 3.4 Preview host stays noindex
 
@@ -138,7 +138,7 @@ Expected: `noindex, nofollow` in both places and a canonical pointing at `https:
 | FAQ answers in HTML | `curl -sS https://taasflow.com/faq \| grep -c '<details'` | More than 0, answer text present in the HTML |
 | Pagination | `curl -sS 'https://taasflow.com/blog?page=2' \| grep -o '<link[^>]*canonical[^>]*>'` | Canonical is `https://taasflow.com/blog?page=2` (self) |
 | Inquiry persists | Submit `/pilot` form with a test email | Row in `marketing_inquiries`; `generate_lead` visible in GA4 DebugView; no email or phone in event parameters |
-| Booking | Book a test slot | `booking_confirmed` visible once |
+| Contact | Send a test message | `generate_lead` visible once |
 | Checkout disabled | Visit `/checkout` while signed out | Redirect to sign-in, no payment form |
 | Consent | Open `/` in a private window with an EU time zone | No Meta, LinkedIn, Clarity or Hotjar request before consent; GA4 cookieless; RB2B loads (owner decision) |
 
@@ -164,9 +164,9 @@ After any rollback, purge the CDN once and re-run section 3.
 
 - Google Search Console: Pages (indexing) report for new "Excluded by noindex" entries on URLs that should be indexable; Crawl stats for spikes in 4xx or 5xx; URL Inspection on `/`, `/pricing`, `/pilot`, `/flat-fee-recruiting` (live test: canonical, indexable, rendered HTML contains the content).
 - Sitemaps: submit `https://taasflow.com/sitemap.xml` (the index) and confirm the three children are read. Remove any older sitemap submission that points at retired URLs.
-- GA4: Realtime and DebugView for `lead_form_view`, `lead_form_start`, `generate_lead`, `booking_confirmed`; confirm no personal data in parameters; confirm no duplicate `generate_lead` per `submission_id`.
+- GA4: Realtime and DebugView for `lead_form_view`, `lead_form_start`, `generate_lead`; confirm no personal data in parameters; confirm no duplicate `generate_lead` per `submission_id`.
 - Lead delivery: `/admin/lead-delivery` and the Teams channel; every test and real inquiry has a record; no retries stuck.
-- Errors: `lead_form_error` rate by `error_code`; server logs for 5xx on `/pilot`, `/book`, `/intake`.
+- Errors: `lead_form_error` rate by `error_code`; server logs for 5xx on `/pilot`, `/contact`, `/intake`.
 - Cache: re-run section 3.1 once more at 24 hours.
 
 ### Following weeks
