@@ -508,7 +508,7 @@ function CandidateDetailPage() {
             Experience, screening answers, compensation and availability.
           </p>
         </header>
-        {/* Row 1 — Career experience{/* Row 1 — Career experience (wider) beside Skills, education and languages */}
+        {/* Career experience and evidenced skills */}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
           <div className="lg:col-span-3">
             <ExperienceTimeline candidate={candidate} />
@@ -537,9 +537,7 @@ function CandidateDetailPage() {
             visible here for reference.
           </p>
         </div>
-        {/* 4 — THE DEAL-BREAKER FACTS: pay and availability decide as many rejections
-      as the evidence does, so they are answered before the long read rather
-      than being buried inside a tab further down. */}
+        {/* Reference-only compensation and availability at the end of the evidence. */}
         <div id="sec-facts" className="scroll-mt-24 grid grid-cols-1 gap-4 lg:grid-cols-2">
           {compQuery.isError ? (
             <QueryErrorCard
@@ -558,8 +556,7 @@ function CandidateDetailPage() {
         {/* Links live in the Contact card only. */}
       </section>
 
-      {/* Every consequential decision is confirmed, reasoned, and logged. */}
-      {/* Every consequential decision is confirmed, reasoned, and logged. */}
+      {/* Feedback and information requests are logged; stage moves happen in Kanban. */}
       <DecisionDialog
         action={dialogAction as never}
         open={!!dialogAction}
