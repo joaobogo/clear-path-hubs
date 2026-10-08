@@ -66,7 +66,9 @@ export const recordOfferOutcomeFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     if (offSystemWorkflowRequired()) {
-      throw new Error("Employment offers and hire arrangements are managed directly outside TAASFlow. Track candidate stages in Kanban.");
+      throw new Error(
+        "Employment offers and hire arrangements are managed directly outside TAASFlow. Track candidate stages in Kanban.",
+      );
     }
     const { requireStaff } = await import("./admin-ops.server");
     await requireStaff(context.userId);
@@ -94,7 +96,9 @@ export const setHireStartDateFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     if (offSystemWorkflowRequired()) {
-      throw new Error("Employment offers and hire arrangements are managed directly outside TAASFlow. Track candidate stages in Kanban.");
+      throw new Error(
+        "Employment offers and hire arrangements are managed directly outside TAASFlow. Track candidate stages in Kanban.",
+      );
     }
     const { requireStaff } = await import("./admin-ops.server");
     await requireStaff(context.userId);
