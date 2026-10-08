@@ -13,10 +13,6 @@ import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-c
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
 
-import {
-  InterviewExceptionsBadge,
-  InterviewExceptionsPanel,
-} from "@/components/admin/interview-exceptions-panel";
 
 import { Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
