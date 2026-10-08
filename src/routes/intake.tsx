@@ -1436,7 +1436,9 @@ function ExpressIntakePage() {
    * per keystroke.
    */
   useEffect(() => {
-    if (stepIndex !== 1) return;
+    // Start reading on the JD entry step, so the role fields can already be
+    // filled when the client reaches the next step. Keep edits fully manual.
+    if (stepIndex > 1) return;
     const jd = state.jobDescriptionText.trim();
     if (jd.length < MIN_JD_TEXT) return;
     const signature = `text:${state.roleTitle.trim()}::${jd}`;
@@ -3111,7 +3113,6 @@ function ExpressIntakePage() {
               label="When would you like them to start?"
               error={errors.targetStartDate}
               required={req["targetStartDate"]}
-              hint="We will tell you honestly if it is achievable."
             >
               <Input
                 type="date"
@@ -3358,7 +3359,7 @@ function ExpressIntakePage() {
               label={intakeFieldLabel("targetDaysToOffer")} carried={isCarried("targetDaysToOffer")}
               error={errors.targetDaysToOffer}
               required={req["targetDaysToOffer"]}
-              hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}
+              hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days.`}
             >
               <Input
                 type="text"
