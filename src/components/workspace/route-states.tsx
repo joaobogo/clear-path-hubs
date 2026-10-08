@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useRouter, useParams, Link, useSearch } from "@tanstack/react-router";
+import { useRouter, useParams, Link, useSearch, type ErrorComponentProps } from "@tanstack/react-router";
 import { ErrorState, PermissionState } from "@/components/ds";
 import { buttonVariants } from "@/components/ui/button";
 import { normalizeError, logTechnical, type AudienceTone } from "@/lib/error-taxonomy";
@@ -57,7 +57,7 @@ export function workspaceLinkSearch(
  * Copy tone follows the audience; technical detail stays in private logs.
  */
 export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
-  return function RouteError({ error, reset }: { error: Error; reset: () => void }) {
+  return function RouteError({ error, reset }: ErrorComponentProps) {
     const router = useRouter();
     const search = useSearch({ strict: false }) as Record<string, string | undefined>;
     const normalized = normalizeError(error, { tone });

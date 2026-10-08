@@ -1016,8 +1016,12 @@ export const getPosition = createServerFn({ method: "GET" })
         .limit(200),
     ]);
     if (!posRes.data) return null;
+    const { data: isAdmin } = await context.supabase.rpc("is_platform_admin", {
+      _user: context.userId,
+    });
     return {
       position: posRes.data,
+      can_override_approval: isAdmin === true,
       screening: (screeningRes.data ?? []) as AnyRow[],
       matches: ((matchesRes.data ?? []) as AnyRow[]).map(withPublishedRun),
     };
@@ -1216,7 +1220,10 @@ export const setPositionStatus = createServerFn({ method: "POST" })
     if (data.action === "activate" || data.action === "reopen") patch.published_at = new Date().toISOString();
     if (data.action === "close" || data.action === "mark_filled" || data.action === "unarchive") patch.closed_at = new Date().toISOString();
     if (data.action === "archive") patch.closed_at = before.closed_at ?? new Date().toISOString();
-    const { data: after, error } = await s
+    // Approval must preserve the verified caller for the database's admin-only
+    // exemption. Other lifecycle actions keep their existing privileged path.
+    const approvalClient = data.action === "approve" ? context.supabase : s;
+    const { data: after, error } = await approvalClient
       .from("positions")
       .update(patch)
       .eq("id", data.id)

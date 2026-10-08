@@ -120,7 +120,14 @@ export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
     <div className="p-10 text-center text-muted-foreground">Position not found.</div>
   ),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.positions.$id.tsx"),
-  head: () => ({ meta: [{ title: "Position workspace · TaaSFlow admin" }] }),
+   head: () => ({ meta: [
+     { title: "Position workspace · TaaSFlow admin" },
+     { name: "description", content: "Review role details, approve requisitions and manage hiring activity in TaaSFlow." },
+     { property: "og:title", content: "Position workspace · TaaSFlow admin" },
+     { property: "og:description", content: "Review role details, approve requisitions and manage hiring activity in TaaSFlow." },
+     { property: "og:type", content: "website" },
+     { name: "twitter:card", content: "summary" },
+   ] }),
   component: PositionWorkspace,
 });
 
@@ -277,7 +284,7 @@ function PositionWorkspace() {
                 Edit position
               </Link>
             </Button>
-            <LifecycleBar position={p} onDone={invalidate} includeVisibilityCheck={true} />
+            <LifecycleBar position={p} onDone={invalidate} includeVisibilityCheck={true} canOverrideApproval={data?.can_override_approval === true} />
           </div>
         </div>
         <div className="mt-4">
