@@ -217,41 +217,15 @@ export const moveMatchStage = createServerFn({ method: "POST" })
 
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
-      const { data: staff } = await supabaseAdmin
-        .from("memberships")
-        .select("user_id")
-        .in("role", ["platform_admin", "operations"])
-        .eq("status", "active");
-      const adminRecipients = (staff ?? []).map((member) => ({
-        user_id: member.user_id as string,
-        audience: "admin" as const,
-        link_path: "/admin/candidates",
-      }));
-      const { data: clients } = await supabaseAdmin
-        .from("memberships")
-        .select("user_id")
-        .eq("organization_id", data.orgId)
-        .eq("status", "active")
-        .in("role", ["client_admin", "client_editor", "client_viewer"]);
-      const clientRecipients = (clients ?? []).map((member) => ({
-        user_id: member.user_id as string,
-        audience: "client" as const,
-        link_path: `/client/candidates/${data.matchId}`,
-      }));
-      const { data: profile } = await supabaseAdmin
-        .from("candidate_profiles")
-        .select("user_id")
-        .eq("id", match.candidate_profile_id as string)
-        .maybeSingle();
-      const candidateRecipients = profile?.user_id
-        ? [{
-            user_id: profile.user_id as string,
-            audience: "candidate" as const,
-            link_path: match.application_id
-              ? `/me/applications/${match.application_id as string}`
-              : "/me",
-          }]
-        : [];
+      const { stageNotificationRecipients } = await import(
+        "@/lib/client/stage-notification-recipients.server"
+      );
+      const recipients = await stageNotificationRecipients({
+        orgId: data.orgId,
+        matchId: data.matchId,
+        candidateProfileId: (match.candidate_profile_id as string) ?? null,
+        applicationId: (match.application_id as string) ?? null,
+      });
 
       // One status update per move, delivered to the team, client and candidate.
       // An Interviewing/Offer column is only a stage, not a booking or an offer.
@@ -265,7 +239,7 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         candidate_profile_id: (match.candidate_profile_id as string) ?? null,
         actor_user_id: context.userId,
         payload: { from, to: data.toStage, feedback: data.reason?.trim() || null },
-        recipients: [...adminRecipients, ...clientRecipients, ...candidateRecipients],
+        recipients,
       });
     } catch (emitErr) {
       console.error("[moveMatchStage] emit failed", trace, emitErr);
