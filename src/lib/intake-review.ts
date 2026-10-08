@@ -168,8 +168,8 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   contactLinkedin: { label: "Your LinkedIn", step: 0, focusLabel: "Your LinkedIn" },
   password: { label: "Password", step: 0, focusLabel: "Password" },
   confirmPassword: { label: "Confirm password", step: 0, focusLabel: "Confirm password" },
-  consent: { label: "Terms and privacy", step: 0, focusLabel: null },
-  pilotAcknowledgement: { label: "Pilot acknowledgement", step: 0, focusLabel: null },
+  consent: { label: "Terms and privacy", step: 2, focusLabel: "consent" },
+  pilotAcknowledgement: { label: "Pilot acknowledgement", step: 2, focusLabel: "pilotAcknowledgement" },
 };
 
 /** Topics are independent of navigation; each row retains its actual step. */

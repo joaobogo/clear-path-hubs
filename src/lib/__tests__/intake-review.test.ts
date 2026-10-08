@@ -174,6 +174,13 @@ describe("complete hiring brief", () => {
     const r = rowsFor({ companyWebsite: "example.com", companyWebsiteDerived: true });
     expect(r.groups[0]?.rows[0]).toMatchObject({ step: 0, focusLabel: "Work email" });
   });
+  it("keeps missing acknowledgements on the final confirmation step", () => {
+    const r = rowsFor({}, { consent: true, pilotAcknowledgement: true });
+    expect(r.missing).toEqual([
+      { field: "consent", label: "Terms and privacy", step: 2, focusLabel: "consent" },
+      { field: "pilotAcknowledgement", label: "Pilot acknowledgement", step: 2, focusLabel: "pilotAcknowledgement" },
+    ]);
+  });
   it("keeps authorisation from older drafts without repeating the sponsorship answer", () => {
     expect(JSON.stringify(rowsFor({ workAuthorizationLabel: "Contractor or agency of record" }))).toContain("Contractor or agency of record");
     const rows = rowsFor({ sponsorshipLabel: "Sponsorship available", workAuthorizationLabel: "We can sponsor or transfer a visa" }).groups.flatMap((g) => g.rows);
