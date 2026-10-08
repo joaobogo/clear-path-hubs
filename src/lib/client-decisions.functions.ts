@@ -217,58 +217,44 @@ export const moveMatchStage = createServerFn({ method: "POST" })
 
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
-      const stageToEvent: Partial<
-        Record<MatchStage, "client_shortlisted" | "candidate_hired">
-      > = {
-        shortlisted: "client_shortlisted",
-        hired: "candidate_hired",
-      };
-      const evt = stageToEvent[data.toStage];
-      if (evt) {
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: staff } = await supabaseAdmin
-          .from("memberships")
-          .select("user_id")
-          .in("role", ["platform_admin", "operations"])
-          .eq("status", "active");
-        const adminRecipients = (staff ?? []).map((s) => ({
-          user_id: s.user_id as string,
-          audience: "admin" as const,
-          link_path: `/admin/candidates`,
-        }));
-        const { data: matchRow } = await supabaseAdmin
-          .from("candidate_matches")
-          .select(
-            "candidate_profile_id, application_id, position_id, candidate_profiles:candidate_profile_id(user_id)",
-          )
-          .eq("id", data.matchId)
-          .maybeSingle();
-        const cpUser =
-          (matchRow?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
-        const candidateRecipients = cpUser
-          ? [
-              {
-                user_id: cpUser,
-                audience: "candidate" as const,
-                link_path: `/me/applications/${matchRow?.application_id ?? ""}`,
-              },
-            ]
-          : [];
-        await emitEventFromServer({
-          event: evt,
-          scope: `${data.matchId}:${data.toStage}`,
-          organization_id: data.orgId,
-          position_id: matchRow?.position_id ?? null,
-          application_id: matchRow?.application_id ?? null,
-          candidate_match_id: data.matchId,
-          candidate_profile_id: matchRow?.candidate_profile_id ?? null,
-          actor_user_id: context.userId,
-          recipients: [...adminRecipients, ...candidateRecipients],
-        });
-      }
-      // Always record the canonical status change itself, even when it has no
-      // notification copy. Scope keys on the exact transition, so replaying the
-      // same move never produces a second activity row.
+      const { data: staff } = await supabaseAdmin
+        .from("memberships")
+        .select("user_id")
+        .in("role", ["platform_admin", "operations"])
+        .eq("status", "active");
+      const adminRecipients = (staff ?? []).map((member) => ({
+        user_id: member.user_id as string,
+        audience: "admin" as const,
+        link_path: "/admin/candidates",
+      }));
+      const { data: clients } = await supabaseAdmin
+        .from("memberships")
+        .select("user_id")
+        .eq("organization_id", data.orgId)
+        .eq("status", "active")
+        .in("role", ["client_admin", "client_editor", "client_viewer"]);
+      const clientRecipients = (clients ?? []).map((member) => ({
+        user_id: member.user_id as string,
+        audience: "client" as const,
+        link_path: `/client/candidates/${data.matchId}`,
+      }));
+      const { data: profile } = await supabaseAdmin
+        .from("candidate_profiles")
+        .select("user_id")
+        .eq("id", match.candidate_profile_id as string)
+        .maybeSingle();
+      const candidateRecipients = profile?.user_id
+        ? [{
+            user_id: profile.user_id as string,
+            audience: "candidate" as const,
+            link_path: match.application_id
+              ? `/me/applications/${match.application_id as string}`
+              : "/me",
+          }]
+        : [];
+
+      // One status update per move, delivered to the team, client and candidate.
+      // An Interviewing/Offer column is only a stage, not a booking or an offer.
       await emitEventFromServer({
         event: "candidate_stage_changed",
         scope: `${data.matchId}:${from}->${data.toStage}`,
@@ -276,8 +262,10 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         position_id: (match.position_id as string) ?? null,
         application_id: (match.application_id as string) ?? null,
         candidate_match_id: data.matchId,
+        candidate_profile_id: (match.candidate_profile_id as string) ?? null,
         actor_user_id: context.userId,
         payload: { from, to: data.toStage, feedback: data.reason?.trim() || null },
+        recipients: [...adminRecipients, ...clientRecipients, ...candidateRecipients],
       });
     } catch (emitErr) {
       console.error("[moveMatchStage] emit failed", trace, emitErr);
