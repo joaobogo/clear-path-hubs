@@ -453,7 +453,7 @@ function CandidateDetailPage() {
     candidate={candidate}
     title="To confirm in the interview"
     preferredLimit={2}
-    onInterviewGuideClick={() => setActiveTab("interview")}
+    onInterviewGuideClick={() => document.getElementById("sec-profile")?.scrollIntoView({ behavior: "smooth" })}
   />
   </div>
   )}
@@ -526,18 +526,15 @@ function CandidateDetailPage() {
  </aside>
  </div>
 
- {/* BELOW THE FOLD — two tabs, everything else lives inside them. */}
- <Tabs id="sec-profile" value={activeTab} onValueChange={setActiveTab} className="mt-8 scroll-mt-24">
-  <TabsList className="flex w-full flex-wrap justify-start">
-  <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
-  <TabsTrigger value="interview">Interview</TabsTrigger>
-  </TabsList>
-
-<TabsContent value="summary" className="mt-4 space-y-4">
-{/* Compensation and availability used to open this tab; they now sit above it
-    in "sec-facts", answered before the reader commits to the long read. */}
-
-{/* Row 1 — Career experience (wider) beside Skills, education and languages */}
+ {/* Full supporting information lives below the fit assessment and evidence. */}
+  <section id="sec-profile" className="mt-8 scroll-mt-24 space-y-5">
+    <header>
+      <h2 className="text-lg font-semibold">Summary &amp; evidence</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Experience, screening answers, compensation and availability.
+      </p>
+    </header>
+{/* Row 1 — Career experience{/* Row 1 — Career experience (wider) beside Skills, education and languages */}
 <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
 <div className="lg:col-span-3">
 <ExperienceTimeline candidate={candidate} />
@@ -589,38 +586,9 @@ function CandidateDetailPage() {
 
 
 
-</TabsContent>
+</section>
 
- <TabsContent value="interview" className="mt-4 space-y-4">
- <InterviewGuide candidate={candidate} />
- <div className="rounded-xl border bg-card p-4">
- <h2 className="text-sm font-semibold">Interview feedback</h2>
- <p className="mt-1 text-sm text-muted-foreground">
- Feedback is collected and shown in one place, alongside the scheduled
- interview.
- </p>
- <Button asChild variant="outline" size="sm" className="mt-3">
- <Link to="/client/interviews" search={{ interview: undefined, feedback: undefined }}>Go to interviews →</Link>
- </Button>
- </div>
-  </TabsContent>
-
- </Tabs>
-
-
-      {/* MOBILE ACTION BAR — visible only on small screens */}
-      {!readOnly && actions.primary && candidate.stage !== "hired" && (
-        <MobileActionBar
-          actions={actions}
-          pending={act.isPending}
-          pendingKey={pendingKey}
-          onAct={(k) => handleAct(k, candidate.stage)}
-          subject={actionSubject}
-          
-        />
-      )}
-
-      {/* Every consequential decision is confirmed, reasoned, and logged. */}
+      {/* Every consequential decision is confirmed, reasoned, and logged. */}{/* Every consequential decision is confirmed, reasoned, and logged. */}
       <DecisionDialog
           action={dialogAction as never}
           open={!!dialogAction}
