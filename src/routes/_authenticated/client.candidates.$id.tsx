@@ -474,12 +474,13 @@ function CandidateDetailPage() {
   <JumpNav
    items={[
     { id: "sec-score", label: "Score" },
-    { id: "sec-facts", label: "Pay & availability" },
+
     { id: "sec-evidence", label: "Evidence" },
     ...(candidate.stage !== "hired"
       ? [{ id: "sec-confirm", label: "Confirm in interview" }]
       : []),
-    { id: "sec-profile", label: "Profile" },
+    { id: "sec-profile", label: "Summary & evidence" },
+     { id: "sec-facts", label: "Pay & availability" },
    ]}
   />
   )}
@@ -492,24 +493,6 @@ function CandidateDetailPage() {
   <ScoreBreakdown candidate={candidate} hideRequirementRows />
   </div>
   )}
-
-  {/* 4 — THE DEAL-BREAKER FACTS: pay and availability decide as many rejections
-      as the evidence does, so they are answered before the long read rather
-      than being buried inside a tab further down. */}
-  <div id="sec-facts" className="scroll-mt-24 grid grid-cols-1 gap-4 lg:grid-cols-2">
-  {compQuery.isError ? (
-  <QueryErrorCard
-    compact
-    title="We couldn't load compensation figures"
-    error={compQuery.error}
-    onRetry={() => void compQuery.refetch()}
-    retrying={compQuery.isFetching}
-  />
-  ) : (
-  <CompensationPanel signal={compSignal} loading={compPending} />
-  )}
-  <AvailabilityPanel candidate={candidate} />
-  </div>
 
   {/* 5 — THE EVIDENCE: requirements listed once, with coverage folded in */}
   {assessmentVisible && (
@@ -655,7 +638,31 @@ function CandidateDetailPage() {
 </dl>
 </CollapsibleSection>
 )}
-{/* Links live in the Contact card only. */}
+<div className="mb-3">
+  <h3 className="text-base font-semibold">Compensation &amp; availability</h3>
+  <p className="mt-1 text-sm text-muted-foreground">
+    The role's stated range, candidate expectations, offer history and availability remain visible here for reference.
+  </p>
+</div>
+{/* 4 — THE DEAL-BREAKER FACTS: pay and availability decide as many rejections
+      as the evidence does, so they are answered before the long read rather
+      than being buried inside a tab further down. */}
+  <div id="sec-facts" className="scroll-mt-24 grid grid-cols-1 gap-4 lg:grid-cols-2">
+  {compQuery.isError ? (
+  <QueryErrorCard
+    compact
+    title="We couldn't load compensation figures"
+    error={compQuery.error}
+    onRetry={() => void compQuery.refetch()}
+    retrying={compQuery.isFetching}
+  />
+  ) : (
+  <CompensationPanel signal={compSignal} loading={compPending} />
+  )}
+  <AvailabilityPanel candidate={candidate} />
+  </div>
+
+  {/* Links live in the Contact card only. */}
 
 
 
