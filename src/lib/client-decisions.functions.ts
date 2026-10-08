@@ -128,9 +128,6 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (data.toStage === "interview_process" || data.toStage === "offer") {
-      throw new Error("Interviews and offers are coordinated outside TAASFlow.");
-    }
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
@@ -171,29 +168,21 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       toStage: data.toStage,
     });
 
-    await reconcileHireRecordForStage(context.supabase, {
-      matchId: data.matchId,
-      orgId: data.orgId,
-      positionId: match.position_id as string,
-      candidateProfileId: match.candidate_profile_id as string,
-      toStage: data.toStage,
-    });
-    // When leaving a gated stage, retract any unstarted side-artifacts.
-    if (from === "interview_process" && data.toStage !== "interview_process") {
-      await context.supabase
-        .from("interviews")
-        .delete()
-        .eq("candidate_match_id", data.matchId)
-        .eq("organization_id", data.orgId)
-        .eq("status", "requested");
+    // A Kanban move records a stage, never drafts an employment offer.
+    // A confirmed hire alone still reconciles hiring outcomes and reporting.
+    if (data.toStage === "hired") {
+      await reconcileHireRecordForStage(context.supabase, {
+        matchId: data.matchId,
+        orgId: data.orgId,
+        positionId: match.position_id as string,
+        candidateProfileId: match.candidate_profile_id as string,
+        toStage: data.toStage,
+      });
     }
-
-    // Canonical side-effects: mirror clientAction so any transition path
-    // (button, drag, keyboard menu) produces identical decision + interview trails.
+    // Track actual shortlist / hire / decline decisions. Interview and Offer
+    // columns are status labels only: no booking or offer is created.
     const stageToDecision: Partial<Record<MatchStage, string>> = {
       shortlisted: "shortlist",
-      interview_process: "request_interview",
-      offer: "offer",
       hired: "hire",
       not_moving_forward: "not_moving_forward",
     };
@@ -215,31 +204,6 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await resolveNotificationsForUser(supabaseAdmin, context.userId);
 
-    if (data.toStage === "interview_process" && from !== "interview_process") {
-      // Same one-open-interview rule as clientAction: a drag-and-drop retry
-      // must not create a second requested interview.
-      const { data: openInterview } = await context.supabase
-        .from("interviews")
-        .select("id")
-        .eq("candidate_match_id", data.matchId)
-        .eq("organization_id", data.orgId)
-        .in("status", ["requested", "scheduling", "scheduled"])
-        .limit(1)
-        .maybeSingle();
-      if (!openInterview) {
-        await context.supabase.from("interviews").insert({
-          candidate_match_id: data.matchId,
-          organization_id: data.orgId,
-          position_id: match.position_id as string,
-          candidate_submission_id: (match.application_id as string) ?? null,
-          status: "requested",
-          requested_at: new Date().toISOString(),
-          created_by: context.userId,
-        });
-      }
-    }
-
-
     await writeAudit(context.supabase, {
       actor: context.userId,
       action: "candidate_match.stage_changed",
@@ -254,10 +218,9 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
       const stageToEvent: Partial<
-        Record<MatchStage, "client_shortlisted" | "interview_requested" | "candidate_hired">
+        Record<MatchStage, "client_shortlisted" | "candidate_hired">
       > = {
         shortlisted: "client_shortlisted",
-        interview_process: "interview_requested",
         hired: "candidate_hired",
       };
       const evt = stageToEvent[data.toStage];
@@ -373,6 +336,9 @@ export const undoClientDecision = createServerFn({ method: "POST" })
 
     // Prefer the stage recorded on the decision itself over the caller's hint.
     const backTo = ((recent as AnyRow).from_stage as MatchStage | null) ?? data.toStage;
+    if (backTo !== from) {
+      throw new Error("Change recruitment stages in the Candidates Kanban board.");
+    }
 
     if (from !== backTo) {
       await persistStage(context.supabase, {
@@ -573,8 +539,10 @@ export const clientAction = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (data.action === "request_interview" || data.action === "offer") {
-      throw new Error("Interviews and offers are coordinated outside TAASFlow.");
+    // Only Kanban moves may change recruitment stages. Any legacy button,
+    // deep link or direct endpoint request is rejected before a write.
+    if (ACTION_TO_STAGE[data.action]) {
+      throw new Error("Change recruitment stages in the Candidates Kanban board.");
     }
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
@@ -624,32 +592,6 @@ export const clientAction = createServerFn({ method: "POST" })
           .eq("status", "requested");
       }
     }
-
-    if (data.action === "request_interview") {
-      // One open interview per candidate. Without this, a retried request adds
-      // a second "requested" row and the scheduling queue shows the same
-      // interview twice.
-      const { data: openInterview } = await context.supabase
-        .from("interviews")
-        .select("id")
-        .eq("candidate_match_id", data.matchId)
-        .eq("organization_id", data.orgId)
-        .in("status", ["requested", "scheduling", "scheduled"])
-        .limit(1)
-        .maybeSingle();
-      if (!openInterview) {
-        await context.supabase.from("interviews").insert({
-          candidate_match_id: data.matchId,
-          organization_id: data.orgId,
-          position_id: match.position_id as string,
-          candidate_submission_id: (match.application_id as string) ?? null,
-          status: "requested",
-          requested_at: new Date().toISOString(),
-          created_by: context.userId,
-        });
-      }
-    }
-
 
     // Persist a decision that mirrors the client's intent.
     const decisionMap = {
