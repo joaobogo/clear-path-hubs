@@ -20,6 +20,8 @@ export type IntakeReviewSnapshot = {
   // Role
   roleTitle: string;
   team: string;
+  seniorityLabel?: string;
+  employmentTypeLabel?: string;
   jobDescriptionText: string;
   jdFilename: string | null;
   // People
@@ -41,6 +43,7 @@ export type IntakeReviewSnapshot = {
   targetDaysToOffer: string;
   decisionMaker: string;
   decisionMakerEmail: string;
+  collaboratorLine?: string;
   dealBreakers: string[];
   // Company and contact
   companyName: string;
@@ -94,6 +97,8 @@ export type IntakeReview = {
 const FIELD_META: Record<string, { label: string; step: number; focusLabel: string | null }> = {
   roleTitle: { label: "Job title", step: 1, focusLabel: "Job title" },
   team: { label: "Team", step: 1, focusLabel: "Team" },
+  seniority: { label: "Seniority level", step: 1, focusLabel: "Seniority level" },
+  employmentType: { label: "Employment type", step: 1, focusLabel: "Employment type" },
   jobDescriptionText: { label: "Job description", step: 0, focusLabel: null },
   jdFilename: { label: "Uploaded file", step: 0, focusLabel: null },
   requirements: { label: "What you need", step: 1, focusLabel: null },
@@ -118,6 +123,7 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   },
   decisionMaker: { label: "Final decision", step: 2, focusLabel: "Who makes the final decision?" },
   decisionMakerEmail: { label: "Decision maker email", step: 2, focusLabel: "Their email" },
+  collaborators: { label: "Collaborators to invite", step: 2, focusLabel: null },
   dealBreakerList: { label: "Rules someone out", step: 2, focusLabel: null },
   companyName: { label: "Company", step: 0, focusLabel: "Company name" },
   companyWebsite: { label: "Website", step: 1, focusLabel: "Company website" },
@@ -174,6 +180,8 @@ export function buildIntakeReview(input: {
   const candidates: Array<IntakeReviewRow | null> = [
     row("roleTitle", s.roleTitle),
     row("team", s.team),
+    row("seniority", s.seniorityLabel ?? ""),
+    row("employmentType", s.employmentTypeLabel ?? ""),
     // Review the complete source: never replace the JD body with a filename or truncate it.
     row("jobDescriptionText", s.jobDescriptionText),
     row("jdFilename", s.jdFilename ?? ""),
@@ -195,11 +203,12 @@ export function buildIntakeReview(input: {
     // information and stays.
     row("workAuthorizationNote", s.workAuthorizationNote),
     row("targetStartDate", s.targetStartDate),
-    row("interviewStages", s.interviewStageLines.join(" → ")),
+    row("interviewStages", s.interviewStageLines.join("\n")),
     row("interviewProcess", s.interviewProcess),
     row("targetDaysToOffer", s.targetDaysToOffer ? `${s.targetDaysToOffer} days` : ""),
     row("decisionMaker", s.decisionMaker),
     row("decisionMakerEmail", s.decisionMakerEmail),
+    row("collaborators", s.collaboratorLine ?? ""),
     row("dealBreakerList", s.dealBreakers.join(" · ")),
     row("companyName", s.companyName),
     row("companyWebsite", s.companyWebsite),
