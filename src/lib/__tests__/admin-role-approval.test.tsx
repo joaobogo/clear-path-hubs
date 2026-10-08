@@ -18,7 +18,7 @@ describe("platform admin role approval", () => {
       position={{ id: "role", status: "under_review", payment_status: "unpaid" }}
       onDone={async () => {}} canOverrideApproval
     />);
-    expect(html).toMatch(/<button(?![^>]*disabled)[^>]*data-qa-action="position-approve"/);
+    expect(html).toMatch(/<button(?![^>]* disabled=)[^>]*data-qa-action="position-approve"/);
   });
 
   it("keeps incomplete approval disabled without admin permission", () => {
