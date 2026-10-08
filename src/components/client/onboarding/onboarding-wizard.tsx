@@ -929,11 +929,10 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
         <div className="space-y-3 rounded-lg border border-border/70 p-4">
           <p className="text-sm font-medium">Nothing connected yet</p>
           <p className="text-sm text-muted-foreground">
-            Connections are optional. Without them, interviews are scheduled with links you send
-            yourself and updates arrive by email from TaaSFlow.
+            Connections are optional. Clients and candidates coordinate conversations
+            and employment offers directly outside TAASFlow. Candidate progress is tracked on the Kanban.
           </p>
           <ul className="space-y-1 text-sm text-muted-foreground">
-            <li>Calendar — interview slots booked straight into your availability.</li>
             <li>Email — candidate threads kept in your own inbox.</li>
             <li>Messaging — shortlist and decision alerts in your team channel.</li>
           </ul>
