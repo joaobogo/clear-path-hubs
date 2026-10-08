@@ -324,6 +324,9 @@ test.describe("launch smoke journey", () => {
     ).toBeVisible({ timeout: 90_000 });
     await page.goto(`/client/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByText(fullName).first()).toBeVisible({ timeout: 90_000 });
+    await expect(
+      page.getByRole("button", { name: /request interview|make offer|extend offer/i }),
+    ).toHaveCount(0);
 
     // Recruitment status changes happen only on the Candidates Kanban,
     // never through an interview request or offer action on a profile.
