@@ -8,7 +8,7 @@
 import { execFileSync } from "node:child_process";
 import { ESLint } from "eslint";
 
-const runGit = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
+const runGit = (...args) => execFileSync("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
 const ZERO = /^0+$/;
 let base = process.env.LINT_BASE_SHA?.trim() || "";
 if (!base || ZERO.test(base)) base = runGit("rev-parse", "HEAD^");
