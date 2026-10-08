@@ -61,7 +61,7 @@ export function IntakeReviewPanel({
             const wide = ["role", "requirements", "workflow"].includes(group.id);
             return (
               <section key={group.id} aria-labelledby={`review-heading-${group.id}`}
-                className={`min-w-0 rounded-lg border border-border bg-card p-4 text-card-foreground sm:p-6 ${wide ? "md:col-span-2" : ""}`}
+                className={`min-w-0 rounded-lg border border-border bg-card p-4 text-card-foreground sm:p-6 print:rounded-none print:shadow-none ${wide ? "md:col-span-2" : ""}`}
                 data-testid={`review-group-${group.id}`}>
                 <div className="flex min-w-0 items-center gap-3 border-b border-border pb-4">
                   <Icon className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -86,7 +86,7 @@ function ReviewRow({ row, onEdit, wide }: { row: IntakeReviewRow; onEdit: OnEdit
   return (
     <div className={`min-w-0 space-y-2 ${row.fullWidth && wide ? "sm:col-span-2" : ""}`} data-testid={`review-row-${row.field}`}>
       <dt className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-        <span className="min-w-0 text-sm font-medium text-muted-foreground">{row.label}</span>
+        <span className="min-w-0 break-words text-sm font-medium text-muted-foreground">{row.label}</span>
         {row.editable !== false && <EditLink label={`Edit ${row.label}`} onClick={() => onEdit({ step: row.step, focusLabel: row.focusLabel, field: row.field })} />}
       </dt>
       <dd className="min-w-0 whitespace-pre-wrap break-words text-sm leading-7 [overflow-wrap:anywhere]">
