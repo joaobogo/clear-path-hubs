@@ -2,7 +2,12 @@ import { describe, it, expect } from "vitest";
 import { listMessageHistory } from "../conversations.functions";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-describe("Message History Log", () => {
+// This is a live-DB integration test, not an isolated unit test. Do not write
+// to the demo organization when GitHub Actions has no dedicated QA database.
+const dbReady = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+const describeWithDb = dbReady ? describe : describe.skip;
+
+describeWithDb("Message History Log", () => {
   it("should list individual messages across threads in chronological order", async () => {
     const orgId = "0c86fa1b-94ee-46b8-9a11-a42cee39bfed"; // Northwind Demo
     const clientId = "1fa5f7ca-da0c-4b88-ae73-a87ef20d35be"; // Demo Client Admin
