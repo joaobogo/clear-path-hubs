@@ -476,26 +476,29 @@ function ExpressIntakePage() {
    * review can never show something different from what gets submitted.
    */
   const review = React.useMemo(() => {
+    const salary = state.salaryMin && state.salaryMax
+      ? `${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)}–${Number(state.salaryMax).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+      : state.salaryMin
+        ? `From ${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+        : state.salaryMax
+          ? `Up to ${state.currency} ${Number(state.salaryMax).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+          : "";
     const compensation = state.compensationUndecided
       ? "Not decided yet"
       : [
-          state.salaryMin && state.salaryMax
-            ? `${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)}–${Number(
-                state.salaryMax,
-              ).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-            : "",
+          salary,
           state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
           state.equity ? COMP_EQUITY_LABELS[state.equity as "none"] : "",
           state.compensationFlexible ? "Flexible for the right person" : "",
           state.compensationNote.trim(),
-        ]
-          .filter(Boolean)
-          .join(" · ");
+        ].filter(Boolean).join(" · ");
 
     return buildIntakeReview({
       snapshot: {
         roleTitle: state.roleTitle,
         team: state.team,
+        seniorityLabel: state.seniority ? state.seniority.replaceAll("_", " ") : "",
+        employmentTypeLabel: state.employmentType ? state.employmentType.replaceAll("_", " ") : "",
         jobDescriptionText: state.jobDescriptionText,
         jdFilename: jdFile ? jdFile.filename : null,
         requirements: state.requirements.map((r) => ({ text: r.text, tag: String(r.tag) })),
@@ -518,11 +521,20 @@ function ExpressIntakePage() {
         targetStartDate: state.targetStartDate,
         interviewStageLines: state.interviewStages
           .filter((st) => st.name.trim())
-          .map((st) => st.name.trim()),
+          .map((st) => [
+            st.name.trim(),
+            INTERVIEW_STAGE_FORMAT_LABELS[st.format] ?? st.format,
+            st.ownerName.trim() ? `Owner: ${st.ownerName.trim()}` : "",
+            st.ownerEmail.trim() ? st.ownerEmail.trim() : "",
+          ].filter(Boolean).join(" · ")),
         interviewProcess: state.interviewProcess,
         targetDaysToOffer: state.targetDaysToOffer,
         decisionMaker: state.decisionMaker,
         decisionMakerEmail: state.decisionMakerEmail,
+        collaboratorLine: state.inviteCollaborators
+          ? collaboratorCandidates(state.interviewStages, { name: state.decisionMaker, email: state.decisionMakerEmail })
+            .map((person) => `${person.name || "Team member"} (${person.email})`).join("\n")
+          : "",
         // Only the rules we will actually apply. The review screen used to
         // list a flagged entry among the accepted ones, which a client
         // reasonably reads as "this will be used" (audit 1 Sep, F12).
