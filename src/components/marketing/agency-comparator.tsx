@@ -13,7 +13,7 @@ import { ArrowRight } from "lucide-react";
  */
 
 import { formatUsdExact } from "@/config/pricing-core";
-import { CTA_PRIMARY, CTA_BOOK, CTA_ENTERPRISE } from "@/config/cta";
+import { CTA_PRIMARY, CTA_MESSAGE, CTA_ENTERPRISE } from "@/config/cta";
 import {
   COMPARISON_DEFAULTS,
   DEFAULT_LABEL,
@@ -246,10 +246,10 @@ export function AgencyComparator() {
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link
-                to={CTA_BOOK.to}
+                to={CTA_MESSAGE.to}
                 className="inline-flex min-h-12 items-center justify-center rounded-md border border-white/40 px-5 py-3 text-sm font-semibold text-white hover:bg-white hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                {CTA_BOOK.label}
+                {CTA_MESSAGE.label}
               </Link>
             </div>
           </div>

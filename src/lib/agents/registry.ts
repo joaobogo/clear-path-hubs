@@ -13,7 +13,6 @@ export type AgentKey =
   | "sourcing"
   | "screening"
   | "outreach"
-  | "scheduling"
   | "market_research"
   | "pipeline_watch";
 
@@ -98,25 +97,6 @@ export const AGENT_REGISTRY: readonly AgentDefinition[] = [
     ],
     switchPermission: "client_admin",
     offConsequence: "No messages leave the platform. Sequences stay queued.",
-  },
-  {
-    key: "scheduling",
-    name: "Scheduling",
-    job: "Offers interview slots from your availability and confirms the booking.",
-    inputs: [
-      "Your availability windows and scheduling settings",
-      "Candidate stage and interview requests",
-    ],
-    outputs: [
-      "Slot offers sent to the candidate",
-      "Confirmed interviews with times on both calendars",
-    ],
-    neverWithoutHuman: [
-      "Cancel a confirmed interview",
-      "Book outside the availability you set",
-    ],
-    switchPermission: "client_admin",
-    offConsequence: "Interview times are agreed by message instead.",
   },
   {
     key: "market_research",

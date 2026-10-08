@@ -2,12 +2,12 @@
   "url": "https://taasflow.com/contact",
   "meta": {
     "title": "Contact TaaSFlow | Recruiting Platform",
-    "description": "Request the $699 pilot, book a 20-minute call, or send us a message. We reply within one business day.",
+    "description": "Request the $699 pilot, send us a message. We reply within one business day.",
     "og:title": "Contact TaaSFlow | Recruiting Platform",
-    "og:description": "Request the $699 pilot, book a 20-minute call, or send us a message. We reply within one business day.",
+    "og:description": "Request the $699 pilot, send us a message. We reply within one business day.",
     "og:image": "https://taasflow.com/og-image.png",
     "og:type": "website",
     "h1": "Contact us"
   },
-  "markdown": "# Contact us\n\nHave questions or want to try TaaSFlow on one role? We reply within one business day.\n\nI want to hire talent\nI am a candidate\nI am an existing client\nI need support\nGeneral inquiry\n\nRequest my $699 pilot or book a 20-minute call.\n\n[See pricing](/pricing)\n\n## Book a 20-minute call or send us a message\n"
+  "markdown": "# Contact us\n\nHave questions or want to try TaaSFlow on one role? We reply within one business day.\n\nI want to hire talent\nI am a candidate\nI am an existing client\nI need support\nGeneral inquiry\n\nRequest my $699 pilot or send us a message.\n\n[See pricing](/pricing)\n\n## Send us a message\n"
 }

@@ -1,8 +1,7 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { sanitizeParams } from "@/lib/tracking/fgv-events";
-import { BOOKING_EVENTS } from "@/lib/booking/booking-events";
 import { leadFormEventParams, safeErrorCategory } from "@/lib/tracking/lead-form-events";
 
 const read = (f: string) => readFileSync(join(process.cwd(), f), "utf8");
@@ -27,11 +26,6 @@ describe("lead form events", () => {
     const params = sanitizeParams({ ...leadFormEventParams("home"), email: "a@b.co", phone: "+4420794609" });
     expect(params).not.toHaveProperty("email");
     expect(params).not.toHaveProperty("phone");
-  });
-
-  it("registers booking_confirmed as a once-only booking event", () => {
-    expect(BOOKING_EVENTS.confirmed).toBe("booking_confirmed");
-    expect(read("src/lib/booking/booking-events.ts")).toMatch(/ONCE[\s\S]*BOOKING_EVENTS\.confirmed/);
   });
 });
 
@@ -63,7 +57,8 @@ describe("EmployerInquiryForm contract", () => {
   it("uses the shared CTA label and the agreed copy", () => {
     expect(src).toContain("CTA_PRIMARY.label");
     expect(src).toContain("Your request has been received");
-    expect(src).toContain("Choose a time");
+    expect(src).not.toContain("Choose a time");
+    expect(src).toContain("We will contact you within one business day to confirm the role and the pilot scope.");
     expect(src).toContain("What role do you need to fill?");
   });
 });
@@ -76,10 +71,9 @@ describe("funnel pages", () => {
     expect(src).not.toMatch(/Start the pilot intake|Start intake|Day 3|free trial|weekly/i);
   });
 
-  it("/book and /intake are noindex,follow and /book has the expectations", () => {
-    expect(read("src/routes/book.tsx")).toContain('content: "noindex, follow"');
+  it("/intake is noindex,follow and there is no public booking route", () => {
     expect(read("src/routes/intake.tsx")).toContain('content: "noindex, follow"');
-    expect(read("src/routes/book.tsx")).toContain("You see how a ranked shortlist looks in the workspace.");
+    expect(existsSync(join(process.cwd(), "src/routes/book.tsx"))).toBe(false);
   });
 
   it("/intake relabels the paying button and drops the contradiction", () => {

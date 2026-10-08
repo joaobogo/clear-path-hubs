@@ -78,7 +78,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       // Approvals themselves live on the Overview work queue now; this desk is
       // the decisions we are still waiting on from clients.
       { to: "/admin/decision-backlog", label: "Decision backlog" },
-      { to: "/admin/interviews", label: "Interviews" },
     ],
   },
   {

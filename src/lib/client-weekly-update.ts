@@ -63,7 +63,7 @@ export function metricLabel(key: WeeklyMetric["key"], count: number): string {
     case "delivered":
       return plural(count, "Candidate delivered", "Candidates delivered");
     case "interviews_held":
-      return plural(count, "Interview held", "Interviews held");
+      return plural(count, "Interview", "Interviews");
     case "decisions_made":
       return plural(count, "Decision made", "Decisions made");
   }

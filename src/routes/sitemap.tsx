@@ -1,7 +1,7 @@
 import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
-import { CTA_BOOK, CTA_FULL_INTAKE, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_FULL_INTAKE, CTA_PRIMARY } from "@/config/cta";
 
 type Group = {
   title: string;
@@ -17,7 +17,7 @@ const GROUPS: Group[] = [
       { label: "Home", to: "/" },
       { label: "About", to: "/about" },
       { label: "Contact", to: "/contact" },
-      { label: "Book a call", to: CTA_BOOK.to },
+      { label: "Send us a message", to: CTA_MESSAGE.to },
     ],
   },
   {

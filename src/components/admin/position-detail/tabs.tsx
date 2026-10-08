@@ -14,11 +14,6 @@ import { PositionSourceQualityPanel } from "@/components/admin/source-quality-pa
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
 import { PositionOfferTrackingPanel } from "@/components/admin/offer-hire-panel";
 
-import {
-  InterviewExceptionsBadge,
-  InterviewExceptionsPanel,
-} from "@/components/admin/interview-exceptions-panel";
-
 import { Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { PanelState } from "@/components/admin/panel-state";
@@ -594,8 +589,6 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
       <StageAgingPanel positionId={positionId} />
 
       <PositionSourceQualityPanel positionId={positionId} />
-
-      <InterviewExceptionsPanel positionId={positionId} />
 
       <PositionOfferTrackingPanel positionId={positionId} />
 

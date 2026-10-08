@@ -4,7 +4,7 @@ import { ArrowRight, BookOpen, CalendarClock, CheckCircle2, Compass, Users } fro
 import { SiteShell } from "@/components/marketing/site-shell";
 import { UnfilledPositionCalculator } from "@/components/marketing/unfilled-position-calculator";
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
-import { CTA_BOOK } from "@/config/cta";
+import { CTA_MESSAGE } from "@/config/cta";
 import { breadcrumbScript, clampDescription } from "@/lib/marketing/head";
 import {
   getResourceGuide,
@@ -353,11 +353,10 @@ function ResourceGuidePage() {
           </ul>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              to="/book"
-              search={{ type: undefined, cta: "resources" }}
+              to={CTA_MESSAGE.to}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
             >
-              {CTA_BOOK.label}
+              {CTA_MESSAGE.label}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link

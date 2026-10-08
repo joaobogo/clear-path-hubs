@@ -12,7 +12,7 @@ import {
   SCOPED_PUBLIC_LABEL,
   publicSeatsLine,
 } from "@/config/pricing-entitlements";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { FIRST_SHORTLIST_TIMING_SHORT } from "@/config/offer-facts";
 
 const read = (rel: string) => readFileSync(join(process.cwd(), rel), "utf8");
@@ -21,7 +21,7 @@ const page = read("src/routes/pricing.tsx");
 describe("/pricing page", () => {
   it("uses the shared CTAs and drops the retired labels", () => {
     expect(page).toContain("primary={CTA_PRIMARY}");
-    expect(page).toContain("secondary={CTA_BOOK}");
+    expect(page).toContain("secondary={CTA_MESSAGE}");
     for (const f of [
       "src/routes/pricing.tsx",
       "src/content/pricing.ts",
@@ -51,12 +51,12 @@ describe("/pricing page", () => {
 });
 
 describe("package cards", () => {
-  it("shows the pilot first with the primary action, others book a call", () => {
+  it("shows the pilot first with the primary action, others send a message", () => {
     expect(PRICING_TIERS[0]!.id).toBe("pilot");
     expect(PRICING_TIERS[0]!.ctaLabel).toBe(CTA_PRIMARY.label);
     expect(PRICING_TIERS[0]!.ctaTo).toBe("/pilot");
     for (const t of PRICING_TIERS.filter((x) => x.id !== "pilot" && x.id !== "enterprise")) {
-      expect(t.ctaLabel).toBe(CTA_BOOK.label);
+      expect(t.ctaLabel).toBe(CTA_MESSAGE.label);
     }
   });
 

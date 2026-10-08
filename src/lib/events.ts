@@ -53,6 +53,18 @@ export const EVENT_TYPES = [
 ] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
+
+/**
+ * Interview-scheduling events. TaaSFlow no longer schedules interviews, so
+ * nothing emits these any more. The names stay in the catalogue only so
+ * notifications already stored under them still render; the emitter drops them.
+ */
+export const RETIRED_SCHEDULING_EVENTS: ReadonlySet<EventType> = new Set<EventType>([
+  "interview_requested",
+  "interview_scheduled",
+  "interview_rescheduled",
+  "interview_cancelled",
+]);
 export type Audience = "admin" | "client" | "candidate";
 
 export type CopyEntry = { title: string; body?: string };
@@ -217,11 +229,7 @@ const CLIENT_ACTIVITY: readonly EventType[] = [
   "client_shortlisted",
   "client_feedback_submitted",
   "candidate_stage_changed",
-  "interview_requested",
-  "interview_scheduled",
-  "interview_rescheduled",
   "interview_completed",
-  "interview_cancelled",
   "candidate_hired",
   "message_sent",
   "document_added",
@@ -238,11 +246,7 @@ const CANDIDATE_ACTIVITY: readonly EventType[] = [
   "clarification_requested",
   "candidate_published",
   "client_shortlisted",
-  "interview_requested",
-  "interview_scheduled",
-  "interview_rescheduled",
   "interview_completed",
-  "interview_cancelled",
   "candidate_hired",
   "message_sent",
   "document_added",

@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ProcessState } from "@/components/ds/process-state";
 import { IntegrationHealthStrip } from "@/components/admin/integration-health-strip";
-import { CalendlyWebhookPanel } from "@/components/admin/calendly-webhook-panel";
 import {
   getIntegrationHealth,
   runIntegrationChecks,
@@ -45,7 +44,6 @@ export const Route = createFileRoute("/_authenticated/admin/integrations")({
 const LABELS: Record<IntegrationId, { name: string; what: string }> = {
   stripe: { name: "Payments", what: "Checkout, plan catalog, receipts" },
   attio: { name: "CRM (Attio)", what: "Lead capture from every public form" },
-  calendly: { name: "Booking (Calendly)", what: "Every 'Book a call' button" },
   email: { name: "Email deliverability", what: "Notifications, receipts, digests" },
 };
 
@@ -278,13 +276,9 @@ function IntegrationHealthPage() {
         })}
       </div>
 
-      <CalendlyWebhookPanel />
-
-
-
       <p className="text-xs text-muted-foreground">
-        Tests are read-only: they list catalog entries, read CRM object names, resolve the
-        booking page and read recent delivery events. No customer is charged, contacted or
+        Tests are read-only: they list catalog entries, read CRM object names and read
+        recent delivery events. No customer is charged, contacted or
         created.
       </p>
     </div>

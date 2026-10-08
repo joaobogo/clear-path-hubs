@@ -91,8 +91,6 @@ const DICTIONARY: Record<string, string> = {
   payments_catalog_empty: "No plan prices published yet",
   attio_unreachable: "CRM did not respond",
   attio_objects_missing: "CRM objects missing",
-  calendly_gateway_error: "Scheduling gateway error",
-  calendly_page_unreachable: "Scheduling page unreachable",
   email_logs_unreachable: "Email history unavailable",
   email_no_history: "No email sent yet",
   email_history_empty: "Provider reported no recent events",

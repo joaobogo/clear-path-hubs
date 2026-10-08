@@ -33,7 +33,7 @@ type AnyRow = any;
 // Plain-English names for recorded decisions.
 export const DECISION_LABELS: Record<string, string> = {
   shortlist: "Shortlisted",
-  request_interview: "Interview requested",
+  request_interview: "Moved to interview stage",
   request_information: "More information requested",
   hold: "Placed on hold",
   request_contact_release: "Contact details requested",
@@ -117,32 +117,9 @@ export function InterviewFeedbackSection({
   );
 }
 
-export function ActivitySection({
-  interviews,
-  decisions,
-}: {
-  interviews: AnyRow[];
-  decisions: AnyRow[];
-}) {
+export function ActivitySection({ decisions }: { decisions: AnyRow[] }) {
   return (
     <SectionCard title="Activity" icon={<CalendarClock className="h-4 w-4" />}>
-      {interviews.length > 0 && (
-        <div className="mb-3">
-          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Interviews
-          </h3>
-          <ul className="space-y-1 text-sm">
-            {interviews.map((iv) => (
-              <li key={iv.id} className="flex items-center justify-between">
-                <span>{formatEnumLabel(iv.status)}</span>
-                <span className="text-xs text-muted-foreground">
-                  {formatDateTime(iv.scheduled_at ?? iv.requested_at)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
       {decisions.length > 0 && (
         <div>
           <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">

@@ -90,7 +90,7 @@ export function StraightAnswers() {
             Six questions buyers ask first.
           </h2>
           <p className="mt-3 text-[color:var(--brand-navy)]/80">
-            Answered here so you can decide before you book a call.
+            Answered here so you can decide before you get in touch.
           </p>
         </div>
 
@@ -121,10 +121,10 @@ export function StraightAnswers() {
         <p className="mt-8 text-sm text-[color:var(--brand-navy)]/80">
           Still want to talk it through?{" "}
           <Link
-            to="/book"
+            to="/contact"
             className="font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] py-1"
           >
-            Book a 20-minute call
+            Send us a message
           </Link>
         </p>
       </PublicPage>

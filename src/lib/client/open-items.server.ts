@@ -6,10 +6,6 @@ import { buildOfferRow } from "@/lib/client-offer-holder";
 import { stageEnteredAt } from "@/lib/offer-stall";
 
 import { roleGaps } from "@/lib/position-readiness";
-import {
-  awaitingClient,
-  loadInterviewsAwaitingConfirmation,
-} from "@/lib/client/interviews-to-confirm.server";
 
 export type BlockedRole = {
   position_id: string;
@@ -90,23 +86,9 @@ export async function loadClientOpenItems(
     }
   }
 
-  // Interviews that still need a time come from the one shared query the Roles
-  // banner uses — narrowed to the ones the CLIENT can actually act on.
-  //
-  // This queue is headed "waiting on you". Every pending interview used to
-  // land in it, including the ones where we had never sent a slot, so the
-  // client was shown our own eleven-day delay as three things they owed us
-  // (audit #9, item 13b).
-  const pendingConfirmations = awaitingClient(
-    await loadInterviewsAwaitingConfirmation(supabase, orgId),
-  );
-
   // Candidate names for the rows that act on one person, so interview and offer
   // rows read like the feedback rows ("… for Carla Nunes").
-  const namedMatchIds = [
-    ...offerMatchIds,
-    ...pendingConfirmations.map((p) => p.candidate_match_id),
-  ].filter(Boolean);
+  const namedMatchIds = [...offerMatchIds].filter(Boolean);
   const matchNames = new Map<string, string>();
   if (namedMatchIds.length > 0) {
     const { data: matchRows } = await supabase
@@ -240,25 +222,6 @@ export async function loadClientOpenItems(
       waiting_since: offer?.movedAt ?? row.stage_entered_at,
     });
   }
-
-  // The subject key is namespaced so an offer or decision on the same candidate
-  // can never collapse this row away and shrink the count.
-  for (const pending of pendingConfirmations) {
-    const name = matchNames.get(pending.candidate_match_id);
-    items.push({
-      kind: "interview",
-      id: pending.interview_id,
-      subject_id: `interview:${pending.candidate_match_id}`,
-      label: name ? `Confirm an interview time for ${name}` : "Confirm an interview time",
-      context: roleLine(pending.position_id),
-      position_id: pending.position_id ?? null,
-      href: `/client/interviews?interview=${pending.interview_id}`,
-      due_at: null,
-      overdue: false,
-      waiting_since: pending.requested_at,
-    });
-  }
-
 
   return { items: sortOpenItems(dedupeOpenItems(items)), blockedRoles };
 }

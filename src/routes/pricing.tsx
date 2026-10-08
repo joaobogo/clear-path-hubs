@@ -26,7 +26,7 @@ import {
   PACKAGE_10,
 } from "@/config/pricing-core";
 import { OFFER_CATEGORY, OFFER_LAST_UPDATED_LABEL, PILOT_IS_PAID_NOTE, SEATS_NOTE, TIMING_FINE_PRINT } from "@/config/offer-facts";
-import { CTA_PRIMARY, CTA_BOOK } from "@/config/cta";
+import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
 import { LargerPackagesTable } from "@/components/marketing/larger-packages-table";
 import { Check, X } from "lucide-react";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
@@ -107,7 +107,7 @@ function PricingPage() {
           { value: String(MAX_POSITIONS), label: "Positions in the largest published package" },
         ]}
         primary={CTA_PRIMARY}
-        secondary={CTA_BOOK}
+        secondary={CTA_MESSAGE}
       >
         <ul className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
           {[
@@ -424,10 +424,10 @@ function PricingPage() {
               {CTA_PRIMARY.label}
             </Link>
             <Link
-              to={CTA_BOOK.to}
+              to={CTA_MESSAGE.to}
               className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              {CTA_BOOK.label}
+              {CTA_MESSAGE.label}
             </Link>
           </div>
         </PublicPage>

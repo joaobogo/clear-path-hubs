@@ -246,7 +246,6 @@ function StatusPage() {
           <CandidateStatePanel
             state={result.state}
             lastUpdate={result.last_update}
-            nextInterviewAt={result.next_interview_at}
           />
 
           {verified && result.open_requests.length > 0 && (

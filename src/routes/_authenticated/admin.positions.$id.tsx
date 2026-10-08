@@ -8,11 +8,6 @@ import { PositionSourceQualityPanel } from "@/components/admin/source-quality-pa
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
 import { PositionOfferTrackingPanel } from "@/components/admin/offer-hire-panel";
 
-import {
-  InterviewExceptionsBadge,
-  InterviewExceptionsPanel,
-} from "@/components/admin/interview-exceptions-panel";
-
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -252,7 +247,6 @@ function PositionWorkspace() {
                 {p.status.replace(/_/g, " ")}
               </Badge>
               <Badge variant="outline">{p.visibility}</Badge>
-              <InterviewExceptionsBadge positionId={p.id} />
             </div>
             <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
               {p.location && <span>{p.location}</span>}

@@ -20,7 +20,6 @@ export type DeliveryMode = "immediate" | "daily" | "off";
 export type PreferenceKey =
   | "pref_shortlist_delivered"
   | "pref_decision_overdue"
-  | "pref_interview_update"
   | "pref_offer_response"
   | "pref_information_needed"
   | "pref_weekly_summary";
@@ -55,13 +54,6 @@ export const NOTIFICATION_EVENTS: readonly NotificationEventSpec[] = [
     defaultMode: "immediate",
     lockedReason:
       "This one can be moved to the digest but not switched off — candidates drop out while a decision waits, and this is the only notice that tells you it is happening.",
-  },
-  {
-    key: "pref_interview_update",
-    label: "Interview scheduled or changed",
-    description: "A new interview time, a reschedule, or a cancellation.",
-    modes: ["immediate", "daily", "off"],
-    defaultMode: "immediate",
   },
   {
     key: "pref_offer_response",
@@ -132,8 +124,6 @@ export const EVENT_PREFERENCE: Partial<Record<EventType, PreferenceKey>> = {
   shortlist_ready: "pref_shortlist_delivered",
   client_shortlisted: "pref_shortlist_delivered",
   approval_needed: "pref_decision_overdue",
-  interview_requested: "pref_interview_update",
-  interview_rescheduled: "pref_interview_update",
   candidate_hired: "pref_offer_response",
   client_declined: "pref_offer_response",
   client_information_requested: "pref_information_needed",

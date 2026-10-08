@@ -14,7 +14,6 @@ import {
   RESPONSE_TIME_SENTENCE,
   TIMING_FINE_PRINT,
 } from "@/config/offer-facts";
-import { KickoffBookingCard } from "@/components/booking/kickoff-booking-card";
 
 // A bad or stale value in the URL is a bad LINK, not a rejected form. A bare
 // zod schema THROWS out of validateSearch, and the router wraps that as an
@@ -309,16 +308,6 @@ function ConfirmationPage() {
           )}
         </CardContent>
       </Card>
-
-      {intake_id && status && (
-        <div className="mt-4">
-          <KickoffBookingCard
-            intakeId={intake_id}
-            positionId={status.positionId}
-            roleTitle={status.roleTitle}
-          />
-        </div>
-      )}
     </FormShell>
   );
 }

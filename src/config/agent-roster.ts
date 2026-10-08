@@ -212,17 +212,15 @@ export const ROSTER: readonly RosterEntry[] = [
     id: "coordination",
     role: "Coordination Agent",
     kind: "agent",
-    registryKeys: ["outreach", "scheduling"],
+    registryKeys: ["outreach"],
     purpose:
-      "Runs the approved contact sequence and offers interview slots from your availability.",
+      "Runs the approved contact sequence and keeps replies in one conversation.",
     inputs: [
       "Approved message templates and channel rules",
       "Opt-outs and existing replies",
-      "Your availability windows",
     ],
     outputs: [
       "Sent messages logged per channel, with replies in one conversation",
-      "Slot offers and confirmed interviews",
       "A blocked-with-reason record whenever a rule stops a contact",
     ],
     operatingState:
@@ -230,17 +228,15 @@ export const ROSTER: readonly RosterEntry[] = [
     controls: [
       "Switch on, pause or switch off — pausing stops queued sends",
       "Approve message bodies and set channel windows",
-      "Set availability windows",
     ],
     approval:
-      "Cannot send an unapproved message body, contact anyone opted out or already in process, or book outside your availability.",
+      "Cannot send an unapproved message body, or contact anyone opted out or already in process.",
     events: [
       "Every send, reply and block with its reason",
-      "Every confirmed or rescheduled interview",
     ],
     representative: {
       status: "Scheduled",
-      activity: "4 slot offers queued for tomorrow; 1 contact blocked (opted out).",
+      activity: "4 messages queued for tomorrow; 1 contact blocked (opted out).",
     },
   },
   {
@@ -271,7 +267,7 @@ export const HANDOFFS: readonly { from: string; payload: string; to: string }[] 
   { from: "Talent Discovery Agent", payload: "Longlist entries", to: "Evidence Agent" },
   { from: "Evidence Agent", payload: "Verified evidence items", to: "Scoring Agent" },
   { from: "Scoring Agent", payload: "Approved score run", to: "Coordination Agent" },
-  { from: "Coordination Agent", payload: "Interviews and replies", to: "Pipeline Agent" },
+  { from: "Coordination Agent", payload: "Replies", to: "Pipeline Agent" },
   { from: "Pipeline Agent", payload: "Outcomes and flags", to: "Governance Agent" },
 ];
 

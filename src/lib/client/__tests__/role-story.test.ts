@@ -119,7 +119,6 @@ describe("role story distribution", () => {
 describe("role story milestone", () => {
   const base = {
     status: "active",
-    nextInterviewAt: null,
     firstShortlistExpectedAt: null,
     openings: 1,
     hires: 0,
@@ -130,13 +129,13 @@ describe("role story milestone", () => {
     expect(m.headline).toContain("offer response");
   });
 
-  it("uses a scheduled interview date", () => {
+  it("names candidates at the interview stage without a schedule", () => {
     const m = buildMilestone({
       ...base,
       candidates: [cand({ stage: "interview_process" })],
-      nextInterviewAt: "2026-09-01T10:00:00Z",
     });
-    expect(m.headline).toContain("Next interview");
+    expect(m.headline).toContain("interview stage");
+    expect(m.detail).toContain("directly");
   });
 
   it("asks for a review when candidates are waiting", () => {

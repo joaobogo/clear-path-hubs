@@ -98,7 +98,7 @@ function SolutionsPage() {
       <CtaSection
         eyebrow="Not sure which fits?"
         title="Talk it through with us."
-        description="Book a call and we will point you to the right starting point for your roles."
+        description="Send us a message and we will point you to the right starting point for your roles."
       />
     </SiteShell>
   );

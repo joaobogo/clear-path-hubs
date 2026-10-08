@@ -20,7 +20,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
 import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero";
 import hiwHero from "@/assets/page-how-it-works-hero.jpg";
 import bandHire from "@/assets/band-hire.jpg";
-import { CTA_BOOK, CTA_FULL_INTAKE, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_FULL_INTAKE, CTA_PRIMARY } from "@/config/cta";
 import {
   FIRST_SHORTLIST_BUSINESS_DAYS,
   FIRST_SHORTLIST_TIMING,
@@ -129,7 +129,7 @@ function HowItWorksPage() {
           { value: "Every score", label: "Backed by evidence" },
         ]}
         primary={CTA_PRIMARY}
-        secondary={CTA_BOOK}
+        secondary={CTA_MESSAGE}
         note={TIMING_FINE_PRINT}
       />
 
@@ -372,9 +372,9 @@ function HowItWorksPage() {
       <CtaSection
         eyebrow="Ready when you are"
         title="Share your first role."
-        description="Request the pilot for one role, or book a call to talk it through first."
+        description="Request the pilot for one role, or send us a message to talk it through first."
         primary={CTA_PRIMARY}
-        secondary={CTA_BOOK}
+        secondary={CTA_MESSAGE}
       />
       <PageConnections
         commercial={{ to: CTA_FULL_INTAKE.to, label: CTA_FULL_INTAKE.label, desc: "Already have a job description? Go straight to the full intake." }}

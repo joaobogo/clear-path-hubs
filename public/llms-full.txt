@@ -138,10 +138,10 @@ Billing, scope, screening and data questions.
 - Does TaaSFlow support multiple teams or business units?
 - Yes. Enterprise accounts run parallel searches across teams and business units on a shared workspace with account-level reporting.
 - Do you support SSO and enterprise access controls?
-- Enterprise access, provisioning, audit logs, and security details are agreed on a 20-minute call.
+- Enterprise access, provisioning, audit logs, and security details are agreed with our team after you send us a message.
 - Account-level reporting rolls up roles across teams, with role-level detail available in each requisition. TA, Finance, and Procurement each get views tailored to their questions.
 - How do we start an enterprise engagement?
-- Book a 20-minute call and we'll scope it with your TA and Procurement leads.
+- Send us a message and we will contact you within one business day to scope it with your TA and Procurement leads.
 - Staffing and recruiting agencies using TaaSFlow to scale delivery.
 - Yes. TaaSFlow partners with staffing and recruiting agencies who want more delivery capacity while keeping the client relationship.
 
@@ -211,7 +211,7 @@ Which engagement fits a given hiring situation.
 - Not an agency. Sourcing capacity for your team at a flat fee, with the evidence behind every score.
 - Hiring for multi-site and shift-based roles, with a shortlist built around the requirements of the role.
 - Add sourcing and screening capacity behind your own client relationships. TaaSFlow does not place workers.
-- Book a call and we will point you to the right starting point for your roles.
+- Send us a message and we will point you to the right starting point for your roles.
 - Pick the page that matches how you hire.
 
 ## Enterprise — https://taasflow.com/enterprise
@@ -261,7 +261,7 @@ Security, procurement, seats and audit requirements for larger programmes.
 
 ## Integrations — https://taasflow.com/integrations
 
-Calendars, video interviews and email that connect to the workspace.
+Email, messaging, CRM and agent connections that work with the workspace.
 
 - Every TaaSFlow integration with its purpose, connection method, data exchanged, permissions and current availability. Planned connections are labelled as planned, never as available.
 - Tell us which system you run and what should flow between it and TaaSFlow. We build integrations by demand, and we will tell you honestly whether it is on the roadmap.
@@ -319,7 +319,7 @@ Why TaaSFlow exists and how it operates.
 - Instead of a contingent fee, a flat one-time price per package. Instead of a private inbox, a workspace for each role. Instead of a summary paragraph, a rubric with citations. The model is deliberately plain: a clear process beats heroics.
 - Every hire has a rubric behind it. Every rejection has a reason. Every candidate record can be exported by the company that paid for it. A recruiter stays in the loop, and the reasoning is visible. That is the version of hiring we want to work in.
 - TaaSFlow is a recruiting platform with managed execution. Every shortlist comes with the evidence behind each score, and package prices are fixed.
-- Request the pilot for one role, or book a call to talk it through first.
+- Request the pilot for one role, or send us a message to talk it through first.
 - HR teams, operators, founders and staffing agencies.
 - Example engagements and how we measure them.
 - Careers built advising global enterprises. Now applying the same rigor to the world of hiring.

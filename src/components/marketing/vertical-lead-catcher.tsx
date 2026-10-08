@@ -1,14 +1,13 @@
 /**
  * Vertical lead catcher — Part 7, prompt 47.
  *
- * Four ways into a conversation, matched to how each industry actually buys,
+ * Three ways into a conversation, matched to how each industry actually buys,
  * all feeding the one lead pipeline with vertical, page and source recorded:
  *
  *   1. Scoped enquiry   — six fields, no essay box required.
  *   2. Estimator        — role cost and time-to-shortlist from our own
  *                         published pricing and delivery commitment.
  *   3. Sector briefing  — a print-ready briefing for this vertical.
- *   4. Book a call      — hands off to the existing call flow.
  *
  * Anything the visitor types here is handed to the intake form later
  * (prompt 48) so nobody types the same thing twice.
@@ -17,10 +16,9 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Calculator, CalendarDays, Check, Download, Loader2, Send } from "lucide-react";
+import { Calculator, Check, Download, Loader2, Send } from "lucide-react";
 
 import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
-import { BookACallDialog } from "@/components/marketing/book-a-call";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -180,7 +178,7 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
             {verticalName} · get started
           </p>
           <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)] sm:text-3xl">
-            Four ways in. Pick whichever suits how you buy.
+            Three ways in. Pick whichever suits how you buy.
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
             Whatever you tell us here is carried into your brief, so you never
@@ -193,7 +191,6 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
             <TabsTrigger value="enquiry" className="gap-2 text-sm"><Send className="h-4 w-4" />Scoped enquiry</TabsTrigger>
             <TabsTrigger value="estimate" className="gap-2 text-sm"><Calculator className="h-4 w-4" />Cost &amp; time estimate</TabsTrigger>
             <TabsTrigger value="briefing" className="gap-2 text-sm"><Download className="h-4 w-4" />Sector briefing</TabsTrigger>
-            <TabsTrigger value="call" className="gap-2 text-sm"><CalendarDays className="h-4 w-4" />Book a 20-minute call</TabsTrigger>
           </TabsList>
 
           {/* ---------------- Shared scoped fields ---------------- */}
@@ -307,24 +304,6 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
                   Get the briefing
                 </Button>
               )}
-            </div>
-          </TabsContent>
-
-          {/* ---------------- Book a call ---------------- */}
-          <TabsContent value="call" className="mt-6">
-            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-              <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold text-[color:var(--brand-navy)]">
-                Book a 20-minute call about your {verticalName.toLowerCase()} search
-              </h3>
-              <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                We look at one role you need to fill and show how we would run it. We will tell you if we are not the right fit.
-              </p>
-              <BookACallDialog
-                industrySlug={verticalSlug}
-                industryName={verticalName}
-                roleTitle={form.roleTitle || undefined}
-                trigger={<Button className="mt-5">Choose a time</Button>}
-              />
             </div>
           </TabsContent>
         </Tabs>

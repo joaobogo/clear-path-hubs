@@ -16,7 +16,7 @@ import {
   type SlaMetric,
   type SlaSummary,
 } from "@/lib/sla";
-import { dayMetric, emptySummary, interviewSlotMetric, summarise } from "@/lib/sla-report.server";
+import { dayMetric, emptySummary, summarise } from "@/lib/sla-report.server";
 import {
   COMMITMENT_LABEL,
   firstCandidatePromise,
@@ -38,7 +38,7 @@ export async function loadSlaPerformance(
 ): Promise<SlaPerformance> {
   let commitmentsQuery = supabase
     .from("position_commitments")
-    .select("position_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at")
+    .select("position_id, first_shortlist_days, shortlist_size, baseline_at")
     .eq("organization_id", orgId);
   if (positionId) commitmentsQuery = commitmentsQuery.eq("position_id", positionId);
   const { data: commitments, error } = await commitmentsQuery;
@@ -71,19 +71,6 @@ export async function loadSlaPerformance(
     deliveriesByPosition.set(m.position_id, list);
   }
   for (const list of deliveriesByPosition.values()) list.sort();
-
-  const { data: interviews } = await supabase
-    .from("interviews")
-    .select("position_id, requested_at, created_at, scheduled_at, proposed_times, updated_at")
-    .eq("organization_id", orgId)
-    .in("position_id", positionIds);
-  const interviewsByPosition = new Map<string, AnyRow[]>();
-  for (const iv of (interviews as AnyRow[]) ?? []) {
-    if (!iv.position_id) continue;
-    const list = interviewsByPosition.get(iv.position_id) ?? [];
-    list.push(iv);
-    interviewsByPosition.set(iv.position_id, list);
-  }
 
   const now = Date.now();
   const roles: RoleSla[] = rows
@@ -131,10 +118,6 @@ export async function loadSlaPerformance(
         varianceValue: shortlistActual ? shortlistBase.varianceValue : null,
         variance: shortlistActual ? shortlistBase.variance : "Not measured",
       });
-
-      // 3 · Interview slots proposed after a request
-      const ivs = interviewsByPosition.get(r.position_id) ?? [];
-      metrics.push(interviewSlotMetric(ivs, Number(r.interview_slots_hours), now));
 
       return {
         positionId: r.position_id as string,

@@ -82,8 +82,6 @@ export async function loadExistingApplicationSummary(
     matchStage: matches[0]?.stage ?? null,
     matchVisible: matches.some((m) => m.client_visibility === "visible"),
     hasOpenInfoRequest: (openReqs ?? []).length > 0,
-    interviewScheduled: false,
-    interviewRequested: false,
     needsSupport: false,
   };
   const state = resolveCandidateState(inputs);

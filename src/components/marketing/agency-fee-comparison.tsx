@@ -6,7 +6,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { CALCULATOR_DEFAULTS } from "@/config/public-pricing";
-import { CTA_PRIMARY, CTA_BOOK } from "@/config/cta";
+import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
 import { compareCosts } from "@/lib/pricing-comparison";
 
 /** Same salary example as the calculator. An example, not an industry fact. */
@@ -169,10 +169,10 @@ export function AgencyFeeComparison() {
           <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
         <Link
-          to={CTA_BOOK.to}
+          to={CTA_MESSAGE.to}
           className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
         >
-          {CTA_BOOK.label}
+          {CTA_MESSAGE.label}
         </Link>
       </div>
     </div>

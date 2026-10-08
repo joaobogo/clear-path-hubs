@@ -597,7 +597,7 @@ export function WorkspaceDeliveryDemo() {
           </li>
           <li>
             <span className="font-semibold">Hiring manager:</span> Approved.
-            Scheduling with tech lead tomorrow.
+            Moving to a technical interview.
           </li>
         </ul>
       </div>
@@ -618,7 +618,7 @@ export function ResponsibilityMatrix() {
     { activity: "Publication gate", owner: "TaaSFlow", note: "Nothing reaches you without recruiter approval." },
     { activity: "Interviews & decisions", owner: "Client", note: "Your team runs the loop. We record decisions." },
     { activity: "Feedback loop & re-sourcing", owner: "Shared", note: "Fast feedback triggers another sourcing round." },
-    { activity: "Offer & close", owner: "Client", note: "You extend. We support scheduling and comms." },
+    { activity: "Offer & close", owner: "Client", note: "You extend the offer. We support the decision with the evidence." },
   ];
   const badge: Record<Owner, string> = {
     Client: "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean-text)]",

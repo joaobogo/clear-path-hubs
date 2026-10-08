@@ -427,7 +427,7 @@ function buildEvidence(role: string, sen: Seniority, fn: RoleFunction, entry: In
 }
 
 function buildCta(role: string, _sen: Seniority): string {
-  return `Hiring a ${role}? ${FIRST_SHORTLIST_TIMING_SHORT}.`;
+  return `Hiring for ${role}? ${FIRST_SHORTLIST_TIMING_SHORT}.`;
 }
 
 function dedupe(arr: string[]): string[] {

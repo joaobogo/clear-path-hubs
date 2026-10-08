@@ -40,7 +40,7 @@ export function EcosystemCrossSell({ trigger }: { trigger: CrossSellTrigger }) {
   const instanceId = useId();
   const claimedPath = useRef<string | null>(null);
 
-  // Conversion routes (intake, checkout, booking, apply) keep the parent-company
+  // Conversion routes (intake, checkout, apply) keep the parent-company
   // identification in the footer but never carry a sibling outbound link — an
   // exit at the decision moment costs more than the referral. /pricing is exempt
   // because the module deflects buyers a subscription cannot serve.

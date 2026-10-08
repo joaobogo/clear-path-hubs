@@ -1,7 +1,7 @@
 /**
  * PAYMENTS-OFF JOURNEY — one brand-new employer, end to end.
  *
- * /intake (3 steps, fresh email) → submit → booking screen → book a slot →
+ * /intake (3 steps, fresh email) → submit → confirmation screen →
  * client dashboard. At every stop we assert:
  *   - visible page text contains no money vocabulary (case-insensitive)
  *   - no Stripe iframe and no card input exists in the DOM
@@ -87,7 +87,7 @@ test.describe("PAYMENTS-OFF — full employer journey", () => {
   test.skip(PAYMENTS_ENABLED, "payments-off assertions only apply with PAYMENTS_ENABLED=false");
   test.setTimeout(240_000);
 
-  test("intake → booking → dashboard, never a money word or a /checkout hit", async ({ page }) => {
+  test("intake → confirmation → dashboard, never a money word or a /checkout hit", async ({ page }) => {
     const errors = collectConsoleErrors(page);
     const { companyName, email } = uniqueProspect();
     const password = "QaTest!Phase11";
@@ -149,45 +149,17 @@ test.describe("PAYMENTS-OFF — full employer journey", () => {
     await expect(submit).toBeEnabled();
     await submit.click();
 
-    // ── Booking screen ──────────────────────────────────────────────────────
+    // ── Confirmation screen ──────────────────────────────────────────────────────
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 90_000 })
-      .toMatch(/^\/(book-call|book|intake\/confirmation)/);
+      .toMatch(/^\/(intake\/confirmation|client)/);
     await expect(page.getByRole("heading").first()).toBeVisible();
-    await assertClean(page, `booking screen (${new URL(page.url()).pathname})`);
+    await assertClean(page, `confirmation screen (${new URL(page.url()).pathname})`);
 
     const persisted = await lookupIntake(companyName, email);
     expect(persisted.auth_user, "account created from intake").not.toBeNull();
     expect(persisted.organization, "organization created").not.toBeNull();
     expect(persisted.position, "role saved").not.toBeNull();
-
-    // ── Book a slot ─────────────────────────────────────────────────────────
-    // The booking screen opens its scheduler in place. Native slots carry
-    // data-slot-start; the hosted embed may be unavailable in CI, in which case
-    // the page must still offer a real way forward (asserted, never skipped).
-    const openScheduler = page.getByRole("button", { name: /open the scheduler/i });
-    if (await openScheduler.count()) await openScheduler.first().click();
-
-    const slot = page.locator("[data-slot-start]").first();
-    const booked = await slot
-      .waitFor({ state: "visible", timeout: 30_000 })
-      .then(() => true)
-      .catch(() => false);
-
-    if (booked) {
-      await slot.click();
-      await expect(page.getByTestId("booked-when")).toBeVisible({ timeout: 30_000 });
-    } else {
-      // No native slot rendered: the fallback must be a live path, not a
-      // dead end, and it still must not mention money.
-      await expect(
-        page
-          .getByRole("link", { name: /booking page|open the booking page/i })
-          .or(page.getByRole("button", { name: /go to my dashboard|go to your workspace/i }))
-          .first(),
-      ).toBeVisible({ timeout: 30_000 });
-    }
-    await assertClean(page, "booking screen after scheduling");
 
     // ── Client dashboard ────────────────────────────────────────────────────
     await page.goto("/client", { waitUntil: "domcontentloaded" });

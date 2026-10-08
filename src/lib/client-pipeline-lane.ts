@@ -9,9 +9,7 @@
  * Shortlisted column, so the tile said 4 and the column said 2 for identical
  * data.
  *
- * Rule: the stored `stage` decides the lane. A candidate in `delivered` or
- * `shortlisted` who already has a live interview is STILL shown in those
- * stages — the interview is a milestone within the stage, not a lane move.
+ * Rule: the stored `stage` decides the lane.
 
  */
 import type { MatchStage } from "@/lib/client-match-stage";
@@ -31,23 +29,10 @@ export type PipelineLane = (typeof PIPELINE_LANES)[number];
 /** Minimum shape any lane consumer must expose. */
 export type LaneRow = {
   stage: string;
-  /** An interview exists (requested, scheduling, scheduled or completed). */
-  interview_active?: boolean | null;
-  /**
-   * Every interview on this match was called off and none was held.
-   *
-   * The rule below — the stored stage decides the lane — is right for ENTERING
-   * an interview and wrong for leaving one. A cancellation does not move the
-   * stage, so the lane kept counting a candidate as interviewing while the row
-   * label beside it, computed from interview status, correctly read "Interview
-   * cancelled": one person interviewing, the tile said two
-   * (audit 1 Sep, F6).
-   */
-  interview_called_off?: boolean | null;
   /**
    * A confirmed offer record exists for this candidate.
    *
-   * REQUIRED, like `interview_called_off` and for the same reason: the rule
+   * REQUIRED: the rule
    * below cannot fire on a field the caller forgot to map, and an optional one
    * fails silently rather than at compile time.
    *
@@ -103,15 +88,7 @@ function isDeliberatelyExcluded(value: string): boolean {
 export function laneFor(row: LaneRow): PipelineLane | null {
   const stage = String(row.stage);
   if (!isLane(stage)) return null;
-  // The one exception to "the stage decides the lane". A candidate whose only
-  // interview was cancelled is back where they were before it was arranged —
-  // shortlisted — and every surface reads that from here, so the tile, the
-  // board column and the row label cannot disagree. A COMPLETED interview is
-  // not this case: that candidate is still in the interview stage.
-  if (stage === "interview_process" && row.interview_called_off && !row.interview_active) {
-    return "shortlisted";
-  }
-  // The second exception, and the same shape as the first: the stage alone may
+  // The one exception to "the stage decides the lane": the stage alone may
   // not claim an outcome the record behind it does not support. A candidate
   // parked in `hired` whose offer is still drafted, sent or negotiating has an
   // OPEN offer, so that is the lane they are in — and the board column, the

@@ -61,11 +61,11 @@ const CONFIG: Record<DecisionActionKey, Config> = {
     notePlaceholder: "Optional note for the TaaSFlow team",
   },
   request_interview: {
-    title: "Request an interview",
+    title: "Move to the interview stage",
     description:
-      "The TaaSFlow team will coordinate availability with the candidate and come back to you with times.",
-    confirmLabel: "Request interview",
-    notePlaceholder: "Preferred times, format, or who will attend (optional)",
+      "Arrange interviews directly with the candidate, outside TaaSFlow. This records that the candidate is at the interview stage.",
+    confirmLabel: "Move to interview stage",
+    notePlaceholder: "Optional note for the TaaSFlow team",
   },
   request_more_information: {
     title: "Request more information",

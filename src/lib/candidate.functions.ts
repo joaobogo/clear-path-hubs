@@ -9,12 +9,7 @@ import { computePendingAction } from "@/lib/candidate/pending-action";
 import { buildCandidateTimeline } from "@/lib/candidate/timeline";
 import { buildClosedOutcome } from "@/lib/candidate/closed-outcome";
 import { profileSectionPatchSchema } from "@/lib/candidate/profile-sections";
-import {
-  availabilityPreferenceSchema,
-  mergeIntoAvailability,
-  normalizePreference,
-  parseStoredPreference,
-} from "@/lib/candidate/availability-preference";
+import { pickLegacyInterview } from "@/lib/candidate/legacy-interview";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -167,8 +162,7 @@ export const listMyApplications = createServerFn({ method: "GET" })
       .select(
         `id, position_id, status, applied_at, updated_at, withdrawn_at, cv_file_id,
          positions:position_id ( id, title, status, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
-         candidate_matches ( id, stage, client_visibility, updated_at,
-           interviews ( id, status, scheduled_at, interview_type, timezone ) )`,
+         candidate_matches ( id, stage, client_visibility, updated_at )`,
       )
       .eq("candidate_profile_id", cpId)
       .order("applied_at", { ascending: false });
@@ -187,14 +181,10 @@ export const listMyApplications = createServerFn({ method: "GET" })
       const org = pos.organizations ?? {};
       const matches = asArray(a.candidate_matches);
       const visibleMatch = matches.find((m: AnyRow) => m.client_visibility === "visible");
-      const interviews = matches.flatMap((m: AnyRow) => asArray(m.interviews));
       const infoRequested = openByApp.has(a.id);
       // One projection of the raw application + match rows.
       const view = toCandidateStatusDTO(a, { hasOpenInfoRequest: infoRequested });
       const status = view.status;
-      const nextInterview = interviews
-        .filter((i: AnyRow) => i.scheduled_at && i.status !== "cancelled")
-        .sort((x: AnyRow, y: AnyRow) => String(x.scheduled_at).localeCompare(String(y.scheduled_at)))[0];
       return {
         id: a.id,
         position_id: pos.id,
@@ -208,7 +198,6 @@ export const listMyApplications = createServerFn({ method: "GET" })
         status,
         role_closed: view.role_closed,
         info_requested: infoRequested,
-        next_interview_at: nextInterview?.scheduled_at ?? null,
         has_document: !!a.cv_file_id,
         can_withdraw: view.can_withdraw,
         next_step: view.next_step,
@@ -232,7 +221,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
          cover_letter, portfolio_url, cv_file_id,
          positions:position_id ( id, title, description, status, closure_reason, closed_at, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
-           interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone, requested_at, cancelled_at, candidate_response, candidate_response_at ) )`,
+           interviews ( status, scheduled_at, meeting_url, timezone ) )`,
       )
       .eq("id", data.id)
       .eq("candidate_profile_id", cpId)
@@ -259,22 +248,6 @@ export const getMyApplication = createServerFn({ method: "GET" })
     const org = pos.organizations ?? {};
     const matches = asArray(a.candidate_matches);
     const visibleMatch = matches.find((m: AnyRow) => m.client_visibility === "visible");
-    const interviews = matches
-      .flatMap((m: AnyRow) => asArray(m.interviews))
-      .map((i: AnyRow) => ({
-        id: i.id,
-        status: i.status as string,
-        scheduled_at: i.scheduled_at as string | null,
-        duration_minutes: i.duration_minutes as number | null,
-        interview_type: i.interview_type as string | null,
-        location: i.location as string | null,
-        meeting_url: i.meeting_url as string | null,
-        timezone: i.timezone as string | null,
-        requested_at: i.requested_at as string,
-        cancelled_at: i.cancelled_at as string | null,
-        candidate_response: (i.candidate_response as string | null) ?? null,
-        candidate_response_at: (i.candidate_response_at as string | null) ?? null,
-      }));
     const infoRequests = (reqs ?? []) as Array<{
       id: string;
       prompt: string;
@@ -288,7 +261,6 @@ export const getMyApplication = createServerFn({ method: "GET" })
 
     const view = toCandidateStatusDTO(a, {
       hasOpenInfoRequest: infoRequested,
-      interviews,
     });
     const status = view.status;
 
@@ -317,7 +289,6 @@ export const getMyApplication = createServerFn({ method: "GET" })
           }
         : null,
       stageHistory,
-      interviews,
       withdrawnAt: (a.withdrawn_at as string | null) ?? null,
     });
 
@@ -367,7 +338,6 @@ export const getMyApplication = createServerFn({ method: "GET" })
       // Derived from real pending rows only — never from the stage.
       pending_action: computePendingAction({
         infoRequests: infoRequests,
-        interviews,
         document: cvFile
           ? {
               received: !isBlockingParseState(cvFile.parse_state as string),
@@ -378,8 +348,11 @@ export const getMyApplication = createServerFn({ method: "GET" })
         closed: status === "Closed",
       }),
       can_withdraw: view.can_withdraw,
+      // Read-only note for an interview booked before scheduling was removed.
+      legacy_interview: pickLegacyInterview(
+        matches.flatMap((m: AnyRow) => asArray(m.interviews)),
+      ),
       info_requests: infoRequests,
-      interviews,
       events,
       closed_outcome: closedOutcome,
 
@@ -489,7 +462,6 @@ export const getMyDashboard = createServerFn({ method: "GET" })
     if (!cpId) {
       return {
         open_requests: 0,
-        upcoming_interviews: [] as AnyRow[],
         unread_messages: 0,
         document: null as AnyRow | null,
       };
@@ -519,33 +491,6 @@ export const getMyDashboard = createServerFn({ method: "GET" })
 
     ]);
 
-    const { data: matches } = await supabase
-      .from("candidate_matches")
-      .select(
-        "id, application_id, positions:position_id ( title ), interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone )",
-      )
-      .eq("candidate_profile_id", cpId);
-
-    const now = Date.now();
-    const upcoming = (matches ?? [])
-      .flatMap((m: AnyRow) =>
-        asArray(m.interviews).map((i: AnyRow) => ({
-          ...i,
-          application_id: m.application_id as string,
-          role_title: m.positions?.title ?? "Role",
-        })),
-      )
-      .filter(
-        (i: AnyRow) =>
-          i.scheduled_at &&
-          i.status !== "cancelled" &&
-          new Date(i.scheduled_at).getTime() > now,
-      )
-      .sort((a: AnyRow, b: AnyRow) =>
-        String(a.scheduled_at).localeCompare(String(b.scheduled_at)),
-      )
-      .slice(0, 3);
-
     let document: AnyRow | null = null;
     if (profile?.current_cv_file_id) {
       const { data: f } = await supabase
@@ -566,7 +511,6 @@ export const getMyDashboard = createServerFn({ method: "GET" })
 
     return {
       open_requests: openCount ?? 0,
-      upcoming_interviews: upcoming,
       unread_messages: unread ?? 0,
       document,
     };
@@ -739,14 +683,16 @@ export const updateMyProfileSection = createServerFn({ method: "POST" })
           work_authorization: data.values.work_authorization_note
             ? { note: data.values.work_authorization_note }
             : null,
-          // Keep the stated general availability preference intact — the note
-          // and the preference live side by side on the same column.
+          // Rewrite only the note. Anything else already stored on this column
+          // (a legacy interview-availability preference) is left as it was.
           availability: (() => {
-            const keep = parseStoredPreference(cp.availability);
-            const base: Record<string, unknown> = data.values.availability_note
-              ? { note: data.values.availability_note }
-              : {};
-            return keep ? mergeIntoAvailability(base, keep) : base;
+            const prev =
+              cp.availability && typeof cp.availability === "object"
+                ? ({ ...(cp.availability as Record<string, unknown>) } as Record<string, unknown>)
+                : {};
+            if (data.values.availability_note) prev.note = data.values.availability_note;
+            else delete prev.note;
+            return prev;
           })(),
           compensation_preferences: data.values.compensation_note
             ? { note: data.values.compensation_note }
@@ -1255,31 +1201,4 @@ export const applyCvToApplications = createServerFn({ method: "POST" })
       })),
       skipped,
     };
-  });
-
-// ─── General availability: stated once, a preference not a commitment ───────
-
-export const updateMyAvailabilityPreference = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({ preference: availabilityPreferenceSchema }).parse(input),
-  )
-  .handler(async ({ context, data }) => {
-    const trace = traceId();
-    const supabase = context.supabase as AnyRow;
-    const { data: cp } = await supabase
-      .from("candidate_profiles")
-      .select("id, availability")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    if (!cp) return { ok: false as const, trace_id: trace, message: "No profile yet." };
-
-    const pref = normalizePreference(data.preference);
-    const next = mergeIntoAvailability(cp.availability, pref);
-    const { error } = await supabase
-      .from("candidate_profiles")
-      .update({ availability: next as never })
-      .eq("id", cp.id);
-    if (error) return { ok: false as const, trace_id: trace, message: error.message };
-    return { ok: true as const, trace_id: trace, preference: pref };
   });

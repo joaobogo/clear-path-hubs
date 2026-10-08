@@ -28,7 +28,6 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { PrivacySummaryNote } from "@/components/candidate/candidate-notes";
 import { FileText } from "lucide-react";
-import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { useConfirmAction } from "@/components/ds";
 import {
   NOTHING_NEEDED_LINE,
@@ -87,17 +86,6 @@ type InfoRequest = {
   created_at: string;
 };
 
-type Interview = {
-  id: string;
-  status: string;
-  scheduled_at: string | null;
-  duration_minutes: number | null;
-  interview_type: string | null;
-  location: string | null;
-  meeting_url: string | null;
-  timezone: string | null;
-};
-
 type MyApplication = {
   role_title: string;
   role_description: string;
@@ -116,7 +104,7 @@ type MyApplication = {
     received: boolean;
   } | null;
   info_requests: InfoRequest[];
-  interviews: Interview[];
+  legacy_interview: { scheduled_at: string; timezone: string | null; join_url: string | null } | null;
   events: CandidateTimelineEvent[];
   closed_outcome: {
     reason: ClosedReasonKey | null;
@@ -398,9 +386,40 @@ function TrackPage() {
         </section>
       ) : null}
 
-      <div id="interviews" className="scroll-mt-24">
-        <InterviewResponseCard applicationId={id} />
-      </div>
+      {data.legacy_interview ? (
+        <section id="your-interview" className="scroll-mt-24 rounded-lg border bg-card p-5 mb-6">
+          <h2 className="text-sm font-medium mb-1">Your interview</h2>
+          <p className="text-sm">
+            {formatDateTime(data.legacy_interview.scheduled_at)}
+            {data.legacy_interview.timezone ? ` (${data.legacy_interview.timezone})` : ""}
+          </p>
+          {data.legacy_interview.join_url ? (
+            <p className="mt-1 text-sm">
+              <a
+                href={data.legacy_interview.join_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                Join link
+              </a>
+            </p>
+          ) : null}
+          <p className="mt-2 text-xs text-muted-foreground">
+            This interview was arranged earlier. To change anything, contact the employer
+            directly.
+          </p>
+        </section>
+      ) : null}
+
+      {data.status === "Interviewing" ? (
+        <section id="interviews" className="scroll-mt-24 rounded-lg border bg-card p-5 mb-6">
+          <h2 className="text-sm font-medium mb-1">Interview</h2>
+          <p className="text-sm text-muted-foreground">
+            The employer will contact you directly to arrange the interview.
+          </p>
+        </section>
+      ) : null}
 
 
       <section className="rounded-lg border bg-card p-5 mb-6">

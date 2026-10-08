@@ -26,21 +26,12 @@ import {
   type CandidateStatus,
 } from "./status-vocabulary";
 
-export type CandidateInterviewState = "none" | "requested" | "scheduled";
-
-/** A raw `interviews` row, as read from the database. */
-export type RawInterviewRow = {
-  status?: string | null;
-  scheduled_at?: string | null;
-};
-
 /** A raw `candidate_matches` row, as read from the database. */
 export type RawMatchRow = {
   id?: string | null;
   stage?: string | null;
   client_visibility?: string | null;
   updated_at?: string | null;
-  interviews?: RawInterviewRow | RawInterviewRow[] | null;
 };
 
 /** A raw `applications` row with its embedded position and match rows. */
@@ -57,8 +48,6 @@ export type CandidateStatusExtras = {
   hasOpenInfoRequest?: boolean;
   /** A document we could not read — the candidate must act for us to continue. */
   needsSupport?: boolean;
-  /** Interviews, when they were fetched separately from the match rows. */
-  interviews?: RawInterviewRow[];
 };
 
 export type CandidateStatusProjection = {
@@ -75,7 +64,6 @@ export type CandidateStatusProjection = {
   can_withdraw: boolean;
   /** The more detailed journey key the reference lookup and receipt render. */
   state: CandidateStateKey;
-  interview_state: CandidateInterviewState;
   /** Truth read off the rows, exposed so callers never re-derive it. */
   match_visible: boolean;
   match_stage: string | null;
@@ -88,14 +76,6 @@ function rows<T>(v: T | T[] | null | undefined): T[] {
   return Array.isArray(v) ? v : [v];
 }
 
-/** Interview state from the raw interview rows. Cancelled rows do not count. */
-export function candidateInterviewState(list: RawInterviewRow[]): CandidateInterviewState {
-  const live = list.filter((i) => i.status !== "cancelled" && i.status !== "declined");
-  if (live.some((i) => i.scheduled_at)) return "scheduled";
-  if (live.length > 0) return "requested";
-  return "none";
-}
-
 /** The lifecycle facts, read once off the raw rows. */
 export type CandidateLifecycleFacts = {
   applicationStatus: string;
@@ -103,7 +83,6 @@ export type CandidateLifecycleFacts = {
   positionStatus: string | null;
   matchStage: string | null;
   matchVisible: boolean;
-  interviewState: CandidateInterviewState;
   hasOpenInfoRequest: boolean;
   needsSupport: boolean;
 };
@@ -114,8 +93,6 @@ export function candidateLifecycleFacts(
 ): CandidateLifecycleFacts {
   const matches = rows(app.candidate_matches);
   const visible = matches.find((m) => m.client_visibility === "visible");
-  const interviews =
-    extras.interviews ?? matches.flatMap((m) => rows(m.interviews));
   return {
     applicationStatus: app.status ?? "submitted",
     withdrawnAt: app.withdrawn_at ?? null,
@@ -134,7 +111,6 @@ export function candidateLifecycleFacts(
           ? "withdrawn"
           : null),
     matchVisible: Boolean(visible),
-    interviewState: candidateInterviewState(interviews),
     hasOpenInfoRequest: Boolean(extras.hasOpenInfoRequest),
     needsSupport: Boolean(extras.needsSupport),
   };
@@ -173,7 +149,6 @@ export function candidateStatusFromFacts(f: CandidateLifecycleFacts): CandidateS
     positionStatus: f.positionStatus,
     matchStage: f.matchStage,
     matchVisible: f.matchVisible,
-    interviewState: f.interviewState,
     withdrawnAt: f.withdrawnAt,
   });
 }
@@ -197,7 +172,6 @@ export function toCandidateStatusDTO(
     email_line: candidateStatusEmailLine(status),
     can_withdraw: canWithdrawFrom(status),
     state: candidateStateKey(status, f),
-    interview_state: f.interviewState,
     match_visible: f.matchVisible,
     match_stage: f.matchStage,
     role_closed: f.positionStatus === "closed" || f.positionStatus === "filled",

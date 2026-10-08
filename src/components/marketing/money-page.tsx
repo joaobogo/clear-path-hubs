@@ -16,7 +16,7 @@ import {
   SiteShell,
 } from "@/components/marketing/site-shell";
 import { faqScript, marketingHead, serviceScript } from "@/lib/marketing/head";
-import { CTA_BOOK, CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
 import { FIRST_SHORTLIST_TIMING, TIMING_FINE_PRINT } from "@/config/offer-facts";
 import {
   DIMENSION_LABELS,
@@ -156,10 +156,10 @@ export function MoneyPageView({ page }: { page: MoneyPageContent }) {
                 {CTA_PRIMARY.label}
               </Link>
               <Link
-                to={CTA_BOOK.to}
+                to={CTA_MESSAGE.to}
                 className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
               >
-                {CTA_BOOK.label}
+                {CTA_MESSAGE.label}
               </Link>
             </div>
           </div>
@@ -226,7 +226,7 @@ export function MoneyPageView({ page }: { page: MoneyPageContent }) {
         title="Try it on one role."
         description={`${FIRST_SHORTLIST_TIMING} ${TIMING_FINE_PRINT}`}
         primary={{ to: CTA_PRIMARY.to, label: CTA_PRIMARY.label }}
-        secondary={{ to: CTA_BOOK.to, label: CTA_BOOK.label }}
+        secondary={{ to: CTA_MESSAGE.to, label: CTA_MESSAGE.label }}
         tertiary={{ to: CTA_HOW_IT_WORKS.to, label: CTA_HOW_IT_WORKS.label }}
       />
     </SiteShell>

@@ -25,7 +25,6 @@ export type Row = {
     top: number;
     shortlisted: number;
     interviewing: number;
-    interview_scheduled: number;
     /** Real count of candidates sitting at the offer stage for this role. */
     offers: number;
     hires: number;
@@ -71,7 +70,7 @@ export function PortfolioSnapshot({
     {
       label: "Interview",
       value: data.interviewing,
-      href: "/client/interviews",
+      href: "/client/candidates?stage=interview_process",
     },
     { label: "Offers", value: data.offers, href: "/client/offers" },
     {

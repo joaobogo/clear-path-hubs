@@ -10,7 +10,6 @@
  *  - This function derives a *view* over existing records. It writes nothing
  *    and introduces no new status field.
  */
-import { interviewNeedsTimeConfirmed } from "@/lib/client/interviews-to-confirm";
 
 import {
   computeRoleLifecycle,
@@ -124,6 +123,7 @@ export async function loadRoleLifecycle(
     let assessedCount = 0;
     let awaitingReview = 0;
     let shortlistedCount = 0;
+    let interviewingCount = 0;
     let offerCount = 0;
     let hires = 0;
     for (const m of matches) {
@@ -136,6 +136,7 @@ export async function loadRoleLifecycle(
       const stage = String(m.stage ?? "");
       if (stage === "delivered") awaitingReview += 1;
       if (stage === "shortlisted") shortlistedCount += 1;
+      if (stage === "interview_process") interviewingCount += 1;
       if (stage === "offer") offerCount += 1;
       if (stage === "hired") hires += 1;
     }
@@ -148,8 +149,6 @@ export async function loadRoleLifecycle(
       if (to === "hired") firstHireAt = min(firstHireAt, h.created_at);
     }
 
-    const toConfirmSet = new Set<string>();
-    const scheduledSet = new Set<string>();
     const completedSet = new Set<string>();
     let firstInterviewAt: string | null = null;
     let lastInterviewCompletedAt: string | null = null;
@@ -159,10 +158,6 @@ export async function loadRoleLifecycle(
       if (status === "completed") {
         completedSet.add(iv.candidate_match_id);
         lastInterviewCompletedAt = max(lastInterviewCompletedAt, iv.completed_at);
-      } else if (status === "scheduled") {
-        scheduledSet.add(iv.candidate_match_id);
-      } else if (interviewNeedsTimeConfirmed(status)) {
-        toConfirmSet.add(iv.candidate_match_id);
       }
     }
 
@@ -197,8 +192,7 @@ export async function loadRoleLifecycle(
       lastDecisionAt,
       decisionCount: decisions.length,
       shortlistedCount,
-      interviewsToConfirm: toConfirmSet.size,
-      interviewsScheduled: scheduledSet.size,
+      interviewingCount,
       interviewsCompleted: completedSet.size,
       firstInterviewAt,
       lastInterviewCompletedAt,

@@ -28,7 +28,7 @@ import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { LifecyclePreview } from "@/components/marketing/product-preview/lifecycle-preview";
 import { CASE_STUDIES, EXAMPLE_ENGAGEMENT_LABEL, type CaseStudy } from "@/content/case-studies";
-import { CTA_PRIMARY, CTA_BOOK, CTA_HOW_IT_WORKS } from "@/config/cta";
+import { CTA_PRIMARY, CTA_MESSAGE, CTA_HOW_IT_WORKS } from "@/config/cta";
 import { FIRST_SHORTLIST_TIMING, PROCESS_STEPS, PROCESS_STEP_COUNT, TIMING_FINE_PRINT, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 
 const entry = getPage("case-studies");
@@ -466,8 +466,8 @@ function CaseStudiesPage() {
             <Link to={CTA_PRIMARY.to} className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
               {CTA_PRIMARY.label}
             </Link>
-            <Link to={CTA_BOOK.to} className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted">
-              {CTA_BOOK.label}
+            <Link to={CTA_MESSAGE.to} className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted">
+              {CTA_MESSAGE.label}
             </Link>
             <Link to={CTA_HOW_IT_WORKS.to} className="rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]">
               {CTA_HOW_IT_WORKS.label}

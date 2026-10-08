@@ -1,7 +1,5 @@
 // Admin operations reads: work queues, payments/pilot panel, review queue.
 // Server-only. Every query reads real records — nothing is simulated.
-import { CONFIRMATION_PENDING_STATUSES } from "@/lib/client/interviews-to-confirm";
-import { dedupeAwaitingByMatch } from "@/lib/kpis/interviews.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -75,7 +73,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     return loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
   })();
 
-  const [unpaid, setup, review, readyForDecision, delivered, interviews, blocked, agingIntakes, stale] = await Promise.all([
+  const [unpaid, setup, review, readyForDecision, delivered, blocked, agingIntakes, stale] = await Promise.all([
     // 1 — submitted roles that have not been paid for (or are stuck mid-checkout).
     excludeTestOrgs(
       s
@@ -134,23 +132,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     })),
 
 
-
-    // 5 — interviews still awaiting a confirmed time.
-    //
-    // Same definition as the client Interviews page and the canonical reader
-    // (`CONFIRMATION_PENDING_STATUSES`): requested or being scheduled. Bundling
-    // interviews that already have a time in the next 48 hours is what made
-    // this tile read 7 while the client read 5 for the same work.
-    excludeTestOrgs(
-      s
-        .from("interviews")
-        .select(
-          "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches!inner(candidate_profiles(full_name),positions!inner(id,title,owner_user_id,organizations!inner(id,name)))",
-        )
-        .in("status", CONFIRMATION_PENDING_STATUSES as unknown as string[])
-        .order("requested_at", { ascending: true }),
-      scope,
-    ),
 
     // 6 — delivery failures a retry can actually clear.
     // The window and the retryable/blocked split are decided once, inside
@@ -295,7 +276,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   // Unanswered client messages. A client writing to their recruiter reached the
   // notification bell and nothing else: the work queues covered approvals,
-  // intakes, payment, setup, review, decisions, interviews, delivery, stale
+  // intakes, payment, setup, review, decisions, delivery, stale
   // scores and hires, and had no entry for someone waiting on a reply. So a
   // message sat unanswered while the dashboard showed a clear desk.
   //
@@ -331,18 +312,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   // One profile read for every owner id on the page, so each row can show who
   // holds it without a second click.
-  // Collapse to one pending interview per candidate — a re-request must not
-  // count the same coordination job twice.
-  const interviewsAwaitingTime: Any[] = (() => {
-    const rows = (interviews.data ?? []) as Any[];
-    const byId = new Map(rows.map((iv) => [String(iv.id), iv]));
-    // The one-per-candidate rule comes from the canonical reader, so this badge
-    // and the client's "awaiting a time" figure count the same work.
-    return dedupeAwaitingByMatch(rows)
-      .map((entry) => byId.get(String(entry.interview_id)))
-      .filter(Boolean) as Any[];
-  })();
-
   const ownerIds = new Set<string>();
   const addOwner = (v: unknown) => {
     if (typeof v === "string" && v) ownerIds.add(v);
@@ -351,8 +320,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   for (const p of (setup.data ?? []) as Any[]) addOwner(p.owner_user_id);
   for (const m of (review.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
   for (const m of overdue) addOwner(m.owner_user_id);
-  for (const iv of (interviews.data ?? []) as Any[])
-    addOwner(iv.candidate_matches?.positions?.owner_user_id);
   for (const i of agingIntakes.rows) addOwner(i.owner_user_id);
   for (const m of (stale.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
 
@@ -538,49 +505,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       })),
     },
 
-    {
-      key: "interviews",
-      label: "Interviews to coordinate",
-      description:
-        "Requested or being scheduled, still without a confirmed time. " +
-        "The badge names the split so this never reads as one bucket.",
-      // One interview per candidate, exactly as the client's "to confirm"
-      // figure counts it, so both sides of the workspace read the same number.
-      count: interviewsAwaitingTime.length,
-      action_hint: "Confirm the slot and tell both sides.",
-      see_all: { to: "/admin/candidates" },
-      secondary_badge: (() => {
-        const awaiting = interviewsAwaitingTime.filter((iv) => iv.status === "requested").length;
-        const soon = interviewsAwaitingTime.length - awaiting;
-        if (!interviewsAwaitingTime.length) return undefined;
-        return {
-          label: `${awaiting} awaiting slot · ${soon} scheduled soon`,
-          tone: "default" as const,
-        };
-      })(),
-      items: interviewsAwaitingTime.slice(0, PREVIEW_LIMIT).map((iv) => ({
-        id: iv.id,
-        title: iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate",
-        // No title_ref — candidate name renders; position is in the subtitle.
-        subtitle: `${iv.candidate_matches?.positions?.title ?? "—"} · ${
-          iv.candidate_matches?.positions?.organizations?.name ?? "—"
-        }`,
-        subtitle_refs: [
-          posRef(iv.candidate_matches?.positions?.id, iv.candidate_matches?.positions?.title),
-          orgRef(
-            iv.candidate_matches?.positions?.organizations?.id,
-            iv.candidate_matches?.positions?.organizations?.name,
-          ),
-        ],
-        meta: iv.status === "requested" ? "awaiting slot" : "scheduled soon",
-        waiting_since: iv.scheduled_at ?? iv.requested_at,
-        target: { kind: "match" as const, id: iv.candidate_match_id },
-        action_label: "Coordinate",
-        owner: owner(iv.candidate_matches?.positions?.owner_user_id),
-        claim: positionClaim(iv.candidate_matches?.positions?.id),
-        tone: iv.status === "requested" ? "warning" : "default",
-      })),
-    },
     {
       key: "delivery_failures",
       label: "Delivery failures to retry (7d)",

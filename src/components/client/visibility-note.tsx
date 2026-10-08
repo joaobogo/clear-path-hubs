@@ -20,7 +20,7 @@ const RULES: { title: string; body: string }[] = [
   {
     title: "Need anything else?",
     body:
-      "Use the actions on each candidate to request an interview, leave feedback, or ask our team a question.",
+      "Use the actions on each candidate to move a candidate to the interview stage, leave feedback, or ask our team a question.",
   },
 ];
 

@@ -17,7 +17,6 @@ import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AiInHiringRouteImport } from './routes/ai-in-hiring'
 import { Route as AiRecruitingAgencyRouteImport } from './routes/ai-recruiting-agency'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as BookRouteImport } from './routes/book'
 import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
 import { Route as CandidateSuccessRouteImport } from './routes/candidate-success'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
@@ -68,7 +67,6 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedBoardroomRouteImport } from './routes/_authenticated/boardroom'
-import { Route as AuthenticatedBookCallRouteImport } from './routes/_authenticated/book-call'
 import { Route as AuthenticatedBrandCenterRouteImport } from './routes/_authenticated/brand-center'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
@@ -110,7 +108,6 @@ import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
 import { Route as AuthenticatedAdminIntakeQualityRouteImport } from './routes/_authenticated/admin.intake-quality'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated/admin.integrations'
-import { Route as AuthenticatedAdminInterviewsRouteImport } from './routes/_authenticated/admin.interviews'
 import { Route as AuthenticatedAdminLeadDeliveryRouteImport } from './routes/_authenticated/admin.lead-delivery'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminMyDayRouteImport } from './routes/_authenticated/admin.my-day'
@@ -222,7 +219,6 @@ import { Route as AuthenticatedAdminPositionsIdPublishRouteImport } from './rout
 import { Route as AuthenticatedAdminScoringReviewIndexRouteImport } from './routes/_authenticated/admin.scoring.review.index'
 import { Route as AuthenticatedAdminScoringReviewMatchIdRouteImport } from './routes/_authenticated/admin.scoring.review.$matchId'
 import { Route as AuthenticatedClientPositionsIdEditRouteImport } from './routes/_authenticated/client.positions.$id_.edit'
-import { Route as ApiPublicBookingSessionIdIcsRouteImport } from './routes/api/public/booking.$sessionId.ics'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -261,11 +257,6 @@ const AiRecruitingAgencyRoute = AiRecruitingAgencyRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BookRoute = BookRouteImport.update({
-  id: '/book',
-  path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CandidateJoinRoute = CandidateJoinRouteImport.update({
@@ -521,11 +512,6 @@ const AuthenticatedBoardroomRoute = AuthenticatedBoardroomRouteImport.update({
   path: '/boardroom',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedBookCallRoute = AuthenticatedBookCallRouteImport.update({
-  id: '/book-call',
-  path: '/book-call',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedBrandCenterRoute =
   AuthenticatedBrandCenterRouteImport.update({
     id: '/brand-center',
@@ -745,12 +731,6 @@ const AuthenticatedAdminIntegrationsRoute =
   AuthenticatedAdminIntegrationsRouteImport.update({
     id: '/integrations',
     path: '/integrations',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminInterviewsRoute =
-  AuthenticatedAdminInterviewsRouteImport.update({
-    id: '/interviews',
-    path: '/interviews',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminLeadDeliveryRoute =
@@ -1384,12 +1364,6 @@ const AuthenticatedClientPositionsIdEditRoute =
     path: '/$id/edit',
     getParentRoute: () => AuthenticatedClientPositionsRoute,
   } as any)
-const ApiPublicBookingSessionIdIcsRoute =
-  ApiPublicBookingSessionIdIcsRouteImport.update({
-    id: '/api/public/booking/$sessionId/ics',
-    path: '/api/public/booking/$sessionId/ics',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -1399,7 +1373,6 @@ export interface FileRoutesByFullPath {
   '/ai-in-hiring': typeof AiInHiringRoute
   '/ai-recruiting-agency': typeof AiRecruitingAgencyRoute
   '/auth': typeof AuthRoute
-  '/book': typeof BookRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1450,7 +1423,6 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/boardroom': typeof AuthenticatedBoardroomRoute
-  '/book-call': typeof AuthenticatedBookCallRoute
   '/brand-center': typeof AuthenticatedBrandCenterRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
@@ -1491,7 +1463,6 @@ export interface FileRoutesByFullPath {
   '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
-  '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -1603,7 +1574,6 @@ export interface FileRoutesByFullPath {
   '/admin/positions/$id/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
-  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/admin/scoring/review/': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRoutesByTo {
@@ -1614,7 +1584,6 @@ export interface FileRoutesByTo {
   '/ai-in-hiring': typeof AiInHiringRoute
   '/ai-recruiting-agency': typeof AiRecruitingAgencyRoute
   '/auth': typeof AuthRoute
-  '/book': typeof BookRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1664,7 +1633,6 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/boardroom': typeof AuthenticatedBoardroomRoute
-  '/book-call': typeof AuthenticatedBookCallRoute
   '/brand-center': typeof AuthenticatedBrandCenterRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/admin/approvals': typeof AdminApprovalsRoute
@@ -1700,7 +1668,6 @@ export interface FileRoutesByTo {
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
-  '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -1808,7 +1775,6 @@ export interface FileRoutesByTo {
   '/admin/positions/$id/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
-  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/admin/scoring/review': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRoutesById {
@@ -1821,7 +1787,6 @@ export interface FileRoutesById {
   '/ai-in-hiring': typeof AiInHiringRoute
   '/ai-recruiting-agency': typeof AiRecruitingAgencyRoute
   '/auth': typeof AuthRoute
-  '/book': typeof BookRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1872,7 +1837,6 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/boardroom': typeof AuthenticatedBoardroomRoute
-  '/_authenticated/book-call': typeof AuthenticatedBookCallRoute
   '/_authenticated/brand-center': typeof AuthenticatedBrandCenterRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
@@ -1913,7 +1877,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/_authenticated/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
-  '/_authenticated/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/_authenticated/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -2025,7 +1988,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/positions/$id_/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/_authenticated/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/_authenticated/client/positions/$id_/edit': typeof AuthenticatedClientPositionsIdEditRoute
-  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/_authenticated/admin/scoring/review/': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRouteTypes {
@@ -2038,7 +2000,6 @@ export interface FileRouteTypes {
     | '/ai-in-hiring'
     | '/ai-recruiting-agency'
     | '/auth'
-    | '/book'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -2089,7 +2050,6 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/boardroom'
-    | '/book-call'
     | '/brand-center'
     | '/checkout'
     | '/client'
@@ -2130,7 +2090,6 @@ export interface FileRouteTypes {
     | '/admin/intake'
     | '/admin/intake-quality'
     | '/admin/integrations'
-    | '/admin/interviews'
     | '/admin/lead-delivery'
     | '/admin/messages'
     | '/admin/my-day'
@@ -2242,7 +2201,6 @@ export interface FileRouteTypes {
     | '/admin/positions/$id/publish'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
-    | '/api/public/booking/$sessionId/ics'
     | '/admin/scoring/review/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -2253,7 +2211,6 @@ export interface FileRouteTypes {
     | '/ai-in-hiring'
     | '/ai-recruiting-agency'
     | '/auth'
-    | '/book'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -2303,7 +2260,6 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/boardroom'
-    | '/book-call'
     | '/brand-center'
     | '/checkout'
     | '/admin/approvals'
@@ -2339,7 +2295,6 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/admin/intake-quality'
     | '/admin/integrations'
-    | '/admin/interviews'
     | '/admin/lead-delivery'
     | '/admin/messages'
     | '/admin/my-day'
@@ -2447,7 +2402,6 @@ export interface FileRouteTypes {
     | '/admin/positions/$id/publish'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
-    | '/api/public/booking/$sessionId/ics'
     | '/admin/scoring/review'
   id:
     | '__root__'
@@ -2459,7 +2413,6 @@ export interface FileRouteTypes {
     | '/ai-in-hiring'
     | '/ai-recruiting-agency'
     | '/auth'
-    | '/book'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -2510,7 +2463,6 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/boardroom'
-    | '/_authenticated/book-call'
     | '/_authenticated/brand-center'
     | '/_authenticated/checkout'
     | '/_authenticated/client'
@@ -2551,7 +2503,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/intake'
     | '/_authenticated/admin/intake-quality'
     | '/_authenticated/admin/integrations'
-    | '/_authenticated/admin/interviews'
     | '/_authenticated/admin/lead-delivery'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/my-day'
@@ -2663,7 +2614,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/positions/$id_/publish'
     | '/_authenticated/admin/scoring/review/$matchId'
     | '/_authenticated/client/positions/$id_/edit'
-    | '/api/public/booking/$sessionId/ics'
     | '/_authenticated/admin/scoring/review/'
   fileRoutesById: FileRoutesById
 }
@@ -2676,7 +2626,6 @@ export interface RootRouteChildren {
   AiInHiringRoute: typeof AiInHiringRoute
   AiRecruitingAgencyRoute: typeof AiRecruitingAgencyRoute
   AuthRoute: typeof AuthRoute
-  BookRoute: typeof BookRoute
   CandidateJoinRoute: typeof CandidateJoinRoute
   CandidateSuccessRoute: typeof CandidateSuccessRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
@@ -2780,7 +2729,6 @@ export interface RootRouteChildren {
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
-  ApiPublicBookingSessionIdIcsRoute: typeof ApiPublicBookingSessionIdIcsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2839,13 +2787,6 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/book': {
-      id: '/book'
-      path: '/book'
-      fullPath: '/book'
-      preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/candidate-join': {
@@ -3198,13 +3139,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBoardroomRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/book-call': {
-      id: '/_authenticated/book-call'
-      path: '/book-call'
-      fullPath: '/book-call'
-      preLoaderRoute: typeof AuthenticatedBookCallRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/brand-center': {
       id: '/_authenticated/brand-center'
       path: '/brand-center'
@@ -3490,13 +3424,6 @@ declare module '@tanstack/react-router' {
       path: '/integrations'
       fullPath: '/admin/integrations'
       preLoaderRoute: typeof AuthenticatedAdminIntegrationsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/interviews': {
-      id: '/_authenticated/admin/interviews'
-      path: '/interviews'
-      fullPath: '/admin/interviews'
-      preLoaderRoute: typeof AuthenticatedAdminInterviewsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/lead-delivery': {
@@ -4276,13 +4203,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientPositionsIdEditRouteImport
       parentRoute: typeof AuthenticatedClientPositionsRoute
     }
-    '/api/public/booking/$sessionId/ics': {
-      id: '/api/public/booking/$sessionId/ics'
-      path: '/api/public/booking/$sessionId/ics'
-      fullPath: '/api/public/booking/$sessionId/ics'
-      preLoaderRoute: typeof ApiPublicBookingSessionIdIcsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -4383,7 +4303,6 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
   AuthenticatedAdminIntakeQualityRoute: typeof AuthenticatedAdminIntakeQualityRoute
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
-  AuthenticatedAdminInterviewsRoute: typeof AuthenticatedAdminInterviewsRoute
   AuthenticatedAdminLeadDeliveryRoute: typeof AuthenticatedAdminLeadDeliveryRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminMyDayRoute: typeof AuthenticatedAdminMyDayRoute
@@ -4428,7 +4347,6 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
   AuthenticatedAdminIntakeQualityRoute: AuthenticatedAdminIntakeQualityRoute,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
-  AuthenticatedAdminInterviewsRoute: AuthenticatedAdminInterviewsRoute,
   AuthenticatedAdminLeadDeliveryRoute: AuthenticatedAdminLeadDeliveryRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminMyDayRoute: AuthenticatedAdminMyDayRoute,
@@ -4611,7 +4529,6 @@ const AuthenticatedMeRouteWithChildren = AuthenticatedMeRoute._addFileChildren(
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedBoardroomRoute: typeof AuthenticatedBoardroomRoute
-  AuthenticatedBookCallRoute: typeof AuthenticatedBookCallRoute
   AuthenticatedBrandCenterRoute: typeof AuthenticatedBrandCenterRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
@@ -4622,7 +4539,6 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedBoardroomRoute: AuthenticatedBoardroomRoute,
-  AuthenticatedBookCallRoute: AuthenticatedBookCallRoute,
   AuthenticatedBrandCenterRoute: AuthenticatedBrandCenterRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
@@ -4642,7 +4558,6 @@ const rootRouteChildren: RootRouteChildren = {
   AiInHiringRoute: AiInHiringRoute,
   AiRecruitingAgencyRoute: AiRecruitingAgencyRoute,
   AuthRoute: AuthRoute,
-  BookRoute: BookRoute,
   CandidateJoinRoute: CandidateJoinRoute,
   CandidateSuccessRoute: CandidateSuccessRoute,
   CaseStudiesRoute: CaseStudiesRoute,
@@ -4749,7 +4664,6 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
-  ApiPublicBookingSessionIdIcsRoute: ApiPublicBookingSessionIdIcsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

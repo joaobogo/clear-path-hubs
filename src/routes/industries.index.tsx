@@ -18,10 +18,7 @@ import {
 } from "@/content/industry-archetypes";
 import { getIndustryConfig } from "@/content/industry-config";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
-import { CTA_PRIMARY, CTA_BOOK } from "@/config/cta";
-import {
-  BookACallDialog,
-} from "@/components/marketing/book-a-call";
+import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
 
 /**
  * /industries — deep sector-expertise library entrance.
@@ -412,21 +409,11 @@ function IndustriesIndex() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:items-end">
-              <BookACallDialog
-                trigger={
-                  <button
-                    type="button"
-                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
-                  >
-                    {CTA_BOOK.label}
-                  </button>
-                }
-              />
               <Link
-                to="/contact"
-                className="text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
+                to={CTA_MESSAGE.to}
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
               >
-                Or send us a message →
+                {CTA_MESSAGE.label}
               </Link>
             </div>
           </div>

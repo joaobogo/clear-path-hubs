@@ -20,7 +20,6 @@ const GUARDED = [
   "src/components/client/candidate-detail/shared.tsx",
   "src/components/client/candidate-detail/profile.tsx",
   "src/components/client/candidate-comparison.tsx",
-  "src/components/client/scheduling/availability-manager.tsx",
 ];
 
 describe("zoneDisplay", () => {

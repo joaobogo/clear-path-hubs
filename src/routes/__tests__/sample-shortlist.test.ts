@@ -39,7 +39,7 @@ describe("sample shortlist page and links", () => {
     expect(page).toContain('robots: "noindex,follow"');
     expect(page).toContain("SAMPLE_SHORTLIST_LABEL");
     expect(page).toContain("CTA_PRIMARY");
-    expect(page).toContain("CTA_BOOK");
+    expect(page).toContain("CTA_MESSAGE");
     expect(page).toContain("breadcrumbs");
   });
   it("is linked from the homepage and the pilot page", () => {

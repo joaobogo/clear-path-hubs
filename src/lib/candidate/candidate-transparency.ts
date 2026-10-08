@@ -77,9 +77,8 @@ export const CANDIDATE_STATES: Record<CandidateStateKey, CandidateStateCopy> = {
     label: "Interview stage",
     meaning: "The hiring team wants to speak with you.",
     happening:
-      "Scheduling and interview feedback are handled between you, us and the hiring team.",
-    needed:
-      "Watch your inbox for interview details. Reply to that email if the timings do not work, or if you need any adjustments.",
+      "The employer arranges interviews with you directly, outside TaaSFlow.",
+    needed: "The employer will contact you directly to arrange the interview.",
     tone: "taas-bg-success-soft taas-fg-success",
     humanInvolved: true,
   },

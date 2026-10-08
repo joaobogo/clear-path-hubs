@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cvConsentGate } from "../cv-consent-gate";
+import { cvConsentGate, reachedInterview } from "../cv-consent-gate";
 
 describe("contact release consent gate", () => {
   it("opens as soon as a release timestamp exists", () => {
@@ -56,5 +56,33 @@ describe("contact release consent gate", () => {
 
   it("blocks a rejection that never reached interview", () => {
     expect(cvConsentGate({ stage: "not_moving_forward", has_interview: false }).open).toBe(false);
+  });
+
+  it("keeps access for a post-interview rejection proven by stage history alone", () => {
+    const has = reachedInterview({ stageHistory: 1, requestDecisions: 0, interviewRows: 0 });
+    expect(has).toBe(true);
+    expect(cvConsentGate({ stage: "not_moving_forward", has_interview: has }).open).toBe(true);
+  });
+
+  it("proves the interview stage from a live request_interview decision or a legacy row", () => {
+    expect(reachedInterview({ requestDecisions: 1 })).toBe(true);
+    expect(reachedInterview({ interviewRows: 2 })).toBe(true);
+    expect(reachedInterview({ stageHistory: 0, requestDecisions: 0, interviewRows: 0 })).toBe(false);
+    expect(reachedInterview({})).toBe(false);
+  });
+
+  it("treats an admin move to the interview stage as reaching interview (interviews are off system)", () => {
+    // No client decision exists, only the stage history. Intended: the candidate
+    // really is at interview, so a later decline keeps CV access.
+    expect(reachedInterview({ stageHistory: 1, requestDecisions: 0, reversedDecisions: 0 })).toBe(true);
+  });
+
+  it("does not let an undone interview request keep the history-based access", () => {
+    // Requested, then undone: the stage-history row remains but proves nothing.
+    expect(reachedInterview({ stageHistory: 1, requestDecisions: 0, reversedDecisions: 1 })).toBe(false);
+    // Undone and then requested again: the live request counts.
+    expect(reachedInterview({ stageHistory: 2, requestDecisions: 1, reversedDecisions: 1 })).toBe(true);
+    // A legacy interview row is still enough on its own.
+    expect(reachedInterview({ stageHistory: 1, reversedDecisions: 1, interviewRows: 1 })).toBe(true);
   });
 });

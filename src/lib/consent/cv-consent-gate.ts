@@ -26,12 +26,32 @@ export function isInterviewOrLaterStage(stage: MatchStageLike | null | undefined
   return (INTERVIEW_OR_LATER_STAGES as readonly string[]).includes(String(stage ?? ""));
 }
 
+/**
+ * "Has this match reached the interview stage?" Interviews happen off system,
+ * so the proof is the stage history, a live request_interview decision, or (for
+ * older matches) an interview record. Any one is enough.
+ */
+export function reachedInterview(counts: {
+  stageHistory?: number | null;
+  requestDecisions?: number | null;
+  /** Interview requests the client later undid. */
+  reversedDecisions?: number | null;
+  interviewRows?: number | null;
+}): boolean {
+  // An undone request leaves its stage-history row behind. When the client
+  // undid the request and nothing live replaced it, that history no longer
+  // proves the candidate was interviewed.
+  const undone = (counts.reversedDecisions ?? 0) > 0 && (counts.requestDecisions ?? 0) === 0;
+  const history = undone ? 0 : (counts.stageHistory ?? 0);
+  return history > 0 || (counts.requestDecisions ?? 0) > 0 || (counts.interviewRows ?? 0) > 0;
+}
+
 export type ConsentGateInput = {
   stage?: MatchStageLike | null;
   contact_released_at?: string | null;
   contact_released_by?: string | null;
   contact_release_reason?: string | null;
-  /** True when an interview record exists (covers post-interview rejections). */
+  /** True when the match reached the interview stage (covers post-interview rejections). See reachedInterview(). */
   has_interview?: boolean | null;
 };
 

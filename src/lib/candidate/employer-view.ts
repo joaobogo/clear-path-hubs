@@ -167,25 +167,6 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
   // process
   { key: "stage", group: "process", label: "Current stage" },
   { key: "delivered_at", group: "process", label: "Date you were shared with the employer" },
-  { key: "interview_active", group: "process", label: "Whether an interview has been requested or held" },
-  {
-    key: "interview_awaiting_time",
-    group: "process",
-    label: "Whether your interview is waiting on us to confirm a time",
-    note: "The employer sees that they have asked for the interview and that we are arranging it.",
-  },
-  {
-    key: "interview_called_off",
-    group: "process",
-    label: "Whether the interview the employer arranged was cancelled",
-    note: "The employer sees that the interview did not go ahead, rather than being told you are still interviewing.",
-  },
-  {
-    key: "interview_completed",
-    group: "process",
-    label: "Whether an interview with the employer has been held",
-    note: "The employer only sees the option to make you an offer once an interview has actually happened.",
-  },
   {
     key: "contact_released",
     group: "process",

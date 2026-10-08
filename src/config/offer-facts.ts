@@ -4,7 +4,7 @@
  * Every public page, FAQ, schema block and AI fact file that states how the
  * offer works must read from here instead of typing its own number or promise.
  * Prices stay in `pricing-core.ts`; this file holds everything else a buyer is
- * told: timing, process, who does the work, the call, the response time.
+ * told: timing, process, who does the work, the response time.
  *
  * Rules for editing:
  *   - Never write a guarantee here. Remedies need owner approval first.
@@ -61,7 +61,7 @@ export const PROCESS_STEPS = [
   },
   {
     title: "Approve the plan",
-    body: "We confirm the role, the criteria and the pilot scope with you on a call or by email.",
+    body: "We contact you to confirm the role, the criteria and the pilot scope before any work begins.",
   },
   {
     title: "Sourcing and screening",
@@ -74,14 +74,13 @@ export const PROCESS_STEPS = [
 ] as const;
 export const PROCESS_STEP_COUNT = PROCESS_STEPS.length;
 
-/** The call. One name, one length. */
-export const CALL_NAME = "20-minute call" as const;
-export const CALL_MINUTES = 20 as const;
-
 /** One response time for general inquiries. */
 export const RESPONSE_TIME = "within one business day" as const;
 export const RESPONSE_TIME_SENTENCE =
   "We reply within one business day." as const;
+/** What happens after an inquiry. Conversations happen outside TaaSFlow, by email or phone. */
+export const INQUIRY_FOLLOWUP_SENTENCE =
+  "We will contact you within one business day to confirm fit and next steps." as const;
 
 /** Files accepted on the intake. Mirrors the intake validator. */
 export const ACCEPTED_UPLOADS = "PDF, DOCX, TXT or RTF" as const;

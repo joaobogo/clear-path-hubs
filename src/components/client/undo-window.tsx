@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 /** Plain-language name for a decision the client can still take back. */
 const DECISION_LABEL: Record<string, string> = {
   shortlist: "Shortlisted",
-  request_interview: "Interview requested",
+  request_interview: "Moved to interview stage",
   offer: "Moved to offer",
   hire: "Marked hired",
   hold: "Placed on hold",

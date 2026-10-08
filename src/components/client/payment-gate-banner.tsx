@@ -2,29 +2,22 @@ import { Link } from "@tanstack/react-router";
 import { Clock3, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
-import { formatDateTime } from "@/lib/format/datetime";
 
 
 type Props = {
   positionId: string;
   positionTitle: string;
   paymentStatus: string;
-  /** ISO start of a booked call, if there is one. */
-  callStart?: string | null;
 };
 
 /**
  * The workspace is open, the role is saved, and payment hasn't happened yet.
  * Says so plainly — no apology, no nagging.
  */
-export function PaymentGateBanner({ positionId, positionTitle, paymentStatus, callStart }: Props) {
+export function PaymentGateBanner({ positionId, positionTitle, paymentStatus }: Props) {
   if (!PAYMENTS_ENABLED) return null;
   if (["paid", "exempt", "covered", "refunded"].includes(paymentStatus)) return null;
 
-
-  const callLabel = callStart
-    ? formatDateTime(callStart, "")
-    : null;
 
   return (
     <div className="rounded-xl border border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/4 p-4">
@@ -35,9 +28,7 @@ export function PaymentGateBanner({ positionId, positionTitle, paymentStatus, ca
             {positionTitle} — payment pending
           </p>
           <p className="mt-1 text-sm text-[color:var(--brand-navy)]/75">
-            {callLabel
-              ? `We're speaking on ${callLabel}. Everything here is yours to use now; the role goes live once payment clears or we approve the start.`
-              : "The brief is saved and your workspace is open. The role goes live the moment payment clears."}
+            The brief is saved and your workspace is open. The role goes live the moment payment clears.
           </p>
         </div>
         <div className="flex gap-2">
@@ -47,13 +38,6 @@ export function PaymentGateBanner({ positionId, positionTitle, paymentStatus, ca
               Pay and publish
             </Link>
           </Button>
-          {!callStart ? (
-            <Button asChild size="sm" variant="outline">
-              <Link to="/book-call" search={{ position: positionId }}>
-                Book a call
-              </Link>
-            </Button>
-          ) : null}
         </div>
       </div>
     </div>

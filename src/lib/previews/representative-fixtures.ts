@@ -126,10 +126,10 @@ export const PREVIEW_AGENT_RUNS: PreviewAgentRun[] = [
   },
   {
     agent: "Coordination agent",
-    status: "Waiting",
-    detail: "2 interview slots proposed",
+    status: "Complete",
+    detail: "2 outreach messages sent",
     at: "09:46",
-    result: "Waiting on your confirmation",
+    result: "Replies land in one conversation",
   },
 ];
 
@@ -403,7 +403,7 @@ export const PREVIEW_ONBOARDING: PreviewOnboardingStep[] = [
   {
     label: "Confirm the plan",
     state: "done",
-    detail: "Pick a plan and pay, or book a call — both open the workspace.",
+    detail: "Confirm the plan with the team by message or email.",
     owner: "Your team",
     elapsed: "≈2 minutes",
   },

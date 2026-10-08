@@ -22,7 +22,7 @@ import { VerticalConfigurationSection } from "@/components/marketing/vertical-co
 import { HeroPicture } from "@/components/marketing/hero-picture";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { CTA_PRIMARY, CTA_BOOK } from "@/config/cta";
+import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
 import type { IndustryEntry } from "@/content/industries-v2";
 import { type IndustrySectionKey } from "@/content/industry-archetypes";
 import {
@@ -1387,10 +1387,10 @@ function SectionCta({ ctx }: { ctx: Ctx }) {
               {CTA_PRIMARY.label}
             </Link>
             <Link
-              to={CTA_BOOK.to}
+              to={CTA_MESSAGE.to}
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
             >
-              {CTA_BOOK.label}
+              {CTA_MESSAGE.label}
             </Link>
           </div>
         </div>

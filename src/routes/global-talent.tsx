@@ -7,7 +7,7 @@ import {
   CtaSection,
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 
 const CANONICAL = canonicalUrl("/global-talent");
@@ -251,7 +251,7 @@ function GlobalTalentPage() {
         title="Open a role across time zones."
         description="The intake captures region, remote scope and any relocation commitment before sourcing starts."
         primary={CTA_PRIMARY}
-        secondary={CTA_BOOK}
+        secondary={CTA_MESSAGE}
       />
       <EcosystemCrossSell trigger="market-entry" />
     </SiteShell>

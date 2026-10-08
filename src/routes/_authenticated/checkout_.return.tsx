@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_authenticated/checkout_/return")({
   // Temporary redirect until Stripe go-live.
   beforeLoad: () => {
     if (!paymentsEnabled()) {
-      throw redirect({ to: "/book-call", search: { position: undefined } });
+      throw redirect({ to: "/client" });
     }
   },
   component: CheckoutReturnPage,

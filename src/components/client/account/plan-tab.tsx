@@ -122,19 +122,6 @@ export function PlanTab() {
           <ServiceExpectationsTable orgId={orgId} />
         </>
       )}
-
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Not sure which fits?</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <span>Talk it through with us before you commit — 30 minutes, no obligation.</span>
-          <Button asChild size="sm" variant="outline">
-            <Link to="/book-call" search={{ position: undefined }}>Book a call</Link>
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 }

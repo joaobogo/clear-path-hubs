@@ -51,9 +51,8 @@ const canonicalHostMiddleware = createMiddleware().server(async ({ next, request
 });
 
 /**
- * Retired booking URLs (/book-a-call, /schedule, /demo) 301 to the one booking
- * page. /book-call is the signed-in client's page and is left alone; see
- * `src/lib/seo/edge-policy.ts`.
+ * Retired booking URLs (/book, /book-call, /book-a-call, /schedule, /demo) 301
+ * to /contact. See `src/lib/seo/edge-policy.ts`.
  */
 const legacyBookingMiddleware = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);

@@ -18,7 +18,6 @@
 import {
   COMMITMENT_LABEL,
   firstCandidatePromise,
-  interviewSlotsPromise,
   rangeOf,
   shortlistLabel,
   shortlistPromise,
@@ -52,7 +51,6 @@ export type StoredRoleCommitment = {
   positionId: string;
   firstShortlistDays: number;
   shortlistSize: number;
-  interviewSlotsHours: number;
 };
 
 export type ExpectationRow = {
@@ -101,7 +99,6 @@ export function buildServiceExpectations(input: {
 
   const days = commitments.map((c) => Number(c.firstShortlistDays));
   const sizes = commitments.map((c) => Number(c.shortlistSize));
-  const hours = commitments.map((c) => Number(c.interviewSlotsHours));
 
   const result = (key: CommitmentKey) => ({
     performance: measured?.[key]?.performance ?? null,
@@ -137,16 +134,6 @@ export function buildServiceExpectations(input: {
                 `within ${dayRange.min === dayRange.max ? dayRange.max : `${dayRange.min}–${dayRange.max}`}`,
               ),
       ...result("full_shortlist"),
-    });
-  }
-
-  const hoursTarget = targetFor(hours, interviewSlotsPromise);
-  if (hoursTarget) {
-    rows.push({
-      key: "interview_slots",
-      commitment: COMMITMENT_LABEL.interview_slots,
-      promised: hoursTarget,
-      ...result("interview_slots"),
     });
   }
 

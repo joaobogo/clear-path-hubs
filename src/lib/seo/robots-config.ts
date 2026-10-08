@@ -21,9 +21,6 @@ export const DISALLOWED_PATHS = [
   "/login",
   "/auth",
   "/checkout",
-  // Signed-in client booking page. The public booking page is /book, which this
-  // prefix does not match.
-  "/book-call",
   "/share/",
   "/shortlist/",
   "/api/",

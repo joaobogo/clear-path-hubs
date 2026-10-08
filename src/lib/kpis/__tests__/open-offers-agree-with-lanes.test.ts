@@ -41,7 +41,6 @@ const isConfirmed = (r: Row) => r.confirmed;
 const asLaneRows = (rows: Row[]) =>
   rows.map((r) => ({
     stage: r.stage,
-    interview_called_off: null,
     hire_confirmed: r.confirmed,
   }));
 

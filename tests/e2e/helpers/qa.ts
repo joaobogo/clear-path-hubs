@@ -43,8 +43,6 @@ type QaAction =
   | "lookup_intake"
   | "lookup_candidate_application"
   | "cleanup_candidate_e2e"
-  | "lookup_booking"
-  | "cleanup_booking_e2e"
   | "lookup_tenant"
   | "seat_scenario"
   | "seat_scenario_reset"
@@ -197,7 +195,6 @@ export const lookupIntake = (companyName: string, email?: string) =>
     intake_submission: { id: string; organization_id: string | null } | null;
     auth_user: { id: string; email: string } | null;
     position: { id: string; title: string; status: string } | null;
-    booking_sessions: number;
   }>("lookup_intake", { company_name: companyName, email });
 
 export const CANDIDATE_EMAIL_PREFIX = "qa.cand+";
@@ -310,70 +307,6 @@ export const cleanupApplyArtifacts = () =>
     email_pattern: APPLY_EMAIL_PATTERN,
   });
 
-
-export const BOOKING_EMAIL_PREFIX = "qa.book+";
-
-export type BookingSessionRow = {
-  id: string;
-  email: string;
-  company_name: string | null;
-  status: string;
-  scheduled_start: string | null;
-  scheduled_end: string | null;
-  join_url: string | null;
-  timezone: string | null;
-  host_name: string | null;
-  calendly_event_uri: string | null;
-  calendly_invitee_uri: string | null;
-  qualification_score: number | null;
-};
-
-/** Reads back the booking_sessions rows the real /book submit persisted. */
-export const lookupBooking = (email: string) =>
-  qaSeed<{ ok: boolean; sessions: BookingSessionRow[] }>("lookup_booking", { email });
-
-/** Removes every booking row this suite created through the real UI. */
-export const cleanupBookingArtifacts = (
-  emailPattern = `${BOOKING_EMAIL_PREFIX}%@${QA_EMAIL_DOMAIN}`,
-) => qaSeed<{ deleted: number }>("cleanup_booking_e2e", { email_pattern: emailPattern });
-
-/** Unique-per-run booking prospect mailbox. */
-export function uniqueBookingProspect(): { stamp: string; email: string; companyName: string } {
-  const stamp = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
-  return {
-    stamp,
-    email: `${BOOKING_EMAIL_PREFIX}${stamp}@${QA_EMAIL_DOMAIN}`,
-    companyName: `${INTAKE_ORG_PREFIX}BOOK_${stamp}`,
-  };
-}
-
-/**
- * Posts a Calendly-shaped webhook to our public handler with a real HMAC
- * signature, so the test exercises the same code path Calendly hits.
- * Returns the raw status so a test can assert 401 on a forged signature.
- */
-export async function postCalendlyWebhook(
-  body: unknown,
-  opts: { signingKey?: string; forge?: boolean } = {},
-): Promise<{ status: number; text: string }> {
-  const key = opts.signingKey ?? process.env["CALENDLY_WEBHOOK_SIGNING_KEY"];
-  if (!key) throw new Error("CALENDLY_WEBHOOK_SIGNING_KEY is not set in the environment");
-  const raw = JSON.stringify(body);
-  const timestamp = Math.floor(Date.now() / 1000).toString();
-  const { createHmac } = await import("node:crypto");
-  const v1 = opts.forge
-    ? "0".repeat(64)
-    : createHmac("sha256", key).update(`${timestamp}.${raw}`).digest("hex");
-  const res = await fetch(`${BASE_URL}/api/public/booking/calendly-webhook`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "calendly-webhook-signature": `t=${timestamp},v1=${v1}`,
-    },
-    body: raw,
-  });
-  return { status: res.status, text: await res.text() };
-}
 
 /**
  * Waits until React has attached to a specific server-rendered control.
@@ -624,7 +557,6 @@ export function collectConsoleErrors(page: Page): string[] {
 const IGNORED_CONSOLE = [
   "favicon",
   "Download the React DevTools",
-  "calendly",
   "ERR_BLOCKED_BY_CLIENT",
   "net::ERR_INTERNET_DISCONNECTED",
   "the server responded with a status of 4",

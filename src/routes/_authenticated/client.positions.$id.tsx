@@ -260,18 +260,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
       search: { position: id, stage: "delivered" },
     });
   }
-  if (summary.interviews_to_confirm > 0) {
-    actionRequired.push({
-      label: `${summary.interviews_to_confirm} interview${summary.interviews_to_confirm === 1 ? "" : "s"} to confirm`,
-      href: "/client/interviews",
-    });
-  }
-  if (summary.interview_scheduled > 0) {
-    actionRequired.push({
-      label: `${summary.interview_scheduled} interview${summary.interview_scheduled === 1 ? "" : "s"} scheduled`,
-      href: "/client/interviews",
-    });
-  }
   if (summary.offers > 0) {
     actionRequired.push({
       label: `${summary.offers} offer${summary.offers === 1 ? "" : "s"} awaiting response`,

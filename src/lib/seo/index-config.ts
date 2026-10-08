@@ -28,7 +28,7 @@ export { BASE_URL, SITEMAP_URL };
 // Intentional exclusions — nothing that emits `noindex` may appear below.
 // - NOINDEX_STATIC_PATHS above: thin or utility pages.
 // - /login, /reset-password, /access-denied, /unauthorized: auth plumbing.
-// - /admin/*, /client/*, /me/*, /boardroom, /checkout, /book-call: behind the
+// - /admin/*, /client/*, /me/*, /boardroom, /checkout: behind the
 //   authenticated route gate, `noindex` on the whole subtree.
 // - /brand-center, /dev/*: internal tooling, `noindex` + disallowed.
 // - /jobs/$id and /jobs/$id/apply: per-role pages carry `noindex`.

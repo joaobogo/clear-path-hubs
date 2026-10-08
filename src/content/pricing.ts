@@ -25,7 +25,7 @@ import {
   FIRST_SHORTLIST_TIMING_SHORT,
   PILOT_IS_PAID_NOTE,
 } from "@/config/offer-facts";
-import { CTA_PRIMARY, CTA_BOOK, CTA_ENTERPRISE } from "@/config/cta";
+import { CTA_PRIMARY, CTA_MESSAGE, CTA_ENTERPRISE } from "@/config/cta";
 import { publicSeatsLine, SCOPED_PUBLIC_LABEL } from "@/config/pricing-entitlements";
 
 export type PricingTier = {
@@ -117,8 +117,8 @@ export const PRICING_TIERS: PricingTier[] = [
     rolesIncluded: PACKAGE_10.capacityLabel,
     turnaround: FIRST_SHORTLIST_TIMING_SHORT,
     included: includedFor("growth", PACKAGE_10.capacityLabel, true),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: true,
   },
   {
@@ -132,8 +132,8 @@ export const PRICING_TIERS: PricingTier[] = [
     rolesIncluded: PACKAGE_20.capacityLabel,
     turnaround: FIRST_SHORTLIST_TIMING_SHORT,
     included: includedFor("scale", PACKAGE_20.capacityLabel, true, ["Priority support"]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: true,
   },
   {
@@ -151,8 +151,8 @@ export const PRICING_TIERS: PricingTier[] = [
       "Dedicated account manager",
       "Executive portfolio dashboard",
     ]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: true,
   },
   {
@@ -170,8 +170,8 @@ export const PRICING_TIERS: PricingTier[] = [
       "Dedicated account manager",
       "Executive portfolio dashboard",
     ]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: false,
   },
   {
@@ -190,8 +190,8 @@ export const PRICING_TIERS: PricingTier[] = [
       "Executive portfolio dashboard",
       "Named executive sponsor",
     ]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: false,
   },
   {

@@ -5,7 +5,6 @@ import { faqScript, marketingHead } from "@/lib/marketing/head";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import {
   ATS_NOTE,
-  CALL_NAME,
   FIRST_SHORTLIST_TIMING,
   HUMAN_OVERSIGHT_NOTE,
   OFFER_CATEGORY,
@@ -136,7 +135,7 @@ function ForHrTeamsPage() {
         { to: "/solutions", label: "Who TaaSFlow is for", desc: "The other audiences we work with." },
       ]}
       ctaTitle="Hand over one role and see the shortlist."
-      ctaDescription={`Request the pilot for one role, or book a ${CALL_NAME} to talk it through first.`}
+      ctaDescription={`Request the pilot for one role, or send us a message to talk it through first.`}
     />
   );
 }

@@ -34,7 +34,7 @@ export function HiringProcessSection({
         <ProcessStep
           n={3}
           title="Interview"
-          body="Your team runs interviews. Schedule and outcomes are logged automatically."
+          body="Your team arranges and runs interviews directly with candidates."
           done={interviewingTotal > 0}
         />
         <ProcessStep

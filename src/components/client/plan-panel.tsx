@@ -371,7 +371,7 @@ export function PlanPanel({
                         </div>
                         {!isCurrent && !paymentsEnabled() ? (
                           // Checkout is switched off (commerce.ts): every
-                          // payment CTA routes to booking instead, the same
+                          // payment CTA routes to the contact form instead, the same
                           // rule the intake form follows. This button used to
                           // open the Stripe dialog regardless, and getStripe()
                           // throws with payments off — "Start this plan"
@@ -382,7 +382,7 @@ export function PlanPanel({
                             className="mt-3 w-full"
                             asChild
                           >
-                            <a href="/book">Book a call to start</a>
+                            <a href="/contact">Contact us to start</a>
                           </Button>
                         ) : !isCurrent ? (
                           <Button

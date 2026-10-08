@@ -8,15 +8,14 @@ import {
 } from "@/lib/seo/edge-policy";
 
 describe("legacy booking redirects", () => {
-  it("redirects retired public booking paths to /book", () => {
-    for (const p of ["/book-a-call", "/schedule", "/demo", "/demo/", "/Schedule"]) {
-      expect(legacyBookingRedirectFor(p)).toBe("/book");
+  it("redirects every retired booking path to /contact", () => {
+    for (const p of ["/book", "/book-call", "/book-a-call", "/schedule", "/demo", "/demo/", "/Schedule"]) {
+      expect(legacyBookingRedirectFor(p)).toBe("/contact");
     }
   });
 
-  it("leaves the signed-in /book-call page and the live /book page alone", () => {
-    expect(legacyBookingRedirectFor("/book-call")).toBeNull();
-    expect(legacyBookingRedirectFor("/book")).toBeNull();
+  it("leaves unrelated paths alone", () => {
+    expect(legacyBookingRedirectFor("/contact")).toBeNull();
     expect(legacyBookingRedirectFor("/demo-day")).toBeNull();
   });
 });
@@ -50,7 +49,6 @@ describe("html cache policy", () => {
   it("leaves APIs, assets, workspace pages, redirects, and explicit caching alone", () => {
     expect(htmlCacheControlFor({ ...base, pathname: "/api/x" })).toBeNull();
     expect(htmlCacheControlFor({ ...base, pathname: "/login" })).toBe(PRIVATE_HTML_CACHE_CONTROL);
-    expect(htmlCacheControlFor({ ...base, pathname: "/book-call" })).toBe(PRIVATE_HTML_CACHE_CONTROL);
     expect(htmlCacheControlFor({ ...base, pathname: "/assets/a.js" })).toBeNull();
     expect(htmlCacheControlFor({ ...base, pathname: "/admin/candidates" })).toBeNull();
     expect(htmlCacheControlFor({ ...base, pathname: "/client" })).toBeNull();

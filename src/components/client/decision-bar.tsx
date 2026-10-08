@@ -61,7 +61,7 @@ export function advanceFor(stage: MatchStage): AdvanceStep | null {
       shortlisted: {
         action: "request_interview",
         label: "Advance to interview",
-        done: "Interview requested",
+        done: "Moved to interview stage",
       },
       interview_process: { action: "offer", label: "Advance to offer", done: "Moved to offer stage" },
       offer: { action: "hire", label: "Mark hired", done: "Marked as hired" },

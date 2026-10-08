@@ -274,7 +274,7 @@ export const FLAT_FEE_PAGE: MoneyPageContent = {
     },
     {
       q: "Can I talk to someone before I request the pilot?",
-      a: "Yes. You can book a 20-minute call, or send a message and expect a reply within one business day. If you request the pilot, we confirm the role and the criteria with you on a call or by email before sourcing starts.",
+      a: "Yes. Send us a message and we will contact you within one business day. If you request the pilot, we confirm the role and the criteria with you before sourcing starts.",
     },
     {
       q: "Can I use the pilot for hospitality or healthcare roles?",

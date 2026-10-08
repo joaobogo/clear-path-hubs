@@ -33,10 +33,6 @@ export const PUBLIC_FN_LIMITS = {
   candidate_write: { max: 10, windowMs: 60_000 },
   /** Funnel beacons. Generous — one page view can fire several. */
   candidate_event: { max: 60, windowMs: 60_000 },
-  /** Booking writes: intake, hold a slot, reschedule, cancel. Sends email. */
-  booking_write: { max: 10, windowMs: 60_000 },
-  /** Booking reads keyed by session id. Throttled against id enumeration. */
-  booking_read: { max: 30, windowMs: 60_000 },
   /** Marketing lead capture: DB write plus staff notification fan-out. */
   inquiry_submit: { max: 6, windowMs: 60_000 },
   /** One-time prefill token exchange. Throttled against token guessing. */

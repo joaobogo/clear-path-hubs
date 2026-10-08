@@ -4,7 +4,7 @@ import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { EmployerInquiryForm } from "@/components/marketing/employer-inquiry-form";
 import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
-import { CTA_BOOK, CTA_FULL_INTAKE, CTA_PRICING } from "@/config/cta";
+import { CTA_MESSAGE, CTA_FULL_INTAKE, CTA_PRICING } from "@/config/cta";
 import {
   FIRST_SHORTLIST_TIMING,
   HUMAN_OVERSIGHT_NOTE,
@@ -78,8 +78,8 @@ function PilotPage() {
                   {CTA_FULL_INTAKE.label}
                 </Link>
                 {" · "}
-                <Link to={CTA_BOOK.to} className={linkClass}>
-                  {CTA_BOOK.label}
+                <Link to={CTA_MESSAGE.to} className={linkClass}>
+                  {CTA_MESSAGE.label}
                 </Link>
               </p>
               <p className="mt-3 text-sm">

@@ -2,7 +2,7 @@
  * Public Integrations directory — verified connections only.
  * ------------------------------------------------------------------
  * Every listing below traces to code in this repository:
- *   - Stripe, Attio, Calendly, transactional email: probed by
+ *   - Stripe, Attio, transactional email: probed by
  *     `src/lib/integration-health.server.ts` and shown in admin health.
  *   - Microsoft Teams: `src/lib/teams-notify.server.ts`.
  *   - Google sign-in: Supabase Auth social provider used by `/login`.
@@ -29,7 +29,6 @@ export const AVAILABILITY_LABEL: Record<Availability, string> = {
 
 export type IntegrationCategory =
   | "crm"
-  | "calendar"
   | "email"
   | "messaging"
   | "payments"
@@ -45,7 +44,6 @@ export type IntegrationCategory =
 export const CATEGORY_LABEL: Record<IntegrationCategory, string> = {
   ats: "Applicant tracking systems",
   crm: "CRM",
-  calendar: "Calendar",
   email: "Email",
   messaging: "Messaging",
   payments: "Payments",
@@ -64,7 +62,6 @@ export const CATEGORY_ORDER: IntegrationCategory[] = [
   "api",
   "webhooks",
   "crm",
-  "calendar",
   "email",
   "messaging",
   "payments",
@@ -167,7 +164,7 @@ export const INTEGRATIONS: Integration[] = [
     category: "webhooks",
     availability: "planned",
     purpose:
-      "Push hiring events — shortlist released, interview scheduled, offer accepted — into your own systems as they happen.",
+      "Push hiring events — shortlist released, offer accepted — into your own systems as they happen.",
     connectionMethod: "Not built yet.",
     dataExchanged: "Not applicable until the feature exists.",
     permissions: "Not applicable until the feature exists.",
@@ -178,7 +175,7 @@ export const INTEGRATIONS: Integration[] = [
       "The internal event model exists; subscriber management, retries and signing are not built. No delivery date is promised.",
   },
 
-  /* ------------------------------------------------------ crm / calendar */
+  /* ------------------------------------------------------ crm */
   {
     id: "attio",
     public: false,
@@ -196,22 +193,6 @@ export const INTEGRATIONS: Integration[] = [
     healthNote:
       "Probed from the admin integration health page: reachability, authorisation and the provider's own error text.",
     docs: { label: "How enquiries are handled", to: "/privacy" },
-  },
-  {
-    id: "calendly",
-    name: "Calendly",
-    category: "calendar",
-    availability: "available",
-    purpose:
-      "Books intro calls and interview slots against real availability instead of an email thread.",
-    connectionMethod:
-      "Managed connector authorised by TaaSFlow, plus an embedded scheduling flow on our public pages.",
-    dataExchanged:
-      "Outbound: invitee name, email and the meeting type. Inbound: the confirmed slot and its time zone.",
-    permissions: "Read scheduling links and availability, and read booked events.",
-    healthVisibility: true,
-    healthNote: "Probed from the admin integration health page before a booking page is shown.",
-    docs: { label: "Book a call", to: "/book" },
   },
 
   /* ------------------------------------------------------ email / messaging */

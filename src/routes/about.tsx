@@ -6,7 +6,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 import { PageConnections } from "@/components/marketing/page-connections";
 
@@ -350,9 +350,9 @@ function AboutPage() {
       <CtaSection
         eyebrow="Ready when you are"
         title="Hire with an evidence-first model."
-        description="Request the pilot for one role, or book a call to talk it through first."
+        description="Request the pilot for one role, or send us a message to talk it through first."
         primary={CTA_PRIMARY}
-        secondary={CTA_BOOK}
+        secondary={CTA_MESSAGE}
       />
           <PageConnections
         commercial={{ to: "/how-it-works", label: "See how it works", desc: "The four steps behind TaaSFlow." }}

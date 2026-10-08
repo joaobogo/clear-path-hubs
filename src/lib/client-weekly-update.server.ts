@@ -82,14 +82,13 @@ export async function buildWeeklyUpdate(
         .eq("organization_id", orgId)
         .eq("status", "open"),
 
-      // Interviews booked ahead: a recorded commitment for next week.
+      // Candidates at the interview stage: interviews are arranged off system.
       client
-        .from("interviews")
-        .select("id, position_id, scheduled_at, positions(title)")
+        .from("candidate_matches")
+        .select("id, position_id, positions(title)")
         .eq("organization_id", orgId)
-        .not("scheduled_at", "is", null)
-        .gte("scheduled_at", endIso)
-        .lte("scheduled_at", new Date(windowEnd.getTime() + 7 * 86_400_000).toISOString()),
+        .eq("client_visibility", "visible")
+        .eq("stage", "interview_process"),
     ]);
 
   const positions = (positionsRes.data ?? []) as Row[];
@@ -107,6 +106,7 @@ export async function buildWeeklyUpdate(
 
   const delivered = (deliveredRes.data ?? []) as Row[];
   const held = week.interviewsHeld as Row[];
+  const heldCount = week.interviewsHeldCount;
   const decisions = week.decisions as Row[];
   const awaitingMatches = (awaitingRes.data ?? []) as Row[];
   const infoRequests = (infoRes.data ?? []) as Row[];
@@ -121,8 +121,8 @@ export async function buildWeeklyUpdate(
     },
     {
       key: "interviews_held",
-      label: metricLabel("interviews_held", held.length),
-      count: held.length,
+      label: metricLabel("interviews_held", heldCount),
+      count: heldCount,
       roles: uniqueTitles(held, titleOf),
     },
     {
@@ -176,7 +176,7 @@ export async function buildWeeklyUpdate(
   }
 
   // ── What happens next week ────────────────────────────────────────────────
-  // Derived from records: booked interviews, candidates with you, open
+  // Derived from records: candidates at the interview stage, candidates with you, open
   // requests, otherwise sourcing continues on live roles.
   const nextWeek: WeeklyNextStep[] = [];
   const upcomingByPosition = new Map<string, number>();
@@ -188,7 +188,7 @@ export async function buildWeeklyUpdate(
     nextWeek.push({
       position_id: pid,
       title: titleById.get(pid) ?? null,
-      text: `${count} booked ${plural(count, "interview", "interviews")} to run and write up`,
+      text: `${count} ${plural(count, "candidate", "candidates")} at the interview stage — record feedback once you have spoken`,
     });
   }
   if (infoRequests.length > 0) {
@@ -210,7 +210,7 @@ export async function buildWeeklyUpdate(
   }
 
   // ── Quiet week, stated plainly ────────────────────────────────────────────
-  const movement = delivered.length + held.length + decisions.length;
+  const movement = delivered.length + heldCount + decisions.length;
   let reason: string | null = null;
   if (movement === 0) {
     if (infoRequests.length > 0) {

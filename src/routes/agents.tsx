@@ -27,7 +27,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero";
 import agentsHero from "@/assets/page-agents-hero.jpg";
 import bandOps from "@/assets/band-ops.jpg";
@@ -196,7 +196,7 @@ function AgentsPage() {
           { value: String(CHANNEL_AGENT_COUNT), label: "Channels covered" },
         ]}
         primary={CTA_PRIMARY}
-        secondary={CTA_BOOK}
+        secondary={CTA_MESSAGE}
       >
         <ul className="grid gap-2 sm:grid-cols-3">
           {[
@@ -421,7 +421,7 @@ function AgentsPage() {
         title="Share a role and choose which agents run."
         description="You choose which agents run, what they may send, and what must be approved before a candidate reaches you."
         primary={CTA_PRIMARY}
-        secondary={CTA_BOOK}
+        secondary={CTA_MESSAGE}
       />
     </SiteShell>
   );

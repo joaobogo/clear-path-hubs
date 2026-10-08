@@ -8,10 +8,10 @@
  *        "immediate"  send as it happens
  *        "digest"     hold it for the daily digest
  *        "off"        no email for that event (the portal still shows it)
- *   2. Interview and document notices carry deadlines, so they can be moved to
+ *   2. Document notices carry deadlines, so they can be moved to
  *      the digest but never switched off, and the UI must state why.
  *   3. Talent-network mail is entirely separate and fully optional. Turning it
- *      off can never affect interview or document notices.
+ *      off can never affect document notices.
  *   4. SMS is only ever offered — and only ever sent — where a verified mobile
  *      number exists.
  */
@@ -24,7 +24,6 @@ export type CandidateChannel = "email" | "sms";
 export type CandidatePrefKey =
   | "application_received"
   | "status_changed"
-  | "interview_update"
   | "document_requested"
   | "team_message"
   | "matching_roles";
@@ -59,16 +58,6 @@ export const CANDIDATE_PREF_EVENTS: readonly CandidatePrefSpec[] = [
     modes: ["immediate", "digest", "off"],
     defaultMode: "immediate",
     channels: ["email", "sms"],
-  },
-  {
-    key: "interview_update",
-    label: "Interview proposed or changed",
-    description: "New times to choose from, a reschedule, or a cancellation.",
-    modes: ["immediate", "digest"],
-    defaultMode: "immediate",
-    channels: ["email", "sms"],
-    lockedReason:
-      "These carry a deadline — times are only held for a short window — so they can be moved to the daily digest but not switched off.",
   },
   {
     key: "document_requested",
@@ -213,10 +202,6 @@ export const CANDIDATE_EVENT_PREFERENCE: Partial<Record<EventType, CandidatePref
   candidate_hired: "status_changed",
   position_closed: "status_changed",
   position_filled: "status_changed",
-  interview_requested: "interview_update",
-  interview_scheduled: "interview_update",
-  interview_rescheduled: "interview_update",
-  interview_cancelled: "interview_update",
   clarification_requested: "document_requested",
   document_added: "document_requested",
   message_sent: "team_message",

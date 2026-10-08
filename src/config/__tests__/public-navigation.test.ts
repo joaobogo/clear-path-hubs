@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  BOOK_CALL_CTA,
+  MESSAGE_CTA,
   CANDIDATE_PRIMARY_CTA,
   FOOTER_GROUPS,
   PRIMARY_CTA,
@@ -8,7 +8,7 @@ import {
   SECONDARY_CTAS,
   allNavHrefs,
 } from "@/config/public-navigation";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { HOMEPAGE_FAQ } from "@/lib/homepage-faq";
 import { SYSTEM_CLAIM } from "@/config/product-language";
 import { WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
@@ -30,8 +30,8 @@ describe("public navigation", () => {
   it("uses the shared CTA vocabulary", () => {
     expect(PRIMARY_CTA.label).toBe(CTA_PRIMARY.label);
     expect(PRIMARY_CTA.to).toBe("/pilot");
-    expect(BOOK_CALL_CTA.label).toBe(CTA_BOOK.label);
-    expect(BOOK_CALL_CTA.to).toBe("/book");
+    expect(MESSAGE_CTA.label).toBe(CTA_MESSAGE.label);
+    expect(MESSAGE_CTA.to).toBe("/contact");
   });
 
   it("keeps the candidate CTA split unchanged", () => {

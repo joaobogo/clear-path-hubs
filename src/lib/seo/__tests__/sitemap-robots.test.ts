@@ -98,7 +98,7 @@ describe("robots.txt", () => {
     expect(txt).toMatch(/intentionally/i);
   });
 
-  it("does not block the public booking page", () => {
+  it("does not disallow /book, so crawlers can follow its redirect to /contact", () => {
     const disallows = txt.split("\n").filter((l) => l.startsWith("Disallow:"));
     expect(disallows).not.toContain("Disallow: /book");
     expect(disallows).not.toContain("Disallow: /book/");

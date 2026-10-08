@@ -13,7 +13,7 @@ import { HeroDecisionWorkspace } from "@/components/home/hero-decision-workspace
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { EmployerInquiryForm } from "@/components/marketing/employer-inquiry-form";
 import { PublicPage, PublicSection, SiteShell } from "@/components/marketing/site-shell";
-import { CTA_BOOK, CTA_HOW_IT_WORKS, CTA_PRICING, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_HOW_IT_WORKS, CTA_PRICING, CTA_PRIMARY } from "@/config/cta";
 import {
   OFFER_EYEBROW,
   OFFER_LAST_UPDATED_LABEL,
@@ -456,7 +456,7 @@ function Home() {
           <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-12 text-center text-white sm:px-12 sm:py-14">
             <H2 light>Start with one role.</H2>
             <p className="mx-auto mt-3 max-w-xl text-base text-white/80">
-              Request the ${PRICE_PILOT_USD} pilot, book a short call, or send a few details and we
+              Request the ${PRICE_PILOT_USD} pilot or send us a message, and we
               will reply.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -467,10 +467,10 @@ function Home() {
                 {CTA_PRIMARY.label}
               </Link>
               <Link
-                to={CTA_BOOK.to}
+                to={CTA_MESSAGE.to}
                 className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
-                {CTA_BOOK.label}
+                {CTA_MESSAGE.label}
               </Link>
             </div>
             <p className="mt-5">

@@ -2,28 +2,20 @@
  * Request-level SEO policy, kept free of framework imports so it can be unit
  * tested and reused by `src/start.ts` (middleware) and the root route (head).
  */
-import { BOOKING_ROUTE, LEGACY_BOOKING_PATHS } from "@/config/booking";
+import { BOOKING_REDIRECT_TARGET, LEGACY_BOOKING_PATHS } from "@/config/booking";
 import { isCanonicalHost } from "@/lib/canonical-origin";
 import { isWorkspacePath } from "@/lib/tracking/pixels";
 
 /**
- * Legacy booking URLs that redirect to the canonical booking page.
- *
- * `/book-call` is deliberately NOT redirected: it is the signed-in client's
- * booking page (`src/routes/_authenticated/book-call.tsx`), linked from the
- * client workspace. Redirecting it would break that page. It stays
- * disallowed in robots.txt and is noindex behind the auth gate.
+ * Legacy booking URLs (/book, /book-call, /book-a-call, /schedule, /demo).
+ * TaaSFlow has no booking flow any more, so each one 301-redirects to /contact.
  */
-const AUTHENTICATED_BOOKING_PATHS = new Set(["/book-call"]);
-
-export const REDIRECTED_LEGACY_BOOKING_PATHS: readonly string[] = LEGACY_BOOKING_PATHS.filter(
-  (p) => !AUTHENTICATED_BOOKING_PATHS.has(p),
-);
+export const REDIRECTED_LEGACY_BOOKING_PATHS: readonly string[] = LEGACY_BOOKING_PATHS;
 
 /** Target path when `pathname` is a retired booking URL, otherwise null. */
 export function legacyBookingRedirectFor(pathname: string): string | null {
   const bare = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
-  return REDIRECTED_LEGACY_BOOKING_PATHS.includes(bare.toLowerCase()) ? BOOKING_ROUTE : null;
+  return REDIRECTED_LEGACY_BOOKING_PATHS.includes(bare.toLowerCase()) ? BOOKING_REDIRECT_TARGET : null;
 }
 
 /** The value sent on `X-Robots-Tag` and in the robots meta tag on preview hosts. */
@@ -71,7 +63,6 @@ const PRIVATE_PATH_PREFIXES = [
   "/access-denied",
   "/unauthorized",
   "/checkout",
-  "/book-call",
   "/boardroom",
   "/brand-center",
   "/candidate-join",

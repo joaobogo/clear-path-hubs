@@ -4,6 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { buildStageFeedbackItems } from "@/lib/interview-feedback-queue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -33,6 +34,88 @@ function happenedAt(iv: AnyRow): string | null {
  * client side.
  */
 export async function getInterviewsAwaitingFeedback(
+  supabase: any,
+  orgId: string,
+): Promise<FeedbackQueueItem[]> {
+  const legacy = await getLegacyInterviewsAwaitingFeedback(supabase, orgId);
+  const stage = await getStageMatchesAwaitingFeedback(supabase, orgId, {
+    coveredMatchIds: new Set(legacy.map((i) => i.candidate_match_id)),
+  });
+  return [...legacy, ...stage];
+}
+
+/**
+ * Matches at the interview stage (interviews happen off system) that have no
+ * submitted feedback yet. Optionally narrowed to one match and wider stages.
+ */
+export async function getStageMatchesAwaitingFeedback(
+  supabase: any,
+  orgId: string,
+  opts: { matchId?: string; stages?: readonly string[]; coveredMatchIds?: ReadonlySet<string> } = {},
+): Promise<FeedbackQueueItem[]> {
+  const stages = opts.stages ?? ["interview_process"];
+  let q = supabase
+    .from("candidate_matches")
+    .select("id, position_id, stage, updated_at, positions:position_id(title)")
+    .eq("organization_id", orgId)
+    .eq("client_visibility", "visible")
+    .in("stage", stages as string[]);
+  if (opts.matchId) q = q.eq("id", opts.matchId);
+  const { data: matches, error } = await q.limit(200);
+  if (error) throw new Error(error.message);
+  const list = (matches as AnyRow[] | null) ?? [];
+  if (list.length === 0) return [];
+  const ids = list.map((m) => m.id as string);
+
+  const [{ data: cards }, { data: hist }] = await Promise.all([
+    supabase
+      .from("interview_scorecards")
+      .select("candidate_match_id")
+      .eq("organization_id", orgId)
+      .in("candidate_match_id", ids),
+    supabase
+      .from("candidate_stage_history")
+      .select("candidate_match_id, created_at")
+      .eq("to_stage", "interview_process")
+      .in("candidate_match_id", ids),
+  ]);
+  const scored = new Set(((cards as AnyRow[] | null) ?? []).map((c) => c.candidate_match_id as string));
+  const entered = new Map<string, string>();
+  for (const h of (hist as AnyRow[] | null) ?? []) {
+    const id = h.candidate_match_id as string;
+    const at = h.created_at as string;
+    if (!entered.has(id) || at > entered.get(id)!) entered.set(id, at);
+  }
+
+  const { hydrateClientCandidateProfiles } = await import("@/lib/client-candidate-hydrate.server");
+  const { data: nameData } = await supabase
+    .from("candidate_matches")
+    .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name)")
+    .in("id", ids);
+  const hydrated = await hydrateClientCandidateProfiles((nameData as AnyRow[]) ?? []);
+  const names = new Map<string, string>();
+  for (const m of hydrated) {
+    const name = (m as AnyRow).candidate_profiles?.full_name as string | undefined;
+    if (name) names.set(m.id as string, name);
+  }
+
+  return buildStageFeedbackItems({
+    matches: list.map((m) => ({
+      id: m.id as string,
+      stage: m.stage as string,
+      position_id: (m.position_id as string) ?? null,
+      position_title: m.positions?.title ?? null,
+      candidate_name: names.get(m.id as string) ?? null,
+      entered_at: entered.get(m.id as string) ?? null,
+      updated_at: (m.updated_at as string) ?? null,
+    })),
+    scoredMatchIds: scored,
+    coveredMatchIds: opts.coveredMatchIds,
+    stages,
+  });
+}
+
+async function getLegacyInterviewsAwaitingFeedback(
   supabase: any,
   orgId: string,
 ): Promise<FeedbackQueueItem[]> {

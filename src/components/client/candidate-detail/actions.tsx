@@ -37,13 +37,13 @@ export const ACTIONS_BY_STAGE: Record<MatchStage, { primary: ActionDef | null; m
   delivered: {
     primary: { key: "shortlist", label: "Shortlist" },
     more: [
-      { key: "request_interview", label: "Request interview" },
+      { key: "request_interview", label: "Move to interview stage" },
       ...COMMON_MORE,
       { key: "not_moving_forward", label: "Decline for this role" },
     ],
   },
   shortlisted: {
-    primary: { key: "request_interview", label: "Request interview" },
+    primary: { key: "request_interview", label: "Move to interview stage" },
     more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
   },
   interview_process: {
@@ -73,7 +73,6 @@ export function ActionArea({
   matchId,
   pendingKey,
   subject,
-  activeInterviewId,
   notRecommended = false,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
@@ -85,7 +84,6 @@ export function ActionArea({
   pendingKey?: ActionKey | null;
   /** Who/what the actions apply to, e.g. "Maria Santos for Front Desk Lead". */
   subject?: string;
-  activeInterviewId?: string | null;
   /** True when the fit band is "Not recommended": evidence leads, not advancing. */
   notRecommended?: boolean;
 }) {
@@ -104,13 +102,7 @@ export function ActionArea({
         </p>
       )}
       <div className="flex items-center gap-2">
-        {actions.primary?.key === "request_interview" && activeInterviewId ? (
-          <Button asChild className="flex-1 min-h-11">
-            <Link to="/client/interviews" search={{ interview: activeInterviewId, feedback: undefined }}>
-              View interview
-            </Link>
-          </Button>
-        ) : actions.primary && notRecommended ? (
+        {actions.primary && notRecommended ? (
           <div className="flex flex-1 flex-wrap items-center gap-2">
             <Button asChild className="min-h-11 flex-1">
               <a href="#sec-evidence">Review evidence</a>
@@ -209,14 +201,12 @@ export function MobileActionBar({
   onAct,
   pendingKey,
   subject,
-  activeInterviewId,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
   pending: boolean;
   onAct: (k: ActionKey) => void;
   pendingKey?: ActionKey | null;
   subject?: string;
-  activeInterviewId?: string | null;
 }) {
   const forSubject = subject ? ` for ${subject}` : "";
   if (!actions.primary) return null;
@@ -231,13 +221,7 @@ export function MobileActionBar({
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
     >
       <div className="mx-auto flex max-w-3xl items-center gap-2">
-        {actions.primary.key === "request_interview" && activeInterviewId ? (
-          <Button asChild className="min-h-11 flex-1">
-            <Link to="/client/interviews" search={{ interview: activeInterviewId, feedback: undefined }}>
-              View interview
-            </Link>
-          </Button>
-        ) : <Button
+        <Button
           className="min-h-11 flex-1"
           disabled={pending}
           onClick={() => onAct(actions.primary!.key)}
@@ -250,7 +234,7 @@ export function MobileActionBar({
           ) : (
             actions.primary.label
           )}
-        </Button>}
+        </Button>
         {decline && (
           <Button
             variant="outline"

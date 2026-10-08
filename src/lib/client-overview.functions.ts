@@ -105,14 +105,12 @@ export const loadClientOverview = createServerFn({ method: "GET" })
     // positions, profile hydration ← matches) stay sequential.
     const [
       { getInterviewsAwaitingFeedback },
-      { loadInterviewsAwaitingConfirmation, awaitingClient },
       { readSeatsForOrg },
       { loadClientWeekActivity },
       { countOpenRolesForOrg },
       { countOpenOffers },
     ] = await Promise.all([
       import("./client/interviews-awaiting-feedback.server"),
-      import("./client/interviews-to-confirm.server"),
       import("@/lib/kpis/seats.server"),
       import("./client/week-activity.server"),
       import("@/lib/kpis/open-roles.server"),
@@ -123,7 +121,6 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       interviewsAwaitingFeedback,
       openItemsResponse,
       rows,
-      pendingConfirmations,
       { activeMembers },
       weekActivity,
       interviewsRes,
@@ -137,11 +134,6 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       // 1. Unified open items and blocked roles.
       loadClientOpenItems(context.supabase, context.userId, data.orgId),
       loadKpiRows(s, data.orgId),
-      // Interviews still waiting on a confirmed time — the one shared query
-      // the Overview queue and the Interviews page read.
-      // Client-owned only. "Interviews to confirm" is a promise that the
-      // client can act; an interview we never sent times for is ours.
-      loadInterviewsAwaitingConfirmation(context.supabase, data.orgId).then(awaitingClient),
       // Seats come from the one reader, so Overview, Account, Team & roles
       // and the staff account summary print the same figure.
       readSeatsForOrg(context.supabase, data.orgId),
@@ -207,14 +199,6 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         .in("processing_state", PROCESSING_STATES_BLOCKED),
     ]);
 
-    const pendingByPosition = new Map<string, string[]>();
-    for (const pending of pendingConfirmations) {
-      if (!pending.position_id) continue;
-      const list = pendingByPosition.get(pending.position_id) ?? [];
-      if (pending.requested_at) list.push(pending.requested_at);
-      pendingByPosition.set(pending.position_id, list);
-    }
-
     const completedInterviews = ((interviewsRes as AnyRow).data as AnyRow[]) ?? [];
     const scoredInterviewIds = new Set<string>();
     if (completedInterviews.length > 0) {
@@ -247,9 +231,8 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       // (`isAwaitingClientDecision`). Counting the open-items strip instead —
       // which is capped and filtered for display — is how this card read 0
       // while the Roles list, the board column and the admin backlog read 10.
-      // Interviews awaiting a time and open offers come from their one reader,
-      // never from the length of a queue list on this page.
-      interviews_to_confirm: pendingConfirmations.length,
+      // Open offers come from their one reader, never from the length of a
+      // queue list on this page.
       offers: openOffers,
       missing_feedback: interviewsAwaitingFeedback.length,
       in_review_by_taasflow: ((inReviewRes as AnyRow)?.count as number | null) ?? 0,
@@ -391,9 +374,6 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       });
 
       const awaiting = posRows.filter(isAwaitingClientDecision);
-      // Ages come from the interview requests themselves, so the banner and the
-      // queue above it always name the same interview.
-      const pendingInterviewRequests = pendingByPosition.get(p.id as string) ?? [];
       const commitment = commitmentByPosition.get(p.id as string);
       const promisedShortlistBy =
         commitment?.baseline_at && commitment?.first_shortlist_days != null
@@ -418,8 +398,6 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         lastMovementAt,
         awaitingDecision: awaiting.length,
         oldestAwaitingDecisionAt: minIso(awaiting.map((r) => r.delivered_at ?? r.stage_entered_at)),
-        interviewsToConfirm: pendingInterviewRequests.length,
-        oldestInterviewToConfirmAt: minIso(pendingInterviewRequests),
 
         promisedShortlistBy,
         shortlistDeliveredAt: dates.shortlist,

@@ -3,7 +3,7 @@ import {
   CANDIDATE_STATUS_COPY,
   candidateStatusFromStateKey,
 } from "@/lib/candidate/status-vocabulary";
-import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 /**
  * The single place a candidate is told where they stand: what the state
@@ -12,12 +12,10 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/li
 export function CandidateStatePanel({
   state,
   lastUpdate,
-  nextInterviewAt,
   className,
 }: {
   state: CandidateStateKey;
   lastUpdate?: string | null;
-  nextInterviewAt?: string | null;
   className?: string;
 }) {
   const copy = CANDIDATE_STATES[state];
@@ -57,14 +55,6 @@ export function CandidateStatePanel({
           </dt>
           <dd className="mt-1">{copy.needed}</dd>
         </div>
-        {nextInterviewAt ? (
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-muted-foreground">Interview</dt>
-            <dd className="mt-1">
-              {formatDateTime(nextInterviewAt)}
-            </dd>
-          </div>
-        ) : null}
       </dl>
 
       {lastUpdate ? (

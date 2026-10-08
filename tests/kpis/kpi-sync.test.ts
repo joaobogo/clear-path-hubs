@@ -20,7 +20,6 @@ import {
 import {
   countCandidatesInPlay,
   countConfirmedHiresForOrg,
-  countInterviewsAwaitingTime,
   countInterviewsHeld,
   countOpenOffers,
   countOpenRolesForOrg,
@@ -87,15 +86,6 @@ describe.skipIf(!live)("business figures agree with the raw rows", () => {
           where ${org} and status not in ${excluded} and not ${testTitle}`,
       ),
     );
-  });
-
-  it("interviews awaiting a time", async () => {
-    const raw = sqlCount(
-      `select count(distinct candidate_match_id) as n from public.interviews
-        where ${org} and status in ('requested','scheduling')
-          and candidate_match_id is not null`,
-    );
-    expect(await countInterviewsAwaitingTime(supabase, orgId!)).toBe(raw);
   });
 
   it("interviews held in the rolling window", async () => {

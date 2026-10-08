@@ -51,7 +51,7 @@ describe("emailActionLabel", () => {
   it("names what is waiting rather than the product", () => {
     expect(emailActionLabel("message_sent")).toBe("Read the message");
     expect(emailActionLabel("approval_needed")).toBe("Review and decide");
-    expect(emailActionLabel("interview_scheduled")).toBe("See the interview");
+    expect(emailActionLabel("shortlist_ready")).toBe("See the shortlist");
   });
 
   it("falls back for events with no specific wording", () => {

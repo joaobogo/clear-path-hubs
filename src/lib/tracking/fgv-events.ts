@@ -19,8 +19,6 @@ export const FGV_EVENTS = {
   formSubmit: "fgv_form_submit",
   formSuccess: "fgv_form_success",
   formError: "fgv_form_error",
-  bookingStart: "fgv_booking_start",
-  bookingComplete: "fgv_booking_complete",
   contentDownload: "fgv_content_download",
   webinarRegistration: "fgv_webinar_registration",
   assessmentStart: "fgv_assessment_start",

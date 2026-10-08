@@ -33,7 +33,7 @@ export function SinceLastVisit({
       {weekActivity && !loading ? (
         <p className="mt-1 text-xs text-muted-foreground">
           This week: {weekActivity.interviews_held} interview
-          {weekActivity.interviews_held === 1 ? "" : "s"} held ·{" "}
+          {weekActivity.interviews_held === 1 ? "" : "s"} ·{" "}
           {weekActivity.decisions_made} decision
           {weekActivity.decisions_made === 1 ? "" : "s"} recorded
         </p>

@@ -10,7 +10,7 @@ import { getSessionContext } from "@/lib/auth.functions";
 import { landingPathForRole } from "@/lib/roles";
 
 import { brand } from "@/config/brand";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ import {
   PRIMARY_ITEMS,
   PRIMARY_NAV as CONFIG_PRIMARY_NAV,
   PRIMARY_CTA,
-  BOOK_CALL_CTA,
+  MESSAGE_CTA,
   SECONDARY_CTAS,
   CANDIDATE_PRIMARY_CTA,
   CANDIDATE_SECONDARY_CTA,
@@ -189,7 +189,7 @@ function Header() {
 
   const candidateMode = isCandidateJourneyPath(pathname);
   const ctaPrimary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
-  const ctaSecondary = candidateMode ? CANDIDATE_SECONDARY_CTA : BOOK_CALL_CTA;
+  const ctaSecondary = candidateMode ? CANDIDATE_SECONDARY_CTA : MESSAGE_CTA;
 
   const sessionCta = useSessionCta();
   const signIn = sessionCta ?? (SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" });
@@ -612,7 +612,7 @@ export function CtaSection({
   title,
   description,
   primary = { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label },
-  secondary = { to: CTA_BOOK.to, label: CTA_BOOK.label },
+  secondary = { to: CTA_MESSAGE.to, label: CTA_MESSAGE.label },
   tertiary,
 }: {
   eyebrow?: string;

@@ -89,17 +89,6 @@ export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
  component: CandidateDetailPage,
 });
 
-import {
-  listSchedulableCandidates,
-  requestInterview,
-  type SchedulableCandidate,
-} from "@/lib/interviews.functions";
-import { RequestInterviewDialog } from "@/components/client/interviews/request-interview-dialog";
-import { getWorkspaceTimezone } from "@/lib/format/datetime";
-import { resolveRecipientZone } from "@/lib/time/zone-label";
-import { useAvailability } from "@/components/client/scheduling/availability-manager";
-import { proposalErrorMessage } from "@/lib/interview-proposal";
-import { isActiveInterview } from "@/lib/interview-state";
 
 function CandidateDetailPage() {
  const { id } = Route.useParams();
@@ -155,43 +144,6 @@ function CandidateDetailPage() {
 
 
 
-  const requestInterviewFn = useServerFn(requestInterview);
-  const availability = useAvailability(orgId);
-  const orgTimezone = resolveRecipientZone(
-    getWorkspaceTimezone(),
-    availability.data?.timezone as string | null | undefined,
-  );
-  const [requestFailed, setRequestFailed] = useState<string | null>(null);
-
-  const requestMut = useMutation({
-    mutationFn: (payload: Parameters<typeof requestInterviewFn>[0]["data"]) =>
-      requestInterviewFn({ data: payload }),
-    onSuccess: () => {
-      toast.success("Times proposed — we'll confirm with the candidate");
-      setRequestFailed(null);
-      setDialogAction(null);
-      setPendingKey(null);
-       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidate(orgId, id) });
-       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
-       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.interviews(orgId) });
-    },
-    onError: (e: Error) => {
-      const msg = proposalErrorMessage(e.message);
-      setRequestFailed(msg);
-      setPendingKey(null);
-      toast.error("Could not request interview", {
-        description: msg,
-        action: {
-          label: "Try again",
-          onClick: () => {
-            // Re-opening the dialog with the same action will allow retry
-            setDialogAction("request_interview");
-          },
-        },
-      });
-    },
-  });
-
   const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
  // Which action is in flight, so only the pressed button shows a spinner.
  const [pendingKey, setPendingKey] = useState<ActionKey | null>(null);
@@ -236,7 +188,7 @@ function CandidateDetailPage() {
       const back = stageBeforeRef.current;
       toast.success(
         p.action === "request_interview"
-          ? "Times proposed — we'll confirm with the candidate"
+          ? "Moved to the interview stage — arrange the interview directly with the candidate."
           : "Recorded — the TaaSFlow team has been notified.",
         {
           description: nextStepAfterRef.current ?? undefined,
@@ -317,7 +269,7 @@ function CandidateDetailPage() {
  not_moving_forward: "not_moving_forward",
  };
   const handleAct = (k: ActionKey, fromStage: MatchStage) => {
-    if (act.isPending || requestMut.isPending) return;
+    if (act.isPending) return;
     stageBeforeRef.current = fromStage;
     const to = RESULT_STAGE[k];
     nextStepAfterRef.current = to ? confirmationLine(to) : null;
@@ -393,15 +345,13 @@ function CandidateDetailPage() {
  }
 
 
- const { candidate, interviews, decisions } = data as {
+ const { candidate, decisions } = data as {
  candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
- interviews: AnyRow[];
  decisions: AnyRow[];
  };
  const isViewer = ctx?.active?.role === "client_viewer";
  const readOnly = support.readOnly || isViewer;
  const actions = ACTIONS_BY_STAGE[candidate.stage] ?? { primary: null, more: [] };
- const activeInterview = interviews.find(isActiveInterview) ?? null;
  // Icon-only controls name their subject so assistive tech (and the Playwright
  // suite) knows which candidate and role a decision applies to.
  const actionSubject = [candidate.candidate.display_name, candidate.position?.title]
@@ -543,13 +493,12 @@ function CandidateDetailPage() {
         <ActionArea
           actions={actions}
           readOnly={readOnly}
-          pending={act.isPending || requestMut.isPending}
+          pending={act.isPending}
           pendingKey={pendingKey}
           onAct={(k) => handleAct(k, candidate.stage)}
           stage={candidate.stage}
           matchId={candidate.match_id}
           subject={actionSubject}
-          activeInterviewId={activeInterview?.id ?? null}
           notRecommended={isNotRecommendedFit(candidate.fit_label, candidate.score)}
          />
 
@@ -574,28 +523,6 @@ function CandidateDetailPage() {
         />
 
 
-
-        {dialogAction === "request_interview" && orgId && (
-          <RequestInterviewDialog
-            orgId={orgId}
-            timezone={orgTimezone}
-            submitting={requestMut.isPending}
-            failed={requestFailed}
-            onClose={() => {
-              setDialogAction(null);
-              setRequestFailed(null);
-            }}
-            onSubmit={(payload) => {
-              setPendingKey("request_interview");
-              requestMut.mutate(payload);
-            }}
-            fetchCandidates={async () => {
-              const res = await listSchedulableCandidates({ data: { orgId: orgId! } });
-              return res as any;
-            }}
-            initialMatchId={candidate.match_id}
-          />
-        )}
 
         <NextStepNote
           stage={candidate.stage}
@@ -666,8 +593,8 @@ function CandidateDetailPage() {
  <div className="rounded-xl border bg-card p-4">
  <h2 className="text-sm font-semibold">Interview feedback</h2>
  <p className="mt-1 text-sm text-muted-foreground">
- Feedback is collected and shown in one place, alongside the scheduled
- interview.
+ Arrange interviews directly with the candidate, outside TaaSFlow. Feedback
+ on past interviews is kept in one place.
  </p>
  <Button asChild variant="outline" size="sm" className="mt-3">
  <Link to="/client/interviews" search={{ interview: undefined, feedback: undefined }}>Go to interviews →</Link>
@@ -686,12 +613,11 @@ function CandidateDetailPage() {
           pendingKey={pendingKey}
           onAct={(k) => handleAct(k, candidate.stage)}
           subject={actionSubject}
-          activeInterviewId={activeInterview?.id ?? null}
         />
       )}
 
       {/* Every consequential decision is confirmed, reasoned, and logged. */}
-      {dialogAction !== "request_interview" ? (
+      {(
         <DecisionDialog
           action={dialogAction as never}
           open={!!dialogAction}
@@ -710,7 +636,7 @@ function CandidateDetailPage() {
             act.mutate(payload as DecisionPayload);
           }}
         />
-      ) : null}
+      )}
 
     </div>
   );

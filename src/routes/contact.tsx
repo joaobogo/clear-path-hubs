@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { toast } from "sonner";
 import { marketingHead } from "@/lib/marketing/head";
-import { CTA_BOOK, CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { RESPONSE_TIME_SENTENCE } from "@/config/offer-facts";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { Input } from "@/components/ui/input";
@@ -51,7 +51,7 @@ const INTENTS: IntentSpec[] = [
     tagline: "Start a role or talk to sales.",
     icon: Briefcase,
     primaryCta: { label: CTA_PRIMARY.label, to: CTA_PRIMARY.to, icon: ArrowRight },
-    secondaryCta: { label: CTA_BOOK.label, to: CTA_BOOK.to },
+    secondaryCta: { label: CTA_MESSAGE.label, anchor: "#contact-form-hire" },
     backup: "Sales: sales@taasflow.com",
     fields: ["name", "email", "company", "role", "message"],
     formHeading: "Talk to sales",

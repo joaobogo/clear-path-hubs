@@ -1,24 +1,17 @@
 /**
  * The site-wide call-to-action vocabulary.
  *
- * Two buttons and one text link. Every public page uses these labels and
+ * Two buttons and one text link (primary pilot request, secondary message). Every public page uses these labels and
  * destinations; do not invent new labels for the same two actions.
  * Payments are disabled (`PAYMENTS_ENABLED=false`), so the primary action is a
  * request, never "Buy", "Pay" or "Start free trial".
  */
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
-import { BOOKING_ROUTE } from "@/config/booking";
 
 /** Primary employer action. Goes to the pilot page, which opens with the short inquiry form. */
 export const CTA_PRIMARY = {
   label: `Request my $${PRICE_PILOT_USD} pilot`,
   to: "/pilot",
-} as const;
-
-/** Secondary action. Always the native scheduler. */
-export const CTA_BOOK = {
-  label: "Book a 20-minute call",
-  to: BOOKING_ROUTE,
 } as const;
 
 /** Quiet link for visitors who want to see the process first. */
@@ -33,7 +26,7 @@ export const CTA_FULL_INTAKE = {
   to: "/intake",
 } as const;
 
-/** Opens the contact form, not a calendar. Label must say so. */
+/** Secondary action. Opens the contact form. TaaSFlow has no public calendar or booking flow. */
 export const CTA_MESSAGE = {
   label: "Send us a message",
   to: "/contact",

@@ -19,7 +19,7 @@ import {
   type ReadinessSection,
   type UpdateReadiness,
 } from "./client-update-readiness";
-import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Admin = SupabaseClient<any, any, any>;
@@ -119,7 +119,7 @@ export async function loadUpdateReadiness(
   }
 
   // ── Activity since baseline ─────────────────────────────────────────────
-  const [submittedRes, decisionsRes, ivCreatedRes, ivDoneRes, stageRes, notesRes, openRes] =
+  const [submittedRes, decisionsRes, ivDoneRes, stageRes, notesRes, openRes] =
     await Promise.all([
       a
         .from("candidate_matches")
@@ -132,13 +132,6 @@ export async function loadUpdateReadiness(
       a
         .from("client_decisions")
         .select("id, candidate_match_id, decision, feedback, created_at")
-        .eq("organization_id", organizationId)
-        .gt("created_at", baselineAt)
-        .order("created_at", { ascending: false })
-        .limit(200),
-      a
-        .from("interviews")
-        .select("id, candidate_match_id, position_id, interview_type, status, scheduled_at, created_at")
         .eq("organization_id", organizationId)
         .gt("created_at", baselineAt)
         .order("created_at", { ascending: false })
@@ -176,7 +169,7 @@ export async function loadUpdateReadiness(
         .order("delivered_at", { ascending: true })
         .limit(200),
     ]);
-  for (const r of [submittedRes, decisionsRes, ivCreatedRes, ivDoneRes, stageRes, notesRes, openRes]) {
+  for (const r of [submittedRes, decisionsRes, ivDoneRes, stageRes, notesRes, openRes]) {
     check(r);
   }
 
@@ -190,7 +183,6 @@ export async function loadUpdateReadiness(
         ...submitted.map((m) => String(m["id"])),
         ...openMatches.map((m) => String(m["id"])),
         ...((decisionsRes.data ?? []) as Row[]).map((d) => String(d["candidate_match_id"])),
-        ...((ivCreatedRes.data ?? []) as Row[]).map((i) => i["candidate_match_id"]),
         ...((ivDoneRes.data ?? []) as Row[]).map((i) => i["candidate_match_id"]),
         ...((stageRes.data ?? []) as Row[]).map((s) => String(s["candidate_match_id"])),
         ...((notesRes.data ?? []) as Row[])
@@ -220,7 +212,6 @@ export async function loadUpdateReadiness(
     new Set(
       [
         ...Array.from(matchRows.values()).map((m) => m["position_id"]),
-        ...((ivCreatedRes.data ?? []) as Row[]).map((i) => i["position_id"]),
         ...((ivDoneRes.data ?? []) as Row[]).map((i) => i["position_id"]),
         ...((stageRes.data ?? []) as Row[]).map((s) => s["position_id"]),
         ...((notesRes.data ?? []) as Row[])
@@ -298,16 +289,6 @@ export async function loadUpdateReadiness(
   });
 
   const interviewItems: ReadinessItem[] = [
-    ...((ivCreatedRes.data ?? []) as Row[]).map<ReadinessItem>((i) => ({
-      id: `interview-scheduled:${String(i["id"])}`,
-      label: `${nameForMatch(i["candidate_match_id"])} — interview ${String(i["status"] ?? "requested")}`,
-      detail: i["scheduled_at"]
-        ? `${String(i["interview_type"] ?? "interview")} on ${formatDateTime((String(i["scheduled_at"])))}`
-        : String(i["interview_type"] ?? "interview"),
-      at: String(i["created_at"]),
-      link_kind: typeof i["candidate_match_id"] === "string" ? "candidate" : "position",
-      link_id: String(i["candidate_match_id"] ?? i["position_id"]),
-    })),
     ...((ivDoneRes.data ?? []) as Row[]).map<ReadinessItem>((i) => ({
       id: `interview-completed:${String(i["id"])}`,
       label: `${nameForMatch(i["candidate_match_id"])} — interview completed`,

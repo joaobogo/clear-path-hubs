@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   EVENT_TYPES,
+  RETIRED_SCHEDULING_EVENTS,
   type Audience,
   type EventType,
   copyFor,
@@ -46,6 +47,9 @@ export async function emitEventFromServer(args: {
    */
   subject_label?: string | null;
 }) {
+  // Interview scheduling is gone: never store or send these.
+  if (RETIRED_SCHEDULING_EVENTS.has(args.event)) return { event_id: null, delivered: 0 };
+
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   // A "new message" notification that opens an empty thread is a dead end for

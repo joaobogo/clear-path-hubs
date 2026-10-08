@@ -19,7 +19,7 @@ import {
   ClipboardList,
   ArrowRight,
 } from "lucide-react";
-import { CTA_BOOK, CTA_ENTERPRISE, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_ENTERPRISE, CTA_PRIMARY } from "@/config/cta";
 import {
   COMPLIANCE_NOTE,
   FIRST_SHORTLIST_TIMING,
@@ -730,7 +730,7 @@ function EnterprisePage() {
         title="Plan hiring at volume with us."
         description="Tell us about your role families, volume, governance and reporting needs. We scope the package with you before anything starts."
         primary={CTA_ENTERPRISE}
-        secondary={CTA_BOOK}
+        secondary={CTA_MESSAGE}
       />
           <PageConnections
         commercial={{ to: CTA_ENTERPRISE.to, label: CTA_ENTERPRISE.label, desc: "Get a scoped package for your volume." }}

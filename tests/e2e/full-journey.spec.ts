@@ -487,29 +487,30 @@ test.describe("full journey walkthrough", () => {
       [/shortlist/i, /client_shortlisted/i],
     );
 
-    const interviewRequested = await advanceOnce(/advance to interview/i);
+    const interviewRequested = await advanceOnce(/advance to interview|move to interview stage/i);
     await checkTrail(
-      "11. Interview requested",
+      "11. Moved to interview stage",
       interviewRequested ? "PASS" : "FAIL",
       { organizationId: orgId, positionId: positionId!, matchId },
       [/interview/i],
     );
 
-    // ── 13. Interview scheduled ───────────────────────────────────────────
-    await page.goto("/client/interviews", { waitUntil: "domcontentloaded" });
+    // ── 13. Candidate sits at the interview stage ─────────────────────────
+    // TaaSFlow does not schedule interviews: the client arranges them directly.
+    await page.goto(`/client/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
     const interviewVisible = await page
       .getByText(applicant.fullName.split(" ")[0]!)
       .first()
       .isVisible({ timeout: 90_000 })
       .catch(() => false);
     record({
-      step: "12. Interview on client board",
+      step: "12. Candidate at interview stage",
       ui: interviewVisible ? "PASS" : "FAIL",
       audit: "n/a",
       notification: "n/a",
       note: "",
     });
-    expect.soft(interviewVisible, "requested interview appears for the client").toBe(true);
+    expect.soft(interviewVisible, "candidate at the interview stage is visible to the client").toBe(true);
 
     // ── 14. Candidate sees their application state ────────────────────────
     await loginAs(page, "candidate", applicant.email, QA_PASSWORD);

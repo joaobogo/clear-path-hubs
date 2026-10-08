@@ -109,7 +109,7 @@ export const NODES: readonly Node[] = [
     name: nameFor("evidence"),
     status: "shipped",
     summary: "Each requirement is linked to its supporting proof.",
-    inputs: [`Parsed CV text (${ACCEPTED_UPLOADS})`, "Application answers and notes"],
+    inputs: ["Parsed CV text (PDF)", "Application answers and notes"],
     does: [
       "Extracts evidence items and attaches them to specific requirements",
       "Flags requirements with no supporting evidence",

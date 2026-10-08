@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
+import { cvConsentGate, reachedInterview } from "@/lib/consent/cv-consent-gate";
+import { loadInterviewEvidence } from "@/lib/consent/interview-evidence.server";
 
 
 const SIGNED_URL_TTL_SECONDS = 3600; // 1 hour - allows for clock skew and long reading sessions
@@ -100,17 +101,17 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
         if (allowed === true) {
           audience = "client";
 
-          const { count: interviewCount } = await supabaseAdmin
-            .from("interviews")
-            .select("id", { count: "exact", head: true })
-            .eq("candidate_match_id", matchId);
+          // "Reached interview" is proven by the stage history or a live
+          // request_interview decision (an undone request does not count);
+          // legacy interview rows are an OR. Shared with the feedback guard.
+          const evidence = await loadInterviewEvidence(matchId);
 
           const gate = cvConsentGate({
             stage: match.stage as string,
             contact_released_at: match.contact_released_at as string | null,
             contact_released_by: match.contact_released_by as string | null,
             contact_release_reason: match.contact_release_reason as string | null,
-            has_interview: (interviewCount ?? 0) > 0,
+            has_interview: reachedInterview(evidence),
           });
           if (!gate.open) throw new Error("cv_gated_pre_interview: this candidate's CV unlocks at interview stage.");
           authorized = true;

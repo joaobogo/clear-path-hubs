@@ -12,10 +12,6 @@ import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 import { loadConfirmedHires } from "@/lib/kpis/confirmed-hires.server";
 import { loadOpenRoles, loadOrgRoles } from "@/lib/kpis/open-roles.server";
 import { loadKpiRows, computeKpis, isAwaitingClientDecision } from "@/lib/client-kpi.server";
-import {
-  awaitingClient,
-  loadInterviewsAwaitingConfirmation,
-} from "@/lib/client/interviews-to-confirm.server";
 import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 import { laneFor } from "@/lib/client-pipeline-lane";
 import {
@@ -197,27 +193,18 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     // and the client board read, so a team row can never claim a hire the
     // Overview does not, or show nothing to decide while the board shows ten.
     const kpiRows = await loadKpiRows(s, orgId);
-    // The lane per match, from the rows that actually carry the interview
-    // fields. `matchRows` below is a raw candidate_matches select with no join
-    // to interviews, so `laneFor` cannot run on it — which is why every
-    // aggregate here fell back to the raw stage and Insights printed
-    // "Shortlisted 5" beside a Candidates tab reading 6 (audit #9, item 12).
+    // The lane per match, from the canonical KPI rows. `matchRows` below is a
+    // raw candidate_matches select, so `laneFor` cannot run on it directly —
+    // which is why every aggregate here once fell back to the raw stage and
+    // Insights printed "Shortlisted 5" beside a Candidates tab reading 6
+    // (audit #9, item 12).
     const laneByMatch = new Map(kpiRows.map((r) => [String(r.id), laneFor(r)]));
     const hiredMatchIds = new Set(
       kpiRows.filter((r) => r.hire_confirmed).map((r) => String(r.id)),
     );
-    // "Needs your input" is a union, matching its caption: candidates waiting
-    // on a decision plus interviews waiting on the client to confirm a time.
-    // A candidate in both states is counted once.
-    const awaitingConfirmation = awaitingClient(
-      await loadInterviewsAwaitingConfirmation(s, orgId),
-    );
     const awaitingDecisionMatchIds = new Set(
       kpiRows.filter(isAwaitingClientDecision).map((r) => String(r.id)),
     );
-    for (const iv of awaitingConfirmation) {
-      if (iv.candidate_match_id) awaitingDecisionMatchIds.add(String(iv.candidate_match_id));
-    }
 
     const buMap = new Map<
       string,

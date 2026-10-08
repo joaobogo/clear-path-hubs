@@ -128,7 +128,7 @@ export type VerticalConfig = {
 /* Configurations                                                      */
 /* ------------------------------------------------------------------ */
 
-const BASE_INTEGRATIONS = ["mcp", "calendly", "transactional-email", "workspace-analytics"];
+const BASE_INTEGRATIONS = ["mcp", "transactional-email", "workspace-analytics"];
 
 export const VERTICAL_CONFIGS: Record<string, VerticalConfig> = {
   technology: {

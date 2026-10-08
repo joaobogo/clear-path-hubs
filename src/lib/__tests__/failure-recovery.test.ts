@@ -144,18 +144,11 @@ type Stage = "delivered" | "shortlisted" | "interview_process";
 class DecisionMirror {
   stage: Stage = "delivered";
   decisions: string[] = [];
-  interviews: { status: string }[] = [];
 
   act(action: "shortlist" | "request_interview") {
     const next: Stage = action === "shortlist" ? "shortlisted" : "interview_process";
     if (this.stage === next) return { ok: true, noop: true };
     this.stage = next;
-    if (action === "request_interview") {
-      const open = this.interviews.some((i) =>
-        ["requested", "scheduling", "scheduled"].includes(i.status),
-      );
-      if (!open) this.interviews.push({ status: "requested" });
-    }
     this.decisions.push(action);
     return { ok: true, noop: false };
   }
@@ -173,11 +166,10 @@ describe("5. Duplicate submit of the same action", () => {
     expect(db.decisions.filter((d) => d === "shortlist")).toHaveLength(1);
   });
 
-  it("never opens a second interview for the same candidate", () => {
+  it("records the move to the interview stage once", () => {
     db.act("shortlist");
     db.act("request_interview");
     db.act("request_interview");
-    expect(db.interviews).toHaveLength(1);
     expect(db.decisions.filter((d) => d === "request_interview")).toHaveLength(1);
   });
 

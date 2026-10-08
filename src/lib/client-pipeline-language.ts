@@ -1,8 +1,7 @@
 // Plain-language pipeline status lines for client-facing surfaces.
-import { calendarDaysUntil } from "@/lib/format/relative-date";
 //
 // One sentence a busy hiring manager understands, e.g.
-//   "4 candidates shortlisted, 2 awaiting your review, 1 interview Thursday."
+//   "4 candidates shortlisted, 2 awaiting your review, 1 offer out."
 //
 // RULES (client language contract):
 //  - Never surface internal vocabulary: canonical states, score runs,
@@ -18,12 +17,6 @@ export type PipelineStatusInput = {
   awaitingReview: number;
   /** Candidates the client shortlisted. */
   shortlisted: number;
-  /** Interviews requested or being scheduled — waiting on the client to confirm a time. */
-  interviewsToConfirm: number;
-  /** Interviews with a confirmed time. */
-  interviewsScheduled: number;
-  /** ISO timestamp of the soonest confirmed interview, if any. */
-  nextInterviewAt?: string | null;
   /** Candidates at offer. */
   offers: number;
   /** Confirmed hires. */
@@ -31,50 +24,6 @@ export type PipelineStatusInput = {
   /** Total candidates shared with the client for this role. */
   totalCandidates: number;
 };
-
-const WEEKDAYS = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
-function startOfDay(d: Date): number {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-}
-
-/** "today" | "tomorrow" | "Thursday" | "on 12 Aug" | null for past/invalid. */
-export function describeInterviewDay(
-  iso: string | null | undefined,
-  now: Date = new Date(),
-): string | null {
-  if (!iso) return null;
-  const when = new Date(iso);
-  if (Number.isNaN(when.getTime())) return null;
-  const days = calendarDaysUntil(when, now) ?? 0;
-  if (days < 0) return null;
-  if (days === 0) return "today";
-  if (days === 1) return "tomorrow";
-  if (days <= 6) return WEEKDAYS[when.getDay()]!;
-  return `on ${when.getDate()} ${MONTHS[when.getMonth()]}`;
-}
 
 function plural(n: number, one: string, many = `${one}s`): string {
   return n === 1 ? one : many;
@@ -119,23 +68,6 @@ export function buildPipelineStatusLine(
   if (input.awaitingReview > 0) {
     parts.push(`${input.awaitingReview} awaiting your review`);
   }
-  if (input.interviewsToConfirm > 0) {
-    parts.push(
-    `${input.interviewsToConfirm} ${plural(input.interviewsToConfirm, "interview")} to confirm`,
-
-    );
-  }
-  if (input.interviewsScheduled > 0) {
-    const day = describeInterviewDay(input.nextInterviewAt, now);
-    const noun = `${input.interviewsScheduled} ${plural(input.interviewsScheduled, "interview")}`;
-    parts.push(
-      day
-        ? input.interviewsScheduled === 1
-          ? `1 interview ${day}`
-          : `${noun} booked, next ${day}`
-        : `${noun} booked`,
-    );
-  }
 
   if (parts.length > 0) return joinClauses(parts);
 
@@ -150,16 +82,11 @@ export function buildPipelineStatusLine(
  * nothing is waiting on the client.
  */
 export function buildPipelineActionLabel(
-  input: Pick<
-    PipelineStatusInput,
-    "status" | "awaitingReview" | "interviewsToConfirm" | "offers"
-  >,
+  input: Pick<PipelineStatusInput, "status" | "awaitingReview" | "offers">,
 ): string | null {
   if (["draft", "paused", "closed", "archived"].includes(input.status)) return null;
   if (input.awaitingReview > 0)
     return `${input.awaitingReview} awaiting your review`;
-  if (input.interviewsToConfirm > 0)
-    return `${input.interviewsToConfirm} to confirm`;
   if (input.offers > 0)
     return `${input.offers} offer${input.offers === 1 ? "" : "s"} awaiting response`;
   return null;
@@ -171,7 +98,6 @@ export function buildPipelineActionLabel(
  *
  * Every target is an exact-id deep link into an existing client surface:
  *  - awaiting review  → candidates list, filtered to this role's new arrivals
- *  - interview to confirm → interviews desk, scrolled to that interview card
  *  - offer outstanding → candidates list at offer stage for this role
  */
 export type PipelineActionTarget =
@@ -180,21 +106,11 @@ export type PipelineActionTarget =
       to: "/client/candidates";
       search: { position: string; review: "awaiting"; stage: "delivered" };
     }
-  | {
-      kind: "confirm_interview";
-      to: "/client/interviews";
-      search: { interview?: string };
-    }
   | { kind: "offer_response"; to: "/client/offers" };
 
 export function buildPipelineActionTarget(
-  input: Pick<
-    PipelineStatusInput,
-    "status" | "awaitingReview" | "interviewsToConfirm" | "offers"
-  > & {
+  input: Pick<PipelineStatusInput, "status" | "awaitingReview" | "offers"> & {
     positionId: string;
-    /** Exact interview id that still needs a confirmed time, when known. */
-    interviewToConfirmId?: string | null;
   },
 ): PipelineActionTarget | null {
   if (["draft", "paused", "closed", "archived"].includes(input.status)) return null;
@@ -203,12 +119,6 @@ export function buildPipelineActionTarget(
       kind: "review_candidates",
       to: "/client/candidates",
       search: { position: input.positionId, review: "awaiting", stage: "delivered" },
-    };
-  if (input.interviewsToConfirm > 0)
-    return {
-      kind: "confirm_interview",
-      to: "/client/interviews",
-      search: input.interviewToConfirmId ? { interview: input.interviewToConfirmId } : {},
     };
   if (input.offers > 0)
     return {

@@ -60,13 +60,6 @@ export function DeliveryCommitmentBlock({
         <p className="text-sm text-muted-foreground">{commitment?.pendingMessage}</p>
       )}
 
-      {commitment?.clientTurnaround && (
-        <div className="text-sm">
-          <p className="font-medium">What we need from you</p>
-          <p className="text-muted-foreground">{commitment.clientTurnaround}</p>
-        </div>
-      )}
-
       {commitment && (
         <div className="text-sm">
           <p className="font-medium">Your point of contact</p>

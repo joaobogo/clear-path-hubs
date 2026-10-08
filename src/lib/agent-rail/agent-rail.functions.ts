@@ -55,7 +55,6 @@ const FEED_EVENTS = [
   "message_sent",
   "clarification_requested",
   "contact_released",
-  "interview_scheduled",
   "interview_completed",
 ] as const;
 
@@ -408,11 +407,8 @@ export const getAgentActivityRail = createServerFn({ method: "GET" })
                   : {
                       kind: "coordination" as const,
                       actor: SYSTEM_ACTORS.pipeline!,
-                      action:
-                        type === "interview_completed"
-                          ? `An interview with ${cand?.label ?? "a candidate"} was completed.`
-                          : `An interview with ${cand?.label ?? "a candidate"} was scheduled.`,
-                      result: "Times and attendees are on the interview record.",
+                      action: `An interview with ${cand?.label ?? "a candidate"} was completed.`,
+                      result: "The interview is on the candidate's record.",
                     };
 
       const needsAnswer = type === "clarification_requested";

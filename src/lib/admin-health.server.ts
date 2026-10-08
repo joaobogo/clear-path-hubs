@@ -34,7 +34,7 @@ export async function loadSlaClock(
     admin
       .from("position_commitments")
       .select(
-        "position_id, organization_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at, positions:position_id(title, status), organizations:organization_id(name)",
+        "position_id, organization_id, first_shortlist_days, shortlist_size, baseline_at, positions:position_id(title, status), organizations:organization_id(name)",
       )
       .limit(500),
     scope,

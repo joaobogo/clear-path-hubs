@@ -135,7 +135,12 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
         countRows(scopedRuns().in("status", ["queued", "running"])),
         countRows(scopedMatches().eq("client_visibility", "visible").eq("stage", "delivered")),
         countRows(scopedMatches().not("delivered_at", "is", null)),
-        countRows(sb.from("interviews").select("id", head).eq("organization_id", org)),
+        // Interviews are arranged off system: candidates who reached the interview
+        // stage count alongside any legacy interview records (never double).
+        Promise.all([
+          countRows(sb.from("interviews").select("id", head).eq("organization_id", org)),
+          countRows(scopedMatches().in("stage", ["interview_process", "offer", "hired"])),
+        ]).then(([rows, staged]) => Math.max(rows, staged)),
         countRows(
           sb
             .from("hire_records")

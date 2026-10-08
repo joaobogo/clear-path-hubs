@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
 import { PublicPage, PublicSection, SiteShell } from "@/components/marketing/site-shell";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { SHORTLIST_SIZE, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 import {
   SAMPLE_SHORTLIST,
@@ -147,10 +147,10 @@ function SampleShortlistPage() {
               {CTA_PRIMARY.label}
             </Link>
             <Link
-              to={CTA_BOOK.to}
+              to={CTA_MESSAGE.to}
               className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/30 px-5 py-3 text-base font-semibold"
             >
-              {CTA_BOOK.label}
+              {CTA_MESSAGE.label}
             </Link>
           </div>
           <p className="mt-4 text-sm">

@@ -4,7 +4,6 @@
  * description. Success is shown only after the server has stored the request.
  */
 import { useEffect, useId, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 
@@ -23,7 +22,7 @@ import {
   trackLeadFormStart,
   trackLeadFormView,
 } from "@/lib/tracking/lead-form-events";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_PRIMARY } from "@/config/cta";
 import { SALES_EMAIL } from "@/config/booking";
 import { cn } from "@/lib/utils";
 
@@ -152,16 +151,10 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
           Your request has been received
         </h2>
         <p role="status" className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
-          We will contact you to confirm fit and next steps. Nothing has been charged and no
-          sourcing has started.
+          We will contact you within one business day to confirm the role and the pilot scope.
+          Nothing has been charged and no sourcing has started.
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-4">
-          <Link
-            to={CTA_BOOK.to}
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-          >
-            Choose a time
-          </Link>
           <a
             href={`mailto:${SALES_EMAIL}`}
             className="text-sm font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:underline"

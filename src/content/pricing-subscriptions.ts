@@ -28,7 +28,7 @@ import {
   FIRST_SHORTLIST_TIMING_SHORT,
   PILOT_IS_PAID_NOTE,
 } from "@/config/offer-facts";
-import { CTA_PRIMARY, CTA_BOOK, CTA_ENTERPRISE } from "@/config/cta";
+import { CTA_PRIMARY, CTA_MESSAGE, CTA_ENTERPRISE } from "@/config/cta";
 import { publicSeatsLine, SCOPED_PUBLIC_LABEL } from "@/config/pricing-entitlements";
 
 export type SubscriptionTier = {
@@ -103,8 +103,8 @@ const BASE_TIERS: SubscriptionTier[] = [
     bestFor: `${PACKAGE_10.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_10.capacityLabel,
     included: includedFor("growth", PACKAGE_10.capacityLabel, ["Dedicated support"]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: true,
   },
   {
@@ -118,8 +118,8 @@ const BASE_TIERS: SubscriptionTier[] = [
     bestFor: `${PACKAGE_20.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_20.capacityLabel,
     included: includedFor("scale", PACKAGE_20.capacityLabel, ["Priority support", "Faster calibration cycles"]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: true,
   },
   {
@@ -133,8 +133,8 @@ const BASE_TIERS: SubscriptionTier[] = [
     bestFor: `${PACKAGE_30.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_30.capacityLabel,
     included: includedFor("volume", PACKAGE_30.capacityLabel, ["Dedicated account manager", "Custom reporting", "Executive portfolio dashboard"]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: true,
   },
   {
@@ -148,8 +148,8 @@ const BASE_TIERS: SubscriptionTier[] = [
     bestFor: `${PACKAGE_40.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_40.capacityLabel,
     included: includedFor("portfolio", PACKAGE_40.capacityLabel, ["Dedicated account manager", "Custom reporting", "Executive portfolio dashboard"]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: false,
   },
   {
@@ -163,8 +163,8 @@ const BASE_TIERS: SubscriptionTier[] = [
     bestFor: `${PACKAGE_100.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_100.capacityLabel,
     included: includedFor("program", PACKAGE_100.capacityLabel, ["Dedicated account manager", "Custom reporting", "Executive portfolio dashboard", "Named executive sponsor"]),
-    ctaLabel: CTA_BOOK.label,
-    ctaTo: CTA_BOOK.to,
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
     card: false,
   },
   {

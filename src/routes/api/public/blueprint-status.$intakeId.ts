@@ -70,7 +70,7 @@ export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
             const { data: row } = await admin
               .from("position_commitments")
               .select(
-                "position_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at",
+                "position_id, first_shortlist_days, shortlist_size, baseline_at",
               )
               .eq("position_id", intake.position_id)
               .maybeSingle();

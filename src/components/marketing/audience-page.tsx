@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { PublicPage, PublicSection, SiteShell, CtaSection } from "@/components/marketing/site-shell";
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { OFFER_LAST_UPDATED_LABEL } from "@/config/offer-facts";
 
 export type AudienceSection = {
@@ -43,10 +43,10 @@ export function AudiencePage(props: AudiencePageProps) {
               {CTA_PRIMARY.label}
             </Link>
             <Link
-              to={CTA_BOOK.to}
+              to={CTA_MESSAGE.to}
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              {CTA_BOOK.label}
+              {CTA_MESSAGE.label}
             </Link>
           </div>
           <p className="mt-4 text-xs text-[color:var(--brand-navy)]/70">{OFFER_LAST_UPDATED_LABEL}</p>

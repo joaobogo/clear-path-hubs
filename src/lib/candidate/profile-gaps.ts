@@ -2,7 +2,7 @@
  * Outcome-tied profile gaps for the candidate home page.
  *
  * Rules:
- * - Only fields that genuinely change matching or scheduling qualify.
+ * - Only fields that genuinely change matching qualify.
  * - Never demographic fields.
  * - At most three items surfaced at a time.
  * - Each item states why it matters and links straight to that field.
@@ -38,7 +38,7 @@ const GAP_RULES: Array<{
   {
     key: "timezone",
     label: "Set your time zone",
-    reason: "We cannot schedule an interview without knowing your time zone.",
+    reason: "Employers read your availability in your time zone.",
     fieldId: "p-timezone",
     missing: (p) => !String(p.timezone ?? "").trim(),
   },
@@ -74,7 +74,7 @@ const GAP_RULES: Array<{
   {
     key: "phone",
     label: "Add a phone number",
-    reason: "We use it to confirm interview times when email goes quiet.",
+    reason: "We use it to reach you when email goes quiet.",
     fieldId: "p-phone",
     missing: (p) => !String(p.phone ?? "").trim(),
   },

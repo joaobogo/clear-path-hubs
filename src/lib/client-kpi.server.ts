@@ -12,11 +12,6 @@ import { isStrongFitBand, isStrongFitScore } from "@/lib/scoring/score-counts";
 import { publishedBand, publishedScore, publishedScoreDisplay, hasVideoIntro, withVideoIntroBonus, scoreVoidedByUnreadableCv, VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
-import {
-  countRowsAwaitingConfirmation,
-  interviewCalledOffOnly,
-  interviewHeld,
-} from "@/lib/client/interviews-to-confirm";
 import { cleanQuote, renderQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
 
 import {
@@ -134,20 +129,6 @@ export type KpiRow = {
   approved_fit_label: string | null;
   /** Stored band key of the approved run, when the writer recorded one. */
   approved_fit_band: string | null;
-  interview_active: boolean;
-  /** Every interview was called off and none held — see interviewCalledOffOnly. */
-  interview_called_off: boolean;
-  /** An interview was actually held. Gates "Make offer" (audit 1 Sep, F20b). */
-  interview_completed: boolean;
-  interview_scheduled: boolean;
-  /** An interview exists that still needs the client to confirm a time. */
-  interview_needs_confirmation: boolean;
-  /** The interview record that needs confirmation, when one exists. */
-  interview_id: string | null;
-  /** Soonest confirmed interview time, if one is booked. */
-  next_interview_at: string | null;
-  /** When the earliest unconfirmed interview was requested. */
-  interview_requested_at: string | null;
   /** When this candidate entered its current stage (falls back to delivery). */
   stage_entered_at: string | null;
   /** Recorded date the client's decision is due by, when one is stored. */
@@ -170,14 +151,10 @@ export type ClientKpis = {
   top: number;
   shortlisted: number;
   interviewing: number;
-  interview_scheduled: number;
-  /** Interviews requested or being scheduled — waiting on the client. */
-  interviews_to_confirm: number;
   /** Candidates delivered and still awaiting a first client decision. */
   awaiting_decision: number;
   /** Oldest timestamps behind each queue count — makes delay visible. */
   oldest_awaiting_decision_at: string | null;
-  oldest_interview_to_confirm_at: string | null;
   oldest_offer_at: string | null;
   offers: number;
   hires: number;
@@ -219,59 +196,13 @@ export async function loadKpiRows(
 
 
   const matchIds = (matches as AnyRow[]).map((m) => m.id);
-  const activeInterviews = new Set<string>();
-  const scheduledInterviews = new Set<string>();
-  const unconfirmedInterviews = new Set<string>();
-  const unconfirmedInterviewId = new Map<string, string>();
-  const nextInterviewAt = new Map<string, string>();
-  const interviewRequestedAt = new Map<string, string>();
   const stageEnteredAt = new Map<string, string>();
   // A recorded client decision is what closes "waiting on you" — never the
   // internal admin recommendation.
   const decidedMatches = new Set<string>();
   let evidenceByMatch = new Map<string, ClientEvidenceRow[]>();
 
-
-  const statusesByMatch = new Map<string, string[]>();
   if (matchIds.length > 0) {
-    // Every status, not just the live ones. Filtering to four statuses made a
-    // cancellation invisible here, so the lane could not know an interview had
-    // been called off and the INTERVIEWING tile went on counting the candidate
-    // (audit 1 Sep, F6).
-    const { data: ivs } = await supabase
-      .from("interviews")
-      .select("id, candidate_match_id, status, scheduled_at, created_at")
-      .in("candidate_match_id", matchIds);
-    for (const iv of (ivs as AnyRow[]) ?? []) {
-      const list = statusesByMatch.get(iv.candidate_match_id) ?? [];
-      list.push(String(iv.status ?? ""));
-      statusesByMatch.set(iv.candidate_match_id, list);
-      if (!["requested", "scheduling", "scheduled", "completed"].includes(String(iv.status))) {
-        continue;
-      }
-      activeInterviews.add(iv.candidate_match_id);
-      if (iv.status === "scheduled") {
-        scheduledInterviews.add(iv.candidate_match_id);
-        const at = iv.scheduled_at as string | null;
-        if (at) {
-          const prev = nextInterviewAt.get(iv.candidate_match_id);
-          if (!prev || at < prev) nextInterviewAt.set(iv.candidate_match_id, at);
-        }
-      }
-      if (iv.status === "requested" || iv.status === "scheduling") {
-        unconfirmedInterviews.add(iv.candidate_match_id);
-        const at = iv.created_at as string | null;
-        if (at) {
-          const prev = interviewRequestedAt.get(iv.candidate_match_id);
-          if (!prev || at < prev) interviewRequestedAt.set(iv.candidate_match_id, at);
-        }
-        // Keep the earliest open interview so deep links point to the right record.
-        if (!unconfirmedInterviewId.has(iv.candidate_match_id)) {
-          unconfirmedInterviewId.set(iv.candidate_match_id, iv.id as string);
-        }
-      }
-    }
-
     // When each candidate entered its current stage — the clock clients see.
     const { data: history } = await supabase
       .from("candidate_stage_history")
@@ -317,12 +248,6 @@ export async function loadKpiRows(
     approved_fit_label: m.score_runs?.fit_label ?? null,
     organization_name: m.organizations?.name ?? null,
     approved_fit_band: m.score_runs?.fit_band ?? null,
-    interview_active: activeInterviews.has(m.id),
-    interview_called_off: interviewCalledOffOnly(statusesByMatch.get(m.id) ?? []),
-    interview_completed: interviewHeld(statusesByMatch.get(m.id) ?? []),
-    interview_scheduled: scheduledInterviews.has(m.id),
-    next_interview_at: nextInterviewAt.get(m.id) ?? null,
-    interview_requested_at: interviewRequestedAt.get(m.id) ?? null,
     stage_entered_at: stageEnteredAt.get(m.id) ?? m.delivered_at ?? null,
 
     client_decision_due_at: m.client_decision_due_at ?? null,
@@ -333,8 +258,6 @@ export async function loadKpiRows(
     hire_confirmed:
       confirmedHires.matchIds.has(String(m.id)) ||
       confirmedHires.pairs.has(`${m.position_id}:${m.candidate_profile_id}`),
-    interview_needs_confirmation: unconfirmedInterviews.has(m.id),
-    interview_id: unconfirmedInterviewId.get(m.id) ?? null,
     evidence_items: (evidenceByMatch.get(String(m.id)) as unknown as AnyRow[]) ?? [],
   }));
 }
@@ -394,7 +317,7 @@ export function computeKpis(
    * from rows is how the same figure came to read 5 on one page and 1 on the
    * next. Pass them wherever an organization-scoped reader is available.
    */
-  canonical: { interviews_to_confirm?: number; offers?: number } = {},
+  canonical: { offers?: number } = {},
 ): ClientKpis {
   // Every stage-shaped count comes from the one lane derivation, so the tiles,
   // the board columns and the per-role roll-ups are literally the same numbers.
@@ -404,11 +327,6 @@ export function computeKpis(
     top: rows.filter(isTopMatch).length,
     shortlisted: counts.shortlisted,
     interviewing: counts.interview_process,
-    interview_scheduled: rows.filter((r) => r.stage === "interview_process" && r.interview_scheduled).length,
-    // Canonical: every interview still awaiting a confirmed time, whatever
-    // lane the candidate sits in (shared with the home page and Interviews page).
-    interviews_to_confirm:
-      canonical.interviews_to_confirm ?? countRowsAwaitingConfirmation(rows),
 
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
     offers: canonical.offers ?? counts.offer,
@@ -419,13 +337,6 @@ export function computeKpis(
       rows
         .filter(isAwaitingClientDecision)
         .map((r) => r.delivered_at ?? r.stage_entered_at),
-    ),
-    // Only real interview request dates age this figure. Falling back to the
-    // candidate's stage date would let an offer masquerade as an interview.
-    oldest_interview_to_confirm_at: oldest(
-      rows
-        .filter((r) => r.interview_needs_confirmation)
-        .map((r) => r.interview_requested_at),
     ),
     oldest_offer_at: oldest(
       rowsInLane(rows, "offer").map((r) => r.stage_entered_at),
@@ -445,33 +356,6 @@ export type ClientCandidateDTO = {
   match_id: string;
   stage: MatchStage;
   delivered_at: string | null;
-  /**
-   * An interview exists for this candidate (requested, scheduling, scheduled or
-   * completed). The "Interviewing" KPI counts these regardless of stage, so the
-   * list must be able to as well — filtering on stage alone made the tile and
-   * its drill-through disagree.
-   */
-  interview_active: boolean;
-  /**
-   * An interview has been asked for and is still waiting on a confirmed time.
-   *
-   * `interview_active` is true for every interview state including scheduled
-   * and completed, so it cannot answer "is the ball with us?". Without this
-   * distinction the candidates list offered "Request interview" for two
-   * candidates the overview was, on the same visit, asking the client to
-   * confirm a time for (audit #6, A6-23).
-   */
-  interview_awaiting_time: boolean;
-  /**
-   * An interview existed and was cancelled, and none was held. The stage stays
-   * at interview_process, so without this the client was shown "Interviewing"
-   * with a "Make offer" action for someone whose only interview was called off
-   * (audit #8, TF8-08). False for a COMPLETED interview — that is a normal
-   * interview_process state and must keep reading as Interviewing.
-   */
-  interview_called_off: boolean;
-  /** An interview was actually held. Gates "Make offer" (audit 1 Sep, F20b). */
-  interview_completed: boolean;
   /**
    * True when the client has already recorded a decision on this candidate.
    * Carried so the snapshot tiles can apply the one "awaiting your review"
@@ -883,7 +767,7 @@ const STAGE_EVENT_LABEL: Record<string, string> = {
 const AUDIT_ACTION_LABEL: Record<string, string> = {
   "cv.download": "CV opened by your team",
   "client.shortlist": "Shortlisted by your team",
-  "client.request_interview": "Interview requested",
+  "client.request_interview": "Moved to interview stage",
   "client.offer": "Offer extended",
   "client.hire": "Marked as hired",
   "client.not_moving_forward": "Declined for this role",
@@ -1280,14 +1164,6 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     stage: row.stage,
     intro_video,
     delivered_at: row.delivered_at ?? null,
-    interview_active: Boolean(row.interview_active),
-    // Requested, but no time confirmed yet — the ball is with us.
-    interview_awaiting_time: Boolean(
-      (row as AnyRow).interview_needs_confirmation ??
-        ((row as AnyRow).interview_requested_at && !(row as AnyRow).next_interview_at),
-    ),
-    interview_called_off: Boolean((row as AnyRow).interview_called_off),
-    interview_completed: Boolean((row as AnyRow).interview_completed),
     client_decided: Boolean(row.client_decided),
     hire_confirmed: Boolean(row.hire_confirmed),
     contact_released: released,

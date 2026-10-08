@@ -7,7 +7,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { noindexMarketingHead } from "@/lib/marketing/noindex-head";
-import { CTA_PRIMARY, CTA_HOW_IT_WORKS, CTA_BOOK } from "@/config/cta";
+import { CTA_PRIMARY, CTA_HOW_IT_WORKS, CTA_MESSAGE } from "@/config/cta";
 import { FIRST_SHORTLIST_TIMING_SHORT, TIMING_FINE_PRINT, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 import { INTAKE_TOTAL_MINUTES } from "@/lib/express-intake-schema";
 import { CheckCircle2, XCircle, Sparkles, ShieldCheck, LineChart, Users } from "lucide-react";
@@ -419,9 +419,9 @@ function PitchPage() {
         <CtaSection
           eyebrow="Next step"
           title="See the process on your own role."
-          description="Request the pilot for one role, or book a call to talk it through first."
+          description="Request the pilot for one role, or send us a message to talk it through first."
           primary={CTA_PRIMARY}
-          secondary={CTA_BOOK}
+          secondary={CTA_MESSAGE}
         />
       ) : null}
     </div>

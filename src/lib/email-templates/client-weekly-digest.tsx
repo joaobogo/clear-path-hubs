@@ -120,8 +120,8 @@ const ClientWeeklyDigest = ({
           <Text style={{ ...text, margin: 0, color: palette.ink, fontWeight: 600 }}>{r.title}</Text>
           <Text style={{ ...text, margin: '2px 0 0', fontSize: '13px' }}>
             {r.stage} · {r.newCandidates} new candidate{r.newCandidates === 1 ? '' : 's'} ·{' '}
-            {r.awaitingDecision} awaiting your decision · {r.interviews} interview
-            {r.interviews === 1 ? '' : 's'} booked
+            {r.awaitingDecision} awaiting your decision · {r.interviews} at the interview
+            stage
           </Text>
           <Text style={{ ...text, margin: '2px 0 0', fontSize: '13px', color: palette.muted }}>
             Next: {r.nextStep}
@@ -153,7 +153,7 @@ export const template = {
       windowLabel: '7 Mar – 14 Mar',
       metrics: [
         { label: 'Candidates', count: 3 },
-        { label: 'Interviews held', count: 1 },
+        { label: 'Interview', count: 1 },
         { label: 'Decision made', count: 1 },
       ],
       awaiting: [

@@ -7,7 +7,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
 import { loadClientOverview } from "@/lib/client-overview.functions";
-import { listPendingPaymentRoles } from "@/lib/booking.functions";
+import { listPendingPaymentRoles } from "@/lib/pending-payment-roles.functions";
 import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
 import { listRolesNeedingDetails } from "@/lib/position-readiness.functions";
 import { RoleDetailsNeededBanner } from "@/components/client/role-details-needed-banner";
@@ -347,7 +347,6 @@ function OverviewPage() {
                   positionId={r.positionId}
                   positionTitle={r.title}
                   paymentStatus={r.paymentStatus}
-                  callStart={r.callStart}
                 />
               ))}
             </div>

@@ -20,7 +20,6 @@ export const NOINDEX_STATIC_PATHS = [
   "/global-talent",
   "/pitch",
   "/sitemap",
-  "/book",
   "/intake",
   "/sample-shortlist",
 ] as const;

@@ -194,7 +194,7 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
   {
     id: "integrations",
     label: "Integration access",
-    description: "Email and calendar coordination connected to your workspace.",
+    description: "Email and messaging connected to your workspace.",
     plans: {
       pilot: pending("Per-plan integration entitlements not defined commercially"),
       growth: pending("Per-plan integration entitlements not defined commercially"),
@@ -362,7 +362,7 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
   {
     id: "integrations",
     label: "Integration access",
-    description: "Email and calendar coordination connected to your workspace.",
+    description: "Email and messaging connected to your workspace.",
     plans: {
       pilot: pending("Per-plan integration entitlements not defined commercially"),
       growth: pending("Per-plan integration entitlements not defined commercially"),

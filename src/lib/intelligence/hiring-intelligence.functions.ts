@@ -131,7 +131,6 @@ export const getHiringIntelligence = createServerFn({ method: "GET" })
           "message_sent",
           "clarification_requested",
           "contact_released",
-          "interview_scheduled",
           "interview_completed",
         ])
     )).data as Row[]) ?? [];

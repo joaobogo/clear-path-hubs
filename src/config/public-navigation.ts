@@ -1,4 +1,4 @@
-import { CTA_BOOK, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
 
@@ -41,10 +41,10 @@ export const PRIMARY_CTA: NavLink = {
 };
 
 /** Secondary header CTA, rendered next to the primary CTA on wide screens. */
-export const BOOK_CALL_CTA: NavLink = {
-  to: CTA_BOOK.to,
-  label: CTA_BOOK.label,
-  description: "Talk through your roles with the team",
+export const MESSAGE_CTA: NavLink = {
+  to: CTA_MESSAGE.to,
+  label: CTA_MESSAGE.label,
+  description: "Send the team a note about your roles",
 };
 
 export const SECONDARY_CTAS: NavLink[] = [
@@ -126,7 +126,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
       { to: "/for-hr-teams", label: "For HR teams" },
       { to: "/for-founders", label: "For founders" },
       { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label },
-      { to: CTA_BOOK.to, label: CTA_BOOK.label },
+      { to: CTA_MESSAGE.to, label: CTA_MESSAGE.label },
       { to: "/enterprise", label: "Enterprise" },
       { to: "/partnerships/staffing", label: "Staffing partnerships" },
       { to: "/login", label: "Sign in" },
@@ -201,7 +201,7 @@ export function allNavHrefs(): string[] {
   });
   FOOTER_GROUPS.forEach((g) => g.links.forEach(push));
   push(PRIMARY_CTA);
-  push(BOOK_CALL_CTA);
+  push(MESSAGE_CTA);
   SECONDARY_CTAS.forEach(push);
   return Array.from(out);
 }

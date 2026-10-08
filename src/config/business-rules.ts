@@ -300,7 +300,8 @@ export const BUSINESS_RULES_DEFAULTS = {
   },
   ctas: {
     start_intake: { label: "Start client intake", to: "/intake", description: "Open the 5-step intake wizard." },
-    book_a_call: { label: "Book a real call", to: "/book", description: "30-minute discovery call with a human." },
+    // Key kept for stored plan definitions; the action is now a message, not a booking.
+    book_a_call: { label: "Send us a message", to: "/contact", description: "Reach the team; we reply within one business day." },
     contact_sales: { label: "Contact sales", to: "/contact", description: "For enterprise / custom scope." },
     browse_jobs: { label: "Browse open jobs", to: "/jobs", description: "Public job board." },
     sign_in: { label: "Sign in", to: "/auth", description: "Existing users sign in to their workspace." },

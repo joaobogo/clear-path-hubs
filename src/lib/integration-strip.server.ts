@@ -5,7 +5,6 @@
  *   - the newest row in `integration_health_checks` (a probe that actually ran)
  *   - queue depth and oldest unprocessed age in `crm_submission_queue` /
  *     `processing_jobs`
- *   - the newest `calendly_webhook_events` row (proof deliveries arrive)
  *   - aggregate per-client rows in `integration_sync_status`
  *
  * Nothing is ever assumed healthy. If no probe exists, or the newest probe is
@@ -33,7 +32,7 @@ export type QueueSignal = {
 };
 
 export type StripChip = {
-  key: "stripe" | "attio" | "calendly" | "email";
+  key: "stripe" | "attio" | "email";
   name: string;
   state: StripState;
   reason: string;
@@ -59,7 +58,6 @@ type Def = {
 const DEFS: Def[] = [
   { key: "stripe", name: "Payments", expectedMinutes: 24 * 60, syncKeys: ["stripe"], queue: null },
   { key: "attio", name: "CRM (Attio)", expectedMinutes: 6 * 60, syncKeys: ["attio", "crm"], queue: "crm" },
-  { key: "calendly", name: "Booking (Calendly)", expectedMinutes: 6 * 60, syncKeys: ["calendly"], queue: null },
   { key: "email", name: "Email delivery", expectedMinutes: 24 * 60, syncKeys: ["email"], queue: "processing" },
 ];
 
@@ -112,7 +110,7 @@ async function loadQueue(admin: Admin, key: QueueSignal["key"]): Promise<QueueSi
 }
 
 export async function loadIntegrationStrip(admin: Admin) {
-  const [checksRes, syncRes, webhookRes, crmSynced, crmQueue, jobQueue] = await Promise.all([
+  const [checksRes, syncRes, crmSynced, crmQueue, jobQueue] = await Promise.all([
     admin
       .from("integration_health_checks")
       .select("integration, status, summary, error_code, error_detail, created_at")
@@ -123,12 +121,6 @@ export async function loadIntegrationStrip(admin: Admin) {
       .from("integration_sync_status")
       .select("integration_key, state, last_success_at, last_error_at, last_error")
       .limit(1000)
-      .then((r: any) => r, (e: any) => ({ error: e })),
-    admin
-      .from("calendly_webhook_events")
-      .select("received_at")
-      .order("received_at", { ascending: false })
-      .limit(1)
       .then((r: any) => r, (e: any) => ({ error: e })),
     admin
       .from("crm_submission_queue")
@@ -164,12 +156,11 @@ export async function loadIntegrationStrip(admin: Admin) {
     const queue = def.queue === "crm" ? crmQueue : def.queue === "processing" ? jobQueue : null;
 
     // Widest evidence of a real success: a passing probe, a per-client sync
-    // success, a delivered webhook (Calendly) or a synced CRM row.
+    // success, or a synced CRM row.
     const successCandidates: (string | null)[] = [
       lastOk?.created_at ?? null,
       ...mine.map((s) => s.last_success_at ?? null),
     ];
-    if (def.key === "calendly") successCandidates.push((webhookRes?.data ?? [])[0]?.received_at ?? null);
     if (def.key === "attio") successCandidates.push((crmSynced?.data ?? [])[0]?.synced_at ?? null);
     const lastSuccessAt =
       successCandidates.filter(Boolean).sort().reverse()[0] ?? null;

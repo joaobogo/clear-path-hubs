@@ -4,11 +4,11 @@ import { formatDate } from "@/lib/format/datetime";
  *
  * Rules:
  *   1. Every entry traces to a stored row: the application itself, the CV file,
- *      recorded stage history, recorded interviews, or the withdrawal stamp.
+ *      recorded stage history, or the withdrawal stamp.
  *      Nothing is projected and nothing describes a future step.
  *   2. Internal recruiter activity never appears — no views, no notes, no
  *      scoring or processing steps, no actor names.
- *   3. Only these ten events exist. A stage with no candidate meaning is
+ *   3. Only these seven events exist. A stage with no candidate meaning is
  *      dropped rather than renamed.
  */
 
@@ -17,10 +17,7 @@ export const CANDIDATE_TIMELINE_LABELS = [
   "CV received",
   "Review started",
   "Shared with the employer",
-  "Interview scheduled",
-  "Reschedule requested",
-  "Interview cancelled",
-  "Interview completed",
+  "Interview stage",
   "Decision recorded",
   "Withdrawn",
 ] as const;
@@ -41,7 +38,7 @@ function labelForStage(stage: string): CandidateTimelineLabel | null {
     case "delivered":
       return "Shared with the employer";
     case "interview_process":
-      return "Interview scheduled";
+      return "Interview stage";
     case "offer":
     case "hired":
     case "rejected":
@@ -59,15 +56,6 @@ export interface TimelineInputs {
   cv: { uploaded_at: string; received: boolean } | null;
   /** Recorded rows from candidate_stage_history for this application's match. */
   stageHistory: Array<{ to_stage: string; created_at: string }>;
-  /** Recorded interviews. */
-  interviews: Array<{
-    status: string;
-    scheduled_at: string | null;
-    cancelled_at?: string | null;
-    /** Candidate's own reply, when they gave one. */
-    candidate_response?: string | null;
-    candidate_response_at?: string | null;
-  }>;
   withdrawnAt: string | null;
 }
 
@@ -81,22 +69,6 @@ export function buildCandidateTimeline(input: TimelineInputs): CandidateTimeline
   for (const row of input.stageHistory) {
     const label = labelForStage(row.to_stage);
     if (label) events.push({ at: row.created_at, label });
-  }
-
-  for (const i of input.interviews) {
-    if (i.scheduled_at && !i.cancelled_at) {
-      events.push({ at: i.scheduled_at, label: "Interview scheduled" });
-    }
-    if (i.status === "completed" && i.scheduled_at) {
-      events.push({ at: i.scheduled_at, label: "Interview completed" });
-    }
-    // A candidate-initiated change is recorded from the stored reply stamp.
-    if (i.candidate_response === "reschedule_requested" && i.candidate_response_at) {
-      events.push({ at: i.candidate_response_at, label: "Reschedule requested" });
-    }
-    if (i.cancelled_at) {
-      events.push({ at: i.cancelled_at, label: "Interview cancelled" });
-    }
   }
 
   if (input.withdrawnAt) events.push({ at: input.withdrawnAt, label: "Withdrawn" });

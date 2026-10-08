@@ -82,7 +82,7 @@ const STAGES: Stage[] = [
     key: "decision",
     title: "Client Decision",
     icon: Handshake,
-    taasflow: "Supports interview scheduling and questions.",
+    taasflow: "Supplies interview prompts and answers your questions.",
     client: "Full profiles and status controls in one view.",
     output: "Interview, offer, and hiring decisions — yours.",
     visual: "decision",

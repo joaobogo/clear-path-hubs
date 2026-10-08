@@ -6,7 +6,7 @@
 import { Link } from "@tanstack/react-router";
 import { Breadcrumbs, CtaSection, PublicPage, PublicSection, SiteShell } from "@/components/marketing/site-shell";
 import { faqScript, marketingHead } from "@/lib/marketing/head";
-import { CTA_BOOK, CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
+import { CTA_MESSAGE, CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
 import { FIRST_SHORTLIST_TIMING, TIMING_FINE_PRINT } from "@/config/offer-facts";
 import { COMPARE_LAST_UPDATED, citedFacts, type ComparePageContent } from "@/content/compare-pages";
 
@@ -53,8 +53,8 @@ export function ComparePageView({ page }: { page: ComparePageContent }) {
               <Link to={CTA_PRIMARY.to} className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm hover:opacity-90">
                 {CTA_PRIMARY.label}
               </Link>
-              <Link to={CTA_BOOK.to} className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5">
-                {CTA_BOOK.label}
+              <Link to={CTA_MESSAGE.to} className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5">
+                {CTA_MESSAGE.label}
               </Link>
             </div>
           </div>
@@ -153,7 +153,7 @@ export function ComparePageView({ page }: { page: ComparePageContent }) {
         title="Try it on one role."
         description={`${FIRST_SHORTLIST_TIMING} ${TIMING_FINE_PRINT}`}
         primary={{ to: CTA_PRIMARY.to, label: CTA_PRIMARY.label }}
-        secondary={{ to: CTA_BOOK.to, label: CTA_BOOK.label }}
+        secondary={{ to: CTA_MESSAGE.to, label: CTA_MESSAGE.label }}
         tertiary={{ to: CTA_HOW_IT_WORKS.to, label: CTA_HOW_IT_WORKS.label }}
       />
     </SiteShell>

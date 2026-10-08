@@ -5,7 +5,6 @@ import {
   candidateStatusFromStateKey,
 } from "@/lib/candidate/status-vocabulary";
 import { assessOutcome, businessDaysBetween } from "@/lib/candidate/outcome-sla";
-import { dueReminder, isNoShow } from "@/lib/candidate/interview-reminders.server";
 import { missingProfileItems, nudgeDue } from "@/lib/candidate/profile-nudges.server";
 
 describe("candidate status vocabulary", () => {
@@ -88,54 +87,6 @@ describe("terminal outcome obligation", () => {
         now: new Date("2026-06-01T09:00:00Z"),
       }).state,
     ).toBe("answered");
-  });
-});
-
-describe("interview reminders", () => {
-  const start = "2026-05-12T10:00:00Z";
-
-  it("sends the day-before reminder once", () => {
-    expect(
-      dueReminder({
-        scheduledAt: start,
-        reminder24hSentAt: null,
-        reminder1hSentAt: null,
-        now: new Date("2026-05-11T10:00:00Z"),
-      }),
-    ).toBe("24h");
-    expect(
-      dueReminder({
-        scheduledAt: start,
-        reminder24hSentAt: "2026-05-11T10:00:00Z",
-        reminder1hSentAt: null,
-        now: new Date("2026-05-11T12:00:00Z"),
-      }),
-    ).toBeNull();
-  });
-
-  it("sends the hour-before reminder inside the final window", () => {
-    expect(
-      dueReminder({
-        scheduledAt: start,
-        reminder24hSentAt: "2026-05-11T10:00:00Z",
-        reminder1hSentAt: null,
-        now: new Date("2026-05-12T09:20:00Z"),
-      }),
-    ).toBe("1h");
-  });
-
-  it("treats a passed slot with no outcome as a no-show, once", () => {
-    const base = {
-      scheduledAt: start,
-      status: "scheduled",
-      completedAt: null,
-      cancelledAt: null,
-      noShowFlaggedAt: null,
-      now: new Date("2026-05-12T13:00:00Z"),
-    };
-    expect(isNoShow(base)).toBe(true);
-    expect(isNoShow({ ...base, noShowFlaggedAt: "2026-05-12T12:30:00Z" })).toBe(false);
-    expect(isNoShow({ ...base, completedAt: "2026-05-12T11:00:00Z" })).toBe(false);
   });
 });
 

@@ -158,7 +158,7 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "Do you support SSO and enterprise access controls?",
-        a: "Enterprise access, provisioning, audit logs, and security details are agreed on a 20-minute call.",
+        a: "Enterprise access, provisioning, audit logs, and security details are agreed with our team after you send us a message.",
       },
       {
         q: "How is reporting handled at scale?",
@@ -166,7 +166,7 @@ const RAW_GROUPS: Array<{
       },
       {
         q: "How do we start an enterprise engagement?",
-        a: "Book a 20-minute call and we'll scope it with your TA and Procurement leads.",
+        a: "Send us a message and we will contact you within one business day to scope it with your TA and Procurement leads.",
       },
     ],
   },

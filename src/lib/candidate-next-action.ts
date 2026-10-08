@@ -3,12 +3,13 @@
  *
  * The single next step is derived from the pipeline stage plus the presence or
  * absence of the record that stage expects (score run, approval, client
- * decision, interview, scorecard, hire record). When the facts disagree with
+ * decision, scorecard, hire record). When the facts disagree with
  * the stage, we say so ("unclear") instead of guessing a step.
  *
  * Deliberately absent: any AI recommendation and any confidence percentage.
  */
 import { humanizeReason } from "@/lib/humanize-codes";
+import { STAGE_AGING_THRESHOLD_DAYS, type PipelineStage } from "@/lib/stage-aging";
 
 export type OwnerSide = "us" | "client" | "candidate" | "system" | "none" | "unclear";
 
@@ -49,7 +50,7 @@ export type NextActionFacts = {
   created_at: string | null;
   /** Latest non-reversed client decision, if any. */
   last_decision: { decision: string; created_at: string } | null;
-  interviews: { total: number; upcoming: number; completed: number; last_completed_at: string | null };
+  interviews: { total: number; completed: number; last_completed_at: string | null };
   scorecards: number;
   hire_record: { status: string; created_at: string } | null;
   /**
@@ -149,7 +150,24 @@ export function waitingFor(since: string | null, now = Date.now()): string | nul
 }
 
 /** Derives the one next step. Never returns more than one action. */
-export function deriveNextAction(f: NextActionFacts): NextAction {
+/**
+ * A follow-up task is only worth raising once the candidate has sat in the
+ * stage longer than the stage-aging threshold (shared with the aging flags;
+ * 7 days when the stage has none). Before that the step is informational.
+ */
+export function stageOverdue(
+  f: Pick<NextActionFacts, "stage" | "stage_changed_at" | "delivered_at">,
+  now: number = Date.now(),
+): boolean {
+  const since = f.stage_changed_at ?? f.delivered_at;
+  if (!since) return false;
+  const t = new Date(since).getTime();
+  if (Number.isNaN(t)) return false;
+  const days = STAGE_AGING_THRESHOLD_DAYS[f.stage as PipelineStage] ?? 7;
+  return now - t > days * 86_400_000;
+}
+
+export function deriveNextAction(f: NextActionFacts, now: number = Date.now()): NextAction {
   const base = {
     stage: f.stage,
     ambiguity: null as string | null,
@@ -304,61 +322,36 @@ export function deriveNextAction(f: NextActionFacts): NextAction {
 
   // Interview stage rules.
   if (f.stage === "interview_process") {
-    if (f.interviews.total === 0) {
-      return {
-        ...base,
-        step: "interview_stage_without_interview",
-        owner: "unclear",
-        step_label: "State is unclear — interview stage with no interview record",
-        because: "The stage says interview process but no interview has been created.",
-        waiting_since: firstTs(f.stage_changed_at, f.delivered_at),
-        action: { kind: "follow_up", taskType: "interview_scheduling", title: "Create the interview record" },
-        action_label: "Assign follow-up",
-        ambiguity:
-          "Stage is interview process but no interview exists. Create the interview or move the stage back.",
-      };
-    }
-    if (f.interviews.upcoming > 0) {
-      return {
-        ...base,
-        step: "await_interview",
-        owner: "candidate",
-        step_label: "Interview scheduled — nothing owed until it happens",
-        because: "An interview is booked and still in the future.",
-        waiting_since: firstTs(f.stage_changed_at),
-        action: { kind: "navigate", tab: "journey" },
-        action_label: "Open journey",
-      };
-    }
-    if (f.interviews.completed > 0 && f.scorecards === 0) {
+    const overdue = stageOverdue(f, now);
+    // Feedback is keyed on the interview stage: interviews happen off system.
+    if (f.scorecards === 0) {
       return {
         ...base,
         step: "collect_scorecard",
         owner: "client",
-        step_label: "Collect interview feedback (scorecard)",
-        because: "The interview is complete and no scorecard has been submitted.",
+        step_label: "Waiting for the client's interview feedback",
+        because: overdue
+          ? "The candidate has been at the interview stage past the usual window with no feedback submitted."
+          : "The candidate is at the interview stage. The client arranges interviews directly and no feedback has been submitted yet.",
         waiting_since: firstTs(f.interviews.last_completed_at, f.stage_changed_at),
-        action: {
-          kind: "follow_up",
-          taskType: "feedback_submission",
-          title: "Chase interview scorecard",
-        },
-        action_label: "Assign follow-up",
+        action: overdue
+          ? { kind: "follow_up", taskType: "feedback_submission", title: "Chase interview feedback" }
+          : { kind: "none" },
+        action_label: overdue ? "Assign follow-up" : null,
       };
     }
     return {
       ...base,
       step: "await_post_interview_decision",
       owner: "client",
-      step_label: "Await the client's post-interview decision",
-      because: "Interview feedback is in and no advance or reject decision has been recorded since.",
+      step_label: "Await the client's decision after the interview",
+      because:
+        "Feedback is in and no advance or reject decision has been recorded since.",
       waiting_since: firstTs(f.interviews.last_completed_at, f.stage_changed_at),
-      action: {
-        kind: "follow_up",
-        taskType: "candidate_review",
-        title: "Chase post-interview decision",
-      },
-      action_label: "Assign follow-up",
+      action: overdue
+        ? { kind: "follow_up", taskType: "candidate_review", title: "Chase post-interview decision" }
+        : { kind: "none" },
+      action_label: overdue ? "Assign follow-up" : null,
     };
   }
 
@@ -406,33 +399,18 @@ export function deriveNextAction(f: NextActionFacts): NextAction {
   }
 
   if (f.stage === "shortlisted") {
-    if (f.interviews.total > 0) {
-      return {
-        ...base,
-        step: "shortlisted_with_interview",
-        owner: "unclear",
-        step_label: "State is unclear — shortlisted but an interview already exists",
-        because: "An interview record exists while the stage is still shortlisted.",
-        waiting_since: firstTs(f.stage_changed_at),
-        action: { kind: "navigate", tab: "journey" },
-        action_label: "Open journey",
-        ambiguity:
-          "Interview exists but the stage is shortlisted. Move the stage to interview process.",
-      };
-    }
     return {
       ...base,
-      step: "schedule_interview",
-      owner: "us",
-      step_label: "Set up the interview with the client",
-      because: "The client shortlisted this candidate and no interview has been arranged.",
+      step: "await_client_interview",
+      owner: "client",
+      step_label: "Await the client's next move",
+      because:
+        "The client shortlisted this candidate. They arrange interviews directly and move the candidate on when ready.",
       waiting_since: firstTs(decision?.created_at, f.stage_changed_at, f.delivered_at),
-      action: {
-        kind: "follow_up",
-        taskType: "interview_scheduling",
-        title: "Arrange interview",
-      },
-      action_label: "Assign follow-up",
+      action: stageOverdue(f, now)
+        ? { kind: "follow_up", taskType: "candidate_review", title: "Check in on the shortlist" }
+        : { kind: "none" },
+      action_label: stageOverdue(f, now) ? "Assign follow-up" : null,
     };
   }
 

@@ -136,20 +136,6 @@ export const getClientPositions = createServerFn({ method: "GET" })
     );
 
     const rows = await loadKpiRows(context.supabase, data.orgId);
-    // Interviews awaiting a time: the one reader, indexed by role, so the Roles
-    // list banner and the Overview queue can never print different numbers.
-    const { loadInterviewsAwaitingTime, awaitingClient } = await import(
-      "@/lib/kpis/interviews.server"
-    );
-    const pendingByRole = new Map<string, number>();
-    // Only what the client can act on: the Roles list badge says "Confirm a
-    // time", which is not something they can do for a slot nobody sent.
-    for (const iv of awaitingClient(
-      await loadInterviewsAwaitingTime(context.supabase, data.orgId),
-    )) {
-      if (!iv.position_id) continue;
-      pendingByRole.set(iv.position_id, (pendingByRole.get(iv.position_id) ?? 0) + 1);
-    }
     const stageDates = await loadRoleStageDates(
       context.supabase,
       data.orgId,
@@ -162,12 +148,8 @@ export const getClientPositions = createServerFn({ method: "GET" })
     }
     return visiblePositions.map((p) => {
       const posRows = byPosition.get(p.id) ?? [];
-      const awaitingTime = pendingByRole.get(String(p.id)) ?? 0;
-      const kpi = computeKpis(posRows, 0, { interviews_to_confirm: awaitingTime });
-      const language = {
-        ...pipelineLanguageInput(posRows, p.status),
-        interviewsToConfirm: awaitingTime,
-      };
+      const kpi = computeKpis(posRows, 0);
+      const language = pipelineLanguageInput(posRows, p.status);
       return {
         ...p,
 
@@ -196,9 +178,6 @@ export const getClientPositions = createServerFn({ method: "GET" })
         action_target: buildPipelineActionTarget({
           ...language,
           positionId: String(p.id),
-          interviewToConfirmId:
-            posRows.find((r) => r.interview_needs_confirmation && r.interview_id)
-              ?.interview_id ?? null,
         }),
       };
     });
@@ -265,14 +244,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const roleKpiRows = (await loadKpiRows(context.supabase, data.orgId)).filter(
       (r) => r.position_id === data.positionId,
     );
-    const { loadInterviewsAwaitingTime: loadAwaitingTime, awaitingClient: ownedByClient } =
-      await import("@/lib/kpis/interviews.server");
-    const awaitingTimeForRole = ownedByClient(
-      await loadAwaitingTime(context.supabase, data.orgId),
-    ).filter((iv) => String(iv.position_id ?? "") === data.positionId).length;
-    const roleKpis = computeKpis(roleKpiRows, 0, {
-      interviews_to_confirm: awaitingTimeForRole,
-    });
+    const roleKpis = computeKpis(roleKpiRows, 0);
     const laneCounts = countLanes(roleKpiRows).counts;
     const stageCounts: Record<string, number> = {
       delivered: laneCounts.delivered,
@@ -290,34 +262,11 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const remaining = Math.max(0, openings - hires);
 
 
-    // Interview state for the plain-language status line.
     const matchIdList = ((matches as AnyRow[]) ?? []).map((m) => m.id as string);
-    let interviewsToConfirm = awaitingTimeForRole;
-    let interviewsScheduled = 0;
-    let nextInterviewAt: string | null = null;
-    if (matchIdList.length > 0) {
-      // Scheduled interviews and the next confirmed time only. The count of
-      // interviews still awaiting a time comes from its one reader above.
-      const { data: ivs } = await context.supabase
-        .from("interviews")
-        .select("candidate_match_id, status, scheduled_at")
-        .in("candidate_match_id", matchIdList)
-        .eq("status", "scheduled");
-      const scheduledSet = new Set<string>();
-      for (const iv of (ivs as AnyRow[]) ?? []) {
-        scheduledSet.add(iv.candidate_match_id);
-        const at = iv.scheduled_at as string | null;
-        if (at && (!nextInterviewAt || at < nextInterviewAt)) nextInterviewAt = at;
-      }
-      interviewsScheduled = scheduledSet.size;
-    }
     // Same vocabulary mapper the Roles list and Overview use, fed the same
     // canonical rows — one sentence, one set of numbers.
     const pipelineLine = buildPipelineStatusLine({
       ...pipelineLanguageInput(roleKpiRows, String(position.status)),
-      interviewsToConfirm,
-      interviewsScheduled,
-      nextInterviewAt,
     });
 
     const positionStageDates = (
@@ -376,29 +325,16 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const minOf = (values: (string | null | undefined)[]) =>
       values.filter((v): v is string => Boolean(v)).sort()[0] ?? null;
 
-    const [historyRes, timelineInterviewsRes] = await Promise.all([
-      context.supabase
-        .from("candidate_stage_history")
-        .select("to_stage, created_at")
-        .eq("organization_id", data.orgId)
-        .eq("position_id", data.positionId)
-        .in("to_stage", ["shortlisted", "offer", "hired"]),
-      matchIdList.length > 0
-        ? context.supabase
-            .from("interviews")
-            .select("scheduled_at, completed_at")
-            .in("candidate_match_id", matchIdList)
-        : Promise.resolve({ data: [] as AnyRow[] }),
-    ]);
+    const historyRes = await context.supabase
+      .from("candidate_stage_history")
+      .select("to_stage, created_at")
+      .eq("organization_id", data.orgId)
+      .eq("position_id", data.positionId)
+      .in("to_stage", ["shortlisted", "interview_process", "offer", "hired"]);
     const historyRows = ((historyRes as AnyRow).data as AnyRow[]) ?? [];
     const stageFirst = (stage: string) =>
       minOf(historyRows.filter((h) => h.to_stage === stage).map((h) => h.created_at as string));
-    const firstInterviewAt = minOf(
-      (((timelineInterviewsRes as AnyRow).data as AnyRow[]) ?? []).flatMap((iv) => [
-        iv.completed_at as string | null,
-        iv.scheduled_at as string | null,
-      ]),
-    );
+    const firstInterviewAt = stageFirst("interview_process");
     const timeline = buildRoleTimeline({
       briefConfirmedAt:
         (position.blueprint_confirmed_at as string | null) ??
@@ -429,7 +365,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const { data: commitment } = await context.supabase
       .from("position_commitments")
       .select(
-        "position_id, baseline_at, first_shortlist_days, shortlist_size, interview_slots_hours",
+        "position_id, baseline_at, first_shortlist_days, shortlist_size",
       )
       .eq("position_id", data.positionId)
       .maybeSingle();
@@ -488,7 +424,6 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const story = buildRoleStory({
       status: String(position.status),
       candidates: storyCandidates,
-      nextInterviewAt,
       firstShortlistExpectedAt,
       openings,
       hires,
@@ -545,7 +480,6 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
             position_id: String((commitment as AnyRow)['position_id']),
             first_shortlist_days: Number((commitment as AnyRow)['first_shortlist_days']),
             shortlist_size: Number((commitment as AnyRow)['shortlist_size']),
-            interview_slots_hours: Number((commitment as AnyRow)['interview_slots_hours']),
             baseline_at: String((commitment as AnyRow)['baseline_at']),
           }
         : null,
@@ -560,10 +494,6 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         interviewing: stageCounts.interview_process,
         offers: stageCounts.offer,
         not_moving_forward: stageCounts.not_moving_forward,
-        // Expose interview action counts so the role page "Action required" panel
-        // can deep-link to the interviews desk and offers board.
-        interviews_to_confirm: roleKpis.interviews_to_confirm,
-        interview_scheduled: roleKpis.interview_scheduled,
         pipeline_line: pipelineLine,
         client_status: computeClientRoleStatus({
           status: String(position.status),

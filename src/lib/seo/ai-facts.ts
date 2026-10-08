@@ -69,7 +69,7 @@ export const AI_FACTS = {
     { path: "/agents", title: "Agents", note: "The agents that run a search, with their inputs, outputs and approval gates." },
     { path: "/solutions", title: "Solutions", note: "Which engagement fits a given hiring situation." },
     { path: "/enterprise", title: "Enterprise", note: "Security, procurement, seats and audit requirements for larger programmes." },
-    { path: "/integrations", title: "Integrations", note: "Calendars, video interviews and email that connect to the workspace." },
+    { path: "/integrations", title: "Integrations", note: "Email, messaging, CRM and agent connections that work with the workspace." },
     { path: "/security", title: "Security", note: "Access control, data handling and hosting posture.", summary: false },
     { path: "/trust", title: "Trust", note: "Commitments on data, screening and how decisions are recorded.", summary: false },
     { path: "/terms", title: "Terms", note: "Contract terms for the subscription and pilot.", summary: false },

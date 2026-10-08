@@ -122,7 +122,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
     id: "systems",
     index: 8,
     title: "Connect supported systems",
-    purpose: "Bring calendar, email and messaging into the loop.",
+    purpose: "Bring email and messaging into the loop.",
     minutes: 4,
     required: false,
     systemWork:
@@ -203,13 +203,6 @@ export const OVERSIGHT_GATES = [
     locked: false,
   },
   {
-    key: "interview_scheduling_review",
-    label: "Confirm interview times yourself",
-    detail:
-      "Scheduling proposals wait for you instead of being confirmed automatically.",
-    locked: false,
-  },
-  {
     key: "offer_review",
     label: "Approve offers before they are sent",
     detail: "Offer terms need a named approver in your workspace.",
@@ -221,6 +214,5 @@ export type OversightGateKey = (typeof OVERSIGHT_GATES)[number]["key"];
 
 export const DEFAULT_OPTIONAL_GATES: Record<string, boolean> = {
   outreach_copy_review: true,
-  interview_scheduling_review: true,
   offer_review: true,
 };
