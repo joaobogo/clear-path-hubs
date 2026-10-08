@@ -12,7 +12,6 @@ import {
 } from "@/lib/candidate.functions";
 import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
 import { ProfileGapsBlock } from "@/components/candidate/profile-gaps-block";
-import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
@@ -177,7 +176,6 @@ function MeHome() {
         </section>
       ) : null}
 
-      <InterviewResponseCard compact />
 
 
 
