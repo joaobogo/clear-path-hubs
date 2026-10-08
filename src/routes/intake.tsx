@@ -50,6 +50,7 @@ import {
   isWideCompensationRange,
   WORK_MODELS,
   WORK_MODEL_LABELS,
+  EMPLOYMENT_TYPES,
   WORK_AUTHORIZATION_OPTIONS,
   SPONSORSHIP_OPTIONS,
   SPONSORSHIP_LABELS,
@@ -100,7 +101,7 @@ import {
 
 import { FieldExamples } from "@/components/intake/field-examples";
 import { RequirementsList, type SuggestionState } from "@/components/intake/requirements-list";
-import type { JdBlueprint } from "@/lib/jd-blueprint";
+import { BLUEPRINT_SENIORITY, type JdBlueprint } from "@/lib/jd-blueprint";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { clearIntakeDraft } from "@/lib/intake-draft.functions";
@@ -393,7 +394,6 @@ function ExpressIntakePage() {
   >({ kind: "idle" });
   const [accountBusy, setAccountBusy] = useState(false);
   const [signInMode, setSignInMode] = useState(false);
-  const [reviewing, setReviewing] = useState(true);
   const [stepIndex, setStepIndex] = useState(0);
   // Set while the client is away editing one answer from the review panel, so
   // Continue takes them straight back to review instead of walking the steps.
@@ -3451,13 +3451,6 @@ function ExpressIntakePage() {
           <CardContent className="space-y-4 pt-6">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-base font-semibold">Review your role brief</h2>
-              <button
-                type="button"
-                className="text-sm underline text-[color:var(--brand-navy)]/70"
-                onClick={() => setReviewing((v) => !v)}
-              >
-                {reviewing ? "Hide" : "Show summary"}
-              </button>
             </div>
             <p className="text-sm text-[color:var(--brand-navy)]/70">
               This is the last chance to correct anything before you submit.
@@ -3565,13 +3558,11 @@ function ExpressIntakePage() {
                 )}
               </div>
             )}
-            {reviewing && (
-              <IntakeReviewPanel
-                review={review}
-                loading={draftPhase === "restoring"}
-                onEdit={editFromReview}
-              />
-            )}
+            <IntakeReviewPanel
+              review={review}
+              loading={draftPhase === "restoring"}
+              onEdit={editFromReview}
+            />
             {!brief.complete && (
               <div className="rounded-lg border border-[color:var(--brand-amber)]/30 bg-[color:var(--brand-navy)]/4 p-4">
                 <p className="text-sm font-semibold">
