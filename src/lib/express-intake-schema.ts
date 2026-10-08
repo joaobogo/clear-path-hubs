@@ -885,6 +885,8 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
     "roleTitle",
     "companyWebsite",
     "team",
+    "seniority",
+    "employmentType",
     "requirements",
     "mustHaves",
     "niceToHaves",
