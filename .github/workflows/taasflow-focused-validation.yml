@@ -32,3 +32,30 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
+  build:
+    name: Production build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+  lint:
+    name: Lint changed TAASFlow surfaces
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: |
+          bunx eslint \
+            src/components/client/candidates/compact-list.tsx \
+            src/components/client/candidate-card.tsx \
+            src/components/client/candidate-detail/actions.tsx \
+            src/components/client/candidates/filters-panel.tsx \
+            src/components/intake/review-panel.tsx \
+            src/routes/intake.tsx \
+            src/routes/_authenticated/client.candidates.\\$id.tsx \
+            src/lib/client-decisions.functions.ts \
+            src/lib/intake-review.ts \
+            src/lib/position-edit.functions.ts
