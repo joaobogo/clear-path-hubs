@@ -32,7 +32,6 @@ export const EVENT_TYPES = [
   "client_viewed_candidate",
   "interview_completed",
   "interview_cancelled",
-  "candidate_stage_changed",
   "document_added",
   "member_invited",
   "member_removed",
