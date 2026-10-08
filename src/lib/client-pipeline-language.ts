@@ -32,29 +32,8 @@ export type PipelineStatusInput = {
   totalCandidates: number;
 };
 
-const WEEKDAYS = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function startOfDay(d: Date): number {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
@@ -95,8 +74,7 @@ export function buildPipelineStatusLine(
   const status = input.status;
   if (status === "draft")
     return "We're reviewing this role. You'll hear from us before the search goes live.";
-  if (status === "paused")
-    return "This search is on hold. Tell us when you'd like it restarted.";
+  if (status === "paused") return "This search is on hold. Tell us when you'd like it restarted.";
   if (status === "closed" || status === "archived") {
     return input.hires > 0
       ? `Closed — ${input.hires} ${plural(input.hires, "hire")} confirmed.`
@@ -109,9 +87,7 @@ export function buildPipelineStatusLine(
     parts.push(`${input.hires} ${plural(input.hires, "hire")} confirmed`);
   }
   if (input.offers > 0) {
-    parts.push(
-      `${input.offers} ${plural(input.offers, "offer")} out`,
-    );
+    parts.push(`${input.offers} ${plural(input.offers, "candidate")} at offer stage`);
   }
   if (input.shortlisted > 0) {
     parts.push(`${input.shortlisted} ${plural(input.shortlisted, "candidate")} shortlisted`);
@@ -119,24 +95,6 @@ export function buildPipelineStatusLine(
   if (input.awaitingReview > 0) {
     parts.push(`${input.awaitingReview} awaiting your review`);
   }
-  if (input.interviewsToConfirm > 0) {
-    parts.push(
-    `${input.interviewsToConfirm} ${plural(input.interviewsToConfirm, "interview")} to confirm`,
-
-    );
-  }
-  if (input.interviewsScheduled > 0) {
-    const day = describeInterviewDay(input.nextInterviewAt, now);
-    const noun = `${input.interviewsScheduled} ${plural(input.interviewsScheduled, "interview")}`;
-    parts.push(
-      day
-        ? input.interviewsScheduled === 1
-          ? `1 interview ${day}`
-          : `${noun} booked, next ${day}`
-        : `${noun} booked`,
-    );
-  }
-
   if (parts.length > 0) return joinClauses(parts);
 
   if (input.totalCandidates > 0) {
@@ -150,18 +108,10 @@ export function buildPipelineStatusLine(
  * nothing is waiting on the client.
  */
 export function buildPipelineActionLabel(
-  input: Pick<
-    PipelineStatusInput,
-    "status" | "awaitingReview" | "interviewsToConfirm" | "offers"
-  >,
+  input: Pick<PipelineStatusInput, "status" | "awaitingReview" | "interviewsToConfirm" | "offers">,
 ): string | null {
   if (["draft", "paused", "closed", "archived"].includes(input.status)) return null;
-  if (input.awaitingReview > 0)
-    return `${input.awaitingReview} awaiting your review`;
-  if (input.interviewsToConfirm > 0)
-    return `${input.interviewsToConfirm} to confirm`;
-  if (input.offers > 0)
-    return `${input.offers} offer${input.offers === 1 ? "" : "s"} awaiting response`;
+  if (input.awaitingReview > 0) return `${input.awaitingReview} awaiting your review`;
   return null;
 }
 
@@ -174,18 +124,11 @@ export function buildPipelineActionLabel(
  *  - interview to confirm → interviews desk, scrolled to that interview card
  *  - offer outstanding → candidates list at offer stage for this role
  */
-export type PipelineActionTarget =
-  | {
-      kind: "review_candidates";
-      to: "/client/candidates";
-      search: { position: string; review: "awaiting"; stage: "delivered" };
-    }
-  | {
-      kind: "confirm_interview";
-      to: "/client/interviews";
-      search: { interview?: string };
-    }
-  | { kind: "offer_response"; to: "/client/offers" };
+export type PipelineActionTarget = {
+  kind: "review_candidates";
+  to: "/client/candidates";
+  search: { position: string; review: "awaiting"; stage: "delivered" };
+};
 
 export function buildPipelineActionTarget(
   input: Pick<
@@ -204,18 +147,5 @@ export function buildPipelineActionTarget(
       to: "/client/candidates",
       search: { position: input.positionId, review: "awaiting", stage: "delivered" },
     };
-  if (input.interviewsToConfirm > 0)
-    return {
-      kind: "confirm_interview",
-      to: "/client/interviews",
-      search: input.interviewToConfirmId ? { interview: input.interviewToConfirmId } : {},
-    };
-  if (input.offers > 0)
-    return {
-      kind: "offer_response",
-      to: "/client/offers",
-    };
   return null;
 }
-
-

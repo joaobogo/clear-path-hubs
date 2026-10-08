@@ -1,3 +1,4 @@
+import { offSystemWorkflowRequired } from "@/lib/off-system-workflow";
 // Interview service — canonical server functions for the Client interviews
 // workspace. Every action is tenant-scoped via requireSupabaseAuth + explicit
 // organization_id checks. Client Viewers and read-only Admin support views are
@@ -17,21 +18,12 @@ import { resolveNotificationsForUser } from "@/lib/notifications-resolver.server
 import { isActiveInterview } from "@/lib/interview-state";
 import { interviewNeedsTimeConfirmed } from "@/lib/client/interviews-to-confirm";
 
-
-
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
-const traceId = () =>
-  `iv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+const traceId = () => `iv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
-export type InterviewStatus =
-  | "requested"
-  | "scheduling"
-  | "scheduled"
-  | "completed"
-  | "cancelled";
+export type InterviewStatus = "requested" | "scheduling" | "scheduled" | "completed" | "cancelled";
 
 const INTERVIEW_TYPES = [
   "phone_screen",
@@ -143,7 +135,7 @@ export type InterviewDTO = {
 function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): InterviewDTO {
   const status = row.status as InterviewStatus;
   const stage = candidate?.stage as string | undefined;
-  
+
   // ELIGIBILITY PREDICATE: An interview request is actionable only if:
   // 1. The match is in an interview-ready stage.
   // 2. The match doesn't have another scheduled interview (checked in confirmation).
@@ -151,7 +143,9 @@ function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): 
 
   const nextAction =
     status === "requested"
-      ? isEligible ? "Propose interview times" : "Move to interview stage to propose"
+      ? isEligible
+        ? "Propose interview times"
+        : "Move to interview stage to propose"
       : status === "scheduling"
         ? "Confirm a scheduled time"
         : status === "scheduled"
@@ -174,7 +168,9 @@ function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): 
     meeting_url: row.meeting_url ?? null,
     location: row.location ?? null,
     proposed_times: Array.isArray(row.proposed_times) ? (row.proposed_times as string[]) : [],
-    participants: Array.isArray(row.participants) ? (row.participants as InterviewParticipant[]) : [],
+    participants: Array.isArray(row.participants)
+      ? (row.participants as InterviewParticipant[])
+      : [],
     notes: row.notes ?? null,
     feedback: row.feedback ?? null,
     cancel_reason: row.cancel_reason ?? null,
@@ -211,16 +207,15 @@ function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): 
 
 export const listClientInterviews = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; status?: InterviewStatus | "all" }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          status: z
-            .enum(["all", "requested", "scheduling", "scheduled", "completed", "cancelled"])
-            .optional(),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; status?: InterviewStatus | "all" }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        status: z
+          .enum(["all", "requested", "scheduling", "scheduled", "completed", "cancelled"])
+          .optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
@@ -269,19 +264,17 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     const [matchesRes, positionsRes] = await Promise.all([
       context.supabase
         .from("candidate_matches")
-        .select("id, stage, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email, availability)")
+        .select(
+          "id, stage, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email, availability)",
+        )
         .in("id", matchIds),
-      context.supabase
-        .from("positions")
-        .select("id, title, reference_code")
-        .in("id", positionIds),
+      context.supabase.from("positions").select("id, title, reference_code").in("id", positionIds),
     ]);
     // Employer roles hold no RLS read on candidate_profiles, so the embed comes
     // back null and every card would degrade to "Candidate". Fill the already
     // authorized rows through the shared hydration helper (no contact fields).
-    const { hydrateClientCandidateProfiles } = await import(
-      "@/lib/client-candidate-hydrate.server"
-    );
+    const { hydrateClientCandidateProfiles } =
+      await import("@/lib/client-candidate-hydrate.server");
     const hydratedMatches = await hydrateClientCandidateProfiles(
       (matchesRes.data as AnyRow[]) ?? [],
     );
@@ -291,7 +284,7 @@ export const listClientInterviews = createServerFn({ method: "POST" })
       matchMap.set(m.id as string, cp ?? null);
     }
     const posMap = new Map<string, AnyRow>();
-    for (const p of ((positionsRes.data as AnyRow[]) ?? [])) posMap.set(p.id as string, p);
+    for (const p of (positionsRes.data as AnyRow[]) ?? []) posMap.set(p.id as string, p);
 
     return {
       interviews: list.map((r) => {
@@ -303,16 +296,11 @@ export const listClientInterviews = createServerFn({ method: "POST" })
         );
       }),
     };
-
-
   });
 
 // ─── Mutations ──────────────────────────────────────────────────────────────
 
-const proposedTimesSchema = z
-  .array(z.string().datetime())
-  .min(1)
-  .max(10);
+const proposedTimesSchema = z.array(z.string().datetime()).min(1).max(10);
 
 export const requestInterview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -341,6 +329,8 @@ export const requestInterview = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    if (offSystemWorkflowRequired())
+      throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
@@ -376,7 +366,9 @@ export const requestInterview = createServerFn({ method: "POST" })
     // Real configured scheduling settings only — no invented Calendly links.
     const { data: settings } = await context.supabase
       .from("org_scheduling_settings")
-      .select("scheduling_method, calendly_url, require_admin_coordination, availability_window_days")
+      .select(
+        "scheduling_method, calendly_url, require_admin_coordination, availability_window_days",
+      )
       .eq("organization_id", data.orgId)
       .maybeSingle();
     const s = (settings as AnyRow) ?? null;
@@ -389,26 +381,26 @@ export const requestInterview = createServerFn({ method: "POST" })
     const expiresAt = new Date(Math.min(lastSlot, windowEnd)).toISOString();
 
     const writePayload = {
-        candidate_match_id: data.matchId,
-        organization_id: data.orgId,
-        position_id: match.position_id as string,
-        candidate_submission_id: (match.application_id as string) ?? null,
-        status: "requested" as const,
-        interview_type: data.interviewType,
-        timezone: data.timezone,
-        duration_minutes: data.durationMinutes,
-        proposed_times: times as never,
-        participants: data.participants as never,
-        notes: data.notes ?? null,
-        requested_at: new Date().toISOString(),
-        requested_by_user_id: context.userId,
-        scheduling_method: method,
-        calendly_url: method === "calendly" ? s.calendly_url : null,
-        availability_expires_at: expiresAt,
-        admin_coordination_required: s?.require_admin_coordination ?? true,
-        created_by: context.userId,
-        updated_by: context.userId,
-      };
+      candidate_match_id: data.matchId,
+      organization_id: data.orgId,
+      position_id: match.position_id as string,
+      candidate_submission_id: (match.application_id as string) ?? null,
+      status: "requested" as const,
+      interview_type: data.interviewType,
+      timezone: data.timezone,
+      duration_minutes: data.durationMinutes,
+      proposed_times: times as never,
+      participants: data.participants as never,
+      notes: data.notes ?? null,
+      requested_at: new Date().toISOString(),
+      requested_by_user_id: context.userId,
+      scheduling_method: method,
+      calendly_url: method === "calendly" ? s.calendly_url : null,
+      availability_expires_at: expiresAt,
+      admin_coordination_required: s?.require_admin_coordination ?? true,
+      created_by: context.userId,
+      updated_by: context.userId,
+    };
     // Reusing an empty request may only touch the proposal itself. The columns
     // that say who the request belongs to and who first asked are staff-owned:
     // they already hold the right values on the existing row, and the database
@@ -435,9 +427,7 @@ export const requestInterview = createServerFn({ method: "POST" })
           .eq("id", reusable.id)
           .eq("organization_id", data.orgId)
       : context.supabase.from("interviews").insert(writePayload);
-    const { data: inserted, error } = await writeQuery
-      .select("id")
-      .maybeSingle();
+    const { data: inserted, error } = await writeQuery.select("id").maybeSingle();
     if (error) {
       if ((error as AnyRow).code === "23505") throw new Error("interview_already_active");
       // A staff-owned column guard means the request belongs to someone else —
@@ -445,7 +435,6 @@ export const requestInterview = createServerFn({ method: "POST" })
       if ((error as AnyRow).code === "42501") throw new Error("interview_already_active");
       throw new Error(error.message);
     }
-
 
     await writeAudit(context.supabase, {
       actor: context.userId,
@@ -469,7 +458,6 @@ export const requestInterview = createServerFn({ method: "POST" })
 
     return { ok: true, id: (inserted as AnyRow).id as string, trace_id: trace };
   });
-
 
 export const proposeInterviewTimes = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -498,6 +486,8 @@ export const proposeInterviewTimes = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    if (offSystemWorkflowRequired())
+      throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -580,6 +570,8 @@ export const confirmInterviewTime = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    if (offSystemWorkflowRequired())
+      throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -662,20 +654,20 @@ export const confirmInterviewTime = createServerFn({ method: "POST" })
     return { ok: true, trace_id: trace, rescheduled: isReschedule };
   });
 
-
 export const cancelInterview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; id: string; reason?: string }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          id: z.string().uuid(),
-          reason: z.string().max(1000).optional(),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; id: string; reason?: string }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        id: z.string().uuid(),
+        reason: z.string().max(1000).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
+    if (offSystemWorkflowRequired())
+      throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -723,22 +715,22 @@ export const cancelInterview = createServerFn({ method: "POST" })
     }
 
     return { ok: true, trace_id: trace };
-
   });
 
 export const markInterviewCompleted = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; id: string; feedback?: string }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          id: z.string().uuid(),
-          feedback: z.string().max(4000).optional(),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; id: string; feedback?: string }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        id: z.string().uuid(),
+        feedback: z.string().max(4000).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
+    if (offSystemWorkflowRequired())
+      throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -792,7 +784,6 @@ export const markInterviewCompleted = createServerFn({ method: "POST" })
     }
 
     return { ok: true, trace_id: trace };
-
   });
 
 export type SchedulableCandidate = {
@@ -810,9 +801,7 @@ export type SchedulableCandidate = {
 
 export const listSchedulableCandidates = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string }) =>
-    z.object({ orgId: z.string().uuid() }).parse(input),
-  )
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const { data: rows, error } = await context.supabase
@@ -824,9 +813,8 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       .eq("client_visibility", "visible")
       .in("stage", ["delivered", "shortlisted", "interview_process", "offer", "hired"]);
     if (error) throw new Error(error.message);
-    const { hydrateClientCandidateProfiles: hydrateSchedulable } = await import(
-      "@/lib/client-candidate-hydrate.server"
-    );
+    const { hydrateClientCandidateProfiles: hydrateSchedulable } =
+      await import("@/lib/client-candidate-hydrate.server");
     const list = await hydrateSchedulable((rows as AnyRow[]) ?? []);
 
     const { data: active } = await context.supabase

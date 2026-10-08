@@ -10,14 +10,10 @@ import { staleStateError } from "@/lib/decision-concurrency";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
-import {
-  DEAL_BREAKER_REASON_CODES,
-  normalizeDealBreakers,
-} from "@/lib/client-deal-breakers";
+import { DEAL_BREAKER_REASON_CODES, normalizeDealBreakers } from "@/lib/client-deal-breakers";
 
 import {
   CLIENT_CANDIDATE_SELECT,
-
   loadKpiRows,
   loadRoleStageDates,
   computeKpis,
@@ -168,29 +164,21 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       toStage: data.toStage,
     });
 
-    await reconcileHireRecordForStage(context.supabase, {
-      matchId: data.matchId,
-      orgId: data.orgId,
-      positionId: match.position_id as string,
-      candidateProfileId: match.candidate_profile_id as string,
-      toStage: data.toStage,
-    });
-    // When leaving a gated stage, retract any unstarted side-artifacts.
-    if (from === "interview_process" && data.toStage !== "interview_process") {
-      await context.supabase
-        .from("interviews")
-        .delete()
-        .eq("candidate_match_id", data.matchId)
-        .eq("organization_id", data.orgId)
-        .eq("status", "requested");
+    // A Kanban move records a stage, never drafts an employment offer.
+    // A confirmed hire alone still reconciles hiring outcomes and reporting.
+    if (data.toStage === "hired") {
+      await reconcileHireRecordForStage(context.supabase, {
+        matchId: data.matchId,
+        orgId: data.orgId,
+        positionId: match.position_id as string,
+        candidateProfileId: match.candidate_profile_id as string,
+        toStage: data.toStage,
+      });
     }
-
-    // Canonical side-effects: mirror clientAction so any transition path
-    // (button, drag, keyboard menu) produces identical decision + interview trails.
+    // Track actual shortlist / hire / decline decisions. Interview and Offer
+    // columns are status labels only: no booking or offer is created.
     const stageToDecision: Partial<Record<MatchStage, string>> = {
       shortlisted: "shortlist",
-      interview_process: "request_interview",
-      offer: "offer",
       hired: "hire",
       not_moving_forward: "not_moving_forward",
     };
@@ -212,31 +200,6 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await resolveNotificationsForUser(supabaseAdmin, context.userId);
 
-    if (data.toStage === "interview_process" && from !== "interview_process") {
-      // Same one-open-interview rule as clientAction: a drag-and-drop retry
-      // must not create a second requested interview.
-      const { data: openInterview } = await context.supabase
-        .from("interviews")
-        .select("id")
-        .eq("candidate_match_id", data.matchId)
-        .eq("organization_id", data.orgId)
-        .in("status", ["requested", "scheduling", "scheduled"])
-        .limit(1)
-        .maybeSingle();
-      if (!openInterview) {
-        await context.supabase.from("interviews").insert({
-          candidate_match_id: data.matchId,
-          organization_id: data.orgId,
-          position_id: match.position_id as string,
-          candidate_submission_id: (match.application_id as string) ?? null,
-          status: "requested",
-          requested_at: new Date().toISOString(),
-          created_by: context.userId,
-        });
-      }
-    }
-
-
     await writeAudit(context.supabase, {
       actor: context.userId,
       action: "candidate_match.stage_changed",
@@ -250,59 +213,17 @@ export const moveMatchStage = createServerFn({ method: "POST" })
 
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
-      const stageToEvent: Partial<
-        Record<MatchStage, "client_shortlisted" | "interview_requested" | "candidate_hired">
-      > = {
-        shortlisted: "client_shortlisted",
-        interview_process: "interview_requested",
-        hired: "candidate_hired",
-      };
-      const evt = stageToEvent[data.toStage];
-      if (evt) {
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: staff } = await supabaseAdmin
-          .from("memberships")
-          .select("user_id")
-          .in("role", ["platform_admin", "operations"])
-          .eq("status", "active");
-        const adminRecipients = (staff ?? []).map((s) => ({
-          user_id: s.user_id as string,
-          audience: "admin" as const,
-          link_path: `/admin/candidates`,
-        }));
-        const { data: matchRow } = await supabaseAdmin
-          .from("candidate_matches")
-          .select(
-            "candidate_profile_id, application_id, position_id, candidate_profiles:candidate_profile_id(user_id)",
-          )
-          .eq("id", data.matchId)
-          .maybeSingle();
-        const cpUser =
-          (matchRow?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
-        const candidateRecipients = cpUser
-          ? [
-              {
-                user_id: cpUser,
-                audience: "candidate" as const,
-                link_path: `/me/applications/${matchRow?.application_id ?? ""}`,
-              },
-            ]
-          : [];
-        await emitEventFromServer({
-          event: evt,
-          scope: `${data.matchId}:${data.toStage}`,
-          organization_id: data.orgId,
-          position_id: matchRow?.position_id ?? null,
-          application_id: matchRow?.application_id ?? null,
-          candidate_match_id: data.matchId,
-          candidate_profile_id: matchRow?.candidate_profile_id ?? null,
-          actor_user_id: context.userId,
-          recipients: [...adminRecipients, ...candidateRecipients],
-        });
-      }
-      // Always record the canonical status change itself, even when it has no
-      // notification copy. Scope keys on the exact transition, so replaying the
-      // same move never produces a second activity row.
+      const { stageNotificationRecipients } =
+        await import("@/lib/client/stage-notification-recipients.server");
+      const recipients = await stageNotificationRecipients({
+        orgId: data.orgId,
+        matchId: data.matchId,
+        candidateProfileId: (match.candidate_profile_id as string) ?? null,
+        applicationId: (match.application_id as string) ?? null,
+      });
+
+      // One status update per move, delivered to the team, client and candidate.
+      // An Interviewing/Offer column is only a stage, not a booking or an offer.
       await emitEventFromServer({
         event: "candidate_stage_changed",
         scope: `${data.matchId}:${from}->${data.toStage}`,
@@ -310,8 +231,10 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         position_id: (match.position_id as string) ?? null,
         application_id: (match.application_id as string) ?? null,
         candidate_match_id: data.matchId,
+        candidate_profile_id: (match.candidate_profile_id as string) ?? null,
         actor_user_id: context.userId,
         payload: { from, to: data.toStage, feedback: data.reason?.trim() || null },
+        recipients,
       });
     } catch (emitErr) {
       console.error("[moveMatchStage] emit failed", trace, emitErr);
@@ -370,6 +293,9 @@ export const undoClientDecision = createServerFn({ method: "POST" })
 
     // Prefer the stage recorded on the decision itself over the caller's hint.
     const backTo = ((recent as AnyRow).from_stage as MatchStage | null) ?? data.toStage;
+    if (backTo !== from) {
+      throw new Error("Change recruitment stages in the Candidates Kanban board.");
+    }
 
     if (from !== backTo) {
       await persistStage(context.supabase, {
@@ -380,7 +306,10 @@ export const undoClientDecision = createServerFn({ method: "POST" })
     }
 
     // An interview requested by the undone decision (or one that existed while leaving interview_process) must not survive it.
-    if (recent.decision === "request_interview" || (from === "interview_process" && backTo !== "interview_process")) {
+    if (
+      recent.decision === "request_interview" ||
+      (from === "interview_process" && backTo !== "interview_process")
+    ) {
       await context.supabase
         .from("interviews")
         .delete()
@@ -450,7 +379,6 @@ export const listReversibleDecisions = createServerFn({ method: "GET" })
       ).toISOString(),
     }));
   });
-
 
 /**
  * What the decline dialog needs to close the loop on a role: the deal-breakers
@@ -570,6 +498,11 @@ export const clientAction = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    // Only Kanban moves may change recruitment stages. Any legacy button,
+    // deep link or direct endpoint request is rejected before a write.
+    if (ACTION_TO_STAGE[data.action]) {
+      throw new Error("Change recruitment stages in the Candidates Kanban board.");
+    }
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
@@ -619,32 +552,6 @@ export const clientAction = createServerFn({ method: "POST" })
       }
     }
 
-    if (data.action === "request_interview") {
-      // One open interview per candidate. Without this, a retried request adds
-      // a second "requested" row and the scheduling queue shows the same
-      // interview twice.
-      const { data: openInterview } = await context.supabase
-        .from("interviews")
-        .select("id")
-        .eq("candidate_match_id", data.matchId)
-        .eq("organization_id", data.orgId)
-        .in("status", ["requested", "scheduling", "scheduled"])
-        .limit(1)
-        .maybeSingle();
-      if (!openInterview) {
-        await context.supabase.from("interviews").insert({
-          candidate_match_id: data.matchId,
-          organization_id: data.orgId,
-          position_id: match.position_id as string,
-          candidate_submission_id: (match.application_id as string) ?? null,
-          status: "requested",
-          requested_at: new Date().toISOString(),
-          created_by: context.userId,
-        });
-      }
-    }
-
-
     // Persist a decision that mirrors the client's intent.
     const decisionMap = {
       shortlist: "shortlist",
@@ -666,9 +573,10 @@ export const clientAction = createServerFn({ method: "POST" })
         decision,
         feedback: data.feedback ?? null,
         reason_code: data.reasonCode ?? null,
-        details: data.signals?.length || data.rating
-          ? { signals: data.signals ?? [], rating: data.rating ?? null }
-          : null,
+        details:
+          data.signals?.length || data.rating
+            ? { signals: data.signals ?? [], rating: data.rating ?? null }
+            : null,
         from_stage: match.stage as string,
         actor_user_id: context.userId,
       });

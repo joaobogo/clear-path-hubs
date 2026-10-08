@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import {
+  makeRouteErrorComponent,
+  makeRouteNotFoundComponent,
+} from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -12,7 +15,6 @@ import {
 } from "@/lib/candidate.functions";
 import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
 import { ProfileGapsBlock } from "@/components/candidate/profile-gaps-block";
-import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
@@ -28,10 +30,7 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetim
 
 export const Route = createFileRoute("/_authenticated/me/")({
   head: () => ({
-    meta: [
-      { title: "My home · TaaSFlow" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "My home · TaaSFlow" }, { name: "robots", content: "noindex" }],
   }),
   loader: async ({ context }) => {
     const [ctx, apps, cvs, dash] = await Promise.all([
@@ -65,7 +64,6 @@ export const Route = createFileRoute("/_authenticated/me/")({
 
 const STATUS_TONE = CANDIDATE_STATUS_TONE;
 
-
 type App = {
   id: string;
   role_title: string;
@@ -74,8 +72,6 @@ type App = {
   next_step: string | null;
   last_update: string;
 };
-
-
 
 function firstName(full?: string | null, email?: string | null): string {
   if (full) return full.split(" ")[0]!;
@@ -121,9 +117,7 @@ function MeHome() {
     received: boolean;
   } | null;
 
-  const active = applications.filter(
-    (a) => !TERMINAL_STATUSES.includes(a.status),
-  );
+  const active = applications.filter((a) => !TERMINAL_STATUSES.includes(a.status));
   const spotlight = active[0] ?? applications[0] ?? null;
 
   const cv = cvVersions[0] ?? null;
@@ -136,12 +130,8 @@ function MeHome() {
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 space-y-6">
       {/* Reassuring hero */}
       <header className="rounded-2xl border bg-gradient-to-br from-primary/5 via-card to-card p-6 sm:p-8 motion-surface">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">
-          Welcome back
-        </p>
-        <h1 className="mt-1 text-2xl sm:text-3xl font-semibold">
-          Hi {name}, we&apos;ve got you.
-        </h1>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">Welcome back</p>
+        <h1 className="mt-1 text-2xl sm:text-3xl font-semibold">Hi {name}, we&apos;ve got you.</h1>
         <p className="mt-2 max-w-xl text-sm text-muted-foreground">
           This is your calm space. You&apos;ll see status changes, next steps, and messages from
           hiring teams here — nothing is lost, nothing is hidden.
@@ -155,16 +145,15 @@ function MeHome() {
         <section className="rounded-2xl border taas-bg-warning-soft p-5 motion-surface">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:justify-between">
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-wider taas-fg-warning">
-                Needs your reply
-              </p>
+              <p className="text-xs uppercase tracking-wider taas-fg-warning">Needs your reply</p>
               <h2 className="mt-1 text-base font-semibold">
                 {openRequests === 1
                   ? "The team asked you a question"
                   : `${openRequests} questions are waiting for you`}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Open the application to read and reply. There&apos;s no rush — take the time you need.
+                Open the application to read and reply. There&apos;s no rush — take the time you
+                need.
               </p>
             </div>
             <Link
@@ -176,10 +165,6 @@ function MeHome() {
           </div>
         </section>
       ) : null}
-
-      <InterviewResponseCard compact />
-
-
 
       {/* Application status spotlight */}
       {spotlight ? (
@@ -205,7 +190,8 @@ function MeHome() {
               What&apos;s next
             </p>
             <p className="mt-1 text-sm">
-              {spotlight.next_step ?? "You'll get an update here as soon as the hiring team moves forward. No need to check in."}
+              {spotlight.next_step ??
+                "You'll get an update here as soon as the hiring team moves forward. No need to check in."}
             </p>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -249,8 +235,12 @@ function MeHome() {
           to="/me/messages"
           icon={<MessageSquare className="h-4 w-4" />}
           eyebrow="Messages"
-          title={unread > 0 ? `${unread} unread message${unread === 1 ? "" : "s"}` : "Hiring team conversations"}
-          body="Direct replies from our team appear here. We&apos;ll notify you — you don&apos;t need to refresh."
+          title={
+            unread > 0
+              ? `${unread} unread message${unread === 1 ? "" : "s"}`
+              : "Hiring team conversations"
+          }
+          body="Direct replies from our team appear here. We'll notify you — you don't need to refresh."
           cta="Open messages"
         />
         <Tile
@@ -265,7 +255,7 @@ function MeHome() {
           to="/me/cv"
           icon={<FileUp className="h-4 w-4" />}
           eyebrow="CV"
-          title={doc ?? cv ? "CV on file" : "No CV uploaded"}
+          title={(doc ?? cv) ? "CV on file" : "No CV uploaded"}
           body={
             doc
               ? `${doc.filename} · uploaded ${formatDate(doc.uploaded_at)}. ${
@@ -277,7 +267,7 @@ function MeHome() {
                 ? `Last updated ${formatDate(cv.created_at)}. You can replace it any time.`
                 : "Upload your CV (PDF) so hiring teams can review your experience privately."
           }
-          cta={doc ?? cv ? "Manage CV" : "Upload CV"}
+          cta={(doc ?? cv) ? "Manage CV" : "Upload CV"}
         />
 
         <Tile
@@ -352,7 +342,8 @@ function Tile({
       ) : null}
       <p className="mt-2 text-sm text-muted-foreground">{body}</p>
       <p className="mt-3 text-xs font-medium text-primary inline-flex items-center gap-1">
-        {cta} <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
+        {cta}{" "}
+        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
       </p>
     </Link>
   );

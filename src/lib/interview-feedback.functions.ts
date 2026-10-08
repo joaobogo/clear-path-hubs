@@ -6,9 +6,6 @@
 // interview, not emailed around.
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { persistStage } from "@/lib/client/persist-stage";
-import { reconcileHireRecordForStage } from "@/lib/hires/stage-reconcile.server";
-import type { MatchStage } from "@/lib/client-match-stage";
 import { z } from "zod";
 import {
   DECLINE_CONCERN_MIN,
@@ -103,9 +100,7 @@ async function nameByMatch(
     .from("candidate_matches")
     .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name)")
     .in("id", ids);
-  const { hydrateClientCandidateProfiles } = await import(
-    "@/lib/client-candidate-hydrate.server"
-  );
+  const { hydrateClientCandidateProfiles } = await import("@/lib/client-candidate-hydrate.server");
   for (const m of await hydrateClientCandidateProfiles((data as AnyRow[]) ?? [])) {
     const name = (m as AnyRow).candidate_profiles?.full_name as string | undefined;
     if (name) out.set(m.id as string, name);
@@ -119,12 +114,11 @@ async function nameByMatch(
  */
 export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string }) =>
-    z.object({ orgId: z.string().uuid() }).parse(input),
-  )
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }): Promise<FeedbackQueueItem[]> => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
-    const { getInterviewsAwaitingFeedback } = await import("./client/interviews-awaiting-feedback.server");
+    const { getInterviewsAwaitingFeedback } =
+      await import("./client/interviews-awaiting-feedback.server");
     return getInterviewsAwaitingFeedback(context.supabase, data.orgId);
   });
 
@@ -190,8 +184,7 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
           return {
             interview_id: iv.id as string,
             candidate_match_id: iv.candidate_match_id as string,
-            candidate_name:
-              matchNames.get(data.matchId) ?? nameOf(iv.candidate_matches),
+            candidate_name: matchNames.get(data.matchId) ?? nameOf(iv.candidate_matches),
             position_id: (iv.position_id as string) ?? null,
             position_title: iv.positions?.title ?? "Your role",
             interview_type: (iv.interview_type as string) ?? null,
@@ -206,12 +199,6 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
       return { pending, submitted };
     },
   );
-
-const NEXT_STEP_TO_STAGE: Record<FeedbackNextStep, string | null> = {
-  another_interview: null, // stays in the interview process
-  make_offer: "offer",
-  stop_here: "not_moving_forward",
-};
 
 export const submitInterviewFeedback = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -304,71 +291,9 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
         .eq("organization_id", data.orgId);
     }
 
-    // Move the candidate to the chosen next step.
-    let movedTo: string | null = null;
-    const targetStage = NEXT_STEP_TO_STAGE[data.nextStep];
-    if (targetStage) {
-      const { data: match } = await context.supabase
-        .from("candidate_matches")
-        .select(sel("id, stage, position_id, candidate_profile_id"))
-        .eq("id", matchId)
-        .eq("organization_id", data.orgId)
-        .maybeSingle();
-      const from = (match as AnyRow)?.stage as string | undefined;
-      const allowed: Record<string, string[]> = {
-        delivered: ["shortlisted", "interview_process", "not_moving_forward"],
-        shortlisted: ["interview_process", "not_moving_forward"],
-        interview_process: ["offer", "shortlisted", "not_moving_forward"],
-        offer: ["hired", "not_moving_forward"],
-        hired: [],
-        not_moving_forward: ["shortlisted"],
-      };
-      if (from && from !== targetStage && (allowed[from] ?? []).includes(targetStage)) {
-        // `movedTo` is reported back to the caller, so it must reflect a move
-        // that actually happened. A no-error/zero-row update set it anyway.
-        let moved = true;
-        try {
-          await persistStage(context.supabase, {
-            matchId,
-            orgId: data.orgId,
-            toStage: targetStage,
-          });
-        } catch {
-          moved = false;
-        }
-        if (moved) {
-          movedTo = targetStage;
-          // The third path that moves a stage, and the one the shared helper's
-          // docstring warned about. "Make an offer" from interview feedback
-          // left no hire_records row, so the candidate sat in the Offer column
-          // while the Offers board — which reads hire_records — showed nobody.
-          //
-          // The feedback itself is already committed above, so a failure here
-          // must not report the whole submission as failed and invite a
-          // double-submit. On failure this simply leaves the behaviour that
-          // shipped before; on success the two records agree.
-          try {
-            await reconcileHireRecordForStage(context.supabase, {
-              matchId,
-              orgId: data.orgId,
-              positionId: ((match as AnyRow)?.position_id as string | null) ?? null,
-              candidateProfileId:
-                ((match as AnyRow)?.candidate_profile_id as string | null) ?? null,
-              toStage: targetStage as MatchStage,
-            });
-          } catch {
-            // Reconciliation is best-effort here, deliberately.
-          }
-          await context.supabase.from("client_decisions").insert({
-            candidate_match_id: matchId,
-            organization_id: data.orgId,
-            decision: (targetStage === "offer" ? "offer" : "not_moving_forward") as never,
-            actor_user_id: context.userId,
-            feedback: concerns ?? strengths,
-          } as never);
-        }
-      }
-    }
+    // Feedback is saved as evidence, but cannot change recruitment stages or
+    // create offers. The Kanban remains the only stage-move workflow.
+    const movedTo: string | null = null;
 
     await context.supabase.from("audit_events").insert({
       actor_user_id: context.userId,

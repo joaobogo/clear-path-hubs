@@ -75,10 +75,7 @@ export function LiveTicker({ orgId }: { orgId: string }) {
   }
 
   return (
-    <section
-      aria-label="Live movement"
-      className="rounded-lg border border-border bg-card p-5"
-    >
+    <section aria-label="Live movement" className="rounded-lg border border-border bg-card p-5">
       <div className="flex items-baseline justify-between">
         <h2 className="text-sm font-semibold">Live movement</h2>
         <span className="text-xs text-muted-foreground">Updates as it happens</span>
@@ -89,8 +86,8 @@ export function LiveTicker({ orgId }: { orgId: string }) {
         // all-clear the data doesn't support.
         <div className="mt-3 space-y-2">
           <p className="text-sm text-muted-foreground">
-            We couldn't load recent movement. This is a loading problem on our side, not
-            a quiet day — activity may have happened that we can't show yet.
+            We couldn't load recent movement. This is a loading problem on our side, not a quiet day
+            — activity may have happened that we can't show yet.
           </p>
           <Button size="sm" variant="outline" disabled={isFetching} onClick={() => void refetch()}>
             {isFetching ? "Retrying…" : "Try again"}
@@ -98,10 +95,9 @@ export function LiveTicker({ orgId }: { orgId: string }) {
         </div>
       ) : !data?.length ? (
         <p className="mt-3 text-sm text-muted-foreground">
-          Nothing has moved yet today. When a candidate arrives, a stage changes
-          or an interview is booked, it will show here.
+          Nothing has moved yet today. When a candidate arrives or a recruitment stage changes on
+          the Kanban, it will show here.
         </p>
-
       ) : (
         <ul aria-live="polite" className="mt-3 space-y-2">
           {data.map((e: LiveEvent) => (

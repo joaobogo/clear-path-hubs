@@ -6,12 +6,6 @@ import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
 import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-card";
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
-import { PositionOfferTrackingPanel } from "@/components/admin/offer-hire-panel";
-
-import {
-  InterviewExceptionsBadge,
-  InterviewExceptionsPanel,
-} from "@/components/admin/interview-exceptions-panel";
 
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -67,7 +61,9 @@ import { SourcingOpsPanel } from "@/components/positions/sourcing-ops-panel";
 const TAB_MODULE = () => import("@/components/admin/position-detail/tabs");
 import { LifecycleBar } from "@/components/admin/position-detail/lifecycle-bar";
 import { OverviewTab } from "@/components/admin/position-detail/overview-tab";
-const RequirementsEditor = lazy(() => TAB_MODULE().then((m) => ({ default: m.RequirementsEditor })));
+const RequirementsEditor = lazy(() =>
+  TAB_MODULE().then((m) => ({ default: m.RequirementsEditor })),
+);
 const ScreeningEditor = lazy(() => TAB_MODULE().then((m) => ({ default: m.ScreeningEditor })));
 const BlueprintTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.BlueprintTab })));
 const PipelineTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.PipelineTab })));
@@ -94,8 +90,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const TAB_IDS = [
-  "overview","requirements","preferred","dealbreakers","screening","blueprint",
-  "pipeline","sourcing","memory","activity","audit","settings",
+  "overview",
+  "requirements",
+  "preferred",
+  "dealbreakers",
+  "screening",
+  "blueprint",
+  "pipeline",
+  "sourcing",
+  "memory",
+  "activity",
+  "audit",
+  "settings",
 ] as const;
 
 export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
@@ -119,15 +125,28 @@ export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
   notFoundComponent: () => (
     <div className="p-10 text-center text-muted-foreground">Position not found.</div>
   ),
-  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.positions.$id.tsx"),
-   head: () => ({ meta: [
-     { title: "Position workspace · TaaSFlow admin" },
-     { name: "description", content: "Review role details, approve requisitions and manage hiring activity in TaaSFlow." },
-     { property: "og:title", content: "Position workspace · TaaSFlow admin" },
-     { property: "og:description", content: "Review role details, approve requisitions and manage hiring activity in TaaSFlow." },
-     { property: "og:type", content: "website" },
-     { name: "twitter:card", content: "summary" },
-   ] }),
+  errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.positions.$id.tsx",
+  ),
+  head: () => ({
+    meta: [
+      { title: "Position workspace · TaaSFlow admin" },
+      {
+        name: "description",
+        content:
+          "Review role details, approve requisitions and manage hiring activity in TaaSFlow.",
+      },
+      { property: "og:title", content: "Position workspace · TaaSFlow admin" },
+      {
+        property: "og:description",
+        content:
+          "Review role details, approve requisitions and manage hiring activity in TaaSFlow.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: PositionWorkspace,
 });
 
@@ -252,14 +271,11 @@ function PositionWorkspace() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="truncate text-2xl font-semibold tracking-tight">
-                {p.title}
-              </h1>
+              <h1 className="truncate text-2xl font-semibold tracking-tight">{p.title}</h1>
               <Badge className={STATUS_BADGE[p.status] ?? "bg-muted"}>
                 {p.status.replace(/_/g, " ")}
               </Badge>
               <Badge variant="outline">{p.visibility}</Badge>
-              <InterviewExceptionsBadge positionId={p.id} />
             </div>
             <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
               {p.location && <span>{p.location}</span>}
@@ -284,7 +300,12 @@ function PositionWorkspace() {
                 Edit position
               </Link>
             </Button>
-            <LifecycleBar position={p} onDone={invalidate} includeVisibilityCheck={true} canOverrideApproval={data?.can_override_approval === true} />
+            <LifecycleBar
+              position={p}
+              onDone={invalidate}
+              includeVisibilityCheck={true}
+              canOverrideApproval={data?.can_override_approval === true}
+            />
           </div>
         </div>
         <div className="mt-4">
@@ -300,8 +321,6 @@ function PositionWorkspace() {
         organizationId={p.organization_id ?? null}
         onOpenStage={() => setTab("pipeline")}
       />
-
-
 
       <nav
         role="tablist"
@@ -345,57 +364,52 @@ function PositionWorkspace() {
         )}
 
         <Suspense fallback={<TabFallback />}>
-        {tab === "requirements" && (
-          <RequirementsEditor
-            positionId={id}
-            field="requirements"
-            title="Must-have requirements"
-            hint="One requirement per line. These are treated as required in scoring."
-            value={p.requirements}
-          />
-        )}
-        {tab === "preferred" && (
-          <RequirementsEditor
-            positionId={id}
-            field="preferred_requirements"
-            title="Preferred criteria"
-            hint="One item per line. Contributes to fit but never causes a fail."
-            value={p.preferred_requirements}
-          />
-        )}
-        {tab === "dealbreakers" && (
-          <RequirementsEditor
-            positionId={id}
-            field="dealbreakers"
-            title="Dealbreakers"
-            hint="One dealbreaker per line. A single miss disqualifies the candidate."
-            value={p.dealbreakers}
-          />
-        )}
-        {tab === "screening" && (
-          <ScreeningEditor positionId={id} questions={screening} />
-        )}
-        {tab === "blueprint" && (
-          <BlueprintTab position={p} screening={screening} />
-        )}
-        {tab === "pipeline" && <PipelineTab matches={matches} positionId={id} />}
-        {tab === "sourcing" && <SourcingOpsPanel positionId={id} />}
-        {tab === "memory" && <RoleMemoryPanel positionId={id} canEdit={true} />}
-        {tab === "activity" && (
-          <div className="space-y-4">
-            <ActivityTab id={id} />
-            <StructuredNotesPanel
-              targetKind="position"
-              targetId={id}
-              title="Recruiter notes for this role"
+          {tab === "requirements" && (
+            <RequirementsEditor
+              positionId={id}
+              field="requirements"
+              title="Must-have requirements"
+              hint="One requirement per line. These are treated as required in scoring."
+              value={p.requirements}
             />
-          </div>
-        )}
-        {tab === "audit" && <AuditTab id={id} />}
-        {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
+          )}
+          {tab === "preferred" && (
+            <RequirementsEditor
+              positionId={id}
+              field="preferred_requirements"
+              title="Preferred criteria"
+              hint="One item per line. Contributes to fit but never causes a fail."
+              value={p.preferred_requirements}
+            />
+          )}
+          {tab === "dealbreakers" && (
+            <RequirementsEditor
+              positionId={id}
+              field="dealbreakers"
+              title="Dealbreakers"
+              hint="One dealbreaker per line. A single miss disqualifies the candidate."
+              value={p.dealbreakers}
+            />
+          )}
+          {tab === "screening" && <ScreeningEditor positionId={id} questions={screening} />}
+          {tab === "blueprint" && <BlueprintTab position={p} screening={screening} />}
+          {tab === "pipeline" && <PipelineTab matches={matches} positionId={id} />}
+          {tab === "sourcing" && <SourcingOpsPanel positionId={id} />}
+          {tab === "memory" && <RoleMemoryPanel positionId={id} canEdit={true} />}
+          {tab === "activity" && (
+            <div className="space-y-4">
+              <ActivityTab id={id} />
+              <StructuredNotesPanel
+                targetKind="position"
+                targetId={id}
+                title="Recruiter notes for this role"
+              />
+            </div>
+          )}
+          {tab === "audit" && <AuditTab id={id} />}
+          {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
         </Suspense>
       </section>
     </div>
   );
 }
-

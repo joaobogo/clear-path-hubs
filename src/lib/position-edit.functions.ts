@@ -63,7 +63,6 @@ async function assertCanEdit(userId: string, positionId: string) {
   return pos;
 }
 
-
 async function writeAudit(opts: {
   actor: string;
   action: string;
@@ -86,8 +85,7 @@ async function writeAudit(opts: {
   });
 }
 
-const traceId = () =>
-  `pe_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+const traceId = () => `pe_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
 export type ScreeningInput = {
   id?: string;
@@ -100,7 +98,6 @@ export type ScreeningInput = {
   /** One line the candidate reads explaining why it is asked. */
   why_asked: string;
 };
-
 
 export type PositionEditInitial = {
   id: string;
@@ -202,6 +199,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
         .from("positions")
         .select("*,organizations(id,name)")
         .eq("id", data.id)
+        .eq("is_test_record" as never, false)
         .maybeSingle(),
       s
         .from("screening_questions")
@@ -237,7 +235,12 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       }
       return [];
     };
-    const rawWorkModel = firstText(p.work_model, ctx.work_model, brief.workModel, blueprintRole.work_model);
+    const rawWorkModel = firstText(
+      p.work_model,
+      ctx.work_model,
+      brief.workModel,
+      blueprintRole.work_model,
+    );
     const workModel: PositionEditInitial["work_model"] =
       rawWorkModel === "remote" || rawWorkModel === "hybrid" || rawWorkModel === "onsite"
         ? rawWorkModel
@@ -270,7 +273,9 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       work_model: workModel,
       employment_type: employmentType,
       // Stored briefs use mixed casing; the picker only matches its own labels.
-      seniority: normalizeSeniority(firstText(p.seniority, ctx.seniority, brief.seniority, blueprintRole.seniority)),
+      seniority: normalizeSeniority(
+        firstText(p.seniority, ctx.seniority, brief.seniority, blueprintRole.seniority),
+      ),
       headcount:
         typeof p.openings === "number"
           ? p.openings
@@ -289,7 +294,11 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       open_worldwide: Boolean(
         ctx.open_worldwide ?? brief.openWorldwide ?? blueprintGeography.open_worldwide,
       ),
-      target_countries: firstList(wa.countries, ctx.target_countries, blueprintGeography.target_countries),
+      target_countries: firstList(
+        wa.countries,
+        ctx.target_countries,
+        blueprintGeography.target_countries,
+      ),
       states_regions: asStrArr(ctx.states_regions),
       metro_areas: asStrArr(ctx.metro_areas),
       search_radius: asStr(ctx.search_radius),
@@ -330,9 +339,17 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       budget_max: firstText(comp.budget_max, comp.max, ctx.budget_max, blueprintComp.max),
       compensation: firstText(comp.summary, comp.text, comp.note, blueprintComp.note),
 
-      target_titles: firstList(wa.target_titles, ctx.target_titles, blueprintSourcing.target_titles),
-      title_match_timing: (asStr(ctx.title_match_timing) as PositionEditInitial["title_match_timing"]) || "",
-      target_company_types: firstList(ctx.target_company_types, blueprintSourcing.target_company_types),
+      target_titles: firstList(
+        wa.target_titles,
+        ctx.target_titles,
+        blueprintSourcing.target_titles,
+      ),
+      title_match_timing:
+        (asStr(ctx.title_match_timing) as PositionEditInitial["title_match_timing"]) || "",
+      target_company_types: firstList(
+        ctx.target_company_types,
+        blueprintSourcing.target_company_types,
+      ),
       include_keywords: firstList(ctx.include_keywords, blueprintSourcing.include_keywords),
       exclude_keywords: firstList(ctx.exclude_keywords, blueprintSourcing.exclude_keywords),
       disqualifier_tags: firstList(p.dealbreakers, blueprint.dealbreakers),
@@ -341,7 +358,8 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       company_intro: asStr(posting.company_intro),
       benefits: asStr(posting.benefits),
       languages: asStr(posting.languages),
-      travel: asStr(posting.travel) || asStr(p.travel_expectation) || asStr(brief.travelExpectation),
+      travel:
+        asStr(posting.travel) || asStr(p.travel_expectation) || asStr(brief.travelExpectation),
       work_authorization_note: asStr(posting.work_authorization_note),
       accessibility_note: asStr(posting.accessibility_note),
       eeo_statement: asStr(posting.eeo_statement),
@@ -357,7 +375,6 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
         must_have: (r.must_have as string) ?? "",
         why_asked: (r.why_asked as string) ?? "",
       })),
-
     };
 
     return initial;
@@ -447,7 +464,6 @@ const saveInput = z.object({
       }
     })
     .refine((qs) => qs.filter((q) => q.required).length <= SCREENING_MAX_REQUIRED, {
-
       message: `At most ${SCREENING_MAX_REQUIRED} screening questions can be mandatory — make the rest optional.`,
     })
     .default([]),
@@ -472,7 +488,9 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     // Preserve unknown intake_context/compensation/work_authorization fields
     const { data: existing } = await s
       .from("positions")
-      .select("intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers,location")
+      .select(
+        "intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers,location",
+      )
       .eq("id", data.id)
       .maybeSingle();
     const priorCtx = (existing?.intake_context ?? {}) as AnyRow;
@@ -485,7 +503,9 @@ export const savePositionEdit = createServerFn({ method: "POST" })
           (row) =>
             typeof row === "object" &&
             row !== null &&
-            String(row.label ?? "").trim().toLowerCase() === label.trim().toLowerCase(),
+            String(row.label ?? "")
+              .trim()
+              .toLowerCase() === label.trim().toLowerCase(),
         );
         return matched ? { ...matched, label } : { label, ...(kind ? { kind } : {}) };
       });
@@ -625,10 +645,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     );
     const toDelete = [...existingIds].filter((id) => !keepIds.has(id));
     if (toDelete.length > 0) {
-      const { error: dErr } = await s
-        .from("screening_questions")
-        .delete()
-        .in("id", toDelete);
+      const { error: dErr } = await s.from("screening_questions").delete().in("id", toDelete);
       if (dErr) throw new Error(dErr.message);
     }
     for (let i = 0; i < data.screening_questions.length; i++) {
@@ -645,10 +662,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       };
 
       if (q.id && existingIds.has(q.id)) {
-        const { error: uErr } = await s
-          .from("screening_questions")
-          .update(row)
-          .eq("id", q.id);
+        const { error: uErr } = await s.from("screening_questions").update(row).eq("id", q.id);
         if (uErr) throw new Error(uErr.message);
       } else {
         const { error: iErr } = await s.from("screening_questions").insert(row);

@@ -24,15 +24,11 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { laneFor } from "@/lib/client-pipeline-lane";
-import {
-  matchesInterviewTile,
-  reviewGroup,
-} from "@/lib/client-candidate-list-filter";
+import { matchesInterviewTile, reviewGroup } from "@/lib/client-candidate-list-filter";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 const src = (rel: string) => readFileSync(join(process.cwd(), rel), "utf8");
-const strip = (s: string) =>
-  s.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
+const strip = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
 
 const dto = (over: Record<string, unknown>) =>
   ({
@@ -47,20 +43,19 @@ describe("the candidate list answers with the same rule the tiles counted", () =
   it("filters by lane, not by raw stage", () => {
     const code = strip(src("src/lib/client-candidate-list-filter.ts"));
     expect(code, "the list must import the canonical lane rule").toMatch(/laneFor/);
-    expect(
-      code,
-      "a raw-stage comparison in the stage filter is the defect itself",
-    ).not.toMatch(/c\.stage !== s\.stage/);
+    expect(code, "a raw-stage comparison in the stage filter is the defect itself").not.toMatch(
+      /c\.stage !== s\.stage/,
+    );
   });
 
-  it("puts a cancelled interview in shortlisted on every surface", () => {
+  it("keeps the manually tracked interview stage on every surface", () => {
     const calledOff = dto({
       stage: "interview_process",
       interview_called_off: true,
       interview_active: false,
     });
-    expect(laneFor(calledOff)).toBe("shortlisted");
-    expect(matchesInterviewTile(calledOff)).toBe(false);
+    expect(laneFor(calledOff)).toBe("interview_process");
+    expect(matchesInterviewTile(calledOff)).toBe(true);
     expect(reviewGroup(calledOff)).toBe("in_progress");
   });
 
@@ -151,15 +146,17 @@ describe("promises match the engine", () => {
     expect(apply).not.toMatch(/adds 10 points/);
   });
 
-  it("the offers KPI carries the currency of the figures it summarises", () => {
+  it("historical offer currency survives after off-platform offer management", () => {
     const hires = strip(src("src/lib/hires.functions.ts"));
     expect(hires).toMatch(/salary_currency: string \| null/);
     expect(hires, "the column has to be selected to be reported").toMatch(
       /salary_amount, salary_currency/,
     );
-    expect(strip(src("src/routes/_authenticated/client.offers.tsx"))).toMatch(
-      /formatMoneyMajorCompact\(\s*report\.totals\.avg_salary,\s*report\.totals\.salary_currency/,
-    );
+    const clientOfferRoute = strip(src("src/routes/_authenticated/client.offers.tsx"));
+    expect(clientOfferRoute).toContain('to: "/client/candidates"');
+    expect(clientOfferRoute).not.toMatch(/formatMoneyMajorCompact|Extend offer|Create offer/);
+    // Salary currency still belongs in historical hire records and reporting,
+    // but client offers are no longer issued through the dashboard.
   });
 });
 
@@ -214,10 +211,9 @@ describe("an invitation that reserves a seat says whether it was sent", () => {
 
   it("the delivery log shows the newest events, not the oldest", () => {
     const code = strip(src("src/components/admin/EmailDeliveryPanel.tsx"));
-    expect(
-      code,
-      "slicing an unsorted list made a healthy pipeline look stalled",
-    ).toMatch(/\.sort\(/);
+    expect(code, "slicing an unsorted list made a healthy pipeline look stalled").toMatch(
+      /\.sort\(/,
+    );
   });
 });
 

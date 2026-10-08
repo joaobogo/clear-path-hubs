@@ -24,7 +24,7 @@ export const STAGE_LABELS: Record<MatchStage, string> = {
   delivered: "Candidates",
   shortlisted: "Shortlist",
   interview_process: `Move to ${PIPELINE_STAGE_DISPLAY.interview_process}`,
-  offer: "Make offer",
+  offer: "Move to offer stage",
   hired: "Mark hired",
   not_moving_forward: "Not moving forward",
 };

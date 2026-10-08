@@ -1,6 +1,7 @@
 // Thin server-function wrappers for offer & hire confirmation tracking.
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { offSystemWorkflowRequired } from "@/lib/off-system-workflow";
 import { z } from "zod";
 import type { OfferHireRollup, PositionOfferTracking } from "./offer-hire";
 
@@ -64,6 +65,11 @@ export const recordOfferOutcomeFn = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
+    if (offSystemWorkflowRequired()) {
+      throw new Error(
+        "Employment offers and hire arrangements are managed directly outside TAASFlow. Track candidate stages in Kanban.",
+      );
+    }
     const { requireStaff } = await import("./admin-ops.server");
     await requireStaff(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -89,6 +95,11 @@ export const setHireStartDateFn = createServerFn({ method: "POST" })
       .parse(i),
   )
   .handler(async ({ data, context }) => {
+    if (offSystemWorkflowRequired()) {
+      throw new Error(
+        "Employment offers and hire arrangements are managed directly outside TAASFlow. Track candidate stages in Kanban.",
+      );
+    }
     const { requireStaff } = await import("./admin-ops.server");
     await requireStaff(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

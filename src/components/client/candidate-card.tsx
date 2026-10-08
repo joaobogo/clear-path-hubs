@@ -2,7 +2,6 @@ import { Link, useSearch } from "@tanstack/react-router";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { UnicornMarker } from "@/components/unicorn-marker";
-import { CandidatePrimaryAction } from "@/components/client/candidate-primary-action";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { candidateLineFor } from "@/lib/client-fit-presentation";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -20,7 +19,6 @@ function cardHeadline(c: ClientCandidateDTO): string {
   });
 }
 
-
 /**
  * Decision-first candidate card for client surfaces.
  *
@@ -31,13 +29,11 @@ function cardHeadline(c: ClientCandidateDTO): string {
  * - one-click CV download
  * - undo window / next-step note
  *
- * The card now shows exactly: name, score band chip, one-line headline,
- * stage, and one primary action. Tapping the name or action opens the detail
- * page where everything above is still one click away.
+ * The card shows the candidate, fit and tracking stage. Clicking the
+ * candidate name opens their details; stages change only on the Kanban.
  */
 export function CandidateCard({
   candidate,
-  orgId: orgIdProp,
   compareSelected,
   compareDisabled,
   onToggleCompare,
@@ -51,7 +47,6 @@ export function CandidateCard({
 }) {
   const search = useSearch({ strict: false }) as { org?: string };
   const c = candidate;
-  const orgId = orgIdProp ?? search.org ?? null;
 
   return (
     <div
@@ -92,40 +87,7 @@ export function CandidateCard({
           evidence={c.evidence_support}
           unicorn={c.unicorn}
         />
-        {/* Same three-way read as the compact list, so the card and the table
-            cannot describe one candidate differently (audit #8, TF8-08). */}
-        <span className="text-xs text-muted-foreground">
-          {c.interview_awaiting_time
-            ? "Interview requested"
-            : c.interview_called_off && c.stage === "interview_process"
-              ? "Interview cancelled"
-              : clientStageLabel(c.stage)}
-        </span>
-      </div>
-
-      <div className="mt-3">
-        {orgId ? (
-          <CandidatePrimaryAction
-            orgId={orgId}
-            matchId={c.match_id}
-            stage={c.stage}
-            candidateName={c.candidate.display_name}
-            fitLabel={c.fit_label}
-            score={c.score}
-            interviewRequested={c.interview_awaiting_time}
-                      interviewCalledOff={c.interview_called_off}
-                      interviewCompleted={c.interview_completed}
-          />
-        ) : (
-          <Link
-            to="/client/candidates/$id"
-            params={{ id: c.match_id }}
-            search={search.org ? { org: search.org } : undefined}
-            className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/80"
-          >
-            Review
-          </Link>
-        )}
+        <span className="text-xs text-muted-foreground">{clientStageLabel(c.stage)}</span>
       </div>
     </div>
   );

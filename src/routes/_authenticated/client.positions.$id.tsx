@@ -1,22 +1,14 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { getClientContext } from "@/lib/client-context.functions";
 import { type MatchStage } from "@/lib/client-match-stage";
-import {
-  TIMEZONE_BAND_LABELS,
-  SPONSORSHIP_LABELS,
-} from "@/lib/express-intake-schema";
+import { TIMEZONE_BAND_LABELS, SPONSORSHIP_LABELS } from "@/lib/express-intake-schema";
 import { useStageMove } from "@/lib/client/use-stage-move";
 import { DeclineReasonDialog } from "@/components/client/decline-reason-dialog";
 
@@ -25,7 +17,6 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { AlertCircle } from "lucide-react";
 import { RoleMessagesPanel } from "@/components/client/role-messages-panel";
-
 
 import { InfoRequestList } from "@/components/client/info-requests";
 import { RoleClosureRecord } from "@/components/client/close-role-dialog";
@@ -47,13 +38,9 @@ import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 import { positionDetailQuery } from "@/lib/client-position-detail-query";
 
-
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
   head: () => ({
-    meta: [
-      { title: "Role · Client workspace" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Role · Client workspace" }, { name: "robots", content: "noindex" }],
   }),
   // Prefetch the primary payload before first paint. The workspace context is
   // already in cache from the /client layout loader, so this is one request.
@@ -77,7 +64,10 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id")({
     </SkeletonTimeout>
   ),
   notFoundComponent: () => <div className="p-8">Role not found.</div>,
-  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.$id.tsx"),
+  errorComponent: makeRouteErrorComponent(
+    "client",
+    "src/routes/_authenticated/client.positions.$id.tsx",
+  ),
   component: PositionDetailPage,
 });
 
@@ -205,9 +195,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
     if (from === to) return;
     const allowed = STAGE_GRAPH[from] ?? [];
     if (!allowed.includes(to)) {
-      toast.error(
-        `Cannot move from ${from.replace("_", " ")} to ${to.replace("_", " ")}.`,
-      );
+      toast.error(`Cannot move from ${from.replace("_", " ")} to ${to.replace("_", " ")}.`);
       return;
     }
     if (to === "not_moving_forward") {
@@ -252,30 +240,13 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
     return parts.join(" · ");
   })();
 
-  const actionRequired: Array<{ label: string; href?: string; search?: Record<string, string> }> = [];
+  const actionRequired: Array<{ label: string; href?: string; search?: Record<string, string> }> =
+    [];
   if (summary.delivered > 0) {
     actionRequired.push({
       label: `${summary.delivered} new candidate${summary.delivered === 1 ? "" : "s"} to review`,
       href: "/client/candidates",
       search: { position: id, stage: "delivered" },
-    });
-  }
-  if (summary.interviews_to_confirm > 0) {
-    actionRequired.push({
-      label: `${summary.interviews_to_confirm} interview${summary.interviews_to_confirm === 1 ? "" : "s"} to confirm`,
-      href: "/client/interviews",
-    });
-  }
-  if (summary.interview_scheduled > 0) {
-    actionRequired.push({
-      label: `${summary.interview_scheduled} interview${summary.interview_scheduled === 1 ? "" : "s"} scheduled`,
-      href: "/client/interviews",
-    });
-  }
-  if (summary.offers > 0) {
-    actionRequired.push({
-      label: `${summary.offers} offer${summary.offers === 1 ? "" : "s"} awaiting response`,
-      href: "/client/offers",
     });
   }
   if (position.status === "needs_clarification") {
@@ -290,10 +261,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center justify-between gap-3">
-        <Link
-          to="/client/positions"
-          className="text-sm text-muted-foreground hover:underline"
-        >
+        <Link to="/client/positions" className="text-sm text-muted-foreground hover:underline">
           ← All roles
         </Link>
         <LiveUpdatedChip updatedAt={live.updatedAt} />
@@ -329,10 +297,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         />
       </div>
 
-      <RoleStatusSection
-        progress={data.progress}
-        pipelineLine={summary.pipeline_line}
-      />
+      <RoleStatusSection progress={data.progress} pipelineLine={summary.pipeline_line} />
 
       {/* 2. Hiring summary */}
       <section aria-label="Hiring summary" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -341,19 +306,10 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
           value={summary.openings}
           hint={summary.openings > 1 ? "Multiple hires expected" : "Single hire"}
         />
-        <SummaryTile
-          label="Hired"
-          value={summary.hires}
-          hint={`${summary.remaining} remaining`}
-        />
+        <SummaryTile label="Hired" value={summary.hires} hint={`${summary.remaining} remaining`} />
         <SummaryTile
           label="In progress"
-          value={
-            summary.delivered +
-            summary.shortlisted +
-            summary.interviewing +
-            summary.offers
-          }
+          value={summary.delivered + summary.shortlisted + summary.interviewing + summary.offers}
           hint="Candidates · shortlisted · interviewing · offers"
         />
         <SummaryTile
@@ -409,7 +365,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         <RoleStoryPanel story={data.story} positionId={id} org={orgSearchParam} hideCoverage />
       )}
 
-
       {/* 9. Messages — one thread per role */}
       {orgId && (
         <RoleMessagesPanel
@@ -419,7 +374,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
           canPost={canEdit}
         />
       )}
-
 
       <DeclineReasonDialog
         open={!!declining}

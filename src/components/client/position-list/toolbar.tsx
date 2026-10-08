@@ -29,24 +29,6 @@ export const STATUS_TABS = ROLE_STATUS_TABS;
 function ActionLink({ row }: { row: Row }) {
   const target = row.action_target ?? null;
   const cls = "text-xs font-medium text-primary hover:underline shrink-0";
-  if (target?.kind === "confirm_interview") {
-    return (
-      <Link
-        to="/client/interviews"
-        search={{ interview: target.search.interview, feedback: undefined }}
-        className={cls}
-      >
-        Confirm a time →
-      </Link>
-    );
-  }
-  if (target?.kind === "offer_response") {
-    return (
-      <Link to="/client/offers" className={cls}>
-        See the offer →
-      </Link>
-    );
-  }
   if (target?.kind === "review_candidates") {
     return (
       <Link to="/client/candidates" search={target.search} className={cls}>
@@ -73,9 +55,7 @@ export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
       <div className="flex items-center gap-2 mb-3">
         <AlertCircle className="h-4 w-4 taas-fg-warning " />
         <h2 className="text-sm font-semibold">Action required</h2>
-        <span className="text-xs text-muted-foreground">
-          {plural(actionItems.length, "role")}
-        </span>
+        <span className="text-xs text-muted-foreground">{plural(actionItems.length, "role")}</span>
       </div>
       <ul className="space-y-2">
         {actionItems.slice(0, 5).map((p) => (
@@ -85,9 +65,7 @@ export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
           >
             <div className="min-w-0">
               <div className="font-medium truncate">{p.title}</div>
-              <div className="text-xs text-muted-foreground">
-                {p.action_required}
-              </div>
+              <div className="text-xs text-muted-foreground">{p.action_required}</div>
             </div>
             <ActionLink row={p} />
           </li>
@@ -96,7 +74,6 @@ export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
     </section>
   );
 }
-
 
 export function StatusTabs({
   status,
@@ -122,9 +99,7 @@ export function StatusTabs({
         >
           {t.label}
           {counts ? (
-            <span className="ml-1.5 text-xs text-muted-foreground">
-              ({counts[t.key] ?? 0})
-            </span>
+            <span className="ml-1.5 text-xs text-muted-foreground">({counts[t.key] ?? 0})</span>
           ) : null}
         </button>
       ))}
@@ -199,10 +174,7 @@ export function FilterBar({
           aria-label="Search roles"
         />
       </div>
-      <Select
-        value={location}
-        onValueChange={(v) => setSearch({ location: v })}
-      >
+      <Select value={location} onValueChange={(v) => setSearch({ location: v })}>
         <SelectTrigger className="w-[160px]" aria-label="Filter by location">
           <SelectValue placeholder="Location" />
         </SelectTrigger>

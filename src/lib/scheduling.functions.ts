@@ -1,3 +1,4 @@
+import { offSystemWorkflowRequired } from "@/lib/off-system-workflow";
 // Scheduling coordination surface: candidate responses, org scheduling
 // configuration, and canonical interview status history.
 import { createServerFn } from "@tanstack/react-start";
@@ -80,7 +81,6 @@ export const listMyInterviews = createServerFn({ method: "GET" })
     };
   });
 
-
 /**
  * Candidate replies to a proposed time. Accepting releases the other slots and
  * schedules the chosen one, unless the organisation coordinates manually — then
@@ -101,6 +101,8 @@ export const respondToInterview = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
+    if (offSystemWorkflowRequired())
+      throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const { data: profile } = await context.supabase
       .from("candidate_profiles")
       .select("id")
@@ -169,9 +171,10 @@ export const respondToInterview = createServerFn({ method: "POST" })
               scheduled_at: null as never,
               confirmed_at: null as never,
               status:
-                (iv as AnyRow).status === "completed" ? (iv as AnyRow).status : ("scheduling" as never),
+                (iv as AnyRow).status === "completed"
+                  ? (iv as AnyRow).status
+                  : ("scheduling" as never),
             }),
-
       })
       .eq("id", data.interviewId);
 
@@ -227,16 +230,14 @@ export const getSchedulingSettings = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     return {
-      settings:
-        (row as AnyRow) ?? {
-          organization_id: data.orgId,
-          scheduling_method: "manual",
-          calendly_url: null,
-          default_timezone: "UTC",
-          availability_window_days: 14,
-          require_admin_coordination: true,
-        },
-
+      settings: (row as AnyRow) ?? {
+        organization_id: data.orgId,
+        scheduling_method: "manual",
+        calendly_url: null,
+        default_timezone: "UTC",
+        availability_window_days: 14,
+        require_admin_coordination: true,
+      },
     };
   });
 
@@ -262,6 +263,8 @@ export const saveSchedulingSettings = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
+    if (offSystemWorkflowRequired())
+      throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     if (data.defaultTimezone && !isValidTimezone(data.defaultTimezone)) {
       throw new Error("invalid_timezone");
     }
@@ -315,6 +318,8 @@ export const requestInterviewChange = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
+    if (offSystemWorkflowRequired())
+      throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const { data: profile } = await context.supabase
       .from("candidate_profiles")
       .select("id")

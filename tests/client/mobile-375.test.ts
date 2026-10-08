@@ -78,18 +78,16 @@ describe("client workspace at 375px", () => {
     });
   }
 
-  it("keeps the decline decision visible in the pinned candidate bar", () => {
+  it("moves stages only in Kanban, with no pinned request or offer actions", () => {
     const detail = readFileSync(join(ROUTES_DIR, "client.candidates.$id.tsx"), "utf8");
-    const actions = readFileSync(
-      join(COMPONENTS_DIR, "candidate-detail/actions.tsx"),
-      "utf8",
-    );
-    const bar = actions.slice(actions.indexOf("function MobileActionBar"));
-    expect(bar).toContain("Not a fit");
-    expect(bar).toContain("fixed inset-x-0 bottom-0");
-    expect(bar).toContain("min-h-11");
-    // The route still renders the pinned bar, and content clears it.
-    expect(detail).toContain("<MobileActionBar");
-    expect(detail).toContain("pb-28");
+    const compact = readFileSync(join(COMPONENTS_DIR, "candidates/compact-list.tsx"), "utf8");
+    const card = readFileSync(join(COMPONENTS_DIR, "candidate-card.tsx"), "utf8");
+    const board = readFileSync(join(COMPONENTS_DIR, "candidates/board-view.tsx"), "utf8");
+    expect(detail).not.toContain("<MobileActionBar");
+    expect(compact).not.toContain("<CandidatePrimaryAction");
+    expect(compact).not.toContain(">Action</th>");
+    expect(card).not.toContain("<CandidatePrimaryAction");
+    expect(board).toContain("<PipelineBoard");
+    expect(board).toContain("attemptMove={attemptMove}");
   });
 });

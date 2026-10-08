@@ -18,35 +18,25 @@ import {
   CANDIDATE_STATUS_NEXT_STEP,
   CANDIDATE_STATUS_TONE,
 } from "@/lib/candidate-status";
-import {
-  CLOSED_REASON_UNRECORDED,
-  type ClosedReasonKey,
-} from "@/lib/candidate/closed-outcome";
+import { CLOSED_REASON_UNRECORDED, type ClosedReasonKey } from "@/lib/candidate/closed-outcome";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { PrivacySummaryNote } from "@/components/candidate/candidate-notes";
 import { FileText } from "lucide-react";
-import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { useConfirmAction } from "@/components/ds";
 import {
   NOTHING_NEEDED_LINE,
   pendingActionDeadline,
   type CandidatePendingAction,
 } from "@/lib/candidate/pending-action";
-import {
-  formatTimelineDate,
-  type CandidateTimelineEvent,
-} from "@/lib/candidate/timeline";
+import { formatTimelineDate, type CandidateTimelineEvent } from "@/lib/candidate/timeline";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   head: () => ({
-    meta: [
-      { title: "Application · TaaSFlow" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Application · TaaSFlow" }, { name: "robots", content: "noindex" }],
   }),
   loader: ({ context, params }) =>
     context.queryClient.ensureQueryData({
@@ -58,22 +48,23 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
     // default, so it has to carry its own timeout or a hung loader shows an
     // unbounded skeleton again (audit 1 Sep, F11).
     <SkeletonTimeout>
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4">
-      <div className="h-8 w-2/3 animate-pulse rounded bg-muted" />
-      <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
-      <div className="h-32 animate-pulse rounded-lg bg-muted" />
-      <div className="space-y-3">
-        <div className="h-10 animate-pulse rounded bg-muted" />
-        <div className="h-10 animate-pulse rounded bg-muted" />
-        <div className="h-10 animate-pulse rounded bg-muted" />
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4">
+        <div className="h-8 w-2/3 animate-pulse rounded bg-muted" />
+        <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
+        <div className="h-32 animate-pulse rounded-lg bg-muted" />
+        <div className="space-y-3">
+          <div className="h-10 animate-pulse rounded bg-muted" />
+          <div className="h-10 animate-pulse rounded bg-muted" />
+          <div className="h-10 animate-pulse rounded bg-muted" />
+        </div>
       </div>
-    </div>
     </SkeletonTimeout>
   ),
-  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.applications.$id.tsx"),
-  notFoundComponent: () => (
-    <div className="p-8">This application isn&apos;t available.</div>
+  errorComponent: makeRouteErrorComponent(
+    "candidate",
+    "src/routes/_authenticated/me.applications.$id.tsx",
   ),
+  notFoundComponent: () => <div className="p-8">This application isn&apos;t available.</div>,
   component: TrackPage,
 });
 
@@ -151,7 +142,6 @@ function TrackPage() {
   });
   const data = raw as MyApplication;
 
-
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["me-application", id] });
     qc.invalidateQueries({ queryKey: ["me-applications"] });
@@ -196,10 +186,7 @@ function TrackPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
-      <Link
-        to="/me/applications"
-        className="text-sm text-muted-foreground hover:text-foreground"
-      >
+      <Link to="/me/applications" className="text-sm text-muted-foreground hover:text-foreground">
         ← All applications
       </Link>
 
@@ -282,9 +269,7 @@ function TrackPage() {
               <p className="text-sm">{data.closed_outcome?.line ?? CLOSED_REASON_UNRECORDED}</p>
               {data.closed_outcome?.closedAt ? (
                 <p className="text-sm text-muted-foreground">
-                  Closed on{" "}
-                  {formatDate(data.closed_outcome.closedAt)}
-                  .
+                  Closed on {formatDate(data.closed_outcome.closedAt)}.
                 </p>
               ) : null}
             </div>
@@ -300,7 +285,6 @@ function TrackPage() {
             </Button>
           </div>
         ) : null}
-
 
         {data.can_withdraw ? (
           <div className="mt-4">
@@ -334,7 +318,10 @@ function TrackPage() {
       </section>
 
       {openRequests.length > 0 ? (
-        <section id="info-requests" className="rounded-lg border taas-bg-warning-soft p-5 mb-6 scroll-mt-24">
+        <section
+          id="info-requests"
+          className="rounded-lg border taas-bg-warning-soft p-5 mb-6 scroll-mt-24"
+        >
           <h2 className="text-sm font-medium mb-1">The team asked you something</h2>
           <p className="text-xs text-muted-foreground mb-4">
             Reply in your own words. Anything you write here goes to the TaaSFlow team.
@@ -397,11 +384,6 @@ function TrackPage() {
           </div>
         </section>
       ) : null}
-
-      <div id="interviews" className="scroll-mt-24">
-        <InterviewResponseCard applicationId={id} />
-      </div>
-
 
       <section className="rounded-lg border bg-card p-5 mb-6">
         <h2 className="text-sm font-medium mb-3 flex items-center gap-2">
@@ -473,10 +455,7 @@ function TrackPage() {
         <ol className="space-y-4">
           {data.events.map((e, i) => (
             <li key={`${e.at}-${e.label}-${i}`} className="flex gap-3">
-              <div
-                aria-hidden="true"
-                className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary"
-              />
+              <div aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />
               <div className="min-w-0 flex-1">
                 {/* Date above the label: on a phone the date is the thing
                     people scan for. */}
@@ -487,7 +466,6 @@ function TrackPage() {
           ))}
         </ol>
       </section>
-
 
       {data.role_description ? (
         <section className="rounded-lg border bg-card p-5">

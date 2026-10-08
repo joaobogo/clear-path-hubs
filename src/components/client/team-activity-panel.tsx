@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { CalendarCheck, CheckSquare, UserX } from "lucide-react";
+import { CheckSquare, UserX } from "lucide-react";
 import {
   getClientTeamActivity,
   type TeamMemberActivity,
@@ -47,10 +47,6 @@ function MemberRow({ m }: { m: TeamMemberActivity }) {
           <CheckSquare className="h-3.5 w-3.5" aria-hidden />
           {m.decisions_30d}
         </span>
-        <span className="flex items-center gap-1" title="Upcoming interviews they booked">
-          <CalendarCheck className="h-3.5 w-3.5" aria-hidden />
-          {m.interviews_upcoming}
-        </span>
         {m.not_seen_since_launch && <UserX className="h-3.5 w-3.5 taas-fg-warning" aria-hidden />}
       </div>
     </li>
@@ -58,7 +54,7 @@ function MemberRow({ m }: { m: TeamMemberActivity }) {
 }
 
 /**
- * Facts about the hiring team: decisions recorded, interviews booked, and who
+ * Facts about the hiring team: decisions recorded and who
  * has not signed in since a role launched. No people are scored or ranked.
  */
 export function TeamActivityPanel({ orgId }: { orgId: string | null }) {
@@ -78,7 +74,7 @@ export function TeamActivityPanel({ orgId }: { orgId: string | null }) {
         <div className="min-w-0">
           <h2 className="truncate text-sm font-semibold">Who is doing what</h2>
           <p className="text-xs text-muted-foreground">
-            Decisions recorded, interviews booked, and last sign-in — straight from the record.
+            Decisions recorded and last sign-in — straight from the record.
           </p>
         </div>
         {!!data && (

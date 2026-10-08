@@ -1,0 +1,72 @@
+name: TAASFlow intake and workflow validation
+on:
+  push:
+    branches:
+      - taasflow/off-system-workflow-intake-20261008
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  regression:
+    name: Focused intake, editor and Kanban regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Run focused regression suite without production credentials
+        run: |
+          bunx vitest run \
+            src/lib/__tests__/intake-review.test.ts \
+            src/lib/__tests__/taasflow-release-regression.test.ts \
+            src/lib/__tests__/jd-blueprint.test.ts \
+            src/lib/__tests__/intake-step-shape.test.ts \
+            src/lib/client/__tests__/interview-state-agreement.test.ts
+  types:
+    name: TypeScript build contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+  build:
+    name: Production build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+  lint:
+    name: Lint changed TAASFlow surfaces
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: |
+          # Legacy source has thousands of unformatted lines. Enforce ESLint
+          # correctness on the affected app surfaces without reformatting
+          # unrelated production code in this functional release.
+          bunx eslint --rule 'prettier/prettier: off' \
+            src/components/client/candidates/compact-list.tsx \
+            src/components/client/candidate-card.tsx \
+            src/components/client/candidate-detail/actions.tsx \
+            src/components/client/candidates/filters-panel.tsx \
+            src/components/intake/review-panel.tsx \
+            src/routes/intake.tsx \
+            'src/routes/_authenticated/client.candidates.$id.tsx' \
+            src/lib/client-decisions.functions.ts \
+            src/lib/intake-review.ts \
+            src/lib/position-edit.functions.ts
+  unit:
+    name: Complete isolated Vitest suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run test

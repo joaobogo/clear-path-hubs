@@ -59,9 +59,21 @@ export const MIN_INTERVIEW_PROCESS = 20;
  * on them and the website has to be asked for once instead.
  */
 export const FREE_MAIL_DOMAINS = new Set([
-  "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com",
-  "protonmail.com", "proton.me", "aol.com", "live.com", "me.com", "msn.com",
-  "gmx.com", "mail.com", "yandex.com", "zoho.com",
+  "gmail.com",
+  "yahoo.com",
+  "outlook.com",
+  "hotmail.com",
+  "icloud.com",
+  "protonmail.com",
+  "proton.me",
+  "aol.com",
+  "live.com",
+  "me.com",
+  "msn.com",
+  "gmx.com",
+  "mail.com",
+  "yandex.com",
+  "zoho.com",
 ]);
 
 /**
@@ -75,7 +87,10 @@ export const FREE_MAIL_DOMAINS = new Set([
 export function companyWebsiteFromEmail(email: string): string | null {
   const at = (email ?? "").trim().toLowerCase().lastIndexOf("@");
   if (at === -1) return null;
-  const domain = email.trim().toLowerCase().slice(at + 1);
+  const domain = email
+    .trim()
+    .toLowerCase()
+    .slice(at + 1);
   if (!domain || !/^[\w-]+(\.[\w-]+)+$/.test(domain)) return null;
   if (FREE_MAIL_DOMAINS.has(domain)) return null;
   return domain;
@@ -227,7 +242,6 @@ export function splitLines(value: string | undefined | null): string[] {
     .slice(0, 40);
 }
 
-
 /* ------------------------------------------------------------------ */
 /* Requirements: one list, three tags                                  */
 /* ------------------------------------------------------------------ */
@@ -275,7 +289,12 @@ export function countMustHaves(items: Array<{ text: string; tag: RequirementTag 
 export function validateRequirements(
   items: Array<{ text: string; tag: RequirementTag }>,
   opts: { manyConfirmed?: boolean } = {},
-): { ok: boolean; rowErrors: Record<number, string>; listError: string | null; needsConfirm: boolean } {
+): {
+  ok: boolean;
+  rowErrors: Record<number, string>;
+  listError: string | null;
+  needsConfirm: boolean;
+} {
   const rowErrors: Record<number, string> = {};
   const seen = new Map<string, number>();
   items.forEach((item, i) => {
@@ -452,13 +471,21 @@ export type InterviewStageIssues = { name?: string; format?: string; ownerEmail?
 export function validateInterviewStages(
   stages: InterviewStage[],
   opts: { targetDaysToOffer?: number | null } = {},
-): { ok: boolean; rowErrors: Record<number, InterviewStageIssues>; listError?: string; targetError?: string } {
+): {
+  ok: boolean;
+  rowErrors: Record<number, InterviewStageIssues>;
+  listError?: string;
+  targetError?: string;
+} {
   const rowErrors: Record<number, InterviewStageIssues> = {};
   let listError: string | undefined;
   let targetError: string | undefined;
 
   const filled = stages.filter(
-    (s) => (s.name ?? "").trim().length > 0 || (s.ownerName ?? "").trim().length > 0 || (s.ownerEmail ?? "").trim().length > 0,
+    (s) =>
+      (s.name ?? "").trim().length > 0 ||
+      (s.ownerName ?? "").trim().length > 0 ||
+      (s.ownerEmail ?? "").trim().length > 0,
   );
   if (filled.length < MIN_INTERVIEW_STAGES) {
     listError = "Add at least one interview stage";
@@ -538,8 +565,6 @@ export function collaboratorCandidates(
   add(extra.name ?? "", extra.email ?? "");
   return Array.from(out.values());
 }
-
-
 
 export const expressIntakeSchema = z
   .object({
@@ -682,15 +707,20 @@ export const expressIntakeSchema = z
     // Anything other than an explicit true means no invitations are sent.
     inviteCollaborators: z.preprocess((v) => v === true, z.boolean()),
 
-
     /** Legacy free text. Derived from the list below when the client sends one. */
     dealBreakers: z.string().trim().max(2000).optional().or(z.literal("")),
     /** Up to five short lines. Optional — an empty list is a valid answer. */
     dealBreakerList: z.preprocess(
       (v) => (Array.isArray(v) ? v : []),
-      z.array(z.string().trim().max(MAX_DEAL_BREAKER_CHARS + 40)).max(20),
+      z
+        .array(
+          z
+            .string()
+            .trim()
+            .max(MAX_DEAL_BREAKER_CHARS + 40),
+        )
+        .max(20),
     ),
-
 
     consent: z.literal(true, {
       errorMap: () => ({ message: "You must accept the terms to continue" }),
@@ -818,8 +848,6 @@ export const expressIntakeSchema = z
     remoteAnywhereInCountry: v.workModel === "remote" ? v.remoteAnywhereInCountry === true : false,
   }));
 
-
-
 export type ExpressIntakeInput = z.infer<typeof expressIntakeSchema>;
 
 export const EXPRESS_DRAFT_KEY = "taasflow.express.intake.v1";
@@ -851,7 +879,8 @@ export const INTAKE_STEPS = [
   {
     key: "details",
     title: "Details and confirm",
-    blurb: "Money, place, timing and process. Only visa sponsorship is required here — the rest you can finish later.",
+    blurb:
+      "Money, place, timing and process. Only visa sponsorship is required here — the rest you can finish later.",
     minutes: 2,
     required: false,
   },
@@ -885,6 +914,8 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
     "roleTitle",
     "companyWebsite",
     "team",
+    "seniority",
+    "employmentType",
     "requirements",
     "mustHaves",
     "niceToHaves",
@@ -948,7 +979,6 @@ export const stepValidators = {
   }),
 } as const;
 
-
 /* ------------------------------------------------------------------ */
 /* Requiredness: one source of truth for the form and the server        */
 /* ------------------------------------------------------------------ */
@@ -989,9 +1019,7 @@ export type IntakeRequirednessContext = {
 };
 
 /** Every intake field name mapped to whether it is required right now. */
-export function intakeRequiredness(
-  ctx: IntakeRequirednessContext = {},
-): Record<string, boolean> {
+export function intakeRequiredness(ctx: IntakeRequirednessContext = {}): Record<string, boolean> {
   const map: Record<string, boolean> = {
     // Optional across the board — declared explicitly so the form never has
     // to guess, and so a new field cannot slip through undecorated.
@@ -1043,7 +1071,6 @@ export function intakeRequiredness(
 /** Said once per step, so nobody has to infer it from the styling. */
 export const INTAKE_REQUIRED_LEGEND =
   "Fields marked * are required. Everything else is marked Optional.";
-
 
 /** The answers that make a brief complete, in the words the client saw. */
 /**
@@ -1103,7 +1130,9 @@ export function briefCompleteness(values: Record<string, unknown>): {
   const hasStages =
     Array.isArray(values["interviewStages"]) &&
     (values["interviewStages"] as unknown[]).some(
-      (s) => typeof (s as { name?: string })?.name === "string" && (s as { name: string }).name.trim().length > 0,
+      (s) =>
+        typeof (s as { name?: string })?.name === "string" &&
+        (s as { name: string }).name.trim().length > 0,
     );
   for (const { field, label, required } of BRIEF_COMPLETENESS_FIELDS) {
     const raw = values[field];
@@ -1112,13 +1141,13 @@ export function briefCompleteness(values: Record<string, unknown>): {
         ? true
         : field === "interviewProcess" && hasStages
           ? true
-        : field === "dealBreakers" && hasDealBreakers
-          ? true
-          : typeof raw === "number"
-            ? Number.isFinite(raw) && raw > 0
-            : typeof raw === "string"
-              ? raw.trim().length > 0
-              : Boolean(raw);
+          : field === "dealBreakers" && hasDealBreakers
+            ? true
+            : typeof raw === "number"
+              ? Number.isFinite(raw) && raw > 0
+              : typeof raw === "string"
+                ? raw.trim().length > 0
+                : Boolean(raw);
     if (filled) continue;
     if (required) missing.push(label);
     else optional.push(label);
@@ -1151,11 +1180,14 @@ export type BlueprintStage = (typeof BLUEPRINT_STAGES)[number]["key"] | "not_sta
  * It favors real lifecycle events (creation, submission, review) over a static
  * default, ensuring the widget is never stuck at "Queued" when progress exists.
  */
-export function blueprintStageIndex(status: string, position?: {
-  created_at?: string | Date;
-  submitted_at?: string | Date;
-  status?: string;
-}): number {
+export function blueprintStageIndex(
+  status: string,
+  position?: {
+    created_at?: string | Date;
+    submitted_at?: string | Date;
+    status?: string;
+  },
+): number {
   // Terminal states.
   if (status === "ready") return BLUEPRINT_STAGES.length;
   if (status === "failed") return -1;
@@ -1167,19 +1199,26 @@ export function blueprintStageIndex(status: string, position?: {
   // Fallback to position lifecycle for "stale" or "not_started" roles.
   // Note: We no longer treat 'under_review' (admin action) as a stage 3 trigger,
   // letting the pipeline report its own progress.
-  if (position?.status === "active" || position?.status === "needs_clarification" || position?.status === "approved") {
+  if (
+    position?.status === "active" ||
+    position?.status === "needs_clarification" ||
+    position?.status === "approved"
+  ) {
     return BLUEPRINT_STAGES.length;
   }
-  
+
   // If the role exists, "Role created" is the baseline.
   return 0;
 }
 
-export function blueprintProgress(status: string, position?: {
-  created_at?: string | Date;
-  submitted_at?: string | Date;
-  status?: string;
-}): number {
+export function blueprintProgress(
+  status: string,
+  position?: {
+    created_at?: string | Date;
+    submitted_at?: string | Date;
+    status?: string;
+  },
+): number {
   if (status === "ready") return 100;
   if (status === "failed") return 100;
   const idx = blueprintStageIndex(status, position);
@@ -1190,4 +1229,3 @@ export function blueprintProgress(status: string, position?: {
   if (!known && idx < BLUEPRINT_STAGES.length) return 0;
   return Math.round(((idx + 1) / BLUEPRINT_STAGES.length) * 100);
 }
-

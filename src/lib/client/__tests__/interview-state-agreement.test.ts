@@ -27,8 +27,8 @@ describe("a request already in the staff queue is not offered again", () => {
     expect(advanceFor("shortlisted", true)).toBeNull();
   });
 
-  it("still offers the request when none has been made", () => {
-    expect(advanceFor("shortlisted", false)?.action).toBe("request_interview");
+  it("never requests interviews from candidate list actions", () => {
+    expect(advanceFor("shortlisted", false)).toBeNull();
   });
 
   it("uses the same statuses the admin queue counts by", () => {
@@ -110,15 +110,15 @@ describe("Make offer needs an interview to have happened", () => {
     expect(advanceFor("interview_process", false, false, false)).toBeNull();
   });
 
-  it("offers Make offer once an interview has been held", () => {
-    expect(advanceFor("interview_process", false, false, true)?.action).toBe("offer");
+  it("does not make an offer when the interview stage was reached", () => {
+    expect(advanceFor("interview_process", false, false, true)).toBeNull();
   });
 
-  it("still routes a cancelled interview to a fresh request", () => {
-    expect(advanceFor("interview_process", false, true, false)?.action).toBe("request_interview");
+  it("never creates new interview bookings after cancellation", () => {
+    expect(advanceFor("interview_process", false, true, false)).toBeNull();
   });
 
-  it("leaves the offer stage alone", () => {
-    expect(advanceFor("offer", false, false, false)?.action).toBe("hire");
+  it("leaves hire confirmation exclusively to the Kanban", () => {
+    expect(advanceFor("offer", false, false, false)).toBeNull();
   });
 });

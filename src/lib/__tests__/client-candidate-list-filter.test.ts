@@ -78,23 +78,19 @@ describe("client candidate list filters", () => {
     expect(out.map((r) => r.match_id)).toEqual(["a"]);
   });
 
-  it("a cancelled interview drops out of interviewing and into shortlisted", () => {
-    // The canonical lane rule, applied to BOTH the tile and this list.
+  it("uses the explicit Kanban stage for the client list after historical cancellations", () => {
     const calledOff = row({
       id: "a",
       stage: "interview_process",
       interview_called_off: true,
       interview_active: false,
     });
-    expect(matchesInterviewTile(calledOff)).toBe(false);
+    expect(matchesInterviewTile(calledOff)).toBe(true);
+    expect(filterCandidates([calledOff], { ...BASE, stage: "shortlisted" })).toEqual([]);
     expect(
-      filterCandidates([calledOff], { ...BASE, stage: "shortlisted" }).map((r) => r.match_id),
-      "a stage=shortlisted drill-through must find them",
+      filterCandidates([calledOff], { ...BASE, stage: "interview_process" }).map((r) => r.match_id),
+      "the client list and Kanban must show the same manually recorded stage",
     ).toEqual(["a"]);
-    expect(
-      filterCandidates([calledOff], { ...BASE, stage: "interview_process" }),
-      "and the interview_process drill-through must not",
-    ).toEqual([]);
   });
 
   it("top drill-through uses the presentation band only", () => {
@@ -104,9 +100,39 @@ describe("client candidate list filters", () => {
 
   it("combines chips with AND semantics", () => {
     const rows = [
-      row({ id: "a", stage: "shortlisted", candidate: { display_name: "Ana", headline: null, location: "Porto", availability: "immediate", years_experience: 9 } as never }),
-      row({ id: "b", stage: "shortlisted", candidate: { display_name: "Bo", headline: null, location: "Porto", availability: "immediate", years_experience: 2 } as never }),
-      row({ id: "c", stage: "delivered", candidate: { display_name: "Cai", headline: null, location: "Porto", availability: "immediate", years_experience: 9 } as never }),
+      row({
+        id: "a",
+        stage: "shortlisted",
+        candidate: {
+          display_name: "Ana",
+          headline: null,
+          location: "Porto",
+          availability: "immediate",
+          years_experience: 9,
+        } as never,
+      }),
+      row({
+        id: "b",
+        stage: "shortlisted",
+        candidate: {
+          display_name: "Bo",
+          headline: null,
+          location: "Porto",
+          availability: "immediate",
+          years_experience: 2,
+        } as never,
+      }),
+      row({
+        id: "c",
+        stage: "delivered",
+        candidate: {
+          display_name: "Cai",
+          headline: null,
+          location: "Porto",
+          availability: "immediate",
+          years_experience: 9,
+        } as never,
+      }),
     ];
     const out = filterCandidates(rows, {
       ...BASE,
@@ -123,11 +149,10 @@ describe("client candidate list filters", () => {
   });
 
   it("search is bounded to visible candidate fields", () => {
-    const rows = [
-      row({ id: "a", skills: ["Kubernetes"] as never }),
-      row({ id: "b" }),
-    ];
-    expect(filterCandidates(rows, { ...BASE, q: "kubernetes" }).map((r) => r.match_id)).toEqual(["a"]);
+    const rows = [row({ id: "a", skills: ["Kubernetes"] as never }), row({ id: "b" })];
+    expect(filterCandidates(rows, { ...BASE, q: "kubernetes" }).map((r) => r.match_id)).toEqual([
+      "a",
+    ]);
     expect(filterCandidates(rows, { ...BASE, q: "no-such-token" })).toHaveLength(0);
   });
 
@@ -143,8 +168,18 @@ describe("client candidate list filters", () => {
       row({ id: "beatriz", score: 88, fit_label: "strong_fit", fit: { band: "top" } } as never),
       row({ id: "ana", score: 79, fit_label: "strong_fit", fit: { band: "strong" } } as never),
       row({ id: "ines", score: 73, fit_label: "strong_fit", fit: { band: "strong" } } as never),
-      row({ id: "carla", score: 66, fit_label: "worth_considering", fit: { band: "consider" } } as never),
-      row({ id: "joao", score: 49, fit_label: "not_a_fit", fit: { band: "not_recommended" } } as never),
+      row({
+        id: "carla",
+        score: 66,
+        fit_label: "worth_considering",
+        fit: { band: "consider" },
+      } as never),
+      row({
+        id: "joao",
+        score: 49,
+        fit_label: "not_a_fit",
+        fit: { band: "not_recommended" },
+      } as never),
     ];
     const strong = filterCandidates(rows, { ...BASE, fit: "strong" });
     expect(strong.map((r) => r.match_id)).toEqual(["ana", "ines"]);

@@ -2,13 +2,17 @@ import { describe, it, expect } from "vitest";
 import { getConversation } from "../conversations.functions";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-describe("Messaging History Integrity", () => {
+// Do not use demo production data as a substitute for a configured test DB.
+const dbReady = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+const describeWithDb = dbReady ? describe : describe.skip;
+
+describeWithDb("Messaging History Integrity", () => {
   it("should render all persisted client messages in their threads including old ones", async () => {
     // Setup: Seed an old client message and a staff reply
     const orgId = "0c86fa1b-94ee-46b8-9a11-a42cee39bfed"; // Northwind Demo
     const clientId = "1fa5f7ca-da0c-4b88-ae73-a87ef20d35be"; // Demo Client Admin
     const staffId = "e60fd0fc-3f4d-4911-b469-c672ca0ca369"; // A staff user
-    
+
     // Reuse or create conversation. Organization scope is 1:1 with org.
     let convoId: string;
     const { data: existing } = await supabaseAdmin
@@ -51,7 +55,7 @@ describe("Messaging History Integrity", () => {
       thread_id: orgId,
       sender_user_id: clientId,
       body: "OLD CLIENT MESSAGE",
-      created_at: oldDateStr
+      created_at: oldDateStr,
     });
 
     // 2. Staff reply
@@ -60,7 +64,7 @@ describe("Messaging History Integrity", () => {
       thread_id: orgId,
       sender_user_id: staffId,
       body: "STAFF REPLY",
-      created_at: new Date(oldDate.getTime() + 1000).toISOString()
+      created_at: new Date(oldDate.getTime() + 1000).toISOString(),
     });
 
     // 3. Recent client message
@@ -69,48 +73,54 @@ describe("Messaging History Integrity", () => {
       thread_id: orgId,
       sender_user_id: clientId,
       body: "RECENT CLIENT MESSAGE",
-      created_at: recentDateStr
+      created_at: recentDateStr,
     });
 
     // Test: Retrieve conversation as the client
-    // Note: createServerFn handlers are usually called via a request context, 
+    // Note: createServerFn handlers are usually called via a request context,
     // but we can test the logic by mocking the context if needed.
     // However, the function itself is exported and we can call it.
-    
+
     // We'll call the internal handler directly to bypass TanStack Start's runtime wrapper in tests
     const { _getConversationHandler } = await import("../conversations.functions");
     const result = await _getConversationHandler({
       data: { conversationId: convoId },
-      context: { 
+      context: {
         supabase: supabaseAdmin,
-        userId: clientId 
-      }
+        userId: clientId,
+      },
     });
 
     // Filter for the exact bodies we just inserted to avoid picking up unrelated messages
-    const inserted = result.messages.filter(m => ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"].includes(m.body));
-    
+    const inserted = result.messages.filter((m) =>
+      ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"].includes(m.body),
+    );
+
     expect(inserted.length).toBeGreaterThanOrEqual(3);
-    
+
     // Sort by created_at to ensure order for assertion
     inserted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
-    const oldMsg = inserted.find(m => m.body === "OLD CLIENT MESSAGE");
-    const staffReply = inserted.find(m => m.body === "STAFF REPLY");
-    const recentMsg = inserted.find(m => m.body === "RECENT CLIENT MESSAGE");
+    const oldMsg = inserted.find((m) => m.body === "OLD CLIENT MESSAGE");
+    const staffReply = inserted.find((m) => m.body === "STAFF REPLY");
+    const recentMsg = inserted.find((m) => m.body === "RECENT CLIENT MESSAGE");
 
     expect(oldMsg).toBeDefined();
     expect(oldMsg?.sender_side).toBe("client");
-    
+
     expect(staffReply).toBeDefined();
     expect(staffReply?.sender_side).toBe("taasflow");
-    
+
     expect(recentMsg).toBeDefined();
     expect(recentMsg?.sender_side).toBe("client");
 
     // Cleanup all messages inserted by this test, and remove the conversation
     // if the test created it, so no test fixture leaks into the demo workspace.
-    await supabaseAdmin.from("messages").delete().eq("conversation_id", convoId).in("body", ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"]);
+    await supabaseAdmin
+      .from("messages")
+      .delete()
+      .eq("conversation_id", convoId)
+      .in("body", ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"]);
     if (createdByTest) {
       await supabaseAdmin.from("conversations").delete().eq("id", convoId);
     }

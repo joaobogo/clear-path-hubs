@@ -12,12 +12,7 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
   {
     id: "roles",
     label: "Roles",
-    tabs: [
-      { to: "/client/positions", label: "Roles" },
-      { to: "/client/interviews", label: "Interviews" },
-      { to: "/client/offers", label: "Offers" },
-      
-    ],
+    tabs: [{ to: "/client/positions", label: "Roles" }],
   },
   {
     id: "candidates",
@@ -61,10 +56,7 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
   {
     id: "command",
     label: "Command",
-    tabs: [
-      { to: "/admin", label: "Overview", exact: true },
-
-    ],
+    tabs: [{ to: "/admin", label: "Overview", exact: true }],
   },
   {
     id: "delivery",
@@ -78,7 +70,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       // Approvals themselves live on the Overview work queue now; this desk is
       // the decisions we are still waiting on from clients.
       { to: "/admin/decision-backlog", label: "Decision backlog" },
-      { to: "/admin/interviews", label: "Interviews" },
     ],
   },
   {
@@ -93,7 +84,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/outcome-sla", label: "Answers we owe" },
       { to: "/admin/intake-quality", label: "Intake quality" },
       { to: "/admin/qa-report", label: "QA report" },
-
     ],
   },
 
@@ -133,7 +123,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/seo", label: "Search visibility" },
       { to: "/admin/integrations", label: "Integration health" },
       { to: "/admin/tracking", label: "Consent & tracking" },
-
     ],
   },
   {

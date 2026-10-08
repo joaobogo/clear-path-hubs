@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildNextStep,
-  confirmationLine,
-  dueLabel,
-  withinLabel,
-} from "@/lib/client-next-step";
+import { buildNextStep, confirmationLine, dueLabel, withinLabel } from "@/lib/client-next-step";
 
 describe("client next step commitments", () => {
   const now = new Date("2026-07-30T10:00:00Z");
@@ -15,16 +10,21 @@ describe("client next step commitments", () => {
     expect(s.due).toBeNull();
   });
 
-  it("promises interview slots within 24h after advancing", () => {
+  it("never promises to book interviews when a candidate reaches shortlist", () => {
     const s = buildNextStep("shortlisted", now.toISOString(), now);
-    expect(s.sentence).toContain("propose interview slots within 24h");
-    expect(s.due).not.toBeNull();
+    expect(s.sentence).toContain("outside TAASFlow");
+    expect(s.sentence).not.toMatch(/book|calendar|invite|propose.*slots/i);
+    expect(s.due).toBeNull();
     expect(s.overdue).toBe(false);
   });
 
-  it("flags a missed commitment as overdue", () => {
-    const s = buildNextStep("shortlisted", "2026-07-27T10:00:00Z", now);
-    expect(s.overdue).toBe(true);
+  it("does not invent overdue interview or offer tasks for historical stages", () => {
+    for (const stage of ["shortlisted", "interview_process", "offer"] as const) {
+      const next = buildNextStep(stage, "2026-07-27T10:00:00Z", now);
+      expect(next.sentence).toContain("outside TAASFlow");
+      expect(next.due).toBeNull();
+      expect(next.overdue).toBe(false);
+    }
   });
 
   it("words commitment windows in plain language", () => {
@@ -39,7 +39,13 @@ describe("client next step commitments", () => {
   });
 
   it("returns an immediate consequence line for every decision outcome", () => {
-    for (const stage of ["shortlisted", "interview_process", "offer", "hired", "not_moving_forward"] as const) {
+    for (const stage of [
+      "shortlisted",
+      "interview_process",
+      "offer",
+      "hired",
+      "not_moving_forward",
+    ] as const) {
       expect(confirmationLine(stage, now).length).toBeGreaterThan(10);
     }
   });
