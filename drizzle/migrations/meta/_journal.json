@@ -8,6 +8,13 @@
       "when": 1791481525797,
       "tag": "0000_allow_admin_approval_without_payment",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791496396982,
+      "tag": "0001_restrict_tracking_policy_public_reads",
+      "breakpoints": true
     }
   ]
 }
