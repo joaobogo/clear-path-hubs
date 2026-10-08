@@ -171,12 +171,7 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   pilotAcknowledgement: { label: "Pilot acknowledgement", step: 0, focusLabel: null },
 };
 
-/**
- * One title per wizard step, indexed by step number. These must stay aligned
- * with INTAKE_STEPS: the group's index is the step its Edit action jumps to, so
- * a stale extra title silently mislabels every group and sends "Edit the role"
- * to the wrong step.
- */
+/** Topics are independent of navigation; each row retains its actual step. */
 const SECTIONS = [
   { id: "company", title: "Company and hiring contact", fields: ["companyName", "companyWebsite", "companyLinkedin", "firstName", "contactTitle", "workEmail", "phone", "contactLinkedin"] },
   { id: "role", title: "Role overview", fields: ["roleTitle", "team", "seniority", "employmentType", "jdFilename", "jobDescriptionText"] },

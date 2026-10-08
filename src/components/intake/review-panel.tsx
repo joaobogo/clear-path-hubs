@@ -68,7 +68,7 @@ export function IntakeReviewPanel({
                   <h3 id={`review-heading-${group.id}`} className="min-w-0 text-base font-semibold">{group.title}</h3>
                 </div>
                 <dl className={`mt-4 grid min-w-0 gap-x-6 gap-y-5 ${wide ? "sm:grid-cols-2" : ""}`}>
-                  {group.rows.map((r) => <ReviewRow key={r.field} row={r} onEdit={onEdit} />)}
+                  {group.rows.map((r) => <ReviewRow key={r.field} row={r} onEdit={onEdit} wide={wide} />)}
                 </dl>
                 {group.id === "role" && group.rows.some((r) => r.field === "jdFilename") && !group.rows.some((r) => r.field === "jobDescriptionText") && (
                   <p className="mt-4 text-sm text-muted-foreground">No extracted job text is available yet. The attached document will be submitted with your brief.</p>
@@ -82,9 +82,9 @@ export function IntakeReviewPanel({
   );
 }
 
-function ReviewRow({ row, onEdit }: { row: IntakeReviewRow; onEdit: OnEdit }) {
+function ReviewRow({ row, onEdit, wide }: { row: IntakeReviewRow; onEdit: OnEdit; wide: boolean }) {
   return (
-    <div className={`min-w-0 space-y-2 ${row.fullWidth ? "sm:col-span-2" : ""}`} data-testid={`review-row-${row.field}`}>
+    <div className={`min-w-0 space-y-2 ${row.fullWidth && wide ? "sm:col-span-2" : ""}`} data-testid={`review-row-${row.field}`}>
       <dt className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <span className="min-w-0 text-sm font-medium text-muted-foreground">{row.label}</span>
         {row.editable !== false && <EditLink label={`Edit ${row.label}`} onClick={() => onEdit({ step: row.step, focusLabel: row.focusLabel, field: row.field })} />}
