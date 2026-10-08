@@ -1,3 +1,4 @@
+import { offSystemWorkflowRequired } from "@/lib/off-system-workflow";
 // Scheduling coordination surface: candidate responses, org scheduling
 // configuration, and canonical interview status history.
 import { createServerFn } from "@tanstack/react-start";
@@ -101,7 +102,7 @@ export const respondToInterview = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Interview scheduling is coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const { data: profile } = await context.supabase
       .from("candidate_profiles")
       .select("id")
@@ -263,7 +264,7 @@ export const saveSchedulingSettings = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     if (data.defaultTimezone && !isValidTimezone(data.defaultTimezone)) {
       throw new Error("invalid_timezone");
     }
@@ -317,7 +318,7 @@ export const requestInterviewChange = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Interview scheduling is coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Interview scheduling is coordinated outside TAASFlow.");
     const { data: profile } = await context.supabase
       .from("candidate_profiles")
       .select("id")
