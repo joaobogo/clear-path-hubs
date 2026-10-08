@@ -67,6 +67,7 @@ export type IntakeReviewSnapshot = {
   // Company and contact
   companyName: string;
   companyWebsite: string;
+  companyWebsiteDerived?: boolean;
   companyLinkedin: string;
   firstName: string;
   lastName: string;
@@ -270,7 +271,7 @@ export function buildIntakeReview(input: {
     listRow("dealBreakerList", s.dealBreakers),
     row("inviteCollaborators", collaborators.length ? `${s.inviteCollaborators ? "Invite these people after the role is accepted" : "No invitations requested — nobody on this list will be emailed"}\n${collaborators.map((c) => [c.name, c.email].filter(Boolean).join(" — ")).join("\n")}` : "", { fullWidth: true }),
     row("companyName", s.companyName),
-    row("companyWebsite", s.companyWebsite),
+    row("companyWebsite", s.companyWebsite, s.companyWebsiteDerived ? { step: 0, focusLabel: "Work email" } : {}),
     row("companyLinkedin", s.companyLinkedin),
     row("firstName", [s.firstName, s.lastName].filter(Boolean).join(" "), { label: "Hiring contact" }),
     row("contactTitle", s.contactTitle),

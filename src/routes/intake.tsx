@@ -523,6 +523,7 @@ function ExpressIntakePage() {
         dealBreakers: usableDealBreakers(normalizeDealBreakers(state.dealBreakerList)),
         companyName: state.companyName,
         companyWebsite: state.companyWebsite,
+        companyWebsiteDerived: Boolean(companyWebsiteFromEmail(state.workEmail)),
         companyLinkedin: state.companyLinkedin,
         firstName: state.firstName,
         lastName: state.lastName,
