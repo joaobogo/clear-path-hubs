@@ -109,4 +109,56 @@ describe("intake review", () => {
     expect(rows.find((x) => x.field === "companyWebsite")).toMatchObject({ step: 1 });
     expect(r.groups.map((g) => g.title)).toEqual(["You and the job description", "What we read"]);
   });
+
+  it("keeps the complete JD body and uploaded file separate with correct edit navigation", () => {
+    const fullJd = Array.from({ length: 60 }, (_, i) =>
+      `Responsibility ${i + 1}: build reliable recruiting and reporting processes.`
+    ).join("\\n");
+    expect(fullJd.length).toBeGreaterThan(400);
+    const review = buildIntakeReview({
+      snapshot: {
+        ...EMPTY,
+        jobDescriptionText: fullJd,
+        jdFilename: "complete-role.pdf",
+        roleTitle: "Senior Finance Manager",
+        team: "Accounting",
+      },
+      required: {},
+    });
+    const rows = review.groups.flatMap((group) => group.rows);
+    expect(rows.find((row) => row.field === "jobDescriptionText")).toMatchObject({
+      value: fullJd,
+      step: 0,
+    });
+    expect(rows.find((row) => row.field === "jdFilename")?.value).toBe("complete-role.pdf");
+    expect(rows.find((row) => row.field === "roleTitle")?.step).toBe(1);
+    expect(rows.find((row) => row.field === "team")?.step).toBe(1);
+  });
+
+  it("includes parsed seniority, employment and the chosen collaborators", () => {
+    const review = buildIntakeReview({
+      snapshot: {
+        ...EMPTY,
+        seniorityLabel: "senior",
+        employmentTypeLabel: "full time",
+        collaboratorLine: "Hiring Manager (hiring@example.com)",
+        interviewStageLines: ["Screening · video · Owner: Jane · jane@example.com"],
+      },
+      required: {},
+    });
+    const rows = review.groups.flatMap((group) => group.rows);
+    expect(rows.find((row) => row.field === "seniority")?.value).toBe("senior");
+    expect(rows.find((row) => row.field === "employmentType")?.value).toBe("full time");
+    expect(rows.find((row) => row.field === "collaborators")?.step).toBe(2);
+    expect(rows.find((row) => row.field === "interviewStages")?.value).toContain("Jane");
+  });
+
+  it("does not show unprovided optional values or account secrets", () => {
+    const review = buildIntakeReview({ snapshot: { ...EMPTY, roleTitle: "Product Designer" }, required: {} });
+    const fields = review.groups.flatMap((g) => g.rows.map((r) => r.field));
+    expect(fields).toEqual(["roleTitle"]);
+    expect(fields).not.toContain("password");
+    expect(fields).not.toContain("confirmPassword");
+  });
+
 });
