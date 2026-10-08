@@ -78,23 +78,19 @@ describe("client candidate list filters", () => {
     expect(out.map((r) => r.match_id)).toEqual(["a"]);
   });
 
-  it("a cancelled interview drops out of interviewing and into shortlisted", () => {
-    // The canonical lane rule, applied to BOTH the tile and this list.
+  it("uses the explicit Kanban stage for the client list after historical cancellations", () => {
     const calledOff = row({
       id: "a",
       stage: "interview_process",
       interview_called_off: true,
       interview_active: false,
     });
-    expect(matchesInterviewTile(calledOff)).toBe(false);
+    expect(matchesInterviewTile(calledOff)).toBe(true);
+    expect(filterCandidates([calledOff], { ...BASE, stage: "shortlisted" })).toEqual([]);
     expect(
-      filterCandidates([calledOff], { ...BASE, stage: "shortlisted" }).map((r) => r.match_id),
-      "a stage=shortlisted drill-through must find them",
+      filterCandidates([calledOff], { ...BASE, stage: "interview_process" }).map((r) => r.match_id),
+      "the client list and Kanban must show the same manually recorded stage",
     ).toEqual(["a"]);
-    expect(
-      filterCandidates([calledOff], { ...BASE, stage: "interview_process" }),
-      "and the interview_process drill-through must not",
-    ).toEqual([]);
   });
 
   it("top drill-through uses the presentation band only", () => {
