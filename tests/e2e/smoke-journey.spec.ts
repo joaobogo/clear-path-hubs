@@ -325,32 +325,31 @@ test.describe("launch smoke journey", () => {
     await page.goto(`/client/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByText(fullName).first()).toBeVisible({ timeout: 90_000 });
 
-    // The forward move is stage-labelled: "Shortlist" on a delivered candidate,
-    // "Advance to …" once they are further along.
-    const advance = page
-      .getByRole("button", { name: /^(shortlist|advance to (shortlist|interview)|request interview)$/i })
-      .first();
-
-    await expect(advance, "client sees a forward decision on an approved candidate").toBeVisible({
+    // Recruitment status changes happen only on the Candidates Kanban,
+    // never through an interview request or offer action on a profile.
+    await page.goto("/client/candidates?view=board", {
+      waitUntil: "domcontentloaded",
+    });
+    const card = page.locator(
+      `[data-testid="pipeline-card"][data-match-id="${matchId}"]`,
+    );
+    await expect(card, "published candidate appears on Kanban").toBeVisible({
       timeout: 60_000,
     });
-    await advance.click();
-    // The decision confirms with an undoable toast naming the outcome; the exact
-    // wording is stage-dependent, so assert the confirmation, not one phrasing.
-    await expect(
-      page.getByText(/shortlist|interview|recorded/i).first(),
-      "the client gets a confirmation of the decision",
-    ).toBeVisible({
-      timeout: 60_000,
-    });
+    await card.getByRole("button", { name: /change stage for/i }).click();
+    await page.getByRole("menuitem", { name: /^shortlist$/i }).click();
 
-
+    await expect(card, "the card moves to the shortlisted column").toHaveAttribute(
+      "data-stage",
+      "shortlisted",
+      { timeout: 60_000 },
+    );
     await expect
       .poll(async () => (await lookupCandidate(email)).matches[0]?.stage, {
         timeout: 60_000,
         intervals: [1_000, 2_000],
       })
-      .toMatch(/shortlisted|interview_process/);
+      .toBe("shortlisted");
 
     // ── 5. Staff manage the processing queue ──────────────────────────────
     await loginAs(page, "admin", fixtures.users["platform_admin"]!.email);
