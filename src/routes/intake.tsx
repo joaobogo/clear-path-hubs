@@ -527,8 +527,8 @@ function ExpressIntakePage() {
           .map((st) => [
             st.name.trim(),
             INTERVIEW_STAGE_FORMAT_LABELS[st.format] ?? st.format,
-            st.ownerName.trim() ? `Owner: ${st.ownerName.trim()}` : "",
-            st.ownerEmail.trim() ? st.ownerEmail.trim() : "",
+            (st.ownerName ?? "").trim() ? `Owner: ${(st.ownerName ?? "").trim()}` : "",
+            (st.ownerEmail ?? "").trim(),
           ].filter(Boolean).join(" · ")),
         interviewProcess: state.interviewProcess,
         targetDaysToOffer: state.targetDaysToOffer,
