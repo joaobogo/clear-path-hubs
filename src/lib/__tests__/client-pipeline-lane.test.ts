@@ -122,14 +122,14 @@ describe("an interview is a milestone, not a lane move", () => {
   });
 });
 
-describe("a cancelled interview leaves the interview lane", () => {
+describe("historical interview cancellations never override a Kanban move", () => {
   // The rule "the stored stage decides the lane" is right for ENTERING an
   // interview and wrong for leaving one. A cancellation does not move the
   // stage, so the INTERVIEWING tile counted 2 while only one candidate was
   // interviewing and the row label beside it read "Interview cancelled"
   // (audit 1 Sep, F6).
-  it("puts a candidate whose only interview was cancelled back in shortlisted", () => {
-    expect(laneFor(row("interview_process", false, true))).toBe("shortlisted");
+  it("keeps a manually advanced candidate in Interviewing after an old cancellation", () => {
+    expect(laneFor(row("interview_process", false, true))).toBe("interview_process");
   });
 
   it("keeps a candidate whose interview was HELD in the interview lane", () => {
@@ -152,8 +152,8 @@ describe("a cancelled interview leaves the interview lane", () => {
       row("interview_process", true),
       row("interview_process", false, true),
     ];
-    expect(countLanes(rows).counts.interview_process).toBe(1);
-    expect(countLanes(rows).counts.shortlisted).toBe(1);
+    expect(countLanes(rows).counts.interview_process).toBe(2);
+    expect(countLanes(rows).counts.shortlisted).toBe(0);
   });
 });
 
