@@ -2,7 +2,11 @@ import { describe, it, expect } from "vitest";
 import { getConversation } from "../conversations.functions";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-describe("Messaging History Integrity", () => {
+// Do not use demo production data as a substitute for a configured test DB.
+const dbReady = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+const describeWithDb = dbReady ? describe : describe.skip;
+
+describeWithDb("Messaging History Integrity", () => {
   it("should render all persisted client messages in their threads including old ones", async () => {
     // Setup: Seed an old client message and a staff reply
     const orgId = "0c86fa1b-94ee-46b8-9a11-a42cee39bfed"; // Northwind Demo
