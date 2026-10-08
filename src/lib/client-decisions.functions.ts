@@ -128,6 +128,9 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    if (data.toStage === "interview_process" || data.toStage === "offer") {
+      throw new Error("Interviews and offers are coordinated outside TAASFlow.");
+    }
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
@@ -570,6 +573,9 @@ export const clientAction = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    if (data.action === "request_interview" || data.action === "offer") {
+      throw new Error("Interviews and offers are coordinated outside TAASFlow.");
+    }
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
