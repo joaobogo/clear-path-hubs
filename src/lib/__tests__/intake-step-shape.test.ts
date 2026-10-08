@@ -153,7 +153,7 @@ describe("the description is read before anything is asked about the role", () =
     // Gating the buttons on that alone is what let a compensation conflict
     // leave an enabled-looking button that did nothing when clicked
     // (audit 16 Sep, INT-001). Every submit button must consult both lists.
-    const buttons = intake.match(/disabled=\{submitting[^}]*\}/g) ?? [];
+    const buttons = intake.match(/disabled=\{\s*submitting[^}]*\}/g) ?? [];
     const submitButtons = buttons.filter((b) => b.includes("review.missing"));
     expect(submitButtons.length, "no gated submit button found").toBeGreaterThan(0);
     for (const b of submitButtons) {
