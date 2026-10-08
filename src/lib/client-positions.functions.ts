@@ -224,6 +224,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
 
       .eq("organization_id", data.orgId)
       .eq("id", data.positionId)
+      .eq("is_test_record" as any, false)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!position) return null;
