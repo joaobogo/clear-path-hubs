@@ -341,6 +341,7 @@ export const requestInterview = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
@@ -498,6 +499,7 @@ export const proposeInterviewTimes = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -580,6 +582,7 @@ export const confirmInterviewTime = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Interview booking is coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
