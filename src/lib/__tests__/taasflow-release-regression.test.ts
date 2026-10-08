@@ -97,3 +97,50 @@ describe("intake parsing and preview contract", () => {
     expect(intake).toContain("collaboratorLine:");
   });
 });
+
+
+describe("off-platform interviews and offers", () => {
+  it("does not expose direct stage-change buttons in client candidate lists", () => {
+    const list = source("src/components/client/candidates/compact-list.tsx");
+    const card = source("src/components/client/candidate-card.tsx");
+    const board = source("src/components/client/candidates/board-view.tsx");
+    expect(list).not.toContain("CandidatePrimaryAction");
+    expect(list).not.toContain('>Action</th>');
+    expect(card).not.toContain("CandidatePrimaryAction");
+    expect(board).toContain("attemptMove={attemptMove}");
+    expect(board).toContain("<PipelineBoard");
+  });
+
+  it("keeps interview and offer stages on Kanban without creating external workflows", () => {
+    const code = source("src/lib/client-decisions.functions.ts");
+    const move = code.slice(
+      code.indexOf("export const moveMatchStage"),
+      code.indexOf("export const undoClientDecision"),
+    );
+    const action = code.slice(code.indexOf("export const clientAction"));
+    expect(move).toContain("toStage: data.toStage");
+    expect(move).not.toMatch(/\.from\(["']interviews["']\)\s*\.insert\(/);
+    expect(move).not.toContain("upsertOfferDraft");
+    expect(move).not.toContain('interview_process: "request_interview"');
+    expect(move).not.toContain('offer: "offer"');
+    expect(action).toContain("if (ACTION_TO_STAGE[data.action])");
+  });
+
+  it("blocks legacy staff offer mutations before writing and retains role closure", () => {
+    const code = source("src/lib/offer-hire.functions.ts");
+    for (const name of ["recordOfferOutcomeFn", "setHireStartDateFn"]) {
+      const handler = code.slice(code.indexOf(`export const ${name}`));
+      expect(handler).toContain("if (offSystemWorkflowRequired())");
+    }
+    expect(code).toContain("export const closePositionWithOutcomeFn");
+  });
+
+  it("redirects old client booking and offer routes to candidate tracking", () => {
+    const interviews = source("src/routes/_authenticated/client.interviews.tsx");
+    const offers = source("src/routes/_authenticated/client.offers.tsx");
+    for (const route of [interviews, offers]) {
+      expect(route).toContain('to: "/client/candidates"');
+      expect(route).not.toMatch(/RequestInterviewDialog|upsertOfferDraft/);
+    }
+  });
+});
