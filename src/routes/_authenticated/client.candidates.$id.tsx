@@ -5,7 +5,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ViewerReadOnlyNotice } from "@/components/client/states";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -41,7 +41,6 @@ import {
 import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
 import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock, JumpNav } from "@/components/client/candidate-detail/shared";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
@@ -53,7 +52,6 @@ import {
 import {
   AvailabilityPanel,
   ExperienceTimeline,
-  InterviewGuide,
   
   SkillsAndEducation,
 } from "@/components/client/candidate-detail/profile";
@@ -65,7 +63,6 @@ import {
 import {
   ACTIONS_BY_STAGE,
   ActionArea,
-  MobileActionBar,
   type ActionKey,
 } from "@/components/client/candidate-detail/actions";
 
@@ -150,7 +147,6 @@ function CandidateDetailPage() {
  const stageBeforeRef = useRef<MatchStage | null>(null);
  // Consequence line for the stage the decision moves the candidate into.
   const nextStepAfterRef = useRef<string | null>(null);
-  const [activeTab, setActiveTab] = useState("summary");
  const undoFn = useServerFn(undoClientDecision);
 
  // Exact cache key of the detail query. Optimistic writes and rollbacks must
