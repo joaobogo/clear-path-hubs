@@ -69,12 +69,6 @@ export function PortfolioSnapshot({
       href: "/client/candidates?stage=shortlisted",
     },
     {
-      label: "Interview",
-      value: data.interviewing,
-      href: "/client/candidates?view=board&stage=interview_process",
-    },
-    { label: "Offer stage", value: data.offers, href: "/client/candidates?view=board&stage=offer" },
-    {
       label: "Hires",
       value: data.hires,
       href: "/client/candidates?stage=hired",
