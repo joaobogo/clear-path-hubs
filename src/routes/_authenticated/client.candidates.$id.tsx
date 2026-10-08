@@ -22,10 +22,7 @@ import { getCompensationSignal } from "@/lib/compensation.functions";
 import { confirmationLine } from "@/lib/client-next-step";
 import { isNotRecommendedFit } from "@/lib/client-fit-presentation";
 import { useSupportView } from "@/lib/support-view";
-import {
-  DecisionDialog,
-  type DecisionPayload,
-} from "@/components/client/decision-dialog";
+import { DecisionDialog, type DecisionPayload } from "@/components/client/decision-dialog";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
@@ -40,7 +37,13 @@ import {
 } from "@/lib/client/action-timeout";
 import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 
-import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock, JumpNav } from "@/components/client/candidate-detail/shared";
+import {
+  BackLink,
+  CandidateHeader,
+  CollapsibleSection,
+  ContactBlock,
+  JumpNav,
+} from "@/components/client/candidate-detail/shared";
 
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
@@ -52,14 +55,10 @@ import {
 import {
   AvailabilityPanel,
   ExperienceTimeline,
-  
   SkillsAndEducation,
 } from "@/components/client/candidate-detail/profile";
 
-
-import {
-  TalentMemoryAction,
-} from "@/components/client/candidate-detail/activity";
+import { TalentMemoryAction } from "@/components/client/candidate-detail/activity";
 import {
   ACTIONS_BY_STAGE,
   ActionArea,
@@ -71,43 +70,45 @@ type AnyRow = any;
 
 const RoutePending = makeWorkspacePending({ shape: "detail", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
-	pendingMs: 150,
-	pendingComponent: RoutePending,
- head: () => ({
- meta: [
- { title: "Candidate · Client workspace" },
- { name: "robots", content: "noindex" },
- ],
- }),
- notFoundComponent: () => (
- <div className="p-8 text-sm text-muted-foreground">Candidate not found.</div>
- ),
- errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.candidates.$id.tsx"),
- component: CandidateDetailPage,
+  pendingMs: 150,
+  pendingComponent: RoutePending,
+  head: () => ({
+    meta: [{ title: "Candidate · Client workspace" }, { name: "robots", content: "noindex" }],
+  }),
+  notFoundComponent: () => (
+    <div className="p-8 text-sm text-muted-foreground">Candidate not found.</div>
+  ),
+  errorComponent: makeRouteErrorComponent(
+    "client",
+    "src/routes/_authenticated/client.candidates.$id.tsx",
+  ),
+  component: CandidateDetailPage,
 });
 
 function CandidateDetailPage() {
- const { id } = Route.useParams();
- const qc = useQueryClient();
- const ctxFn = useServerFn(getClientContext);
- const detailFn = useServerFn(getClientCandidate);
- const actionFn = useServerFn(clientAction);
- const orgSearch = useClientOrgSearch();
- const support = useSupportView();
+  const { id } = Route.useParams();
+  const qc = useQueryClient();
+  const ctxFn = useServerFn(getClientContext);
+  const detailFn = useServerFn(getClientCandidate);
+  const actionFn = useServerFn(clientAction);
+  const orgSearch = useClientOrgSearch();
+  const support = useSupportView();
 
- const ctxQuery = useQuery({
- queryKey: ["client-context", orgSearch ?? null],
- queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
- });
- const ctx = ctxQuery.data;
- const orgId = ctx?.active?.organization_id;
+  const ctxQuery = useQuery({
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
+  });
+  const ctx = ctxQuery.data;
+  const orgId = ctx?.active?.organization_id;
 
   const detailQuery = useQuery({
     // Staff preview reads the same sanitized payload, but may open a candidate
     // that is not published to this client yet.
     queryKey: ["client-candidate", orgId, id, support.active ? "preview" : "live"],
     queryFn: () =>
-      detailFn({ data: { orgId: orgId!, matchId: id, ...(support.active ? { preview: true } : {}) } }),
+      detailFn({
+        data: { orgId: orgId!, matchId: id, ...(support.active ? { preview: true } : {}) },
+      }),
     enabled: !!orgId,
   });
 
@@ -138,20 +139,18 @@ function CandidateDetailPage() {
   });
   const compPending = compQuery.isPending;
 
-
-
   const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
- // Which action is in flight, so only the pressed button shows a spinner.
- const [pendingKey, setPendingKey] = useState<ActionKey | null>(null);
- // Stage captured at mutate time so the toast's Undo knows where to return to.
- const stageBeforeRef = useRef<MatchStage | null>(null);
- // Consequence line for the stage the decision moves the candidate into.
+  // Which action is in flight, so only the pressed button shows a spinner.
+  const [pendingKey, setPendingKey] = useState<ActionKey | null>(null);
+  // Stage captured at mutate time so the toast's Undo knows where to return to.
+  const stageBeforeRef = useRef<MatchStage | null>(null);
+  // Consequence line for the stage the decision moves the candidate into.
   const nextStepAfterRef = useRef<string | null>(null);
- const undoFn = useServerFn(undoClientDecision);
+  const undoFn = useServerFn(undoClientDecision);
 
- // Exact cache key of the detail query. Optimistic writes and rollbacks must
- // use it verbatim — a shorter key writes a phantom entry nothing reads.
- const detailKey = ["client-candidate", orgId, id, support.active ? "preview" : "live"] as const;
+  // Exact cache key of the detail query. Optimistic writes and rollbacks must
+  // use it verbatim — a shorter key writes a phantom entry nothing reads.
+  const detailKey = ["client-candidate", orgId, id, support.active ? "preview" : "live"] as const;
   const act = useMutation({
     mutationFn: (p: DecisionPayload) =>
       withActionTimeout(() =>
@@ -181,86 +180,84 @@ function CandidateDetailPage() {
     },
     onSuccess: (res, p) => {
       const back = stageBeforeRef.current;
-      toast.success(
-        "Recorded — the TaaSFlow team has been notified.",
-        {
-          description: nextStepAfterRef.current ?? undefined,
-          duration: 12_000,
-          action: back
-            ? {
-                label: "Undo",
-                onClick: (e) => {
-                  const btn = e.currentTarget as HTMLButtonElement;
-                  const originalText = btn.textContent;
-                  btn.disabled = true;
-                  btn.textContent = "Undoing…";
-                  void (async () => {
-                    try {
-                      await undoFn({ data: { orgId: orgId!, matchId: id, toStage: back } });
-                      toast.success("Decision undone.");
-                      await qc.invalidateQueries();
-                    } catch (e) {
-                      const msg = e instanceof Error ? e.message.replace(/^Error:\s*/, "") : "";
-                      toast.error("That decision can no longer be undone", {
-                        description: msg || "Your recruiter can reverse it for you.",
-                      });
-                      btn.disabled = false;
-                      btn.textContent = originalText;
-                    }
-                  })();
-                },
-              }
-            : undefined,
-        },
-      );
+      toast.success("Recorded — the TaaSFlow team has been notified.", {
+        description: nextStepAfterRef.current ?? undefined,
+        duration: 12_000,
+        action: back
+          ? {
+              label: "Undo",
+              onClick: (e) => {
+                const btn = e.currentTarget as HTMLButtonElement;
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = "Undoing…";
+                void (async () => {
+                  try {
+                    await undoFn({ data: { orgId: orgId!, matchId: id, toStage: back } });
+                    toast.success("Decision undone.");
+                    await qc.invalidateQueries();
+                  } catch (e) {
+                    const msg = e instanceof Error ? e.message.replace(/^Error:\s*/, "") : "";
+                    toast.error("That decision can no longer be undone", {
+                      description: msg || "Your recruiter can reverse it for you.",
+                    });
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                  }
+                })();
+              },
+            }
+          : undefined,
+      });
       setDialogAction(null);
-       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidate(orgId, id) });
-       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
-       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.positions(orgId) });
-       qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidates(orgId) });
+      qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidate(orgId, id) });
+      qc.invalidateQueries({ queryKey: kpiCacheKeys.client.overview(orgId) });
+      qc.invalidateQueries({ queryKey: kpiCacheKeys.client.positions(orgId) });
+      qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidates(orgId) });
     },
- onSettled: () => setPendingKey(null),
- onError: (e: Error, p, context) => {
- // Visible revert: the panel returns to the stage it was in.
- if (context?.previous) qc.setQueryData(detailKey, context.previous);
- const stale = readStaleStateError(e);
- if (stale) {
- setDialogAction(null);
-  qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidate(orgId, id) });
- toast.error("This candidate already moved", { description: stale.message, duration: 12_000 });
- return;
- }
- const msg = e.message.replace(/^Error: /, "");
- if (/reason/i.test(msg)) {
- toast.error("Pick a reason so we can act on it.");
- return;
- }
- toast.error(isActionTimeout(e) ? ACTION_TIMEOUT_MESSAGE : "That did not save", {
- description: isActionTimeout(e) ? undefined : msg || undefined,
- duration: 12_000,
- action: {
- label: "Retry",
- onClick: () => {
- setPendingKey(p.action as ActionKey);
- act.mutate(p);
- },
- },
- });
- },
- });
+    onSettled: () => setPendingKey(null),
+    onError: (e: Error, p, context) => {
+      // Visible revert: the panel returns to the stage it was in.
+      if (context?.previous) qc.setQueryData(detailKey, context.previous);
+      const stale = readStaleStateError(e);
+      if (stale) {
+        setDialogAction(null);
+        qc.invalidateQueries({ queryKey: kpiCacheKeys.client.candidate(orgId, id) });
+        toast.error("This candidate already moved", {
+          description: stale.message,
+          duration: 12_000,
+        });
+        return;
+      }
+      const msg = e.message.replace(/^Error: /, "");
+      if (/reason/i.test(msg)) {
+        toast.error("Pick a reason so we can act on it.");
+        return;
+      }
+      toast.error(isActionTimeout(e) ? ACTION_TIMEOUT_MESSAGE : "That did not save", {
+        description: isActionTimeout(e) ? undefined : msg || undefined,
+        duration: 12_000,
+        action: {
+          label: "Retry",
+          onClick: () => {
+            setPendingKey(p.action as ActionKey);
+            act.mutate(p);
+          },
+        },
+      });
+    },
+  });
 
-
-
- // Advance-type moves go through in one click; anything needing a "why"
- // opens the structured reason picker.
+  // Advance-type moves go through in one click; anything needing a "why"
+  // opens the structured reason picker.
   const NO_REASON_NEEDED = new Set<ActionKey>(["shortlist"]);
- const RESULT_STAGE: Partial<Record<ActionKey, MatchStage>> = {
- shortlist: "shortlisted",
- request_interview: "interview_process",
- offer: "offer",
- hire: "hired",
- not_moving_forward: "not_moving_forward",
- };
+  const RESULT_STAGE: Partial<Record<ActionKey, MatchStage>> = {
+    shortlist: "shortlisted",
+    request_interview: "interview_process",
+    offer: "offer",
+    hire: "hired",
+    not_moving_forward: "not_moving_forward",
+  };
   const handleAct = (k: ActionKey, fromStage: MatchStage) => {
     if (act.isPending) return;
     stageBeforeRef.current = fromStage;
@@ -313,41 +310,39 @@ function CandidateDetailPage() {
   if (!orgId || detailPending || (data === undefined && detailFetching)) {
     return <div className="p-8 text-sm text-muted-foreground">Loading candidate…</div>;
   }
- if (data === null || !data?.candidate) {
- return (
- <div className="mx-auto max-w-3xl px-6 py-12">
- <BackLink />
- <div className="mt-4 rounded-lg border bg-card p-8 text-center">
- <h1 className="text-lg font-semibold">Candidate not shared with you yet</h1>
- <p className="mt-2 text-sm text-muted-foreground">
- This profile isn't in your workspace. Either TaaSFlow hasn't approved them
- for one of your roles yet, they were withdrawn, or you're signed in to a
- different client account.
- </p>
- <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
- <Button asChild size="sm">
- <Link to="/client/candidates">See your candidates</Link>
- </Button>
- <Button asChild size="sm" variant="outline">
- <Link to="/client/conversations">Ask your recruiter</Link>
- </Button>
- </div>
- </div>
- </div>
- );
- }
+  if (data === null || !data?.candidate) {
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-12">
+        <BackLink />
+        <div className="mt-4 rounded-lg border bg-card p-8 text-center">
+          <h1 className="text-lg font-semibold">Candidate not shared with you yet</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            This profile isn't in your workspace. Either TaaSFlow hasn't approved them for one of
+            your roles yet, they were withdrawn, or you're signed in to a different client account.
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            <Button asChild size="sm">
+              <Link to="/client/candidates">See your candidates</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/client/conversations">Ask your recruiter</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
+  const { candidate } = data as { candidate: import("@/lib/client-kpi.server").ClientCandidateDTO };
+  const isViewer = ctx?.active?.role === "client_viewer";
+  const readOnly = support.readOnly || isViewer;
+  const actions = ACTIONS_BY_STAGE[candidate.stage] ?? { primary: null, more: [] };
 
- const { candidate } = data as { candidate: import("@/lib/client-kpi.server").ClientCandidateDTO; };
- const isViewer = ctx?.active?.role === "client_viewer";
- const readOnly = support.readOnly || isViewer;
- const actions = ACTIONS_BY_STAGE[candidate.stage] ?? { primary: null, more: [] };
-
- // Icon-only controls name their subject so assistive tech (and the Playwright
- // suite) knows which candidate and role a decision applies to.
- const actionSubject = [candidate.candidate.display_name, candidate.position?.title]
-  .filter(Boolean)
-  .join(" for ");
+  // Icon-only controls name their subject so assistive tech (and the Playwright
+  // suite) knows which candidate and role a decision applies to.
+  const actionSubject = [candidate.candidate.display_name, candidate.position?.title]
+    .filter(Boolean)
+    .join(" for ");
 
   const verdictTrusted = true;
   // An unpublished candidate has no assessment to show. Staff org-preview can
@@ -357,253 +352,232 @@ function CandidateDetailPage() {
   // was still in review (audit #4, H6).
   const assessmentVisible = (candidate as AnyRow).published !== false;
 
+  return (
+    <div className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
+      <div className="flex items-center justify-between gap-3">
+        <BackLink />
+        <LiveUpdatedChip updatedAt={live.updatedAt} />
+      </div>
 
- return (
- <div className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
- <div className="flex items-center justify-between gap-3">
- <BackLink />
- <LiveUpdatedChip updatedAt={live.updatedAt} />
- </div>
+      {/* 1 — IDENTITY */}
+      <CandidateHeader candidate={candidate} readOnly={readOnly} />
 
- {/* 1 — IDENTITY */}
- <CandidateHeader
- candidate={candidate}
- readOnly={readOnly}
- />
+      {isViewer && !support.readOnly && (
+        <ViewerReadOnlyNotice className="mt-4" area="deciding on this candidate" />
+      )}
 
-
- {isViewer && !support.readOnly && (
- <ViewerReadOnlyNotice
- className="mt-4"
- area="deciding on this candidate"
- />
- )}
-
- <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-12">
- <div className="space-y-4 lg:col-span-8">
- {/* A short recruiter introduction, when one is attached. Nothing about an
+      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-12">
+        <div className="space-y-4 lg:col-span-8">
+          {/* A short recruiter introduction, when one is attached. Nothing about an
      unpublished candidate reaches the client — including their video. */}
- {assessmentVisible && (
- <IntroVideoPanel
-  matchId={candidate.match_id}
-  video={candidate.intro_video}
-  candidateName={candidate.candidate.display_name}
- />
- )}
- {/* 2 — THE VERDICT */}
- {!assessmentVisible ? (
-  <div className="rounded-xl border bg-muted/30 p-5">
-   <h2 className="text-lg font-semibold">Assessment in review</h2>
-   <p className="mt-1 text-sm text-muted-foreground">
-    We're finishing this candidate's assessment. The fit verdict, the
-    evidence behind it and their introduction appear here once our team
-    approves and publishes them.
-   </p>
-  </div>
- ) : verdictTrusted ? (
- <div id="sec-fit" className="scroll-mt-24 space-y-3">
-  <FitHero candidate={candidate} />
- </div>
- ) : (
-  <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
-  We are still reconciling the evidence for this candidate. The fit assessment below is based on the initial screening.
-  </div>
+          {assessmentVisible && (
+            <IntroVideoPanel
+              matchId={candidate.match_id}
+              video={candidate.intro_video}
+              candidateName={candidate.candidate.display_name}
+            />
+          )}
+          {/* 2 — THE VERDICT */}
+          {!assessmentVisible ? (
+            <div className="rounded-xl border bg-muted/30 p-5">
+              <h2 className="text-lg font-semibold">Assessment in review</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                We're finishing this candidate's assessment. The fit verdict, the evidence behind it
+                and their introduction appear here once our team approves and publishes them.
+              </p>
+            </div>
+          ) : verdictTrusted ? (
+            <div id="sec-fit" className="scroll-mt-24 space-y-3">
+              <FitHero candidate={candidate} />
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
+              We are still reconciling the evidence for this candidate. The fit assessment below is
+              based on the initial screening.
+            </div>
+          )}
 
- )}
+          {assessmentVisible && (
+            <JumpNav
+              items={[
+                { id: "sec-score", label: "Score" },
 
-  {assessmentVisible && (
-  <JumpNav
-   items={[
-    { id: "sec-score", label: "Score" },
+                { id: "sec-evidence", label: "Evidence" },
+                ...(candidate.stage !== "hired"
+                  ? [{ id: "sec-confirm", label: "Confirm in interview" }]
+                  : []),
+                { id: "sec-profile", label: "Summary & evidence" },
+                { id: "sec-facts", label: "Pay & availability" },
+              ]}
+            />
+          )}
 
-    { id: "sec-evidence", label: "Evidence" },
-    ...(candidate.stage !== "hired"
-      ? [{ id: "sec-confirm", label: "Confirm in interview" }]
-      : []),
-    { id: "sec-profile", label: "Summary & evidence" },
-     { id: "sec-facts", label: "Pay & availability" },
-   ]}
-  />
-  )}
-
-  {/* 3 — THE NUMBER EXPLAINED: sits directly under the verdict it explains.
+          {/* 3 — THE NUMBER EXPLAINED: sits directly under the verdict it explains.
       It used to sit below the evidence and the interview checklist, so the
       figure and the reasoning behind it were a scroll apart. */}
-  {assessmentVisible && (
-  <div id="sec-score" className="scroll-mt-24">
-  <ScoreBreakdown candidate={candidate} hideRequirementRows />
-  </div>
-  )}
+          {assessmentVisible && (
+            <div id="sec-score" className="scroll-mt-24">
+              <ScoreBreakdown candidate={candidate} hideRequirementRows />
+            </div>
+          )}
 
-  {/* 5 — THE EVIDENCE: requirements listed once, with coverage folded in */}
-  {assessmentVisible && (
-  <div id="sec-evidence" className="scroll-mt-24 space-y-4">
-  <WhyThisCandidate candidate={candidate} withCoverage />
-  </div>
-  )}
+          {/* 5 — THE EVIDENCE: requirements listed once, with coverage folded in */}
+          {assessmentVisible && (
+            <div id="sec-evidence" className="scroll-mt-24 space-y-4">
+              <WhyThisCandidate candidate={candidate} withCoverage />
+            </div>
+          )}
 
-  {/* 6 — WHAT TO CONFIRM: hidden once the hiring decision is made */}
-  {assessmentVisible && candidate.stage !== "hired" && (
-  <div id="sec-confirm" className="scroll-mt-24">
-  <WhatNeedsValidation
-    candidate={candidate}
-    title="To confirm in the interview"
-    preferredLimit={2}
-    onInterviewGuideClick={() => document.getElementById("sec-profile")?.scrollIntoView({ behavior: "smooth" })}
-  />
-  </div>
-  )}
+          {/* 6 — WHAT TO CONFIRM: hidden once the hiring decision is made */}
+          {assessmentVisible && candidate.stage !== "hired" && (
+            <div id="sec-confirm" className="scroll-mt-24">
+              <WhatNeedsValidation
+                candidate={candidate}
+                title="To confirm in the interview"
+                preferredLimit={2}
+                onInterviewGuideClick={() =>
+                  document.getElementById("sec-profile")?.scrollIntoView({ behavior: "smooth" })
+                }
+              />
+            </div>
+          )}
 
- {/* 4 — CONTACT (mobile keeps it in the main flow, after the evidence) */}
- <ContactBlock
- candidate={candidate}
- instanceId="contact-mobile"
- className="lg:hidden"
- />
- </div>
+          {/* 4 — CONTACT (mobile keeps it in the main flow, after the evidence) */}
+          <ContactBlock candidate={candidate} instanceId="contact-mobile" className="lg:hidden" />
+        </div>
 
-      {/* RIGHT RAIL — stage actions, contact and next step stay in view */}
-      <aside className="space-y-4 lg:col-span-4 lg:sticky lg:top-20 lg:self-start">
-        <ActionArea
-          actions={actions}
-          readOnly={readOnly}
-          pending={act.isPending}
-          pendingKey={pendingKey}
-          onAct={(k) => handleAct(k, candidate.stage)}
-          stage={candidate.stage}
-          matchId={candidate.match_id}
-          subject={actionSubject}
-          
-          notRecommended={isNotRecommendedFit(candidate.fit_label, candidate.score)}
-         />
+        {/* RIGHT RAIL — stage actions, contact and next step stay in view */}
+        <aside className="space-y-4 lg:col-span-4 lg:sticky lg:top-20 lg:self-start">
+          <ActionArea
+            actions={actions}
+            readOnly={readOnly}
+            pending={act.isPending}
+            pendingKey={pendingKey}
+            onAct={(k) => handleAct(k, candidate.stage)}
+            stage={candidate.stage}
+            matchId={candidate.match_id}
+            subject={actionSubject}
+            notRecommended={isNotRecommendedFit(candidate.fit_label, candidate.score)}
+          />
 
-        {/* The server lets a client take a decision back for five minutes
+          {/* The server lets a client take a decision back for five minutes
             (UNDO_WINDOW_MS). The only affordance for it was a twelve-second
             toast, and UndoWindow — written so the Undo "survives a page
             refresh instead of living only inside a toast" — was never mounted
             anywhere. Four of those five minutes existed on the server and had
             no route to the screen. */}
-        <UndoWindow
-          orgId={orgId ?? null}
-          matchId={candidate.match_id}
-          candidateName={candidate.candidate.display_name}
-        />
+          <UndoWindow
+            orgId={orgId ?? null}
+            matchId={candidate.match_id}
+            candidateName={candidate.candidate.display_name}
+          />
 
-        {/* Contact and the CV controls sit right under the stage actions so
+          {/* Contact and the CV controls sit right under the stage actions so
             they are visible without scrolling on desktop. */}
-        <ContactBlock
-          candidate={candidate}
-          instanceId="contact-desktop"
-          className="hidden lg:block"
-        />
+          <ContactBlock
+            candidate={candidate}
+            instanceId="contact-desktop"
+            className="hidden lg:block"
+          />
 
+          <NextStepNote stage={candidate.stage} stageEnteredAt={candidate.stage_entered_at} />
+          {orgId && (
+            <OpenThreadButton
+              orgId={orgId}
+              scope="candidate"
+              candidateMatchId={id}
+              subject={candidate.candidate.display_name}
+              label="Conversation about this candidate"
+            />
+          )}
+          <TalentMemoryAction
+            orgId={orgId}
+            matchId={candidate.match_id}
+            candidateName={candidate.candidate.display_name}
+            roleTitle={candidate.position?.title ?? null}
+            readOnly={readOnly}
+          />
+        </aside>
+      </div>
 
+      {/* Full supporting information lives below the fit assessment and evidence. */}
+      <section id="sec-profile" className="mt-8 scroll-mt-24 space-y-5">
+        <header>
+          <h2 className="text-lg font-semibold">Summary &amp; evidence</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Experience, screening answers, compensation and availability.
+          </p>
+        </header>
+        {/* Row 1 — Career experience{/* Row 1 — Career experience (wider) beside Skills, education and languages */}
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+          <div className="lg:col-span-3">
+            <ExperienceTimeline candidate={candidate} />
+          </div>
+          <div className="lg:col-span-2">
+            <SkillsAndEducation candidate={candidate} />
+          </div>
+        </div>
 
-        <NextStepNote
-          stage={candidate.stage}
-          stageEnteredAt={candidate.stage_entered_at}
-        />
- {orgId && (
- <OpenThreadButton
- orgId={orgId}
- scope="candidate"
- candidateMatchId={id}
- subject={candidate.candidate.display_name}
- label="Conversation about this candidate"
- />
- )}
- <TalentMemoryAction
- orgId={orgId}
- matchId={candidate.match_id}
- candidateName={candidate.candidate.display_name}
- roleTitle={candidate.position?.title ?? null}
- readOnly={readOnly}
- />
- </aside>
- </div>
-
- {/* Full supporting information lives below the fit assessment and evidence. */}
-  <section id="sec-profile" className="mt-8 scroll-mt-24 space-y-5">
-    <header>
-      <h2 className="text-lg font-semibold">Summary &amp; evidence</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Experience, screening answers, compensation and availability.
-      </p>
-    </header>
-{/* Row 1 — Career experience{/* Row 1 — Career experience (wider) beside Skills, education and languages */}
-<div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-<div className="lg:col-span-3">
-<ExperienceTimeline candidate={candidate} />
-</div>
-<div className="lg:col-span-2">
-<SkillsAndEducation candidate={candidate} />
-</div>
-</div>
-
-{candidate.screening_answers.some((a) => (a.answer ?? "").trim().length > 0) && (
-<CollapsibleSection title="Screening answers">
-<dl className="space-y-3 text-sm">
-{candidate.screening_answers.map((a, i) => (
-<div key={i}>
-<dt className="text-xs font-medium text-muted-foreground">
-{a.question}
-</dt>
-<dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
-</div>
-))}
-</dl>
-</CollapsibleSection>
-)}
-<div className="mb-3">
-  <h3 className="text-base font-semibold">Compensation &amp; availability</h3>
-  <p className="mt-1 text-sm text-muted-foreground">
-    The role's stated range, candidate expectations, offer history and availability remain visible here for reference.
-  </p>
-</div>
-{/* 4 — THE DEAL-BREAKER FACTS: pay and availability decide as many rejections
+        {candidate.screening_answers.some((a) => (a.answer ?? "").trim().length > 0) && (
+          <CollapsibleSection title="Screening answers">
+            <dl className="space-y-3 text-sm">
+              {candidate.screening_answers.map((a, i) => (
+                <div key={i}>
+                  <dt className="text-xs font-medium text-muted-foreground">{a.question}</dt>
+                  <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
+                </div>
+              ))}
+            </dl>
+          </CollapsibleSection>
+        )}
+        <div className="mb-3">
+          <h3 className="text-base font-semibold">Compensation &amp; availability</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The role's stated range, candidate expectations, offer history and availability remain
+            visible here for reference.
+          </p>
+        </div>
+        {/* 4 — THE DEAL-BREAKER FACTS: pay and availability decide as many rejections
       as the evidence does, so they are answered before the long read rather
       than being buried inside a tab further down. */}
-  <div id="sec-facts" className="scroll-mt-24 grid grid-cols-1 gap-4 lg:grid-cols-2">
-  {compQuery.isError ? (
-  <QueryErrorCard
-    compact
-    title="We couldn't load compensation figures"
-    error={compQuery.error}
-    onRetry={() => void compQuery.refetch()}
-    retrying={compQuery.isFetching}
-  />
-  ) : (
-  <CompensationPanel signal={compSignal} loading={compPending} />
-  )}
-  <AvailabilityPanel candidate={candidate} />
-  </div>
+        <div id="sec-facts" className="scroll-mt-24 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {compQuery.isError ? (
+            <QueryErrorCard
+              compact
+              title="We couldn't load compensation figures"
+              error={compQuery.error}
+              onRetry={() => void compQuery.refetch()}
+              retrying={compQuery.isFetching}
+            />
+          ) : (
+            <CompensationPanel signal={compSignal} loading={compPending} />
+          )}
+          <AvailabilityPanel candidate={candidate} />
+        </div>
 
-  {/* Links live in the Contact card only. */}
+        {/* Links live in the Contact card only. */}
+      </section>
 
-
-
-</section>
-
-      {/* Every consequential decision is confirmed, reasoned, and logged. */}{/* Every consequential decision is confirmed, reasoned, and logged. */}
+      {/* Every consequential decision is confirmed, reasoned, and logged. */}
+      {/* Every consequential decision is confirmed, reasoned, and logged. */}
       <DecisionDialog
-          action={dialogAction as never}
-          open={!!dialogAction}
-          pending={act.isPending}
-          onOpenChange={(v) => !v && setDialogAction(null)}
-          onConfirm={(payload) => {
-            if (act.isPending) return;
-            setPendingKey(payload.action as ActionKey);
-            stageBeforeRef.current = candidate.stage;
-            nextStepAfterRef.current =
-              payload.action === "hold"
-                ? "We'll pause outreach and keep them warm until you tell us to move."
-                : RESULT_STAGE[payload.action as ActionKey]
-                  ? confirmationLine(RESULT_STAGE[payload.action as ActionKey]!)
-                  : null;
-            act.mutate(payload as DecisionPayload);
-          }}
-        />
-
+        action={dialogAction as never}
+        open={!!dialogAction}
+        pending={act.isPending}
+        onOpenChange={(v) => !v && setDialogAction(null)}
+        onConfirm={(payload) => {
+          if (act.isPending) return;
+          setPendingKey(payload.action as ActionKey);
+          stageBeforeRef.current = candidate.stage;
+          nextStepAfterRef.current =
+            payload.action === "hold"
+              ? "We'll pause outreach and keep them warm until you tell us to move."
+              : RESULT_STAGE[payload.action as ActionKey]
+                ? confirmationLine(RESULT_STAGE[payload.action as ActionKey]!)
+                : null;
+          act.mutate(payload as DecisionPayload);
+        }}
+      />
     </div>
   );
 }

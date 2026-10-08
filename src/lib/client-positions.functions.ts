@@ -15,14 +15,10 @@ import {
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
-import {
-  DEAL_BREAKER_REASON_CODES,
-  normalizeDealBreakers,
-} from "@/lib/client-deal-breakers";
+import { DEAL_BREAKER_REASON_CODES, normalizeDealBreakers } from "@/lib/client-deal-breakers";
 
 import {
   CLIENT_CANDIDATE_SELECT,
-
   loadKpiRows,
   loadRoleStageDates,
   computeKpis,
@@ -117,9 +113,7 @@ export const getClientPositions = createServerFn({ method: "GET" })
       "closed",
       "archived",
     ];
-    const statusFilter: string[] = data.status
-      ? statusesForRoleTab(data.status)
-      : ALL_STATUSES;
+    const statusFilter: string[] = data.status ? statusesForRoleTab(data.status) : ALL_STATUSES;
     const { data: positions, error } = await context.supabase
       .from("positions")
       .select(
@@ -138,9 +132,8 @@ export const getClientPositions = createServerFn({ method: "GET" })
     const rows = await loadKpiRows(context.supabase, data.orgId);
     // Interviews awaiting a time: the one reader, indexed by role, so the Roles
     // list banner and the Overview queue can never print different numbers.
-    const { loadInterviewsAwaitingTime, awaitingClient } = await import(
-      "@/lib/kpis/interviews.server"
-    );
+    const { loadInterviewsAwaitingTime, awaitingClient } =
+      await import("@/lib/kpis/interviews.server");
     const pendingByRole = new Map<string, number>();
     // Only what the client can act on: the Roles list badge says "Confirm a
     // time", which is not something they can do for a slot nobody sent.
@@ -197,8 +190,8 @@ export const getClientPositions = createServerFn({ method: "GET" })
           ...language,
           positionId: String(p.id),
           interviewToConfirmId:
-            posRows.find((r) => r.interview_needs_confirmation && r.interview_id)
-              ?.interview_id ?? null,
+            posRows.find((r) => r.interview_needs_confirmation && r.interview_id)?.interview_id ??
+            null,
         }),
       };
     });
@@ -289,7 +282,6 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     // in the Hired column without a confirmed offer is not a hire.
     const hires = roleKpis.hires;
     const remaining = Math.max(0, openings - hires);
-
 
     // Interview state for the plain-language status line.
     const matchIdList = ((matches as AnyRow[]) ?? []).map((m) => m.id as string);
@@ -543,11 +535,11 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       story,
       commitment: (commitment as AnyRow | null)
         ? {
-            position_id: String((commitment as AnyRow)['position_id']),
-            first_shortlist_days: Number((commitment as AnyRow)['first_shortlist_days']),
-            shortlist_size: Number((commitment as AnyRow)['shortlist_size']),
-            interview_slots_hours: Number((commitment as AnyRow)['interview_slots_hours']),
-            baseline_at: String((commitment as AnyRow)['baseline_at']),
+            position_id: String((commitment as AnyRow)["position_id"]),
+            first_shortlist_days: Number((commitment as AnyRow)["first_shortlist_days"]),
+            shortlist_size: Number((commitment as AnyRow)["shortlist_size"]),
+            interview_slots_hours: Number((commitment as AnyRow)["interview_slots_hours"]),
+            baseline_at: String((commitment as AnyRow)["baseline_at"]),
           }
         : null,
       commitment_contact_name: commitmentContactName,
@@ -649,9 +641,7 @@ export const createWorkspacePosition = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await assertEditor(context.supabase, context.userId, data.orgId);
-    const qa = await assertNoQaContamination(context.supabase, data.orgId, [
-      data.title,
-    ]);
+    const qa = await assertNoQaContamination(context.supabase, data.orgId, [data.title]);
     if (!qa.ok) throw new Error(qa.reason ?? "Invalid input");
     const trace_id = crypto.randomUUID();
     const { data: created, error } = await context.supabase

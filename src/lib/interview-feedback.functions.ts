@@ -100,9 +100,7 @@ async function nameByMatch(
     .from("candidate_matches")
     .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name)")
     .in("id", ids);
-  const { hydrateClientCandidateProfiles } = await import(
-    "@/lib/client-candidate-hydrate.server"
-  );
+  const { hydrateClientCandidateProfiles } = await import("@/lib/client-candidate-hydrate.server");
   for (const m of await hydrateClientCandidateProfiles((data as AnyRow[]) ?? [])) {
     const name = (m as AnyRow).candidate_profiles?.full_name as string | undefined;
     if (name) out.set(m.id as string, name);
@@ -116,12 +114,11 @@ async function nameByMatch(
  */
 export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string }) =>
-    z.object({ orgId: z.string().uuid() }).parse(input),
-  )
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }): Promise<FeedbackQueueItem[]> => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
-    const { getInterviewsAwaitingFeedback } = await import("./client/interviews-awaiting-feedback.server");
+    const { getInterviewsAwaitingFeedback } =
+      await import("./client/interviews-awaiting-feedback.server");
     return getInterviewsAwaitingFeedback(context.supabase, data.orgId);
   });
 
@@ -187,8 +184,7 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
           return {
             interview_id: iv.id as string,
             candidate_match_id: iv.candidate_match_id as string,
-            candidate_name:
-              matchNames.get(data.matchId) ?? nameOf(iv.candidate_matches),
+            candidate_name: matchNames.get(data.matchId) ?? nameOf(iv.candidate_matches),
             position_id: (iv.position_id as string) ?? null,
             position_title: iv.positions?.title ?? "Your role",
             interview_type: (iv.interview_type as string) ?? null,

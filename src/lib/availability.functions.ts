@@ -14,8 +14,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
-const trace = () =>
-  `av_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+const trace = () => `av_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
 async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
   const { data: m, error } = await supabase
@@ -50,9 +49,7 @@ const windowSchema = z.object({
 
 export const getAvailabilityWindows = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string }) =>
-    z.object({ orgId: z.string().uuid() }).parse(input),
-  )
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     const { data: rows, error } = await context.supabase
       .from("org_availability_windows")
@@ -70,18 +67,18 @@ export const getAvailabilityWindows = createServerFn({ method: "POST" })
 
 export const saveAvailabilityWindows = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; timezone: string; windows: unknown[] }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          timezone: z.string().min(1).max(80),
-          windows: z.array(windowSchema).max(40),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; timezone: string; windows: unknown[] }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        timezone: z.string().min(1).max(80),
+        windows: z.array(windowSchema).max(40),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (offSystemWorkflowRequired()) throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
+    if (offSystemWorkflowRequired())
+      throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     const t = trace();
     await assertEditor(context.supabase, context.userId, data.orgId);
     if (!isValidTimezone(data.timezone)) throw new Error("invalid_timezone");
@@ -113,7 +110,9 @@ export const saveAvailabilityWindows = createServerFn({ method: "POST" })
           timezone: data.timezone,
           created_by: context.userId,
         }));
-      const { error } = await context.supabase.from("org_availability_windows").insert(rows as never);
+      const { error } = await context.supabase
+        .from("org_availability_windows")
+        .insert(rows as never);
       if (error) throw new Error(error.message);
     }
 
@@ -150,7 +149,6 @@ async function windowsFor(supabase: AnyRow, orgId: string) {
   return (data ?? []) as AvailabilityWindow[];
 }
 
-
 /**
  * The candidate's stated general availability, if they gave one. Used to reduce
  * generated slots to times they said work — a preference, so if nothing fits we
@@ -176,18 +174,18 @@ async function candidatePreferenceFor(supabase: AnyRow, matchId: string | null) 
 /** Propose times generated from the org's saved availability windows. */
 export const proposeFromAvailability = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; id: string; durationMinutes?: number }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          id: z.string().uuid(),
-          durationMinutes: z.number().int().min(15).max(480).optional(),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; id: string; durationMinutes?: number }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        id: z.string().uuid(),
+        durationMinutes: z.number().int().min(15).max(480).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (offSystemWorkflowRequired()) throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
+    if (offSystemWorkflowRequired())
+      throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     const t = trace();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);
@@ -251,18 +249,18 @@ export const proposeFromAvailability = createServerFn({ method: "POST" })
  */
 export const rescheduleInterview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; id: string; reason?: string }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          id: z.string().uuid(),
-          reason: z.string().max(500).optional(),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; id: string; reason?: string }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        id: z.string().uuid(),
+        reason: z.string().max(500).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (offSystemWorkflowRequired()) throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
+    if (offSystemWorkflowRequired())
+      throw new Error("Calendar and interview scheduling are handled outside TAASFlow.");
     const t = trace();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const prev = await loadInterview(context.supabase, data.orgId, data.id);

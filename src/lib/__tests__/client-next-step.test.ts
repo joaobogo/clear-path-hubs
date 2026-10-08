@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildNextStep,
-  confirmationLine,
-  dueLabel,
-  withinLabel,
-} from "@/lib/client-next-step";
+import { buildNextStep, confirmationLine, dueLabel, withinLabel } from "@/lib/client-next-step";
 
 describe("client next step commitments", () => {
   const now = new Date("2026-07-30T10:00:00Z");
@@ -44,7 +39,13 @@ describe("client next step commitments", () => {
   });
 
   it("returns an immediate consequence line for every decision outcome", () => {
-    for (const stage of ["shortlisted", "interview_process", "offer", "hired", "not_moving_forward"] as const) {
+    for (const stage of [
+      "shortlisted",
+      "interview_process",
+      "offer",
+      "hired",
+      "not_moving_forward",
+    ] as const) {
       expect(confirmationLine(stage, now).length).toBeGreaterThan(10);
     }
   });

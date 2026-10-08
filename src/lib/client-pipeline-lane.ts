@@ -126,7 +126,6 @@ export function laneFor(row: LaneRow): PipelineLane | null {
   return stage;
 }
 
-
 export function isInLane(row: LaneRow, lane: PipelineLane): boolean {
   return laneFor(row) === lane;
 }

@@ -85,10 +85,9 @@ describe("client workspace at 375px", () => {
     const board = readFileSync(join(COMPONENTS_DIR, "candidates/board-view.tsx"), "utf8");
     expect(detail).not.toContain("<MobileActionBar");
     expect(compact).not.toContain("<CandidatePrimaryAction");
-    expect(compact).not.toContain('>Action</th>');
+    expect(compact).not.toContain(">Action</th>");
     expect(card).not.toContain("<CandidatePrimaryAction");
     expect(board).toContain("<PipelineBoard");
     expect(board).toContain("attemptMove={attemptMove}");
-
   });
 });

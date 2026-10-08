@@ -111,8 +111,9 @@ describe("intake review", () => {
   });
 
   it("keeps the complete JD body and uploaded file separate with correct edit navigation", () => {
-    const fullJd = Array.from({ length: 60 }, (_, i) =>
-      `Responsibility ${i + 1}: build reliable recruiting and reporting processes.`
+    const fullJd = Array.from(
+      { length: 60 },
+      (_, i) => `Responsibility ${i + 1}: build reliable recruiting and reporting processes.`,
     ).join("\\n");
     expect(fullJd.length).toBeGreaterThan(400);
     const review = buildIntakeReview({
@@ -154,11 +155,13 @@ describe("intake review", () => {
   });
 
   it("does not show unprovided optional values or account secrets", () => {
-    const review = buildIntakeReview({ snapshot: { ...EMPTY, roleTitle: "Product Designer" }, required: {} });
+    const review = buildIntakeReview({
+      snapshot: { ...EMPTY, roleTitle: "Product Designer" },
+      required: {},
+    });
     const fields = review.groups.flatMap((g) => g.rows.map((r) => r.field));
     expect(fields).toEqual(["roleTitle"]);
     expect(fields).not.toContain("password");
     expect(fields).not.toContain("confirmPassword");
   });
-
 });

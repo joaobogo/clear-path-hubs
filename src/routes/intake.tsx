@@ -13,10 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
 import { useHydrated } from "@/hooks/use-hydrated";
-import {
-  PILOT_INELIGIBLE_CLIENT_MESSAGE,
-  PILOT_ONE_PER_COMPANY,
-} from "@/lib/pilot-eligibility";
+import { PILOT_INELIGIBLE_CLIENT_MESSAGE, PILOT_ONE_PER_COMPANY } from "@/lib/pilot-eligibility";
 
 import {
   DEAL_BREAKER_EMPTY_HINT,
@@ -40,7 +37,6 @@ import {
   ALLOWED_JD_EXT,
   COMP_CURRENCIES,
   splitLines,
-
   COMP_PERIODS,
   COMP_PERIOD_LABELS,
   COMP_EQUITY,
@@ -57,11 +53,9 @@ import {
   SPONSORSHIP_WHY_IT_MATTERS,
   TIMEZONE_BANDS,
   TIMEZONE_BAND_LABELS,
-
   UNREADABLE_JD_EXT,
   JD_ACCEPT_ATTR,
   JD_ACCEPT_LABEL,
-
   EXPRESS_IDEMPOTENCY_KEY,
   INTAKE_STEPS,
   INTAKE_TOTAL_MINUTES,
@@ -74,13 +68,11 @@ import {
   requirementsToLines,
   validateRequirements,
   type RequirementItem,
-
   MAX_JD_BYTES,
   MIN_ACCOUNT_PASSWORD,
   MIN_JD_TEXT,
   expressIntakeSchema,
   jdFileExt,
-
   DEFAULT_INTERVIEW_STAGE_TEMPLATE,
   INTERVIEW_STAGE_FORMATS,
   INTERVIEW_STAGE_FORMAT_LABELS,
@@ -131,10 +123,7 @@ import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
 import { intakeSubmitBlockers } from "@/lib/intake-submit-blockers";
 import { CARRY_NOTICE, type CarryForward } from "@/lib/intake-carry";
-import {
-  COMPENSATION_STALE_DAYS,
-  type DuplicateDraft,
-} from "@/lib/position-duplicate";
+import { COMPENSATION_STALE_DAYS, type DuplicateDraft } from "@/lib/position-duplicate";
 import { getPositionDuplicateDraft } from "@/lib/position-duplicate.functions";
 import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
@@ -304,7 +293,6 @@ const EMPTY: FormState = {
   companyFax: "",
 };
 
-
 type JdFile = { filename: string; mime: string; base64: string; size: number };
 
 function newIdempotencyKey(): string {
@@ -341,7 +329,9 @@ function withRequirements(patch: Partial<FormState>): Partial<FormState> {
  */
 async function fetchCarryByIntakeId(intakeId: string): Promise<CarryForward | null> {
   try {
-    const res = await fetch(`/api/public/intake-carry/${intakeId}`, { headers: { accept: "application/json" } });
+    const res = await fetch(`/api/public/intake-carry/${intakeId}`, {
+      headers: { accept: "application/json" },
+    });
     if (!res.ok) return null;
     const json = (await res.json()) as { ok?: boolean } & Partial<CarryForward>;
     if (!json.ok || !json.values || !json.carried) return null;
@@ -479,13 +469,14 @@ function ExpressIntakePage() {
    * review can never show something different from what gets submitted.
    */
   const review = React.useMemo(() => {
-    const salary = state.salaryMin && state.salaryMax
-      ? `${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)}–${Number(state.salaryMax).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-      : state.salaryMin
-        ? `From ${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-        : state.salaryMax
-          ? `Up to ${state.currency} ${Number(state.salaryMax).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-          : "";
+    const salary =
+      state.salaryMin && state.salaryMax
+        ? `${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)}–${Number(state.salaryMax).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+        : state.salaryMin
+          ? `From ${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+          : state.salaryMax
+            ? `Up to ${state.currency} ${Number(state.salaryMax).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+            : "";
     const compensation = state.compensationUndecided
       ? "Not decided yet"
       : [
@@ -494,7 +485,9 @@ function ExpressIntakePage() {
           state.equity ? COMP_EQUITY_LABELS[state.equity as "none"] : "",
           state.compensationFlexible ? "Flexible for the right person" : "",
           state.compensationNote.trim(),
-        ].filter(Boolean).join(" · ");
+        ]
+          .filter(Boolean)
+          .join(" · ");
 
     return buildIntakeReview({
       snapshot: {
@@ -508,8 +501,7 @@ function ExpressIntakePage() {
         location: state.location,
         workModelLabel: state.workModel ? WORK_MODEL_LABELS[state.workModel] : "",
         onsiteDays: state.workModel === "hybrid" ? state.onsiteDays : "",
-        remoteAnywhereInCountry:
-          state.workModel === "remote" && state.remoteAnywhereInCountry,
+        remoteAnywhereInCountry: state.workModel === "remote" && state.remoteAnywhereInCountry,
         remoteTimezoneLabels:
           state.workModel === "remote"
             ? state.remoteTimezones.map((t) => TIMEZONE_BAND_LABELS[t] ?? t)
@@ -524,19 +516,27 @@ function ExpressIntakePage() {
         targetStartDate: state.targetStartDate,
         interviewStageLines: state.interviewStages
           .filter((st) => st.name.trim())
-          .map((st) => [
-            st.name.trim(),
-            INTERVIEW_STAGE_FORMAT_LABELS[st.format] ?? st.format,
-            (st.ownerName ?? "").trim() ? `Owner: ${(st.ownerName ?? "").trim()}` : "",
-            (st.ownerEmail ?? "").trim(),
-          ].filter(Boolean).join(" · ")),
+          .map((st) =>
+            [
+              st.name.trim(),
+              INTERVIEW_STAGE_FORMAT_LABELS[st.format] ?? st.format,
+              (st.ownerName ?? "").trim() ? `Owner: ${(st.ownerName ?? "").trim()}` : "",
+              (st.ownerEmail ?? "").trim(),
+            ]
+              .filter(Boolean)
+              .join(" · "),
+          ),
         interviewProcess: state.interviewProcess,
         targetDaysToOffer: state.targetDaysToOffer,
         decisionMaker: state.decisionMaker,
         decisionMakerEmail: state.decisionMakerEmail,
         collaboratorLine: state.inviteCollaborators
-          ? collaboratorCandidates(state.interviewStages, { name: state.decisionMaker, email: state.decisionMakerEmail })
-            .map((person) => `${person.name || "Team member"} (${person.email})`).join("\n")
+          ? collaboratorCandidates(state.interviewStages, {
+              name: state.decisionMaker,
+              email: state.decisionMakerEmail,
+            })
+              .map((person) => `${person.name || "Team member"} (${person.email})`)
+              .join("\n")
           : "",
         // Only the rules we will actually apply. The review screen used to
         // list a flagged entry among the accepted ones, which a client
@@ -583,8 +583,7 @@ function ExpressIntakePage() {
       state.remoteTimezones.length === 0 &&
       !state.remoteAnywhereInCountry
     ) {
-      out.remoteTimezones =
-        "Pick at least one acceptable timezone, or say anywhere in the country";
+      out.remoteTimezones = "Pick at least one acceptable timezone, or say anywhere in the country";
     }
     if (!state.sponsorshipAvailable) {
       out.sponsorshipAvailable = "Answer yes or no — we do not assume either way";
@@ -601,11 +600,23 @@ function ExpressIntakePage() {
     const days = state.targetDaysToOffer === "" ? null : Number(state.targetDaysToOffer);
     const base =
       stages.length === 0
-        ? { ok: true, rowErrors: {} as Record<number, { name?: string; format?: string; ownerEmail?: string }>, listError: undefined as string | undefined, targetError: undefined as string | undefined }
+        ? {
+            ok: true,
+            rowErrors: {} as Record<
+              number,
+              { name?: string; format?: string; ownerEmail?: string }
+            >,
+            listError: undefined as string | undefined,
+            targetError: undefined as string | undefined,
+          }
         : validateInterviewStages(stages, { targetDaysToOffer: days });
     let targetError = base.targetError;
     if (stages.length === 0 && days !== null) {
-      if (!Number.isFinite(days) || days < MIN_TARGET_DAYS_TO_OFFER || days > MAX_TARGET_DAYS_TO_OFFER) {
+      if (
+        !Number.isFinite(days) ||
+        days < MIN_TARGET_DAYS_TO_OFFER ||
+        days > MAX_TARGET_DAYS_TO_OFFER
+      ) {
         targetError = `Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days`;
       }
     }
@@ -614,10 +625,13 @@ function ExpressIntakePage() {
       email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
         ? "Enter a valid email address"
         : undefined;
-    return { rowErrors: base.rowErrors, listError: base.listError, targetError, decisionMakerEmail };
+    return {
+      rowErrors: base.rowErrors,
+      listError: base.listError,
+      targetError,
+      decisionMakerEmail,
+    };
   };
-
-
 
   /**
    * Choosing a different work model drops the answers that no longer apply, so
@@ -674,9 +688,9 @@ function ExpressIntakePage() {
         const err = document.querySelector<HTMLElement>("[data-field-error='true']");
         if (!err) return;
         err.scrollIntoView({ behavior: "smooth", block: "center" });
-        const field = err.closest("[data-field]")?.querySelector<HTMLElement>(
-          "input, textarea, select",
-        );
+        const field = err
+          .closest("[data-field]")
+          ?.querySelector<HTMLElement>("input, textarea, select");
         (field ?? err).focus?.();
       });
     });
@@ -890,8 +904,6 @@ function ExpressIntakePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepIndex]);
 
-
-
   // A draft belongs to the person, not the tab: it is loaded from the server on
   // every visit — account first, private draft token otherwise — so a closed
   // laptop, a new tab, or another device all resume the same brief. Passwords
@@ -901,8 +913,15 @@ function ExpressIntakePage() {
     getPayload: () => stripNeverPersisted(state as unknown as Record<string, unknown>),
     getLastStep: () => stepIndex,
   });
-  const { savedAt, setSavedAt, saving: savingDraft, saveError, submittedElsewhere, queueSave, saveNow } =
-    draftSaver;
+  const {
+    savedAt,
+    setSavedAt,
+    saving: savingDraft,
+    saveError,
+    submittedElsewhere,
+    queueSave,
+    saveNow,
+  } = draftSaver;
 
   const applyDraftPayload = (payload: Record<string, unknown>) => {
     const restored = withRequirements(payload as Partial<FormState>) as Record<string, unknown>;
@@ -918,7 +937,6 @@ function ExpressIntakePage() {
       researchConsent: false,
     }));
   };
-
 
   /**
    * Carried answers land as ordinary editable values. They are marked as
@@ -936,7 +954,8 @@ function ExpressIntakePage() {
     try {
       // A new role must never reuse the previous role's idempotency key, or the
       // server would replay the first submission instead of creating a second.
-      const existingIdem = carryParam || duplicateParam ? null : localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
+      const existingIdem =
+        carryParam || duplicateParam ? null : localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
       idem.current = existingIdem || newIdempotencyKey();
       localStorage.setItem(EXPRESS_IDEMPOTENCY_KEY, idem.current);
     } catch {
@@ -1131,7 +1150,6 @@ function ExpressIntakePage() {
     }
   };
 
-
   // Recognise a returning client before they type a password.
   const checkEmail = async () => {
     const email = state.workEmail.trim().toLowerCase();
@@ -1302,15 +1320,15 @@ function ExpressIntakePage() {
     if (!new URLSearchParams(window.location.search).has("resume")) return;
     setStepIndex(0);
     const t = setTimeout(() => {
-      document.getElementById("account-step")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document
+        .getElementById("account-step")
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 400);
     return () => clearTimeout(t);
   }, []);
 
   // Which step the client was on is part of the server-side draft, so it
   // survives a closed laptop rather than living in this browser only.
-
-
 
   /**
    * Asks for requirement suggestions from the pasted job description once the
@@ -1354,7 +1372,9 @@ function ExpressIntakePage() {
         if (editedRef.current.has(key as string)) return;
         const current = s[key];
         const isEmpty =
-          current === "" || current === null || current === undefined ||
+          current === "" ||
+          current === null ||
+          current === undefined ||
           (Array.isArray(current) && current.length === 0);
         if (!isEmpty && !DEFAULTED.has(key as string)) return;
         next[key] = value;
@@ -1422,7 +1442,8 @@ function ExpressIntakePage() {
         if (
           requestId !== jdRequestSeqRef.current ||
           (sourceText !== null && latestJdTextRef.current.trim() !== sourceText)
-        ) return;
+        )
+          return;
         if (!json.ok) {
           // A file we genuinely could not read is worth saying out loud; every
           // other failure stays quiet and the client just types.
@@ -1587,9 +1608,7 @@ function ExpressIntakePage() {
     });
   };
 
-
   const useExample = (key: "dealBreakers" | "interviewProcess", text: string) => {
-
     setState((s) => {
       const current = (s[key] ?? "").trim();
       return { ...s, [key]: current.length > 0 ? `${current}\n${text}` : text };
@@ -1618,7 +1637,13 @@ function ExpressIntakePage() {
    * answer" summary tracks what is on screen instead of the last Continue click.
    */
   const answerNowValid = (key: string, value: unknown, next: FormState): boolean => {
-    if (key === "companyName" || key === "companyWebsite" || key === "firstName" || key === "lastName" || key === "workEmail") {
+    if (
+      key === "companyName" ||
+      key === "companyWebsite" ||
+      key === "firstName" ||
+      key === "lastName" ||
+      key === "workEmail"
+    ) {
       const res = stepValidators.company.safeParse({
         companyName: next.companyName,
         companyWebsite: next.companyWebsite,
@@ -1628,7 +1653,8 @@ function ExpressIntakePage() {
       });
       return res.success || !res.error.issues.some((i) => String(i.path[0] ?? "") === key);
     }
-    if (key === "roleTitle") return stepValidators.role.safeParse({ roleTitle: next.roleTitle }).success;
+    if (key === "roleTitle")
+      return stepValidators.role.safeParse({ roleTitle: next.roleTitle }).success;
     if (key === "jobDescriptionText") {
       return Boolean(jdFile) || next.jobDescriptionText.trim().length >= MIN_JD_TEXT;
     }
@@ -1742,11 +1768,8 @@ function ExpressIntakePage() {
    */
   const buildSubmitPayload = (idempotencyKey: string) => {
     // Blank rows the client added and never filled in are dropped, not sent.
-    const submittedStages = state.interviewStages.filter(
-      (s) => (s.name ?? "").trim().length > 0,
-    );
+    const submittedStages = state.interviewStages.filter((s) => (s.name ?? "").trim().length > 0);
     return {
-
       idempotencyKey,
       companyName: state.companyName,
       companyWebsite: state.companyWebsite,
@@ -1786,8 +1809,7 @@ function ExpressIntakePage() {
           ? Number(state.onsiteDays)
           : undefined,
       remoteTimezones: state.workModel === "remote" ? state.remoteTimezones : [],
-      remoteAnywhereInCountry:
-        state.workModel === "remote" ? state.remoteAnywhereInCountry : false,
+      remoteAnywhereInCountry: state.workModel === "remote" ? state.remoteAnywhereInCountry : false,
       sponsorshipAvailable: state.sponsorshipAvailable,
       currency: state.currency,
       compensationPeriod: state.compensationPeriod,
@@ -1920,17 +1942,13 @@ function ExpressIntakePage() {
         }
       }
 
-
-
       setErrors(next);
       // Same reasoning as validateStep: name the first real problem rather than
       // pointing at a highlight that may be on another step entirely.
       toast.error(Object.values(next)[0] ?? "Please check the highlighted fields.");
       // Send the client to the step that actually holds the first problem,
       // rather than showing an error they cannot see.
-      const badStep = INTAKE_STEPS.findIndex((s) =>
-        STEP_FIELDS[s.key].some((f) => next[f]),
-      );
+      const badStep = INTAKE_STEPS.findIndex((s) => STEP_FIELDS[s.key].some((f) => next[f]));
       if (badStep >= 0 && badStep !== stepIndex) setStepIndex(badStep);
       focusFirstError();
       return;
@@ -1941,7 +1959,6 @@ function ExpressIntakePage() {
     setSubmitting(true);
 
     try {
-
       // A signed-in client proves ownership of the account with their bearer
       // token; the server refuses to touch an existing workspace without it.
       const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -1958,12 +1975,12 @@ function ExpressIntakePage() {
       const body = await res.json();
       if (!res.ok || !body?.ok) {
         // Keep every entered value; show one clear message with Retry.
-        setSubmitError(body?.message || "We couldn't submit that. Nothing was lost — please retry.");
+        setSubmitError(
+          body?.message || "We couldn't submit that. Nothing was lost — please retry.",
+        );
         setSubmitting(false);
         return;
       }
-
-
 
       trackFgv(FGV_EVENTS.formSubmit, { form_type: "employer_intake" });
       void submitToCrm({
@@ -1979,7 +1996,11 @@ function ExpressIntakePage() {
           "Role title": parsed.data.roleTitle ?? "",
           "Company website": parsed.data.companyWebsite ?? "",
           "Company LinkedIn": parsed.data.companyLinkedin ?? "",
-          "Job description provided": parsed.data.jobDescriptionText ? "pasted" : jdFile ? "uploaded" : "none",
+          "Job description provided": parsed.data.jobDescriptionText
+            ? "pasted"
+            : jdFile
+              ? "uploaded"
+              : "none",
         },
         consentStatus: parsed.data.consent ? "accepted_terms" : null,
         honeypot: parsed.data.companyFax ?? "",
@@ -2006,15 +2027,17 @@ function ExpressIntakePage() {
       if (body.accountCreated) {
         trackEvent("account_created_from_intake", { flow: "express_onboarding" });
         trackDashboardSignup({ method: "email_password", plan: "express_onboarding" });
-      }
-      else trackEvent("existing_account_detected", { flow: "express_onboarding" });
+      } else trackEvent("existing_account_detected", { flow: "express_onboarding" });
       if (body.pilotEligible === false)
         trackEvent("pilot_ineligible", { reason: String(body.pilotReason ?? "unknown") });
       if (body.positionId) trackEvent("role_created", { flow: "express_onboarding" });
       if (jdFile)
-        trackEvent(body.jdStored === false ? "document_upload_failed" : "document_upload_succeeded", {
-          flow: "express_onboarding",
-        });
+        trackEvent(
+          body.jdStored === false ? "document_upload_failed" : "document_upload_succeeded",
+          {
+            flow: "express_onboarding",
+          },
+        );
 
       // Sign the client straight into their new workspace.
       let signedIn = authed;
@@ -2050,7 +2073,6 @@ function ExpressIntakePage() {
         /* ignore */
       }
 
-
       const proceed = () => {
         if (signedIn && body.positionId) {
           // Role stays a draft either way — payment (or a conversation) comes next.
@@ -2074,13 +2096,10 @@ function ExpressIntakePage() {
         return;
       }
       proceed();
-
-
     } catch {
       setSubmitError("We couldn't reach us just now. Your answers are safe — please retry.");
       setSubmitting(false);
     }
-
   };
 
   const jdChars = state.jobDescriptionText.trim().length;
@@ -2107,10 +2126,7 @@ function ExpressIntakePage() {
             Opening your form…
           </p>
           {[0, 1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-24 animate-pulse rounded-xl bg-[color:var(--brand-navy)]/8"
-            />
+            <div key={i} className="h-24 animate-pulse rounded-xl bg-[color:var(--brand-navy)]/8" />
           ))}
         </div>
       </FormShell>
@@ -2158,21 +2174,18 @@ function ExpressIntakePage() {
 
         {PAYMENTS_ENABLED ? (
           <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
-            <p className="text-sm font-semibold">
-              No payment today. Nothing is charged to start.
-            </p>
+            <p className="text-sm font-semibold">No payment today. Nothing is charged to start.</p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your workspace and share the role first. You only pay once your account is created
-              and we've accepted the role — and you can walk away before that at no cost.
+              Create your workspace and share the role first. You only pay once your account is
+              created and we've accepted the role — and you can walk away before that at no cost.
             </p>
           </div>
         ) : (
           <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
-            <p className="text-sm font-semibold">
-              Free to start. Your workspace opens right away.
-            </p>
+            <p className="text-sm font-semibold">Free to start. Your workspace opens right away.</p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your account, share the role, then pick a time. We agree the plan together on the call.
+              Create your account, share the role, then pick a time. We agree the plan together on
+              the call.
             </p>
           </div>
         )}
@@ -2198,7 +2211,9 @@ function ExpressIntakePage() {
             </>
           ) : saveError ? (
             <>
-              <span className="text-[color:var(--brand-navy)]">{INTAKE_DRAFT_SAVE_ERROR_MESSAGE}</span>
+              <span className="text-[color:var(--brand-navy)]">
+                {INTAKE_DRAFT_SAVE_ERROR_MESSAGE}
+              </span>
               <button
                 type="button"
                 className="underline"
@@ -2224,7 +2239,9 @@ function ExpressIntakePage() {
           )}
           {draftPhase === "ready" && !authed && (
             <>
-              <span aria-hidden className="text-[color:var(--brand-navy)]/30">·</span>
+              <span aria-hidden className="text-[color:var(--brand-navy)]/30">
+                ·
+              </span>
               {resumeEmailState.kind === "sent" ? (
                 <span>Link sent to {resumeEmailState.email}.</span>
               ) : (
@@ -2235,7 +2252,9 @@ function ExpressIntakePage() {
                   disabled={resumeEmailState.kind === "sending"}
                   data-testid="email-resume-link"
                 >
-                  {resumeEmailState.kind === "sending" ? "Sending…" : "Email me a link back to this"}
+                  {resumeEmailState.kind === "sending"
+                    ? "Sending…"
+                    : "Email me a link back to this"}
                 </button>
               )}
               {resumeEmailState.kind === "error" && (
@@ -2244,7 +2263,6 @@ function ExpressIntakePage() {
             </>
           )}
         </div>
-
 
         {/* Step counter and an honest time estimate — not a fake "2 minutes". */}
         <nav aria-label="Intake progress" className="space-y-3">
@@ -2274,9 +2292,13 @@ function ExpressIntakePage() {
                           : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/70"
                     }`}
                   >
-                    <span className="block font-semibold">{i + 1}. {s.title}</span>
+                    <span className="block font-semibold">
+                      {i + 1}. {s.title}
+                    </span>
                     {!s.required && (
-                      <span className={current ? "text-white/75" : "text-[color:var(--brand-navy)]/60"}>
+                      <span
+                        className={current ? "text-white/75" : "text-[color:var(--brand-navy)]/60"}
+                      >
                         Optional now
                       </span>
                     )}
@@ -2285,13 +2307,14 @@ function ExpressIntakePage() {
               );
             })}
           </ol>
-          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{currentStep.blurb}</p>
+          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+            {currentStep.blurb}
+          </p>
           {/* One legend per step — the only place requiredness is explained. */}
           <p className="text-xs text-[color:var(--brand-navy)]/70" data-testid="required-legend">
             {INTAKE_REQUIRED_LEGEND}
           </p>
         </nav>
-
 
         {carryCompany && (
           <div
@@ -2300,1560 +2323,1724 @@ function ExpressIntakePage() {
           >
             <p className="font-semibold">Another role for {carryCompany}</p>
             <p className="text-[color:var(--brand-navy)]/75">
-              Your company, contact, location, process and package defaults are filled in already. Edit anything
-              that differs for this role — it stays with this role only.
+              Your company, contact, location, process and package defaults are filled in already.
+              Edit anything that differs for this role — it stays with this role only.
             </p>
           </div>
         )}
 
         {step === 1 && (
           <>
-        <Section id="section-company" title="Your company" step={1}>
-
-          <Field label="Company name" carried={isCarried("companyName")} error={errors.companyName} required={req["companyName"]}>
-            <Input
-              value={state.companyName}
-              onChange={(e) => set("companyName", e.target.value)}
-              placeholder="Northwind Health"
-              autoComplete="organization"
-            />
-          </Field>
-          <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
-            <summary className="cursor-pointer text-sm font-medium">
-              Add company LinkedIn{" "}
-              <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
-            </summary>
-            <div className="mt-3">
-              <Field label="Company LinkedIn" carried={isCarried("companyLinkedin")} error={errors.companyLinkedin} required={req["companyLinkedin"]}>
-                <Input
-                  value={state.companyLinkedin}
-                  onChange={(e) => set("companyLinkedin", e.target.value)}
-                  placeholder="linkedin.com/company/northwind"
-                  inputMode="url"
-                />
-              </Field>
-            </div>
-          </details>
-
-        </Section>
-
-        <Section id="section-you" title="You" step={1}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="First name" carried={isCarried("firstName")} error={errors.firstName} required={req["firstName"]}>
-              <Input
-                value={state.firstName}
-                onChange={(e) => set("firstName", e.target.value)}
-                autoComplete="given-name"
-              />
-            </Field>
-            <Field label="Last name" carried={isCarried("lastName")} error={errors.lastName} required={req["lastName"]}>
-              <Input
-                value={state.lastName}
-                onChange={(e) => set("lastName", e.target.value)}
-                autoComplete="family-name"
-              />
-            </Field>
-          </div>
-          <Field label="Work email" carried={isCarried("workEmail")} error={errors.workEmail} required={req["workEmail"]}>
-            <Input
-              type="email"
-              value={state.workEmail}
-              onChange={(e) => {
-                set("workEmail", e.target.value);
-                setEmailStatus({ kind: "idle" });
-              }}
-              onBlur={() => void checkEmail()}
-              autoComplete="email"
-              inputMode="email"
-            />
-          </Field>
-          <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
-            <summary className="cursor-pointer text-sm font-medium">
-              Add your job title, phone and LinkedIn{" "}
-              <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
-            </summary>
-            <div className="mt-3">
-              <Field label="Your job title" carried={isCarried("contactTitle")} error={errors.contactTitle} required={req["contactTitle"]}>
-                <Input
-                  value={state.contactTitle}
-                  onChange={(e) => set("contactTitle", e.target.value)}
-                  placeholder="Head of Talent"
-                  autoComplete="organization-title"
-                />
-              </Field>
-            </div>
-            <div className="mt-3 grid gap-4 sm:grid-cols-2">
-              <Field label="Phone" carried={isCarried("phone")} error={errors.phone} required={req["phone"]}>
-                <Input
-                  value={state.phone}
-                  onChange={(e) => set("phone", e.target.value)}
-                  autoComplete="tel"
-                  inputMode="tel"
-                />
-              </Field>
-              <Field label="Your LinkedIn" carried={isCarried("contactLinkedin")} error={errors.contactLinkedin} required={req["contactLinkedin"]}>
-                <Input
-                  value={state.contactLinkedin}
-                  onChange={(e) => set("contactLinkedin", e.target.value)}
-                  placeholder="linkedin.com/in/yourname"
-                  inputMode="url"
-                />
-              </Field>
-            </div>
-          </details>
-
-        </Section>
-
-        <div id="account-step">
-        {authed ? (
-          <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal)]/30 bg-[color:var(--brand-teal)]/5 p-4">
-            <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
-            <p className="text-sm">
-              Signed in as <strong>{accountEmail}</strong>. This role will be added to your existing
-              organisation, and your answers are saved to your account as you type.
-            </p>
-          </section>
-        ) : (
-        <Section title="Create your account" step={1}>
-          <p className="text-sm text-[color:var(--brand-navy)]/70">
-            Create it now and nothing you've typed can be lost — you stay on this page the whole time.
-          </p>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-11 w-full sm:w-auto"
-            disabled={accountBusy}
-            onClick={() => void googleSignIn()}
-          >
-            Continue with Google
-          </Button>
-
-          {emailStatus.kind === "exists" && (
-            <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/4 p-3 text-sm">
-              {emailStatus.message}
-            </div>
-          )}
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Password"
-              htmlFor="account-password"
-              error={errors.password}
-              required={req["password"]}
-              hint={signInMode ? "The password for your existing account." : `At least ${MIN_ACCOUNT_PASSWORD} characters.`}
-            >
-              <div className="relative">
-                <Input
-                  id="account-password"
-                  type={showPassword ? "text" : "password"}
-                  value={state.password}
-                  onChange={(e) => set("password", e.target.value)}
-                  autoComplete={signInMode ? "current-password" : "new-password"}
-                  className="pr-11"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/75 sm:h-9 sm:w-9 hover:text-[color:var(--brand-navy)]"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" aria-hidden />
-                  ) : (
-                    <Eye className="h-4 w-4" aria-hidden />
-                  )}
-                </button>
-              </div>
-            </Field>
-            {!signInMode && (
+            <Section id="section-company" title="Your company" step={1}>
               <Field
-                label="Confirm password"
-                error={errors.confirmPassword}
-                required={req["confirmPassword"]}
-                hint="Type it once more so we know it's right."
+                label="Company name"
+                carried={isCarried("companyName")}
+                error={errors.companyName}
+                required={req["companyName"]}
               >
                 <Input
-                  type={showPassword ? "text" : "password"}
-                  value={state.confirmPassword}
-                  onChange={(e) => set("confirmPassword", e.target.value)}
-                  autoComplete="new-password"
+                  value={state.companyName}
+                  onChange={(e) => set("companyName", e.target.value)}
+                  placeholder="Northwind Health"
+                  autoComplete="organization"
                 />
               </Field>
-            )}
-          </div>
+              <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
+                <summary className="cursor-pointer text-sm font-medium">
+                  Add company LinkedIn{" "}
+                  <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
+                </summary>
+                <div className="mt-3">
+                  <Field
+                    label="Company LinkedIn"
+                    carried={isCarried("companyLinkedin")}
+                    error={errors.companyLinkedin}
+                    required={req["companyLinkedin"]}
+                  >
+                    <Input
+                      value={state.companyLinkedin}
+                      onChange={(e) => set("companyLinkedin", e.target.value)}
+                      placeholder="linkedin.com/company/northwind"
+                      inputMode="url"
+                    />
+                  </Field>
+                </div>
+              </details>
+            </Section>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11"
-              disabled={accountBusy}
-              onClick={() => void (signInMode ? signInInline() : createAccountInline())}
-            >
-              {accountBusy ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                  Working…
-                </>
-              ) : signInMode ? (
-                "Sign in and continue"
+            <Section id="section-you" title="You" step={1}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field
+                  label="First name"
+                  carried={isCarried("firstName")}
+                  error={errors.firstName}
+                  required={req["firstName"]}
+                >
+                  <Input
+                    value={state.firstName}
+                    onChange={(e) => set("firstName", e.target.value)}
+                    autoComplete="given-name"
+                  />
+                </Field>
+                <Field
+                  label="Last name"
+                  carried={isCarried("lastName")}
+                  error={errors.lastName}
+                  required={req["lastName"]}
+                >
+                  <Input
+                    value={state.lastName}
+                    onChange={(e) => set("lastName", e.target.value)}
+                    autoComplete="family-name"
+                  />
+                </Field>
+              </div>
+              <Field
+                label="Work email"
+                carried={isCarried("workEmail")}
+                error={errors.workEmail}
+                required={req["workEmail"]}
+              >
+                <Input
+                  type="email"
+                  value={state.workEmail}
+                  onChange={(e) => {
+                    set("workEmail", e.target.value);
+                    setEmailStatus({ kind: "idle" });
+                  }}
+                  onBlur={() => void checkEmail()}
+                  autoComplete="email"
+                  inputMode="email"
+                />
+              </Field>
+              <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
+                <summary className="cursor-pointer text-sm font-medium">
+                  Add your job title, phone and LinkedIn{" "}
+                  <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
+                </summary>
+                <div className="mt-3">
+                  <Field
+                    label="Your job title"
+                    carried={isCarried("contactTitle")}
+                    error={errors.contactTitle}
+                    required={req["contactTitle"]}
+                  >
+                    <Input
+                      value={state.contactTitle}
+                      onChange={(e) => set("contactTitle", e.target.value)}
+                      placeholder="Head of Talent"
+                      autoComplete="organization-title"
+                    />
+                  </Field>
+                </div>
+                <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                  <Field
+                    label="Phone"
+                    carried={isCarried("phone")}
+                    error={errors.phone}
+                    required={req["phone"]}
+                  >
+                    <Input
+                      value={state.phone}
+                      onChange={(e) => set("phone", e.target.value)}
+                      autoComplete="tel"
+                      inputMode="tel"
+                    />
+                  </Field>
+                  <Field
+                    label="Your LinkedIn"
+                    carried={isCarried("contactLinkedin")}
+                    error={errors.contactLinkedin}
+                    required={req["contactLinkedin"]}
+                  >
+                    <Input
+                      value={state.contactLinkedin}
+                      onChange={(e) => set("contactLinkedin", e.target.value)}
+                      placeholder="linkedin.com/in/yourname"
+                      inputMode="url"
+                    />
+                  </Field>
+                </div>
+              </details>
+            </Section>
+
+            <div id="account-step">
+              {authed ? (
+                <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal)]/30 bg-[color:var(--brand-teal)]/5 p-4">
+                  <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
+                  <p className="text-sm">
+                    Signed in as <strong>{accountEmail}</strong>. This role will be added to your
+                    existing organisation, and your answers are saved to your account as you type.
+                  </p>
+                </section>
               ) : (
-                "Create my account now (optional)"
-              )}
-            </Button>
-            <button
-              type="button"
-              className="text-sm underline text-[color:var(--brand-navy)]/70"
-              onClick={() => setSignInMode((v) => !v)}
-            >
-              {signInMode ? "I don't have an account yet" : "I already have an account"}
-            </button>
-          </div>
-          <p className="text-sm text-[color:var(--brand-navy)]/70">
-            You don't have to do this now — <strong>Continue</strong> at the bottom of this step is the
-            way forward, and we'll set the account up as you go.
-          </p>
-          <p className="text-sm text-[color:var(--brand-navy)]/70">
-            Prefer the full login screen?{" "}
-            <a href="/login" className="underline">
-              Sign in first
-            </a>{" "}
-            and come back — your answers stay saved.
-          </p>
+                <Section title="Create your account" step={1}>
+                  <p className="text-sm text-[color:var(--brand-navy)]/70">
+                    Create it now and nothing you've typed can be lost — you stay on this page the
+                    whole time.
+                  </p>
 
-        </Section>
-        )}
-        </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="min-h-11 w-full sm:w-auto"
+                    disabled={accountBusy}
+                    onClick={() => void googleSignIn()}
+                  >
+                    Continue with Google
+                  </Button>
+
+                  {emailStatus.kind === "exists" && (
+                    <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/4 p-3 text-sm">
+                      {emailStatus.message}
+                    </div>
+                  )}
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field
+                      label="Password"
+                      htmlFor="account-password"
+                      error={errors.password}
+                      required={req["password"]}
+                      hint={
+                        signInMode
+                          ? "The password for your existing account."
+                          : `At least ${MIN_ACCOUNT_PASSWORD} characters.`
+                      }
+                    >
+                      <div className="relative">
+                        <Input
+                          id="account-password"
+                          type={showPassword ? "text" : "password"}
+                          value={state.password}
+                          onChange={(e) => set("password", e.target.value)}
+                          autoComplete={signInMode ? "current-password" : "new-password"}
+                          className="pr-11"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((v) => !v)}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/75 sm:h-9 sm:w-9 hover:text-[color:var(--brand-navy)]"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" aria-hidden />
+                          ) : (
+                            <Eye className="h-4 w-4" aria-hidden />
+                          )}
+                        </button>
+                      </div>
+                    </Field>
+                    {!signInMode && (
+                      <Field
+                        label="Confirm password"
+                        error={errors.confirmPassword}
+                        required={req["confirmPassword"]}
+                        hint="Type it once more so we know it's right."
+                      >
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          value={state.confirmPassword}
+                          onChange={(e) => set("confirmPassword", e.target.value)}
+                          autoComplete="new-password"
+                        />
+                      </Field>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="min-h-11"
+                      disabled={accountBusy}
+                      onClick={() => void (signInMode ? signInInline() : createAccountInline())}
+                    >
+                      {accountBusy ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                          Working…
+                        </>
+                      ) : signInMode ? (
+                        "Sign in and continue"
+                      ) : (
+                        "Create my account now (optional)"
+                      )}
+                    </Button>
+                    <button
+                      type="button"
+                      className="text-sm underline text-[color:var(--brand-navy)]/70"
+                      onClick={() => setSignInMode((v) => !v)}
+                    >
+                      {signInMode ? "I don't have an account yet" : "I already have an account"}
+                    </button>
+                  </div>
+                  <p className="text-sm text-[color:var(--brand-navy)]/70">
+                    You don't have to do this now — <strong>Continue</strong> at the bottom of this
+                    step is the way forward, and we'll set the account up as you go.
+                  </p>
+                  <p className="text-sm text-[color:var(--brand-navy)]/70">
+                    Prefer the full login screen?{" "}
+                    <a href="/login" className="underline">
+                      Sign in first
+                    </a>{" "}
+                    and come back — your answers stay saved.
+                  </p>
+                </Section>
+              )}
+            </div>
           </>
         )}
 
-
-
         {step === 1 && (
-        <Section id="section-jd" title="The job description" step={1}>
-          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-            Give us the description and we read the role out of it — the title, the
-            requirements, where it sits, what it pays. You confirm it on the next screen.
-          </p>
-          <div className="space-y-3">
-            <div className="flex items-baseline">
-              <Label htmlFor="jd-text" className="text-sm font-medium">
-                Job description
-              </Label>
-              {req["jobDescriptionText"] ? (
-                <span className="ml-1 text-sm text-[color:var(--brand-navy)]/70" aria-hidden="true">
-                  *
-                </span>
-              ) : (
-                <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
-                  Optional
-                </span>
-              )}
-            </div>
-            {!jdFile && state.jdSourceName && state.jobDescriptionText.trim().length > 0 && (
-              <p className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3 text-xs text-[color:var(--brand-navy)]/80">
-                Read from <span className="font-medium">{state.jdSourceName}</span>. The text is
-                saved with your draft and shown below — re-upload the file only if it has changed.
-              </p>
-            )}
-            {jdFile ? (
-              <div className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <FileText className="h-5 w-5 shrink-0 text-[color:var(--brand-navy)]/75" aria-hidden />
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{jdFile.filename}</p>
-                    <p className="text-xs text-[color:var(--brand-navy)]/75">
-                      {(jdFile.size / 1024).toFixed(0)} KB
-                    </p>
-                  </div>
-                </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="min-h-11"
-                    onClick={() => fileInput.current?.click()}
+          <Section id="section-jd" title="The job description" step={1}>
+            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              Give us the description and we read the role out of it — the title, the requirements,
+              where it sits, what it pays. You confirm it on the next screen.
+            </p>
+            <div className="space-y-3">
+              <div className="flex items-baseline">
+                <Label htmlFor="jd-text" className="text-sm font-medium">
+                  Job description
+                </Label>
+                {req["jobDescriptionText"] ? (
+                  <span
+                    className="ml-1 text-sm text-[color:var(--brand-navy)]/70"
+                    aria-hidden="true"
                   >
-                    Replace
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setJdFile(null)}
-                    aria-label="Remove file"
-                    className="min-h-11"
-                  >
-                    <X className="h-4 w-4" aria-hidden />
-                  </Button>
-                </div>
+                    *
+                  </span>
+                ) : (
+                  <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+                    Optional
+                  </span>
+                )}
               </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => fileInput.current?.click()}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setDragging(true);
-                }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDragging(false);
-                  void onPickFile(e.dataTransfer.files?.[0] ?? null);
-                }}
-                className={`flex min-h-[104px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-white p-4 text-center transition ${
-                  dragging
-                    ? "border-[color:var(--brand-teal)] bg-[color:var(--brand-teal)]/5"
-                    : "border-[color:var(--brand-navy)]/25 hover:border-[color:var(--brand-navy)]/50"
-                }`}
-              >
-                <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/75" aria-hidden />
-                <span className="text-sm font-medium">Drop the job description here, or browse</span>
-                <span className="text-xs text-[color:var(--brand-navy)]/75">
-                  {JD_ACCEPT_LABEL}
-                </span>
-              </button>
-            )}
-            <input
-              ref={fileInput}
-              type="file"
-              aria-label="Upload the job description file"
-              accept={JD_ACCEPT_ATTR}
-              className="sr-only"
-              onChange={(e) => void onPickFile(e.target.files?.[0] ?? null)}
-            />
-
-            <div className="relative">
-              <MarkdownToolbar
-                textareaRef={jdTextRef}
-                value={state.jobDescriptionText}
-                onChange={(next) => set("jobDescriptionText", next)}
-              />
-              <Textarea
-                id="jd-text"
-                ref={jdTextRef}
-                value={state.jobDescriptionText}
-                onChange={(e) => set("jobDescriptionText", e.target.value)}
-                onKeyDown={jdShortcuts}
-                rows={8}
-                className="rounded-t-none"
-                placeholder={
-                  jdFile
-                    ? "Anything else we should know about this role (optional)…"
-                    : "…or paste the job description here."
-                }
-                aria-invalid={Boolean(errors.jobDescriptionText)}
-                aria-describedby={errors.jobDescriptionText ? "intake-jobDescriptionText-error" : undefined}
-              />
-              {!jdFile && (
-                <p className="mt-1 text-xs text-[color:var(--brand-navy)]/75">
-                  Paste the job description, upload the file, or paste a link to it.
+              {!jdFile && state.jdSourceName && state.jobDescriptionText.trim().length > 0 && (
+                <p className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3 text-xs text-[color:var(--brand-navy)]/80">
+                  Read from <span className="font-medium">{state.jdSourceName}</span>. The text is
+                  saved with your draft and shown below — re-upload the file only if it has changed.
                 </p>
               )}
+              {jdFile ? (
+                <div className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <FileText
+                      className="h-5 w-5 shrink-0 text-[color:var(--brand-navy)]/75"
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{jdFile.filename}</p>
+                      <p className="text-xs text-[color:var(--brand-navy)]/75">
+                        {(jdFile.size / 1024).toFixed(0)} KB
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="min-h-11"
+                      onClick={() => fileInput.current?.click()}
+                    >
+                      Replace
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setJdFile(null)}
+                      aria-label="Remove file"
+                      className="min-h-11"
+                    >
+                      <X className="h-4 w-4" aria-hidden />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInput.current?.click()}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragging(true);
+                  }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragging(false);
+                    void onPickFile(e.dataTransfer.files?.[0] ?? null);
+                  }}
+                  className={`flex min-h-[104px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-white p-4 text-center transition ${
+                    dragging
+                      ? "border-[color:var(--brand-teal)] bg-[color:var(--brand-teal)]/5"
+                      : "border-[color:var(--brand-navy)]/25 hover:border-[color:var(--brand-navy)]/50"
+                  }`}
+                >
+                  <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/75" aria-hidden />
+                  <span className="text-sm font-medium">
+                    Drop the job description here, or browse
+                  </span>
+                  <span className="text-xs text-[color:var(--brand-navy)]/75">
+                    {JD_ACCEPT_LABEL}
+                  </span>
+                </button>
+              )}
+              <input
+                ref={fileInput}
+                type="file"
+                aria-label="Upload the job description file"
+                accept={JD_ACCEPT_ATTR}
+                className="sr-only"
+                onChange={(e) => void onPickFile(e.target.files?.[0] ?? null)}
+              />
 
-            </div>
-            {/* The third way in. A client whose role is already posted on
+              <div className="relative">
+                <MarkdownToolbar
+                  textareaRef={jdTextRef}
+                  value={state.jobDescriptionText}
+                  onChange={(next) => set("jobDescriptionText", next)}
+                />
+                <Textarea
+                  id="jd-text"
+                  ref={jdTextRef}
+                  value={state.jobDescriptionText}
+                  onChange={(e) => set("jobDescriptionText", e.target.value)}
+                  onKeyDown={jdShortcuts}
+                  rows={8}
+                  className="rounded-t-none"
+                  placeholder={
+                    jdFile
+                      ? "Anything else we should know about this role (optional)…"
+                      : "…or paste the job description here."
+                  }
+                  aria-invalid={Boolean(errors.jobDescriptionText)}
+                  aria-describedby={
+                    errors.jobDescriptionText ? "intake-jobDescriptionText-error" : undefined
+                  }
+                />
+                {!jdFile && (
+                  <p className="mt-1 text-xs text-[color:var(--brand-navy)]/75">
+                    Paste the job description, upload the file, or paste a link to it.
+                  </p>
+                )}
+              </div>
+              {/* The third way in. A client whose role is already posted on
                 LinkedIn, Indeed or their own careers page has the description
                 at a URL, and retyping it is work we can do for them (audit
                 15 Sep, INT-014). Never required, and a site that blocks us
                 falls back to pasting without losing anything already entered. */}
-            <div className="space-y-1.5">
-              <Label htmlFor="jd-url" className="text-xs">
-                Or paste a link to the job posting
-              </Label>
-              <div className="flex flex-wrap items-center gap-2">
-                <Input
-                  id="jd-url"
-                  type="url"
-                  inputMode="url"
-                  value={jdUrl}
-                  onChange={(e) => setJdUrl(e.target.value)}
-                  placeholder="https://…"
-                  className="min-w-0 flex-1"
-                  aria-describedby="jd-url-help"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="min-h-11"
-                  disabled={!jdUrl.trim() || suggestions.kind === "loading"}
-                  onClick={() => {
-                    const url = jdUrl.trim();
-                    if (!url) return;
-                    suggestedForRef.current = `url:${url}`;
-                    set("jdSourceName", url);
-                    void runJdParse({ url, roleTitle: state.roleTitle });
-                  }}
-                >
-                  {suggestions.kind === "loading" ? "Reading…" : "Read the link"}
-                </Button>
+              <div className="space-y-1.5">
+                <Label htmlFor="jd-url" className="text-xs">
+                  Or paste a link to the job posting
+                </Label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Input
+                    id="jd-url"
+                    type="url"
+                    inputMode="url"
+                    value={jdUrl}
+                    onChange={(e) => setJdUrl(e.target.value)}
+                    placeholder="https://…"
+                    className="min-w-0 flex-1"
+                    aria-describedby="jd-url-help"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="min-h-11"
+                    disabled={!jdUrl.trim() || suggestions.kind === "loading"}
+                    onClick={() => {
+                      const url = jdUrl.trim();
+                      if (!url) return;
+                      suggestedForRef.current = `url:${url}`;
+                      set("jdSourceName", url);
+                      void runJdParse({ url, roleTitle: state.roleTitle });
+                    }}
+                  >
+                    {suggestions.kind === "loading" ? "Reading…" : "Read the link"}
+                  </Button>
+                </div>
+                <p id="jd-url-help" className="text-xs text-[color:var(--brand-navy)]/75">
+                  We read the page and fill in what it says. If the site blocks us, paste the text
+                  instead.
+                </p>
               </div>
-              <p id="jd-url-help" className="text-xs text-[color:var(--brand-navy)]/75">
-                We read the page and fill in what it says. If the site blocks us, paste the text
-                instead.
-              </p>
+              {errors.jobDescriptionText && (
+                <p
+                  id="intake-jobDescriptionText-error"
+                  data-field-error="true"
+                  className="text-sm text-[color:var(--brand-danger)]"
+                >
+                  {errors.jobDescriptionText}
+                </p>
+              )}
             </div>
-            {errors.jobDescriptionText && (
-              <p id="intake-jobDescriptionText-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.jobDescriptionText}
-              </p>
-            )}
-          </div>
-        </Section>
+          </Section>
         )}
 
         {step === 2 && (
-        <Section id="section-role" title="The role" step={2}>
-          {/* Only a free-mail address gets asked this. A company domain
+          <Section id="section-role" title="The role" step={2}>
+            {/* Only a free-mail address gets asked this. A company domain
               already answered it on step 1 without a question being put
               (audit 15 Sep, INT-001). */}
-          {!companyWebsiteFromEmail(state.workEmail) && (
-            <Field
-              label="Company website"
-              carried={isCarried("companyWebsite")}
-              error={errors.companyWebsite}
-              required={req["companyWebsite"]}
-              hint="Your email domain did not tell us this one. We read only your public pages."
-            >
-              <Input
-                value={state.companyWebsite}
-                onChange={(e) => set("companyWebsite", e.target.value)}
-                placeholder="northwindhealth.com"
-                autoComplete="url"
-                inputMode="url"
-              />
-            </Field>
-          )}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label={intakeFieldLabel("roleTitle")} error={errors.roleTitle} required={req["roleTitle"]}>
-              <Input
-                value={state.roleTitle}
-                onChange={(e) => set("roleTitle", e.target.value)}
-                placeholder="Clinical Operations Manager"
-              />
-            </Field>
-            <Field label={intakeFieldLabel("team")} error={errors.team} required={req["team"]} hint={intakeFieldHint("team")}>
-              <Input
-                value={state.team}
-                onChange={(e) => set("team", e.target.value)}
-                placeholder="Clinical Operations"
-              />
-            </Field>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Field label="Seniority level" required={false}>
-              <select
-                aria-label="Seniority level"
-                value={state.seniority}
-                onChange={(e) => set("seniority", e.target.value)}
-                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-              >
-                <option value="">Not stated in the job description</option>
-                {BLUEPRINT_SENIORITY.map((level) => (
-                  <option key={level} value={level}>{level.charAt(0).toUpperCase() + level.slice(1)}</option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Employment type" required={false}>
-              <select
-                aria-label="Employment type"
-                value={state.employmentType}
-                onChange={(e) => set("employmentType", e.target.value as FormState["employmentType"])}
-                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-              >
-                <option value="">Not stated in the job description</option>
-                {EMPLOYMENT_TYPES.map((kind) => (
-                  <option key={kind} value={kind}>{kind.replaceAll("_", " ")}</option>
-                ))}
-              </select>
-            </Field>
-          </div>
-          {suggestions.kind === "loading" && (
-            <p role="status" className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
-              Reading the job description. Any details we find will appear here automatically; you can edit them.
-            </p>
-          )}
-
-
-        </Section>
-        )}
-
-        {step === 2 && (
-        <Section id="section-people" title="Who you need" step={2}>
-          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-            One list. Tag each requirement so sourcing chases the right people instead of a wish list.
-          </p>
-          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-            Each additional must-have narrows the search, so the more you add, the fewer eligible candidates there will be.
-          </p>
-
-          <SectionGroup title="Requirements">
-            <RequirementsList
-              items={state.requirements}
-              onChange={setRequirements}
-              rowErrors={rowErrors}
-              listError={errors.requirements || null}
-              needsConfirm={
-                validateRequirements(state.requirements, {
-                  manyConfirmed: state.manyMustHavesConfirmed,
-                }).needsConfirm
-              }
-              manyConfirmed={state.manyMustHavesConfirmed}
-              onConfirmMany={(confirmed) => {
-                set("manyMustHavesConfirmed", confirmed);
-                if (confirmed) setErrors((e) => ({ ...e, requirements: "" }));
-              }}
-              roleTitle={state.roleTitle}
-              suggestions={suggestions}
-              onRetrySuggestions={() => {
-                // Re-analyse reads whatever the client gave us, in the same
-                // order the parser does: an attached file first, then the text.
-                suggestedForRef.current = "";
-                if (jdFile) {
-                  void runJdParse({
-                    file: { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 },
-                    roleTitle: state.roleTitle,
-                  });
-                  return;
-                }
-                const jd = state.jobDescriptionText.trim();
-                if (jd.length < MIN_JD_TEXT) return;
-                void runJdParse({ text: jd, roleTitle: state.roleTitle });
-              }}
-            />
-            {/* The example helper belongs INSIDE Requirements. As its own
-                section it read as a second requirements question and made the
-                step look twice as long as it is. */}
-            <FieldExamples
-              field="must_haves"
-              roleTitle={state.roleTitle}
-              label="See an example must-have"
-              onUse={(text) =>
-                setRequirements([...state.requirements, { text, tag: "must_have" }])
-              }
-            />
-          </SectionGroup>
-        </Section>
-        )}
-
-        {step === 3 && (
-        <Section id="section-practicalities" title="Practicalities" step={3}>
-          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-            Money, place, authorisation, timing. If you do not have an answer yet, leave it — the role
-            will simply be marked <span className="font-medium">Brief incomplete</span> until you do.
-          </p>
-
-          <SectionGroup title="Location and working model">
-            <div className="grid gap-4 sm:grid-cols-2">
+            {!companyWebsiteFromEmail(state.workEmail) && (
               <Field
-                label={intakeFieldLabel("location")} carried={isCarried("location")}
-                error={errors.location}
-                required={req["location"]}
-                hint="City and country, or the region candidates must live in."
+                label="Company website"
+                carried={isCarried("companyWebsite")}
+                error={errors.companyWebsite}
+                required={req["companyWebsite"]}
+                hint="Your email domain did not tell us this one. We read only your public pages."
               >
                 <Input
-                  value={state.location}
-                  onChange={(e) => set("location", e.target.value)}
-                  placeholder="Manchester, United Kingdom"
+                  value={state.companyWebsite}
+                  onChange={(e) => set("companyWebsite", e.target.value)}
+                  placeholder="northwindhealth.com"
+                  autoComplete="url"
+                  inputMode="url"
                 />
               </Field>
-              <Field label={intakeFieldLabel("workModel")} carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
+            )}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                label={intakeFieldLabel("roleTitle")}
+                error={errors.roleTitle}
+                required={req["roleTitle"]}
+              >
+                <Input
+                  value={state.roleTitle}
+                  onChange={(e) => set("roleTitle", e.target.value)}
+                  placeholder="Clinical Operations Manager"
+                />
+              </Field>
+              <Field
+                label={intakeFieldLabel("team")}
+                error={errors.team}
+                required={req["team"]}
+                hint={intakeFieldHint("team")}
+              >
+                <Input
+                  value={state.team}
+                  onChange={(e) => set("team", e.target.value)}
+                  placeholder="Clinical Operations"
+                />
+              </Field>
+            </div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <Field label="Seniority level" required={false}>
                 <select
-                  id="work-model"
-                  value={state.workModel}
-                  onChange={(e) => onWorkModelChange(e.target.value as FormState["workModel"])}
+                  aria-label="Seniority level"
+                  value={state.seniority}
+                  onChange={(e) => set("seniority", e.target.value)}
                   className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-                  aria-invalid={Boolean(errors.workModel)}
-                aria-describedby={errors.workModel ? "intake-workModel-error" : undefined}
                 >
-                  <option value="">Choose one</option>
-                  {WORK_MODELS.map((m) => (
-                    <option key={m} value={m}>
-                      {WORK_MODEL_LABELS[m]}
+                  <option value="">Not stated in the job description</option>
+                  {BLUEPRINT_SENIORITY.map((level) => (
+                    <option key={level} value={level}>
+                      {level.charAt(0).toUpperCase() + level.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Employment type" required={false}>
+                <select
+                  aria-label="Employment type"
+                  value={state.employmentType}
+                  onChange={(e) =>
+                    set("employmentType", e.target.value as FormState["employmentType"])
+                  }
+                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                >
+                  <option value="">Not stated in the job description</option>
+                  {EMPLOYMENT_TYPES.map((kind) => (
+                    <option key={kind} value={kind}>
+                      {kind.replaceAll("_", " ")}
                     </option>
                   ))}
                 </select>
               </Field>
             </div>
-
-            {/* Hybrid is the only model that needs a day count. */}
-            {state.workModel === "hybrid" && (
-              <Field
-                label="Days on site each week" carried={isCarried("onsiteDays")}
-                error={errors.onsiteDays}
-                required={req["onsiteDays"]}
-                hint="Between 1 and 5. Candidates ask this first, and a wrong guess costs you offers."
-              >
-                <Input
-                  value={state.onsiteDays}
-                  onChange={(e) => set("onsiteDays", e.target.value.replace(/[^\d]/g, ""))}
-                  inputMode="numeric"
-                  placeholder="3"
-                />
-              </Field>
-            )}
-
-            {/* Remote roles need a boundary: timezone bands, or the whole country. */}
-            {state.workModel === "remote" && (
-              <fieldset className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
-                <legend className="text-sm font-medium">
-                  Acceptable timezones
-                  {req["remoteTimezones"] ? (
-                    <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
-                      *
-                    </span>
-                  ) : (
-                    <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
-                      Optional
-                    </span>
-                  )}
-                </legend>
-                <p className="text-sm text-[color:var(--brand-navy)]/75">
-                  Pick the working-hours bands you can live with, or say anywhere in the country.
-                </p>
-                <label className="flex cursor-pointer items-start gap-3 text-sm">
-                  <input
-                    type="checkbox"
-                    className="mt-1"
-                    checked={state.remoteAnywhereInCountry}
-                    onChange={(e) => {
-                      const on = e.target.checked;
-                      setState((s) => ({
-                        ...s,
-                        remoteAnywhereInCountry: on,
-                        remoteTimezones: on ? [] : s.remoteTimezones,
-                      }));
-                      setErrors((prev) => {
-                        const next = { ...prev };
-                        delete next.remoteTimezones;
-                        return next;
-                      });
-                    }}
-                  />
-                  <span>Anywhere in the country — timezone does not matter</span>
-                </label>
-                {!state.remoteAnywhereInCountry && (
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {TIMEZONE_BANDS.map((tz) => (
-                      <label key={tz.value} className="flex cursor-pointer items-start gap-3 text-sm">
-                        <input
-                          type="checkbox"
-                          className="mt-1"
-                          checked={state.remoteTimezones.includes(tz.value)}
-                          onChange={() => toggleTimezone(tz.value)}
-                        />
-                        <span>{tz.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-                {errors.remoteTimezones && (
-                  <p id="intake-remoteTimezones-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                    {errors.remoteTimezones}
-                  </p>
-                )}
-              </fieldset>
-            )}
-          </SectionGroup>
-
-          <SectionGroup title="Visa sponsorship">
-            <fieldset
-              className={`space-y-2 rounded-lg border p-4 ${
-                errors.sponsorshipAvailable
-                  ? "border-[color:var(--brand-danger)] bg-[color:var(--brand-danger)]/5"
-                  : "border-[color:var(--brand-navy)]/12 bg-white"
-              }`}
-            >
-              <legend className="text-sm font-medium">
-                Can you sponsor a visa?
-                <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
-                  *
-                </span>
-              </legend>
-              <p className="text-sm text-[color:var(--brand-navy)]/75">
-                {SPONSORSHIP_WHY_IT_MATTERS}
+            {suggestions.kind === "loading" && (
+              <p role="status" className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+                Reading the job description. Any details we find will appear here automatically; you
+                can edit them.
               </p>
-              {SPONSORSHIP_OPTIONS.map((opt) => (
-                <label
-                  key={opt.value}
-                  className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
-                >
-                  <input
-                    type="radio"
-                    name="sponsorship-available"
-                    value={opt.value}
-                    checked={state.sponsorshipAvailable === opt.value}
-                    onChange={() =>
-                      setState((s) => ({
-                        ...s,
-                        sponsorshipAvailable: opt.value,
-                        // Work authorisation is the same answer in other words,
-                        // so it is derived rather than asked twice.
-                        workAuthorization:
-                          opt.value === "yes" ? "will_sponsor" : "already_authorized",
-                      }))
-                    }
-                    className="mt-1"
-                  />
-                  <span className="text-sm leading-relaxed">
-                    <span className="font-medium">{opt.label}</span>
-                    <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
-                  </span>
-                </label>
-              ))}
-              {errors.sponsorshipAvailable && (
-                <p id="intake-sponsorshipAvailable-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                  {errors.sponsorshipAvailable}
-                </p>
-              )}
-            </fieldset>
-          </SectionGroup>
+            )}
+          </Section>
+        )}
 
-          <SectionGroup title="Compensation">
-            <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
-              <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
-              <div className="grid gap-3 sm:grid-cols-4">
-                <Field label={intakeFieldLabel("currency")} carried={isCarried("currency")} htmlFor="currency">
-                  <select
-                    id="currency"
-                    value={state.currency}
-                    onChange={(e) => set("currency", e.target.value)}
-                    className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-                  >
-                    {COMP_CURRENCIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-                <Field label={intakeFieldLabel("salaryMin")} error={errors.salaryMin} required={req["salaryMin"]}>
+        {step === 2 && (
+          <Section id="section-people" title="Who you need" step={2}>
+            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              One list. Tag each requirement so sourcing chases the right people instead of a wish
+              list.
+            </p>
+            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              Each additional must-have narrows the search, so the more you add, the fewer eligible
+              candidates there will be.
+            </p>
+
+            <SectionGroup title="Requirements">
+              <RequirementsList
+                items={state.requirements}
+                onChange={setRequirements}
+                rowErrors={rowErrors}
+                listError={errors.requirements || null}
+                needsConfirm={
+                  validateRequirements(state.requirements, {
+                    manyConfirmed: state.manyMustHavesConfirmed,
+                  }).needsConfirm
+                }
+                manyConfirmed={state.manyMustHavesConfirmed}
+                onConfirmMany={(confirmed) => {
+                  set("manyMustHavesConfirmed", confirmed);
+                  if (confirmed) setErrors((e) => ({ ...e, requirements: "" }));
+                }}
+                roleTitle={state.roleTitle}
+                suggestions={suggestions}
+                onRetrySuggestions={() => {
+                  // Re-analyse reads whatever the client gave us, in the same
+                  // order the parser does: an attached file first, then the text.
+                  suggestedForRef.current = "";
+                  if (jdFile) {
+                    void runJdParse({
+                      file: { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 },
+                      roleTitle: state.roleTitle,
+                    });
+                    return;
+                  }
+                  const jd = state.jobDescriptionText.trim();
+                  if (jd.length < MIN_JD_TEXT) return;
+                  void runJdParse({ text: jd, roleTitle: state.roleTitle });
+                }}
+              />
+              {/* The example helper belongs INSIDE Requirements. As its own
+                section it read as a second requirements question and made the
+                step look twice as long as it is. */}
+              <FieldExamples
+                field="must_haves"
+                roleTitle={state.roleTitle}
+                label="See an example must-have"
+                onUse={(text) =>
+                  setRequirements([...state.requirements, { text, tag: "must_have" }])
+                }
+              />
+            </SectionGroup>
+          </Section>
+        )}
+
+        {step === 3 && (
+          <Section id="section-practicalities" title="Practicalities" step={3}>
+            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              Money, place, authorisation, timing. If you do not have an answer yet, leave it — the
+              role will simply be marked <span className="font-medium">Brief incomplete</span> until
+              you do.
+            </p>
+
+            <SectionGroup title="Location and working model">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field
+                  label={intakeFieldLabel("location")}
+                  carried={isCarried("location")}
+                  error={errors.location}
+                  required={req["location"]}
+                  hint="City and country, or the region candidates must live in."
+                >
                   <Input
-                    value={state.salaryMin}
-                    disabled={state.compensationUndecided}
-                    onChange={(e) => onSalaryChange("salaryMin", e.target.value)}
-                    inputMode="numeric"
-                    placeholder="70000"
+                    value={state.location}
+                    onChange={(e) => set("location", e.target.value)}
+                    placeholder="Manchester, United Kingdom"
                   />
                 </Field>
-                <Field label={intakeFieldLabel("salaryMax")} error={errors.salaryMax} required={req["salaryMax"]}>
-                  <Input
-                    value={state.salaryMax}
-                    disabled={state.compensationUndecided}
-                    onChange={(e) => onSalaryChange("salaryMax", e.target.value)}
-                    inputMode="numeric"
-                    placeholder="85000"
-                  />
-                </Field>
-                <Field label={intakeFieldLabel("compensationPeriod")} carried={isCarried("compensationPeriod")} htmlFor="comp-period">
+                <Field
+                  label={intakeFieldLabel("workModel")}
+                  carried={isCarried("workModel")}
+                  error={errors.workModel}
+                  required={req["workModel"]}
+                  htmlFor="work-model"
+                >
                   <select
-                    id="comp-period"
-                    value={state.compensationPeriod}
-                    onChange={(e) => set("compensationPeriod", e.target.value)}
+                    id="work-model"
+                    value={state.workModel}
+                    onChange={(e) => onWorkModelChange(e.target.value as FormState["workModel"])}
                     className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                    aria-invalid={Boolean(errors.workModel)}
+                    aria-describedby={errors.workModel ? "intake-workModel-error" : undefined}
                   >
-                    {COMP_PERIODS.map((p) => (
-                      <option key={p} value={p}>
-                        {COMP_PERIOD_LABELS[p]}
+                    <option value="">Choose one</option>
+                    {WORK_MODELS.map((m) => (
+                      <option key={m} value={m}>
+                        {WORK_MODEL_LABELS[m]}
                       </option>
                     ))}
                   </select>
                 </Field>
               </div>
 
-              {/* Wide-range confirmation: it goes through, but on purpose. */}
-              {wideRange && (
-                <div
-                  className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3"
-                  data-field="wideRangeConfirmed"
+              {/* Hybrid is the only model that needs a day count. */}
+              {state.workModel === "hybrid" && (
+                <Field
+                  label="Days on site each week"
+                  carried={isCarried("onsiteDays")}
+                  error={errors.onsiteDays}
+                  required={req["onsiteDays"]}
+                  hint="Between 1 and 5. Candidates ask this first, and a wrong guess costs you offers."
                 >
+                  <Input
+                    value={state.onsiteDays}
+                    onChange={(e) => set("onsiteDays", e.target.value.replace(/[^\d]/g, ""))}
+                    inputMode="numeric"
+                    placeholder="3"
+                  />
+                </Field>
+              )}
+
+              {/* Remote roles need a boundary: timezone bands, or the whole country. */}
+              {state.workModel === "remote" && (
+                <fieldset className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
+                  <legend className="text-sm font-medium">
+                    Acceptable timezones
+                    {req["remoteTimezones"] ? (
+                      <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
+                        *
+                      </span>
+                    ) : (
+                      <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+                        Optional
+                      </span>
+                    )}
+                  </legend>
+                  <p className="text-sm text-[color:var(--brand-navy)]/75">
+                    Pick the working-hours bands you can live with, or say anywhere in the country.
+                  </p>
                   <label className="flex cursor-pointer items-start gap-3 text-sm">
                     <input
                       type="checkbox"
-                      checked={state.wideRangeConfirmed}
-                      onChange={(e) => set("wideRangeConfirmed", e.target.checked)}
+                      className="mt-1"
+                      checked={state.remoteAnywhereInCountry}
+                      onChange={(e) => {
+                        const on = e.target.checked;
+                        setState((s) => ({
+                          ...s,
+                          remoteAnywhereInCountry: on,
+                          remoteTimezones: on ? [] : s.remoteTimezones,
+                        }));
+                        setErrors((prev) => {
+                          const next = { ...prev };
+                          delete next.remoteTimezones;
+                          return next;
+                        });
+                      }}
+                    />
+                    <span>Anywhere in the country — timezone does not matter</span>
+                  </label>
+                  {!state.remoteAnywhereInCountry && (
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {TIMEZONE_BANDS.map((tz) => (
+                        <label
+                          key={tz.value}
+                          className="flex cursor-pointer items-start gap-3 text-sm"
+                        >
+                          <input
+                            type="checkbox"
+                            className="mt-1"
+                            checked={state.remoteTimezones.includes(tz.value)}
+                            onChange={() => toggleTimezone(tz.value)}
+                          />
+                          <span>{tz.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                  {errors.remoteTimezones && (
+                    <p
+                      id="intake-remoteTimezones-error"
+                      data-field-error="true"
+                      className="text-sm text-[color:var(--brand-danger)]"
+                    >
+                      {errors.remoteTimezones}
+                    </p>
+                  )}
+                </fieldset>
+              )}
+            </SectionGroup>
+
+            <SectionGroup title="Visa sponsorship">
+              <fieldset
+                className={`space-y-2 rounded-lg border p-4 ${
+                  errors.sponsorshipAvailable
+                    ? "border-[color:var(--brand-danger)] bg-[color:var(--brand-danger)]/5"
+                    : "border-[color:var(--brand-navy)]/12 bg-white"
+                }`}
+              >
+                <legend className="text-sm font-medium">
+                  Can you sponsor a visa?
+                  <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
+                    *
+                  </span>
+                </legend>
+                <p className="text-sm text-[color:var(--brand-navy)]/75">
+                  {SPONSORSHIP_WHY_IT_MATTERS}
+                </p>
+                {SPONSORSHIP_OPTIONS.map((opt) => (
+                  <label
+                    key={opt.value}
+                    className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
+                  >
+                    <input
+                      type="radio"
+                      name="sponsorship-available"
+                      value={opt.value}
+                      checked={state.sponsorshipAvailable === opt.value}
+                      onChange={() =>
+                        setState((s) => ({
+                          ...s,
+                          sponsorshipAvailable: opt.value,
+                          // Work authorisation is the same answer in other words,
+                          // so it is derived rather than asked twice.
+                          workAuthorization:
+                            opt.value === "yes" ? "will_sponsor" : "already_authorized",
+                        }))
+                      }
+                      className="mt-1"
+                    />
+                    <span className="text-sm leading-relaxed">
+                      <span className="font-medium">{opt.label}</span>
+                      <span className="block text-xs text-[color:var(--brand-navy)]/75">
+                        {opt.hint}
+                      </span>
+                    </span>
+                  </label>
+                ))}
+                {errors.sponsorshipAvailable && (
+                  <p
+                    id="intake-sponsorshipAvailable-error"
+                    data-field-error="true"
+                    className="text-sm text-[color:var(--brand-danger)]"
+                  >
+                    {errors.sponsorshipAvailable}
+                  </p>
+                )}
+              </fieldset>
+            </SectionGroup>
+
+            <SectionGroup title="Compensation">
+              <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
+                <p className="text-sm text-[color:var(--brand-navy)]/75">
+                  {COMPENSATION_HONEST_LINE}
+                </p>
+                <div className="grid gap-3 sm:grid-cols-4">
+                  <Field
+                    label={intakeFieldLabel("currency")}
+                    carried={isCarried("currency")}
+                    htmlFor="currency"
+                  >
+                    <select
+                      id="currency"
+                      value={state.currency}
+                      onChange={(e) => set("currency", e.target.value)}
+                      className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                    >
+                      {COMP_CURRENCIES.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field
+                    label={intakeFieldLabel("salaryMin")}
+                    error={errors.salaryMin}
+                    required={req["salaryMin"]}
+                  >
+                    <Input
+                      value={state.salaryMin}
+                      disabled={state.compensationUndecided}
+                      onChange={(e) => onSalaryChange("salaryMin", e.target.value)}
+                      inputMode="numeric"
+                      placeholder="70000"
+                    />
+                  </Field>
+                  <Field
+                    label={intakeFieldLabel("salaryMax")}
+                    error={errors.salaryMax}
+                    required={req["salaryMax"]}
+                  >
+                    <Input
+                      value={state.salaryMax}
+                      disabled={state.compensationUndecided}
+                      onChange={(e) => onSalaryChange("salaryMax", e.target.value)}
+                      inputMode="numeric"
+                      placeholder="85000"
+                    />
+                  </Field>
+                  <Field
+                    label={intakeFieldLabel("compensationPeriod")}
+                    carried={isCarried("compensationPeriod")}
+                    htmlFor="comp-period"
+                  >
+                    <select
+                      id="comp-period"
+                      value={state.compensationPeriod}
+                      onChange={(e) => set("compensationPeriod", e.target.value)}
+                      className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                    >
+                      {COMP_PERIODS.map((p) => (
+                        <option key={p} value={p}>
+                          {COMP_PERIOD_LABELS[p]}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                </div>
+
+                {/* Wide-range confirmation: it goes through, but on purpose. */}
+                {wideRange && (
+                  <div
+                    className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3"
+                    data-field="wideRangeConfirmed"
+                  >
+                    <label className="flex cursor-pointer items-start gap-3 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={state.wideRangeConfirmed}
+                        onChange={(e) => set("wideRangeConfirmed", e.target.checked)}
+                        className="mt-0.5 h-4 w-4"
+                      />
+                      <span>{COMPENSATION_WIDE_RANGE_WARNING}</span>
+                    </label>
+                    {errors.wideRangeConfirmed && !state.wideRangeConfirmed && (
+                      <p className="text-sm text-red-600" data-field-error="true">
+                        {errors.wideRangeConfirmed}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* "Not decided yet" is recorded as undecided, never as zero. */}
+                <div className="space-y-1" data-field="compensationUndecided">
+                  <label className="flex cursor-pointer items-start gap-3 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={state.compensationUndecided}
+                      onChange={(e) => {
+                        const on = e.target.checked;
+                        setState((prev) => ({
+                          ...prev,
+                          compensationUndecided: on,
+                          salaryMin: on ? "" : prev.salaryMin,
+                          salaryMax: on ? "" : prev.salaryMax,
+                          wideRangeConfirmed: on ? false : prev.wideRangeConfirmed,
+                        }));
+                        setErrors((prev) => {
+                          const nextErrors = { ...prev };
+                          delete nextErrors.salaryMin;
+                          delete nextErrors.salaryMax;
+                          delete nextErrors.compensationUndecided;
+                          delete nextErrors.wideRangeConfirmed;
+                          return nextErrors;
+                        });
+                      }}
                       className="mt-0.5 h-4 w-4"
                     />
-                    <span>{COMPENSATION_WIDE_RANGE_WARNING}</span>
+                    <span>
+                      Not decided yet
+                      <span className="block text-[color:var(--brand-navy)]/65">
+                        We will record this as undecided and mark the brief incomplete for
+                        compensation.
+                      </span>
+                    </span>
                   </label>
-                  {errors.wideRangeConfirmed && !state.wideRangeConfirmed && (
-                    <p className="text-sm text-red-600" data-field-error="true">
-                      {errors.wideRangeConfirmed}
+                  {errors.compensationUndecided && (
+                    <p
+                      id="intake-compensationUndecided-error"
+                      className="text-sm text-red-600"
+                      data-field-error="true"
+                    >
+                      {errors.compensationUndecided}
                     </p>
                   )}
                 </div>
-              )}
 
-              {/* "Not decided yet" is recorded as undecided, never as zero. */}
-              <div className="space-y-1" data-field="compensationUndecided">
+                <Field
+                  label="Equity"
+                  carried={isCarried("equity")}
+                  htmlFor="comp-equity"
+                  required={req["equity"]}
+                >
+                  <select
+                    id="comp-equity"
+                    value={state.equity}
+                    onChange={(e) => set("equity", e.target.value)}
+                    className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                  >
+                    <option value="">Not stated</option>
+                    {COMP_EQUITY.map((k) => (
+                      <option key={k} value={k}>
+                        {COMP_EQUITY_LABELS[k]}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+
                 <label className="flex cursor-pointer items-start gap-3 text-sm">
                   <input
                     type="checkbox"
-                    checked={state.compensationUndecided}
-                    onChange={(e) => {
-                      const on = e.target.checked;
-                      setState((prev) => ({
-                        ...prev,
-                        compensationUndecided: on,
-                        salaryMin: on ? "" : prev.salaryMin,
-                        salaryMax: on ? "" : prev.salaryMax,
-                        wideRangeConfirmed: on ? false : prev.wideRangeConfirmed,
-                      }));
-                      setErrors((prev) => {
-                        const nextErrors = { ...prev };
-                        delete nextErrors.salaryMin;
-                        delete nextErrors.salaryMax;
-                        delete nextErrors.compensationUndecided;
-                        delete nextErrors.wideRangeConfirmed;
-                        return nextErrors;
-                      });
-                    }}
+                    checked={state.compensationFlexible}
+                    onChange={(e) => set("compensationFlexible", e.target.checked)}
                     className="mt-0.5 h-4 w-4"
                   />
-                  <span>
-                    Not decided yet
-                    <span className="block text-[color:var(--brand-navy)]/65">
-                      We will record this as undecided and mark the brief incomplete for compensation.
-                    </span>
-                  </span>
+                  <span>Flexible for the right person</span>
                 </label>
-                {errors.compensationUndecided && (
-                  <p id="intake-compensationUndecided-error" className="text-sm text-red-600" data-field-error="true">
-                    {errors.compensationUndecided}
-                  </p>
-                )}
-              </div>
 
-              <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
-                <select
-                  id="comp-equity"
-                  value={state.equity}
-                  onChange={(e) => set("equity", e.target.value)}
-                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                <Field
+                  label="Anything else about the package"
+                  error={errors.compensationNote}
+                  required={req["compensationNote"]}
+                  hint="Bonus, relocation, shift premium, or where exactly you have room."
                 >
-                  <option value="">Not stated</option>
-                  {COMP_EQUITY.map((k) => (
-                    <option key={k} value={k}>
-                      {COMP_EQUITY_LABELS[k]}
-                    </option>
-                  ))}
-                </select>
-              </Field>
+                  <Input
+                    value={state.compensationNote}
+                    onChange={(e) => set("compensationNote", e.target.value)}
+                    placeholder="10% annual bonus; can stretch to 90k for someone exceptional"
+                  />
+                </Field>
+              </div>
+            </SectionGroup>
 
-              <label className="flex cursor-pointer items-start gap-3 text-sm">
-                <input
-                  type="checkbox"
-                  checked={state.compensationFlexible}
-                  onChange={(e) => set("compensationFlexible", e.target.checked)}
-                  className="mt-0.5 h-4 w-4"
-                />
-                <span>Flexible for the right person</span>
-              </label>
-
-              <Field
-                label="Anything else about the package"
-                error={errors.compensationNote}
-                required={req["compensationNote"]}
-                hint="Bonus, relocation, shift premium, or where exactly you have room."
-              >
-                <Input
-                  value={state.compensationNote}
-                  onChange={(e) => set("compensationNote", e.target.value)}
-                  placeholder="10% annual bonus; can stretch to 90k for someone exceptional"
-                />
-              </Field>
-            </div>
-          </SectionGroup>
-
-          {/* No "Start date" group heading above a field labelled "Ideal start
+            {/* No "Start date" group heading above a field labelled "Ideal start
               date": one field does not need a group, and the two together
               simply said the same thing twice. */}
-          <SectionGroup title={intakeFieldLabel("startDate")}>
-            <Field
-              label="When would you like them to start?"
-              error={errors.targetStartDate}
-              required={req["targetStartDate"]}
-            >
-              <Input
-                type="date"
-                value={state.targetStartDate}
-                onChange={(e) => set("targetStartDate", e.target.value)}
-              />
-            </Field>
-          </SectionGroup>
-        </Section>
+            <SectionGroup title={intakeFieldLabel("startDate")}>
+              <Field
+                label="When would you like them to start?"
+                error={errors.targetStartDate}
+                required={req["targetStartDate"]}
+              >
+                <Input
+                  type="date"
+                  value={state.targetStartDate}
+                  onChange={(e) => set("targetStartDate", e.target.value)}
+                />
+              </Field>
+            </SectionGroup>
+          </Section>
         )}
 
         {step === 3 && (
-        <Section id="section-process" title="Process and confirm" step={3}>
-          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-            How you decide, and what rules someone out. Two minutes here saves candidates dropping
-            out halfway.
-          </p>
+          <Section id="section-process" title="Process and confirm" step={3}>
+            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              How you decide, and what rules someone out. Two minutes here saves candidates dropping
+              out halfway.
+            </p>
 
-          <SectionGroup title="What rules someone out?">
-            <fieldset className="space-y-3" data-field="dealBreakerList">
-              <legend className="sr-only">What would rule someone out?</legend>
-              <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                {DEAL_BREAKER_WHY_IT_MATTERS}
-              </p>
-              <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
-                {DEAL_BREAKER_POLICY_LINE}
-              </p>
-
-              <div className="space-y-2">
-                {state.dealBreakerList.map((line, index) => {
-                  const rowError = dealBreakerIssues.rowErrors[index];
-                  return (
-                    <div key={index}>
-                      <div className="flex items-start gap-2">
-                        <Input
-                          value={line}
-                          maxLength={MAX_DEAL_BREAKER_CHARS}
-                          onChange={(e) => setDealBreaker(index, e.target.value)}
-                          placeholder={
-                            index === 0
-                              ? "No agency-side-only backgrounds"
-                              : index === 1
-                                ? "Cannot start within six weeks"
-                                : "No hands-on ownership of the core system"
-                          }
-                          aria-label={`Deal-breaker ${index + 1}`}
-                          aria-invalid={Boolean(rowError)}
-                        />
-                        {state.dealBreakerList.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeDealBreaker(index)}
-                            className="mt-2 text-xs underline text-[color:var(--brand-navy)]/70"
-                          >
-                            Remove
-                          </button>
-                        )}
-                      </div>
-                      {rowError && (
-                        <p
-                          data-field-error="true"
-                          className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                        >
-                          {rowError}
-                        </p>
-                      )}
-                      {dealBreakerFlags[index] && (
-                        <p
-                          role="status"
-                          className="mt-1 rounded-md border border-dashed px-2 py-1.5 text-xs leading-relaxed text-[color:var(--brand-navy)]/75"
-                        >
-                          <span className="font-medium">Will not be used. </span>
-                          {dealBreakerFlags[index]!.message}
-                          {dealBreakerFlags[index]!.suggestion
-                            ? ` ${dealBreakerFlags[index]!.suggestion}`
-                            : ""}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {dealBreakerIssues.listError && (
-                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                  {dealBreakerIssues.listError}
+            <SectionGroup title="What rules someone out?">
+              <fieldset className="space-y-3" data-field="dealBreakerList">
+                <legend className="sr-only">What would rule someone out?</legend>
+                <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                  {DEAL_BREAKER_WHY_IT_MATTERS}
                 </p>
-              )}
-
-              {normalizeDealBreakers(state.dealBreakerList).length === 0 && (
                 <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
-                  {DEAL_BREAKER_EMPTY_HINT}
+                  {DEAL_BREAKER_POLICY_LINE}
                 </p>
-              )}
 
-              {state.dealBreakerList.length < MAX_DEAL_BREAKERS ? (
-                <Button type="button" variant="outline" size="sm" onClick={addDealBreaker}>
-                  Add another
-                </Button>
-              ) : (
-                <p className="text-xs text-[color:var(--brand-navy)]/60">
-                  Five is the most we record — beyond that it stops being a filter.
-                </p>
-              )}
-            </fieldset>
-          </SectionGroup>
-
-          <SectionGroup title="Your interview process">
-            <fieldset className="space-y-3" data-field="interviewStages">
-              <legend className="sr-only">Your interview process</legend>
-              <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                {INTERVIEW_PROCESS_WHY_IT_MATTERS}
-              </p>
-              {isCarried("interviewStages") && (
-                <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
-              )}
-
-              {state.interviewStages.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4">
-                  <p className="text-sm font-medium">Most clients run three stages</p>
-                  <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                    {DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((s) => s.name).join(" → ")}. Use it as a
-                    starting point, or build your own — nothing is saved until you choose.
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={useStageTemplate}>
-                      Use this as a starting point
-                    </Button>
-                    <Button type="button" variant="ghost" size="sm" onClick={addStage}>
-                      Build my own
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">Stages</h4>
-                  {state.interviewStages.map((stage, index) => {
-                    const issues = stageErrors[index] ?? {};
+                <div className="space-y-2">
+                  {state.dealBreakerList.map((line, index) => {
+                    const rowError = dealBreakerIssues.rowErrors[index];
                     return (
-                      <div
-                        key={index}
-                        className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4"
-                      >
-                        <div className="flex items-center justify-between gap-2 border-b border-[color:var(--brand-navy)]/10 pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--brand-navy)]/70">
-                            Stage {index + 1}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => removeStage(index)}
-                            className="text-xs underline text-[color:var(--brand-navy)]/70"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                          <div>
-                            <Label className="text-xs">What is this stage?</Label>
-                            <Input
-                              value={stage.name}
-                              maxLength={MAX_STAGE_NAME_CHARS}
-                              onChange={(e) => updateStage(index, { name: e.target.value })}
-                              placeholder="Hiring manager interview"
-                              aria-invalid={Boolean(issues.name)}
-                            />
-                            {issues.name && (
-                              <p
-                                data-field-error="true"
-                                className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                              >
-                                {issues.name}
-                              </p>
-                            )}
-                          </div>
-                          <div>
-                            <Label className="text-xs">Format</Label>
-                            <select
-                              value={stage.format}
-                              onChange={(e) =>
-                                updateStage(index, {
-                                  format: e.target.value as InterviewStage["format"],
-                                })
-                              }
-                              className="h-10 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                      <div key={index}>
+                        <div className="flex items-start gap-2">
+                          <Input
+                            value={line}
+                            maxLength={MAX_DEAL_BREAKER_CHARS}
+                            onChange={(e) => setDealBreaker(index, e.target.value)}
+                            placeholder={
+                              index === 0
+                                ? "No agency-side-only backgrounds"
+                                : index === 1
+                                  ? "Cannot start within six weeks"
+                                  : "No hands-on ownership of the core system"
+                            }
+                            aria-label={`Deal-breaker ${index + 1}`}
+                            aria-invalid={Boolean(rowError)}
+                          />
+                          {state.dealBreakerList.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeDealBreaker(index)}
+                              className="mt-2 text-xs underline text-[color:var(--brand-navy)]/70"
                             >
-                              {INTERVIEW_STAGE_FORMATS.map((f) => (
-                                <option key={f} value={f}>
-                                  {INTERVIEW_STAGE_FORMAT_LABELS[f]}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          <div>
-                            <Label className="text-xs">Who runs it?</Label>
-                            <Input
-                              value={stage.ownerName ?? ""}
-                              onChange={(e) => updateStage(index, { ownerName: e.target.value })}
-                              placeholder="Dana Okoro"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-xs">Their email</Label>
-                            <Input
-                              type="email"
-                              value={stage.ownerEmail ?? ""}
-                              onChange={(e) => updateStage(index, { ownerEmail: e.target.value })}
-                              placeholder="dana@company.com"
-                              aria-invalid={Boolean(issues.ownerEmail)}
-                            />
-                            {issues.ownerEmail && (
-                              <p
-                                data-field-error="true"
-                                className="mt-1 text-xs text-[color:var(--brand-danger)]"
-                              >
-                                {issues.ownerEmail}
-                              </p>
-                            )}
-                          </div>
+                              Remove
+                            </button>
+                          )}
                         </div>
+                        {rowError && (
+                          <p
+                            data-field-error="true"
+                            className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                          >
+                            {rowError}
+                          </p>
+                        )}
+                        {dealBreakerFlags[index] && (
+                          <p
+                            role="status"
+                            className="mt-1 rounded-md border border-dashed px-2 py-1.5 text-xs leading-relaxed text-[color:var(--brand-navy)]/75"
+                          >
+                            <span className="font-medium">Will not be used. </span>
+                            {dealBreakerFlags[index]!.message}
+                            {dealBreakerFlags[index]!.suggestion
+                              ? ` ${dealBreakerFlags[index]!.suggestion}`
+                              : ""}
+                          </p>
+                        )}
                       </div>
                     );
                   })}
-                  {state.interviewStages.length < MAX_INTERVIEW_STAGES ? (
-                    <Button type="button" variant="outline" size="sm" onClick={addStage}>
-                      Add a stage
-                    </Button>
-                  ) : (
-                    <p className="text-xs text-[color:var(--brand-navy)]/60">
-                      Five stages is the most we record — beyond that candidates drop out.
+                </div>
+
+                {dealBreakerIssues.listError && (
+                  <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                    {dealBreakerIssues.listError}
+                  </p>
+                )}
+
+                {normalizeDealBreakers(state.dealBreakerList).length === 0 && (
+                  <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
+                    {DEAL_BREAKER_EMPTY_HINT}
+                  </p>
+                )}
+
+                {state.dealBreakerList.length < MAX_DEAL_BREAKERS ? (
+                  <Button type="button" variant="outline" size="sm" onClick={addDealBreaker}>
+                    Add another
+                  </Button>
+                ) : (
+                  <p className="text-xs text-[color:var(--brand-navy)]/60">
+                    Five is the most we record — beyond that it stops being a filter.
+                  </p>
+                )}
+              </fieldset>
+            </SectionGroup>
+
+            <SectionGroup title="Your interview process">
+              <fieldset className="space-y-3" data-field="interviewStages">
+                <legend className="sr-only">Your interview process</legend>
+                <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                  {INTERVIEW_PROCESS_WHY_IT_MATTERS}
+                </p>
+                {isCarried("interviewStages") && (
+                  <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
+                )}
+
+                {state.interviewStages.length === 0 ? (
+                  <div className="rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4">
+                    <p className="text-sm font-medium">Most clients run three stages</p>
+                    <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                      {DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((s) => s.name).join(" → ")}. Use it as a
+                      starting point, or build your own — nothing is saved until you choose.
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Button type="button" variant="outline" size="sm" onClick={useStageTemplate}>
+                        Use this as a starting point
+                      </Button>
+                      <Button type="button" variant="ghost" size="sm" onClick={addStage}>
+                        Build my own
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">Stages</h4>
+                    {state.interviewStages.map((stage, index) => {
+                      const issues = stageErrors[index] ?? {};
+                      return (
+                        <div
+                          key={index}
+                          className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4"
+                        >
+                          <div className="flex items-center justify-between gap-2 border-b border-[color:var(--brand-navy)]/10 pb-2">
+                            <span className="text-xs font-bold uppercase tracking-wider text-[color:var(--brand-navy)]/70">
+                              Stage {index + 1}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => removeStage(index)}
+                              className="text-xs underline text-[color:var(--brand-navy)]/70"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                            <div>
+                              <Label className="text-xs">What is this stage?</Label>
+                              <Input
+                                value={stage.name}
+                                maxLength={MAX_STAGE_NAME_CHARS}
+                                onChange={(e) => updateStage(index, { name: e.target.value })}
+                                placeholder="Hiring manager interview"
+                                aria-invalid={Boolean(issues.name)}
+                              />
+                              {issues.name && (
+                                <p
+                                  data-field-error="true"
+                                  className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                                >
+                                  {issues.name}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <Label className="text-xs">Format</Label>
+                              <select
+                                value={stage.format}
+                                onChange={(e) =>
+                                  updateStage(index, {
+                                    format: e.target.value as InterviewStage["format"],
+                                  })
+                                }
+                                className="h-10 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                              >
+                                {INTERVIEW_STAGE_FORMATS.map((f) => (
+                                  <option key={f} value={f}>
+                                    {INTERVIEW_STAGE_FORMAT_LABELS[f]}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div>
+                              <Label className="text-xs">Who runs it?</Label>
+                              <Input
+                                value={stage.ownerName ?? ""}
+                                onChange={(e) => updateStage(index, { ownerName: e.target.value })}
+                                placeholder="Dana Okoro"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs">Their email</Label>
+                              <Input
+                                type="email"
+                                value={stage.ownerEmail ?? ""}
+                                onChange={(e) => updateStage(index, { ownerEmail: e.target.value })}
+                                placeholder="dana@company.com"
+                                aria-invalid={Boolean(issues.ownerEmail)}
+                              />
+                              {issues.ownerEmail && (
+                                <p
+                                  data-field-error="true"
+                                  className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                                >
+                                  {issues.ownerEmail}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {state.interviewStages.length < MAX_INTERVIEW_STAGES ? (
+                      <Button type="button" variant="outline" size="sm" onClick={addStage}>
+                        Add a stage
+                      </Button>
+                    ) : (
+                      <p className="text-xs text-[color:var(--brand-navy)]/60">
+                        Five stages is the most we record — beyond that candidates drop out.
+                      </p>
+                    )}
+                  </div>
+                )}
+                {errors.interviewStages && (
+                  <p
+                    id="intake-interviewStages-error"
+                    data-field-error="true"
+                    className="text-sm text-[color:var(--brand-danger)]"
+                  >
+                    {errors.interviewStages}
+                  </p>
+                )}
+              </fieldset>
+            </SectionGroup>
+
+            <SectionGroup title="Timeline">
+              <Field
+                label={intakeFieldLabel("targetDaysToOffer")}
+                carried={isCarried("targetDaysToOffer")}
+                error={errors.targetDaysToOffer}
+                required={req["targetDaysToOffer"]}
+                hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days.`}
+              >
+                <Input
+                  type="text"
+                  inputMode="numeric"
+                  value={state.targetDaysToOffer}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/[^0-9]/g, "").slice(0, 3);
+                    set("targetDaysToOffer", digits);
+                    setErrors((prev) => ({ ...prev, targetDaysToOffer: "" }));
+                  }}
+                  placeholder="21"
+                  className="max-w-[8rem]"
+                />
+              </Field>
+            </SectionGroup>
+
+            <SectionGroup title="Decision maker">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field
+                  label="Who makes the final decision?"
+                  carried={isCarried("decisionMaker")}
+                  error={errors.decisionMaker}
+                  required={req["decisionMaker"]}
+                  hint="Name and role. We keep the process moving through them."
+                >
+                  <Input
+                    value={state.decisionMaker}
+                    onChange={(e) => set("decisionMaker", e.target.value)}
+                    placeholder="Dana Okoro, Operations Director"
+                  />
+                </Field>
+                <Field
+                  label="Their email"
+                  carried={isCarried("decisionMakerEmail")}
+                  error={errors.decisionMakerEmail}
+                  required={req["decisionMakerEmail"]}
+                  hint="Only used if you invite them below."
+                >
+                  <Input
+                    type="email"
+                    value={state.decisionMakerEmail}
+                    onChange={(e) => {
+                      set("decisionMakerEmail", e.target.value);
+                      setErrors((prev) => ({ ...prev, decisionMakerEmail: "" }));
+                    }}
+                    placeholder="dana@company.com"
+                  />
+                </Field>
+              </div>
+            </SectionGroup>
+
+            {collaborators.length > 0 && (
+              <SectionGroup title="People you named">
+                <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4">
+                  <ul className="space-y-0.5 text-sm text-[color:var(--brand-navy)]/75">
+                    {collaborators.map((c) => (
+                      <li key={c.email}>{c.name ? `${c.name} — ${c.email}` : c.email}</li>
+                    ))}
+                  </ul>
+                  <div className="mt-3 flex items-start gap-3">
+                    <Checkbox
+                      id="invite-collaborators"
+                      checked={state.inviteCollaborators}
+                      onCheckedChange={(v) => set("inviteCollaborators", v === true)}
+                      className="mt-0.5"
+                    />
+                    <span className="order-last text-xs text-[color:var(--brand-navy)]/60">
+                      Optional
+                    </span>
+                    <label htmlFor="invite-collaborators" className="text-sm leading-relaxed">
+                      {COLLABORATOR_OPT_IN_LABEL}
+                    </label>
+                  </div>
+                  {!state.inviteCollaborators && (
+                    <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
+                      We will not email anyone on this list.
                     </p>
                   )}
                 </div>
-              )}
-              {errors.interviewStages && (
-                <p id="intake-interviewStages-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                  {errors.interviewStages}
+              </SectionGroup>
+            )}
+          </Section>
+        )}
+
+        {step === 3 && (
+          <>
+            <Card className="border-[color:var(--brand-navy)]/12">
+              <CardContent className="space-y-4 pt-6">
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-base font-semibold">Review your role brief</h2>
+                </div>
+                <p className="text-sm text-[color:var(--brand-navy)]/70">
+                  This is the last chance to correct anything before you submit.
                 </p>
-              )}
-            </fieldset>
-          </SectionGroup>
 
-          <SectionGroup title="Timeline">
-            <Field
-              label={intakeFieldLabel("targetDaysToOffer")} carried={isCarried("targetDaysToOffer")}
-              error={errors.targetDaysToOffer}
-              required={req["targetDaysToOffer"]}
-              hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days.`}
-            >
-              <Input
-                type="text"
-                inputMode="numeric"
-                value={state.targetDaysToOffer}
-                onChange={(e) => {
-                  const digits = e.target.value.replace(/[^0-9]/g, "").slice(0, 3);
-                  set("targetDaysToOffer", digits);
-                  setErrors((prev) => ({ ...prev, targetDaysToOffer: "" }));
-                }}
-                placeholder="21"
-                className="max-w-[8rem]"
-              />
-            </Field>
-          </SectionGroup>
+                {duplicateError && (
+                  <div
+                    role="alert"
+                    className="rounded-lg border border-[color:var(--brand-danger)]/30 bg-[color:var(--brand-danger)]/5 p-4 text-sm leading-relaxed"
+                  >
+                    {duplicateError}
+                  </div>
+                )}
 
-          <SectionGroup title="Decision maker">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field
-                label="Who makes the final decision?" carried={isCarried("decisionMaker")}
-                error={errors.decisionMaker}
-                required={req["decisionMaker"]}
-                hint="Name and role. We keep the process moving through them."
-              >
-                <Input
-                  value={state.decisionMaker}
-                  onChange={(e) => set("decisionMaker", e.target.value)}
-                  placeholder="Dana Okoro, Operations Director"
+                {duplicate && (
+                  <div
+                    className="space-y-3 rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4"
+                    data-testid="duplicate-notice"
+                  >
+                    <p className="text-sm font-semibold">
+                      Started from{" "}
+                      {duplicate.sourceTitle
+                        ? `your “${duplicate.sourceTitle}” brief`
+                        : "an earlier role"}
+                    </p>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                          Copied
+                        </p>
+                        <ul className="mt-1 space-y-1 text-sm text-[color:var(--brand-navy)]/75">
+                          {duplicate.copied.map((c) => (
+                            <li key={c}>{c}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                          Not copied
+                        </p>
+                        <ul className="mt-1 space-y-1 text-sm text-[color:var(--brand-navy)]/75">
+                          {duplicate.notCopied.map((c) => (
+                            <li key={c}>{c}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    {dupTitleUnchanged && (
+                      <div className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/60 p-3">
+                        <p className="text-sm">
+                          This role still has the same title as the one you copied.
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => editFromReview({ step: 1, focusLabel: "Job title" })}
+                          >
+                            Change the title
+                          </Button>
+                          <label className="flex items-center gap-2 text-sm">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4"
+                              checked={dupTitleConfirmed}
+                              onChange={(e) => setDupTitleConfirmed(e.target.checked)}
+                              data-testid="duplicate-title-confirm"
+                            />
+                            The title is intentionally the same
+                          </label>
+                        </div>
+                      </div>
+                    )}
+
+                    {duplicate.compensationStale && (
+                      <div className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/60 p-3">
+                        <p className="text-sm">
+                          The compensation came from a brief more than {COMPENSATION_STALE_DAYS}{" "}
+                          days old
+                          {duplicate.compensationAsOf
+                            ? ` (last set ${formatDate(duplicate.compensationAsOf)})`
+                            : ""}
+                          . Worth a look before it goes out to candidates.
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => editFromReview({ step: 2, focusLabel: "From" })}
+                          >
+                            Review compensation
+                          </Button>
+                          <label className="flex items-center gap-2 text-sm">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4"
+                              checked={dupCompReviewed}
+                              onChange={(e) => setDupCompReviewed(e.target.checked)}
+                              data-testid="duplicate-comp-confirm"
+                            />
+                            I have checked the range is still right
+                          </label>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <IntakeReviewPanel
+                  review={review}
+                  loading={draftPhase === "restoring"}
+                  onEdit={editFromReview}
                 />
-              </Field>
-              <Field
-                label="Their email" carried={isCarried("decisionMakerEmail")}
-                error={errors.decisionMakerEmail}
-                required={req["decisionMakerEmail"]}
-                hint="Only used if you invite them below."
-              >
-                <Input
-                  type="email"
-                  value={state.decisionMakerEmail}
-                  onChange={(e) => {
-                    set("decisionMakerEmail", e.target.value);
-                    setErrors((prev) => ({ ...prev, decisionMakerEmail: "" }));
-                  }}
-                  placeholder="dana@company.com"
-                />
-              </Field>
-            </div>
-          </SectionGroup>
+                {!brief.complete && (
+                  <div className="rounded-lg border border-[color:var(--brand-amber)]/30 bg-[color:var(--brand-navy)]/4 p-4">
+                    <p className="text-sm font-semibold">
+                      This brief is incomplete — you can still submit it.
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                      The role will be labelled{" "}
+                      <span className="font-medium">Brief incomplete</span> in your workspace until
+                      you add: {brief.missing.join(", ").toLowerCase()}. You can finish it any time
+                      from the role page.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-          {collaborators.length > 0 && (
-            <SectionGroup title="People you named">
-              <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4">
-                <ul className="space-y-0.5 text-sm text-[color:var(--brand-navy)]/75">
-                  {collaborators.map((c) => (
-                    <li key={c.email}>{c.name ? `${c.name} — ${c.email}` : c.email}</li>
-                  ))}
-                </ul>
-                <div className="mt-3 flex items-start gap-3">
+            <Card className="border-[color:var(--brand-navy)]/12">
+              <CardContent className="space-y-4 pt-6">
+                <div className="rounded-lg bg-[color:var(--brand-navy)]/4 p-4">
+                  <p className="text-sm font-semibold">What happens after you submit</p>
+                  <ol className="mt-2 space-y-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                    <li>1. Your account and workspace are created — free.</li>
+                    <li>2. We review the role and confirm we can deliver it.</li>
+                    {PAYMENTS_ENABLED ? (
+                      <li>
+                        3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot
+                        window starts when the search goes live.
+                      </li>
+                    ) : (
+                      <li>
+                        3. You pick a time on the next screen. We agree the plan on the call, then
+                        the search goes live.
+                      </li>
+                    )}
+                  </ol>
+                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                    {PAYMENTS_ENABLED ? (
+                      <>
+                        One active role, any industry, anywhere in the world, no placement fees.{" "}
+                        {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5
+                        days after go-live.
+                      </>
+                    ) : (
+                      <>
+                        One active role, any industry, anywhere in the world. Your workspace opens
+                        immediately. First candidate activity usually begins within 3–5 days after
+                        we agree the plan on the call.
+                      </>
+                    )}
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3">
                   <Checkbox
-                    id="invite-collaborators"
-                    checked={state.inviteCollaborators}
-                    onCheckedChange={(v) => set("inviteCollaborators", v === true)}
+                    id="pilot-acknowledgement"
+                    checked={state.pilotAcknowledgement}
+                    onCheckedChange={(v) => set("pilotAcknowledgement", v === true)}
+                    className="mt-0.5"
+                    aria-invalid={Boolean(errors.pilotAcknowledgement)}
+                    aria-describedby={
+                      errors.pilotAcknowledgement ? "intake-pilotAcknowledgement-error" : undefined
+                    }
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="order-last text-sm text-[color:var(--brand-navy)]/70"
+                  >
+                    *
+                  </span>
+                  <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
+                    {PAYMENTS_ENABLED ? (
+                      <>
+                        I understand there is no charge today, and that the ${PRICE_PILOT_USD}{" "}
+                        one-time pilot is billed only after my account is created and the role is
+                        accepted. The pilot can be used once per company, for one position — a
+                        second sign-up or a new email does not create a new pilot. Separate
+                        locations, franchises and subsidiaries are reviewed case by case.
+                      </>
+                    ) : (
+                      <>
+                        I understand this is free to start today, that my workspace opens
+                        immediately, and that we agree the plan on the call before the search goes
+                        live. This initial role can be started once per company — a second sign-up
+                        or a new email does not create a new start. Separate locations, franchises
+                        and subsidiaries are reviewed case by case.
+                      </>
+                    )}
+                  </label>
+                </div>
+
+                {errors.pilotAcknowledgement && (
+                  <p
+                    id="intake-pilotAcknowledgement-error"
+                    data-field-error="true"
+                    className="text-sm text-[color:var(--brand-danger)]"
+                  >
+                    {errors.pilotAcknowledgement}
+                  </p>
+                )}
+
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="research-consent"
+                    checked={state.researchConsent}
+                    onCheckedChange={(v) => set("researchConsent", v === true)}
                     className="mt-0.5"
                   />
                   <span className="order-last text-xs text-[color:var(--brand-navy)]/60">
                     Optional
                   </span>
-                  <label htmlFor="invite-collaborators" className="text-sm leading-relaxed">
-                    {COLLABORATOR_OPT_IN_LABEL}
+                  <label htmlFor="research-consent" className="text-sm leading-relaxed">
+                    Review my company's public website to fill in company context. You can turn this
+                    off — we'll use only the job description.
                   </label>
                 </div>
-                {!state.inviteCollaborators && (
-                  <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
-                    We will not email anyone on this list.
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="terms-consent"
+                    checked={state.consent}
+                    onCheckedChange={(v) => set("consent", v === true)}
+                    className="mt-0.5"
+                    aria-invalid={Boolean(errors.consent)}
+                    aria-describedby={errors.consent ? "intake-consent-error" : undefined}
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="order-last text-sm text-[color:var(--brand-navy)]/70"
+                  >
+                    *
+                  </span>
+                  <label htmlFor="terms-consent" className="text-sm leading-relaxed">
+                    I accept the{" "}
+                    <a href="/terms" className="underline">
+                      terms
+                    </a>{" "}
+                    and{" "}
+                    <a href="/privacy" className="underline">
+                      privacy policy
+                    </a>
+                    .
+                  </label>
+                </div>
+                {errors.consent && (
+                  <p
+                    id="intake-consent-error"
+                    data-field-error="true"
+                    className="text-sm text-[color:var(--brand-danger)]"
+                  >
+                    {errors.consent}
                   </p>
                 )}
-              </div>
-            </SectionGroup>
-          )}
 
-        </Section>
-        )}
-
-
-
-        {step === 3 && (
-          <>
-        <Card className="border-[color:var(--brand-navy)]/12">
-          <CardContent className="space-y-4 pt-6">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-base font-semibold">Review your role brief</h2>
-            </div>
-            <p className="text-sm text-[color:var(--brand-navy)]/70">
-              This is the last chance to correct anything before you submit.
-            </p>
-
-            {duplicateError && (
-              <div
-                role="alert"
-                className="rounded-lg border border-[color:var(--brand-danger)]/30 bg-[color:var(--brand-danger)]/5 p-4 text-sm leading-relaxed"
-              >
-                {duplicateError}
-              </div>
-            )}
-
-            {duplicate && (
-              <div
-                className="space-y-3 rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4"
-                data-testid="duplicate-notice"
-              >
-                <p className="text-sm font-semibold">
-                  Started from{" "}
-                  {duplicate.sourceTitle ? `your “${duplicate.sourceTitle}” brief` : "an earlier role"}
-                </p>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-                      Copied
-                    </p>
-                    <ul className="mt-1 space-y-1 text-sm text-[color:var(--brand-navy)]/75">
-                      {duplicate.copied.map((c) => (
-                        <li key={c}>{c}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-                      Not copied
-                    </p>
-                    <ul className="mt-1 space-y-1 text-sm text-[color:var(--brand-navy)]/75">
-                      {duplicate.notCopied.map((c) => (
-                        <li key={c}>{c}</li>
-                      ))}
-                    </ul>
-                  </div>
+                {/* Spam trap — intentionally hidden from people and assistive tech. */}
+                <div aria-hidden className="hidden">
+                  <label htmlFor="company-fax">Company fax</label>
+                  <input
+                    id="company-fax"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={state.companyFax}
+                    onChange={(e) => set("companyFax", e.target.value)}
+                  />
                 </div>
 
-                {dupTitleUnchanged && (
-                  <div className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/60 p-3">
-                    <p className="text-sm">
-                      This role still has the same title as the one you copied.
+                {submitError && (
+                  <div
+                    role="alert"
+                    className="space-y-3 rounded-lg border border-[color:var(--brand-danger)]/30 bg-[color:var(--brand-danger)]/5 p-4"
+                  >
+                    <p className="text-sm leading-relaxed">{submitError}</p>
+                    <p className="text-xs text-[color:var(--brand-navy)]/70">
+                      Nothing you typed was lost.
                     </p>
-                    <div className="mt-2 flex flex-wrap items-center gap-3">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => editFromReview({ step: 1, focusLabel: "Job title" })}
-                      >
-                        Change the title
-                      </Button>
-                      <label className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4"
-                          checked={dupTitleConfirmed}
-                          onChange={(e) => setDupTitleConfirmed(e.target.checked)}
-                          data-testid="duplicate-title-confirm"
-                        />
-                        The title is intentionally the same
-                      </label>
-                    </div>
-                  </div>
-                )}
-
-                {duplicate.compensationStale && (
-                  <div className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/60 p-3">
-                    <p className="text-sm">
-                      The compensation came from a brief more than {COMPENSATION_STALE_DAYS} days old
-                      {duplicate.compensationAsOf
-                        ? ` (last set ${formatDate(duplicate.compensationAsOf)})`
-                        : ""}
-                      . Worth a look before it goes out to candidates.
-                    </p>
-                    <div className="mt-2 flex flex-wrap items-center gap-3">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => editFromReview({ step: 2, focusLabel: "From" })}
-                      >
-                        Review compensation
-                      </Button>
-                      <label className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4"
-                          checked={dupCompReviewed}
-                          onChange={(e) => setDupCompReviewed(e.target.checked)}
-                          data-testid="duplicate-comp-confirm"
-                        />
-                        I have checked the range is still right
-                      </label>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-            <IntakeReviewPanel
-              review={review}
-              loading={draftPhase === "restoring"}
-              onEdit={editFromReview}
-            />
-            {!brief.complete && (
-              <div className="rounded-lg border border-[color:var(--brand-amber)]/30 bg-[color:var(--brand-navy)]/4 p-4">
-                <p className="text-sm font-semibold">
-                  This brief is incomplete — you can still submit it.
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                  The role will be labelled <span className="font-medium">Brief incomplete</span> in
-                  your workspace until you add: {brief.missing.join(", ").toLowerCase()}. You can
-                  finish it any time from the role page.
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-[color:var(--brand-navy)]/12">
-          <CardContent className="space-y-4 pt-6">
-            <div className="rounded-lg bg-[color:var(--brand-navy)]/4 p-4">
-              <p className="text-sm font-semibold">What happens after you submit</p>
-              <ol className="mt-2 space-y-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                <li>1. Your account and workspace are created — free.</li>
-                <li>2. We review the role and confirm we can deliver it.</li>
-                {PAYMENTS_ENABLED ? (
-                  <li>
-                    3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot window starts
-                    when the search goes live.
-                  </li>
-                ) : (
-                  <li>
-                    3. You pick a time on the next screen. We agree the plan on the call, then the search goes live.
-                  </li>
-                )}
-              </ol>
-              <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                {PAYMENTS_ENABLED ? (
-                  <>
-                    One active role, any industry, anywhere in the world, no placement fees.{" "}
-                    {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5 days after
-                    go-live.
-                  </>
-                ) : (
-                  <>
-                    One active role, any industry, anywhere in the world. Your workspace opens immediately.
-                    First candidate activity usually begins within 3–5 days after we agree the plan on the call.
-                  </>
-                )}
-              </p>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Checkbox
-                id="pilot-acknowledgement"
-                checked={state.pilotAcknowledgement}
-                onCheckedChange={(v) => set("pilotAcknowledgement", v === true)}
-                className="mt-0.5"
-                aria-invalid={Boolean(errors.pilotAcknowledgement)}
-                aria-describedby={errors.pilotAcknowledgement ? "intake-pilotAcknowledgement-error" : undefined}
-              />
-              <span aria-hidden="true" className="order-last text-sm text-[color:var(--brand-navy)]/70">
-                *
-              </span>
-              <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
-                {PAYMENTS_ENABLED ? (
-                  <>
-                    I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time
-                    pilot is billed only after my account is created and the role is accepted. The pilot
-                    can be used once per company, for one position — a second sign-up or a new email does
-                    not create a new pilot. Separate locations, franchises and subsidiaries are reviewed
-                    case by case.
-                  </>
-                ) : (
-                  <>
-                    I understand this is free to start today, that my workspace opens immediately, and that we
-                    agree the plan on the call before the search goes live. This initial role can be started
-                    once per company — a second sign-up or a new email does not create a new start. Separate
-                    locations, franchises and subsidiaries are reviewed case by case.
-                  </>
-                )}
-              </label>
-
-            </div>
-
-            {errors.pilotAcknowledgement && (
-              <p id="intake-pilotAcknowledgement-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.pilotAcknowledgement}
-              </p>
-            )}
-
-            <div className="flex items-start gap-3">
-              <Checkbox
-                id="research-consent"
-                checked={state.researchConsent}
-                onCheckedChange={(v) => set("researchConsent", v === true)}
-                className="mt-0.5"
-              />
-              <span className="order-last text-xs text-[color:var(--brand-navy)]/60">Optional</span>
-              <label htmlFor="research-consent" className="text-sm leading-relaxed">
-                Review my company's public website to fill in company context. You can turn this off —
-                we'll use only the job description.
-              </label>
-            </div>
-            <div className="flex items-start gap-3">
-              <Checkbox
-                id="terms-consent"
-                checked={state.consent}
-                onCheckedChange={(v) => set("consent", v === true)}
-                className="mt-0.5"
-                aria-invalid={Boolean(errors.consent)}
-                aria-describedby={errors.consent ? "intake-consent-error" : undefined}
-              />
-              <span aria-hidden="true" className="order-last text-sm text-[color:var(--brand-navy)]/70">
-                *
-              </span>
-              <label htmlFor="terms-consent" className="text-sm leading-relaxed">
-                I accept the{" "}
-                <a href="/terms" className="underline">
-                  terms
-                </a>{" "}
-                and{" "}
-                <a href="/privacy" className="underline">
-                  privacy policy
-                </a>
-                .
-              </label>
-            </div>
-            {errors.consent && (
-              <p id="intake-consent-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.consent}
-              </p>
-            )}
-
-            {/* Spam trap — intentionally hidden from people and assistive tech. */}
-            <div aria-hidden className="hidden">
-              <label htmlFor="company-fax">Company fax</label>
-              <input
-                id="company-fax"
-                tabIndex={-1}
-                autoComplete="off"
-                value={state.companyFax}
-                onChange={(e) => set("companyFax", e.target.value)}
-              />
-            </div>
-
-            {submitError && (
-              <div
-                role="alert"
-                className="space-y-3 rounded-lg border border-[color:var(--brand-danger)]/30 bg-[color:var(--brand-danger)]/5 p-4"
-              >
-                <p className="text-sm leading-relaxed">{submitError}</p>
-                <p className="text-xs text-[color:var(--brand-navy)]/70">
-                  Nothing you typed was lost.
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => void submit(lastIntentRef.current)}
-                  disabled={submitting}
-                >
-                  Retry
-                </Button>
-              </div>
-            )}
-
-            <div className="rounded-xl border border-[color:var(--brand-navy)]/12 p-4">
-              <p className="text-sm font-semibold">
-                {PAYMENTS_ENABLED ? "Choose how you'd like to start" : "Create your workspace and pick a time"}
-              </p>
-              <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-                {PAYMENTS_ENABLED
-                  ? "Both create your workspace and analyse the role. One publishes today; the other keeps it saved until we've spoken."
-                  : "Your workspace opens immediately. We agree the plan on the call and activate the search once you're ready."}
-              </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {PAYMENTS_ENABLED ? (
-                  <>
-                    <Button
-                      type="button"
-                      data-testid="intake-submit-pay"
-                      onClick={() => void submit("pay")}
-                      disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
-                      className="min-h-12 w-full"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                          Creating your workspace…
-                        </>
-                      ) : (
-                        "Start now — pay and publish"
-                      )}
-                    </Button>
                     <Button
                       type="button"
                       variant="outline"
-                      data-testid="intake-submit-call"
-                      onClick={() => void submit("call")}
-                      disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
-                      className="min-h-12 w-full"
+                      size="sm"
+                      onClick={() => void submit(lastIntentRef.current)}
+                      disabled={submitting}
                     >
-                      Book a call first
+                      Retry
                     </Button>
-                  </>
-                ) : (
-                  <Button
-                    type="button"
-                    data-testid="intake-submit-call"
-                    onClick={() => void submit("call")}
-                    disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
-                    className="min-h-12 w-full"
-                  >
-                    {submitting ? (
+                  </div>
+                )}
+
+                <div className="rounded-xl border border-[color:var(--brand-navy)]/12 p-4">
+                  <p className="text-sm font-semibold">
+                    {PAYMENTS_ENABLED
+                      ? "Choose how you'd like to start"
+                      : "Create your workspace and pick a time"}
+                  </p>
+                  <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
+                    {PAYMENTS_ENABLED
+                      ? "Both create your workspace and analyse the role. One publishes today; the other keeps it saved until we've spoken."
+                      : "Your workspace opens immediately. We agree the plan on the call and activate the search once you're ready."}
+                  </p>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    {PAYMENTS_ENABLED ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                        Creating your workspace…
+                        <Button
+                          type="button"
+                          data-testid="intake-submit-pay"
+                          onClick={() => void submit("pay")}
+                          disabled={
+                            submitting ||
+                            review.missing.length > 0 ||
+                            submitBlockers.length > 0 ||
+                            dupBlockers.length > 0
+                          }
+                          className="min-h-12 w-full"
+                        >
+                          {submitting ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                              Creating your workspace…
+                            </>
+                          ) : (
+                            "Start now — pay and publish"
+                          )}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          data-testid="intake-submit-call"
+                          onClick={() => void submit("call")}
+                          disabled={
+                            submitting ||
+                            review.missing.length > 0 ||
+                            submitBlockers.length > 0 ||
+                            dupBlockers.length > 0
+                          }
+                          className="min-h-12 w-full"
+                        >
+                          Book a call first
+                        </Button>
                       </>
                     ) : (
-                      "Create my workspace and pick a time"
+                      <Button
+                        type="button"
+                        data-testid="intake-submit-call"
+                        onClick={() => void submit("call")}
+                        disabled={
+                          submitting ||
+                          review.missing.length > 0 ||
+                          submitBlockers.length > 0 ||
+                          dupBlockers.length > 0
+                        }
+                        className="min-h-12 w-full"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                            Creating your workspace…
+                          </>
+                        ) : (
+                          "Create my workspace and pick a time"
+                        )}
+                      </Button>
                     )}
-                  </Button>
-                )}
-              </div>
-              {review.missing.length > 0 && (
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
-                  Submit unlocks once the required answers named in the review above are filled in.
-                </p>
-              )}
-              {/*
+                  </div>
+                  {review.missing.length > 0 && (
+                    <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
+                      Submit unlocks once the required answers named in the review above are filled
+                      in.
+                    </p>
+                  )}
+                  {/*
                 Blockers that are not missing answers — two fields that
                 contradict each other, a value the brief cannot accept. The
                 review's "still missing" list can only describe emptiness, so
@@ -3861,52 +4048,59 @@ function ExpressIntakePage() {
                 looked enabled, and clicking it did nothing (INT-001). They are
                 named here, in full, next to the button they are holding.
               */}
-              {submitBlockers.length > 0 && (
-                <div
-                  role="status"
-                  className="mt-3 rounded-lg border border-[color:var(--brand-danger)]/35 bg-[color:var(--brand-danger)]/6 p-3 text-sm"
-                >
-                  <p className="font-semibold text-[color:var(--brand-danger)]">
-                    {submitBlockers.length === 1
-                      ? "One answer still needs fixing before you can submit:"
-                      : `${submitBlockers.length} answers still need fixing before you can submit:`}
+                  {submitBlockers.length > 0 && (
+                    <div
+                      role="status"
+                      className="mt-3 rounded-lg border border-[color:var(--brand-danger)]/35 bg-[color:var(--brand-danger)]/6 p-3 text-sm"
+                    >
+                      <p className="font-semibold text-[color:var(--brand-danger)]">
+                        {submitBlockers.length === 1
+                          ? "One answer still needs fixing before you can submit:"
+                          : `${submitBlockers.length} answers still need fixing before you can submit:`}
+                      </p>
+                      <ul className="mt-2 list-disc space-y-1 pl-5 text-[color:var(--brand-navy)]/85">
+                        {submitBlockers.map((b) => (
+                          <li key={b.field}>{b.message}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {dupBlockers.length > 0 && (
+                    <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
+                      Before you submit this duplicate: {dupBlockers.join(" \u00b7 ")}.
+                    </p>
+                  )}
+                  <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+                    {PAYMENTS_ENABLED
+                      ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
+                      : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."}
                   </p>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-[color:var(--brand-navy)]/85">
-                    {submitBlockers.map((b) => (
-                      <li key={b.field}>{b.message}</li>
-                    ))}
-                  </ul>
+                  <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+                    Your information stays inside TaaSFlow, part of Flow Group Ventures, and is
+                    never sold or passed to third parties.
+                  </p>
                 </div>
-              )}
-              {dupBlockers.length > 0 && (
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
-                  Before you submit this duplicate: {dupBlockers.join(" \u00b7 ")}.
-                </p>
-              )}
-              <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
-                {PAYMENTS_ENABLED
-                  ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
-                  : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."}
-              </p>
-              <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
-                Your information stays inside TaaSFlow, part of Flow Group Ventures, and is never sold or passed to third parties.
-              </p>
-            </div>
-            <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
-              {["Role live in your workspace", "Blueprint built for you", "Every answer editable"].map((t) => (
-                <li key={t} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
-                  {t}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+                <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
+                  {[
+                    "Role live in your workspace",
+                    "Blueprint built for you",
+                    "Every answer editable",
+                  ].map((t) => (
+                    <li key={t} className="flex items-center gap-2">
+                      <CheckCircle2
+                        className="h-4 w-4 shrink-0 text-[color:var(--brand-teal)]"
+                        aria-hidden
+                      />
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           </>
         )}
 
         {(() => {
-
           const blocking = STEP_FIELDS[currentStep.key]
             .map((f) => errors[f])
             .filter((m): m is string => Boolean(m));
@@ -3936,7 +4130,6 @@ function ExpressIntakePage() {
           data-step={String(stepIndex)}
           className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/12 pt-5"
         >
-
           <Button
             type="button"
             data-testid="step-back"
@@ -3980,7 +4173,6 @@ function ExpressIntakePage() {
   );
 }
 
-
 function Section({
   title,
   step,
@@ -3993,7 +4185,10 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="space-y-6 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-6 sm:p-8">
+    <section
+      id={id}
+      className="space-y-6 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-6 sm:p-8"
+    >
       <div className="flex items-center gap-3 border-b border-[color:var(--brand-navy)]/10 pb-4">
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-sm font-bold text-white">
           {step}
@@ -4005,13 +4200,7 @@ function Section({
   );
 }
 
-function SectionGroup({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function SectionGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-4">
       <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">{title}</h3>
@@ -4021,7 +4210,6 @@ function SectionGroup({
 }
 
 function Field({
-
   label,
   children,
   error,
@@ -4050,16 +4238,18 @@ function Field({
     .filter(Boolean)
     .join(" ");
   const labelFor = htmlFor ?? fieldId;
-  const control = !htmlFor && React.isValidElement(children)
-    ? React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
-        id: ((children as React.ReactElement<Record<string, unknown>>).props["id"] as
-          | string
-          | undefined) ?? fieldId,
-        "aria-describedby": described || undefined,
-        "aria-invalid": error ? true : undefined,
-        "aria-required": required === true || undefined,
-      })
-    : children;
+  const control =
+    !htmlFor && React.isValidElement(children)
+      ? React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+          id:
+            ((children as React.ReactElement<Record<string, unknown>>).props["id"] as
+              | string
+              | undefined) ?? fieldId,
+          "aria-describedby": described || undefined,
+          "aria-invalid": error ? true : undefined,
+          "aria-required": required === true || undefined,
+        })
+      : children;
   return (
     <div className="space-y-1.5" data-field={label}>
       {/* The required marker sits outside the <label> so the label's text is
@@ -4101,7 +4291,4 @@ function Field({
       )}
     </div>
   );
-
 }
-
-

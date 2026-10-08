@@ -148,10 +148,7 @@ describe("historical interview cancellations never override a Kanban move", () =
   });
 
   it("keeps the tile and the lane count in agreement", () => {
-    const rows = [
-      row("interview_process", true),
-      row("interview_process", false, true),
-    ];
+    const rows = [row("interview_process", true), row("interview_process", false, true)];
     expect(countLanes(rows).counts.interview_process).toBe(2);
     expect(countLanes(rows).counts.shortlisted).toBe(0);
   });
@@ -178,7 +175,13 @@ describe("the offer record decides a hire, never the stage", () => {
   });
 
   it("touches no other stage", () => {
-    for (const stage of ["delivered", "shortlisted", "interview_process", "offer", "not_moving_forward"]) {
+    for (const stage of [
+      "delivered",
+      "shortlisted",
+      "interview_process",
+      "offer",
+      "not_moving_forward",
+    ]) {
       expect(laneFor(row(stage, false, false, false)), stage).toBe(stage);
     }
   });

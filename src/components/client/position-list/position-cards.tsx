@@ -5,10 +5,7 @@ import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import type { RoleProgress } from "@/lib/client-role-progress";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoRolesState } from "@/lib/empty-states/empty-state-catalogue";
-import {
-  clientRoleStatusLabel,
-  type ClientRoleStatus,
-} from "@/lib/client-role-status";
+import { clientRoleStatusLabel, type ClientRoleStatus } from "@/lib/client-role-status";
 import type { PipelineActionTarget } from "@/lib/client-pipeline-language";
 
 export type Row = {
@@ -75,14 +72,14 @@ export function PortfolioSnapshot({
     },
   ];
 
-  const tiles = simplified 
-    ? allTiles.filter(t => ["Active", "Hires"].includes(t.label))
+  const tiles = simplified
+    ? allTiles.filter((t) => ["Active", "Hires"].includes(t.label))
     : allTiles;
 
   return (
     <section
       aria-label="Portfolio snapshot"
-      className={`mb-6 grid grid-cols-2 gap-2 ${simplified ? 'sm:grid-cols-2 lg:grid-cols-2 max-w-sm' : 'sm:grid-cols-3 lg:grid-cols-6'}`}
+      className={`mb-6 grid grid-cols-2 gap-2 ${simplified ? "sm:grid-cols-2 lg:grid-cols-2 max-w-sm" : "sm:grid-cols-3 lg:grid-cols-6"}`}
     >
       {tiles.map((t) => {
         const inner = (
@@ -96,7 +93,11 @@ export function PortfolioSnapshot({
           </div>
         );
         return t.href ? (
-          <Link key={t.label} to={t.href} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl">
+          <Link
+            key={t.label}
+            to={t.href}
+            className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
+          >
             {inner}
           </Link>
         ) : (
@@ -109,15 +110,26 @@ export function PortfolioSnapshot({
 
 export function PositionCard({ p }: { p: Row }) {
   const progress = p.pipeline_line ?? progressSummary(p);
-  const total =
-    p.kpis.delivered +
-    p.kpis.shortlisted +
-    p.kpis.interviewing +
-    p.kpis.hires;
+  const total = p.kpis.delivered + p.kpis.shortlisted + p.kpis.interviewing + p.kpis.hires;
   const segments = [
-    { key: "delivered", label: "Candidates", value: p.kpis.delivered, className: "taas-bg-info-soft" },
-    { key: "shortlisted", label: "Shortlisted", value: p.kpis.shortlisted, className: "taas-bg-info-soft" },
-    { key: "interviewing", label: "Interview", value: p.kpis.interviewing, className: "taas-bg-warning-soft" },
+    {
+      key: "delivered",
+      label: "Candidates",
+      value: p.kpis.delivered,
+      className: "taas-bg-info-soft",
+    },
+    {
+      key: "shortlisted",
+      label: "Shortlisted",
+      value: p.kpis.shortlisted,
+      className: "taas-bg-info-soft",
+    },
+    {
+      key: "interviewing",
+      label: "Interview",
+      value: p.kpis.interviewing,
+      className: "taas-bg-warning-soft",
+    },
     { key: "hires", label: "Hires", value: p.kpis.hires, className: "taas-bg-success-soft" },
   ];
   return (
@@ -208,14 +220,11 @@ export function CompactList({ rows }: { rows: Row[] }) {
           </thead>
           <tbody>
             {rows.map((p) => (
-              <tr
-                key={p.id}
-                className="border-t hover:bg-muted/30 focus-within:bg-muted/30"
-              >
+              <tr key={p.id} className="border-t hover:bg-muted/30 focus-within:bg-muted/30">
                 <td className="px-4 py-2">
                   <Link
                     to="/client/positions/$id"
-      search={(prev: Record<string, unknown>) => prev}
+                    search={(prev: Record<string, unknown>) => prev}
                     params={{ id: p.id }}
                     className="font-medium hover:underline"
                   >
@@ -230,32 +239,19 @@ export function CompactList({ rows }: { rows: Row[] }) {
                     </div>
                   )}
                   {p.action_required && (
-                    <div className="text-[11px] taas-fg-warning ">
-                      {p.action_required}
-                    </div>
+                    <div className="text-[11px] taas-fg-warning ">{p.action_required}</div>
                   )}
-
                 </td>
                 <td className="px-3 py-2">
                   <Badge variant="secondary" className="text-[11px]">
                     {clientRoleStatusLabel(p.client_status)}
                   </Badge>
                 </td>
-                <td className="px-3 py-2 text-muted-foreground">
-                  {p.location ?? "—"}
-                </td>
-                <td className="px-3 py-2 text-right tabular-nums">
-                  {p.kpis.delivered}
-                </td>
-                <td className="px-3 py-2 text-right tabular-nums">
-                  {p.kpis.shortlisted}
-                </td>
-                <td className="px-3 py-2 text-right tabular-nums">
-                  {p.kpis.interviewing}
-                </td>
-                <td className="px-3 py-2 text-right tabular-nums">
-                  {p.kpis.hires}
-                </td>
+                <td className="px-3 py-2 text-muted-foreground">{p.location ?? "—"}</td>
+                <td className="px-3 py-2 text-right tabular-nums">{p.kpis.delivered}</td>
+                <td className="px-3 py-2 text-right tabular-nums">{p.kpis.shortlisted}</td>
+                <td className="px-3 py-2 text-right tabular-nums">{p.kpis.interviewing}</td>
+                <td className="px-3 py-2 text-right tabular-nums">{p.kpis.hires}</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
                   {p.next_milestone ?? "—"}
                 </td>
@@ -282,20 +278,20 @@ export function EmptyState({
   hasAnyRole: boolean;
   pendingSetup: number;
 }) {
-  return (
-    <SurfaceState content={resolveNoRolesState({ status, hasAnyRole, pendingSetup })} />
-  );
+  return <SurfaceState content={resolveNoRolesState({ status, hasAnyRole, pendingSetup })} />;
 }
 
 export function progressSummary(p: Row): string {
   const isClosed = p.client_status?.key === "closed";
 
-  if (p.status === "draft") return "Under review by TaaSFlow. You will be notified when the search goes live.";
+  if (p.status === "draft")
+    return "Under review by TaaSFlow. You will be notified when the search goes live.";
   if (p.status === "paused") return "This search is currently paused.";
   if (isClosed) return "This search is closed.";
 
   const k = p.kpis;
-  if (k.hires > 0) return `${k.hires} hire${k.hires === 1 ? "" : "s"} confirmed. Hiring activity remains available.`;
+  if (k.hires > 0)
+    return `${k.hires} hire${k.hires === 1 ? "" : "s"} confirmed. Hiring activity remains available.`;
   if (k.interviewing > 0)
     return `${k.interviewing} candidate${k.interviewing === 1 ? "" : "s"} in the interview process.`;
   if (k.shortlisted > 0)

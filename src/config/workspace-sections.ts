@@ -12,10 +12,7 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
   {
     id: "roles",
     label: "Roles",
-    tabs: [
-      { to: "/client/positions", label: "Roles" },
-      
-    ],
+    tabs: [{ to: "/client/positions", label: "Roles" }],
   },
   {
     id: "candidates",
@@ -59,10 +56,7 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
   {
     id: "command",
     label: "Command",
-    tabs: [
-      { to: "/admin", label: "Overview", exact: true },
-
-    ],
+    tabs: [{ to: "/admin", label: "Overview", exact: true }],
   },
   {
     id: "delivery",
@@ -90,7 +84,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/outcome-sla", label: "Answers we owe" },
       { to: "/admin/intake-quality", label: "Intake quality" },
       { to: "/admin/qa-report", label: "QA report" },
-
     ],
   },
 
@@ -130,7 +123,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/seo", label: "Search visibility" },
       { to: "/admin/integrations", label: "Integration health" },
       { to: "/admin/tracking", label: "Consent & tracking" },
-
     ],
   },
   {

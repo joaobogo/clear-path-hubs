@@ -12,17 +12,12 @@ import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 import { countConfirmedHires, normalizeOfferRecord } from "@/lib/hires/confirmed";
 import { isConfirmedHire, selectConfirmedHires } from "@/lib/hires/confirmed";
-import {
-  countConfirmedHiresForOrg,
-  loadOfferRecords,
-} from "@/lib/hires/confirmed.server";
-
+import { countConfirmedHiresForOrg, loadOfferRecords } from "@/lib/hires/confirmed.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
-const traceId = () =>
-  `hr_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+const traceId = () => `hr_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -282,15 +277,14 @@ function toDTO(input: AnyRow): HireRecordDTO {
 
 export const listHires = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; positionId?: string; status?: HireStatus }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          positionId: z.string().uuid().optional(),
-          status: z.enum(HIRE_STATUSES as [HireStatus, ...HireStatus[]]).optional(),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; positionId?: string; status?: HireStatus }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        positionId: z.string().uuid().optional(),
+        status: z.enum(HIRE_STATUSES as [HireStatus, ...HireStatus[]]).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
     // One org-wide read of the offer records — the same one the KPI strip and
@@ -301,9 +295,7 @@ export const listHires = createServerFn({ method: "POST" })
       "*, positions:position_id(title), candidate_profiles:candidate_profile_id(full_name), applications:application_id(applied_at)",
     );
     const rows = all
-      .filter((r: AnyRow) =>
-        data.positionId ? r.position_id === data.positionId : true,
-      )
+      .filter((r: AnyRow) => (data.positionId ? r.position_id === data.positionId : true))
       .filter((r: AnyRow) => (data.status ? r.status === data.status : true))
       .sort((a: AnyRow, b: AnyRow) =>
         String(b.updated_at ?? "").localeCompare(String(a.updated_at ?? "")),
@@ -323,7 +315,9 @@ export const listHires = createServerFn({ method: "POST" })
       ownerMap = Object.fromEntries(
         (profs ?? []).map((p: AnyRow) => [
           p.auth_user_id,
-          p.email?.endsWith("@taasflow.com") ? "TaaSFlow team" : (p.full_name || p.email || "Unassigned"),
+          p.email?.endsWith("@taasflow.com")
+            ? "TaaSFlow team"
+            : p.full_name || p.email || "Unassigned",
         ]),
       );
     }
@@ -336,9 +330,7 @@ export const listHires = createServerFn({ method: "POST" })
     const nameByMatch = await resolveMatchCandidateNames(
       context.supabase,
       data.orgId,
-      (rows ?? [])
-        .map((r: AnyRow) => r.candidate_match_id)
-        .filter(Boolean) as string[],
+      (rows ?? []).map((r: AnyRow) => r.candidate_match_id).filter(Boolean) as string[],
     );
 
     // The offer record's own outcome is the single source of truth for
@@ -353,20 +345,17 @@ export const listHires = createServerFn({ method: "POST" })
           (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
           "Candidate",
         applied_at: r.applications?.applied_at ?? null,
-        owner_name: r.owner_user_id ? ownerMap[r.owner_user_id] ?? null : null,
+        owner_name: r.owner_user_id ? (ownerMap[r.owner_user_id] ?? null) : null,
       }),
     );
 
     return { hires };
-
   });
 
 export const getHireByMatch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string; matchId: string }) =>
-    z
-      .object({ orgId: z.string().uuid(), matchId: z.string().uuid() })
-      .parse(input),
+    z.object({ orgId: z.string().uuid(), matchId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
     const sel = (s: string): string => s;
@@ -391,7 +380,9 @@ export const getHireByMatch = createServerFn({ method: "POST" })
         .eq("auth_user_id", r.owner_user_id)
         .maybeSingle();
       const p = prof as AnyRow | null;
-      owner_name = p?.email?.endsWith("@taasflow.com") ? "TaaSFlow team" : (p?.full_name || p?.email || null);
+      owner_name = p?.email?.endsWith("@taasflow.com")
+        ? "TaaSFlow team"
+        : p?.full_name || p?.email || null;
     }
     const { resolveMatchCandidateNames } = await import("@/lib/client-candidate-hydrate.server");
     const nameByMatch = r.candidate_match_id
@@ -444,18 +435,18 @@ function pickTerms(t: OfferTerms | undefined): Record<string, unknown> {
 
 export const upsertOfferDraft = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; matchId: string; terms?: OfferTerms }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          matchId: z.string().uuid(),
-          terms: OfferTermsSchema.optional(),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; matchId: string; terms?: OfferTerms }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        matchId: z.string().uuid(),
+        terms: OfferTermsSchema.optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (offSystemWorkflowRequired()) throw new Error("Employment offers are coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired())
+      throw new Error("Employment offers are coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatchForHire(context.supabase, data.orgId, data.matchId);
@@ -468,17 +459,21 @@ export const upsertOfferDraft = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (existing) {
-      // Invariant guard: if the candidate is already platform-hired, 
+      // Invariant guard: if the candidate is already platform-hired,
       // do not allow creating/updating an offer record that isn't 'hire_confirmed'.
       const { data: match } = await context.supabase
         .from("candidate_matches")
         .select("stage")
         .eq("id", data.matchId)
         .single();
-      
-      if (match?.stage === "hired" && data.terms?.owner_user_id !== undefined && !qualifiesAsHire(existing.status)) {
-         // This is a draft update for a hired person, but the logic should technically 
-         // happen in the transitionHire function. Here we just ensure consistency.
+
+      if (
+        match?.stage === "hired" &&
+        data.terms?.owner_user_id !== undefined &&
+        !qualifiesAsHire(existing.status)
+      ) {
+        // This is a draft update for a hired person, but the logic should technically
+        // happen in the transitionHire function. Here we just ensure consistency.
       }
     }
 
@@ -569,7 +564,8 @@ export const transitionHire = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (offSystemWorkflowRequired()) throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
+    if (offSystemWorkflowRequired())
+      throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 
@@ -611,7 +607,6 @@ export const transitionHire = createServerFn({ method: "POST" })
       });
     }
 
-
     await writeAudit(context.supabase, {
       actor: context.userId,
       action: `hire.${data.to}`,
@@ -625,21 +620,20 @@ export const transitionHire = createServerFn({ method: "POST" })
     return { ok: true, trace_id: trace };
   });
 
-
 export const assignHireOwner = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { orgId: string; id: string; owner_user_id: string | null }) =>
-      z
-        .object({
-          orgId: z.string().uuid(),
-          id: z.string().uuid(),
-          owner_user_id: z.string().uuid().nullable(),
-        })
-        .parse(input),
+  .inputValidator((input: { orgId: string; id: string; owner_user_id: string | null }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        id: z.string().uuid(),
+        owner_user_id: z.string().uuid().nullable(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (offSystemWorkflowRequired()) throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
+    if (offSystemWorkflowRequired())
+      throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const { error } = await context.supabase
@@ -694,7 +688,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       const appliedAt = r.applications?.applied_at ?? null;
       // Confirmed hires without a hired_at fall back to the acceptance date so
       // timing metrics still have something real behind them.
-      const hiredAt = r.hired_at ?? (isConfirmedHire(r.status) ? r.accepted_at ?? null : null);
+      const hiredAt = r.hired_at ?? (isConfirmedHire(r.status) ? (r.accepted_at ?? null) : null);
       return {
         ...r,
         position_title: r.positions?.title ?? "Role",
@@ -707,9 +701,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       };
     });
 
-    const cutoff = data.sinceDays
-      ? Date.now() - data.sinceDays * 86400_000
-      : null;
+    const cutoff = data.sinceDays ? Date.now() - data.sinceDays * 86400_000 : null;
     const inWindow = (r: AnyRow) => {
       if (!cutoff) return true;
       const t = r.hired_at || r.offer_sent_at || r.offer_accepted_at;
@@ -728,17 +720,13 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     // themselves — the same function the board column and footer use.
     const hires: AnyRow[] = selectConfirmedHires(scoped as Array<{ status: string }>) as AnyRow[];
 
-
-
     // ACCEPTANCE RATE denominator: only count records that are genuinely decided (accepted, declined, hired, or lost).
     // A confirmed hire implies an accepted offer, so they must contribute to both decided and accepted counts.
     const decidedOffers = scoped.filter((r) => isDecidedOffer(r.status));
     const acceptedOffers = scoped.filter((r) => isAcceptedOffer(r.status));
 
     const acceptanceRate =
-      decidedOffers.length > 0
-        ? acceptedOffers.length / decidedOffers.length
-        : null;
+      decidedOffers.length > 0 ? acceptedOffers.length / decidedOffers.length : null;
 
     // Salary stats: only include confirmed hires with comp on record.
     // If some have no comp, we mark the average as incomplete.
@@ -748,9 +736,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       0,
     );
     const avgSalary =
-      confirmedHiresWithComp.length > 0
-        ? totalSalaryValue / confirmedHiresWithComp.length
-        : null;
+      confirmedHiresWithComp.length > 0 ? totalSalaryValue / confirmedHiresWithComp.length : null;
     // One currency for the strip. Mixed currencies would make the average
     // meaningless, so we report none rather than label a sum in a currency
     // only some of it is in.
@@ -761,14 +747,12 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     );
     const salaryCurrency = currencies.size === 1 ? [...currencies][0] : null;
 
-    const salaryReportIncomplete =
-      hires.length > 0 && confirmedHiresWithComp.length < hires.length;
+    const salaryReportIncomplete = hires.length > 0 && confirmedHiresWithComp.length < hires.length;
 
     const daysHired = hires
       .map((r) => (r.days_to_hire == null ? null : Number(r.days_to_hire)))
       .filter((n): n is number => n != null && Number.isFinite(n));
-    const avg = (xs: number[]) =>
-      xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
+    const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
     const median = (xs: number[]) => {
       if (!xs.length) return null;
       const s = [...xs].sort((a, b) => a - b);
@@ -776,16 +760,11 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
     };
     const daysAccept = hires
-      .map((r) =>
-        r.days_offer_to_accept == null ? null : Number(r.days_offer_to_accept),
-      )
+      .map((r) => (r.days_offer_to_accept == null ? null : Number(r.days_offer_to_accept)))
       .filter((n): n is number => n != null && Number.isFinite(n));
 
     // by owner
-    const ownerAgg = new Map<
-      string,
-      { hires: number; days: number[]; ownerId: string | null }
-    >();
+    const ownerAgg = new Map<string, { hires: number; days: number[]; ownerId: string | null }>();
     for (const r of hires) {
       const key = r.owner_user_id ?? "__unassigned__";
       const entry = ownerAgg.get(key) ?? {
@@ -807,24 +786,23 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         .select("auth_user_id, full_name, email")
         .in("auth_user_id", ownerIds);
       ownerNames = Object.fromEntries(
-        (profs ?? []).map((p: AnyRow) => [
-          p.auth_user_id,
-          p.full_name || p.email || "Team member",
-        ]),
+        (profs ?? []).map((p: AnyRow) => [p.auth_user_id, p.full_name || p.email || "Team member"]),
       );
     }
     const byOwner = Array.from(ownerAgg.entries()).map(([, v]) => ({
       owner_user_id: v.ownerId,
-      owner_name: v.ownerId ? ownerNames[v.ownerId] ?? "Team member" : "Unassigned",
+      owner_name: v.ownerId ? (ownerNames[v.ownerId] ?? "Team member") : "Unassigned",
       hires: v.hires,
       avg_days_to_hire: avg(v.days),
     }));
 
     // Ensure "Unassigned" bucket is present if there are confirmed hires with no owner
-    const hasUnassignedHires = hires.some(r => !r.owner_user_id);
-    if (hasUnassignedHires && !byOwner.some(o => o.owner_user_id === null)) {
-      const unassignedHires = hires.filter(r => !r.owner_user_id);
-      const unassignedDays = unassignedHires.map(r => r.days_to_hire == null ? null : Number(r.days_to_hire)).filter((n): n is number => n != null);
+    const hasUnassignedHires = hires.some((r) => !r.owner_user_id);
+    if (hasUnassignedHires && !byOwner.some((o) => o.owner_user_id === null)) {
+      const unassignedHires = hires.filter((r) => !r.owner_user_id);
+      const unassignedDays = unassignedHires
+        .map((r) => (r.days_to_hire == null ? null : Number(r.days_to_hire)))
+        .filter((n): n is number => n != null);
       byOwner.push({
         owner_user_id: null,
         owner_name: "Unassigned",
@@ -849,9 +827,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         entry.hires += 1;
         if (r.days_to_hire != null) entry.days.push(Number(r.days_to_hire));
       } else if (
-        ["offer_drafted", "offer_sent", "offer_negotiating", "offer_accepted"].includes(
-          r.status,
-        )
+        ["offer_drafted", "offer_sent", "offer_negotiating", "offer_accepted"].includes(r.status)
       ) {
         entry.open += 1;
       }
@@ -885,10 +861,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         // The one selector, over every offer record in the account. Windowing
         // the hire number here is what made this strip disagree with Roles,
         // Candidates, Account and Insights.
-        hires_confirmed: await countConfirmedHiresForOrg(
-          context.supabase,
-          data.orgId,
-        ),
+        hires_confirmed: await countConfirmedHiresForOrg(context.supabase, data.orgId),
 
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
@@ -912,9 +885,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
 // List teammates who can be assigned as owners (active org members)
 export const listOfferOwners = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string }) =>
-    z.object({ orgId: z.string().uuid() }).parse(input),
-  )
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     const { data: members, error } = await context.supabase
       .from("memberships")
@@ -953,7 +924,8 @@ export const nudgeOffer = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (offSystemWorkflowRequired()) throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
+    if (offSystemWorkflowRequired())
+      throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 
@@ -1034,7 +1006,8 @@ export const setOfferResponseDate = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (offSystemWorkflowRequired()) throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
+    if (offSystemWorkflowRequired())
+      throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 

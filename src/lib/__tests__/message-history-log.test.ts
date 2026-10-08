@@ -20,7 +20,7 @@ describeWithDb("Message History Log", () => {
       .eq("organization_id", orgId)
       .limit(1)
       .single();
-    
+
     const convoId = existing!.id;
 
     const now = new Date();
@@ -64,7 +64,9 @@ describeWithDb("Message History Log", () => {
 
     const testMessages = result.items
       .filter((m: any) => m.body.includes("(HISTORY TEST)"))
-      .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      .sort(
+        (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
 
     expect(testMessages.length).toBeGreaterThanOrEqual(3);
 
@@ -74,6 +76,10 @@ describeWithDb("Message History Log", () => {
     expect(testMessages[2].body).toBe("MESSAGE 1 (HISTORY TEST)");
 
     // Cleanup
-    await supabaseAdmin.from("messages").delete().eq("conversation_id", convoId).ilike("body", "%(HISTORY TEST)%");
+    await supabaseAdmin
+      .from("messages")
+      .delete()
+      .eq("conversation_id", convoId)
+      .ilike("body", "%(HISTORY TEST)%");
   });
 });

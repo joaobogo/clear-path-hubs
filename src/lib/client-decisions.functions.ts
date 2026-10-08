@@ -10,14 +10,10 @@ import { staleStateError } from "@/lib/decision-concurrency";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
-import {
-  DEAL_BREAKER_REASON_CODES,
-  normalizeDealBreakers,
-} from "@/lib/client-deal-breakers";
+import { DEAL_BREAKER_REASON_CODES, normalizeDealBreakers } from "@/lib/client-deal-breakers";
 
 import {
   CLIENT_CANDIDATE_SELECT,
-
   loadKpiRows,
   loadRoleStageDates,
   computeKpis,
@@ -217,9 +213,8 @@ export const moveMatchStage = createServerFn({ method: "POST" })
 
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
-      const { stageNotificationRecipients } = await import(
-        "@/lib/client/stage-notification-recipients.server"
-      );
+      const { stageNotificationRecipients } =
+        await import("@/lib/client/stage-notification-recipients.server");
       const recipients = await stageNotificationRecipients({
         orgId: data.orgId,
         matchId: data.matchId,
@@ -311,7 +306,10 @@ export const undoClientDecision = createServerFn({ method: "POST" })
     }
 
     // An interview requested by the undone decision (or one that existed while leaving interview_process) must not survive it.
-    if (recent.decision === "request_interview" || (from === "interview_process" && backTo !== "interview_process")) {
+    if (
+      recent.decision === "request_interview" ||
+      (from === "interview_process" && backTo !== "interview_process")
+    ) {
       await context.supabase
         .from("interviews")
         .delete()
@@ -381,7 +379,6 @@ export const listReversibleDecisions = createServerFn({ method: "GET" })
       ).toISOString(),
     }));
   });
-
 
 /**
  * What the decline dialog needs to close the loop on a role: the deal-breakers
@@ -576,9 +573,10 @@ export const clientAction = createServerFn({ method: "POST" })
         decision,
         feedback: data.feedback ?? null,
         reason_code: data.reasonCode ?? null,
-        details: data.signals?.length || data.rating
-          ? { signals: data.signals ?? [], rating: data.rating ?? null }
-          : null,
+        details:
+          data.signals?.length || data.rating
+            ? { signals: data.signals ?? [], rating: data.rating ?? null }
+            : null,
         from_stage: match.stage as string,
         actor_user_id: context.userId,
       });

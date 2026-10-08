@@ -66,78 +66,196 @@ export const ADMIN_COPY: Partial<Record<EventType, CopyEntry>> = {
   intake_submitted: { title: "New client intake", body: "A new intake is ready for review." },
   // Without admin copy the staff fanout produced zero rows: copyFor('admin', …)
   // gated recipient resolution, so anonymous applications never reached the bell.
-  application_received: { title: "New application received", body: "A new application is waiting in the candidate queue." },
-  candidate_ready_for_admin_review: { title: "Candidate ready for review", body: "A candidate has completed processing." },
-  candidate_processing_completed: { title: "Processing finished", body: "Candidate processing pipeline finished." },
-  client_shortlisted: { title: "Client shortlisted a candidate", body: "A client just moved a candidate to shortlist." },
-  candidate_stage_changed: { title: "Candidate stage updated", body: "Recruitment progress was updated in the candidate board." },
+  application_received: {
+    title: "New application received",
+    body: "A new application is waiting in the candidate queue.",
+  },
+  candidate_ready_for_admin_review: {
+    title: "Candidate ready for review",
+    body: "A candidate has completed processing.",
+  },
+  candidate_processing_completed: {
+    title: "Processing finished",
+    body: "Candidate processing pipeline finished.",
+  },
+  client_shortlisted: {
+    title: "Client shortlisted a candidate",
+    body: "A client just moved a candidate to shortlist.",
+  },
+  candidate_stage_changed: {
+    title: "Candidate stage updated",
+    body: "Recruitment progress was updated in the candidate board.",
+  },
   client_feedback_submitted: { title: "Client feedback received" },
   interview_requested: { title: "Your interview request is waiting on a time" },
   message_sent: { title: "New client message" },
-  cv_parse_failed: { title: "CV parsing failed", body: "A CV could not be parsed and needs attention." },
-  screening_needs_review: { title: "Screening needs review", body: "A screening result requires a human decision." },
+  cv_parse_failed: {
+    title: "CV parsing failed",
+    body: "A CV could not be parsed and needs attention.",
+  },
+  screening_needs_review: {
+    title: "Screening needs review",
+    body: "A screening result requires a human decision.",
+  },
   client_hold: { title: "Client placed a candidate on hold" },
-  client_declined: { title: "Client declined a candidate", body: "A client decided not to move forward." },
+  client_declined: {
+    title: "Client declined a candidate",
+    body: "A client decided not to move forward.",
+  },
   client_information_requested: { title: "Client requested more information" },
-  contact_release_requested: { title: "Client requested contact details", body: "Review and release contact details if approved." },
+  contact_release_requested: {
+    title: "Client requested contact details",
+    body: "Review and release contact details if approved.",
+  },
   payment_failed: { title: "Payment failed", body: "A workspace payment did not go through." },
-  integration_failed: { title: "Integration failing", body: "A connection stopped responding and needs attention." },
+  integration_failed: {
+    title: "Integration failing",
+    body: "A connection stopped responding and needs attention.",
+  },
   security_alert: { title: "Security alert", body: "Unusual account access was recorded." },
-  agent_run_blocked: { title: "Agent run blocked", body: "An automated run stopped and will not resume on its own." },
-  role_information_missing: { title: "Role information missing", body: "Required details are missing before sourcing can start." },
+  agent_run_blocked: {
+    title: "Agent run blocked",
+    body: "An automated run stopped and will not resume on its own.",
+  },
+  role_information_missing: {
+    title: "Role information missing",
+    body: "Required details are missing before sourcing can start.",
+  },
   approval_needed: { title: "Approval needed", body: "An item is waiting on a decision." },
-  shortlist_ready: { title: "Shortlist ready", body: "A shortlist is ready to send to the client." },
+  shortlist_ready: {
+    title: "Shortlist ready",
+    body: "A shortlist is ready to send to the client.",
+  },
   scoring_completed: { title: "Evidence review finished" },
   sync_completed: { title: "Synchronisation finished" },
   scheduled_run_completed: { title: "Scheduled run finished" },
 };
 
 export const CLIENT_COPY: Partial<Record<EventType, CopyEntry>> = {
-  clarification_requested: { title: "We need a quick clarification", body: "Please review the open question on your role." },
-  position_approved: { title: "Your role is approved", body: "We are preparing your position for launch." },
+  clarification_requested: {
+    title: "We need a quick clarification",
+    body: "Please review the open question on your role.",
+  },
+  position_approved: {
+    title: "Your role is approved",
+    body: "We are preparing your position for launch.",
+  },
   position_activated: { title: "Your role is live", body: "Candidates can now apply." },
-  position_reopened: { title: "Your role is open again", body: "We resumed sourcing for this position." },
-  candidate_published: { title: "New candidate delivered", body: "A vetted candidate is available in your workspace." },
-  candidate_stage_changed: { title: "Candidate status updated", body: "The candidate board has new progress to review." },
-  interview_requested: { title: "You requested an interview", body: "This interview still needs a confirmed time" },
+  position_reopened: {
+    title: "Your role is open again",
+    body: "We resumed sourcing for this position.",
+  },
+  candidate_published: {
+    title: "New candidate delivered",
+    body: "A vetted candidate is available in your workspace.",
+  },
+  candidate_stage_changed: {
+    title: "Candidate status updated",
+    body: "The candidate board has new progress to review.",
+  },
+  interview_requested: {
+    title: "You requested an interview",
+    body: "This interview still needs a confirmed time",
+  },
   interview_scheduled: { title: "Interview scheduled" },
-  interview_rescheduled: { title: "Interview being rescheduled", body: "New times have gone out to the candidate." },
+  interview_rescheduled: {
+    title: "Interview being rescheduled",
+    body: "New times have gone out to the candidate.",
+  },
   interview_completed: { title: "Interview completed" },
   interview_cancelled: { title: "Interview cancelled" },
-  contact_released: { title: "Contact details available", body: "You can now reach this candidate directly." },
+  contact_released: {
+    title: "Contact details available",
+    body: "You can now reach this candidate directly.",
+  },
   message_sent: { title: "New message from TaaSFlow" },
   position_closed: { title: "Position closed" },
   member_invited: { title: "Team member invited" },
   member_removed: { title: "Team member removed" },
-  payment_failed: { title: "Payment did not go through", body: "Update your payment details to keep roles publishing." },
-  integration_failed: { title: "A connection needs attention", body: "Updates from this system have stopped arriving." },
-  security_alert: { title: "Please review account access", body: "We recorded sign-in activity worth checking." },
-  approval_needed: { title: "Something is waiting on you", body: "A decision is needed before work continues." },
-  role_information_missing: { title: "Your role needs a few details", body: "Sourcing is paused until the role is complete." },
-  agent_run_blocked: { title: "Automated work is paused", body: "We hit a blocker on this role and need a quick input." },
-  shortlist_ready: { title: "Your shortlist is ready", body: "Compare the candidates side by side." },
-  scoring_completed: { title: "Candidate evidence updated", body: "New findings may change how candidates compare." },
+  payment_failed: {
+    title: "Payment did not go through",
+    body: "Update your payment details to keep roles publishing.",
+  },
+  integration_failed: {
+    title: "A connection needs attention",
+    body: "Updates from this system have stopped arriving.",
+  },
+  security_alert: {
+    title: "Please review account access",
+    body: "We recorded sign-in activity worth checking.",
+  },
+  approval_needed: {
+    title: "Something is waiting on you",
+    body: "A decision is needed before work continues.",
+  },
+  role_information_missing: {
+    title: "Your role needs a few details",
+    body: "Sourcing is paused until the role is complete.",
+  },
+  agent_run_blocked: {
+    title: "Automated work is paused",
+    body: "We hit a blocker on this role and need a quick input.",
+  },
+  shortlist_ready: {
+    title: "Your shortlist is ready",
+    body: "Compare the candidates side by side.",
+  },
+  scoring_completed: {
+    title: "Candidate evidence updated",
+    body: "New findings may change how candidates compare.",
+  },
   sync_completed: { title: "Your workspace data is up to date" },
   scheduled_run_completed: { title: "Scheduled sourcing run finished" },
 };
 
 export const CANDIDATE_COPY: Partial<Record<EventType, CopyEntry>> = {
-  application_received: { title: "Application received", body: "Thanks — we have your application and will be in touch." },
-  clarification_requested: { title: "We need a bit more information", body: "Please check your application for an open question." },
-  candidate_published: { title: "You are under consideration", body: "You have advanced to the next step." },
-  client_shortlisted: { title: "You have been shortlisted", body: "The client has shortlisted you for their role." },
-  candidate_stage_changed: { title: "Your application status changed", body: "Your recruitment progress has been updated. Check your application for the latest status." },
-  interview_requested: { title: "Interview request", body: "The client would like to interview you." },
+  application_received: {
+    title: "Application received",
+    body: "Thanks — we have your application and will be in touch.",
+  },
+  clarification_requested: {
+    title: "We need a bit more information",
+    body: "Please check your application for an open question.",
+  },
+  candidate_published: {
+    title: "You are under consideration",
+    body: "You have advanced to the next step.",
+  },
+  client_shortlisted: {
+    title: "You have been shortlisted",
+    body: "The client has shortlisted you for their role.",
+  },
+  candidate_stage_changed: {
+    title: "Your application status changed",
+    body: "Your recruitment progress has been updated. Check your application for the latest status.",
+  },
+  interview_requested: {
+    title: "Interview request",
+    body: "The client would like to interview you.",
+  },
   interview_scheduled: { title: "Your interview is scheduled" },
-  interview_rescheduled: { title: "New interview times", body: "Please choose a new time that works for you." },
-  interview_completed: { title: "Interview completed", body: "Thanks for your time — we will follow up." },
-  interview_cancelled: { title: "Interview cancelled", body: "We will be in touch with next steps." },
-  candidate_hired: { title: "Congratulations — offer stage", body: "The client has moved forward with an offer." },
+  interview_rescheduled: {
+    title: "New interview times",
+    body: "Please choose a new time that works for you.",
+  },
+  interview_completed: {
+    title: "Interview completed",
+    body: "Thanks for your time — we will follow up.",
+  },
+  interview_cancelled: {
+    title: "Interview cancelled",
+    body: "We will be in touch with next steps.",
+  },
+  candidate_hired: {
+    title: "Congratulations — offer stage",
+    body: "The client has moved forward with an offer.",
+  },
   message_sent: { title: "New message" },
 };
 
 export function copyFor(audience: Audience, event: EventType): CopyEntry | null {
-  const map = audience === "admin" ? ADMIN_COPY : audience === "client" ? CLIENT_COPY : CANDIDATE_COPY;
+  const map =
+    audience === "admin" ? ADMIN_COPY : audience === "client" ? CLIENT_COPY : CANDIDATE_COPY;
   return map[event] ?? null;
 }
 
@@ -253,7 +371,11 @@ const CANDIDATE_ACTIVITY: readonly EventType[] = [
 
 export function isVisibleActivity(audience: Audience, event: EventType): boolean {
   const set =
-    audience === "admin" ? ADMIN_ACTIVITY : audience === "client" ? CLIENT_ACTIVITY : CANDIDATE_ACTIVITY;
+    audience === "admin"
+      ? ADMIN_ACTIVITY
+      : audience === "client"
+        ? CLIENT_ACTIVITY
+        : CANDIDATE_ACTIVITY;
   return set.includes(event);
 }
 
@@ -326,7 +448,6 @@ export const PLACEMENT_STATES = {
   closed_lost: ["offer_drafted"],
 } as const;
 
-
 /** Client approval and contact release are two separate, ordered permissions. */
 export const CLIENT_ACCESS_STATES = {
   hidden: ["approved"],
@@ -338,4 +459,3 @@ export const CLIENT_ACCESS_STATES = {
 export function eventKey(event: EventType, scope: string): string {
   return `${event}:${scope}`;
 }
-

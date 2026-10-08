@@ -48,12 +48,14 @@ const STEPS: Record<string, NextStep> = {
     withinHours: null,
   },
   interview_process: {
-    headline: "Interviews happen outside TAASFlow. Use the Kanban to track progress after conversations.",
+    headline:
+      "Interviews happen outside TAASFlow. Use the Kanban to track progress after conversations.",
     owner: "client",
     withinHours: null,
   },
   offer: {
-    headline: "Employment offers are handled directly outside TAASFlow. This is a tracking stage only.",
+    headline:
+      "Employment offers are handled directly outside TAASFlow. This is a tracking stage only.",
     owner: "client",
     withinHours: null,
   },
@@ -181,7 +183,6 @@ export function buildNextStep(
     overdue: isOverdue,
   };
 }
-
 
 /**
  * The consequence line shown the instant a decision lands, before any data

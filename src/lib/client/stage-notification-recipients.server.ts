@@ -46,13 +46,13 @@ export async function stageNotificationRecipients(input: {
   }));
   const candidateUserId = candidateResult.data?.user_id;
   const candidates = candidateUserId
-    ? [{
-        user_id: candidateUserId,
-        audience: "candidate" as const,
-        link_path: input.applicationId
-          ? `/me/applications/${input.applicationId}`
-          : "/me",
-      }]
+    ? [
+        {
+          user_id: candidateUserId,
+          audience: "candidate" as const,
+          link_path: input.applicationId ? `/me/applications/${input.applicationId}` : "/me",
+        },
+      ]
     : [];
   return [...staff, ...clients, ...candidates];
 }

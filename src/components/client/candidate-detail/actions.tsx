@@ -31,7 +31,10 @@ export const COMMON_MORE: ActionDef[] = [
   { key: "request_contact_release", label: "Request contact details" },
 ];
 
-export const ACTIONS_BY_STAGE: Record<MatchStage, { primary: ActionDef | null; more: ActionDef[] }> = {
+export const ACTIONS_BY_STAGE: Record<
+  MatchStage,
+  { primary: ActionDef | null; more: ActionDef[] }
+> = {
   delivered: {
     primary: null,
     more: [...COMMON_MORE],
@@ -82,7 +85,9 @@ export function ActionArea({
     <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
       <div className="mb-3 flex items-center justify-between gap-2">
         {/* The stage is named once, as the chip beside the candidate's name. */}
-        <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-foreground/90">Candidate tools</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-foreground/90">
+          Candidate tools
+        </h2>
       </div>
       {stage === "hired" ? (
         <p className="text-sm text-muted-foreground">Candidate marked as hired. 🎉</p>
@@ -113,11 +118,7 @@ export function ActionArea({
             <DropdownMenuContent align="end" className="w-56">
               {actions.more.map((a) => (
                 <div key={a.key}>
-                  <DropdownMenuItem
-                    onSelect={() => onAct(a.key)}
-                    disabled={pending}
-
-                  >
+                  <DropdownMenuItem onSelect={() => onAct(a.key)} disabled={pending}>
                     {a.label}
                   </DropdownMenuItem>
                 </div>
@@ -151,4 +152,3 @@ export function ActionArea({
     </div>
   );
 }
-

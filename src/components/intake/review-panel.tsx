@@ -43,9 +43,7 @@ export function IntakeReviewPanel({
           {review.groups.length} sections · {review.answeredCount} answers to review
         </p>
       </div>
-      {review.missing.length > 0 && (
-        <MissingList missing={review.missing} onEdit={onEdit} />
-      )}
+      {review.missing.length > 0 && <MissingList missing={review.missing} onEdit={onEdit} />}
 
       {review.groups.length === 0 ? (
         <p className="text-sm text-[color:var(--brand-navy)]/75">
@@ -105,9 +103,10 @@ function ReviewRow({
       </dt>
       <dd
         tabIndex={row.field === "jobDescriptionText" ? 0 : undefined}
-        className={row.field === "jobDescriptionText"
-          ? "max-h-80 min-w-0 overflow-y-auto rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-navy)]/[0.025] p-3 text-sm leading-relaxed whitespace-pre-wrap break-words"
-          : "min-w-0 text-sm leading-relaxed whitespace-pre-wrap break-words"
+        className={
+          row.field === "jobDescriptionText"
+            ? "max-h-80 min-w-0 overflow-y-auto rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-navy)]/[0.025] p-3 text-sm leading-relaxed whitespace-pre-wrap break-words"
+            : "min-w-0 text-sm leading-relaxed whitespace-pre-wrap break-words"
         }
       >
         {row.value}

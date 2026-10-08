@@ -72,12 +72,18 @@ describe("off-system interview status follows the candidate Kanban", () => {
     expect(k.offers).toBe(2);
     // The partition must still sum to the list beneath the tiles.
     const p = k.stage_partition;
-    expect(p.awaiting + p.shortlisted + p.interviewing + p.offer + p.hired + p.closed + p.elsewhere).toBe(14);
+    expect(
+      p.awaiting + p.shortlisted + p.interviewing + p.offer + p.hired + p.closed + p.elsewhere,
+    ).toBe(14);
   });
 
   it("leaves a COMPLETED interview in the interview lane", () => {
     // Only a cancellation moves the lane back. Held interviews stay put.
-    const held = row({ stage: "interview_process", interview_active: true, interview_called_off: false });
+    const held = row({
+      stage: "interview_process",
+      interview_active: true,
+      interview_called_off: false,
+    });
     expect(computeCandidateKpis([held]).interviewing).toBe(1);
     expect(computeCandidateKpis([held]).shortlisted).toBe(0);
   });
@@ -90,9 +96,8 @@ describe("the counter reads the lane, not the stage", () => {
       "utf8",
     );
     expect(src, "the counter must go through laneFor").toMatch(/switch \(laneFor\(row\)\)/);
-    expect(
-      src,
-      "switching on the raw stage is what made two surfaces disagree",
-    ).not.toMatch(/switch \(row\.stage\)/);
+    expect(src, "switching on the raw stage is what made two surfaces disagree").not.toMatch(
+      /switch \(row\.stage\)/,
+    );
   });
 });

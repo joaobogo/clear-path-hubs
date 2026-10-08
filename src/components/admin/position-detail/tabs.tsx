@@ -13,7 +13,6 @@ import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-c
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
 
-
 import { Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { PanelState } from "@/components/admin/panel-state";
@@ -86,7 +85,6 @@ const scoreOf = (m: { score_runs?: unknown; processing_state?: string | null }) 
     ? null
     : publishedScoreDisplay(m.score_runs as Parameters<typeof publishedScoreDisplay>[0]);
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
 
@@ -146,7 +144,11 @@ export function RequirementsEditor({
 
   const dirty = text !== initial;
   const items = useMemo(
-    () => text.split(/\r?\n/).map((s) => s.trim()).filter(Boolean),
+    () =>
+      text
+        .split(/\r?\n/)
+        .map((s) => s.trim())
+        .filter(Boolean),
     [text],
   );
 
@@ -229,7 +231,13 @@ type LocalQ = {
   display_order: number;
 };
 
-export function ScreeningEditor({ positionId, questions }: { positionId: string; questions: Any[] }) {
+export function ScreeningEditor({
+  positionId,
+  questions,
+}: {
+  positionId: string;
+  questions: Any[];
+}) {
   const qc = useQueryClient();
   const saveFn = useServerFn(saveScreeningQuestions);
 
@@ -325,10 +333,7 @@ export function ScreeningEditor({ positionId, questions }: { positionId: string;
                   placeholder="Ask the candidate a specific, evidence-based question…"
                 />
                 <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <Select
-                    value={q.answer_type}
-                    onValueChange={(v) => patch(i, { answer_type: v })}
-                  >
+                  <Select value={q.answer_type} onValueChange={(v) => patch(i, { answer_type: v })}>
                     <SelectTrigger className="h-8 w-40">
                       <SelectValue />
                     </SelectTrigger>
@@ -366,9 +371,7 @@ export function ScreeningEditor({ positionId, questions }: { positionId: string;
                       step={0.5}
                       className="h-8 w-20"
                       value={q.scoring_weight}
-                      onChange={(e) =>
-                        patch(i, { scoring_weight: Number(e.target.value) || 0 })
-                      }
+                      onChange={(e) => patch(i, { scoring_weight: Number(e.target.value) || 0 })}
                     />
                   </label>
                 </div>
@@ -396,10 +399,7 @@ export function BlueprintTab({ position, screening }: { position: Any; screening
   const deals = toStringList(position.dealbreakers);
   const reqWeight = reqs.length * 2;
   const prefWeight = prefs.length * 1;
-  const scrWeight = screening.reduce(
-    (n, q) => n + (Number(q.scoring_weight) || 1),
-    0,
-  );
+  const scrWeight = screening.reduce((n, q) => n + (Number(q.scoring_weight) || 1), 0);
   const total = reqWeight + prefWeight + scrWeight;
   const share = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
 
@@ -410,14 +410,34 @@ export function BlueprintTab({ position, screening }: { position: Any; screening
       <div className="rounded-lg border bg-card p-5">
         <h2 className="text-sm font-semibold">Scoring blueprint</h2>
         <p className="text-xs text-muted-foreground">
-          Derived from requirements, preferred criteria, dealbreakers, and screening
-          questions. Runs the same way for every candidate on this position.
+          Derived from requirements, preferred criteria, dealbreakers, and screening questions. Runs
+          the same way for every candidate on this position.
         </p>
         <div className="mt-4 space-y-3">
-          <BlueprintRow label="Must-have requirements" count={reqs.length} weight={reqWeight} share={share(reqWeight)} />
-          <BlueprintRow label="Preferred criteria" count={prefs.length} weight={prefWeight} share={share(prefWeight)} />
-          <BlueprintRow label="Screening questions" count={screening.length} weight={scrWeight} share={share(scrWeight)} />
-          <BlueprintRow label="Dealbreakers (auto-fail)" count={deals.length} weight={0} share={0} />
+          <BlueprintRow
+            label="Must-have requirements"
+            count={reqs.length}
+            weight={reqWeight}
+            share={share(reqWeight)}
+          />
+          <BlueprintRow
+            label="Preferred criteria"
+            count={prefs.length}
+            weight={prefWeight}
+            share={share(prefWeight)}
+          />
+          <BlueprintRow
+            label="Screening questions"
+            count={screening.length}
+            weight={scrWeight}
+            share={share(scrWeight)}
+          />
+          <BlueprintRow
+            label="Dealbreakers (auto-fail)"
+            count={deals.length}
+            weight={0}
+            share={0}
+          />
         </div>
         {!ready && (
           <p className="mt-3 rounded-md border border-warning/40 bg-warning/10 p-2 text-xs text-warning-foreground dark:text-warning-foreground">
@@ -437,8 +457,8 @@ export function BlueprintTab({ position, screening }: { position: Any; screening
           <dd>Enforced by DB trigger</dd>
         </dl>
         <p className="mt-3 text-xs text-muted-foreground">
-          Every candidate score references this blueprint version so results stay
-          reproducible even after criteria change.
+          Every candidate score references this blueprint version so results stay reproducible even
+          after criteria change.
         </p>
       </div>
     </div>
@@ -465,10 +485,7 @@ function BlueprintRow({
         </span>
       </div>
       <div className="h-1.5 rounded-full bg-muted">
-        <div
-          className="h-1.5 rounded-full bg-primary"
-          style={{ width: `${share}%` }}
-        />
+        <div className="h-1.5 rounded-full bg-primary" style={{ width: `${share}%` }} />
       </div>
     </div>
   );
@@ -507,9 +524,7 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                     params={{ id: m.id }}
                     className="flex items-center justify-between gap-2 rounded-md px-1.5 py-1 hover:bg-muted/50"
                   >
-                    <span className="truncate">
-                      {m.candidate_profiles?.full_name ?? "Unknown"}
-                    </span>
+                    <span className="truncate">{m.candidate_profiles?.full_name ?? "Unknown"}</span>
                     <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
                       {scoreOf(m) ?? "—"}
                     </span>
@@ -517,9 +532,7 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                 </li>
               ))}
               {byStage[s].length > 6 && (
-                <li className="text-xs text-muted-foreground">
-                  +{byStage[s].length - 6} more
-                </li>
+                <li className="text-xs text-muted-foreground">+{byStage[s].length - 6} more</li>
               )}
             </ul>
           </div>
@@ -558,9 +571,7 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                 <td className="px-3 py-2 text-xs">
                   {(m.client_visibility ?? "—").replace(/_/g, " ")}
                 </td>
-                <td className="px-3 py-2 tabular-nums">
-                  {scoreOf(m) ?? "—"}
-                </td>
+                <td className="px-3 py-2 tabular-nums">{scoreOf(m) ?? "—"}</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
                   {m.updated_at ? formatDate(m.updated_at) : "—"}
                 </td>
@@ -591,7 +602,6 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
       <PositionSourceQualityPanel positionId={positionId} />
 
       <RejectionReasonsPanel positionId={positionId} />
-
     </div>
   );
 }
@@ -660,7 +670,11 @@ export function SettingsTab({ position, onDone }: { position: Any; onDone: () =>
         "Tasks, notifications and memory entries are removed",
       ],
       typedConfirmation: "DELETE",
-      reason: { label: "Reason for deletion", required: true, placeholder: "e.g. duplicate requisition created in error" },
+      reason: {
+        label: "Reason for deletion",
+        required: true,
+        placeholder: "e.g. duplicate requisition created in error",
+      },
       confirmLabel: "Permanently delete",
       tone: "destructive",
     });
@@ -728,11 +742,7 @@ export function SettingsTab({ position, onDone }: { position: Any; onDone: () =>
             size="sm"
             className="min-h-11"
             disabled={position.status === "archived" || busy}
-            title={
-              position.status === "archived"
-                ? "This position is already archived"
-                : undefined
-            }
+            title={position.status === "archived" ? "This position is already archived" : undefined}
             onClick={archive}
             data-qa-action="archive-position"
           >
@@ -828,9 +838,7 @@ export function AuditTab({ id }: { id: string }) {
                   </div>
                 </div>
                 <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
-                  <span>
-                    {r.actor_name ?? (r.actor_user_id ? "Unknown user" : "System")}
-                  </span>
+                  <span>{r.actor_name ?? (r.actor_user_id ? "Unknown user" : "System")}</span>
                   {r.trace_id && (
                     <Button
                       variant="ghost"
@@ -863,5 +871,3 @@ export function AuditTab({ id }: { id: string }) {
     </PanelState>
   );
 }
-
-

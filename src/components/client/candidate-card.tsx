@@ -19,7 +19,6 @@ function cardHeadline(c: ClientCandidateDTO): string {
   });
 }
 
-
 /**
  * Decision-first candidate card for client surfaces.
  *
@@ -90,8 +89,6 @@ export function CandidateCard({
         />
         <span className="text-xs text-muted-foreground">{clientStageLabel(c.stage)}</span>
       </div>
-
-
     </div>
   );
 }

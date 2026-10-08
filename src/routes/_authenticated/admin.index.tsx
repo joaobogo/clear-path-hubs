@@ -3,7 +3,10 @@ import { TestScopeEmptyNote, TestScopeIncludedNote } from "@/components/admin/te
 import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import {
+  makeRouteErrorComponent,
+  makeRouteNotFoundComponent,
+} from "@/components/workspace/route-states";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ActivityFeed, ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
@@ -45,22 +48,22 @@ export const Route = createFileRoute("/_authenticated/admin/")({
     // default, so it has to carry its own timeout or a hung loader shows an
     // unbounded skeleton again (audit 1 Sep, F11).
     <SkeletonTimeout>
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <div className="h-8 w-48 animate-pulse rounded bg-muted" />
-        <div className="h-4 w-96 animate-pulse rounded bg-muted" />
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+          <div className="h-4 w-96 animate-pulse rounded bg-muted" />
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-7">
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-7">
-        {Array.from({ length: 7 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />
-        ))}
-      </div>
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
-        ))}
-      </div>
-    </div>
     </SkeletonTimeout>
   ),
 
@@ -74,10 +77,7 @@ export const Route = createFileRoute("/_authenticated/admin/")({
     }),
 
   head: () => ({
-    meta: [
-      { title: "Work queue · TaaSFlow admin" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Work queue · TaaSFlow admin" }, { name: "robots", content: "noindex" }],
   }),
   component: Overview,
   errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.index"),
@@ -119,9 +119,11 @@ function Header({
           {total === null ? (
             <span className="inline-block h-4 w-48 animate-pulse rounded bg-muted" />
           ) : total === 0 ? (
-            scope === "mine"
-              ? "Nothing you own is waiting right now."
-              : "Nothing is waiting on the platform team right now."
+            scope === "mine" ? (
+              "Nothing you own is waiting right now."
+            ) : (
+              "Nothing is waiting on the platform team right now."
+            )
           ) : (
             `${total} item${total === 1 ? "" : "s"} waiting on ${scope === "mine" ? "you" : "the team"}. Every row opens the one action it needs.`
           )}
@@ -144,35 +146,35 @@ function Header({
         </p>
       </div>
       <div className="flex items-center gap-2">
-      <div role="group" aria-label="Queue scope" className="flex rounded-md border p-0.5">
-        {(["all", "mine"] as QueueScope[]).map((s) => (
-          <Link
-            key={s}
-            to="/admin"
-            search={s === "mine" ? { scope: "mine" } : {}}
-            replace
-            aria-current={scope === s ? "true" : undefined}
-            className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
-              scope === s
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {s === "all" ? "All" : "Mine"}
-          </Link>
-        ))}
-      </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 gap-1.5 px-2 text-xs"
-        onClick={() => void onRefresh()}
-        disabled={isFetching}
-        aria-label="Refresh work queue"
-      >
-        <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
-        Refresh
-      </Button>
+        <div role="group" aria-label="Queue scope" className="flex rounded-md border p-0.5">
+          {(["all", "mine"] as QueueScope[]).map((s) => (
+            <Link
+              key={s}
+              to="/admin"
+              search={s === "mine" ? { scope: "mine" } : {}}
+              replace
+              aria-current={scope === s ? "true" : undefined}
+              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+                scope === s
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {s === "all" ? "All" : "Mine"}
+            </Link>
+          ))}
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 gap-1.5 px-2 text-xs"
+          onClick={() => void onRefresh()}
+          disabled={isFetching}
+          aria-label="Refresh work queue"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+          Refresh
+        </Button>
       </div>
     </header>
   );
@@ -232,7 +234,10 @@ function Overview() {
               Latest activity
               {teamWide ? <TeamScopeNote className="normal-case tracking-normal" /> : null}
             </h2>
-            <Link to="/admin/operations" className="text-xs font-medium text-primary hover:underline">
+            <Link
+              to="/admin/operations"
+              className="text-xs font-medium text-primary hover:underline"
+            >
               View all activity
             </Link>
           </div>
@@ -244,7 +249,6 @@ function Overview() {
     </div>
   );
 }
-
 
 /** The acting admin's user id, for the "Mine" scope. Moved to useActingUserId in admin-scope. */
 
@@ -277,13 +281,22 @@ function WorkQueueSummary({
           return { ...q, items, count: items.length };
         })
       : allQueues;
-  const total = isPending ? null : queues.reduce((n, q) => n + (typeof q.count === "number" ? q.count : 0), 0);
+  const total = isPending
+    ? null
+    : queues.reduce((n, q) => n + (typeof q.count === "number" ? q.count : 0), 0);
   const active = queues.filter((q) => q.items.length > 0);
   const isReady = !isPending && !error;
 
   return (
     <div className="space-y-6">
-      <Header total={total} isReady={isReady} isFetching={isFetching} showTest={showTest} onRefresh={onRefresh} scope={scope} />
+      <Header
+        total={total}
+        isReady={isReady}
+        isFetching={isFetching}
+        showTest={showTest}
+        onRefresh={onRefresh}
+        scope={scope}
+      />
 
       {isPending ? (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-7">
@@ -298,7 +311,10 @@ function WorkQueueSummary({
         </div>
       ) : (
         <>
-          <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
+          <nav
+            aria-label="Queue counts"
+            className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7"
+          >
             {queues.map((q) => {
               const Icon = ICONS[q.key] ?? ClipboardCheck;
               const hasItems = (q.count ?? 0) > 0;
@@ -308,7 +324,9 @@ function WorkQueueSummary({
               const hasSection = hasItems && (q.items?.length ?? 0) > 0;
               const tileClass = cn(
                 "block rounded-lg border bg-card px-3 py-2.5 text-left transition-colors",
-                hasItems ? "hover:border-primary/50" : "opacity-40 cursor-not-allowed grayscale pointer-events-none"
+                hasItems
+                  ? "hover:border-primary/50"
+                  : "opacity-40 cursor-not-allowed grayscale pointer-events-none",
               );
               const body = (
                 <>
@@ -319,7 +337,7 @@ function WorkQueueSummary({
                   <div
                     className={cn(
                       "mt-1 text-2xl font-semibold tabular-nums",
-                      q.count === 0 ? "text-muted-foreground" : ""
+                      q.count === 0 ? "text-muted-foreground" : "",
                     )}
                   >
                     {typeof q.count === "number" ? q.count : "—"}
@@ -359,8 +377,7 @@ function WorkQueueSummary({
               <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground">
                 {scope === "mine" ? (
                   <>
-                    No item on this desk lists you as owner. The rest of the desk is still
-                    waiting —{" "}
+                    No item on this desk lists you as owner. The rest of the desk is still waiting —{" "}
                     <Link
                       to="/admin"
                       search={{}}
@@ -432,7 +449,9 @@ function QueueSection({ q }: { q: any }) {
         ))}
       </ul>
 
-      <footer className="border-t px-4 py-2 text-[11px] text-muted-foreground">{q.action_hint}</footer>
+      <footer className="border-t px-4 py-2 text-[11px] text-muted-foreground">
+        {q.action_hint}
+      </footer>
     </section>
   );
 }

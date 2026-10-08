@@ -10,11 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { SlidersHorizontal, Sparkles, X } from "lucide-react";
 import { plural, pluralWord } from "@/lib/format/plural";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
@@ -104,32 +100,44 @@ export function CandidatesFiltersPanel({
           <SelectContent>
             <SelectItem value="all">All roles</SelectItem>
             {positions.map((p) => (
-              <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
+              <SelectItem key={p.id} value={p.id}>
+                {p.title}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={search.stage} onValueChange={(v) => setF({ stage: v })}>
-          <SelectTrigger className="md:w-44" aria-label="Stage"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="md:w-44" aria-label="Stage">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             {STAGE_OPTIONS.map((o) => (
-              <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+              <SelectItem key={o.key} value={o.key}>
+                {o.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
-          <SelectTrigger className="md:w-44" aria-label="Sort candidates" disabled={!hydrated}><SelectValue /></SelectTrigger>
+          <SelectTrigger className="md:w-44" aria-label="Sort candidates" disabled={!hydrated}>
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             {SORT_OPTIONS.map((o) => (
-              <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+              <SelectItem key={o.key} value={o.key}>
+                {o.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
-
-
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="justify-center md:w-auto" aria-label="More filters">
+            <Button
+              variant="outline"
+              className="justify-center md:w-auto"
+              aria-label="More filters"
+            >
               <SlidersHorizontal className="mr-2 h-4 w-4" />
               Filters
               {advancedCount > 0 && (
@@ -143,33 +151,48 @@ export function CandidatesFiltersPanel({
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">More filters</p>
               {advancedCount > 0 && (
-                <Button size="sm" variant="ghost" onClick={clearFilters}>Reset</Button>
+                <Button size="sm" variant="ghost" onClick={clearFilters}>
+                  Reset
+                </Button>
               )}
             </div>
             <FilterField label="Fit">
               <Select value={search.fit} onValueChange={(v) => setF({ fit: v })}>
-                <SelectTrigger aria-label="Fit"><SelectValue /></SelectTrigger>
+                <SelectTrigger aria-label="Fit">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {FIT_OPTIONS.map((o) => (
-                    <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+                    <SelectItem key={o.key} value={o.key}>
+                      {o.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </FilterField>
             <FilterField label="Availability">
               <Select value={search.availability} onValueChange={(v) => setF({ availability: v })}>
-                <SelectTrigger aria-label="Availability"><SelectValue /></SelectTrigger>
+                <SelectTrigger aria-label="Availability">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Any availability</SelectItem>
                   {availabilityOptions.map((a) => (
-                    <SelectItem key={a} value={a}>{a}</SelectItem>
+                    <SelectItem key={a} value={a}>
+                      {a}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </FilterField>
             <FilterField label="Experience">
-              <Select value={search.minExp || "all"} onValueChange={(v) => setF({ minExp: v === "all" ? "" : v })}>
-                <SelectTrigger aria-label="Minimum experience"><SelectValue placeholder="Any experience" /></SelectTrigger>
+              <Select
+                value={search.minExp || "all"}
+                onValueChange={(v) => setF({ minExp: v === "all" ? "" : v })}
+              >
+                <SelectTrigger aria-label="Minimum experience">
+                  <SelectValue placeholder="Any experience" />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Any experience</SelectItem>
                   <SelectItem value="2">2+ years</SelectItem>
@@ -187,7 +210,9 @@ export function CandidatesFiltersPanel({
                 aria-label="Filter by location"
               />
             </FilterField>
-            <Button className="w-full" size="sm" onClick={() => setOpen(false)}>Done</Button>
+            <Button className="w-full" size="sm" onClick={() => setOpen(false)}>
+              Done
+            </Button>
           </PopoverContent>
         </Popover>
 
@@ -214,11 +239,7 @@ export function CandidatesFiltersPanel({
             <button
               onClick={() =>
                 setF({
-                  [f.key]: RESET_TO_OFF.has(f.key)
-                    ? "0"
-                    : RESET_TO_ALL.has(f.key)
-                      ? "all"
-                      : "",
+                  [f.key]: RESET_TO_OFF.has(f.key) ? "0" : RESET_TO_ALL.has(f.key) ? "all" : "",
                 } as never)
               }
               className="text-muted-foreground hover:text-foreground"
@@ -229,7 +250,9 @@ export function CandidatesFiltersPanel({
           </span>
         ))}
         {activeFilters.length > 0 && (
-          <Button size="sm" variant="ghost" onClick={clearFilters}>Clear all</Button>
+          <Button size="sm" variant="ghost" onClick={clearFilters}>
+            Clear all
+          </Button>
         )}
         {/* List / Board is a view of the same result set — it only writes the
             search param, so the choice is deep-linkable and survives back. */}

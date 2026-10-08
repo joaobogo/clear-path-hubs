@@ -24,15 +24,11 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { laneFor } from "@/lib/client-pipeline-lane";
-import {
-  matchesInterviewTile,
-  reviewGroup,
-} from "@/lib/client-candidate-list-filter";
+import { matchesInterviewTile, reviewGroup } from "@/lib/client-candidate-list-filter";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 const src = (rel: string) => readFileSync(join(process.cwd(), rel), "utf8");
-const strip = (s: string) =>
-  s.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
+const strip = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
 
 const dto = (over: Record<string, unknown>) =>
   ({
@@ -47,10 +43,9 @@ describe("the candidate list answers with the same rule the tiles counted", () =
   it("filters by lane, not by raw stage", () => {
     const code = strip(src("src/lib/client-candidate-list-filter.ts"));
     expect(code, "the list must import the canonical lane rule").toMatch(/laneFor/);
-    expect(
-      code,
-      "a raw-stage comparison in the stage filter is the defect itself",
-    ).not.toMatch(/c\.stage !== s\.stage/);
+    expect(code, "a raw-stage comparison in the stage filter is the defect itself").not.toMatch(
+      /c\.stage !== s\.stage/,
+    );
   });
 
   it("keeps the manually tracked interview stage on every surface", () => {
@@ -216,10 +211,9 @@ describe("an invitation that reserves a seat says whether it was sent", () => {
 
   it("the delivery log shows the newest events, not the oldest", () => {
     const code = strip(src("src/components/admin/EmailDeliveryPanel.tsx"));
-    expect(
-      code,
-      "slicing an unsorted list made a healthy pipeline look stalled",
-    ).toMatch(/\.sort\(/);
+    expect(code, "slicing an unsorted list made a healthy pipeline look stalled").toMatch(
+      /\.sort\(/,
+    );
   });
 });
 
