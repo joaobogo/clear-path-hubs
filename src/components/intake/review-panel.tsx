@@ -36,7 +36,13 @@ export function IntakeReviewPanel({
   }
 
   return (
-    <div className="space-y-4" data-testid="intake-review">
+    <div className="space-y-5" data-testid="intake-review">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[color:var(--brand-navy)]/5 px-4 py-3">
+        <p className="text-sm font-semibold">Your complete role brief</p>
+        <p className="text-xs text-[color:var(--brand-navy)]/70">
+          {review.groups.length} sections · {review.answeredCount} answers to review
+        </p>
+      </div>
       {review.missing.length > 0 && (
         <MissingList missing={review.missing} onEdit={onEdit} />
       )}
@@ -49,11 +55,16 @@ export function IntakeReviewPanel({
         review.groups.map((group) => (
           <div
             key={group.step}
-            className="rounded-lg border border-[color:var(--brand-navy)]/12 p-4"
+            className="min-w-0 rounded-xl border border-[color:var(--brand-navy)]/15 bg-white p-4 shadow-sm sm:p-5"
             data-testid={`review-group-${group.step}`}
           >
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-semibold">{group.title}</h3>
+              <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
+                <span className="mr-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+                  {String(group.step + 1).padStart(2, "0")}
+                </span>
+                {group.title}
+              </h3>
               <EditLink
                 label={`Edit ${group.title}`}
                 onClick={() =>
@@ -65,7 +76,7 @@ export function IntakeReviewPanel({
                 }
               />
             </div>
-            <dl className="mt-3 space-y-2">
+            <dl className="mt-4 divide-y divide-[color:var(--brand-navy)]/10">
               {group.rows.map((r) => (
                 <ReviewRow key={r.field} row={r} onEdit={onEdit} />
               ))}
@@ -86,13 +97,21 @@ function ReviewRow({
 }) {
   return (
     <div
-      className="grid gap-1 sm:grid-cols-[160px_1fr_auto] sm:items-baseline"
+      className="grid min-w-0 gap-2 py-3 first:pt-0 last:pb-0 sm:grid-cols-[160px_minmax(0,1fr)_auto] sm:items-start"
       data-testid={`review-row-${row.field}`}
     >
-      <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/75">
+      <dt className="pt-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/65">
         {row.label}
       </dt>
-      <dd className="text-sm whitespace-pre-wrap break-words">{row.value}</dd>
+      <dd
+        tabIndex={row.field === "jobDescriptionText" ? 0 : undefined}
+        className={row.field === "jobDescriptionText"
+          ? "max-h-80 min-w-0 overflow-y-auto rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-navy)]/[0.025] p-3 text-sm leading-relaxed whitespace-pre-wrap break-words"
+          : "min-w-0 text-sm leading-relaxed whitespace-pre-wrap break-words"
+        }
+      >
+        {row.value}
+      </dd>
       <EditLink
         label={`Edit ${row.label}`}
         onClick={() => onEdit({ step: row.step, focusLabel: row.focusLabel, field: row.field })}
