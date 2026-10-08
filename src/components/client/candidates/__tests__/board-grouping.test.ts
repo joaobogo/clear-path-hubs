@@ -62,13 +62,10 @@ describe("groupRowsByStage", () => {
     expect(byStage["shortlisted"]!.map((r) => r.id)).toEqual(["1", "2", "3"]);
   });
 
-  it("puts a cancelled interview in Shortlisted, not Interviewing", () => {
-    // The stage still reads interview_process after a cancellation, so the
-    // board must apply laneFor rather than the raw stage. It called laneFor all
-    // along, but its row mapper dropped the flag, so the call did nothing.
+  it("shows the recruiter's explicit Interviewing stage despite old cancellation history", () => {
     const { byStage } = groupRowsByStage([row("cancelled", "interview_process", true)]);
-    expect(byStage["shortlisted"]!.map((r) => r.id)).toEqual(["cancelled"]);
-    expect(byStage["interview_process"]).toEqual([]);
+    expect(byStage["interview_process"]!.map((r) => r.id)).toEqual(["cancelled"]);
+    expect(byStage["shortlisted"]).toEqual([]);
   });
 
   it("puts an unconfirmed hire in Offer, not Hired", () => {
