@@ -568,6 +568,7 @@ export const transitionHire = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 
@@ -637,6 +638,7 @@ export const assignHireOwner = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const { error } = await context.supabase
@@ -950,6 +952,7 @@ export const nudgeOffer = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 
@@ -1030,6 +1033,7 @@ export const setOfferResponseDate = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
+    throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 
