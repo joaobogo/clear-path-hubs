@@ -12,7 +12,6 @@ import { useIncludeTestRecords, useActingUserId } from "@/lib/admin-scope";
 import { TeamScopeNote } from "@/components/admin/scope-note";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
-import { OfferHireRollupPanel } from "@/components/admin/offer-hire-panel";
 import { SlaBreachStrip } from "@/components/admin/sla-breach-strip";
 import { WorkQueueRow } from "@/components/admin/work-queue-row";
 import { AdminWidgetErrorBoundary } from "@/components/admin/admin-widget-error-boundary";
