@@ -23,12 +23,12 @@ const JD_TEXT =
 
 /**
  * The primary submit label depends on the commerce flag: with payments off the
- * review step offers a single "create workspace and pick a time" action, so the
+ * review step offers a single "create workspace" action, so the
  * spec resolves the label from the flag instead of hardcoding the pay copy.
  */
 const PRIMARY_SUBMIT = PAYMENTS_ENABLED
   ? /start now — pay and publish/i
-  : /create my workspace and pick a time/i;
+  : /create my workspace/i;
 
 const PRIMARY_SUBMIT_TESTID = PAYMENTS_ENABLED ? "intake-submit-pay" : "intake-submit-call";
 
@@ -287,8 +287,8 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(overflow).toBeLessThanOrEqual(2);
   });
 
-  test('submit path "Book a call first" creates account, org and intake', async ({ page }) => {
-    // The secondary "Book a call first" button only exists alongside the pay
+  test('submit path "Save the role and talk first" creates account, org and intake', async ({ page }) => {
+    // The secondary "Save the role and talk first" button only exists alongside the pay
     // action, so this case is scoped to the payments-on configuration.
     test.skip(!PAYMENTS_ENABLED, "secondary call button only renders when payments are on");
     const errors = collectConsoleErrors(page);
@@ -305,7 +305,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
 
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
-      .toMatch(/^\/(book-call|book|intake\/confirmation)/);
+      .toMatch(/^\/(intake\/confirmation)/);
     // Whatever the destination, it must render real content — never a dead end.
     await expect(page.locator("body")).not.toBeEmpty();
     await expect(page.getByRole("heading").first()).toBeVisible();
@@ -338,7 +338,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
       .toMatch(
         PAYMENTS_ENABLED
           ? /^\/(checkout|intake\/confirmation)/
-          : /^\/(book-call|book|intake\/confirmation)/,
+          : /^\/(intake\/confirmation)/,
       );
 
     await expect(page.getByRole("heading").first()).toBeVisible();
@@ -405,7 +405,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await submit.click({ force: true, timeout: 5_000 }).catch(() => undefined);
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
-      .toMatch(/^\/(checkout|book-call|book|intake\/confirmation)/);
+      .toMatch(/^\/(checkout|intake\/confirmation)/);
 
     expect(posts.length, "only one submission leaves the browser").toBe(1);
     const state = await lookupIntake(companyName, email);
@@ -446,7 +446,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await page.getByTestId(PRIMARY_SUBMIT_TESTID).click();
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
-      .toMatch(/^\/(checkout|book-call|book|intake\/confirmation)/);
+      .toMatch(/^\/(checkout|intake\/confirmation)/);
     const ok = await lookupIntake(companyName, email);
     expect(ok.intake_submission, "the retry persisted the intake").not.toBeNull();
   });

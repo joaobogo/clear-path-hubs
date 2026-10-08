@@ -121,7 +121,7 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   companyName: { label: "Company", step: 0, focusLabel: "Company name" },
   companyWebsite: { label: "Website", step: 1, focusLabel: "Company website" },
   companyLinkedin: { label: "Company LinkedIn", step: 0, focusLabel: "Company LinkedIn" },
-  firstName: { label: "First name", step: 0, focusLabel: "First name" },
+  firstName: { label: "Name", step: 0, focusLabel: "First name" },
   lastName: { label: "Last name", step: 0, focusLabel: "Last name" },
   contactTitle: { label: "Your job title", step: 0, focusLabel: "Your job title" },
   workEmail: { label: "Work email", step: 0, focusLabel: "Work email" },
@@ -173,9 +173,12 @@ export function buildIntakeReview(input: {
   const candidates: Array<IntakeReviewRow | null> = [
     row("roleTitle", s.roleTitle),
     row("team", s.team),
+    // The whole description, never a clipped preview: the client is being asked
+    // to confirm it, and a cut-off paragraph cannot be confirmed. When it came
+    // from a file the filename leads and the text read from it follows.
     row(
       "jobDescriptionText",
-      s.jdFilename ? s.jdFilename : s.jobDescriptionText.trim().slice(0, 400),
+      [s.jdFilename, s.jobDescriptionText.trim()].filter(Boolean).join("\n\n"),
     ),
     row("mustHaves", tagged("must_have")),
     row("niceToHaves", tagged("nice_to_have")),

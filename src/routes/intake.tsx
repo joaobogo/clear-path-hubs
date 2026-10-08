@@ -1,3 +1,4 @@
+import { guessTitleAndTeam } from "@/lib/jd-title-guess";
 import { screenDealBreakers, usableDealBreakers } from "@/lib/deal-breaker-screening";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -124,7 +125,7 @@ import { trackDashboardSignup } from "@/lib/tracking/conversions";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
-import { CTA_BOOK } from "@/config/cta";
+import { CTA_MESSAGE } from "@/config/cta";
 import {
   ACCEPTED_UPLOADS,
   FIRST_SHORTLIST_TIMING,
@@ -1332,15 +1333,38 @@ function ExpressIntakePage() {
    * while the client has not set one themselves, and never for a free-mail
    * address, where the domain says nothing about the company.
    */
+  const derivedWebsiteRef = useRef<string>("");
   useEffect(() => {
     if (editedRef.current.has("companyWebsite")) return;
-    if (state.companyWebsite.trim().length > 0) return;
-    const derived = companyWebsiteFromEmail(state.workEmail);
-    if (!derived) return;
-    setState((s) => (s.companyWebsite.trim() ? s : { ...s, companyWebsite: derived }));
+    const current = state.companyWebsite.trim();
+    // Only ever overwrite a value this effect derived itself. The old guard
+    // ("only while empty") froze the first partial domain typed: "co-kreator.c"
+    // stayed on screen while the client finished "co-kreator.com".
+    const derived = companyWebsiteFromEmail(state.workEmail) ?? "";
+    // A draft saved before this fix can hold a truncated domain ("co-kreator.c")
+    // the client never typed; a strict prefix of the real one is repaired too.
+    const staleDerivedPrefix =
+      current.length >= 3 && derived.length > current.length && derived.startsWith(current);
+    if (current.length > 0 && current !== derivedWebsiteRef.current && !staleDerivedPrefix) return;
+    // Remember what was derived even when it already matches (a restored draft),
+    // so a later email change still updates it.
+    if (derived === current) {
+      derivedWebsiteRef.current = derived;
+      return;
+    }
+    derivedWebsiteRef.current = derived;
+    setState((s) =>
+      s.companyWebsite.trim() === current ? { ...s, companyWebsite: derived } : s,
+    );
   }, [state.workEmail, state.companyWebsite]);
 
-  const applyBlueprint = React.useCallback((bp: JdBlueprint) => {
+  /**
+   * Values the quick text read filled in (see `guessTitleAndTeam`). The model
+   * read may replace exactly these, and only while the client has not touched
+   * the field; anything the client typed is never overwritten.
+   */
+  const guessedRef = useRef<Record<string, string>>({});
+  const applyBlueprint = React.useCallback((bp: JdBlueprint, source: "model" | "guess" = "model") => {
     const DEFAULTED = new Set(["currency", "compensationPeriod"]);
     setState((s) => {
       const next: Partial<FormState> = {};
@@ -1350,7 +1374,14 @@ function ExpressIntakePage() {
         const isEmpty =
           current === "" || current === null || current === undefined ||
           (Array.isArray(current) && current.length === 0);
-        if (!isEmpty && !DEFAULTED.has(key as string)) return;
+        // A value the quick text read filled in may be replaced by a better read
+        // (the model's, or a new guess from a replaced description) — never one
+        // the client typed (editedRef above).
+        const replaceGuess =
+          typeof current === "string" && guessedRef.current[key as string] === current;
+        if (!isEmpty && !DEFAULTED.has(key as string) && !replaceGuess) return;
+        if (source === "guess" && typeof value === "string") guessedRef.current[key as string] = value;
+        else delete guessedRef.current[key as string];
         next[key] = value;
       };
 
@@ -1445,17 +1476,32 @@ function ExpressIntakePage() {
    * per keystroke.
    */
   useEffect(() => {
-    if (stepIndex !== 1) return;
+    // Steps 1 and 2: the description is read as soon as it is given, so the job
+    // title and team are already waiting on the next screen instead of being
+    // fetched after the client arrives there.
+    if (stepIndex > 1) return;
     const jd = state.jobDescriptionText.trim();
     if (jd.length < MIN_JD_TEXT) return;
-    const signature = `text:${state.roleTitle.trim()}::${jd}`;
+    const quick = guessTitleAndTeam(jd);
+    if (quick.title || quick.team) {
+      applyBlueprint(
+        {
+          ...(quick.title ? { title: { value: quick.title, confidence: "low" as const } } : {}),
+          ...(quick.team ? { team: { value: quick.team, confidence: "low" as const } } : {}),
+        },
+        "guess",
+      );
+    }
+    // Only a title the client typed belongs in the signature: a guessed or read
+    // title changing must not trigger a second model call for the same text.
+    const signature = `text:${editedRef.current.has("roleTitle") ? state.roleTitle.trim() : ""}::${jd}`;
     if (suggestedForRef.current === signature) return;
     const timer = window.setTimeout(() => {
       suggestedForRef.current = signature;
       void runJdParse({ text: jd, roleTitle: state.roleTitle });
     }, JD_REPARSE_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [stepIndex, state.jobDescriptionText, state.roleTitle, runJdParse]);
+  }, [stepIndex, state.jobDescriptionText, state.roleTitle, runJdParse, applyBlueprint]);
 
   const setRequirements = (next: RequirementItem[]) => {
     if (!startedRef.current) {
@@ -2035,7 +2081,7 @@ function ExpressIntakePage() {
           if (PAYMENTS_ENABLED && intent === "pay") {
             navigate({ to: "/checkout", search: { position: body.positionId } });
           } else {
-            navigate({ to: "/book", search: { cta: "intake" } });
+            navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
           }
           return;
         }
@@ -2149,8 +2195,8 @@ function ExpressIntakePage() {
               No payment is taken on this page. Your workspace opens right away.
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-              Create your account, share the role, then pick a time. We agree the plan together
-              before the search goes live. {PILOT_IS_PAID_NOTE}
+              Create your account and share the role. We confirm the plan with you before the
+              search goes live. {PILOT_IS_PAID_NOTE}
             </p>
           </div>
         )}
@@ -3123,7 +3169,6 @@ function ExpressIntakePage() {
               label="When would you like them to start?"
               error={errors.targetStartDate}
               required={req["targetStartDate"]}
-              hint="We will tell you honestly if it is achievable."
             >
               <Input
                 type="date"
@@ -3370,7 +3415,7 @@ function ExpressIntakePage() {
               label={intakeFieldLabel("targetDaysToOffer")} carried={isCarried("targetDaysToOffer")}
               error={errors.targetDaysToOffer}
               required={req["targetDaysToOffer"]}
-              hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}
+              hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days.`}
             >
               <Input
                 type="text"
@@ -3612,7 +3657,7 @@ function ExpressIntakePage() {
                   </li>
                 ) : (
                   <li>
-                    3. You pick a time on the next screen. We agree the plan on the call, then the search goes live.
+                    3. We contact you to agree the plan, then the search goes live.
                   </li>
                 )}
               </ol>
@@ -3655,7 +3700,7 @@ function ExpressIntakePage() {
                 ) : (
                   <>
                     I understand that no payment is taken today, that my workspace opens immediately, and that we
-                    agree the plan on the call before the search goes live. This initial role can be started
+                    agree the plan with you before the search goes live. This initial role can be started
                     once per company — a second sign-up or a new email does not create a new start. Separate
                     locations, franchises and subsidiaries are reviewed case by case.
                   </>
@@ -3748,12 +3793,12 @@ function ExpressIntakePage() {
 
             <div className="rounded-xl border border-[color:var(--brand-navy)]/12 p-4">
               <p className="text-sm font-semibold">
-                {PAYMENTS_ENABLED ? "Choose how you'd like to start" : "Create your workspace and pick a time"}
+                {PAYMENTS_ENABLED ? "Choose how you'd like to start" : "Create your workspace"}
               </p>
               <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
                 {PAYMENTS_ENABLED
                   ? "Both create your workspace and analyse the role. One publishes today; the other keeps it saved until we've spoken."
-                  : "Your workspace opens immediately. We agree the plan on the call and activate the search once you're ready."}
+                  : "Your workspace opens immediately. We agree the plan with you and activate the search once you're ready."}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {PAYMENTS_ENABLED ? (
@@ -3782,7 +3827,7 @@ function ExpressIntakePage() {
                       disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
                       className="min-h-12 w-full"
                     >
-                      Book a call first
+                      Save the role and talk first
                     </Button>
                   </>
                 ) : (
@@ -3799,7 +3844,7 @@ function ExpressIntakePage() {
                         Creating your workspace…
                       </>
                     ) : (
-                      "Create my workspace and pick a time"
+                      "Create my workspace"
                     )}
                   </Button>
                 )}
@@ -3841,12 +3886,12 @@ function ExpressIntakePage() {
               )}
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
                 {PAYMENTS_ENABLED
-                  ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
-                  : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."}
+                  ? "Saving first still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
+                  : "The role is saved in your workspace straight away. We confirm the plan with you before anything goes live."}
               </p>
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
-                <Link to={CTA_BOOK.to} className="underline" data-testid="intake-book-link">
-                  Prefer to talk first? Book a call.
+                <Link to={CTA_MESSAGE.to} className="underline" data-testid="intake-message-link">
+                  Prefer to talk first? Send us a message.
                 </Link>
               </p>
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
@@ -4087,8 +4132,8 @@ function IntakeSummaryPanel() {
         ))}
       </ol>
       <p className="mt-3 text-[color:var(--brand-navy)]/75">
-        <Link to={CTA_BOOK.to} className="underline">
-          Prefer to talk first? Book a call.
+        <Link to={CTA_MESSAGE.to} className="underline">
+          Prefer to talk first? Send us a message.
         </Link>
       </p>
     </aside>

@@ -76,7 +76,10 @@ export function companyWebsiteFromEmail(email: string): string | null {
   const at = (email ?? "").trim().toLowerCase().lastIndexOf("@");
   if (at === -1) return null;
   const domain = email.trim().toLowerCase().slice(at + 1);
-  if (!domain || !/^[\w-]+(\.[\w-]+)+$/.test(domain)) return null;
+  // The last label must be a real-looking top-level domain (two or more
+  // letters). Without this, typing "me@co-kreator.com" derives "co-kreator.c"
+  // one keystroke before the end and the half-typed domain gets shown.
+  if (!domain || !/^[\w-]+(\.[\w-]+)*\.(?:[a-z]{2,}|xn--[a-z0-9-]{2,})$/.test(domain)) return null;
   if (FREE_MAIL_DOMAINS.has(domain)) return null;
   return domain;
 }
