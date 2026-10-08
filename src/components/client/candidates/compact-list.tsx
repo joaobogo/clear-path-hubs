@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { CandidateCard } from "@/components/client/candidate-card";
-import { CandidatePrimaryAction } from "@/components/client/candidate-primary-action";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { candidateLineFor } from "@/lib/client-fit-presentation";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -32,9 +31,8 @@ function candidateHeadline(c: ClientCandidateDTO): string {
  * - per-row CV download
  * - "Open" action link
  *
- * The row/card now shows exactly: name, score band chip, one-line headline,
- * stage, and one primary action. The checkbox used for "Compare side by side"
- * stays exactly where it is.
+ * The row/card shows the candidate, fit and current tracking stage.
+ * Stage changes are available only in the Kanban board, not from table rows.
  */
 export function CompactList({
   rows,
@@ -80,7 +78,6 @@ export function CompactList({
               <th className="text-left py-2 px-3">Candidate</th>
               <th className="text-left py-2 px-3">Fit</th>
               <th className="text-left py-2 px-3">Stage</th>
-              <th className="text-right py-2 px-3">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -120,46 +117,8 @@ export function CompactList({
                     hideEvidenceChip
                   />
                 </td>
-                {/* The stage word alone said "Shortlisted" for a candidate
-                    whose interview had already been requested, while the
-                    overview asked the client to confirm a time for that same
-                    person (audit #6, A6-23). */}
                 <td data-label="Stage" className="py-3 px-3 text-muted-foreground align-middle whitespace-nowrap">
-                  {c.interview_awaiting_time
-                    ? "Interview requested"
-                    : c.interview_called_off && c.stage === "interview_process"
-                      ? /* The stage stays at interview_process after a
-                           cancellation, so the word alone read "Interviewing"
-                           for someone whose only interview was called off
-                           (audit #8, TF8-08). */
-                        "Interview cancelled"
-                      : clientStageLabel(c.stage)}
-                </td>
-                <td data-label="Action" className="py-3 px-3 text-right align-middle">
-                  {orgId ? (
-                    <CandidatePrimaryAction
-                      orgId={orgId}
-                      matchId={c.match_id}
-                      stage={c.stage}
-                      candidateName={c.candidate.display_name}
-                      fitLabel={c.fit_label}
-                      score={c.score}
-                      interviewRequested={c.interview_awaiting_time}
-                      interviewCalledOff={c.interview_called_off}
-                      interviewCompleted={c.interview_completed}
-                      size="sm"
-                    />
-                  ) : (
-                    <Link
-                      to="/client/candidates/$id"
-                      preload="intent"
-                      params={{ id: c.match_id }}
-                      search={orgSearch ? { org: orgSearch } : undefined}
-                      className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/80"
-                    >
-                      Review
-                    </Link>
-                  )}
+                  {clientStageLabel(c.stage)}
                 </td>
               </tr>
             ))}
