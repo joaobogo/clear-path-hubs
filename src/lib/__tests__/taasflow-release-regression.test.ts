@@ -98,14 +98,13 @@ describe("intake parsing and preview contract", () => {
   });
 });
 
-
 describe("off-platform interviews and offers", () => {
   it("does not expose direct stage-change buttons in client candidate lists", () => {
     const list = source("src/components/client/candidates/compact-list.tsx");
     const card = source("src/components/client/candidate-card.tsx");
     const board = source("src/components/client/candidates/board-view.tsx");
     expect(list).not.toContain("CandidatePrimaryAction");
-    expect(list).not.toContain('>Action</th>');
+    expect(list).not.toContain(">Action</th>");
     expect(card).not.toContain("CandidatePrimaryAction");
     expect(board).toContain("attemptMove={attemptMove}");
     expect(board).toContain("<PipelineBoard");
