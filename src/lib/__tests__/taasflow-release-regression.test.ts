@@ -72,7 +72,7 @@ describe("role editing", () => {
 
   it("prevents discarded demo fixtures from appearing in normal client roles", () => {
     const roles = source("src/lib/client-positions.functions.ts");
-    expect(roles).toMatch(/\.eq\("is_test_record"(?:\s+as\s+any)?,\s*false\)/);
+    expect(roles).toMatch(/\.eq\("is_test_record"(?:\s+as\s+never)?,\s*false\)/);
   });
 });
 
