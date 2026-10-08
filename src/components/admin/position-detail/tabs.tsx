@@ -12,7 +12,6 @@ import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
 import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-card";
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
-import { PositionOfferTrackingPanel } from "@/components/admin/offer-hire-panel";
 
 import {
   InterviewExceptionsBadge,
@@ -594,10 +593,6 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
       <StageAgingPanel positionId={positionId} />
 
       <PositionSourceQualityPanel positionId={positionId} />
-
-      <InterviewExceptionsPanel positionId={positionId} />
-
-      <PositionOfferTrackingPanel positionId={positionId} />
 
       <RejectionReasonsPanel positionId={positionId} />
 
