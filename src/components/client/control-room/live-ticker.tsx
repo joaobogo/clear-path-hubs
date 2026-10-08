@@ -98,8 +98,8 @@ export function LiveTicker({ orgId }: { orgId: string }) {
         </div>
       ) : !data?.length ? (
         <p className="mt-3 text-sm text-muted-foreground">
-          Nothing has moved yet today. When a candidate arrives, a stage changes
-          or an interview is booked, it will show here.
+          Nothing has moved yet today. When a candidate arrives or a
+          recruitment stage changes on the Kanban, it will show here.
         </p>
 
       ) : (
