@@ -7,9 +7,7 @@ import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-c
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
 
-import {
-  InterviewExceptionsBadge,
-} from "@/components/admin/interview-exceptions-panel";
+
 
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -257,7 +255,7 @@ function PositionWorkspace() {
                 {p.status.replace(/_/g, " ")}
               </Badge>
               <Badge variant="outline">{p.visibility}</Badge>
-              <InterviewExceptionsBadge positionId={p.id} />
+              
             </div>
             <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
               {p.location && <span>{p.location}</span>}
