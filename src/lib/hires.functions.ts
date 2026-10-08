@@ -1,3 +1,4 @@
+import { offSystemWorkflowRequired } from "@/lib/off-system-workflow";
 // Offer & hire lifecycle server functions.
 //
 // Every mutation is org-scoped through RLS + assertEditor, writes an audit
@@ -454,7 +455,7 @@ export const upsertOfferDraft = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Employment offers are coordinated outside TAASFlow.");
+    if (offSystemWorkflowRequired()) throw new Error("Employment offers are coordinated outside TAASFlow.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatchForHire(context.supabase, data.orgId, data.matchId);
@@ -568,7 +569,7 @@ export const transitionHire = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
+    if (offSystemWorkflowRequired()) throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 
@@ -638,7 +639,7 @@ export const assignHireOwner = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
+    if (offSystemWorkflowRequired()) throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const { error } = await context.supabase
@@ -952,7 +953,7 @@ export const nudgeOffer = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
+    if (offSystemWorkflowRequired()) throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 
@@ -1033,7 +1034,7 @@ export const setOfferResponseDate = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
+    if (offSystemWorkflowRequired()) throw new Error("Offer handling happens outside TAASFlow; track stage changes in Kanban.");
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
 
