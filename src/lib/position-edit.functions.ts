@@ -202,6 +202,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
         .from("positions")
         .select("*,organizations(id,name)")
         .eq("id", data.id)
+        .eq("is_test_record" as any, false)
         .maybeSingle(),
       s
         .from("screening_questions")
