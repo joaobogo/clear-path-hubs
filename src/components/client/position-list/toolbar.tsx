@@ -29,13 +29,6 @@ export const STATUS_TABS = ROLE_STATUS_TABS;
 function ActionLink({ row }: { row: Row }) {
   const target = row.action_target ?? null;
   const cls = "text-xs font-medium text-primary hover:underline shrink-0";
-  if (target?.kind === "confirm_interview" || target?.kind === "offer_response") {
-    return (
-      <Link to="/client/candidates" search={{ view: "board" }} className={cls}>
-        View candidate progress →
-      </Link>
-    );
-  }
   if (target?.kind === "review_candidates") {
     return (
       <Link to="/client/candidates" search={target.search} className={cls}>
