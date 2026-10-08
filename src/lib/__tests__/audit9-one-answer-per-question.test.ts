@@ -151,15 +151,17 @@ describe("promises match the engine", () => {
     expect(apply).not.toMatch(/adds 10 points/);
   });
 
-  it("the offers KPI carries the currency of the figures it summarises", () => {
+  it("historical offer currency survives after off-platform offer management", () => {
     const hires = strip(src("src/lib/hires.functions.ts"));
     expect(hires).toMatch(/salary_currency: string \| null/);
     expect(hires, "the column has to be selected to be reported").toMatch(
       /salary_amount, salary_currency/,
     );
-    expect(strip(src("src/routes/_authenticated/client.offers.tsx"))).toMatch(
-      /formatMoneyMajorCompact\(\s*report\.totals\.avg_salary,\s*report\.totals\.salary_currency/,
-    );
+    const clientOfferRoute = strip(src("src/routes/_authenticated/client.offers.tsx"));
+    expect(clientOfferRoute).toContain('to: "/client/candidates"');
+    expect(clientOfferRoute).not.toMatch(/formatMoneyMajorCompact|Extend offer|Create offer/);
+    // Salary currency still belongs in historical hire records and reporting,
+    // but client offers are no longer issued through the dashboard.
   });
 });
 
