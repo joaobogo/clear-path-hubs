@@ -27,7 +27,7 @@ const STEPS: Record<string, NextStep> = {
     withinHours: 24,
   },
   reviewing: {
-    headline: "Waiting on your review — advance, hold or decline whenever you're ready.",
+    headline: "Review the candidate, then use the Kanban board to update their recruitment stage.",
     owner: "client",
     withinHours: null,
   },
@@ -37,25 +37,25 @@ const STEPS: Record<string, NextStep> = {
     withinHours: null,
   },
   delivered: {
-    headline: "Waiting on your review — advance, hold or decline whenever you're ready.",
+    headline: "Review the candidate, then use the Kanban board to update their recruitment stage.",
     owner: "client",
     withinHours: null,
   },
 
   shortlisted: {
-    headline: "We'll propose interview slots",
-    owner: "taasflow",
-    withinHours: 24,
+    headline: "Your recruiter and the candidate coordinate next steps directly outside TAASFlow.",
+    owner: "client",
+    withinHours: null,
   },
   interview_process: {
-    headline: "We'll confirm the time and send calendar invites",
-    owner: "taasflow",
-    withinHours: 24,
+    headline: "Interviews happen outside TAASFlow. Use the Kanban to track progress after conversations.",
+    owner: "client",
+    withinHours: null,
   },
   offer: {
-    headline: "We'll present the offer and come back with the candidate's response",
-    owner: "taasflow",
-    withinHours: 48,
+    headline: "Employment offers are handled directly outside TAASFlow. This is a tracking stage only.",
+    owner: "client",
+    withinHours: null,
   },
   hired: {
     headline: "We'll confirm the start date and handle onboarding paperwork",
