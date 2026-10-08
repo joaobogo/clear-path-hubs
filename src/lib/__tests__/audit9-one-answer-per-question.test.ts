@@ -53,14 +53,14 @@ describe("the candidate list answers with the same rule the tiles counted", () =
     ).not.toMatch(/c\.stage !== s\.stage/);
   });
 
-  it("puts a cancelled interview in shortlisted on every surface", () => {
+  it("keeps the manually tracked interview stage on every surface", () => {
     const calledOff = dto({
       stage: "interview_process",
       interview_called_off: true,
       interview_active: false,
     });
-    expect(laneFor(calledOff)).toBe("shortlisted");
-    expect(matchesInterviewTile(calledOff)).toBe(false);
+    expect(laneFor(calledOff)).toBe("interview_process");
+    expect(matchesInterviewTile(calledOff)).toBe(true);
     expect(reviewGroup(calledOff)).toBe("in_progress");
   });
 
