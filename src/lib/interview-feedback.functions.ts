@@ -6,9 +6,6 @@
 // interview, not emailed around.
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { persistStage } from "@/lib/client/persist-stage";
-import { reconcileHireRecordForStage } from "@/lib/hires/stage-reconcile.server";
-import type { MatchStage } from "@/lib/client-match-stage";
 import { z } from "zod";
 import {
   DECLINE_CONCERN_MIN,
@@ -206,12 +203,6 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
       return { pending, submitted };
     },
   );
-
-const NEXT_STEP_TO_STAGE: Record<FeedbackNextStep, string | null> = {
-  another_interview: null, // stays in the interview process
-  make_offer: "offer",
-  stop_here: "not_moving_forward",
-};
 
 export const submitInterviewFeedback = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
