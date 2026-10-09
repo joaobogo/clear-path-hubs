@@ -125,7 +125,7 @@ export function ChapterScore() {
                   <blockquote className="mt-1.5 text-[15px] text-[color:var(--text-2)]">“{sentence.text}”</blockquote>
                 ) : (
                   <p className="mt-1.5 text-[15px] text-[color:var(--text)]">
-                    <span className="font-semibold">No sentence found.</span> Ask in the interview: {result.evidence}
+                    <span className="font-semibold">No sentence found.</span> {result.evidence}
                   </p>
                 )}
               </li>

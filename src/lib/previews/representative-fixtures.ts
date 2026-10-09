@@ -457,19 +457,20 @@ export const PREVIEW_ONBOARDING: PreviewOnboardingStep[] = [
 // real person, employer or property. Each candidate has ONE overall score, the
 // rounded mean of the five requirement scores, computed in one place below.
 
-export const SAMPLE_SHORTLIST_ROLE = "Hotel General Manager" as const;
+export const SAMPLE_SHORTLIST_ROLE = "Registered nurse" as const;
 
 export const SAMPLE_SHORTLIST_LABEL = "Example shortlist (example data, not a client result)" as const;
 
 export const SAMPLE_SHORTLIST_NOTICE =
   "Every candidate, score and evidence line on this page is invented to show the format. No real person, employer or client appears here." as const;
 
+/** In rubric order, heaviest first: the first three are the Brief chapter's sliders. */
 export const SAMPLE_SHORTLIST_REQUIREMENTS = [
-  { key: "ops", label: "Hotel operations leadership" },
-  { key: "pnl", label: "P&L and budget ownership" },
-  { key: "guest", label: "Guest satisfaction results" },
-  { key: "team", label: "Team leadership and retention" },
-  { key: "brand", label: "Brand and licence standards" },
+  { key: "licence", label: "Active RN licence in the state" },
+  { key: "acute", label: "Acute-care experience, three years or more" },
+  { key: "nights", label: "Night and weekend rotation" },
+  { key: "certs", label: "BLS and ACLS certification" },
+  { key: "charting", label: "Epic or Cerner charting" },
 ] as const;
 
 export type SampleRequirementKey = (typeof SAMPLE_SHORTLIST_REQUIREMENTS)[number]["key"];
@@ -495,101 +496,101 @@ const SAMPLE_CANDIDATE_INPUTS: SampleCandidateInput[] = [
   {
     ref: "Example candidate A1",
     results: {
-      ops: r(96, "Ran a 240-room city hotel with rooms, F&B and events reporting to them."),
-      pnl: r(93, "Owned a stated annual budget and the monthly forecast for five years."),
-      guest: r(92, "CV cites lifting the guest review score over two consecutive years."),
-      team: r(90, "Led a department-head team of eight; promoted three from within."),
-      brand: r(94, "Passed two brand standards audits as the accountable manager."),
+      licence: r(98, "Licensed as a registered nurse in the state since 2019; licence in good standing."),
+      acute: r(95, "Five years on a 32-bed acute medical-surgical unit, charge nurse for the last two."),
+      nights: r(72, "Shift pattern is not stated in the CV. Ask in the interview."),
+      certs: r(96, "BLS and ACLS certified, both renewed in 2025."),
+      charting: r(94, "Charted in Epic daily, including medication reconciliation and discharge planning."),
     },
   },
   {
     ref: "Example candidate B2",
     results: {
-      ops: r(91, "General manager of a 180-room resort with a spa and two restaurants."),
-      pnl: r(90, "Delivered a cost-reduction plan against budget; figures stated in the CV."),
-      guest: r(88, "Describes a service recovery programme and the review trend that followed."),
-      team: r(89, "Reduced front-line turnover during a seasonal peak, with the method stated."),
-      brand: r(86, "Opened the hotel under an international brand programme."),
+      licence: r(96, "Active state licence; renewal date stated in the CV."),
+      acute: r(92, "Four years in a 40-bed telemetry unit at a regional hospital."),
+      nights: r(88, "Works a rotating schedule including nights and alternate weekends, stated outright."),
+      certs: r(90, "BLS and ACLS current; PALS listed as expired."),
+      charting: r(84, "Cerner for three years; Epic mentioned from a float assignment."),
     },
   },
   {
     ref: "Example candidate C3",
     results: {
-      ops: r(89, "Resident manager of a 300-room convention hotel for four years."),
-      pnl: r(84, "Shared budget ownership with a finance director; own share is not quantified."),
-      guest: r(90, "Quotes guest feedback targets and the actions taken to meet them."),
-      team: r(86, "Managed a team of about 120 across four departments."),
-      brand: r(83, "Brand standards work mentioned, no audit result given."),
+      licence: r(95, "Licence by endorsement granted this year; number given."),
+      acute: r(90, "Six years across medical-surgical and step-down units."),
+      nights: r(84, "Night shift for three of the six years."),
+      certs: r(88, "BLS and ACLS current; renewal dates not given."),
+      charting: r(80, "Epic listed under skills; no detail of daily use."),
     },
   },
   {
     ref: "Example candidate D4",
     results: {
-      ops: r(87, "Director of operations for a three-hotel group in one city."),
-      pnl: r(88, "Group-level P&L responsibility with a stated revenue range."),
-      guest: r(81, "Guest scores mentioned for one property only."),
-      team: r(85, "Built a regional training programme, with attendance figures."),
-      brand: r(80, "Works across independent hotels; limited brand-programme evidence."),
+      licence: r(94, "Active licence in the state; compact licence also held."),
+      acute: r(86, "Three years in an intensive care unit; acute-care scope is clear."),
+      nights: r(90, "Permanent night shift for the whole period."),
+      certs: r(82, "ACLS current; BLS renewal is listed as due."),
+      charting: r(76, "Charting system is not named."),
     },
   },
   {
     ref: "Example candidate E5",
     results: {
-      ops: r(84, "Hotel manager of a 120-room boutique property for three years."),
-      pnl: r(82, "Owned the property budget; the size is not stated."),
-      guest: r(86, "Cites top-ranked status on a travel review site for the property."),
-      team: r(80, "Led a team of 45; no retention evidence in the CV."),
-      brand: r(76, "Independent property, so no brand standards to evidence."),
+      licence: r(90, "Licence active; transferred from another state last year."),
+      acute: r(84, "Three years on a surgical unit, with the bed count stated."),
+      nights: r(80, "Rotation mentioned, without the split between days and nights."),
+      certs: r(86, "BLS and ACLS current."),
+      charting: r(70, "Paper and a legacy system; no Epic or Cerner experience shown."),
     },
   },
   {
     ref: "Example candidate F6",
     results: {
-      ops: r(82, "Assistant general manager at a 200-room hotel, deputising for the GM."),
-      pnl: r(76, "Prepared budgets for rooms and F&B; final sign-off sat with the GM."),
-      guest: r(83, "Led the guest complaints process and reported its results monthly."),
-      team: r(81, "Ran hiring and training for the front office and housekeeping."),
-      brand: r(78, "Coordinated a brand audit as the delegate for the GM."),
+      licence: r(88, "Licence application in the state is pending; licensed elsewhere."),
+      acute: r(82, "Two and a half years acute care, close to the requirement."),
+      nights: r(74, "Preference for days is stated; nights not ruled out."),
+      certs: r(84, "BLS and ACLS current."),
+      charting: r(72, "Epic training course completed; no unit use yet."),
     },
   },
   {
     ref: "Example candidate G7",
     results: {
-      ops: r(79, "Rooms division manager at a large airport hotel."),
-      pnl: r(72, "Rooms revenue targets owned; F&B and overall P&L were not."),
-      guest: r(80, "Front-desk service scores stated for the rooms division."),
-      team: r(78, "Managed about 60 staff in the rooms division."),
-      brand: r(75, "Worked to brand standards daily; no audit ownership shown."),
+      licence: r(85, "Licence active; the state is not named in the CV."),
+      acute: r(78, "Two years acute care, then outpatient."),
+      nights: r(76, "Weekend rotation stated; nights not mentioned."),
+      certs: r(80, "BLS current; ACLS not listed."),
+      charting: r(68, "Charting experience is not described."),
     },
   },
   {
     ref: "Example candidate H8",
     results: {
-      ops: r(76, "Food and beverage director with some rooms-division exposure."),
-      pnl: r(74, "Owned the F&B budget for a 150-room hotel."),
-      guest: r(77, "Restaurant review scores quoted; no whole-hotel figure."),
-      team: r(75, "Led a kitchen and service team of around 70."),
-      brand: r(68, "Brand standards evidence is limited to F&B."),
+      licence: r(80, "Licence held; status and renewal date not stated."),
+      acute: r(76, "Long-term care background with one acute-care rotation."),
+      nights: r(70, "Shift pattern not stated."),
+      certs: r(78, "BLS current; ACLS in progress."),
+      charting: r(66, "A different electronic record is named."),
     },
   },
   {
     ref: "Example candidate I9",
     results: {
-      ops: r(72, "Hotel manager at a serviced-apartment operator, a related format."),
-      pnl: r(71, "Owned an occupancy and cost target; scale is smaller than this role."),
-      guest: r(70, "Guest satisfaction is mentioned without a figure."),
-      team: r(69, "Managed a team of 20; the scale is below the role requirement."),
-      brand: r(66, "No international brand programme in the work history."),
+      licence: r(76, "Licensed in another state; no transfer under way."),
+      acute: r(72, "One year acute care within a residency."),
+      nights: r(68, "Shift pattern not stated."),
+      certs: r(74, "BLS current; ACLS not listed."),
+      charting: r(62, "Charting experience is not described."),
     },
   },
   {
     ref: "Example candidate J10",
     results: {
-      ops: r(68, "Operations manager at a resort, seasonal contracts only."),
-      pnl: r(63, "Budget responsibility is described in general terms."),
-      guest: r(66, "Guest feedback is mentioned, with no source or result."),
-      team: r(64, "Led seasonal teams; the size is not stated."),
-      brand: r(61, "No brand or licence standards evidence found."),
+      licence: r(70, "Licence status unclear from the CV."),
+      acute: r(66, "Agency contracts only; unit and duration not stated."),
+      nights: r(60, "Shift pattern not stated."),
+      certs: r(68, "BLS listed without a date."),
+      charting: r(58, "No charting system named."),
     },
   },
 ];
@@ -599,47 +600,41 @@ const SAMPLE_CANDIDATE_INPUTS: SampleCandidateInput[] = [
  * three are the sliders in the Brief chapter; the rest are chips.
  */
 export const SAMPLE_RUBRIC_WEIGHTS: Record<SampleRequirementKey, number> = {
-  ops: 35,
-  pnl: 25,
-  guest: 15,
-  team: 15,
-  brand: 10,
+  licence: 35,
+  acute: 25,
+  nights: 15,
+  certs: 15,
+  charting: 10,
 };
 
 /**
  * An excerpt of the top example candidate's CV, invented like the rest of
  * this fixture. Each sentence that earns points names its requirement, so the
  * Score chapter's quotes are, character for character, the sentences it
- * highlights. The guest-satisfaction requirement has no sentence on purpose:
- * the gap is shown as plainly as the hits.
+ * highlights. The night-rotation requirement has no sentence on purpose: the
+ * gap is shown as plainly as the hits.
  */
 export const SAMPLE_CV_EXCERPT: readonly { text: string; requirement?: SampleRequirementKey }[] = [
-  { text: "General manager, Harbourside Hotel (240 rooms), 2019 to 2025." },
-  {
-    text: "Ran rooms, food and beverage and events with all three department heads reporting to me.",
-    requirement: "ops",
-  },
-  {
-    text: "Owned the annual budget of $18.4m and signed off the monthly forecast for five years.",
-    requirement: "pnl",
-  },
-  { text: "Led a department-head team of eight and promoted three from within.", requirement: "team" },
-  { text: "Passed two brand standards audits as the accountable manager.", requirement: "brand" },
-  { text: "Earlier: resident manager, then front office manager, at two city hotels." },
+  { text: "Registered nurse, Riverside General Hospital, medical-surgical unit, 2020 to 2025." },
+  { text: "Licensed as a registered nurse in the state since 2019; licence in good standing.", requirement: "licence" },
+  { text: "Five years on a 32-bed acute medical-surgical unit, charge nurse for the last two.", requirement: "acute" },
+  { text: "BLS and ACLS certified, both renewed in 2025.", requirement: "certs" },
+  { text: "Charted in Epic daily, including medication reconciliation and discharge planning.", requirement: "charting" },
+  { text: "Earlier: graduate nurse residency at a community hospital." },
 ];
 
 /** The recruiter's one-line note on each of the top five, as the Sign-off chapter shows them. */
 export const SAMPLE_RECRUITER_NOTES: readonly string[] = [
-  "Runs a hotel this size already. Ask about the opening timeline.",
-  "Strongest on service recovery; budget ownership is shared.",
-  "Convention-scale operator. Confirm the P&L share in the interview.",
-  "Group-level numbers, but one property's guest scores only.",
-  "Boutique scale; the team evidence is thin. Worth a conversation.",
+  "Charge nurse on a unit this size already. Ask about the shift pattern.",
+  "Rotates nights and weekends now; the strongest match on schedule.",
+  "Six years acute care; confirm the charting system in the interview.",
+  "Intensive care background and permanent nights; BLS renewal is due.",
+  "Three years on a surgical unit; no Epic or Cerner yet. Worth a conversation.",
 ];
 
 /** What the recruiter wrote above the signed list. */
 export const SAMPLE_RECRUITER_SIGN_OFF =
-  "Ten read in full. Six have run a property of this size; four are a step up. Two need a direct question on budget ownership, flagged on their rows. Nothing here was scored by software alone." as const;
+  "Ten read in full. Seven hold an active licence in the state today; three are transferring. Two need a direct question on night rotation, flagged on their rows. Nothing here was scored by software alone." as const;
 
 /**
  * Three representative runs on the one clock, as the Proof chapter draws
