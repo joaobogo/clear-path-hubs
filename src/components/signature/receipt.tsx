@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
  * and a tilt, because it is paper.
  */
 export type ReceiptLine = { label: string; amount: number; note?: string };
+/** A line with words where the amount would be: seats, support, access. */
+export type ReceiptDetail = { label: string; value: string };
 
 /** The sawtooth edge, as a clip path, so the paper reads as torn. */
 function torn(teeth: number, depth: number): string {
@@ -29,6 +31,7 @@ export function Receipt({
   title,
   subtitle,
   lines,
+  details,
   total,
   footer,
   tilt = 0,
@@ -37,6 +40,7 @@ export function Receipt({
   title: string;
   subtitle?: string;
   lines: readonly ReceiptLine[];
+  details?: readonly ReceiptDetail[];
   total: { label: string; amount: number };
   footer?: ReactNode;
   /** Degrees. Paper may lie a little askew; nothing else on the site may. */
@@ -65,6 +69,17 @@ export function Receipt({
             </div>
           ))}
         </dl>
+        {details && details.length > 0 ? (
+          <dl className="mt-4 flex flex-col gap-2 border-t border-[color:var(--rule)] pt-4">
+            {details.map((d) => (
+              <div key={d.label} className="flex items-baseline gap-2 text-[15px]">
+                <dt className="min-w-0 text-[color:var(--slate)]">{d.label}</dt>
+                <span aria-hidden className="mb-1 min-w-4 flex-1 self-end border-b border-dotted border-[color:var(--rule-2)]" />
+                <dd className="shrink-0 text-right text-[color:var(--ink)]">{d.value}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
         <div className="mt-5 flex items-baseline justify-between gap-4 border-t border-[color:var(--ink)] pt-3">
           <span className="text-base font-semibold text-[color:var(--ink)]">{total.label}</span>
           <span className="wide num shrink-0 text-[26px] font-semibold leading-none text-[color:var(--ink)]">{money(total.amount)}</span>

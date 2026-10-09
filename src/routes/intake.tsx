@@ -158,6 +158,10 @@ import { getPositionDuplicateDraft } from "@/lib/position-duplicate.functions";
 import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 import { roleFromSearch } from "@/lib/marketing/role-input";
+import { LiveBrief } from "@/components/intake/live-brief";
+
+/** The step that asks for the role; a visitor arriving with ?role= starts here. */
+const ROLE_STEP_INDEX = Math.max(0, INTAKE_STEPS.findIndex((s) => s.key === "role"));
 
 export const Route = createFileRoute("/intake")({
   /**
@@ -953,6 +957,9 @@ function ExpressIntakePage() {
     if (roleAppliedRef.current || draftPhase !== "ready" || !roleParam) return;
     roleAppliedRef.current = true;
     setState((s) => (s.roleTitle.trim() ? s : { ...s, roleTitle: roleParam }));
+    // Intake opens at the role step with the title filled in; the earlier
+    // details are asked once the brief is drafted.
+    setStepIndex((i) => (i === 0 ? ROLE_STEP_INDEX : i));
   }, [draftPhase, roleParam]);
 
   const applyDraftPayload = (payload: Record<string, unknown>) => {
@@ -2321,9 +2328,23 @@ function ExpressIntakePage() {
   return (
     <FormShell
       width="lg"
+      exitLabel="Save and exit"
       eyebrow="Full role intake"
       title={`Share your role in about ${INTAKE_TOTAL_MINUTES} minutes.`}
       description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
+      progress={{
+        step: stepIndex + 1,
+        total: INTAKE_STEPS.length,
+        label: `Step ${stepIndex + 1} of ${INTAKE_STEPS.length}: ${currentStep.title}`,
+      }}
+      aside={
+        <LiveBrief
+          groups={review.groups}
+          step={stepIndex}
+          roleTitle={state.roleTitle}
+          companyName={state.companyName}
+        />
+      }
     >
       <div
         className="space-y-6"

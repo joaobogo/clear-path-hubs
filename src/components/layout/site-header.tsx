@@ -88,7 +88,10 @@ export function SiteHeader() {
   }, [pathname]);
 
   const candidateMode = isCandidateJourneyPath(pathname);
-  const primary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
+  // On the pilot checkout the page's own form is the one primary action, so
+  // the site button becomes the quiet alternative.
+  const onPilot = pathname === "/pilot" || pathname.startsWith("/pilot/");
+  const primary = candidateMode ? CANDIDATE_PRIMARY_CTA : onPilot ? MESSAGE_CTA : PRIMARY_CTA;
   const sessionCta = useSessionCta();
   const signIn = sessionCta ?? SECONDARY_CTAS.find((c) => c.to === "/login") ?? { to: "/login", label: "Sign in" };
 
@@ -115,7 +118,12 @@ export function SiteHeader() {
           <ProductionLink to={signIn.to} className={cn(linkClass, inactiveClass, "hidden lg:inline-flex")}>
             {signIn.label}
           </ProductionLink>
-          <RunLinkButton to={primary.to} size="sm" className="min-h-11 px-3 text-sm sm:px-4 sm:text-[15px]">
+          <RunLinkButton
+            to={primary.to}
+            size="sm"
+            variant={onPilot ? "ghost" : "primary"}
+            className="min-h-11 px-3 text-sm sm:px-4 sm:text-[15px]"
+          >
             {primary.label}
           </RunLinkButton>
 
@@ -157,7 +165,7 @@ export function SiteHeader() {
                 <RunLinkButton to={primary.to} className="w-full">
                   {primary.label}
                 </RunLinkButton>
-                {!candidateMode ? (
+                {!candidateMode && !onPilot ? (
                   <RunLinkButton to={MESSAGE_CTA.to} variant="ghost" className="w-full">
                     {MESSAGE_CTA.label}
                   </RunLinkButton>

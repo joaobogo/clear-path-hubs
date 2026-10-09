@@ -20,8 +20,8 @@ const page = read("src/routes/pricing.tsx");
 
 describe("/pricing page", () => {
   it("uses the shared CTAs and drops the retired labels", () => {
-    expect(page).toContain("primary={CTA_PRIMARY}");
-    expect(page).toContain("secondary={CTA_MESSAGE}");
+    expect(page).toContain("CTA_PRIMARY.label");
+    expect(page).toContain("CTA_MESSAGE.to");
     for (const f of [
       "src/routes/pricing.tsx",
       "src/content/pricing.ts",
@@ -34,19 +34,32 @@ describe("/pricing page", () => {
     }
   });
 
-  it("has the approved H1 and title built from the price constant", () => {
-    expect(page).toContain("Flat-fee recruiting. ${PRICE_PILOT_DISPLAY} for your first role.");
+  it("has the approved H1 and the title built from the price constant", () => {
+    expect(page).toContain("Your invoice, before you sign.");
     expect(page).toContain("Recruiting Packages & ${PRICE_PILOT_DISPLAY} Pilot | TaaSFlow");
   });
 
-  it("no longer cross-sells FlowPlaced or shows the Continue on TaaSFlow block", () => {
-    expect(page).not.toContain("EcosystemCrossSell");
-    expect(page).not.toContain("PageConnections");
+  it("is one control and one invoice: no plan cards, previews or examples", () => {
+    expect(page).toContain("<PackageSelector");
+    expect(page).toContain("<Receipt");
+    expect(page).toContain("selectedPlanId={stop.id}");
+    for (const gone of [
+      "EcosystemCrossSell",
+      "PageConnections",
+      "PricingTierCard",
+      "SubscriptionTierCard",
+      "LargerPackagesTable",
+      "DecisionWorkspacePreview",
+      "RiskProof",
+      "CaseStudyPreviews",
+      "AgencyFeeComparison",
+    ]) {
+      expect(page).not.toContain(gone);
+    }
   });
 
-  it("does not reuse the shared case-study heading", () => {
-    expect(page).toContain("<CaseStudyPreviews");
-    expect(page).toContain('title="Example engagements by industry"');
+  it("never prints a per-position price on the page", () => {
+    expect(page).not.toMatch(/per position|per role|\/position/i);
   });
 });
 
