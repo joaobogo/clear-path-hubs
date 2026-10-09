@@ -38,9 +38,17 @@ pinned down this round.
 
 ## Needs the owner
 
-1. Run `docs/ops/demo-cleanup-qa-records.sql` in the Supabase SQL editor
-   against the production project (REPORT first, read it, then DELETE, then
-   VERIFY). The sandbox cannot reach the production database.
+1. Remove the two QA records from the demo workspace. Either way uses the
+   same `hard_delete_position` routine, so counts, boards and reports update
+   at once:
+   - In the admin dashboard: Positions → open the role → "Permanently
+     delete" (type DELETE, give a reason). Do it for "[QA] Senior Accountant
+     (delete me)" and "AUDIT-DELETE-ME".
+   - Or run `docs/ops/demo-cleanup-qa-records.sql` in the Supabase SQL
+     editor against the production project (REPORT first, read it, then
+     DELETE, then VERIFY). It also catches a candidate, task, notification
+     or empty organisation that carries the marker.
+   The sandbox cannot reach the production database, so this is yours.
 2. Set `LOVABLE_API_KEY` on the server; without it every role analysis ends
    "failed" (the admin health page now says so).
 3. Schedule `POST /api/public/blueprint-drain` with `CRON_INVOKE_SECRET`
