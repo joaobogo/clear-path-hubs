@@ -86,3 +86,10 @@ pinned down this round.
 5. Still open from the previous round: the RLS hardening SQL in
    `docs/ops/scheduling-removal-cutover.md` §6, and the owner-fact items in
    `docs/audit/2026-10-08-final-audit.md`.
+
+## Deploy status
+
+Merged to `main` in [PR #3](https://github.com/joaobogo/clear-path-hubs/pull/3)
+(`2f7993d4`). Lovable's mirror was still on a local-only commit (`2e7aac92`,
+absent from GitHub) at 07:53 on 9 October; the published site showed the old
+"Request interview" buttons until Lovable pulled `main` and republished.
