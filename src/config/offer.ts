@@ -55,6 +55,8 @@ export const offer = {
   /** Stated beside every comparison. */
   agencyFee: CALCULATOR_DEFAULTS.agencyFeePct,
   channels: CHANNEL_AGENT_COUNT,
+  /** Agents searching across every channel for a role. Owner's figure, 9 October 2026. */
+  agents: 26,
   steps: ["Brief", "Broadcast", "Score", "Sign-off"] as const,
   /**
    * Proof figures that may be published: only those with a recorded source.

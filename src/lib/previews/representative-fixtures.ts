@@ -85,6 +85,26 @@ export const PREVIEW_DECISION_QUEUE: PreviewCandidate[] = [
   },
 ];
 
+// ── The run, as four counts ──────────────────────────────────────────────────
+
+/**
+ * The funnel is always four numbers in one order: reached, matched, scored,
+ * signed. The same words in the hero, the email and the role page. These are
+ * the representative run drawn on the homepage; the first three are agent
+ * work (blue), the last is a person's (ink).
+ */
+export type RunStage = "reached" | "matched" | "scored" | "signed";
+
+export const PREVIEW_RUN_FUNNEL: readonly { key: RunStage; label: string; count: number }[] = [
+  { key: "reached", label: "Reached", count: 6_240 },
+  { key: "matched", label: "Matched", count: 418 },
+  { key: "scored", label: "Scored", count: 64 },
+  { key: "signed", label: "Signed", count: 10 },
+];
+
+/** Time is "Day n, hh:mm" from the approved brief; the list is signed on day 5. */
+export const PREVIEW_RUN_SIGNED_AT = "Day 5, 09:00" as const;
+
 // ── Agent runs ───────────────────────────────────────────────────────────────
 
 export type PreviewAgentRun = {

@@ -15,6 +15,7 @@ describe("offer", () => {
       [100, 64000],
     ]);
     expect(offer.channels).toBe(23);
+    expect(offer.agents).toBe(26);
     expect(offer.agencyFee).toBe(0.2);
     expect(offer.accessMonths).toBe(3);
   });

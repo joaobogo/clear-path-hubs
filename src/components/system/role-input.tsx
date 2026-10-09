@@ -18,15 +18,25 @@ export function RoleInput({
   size = "site",
   defaultRole = "",
   source,
+  suggestions,
+  onRun,
   className,
 }: {
   size?: "site" | "closing";
   defaultRole?: string;
   /** Where the input sits, for analytics (never the typed text). */
   source: string;
+  /** Typical roles offered under the field. */
+  suggestions?: readonly string[];
+  /**
+   * The homepage keeps the visitor on the page and redraws every chapter for
+   * the role. Everywhere else the input opens Intake with the role filled in.
+   */
+  onRun?: (role: string) => void;
   className?: string;
 }) {
   const id = useId();
+  const listId = `${id}-roles`;
   const navigate = useNavigate();
   const [role, setRole] = useState(defaultRole);
 
@@ -34,6 +44,10 @@ export function RoleInput({
     e.preventDefault();
     const clean = cleanRole(role);
     trackEvent("role_typed", { source, has_role: clean.length > 0 });
+    if (onRun) {
+      onRun(clean);
+      return;
+    }
     void navigate({ to: CTA_RUN_ROLE.to, search: clean ? { role: clean } : {} });
   };
 
@@ -64,10 +78,18 @@ export function RoleInput({
           autoComplete="off"
           spellCheck={false}
           placeholder="Registered nurse"
+          list={suggestions ? listId : undefined}
           onChange={(e) => setRole(e.target.value)}
           className="min-w-0 flex-1 self-center bg-transparent font-semibold text-[color:var(--ink)] [font-stretch:110%] placeholder:font-normal placeholder:text-[color:var(--faint)] focus:outline-none"
         />
       </label>
+      {suggestions ? (
+        <datalist id={listId}>
+          {suggestions.map((s) => (
+            <option key={s} value={s} />
+          ))}
+        </datalist>
+      ) : null}
       <button
         type="submit"
         className={cn(

@@ -1,21 +1,12 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowRight,
-  BarChart3,
-  CheckCircle2,
-  FileSearch,
-  LayoutDashboard,
-  UserCheck,
-} from "lucide-react";
+import { ArrowRight, BarChart3, FileSearch, LayoutDashboard, UserCheck } from "lucide-react";
 
-import { HeroDecisionWorkspace } from "@/components/home/hero-decision-workspace";
+import { RunHero } from "@/components/home/run-hero";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
-import { EmployerInquiryForm } from "@/components/marketing/employer-inquiry-form";
 import { PublicPage, PublicSection, SiteShell } from "@/components/marketing/site-shell";
 import { CTA_MESSAGE, CTA_HOW_IT_WORKS, CTA_PRICING, CTA_PRIMARY } from "@/config/cta";
 import {
-  OFFER_EYEBROW,
   OFFER_LAST_UPDATED_LABEL,
   PILOT_IS_PAID_NOTE,
   PROCESS_STEPS,
@@ -26,6 +17,7 @@ import { MAX_POSITIONS, PRICE_PILOT_USD } from "@/config/pricing-core";
 import { HOMEPAGE_FAQ } from "@/lib/homepage-faq";
 import { faqScript, marketingHead } from "@/lib/marketing/head";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
+import { roleFromSearch } from "@/lib/marketing/role-input";
 
 // Homepage metadata is authored inline. The content bundle is deliberately NOT
 // imported here: importing it pulls every blog/industry markdown file into the
@@ -35,6 +27,11 @@ const HOME_TITLE = "Recruiting Subscription & Candidate Sourcing | TaaSFlow";
 const HOME_DESCRIPTION = `Find and evaluate candidates with TaaSFlow recruiting support and a shared workspace. Explore a $${PRICE_PILOT_USD}, one-role pilot for your team.`;
 
 export const Route = createFileRoute("/")({
+  /** The role typed into the hero. Every chapter below speaks about it. */
+  validateSearch: (search: Record<string, unknown>): { role?: string } => {
+    const role = roleFromSearch(search["role"]);
+    return role ? { role } : {};
+  },
   head: () =>
     marketingHead(
       undefined,
@@ -50,13 +47,6 @@ export const Route = createFileRoute("/")({
 });
 
 /* ------------------------------------------------------------------ content */
-
-const TRUST_FACTS = [
-  `One role, $${PRICE_PILOT_USD}, one pilot per company`,
-  "No placement fee",
-  "A recruiter reviews every shortlist",
-  "You make every hiring decision",
-] as const;
 
 const WHAT_YOU_RECEIVE = [
   {
@@ -138,106 +128,11 @@ const primaryButton =
 /* ------------------------------------------------------------------ page */
 
 function Home() {
+  const { role } = Route.useSearch();
   return (
-    <SiteShell hideLinkHub>
-      {/* 1 — HERO: copy and the short inquiry form, then one example illustration */}
-      <section
-        aria-labelledby="home-hero-heading"
-        className="relative overflow-hidden border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-paper)]"
-      >
-        <PublicPage>
-          <div className="grid grid-cols-1 gap-10 pb-10 pt-12 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-14 lg:pt-20">
-            <div className="flex min-w-0 flex-col gap-5">
-              <span className="inline-flex w-fit items-center gap-2 border-l-2 border-[color:var(--brand-ocean-text)] pl-3 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
-                {OFFER_EYEBROW}
-              </span>
-              <h1
-                id="home-hero-heading"
-                className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
-              >
-                Your next shortlist.{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">
-                  Sourced, screened, and ranked.
-                </span>
-              </h1>
-              <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                TaaSFlow helps your team find and evaluate candidates, with recruiting execution
-                and a shared workspace to review the evidence. Your team keeps control of
-                interviews and hiring decisions.
-              </p>
-              <p className="text-base font-semibold text-[color:var(--brand-navy)]">
-                Start with one role for ${PRICE_PILOT_USD}. One pilot per company.
-              </p>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <Link to={CTA_PRIMARY.to} className={primaryButton}>
-                  {CTA_PRIMARY.label} <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-                <Link
-                  to={CTA_HOW_IT_WORKS.to}
-                  className={
-                    "inline-flex min-h-11 items-center rounded-md px-2 text-sm font-semibold text-[color:var(--brand-navy)]/85 underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline " +
-                    focusRing
-                  }
-                >
-                  {CTA_HOW_IT_WORKS.label}
-                </Link>
-              </div>
-              <p className="text-sm">
-                <Link
-                  to="/sample-shortlist"
-                  className={
-                    "inline-flex min-h-11 items-center rounded font-semibold text-[color:var(--brand-ocean-text)] underline underline-offset-4 hover:text-[color:var(--brand-navy)] " +
-                    focusRing
-                  }
-                >
-                  See a sample top 10
-                </Link>
-              </p>
-              <p className="text-xs text-[color:var(--brand-navy)]/80">
-                Looking for a job instead?{" "}
-                <Link
-                  to="/jobs"
-                  className={
-                    "inline-flex min-h-11 items-center gap-1 rounded font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline " +
-                    focusRing
-                  }
-                >
-                  Browse jobs <ArrowRight className="h-3 w-3" aria-hidden />
-                </Link>
-              </p>
-            </div>
-
-            <div id="inquiry" className="min-w-0 scroll-mt-24">
-              <EmployerInquiryForm source="home-hero" />
-            </div>
-          </div>
-
-          {/* One illustration, below the first inquiry opportunity */}
-          <div className="mx-auto max-w-4xl pb-14 sm:pb-16 lg:pb-20">
-            <HeroDecisionWorkspace />
-          </div>
-        </PublicPage>
-      </section>
-
-      {/* 2 — TRUST: factual attributes only */}
-      <section
-        aria-label="What to expect"
-        className="bg-[color:var(--blue-600)] text-white"
-      >
-        <PublicPage>
-          <ul className="grid grid-cols-1 gap-x-8 gap-y-3 py-6 sm:grid-cols-2 lg:grid-cols-4">
-            {TRUST_FACTS.map((t) => (
-              <li key={t} className="flex min-w-0 items-start gap-2 text-sm font-medium">
-                <CheckCircle2
-                  className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-sky)]"
-                  aria-hidden
-                />
-                <span className="min-w-0">{t}</span>
-              </li>
-            ))}
-          </ul>
-        </PublicPage>
-      </section>
+    <SiteShell hideLinkHub role={role}>
+      {/* The cold open: headline, role input, top 10, the run bar. */}
+      <RunHero role={role} />
 
       {/* 3 — WHAT YOU RECEIVE */}
       <PublicSection>
@@ -473,14 +368,6 @@ function Home() {
                 {CTA_MESSAGE.label}
               </Link>
             </div>
-            <p className="mt-5">
-              <a
-                href="#inquiry"
-                className="inline-flex min-h-11 items-center rounded text-sm font-medium text-white/80 underline underline-offset-4 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-              >
-                Or send a short inquiry
-              </a>
-            </p>
           </div>
         </PublicPage>
       </PublicSection>
