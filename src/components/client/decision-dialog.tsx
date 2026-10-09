@@ -22,16 +22,18 @@ import {
   decisionReasonError,
 } from "@/lib/client-decision-reasons";
 
+/**
+ * Decisions a client takes inside TaaSFlow. Interviews, offers and hires are
+ * not among them: they happen directly between the client and the candidate,
+ * and are tracked on the candidates board rather than decided here.
+ */
 export type DecisionActionKey =
   | "shortlist"
-  | "request_interview"
   | "request_more_information"
   | "hold"
   | "request_contact_release"
   | "submit_feedback"
-  | "not_moving_forward"
-  | "offer"
-  | "hire";
+  | "not_moving_forward";
 
 export type DecisionPayload = {
   action: DecisionActionKey;
@@ -59,13 +61,6 @@ const CONFIG: Record<DecisionActionKey, Config> = {
       "We will let the TaaSFlow team know you want to take this candidate further. Nothing is committed to the candidate yet.",
     confirmLabel: "Shortlist",
     notePlaceholder: "Optional note for the TaaSFlow team",
-  },
-  request_interview: {
-    title: "Request an interview",
-    description:
-      "The TaaSFlow team will coordinate availability with the candidate and come back to you with times.",
-    confirmLabel: "Request interview",
-    notePlaceholder: "Preferred times, format, or who will attend (optional)",
   },
   request_more_information: {
     title: "Request more information",
@@ -110,18 +105,6 @@ const CONFIG: Record<DecisionActionKey, Config> = {
     reasons: DECLINE_REASONS,
     reasonLabel: "Main reason",
     notePlaceholder: "Anything else that would help us calibrate (optional)",
-  },
-  offer: {
-    title: "Extend an offer",
-    description: "The TaaSFlow team will prepare the offer documents and confirm the details with you before anything reaches the candidate.",
-    confirmLabel: "Extend offer",
-    notePlaceholder: "Offer context (optional)",
-  },
-  hire: {
-    title: "Mark as hired",
-    description: "This records the placement and notifies the TaaSFlow team to close the candidate's journey for this role.",
-    confirmLabel: "Mark hired",
-    notePlaceholder: "Start date or notes (optional)",
   },
 };
 

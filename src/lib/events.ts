@@ -53,6 +53,18 @@ export const EVENT_TYPES = [
 ] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
+
+/**
+ * Interview-scheduling events. TaaSFlow no longer schedules interviews, so
+ * nothing emits these any more. The names stay in the catalogue only so
+ * notifications already stored under them still render; the emitter drops them.
+ */
+export const RETIRED_SCHEDULING_EVENTS: ReadonlySet<EventType> = new Set<EventType>([
+  "interview_requested",
+  "interview_scheduled",
+  "interview_rescheduled",
+  "interview_cancelled",
+]);
 export type Audience = "admin" | "client" | "candidate";
 
 export type CopyEntry = { title: string; body?: string };
@@ -71,7 +83,7 @@ export const ADMIN_COPY: Partial<Record<EventType, CopyEntry>> = {
   candidate_processing_completed: { title: "Processing finished", body: "Candidate processing pipeline finished." },
   client_shortlisted: { title: "Client shortlisted a candidate", body: "A client just moved a candidate to shortlist." },
   client_feedback_submitted: { title: "Client feedback received" },
-  interview_requested: { title: "Your interview request is waiting on a time" },
+  interview_requested: { title: "Candidate moved to interview stage" },
   message_sent: { title: "New client message" },
   cv_parse_failed: { title: "CV parsing failed", body: "A CV could not be parsed and needs attention." },
   screening_needs_review: { title: "Screening needs review", body: "A screening result requires a human decision." },
@@ -97,9 +109,9 @@ export const CLIENT_COPY: Partial<Record<EventType, CopyEntry>> = {
   position_activated: { title: "Your role is live", body: "Candidates can now apply." },
   position_reopened: { title: "Your role is open again", body: "We resumed sourcing for this position." },
   candidate_published: { title: "New candidate delivered", body: "A vetted candidate is available in your workspace." },
-  interview_requested: { title: "You requested an interview", body: "This interview still needs a confirmed time" },
-  interview_scheduled: { title: "Interview scheduled" },
-  interview_rescheduled: { title: "Interview being rescheduled", body: "New times have gone out to the candidate." },
+  interview_requested: { title: "Moved to interview stage", body: "Interviews are arranged directly with the candidate." },
+  interview_scheduled: { title: "Interview recorded" },
+  interview_rescheduled: { title: "Interview updated" },
   interview_completed: { title: "Interview completed" },
   interview_cancelled: { title: "Interview cancelled" },
   contact_released: { title: "Contact details available", body: "You can now reach this candidate directly." },
@@ -124,9 +136,9 @@ export const CANDIDATE_COPY: Partial<Record<EventType, CopyEntry>> = {
   clarification_requested: { title: "We need a bit more information", body: "Please check your application for an open question." },
   candidate_published: { title: "You are under consideration", body: "You have advanced to the next step." },
   client_shortlisted: { title: "You have been shortlisted", body: "The client has shortlisted you for their role." },
-  interview_requested: { title: "Interview request", body: "The client would like to interview you." },
-  interview_scheduled: { title: "Your interview is scheduled" },
-  interview_rescheduled: { title: "New interview times", body: "Please choose a new time that works for you." },
+  interview_requested: { title: "Interview stage", body: "The employer will contact you directly." },
+  interview_scheduled: { title: "Interview stage", body: "The employer will contact you directly." },
+  interview_rescheduled: { title: "Interview update", body: "The employer will contact you directly." },
   interview_completed: { title: "Interview completed", body: "Thanks for your time — we will follow up." },
   interview_cancelled: { title: "Interview cancelled", body: "We will be in touch with next steps." },
   candidate_hired: { title: "Congratulations — offer stage", body: "The client has moved forward with an offer." },
@@ -166,9 +178,9 @@ export const ACTIVITY_LABELS: Record<EventType, string> = {
   client_shortlisted: "Candidate shortlisted",
   client_feedback_submitted: "Feedback added",
   candidate_stage_changed: "Status changed",
-  interview_requested: "Interview requested",
-  interview_scheduled: "Interview scheduled",
-  interview_rescheduled: "Interview rescheduled",
+  interview_requested: "Moved to interview stage",
+  interview_scheduled: "Interview recorded",
+  interview_rescheduled: "Interview updated",
   interview_completed: "Interview completed",
   interview_cancelled: "Interview cancelled",
   candidate_hired: "Placement confirmed",
@@ -217,11 +229,7 @@ const CLIENT_ACTIVITY: readonly EventType[] = [
   "client_shortlisted",
   "client_feedback_submitted",
   "candidate_stage_changed",
-  "interview_requested",
-  "interview_scheduled",
-  "interview_rescheduled",
   "interview_completed",
-  "interview_cancelled",
   "candidate_hired",
   "message_sent",
   "document_added",
@@ -238,11 +246,7 @@ const CANDIDATE_ACTIVITY: readonly EventType[] = [
   "clarification_requested",
   "candidate_published",
   "client_shortlisted",
-  "interview_requested",
-  "interview_scheduled",
-  "interview_rescheduled",
   "interview_completed",
-  "interview_cancelled",
   "candidate_hired",
   "message_sent",
   "document_added",

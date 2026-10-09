@@ -26,7 +26,6 @@ function buildRole(
   overrides: {
     firstCandidate?: { actualDays?: number | null };
     fullShortlist?: { actualDays?: number | null; targetSize?: number };
-    interviewSlots?: { avgHours?: number | null; hours?: number };
   } = {},
   status = "active",
 ): RoleSla {
@@ -34,7 +33,6 @@ function buildRole(
 
   const firstCandidateOverride = overrides.firstCandidate ?? { actualDays: null };
   const fullShortlistOverride = overrides.fullShortlist ?? { actualDays: null, targetSize: 3 };
-  const interviewSlotsOverride = overrides.interviewSlots ?? { avgHours: null, hours: 24 };
 
   // First candidate
   const firstActualDays = firstCandidateOverride.actualDays ?? null;
@@ -73,39 +71,6 @@ function buildRole(
     variance: shortlistActualAt === null ? "Not measured" : shortlistBase.variance,
   });
 
-  // Interview slots
-  const slotHours = interviewSlotsOverride.hours ?? 24;
-  const avgHours = interviewSlotsOverride.avgHours ?? null;
-  const ivMetric: SlaMetric =
-    avgHours === null
-      ? {
-          key: "interview_slots",
-          label: COMMITMENT_LABEL.interview_slots,
-          promise: `Interview slots within ${slotHours}h of a request`,
-          dueAt: null,
-          actualAt: null,
-          actual: "no requests yet",
-          actualValue: null,
-          varianceValue: null,
-          varianceUnit: "hours",
-          variance: "—",
-          state: "pending",
-        }
-      : {
-          key: "interview_slots",
-          label: COMMITMENT_LABEL.interview_slots,
-          promise: `Interview slots within ${slotHours}h of a request`,
-          dueAt: null,
-          actualAt: dateOffset(baseline, 1),
-          actual: `${amountLabel(avgHours, "hours")} average`,
-          actualValue: avgHours,
-          varianceValue: avgHours - slotHours,
-          varianceUnit: "hours",
-          variance: varianceLabel(avgHours - slotHours, "hours"),
-          state: avgHours <= slotHours ? "met" : "missed",
-        };
-  metrics.push(ivMetric);
-
   return {
     positionId: `pos-${title}`,
     title,
@@ -140,39 +105,35 @@ describe("SLA commitment arithmetic", () => {
       buildRole("A", baseline, {
         firstCandidate: { actualDays: 0 },
         fullShortlist: { actualDays: 3, targetSize: 3 },
-        interviewSlots: { avgHours: 30, hours: 24 },
       }),
       buildRole("B", baseline, {
         firstCandidate: { actualDays: 6 },
         fullShortlist: { actualDays: null, targetSize: 3 },
-        interviewSlots: { avgHours: 18, hours: 24 },
       }),
     ];
     const summary = summarise(roles);
-    // A: first=0d (met), full=3d (met), slots=30h (missed)
-    // B: first=6d (missed), full=null (missed, but no invented variance), slots=18h (met)
-    expect(summary.total).toBe(6); // 2 roles × 3 commitments
-    expect(summary.measured).toBe(6); // all six have an outcome, even though the B shortlist variance is not invented
-    expect(summary.met).toBe(3); // A first, A full, B slots
-    expect(summary.onTimeRate).toBe(50); // 3/6 = 50%
+    // A: first=0d (met), full=3d (met)
+    // B: first=6d (missed), full=null (missed, but no invented variance)
+    expect(summary.total).toBe(4); // 2 roles × 2 commitments
+    expect(summary.measured).toBe(4); // all four have an outcome, even though the B shortlist variance is not invented
+    expect(summary.met).toBe(2); // A first, A full
+    expect(summary.onTimeRate).toBe(50); // 2/4 = 50%
   });
 
-  it("includes every measured row in the average variance, converting hours to days", () => {
+  it("includes every measured row in the average variance", () => {
     const roles: RoleSla[] = [
       buildRole("A", baseline, {
         firstCandidate: { actualDays: 0 }, // variance -5 days
         fullShortlist: { actualDays: 3, targetSize: 3 }, // variance -2 days
-        interviewSlots: { avgHours: 30, hours: 24 }, // variance +6 hours = +0.25 days
       }),
       buildRole("B", baseline, {
         firstCandidate: { actualDays: 6 }, // variance +1 day
         fullShortlist: { actualDays: null, targetSize: 3 }, // missed, variance not invented
-        interviewSlots: { avgHours: 18, hours: 24 }, // variance -6 hours = -0.25 days
       }),
     ];
     const summary = summarise(roles);
-    // measured variances: -5, -2, +0.25, +1, -0.25 = -6 total / 5 = -1.2
-    expect(summary.averageVarianceDays).toBeCloseTo(-1.2, 2);
+    // measured variances: -5, -2, +1 = -6 total / 3 = -2
+    expect(summary.averageVarianceDays).toBeCloseTo(-2, 2);
   });
 
   it("keeps the plan table and overview scorecard numbers identical for the same commitment", () => {
@@ -180,7 +141,6 @@ describe("SLA commitment arithmetic", () => {
       buildRole("A", baseline, {
         firstCandidate: { actualDays: 0 },
         fullShortlist: { actualDays: 3, targetSize: 3 },
-        interviewSlots: { avgHours: 30, hours: 24 },
       }),
     ];
     const rollup = rollupCommitments(roles);

@@ -2,7 +2,7 @@
  * Public Integrations directory — verified connections only.
  * ------------------------------------------------------------------
  * Every listing below traces to code in this repository:
- *   - Stripe, Attio, Calendly, transactional email: probed by
+ *   - Stripe, Attio, transactional email: probed by
  *     `src/lib/integration-health.server.ts` and shown in admin health.
  *   - Microsoft Teams: `src/lib/teams-notify.server.ts`.
  *   - Google sign-in: Supabase Auth social provider used by `/login`.
@@ -16,7 +16,7 @@
  * internal configuration value may appear in this file.
  */
 
-export const INTEGRATIONS_LAST_REVIEWED = "4 August 2026";
+export const INTEGRATIONS_LAST_REVIEWED = "7 October 2026";
 
 export type Availability = "available" | "beta" | "custom" | "planned";
 
@@ -29,7 +29,6 @@ export const AVAILABILITY_LABEL: Record<Availability, string> = {
 
 export type IntegrationCategory =
   | "crm"
-  | "calendar"
   | "email"
   | "messaging"
   | "payments"
@@ -45,7 +44,6 @@ export type IntegrationCategory =
 export const CATEGORY_LABEL: Record<IntegrationCategory, string> = {
   ats: "Applicant tracking systems",
   crm: "CRM",
-  calendar: "Calendar",
   email: "Email",
   messaging: "Messaging",
   payments: "Payments",
@@ -64,7 +62,6 @@ export const CATEGORY_ORDER: IntegrationCategory[] = [
   "api",
   "webhooks",
   "crm",
-  "calendar",
   "email",
   "messaging",
   "payments",
@@ -96,6 +93,14 @@ export interface Integration {
   docs: { label: string; to: string; hash?: string } | null;
   /** Only for `planned` listings: what has to be true before it ships. */
   plannedNote?: string;
+  /**
+   * `false` marks internal plumbing: systems TaaSFlow runs for itself that a
+   * buyer cannot connect to or use (our own CRM mirror, payment webhooks,
+   * website analytics, in-workspace analytics). They stay in this file for the
+   * code and the audit trail that read it, but the public integrations page
+   * lists only entries where this is not `false`. Omitted means public.
+   */
+  public?: boolean;
 }
 
 export const INTEGRATIONS: Integration[] = [
@@ -116,7 +121,7 @@ export const INTEGRATIONS: Integration[] = [
     healthVisibility: false,
     healthNote:
       "No health panel yet. A failed connection surfaces as an error in your assistant.",
-    docs: { label: "Platform overview", to: "/platform" },
+    docs: { label: "How it works", to: "/how-it-works" },
   },
   {
     id: "intake-api",
@@ -137,6 +142,7 @@ export const INTEGRATIONS: Integration[] = [
   },
   {
     id: "payment-webhooks",
+    public: false,
     name: "Payment webhooks",
     category: "webhooks",
     availability: "available",
@@ -158,7 +164,7 @@ export const INTEGRATIONS: Integration[] = [
     category: "webhooks",
     availability: "planned",
     purpose:
-      "Push hiring events — shortlist released, interview scheduled, offer accepted — into your own systems as they happen.",
+      "Push hiring events — shortlist released, offer accepted — into your own systems as they happen.",
     connectionMethod: "Not built yet.",
     dataExchanged: "Not applicable until the feature exists.",
     permissions: "Not applicable until the feature exists.",
@@ -169,9 +175,10 @@ export const INTEGRATIONS: Integration[] = [
       "The internal event model exists; subscriber management, retries and signing are not built. No delivery date is promised.",
   },
 
-  /* ------------------------------------------------------ crm / calendar */
+  /* ------------------------------------------------------ crm */
   {
     id: "attio",
+    public: false,
     name: "Attio",
     category: "crm",
     availability: "available",
@@ -186,22 +193,6 @@ export const INTEGRATIONS: Integration[] = [
     healthNote:
       "Probed from the admin integration health page: reachability, authorisation and the provider's own error text.",
     docs: { label: "How enquiries are handled", to: "/privacy" },
-  },
-  {
-    id: "calendly",
-    name: "Calendly",
-    category: "calendar",
-    availability: "available",
-    purpose:
-      "Books intro calls and interview slots against real availability instead of an email thread.",
-    connectionMethod:
-      "Managed connector authorised by TaaSFlow, plus an embedded scheduling flow on our public pages.",
-    dataExchanged:
-      "Outbound: invitee name, email and the meeting type. Inbound: the confirmed slot and its time zone.",
-    permissions: "Read scheduling links and availability, and read booked events.",
-    healthVisibility: true,
-    healthNote: "Probed from the admin integration health page before a booking page is shown.",
-    docs: { label: "Book a call", to: "/book" },
   },
 
   /* ------------------------------------------------------ email / messaging */
@@ -237,7 +228,7 @@ export const INTEGRATIONS: Integration[] = [
     permissions: "Post messages to the one channel you nominate.",
     healthVisibility: false,
     healthNote:
-      "No health probe yet. Failed posts are logged server-side and swallowed so nothing user-facing breaks.",
+      "No health probe yet. If a post fails, the application or enquiry still goes through.",
     docs: { label: "Ask us to enable it", to: "/contact" },
   },
 
@@ -246,7 +237,9 @@ export const INTEGRATIONS: Integration[] = [
     id: "stripe",
     name: "Payments",
     category: "payments",
-    availability: "available",
+    availability: "planned",
+    plannedNote:
+      "Online checkout is switched off for now. Packages are requested and invoiced by TaaSFlow directly. No date is promised for turning it on.",
     purpose:
       "Takes payment for a pilot or a plan before a role goes live, with tax calculated at checkout.",
     connectionMethod:
@@ -277,6 +270,7 @@ export const INTEGRATIONS: Integration[] = [
   /* ------------------------------------------------------ analytics */
   {
     id: "web-analytics",
+    public: false,
     name: "Website analytics and consent",
     category: "analytics",
     availability: "available",
@@ -293,6 +287,7 @@ export const INTEGRATIONS: Integration[] = [
   },
   {
     id: "workspace-analytics",
+    public: false,
     name: "In-workspace hiring analytics",
     category: "analytics",
     availability: "available",
@@ -305,7 +300,7 @@ export const INTEGRATIONS: Integration[] = [
     healthVisibility: true,
     healthNote:
       "Every metric states its own freshness and says so plainly when there is not enough data to answer.",
-    docs: { label: "Hiring intelligence", to: "/system" },
+    docs: { label: "How scoring works", to: "/how-it-works" },
   },
 
   /* ------------------------------------------------------ planned */
@@ -374,4 +369,12 @@ export function integrationsByCategory(): {
 export const AVAILABILITY_COUNTS = INTEGRATIONS.reduce<Record<Availability, number>>(
   (acc, i) => ({ ...acc, [i.availability]: (acc[i.availability] ?? 0) + 1 }),
   { available: 0, beta: 0, custom: 0, planned: 0 },
+);
+
+/** What the public integrations page lists: everything except internal plumbing. */
+export const PUBLIC_INTEGRATIONS: Integration[] = INTEGRATIONS.filter((i) => i.public !== false);
+
+/** Connections a buyer can use today (available, beta or custom setup). */
+export const USABLE_INTEGRATIONS: Integration[] = PUBLIC_INTEGRATIONS.filter(
+  (i) => i.availability !== "planned",
 );

@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_MESSAGE } from "@/config/cta";
+import { ATS_NOTE, JOB_BOARD_NOTE } from "@/config/offer-facts";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 import { Input } from "@/components/ui/input";
 import {
-  INTEGRATIONS,
+  PUBLIC_INTEGRATIONS,
   INTEGRATIONS_LAST_REVIEWED,
   AVAILABILITY_LABEL,
   CATEGORY_LABEL,
@@ -70,9 +72,9 @@ function IntegrationCard({ item }: { item: Integration }) {
     <article className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white/70 p-5 sm:p-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold tracking-tight">
+          <h4 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold tracking-tight">
             {item.name}
-          </h3>
+          </h4>
           <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
             {CATEGORY_LABEL[item.category]}
           </p>
@@ -127,13 +129,13 @@ function IntegrationsPage() {
   const [availability, setAvailability] = useState<Availability | "all">("all");
 
   const activeCategories = useMemo(
-    () => CATEGORY_ORDER.filter((c) => INTEGRATIONS.some((i) => i.category === c)),
+    () => CATEGORY_ORDER.filter((c) => PUBLIC_INTEGRATIONS.some((i) => i.category === c)),
     [],
   );
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return INTEGRATIONS.filter((i) => {
+    return PUBLIC_INTEGRATIONS.filter((i) => {
       if (category !== "all" && i.category !== category) return false;
       if (availability !== "all" && i.availability !== availability) return false;
       if (!q) return true;
@@ -141,13 +143,22 @@ function IntegrationsPage() {
     });
   }, [query, category, availability]);
 
-  const grouped = useMemo(
-    () =>
-      activeCategories
-        .map((c) => ({ category: c, items: results.filter((i) => i.category === c) }))
-        .filter((g) => g.items.length > 0),
+  const groupBy = (items: Integration[]) =>
+    activeCategories
+      .map((c) => ({ category: c, items: items.filter((i) => i.category === c) }))
+      .filter((g) => g.items.length > 0);
+
+  const usableGroups = useMemo(
+    () => groupBy(results.filter((i) => i.availability !== "planned")),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeCategories, results],
   );
+  const plannedGroups = useMemo(
+    () => groupBy(results.filter((i) => i.availability === "planned")),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [activeCategories, results],
+  );
+  const grouped = [...usableGroups, ...plannedGroups];
 
   const chip = (active: boolean) =>
     `rounded-full border px-3 py-1.5 text-sm transition ${
@@ -169,6 +180,8 @@ function IntegrationsPage() {
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
             Each listing states its purpose, how the connection is made, what data crosses the
             boundary and what permissions it needs. Anything not built yet is marked Planned.
+            Systems TaaSFlow runs for itself, such as our own billing and website analytics, are not
+            listed here. {ATS_NOTE} {JOB_BOARD_NOTE}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3 text-sm text-[color:var(--brand-navy)]/70">
@@ -254,28 +267,49 @@ function IntegrationsPage() {
                   to="/contact"
                   className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-medium text-white"
                 >
-                  Request an integration
+                  {CTA_MESSAGE.label}
                   <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-10 space-y-12">
-              {grouped.map((group) => (
-                <section key={group.category} id={group.category} aria-labelledby={`h-${group.category}`}>
-                  <h2
-                    id={`h-${group.category}`}
-                    className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight"
-                  >
-                    {CATEGORY_LABEL[group.category]}
-                  </h2>
-                  <div className="mt-5 grid gap-5 lg:grid-cols-2">
-                    {group.items.map((item) => (
-                      <IntegrationCard key={item.id} item={item} />
-                    ))}
+            <div className="mt-10 space-y-16">
+              {[
+                { id: "usable", title: "Connections you can use", groups: usableGroups },
+                { id: "planned", title: "Planned, not built yet", groups: plannedGroups },
+              ]
+                .filter((section) => section.groups.length > 0)
+                .map((section) => (
+                  <div key={section.id} aria-labelledby={`section-${section.id}`}>
+                    <h2
+                      id={`section-${section.id}`}
+                      className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight"
+                    >
+                      {section.title}
+                    </h2>
+                    <div className="mt-6 space-y-12">
+                      {section.groups.map((group) => (
+                        <section
+                          key={group.category}
+                          id={section.id === "usable" ? group.category : `planned-${group.category}`}
+                          aria-labelledby={`h-${section.id}-${group.category}`}
+                        >
+                          <h3
+                            id={`h-${section.id}-${group.category}`}
+                            className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight"
+                          >
+                            {CATEGORY_LABEL[group.category]}
+                          </h3>
+                          <div className="mt-5 grid gap-5 lg:grid-cols-2">
+                            {group.items.map((item) => (
+                              <IntegrationCard key={item.id} item={item} />
+                            ))}
+                          </div>
+                        </section>
+                      ))}
+                    </div>
                   </div>
-                </section>
-              ))}
+                ))}
             </div>
           )}
         </PublicPage>
@@ -284,8 +318,8 @@ function IntegrationsPage() {
       <CtaSection
         title="Need a connection that is not listed?"
         description="Tell us which system you run and what should flow between it and TaaSFlow. We build integrations by demand, and we will tell you honestly whether it is on the roadmap."
-        primary={{ to: "/contact", label: "Request an integration" }}
-        secondary={{ to: "/platform", label: "See the platform" }}
+        primary={CTA_MESSAGE}
+        secondary={{ to: "/how-it-works", label: "See how it works" }}
       />
     </SiteShell>
   );

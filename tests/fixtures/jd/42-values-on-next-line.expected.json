@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Senior Accountant",
+    "seniority": "senior",
+    "location": "Austin, TX",
+    "team": "Finance Operations"
+  },
+  "empty": [
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "CPA or equivalent",
+      "Month-end close"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

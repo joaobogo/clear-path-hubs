@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { Markdown, slugifyHeading } from "@/components/marketing/markdown";
 import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 import { resolveBlogAuthor } from "@/content/blog-authors";
+import { resolveBlogRedirect } from "@/content/blog-redirects";
 import {
   estimateReadMinutes,
   getBlogPost,
 } from "@/lib/marketing/content";
 import { articleScript, marketingHead } from "@/lib/marketing/head";
+import { isNoindexBlogSlug } from "@/lib/seo/blog-noindex";
 import {
   BLOG_CATEGORY_SLUGS,
   BLOG_METADATA,
@@ -20,6 +22,18 @@ import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/blog/$slug")({
+  // Retired posts (consolidated into one guide per industry) 301 to their
+  // replacement. See src/content/blog-redirects.ts.
+  beforeLoad: ({ params }) => {
+    const target = resolveBlogRedirect(params.slug);
+    if (target) {
+      throw redirect({
+        to: "/blog/$slug",
+        params: { slug: target },
+        statusCode: 301,
+      });
+    }
+  },
   loader: ({ params }) => {
     const entry = getBlogPost(params.slug);
     if (!entry) throw notFound();
@@ -48,7 +62,7 @@ export const Route = createFileRoute("/blog/$slug")({
     // a post whose markdown front matter is thin still shares a real title and
     // description instead of its URL slug.
     const manifest = BLOG_METADATA[params.slug] as
-      | { title?: string; description?: string }
+      | { title?: string; description?: string; category?: string; tags?: readonly string[] }
       | undefined;
     const headline = metaBag.title || manifest?.title || params.slug;
     const summary = metaBag.description || manifest?.description;
@@ -64,6 +78,7 @@ export const Route = createFileRoute("/blog/$slug")({
       },
       {
         image: cover,
+        ...(isNoindexBlogSlug(params.slug) ? { robots: "noindex, follow" } : {}),
         breadcrumbs: [
           { name: "Blog", path: "/blog" },
           {
@@ -77,6 +92,8 @@ export const Route = createFileRoute("/blog/$slug")({
             ...(summary ? { description: summary } : {}),
             path: `/blog/${params.slug}`,
             ...(cover ? { image: cover } : {}),
+            ...(manifest?.category ? { articleSection: manifest.category } : {}),
+            ...(manifest?.tags?.length ? { keywords: manifest.tags } : {}),
             ...(metaBag["article:published_time"]
               ? { datePublished: metaBag["article:published_time"] }
               : {}),
@@ -212,18 +229,6 @@ function BlogPost() {
       .filter(Boolean)
       .slice(0, 3) as typeof INDUSTRY_ENTRIES;
   }, [entryAny.industry, title, description, tags]);
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: title,
-    datePublished: published,
-    dateModified: updated,
-    author: { "@type": author.type, name: author.name, ...(author.url ? { url: author.url } : {}) },
-    publisher: { "@type": "Organization", name: "TaaSFlow" },
-    articleSection: category,
-    keywords: tags.join(", "),
-  };
 
   return (
     <SiteShell>
@@ -492,12 +497,6 @@ function BlogPost() {
           )}
         </div>
       </div>
-
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
     </SiteShell>
   );
 }

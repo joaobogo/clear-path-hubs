@@ -104,10 +104,10 @@ export async function runWeeklyDigest(options: { dryRun?: boolean } = {}): Promi
           .eq("position_id", p.id)
           .eq("stage", "delivered"),
         supabaseAdmin
-          .from("interviews")
+          .from("candidate_matches")
           .select("id", { count: "exact", head: true })
           .eq("position_id", p.id)
-          .gte("scheduled_at", nowIso),
+          .eq("stage", "interview_process"),
         supabaseAdmin
           .from("candidate_matches")
           .select("stage")
@@ -132,7 +132,7 @@ export async function runWeeklyDigest(options: { dryRun?: boolean } = {}): Promi
           awaiting > 0
             ? `Review ${awaiting} shortlisted candidate${awaiting === 1 ? "" : "s"}`
             : interviews > 0
-              ? "Attend the booked interviews"
+              ? "Arrange interviews directly with your candidates"
               : "We keep sourcing — nothing needed from you",
       });
     }

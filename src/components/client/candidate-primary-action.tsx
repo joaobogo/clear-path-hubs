@@ -15,13 +15,10 @@ import {
 import type { MatchStage } from "@/lib/client-match-stage";
 import { isNotRecommendedFit } from "@/lib/client-fit-presentation";
 
-type PrimaryActionKey = "shortlist" | "request_interview" | "offer" | "hire" | "not_moving_forward";
+type PrimaryActionKey = "shortlist" | "not_moving_forward";
 
 const RESULT_STAGE: Record<PrimaryActionKey, MatchStage> = {
   shortlist: "shortlisted",
-  request_interview: "interview_process",
-  offer: "offer",
-  hire: "hired",
   not_moving_forward: "not_moving_forward",
 };
 
@@ -35,63 +32,21 @@ const UNDO_TOAST_MS = 12_000;
 type AdvanceStep = { action: PrimaryActionKey; label: string; done: string };
 
 /**
- * The next decision for a candidate.
+ * The one-click decision for a candidate, derived from the stage alone.
  *
- * `interviewRequested` is not cosmetic: a candidate sits at stage
- * `shortlisted` from the moment an interview is asked for until a time is
- * confirmed, so deriving the action from the stage alone offered "Request
- * interview" for two candidates the overview was simultaneously asking the
- * client to *confirm a time* for, and whom /admin/interviews listed as
- * "requested · awaiting a time" (audit #6, A6-23). Asking twice for something
- * already asked for is the client's most confusing possible state.
+ * TaaSFlow delivers the list; it does not run interviews or offers. Those
+ * happen directly between the employer and the candidate, so no card or row
+ * carries an interview, offer or hire button. Those stages exist only as
+ * tracking columns on the candidates board, where a card is dragged to record
+ * what happened off-system.
  */
-export function advanceFor(
-  stage: MatchStage,
-  interviewRequested = false,
-  interviewCalledOff = false,
-  interviewCompleted = false,
-): AdvanceStep | null {
-  if (stage === "shortlisted" && interviewRequested) {
-    // The ball is with us, not with them. No advance action is offered.
-    return null;
-  }
-  // A cancellation does not move the stage, so the stage still says
-  // interview_process and this offered "Make offer" for someone whose only
-  // interview was called off (audit 1 Sep, F6). The next step is to arrange
-  // another one, which is what the shortlisted step already is.
-  // "Make offer" needs an interview to have HAPPENED.
-  //
-  // The action came from the stage alone, so a candidate at interview_process
-  // whose only interview was still awaiting a slot was offered the chance to
-  // make an offer to someone the client had never met (audit 1 Sep, F20b).
-  // Lane counting stays on the stage, as client-pipeline-lane.ts documents —
-  // that rule is right for counting and wrong for choosing the next action.
-  if (
-    stage === "interview_process" &&
-    !interviewCompleted &&
-    !interviewCalledOff &&
-    !interviewRequested
-  ) {
-    // An interview is arranged or under way. Nothing for the client to do.
-    return null;
-  }
-  if (stage === "interview_process" && interviewCalledOff && !interviewRequested) {
-    return {
-      action: "request_interview",
-      label: "Request interview",
-      done: "Interview requested",
-    };
-  }
+export function advanceFor(stage: MatchStage): AdvanceStep | null {
   return (
     {
       delivered: { action: "shortlist", label: "Shortlist", done: "Added to your shortlist" },
-      shortlisted: {
-        action: "request_interview",
-        label: "Request interview",
-        done: "Interview requested",
-      },
-      interview_process: { action: "offer", label: "Make offer", done: "Moved to offer stage" },
-      offer: { action: "hire", label: "Mark hired", done: "Marked as hired" },
+      shortlisted: null,
+      interview_process: null,
+      offer: null,
       hired: null,
       not_moving_forward: {
         action: "shortlist",
@@ -115,9 +70,6 @@ export function CandidatePrimaryAction({
   size = "sm",
   fitLabel = null,
   score = null,
-  interviewRequested = false,
-  interviewCalledOff = false,
-  interviewCompleted = false,
 }: {
   orgId: string;
   matchId: string;
@@ -128,12 +80,6 @@ export function CandidatePrimaryAction({
   fitLabel?: string | null;
   /** Fit score 0-100, when the surface has it. */
   score?: number | null;
-  /** An interview has been asked for and is waiting on a confirmed time. */
-  interviewRequested?: boolean;
-  /** Every interview was called off and none held. */
-  interviewCalledOff?: boolean;
-  /** An interview was actually held. */
-  interviewCompleted?: boolean;
 }) {
   const queryClient = useQueryClient();
   const search = useSearch({ strict: false }) as { org?: string };
@@ -152,7 +98,7 @@ export function CandidatePrimaryAction({
   React.useEffect(() => setOptimistic(null), [stage]);
 
   const shownStage = optimistic ?? stage;
-  const advance = advanceFor(shownStage, interviewRequested, interviewCalledOff, interviewCompleted);
+  const advance = advanceFor(shownStage);
   const notRecommended = isNotRecommendedFit(fitLabel, score);
 
   async function runUndo(fromStage: MatchStage) {
@@ -171,17 +117,6 @@ export function CandidatePrimaryAction({
   }
 
   async function run(action: PrimaryActionKey, done: string) {
-    if (action === "request_interview") {
-      const search = new URLSearchParams(window.location.search);
-      const org = search.get("org");
-      const preview = search.get("preview");
-      const params = new URLSearchParams();
-      if (org) params.set("org", org);
-      if (preview) params.set("preview", preview);
-      const query = params.toString();
-      window.location.href = `/client/candidates/${matchId}${query ? `?${query}` : ""}`;
-      return;
-    }
     setPending(action);
     const fromStage = shownStage;
     const landing = RESULT_STAGE[action];
@@ -230,17 +165,6 @@ export function CandidatePrimaryAction({
       <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
         <Check className="h-3.5 w-3.5" aria-hidden />
         {settled}
-      </span>
-    );
-  }
-
-  // Say where it actually stands rather than leaving the cell blank: the
-  // client asked for this interview and is waiting on us for a time, which is
-  // exactly what the overview tells them on the same visit (audit #6, A6-23).
-  if (stage === "shortlisted" && interviewRequested) {
-    return (
-      <span className="inline-flex items-center whitespace-nowrap rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-        Interview requested — we're confirming a time
       </span>
     );
   }

@@ -1,9 +1,10 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { ArrowRight, BookOpen, CalendarClock, CheckCircle2, Compass, Users } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { UnfilledPositionCalculator } from "@/components/marketing/unfilled-position-calculator";
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
+import { CTA_MESSAGE } from "@/config/cta";
 import { breadcrumbScript, clampDescription } from "@/lib/marketing/head";
 import {
   getResourceGuide,
@@ -13,7 +14,16 @@ import {
   type ResourceGuide,
 } from "@/content/resources";
 
+/** Guides that moved to a top-level page. The old URL redirects permanently. */
+const MOVED_GUIDES: Record<string, string> = {
+  "recruiting-as-a-service": "/recruiting-as-a-service",
+};
+
 export const Route = createFileRoute("/resources/$slug")({
+  beforeLoad: ({ params }) => {
+    const moved = MOVED_GUIDES[params.slug];
+    if (moved) throw redirect({ href: moved, statusCode: 301 });
+  },
   loader: ({ params }): { guide: ResourceGuide } => {
     const guide = getResourceGuide(params.slug);
     if (!guide) throw notFound();
@@ -343,11 +353,10 @@ function ResourceGuidePage() {
           </ul>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              to="/book"
-              search={{ type: undefined, cta: "resources" }}
+              to={CTA_MESSAGE.to}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
             >
-              Book a call
+              {CTA_MESSAGE.label}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link

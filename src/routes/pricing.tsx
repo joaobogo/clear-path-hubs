@@ -1,7 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { marketingHead, faqScript, serviceScript } from "@/lib/marketing/head";
-import { PRODUCT_CATEGORY } from "@/config/product-language";
 import {
   SiteShell,
   PublicPage,
@@ -12,40 +11,45 @@ import pricingHero from "@/assets/page-pricing-hero.jpg";
 import { PricingTierCard } from "@/components/marketing/pricing-tier-card";
 import { SubscriptionTierCard } from "@/components/marketing/subscription-tier-card";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
-import { PRICING_TIERS, NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
+import {
+  PRICING_TIERS,
+  NEVER_CHARGED,
+  PRICING_GUARANTEES,
+  INCLUDED_ON_EVERY_PLAN,
+} from "@/content/pricing";
 import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
 import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import {
   PRICE_PILOT_DISPLAY,
   ANNUAL_DISCOUNT_NOTE,
   MAX_POSITIONS,
+  PACKAGE_10,
 } from "@/config/pricing-core";
+import { OFFER_CATEGORY, OFFER_LAST_UPDATED_LABEL, PILOT_IS_PAID_NOTE, SEATS_NOTE, TIMING_FINE_PRINT } from "@/config/offer-facts";
+import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
+import { LargerPackagesTable } from "@/components/marketing/larger-packages-table";
 import { Check, X } from "lucide-react";
-import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
 import { RiskProof } from "@/components/marketing/risk-proof";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
 import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
-import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
 import {
-  ONEOFF_ENTITLEMENTS,
-  ONEOFF_PLAN_IDS,
-  ONEOFF_PLAN_LABELS,
-  SUBSCRIPTION_ENTITLEMENTS,
-  SUBSCRIPTION_PLAN_IDS,
-  SUBSCRIPTION_PLAN_LABELS,
+  PUBLIC_ONEOFF_ENTITLEMENTS,
+  PUBLIC_SUBSCRIPTION_ENTITLEMENTS,
+  PUBLIC_PLAN_IDS,
+  PUBLIC_PLAN_LABELS,
   ENTITLEMENT_POLICY,
+  publicSeatsLine,
 } from "@/config/pricing-entitlements";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
     marketingHead(undefined, "/pricing", {
-      title: "Pricing & Plan Entitlements | TaaSFlow Platform",
-      description:
-        `TaaSFlow platform packages, starting with the ${PRICE_PILOT_DISPLAY} pilot: active roles under management, agent capacity, Hiring Intelligence, Evidence Graph, governance and support — compared side by side.`,
+      title: `Recruiting Packages & ${PRICE_PILOT_DISPLAY} Pilot | TaaSFlow`,
+      description: `Compare TaaSFlow recruiting packages, one-off and recurring options, and the ${PRICE_PILOT_DISPLAY} one-role pilot. Review scope and request a conversation.`,
     }, {
       breadcrumbs: [
         { name: "Home", path: "/" },
@@ -53,9 +57,9 @@ export const Route = createFileRoute("/pricing")({
       ],
       scripts: [
         serviceScript({
-          name: "TaaSFlow subscription recruiting",
+          name: "TaaSFlow recruiting packages",
           description:
-            "Software-enabled recruiting delivered as a subscription: ATS, recruiting agents, multichannel outreach and curated talent data for one flat monthly fee per active role, with no placement fees.",
+            `${OFFER_CATEGORY}, sold as packages by number of positions: one-off (paid once) or as a subscription billed monthly. A ${PRICE_PILOT_DISPLAY} pilot covers one role, once per company. No placement fees.`,
           path: "/pricing",
           serviceType: "Recruiting",
         }),
@@ -66,33 +70,51 @@ export const Route = createFileRoute("/pricing")({
 });
 
 function PricingPage() {
-  // Every published package, including the talk-to-us card above the maximum.
-  const paid = PRICING_TIERS;
   const [mode, setMode] = useState<"oneoff" | "subscription">("oneoff");
+
+  const cardTiers = PRICING_TIERS.filter((t) => t.card);
+  const cardSubs = SUBSCRIPTION_TIERS.filter((t) => t.card);
+  const largerOneOff = PRICING_TIERS.filter((t) => !t.card).map((t) => ({
+    id: t.id,
+    name: t.name,
+    total: t.priceDisplay,
+    billing: t.oneTime === null ? "Scoped with your account team" : "Paid once",
+    seats: publicSeatsLine(t.id),
+    ctaLabel: t.ctaLabel,
+    ctaTo: t.ctaTo,
+  }));
+  const largerSubs = SUBSCRIPTION_TIERS.filter((t) => !t.card).map((t) => ({
+    id: t.id,
+    name: t.name,
+    total: t.monthly === null ? t.priceDisplay : `${t.priceDisplay} a month`,
+    billing: t.monthly === null ? "Scoped with your account team" : "Billed monthly",
+    seats: publicSeatsLine(t.id),
+    ctaLabel: t.ctaLabel,
+    ctaTo: t.ctaTo,
+  }));
 
   return (
     <SiteShell>
-      {/* Hero — mirrors taasflow.com/pricing */}
       <EditorialHero
-        eyebrow="Plans & Entitlements"
-        title="One platform, Talent Management that scales."
-        lead={`Every plan is the full ${PRODUCT_CATEGORY}. What changes is capacity — active roles, agent runs, intelligence and governance.`}
+        eyebrow="Pricing"
+        title={`Flat-fee recruiting. ${PRICE_PILOT_DISPLAY} for your first role.`}
+        lead={`Every package is the full ${OFFER_CATEGORY.toLowerCase()}. What changes is capacity: positions, seats and support.`}
         image={pricingHero}
         imageAlt="A hiring team planning roles together in a light-filled meeting room"
         stats={[
-          { value: PRICE_PILOT_DISPLAY, label: "Pilot, billed once" },
-          { value: "0%", label: "Of salary, ever" },
-          { value: String(MAX_POSITIONS), label: "Positions, maximum" },
+          { value: PRICE_PILOT_DISPLAY, label: "One-role pilot, paid once" },
+          { value: "0%", label: "Placement fee on any package" },
+          { value: String(MAX_POSITIONS), label: "Positions in the largest published package" },
         ]}
-        primary={{ to: "/intake", label: "Start a role" }}
-        secondary={{ to: "/book", label: "Book a call" }}
+        primary={CTA_PRIMARY}
+        secondary={CTA_MESSAGE}
       >
         <ul className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
           {[
             "No salary percentage fees",
             "Evidence-backed scoring on every candidate",
-            "Expert oversight included",
-            "Candidate records stay yours",
+            "A recruiter reviews every shortlist",
+            "Export your candidate records at any time",
           ].map((x) => (
             <li key={x} className="flex items-start gap-2">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
@@ -100,78 +122,70 @@ function PricingPage() {
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-xs text-[color:var(--brand-navy)]/70" data-testid="last-updated">
+          {OFFER_LAST_UPDATED_LABEL}
+        </p>
       </EditorialHero>
 
-      {/* Tab toggle — One-Off Package / Subscription (mirrors taasflow.com) */}
+      {/* One-off vs recurring selector */}
       <PublicSection className="pt-4">
         <PublicPage>
           <div
             role="tablist"
             aria-label="Billing model"
-            className="mx-auto inline-flex w-full max-w-md items-center rounded-full border border-[color:var(--brand-navy)]/12 bg-white p-1 sm:mx-0 sm:mx-auto sm:flex"
+            className="mx-auto inline-flex w-full max-w-md items-center rounded-full border border-[color:var(--brand-navy)]/12 bg-white p-1 sm:flex"
           >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === "oneoff"}
-              onClick={() => setMode("oneoff")}
-              className={
-                "flex-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors min-h-11 sm:min-h-0 sm:py-2 " +
-                (mode === "oneoff"
-                  ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
-                  : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")
-              }
-            >
-              One-Off Package
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === "subscription"}
-              onClick={() => setMode("subscription")}
-              className={
-                "flex-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors min-h-11 sm:min-h-0 sm:py-2 " +
-                (mode === "subscription"
-                  ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
-                  : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")
-              }
-            >
-              Subscription
-            </button>
+            {(
+              [
+                ["oneoff", "One-off package"],
+                ["subscription", "Monthly subscription"],
+              ] as const
+            ).map(([value, text]) => (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                aria-selected={mode === value}
+                onClick={() => setMode(value)}
+                className={
+                  "flex-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors min-h-11 sm:min-h-0 sm:py-2 " +
+                  (mode === value
+                    ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
+                    : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")
+                }
+              >
+                {text}
+              </button>
+            ))}
           </div>
           <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/80">
             {mode === "oneoff"
-              ? "A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now."
-              : `Continuous capacity, billed monthly — the same rates as one-off, one position up to ${MAX_POSITIONS}.`}
+              ? "A single flat fee, paid once, for a fixed number of positions. Best when you know which roles are open now."
+              : "The same packages and totals, charged each month. Best when hiring is continuous."}
           </p>
         </PublicPage>
       </PublicSection>
 
-      {/* Tier cards — swap based on mode */}
       <PublicSection className="pt-6">
         <PublicPage>
+          <p className="mb-6 max-w-3xl text-sm text-[color:var(--brand-navy)]/85">
+            The pilot is one role, once per company. The smallest package covers up to{" "}
+            {PACKAGE_10.capacity} positions for one total, so packages suit teams hiring for
+            several roles. {PILOT_IS_PAID_NOTE}
+          </p>
           {mode === "oneoff" ? (
-            <>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {paid.map((tier) => (
-                  <PricingTierCard key={tier.id} tier={tier} />
-                ))}
-              </div>
-              <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
-                Each active role returns a ranked, evidence-backed shortlist of the{" "}
-                <span className="font-semibold text-[color:var(--brand-navy)]">top 10</span>{" "}
-                candidates, refreshed weekly in your workspace.
-              </p>
-            </>
+            <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {cardTiers.map((tier) => (
+                <PricingTierCard key={tier.id} tier={tier} />
+              ))}
+            </div>
           ) : (
             <>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {SUBSCRIPTION_TIERS.map((tier) => (
+              <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {cardSubs.map((tier) => (
                   <SubscriptionTierCard key={tier.id} tier={tier} />
                 ))}
               </div>
-              {/* One total per package — the same packages whether billed once
-                  or monthly. The only published discount is annual prepay. */}
               <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
                 <span className="font-semibold text-[color:var(--brand-navy)]">
                   {ANNUAL_DISCOUNT_NOTE}
@@ -182,7 +196,27 @@ function PricingPage() {
               </p>
             </>
           )}
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80">
+
+          <h2 className="mt-10 font-[family-name:var(--brand-font-display)] text-xl font-semibold tracking-tight">
+            Larger packages
+          </h2>
+          <p className="mb-4 mt-1 text-sm text-[color:var(--brand-navy)]/80">
+            Same platform, more positions. Every package and its total is also in the comparison
+            table below.
+          </p>
+          <LargerPackagesTable
+            rows={mode === "oneoff" ? largerOneOff : largerSubs}
+            caption={
+              mode === "oneoff"
+                ? "Larger one-off packages: total, billing, seats and next step"
+                : "Larger subscription packages: monthly total, billing, seats and next step"
+            }
+          />
+
+          <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
+            {TIMING_FINE_PRINT} {SEATS_NOTE}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80">
             {PRICING_GUARANTEES.map((g) => (
               <span key={g} className="inline-flex items-center gap-2">
                 <Check className="h-4 w-4 text-[color:var(--brand-navy)]" aria-hidden />
@@ -201,24 +235,20 @@ function PricingPage() {
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             The platform is the same on every plan. These are the entitlements that
-            differ — capacity, access and governance, not hours of labour.
+            differ: capacity, seats and support. Where a cell says &ldquo;Scoped with your
+            account team&rdquo;, we set it with you rather than print a limit we have not committed to.
           </p>
           <div className="mt-6">
-            {mode === "oneoff" ? (
-              <EntitlementMatrix
-                rows={ONEOFF_ENTITLEMENTS}
-                planIds={ONEOFF_PLAN_IDS}
-                planLabels={ONEOFF_PLAN_LABELS}
-                caption="Platform entitlements by one-off package plan"
-              />
-            ) : (
-              <EntitlementMatrix
-                rows={SUBSCRIPTION_ENTITLEMENTS}
-                planIds={SUBSCRIPTION_PLAN_IDS}
-                planLabels={SUBSCRIPTION_PLAN_LABELS}
-                caption="Platform entitlements by subscription plan"
-              />
-            )}
+            <EntitlementMatrix
+              rows={mode === "oneoff" ? PUBLIC_ONEOFF_ENTITLEMENTS : PUBLIC_SUBSCRIPTION_ENTITLEMENTS}
+              planIds={PUBLIC_PLAN_IDS}
+              planLabels={PUBLIC_PLAN_LABELS}
+              caption={
+                mode === "oneoff"
+                  ? "Entitlements by one-off package, from the pilot to more than 100 positions"
+                  : "Entitlements by subscription package, from the pilot to more than 100 positions"
+              }
+            />
           </div>
         </PublicPage>
       </PublicSection>
@@ -293,10 +323,14 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Real engagements */}
+      {/* Example engagements */}
       <PublicSection className="py-10">
         <PublicPage>
-          <CaseStudyPreviews count={2} />
+          <CaseStudyPreviews
+            count={2}
+            title="Example engagements by industry"
+            intro="Anonymised examples by industry and company type. Your own search depends on the role and the market."
+          />
         </PublicPage>
       </PublicSection>
 
@@ -320,7 +354,7 @@ function PricingPage() {
                 Baseline platform capabilities, regardless of plan size.
               </p>
               <ul className="mt-5 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85">
-                {PRICING_TIERS[0].included.map((x) => (
+                {INCLUDED_ON_EVERY_PLAN.map((x) => (
                   <li key={x} className="flex gap-2">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
                     <span>{x}</span>
@@ -380,13 +414,24 @@ function PricingPage() {
           </div>
         </PublicPage>
       </PublicSection>
-      <PageConnections
-        commercial={{ to: "/intake", label: "Start hiring", desc: "Pick a plan and open your first role." }}
-        explainer={{ to: "/how-it-works", label: "How delivery works", desc: "What each subscription actually includes each week." }}
-        resource={{ to: "/faq", label: "Pricing questions answered", desc: "Overages, holds, cancellation, and enterprise terms." }}
-        audience={{ to: "/enterprise", label: "Enterprise pricing", desc: "Volume, procurement, and MSA-ready terms." }}
-      />
-      <EcosystemCrossSell trigger="single-role" />
+      <PublicSection className="py-10">
+        <PublicPage>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to={CTA_PRIMARY.to}
+              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              {CTA_PRIMARY.label}
+            </Link>
+            <Link
+              to={CTA_MESSAGE.to}
+              className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              {CTA_MESSAGE.label}
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
     </SiteShell>
   );
 }

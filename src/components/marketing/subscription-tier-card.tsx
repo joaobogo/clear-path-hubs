@@ -17,12 +17,6 @@ export function SubscriptionTierCard({ tier }: { tier: SubscriptionTier }) {
           : "border-[color:var(--brand-navy)]/12 bg-white hover:border-[color:var(--brand-navy)]/25")
       }
     >
-      {tier.highlight ? (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[color:var(--brand-navy)] px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-          Most Popular
-        </span>
-      ) : null}
-
       <div>
         <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
           {tier.name}
@@ -37,11 +31,14 @@ export function SubscriptionTierCard({ tier }: { tier: SubscriptionTier }) {
           {tier.priceDisplay}
         </span>
         <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
-          {isCustom ? tier.priceSuffix : tier.priceSuffix}
+          {tier.priceSuffix}
         </p>
-        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/80">
+        <p className="mt-0.5 text-sm font-medium text-[color:var(--brand-navy)]">
           {tier.billingNote}
         </p>
+        {!isCustom && tier.id !== "pilot" && tier.annualSavingsNote ? (
+          <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">{tier.annualSavingsNote}</p>
+        ) : null}
       </div>
 
       <ul className="mt-6 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85">
@@ -53,10 +50,11 @@ export function SubscriptionTierCard({ tier }: { tier: SubscriptionTier }) {
         ))}
       </ul>
 
+      <div className="mt-auto pt-7">
       <Link
         to={tier.ctaTo}
         className={
-          "mt-7 inline-flex min-h-11 items-center justify-center rounded-md px-4 py-2.5 text-sm font-semibold transition-opacity " +
+          "flex w-full min-h-11 items-center justify-center rounded-md px-4 py-2.5 text-sm font-semibold transition-opacity " +
           (tier.highlight
             ? "bg-[color:var(--brand-navy)] text-white hover:opacity-90"
             : "border border-[color:var(--brand-navy)]/20 text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5")
@@ -64,6 +62,7 @@ export function SubscriptionTierCard({ tier }: { tier: SubscriptionTier }) {
       >
         {tier.ctaLabel}
       </Link>
+      </div>
     </div>
   );
 }

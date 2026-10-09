@@ -155,9 +155,9 @@ export const CHANGELOG_RELEASES: ChangelogRelease[] = [
         id: "public-status-page",
         category: "New",
         area: "Platform",
-        summary: "Public system status page covering ten core services.",
+        summary: "Public system status page covering the platform's core services.",
         impact:
-          "You can check availability yourself before raising a question. A service reads Unknown when it cannot be measured, so a green state always means something was actually checked.",
+          "You can check availability yourself before raising a question. A service reads Not yet measured when it cannot be measured, so a green state always means something was actually checked.",
         availability: "Live for everyone, no sign-in required.",
         docHref: "/status",
         docLabel: "Open system status",

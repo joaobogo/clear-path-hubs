@@ -128,7 +128,8 @@ function asNumber(v: unknown): number | null {
   // A salary of 0 is not a salary, and anything past eight figures is a parse
   // artefact (a phone number, a postcode, a year run together).
   if (!Number.isFinite(n) || n <= 0 || n > 100_000_000) return null;
-  return Math.round(n);
+  // Cents survive: £12.50 an hour is not £13 an hour.
+  return Math.round(n * 100) / 100;
 }
 
 function asBool(v: unknown): boolean | null {

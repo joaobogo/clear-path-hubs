@@ -33,7 +33,6 @@ const PAGES = [
   "/contact",
   "/pilot",
   "/intake",
-  "/book",
   "/candidate-join",
 ];
 

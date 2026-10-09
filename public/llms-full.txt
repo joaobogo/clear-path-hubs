@@ -1,66 +1,37 @@
 # TaaSFlow — full text of canonical pages
 
-> TaaSFlow is a subscription recruiting service: an applicant tracking system, sourcing and candidate outreach in one monthly subscription, with AI-assisted screening and a human recruiter reviewing every shortlist before a client sees it.
+> TaaSFlow is a recruiting platform with managed execution. Agents source and score candidates. A recruiter reviews every shortlist before you see it. You make every hiring decision.
 
-## TaaSFlow — subscription recruiting — https://taasflow.com/
+## TaaSFlow — recruiting platform with managed execution — https://taasflow.com/
 
 What the service is and who it is for.
 
-- Candidates scored against the requirements your team approved — highest fit first, with the reasoning in view.
-- The Evidence Graph maps CV quotes and reviewer notes to every must-have, so decisions are grounded in what the CV actually says.
-- Every stage — Applied, Under review, Shortlisted, Interview, Offer — reflects the current state, not a weekly snapshot.
-- Message a named platform expert in the workspace. Same thread, same context, no forwarded emails.
-- Limited time, no dedicated sourcing capacity, and hires that can't wait for a full internal team to be built.
-- A hiring intelligence platform that runs beside you — sourcing agents continuously identify, the Scoring Engine evaluates, and ranked candidates arrive without hiring a full internal team.
-- Interview-ready shortlists on roles you'd otherwise leave open.
-- TA teams spend too much time sourcing and too little time interviewing, supporting hiring managers, and improving candidate experience.
-- Sourcing agents run continuously and ranked candidates land in one Decision Workspace your TA team owns — so your team gets its calendar back.
-- Sourcing capacity that scales with demand, evidence in view.
-- High-volume and multi-market hiring becomes fragmented across agencies, regions, and spreadsheets — and expensive to coordinate.
-- Structured sourcing capacity, ranked candidate delivery, and portfolio-level visibility across every active role and business unit.
-- One consolidated view across regions, roles, and teams.
-- Client demand exceeds internal sourcing capacity — but adding headcount to meet peaks doesn't fit the margin structure.
-- Scalable agent capacity behind the agency — you keep the client relationship, the platform extends your bench.
-- More placements fulfilled without expanding headcount.
-- A flat monthly fee per active role instead of a percentage of salary owed at hire.
-- Sourcing keeps running week after week — the pipeline doesn't stop when the first shortlist lands.
-- We win when your team hires and stays hired. Not when an invoice ships.
-- Every candidate, every note, every message stays in your workspace — even between roles.
-- Publish desk, action items, and pipeline health across every client — one dashboard for the delivery team.
-- Ranked candidates, evidence per requirement, Kanban pipeline, and one-click shortlist / interview / offer.
-- Application status, CV versions, and messages — always in sync with the hiring team on the other side.
-- Flat monthly subscription per active role
-- Percentage of first-year salary at placement
-- Recruiter's inbox and weekly status emails
-- Ranked candidates with evidence per requirement
-- Your team owns interviews, offer, and hire
-- Agency stays in the loop through placement
-- Every candidate is scored against the requirements you approved in the intake — same criteria, same weighting, same evidence format across roles.
-- Sourcing progress, pipeline stages, evidence, and recruiter notes are visible to your team in real time. Nothing sits in a private inbox.
-- Candidates, notes, and evidence belong to your workspace. When a role closes, the context is still there for the next one.
-- Requirements, evidence prompts, and scoring are tuned to the role — not a generic template applied to every search.
-- A recruiter reads each CV, writes the evidence, and approves it before a candidate is published to your shortlist.
-- Every decision — approvals, stage moves, evidence edits — is recorded, so your team can revisit why a candidate progressed or didn't.
-- AI in Recruitment 2026: What Works, What Fails, and What Is Next
-- An honest assessment of AI in recruiting — from resume parsing to predictive analytics — and where human judgment still decides.
-- A research-backed onboarding framework with week-by-week milestones and manager checkpoints for new hires.
-- Which roles are being augmented versus automated — and how hiring teams should prioritise skills as the mix shifts.
-- Percentage-of-salary placement fees, paid on every hire.
+- Each requirement points to the line in the CV or application that supports it, so you can check the reasoning.
+- Your team reviews candidates, compares them and moves them forward in one place.
+- A recruiter reviews every shortlist before it reaches you. Your team runs the interviews and decides who to hire.
+- Roles at hotels, restaurants, resorts and event venues.
+- Clinical, administrative and leadership roles where credentials matter.
+- Roles you fill in numbers, such as retail and store teams.
+- TaaSFlow helps your team find and evaluate candidates, with recruiting execution and a shared workspace to review the evidence. Your team keeps control of interviews and hiring decisions.
+- A shortlist you can check, not a stack of CVs.
+- Four steps from role brief to shortlist.
+- Enter your own salary, agency fee and hiring volume. Every starting value is an editable example, not an industry average.
 
 ## Pricing — https://taasflow.com/pricing
 
 The exact total for any position count from 1 to 100.
 
-- Software-enabled recruiting delivered as a subscription: ATS, recruiting agents, multichannel outreach and curated talent data for one flat monthly fee per active role, with no placement fees.
-- One platform, Talent Management that scales.
-- A hiring team planning roles together in a light-filled meeting room
 - Evidence-backed scoring on every candidate
-- A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now.
+- Export your candidate records at any time
+- A single flat fee, paid once, for a fixed number of positions. Best when you know which roles are open now.
+- The same packages and totals, charged each month. Best when hiring is continuous.
 - The total you see is the total on your invoice.
-- What each subscription actually includes each week.
-- Overages, holds, cancellation, and enterprise terms.
-- Volume, procurement, and MSA-ready terms.
-- The platform is the same on every plan. These are the entitlements that differ — capacity, access and governance, not hours of labour.
+- Larger one-off packages: total, billing, seats and next step
+- Larger subscription packages: monthly total, billing, seats and next step
+- Entitlements by one-off package, from the pilot to more than 100 positions
+- Entitlements by subscription package, from the pilot to more than 100 positions
+- Anonymised examples by industry and company type. Your own search depends on the role and the market.
+- Same platform, more positions. Every package and its total is also in the comparison table below.
 - Plain answers to the questions that decide whether a plan fits. Your signed quote or agreement is always the authority on commercial terms.
 - Every plan opens the same Decision Workspace. Plans differ in seats, concurrent roles and entitlements — not in the product.
 - Baseline platform capabilities, regardless of plan size.
@@ -71,82 +42,63 @@ The exact total for any position count from 1 to 100.
 
 Intake, sourcing, screening, shortlist, hire.
 
-- The operational explainer: Blueprint Compiler, Agent Layer discovery, Evidence Graph review, Scoring Engine ranking and Decision Workspace delivery.
-- The operational anatomy of a TaaSFlow hire.
-- The actual mechanics — blueprint, agents, evidence, scoring, decision — and who owns what.
+- Share the role, approve the plan, sourcing and screening, then review a ranked shortlist with the evidence behind each score. What you do and what we do at each step.
+- We read the brief and ask for what is missing. Nothing is sourced until the scope is confirmed.
+- Confirm the scoring rubric: must-haves, nice-to-haves and deal-breakers, with their weights.
+- Nothing, unless we have a question. You can follow progress in the workspace.
+- Agents source candidates, parse each application and extract evidence, and apply the rubric. A recruiter reviews the results before anyone reaches your shortlist.
+- Review the ranked shortlist, then advance, hold or pass on each candidate with a reason. Run the interviews and make the hiring decision.
+- Rough notes on responsibilities, must-haves and nice-to-haves. The intake structures them.
+- An approved range for the role, shared with candidates at the right stage.
+- Names and emails of the reviewers, interviewers and decision maker, to invite into the workspace.
+- The stages, who owns each, and roughly how long each takes.
+- A few role-specific questions. Optional: we can propose a set from the rubric.
+- Location model, visa policy and start-date flexibility. Anything that would disqualify late is better captured early.
+- Roles are split into requirements, and each requirement gets its own verdict and evidence quote.
+- The 0 to 100 fit score is built from those verdicts, not the other way around.
+- Each score shows its coverage, any contradiction flags and the rubric version it ran on.
+- The same rubric is applied to every candidate on a role.
+- Scoring uses the material a candidate submits, such as their CV and application answers. No external data-enrichment source is connected today.
+- No candidate reaches your shortlist until a recruiter has verified the evidence and approved the release.
+- Each score names the rubric version it ran on. Versions are frozen once scored against.
+- Weights, must-haves and intensity (steady, standard or aggressive) are set per role.
+- Enable, pause or disable any agent per role. Paused agents stop, and the change is logged.
+- State changes, overrides, releases and access events are appended, never edited.
+- A path to a TaaSFlow recruiter inside the workspace.
+- From your hiring brief to a ranked shortlist.
 - A hiring team reviewing candidate shortlists together at a table
+- The same four steps for every role, with what you do and what happens on our side.
 - The intake becomes an approved blueprint.
-- Your intake is not filed away — it becomes the scoring rubric, the search plan, and the screening spec. Weights and deal-breakers are approved before sourcing agents identify a single candidate.
+- Your intake is not filed away — it becomes the scoring rubric, the search plan, and the screening spec. Weights and deal-breakers are approved before sourcing starts.
 - Must-haves, nice-to-haves, and deal-breakers made explicit
 - Search plan reviewed with you before launch
-- LinkedIn, sponsored ads, university partnerships, email marketing, web-scale intent scanning, billboards, radio, cold calling, job boards, communities, staffing partners, executive recruiters, inbound applications — every source feeds the same evidence-first scoring bar.
-- Digital, direct, AI-driven, inbound, offline — five families of channels working in parallel per role
-- AI intent scanning surfaces high-intent passive candidates other tools never see
-- Named-target outreach + a 20,000-strong talent network + past finalists brought back in
-- Universities, staffing partners, referrals, events, PR, radio and OOH when a role warrants it
-- Whatever the channel — LinkedIn or a billboard — the candidate is scored on the same rubric
-- Every score has a quote. Every quote has a source.
-- Before publication, a recruiter reads each CV against the rubric and attaches evidence quotes to every requirement. If a requirement can't be evidenced, the candidate is not published.
-- Recruiter-approved before it reaches your workspace
-- Match / partial / gap called honestly per requirement
-- Fit narrative written by a human, not a template
-- Adjust the rubric weights and watch the order change. In your real workspace weights are approved at intake — this demo lets you see how the model reacts.
+- Named-target outreach, our own talent network and past finalists come first
+- Universities, partners, referrals, events and press when a role warrants it
+- Whatever the channel, the candidate is scored on the same rubric
+- The delivery is a workspace, not a PDF. You and your TaaSFlow recruiter share it: stage moves are validated, threads are scoped per role, and every decision is recorded next to the candidate it applies to.
 - You interview fewer people, and better ones.
-- The delivery is a workspace — not a PDF.
-- Candidates arrive in a Decision Workspace you and your platform experts share. Stage moves are validated, threads are scoped per role, and every decision is recorded next to the candidate it applies to.
-- A model this transparent only works if roles are clear. Here is exactly who owns each step — us, you, or both.
-- Intake takes a few minutes. Draft saving is on — return anytime and pick up where you left off.
-- Kick off hiring in minutes with a guided intake.
+- How candidates are scored: the evidence behind each score.
+- Before you see a shortlist, a recruiter reviews each candidate against the rubric and checks the evidence behind every requirement. A requirement that cannot be evidenced is flagged, not hidden.
+- Representative data for one senior platform role. In the workspace this is the real record, with reviewer history attached.
+- Adjust the rubric weights and watch the order change. In your real workspace the weights are approved at intake. This demo shows how the ranking reacts.
+- Here is who owns each activity: us, you, or both. A recruiter reviews every shortlist, and you make every hiring decision.
 
 ## Platform — https://taasflow.com/platform
 
 The ATS and workspace clients work in.
 
-- TaaSFlow Platform — AI Hiring Intelligence in one system
-- No candidate reaches your shortlist until evidence is verified and the release is approved.
-- Each score names the rubric version it ran on. Versions are frozen once scored against.
-- Weights, must-haves and intensity — steady, standard or aggressive — are set per role.
-- Every state change, override, release and access event is appended, never edited.
-- Hire, reject or withdrawal — with the reason captured at decision time.
-- The verified evidence behind that outcome stays attached to the record.
-- What worked and what to avoid is kept as notes against the role family.
-- New rubrics resurface past candidates and inherit role memory, so briefing starts ahead.
-- Doesn't source, doesn't score, doesn't produce a shortlist.
-- Doesn't leave a system behind — the pipeline goes with the vendor.
-- Doesn't run intake, doesn't score against a rubric, doesn't hand off to hiring.
-- Doesn't produce ranked, evidenced shortlists on active roles.
-- Requirements enter once, compile into a versioned rubric, and every step after that is recorded.
-- An operations lead reviewing hiring performance on a wall display in a modern office
-- Representative data for one senior platform role. In the workspace this is the real record, with reviewer history attached.
-- Every shortlist arrives with the evidence that produced it.
-- Submit intake and see the compiled rubric, agent runs, and first evidence-backed shortlist inside your workspace.
-- Pick a module. See exactly what it does.
-- What enters it, what it does, what it produces, what you control, and what gets recorded.
-- Requirement, evidence, source, rule, points, decision. Pick a requirement and follow the whole chain. Where evidence is missing, it says so.
-- A role moves through nine stages, and each one names its owner, its outputs and what is blocking it. Decisions sit next to the evidence.
-- People stay in the loop as governance — approving, escalating and overriding, with each action logged.
-- Each closed role makes the next one shorter.
-- Not a model that trains itself. Verified outcomes, retained evidence and role memory that your next rubric can read.
-- Retained data stays inside your organisation. You can edit or remove any record, and every re-engagement is logged.
-- Adjacent categories, and the gap they leave.
-- Runs the whole loop — intake, rubric, agents, evidence, scoring, decisions and memory — in one system you keep.
-
 ## Case studies — https://taasflow.com/case-studies
 
 Engagement outcomes. Client names are withheld unless a client approved attribution.
 
-- Hospitality, finance, healthcare, tech, consumer and industrial engagements — evidence-backed shortlists produced by the AI Hiring Intelligence Platform.
-- The operating model that produced these numbers.
+- Examples of how a TaaSFlow engagement runs, using representative example data. Not reported client results.
 - Deep dives on hiring economics and evaluation.
-- Case-study-adjacent playbooks per vertical.
-- Active or recent engagements represented on this page
-- Representative delivery figures for this vertical — not the reported results of one named client.
-- No published quote for this engagement. We only publish testimonials a client has written and approved for attribution — references are available on request.
-- One workspace, one evidence model — applied consistently whether the role sits in Zurich, São Paulo, or Tokyo.
-- Numbers that show up in the client's own dashboard.
-- Metrics reflect aggregate delivery performance across representative TaaSFlow engagements in each vertical. Named case studies with written client approval are added individually as each client signs off on attribution.
-- Six engagements across hospitality, finance, healthcare, tech, consumer, and industrial — with a global operating footprint and evidence-scored shortlists every time.
-- Start an intake and see shortlist delivery inside your own workspace in under 10 days.
+- No quote is published for an example engagement. We publish a testimonial only when a client has written it and approved it for attribution.
+- Hiring metrics are easy to mix up, so these are the definitions we use. When a figure is published on this site, it states where it comes from.
+- Accepted offers divided by offers extended.
+- A different ratio: hires divided by shortlisted candidates. It measures shortlist quality, not the strength of an offer, and it should not be compared with offer acceptance.
+- Six example engagements across hospitality, finance, healthcare, technology, consumer and industrial hiring. They show how a search runs from brief to shortlist.
+- These are examples built from representative data. They are not reported client results, and we publish no client name or testimonial without written approval.
 
 ## FAQ — https://taasflow.com/faq
 
@@ -154,13 +106,13 @@ Billing, scope, screening and data questions.
 
 - What TaaSFlow is, how the system runs a search, and where expert oversight sits.
 - A hiring operating system. You submit roles through a structured intake, our delivery team runs sourcing and screening, and candidates are delivered inside a shared workspace with evidence against every requirement.
-- Think of it as hiring infrastructure you subscribe to: agents run the search, evidence backs every score, and expert oversight approves what reaches you — the same workspace and the same context across every role you run.
+- Think of it as a recruiting service you can subscribe to: agents source and score candidates, a recruiter reviews every shortlist, and you make the hiring decision — in the same workspace across every role you run.
 - How is TaaSFlow different from an agency?
 - You get a workspace instead of a PDF, a flat subscription instead of placement fees, and evidence instead of a verdict. Delivery is not contingent on placement.
 - A dedicated TaaSFlow team handles intake, sourcing, screening, and evidence capture. Your hiring managers keep decision rights end-to-end.
 - No. TaaSFlow runs the pre-hire workflow inside its own workspace and hands over into your ATS at the point you decide.
 - Yes. Most clients start with one or two roles to see how delivery works before scaling. Pilot scope and cadence are agreed together.
-- Flat subscription, no placement fees, and how the commercial model actually behaves.
+- Flat subscription, no placement fees, and how the commercial model works in practice.
 - A flat monthly subscription. No placement fees, no per-hire commissions. The subscription covers sourcing, screening, evidence, and workspace delivery for the roles in scope.
 - Tiers scale by concurrent role volume. You can pause, resize, or add roles between billing cycles — the workspace and history stay intact.
 - No. Delivery is not contingent on placement, so there is no incentive to push weak candidates.
@@ -169,7 +121,6 @@ Billing, scope, screening and data questions.
 - How candidates surface, what evidence you receive, and how volume is calibrated.
 - They surface in your workspace as a ranked shortlist, each with evidence mapped against the requirements defined in the brief.
 - Shortlists are sized to the role and the market. We favour signal over volume — usually a small, hand-reviewed shortlist per cadence rather than a firehose.
-- The first ranked candidates typically arrive within days of the intake being finalised, with regular batches after that.
 - Yes. Feedback in the workspace shapes the next batch. You can also open new requirement variants without restarting the intake.
 - Evidence-first evaluation and how disagreements are resolved.
 - Each requirement in the brief is scored against concrete evidence — experience, projects, credentials, or answers to screening questions. Reviewers always see the evidence, not just a verdict.
@@ -181,31 +132,32 @@ Billing, scope, screening and data questions.
 - Access, visibility, collaboration, and what the workspace does day-to-day.
 - Your client account, invited teammates, and the TaaSFlow delivery team assigned to your roles. No wider distribution.
 - Can multiple teammates review candidates?
-- Yes. Invite as many teammates as needed with role-appropriate access — reviewers, editors, hiring managers, admins.
 - Open roles, current stage per candidate, feedback exchanged, and messages — in one live view. No status meetings required.
 - Yes. Messaging is inside the workspace so it stays attached to the role, not lost in email threads.
 - Multi-team scale, governance, reporting, and enterprise access controls.
 - Does TaaSFlow support multiple teams or business units?
 - Yes. Enterprise accounts run parallel searches across teams and business units on a shared workspace with account-level reporting.
 - Do you support SSO and enterprise access controls?
-- Enterprise access, provisioning, audit logs, and security details are agreed as part of the enterprise consultation.
+- Enterprise access, provisioning, audit logs, and security details are agreed with our team after you send us a message.
 - Account-level reporting rolls up roles across teams, with role-level detail available in each requisition. TA, Finance, and Procurement each get views tailored to their questions.
 - How do we start an enterprise engagement?
-- Book an enterprise consultation from the Enterprise page and we'll scope it with your TA and Procurement leads.
+- Send us a message and we will contact you within one business day to scope it with your TA and Procurement leads.
+- Staffing and recruiting agencies using TaaSFlow to scale delivery.
+- Yes. TaaSFlow partners with staffing and recruiting agencies who want more delivery capacity while keeping the client relationship.
 
 ## Industries — https://taasflow.com/industries
 
 Index of sector-specific hiring guidance.
 
-- Fifty-seven industries, six page archetypes, one AI Hiring Intelligence Platform. Search or filter to the vertical you hire for.
-- Signals, credentials and outcomes match the industry — not a generic sourcing template.
+- Browse the industries TaaSFlow recruits for and open the page for the sector you hire in. Each page covers the roles, evidence and boundaries for that sector.
+- Signals, credentials and outcomes match the industry — not a one-size-fits-all checklist.
 - Every score point ties to a specific sentence pulled from the candidate's document.
-- A partner reviews each shortlist against the role, jurisdiction and delivery expectations.
+- A recruiter reviews every shortlist before you see it. You make every hiring decision.
 - One workspace, one intake, one commercial model — with content that adapts per industry.
 - Hiring intelligence, tuned to the realities of each industry.
-- One recruiting model, six page archetypes, and a rubric calibrated to the language, evidence and regulation of every sector we serve.
+- One recruiting model, with the role criteria, evidence and boundaries described for each sector we recruit in.
 - Try a broader query, clear filters, or contact us — we may serve the vertical without a dedicated page yet.
-- Every industry gets a rubric calibrated to what actually matters in that sector — the language on the CV, the credentials that gate the role, the signals that predict delivery. Nothing is borrowed from a generic template.
+- Each industry page describes what matters in that sector: the language on the CV, the credentials that gate the role and the signals worth scoring. The scoring method itself is the same across sectors, and you approve the criteria for your role.
 - We build custom rubrics for adjacent sectors.
 - Tell us what you hire for. We'll confirm coverage, share a sample rubric, and start a role if it's a fit.
 
@@ -214,7 +166,7 @@ Index of sector-specific hiring guidance.
 Live job board for candidates.
 
 - Browse roles open through TaaSFlow. Every application gets a structured screening against what the role asks for — apply in minutes, no account needed.
-- Roles currently open through TaaSFlow. Apply in minutes.
+- Roles currently open on the TaaSFlow job board. Apply in minutes.
 - Only active + public roles with a complete description and at least one requirement appear on the board.
 - No open roles right now — join the talent network to be first in line when the next role goes live.
 - Try widening the location or removing a filter.
@@ -231,69 +183,53 @@ How candidate and client data is handled.
 
 The one-time single-role pilot: what it includes and what it costs.
 
-- You create your workspace and upload the job description. TaaSFlow builds the role blueprint, screening criteria and sourcing plan automatically, and you review or edit every detail before the search goes live.
-- Sourcing agents continuously identify candidates across talent signals, then the Scoring Engine scores every candidate against your rubric. Each score is tied to evidence pulled from the CV, so you can see why a candidate ranks where they do.
-- Reviewed, evidence-backed candidates are published to your dashboard, ranked. You review, message your platform experts, and give feedback that shapes the next round.
-- One role scoped end-to-end with our team
-- A live client dashboard with pipeline, messages, and status
-- A ranked shortlist of pre-screened candidates
-- Evidence per requirement, tied to CV quotes
-- Full candidate profiles and CV downloads
-- Configurable expert oversight, reachable in the workspace
-- More than one role — the pilot covers a single active role
-- A second pilot — each company can run the pilot once
+- A recruiter who reviews every shortlist before you see it
+- Scope and delivery schedule confirmed with you before work begins
+- More than one role. The pilot covers a single agreed role.
+- A second pilot. Each company can run the pilot once.
 - Interview scheduling and offer negotiation on your behalf
 - Executive search retainers or contingency placements
 - Background checks, assessments, or payroll
-- Ongoing weekly delivery — that starts with a subscription
-- Move to a flat monthly fee and keep the same workspace, rubric, and expert oversight. Nothing is rebuilt.
-- No commitment, no placement fee. You keep every candidate the platform surfaced and the evidence behind each score.
-- The pilot is a one-time, single-role engagement that runs the full TaaSFlow process — intake, sourcing, evidence-based scoring, and a ranked shortlist in a live dashboard — so you can judge candidate quality on real work before committing to a subscription. Each company can run it once.
-- Three stages, one role, one fixed price. The pilot is a one-time engagement available once per company. First candidate activity usually begins within 3–5 days after the search goes live.
+- See how our recruiting process and candidate workspace support your team before discussing a larger engagement. Your pilot covers one agreed role and is available once per company. We confirm the scope and delivery schedule before work begins.
 
 ## Agents — https://taasflow.com/agents
 
 The agents that run a search, with their inputs, outputs and approval gates.
 
-- Agents work inside role rules, a frozen rubric and approval gates. Every action they take is recorded.
-- A recruiter reviewing candidate evidence at a desk in the evening
 - Agents keep working between your meetings — inside limits you set.
+- Share a role and choose which agents run.
 - You choose which agents run, what they may send, and what must be approved before a candidate reaches you.
 - Agents do not talk in prose. Each one passes a structured record forward, and the Governance Agent records the handoff.
 - Approval gates sit between the blueprint and sourcing, and between scoring and release. Work stops at those gates until a person clears it.
-- These are enforced in the system, not stated as policy.
 - This is the activity rail from the workspace: actor, action, time, status and result — including the runs that are waiting on a person.
 
 ## Solutions — https://taasflow.com/solutions
 
 Which engagement fits a given hiring situation.
 
-- Solutions — AI Hiring Intelligence for every hiring need
-- Pilot a single hire, scale volume hiring, run enterprise hiring or hire globally. One platform, one monthly fee, ranked candidates in days.
-- Pick the package that covers your open roles and pay one monthly total. Hires within that capacity are included. Your workspace tracks every requisition in one place.
-- Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — TaaSFlow runs alongside it and hands over at the point you decide. Direct ATS sync is planned, not built.
-- 50+ countries covered. Timezone-aware shortlisting, work-authorisation screening, and remote-first evidence.
-- A 3-step intake, about 6 minutes, captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.
-- Consent tracking, retention policies, and full audit trail. GDPR-aligned. Your data stays yours.
-- From a single pilot hire to enterprise programs across 50+ countries — TaaSFlow adapts to the shape of your team.
-- Book a 20-minute consultation — we'll map your open roles to the right plan.
+- TaaSFlow is a recruiting platform with managed execution for HR and talent teams, hospitality and frontline operators, founders and staffing agencies.
+- Not an agency. Sourcing capacity for your team at a flat fee, with the evidence behind every score.
+- Hiring for multi-site and shift-based roles, with a shortlist built around the requirements of the role.
+- Add sourcing and screening capacity behind your own client relationships. TaaSFlow does not place workers.
+- Send us a message and we will point you to the right starting point for your roles.
+- Pick the page that matches how you hire.
 
 ## Enterprise — https://taasflow.com/enterprise
 
 Security, procurement, seats and audit requirements for larger programmes.
 
-- The AI Hiring Intelligence Platform for teams hiring at scale: ranked, evidence-backed shortlists, governance controls and audit trails in one workspace.
+- Recruiting with managed execution for teams hiring at volume: ranked, evidence-backed shortlists, access controls and audit trails in one workspace.
 - Recruiting infrastructure for teams running many roles at once: recruiting agents, multichannel outreach, evidence-backed scoring, governance controls and audit trails in one workspace.
 - One or two functions hiring in parallel with shared standards.
+- Schedule confirmed with you before work begins
 - Agent capacity plus a named account lead
 - Multi-business-unit hiring with executive reporting.
-- Twice-weekly delivery across the portfolio
 - Portfolio hiring across teams in one package.
 - A continuous hiring programme run as one package.
 - Continuous hiring where volume shifts by quarter.
 - No search starts until must-haves, nice-to-haves and weightings are signed off in writing at intake.
 - Each score line carries the source text it came from, so a hiring committee can check the reasoning.
-- A recruiter reads and signs off every shortlist. Nothing reaches your dashboard unread.
+- A recruiter reviews every shortlist before you see it. You make every hiring decision.
 - Change the brief and affected candidates are flagged for re-review rather than left on a stale score.
 - Consistent rubric across every role family
 - The same role family is scored against the same rubric version, whichever recruiter runs the search.
@@ -303,13 +239,12 @@ Security, procurement, seats and audit requirements for larger programmes.
 - Australia, New Zealand, India, Singapore and Southeast Asia, with explicit local-hours filters.
 - Every account is isolated at the database layer. Your candidates and pipelines are never visible to another tenant.
 - Access is scoped to business unit, team or requisition, and candidate contact details are released deliberately, not by default.
-- Candidates apply directly and consent to processing. CVs are stored as PDFs in private storage with time-limited access links.
+- Candidates apply directly and consent to processing. CVs are stored in private storage with time-limited access links.
 - Score changes, decisions, releases and exports are logged with actor and timestamp for internal review.
 - DPAs, sub-processor lists, retention windows and security questionnaires are completed during onboarding.
 - Role families, business units, expected volume, stakeholders and reporting needs.
 - Business units, hiring teams, permissions and dashboards configured to match your org.
 - Criteria and weightings approved per role family. Agent capacity assigned and oversight briefed.
-- Delivery begins in the workspace, in days from an approved brief.
 - Calibration on the first batches, then a standing review on volume, quality and cycle time.
 - Roles live in different spreadsheets, ATSes, and inboxes. Nobody has a single view of what is actually happening.
 - Every recruiter scores differently. Hiring managers see different signals for what is supposedly the same role.
@@ -318,110 +253,54 @@ Security, procurement, seats and audit requirements for larger programmes.
 - Interviews start with no shared record of what was assessed at sourcing, so questions get repeated and time is lost.
 - Cycle time and stage health are calculated retroactively from stale exports rather than a live account view.
 - Business units, teams, and hiring managers modeled explicitly so requisitions, permissions, and reporting line up with how you actually operate.
-- Dedicated agent capacity per role family or business unit. Standards stay consistent as volume changes and new requisitions open.
+- Agent capacity aligned to each role family or business unit. Standards stay consistent as volume changes and new requisitions open.
 - Every open role is a separate pipeline inside the same Client workspace — no context switching between tools per requisition.
 - Requisition portfolio view for TA leadership
 - Role-scoped pipelines for hiring managers
+- Business-unit rollups for people partners
 
 ## Integrations — https://taasflow.com/integrations
 
-Calendars, video interviews and email that connect to the workspace.
+Email, messaging, CRM and agent connections that work with the workspace.
 
 - Every TaaSFlow integration with its purpose, connection method, data exchanged, permissions and current availability. Planned connections are labelled as planned, never as available.
 - Tell us which system you run and what should flow between it and TaaSFlow. We build integrations by demand, and we will tell you honestly whether it is on the roadmap.
 - No setup documentation — nothing to set up yet.
-- Each listing states its purpose, how the connection is made, what data crosses the boundary and what permissions it needs. Anything not built yet is marked Planned.
 - We only list connections that exist in the platform or are formally documented. If the one you need is missing, ask us for it — we prioritise by demand.
 
 ## Security — https://taasflow.com/security
 
 Access control, data handling and hosting posture.
 
-- Verified security and privacy information for TaaSFlow: row-level tenant isolation, access controls, encryption, retention, audit coverage, subprocessors and incident response — with dates and sources.
+- Security and privacy information for TaaSFlow with dates and sources: tenant isolation, access controls, retention, audit coverage, subprocessors, your records and how scoring works.
+- Your role blueprints, rubrics and screening questions.
+- Every decision, comment and hire record, with a history of who changed what.
+- Exportable shortlists for internal stakeholders.
+- Every score points at a specific line in the CV or an answer to a screening question. If we cannot cite it, we do not score it.
+- The rubric is built from your role brief: must-haves, preferred criteria and deal-breakers. You approve it before any candidate is scored.
+- Each score is written to an append-only record with the rubric version and the evidence used.
+- When two pieces of evidence disagree, the candidate card shows the contradiction instead of picking a winner.
+- What happens if we stop working with TaaSFlow?
+- Can the software hire or reject a candidate?
+- In your organisation's workspace on managed infrastructure. The database enforces who can read what with row-level security, and candidate files sit in private storage. The sections above give the detail and the source for each statement.
+- Do you hold SOC 2, ISO 27001 or HIPAA certification?
 - Security and privacy, stated only where we can prove it
 - Every claim here traces to the platform, an internal control, or a published policy. Where something is not in place yet, it says so.
 - A secure data facility corridor lit by a single warm light
 - Send us your questionnaire or DPA template. We answer against the real configuration, and we say 'not yet' where that is the honest answer.
 - This page is our own account of how the system works — not an independent audit or a third-party verification.
 - A real person reads these. Use the closest match rather than a general enquiry form.
+- There is no separate security mailbox yet. Vulnerability reports go to the same privacy@taasflow.com mailbox as privacy requests, so please put "Security report" in the subject line.
 
 ## Trust — https://taasflow.com/trust
 
 Commitments on data, screening and how decisions are recorded.
 
-- The commercial trust pack for TaaSFlow. How pricing works, what you keep, how scoring works, candidate privacy, and where the line runs between TaaSFlow and your team.
-- Every candidate profile, evidence, and score you have seen — permanently.
-- Your role blueprints, rubrics, screening questions, and scoring logic.
-- Talent pools, previously shortlisted candidates, and rediscovery data.
-- Every decision, comment, and hire record — with a full history of who changed what.
-- Exportable shortlists and share links for internal stakeholders.
-- No per-seat charges for internal reviewers.
-- No extra fees for rediscovery or hiring someone you shortlisted earlier.
-- Every score points at a specific line in the CV, an answer to a screening question, or a piece of enrichment data. If we cannot cite it, we do not score it.
-- The scoring rubric is generated from your role blueprint — must-haves, preferred criteria, dealbreakers, and screening answers. It is visible to you before any candidate is scored.
-- Once a score is generated it is written to an append-only record with the model version and the evidence used. Nobody can rewrite history.
-- When two evidence sources disagree — CV vs LinkedIn, claim vs screening answer — we flag it as a contradiction on the candidate card instead of picking a winner.
-- Every extracted fact carries a confidence signal. Low-confidence facts do not carry the same weight as verified ones and are visible as such.
-- Candidates own their data. They can request access, correction, and deletion at any time.
-- CVs are stored in a private bucket with per-organization access, encrypted at rest.
-- External stakeholder share links are token-gated, scoped to the shortlist, and revocable.
-- PII is never used to train third-party models. Model calls are per-request, stateless, and logged for audit.
-- Consent and legal basis are recorded per candidate — with a full history of every access.
-- We help translate the ask into a structured brief and rubric.
-- You approve the brief, the rubric, and the dealbreakers before sourcing starts.
-- We run multi-channel sourcing and outreach with delivery health tracking.
-- You see the pipeline in real time and can pause, redirect, or comment.
-- We parse CVs, extract evidence, and score against your rubric.
-- You review, override, and decide. Every override is captured with a reason.
-- We deliver a ranked shortlist with evidence and provenance.
-- You decide who moves forward. We never make hire/no-hire calls for you.
-- We host the system of record and keep the full change history complete.
-- You own the data. Export, delete, or migrate at any time.
-- What happens if we stop working with TaaSFlow?
-- No. Pricing is package-based and published above. Higher volume gets a lower cost per role. Enterprise plans are custom but never percentage-based.
-- Do candidates know they are being evaluated by an AI-assisted system?
-- Yes. The application flow and privacy notice make the AI-assisted evaluation explicit. Every evaluation is reviewable and reversible by a human.
-- Can the AI make a hire or reject a candidate?
-- No. The system ranks and explains. A human on your team makes every progression, offer, and rejection decision. Every decision is logged with the person and the reason.
-- How are you different from an ATS or a recruiting agency?
-- An ATS stores. An agency executes. TaaSFlow is a recruiting execution system: system of record + sourcing + evidence-first scoring + live client control + persistent memory across roles.
-- TaaSFlow runs alongside — the system of record for how the role was actually run, the evidence behind every candidate, and the memory that carries between roles.
-- In an isolated, per-organization workspace with row-level security. Encrypted at rest. Access is scoped to your team and, when granted, our staff — every read is logged.
-- Per-organization workspace with row-level security on every table.
-- Least-privilege roles: platform admin, client admin, editor, viewer. All access audited.
-
-## Global talent — https://taasflow.com/global-talent
-
-Hiring across regions, remote-ready and compliance considerations.
-
-- Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.
-- Active sourcing across the UK, EU-27, EFTA and select MENA markets. Local time-zone screening and language filters.
-- North America, LATAM and Caribbean coverage with time-zone-aligned pipelines for cross-region teams.
-- Established reach across Australia, New Zealand, India, Singapore and Southeast Asia. Explicit local-hours filters.
-- Remote-first is the default working model on most briefs.
-- Time-zone constraints are captured at intake and enforced in scoring.
-- Hybrid and on-site briefs state the required city or region up front.
-- Working preference is a candidate-owned field — filters, not assumptions.
-- Relocation and visa support are brief-specific. They appear on the job details only when the client has confirmed it in writing.
-- If a role offers relocation, the type of support (bonus, agency, sponsorship) is stated on the job page — never implied by us.
-- Candidates share work authorisation and relocation openness during intake, so mismatches never reach the shortlist.
-- Structured multi-channel sourcing per brief, not blanket outreach.
-- Role-specific rubrics adapt to regional titles, credentials and market norms.
-- Language proficiency captured as a first-class attribute where the brief requires it.
-- Every candidate is reviewed by a human before introduction.
-- Employer of record is the client. Introductions include eligibility and location.
-- Fixed-term contracts where the client already has the entity or contractor framework in place.
-- Where an EOR is required, we introduce with the client's chosen partner — we don't act as the employer of record ourselves.
-- Structured intake captures region, remote scope and any relocation commitment before sourcing starts.
-- Remote-first sourcing across EMEA, the Americas and APAC. Relocation and visa support are offered per brief, only when the employer has confirmed the scope in writing.
-- Coverage means active sourcing, screening and time-zone alignment — not country checklists.
-- We do not publish country totals or visa outcomes. Every brief states what the employer commits to, and nothing more.
-
 ## Terms — https://taasflow.com/terms
 
 Contract terms for the subscription and pilot.
 
-- TaaSFlow runs on a managed Postgres database, authentication and file storage operated by Supabase, with application hosting, CDN and WAF services on Cloudflare's edge network. The full sub-processor register is published in section 6 of our Privacy Notice. This wording is pending review by TaaSFlow's legal counsel.
+- TaaSFlow runs on a managed Postgres database, authentication and file storage operated by Supabase, with application hosting, CDN and WAF services on Cloudflare's edge network. The full sub-processor register is published in section 6 of our Privacy Notice.
 
 ## About — https://taasflow.com/about
 
@@ -430,19 +309,18 @@ Why TaaSFlow exists and how it operates.
 - Great hiring starts with great process. We just made it repeatable.
 - 25 years designing and driving value creation across Fortune 500s and private equity. Former Director at UBS Investment Bank, and led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Pragmatic and disruption-minded, with technology as the enabler — and deep experience working directly with leadership teams to execute business strategy.
 - The best candidates aren't looking. You need to know where they are and how to reach them.
-- Former strategist for Hilton, Marriott, Four Seasons and Philips, and represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe and the Gulf, focused on employer branding, global talent markets and building real connections at scale.
-- TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — an AI Hiring Intelligence Platform that runs the search end to end, priced like software, with configurable expert oversight on every shortlist.
-- Every score cites the exact CV quote it came from. If we cannot cite it, we do not claim it.
-- The workspace your client sees is the same workspace the platform runs on. Nothing lives in a private inbox.
-- Every candidate the platform surfaces stays in your Talent Graph — even between roles. No gatekeeping, no lock-in.
-- Applicants get a real answer, real feedback, real timelines. Silence is not a delivery mode.
-- Scaling teams that need predictable throughput without building an internal recruiting org overnight.
-- Established teams running multiple parallel searches that need one operating model, not five separate vendor contracts.
-- Operators who want to run the search themselves without losing their week to sourcing.
-- About TaaSFlow — the AI Hiring Intelligence Platform
-- TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.
-- Start hiring with an evidence-first model.
-- Submit a role in the guided intake — your workspace is ready as soon as you finish.
-- Why we built a subscription recruiting product.
-- We exist to make recruiting explainable again.
+- Former strategist for Hilton, Marriott, Four Seasons and Philips. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe and the Gulf, focused on employer branding, global talent markets and building real connections at scale.
+- Every score cites the CV passage it came from. If we cannot cite it, we do not claim it.
+- The workspace you see is the same workspace we work in. Nothing lives in a private inbox.
+- Candidates should hear back. Silence is not a delivery mode.
+- Agencies delivered names without reasoning, outsourced recruiting added process without improving quality, and every search started from a fresh set of spreadsheets. There was no shared place where the rubric, the evidence and the decisions lived together.
+- Incentives pointed at the wrong outcome.
+- Contingent fees reward speed to placement, not quality of match. A recruiter paid on placement has every reason to push a candidate over the line and little reason to explain why. Clients paid per placement and still had to trust a summary paragraph.
+- Instead of a contingent fee, a flat one-time price per package. Instead of a private inbox, a workspace for each role. Instead of a summary paragraph, a rubric with citations. The model is deliberately plain: a clear process beats heroics.
+- Every hire has a rubric behind it. Every rejection has a reason. Every candidate record can be exported by the company that paid for it. A recruiter stays in the loop, and the reasoning is visible. That is the version of hiring we want to work in.
+- TaaSFlow is a recruiting platform with managed execution. Every shortlist comes with the evidence behind each score, and package prices are fixed.
+- Request the pilot for one role, or send us a message to talk it through first.
+- HR teams, operators, founders and staffing agencies.
+- Example engagements and how we measure them.
 - Careers built advising global enterprises. Now applying the same rigor to the world of hiring.
+- TaaSFlow was not built to be another agency with a nicer landing page. It was built to fix the specific things that go wrong when companies hire.

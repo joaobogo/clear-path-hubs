@@ -34,7 +34,6 @@ export const AGENT_JOB_TYPES: Record<AgentKey, string[]> = {
     "evidence_extract",
   ],
   outreach: ["outreach_send", "outreach_sequence", "message_send"],
-  scheduling: ["scheduling_offer", "interview_reminder"],
   market_research: ["market_refresh", "role_realism", "blueprint"],
   pipeline_watch: ["pipeline_scan", "sla_check", "notification"],
 };

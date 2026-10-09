@@ -10,7 +10,10 @@ import {
 } from "@tanstack/react-router";
 import type { QueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
-import { BRAND_ONE_LINER, PRODUCT_CATEGORY } from "@/config/product-language";
+import { BRAND_ONE_LINER } from "@/config/product-language";
+import { SOCIAL_LINKS } from "@/config/public-navigation";
+import { getHostIndexability } from "@/lib/seo/request-host.functions";
+import { NON_PRODUCTION_ROBOTS } from "@/lib/seo/edge-policy";
 import { GOOGLE_SITE_VERIFICATION } from "@/config/site-verification";
 import { resetStaleBrowserStorage } from "@/lib/storage-epoch";
 import { captureFirstTouch } from "@/lib/crm/attribution";
@@ -30,7 +33,20 @@ import "@/styles.css";
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
+  // Resolved once per document on the server; never refetched on client
+  // navigation, so it adds no request to the workspace.
+  loader: async () => {
+    try {
+      return await getHostIndexability();
+    } catch {
+      return { indexable: true };
+    }
+  },
+  staleTime: Infinity,
   head: (ctx) => {
+    // Preview and other non-production hosts: keep out of search. Canonical
+    // tags and og:url still point at the production domain.
+    const indexable = (ctx.loaderData as { indexable?: boolean } | undefined)?.indexable !== false;
     // The path this document is being rendered for, known on the SERVER. RB2B
     // is excluded from workspace HTML here rather than guarded at runtime, so
     // /admin, /client and /me never carry the tag at all.
@@ -53,6 +69,7 @@ export const Route = createRootRouteWithContext<{
         name: "description",
         content: BRAND_ONE_LINER,
       },
+      ...(indexable ? [] : [{ name: "robots", content: NON_PRODUCTION_ROBOTS }]),
       {
         name: "apple-mobile-web-app-title",
         content: "TaaSFlow",
@@ -145,19 +162,11 @@ export const Route = createRootRouteWithContext<{
                 caption: "TaaSFlow",
               },
               image: { "@id": "https://taasflow.com/#logo" },
-              // sameAs intentionally omitted: only add profiles that are
-              // verified to exist and to belong to TaaSFlow.
-            },
-            {
-              "@type": "WebApplication",
-              "@id": "https://taasflow.com/platform/#software",
-              name: "TaaSFlow",
-              applicationCategory: "BusinessApplication",
-              applicationSubCategory: PRODUCT_CATEGORY,
-              operatingSystem: "Web",
-              url: "https://taasflow.com/platform",
-              description: `${BRAND_ONE_LINER} Intake Engine, Blueprint Compiler, Agent Layer, Evidence Graph, Scoring Engine and Decision Workspace in one governed system.`,
-              publisher: { "@id": "https://taasflow.com/#organization" },
+              // Only profile URLs already published in the site footer
+              // (SOCIAL_LINKS). Never add a profile that is not linked there.
+              sameAs: SOCIAL_LINKS.filter((l) => l.href.startsWith("https://")).map(
+                (l) => l.href,
+              ),
             },
             {
               "@type": "WebSite",

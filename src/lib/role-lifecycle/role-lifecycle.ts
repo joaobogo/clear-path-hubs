@@ -133,9 +133,8 @@ export type LifecycleSignals = {
   decisionCount?: number;
 
   shortlistedCount?: number;
-  /** Interviews requested or being scheduled — a time is still needed. */
-  interviewsToConfirm?: number;
-  interviewsScheduled?: number;
+  /** Candidates currently at the interview stage. */
+  interviewingCount?: number;
   interviewsCompleted?: number;
   firstInterviewAt?: string | null;
   lastInterviewCompletedAt?: string | null;
@@ -209,11 +208,11 @@ const STAGE_META: Record<
   },
   interview: {
     label: "Interview",
-    summary: "Interviews are arranged and feedback is captured against the brief.",
-    owner: "Coordination agent",
-    ownerKind: "agent",
-    inputs: ["Your shortlist", "Interviewer and candidate availability"],
-    outputs: ["Confirmed interview times", "Structured interview feedback"],
+    summary: "You arrange interviews directly with the candidate; feedback is captured against the brief.",
+    owner: "Your team",
+    ownerKind: "client",
+    inputs: ["Your shortlist"],
+    outputs: ["Interview stage tracking", "Structured interview feedback"],
   },
   decision: {
     label: "Decision",
@@ -462,23 +461,15 @@ export function computeRoleLifecycle(
   }
 
   // ── Interview ─────────────────────────────────────────────────────────────
-  const toConfirm = n(s.interviewsToConfirm);
-  const scheduled = n(s.interviewsScheduled);
+  const interviewing = n(s.interviewingCount);
   const completedIvs = n(s.interviewsCompleted);
-  if (toConfirm > 0) {
-    drafts.interview = draft({
-      state: "waiting",
-      startedAt: s.firstInterviewAt,
-      pendingApprovals: [`${plural(toConfirm, "interview")} needing a confirmed time`],
-      nextAction: "Confirm a time so we can book the interview.",
-      outputNotes: scheduled > 0 ? [`${plural(scheduled, "interview")} confirmed`] : [],
-    });
-  } else if (scheduled > 0) {
+  if (interviewing > 0) {
     drafts.interview = draft({
       state: "active",
       startedAt: s.firstInterviewAt,
-      outputNotes: [`${plural(scheduled, "interview")} confirmed`],
-      nextAction: "Interviews are booked — feedback is captured after each one.",
+      outputNotes: [`${plural(interviewing, "candidate")} at the interview stage`],
+      nextAction:
+        "Arrange interviews directly with the candidate, outside TaaSFlow, then move them on when you decide.",
     });
   } else if (completedIvs > 0) {
     drafts.interview = draft({
@@ -490,7 +481,7 @@ export function computeRoleLifecycle(
   } else if (shortlisted > 0) {
     drafts.interview = draft({
       state: "waiting",
-      nextAction: "Request an interview with a shortlisted candidate.",
+      nextAction: "Move a shortlisted candidate to the interview stage when you are ready.",
     });
   }
 
@@ -505,7 +496,7 @@ export function computeRoleLifecycle(
       outputNotes: [`${plural(offers, "offer")} in play`],
       nextAction: hires > 0 ? null : "Record the outcome once the candidate responds.",
     });
-  } else if (completedIvs > 0 || scheduled > 0) {
+  } else if (completedIvs > 0 || interviewing > 0) {
     drafts.decision = draft({
       state: "waiting",
       nextAction: "Decide who to take to offer after the interviews.",

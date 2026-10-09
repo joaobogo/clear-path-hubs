@@ -166,7 +166,10 @@ describe("re-reading never overwrites the client", () => {
   it("re-reads on the CONTENT of the description, not its length", () => {
     // Keying on length meant replacing a description with a different one of
     // the same length left the old suggestions in place (INT-012/INT-016).
-    expect(intake).toMatch(/signature = `text:\$\{state\.roleTitle\.trim\(\)\}::\$\{jd\}`/);
+    expect(intake).toMatch(/signature = `text:\$\{[^}]*\}::\$\{jd\}`/);
+    // Only a title the client typed is part of the key, so a guessed or read
+    // title changing never triggers a second model call for the same text.
+    expect(intake).toMatch(/editedRef\.current\.has\("roleTitle"\)/);
     expect(intake, "the old length-keyed signature must be gone").not.toMatch(
       /::\$\{jd\.length\}/,
     );

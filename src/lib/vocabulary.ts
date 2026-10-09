@@ -137,11 +137,11 @@ export const APPLICATION_STATUS_VOCABULARY = {
   rejected: { label: "Not moving forward", candidate: "Closed" },
 } as const satisfies Record<string, Entry>;
 
-/** Interview scheduling state. */
+/** Legacy interview-row state (stage tracking only; nothing is scheduled here). */
 export const INTERVIEW_STATUS_VOCABULARY = {
-  requested: { label: "Interview requested", candidate: "Interviewing" },
-  proposed: { label: "Times proposed", candidate: "Interviewing" },
-  scheduling: { label: "Awaiting a time", candidate: "Interviewing" },
+  requested: { label: "Interview stage", candidate: "Interviewing" },
+  proposed: { label: "Interview stage", candidate: "Interviewing" },
+  scheduling: { label: "Interview stage", candidate: "Interviewing" },
   scheduled: { label: "Scheduled", candidate: "Interviewing" },
   completed: { label: "Completed", candidate: "Interviewing" },
   cancelled: { label: "Cancelled", candidate: "Under review" },

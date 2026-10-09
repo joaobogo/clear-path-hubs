@@ -169,10 +169,12 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
         <div>
           <h3 className="flex items-center gap-2 text-base font-semibold">
             <BadgeCheck className="h-4 w-4" />
-            Offers and hire confirmation
+            Offer outcomes and hire confirmation
           </h3>
           <p className="text-sm text-muted-foreground">
-            Guarantee end dates are derived from the recorded start date.
+            Offers are made by the client directly with the candidate. Record the outcome
+            here so the board and the hire count stay right. Guarantee end dates are derived
+            from the recorded start date.
           </p>
         </div>
         {data && !closed && (
@@ -185,7 +187,7 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
       <PanelState
         query={query}
         isEmpty={(data?.offers.length ?? 0) === 0}
-        empty={<PanelEmpty title="No offers on this role" description="Offers extended for this position will appear here." />}
+        empty={<PanelEmpty title="No offers recorded on this role" description="When a candidate reaches the offer stage on the board, the outcome is recorded here." />}
       >
       {data && (
       <>
@@ -505,7 +507,8 @@ export function OfferHireRollupPanel({ teamWideNote = false }: { teamWideNote?: 
           {teamWideNote ? <TeamScopeNote /> : null}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Recorded outcomes only. Guarantee windows are derived from start dates.
+          Recorded outcomes only: offers are made off-system, directly with the candidate.
+          Guarantee windows are derived from start dates.
         </p>
       </header>
 

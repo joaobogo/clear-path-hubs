@@ -17,7 +17,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useConfirmAction } from "@/components/ds";
-import { AvailabilityBlock } from "@/components/candidate/availability-block";
 import { SupportRequestSheet } from "@/components/candidate/support-request-sheet";
 import {
   CANDIDATE_NOTIFICATION_EVENTS,
@@ -206,7 +205,7 @@ function SettingsPage() {
               <div>
                 <Label className="text-sm">Also send time-sensitive updates by SMS</Label>
                 <p className="text-xs text-muted-foreground">
-                  Interview times and anything with a deadline. Nothing else.
+                  Anything with a deadline. Nothing else.
                 </p>
               </div>
               <Switch checked={smsNotif} onCheckedChange={setSmsNotif} aria-label="SMS updates" />
@@ -235,12 +234,6 @@ function SettingsPage() {
               {saveConsent.isPending ? "Saving…" : "Save preferences"}
             </Button>
           </section>
-
-          <AvailabilityBlock
-            availability={data?.profile?.availability ?? null}
-            profileTimezone={data?.profile?.timezone ?? null}
-            onSaved={() => qc.invalidateQueries({ queryKey: ["me-context"] })}
-          />
 
           <section className="rounded-lg border bg-card p-5 space-y-3">
             <h2 className="text-sm font-medium">Request a correction</h2>

@@ -31,7 +31,6 @@ export interface PublicApplicationStatus {
   state: CandidateStateKey;
   steps: JourneyStep[];
   open_requests: PublicInfoRequest[];
-  next_interview_at: string | null;
   can_withdraw: boolean;
   withdrawn: boolean;
 }
@@ -52,7 +51,7 @@ async function findApplication(reference: string, email: string) {
       "id,applied_at,updated_at,status,withdrawn_at,candidate_profile_id," +
         "positions(title,status,organizations(name))," +
         "candidate_profiles!inner(full_name,email)," +
-        "candidate_matches(stage,client_visibility,updated_at,interviews(status,scheduled_at))",
+        "candidate_matches(stage,client_visibility,updated_at)",
     )
     .ilike("candidate_profiles.email", email)
     .limit(50);
@@ -86,22 +85,7 @@ export async function loadPublicStatus(
     stage: string | null;
     client_visibility: string | null;
     updated_at: string | null;
-    interviews?: unknown;
   }>;
-  const interviews = matches.flatMap((m) => {
-    const iv = m.interviews;
-    return (Array.isArray(iv) ? iv : iv ? [iv] : []) as Array<{
-      status: string | null;
-      scheduled_at: string | null;
-    }>;
-  });
-  const live = interviews.filter((iv) => iv.status !== "cancelled");
-  const nextInterview =
-    live
-      .filter((iv) => iv.scheduled_at)
-      .map((iv) => iv.scheduled_at as string)
-      .sort((a, b) => a.localeCompare(b))[0] ?? null;
-
   const { data: reqRows } = await db
     .from("candidate_info_requests")
     .select("id,prompt,created_at,due_at,status")
@@ -137,8 +121,6 @@ export async function loadPublicStatus(
     matchStage: stage,
     matchVisible: visible,
     hasOpenInfoRequest: open_requests.some((r) => !r.expired),
-    interviewScheduled: Boolean(nextInterview),
-    interviewRequested: live.length > 0,
     needsSupport,
   };
   const state = resolveCandidateState(inputs);
@@ -163,7 +145,6 @@ export async function loadPublicStatus(
     state,
     steps: buildJourney(state, inputs),
     open_requests,
-    next_interview_at: nextInterview,
     can_withdraw: state !== "withdrawn" && state !== "decision_made" && state !== "role_closed",
     withdrawn: Boolean(app.withdrawn_at),
   };

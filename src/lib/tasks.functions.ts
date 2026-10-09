@@ -37,7 +37,7 @@ export const TASK_TYPE_LABELS: Record<TaskType, string> = {
   role_brief_approval: "Role brief approval",
   rubric_approval: "Rubric approval",
   candidate_review: "Candidate review",
-  interview_scheduling: "Interview scheduling",
+  interview_scheduling: "Interview stage",
   feedback_submission: "Feedback submission",
   compensation_confirmation: "Compensation confirmation",
   offer_decision: "Offer decision",

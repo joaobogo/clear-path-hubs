@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Senior Product Manager",
+    "seniority": "senior",
+    "workModel": "remote",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "location",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "6+ years in product management",
+      "developer tools or APIs"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

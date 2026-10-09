@@ -28,7 +28,8 @@ const base: QualityInput = {
 describe("job quality checklist against a draft", () => {
   it("flags seniority and employment type only while they are unset", () => {
     const missing = assessJobQuality(base);
-    expect(missing.blocking.map((g) => g.id)).toEqual(
+    // Listed as improvements (the intake and the save treat both as optional).
+    expect(missing.gaps.map((g) => g.id)).toEqual(
       expect.arrayContaining(["seniority", "employment_type"]),
     );
   });
@@ -40,5 +41,20 @@ describe("job quality checklist against a draft", () => {
     expect(ids).not.toContain("seniority");
     expect(ids).not.toContain("employment_type");
     expect(merged.readiness).not.toBe("not_scoreable");
+  });
+});
+
+describe("the checklist agrees with what a save actually requires", () => {
+  it("seniority and employment type are improvements, never 'required to submit'", () => {
+    const q = assessJobQuality({ ...base, seniority: "", employment_type: "" } as QualityInput);
+    expect(q.blocking.map((g) => g.id)).not.toEqual(expect.arrayContaining(["seniority", "employment_type"]));
+    expect(q.degrades.map((g) => g.id)).toEqual(expect.arrayContaining(["seniority", "employment_type"]));
+  });
+
+  it("never tells a submitted or live role that it cannot be submitted", () => {
+    const q = assessJobQuality({ ...base, title: "", status: "active" } as QualityInput);
+    expect(q.summary).not.toMatch(/can't submit/);
+    const draft = assessJobQuality({ ...base, title: "", status: "draft" } as QualityInput);
+    expect(draft.summary).toMatch(/can't submit this role yet/);
   });
 });

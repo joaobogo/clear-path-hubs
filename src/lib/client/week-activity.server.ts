@@ -1,14 +1,15 @@
 import { CLIENT_DECISION_ACTIONS } from "@/lib/client-activity-actions";
 import { dedupeDecisions } from "@/lib/decisions/dedupe";
 import { WEEKLY_WINDOW_DAYS } from "@/lib/client-weekly-update";
+import { distinctInterviewMatches } from "@/lib/kpis/interview-activity";
 
 /**
  * Single source of truth for the "This week" interview and decision counts on
  * the client workspace.
  *
- * An interview counts as held when it was recorded complete in the window, or
- * when its scheduled time falls in the window and is already in the past and
- * the interview was not cancelled. A separate "held" event is never required.
+ * Interviews are arranged off system, so a candidate reaching the interview
+ * stage in the window counts (once per candidate) alongside legacy interview
+ * records completed in it.
  * Decisions come from the same whitelisted `audit_events` rows the Recent activity
 
  * feed lists — so the tiles, the weekly card and the activity list cannot
@@ -24,7 +25,7 @@ export interface ClientWeekActivity {
   /** Inclusive window start / end, ISO. */
   windowStart: string;
   windowEnd: string;
-  /** Interviews held in the window: completed, or scheduled in the past. */
+  /** Interview activity in the window: legacy records plus candidates who reached the interview stage. */
   interviewsHeld: WeekActivityRow[];
   /** One row per recorded decision event, de-duplicated by event id. */
   decisions: WeekActivityRow[];
@@ -79,7 +80,7 @@ export async function loadClientWeekActivity(
     windowEnd: endIso,
     interviewsHeld,
     decisions,
-    interviewsHeldCount: interviewsHeld.length,
+    interviewsHeldCount: distinctInterviewMatches(interviewsHeld),
     decisionsCount: decisions.length,
   };
 }

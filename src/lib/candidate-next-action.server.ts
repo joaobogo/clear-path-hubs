@@ -104,14 +104,6 @@ export async function loadNextAction(
     scheduled_at: string | null;
     completed_at: string | null;
   }>;
-  const now = Date.now();
-  const upcoming = interviews.filter(
-    (i) =>
-      !i.completed_at &&
-      i.status !== "cancelled" &&
-      i.scheduled_at !== null &&
-      new Date(i.scheduled_at).getTime() > now,
-  ).length;
   const completedList = interviews
     .filter((i) => Boolean(i.completed_at))
     .sort((a, b) => (a.completed_at! < b.completed_at! ? 1 : -1));
@@ -137,7 +129,6 @@ export async function loadNextAction(
       : null,
     interviews: {
       total: interviews.length,
-      upcoming,
       completed: completedList.length,
       last_completed_at: completedList[0]?.completed_at ?? null,
     },

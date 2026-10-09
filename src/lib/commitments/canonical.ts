@@ -19,7 +19,6 @@ export type CommitmentKey = SlaMetric["key"];
 export const COMMITMENT_LABEL: Record<CommitmentKey, string> = {
   first_candidate: "First candidate",
   full_shortlist: "Shortlist",
-  interview_slots: "Interview slots",
 };
 
 /** Canonical target wording, built from the stored commitment numbers. */
@@ -35,14 +34,6 @@ export function shortlistPromise(size: number, days: number): string {
   return `${size} ${size === 1 ? "candidate" : "candidates"} within ${days} ${
     days === 1 ? "day" : "days"
   }`;
-}
-
-/**
- * Hours are stated in hours on every surface. The plan page used to translate
- * 24h into "1 working day", which read as a different (softer) promise.
- */
-export function interviewSlotsPromise(hours: number): string {
-  return `Interview slots within ${hours}h of a request`;
 }
 
 /** A target that differs across the account's roles is stated as a range. */
@@ -81,7 +72,7 @@ function plural(n: number, one: string) {
  * commitment, so the plan table reports the same outcomes rather than its own.
  */
 export function rollupCommitments(roles: RoleSla[]): Record<CommitmentKey, CommitmentRollup> {
-  const keys: CommitmentKey[] = ["first_candidate", "full_shortlist", "interview_slots"];
+  const keys: CommitmentKey[] = ["first_candidate", "full_shortlist"];
   const out = {} as Record<CommitmentKey, CommitmentRollup>;
 
   for (const key of keys) {

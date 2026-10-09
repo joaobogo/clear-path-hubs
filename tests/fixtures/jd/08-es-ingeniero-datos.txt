@@ -1,0 +1,17 @@
+Puesto: Ingeniero de Datos Senior
+Ubicación: Madrid, España
+Modalidad: Híbrido
+Tipo de contrato: Indefinido, jornada completa
+Salario: 50.000 € - 60.000 € brutos anuales
+
+En Logística Norte construimos la plataforma de datos que alimenta nuestras operaciones en 14 países.
+
+Requisitos
+- Más de 5 años de experiencia en ingeniería de datos
+- Dominio de Python y SQL
+- Experiencia con Airflow y dbt
+- Nivel alto de inglés
+
+Se valorará
+- Experiencia con Snowflake
+- Conocimientos de Terraform

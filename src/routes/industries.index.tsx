@@ -18,9 +18,7 @@ import {
 } from "@/content/industry-archetypes";
 import { getIndustryConfig } from "@/content/industry-config";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
-import {
-  BookACallDialog,
-} from "@/components/marketing/book-a-call";
+import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
 
 /**
  * /industries — deep sector-expertise library entrance.
@@ -43,9 +41,9 @@ export const Route = createFileRoute("/industries/")({
   },
   head: () =>
     marketingHead(undefined, "/industries", {
-      title: "Industries — AI Hiring Intelligence by sector | TaaSFlow",
+      title: "Recruiting by Industry | TaaSFlow",
       description:
-        "Fifty-seven industries, six page archetypes, one AI Hiring Intelligence Platform. Search or filter to the vertical you hire for.",
+        "Browse the industries TaaSFlow recruits for and open the page for the sector you hire in. Each page covers the roles, evidence and boundaries for that sector.",
     }),
   component: IndustriesIndex,
 });
@@ -165,20 +163,16 @@ function IndustriesIndex() {
             Hiring intelligence, tuned to the realities of each industry.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            One recruiting model, six page archetypes, and a rubric calibrated to
-            the language, evidence and regulation of every sector we serve.
+            One recruiting model, with the role criteria, evidence and
+            boundaries described for each sector we recruit in.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <BookACallDialog
-              trigger={
-                <button
-                  type="button"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                >
-                  Discuss your hiring needs
-                </button>
-              }
-            />
+            <Link
+              to={CTA_PRIMARY.to}
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              {CTA_PRIMARY.label}
+            </Link>
             <Link
               to="/how-it-works"
               hash="scoring"
@@ -346,10 +340,10 @@ function IndustriesIndex() {
                 How industry-specific evaluation works
               </h2>
               <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-[color:var(--brand-navy)]/80">
-                Every industry gets a rubric calibrated to what actually matters
-                in that sector — the language on the CV, the credentials that
-                gate the role, the signals that predict delivery. Nothing is
-                borrowed from a generic template.
+                Each industry page describes what matters in that sector: the
+                language on the CV, the credentials that gate the role and the
+                signals worth scoring. The scoring method itself is the same
+                across sectors, and you approve the criteria for your role.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
@@ -369,9 +363,9 @@ function IndustriesIndex() {
             </div>
             <ol className="space-y-3">
               {[
-                { t: "Sector-specific rubric", b: "Signals, credentials and outcomes match the industry — not a generic sourcing template." },
+                { t: "Sector-specific rubric", b: "Signals, credentials and outcomes match the industry — not a one-size-fits-all checklist." },
                 { t: "Evidence quoted from the CV", b: "Every score point ties to a specific sentence pulled from the candidate's document." },
-                { t: "Reviewed before delivery", b: "A partner reviews each shortlist against the role, jurisdiction and delivery expectations." },
+                { t: "Reviewed before delivery", b: "A recruiter reviews every shortlist before you see it. You make every hiring decision." },
                 { t: "Same workflow across sectors", b: "One workspace, one intake, one commercial model — with content that adapts per industry." },
               ].map((row, i) => (
                 <li
@@ -415,21 +409,11 @@ function IndustriesIndex() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:items-end">
-              <BookACallDialog
-                trigger={
-                  <button
-                    type="button"
-                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
-                  >
-                    Discuss your hiring needs
-                  </button>
-                }
-              />
               <Link
-                to="/contact"
-                className="text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
+                to={CTA_MESSAGE.to}
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
               >
-                Or send us a message →
+                {CTA_MESSAGE.label}
               </Link>
             </div>
           </div>

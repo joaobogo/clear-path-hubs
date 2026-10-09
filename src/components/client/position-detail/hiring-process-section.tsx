@@ -34,13 +34,13 @@ export function HiringProcessSection({
         <ProcessStep
           n={3}
           title="Interview"
-          body="Your team runs interviews. Schedule and outcomes are logged automatically."
+          body="Your team arranges and runs interviews directly with candidates."
           done={interviewingTotal > 0}
         />
         <ProcessStep
           n={4}
           title="Offer"
-          body="Extend an offer through TaaSFlow so we can track acceptance."
+          body="Make the offer directly with the candidate, then track it on the board."
           done={offersTotal > 0}
         />
         <ProcessStep

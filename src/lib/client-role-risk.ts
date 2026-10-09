@@ -14,10 +14,6 @@ export type RoleRiskInput = {
   awaitingDecision?: number;
   /** When the oldest of those was delivered. */
   oldestAwaitingDecisionAt?: string | null;
-  /** When the oldest unconfirmed interview request was made. */
-  oldestInterviewToConfirmAt?: string | null;
-  /** True when an interview is requested but no time is confirmed. */
-  interviewsToConfirm?: number;
   /** The date we promised a first shortlist by, when a commitment exists. */
   promisedShortlistBy?: string | null;
   /** Whether a shortlist has actually been delivered. */
@@ -33,7 +29,6 @@ export type RoleRisk = {
     | "none"
     | "stalled"
     | "waiting_on_client"
-    | "interview_unscheduled"
     | "promise_missed";
 };
 
@@ -41,8 +36,6 @@ export type RoleRisk = {
 export const STALL_DAYS = 7;
 /** Days a decision may sit with the client before we flag it. */
 export const DECISION_WAIT_DAYS = 3;
-/** Days an interview request may sit unconfirmed before we flag it. */
-export const INTERVIEW_WAIT_DAYS = 2;
 
 const DAY_MS = 86_400_000;
 const HOUR_MS = 3_600_000;
@@ -62,27 +55,6 @@ function plural(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
 
-/**
- * Render an age in honest units: hours when < 24h, otherwise whole days.
- * Never rounds up (e.g. 18 hours stays "18 hours ago", not "2 days ago").
- */
-function honestAge(iso: string | null | undefined, now: Date): string {
-  if (!iso) return "";
-  const t = new Date(iso).getTime();
-  if (Number.isNaN(t)) return "";
-  const diffMs = now.getTime() - t;
-  const hrs = diffMs / HOUR_MS;
-
-  if (hrs < 24) {
-    const rounded = Math.max(0, Math.round(hrs));
-    return rounded === 0 ? "less than an hour ago" : `${plural(rounded, "hour")} ago`;
-  }
-
-  const days = Math.max(0, Math.round(hrs / 24));
-  return `${plural(days, "day")} ago`;
-}
-
-
 const OK: RoleRisk = { atRisk: false, reason: "", cause: "none" };
 
 export function computeRoleRisk(input: RoleRiskInput, now: Date = new Date()): RoleRisk {
@@ -101,17 +73,6 @@ export function computeRoleRisk(input: RoleRiskInput, now: Date = new Date()): R
       } been waiting on your decision for ${plural(decisionDays, "day")}.`,
     };
   }
-
-  // 2 · An interview was requested and no time is confirmed.
-  const interviewDays = daysSince(input.oldestInterviewToConfirmAt, now);
-  if ((input.interviewsToConfirm ?? 0) > 0 && interviewDays != null && interviewDays >= INTERVIEW_WAIT_DAYS) {
-    return {
-      atRisk: true,
-      cause: "interview_unscheduled",
-      reason: `An interview requested ${honestAge(input.oldestInterviewToConfirmAt, now)} still has no confirmed time.`,
-    };
-  }
-
 
   // 3 · We promised a shortlist by a date and it hasn't landed.
   if (input.promisedShortlistBy && !input.shortlistDeliveredAt) {

@@ -9,8 +9,14 @@
  * oversight, an approval gate, an escalation path, or a governance control.
  */
 
-/** The category we compete in. Use verbatim. */
-export const PRODUCT_CATEGORY = "AI Hiring Intelligence Platform" as const;
+import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
+
+/**
+ * The category name on public pages. Same string as `OFFER_CATEGORY` in
+ * `offer-facts.ts`. Only public marketing routes and the root schema read it;
+ * the admin dashboard and client workspace do not.
+ */
+export const PRODUCT_CATEGORY = OFFER_CATEGORY;
 
 /**
  * The canonical brand one-liner, reused verbatim network-wide (title tags,
@@ -19,15 +25,14 @@ export const PRODUCT_CATEGORY = "AI Hiring Intelligence Platform" as const;
  * keeping the platform positioning.
  */
 export const BRAND_ONE_LINER =
-  "Recruiting subscription and hiring infrastructure, powered by AI hiring intelligence." as const;
+  "A recruiting platform with managed execution: agents source and score candidates, a recruiter reviews, and you decide." as const;
 
 /** Short form of the one-liner, for titles where length is capped. */
 export const BRAND_DESCRIPTOR =
-  "Recruiting Subscription & Hiring Infrastructure" as const;
+  "Recruiting Platform with Managed Execution" as const;
 
-/** The one-line system claim. Use verbatim. */
-export const SYSTEM_CLAIM =
-  "Agents run the search. Evidence backs every score." as const;
+/** The one-line system claim. Same sentence as `WHO_RUNS_THE_SEARCH_SHORT`. */
+export const SYSTEM_CLAIM = WHO_RUNS_THE_SEARCH_SHORT;
 
 /** Canonical module names. Never rename in copy. */
 export const MODULES = {
@@ -57,7 +62,7 @@ export const MODULE_LIST = [
 ] as const;
 
 /**
- * Public module directory. `anchor` is the section id rendered on /platform,
+ * Public module directory. `anchor` is the section id used inside the module overview on /how-it-works,
  * so navigation and page content can never drift apart. Descriptions state
  * what the module does — no forward-looking or unverifiable claims.
  */

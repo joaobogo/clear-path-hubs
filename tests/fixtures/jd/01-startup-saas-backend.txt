@@ -1,0 +1,29 @@
+Job Title: Senior Backend Engineer
+Team: Platform
+Location: Remote (US)
+Employment Type: Full-time
+Salary: $140,000 - $180,000 per year
+
+About Lumen
+Lumen builds payment infrastructure for marketplaces. We raised $40M in a Series B last spring and
+now process over $2 billion a year for 1,200 customers.
+
+What you'll do
+- Design and ship services in Go and Postgres that move money safely
+- Own the reliability of the ledger service, including on-call
+- Mentor two mid-level engineers
+
+What you'll need
+- 6+ years of backend engineering experience
+- Production experience with Go, Rust or Java
+- Strong grounding in relational databases and SQL
+- Experience operating services on AWS or GCP
+
+Nice to have
+- Experience with payments or ledger systems
+- Kubernetes experience
+
+Benefits
+- $1,500 learning budget per year
+- Health, dental and vision from day one
+- 401(k) with a 4% match

@@ -6,9 +6,7 @@
  * credential — only presence, status codes and provider error text (truncated).
  */
 
-import { BOOKING_ROUTE } from "@/config/booking";
-
-export type IntegrationId = "stripe" | "attio" | "calendly" | "email";
+export type IntegrationId = "stripe" | "attio" | "email";
 
 export type CheckStatus = "ok" | "degraded" | "failed" | "not_configured";
 
@@ -188,95 +186,6 @@ async function checkAttio(): Promise<CheckResult> {
   };
 }
 
-/* ---------------------------------------------------------------- Calendly */
-
-const CALENDLY_BOOKING_URL = BOOKING_ROUTE;
-
-async function checkCalendly(): Promise<CheckResult> {
-  const base = {
-    integration: "calendly" as const,
-    error_code: null as string | null,
-    error_detail: null as string | null,
-    remediation: null as string | null,
-    details: { booking_url: CALENDLY_BOOKING_URL } as DetailsMap,
-  };
-
-  const lovableKey = process.env['LOVABLE_API_KEY'];
-  const calendlyKey = process.env['CALENDLY_API_KEY'];
-
-  if (lovableKey && calendlyKey) {
-    const run = await timed(async () => {
-      const res = await fetchWithTimeout("https://connector-gateway.lovable.dev/calendly/users/me", {
-        headers: {
-          Authorization: `Bearer ${lovableKey}`,
-          "X-Connection-Api-Key": calendlyKey,
-        },
-      });
-      const body = await res.text();
-      if (!res.ok) throw new Error(`${res.status} ${truncate(body, 400)}`);
-      const parsed = JSON.parse(body) as { resource?: { scheduling_url?: string; email?: string } };
-      return parsed.resource ?? {};
-    });
-
-    if (run.error) {
-      const message = (run.error as Error).message ?? String(run.error);
-      return {
-        ...base,
-        status: "failed",
-        summary: "The Calendly connection failed to authenticate.",
-        error_code: "calendly_gateway_error",
-        error_detail: truncate(message),
-        remediation:
-          "Reconnect Calendly so a fresh authorisation is stored. Booking links still open the public scheduling page, so bookings are not blocked by this.",
-        latency_ms: run.ms,
-        details: { ...base.details, mode: "connector" },
-      };
-    }
-
-    const resource = run.value!;
-    return {
-      ...base,
-      status: "ok",
-      summary: "Calendly connection authenticated and the scheduling page resolved.",
-      latency_ms: run.ms,
-      details: {
-        ...base.details,
-        mode: "connector",
-        scheduling_url: resource.scheduling_url ?? null,
-      },
-    };
-  }
-
-  // No API connection: verify the public scheduling page the widget actually loads.
-  const run = await timed(async () => {
-    const res = await fetchWithTimeout(CALENDLY_BOOKING_URL, { method: "GET" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.status;
-  });
-
-  if (run.error) {
-    return {
-      ...base,
-      status: "failed",
-      summary: "The public Calendly booking page did not load.",
-      error_code: "calendly_page_unreachable",
-      error_detail: truncate((run.error as Error).message ?? String(run.error)),
-      remediation:
-        "Every 'Book a call' button points at this URL. Confirm the Calendly event is still published and the slug in src/lib/calendly.ts matches it.",
-      latency_ms: run.ms,
-      details: { ...base.details, mode: "public_page" },
-    };
-  }
-
-  return {
-    ...base,
-    status: "ok",
-    summary: "Public Calendly booking page loads (no API connection linked).",
-    latency_ms: run.ms,
-    details: { ...base.details, mode: "public_page", http_status: run.value ?? null },
-  };
-}
-
 /* ------------------------------------------------------------------- Email */
 
 async function checkEmail(): Promise<CheckResult> {
@@ -419,12 +328,11 @@ async function checkEmail(): Promise<CheckResult> {
 
 /* ---------------------------------------------------------------- Registry */
 
-export const INTEGRATION_IDS: IntegrationId[] = ["stripe", "attio", "calendly", "email"];
+export const INTEGRATION_IDS: IntegrationId[] = ["stripe", "attio", "email"];
 
 const PROBES: Record<IntegrationId, () => Promise<CheckResult>> = {
   stripe: checkStripe,
   attio: checkAttio,
-  calendly: checkCalendly,
   email: checkEmail,
 };
 

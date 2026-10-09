@@ -8,8 +8,8 @@ import {
 } from "@/config/channel-agents";
 
 /**
- * Public coverage panel: states that every sourcing channel has its own agent,
- * by family and count, without publishing how any of them work.
+ * Public coverage panel: states which channels sourcing covers, by family and
+ * count, without publishing how any of them work.
  */
 export function ChannelAgentCoverage({ className }: { className?: string }) {
   return (
@@ -19,12 +19,12 @@ export function ChannelAgentCoverage({ className }: { className?: string }) {
           Channel coverage
         </p>
         <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
-          {CHANNEL_AGENT_COUNT} channels. {CHANNEL_AGENT_COUNT} agents.
+          {CHANNEL_AGENT_COUNT} channels, one set of rules.
         </h2>
         <p className="mt-3 text-[color:var(--brand-navy)]/80">
-          Every sourcing channel we run has its own agent — tuned to that
-          channel, reporting into the same rubric and the same log. Coverage is
-          public. The method is not.
+          Sourcing agents work across these channels, chosen per role. Every
+          candidate, from any channel, is scored on the same rubric and
+          recorded in the same log. Coverage is public. The method is not.
         </p>
       </div>
 
@@ -39,7 +39,7 @@ export function ChannelAgentCoverage({ className }: { className?: string }) {
                 {f.name}
               </span>
               <span className="shrink-0 rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[color:var(--brand-ocean-text)]">
-                {f.agents} agents
+                {f.channels} channels
               </span>
             </div>
             <p className="mt-2 text-sm leading-snug text-[color:var(--brand-navy)]/85">
@@ -56,7 +56,7 @@ export function ChannelAgentCoverage({ className }: { className?: string }) {
               className="h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]"
               aria-hidden
             />
-            The same rules on all {CHANNEL_AGENT_COUNT}
+            The same rules on all {CHANNEL_AGENT_COUNT} channels
           </p>
           <ul className="mt-3 grid gap-2">
             {CHANNEL_AGENT_INVARIANTS.map((line) => (

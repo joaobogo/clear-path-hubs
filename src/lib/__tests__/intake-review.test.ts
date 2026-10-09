@@ -35,6 +35,17 @@ const EMPTY: IntakeReviewSnapshot = {
 };
 
 describe("intake review", () => {
+  it("shows the whole job description, not a clipped preview", () => {
+    const long = "Lead the operations team. ".repeat(60).trim(); // well over 400 characters
+    const r = buildIntakeReview({
+      snapshot: { ...EMPTY, jobDescriptionText: long },
+      required: {},
+    });
+    const jd = r.groups.flatMap((g) => g.rows).find((x) => x.field === "jobDescriptionText");
+    expect(jd?.value).toBe(long);
+    expect(jd?.value.length).toBeGreaterThan(400);
+  });
+
   it("renders every answered field, grouped by its step", () => {
     const r = buildIntakeReview({
       snapshot: {

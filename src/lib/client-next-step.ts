@@ -3,7 +3,7 @@
  *
  * Every client decision must produce a visible consequence. A decision that
  * disappears into the system trains clients to stop deciding, so each stage
- * carries an explicit commitment ("We'll propose interview slots within 24h")
+ * carries an explicit commitment ("We'll present the offer within 2 days")
  * with a real deadline computed from when the candidate entered that stage.
  */
 
@@ -43,14 +43,16 @@ const STEPS: Record<string, NextStep> = {
   },
 
   shortlisted: {
-    headline: "We'll propose interview slots",
-    owner: "taasflow",
-    withinHours: 24,
+    headline:
+      "Move a candidate to the interview stage when you're ready, then arrange the interview directly with them.",
+    owner: "client",
+    withinHours: null,
   },
   interview_process: {
-    headline: "We'll confirm the time and send calendar invites",
-    owner: "taasflow",
-    withinHours: 24,
+    headline:
+      "Arrange the interview directly with the candidate, outside TaaSFlow, then move them on when you've decided.",
+    owner: "client",
+    withinHours: null,
   },
   offer: {
     headline: "We'll present the offer and come back with the candidate's response",

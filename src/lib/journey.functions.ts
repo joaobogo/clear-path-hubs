@@ -329,25 +329,21 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
       );
     if (shortlistedAt) push("shortlisted", shortlistedAt);
 
-    // Interviewed — one row per real interview milestone.
+    // Interviewed — the move to the interview stage is what TaaSFlow can
+    // prove (interviews are arranged off system). A recorded completion is
+    // added when a legacy or feedback-created record has one.
+    const stageInterviewAt =
+      firstStageAt("interview_process") ??
+      clampGuess(
+        match?.stage === "interview_process" ||
+          match?.stage === "offer" ||
+          match?.stage === "hired"
+          ? ((match.updated_at ?? match.created_at) as string | null)
+          : null,
+      );
+    if (stageInterviewAt) push("interviewed", stageInterviewAt, "Moved to interview stage");
     for (const i of interviews) {
-      if (i.requested_at) push("interviewed", i.requested_at, "Interview requested");
-      if (i.scheduled_at) push("interviewed", i.scheduled_at, "Interview scheduled");
       if (i.completed_at) push("interviewed", i.completed_at, "Interview completed");
-    }
-
-    // No interview record: fall back to the stage move, kept in order.
-    if (interviews.length === 0) {
-      const stageInterviewAt =
-        firstStageAt("interview_process") ??
-        clampGuess(
-          match?.stage === "interview_process" ||
-            match?.stage === "offer" ||
-            match?.stage === "hired"
-            ? ((match.updated_at ?? match.created_at) as string | null)
-            : null,
-        );
-      if (stageInterviewAt) push("interviewed", stageInterviewAt);
     }
 
     if (match?.stage === "not_moving_forward") {

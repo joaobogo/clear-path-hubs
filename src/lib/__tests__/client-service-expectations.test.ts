@@ -15,7 +15,6 @@ const commitment = (over: Partial<StoredRoleCommitment> = {}): StoredRoleCommitm
   positionId: "p1",
   firstShortlistDays: 10,
   shortlistSize: 5,
-  interviewSlotsHours: 24,
   ...over,
 });
 
@@ -26,9 +25,9 @@ const metric = (key: CommitmentKey, over: Partial<SlaMetric> = {}): SlaMetric =>
     promise: "promise",
     state: "met",
     detail: "detail",
-    actualValue: key === "interview_slots" ? 30 : 2,
+    actualValue: 2,
     varianceValue: -2,
-    varianceUnit: key === "interview_slots" ? "hours" : "days",
+    varianceUnit: "days",
     ...over,
   }) as SlaMetric;
 
@@ -48,19 +47,11 @@ describe("buildServiceExpectations", () => {
 
   it("uses the canonical commitment names and targets", () => {
     const out = buildServiceExpectations({ plan: null, commitments: [commitment()] });
-    expect(out.rows.map((r) => r.key)).toEqual([
-      "first_candidate",
-      "full_shortlist",
-      "interview_slots",
-    ]);
+    expect(out.rows.map((r) => r.key)).toEqual(["first_candidate", "full_shortlist"]);
     expect(out.rows.find((r) => r.key === "first_candidate")!.commitment).toBe(
       COMMITMENT_LABEL.first_candidate,
     );
     expect(out.rows.find((r) => r.key === "full_shortlist")!.commitment).toBe("Shortlist of 5");
-    // Hours stay hours — never softened into "1 working day".
-    expect(out.rows.find((r) => r.key === "interview_slots")!.promised).toBe(
-      "Interview slots within 24h of a request",
-    );
   });
 
   it("states a range when the account's roles carry different terms", () => {
@@ -82,10 +73,10 @@ describe("buildServiceExpectations", () => {
   });
 
   it("explains why a commitment has no figure yet instead of going silent", () => {
-    const measured = rollupCommitments([role([metric("interview_slots", { state: "pending" })])]);
+    const measured = rollupCommitments([role([metric("full_shortlist", { state: "pending" })])]);
     const out = buildServiceExpectations({ plan: null, commitments: [commitment()], measured });
-    expect(out.rows.find((r) => r.key === "interview_slots")!.performance).toBeNull();
-    expect(out.rows.find((r) => r.key === "interview_slots")!.sampleNote).toBe(NOTHING_DUE_YET);
+    expect(out.rows.find((r) => r.key === "full_shortlist")!.performance).toBeNull();
+    expect(out.rows.find((r) => r.key === "full_shortlist")!.sampleNote).toBe(NOTHING_DUE_YET);
   });
 
   it("reports included roles and term from the stored plan", () => {
@@ -119,15 +110,18 @@ describe("buildServiceExpectations", () => {
 describe("commitment wording is shared with the Overview scorecard", () => {
   it("names every commitment identically on both surfaces", () => {
     const rollup = rollupCommitments([
-      role([metric("first_candidate"), metric("full_shortlist"), metric("interview_slots")]),
+      role([metric("first_candidate"), metric("full_shortlist")]),
     ]);
     const out = buildServiceExpectations({
       plan: null,
       commitments: [commitment()],
       measured: rollup,
     });
-    for (const key of ["first_candidate", "interview_slots"] as CommitmentKey[]) {
-      expect(out.rows.find((r) => r.key === key)!.commitment).toBe(COMMITMENT_LABEL[key]);
-    }
+    expect(out.rows.find((r) => r.key === "first_candidate")!.commitment).toBe(
+      COMMITMENT_LABEL.first_candidate,
+    );
+    expect(out.rows.find((r) => r.key === "full_shortlist")!.commitment).toContain(
+      COMMITMENT_LABEL.full_shortlist,
+    );
   });
 });

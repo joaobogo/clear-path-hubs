@@ -5,11 +5,11 @@ import type { DetailsMap } from "@/lib/integration-health.server";
 
 /**
  * Admin integration health: run read-only probes against Stripe, Attio,
- * Calendly and email delivery, record every result, and read back the latest
+ * and email delivery, record every result, and read back the latest
  * result plus recent history per integration.
  */
 
-const INTEGRATIONS = ["stripe", "attio", "calendly", "email"] as const;
+const INTEGRATIONS = ["stripe", "attio", "email"] as const;
 export type IntegrationId = (typeof INTEGRATIONS)[number];
 
 export type IntegrationCheckRow = {
@@ -51,7 +51,6 @@ export const getIntegrationHealth = createServerFn({ method: "GET" })
     const history: Record<IntegrationId, IntegrationCheckRow[]> = {
       stripe: [],
       attio: [],
-      calendly: [],
       email: [],
     };
     for (const row of rows) {

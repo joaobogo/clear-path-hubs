@@ -29,44 +29,24 @@ const row = (over: Record<string, unknown> = {}): any => ({
   stage: "delivered",
   client_decided: false,
   hire_confirmed: false,
-  interview_active: false,
-  interview_called_off: false,
   fit: { band: "consider" },
   ...over,
 });
 
-const CALLED_OFF = row({
-  stage: "interview_process",
-  interview_called_off: true,
-  interview_active: false,
-});
-
-describe("a called-off interview counts as shortlisted", () => {
-  it("is shortlisted, not interviewing", () => {
-    const k = computeCandidateKpis([CALLED_OFF]);
-    expect(k.shortlisted, "the tile said interviewing while every other surface said shortlisted").toBe(1);
-    expect(k.interviewing).toBe(0);
-  });
-
-  it("agrees with laneFor, which is where the rule lives", () => {
-    expect(laneFor(CALLED_OFF)).toBe("shortlisted");
-  });
-
+describe("stage counts read the stored stage", () => {
   it("reproduces the launch-pass tally exactly", () => {
-    // The 14 Northwind rows as observed: 5 awaiting, 3 stored shortlisted,
-    // 1 interviewing, 1 interview cancelled, 2 offer, 1 hired, 1 closed.
+    // The 14 Northwind rows as observed: 5 awaiting, 4 shortlisted,
+    // 1 interviewing, 2 offer, 1 hired, 1 closed.
     const rows = [
       ...Array.from({ length: 5 }, () => row({ stage: "delivered" })),
-      ...Array.from({ length: 3 }, () => row({ stage: "shortlisted" })),
-      row({ stage: "interview_process", interview_active: true }),
-      CALLED_OFF,
+      ...Array.from({ length: 4 }, () => row({ stage: "shortlisted" })),
+      row({ stage: "interview_process" }),
       ...Array.from({ length: 2 }, () => row({ stage: "offer" })),
       row({ stage: "hired", hire_confirmed: true }),
       row({ stage: "not_moving_forward" }),
     ];
     const k = computeCandidateKpis(rows);
     expect(k.delivered).toBe(14);
-    // 3 stored shortlisted + the cancelled one = 4, matching /client/positions.
     expect(k.shortlisted).toBe(4);
     expect(k.interviewing).toBe(1);
     expect(k.offers).toBe(2);
@@ -75,11 +55,8 @@ describe("a called-off interview counts as shortlisted", () => {
     expect(p.awaiting + p.shortlisted + p.interviewing + p.offer + p.hired + p.closed + p.elsewhere).toBe(14);
   });
 
-  it("leaves a COMPLETED interview in the interview lane", () => {
-    // Only a cancellation moves the lane back. Held interviews stay put.
-    const held = row({ stage: "interview_process", interview_active: true, interview_called_off: false });
-    expect(computeCandidateKpis([held]).interviewing).toBe(1);
-    expect(computeCandidateKpis([held]).shortlisted).toBe(0);
+  it("agrees with laneFor, which is where the rule lives", () => {
+    expect(laneFor(row({ stage: "interview_process" }))).toBe("interview_process");
   });
 });
 

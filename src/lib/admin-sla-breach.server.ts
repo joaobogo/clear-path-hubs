@@ -5,7 +5,6 @@
  * real pipeline rows that prove (or disprove) the commitment:
  *   - first shortlist days  → earliest client-visible delivered candidate_match
  *   - shortlist size        → count of client-visible delivered candidate_matches
- *   - interview slots hours → interviews.requested_at vs slots offered/booked
  *
  * A breach is only ever "actual exceeds target as of now". No forecasting.
  * Acknowledgements are read back from audit_events so the maths stays
@@ -13,22 +12,19 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { formatDate } from "@/lib/format/datetime";
-import { waitingFor } from "@/lib/candidate-next-action";
 
 type Admin = SupabaseClient<never, never, never>;
 
 const DAY = 86_400_000;
-const HOUR = 3_600_000;
 
 export const SLA_ACK_ACTION = "sla.breach_acknowledged";
 export const SLA_ACK_ENTITY = "position_commitment";
 
-export type SlaMetricKey = "first_shortlist" | "shortlist_size" | "interview_slots";
+export type SlaMetricKey = "first_shortlist" | "shortlist_size";
 
 export const SLA_METRIC_LABEL: Record<SlaMetricKey, string> = {
   first_shortlist: "First shortlist",
   shortlist_size: "Shortlist size",
-  interview_slots: "Interview slots",
 };
 
 export type SlaBreachRow = {
@@ -88,7 +84,7 @@ export async function loadSlaBreaches(
   let commitQuery = a
     .from("position_commitments")
     .select(
-      "id, position_id, organization_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at",
+      "id, position_id, organization_id, first_shortlist_days, shortlist_size, baseline_at",
     );
   if (opts.organizationId) commitQuery = commitQuery.eq("organization_id", opts.organizationId);
   const commitRes = await commitQuery;
@@ -101,7 +97,7 @@ export async function loadSlaBreaches(
   const positionIds = Array.from(new Set(commitments.map((c) => String(c['position_id']))));
   const orgIds = Array.from(new Set(commitments.map((c) => String(c['organization_id']))));
 
-  const [posRes, orgRes, matchRes, ivRes, ackRes] = await Promise.all([
+  const [posRes, orgRes, matchRes, ackRes] = await Promise.all([
     a
       .from("positions")
       .select("id, title, status, owner_user_id, organization_id, is_test_record")
@@ -113,17 +109,13 @@ export async function loadSlaBreaches(
       .in("position_id", positionIds)
       .not("delivered_at", "is", null),
     a
-      .from("interviews")
-      .select("id, position_id, requested_at, created_at, scheduled_at, proposed_times, updated_at")
-      .in("position_id", positionIds),
-    a
       .from("audit_events")
       .select("entity_id, actor_user_id, action, after_state, created_at")
       .eq("entity_type", SLA_ACK_ENTITY)
       .eq("action", SLA_ACK_ACTION)
       .order("created_at", { ascending: false }),
   ]);
-  for (const r of [posRes, orgRes, matchRes, ivRes, ackRes]) {
+  for (const r of [posRes, orgRes, matchRes, ackRes]) {
     const err = (r as { error?: { message: string } | null }).error;
     if (err) throw new Error(err.message);
   }
@@ -197,15 +189,6 @@ export async function loadSlaBreaches(
   }
   for (const list of deliveries.values()) list.sort();
 
-  const interviewsByPosition = new Map<string, Array<Record<string, unknown>>>();
-  for (const iv of (ivRes.data ?? []) as Array<Record<string, unknown>>) {
-    const pid = iv['position_id'];
-    if (typeof pid !== "string") continue;
-    const list = interviewsByPosition.get(pid) ?? [];
-    list.push(iv);
-    interviewsByPosition.set(pid, list);
-  }
-
   const rows: SlaBreachRow[] = [];
   let monitored = 0;
 
@@ -229,7 +212,6 @@ export async function loadSlaBreaches(
     const baselineMs = new Date(baselineAt).getTime();
     const targetDays = Number(c['first_shortlist_days']);
     const shortlistSize = Number(c['shortlist_size']);
-    const slotHours = Number(c['interview_slots_hours']);
     const ownerRaw = position['owner_user_id'];
     const ownerId = typeof ownerRaw === "string" && ownerRaw ? ownerRaw : null;
 
@@ -292,58 +274,6 @@ export async function loadSlaBreaches(
         days_over: daysOver(deadlineMs, nowMs),
         first_breach_at: new Date(deadlineMs).toISOString(),
         basis: `${delivered.length} client-visible candidates by day ${targetDays} deadline (${formatDate(new Date(deadlineMs).toISOString())})`,
-      });
-    }
-
-    // 3 · Interview slots within N hours of a request — worst open/late request.
-    let worst: {
-      overMs: number;
-      dueMs: number;
-      /** The instant the clock stopped — slots offered, or now. */
-      endMs: number;
-      actualHours: number;
-      requestedAt: string;
-      responded: boolean;
-    } | null = null;
-    for (const iv of interviewsByPosition.get(positionId) ?? []) {
-      const requestedAt = (iv['requested_at'] ?? iv['created_at']) as string | null;
-      if (!requestedAt) continue;
-      const requestedMs = new Date(requestedAt).getTime();
-      const dueMs = requestedMs + slotHours * HOUR;
-      const proposed = iv['proposed_times'];
-      const hasSlots =
-        (Array.isArray(proposed) && proposed.length > 0) || Boolean(iv['scheduled_at']);
-      const respondedAtRaw = hasSlots
-        ? ((iv['updated_at'] ?? iv['scheduled_at']) as string | null)
-        : null;
-      const endMs = respondedAtRaw ? new Date(respondedAtRaw).getTime() : nowMs;
-      if (endMs <= dueMs) continue;
-      const candidate = {
-        overMs: endMs - dueMs,
-        dueMs,
-        endMs,
-        actualHours: (endMs - requestedMs) / HOUR,
-        requestedAt,
-        responded: Boolean(respondedAtRaw),
-      };
-      if (!worst || candidate.overMs > worst.overMs) worst = candidate;
-    }
-    if (worst) {
-      push({
-        ...base,
-        metric: "interview_slots",
-        target_value: slotHours,
-        target_unit: "hours",
-        target_label: `${slotHours}h`,
-        actual_value: Math.round(worst.actualHours * 10) / 10,
-        // "556.8h" is a machine reading nobody converts in their head. The
-        // same humanised wait the next-action bar shows ("23d 4h") is used
-        // here. actual_value below stays in hours, unchanged, so the maths and
-        // the unit comparison against target_value are untouched.
-        actual_label: `${waitingFor(worst.requestedAt, worst.endMs) ?? `${num(worst.actualHours)}h`}${worst.responded ? "" : " (still open)"}`,
-        days_over: daysOver(worst.dueMs, nowMs),
-        first_breach_at: new Date(worst.dueMs).toISOString(),
-        basis: `Interview requested ${formatDate(worst.requestedAt)}, slots ${worst.responded ? "offered late" : "not offered yet"} against a ${slotHours}h promise`,
       });
     }
   }

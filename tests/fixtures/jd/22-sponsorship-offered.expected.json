@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Machine Learning Engineer",
+    "location": "Toronto, Canada",
+    "workModel": "hybrid"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "MSc or PhD",
+      "Python and PyTorch",
+      "deploying models"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

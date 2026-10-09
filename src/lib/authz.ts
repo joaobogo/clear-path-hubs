@@ -52,7 +52,7 @@ export type ClientPermission = (typeof CLIENT_PERMISSIONS)[number];
 export const CLIENT_PERMISSION_LABELS: Record<ClientPermission, string> = {
   view_candidates: "View candidates",
   add_feedback: "Add feedback",
-  request_interviews: "Request interviews",
+  request_interviews: "Move candidates to interview",
   manage_jobs: "Manage jobs",
   invite_members: "Invite members",
   view_reports: "View reports",
@@ -61,7 +61,7 @@ export const CLIENT_PERMISSION_LABELS: Record<ClientPermission, string> = {
 export const CLIENT_PERMISSION_DESCRIPTIONS: Record<ClientPermission, string> = {
   view_candidates: "See candidates that TaaSFlow has approved for this organization.",
   add_feedback: "Leave decisions, notes and feedback on candidates.",
-  request_interviews: "Request and schedule interviews.",
+  request_interviews: "Move candidates to the interview stage.",
   manage_jobs: "Create, edit and close positions.",
   invite_members: "Invite additional recruiter seats (subject to the seat limit).",
   view_reports: "Open analytics, operations and portfolio reporting.",

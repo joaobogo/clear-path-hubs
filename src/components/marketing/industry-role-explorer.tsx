@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import type { IndustryEntry, IndustryRoleFamily } from "@/content/industries-v2";
 import { getRoleEvidence } from "@/content/industry-evidence-bank";
+import { CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
+import { FIRST_SHORTLIST_TIMING_SHORT } from "@/config/offer-facts";
 
 /**
  * Interactive role explorer. Two axes of selection:
@@ -27,11 +29,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
   );
 
   const [famIdx, setFamIdx] = useState(0);
-  const family = families[famIdx];
   const [roleIdx, setRoleIdx] = useState(0);
-  const role = family.roles[Math.min(roleIdx, family.roles.length - 1)] ?? family.roles[0];
-
-  const view = useMemo(() => buildRoleView(role, family, entry), [role, family, entry]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)]">
@@ -48,6 +46,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
               key={fam.name}
               role="tab"
               aria-selected={selected}
+              aria-controls={`role-family-panel-${idx}`}
               onClick={() => {
                 setFamIdx(idx);
                 setRoleIdx(0);
@@ -70,35 +69,76 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
         })}
       </div>
 
-      {/* Panel */}
-      <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-        {/* Role chips */}
+      {/* Panels: every family and role is in the HTML; inactive ones are hidden. */}
+      {families.map((fam, fIdx) => (
         <div
-          role="tablist"
-          aria-label={`${family.name} — individual roles`}
-          className="flex flex-wrap gap-2"
+          key={fam.name}
+          id={`role-family-panel-${fIdx}`}
+          role="tabpanel"
+          aria-label={fam.name}
+          hidden={fIdx !== famIdx}
+          className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
         >
-          {family.roles.map((r, idx) => {
-            const selected = idx === roleIdx;
-            return (
-              <button
-                key={r}
-                role="tab"
-                aria-selected={selected}
-                onClick={() => setRoleIdx(idx)}
-                className={[
-                  "inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs font-medium sm:min-h-9 transition-colors",
-                  selected
-                    ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
-                    : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40",
-                ].join(" ")}
-              >
-                {r}
-              </button>
-            );
-          })}
-        </div>
+          {/* Role chips */}
+          <div
+            role="tablist"
+            aria-label={`${fam.name} — individual roles`}
+            className="flex flex-wrap gap-2"
+          >
+            {fam.roles.map((r, idx) => {
+              const selected = idx === Math.min(roleIdx, fam.roles.length - 1);
+              return (
+                <button
+                  key={r}
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls={`role-panel-${fIdx}-${idx}`}
+                  onClick={() => setRoleIdx(idx)}
+                  className={[
+                    "inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs font-medium sm:min-h-9 transition-colors",
+                    selected
+                      ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                      : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40",
+                  ].join(" ")}
+                >
+                  {r}
+                </button>
+              );
+            })}
+          </div>
 
+          {fam.roles.map((r, idx) => (
+            <RolePanel
+              key={r}
+              id={`role-panel-${fIdx}-${idx}`}
+              hidden={idx !== Math.min(roleIdx, fam.roles.length - 1)}
+              role={r}
+              family={fam}
+              entry={entry}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function RolePanel({
+  id,
+  hidden,
+  role,
+  family,
+  entry,
+}: {
+  id: string;
+  hidden: boolean;
+  role: string;
+  family: IndustryRoleFamily;
+  entry: IndustryEntry;
+}) {
+  const view = useMemo(() => buildRoleView(role, family, entry), [role, family, entry]);
+  return (
+    <div id={id} role="tabpanel" aria-label={role} hidden={hidden}>
         <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2 border-t border-[color:var(--brand-navy)]/10 pt-5">
           <div>
             <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]">
@@ -126,7 +166,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
             <blockquote className="mt-2 rounded-xl bg-[color:var(--brand-mist)]/60 p-4 text-sm italic text-[color:var(--brand-navy)]/85">
               {view.evidence}
               <footer className="mt-2 not-italic text-xs text-[color:var(--brand-navy)]/80">
-                Illustrative — quoted from candidate CVs in the workspace.
+                Illustrative example, not a quote from a real candidate.
               </footer>
             </blockquote>
           </div>
@@ -135,19 +175,18 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
         <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[color:var(--brand-navy)]/10 pt-5">
           <p className="text-sm text-[color:var(--brand-navy)]/80">{view.cta}</p>
           <a
-            href="/intake"
+            href={CTA_PRIMARY.to}
             className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
           >
-            Brief this role
+            {CTA_PRIMARY.label}
           </a>
           <a
-            href="/how-it-works"
+            href={CTA_HOW_IT_WORKS.to}
             className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
           >
-            See how the platform sources it
+            {CTA_HOW_IT_WORKS.label}
           </a>
         </div>
-      </div>
     </div>
   );
 }
@@ -387,14 +426,8 @@ function buildEvidence(role: string, sen: Seniority, fn: RoleFunction, entry: In
   return `For a ${role} in ${entry.name.toLowerCase()}, a CV scores on the work it names, its scope and who can confirm it — not on a keyword list.`;
 }
 
-function buildCta(role: string, sen: Seniority): string {
-  if (sen === "Executive" || sen === "Director") {
-    return `Hiring a ${role}? Book a scoped call — leadership hires get a partner-led shortlist.`;
-  }
-  if (sen === "Manager" || sen === "Lead") {
-    return `Hiring a ${role}? Brief the role — first shortlist within 10 business days.`;
-  }
-  return `Hiring a ${role}? Brief the role — first shortlist within 7 business days.`;
+function buildCta(role: string, _sen: Seniority): string {
+  return `Hiring for ${role}? ${FIRST_SHORTLIST_TIMING_SHORT}.`;
 }
 
 function dedupe(arr: string[]): string[] {

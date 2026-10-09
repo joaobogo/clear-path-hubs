@@ -1,139 +1,104 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteShell } from "@/components/marketing/site-shell";
-import { marketingHead } from "@/lib/marketing/head";
-import { PRICING_PACKAGES, isTierPricePublic, formatUsd } from "@/config/public-pricing";
-import {
-  Users,
-  Building2,
-  Rocket,
-  Globe2,
-  ClipboardList,
-  ShieldCheck,
-} from "lucide-react";
-import { PageConnections } from "@/components/marketing/page-connections";
+import { Briefcase, Building2, Handshake, Rocket } from "lucide-react";
 
-const PILOT = PRICING_PACKAGES.find((p) => p.id === "pilot");
-const PILOT_PRICE_LABEL =
-  PILOT && isTierPricePublic(PILOT) && PILOT.priceUsd !== null
-    ? ` for ${formatUsd(PILOT.priceUsd)}`
-    : "";
+import { PublicPage, PublicSection, SiteShell, CtaSection } from "@/components/marketing/site-shell";
+import { marketingHead } from "@/lib/marketing/head";
+import { PRICE_PILOT_USD } from "@/config/pricing-core";
+import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 
 export const Route = createFileRoute("/solutions")({
   head: () =>
     marketingHead(undefined, "/solutions", {
-      title: "Solutions — AI Hiring Intelligence for every hiring need",
+      title: "Who TaaSFlow Is For | HR, Operators, Founders",
       description:
-        "Pilot a single hire, scale volume hiring, run enterprise hiring or hire globally. One platform, one monthly fee, ranked candidates in days.",
+        "TaaSFlow is a recruiting platform with managed execution for HR and talent teams, hospitality and frontline operators, founders and staffing agencies.",
     }),
   component: SolutionsPage,
 });
 
-const SOLUTIONS = [
+const AUDIENCES = [
   {
-    icon: Rocket,
-    title: "Pilot a single hire",
-    body: `Test TaaSFlow on one role${PILOT_PRICE_LABEL}. Ranked shortlist delivered fast. If it isn't the best hiring experience you've had, you don't renew.`,
-    cta: { to: "/pilot", label: "Start a pilot" },
-  },
-  {
-    icon: Users,
-    title: "Scale hiring teams",
-    body: "Pick the package that covers your open roles and pay one monthly total. Hires within that capacity are included. Your workspace tracks every requisition in one place.",
-    cta: { to: "/pricing", label: "See pricing" },
+    icon: Briefcase,
+    title: "HR and talent teams",
+    body: "Not an agency. Sourcing capacity for your team at a flat fee, with the evidence behind every score.",
+    to: "/for-hr-teams",
+    cta: "For HR and talent teams",
   },
   {
     icon: Building2,
-    title: "Enterprise programs",
-    body: "Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — TaaSFlow runs alongside it and hands over at the point you decide. Direct ATS sync is planned, not built.",
-    cta: { to: "/enterprise", label: "Enterprise details" },
+    title: "Hospitality and frontline operators",
+    body: "Hiring for multi-site and shift-based roles, with a shortlist built around the requirements of the role.",
+    to: "/industries/hospitality",
+    cta: "Hospitality hiring",
   },
   {
-    icon: Globe2,
-    title: "Global talent, remote-ready",
-    body: "50+ countries covered. Timezone-aware shortlisting, work-authorisation screening, and remote-first evidence.",
-    cta: { to: "/global-talent", label: "Global talent" },
+    icon: Rocket,
+    title: "Founders",
+    body: `Your first recruiter, for $${PRICE_PILOT_USD} a role. One pilot per company.`,
+    to: "/for-founders",
+    cta: "For founders",
   },
   {
-    icon: ClipboardList,
-    title: "Structured intake",
-    body: "A 3-step intake, about 6 minutes, captures role, requirements, and hiring context. Every requirement scored 0–100 with evidence.",
-    cta: { to: "/how-it-works", label: "How it works" },
-  },
-  {
-    icon: ShieldCheck,
-    title: "Compliance & privacy",
-    body: "Consent tracking, retention policies, and full audit trail. GDPR-aligned. Your data stays yours.",
-    cta: { to: "/privacy", label: "Privacy" },
+    icon: Handshake,
+    title: "Staffing agencies",
+    body: "Add sourcing and screening capacity behind your own client relationships. TaaSFlow does not place workers.",
+    to: "/partnerships/staffing",
+    cta: "Staffing partnerships",
   },
 ] as const;
+
+const LINK_CLASS =
+  "mt-4 text-sm font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:underline";
 
 function SolutionsPage() {
   return (
     <SiteShell>
-      <section className="border-b border-border/60">
-        <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">
-            Solutions
+      <PublicSection className="pb-6 pt-16 sm:pt-20">
+        <PublicPage className="max-w-4xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
+            Who TaaSFlow is for
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            One workspace. Every hiring model.
+          <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
+            Pick the page that matches how you hire.
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            From a single pilot hire to enterprise programs across 50+ countries —
-            TaaSFlow adapts to the shape of your team.
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
+            TaaSFlow is a {OFFER_CATEGORY.toLowerCase()}. {WHO_RUNS_THE_SEARCH}
           </p>
-        </div>
-      </section>
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {SOLUTIONS.map((s) => (
-            <article
-              key={s.title}
-              className="flex flex-col rounded-2xl border border-border/60 bg-card p-6 shadow-sm"
-            >
-              <s.icon className="h-6 w-6 text-primary" aria-hidden />
-              <h2 className="mt-4 text-lg font-semibold">{s.title}</h2>
-              <p className="mt-2 flex-1 text-sm text-muted-foreground">{s.body}</p>
-              <Link
-                to={s.cta.to}
-                className="mt-4 text-sm font-medium text-primary hover:underline"
+        </PublicPage>
+      </PublicSection>
+      <PublicSection className="py-8">
+        <PublicPage>
+          <div className="grid gap-5 md:grid-cols-2">
+            {AUDIENCES.map((a) => (
+              <article
+                key={a.title}
+                className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                {s.cta.label} →
-              </Link>
-            </article>
-          ))}
-        </div>
-      </section>
-      <section className="border-t border-border/60 bg-muted/30">
-        <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-semibold tracking-tight">
-            Not sure which fits?
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Book a 20-minute consultation — we'll map your open roles to the right
-            plan.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link
-              to="/contact"
-              className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-            >
-              Book a consultation
-            </Link>
-            <Link
-              to="/intake"
-              className="rounded-md border border-input px-5 py-3 text-sm font-semibold hover:bg-accent"
-            >
-              Start a pilot
-            </Link>
+                <a.icon className="h-6 w-6 text-[color:var(--brand-ocean-text)]" aria-hidden />
+                <h2 className="mt-4 text-xl font-semibold text-[color:var(--brand-navy)]">{a.title}</h2>
+                <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/80">{a.body}</p>
+                {a.to === "/industries/hospitality" ? (
+                  <Link
+                    to="/industries/$slug"
+                    params={{ slug: "hospitality" }}
+                    className={LINK_CLASS}
+                  >
+                    {a.cta} →
+                  </Link>
+                ) : (
+                  <Link to={a.to} className={LINK_CLASS}>
+                    {a.cta} →
+                  </Link>
+                )}
+              </article>
+            ))}
           </div>
-        </div>
-      </section>
-          <PageConnections
-        commercial={{ to: "/intake", label: "Start hiring", desc: "Open your first role in minutes." }}
-        explainer={{ to: "/how-it-works", label: "The delivery model", desc: "Evidence-first ranking, weekly cadence." }}
-        resource={{ to: "/case-studies", label: "Operator case studies", desc: "Series A–C teams shipping hires." }}
-        audience={{ to: "/industries", label: "By industry", desc: "Role blueprints for your vertical." }}
+        </PublicPage>
+      </PublicSection>
+      <CtaSection
+        eyebrow="Not sure which fits?"
+        title="Talk it through with us."
+        description="Send us a message and we will point you to the right starting point for your roles."
       />
     </SiteShell>
   );

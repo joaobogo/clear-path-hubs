@@ -19,6 +19,13 @@ import {
   ClipboardList,
   ArrowRight,
 } from "lucide-react";
+import { CTA_MESSAGE, CTA_ENTERPRISE, CTA_PRIMARY } from "@/config/cta";
+import {
+  COMPLIANCE_NOTE,
+  FIRST_SHORTLIST_TIMING,
+  TIMING_FINE_PRINT,
+  WHO_RUNS_THE_SEARCH,
+} from "@/config/offer-facts";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
 import {
@@ -38,9 +45,9 @@ import {
 export const Route = createFileRoute("/enterprise")({
   head: () =>
     marketingHead(undefined, "/enterprise", {
-      title: "Enterprise Hiring Intelligence | TaaSFlow",
+      title: "Enterprise Recruiting | TaaSFlow",
       description:
-        "The AI Hiring Intelligence Platform for teams hiring at scale: ranked, evidence-backed shortlists, governance controls and audit trails in one workspace.",
+        "Recruiting with managed execution for teams hiring at volume: ranked, evidence-backed shortlists, access controls and audit trails in one workspace.",
     }, {
       breadcrumbs: [
         { name: "Home", path: "/" },
@@ -75,28 +82,28 @@ const VOLUME_BANDS = [
   {
     band: "1 position",
     price: PRICE_PILOT_DISPLAY,
-    cadence: "Weekly ranked delivery",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "One agent capacity block",
     fit: "A single critical hire, run end to end.",
   },
   {
     band: PACKAGE_10.capacityLabel,
     price: PACKAGE_10.totalDisplay,
-    cadence: "Weekly delivery per role family",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Agent capacity per role family",
     fit: "One or two functions hiring in parallel with shared standards.",
   },
   {
     band: PACKAGE_20.capacityLabel,
     price: PACKAGE_20.totalDisplay,
-    cadence: "Twice-weekly delivery on priority roles",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Agent capacity plus a named account lead",
     fit: "Multi-business-unit hiring with executive reporting.",
   },
   {
     band: PACKAGE_30.capacityLabel,
     price: PACKAGE_30.totalDisplay,
-    cadence: "Twice-weekly delivery across the portfolio",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Enterprise-scale agent capacity",
     fit: "Portfolio hiring across teams in one package.",
   },
@@ -105,21 +112,21 @@ const VOLUME_BANDS = [
   // published up to $64,000 — a large buyer, on the page written for them,
   // was shown no price for their volume at all (audit 17 Sep, item 4).
   //
-  // `fit` is the approved `bestFor` line from src/content/pricing.ts. Cadence
-  // and capacity repeat the 30-position row deliberately: the approved tier
-  // content gives portfolio and program the SAME included list as volume, so
-  // repeating it commits to nothing these packages do not already promise.
+  // `fit` is the approved `bestFor` line from src/content/pricing.ts. Delivery
+  // timing is not promised per package: the schedule is confirmed with the
+  // buyer before work begins. Capacity repeats the 30-position row
+  // deliberately: portfolio and program share its approved included list.
   {
     band: PACKAGE_40.capacityLabel,
     price: PACKAGE_40.totalDisplay,
-    cadence: "Twice-weekly delivery across the portfolio",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Enterprise-scale agent capacity",
     fit: "Portfolio hiring across business units.",
   },
   {
     band: PACKAGE_100.capacityLabel,
     price: PACKAGE_100.totalDisplay,
-    cadence: "Twice-weekly delivery across the portfolio",
+    cadence: "Schedule confirmed with you before work begins",
     agentCapacity: "Enterprise-scale agent capacity",
     fit: "A continuous hiring programme run as one package.",
   },
@@ -127,7 +134,7 @@ const VOLUME_BANDS = [
   {
     band: `More than ${MAX_POSITIONS} positions`,
     price: ABOVE_MAX_DISPLAY,
-    cadence: "Cadence agreed per business unit",
+    cadence: "Schedule agreed per business unit",
     agentCapacity: "Scoped with you",
     fit: "Continuous hiring where volume shifts by quarter.",
   },
@@ -144,7 +151,7 @@ const QUALITY_CONTROLS = [
   },
   {
     title: "Human review before delivery",
-    body: "A recruiter reads and signs off every shortlist. Nothing reaches your dashboard unread.",
+    body: "A recruiter reviews every shortlist before you see it. You make every hiring decision.",
   },
   {
     title: "Rescoring when the role changes",
@@ -186,7 +193,7 @@ const COMPLIANCE_POSTURE = [
   },
   {
     title: "Consent captured at source",
-    body: "Candidates apply directly and consent to processing. CVs are stored as PDFs in private storage with time-limited access links.",
+    body: "Candidates apply directly and consent to processing. CVs are stored in private storage with time-limited access links.",
   },
   {
     title: "Audit trail on record changes",
@@ -203,10 +210,10 @@ const COMPLIANCE_POSTURE = [
 ];
 
 const IMPLEMENTATION = [
-  { step: "Week 0", title: "Scoping call", body: "Role families, business units, expected volume, stakeholders and reporting needs." },
-  { step: "Week 1", title: "Account design", body: "Business units, hiring teams, permissions and dashboards configured to match your org." },
-  { step: "Week 1–2", title: "Intake and calibration", body: "Criteria and weightings approved per role family. Agent capacity assigned and oversight briefed." },
-  { step: "Week 2–3", title: "First ranked shortlists", body: "Delivery begins in the workspace, in days from an approved brief." },
+  { step: "Step 1", title: "Scoping call", body: "Role families, business units, expected volume, stakeholders and reporting needs." },
+  { step: "Step 2", title: "Account design", body: "Business units, hiring teams, permissions and dashboards configured to match your org." },
+  { step: "Step 3", title: "Intake and calibration", body: "Criteria and weightings approved per role family. Agent capacity assigned and oversight briefed." },
+  { step: "Step 4", title: "First ranked shortlists", body: FIRST_SHORTLIST_TIMING },
   { step: "Ongoing", title: "Review cadence", body: "Calibration on the first batches, then a standing review on volume, quality and cycle time." },
 ];
 
@@ -224,22 +231,21 @@ function EnterprisePage() {
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Every open role, every ranked candidate, every piece of evidence —
-            in a single account your TA, hiring managers, and executives share.
-            Agents run the search, with configurable expert oversight. Flat subscription;
-            direct handover after shortlist.
+            in a single account your TA, hiring managers, and executives share.{" "}
+            {WHO_RUNS_THE_SEARCH}
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
-              to="/contact"
+              to={CTA_ENTERPRISE.to}
               className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-center text-sm font-semibold text-white hover:opacity-90"
             >
-              Build an enterprise recruiting plan
+              {CTA_ENTERPRISE.label}
             </Link>
             <Link
-              to="/intake"
+              to={CTA_PRIMARY.to}
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-center text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              Start with one search
+              {CTA_PRIMARY.label}
             </Link>
           </div>
 
@@ -334,7 +340,7 @@ function EnterprisePage() {
                 <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">{b.fit}</p>
                 <dl className="mt-3 space-y-1.5 text-sm">
                   <div className="flex gap-2">
-                    <dt className="shrink-0 text-[color:var(--brand-navy)]/70">Cadence:</dt>
+                    <dt className="shrink-0 text-[color:var(--brand-navy)]/70">Delivery:</dt>
                     <dd className="text-[color:var(--brand-navy)]/85">{b.cadence}</dd>
                   </div>
                   <div className="flex gap-2">
@@ -350,14 +356,14 @@ function EnterprisePage() {
             <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
 
               <caption className="sr-only">
-                Subscription bands by number of active roles
+                Package prices by number of positions
               </caption>
               <thead>
                 <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Subscription option</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Monthly</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">System operating cadence</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Agent capacity and oversight</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Package</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Package price</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Delivery</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Capacity and oversight</th>
                 </tr>
               </thead>
               <tbody>
@@ -405,7 +411,7 @@ function EnterprisePage() {
             <Pillar
               icon={<Users className="h-5 w-5" aria-hidden />}
               title="Aligned agent capacity"
-              body="Dedicated agent capacity per role family or business unit. Standards stay consistent as volume changes and new requisitions open."
+              body="Agent capacity aligned to each role family or business unit. Standards stay consistent as volume changes and new requisitions open."
             />
             <Pillar
               icon={<Layers className="h-5 w-5" aria-hidden />}
@@ -484,15 +490,15 @@ function EnterprisePage() {
                 Every candidate. Every requirement. Every role.
               </h2>
               <p className="mt-4 text-[color:var(--brand-navy)]/80">
-                Candidates arrive scored against the requirements your team actually
-                approved at intake — with recruiter-written fit notes and quotes from the CV
-                that make the score defensible in a hiring committee.
+                Candidates arrive scored against the requirements your team approved at
+                intake, with fit notes and quotes from the CV that make the score
+                defensible in a hiring committee.
               </p>
               <ul className="mt-6 space-y-2.5 text-sm text-[color:var(--brand-navy)]/80">
                 {[
                   "Role-specific scoring aligned to your intake",
                   "Evidence per requirement, not one blanket score",
-                  "Recruiter-written fit narratives",
+                  "Fit narratives reviewed by a recruiter",
                   "Same standard applied across every role",
                 ].map((x) => (
                   <li key={x} className="flex gap-2">
@@ -530,12 +536,12 @@ function EnterprisePage() {
                 Transparency & reporting
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
-                Live account view — not a monthly export.
+                Account view in the workspace, not a monthly export.
               </h2>
               <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 The workspace is the report. Requisition health, stage distribution,
-                sourcing throughput and decision reasons update as work happens — and
-                everything is exportable for board reviews and internal reviews.
+                sourcing throughput and decision reasons update as work happens, and
+                you can export your records at any time.
               </p>
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <MiniCard
@@ -556,7 +562,7 @@ function EnterprisePage() {
                 <MiniCard
                   icon={<ClipboardList className="h-4 w-4" aria-hidden />}
                   label="Export for reviews"
-                  body="Board-ready and internal-review outputs."
+                  body="Your candidate records, exportable at any time."
                 />
               </div>
             </div>
@@ -575,7 +581,7 @@ function EnterprisePage() {
             One thread per role. No forwarded emails.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            TA, hiring managers, and your platform experts work in the same workspace with the
+            TA, hiring managers, and your TaaSFlow recruiter work in the same workspace with the
             same context. Decisions and reasons are captured next to the candidate they
             apply to — not lost in email threads.
           </p>
@@ -583,7 +589,7 @@ function EnterprisePage() {
             <Pillar
               icon={<MessagesSquare className="h-5 w-5" aria-hidden />}
               title="In-workspace messaging"
-              body="Direct thread with your platform experts, scoped per role. No side channels."
+              body="A message thread with your TaaSFlow recruiter, scoped per role. No side channels."
             />
             <Pillar
               icon={<Users className="h-5 w-5" aria-hidden />}
@@ -614,8 +620,8 @@ function EnterprisePage() {
             ))}
           </div>
           <p className="mt-6 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
-            Time-zone and right-to-work constraints are captured at intake and enforced in scoring, so
-            a candidate who cannot legally or practically work the role never reaches your shortlist.{" "}
+            Time-zone and right-to-work constraints are captured at intake and used in scoring and
+            recruiter review.{" "}
             <Link to="/global-talent" className="font-semibold underline underline-offset-4">
               More on global coverage
             </Link>
@@ -654,18 +660,17 @@ function EnterprisePage() {
             />
             <Pillar
               icon={<Eye className="h-5 w-5" aria-hidden />}
-              title="Named recruiter contact"
-              body="You always know who to talk to. Your platform expert is a direct message in the workspace — not a ticket queue."
+              title="A recruiter on every search"
+              body="A recruiter reviews every shortlist, and you can message your TaaSFlow recruiter in the workspace."
             />
             <Pillar
               icon={<MessagesSquare className="h-5 w-5" aria-hidden />}
               title="Security review support"
-              body="We complete your questionnaire, DPA and sub-processor review as part of onboarding, not after go-live."
+              body="We support your security review during onboarding. DPAs, sub-processor lists and questionnaires are scoped with you."
             />
           </div>
           <p className="mt-6 text-xs text-[color:var(--brand-navy)]/80">
-            Specific security certifications, integrations, and support SLAs are confirmed
-            during your enterprise consultation and scoped to your account.
+            {COMPLIANCE_NOTE}
           </p>
         </PublicPage>
       </PublicSection>
@@ -677,7 +682,7 @@ function EnterprisePage() {
             <Scale className="mt-1 h-5 w-5 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
             <p className="text-sm text-[color:var(--brand-navy)]/80">
               At enterprise volume the difference is structural: a placement fee scales with every
-              hire and every salary. A subscription does not.
+              hire and every salary. A fixed package price does not.
             </p>
           </div>
           <div className="mt-8">
@@ -685,10 +690,10 @@ function EnterprisePage() {
           </div>
           <div className="mt-8">
             <Link
-              to="/contact"
+              to={CTA_ENTERPRISE.to}
               className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
             >
-              Build an enterprise recruiting plan
+              {CTA_ENTERPRISE.label}
             </Link>
           </div>
         </PublicPage>
@@ -701,11 +706,11 @@ function EnterprisePage() {
             Implementation timeline
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
-            From first call to first shortlist in weeks, not quarters.
+            From first call to first shortlist.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            No integration project, no data migration, no implementation fee. Your team logs into a
-            workspace that is already configured.
+            No integration project and no data migration. Your team logs into a workspace
+            configured for your account.
           </p>
           <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
             {IMPLEMENTATION.map((s) => (
@@ -714,7 +719,7 @@ function EnterprisePage() {
           </ol>
           <p className="mt-6 flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/80">
             <CalendarClock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-            Timings assume criteria are approved on schedule; scoping calls are usually booked within a week.
+            {TIMING_FINE_PRINT}
           </p>
         </PublicPage>
       </PublicSection>
@@ -722,15 +727,15 @@ function EnterprisePage() {
       {/* ── Final CTA ────────────────────────────────────────────── */}
       <CtaSection
         eyebrow="Enterprise"
-        title="Build an enterprise recruiting plan."
-        description="One call to scope role families, volume, governance and reporting. You get a written plan before anything starts."
-        primary={{ to: "/contact", label: "Build an enterprise recruiting plan" }}
-        secondary={{ to: "/pricing", label: "See pricing" }}
+        title="Plan hiring at volume with us."
+        description="Tell us about your role families, volume, governance and reporting needs. We scope the package with you before anything starts."
+        primary={CTA_ENTERPRISE}
+        secondary={CTA_MESSAGE}
       />
           <PageConnections
-        commercial={{ to: "/contact", label: "Talk to enterprise sales", desc: "Get a scoped rollout and pricing proposal." }}
+        commercial={{ to: CTA_ENTERPRISE.to, label: CTA_ENTERPRISE.label, desc: "Get a scoped package for your volume." }}
         explainer={{ to: "/how-it-works", label: "The operating model", desc: "How multi-role portfolios run through the workspace." }}
-        resource={{ to: "/case-studies", label: "Portfolio outcomes", desc: "How large teams govern hiring at scale." }}
+        resource={{ to: "/case-studies", label: "Example engagements", desc: "Example engagements and how we measure them." }}
         audience={{ to: "/global-talent", label: "Global talent options", desc: "Hire compliantly across borders." }}
       />
     </SiteShell>
@@ -816,7 +821,15 @@ function Step({
 
 /* ── Destination-product visual mocks ────────────────────────── */
 
-function MockChrome({ title, children }: { title: string; children: React.ReactNode }) {
+function MockChrome({
+  title,
+  children,
+  badge = "Example dashboard",
+}: {
+  title: string;
+  children: React.ReactNode;
+  badge?: string;
+}) {
   return (
     <div
       role="img"
@@ -830,9 +843,8 @@ function MockChrome({ title, children }: { title: string; children: React.ReactN
         <span className="ml-3 min-w-0 flex-1 truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
           {title}
         </span>
-        <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
-          Live
+        <span className="ml-auto inline-flex shrink-0 items-center rounded-full bg-[color:var(--brand-navy)]/8 px-2 py-0.5 text-[10px] font-semibold text-[color:var(--brand-navy)]">
+          {badge}
         </span>
       </div>
       <div className="p-4 sm:p-5">{children}</div>
@@ -848,7 +860,7 @@ function RequisitionPortfolioMock() {
     { role: "VP Engineering", unit: "Executive · Global", mgr: "M. Chen", stage: "Sourcing", pct: 18 },
   ];
   return (
-    <MockChrome title="Admin workspace · Requisition portfolio">
+    <MockChrome title="Requisition portfolio">
       <div className="space-y-2.5">
         {rows.map((r) => (
           <div
@@ -889,19 +901,19 @@ function RankedEvidenceMock() {
     { label: "Timezone overlap (EU)", score: 100 },
   ];
   return (
-    <MockChrome title="Client workspace · Ranked candidate · Evidence">
+    <MockChrome title="Ranked candidate and evidence" badge="Example candidate">
       <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="text-sm font-semibold text-[color:var(--brand-navy)]">
-              Candidate #A-1042
+              Candidate A-1042
             </div>
             <div className="text-xs text-[color:var(--brand-navy)]/80">
               Senior Product Designer · Remote · EU
             </div>
           </div>
           <div className="rounded-lg bg-[color:var(--brand-navy)]/8 px-2.5 py-1 text-sm font-semibold text-[color:var(--brand-navy)]">
-            94
+            Score 94
           </div>
         </div>
         <div className="mt-4 space-y-2">
@@ -941,7 +953,7 @@ function ReportingMock() {
   ];
   const max = Math.max(...stages.map((s) => s.n));
   return (
-    <MockChrome title="Admin workspace · Account reporting">
+    <MockChrome title="Account reporting">
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
           <div className="text-[11px] uppercase tracking-wider text-[color:var(--brand-navy)]/80">
@@ -951,7 +963,7 @@ function ReportingMock() {
             37
           </div>
           <div className="mt-1 text-[11px] text-[color:var(--brand-navy)]/80">
-            across 6 business units
+            across 6 business units (example figures)
           </div>
         </div>
         <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
@@ -962,7 +974,7 @@ function ReportingMock() {
             412
           </div>
           <div className="mt-1 text-[11px] text-[color:var(--brand-navy)]/80">
-            across all pipelines
+            across all pipelines (example figures)
           </div>
         </div>
       </div>

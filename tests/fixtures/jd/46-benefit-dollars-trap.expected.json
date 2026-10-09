@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Office Administrator",
+    "location": "Boston, MA"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "office administration",
+      "organisational skills"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Payroll Specialist",
+    "location": "Calgary, AB",
+    "salaryMin": 62000,
+    "salaryMax": 70000,
+    "currency": "CAD",
+    "compensationPeriod": "year",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "PCP",
+      "Canadian payroll"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

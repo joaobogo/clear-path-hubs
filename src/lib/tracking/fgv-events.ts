@@ -19,8 +19,6 @@ export const FGV_EVENTS = {
   formSubmit: "fgv_form_submit",
   formSuccess: "fgv_form_success",
   formError: "fgv_form_error",
-  bookingStart: "fgv_booking_start",
-  bookingComplete: "fgv_booking_complete",
   contentDownload: "fgv_content_download",
   webinarRegistration: "fgv_webinar_registration",
   assessmentStart: "fgv_assessment_start",
@@ -35,6 +33,10 @@ export const FGV_EVENTS = {
   ecosystemSwitch: "fgv_ecosystem_switch",
   crossBrandClick: "fgv_cross_brand_click",
   qualifiedLead: "fgv_qualified_lead",
+  // Short employer inquiry funnel. Non-PII: category and source only.
+  leadFormView: "lead_form_view",
+  leadFormStart: "lead_form_start",
+  leadFormError: "lead_form_error",
 } as const;
 
 export type FgvEventName = (typeof FGV_EVENTS)[keyof typeof FGV_EVENTS];

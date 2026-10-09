@@ -7,6 +7,7 @@ import { getIndustry } from "@/lib/marketing/content";
 import { getIndustryEntry } from "@/content/industries-v2";
 import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { marketingHead } from "@/lib/marketing/head";
+import { INDUSTRY_NOINDEX_ROBOTS, isIndexableIndustrySlug } from "@/lib/seo/indexability";
 import {
   INDUSTRY_SLUG_ALIASES,
   isLegacyIndustrySlug,
@@ -36,6 +37,9 @@ export const Route = createFileRoute("/industries/$slug")({
   },
   head: ({ params, loaderData }) => {
     const v2 = loaderData?.v2;
+    // Only INDUSTRY pages listed in INDEXABLE_INDUSTRY_SLUGS are indexable;
+    // the rest stay crawlable (follow) but out of the index and the sitemap.
+    const robots = isIndexableIndustrySlug(params.slug) ? undefined : INDUSTRY_NOINDEX_ROBOTS;
     // The vertical hero rendered on the page is also its share image.
     const hero = getIndustryHeroImage(toInternalSlug(params.slug))?.src;
     if (v2) {
@@ -56,6 +60,7 @@ export const Route = createFileRoute("/industries/$slug")({
         { title: v2.meta.title, description: v2.meta.description },
         {
           image: hero,
+          robots,
           breadcrumbs: [
             { name: "Industries", path: "/industries" },
             { name: v2.name ?? params.slug, path: `/industries/${params.slug}` },
@@ -80,7 +85,7 @@ export const Route = createFileRoute("/industries/$slug")({
         title: `${params.slug} — TaaSFlow`,
         description: "Industry-focused subscription recruiting.",
       },
-      { image: hero },
+      { image: hero, robots },
     );
   },
 

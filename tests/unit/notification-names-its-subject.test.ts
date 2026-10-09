@@ -150,15 +150,7 @@ describe("a resolved task leaves the feed", () => {
   });
 });
 
-describe("the sweep and the reconciler use one title", () => {
-  it("is not written out a second time in the sweep", () => {
-    // Two copies of this string is how the sweep keeps raising items that
-    // nothing ever clears — the shape of the original defect.
-    const sweep = read("src/lib/candidate/interview-reminders.server.ts");
-    expect(sweep).toMatch(/INTERVIEW_NO_OUTCOME_TITLE/);
-    expect(sweep).not.toMatch(/_title:\s*"Interview slot passed/);
-  });
-
+describe("the no-outcome title", () => {
   it("is the title the reader actually sees", () => {
     expect(INTERVIEW_NO_OUTCOME_TITLE).toBe("Interview slot passed with no outcome");
   });

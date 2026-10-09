@@ -20,8 +20,6 @@ const CONVERSION_PATHS: readonly string[] = [
   "/pilot",
   "/pricing",
   "/contact",
-  "/book-call",
-  "/book-a-call",
   "/checkout",
   "/pay",
   "/start",

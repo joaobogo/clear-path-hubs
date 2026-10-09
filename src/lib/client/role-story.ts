@@ -242,12 +242,11 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
 export function buildMilestone(input: {
   status: string;
   candidates: StoryCandidate[];
-  nextInterviewAt: string | null;
   firstShortlistExpectedAt: string | null;
   openings: number;
   hires: number;
 }): MilestoneBlock {
-  const { status, candidates, nextInterviewAt } = input;
+  const { status, candidates } = input;
   const at = (iso: string | null) =>
     iso
       ? formatDate(iso)
@@ -277,7 +276,7 @@ export function buildMilestone(input: {
   }
   const isClosed = status === "closed" || status === "archived";
   const isFilled = input.hires >= input.openings && input.openings > 0;
-  const hasActivePipeline = count("offer") > 0 || nextInterviewAt || count("interview_process") > 0;
+  const hasActivePipeline = count("offer") > 0 || count("interview_process") > 0;
 
   // A role is only "Complete" if it's closed/filled AND has no active interviews or offers outstanding.
   if ((isClosed || isFilled) && !hasActivePipeline) {
@@ -291,22 +290,18 @@ export function buildMilestone(input: {
   if (count("offer") > 0) {
     return {
       headline: "Waiting on an offer response",
-      detail: `${count("offer")} offer${count("offer") === 1 ? "" : "s"} outstanding. We chase daily and post the answer here.`,
+      // The offer is between the client and the candidate; TaaSFlow does not
+      // chase it. The board is where the answer gets recorded.
+      detail: `${count("offer")} offer${count("offer") === 1 ? "" : "s"} outstanding. Record the answer on the candidates board when it comes in.`,
       criteria: "Based on candidates currently at offer stage.",
     };
   }
-  if (nextInterviewAt) {
-    return {
-      headline: `Next interview ${at(nextInterviewAt)}`,
-      detail: "Scorecards land here within a day of each conversation.",
-      criteria: "Based on the earliest scheduled interview on this role.",
-    };
-  }
   if (count("interview_process") > 0) {
+    const n = count("interview_process");
     return {
-      headline: "Interview times to confirm",
-      detail: `${count("interview_process")} candidate${count("interview_process") === 1 ? "" : "s"} in the interview stage without a confirmed slot.`,
-      criteria: "Based on candidates in the interview stage with no scheduled time.",
+      headline: `${n} candidate${n === 1 ? "" : "s"} at the interview stage`,
+      detail: "Arrange interviews directly with the candidate, outside TaaSFlow, then move them on when you decide.",
+      criteria: "Based on candidates currently in the interview stage.",
     };
   }
   if (count("delivered") > 0) {
@@ -331,7 +326,6 @@ export function buildMilestone(input: {
 export function buildRoleStory(input: {
   status: string;
   candidates: StoryCandidate[];
-  nextInterviewAt: string | null;
   firstShortlistExpectedAt: string | null;
   openings: number;
   hires: number;

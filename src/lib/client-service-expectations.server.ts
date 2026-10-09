@@ -45,7 +45,7 @@ export async function buildServiceExpectationsFor(
       .maybeSingle(),
     client
       .from("position_commitments")
-      .select("position_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at")
+      .select("position_id, first_shortlist_days, shortlist_size, baseline_at")
       .eq("organization_id", orgId),
   ]);
 
@@ -78,7 +78,6 @@ export async function buildServiceExpectationsFor(
     positionId: r.position_id,
     firstShortlistDays: Number(r.first_shortlist_days),
     shortlistSize: Number(r.shortlist_size),
-    interviewSlotsHours: Number(r.interview_slots_hours),
   }));
 
   // Measured performance comes from the one commitments measurement path — the

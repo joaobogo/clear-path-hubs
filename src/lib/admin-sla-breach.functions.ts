@@ -6,7 +6,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const metric = z.enum(["first_shortlist", "shortlist_size", "interview_slots"]);
+const metric = z.enum(["first_shortlist", "shortlist_size"]);
 
 export const getSlaBreaches = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

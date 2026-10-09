@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Senior Accountant",
+    "seniority": "senior",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "workModel",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "CPA LICENCE",
+      "FIVE YEARS OF EXPERIENCE"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

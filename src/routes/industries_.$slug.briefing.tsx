@@ -1,5 +1,5 @@
 /**
- * Sector briefing — the print-ready document offered by the industry lead
+ * Industry hiring guide — the print-ready document offered by the industry lead
  * catcher (Part 7, prompt 47).
  *
  * Everything on this page is drawn from the vertical's own content entry:
@@ -21,6 +21,8 @@ import {
   toInternalSlug,
 } from "@/lib/marketing/industry-slug-aliases";
 import { breadcrumbScript, clampDescription } from "@/lib/marketing/head";
+import { INDUSTRY_NOINDEX_ROBOTS, isIndexableIndustrySlug } from "@/lib/seo/indexability";
+import { OFFER_CATEGORY } from "@/config/offer-facts";
 import { Button } from "@/components/ui/button";
 
 
@@ -46,13 +48,13 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
       // Loader threw notFound(): keep the soft-404 out of the index.
       return {
         meta: [
-          { title: "Briefing not found — TaaSFlow" },
+          { title: "Guide not found — TaaSFlow" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
     const name = loaderData.entry.name;
-    const title = `${name} hiring briefing — TaaSFlow`;
+    const title = `${name} hiring guide — TaaSFlow`;
     const description = clampDescription(
       `How we run ${name.toLowerCase()} searches: role families, the evidence we score against, the certifications that matter, and what your shortlist contains.`,
     );
@@ -61,6 +63,9 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
       meta: [
         { title },
         { name: "description", content: description },
+        ...(isIndexableIndustrySlug(params.slug)
+          ? []
+          : [{ name: "robots", content: INDUSTRY_NOINDEX_ROBOTS }]),
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
@@ -74,7 +79,7 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
         breadcrumbScript([
           { name: "Industries", path: "/industries" },
           { name, path: `/industries/${params.slug}` },
-          { name: "Hiring briefing", path: `/industries/${params.slug}/briefing` },
+          { name: "Hiring guide", path: `/industries/${params.slug}/briefing` },
         ]),
       ],
     };
@@ -82,9 +87,9 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
   component: BriefingPage,
   notFoundComponent: () => (
     <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-      <h1 className="text-2xl font-semibold">Briefing not found</h1>
+      <h1 className="text-2xl font-semibold">Guide not found</h1>
       <Link to="/industries" className="mt-4 inline-block text-primary hover:underline">
-        Browse all sectors
+        Browse all industries
       </Link>
     </div>
   ),
@@ -127,7 +132,7 @@ function BriefingPage() {
         <header className="flex items-start justify-between gap-6 border-b border-[color:var(--brand-navy)]/15 pb-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/70">
-              TaaSFlow · sector briefing
+              TaaSFlow · industry hiring guide
             </p>
             <h1 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-navy)]">
               Hiring in {entry.name}
@@ -163,7 +168,7 @@ function BriefingPage() {
           </Section>
         ) : null}
 
-        <Section title="What makes this sector hard">
+        <Section title="What makes hiring here hard">
           <ul className="space-y-3">
             {entry.challenges.map((c) => (
               <li key={c.title} className="break-inside-avoid">
@@ -216,8 +221,7 @@ function BriefingPage() {
 
         <footer className="mt-12 border-t border-[color:var(--brand-navy)]/15 pt-6 text-xs text-[color:var(--brand-navy)]/70">
           <p>
-            TaaSFlow — one subscription covering applicant tracking, recruiting and
-            outreach. Prepared for {entry.name} hiring teams.
+            TaaSFlow — {OFFER_CATEGORY}. Prepared for {entry.name} hiring teams.
           </p>
           <p className="mt-1 print:hidden">
             <Link to="/industries/$slug" params={{ slug }} className="text-primary hover:underline">

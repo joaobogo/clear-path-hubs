@@ -49,7 +49,6 @@ import {
   evaluateAdvanceGate,
 } from "@/lib/client/advance-gate";
 import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
-import { isActiveInterview } from "@/lib/interview-state";
 
 import {
   type AnyRow,
@@ -152,55 +151,6 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     const matchIds = ((rows as AnyRow[]) ?? []).map((r) => r.id as string);
     const evidenceByMatch = await loadClientEvidenceItems(context.supabase, matchIds);
 
-    // Active interviews, same definition as the "Interviewing" KPI tile, so the
-    // list can agree with the tile even before the stage is moved.
-    const activeInterviews = new Set<string>();
-    // Requested but not yet timed. toClientCandidateDTO derives
-    // interview_awaiting_time from interview_needs_confirmation, and this path
-    // never set it — so the flag was permanently false on the candidate LIST
-    // and CandidatePrimaryAction went on offering "Request interview" to a
-    // client whose request was already sitting in the staff queue as
-    // "requested · awaiting a time" (audit #8, TF8-08). The mechanism for this
-    // was added in audit #6 (A6-23); it was simply never fed here.
-    const awaitingTime = new Set<string>();
-    // Cancelled with nothing held. The stage stays at interview_process after a
-    // cancellation, so the client was shown "Interviewing · Make offer" for a
-    // candidate whose only interview was called off (audit #8, TF8-08). A
-    // COMPLETED interview is a normal interview_process state and must not
-    // land here — which is why the query below can no longer filter to the
-    // three live statuses.
-    const everCancelled = new Set<string>();
-    // An interview that actually happened. "Make offer" is gated on this.
-    const held = new Set<string>();
-    if (matchIds.length > 0) {
-      const { interviewNeedsTimeConfirmed, interviewCalledOffOnly, interviewHeld } =
-        await import("@/lib/client/interviews-to-confirm");
-      const { data: ivs } = await context.supabase
-        .from("interviews")
-        .select("candidate_match_id, status, proposed_times, scheduled_at, availability_expires_at")
-        .in("candidate_match_id", matchIds);
-      const statusesByMatch = new Map<string, string[]>();
-      for (const iv of ((ivs as AnyRow[]) ?? [])) {
-        if (!iv.candidate_match_id) continue;
-        const id = iv.candidate_match_id as string;
-        const status = String(iv.status ?? "");
-        const list = statusesByMatch.get(id) ?? [];
-        list.push(status);
-        statusesByMatch.set(id, list);
-        if (isActiveInterview(iv)) {
-          activeInterviews.add(id);
-          // Same predicate the admin "Awaiting a time" queue counts by.
-          if (interviewNeedsTimeConfirmed(status)) awaitingTime.add(id);
-        }
-      }
-      // One rule, shared with the KPI loader and the lane derivation, so the
-      // row label, the tile and the board column cannot disagree.
-      for (const [id, statuses] of statusesByMatch) {
-        if (interviewCalledOffOnly(statuses)) everCancelled.add(id);
-        if (interviewHeld(statuses)) held.add(id);
-      }
-    }
-
     // What the client has already answered, and which candidates hold a
     // confirmed offer record. The snapshot tiles count "awaiting your review"
     // and "hired" from these, so a tile can never read a different figure from
@@ -226,10 +176,6 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     let dtos = ((rows as AnyRow[]) ?? []).map((r) =>
       toClientCandidateDTO({
         ...r,
-        interview_active: activeInterviews.has(r.id as string),
-        interview_needs_confirmation: awaitingTime.has(r.id as string),
-        interview_called_off: everCancelled.has(r.id as string),
-        interview_completed: held.has(r.id as string),
         client_decided: decidedMatches.has(r.id as string),
         hire_confirmed:
           confirmedHires.matchIds.has(String(r.id)) ||
@@ -245,7 +191,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         if (data.filter === "hired") return d.stage === "hired";
         if (data.filter === "not_moving_forward") return d.stage === "not_moving_forward";
         if (data.filter === "interview")
-          return d.interview_active || d.stage === "interview_process" || d.stage === "offer";
+          return d.stage === "interview_process" || d.stage === "offer";
         // "Top" matches the Overview tile and the card band: derived from the
         // run's score, with the stored label only as a fallback.
         if (data.filter === "top")
@@ -301,12 +247,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const applicationId = (match as AnyRow).application_id;
     const candidateProfileId = (match as AnyRow).candidate_profile_id;
     const auditIds = [data.matchId, applicationId, candidateProfileId].filter(Boolean) as string[];
-    const [{ data: interviews }, { data: decisions }, answersRes, auditRes] = await Promise.all([
-      context.supabase
-        .from("interviews")
-        .select("id, status, requested_at, scheduled_at, completed_at, notes, proposed_times, availability_expires_at")
-        .eq("candidate_match_id", data.matchId)
-        .order("created_at", { ascending: false }),
+    const [{ data: decisions }, answersRes, auditRes] = await Promise.all([
       context.supabase
         .from("client_decisions")
         .select("id, decision, feedback, reason_code, details, created_at")
@@ -376,8 +317,6 @@ export const getClientCandidate = createServerFn({ method: "GET" })
             skills: hasList(profile.skills) ? profile.skills : (parsedFacts?.skills ?? profile.skills),
           }
         : profile,
-      // Same definition as the list and the "Interviewing" KPI tile.
-      interview_active: ((interviews as AnyRow[]) ?? []).some(isActiveInterview),
       evidence_items: evidenceItems,
       application_answers: answers,
       audit_events: ((auditRes as AnyRow).data as AnyRow[]) ?? [],
@@ -385,7 +324,6 @@ export const getClientCandidate = createServerFn({ method: "GET" })
 
     return {
       candidate: toClientCandidateDTO(matchWithAnswers),
-      interviews: (interviews as AnyRow[]) ?? [],
       // One entry per real decision: a decision recorded more than once never
       // shows up as a repeating history.
       decisions: dedupeDecisions(((decisions as AnyRow[]) ?? []) as AnyRow[]),

@@ -18,6 +18,7 @@ import {
 } from "./interview-feedback";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { assertEditor } from "@/lib/client-shared.server";
+import { parseFeedbackTarget } from "@/lib/interview-feedback-queue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -203,7 +204,21 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
           };
         });
 
-      return { pending, submitted };
+      // Interviews happen off system: a match at (or past) the interview stage
+      // with no feedback yet is also open, even with no interview row.
+      const { getStageMatchesAwaitingFeedback } = await import(
+        "./client/interviews-awaiting-feedback.server"
+      );
+      const stagePending =
+        submitted.length > 0
+          ? []
+          : await getStageMatchesAwaitingFeedback(context.supabase, data.orgId, {
+              matchId: data.matchId,
+              stages: ["interview_process", "offer", "hired"],
+              coveredMatchIds: pending.length > 0 ? new Set([data.matchId]) : undefined,
+            });
+
+      return { pending: [...pending, ...stagePending], submitted };
     },
   );
 
@@ -227,7 +242,7 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
       z
         .object({
           orgId: z.string().uuid(),
-          interviewId: z.string().uuid(),
+          interviewId: z.string().min(1).max(80),
           recommendation: z.enum(RECOMMENDATIONS),
           nextStep: z.enum(NEXT_STEPS),
           strengths: z.string().max(FEEDBACK_TEXT_MAX).default(""),
@@ -249,15 +264,39 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
     const sel = (s: string): string => s;
     await assertEditor(context.supabase, context.userId, data.orgId);
 
-    const { data: iv, error: ivErr } = await context.supabase
-      .from("interviews")
-      .select(sel("id, candidate_match_id, organization_id, position_id, status"))
-      .eq("id", data.interviewId)
-      .eq("organization_id", data.orgId)
-      .maybeSingle();
-    if (ivErr) throw new Error(ivErr.message);
-    if (!iv) throw new Error("interview_not_found");
-    const row = iv as AnyRow;
+    // The target is a real interview row (legacy) or a match at the interview
+    // stage, in which case one completed record is created on first submit.
+    const target = parseFeedbackTarget(data.interviewId);
+    let interviewId: string;
+    let row: AnyRow;
+    if (target.kind === "match") {
+      if (!z.string().uuid().safeParse(target.matchId).success) throw new Error("interview_not_found");
+      const { ensureCompletedInterviewForMatch } = await import("./interview-record.server");
+      const ensured = await ensureCompletedInterviewForMatch(context.supabase, {
+        orgId: data.orgId,
+        matchId: target.matchId,
+        userId: context.userId,
+      });
+      interviewId = ensured.interviewId;
+      row = {
+        id: interviewId,
+        candidate_match_id: ensured.matchId,
+        position_id: ensured.positionId,
+        status: "completed",
+      };
+    } else {
+      interviewId = target.interviewId;
+      if (!z.string().uuid().safeParse(interviewId).success) throw new Error("interview_not_found");
+      const { data: iv, error: ivErr } = await context.supabase
+        .from("interviews")
+        .select(sel("id, candidate_match_id, organization_id, position_id, status"))
+        .eq("id", interviewId)
+        .eq("organization_id", data.orgId)
+        .maybeSingle();
+      if (ivErr) throw new Error(ivErr.message);
+      if (!iv) throw new Error("interview_not_found");
+      row = iv as AnyRow;
+    }
     const matchId = row.candidate_match_id as string;
 
     const { data: profile } = await context.supabase
@@ -272,7 +311,7 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
 
     const { error: upsertErr } = await context.supabase.from("interview_scorecards").upsert(
       {
-        interview_id: data.interviewId,
+        interview_id: interviewId,
         candidate_match_id: matchId,
         organization_id: data.orgId,
         position_id: (row.position_id as string) ?? null,
@@ -300,7 +339,7 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
           feedback: strengths ?? concerns,
           updated_by: context.userId,
         } as never)
-        .eq("id", data.interviewId)
+        .eq("id", interviewId)
         .eq("organization_id", data.orgId);
     }
 
@@ -374,7 +413,7 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
       actor_user_id: context.userId,
       action: "interview.feedback_submitted",
       entity_type: "interview_scorecards",
-      entity_id: data.interviewId,
+      entity_id: interviewId,
       organization_id: data.orgId,
       after_state: {
         recommendation: data.recommendation,

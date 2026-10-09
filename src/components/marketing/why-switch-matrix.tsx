@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Check, Minus, X, ChevronRight } from "lucide-react";
+import { WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 
 /**
  * "Why teams switch to TaaSFlow" decision matrix.
@@ -31,7 +32,7 @@ const OPTIONS: Option[] = [
   {
     key: "agency",
     name: "Traditional agencies",
-    tagline: "Contingency or retained. 20–25% of first-year salary.",
+    tagline: "Contingency or retained, usually a percentage of first-year salary.",
     scores: {
       "Sourcing execution": { score: "full", note: "Recruiter runs the search." },
       "Candidate ranking": { score: "partial", note: "Ordered by recruiter opinion, rarely explained." },
@@ -73,15 +74,15 @@ const OPTIONS: Option[] = [
   {
     key: "taasflow",
     name: "TaaSFlow",
-    tagline: "Recruiting execution + live workspace + evidence — one flat subscription.",
+    tagline: "Managed recruiting execution, a shared workspace and the evidence behind each score.",
     highlight: true,
     scores: {
-      "Sourcing execution": { score: "full", note: "Named recruiter runs each search." },
-      "Candidate ranking": { score: "full", note: "Ranked 0–100 by requirement coverage." },
+      "Sourcing execution": { score: "full", note: WHO_RUNS_THE_SEARCH },
+      "Candidate ranking": { score: "full", note: "Ranked by how well each candidate meets your requirements." },
       "Evidence quality": { score: "full", note: "Each requirement cites the source sentence." },
-      "Visibility": { score: "full", note: "Live workspace. Same URL as the recruiter." },
-      "Control": { score: "full", note: "You own the pipeline, the ATS, and the final call." },
-      "Pricing model": { score: "full", note: "Flat monthly subscription. No placement fees." },
+      "Visibility": { score: "full", note: "Shared workspace with your recruiter." },
+      "Control": { score: "full", note: "You own the candidate records and make every hiring decision." },
+      "Pricing model": { score: "full", note: "Fixed package prices. No placement fee." },
       "Continuity across roles": { score: "full", note: "Same workspace across every open role." },
     },
   },

@@ -17,8 +17,6 @@ export interface StatusInputs {
   matchStage: string | null;
   matchVisible: boolean;
   hasOpenInfoRequest: boolean;
-  interviewScheduled: boolean;
-  interviewRequested: boolean;
   /** Processing failed or a file could not be read. */
   needsSupport: boolean;
 }
@@ -61,11 +59,6 @@ export function resolveCandidateState(i: StatusInputs): CandidateStateKey {
     positionStatus: i.positionStatus,
     matchStage: i.matchStage,
     matchVisible: i.matchVisible,
-    interviewState: i.interviewScheduled
-      ? "scheduled"
-      : i.interviewRequested
-        ? "requested"
-        : "none",
     hasOpenInfoRequest: i.hasOpenInfoRequest,
     needsSupport: i.needsSupport,
   };

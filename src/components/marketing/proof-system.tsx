@@ -1,16 +1,6 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { positionsTotalUsd } from "@/config/pricing-core";
-/** Agency benchmark used in the cost comparison. Contingency fees typically
- *  run 20–25% of first-year salary; we quote the midpoint and show the math. */
-const AGENCY_FEE_PCT = 22;
-const BENCHMARK_SALARY_USD = 150_000;
-const AGENCY_FEE_USD = Math.round((BENCHMARK_SALARY_USD * AGENCY_FEE_PCT) / 100);
-/** Comparison figure: the exact total for ten positions under the pricing rule. */
-const COMPARISON_POSITIONS = 10;
-const COMPARISON_SUB_USD = positionsTotalUsd(COMPARISON_POSITIONS)!;
-const COST_DIFFERENCE_USD = AGENCY_FEE_USD - COMPARISON_SUB_USD;
-const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+import { ATS_NOTE, SHORTLIST_SIZE, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 
 
 import {
@@ -26,7 +16,6 @@ import {
   Target,
   UserCheck,
   Users,
-  Wallet,
   ChevronDown,
 } from "lucide-react";
 
@@ -40,30 +29,30 @@ import {
 const VERIFIED_OUTCOMES = [
   {
     icon: ListOrdered,
-    stat: "5–12",
+    stat: `Up to ${SHORTLIST_SIZE}`,
     unit: "ranked candidates",
-    line: "Published per role in week 1. Ordered by requirement coverage, not opinion.",
+    line: "Ordered by how well each candidate meets the requirements you approved, with the reasoning shown.",
   },
   {
     icon: FileSearch,
-    stat: "100%",
-    unit: "requirements cited",
-    line: "Every must-have carries a coverage score and a source line from the CV or the application.",
+    stat: "Every",
+    unit: "score shows its evidence",
+    line: "Each must-have carries a coverage score and a source line from the CV or the application.",
   },
   {
     icon: BadgeCheck,
     stat: "0",
-    unit: "auto-publishes",
-    line: "A recruiter reviews and approves each candidate before your workspace shows them.",
+    unit: "candidates published unreviewed",
+    line: "A recruiter reviews each shortlist before your workspace shows it.",
   },
 ] as const;
 
 const PROCESS_STEPS = [
   { icon: ClipboardCheck, t: "Structured intake", d: "Requirements, weighting, and interview themes captured in a 5-step brief before sourcing starts." },
-  { icon: Users, t: "Sourced by a named recruiter", d: "A person runs the search — direct outreach and inbound review, not just an aggregator." },
+  { icon: Users, t: "Who does the work", d: WHO_RUNS_THE_SEARCH },
   { icon: FileSearch, t: "Evidence extracted per requirement", d: "For each must-have, we cite the sentence in the CV or application answer that supports the score." },
-  { icon: UserCheck, t: "Human review before publish", d: "A recruiter reads every candidate and signs off before the workspace shows them to your team." },
-  { icon: Eye, t: "Live pipeline stages", d: "Under review → shortlisted → interview → offer. Same URL for you and the recruiter." },
+  { icon: UserCheck, t: "Human review before publish", d: "A recruiter reviews every shortlist before the workspace shows it to your team." },
+  { icon: Eye, t: "Live pipeline stages", d: "Under review → shortlisted → interview → offer. Same workspace for you and your recruiter." },
   { icon: ShieldCheck, t: "Full audit trail", d: "Every approval, stage move, and evidence edit is recorded and exportable." },
 ] as const;
 
@@ -81,7 +70,7 @@ const PRODUCT_PATTERNS = [
   {
     icon: Eye,
     label: "Live pipeline",
-    detail: "Stage aging, next action, and the recruiter's note — visible on the same page.",
+    detail: "Stage, next action and the recruiter's note, visible on the same page.",
   },
   {
     icon: KeyRound,
@@ -90,44 +79,22 @@ const PRODUCT_PATTERNS = [
   },
 ] as const;
 
-const CASE_SUMMARIES = [
-  {
-    industry: "Hospitality",
-    role: "Regional Ops Director, EMEA",
-    line: "Retained-model replacement. Ranked shortlist in week 1, hire signed in week 4.",
-  },
-  {
-    industry: "Finance",
-    role: "Senior Compliance Manager",
-    line: "Requirements-driven search across two regulated jurisdictions with evidence per credential.",
-  },
-  {
-    industry: "Healthcare",
-    role: "Head of Clinical Operations",
-    line: "12 candidates, 5 interviewed, 1 hired — same workspace shared with the CMO throughout.",
-  },
-] as const;
-
 const FAQ = [
   {
     q: "What if the first shortlist is wrong?",
-    a: "Tell the recruiter in the workspace. The requirements are re-weighted and the next batch reflects the change — no restart fee, no new brief cycle.",
+    a: "Tell your recruiter in the workspace. We adjust the criteria and the next batch reflects the change.",
   },
   {
-    q: "Do we have to switch our ATS?",
-    a: "No. TaaSFlow includes its own ATS, and it also sits alongside Greenhouse, Ashby, Lever, or Workday. Use ours or keep yours — either way you get the recruiting, the outreach, and the evidence in one place.",
+    q: "Does it connect to our ATS?",
+    a: ATS_NOTE,
   },
   {
     q: "What happens if we cancel?",
-    a: "You keep your workspace data — candidates, notes, evidence, decisions. Export any month. No placement clawbacks, no restrictive covenants on candidates.",
+    a: "Your candidate records can be exported at any time. There is no placement fee to claw back.",
   },
   {
     q: "How is this different from an AI sourcing tool?",
-    a: "A named recruiter runs each search and signs off on every candidate. AI structures the evidence and the scoring; it does not decide who reaches your shortlist.",
-  },
-  {
-    q: "Is our data used to train models?",
-    a: "No. CVs are stored in a private bucket with row-level security. LLM calls run on evidence extraction only, and prompts are not used for model training.",
+    a: WHO_RUNS_THE_SEARCH,
   },
 ] as const;
 
@@ -216,25 +183,27 @@ export function ProofSystem() {
               Who runs this
             </span>
             <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-2xl font-semibold leading-tight">
-              Built by operators who ran the searches.
+              Who runs TaaSFlow.
             </h3>
             <ul className="mt-6 space-y-4">
               <li>
                 <div className="text-sm font-semibold text-white">
-                  Christian Brogger — Co-founder & CEO
+                  Christian Brøgger, Chief Executive Officer
                 </div>
                 <div className="mt-1 text-[12px] leading-snug text-white/70">
-                  25 years in PE-backed and Fortune 500 hiring. Ran talent
-                  functions before building the product to fix them.
+                  25 years designing and driving value creation across
+                  Fortune 500 companies and private equity. Former Director at
+                  UBS Investment Bank.
                 </div>
               </li>
               <li>
                 <div className="text-sm font-semibold text-white">
-                  João Bogo — Co-founder & CMO
+                  João (John) Bogo Kasprzak, Chief Marketing Officer
                 </div>
                 <div className="mt-1 text-[12px] leading-snug text-white/70">
-                  Global talent strategy at Hilton and Marriott. Owns how the
-                  workspace communicates with clients and candidates.
+                  Former strategist for Hilton, Marriott, Four Seasons and
+                  Philips. Has built talent acquisition campaigns across the
+                  US, LATAM, Europe and the Gulf.
                 </div>
               </li>
             </ul>
@@ -281,90 +250,6 @@ export function ProofSystem() {
           </div>
         </div>
 
-        {/* 5 — Case study summaries + 6 — Calculator math (two-column) */}
-        <div className="mt-14 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-          {/* Case summaries */}
-          <div>
-            <div className="flex items-center justify-between gap-4">
-              <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                Recent search patterns.
-              </h3>
-              <Link
-                to="/case-studies"
-                className="hidden text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] sm:inline-flex"
-              >
-                All case studies →
-              </Link>
-            </div>
-            <ul className="mt-5 space-y-3">
-              {CASE_SUMMARIES.map((c) => (
-                <li
-                  key={c.role}
-                  className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-5"
-                >
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
-                      {c.industry}
-                    </span>
-                    <span className="text-sm font-semibold text-[color:var(--brand-navy)]">
-                      {c.role}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm leading-snug text-[color:var(--brand-navy)]/80">
-                    {c.line}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Calculator math */}
-          <div className="rounded-2xl border border-[color:var(--brand-ocean)]/25 bg-gradient-to-br from-[color:var(--brand-sky)]/40 to-[color:var(--brand-paper)] p-6 sm:p-8">
-            <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
-              <Wallet className="h-3.5 w-3.5" aria-hidden />
-              The math, without a call
-            </span>
-            <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-2xl font-semibold leading-tight text-[color:var(--brand-navy)]">
-              One $150k hire.
-              <br />
-              Two cost paths.
-            </h3>
-            <dl className="mt-6 space-y-3 text-sm">
-              <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
-                <dt className="text-[color:var(--brand-navy)]/80">
-                  Contingency agency ({AGENCY_FEE_PCT}% of first-year salary)
-                </dt>
-                <dd className="font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                  {usd(AGENCY_FEE_USD)}
-                </dd>
-              </div>
-              <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
-                <dt className="text-[color:var(--brand-navy)]/80">
-                  TaaSFlow Bronze (one month, flat)
-                </dt>
-                <dd className="font-semibold tabular-nums text-[color:var(--brand-ocean-text)]">
-                  {usd(COMPARISON_SUB_USD)}
-                </dd>
-              </div>
-              <div className="flex items-baseline justify-between gap-4">
-                <dt className="text-sm font-semibold text-[color:var(--brand-navy)]">
-                  Difference on one hire
-                </dt>
-                <dd className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                  {usd(COST_DIFFERENCE_USD)}
-                </dd>
-              </div>
-
-            </dl>
-            <a
-              href="#roi-calculator"
-              className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
-            >
-              Run your own numbers <ArrowRight className="h-4 w-4" aria-hidden />
-            </a>
-          </div>
-        </div>
-
         {/* 7 — Risk-reducing FAQ */}
         <div className="mt-14">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
@@ -372,7 +257,7 @@ export function ProofSystem() {
               What people ask before signing.
             </h3>
             <span className="text-[12px] text-[color:var(--brand-navy)]/80">
-              Straight answers. No sales dance.
+              Plain answers before you commit.
             </span>
           </div>
           <ul className="mt-5 divide-y divide-[color:var(--brand-navy)]/10 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">

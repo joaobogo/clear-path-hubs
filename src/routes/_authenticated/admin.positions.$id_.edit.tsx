@@ -8,7 +8,7 @@ import { kpiCacheKeys } from "@/lib/kpis/cache-keys";
 export const Route = createFileRoute("/_authenticated/admin/positions/$id_/edit")({
   validateSearch: (search: Record<string, unknown>) => {
     const raw = search.step ? Number(search.step) : undefined;
-    const step = raw && raw >= 1 && raw <= 3 ? raw : undefined;
+    const step = raw && raw >= 1 && raw <= 4 ? raw : undefined;
     return { step };
   },
   loader: async ({ context, params }) => {

@@ -78,7 +78,7 @@ export const COLLABORATOR_ROLES: Record<CollaboratorRoleId, CollaboratorRole> = 
     can: [
       "Create and edit roles",
       "Advance, hold and decline candidates",
-      "Request interviews and submit feedback",
+      "Move candidates to the interview stage and submit feedback",
     ],
     cannot: ["Manage the team", "Open the plan or billing"],
   },

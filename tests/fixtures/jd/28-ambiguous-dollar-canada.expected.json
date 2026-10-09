@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Operations Manager",
+    "location": "Toronto, ON",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "5 years in operations",
+      "WMS"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

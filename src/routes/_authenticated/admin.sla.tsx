@@ -30,10 +30,6 @@ const DEFINITIONS = [
     title: "Shortlist size",
     body: "Target is the committed number of client-visible candidates by the same day-count deadline. Breached when the deadline has passed and fewer candidates are visible to the client.",
   },
-  {
-    title: "Interview slots",
-    body: "Target is the committed hours from an interview request to slots being offered or a time being booked. Breached when the oldest request is past that window, whether or not slots eventually went out.",
-  },
 ];
 
 function SlaBreachPage() {

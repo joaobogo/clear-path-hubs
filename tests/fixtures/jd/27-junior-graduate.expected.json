@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Junior Frontend Developer",
+    "seniority": "junior",
+    "location": "Leeds, UK",
+    "workModel": "onsite",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "degree in computer science",
+      "React",
+      "GitHub profile"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

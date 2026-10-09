@@ -759,13 +759,9 @@ export function buildIntelligence(
         .map((m) => iso(m.delivered_at))
         .filter(Boolean)
         .sort()[0] as string | undefined;
-      const unconfirmed = records.interviews.filter(
-        (i) => i.position_id === p.id && !i.scheduled_at && i.status !== "cancelled",
-      );
       const movement = [
         ...roleMatches.map((m) => iso(m.updated_at)),
         ...records.history.filter((h) => h.position_id === p.id).map((h) => iso(h.created_at)),
-        ...unconfirmed.map((i) => iso(i.requested_at)),
         iso(p.updated_at),
       ]
         .filter(Boolean)
@@ -785,9 +781,6 @@ export function buildIntelligence(
           lastMovementAt: movement ?? null,
           awaitingDecision: awaiting.length,
           oldestAwaitingDecisionAt: oldestAwaiting ?? null,
-          interviewsToConfirm: unconfirmed.length,
-          oldestInterviewToConfirmAt:
-            (unconfirmed.map((i) => iso(i.requested_at)).filter(Boolean).sort()[0] as string) ?? null,
           promisedShortlistBy: promisedBy,
           shortlistDeliveredAt:
             (roleMatches.map((m) => iso(m.delivered_at)).filter(Boolean).sort()[0] as string) ?? null,
@@ -816,7 +809,7 @@ export function buildIntelligence(
       tone: !open.length ? "neutral" : atRisk.length === 0 ? "good" : "bad",
       comparison: null,
       freshness: fresh(latestAt, 30),
-      explanation: `A role is flagged only when a date proves it: a decision sitting with you, an interview with no confirmed time, a missed shortlist commitment, or ${STALL_DAYS} days with no movement at all. No prediction is involved.`,
+      explanation: `A role is flagged only when a date proves it: a decision sitting with you, a missed shortlist commitment, or ${STALL_DAYS} days with no movement at all. No prediction is involved.`,
       action: atRisk.length
         ? {
             label: atRisk[0].position.title,

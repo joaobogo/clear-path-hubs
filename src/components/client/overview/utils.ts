@@ -16,7 +16,7 @@ export function formatAction(action: string): string {
   const map: Record<string, string> = {
     "candidate_match.stage_changed": "A candidate moved forward",
     "client.shortlist": "You shortlisted a candidate",
-    "client.request_interview": "You requested an interview",
+    "client.request_interview": "You moved a candidate to the interview stage",
     "client.offer": "An offer was made",
     "client.hire": "A hire was confirmed",
     "client.not_moving_forward": "A candidate was declined",

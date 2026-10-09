@@ -4,7 +4,7 @@
  *
  * Google's scaled-content-abuse policy targets high page volume produced on a
  * compressed timeline with no unique first-hand value per page. This site has
- * 119 live blog posts and 57 industry pages, so the three signatures below
+ * 83 live blog posts (after the per-industry consolidation) and 57 industry pages, so the three signatures below
  * have to stay visible and reviewed rather than accumulating quietly:
  *
  *   1. FAIL — an illustrative "sample evidence" / example string used on an

@@ -44,7 +44,7 @@ const LABELS = {
 
 export function PageConnections({
   eyebrow = "Where to go next",
-  heading = "Continue on TaaSFlow",
+  heading = "Related pages",
   commercial,
   explainer,
   resource,

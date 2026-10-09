@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "title": "Customer Support Specialist",
+    "location": "Berlin, Germany",
+    "employmentType": "full_time",
+    "salaryMin": 50000,
+    "salaryMax": 60000,
+    "currency": "EUR"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "compensationPeriod"
+  ],
+  "requirements": {
+    "must": [
+      "Fluent German and English",
+      "customer-facing",
+      "Calm under pressure"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

@@ -1,14 +1,13 @@
 /**
  * Vertical lead catcher — Part 7, prompt 47.
  *
- * Four ways into a conversation, matched to how each industry actually buys,
+ * Three ways into a conversation, matched to how each industry actually buys,
  * all feeding the one lead pipeline with vertical, page and source recorded:
  *
  *   1. Scoped enquiry   — six fields, no essay box required.
  *   2. Estimator        — role cost and time-to-shortlist from our own
  *                         published pricing and delivery commitment.
  *   3. Sector briefing  — a print-ready briefing for this vertical.
- *   4. Book a call      — hands off to the existing call flow.
  *
  * Anything the visitor types here is handed to the intake form later
  * (prompt 48) so nobody types the same thing twice.
@@ -17,10 +16,9 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Calculator, CalendarDays, Check, Download, Loader2, Send } from "lucide-react";
+import { Calculator, Check, Download, Loader2, Send } from "lucide-react";
 
 import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
-import { BookACallDialog } from "@/components/marketing/book-a-call";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,8 +38,8 @@ import {
   packageForPositions,
   ABOVE_MAX_ROLES_LABEL,
   MAX_POSITIONS,
-  TURNAROUND_LABEL,
 } from "@/config/pricing-core";
+import { FIRST_SHORTLIST_TIMING_SHORT, RESPONSE_TIME_SENTENCE, TIMING_FINE_PRINT } from "@/config/offer-facts";
 
 type Props = {
   verticalSlug: string;
@@ -180,7 +178,7 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
             {verticalName} · get started
           </p>
           <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)] sm:text-3xl">
-            Four ways in. Pick whichever suits how you buy.
+            Three ways in. Pick whichever suits how you buy.
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
             Whatever you tell us here is carried into your brief, so you never
@@ -193,7 +191,6 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
             <TabsTrigger value="enquiry" className="gap-2 text-sm"><Send className="h-4 w-4" />Scoped enquiry</TabsTrigger>
             <TabsTrigger value="estimate" className="gap-2 text-sm"><Calculator className="h-4 w-4" />Cost &amp; time estimate</TabsTrigger>
             <TabsTrigger value="briefing" className="gap-2 text-sm"><Download className="h-4 w-4" />Sector briefing</TabsTrigger>
-            <TabsTrigger value="call" className="gap-2 text-sm"><CalendarDays className="h-4 w-4" />Book a call</TabsTrigger>
           </TabsList>
 
           {/* ---------------- Shared scoped fields ---------------- */}
@@ -258,8 +255,8 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
                 <Stat label="TaaSFlow package" value={pkg.usd ? money(pkg.usd) : "Custom"} note={`${pkg.label}. ${pkg.note}`} />
                 <Stat
                   label="Time to first shortlist"
-                  value={TURNAROUND_LABEL}
-                  note="Our published commitment for every tier. Actual delivery per role is tracked against it in your workspace."
+                  value={FIRST_SHORTLIST_TIMING_SHORT}
+                  note={TIMING_FINE_PRINT}
                 />
               </div>
               <p className="mt-3 text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
@@ -307,24 +304,6 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
                   Get the briefing
                 </Button>
               )}
-            </div>
-          </TabsContent>
-
-          {/* ---------------- Book a call ---------------- */}
-          <TabsContent value="call" className="mt-6">
-            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-              <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold text-[color:var(--brand-navy)]">
-                Speak to the person who would run your {verticalName.toLowerCase()} search
-              </h3>
-              <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                Twenty minutes, no deck. We'll tell you if we're not the right fit.
-              </p>
-              <BookACallDialog
-                industrySlug={verticalSlug}
-                industryName={verticalName}
-                roleTitle={form.roleTitle || undefined}
-                trigger={<Button className="mt-5">Pick a time</Button>}
-              />
             </div>
           </TabsContent>
         </Tabs>
@@ -453,7 +432,7 @@ function Stat({ label, value, note }: { label: string; value: string; note: stri
 function Confirmation() {
   return (
     <p className="mt-3 flex items-center gap-2 text-sm text-[color:var(--brand-navy)]/75">
-      <Check className="h-4 w-4" /> Received. We reply within one business day — sooner if you said it's urgent.
+      <Check className="h-4 w-4" /> Received. {RESPONSE_TIME_SENTENCE}
     </p>
   );
 }

@@ -7,6 +7,7 @@ import {
   CtaSection,
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 
 const CANONICAL = canonicalUrl("/global-talent");
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/global-talent")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: CANONICAL },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
@@ -50,7 +52,7 @@ const COVERAGE = [
 
 const REMOTE = [
   "Remote-first is the default working model on most briefs.",
-  "Time-zone constraints are captured at intake and enforced in scoring.",
+  "Time-zone constraints are captured at intake and used in scoring.",
   "Hybrid and on-site briefs state the required city or region up front.",
   "Working preference is a candidate-owned field — filters, not assumptions.",
 ];
@@ -69,7 +71,7 @@ const RELOCATION = [
   {
     title: "Eligibility captured up front",
     body:
-      "Candidates share work authorisation and relocation openness during intake, so mismatches never reach the shortlist.",
+      "Candidates share work authorisation and relocation openness during intake, so mismatches are flagged before the shortlist.",
   },
 ];
 
@@ -116,10 +118,10 @@ function GlobalTalentPage() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              to="/intake"
+              to={CTA_PRIMARY.to}
               className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
             >
-              Start an international hire
+              {CTA_PRIMARY.label}
             </Link>
             <Link
               to="/jobs"
@@ -245,11 +247,11 @@ function GlobalTalentPage() {
       </PublicSection>
 
       <CtaSection
-        eyebrow="Global reach"
+        eyebrow="Next step"
         title="Open a role across time zones."
-        description="Structured intake captures region, remote scope and any relocation commitment before sourcing starts."
-        primary={{ to: "/intake", label: "Start hiring" }}
-        secondary={{ to: "/jobs", label: "See open briefs" }}
+        description="The intake captures region, remote scope and any relocation commitment before sourcing starts."
+        primary={CTA_PRIMARY}
+        secondary={CTA_MESSAGE}
       />
       <EcosystemCrossSell trigger="market-entry" />
     </SiteShell>

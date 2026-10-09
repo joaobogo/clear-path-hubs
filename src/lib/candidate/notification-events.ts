@@ -30,13 +30,6 @@ export const CANDIDATE_NOTIFICATION_EVENTS: CandidateNotificationEvent[] = [
     defaultOn: true,
   },
   {
-    key: "interview_invitation",
-    label: "Interview times and changes",
-    description: "Proposed times, confirmations, reschedules and cancellations.",
-    required: true,
-    defaultOn: true,
-  },
-  {
     key: "status_changed",
     label: "Status changes",
     description: "When your application moves forward, or the role closes.",

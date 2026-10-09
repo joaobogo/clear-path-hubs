@@ -1,0 +1,30 @@
+{
+  "fields": {
+    "title": "Product Designer",
+    "location": "Lisbon, Portugal",
+    "workModel": "hybrid",
+    "salaryMin": 42000,
+    "salaryMax": 55000,
+    "currency": "EUR",
+    "compensationPeriod": "year"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "employmentType",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "4+ years designing digital products",
+      "portfolio",
+      "Figma"
+    ],
+    "nice": [
+      "Motion design"
+    ],
+    "none": false
+  }
+}

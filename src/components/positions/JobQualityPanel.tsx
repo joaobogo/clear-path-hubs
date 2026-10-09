@@ -6,7 +6,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { getRequisitionQuality } from "@/lib/requisition.functions";
-import { assessJobQuality } from "@/lib/requisition-schema";
+import { assessJobQuality, isDraftLikeStatus } from "@/lib/requisition-schema";
 import type { QualityGap, QualityInput } from "@/lib/requisition-schema";
 
 const TONE: Record<string, string> = {
@@ -124,7 +124,12 @@ export function JobQualityPanel({
               checklist that mixes what you must do with what you could do
               stops reading as a checklist, and the one thing actually holding
               up the role gets lost among the suggestions. */}
-          <GapList title="Required to submit" gaps={view.blocking} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList
+            title={isDraftLikeStatus(view.input.status) ? "Required to submit" : "Needed to keep sourcing"}
+            gaps={view.blocking}
+            onJumpToStep={onJumpToStep}
+            editTo={editTo}
+          />
         </div>
       )}
     </div>

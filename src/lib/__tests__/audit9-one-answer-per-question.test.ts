@@ -23,11 +23,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { laneFor } from "@/lib/client-pipeline-lane";
-import {
-  matchesInterviewTile,
-  reviewGroup,
-} from "@/lib/client-candidate-list-filter";
+import { matchesInterviewTile } from "@/lib/client-candidate-list-filter";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 const src = (rel: string) => readFileSync(join(process.cwd(), rel), "utf8");
@@ -38,8 +34,7 @@ const dto = (over: Record<string, unknown>) =>
   ({
     match_id: "m",
     stage: "delivered",
-    interview_active: false,
-    interview_called_off: false,
+    hire_confirmed: true,
     ...over,
   }) as unknown as ClientCandidateDTO;
 
@@ -51,17 +46,6 @@ describe("the candidate list answers with the same rule the tiles counted", () =
       code,
       "a raw-stage comparison in the stage filter is the defect itself",
     ).not.toMatch(/c\.stage !== s\.stage/);
-  });
-
-  it("puts a cancelled interview in shortlisted on every surface", () => {
-    const calledOff = dto({
-      stage: "interview_process",
-      interview_called_off: true,
-      interview_active: false,
-    });
-    expect(laneFor(calledOff)).toBe("shortlisted");
-    expect(matchesInterviewTile(calledOff)).toBe(false);
-    expect(reviewGroup(calledOff)).toBe("in_progress");
   });
 
   it("does not fold the offer lane into the interview drill-through", () => {
@@ -81,35 +65,6 @@ describe("a hire means one thing", () => {
     expect(body, "counting the Hired lane is what disagreed with the cell").not.toMatch(
       /hires:\s*counts\.hired/,
     );
-  });
-});
-
-describe("an interview nobody sent times for is not the client's move", () => {
-  it("the shared reader can compute the holder", () => {
-    const code = strip(src("src/lib/kpis/interviews.server.ts"));
-    expect(code, "availability_expires_at is required by interviewHolder").toMatch(
-      /availability_expires_at/,
-    );
-    expect(code).toMatch(/export function awaitingClient/);
-  });
-
-  it("every client-facing surface narrows to what the client owns", () => {
-    for (const file of [
-      "src/lib/client/open-items.server.ts",
-      "src/lib/client-overview.functions.ts",
-      "src/lib/client-positions.functions.ts",
-      "src/lib/executive.functions.ts",
-    ]) {
-      expect(strip(src(file)), `${file} reports pending interviews unfiltered`).toMatch(
-        /awaitingClient|ownedByClient/,
-      );
-    }
-  });
-
-  it("the count behind 'waiting on you' is the client-owned one", () => {
-    const code = strip(src("src/lib/kpis/interviews.server.ts"));
-    const fn = code.slice(code.indexOf("export async function countInterviewsAwaitingTime"));
-    expect(fn).toMatch(/awaitingClient\(/);
   });
 });
 
@@ -157,9 +112,9 @@ describe("promises match the engine", () => {
     expect(hires, "the column has to be selected to be reported").toMatch(
       /salary_amount, salary_currency/,
     );
-    expect(strip(src("src/routes/_authenticated/client.offers.tsx"))).toMatch(
-      /formatMoneyMajorCompact\(\s*report\.totals\.avg_salary,\s*report\.totals\.salary_currency/,
-    );
+    // The client Offers screen is gone (offers are made directly with the
+    // candidate and tracked on the board), so the only consumer of the report
+    // is the admin side; the report itself still carries the currency.
   });
 });
 

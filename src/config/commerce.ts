@@ -2,8 +2,8 @@
  * Commerce switch.
  *
  * Stripe is not live yet. When this is true, checkout surfaces across the app
- * are enabled and the intake form ends with a pay-or-call choice. When false,
- * every payment CTA is gated and the intake form always routes to booking.
+ * are enabled and the intake form ends with a pay-or-message choice. When false,
+ * every payment CTA is gated and the intake form always routes to a message to the team.
  * Flipping this single line restores payments everywhere — no code, tables,
  * webhooks or tests are deleted when it is false.
  */

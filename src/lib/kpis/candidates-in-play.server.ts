@@ -70,7 +70,6 @@ export function selectOpenOffers<T extends { stage?: unknown }>(
     return (
       laneFor({
         stage: String(r.stage ?? ""),
-        interview_called_off: null,
         // Established false by the early return above.
         hire_confirmed: false,
       }) === "offer"

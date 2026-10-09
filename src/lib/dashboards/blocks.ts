@@ -65,7 +65,7 @@ export const BLOCK_LIBRARY: Record<BlockId, BlockDefinition> = {
     title: "Offer status",
     definition: "Every open offer by status, and any sitting still for over 48 hours.",
     emptyHint: "Fills when the first offer is drafted.",
-    href: "/client/offers",
+    href: "/client/candidates?view=board&stage=offer",
     span: 6,
   },
   outreach_conversion: {

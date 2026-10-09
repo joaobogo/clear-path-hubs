@@ -7,6 +7,7 @@ import { toastError } from "@/lib/toast-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
+import { seededLocation } from "@/lib/positions/role-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,6 +49,7 @@ import {
   countryName,
   explainWeights,
   locationLabel,
+  normalizeCountryCode,
   requisitionMetaSchema,
   TIMEZONE_ANCHOR_SUGGESTIONS,
   type EvaluationWeights,
@@ -73,16 +75,6 @@ const emptyLocation = (): RequisitionLocation => ({
 });
 
 type WorkModel = "remote" | "hybrid" | "onsite" | "";
-
-function seededLocation(openWorldwide: boolean, workModel: WorkModel, location: string): RequisitionLocation {
-  if (openWorldwide) return emptyLocation();
-  return {
-    ...emptyLocation(),
-    work_model: workModel || "remote",
-    notes: location || "",
-    is_primary: true,
-  };
-}
 
 type Form = {
   reference_code: string;
@@ -217,7 +209,12 @@ export function RequisitionEditor({
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!form) throw new Error("Not ready");
-      const parsed = requisitionMetaSchema.safeParse({ position_id: positionId, ...form });
+      // An untouched blank row (no country, no place) is not an answer: drop
+      // it rather than refusing the save with "Choose a country".
+      const locations = form.locations.filter(
+        (l) => l.country_code || l.city.trim() || l.region.trim(),
+      );
+      const parsed = requisitionMetaSchema.safeParse({ position_id: positionId, ...form, locations });
       if (!parsed.success) {
         const msgs = parsed.error.issues.map((i) => i.message);
         setErrors(msgs);

@@ -636,12 +636,6 @@ async function cleanupIntakeE2E(
     .ilike("company_name", `${safePrefix}%`);
   counts.orphan_intakes_deleted = orphanIntakes ?? 0;
 
-  const { count: bookings } = await sb
-    .from("booking_sessions")
-    .delete({ count: "exact" })
-    .ilike("company_name", `${safePrefix}%`);
-  counts.booking_sessions_deleted = bookings ?? 0;
-
   // Auth accounts created through the form (qa.intake+<stamp>@qa.taasflow.test).
   let usersDeleted = 0;
   let page = 1;
@@ -702,45 +696,12 @@ async function lookupIntake(companyName: string, email?: string) {
     const uid = await findUserIdByEmail(sb, email);
     if (uid) authUser = { id: uid, email };
   }
-  const { count: bookingCount } = await sb
-    .from("booking_sessions")
-    .select("id", { count: "exact", head: true })
-    .eq("company_name", companyName);
   return {
     organization: org ?? null,
     intake_submission: intake ?? null,
     auth_user: authUser,
     position,
-    booking_sessions: bookingCount ?? 0,
   };
-}
-
-/** Booking sessions created by the /book flow, looked up by work email. */
-async function lookupBooking(email: string) {
-  const sb = await loadAdmin();
-  const emailLower = email.toLowerCase();
-  if (!emailLower.endsWith("@qa.taasflow.test")) {
-    throw new Error("lookup_booking only accepts @qa.taasflow.test mailboxes");
-  }
-  const { data: rows } = await sb
-    .from("booking_sessions")
-    .select(
-      "id,email,company_name,status,scheduled_start,scheduled_end,join_url,timezone,host_name,calendly_event_uri,calendly_invitee_uri,qualification_score",
-    )
-    .eq("email", emailLower)
-    .order("created_at", { ascending: false })
-    .limit(5);
-  return { sessions: rows ?? [] };
-}
-
-async function cleanupBookingE2E(emailPattern: string): Promise<{ deleted: number }> {
-  const sb = await loadAdmin();
-  const safe = emailPattern.includes("@qa.taasflow.test") ? emailPattern : "qa.book+%@qa.taasflow.test";
-  const { count } = await sb
-    .from("booking_sessions")
-    .delete({ count: "exact" })
-    .ilike("email", safe);
-  return { deleted: count ?? 0 };
 }
 
 /**
@@ -1144,10 +1105,6 @@ async function handle(request: Request): Promise<Response> {
       const res = await cleanupIntakeE2E(body.prefix ?? "QA_INTAKE_E2E_");
       return Response.json({ ok: true, action, ...res });
     }
-    if (action === "cleanup_booking_e2e") {
-      const res = await cleanupBookingE2E(body.email_pattern ?? "qa.book+%@qa.taasflow.test");
-      return Response.json({ ok: true, action, ...res });
-    }
     if (action === "lookup_intake") {
       if (!body.company_name) {
         return Response.json({ ok: false, error: "company_name required" }, { status: 400 });
@@ -1375,11 +1332,6 @@ async function handle(request: Request): Promise<Response> {
     }
     if (action === "cleanup_candidate_e2e") {
       const res = await cleanupCandidateE2E(body.email_pattern ?? "qa.cand+%@qa.taasflow.test");
-      return Response.json({ ok: true, action, ...res });
-    }
-    if (action === "lookup_booking") {
-      if (!body.email) return Response.json({ ok: false, error: "email required" }, { status: 400 });
-      const res = await lookupBooking(body.email);
       return Response.json({ ok: true, action, ...res });
     }
 
@@ -1938,17 +1890,7 @@ async function handle(request: Request): Promise<Response> {
         delivered_at: string | null;
       };
       const visible = ((matches ?? []) as M[]).filter((m) => m.client_visibility === "visible");
-      let interviewing = 0;
-      if (visible.length > 0) {
-        const { data: ivs } = await sb
-          .from("interviews")
-          .select("candidate_match_id, status")
-          .in("candidate_match_id", visible.map((m) => m.id))
-          .in("status", ["requested", "scheduling", "scheduled", "completed"]);
-        interviewing = new Set(
-          ((ivs ?? []) as Array<{ candidate_match_id: string }>).map((i) => i.candidate_match_id),
-        ).size;
-      }
+      const interviewing = visible.filter((m) => m.stage === "interview_process").length;
       const pos = (positions ?? []) as Array<{ id: string; title: string; status: string }>;
       const deliveredByPosition = new Map<string, Set<string>>();
       for (const m of visible) {

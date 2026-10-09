@@ -33,9 +33,7 @@ const CALL_SITES = [
   "src/routes/contact.tsx",
   "src/lib/tracking/fgv-events.ts",
   "src/lib/tracking/conversions.ts",
-  "src/lib/booking/booking-events.ts",
   "src/components/analytics/tracking-route-observer.tsx",
-  "src/components/marketing/booking-cta-router.tsx",
 ].map((f) => strip(src(f)));
 
 /** Events raised through a typed helper rather than by name at the call site. */
@@ -132,7 +130,6 @@ describe("every mapped conversion is actually raised by something", () => {
     const callers = [
       "src/routes/contact.tsx",
       "src/routes/intake.tsx",
-      "src/components/marketing/book-a-call.tsx",
     ].filter((f) => strip(src(f)).includes("trackConfirmedConversion("));
     expect(callers.length, "no surface reports a confirmed conversion").toBeGreaterThan(0);
   });

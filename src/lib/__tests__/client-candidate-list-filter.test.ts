@@ -28,7 +28,6 @@ function row(over: Partial<ClientCandidateDTO> & { id: string }): ClientCandidat
     match_id: id,
     stage: "delivered",
     delivered_at: "2026-01-01T00:00:00Z",
-    interview_active: false,
     contact_released: false,
     score: 80,
     fit_label: null,
@@ -65,7 +64,7 @@ describe("client candidate list filters", () => {
    */
   it("interview drill-through returns exactly what the Interviewing tile counted", () => {
     const interviewing = row({ id: "a", stage: "interview_process" });
-    const shortlistedWithInterview = row({ id: "b", stage: "shortlisted", interview_active: true });
+    const shortlistedWithInterview = row({ id: "b", stage: "shortlisted" });
     const offered = row({ id: "c", stage: "offer" });
     expect(matchesInterviewTile(interviewing)).toBe(true);
     expect(matchesInterviewTile(shortlistedWithInterview), "stage not moved").toBe(false);
@@ -76,25 +75,6 @@ describe("client candidate list filters", () => {
       filter: "interview_pipeline",
     });
     expect(out.map((r) => r.match_id)).toEqual(["a"]);
-  });
-
-  it("a cancelled interview drops out of interviewing and into shortlisted", () => {
-    // The canonical lane rule, applied to BOTH the tile and this list.
-    const calledOff = row({
-      id: "a",
-      stage: "interview_process",
-      interview_called_off: true,
-      interview_active: false,
-    });
-    expect(matchesInterviewTile(calledOff)).toBe(false);
-    expect(
-      filterCandidates([calledOff], { ...BASE, stage: "shortlisted" }).map((r) => r.match_id),
-      "a stage=shortlisted drill-through must find them",
-    ).toEqual(["a"]);
-    expect(
-      filterCandidates([calledOff], { ...BASE, stage: "interview_process" }),
-      "and the interview_process drill-through must not",
-    ).toEqual([]);
   });
 
   it("top drill-through uses the presentation band only", () => {

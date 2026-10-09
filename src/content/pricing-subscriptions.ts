@@ -23,6 +23,13 @@ import {
   ANNUAL_DISCOUNT_PCT,
   formatUsdExact,
 } from "@/config/pricing-core";
+import {
+  SHORTLIST_LABEL,
+  FIRST_SHORTLIST_TIMING_SHORT,
+  PILOT_IS_PAID_NOTE,
+} from "@/config/offer-facts";
+import { CTA_PRIMARY, CTA_MESSAGE, CTA_ENTERPRISE } from "@/config/cta";
+import { publicSeatsLine, SCOPED_PUBLIC_LABEL } from "@/config/pricing-entitlements";
 
 export type SubscriptionTier = {
   id: "pilot" | "growth" | "scale" | "volume" | "portfolio" | "program" | "enterprise";
@@ -44,15 +51,29 @@ export type SubscriptionTier = {
   ctaLabel: string;
   ctaTo: string;
   highlight?: boolean;
+  /** Shown as a card on /pricing; the rest go in the comparison table. */
+  card: boolean;
 };
 
-const BASE = [
-  "Top 10 candidates per position",
-  "Ranked shortlists refreshed weekly",
-  "Evidence-backed scoring with fit notes",
-  "Hiring Intelligence reporting",
-  "3 months candidate-record retention",
-];
+/**
+ * Same order on every card: capacity, shortlist, timing, recruiter review,
+ * seats, records. Extras come after.
+ */
+function includedFor(planId: string, capacity: string, extras: string[] = []): string[] {
+  return [
+    capacity,
+    planId === "pilot" ? SHORTLIST_LABEL : `${SHORTLIST_LABEL} for each position`,
+    FIRST_SHORTLIST_TIMING_SHORT,
+    "A recruiter reviews every shortlist before you see it",
+    planId === "enterprise"
+      ? `Seats: ${SCOPED_PUBLIC_LABEL.toLowerCase()}`
+      : `Seats: ${publicSeatsLine(planId)}`,
+    "Export your candidate records at any time",
+    "Evidence-backed scoring with fit notes",
+    "Hiring Intelligence reporting",
+    ...extras,
+  ];
+}
 
 const BASE_TIERS: SubscriptionTier[] = [
   {
@@ -61,13 +82,15 @@ const BASE_TIERS: SubscriptionTier[] = [
     eyebrow: PILOT_ROLES_LABEL,
     monthly: PILOT_PACKAGE.totalUsd,
     priceDisplay: PILOT_PACKAGE.totalDisplay,
-    priceSuffix: "one position",
-    billingNote: "Billed once — one pilot per company",
-    bestFor: "One position, the full workflow.",
+    priceSuffix: "for one position",
+    billingNote: "Paid once. One pilot per company.",
+    bestFor: PILOT_IS_PAID_NOTE,
     rolesIncluded: PILOT_ROLES_LABEL,
-    included: BASE,
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    included: includedFor("pilot", "1 position, one pilot per company"),
+    ctaLabel: CTA_PRIMARY.label,
+    ctaTo: CTA_PRIMARY.to,
+    highlight: true,
+    card: true,
   },
   {
     id: "growth",
@@ -79,10 +102,10 @@ const BASE_TIERS: SubscriptionTier[] = [
     billingNote: "Billed monthly",
     bestFor: `${PACKAGE_10.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_10.capacityLabel,
-    included: [...BASE, "Dedicated support"],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
-    highlight: true,
+    included: includedFor("growth", PACKAGE_10.capacityLabel, ["Dedicated support"]),
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
+    card: true,
   },
   {
     id: "scale",
@@ -94,9 +117,10 @@ const BASE_TIERS: SubscriptionTier[] = [
     billingNote: "Billed monthly",
     bestFor: `${PACKAGE_20.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_20.capacityLabel,
-    included: [...BASE, "Priority support", "Faster calibration cycles"],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    included: includedFor("scale", PACKAGE_20.capacityLabel, ["Priority support", "Faster calibration cycles"]),
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
+    card: true,
   },
   {
     id: "volume",
@@ -108,14 +132,10 @@ const BASE_TIERS: SubscriptionTier[] = [
     billingNote: "Billed monthly",
     bestFor: `${PACKAGE_30.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_30.capacityLabel,
-    included: [
-      ...BASE,
-      "Dedicated account manager",
-      "Custom reporting",
-      "Executive portfolio dashboard",
-    ],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    included: includedFor("volume", PACKAGE_30.capacityLabel, ["Dedicated account manager", "Custom reporting", "Executive portfolio dashboard"]),
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
+    card: true,
   },
   {
     id: "portfolio",
@@ -127,14 +147,10 @@ const BASE_TIERS: SubscriptionTier[] = [
     billingNote: "Billed monthly",
     bestFor: `${PACKAGE_40.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_40.capacityLabel,
-    included: [
-      ...BASE,
-      "Dedicated account manager",
-      "Custom reporting",
-      "Executive portfolio dashboard",
-    ],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    included: includedFor("portfolio", PACKAGE_40.capacityLabel, ["Dedicated account manager", "Custom reporting", "Executive portfolio dashboard"]),
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
+    card: false,
   },
   {
     id: "program",
@@ -146,15 +162,10 @@ const BASE_TIERS: SubscriptionTier[] = [
     billingNote: "Billed monthly",
     bestFor: `${PACKAGE_100.capacityLabel} running together, every month.`,
     rolesIncluded: PACKAGE_100.capacityLabel,
-    included: [
-      ...BASE,
-      "Dedicated account manager",
-      "Custom reporting",
-      "Executive portfolio dashboard",
-      "Named executive sponsor",
-    ],
-    ctaLabel: "Book a discovery call",
-    ctaTo: "/book",
+    included: includedFor("program", PACKAGE_100.capacityLabel, ["Dedicated account manager", "Custom reporting", "Executive portfolio dashboard", "Named executive sponsor"]),
+    ctaLabel: CTA_MESSAGE.label,
+    ctaTo: CTA_MESSAGE.to,
+    card: false,
   },
   {
     id: "enterprise",
@@ -162,18 +173,14 @@ const BASE_TIERS: SubscriptionTier[] = [
     eyebrow: ABOVE_MAX_ROLES_LABEL,
     monthly: null,
     priceDisplay: ABOVE_MAX_DISPLAY,
-    priceSuffix: "Scoped with you",
-    billingNote: ABOVE_MAX_ROLES_LABEL,
-    bestFor: "Above the published maximum we scope it with you.",
+    priceSuffix: SCOPED_PUBLIC_LABEL,
+    billingNote: ABOVE_MAX_ROLES_LABEL + ": scoped",
+    bestFor: "Above the largest published package, we scope it with your account team.",
     rolesIncluded: ABOVE_MAX_ROLES_LABEL,
-    included: [
-      ...BASE,
-      `Everything in ${PACKAGE_100.capacityLabel}`,
-      "White-glove onboarding",
-      "Strategic planning sessions",
-    ],
-    ctaLabel: ABOVE_MAX_CTA_LABEL,
-    ctaTo: "/enterprise",
+    included: includedFor("enterprise", `Everything in ${PACKAGE_100.capacityLabel}, scoped to your volume`),
+    ctaLabel: CTA_ENTERPRISE.label,
+    ctaTo: CTA_ENTERPRISE.to,
+    card: false,
   },
 ];
 

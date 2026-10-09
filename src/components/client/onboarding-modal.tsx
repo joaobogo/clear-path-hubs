@@ -115,7 +115,7 @@ export function ClientOnboardingModal({
     client_admin:
       "As Client admin you can invite teammates, submit new roles, approve offers, and configure workspace settings.",
     client_editor:
-      "As Client editor you can move candidates through your hiring stages, schedule interviews, and message TaaSFlow.",
+      "As Client editor you can move candidates through your hiring stages and message TaaSFlow.",
     client_viewer:
       "As Client viewer you can review roles and candidates. Anything that changes a role is hidden — ask an admin for edit access if you need more.",
   };
@@ -194,8 +194,7 @@ export function ClientOnboardingModal({
       body: (
         <div className="space-y-3 text-sm">
           <p className="text-muted-foreground">
-            We use this to show times in your local zone and to schedule interview
-            reminders.
+            We use this to show times in your local zone.
           </p>
           <input
             className="w-full rounded-md border bg-background px-3 py-2 text-sm"
@@ -218,8 +217,7 @@ export function ClientOnboardingModal({
           />
           <span>
             <span className="flex items-center gap-1.5 font-medium">
-              <Bell className="h-3.5 w-3.5" /> Email me for candidates, messages, and
-              interviews.
+              <Bell className="h-3.5 w-3.5" /> Email me for candidates and messages.
             </span>
             <span className="mt-0.5 block text-muted-foreground">
               You can fine-tune every event later in Settings → Notifications.

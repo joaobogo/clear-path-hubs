@@ -52,6 +52,19 @@ export type IntakeReviewSnapshot = {
   workEmail: string;
   phone: string;
   contactLinkedin: string;
+  // Read from the job description or answered late — all optional, omitted when blank.
+  seniority?: string;
+  employmentType?: string;
+  /** One readable line per interview stage: name, format and who runs it. */
+  interviewStageDetails?: string[];
+  /** e.g. "Invite the people named in the interview stages". Empty when not ticked. */
+  collaboratorsLine?: string;
+  /** Final-step acknowledgements, shown as answers rather than hidden ticks. */
+  termsAccepted?: boolean;
+  pilotAcknowledged?: boolean;
+  researchConsent?: boolean;
+  /** True once a password has been typed. The password itself is never shown. */
+  passwordSet?: boolean;
 };
 
 export type IntakeReviewRow = {
@@ -118,10 +131,17 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   decisionMaker: { label: "Final decision", step: 2, focusLabel: "Who makes the final decision?" },
   decisionMakerEmail: { label: "Decision maker email", step: 2, focusLabel: "Their email" },
   dealBreakerList: { label: "Rules someone out", step: 2, focusLabel: null },
+  seniority: { label: "Seniority", step: 1, focusLabel: null },
+  employmentType: { label: "Employment type", step: 1, focusLabel: null },
+  collaborators: { label: "Interview team access", step: 2, focusLabel: null },
+  termsSummary: { label: "Terms and privacy", step: 2, focusLabel: null },
+  pilotSummary: { label: "Pilot acknowledgement", step: 2, focusLabel: null },
+  researchSummary: { label: "Product research", step: 2, focusLabel: null },
+  passwordSummary: { label: "Password", step: 0, focusLabel: "Password" },
   companyName: { label: "Company", step: 0, focusLabel: "Company name" },
   companyWebsite: { label: "Website", step: 1, focusLabel: "Company website" },
   companyLinkedin: { label: "Company LinkedIn", step: 0, focusLabel: "Company LinkedIn" },
-  firstName: { label: "First name", step: 0, focusLabel: "First name" },
+  firstName: { label: "Name", step: 0, focusLabel: "First name" },
   lastName: { label: "Last name", step: 0, focusLabel: "Last name" },
   contactTitle: { label: "Your job title", step: 0, focusLabel: "Your job title" },
   workEmail: { label: "Work email", step: 0, focusLabel: "Work email" },
@@ -140,6 +160,76 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
  * to the wrong step.
  */
 const GROUP_TITLES = ["You and the job description", "What we read", "Details and confirm"];
+
+/** "full_time" -> "Full time". */
+export function humanizeEnum(value: string): string {
+  const v = (value ?? "").trim().replace(/[_-]+/g, " ");
+  return v ? v.charAt(0).toUpperCase() + v.slice(1) : "";
+}
+
+/**
+ * A salary range in words, for any combination the form can hold: both bounds,
+ * only a minimum ("from"), or only a maximum ("up to"). The old line required
+ * BOTH bounds, so a role with just a minimum showed no pay at all in the
+ * review. Pure, locale-fixed so server and browser render the same text.
+ */
+export function formatCompensationRange(input: {
+  currency: string;
+  min: string;
+  max: string;
+  periodLabel: string;
+}): string {
+  const fmt = (v: string) => {
+    const n = Number(v);
+    return v.trim() !== "" && Number.isFinite(n) && n > 0 ? n.toLocaleString("en-US") : "";
+  };
+  const min = fmt(input.min);
+  const max = fmt(input.max);
+  const cur = input.currency.trim();
+  const period = input.periodLabel.trim();
+  const tail = [period].filter(Boolean).join(" ");
+  if (min && max) return [`${cur} ${min}–${max}`.trim(), tail].filter(Boolean).join(" ");
+  if (min) return [`From ${cur} ${min}`.replace(/\s+/g, " ").trim(), tail].filter(Boolean).join(" ");
+  if (max) return [`Up to ${cur} ${max}`.replace(/\s+/g, " ").trim(), tail].filter(Boolean).join(" ");
+  return "";
+}
+
+/** "2026-09-01" -> "1 September 2026". Anything else is shown as typed. */
+export function formatReviewDate(value: string): string {
+  const v = (value ?? "").trim();
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+  if (!m) return v;
+  const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
+  if (Number.isNaN(d.getTime()) || d.getUTCMonth() !== Number(m[2]) - 1) return v;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+/**
+ * Every field the form holds is either shown in the review or deliberately left
+ * out for a stated reason. A test compares this against the form's own state
+ * type, so a new question cannot be added without the summary covering it.
+ */
+export const REVIEW_COVERAGE = {
+  reviewed: [
+    "companyName", "companyWebsite", "companyLinkedin", "firstName", "lastName", "contactTitle",
+    "workEmail", "phone", "contactLinkedin", "password", "roleTitle", "team", "jobDescriptionText",
+    "jdSourceName", "requirements", "mustHaves", "niceToHaves", "trainable", "dealBreakerList",
+    "location", "workModel", "seniority", "employmentType", "onsiteDays", "remoteTimezones",
+    "remoteAnywhereInCountry", "sponsorshipAvailable", "currency", "compensationPeriod",
+    "salaryMin", "salaryMax", "compensationNote", "compensationUndecided", "bonusStructure",
+    "equity", "compensationFlexible", "workAuthorizationNote", "interviewProcess",
+    "interviewStages", "targetDaysToOffer", "inviteCollaborators", "decisionMaker",
+    "decisionMakerEmail", "targetStartDate", "consent", "pilotAcknowledgement", "researchConsent",
+  ],
+  notReviewed: {
+    confirmPassword: "Repeat of the password; the password row says it is set.",
+    manyMustHavesConfirmed: "A confirmation about the must-have count, not an answer about the role.",
+    dealBreakers: "Legacy single-string form of dealBreakerList, which is reviewed.",
+    wideRangeConfirmed: "A confirmation about an unusually wide salary range, not an answer.",
+    workAuthorization: "Derived from the visa sponsorship answer, which is reviewed.",
+    companyFax: "Spam honeypot; never filled by a person.",
+  },
+} as const;
 
 function row(field: string, value: string): IntakeReviewRow | null {
   const meta = FIELD_META[field];
@@ -173,9 +263,14 @@ export function buildIntakeReview(input: {
   const candidates: Array<IntakeReviewRow | null> = [
     row("roleTitle", s.roleTitle),
     row("team", s.team),
+    row("seniority", s.seniority ?? ""),
+    row("employmentType", s.employmentType ?? ""),
+    // The whole description, never a clipped preview: the client is being asked
+    // to confirm it, and a cut-off paragraph cannot be confirmed. When it came
+    // from a file the filename leads and the text read from it follows.
     row(
       "jobDescriptionText",
-      s.jdFilename ? s.jdFilename : s.jobDescriptionText.trim().slice(0, 400),
+      [s.jdFilename, s.jobDescriptionText.trim()].filter(Boolean).join("\n\n"),
     ),
     row("mustHaves", tagged("must_have")),
     row("niceToHaves", tagged("nice_to_have")),
@@ -194,8 +289,14 @@ export function buildIntakeReview(input: {
     // carefully (audit 1 Sep, F31). The free-text NOTE is genuinely extra
     // information and stays.
     row("workAuthorizationNote", s.workAuthorizationNote),
-    row("targetStartDate", s.targetStartDate),
-    row("interviewStages", s.interviewStageLines.join(" → ")),
+    row("targetStartDate", formatReviewDate(s.targetStartDate)),
+    row(
+      "interviewStages",
+      (s.interviewStageDetails && s.interviewStageDetails.length > 0
+        ? s.interviewStageDetails
+        : s.interviewStageLines
+      ).join("\n"),
+    ),
     row("interviewProcess", s.interviewProcess),
     row("targetDaysToOffer", s.targetDaysToOffer ? `${s.targetDaysToOffer} days` : ""),
     row("decisionMaker", s.decisionMaker),
@@ -209,6 +310,11 @@ export function buildIntakeReview(input: {
     row("workEmail", s.workEmail),
     row("phone", s.phone),
     row("contactLinkedin", s.contactLinkedin),
+    row("passwordSummary", s.passwordSet ? "Set (not shown)" : ""),
+    row("collaborators", s.collaboratorsLine ?? ""),
+    row("termsSummary", s.termsAccepted ? "Accepted" : ""),
+    row("pilotSummary", s.pilotAcknowledged ? "Acknowledged" : ""),
+    row("researchSummary", s.researchConsent ? "You agreed to take part" : ""),
   ];
 
   const rows = candidates.filter((r): r is IntakeReviewRow => r !== null);

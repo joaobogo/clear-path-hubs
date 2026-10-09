@@ -9,7 +9,7 @@
 export type SlaState = "met" | "missed" | "on_track" | "at_risk" | "pending";
 
 export type SlaMetric = {
-  key: "first_candidate" | "full_shortlist" | "interview_slots";
+  key: "first_candidate" | "full_shortlist";
   label: string;
   /** Plain-language statement of the promise. */
   promise: string;

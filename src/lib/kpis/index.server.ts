@@ -7,7 +7,6 @@
  *
  *   confirmed hires            → countConfirmedHiresForOrg
  *   open roles                 → countOpenRolesForOrg / countRolesForOrg
- *   interviews awaiting a time → countInterviewsAwaitingTime
  *   interviews held in a window→ countInterviewsHeld
  *   seats in use               → readSeatsForOrg / countSeatsInUse
  *   candidates in play         → countCandidatesInPlay
@@ -28,13 +27,9 @@ export {
   countOpenRolesForOrg,
 } from "@/lib/kpis/open-roles.server";
 export {
-  loadInterviewsAwaitingTime,
-  dedupeAwaitingByMatch,
-  countInterviewsAwaitingTime,
   loadInterviewsHeld,
   countInterviewsHeld,
   interviewWindow,
-  type PendingConfirmationInterview,
 } from "@/lib/kpis/interviews.server";
 export { readSeatsForOrg, countSeatsInUse, type SeatCount } from "@/lib/kpis/seats.server";
 export {

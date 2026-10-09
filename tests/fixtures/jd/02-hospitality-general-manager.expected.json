@@ -1,0 +1,32 @@
+{
+  "fields": {
+    "title": "Hotel General Manager",
+    "location": "Brighton, UK",
+    "employmentType": "full_time",
+    "salaryMin": 55000,
+    "salaryMax": 65000,
+    "currency": "GBP",
+    "compensationPeriod": "year"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "five years in hotel operations",
+      "P&L",
+      "revenue management",
+      "evenings and weekends"
+    ],
+    "nice": [
+      "Opera PMS",
+      "degree in hospitality"
+    ],
+    "none": false
+  }
+}

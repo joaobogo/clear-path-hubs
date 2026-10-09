@@ -1,0 +1,31 @@
+{
+  "fields": {
+    "title": "Product Manager & Owner",
+    "team": "Growth & Retention",
+    "workModel": "remote"
+  },
+  "empty": [
+    "seniority",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "employmentType",
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "4+ years of product management",
+      "SQL & experimentation",
+      "stakeholder skills"
+    ],
+    "nice": [
+      "marketplaces"
+    ],
+    "none": false
+  }
+}

@@ -42,6 +42,17 @@ describe("the work email answers the website question", () => {
     }
   });
 
+  it("never derives a half-typed domain while the address is still being typed", () => {
+    // Every prefix of "ana@co-kreator.com" that is not yet a real domain is refused…
+    for (const partial of ["ana@co-kreator", "ana@co-kreator.", "ana@co-kreator.c"]) {
+      expect(companyWebsiteFromEmail(partial), partial).toBeNull();
+    }
+    // …and the finished one is returned in full.
+    expect(companyWebsiteFromEmail("ana@co-kreator.com")).toBe("co-kreator.com");
+    // Internationalised top-level domains (punycode) still derive.
+    expect(companyWebsiteFromEmail("ana@acme.xn--p1ai")).toBe("acme.xn--p1ai");
+  });
+
   it("refuses anything that is not an address", () => {
     for (const bad of ["", "   ", "no-at-sign", "a@", "a@b", "a@localhost", "a@ spaced.com"]) {
       expect(companyWebsiteFromEmail(bad), bad).toBeNull();

@@ -149,7 +149,6 @@ function MyApplicationsPage() {
  next_step: string | null;
  can_withdraw: boolean;
  info_requested: boolean;
- next_interview_at: string | null;
  }>).map((a) => (
 
  <Card key={a.id} data-application-id={a.id}>
@@ -176,11 +175,6 @@ function MyApplicationsPage() {
  {a.info_requested ? (
  <span className="text-[10px] uppercase tracking-wide taas-fg-warning">
  Reply needed
- </span>
- ) : null}
- {a.next_interview_at ? (
- <span className="text-[10px] text-muted-foreground">
- {formatDate(a.next_interview_at)}
  </span>
  ) : null}
  </div>

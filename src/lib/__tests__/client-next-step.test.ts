@@ -15,15 +15,25 @@ describe("client next step commitments", () => {
     expect(s.due).toBeNull();
   });
 
-  it("promises interview slots within 24h after advancing", () => {
-    const s = buildNextStep("shortlisted", now.toISOString(), now);
-    expect(s.sentence).toContain("propose interview slots within 24h");
+  it("hands interviews back to the client: they arrange them directly", () => {
+    for (const stage of ["shortlisted", "interview_process"] as const) {
+      const s = buildNextStep(stage, now.toISOString(), now);
+      expect(s.owner).toBe("client");
+      expect(s.due).toBeNull();
+      expect(s.sentence.toLowerCase()).toContain("interview");
+      expect(s.sentence).not.toMatch(/slot|calendar|book/i);
+    }
+  });
+
+  it("promises the offer within 2 days after advancing", () => {
+    const s = buildNextStep("offer", now.toISOString(), now);
+    expect(s.sentence).toContain("within 2 days");
     expect(s.due).not.toBeNull();
     expect(s.overdue).toBe(false);
   });
 
   it("flags a missed commitment as overdue", () => {
-    const s = buildNextStep("shortlisted", "2026-07-27T10:00:00Z", now);
+    const s = buildNextStep("offer", "2026-07-25T10:00:00Z", now);
     expect(s.overdue).toBe(true);
   });
 

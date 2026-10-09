@@ -33,7 +33,7 @@ export const BLOG_AUTHORS: Record<string, BlogAuthor> = {
     type: "Organization",
     role: "Recruiting operations and research desk",
     note:
-      "Written and reviewed by the TaaSFlow editorial desk — the recruiters, sourcers and operations leads who run client requisitions day to day. Benchmarks and market figures are checked against published sources or our own delivery data before a post goes live; where a figure is illustrative, we say so.",
+      "Published by the TaaSFlow editorial team. This is a team byline, not an individual reviewer. Where a post gives a figure, it names the source or labels the figure as illustrative.",
     url: "/about",
   },
 };

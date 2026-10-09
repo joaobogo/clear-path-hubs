@@ -20,11 +20,16 @@ export const STAGE_GRAPH: Record<MatchStage, MatchStage[]> = {
   not_moving_forward: ["shortlisted"],
 };
 
+/**
+ * Drop-target labels on the board. The board records what happened between
+ * the client and the candidate outside TaaSFlow; it never makes the offer or
+ * the hire, so the labels name the stage reached, not an action.
+ */
 export const STAGE_LABELS: Record<MatchStage, string> = {
   delivered: "Candidates",
   shortlisted: "Shortlist",
-  interview_process: `Move to ${PIPELINE_STAGE_DISPLAY.interview_process}`,
-  offer: "Make offer",
-  hired: "Mark hired",
+  interview_process: PIPELINE_STAGE_DISPLAY.interview_process,
+  offer: "Offer made",
+  hired: "Hired",
   not_moving_forward: "Not moving forward",
 };

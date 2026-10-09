@@ -24,8 +24,6 @@ export const kpiCacheKeys = {
         : (["client-candidate"] as const),
     interviews: (orgId?: string | null) =>
       orgId ? (["client-interviews", orgId] as const) : (["client-interviews"] as const),
-    schedulable: (orgId?: string | null) =>
-      orgId ? (["client-schedulable", orgId] as const) : (["client-schedulable"] as const),
     team: (orgId?: string | null) =>
       orgId ? (["client-team", orgId] as const) : (["client-team"] as const),
     seats: (orgId?: string | null) =>
@@ -59,7 +57,6 @@ export const clientBusinessRefreshKeys = (orgId?: string | null) => [
   kpiCacheKeys.client.candidates(orgId),
   kpiCacheKeys.client.candidate(),
   kpiCacheKeys.client.interviews(orgId),
-  kpiCacheKeys.client.schedulable(orgId),
   kpiCacheKeys.client.team(orgId),
   kpiCacheKeys.client.seats(orgId),
 ] as const;

@@ -85,6 +85,21 @@ function HealthPage() {
 
       {feedback && <Alert><AlertDescription>{feedback}</AlertDescription></Alert>}
 
+      {(data.blueprint_notes ?? []).length > 0 && (
+        <section aria-label="Role analysis health" data-testid="role-analysis-health">
+          <h2 className="font-semibold mb-2">Role analysis</h2>
+          <ul className="space-y-2">
+            {(data.blueprint_notes ?? []).map((n: { level: string; text: string }) => (
+              <li key={n.text}>
+                <Alert variant={n.level === "error" ? "destructive" : "default"}>
+                  <AlertDescription>{n.text}</AlertDescription>
+                </Alert>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <OperationalHealthPanel />
 
       <EmailDeliveryPanel />

@@ -57,7 +57,7 @@ export const CANDIDATE_STATUS_COPY: Record<CandidateStatus, CandidateStatusCopy>
   Interviewing: {
     status: "Interviewing",
     meaning: "The employer is arranging or holding interviews with you.",
-    nextStep: "Watch for interview details, and tell us if a time does not work.",
+    nextStep: "The employer will contact you directly to arrange the interview.",
     tone: "taas-bg-success-soft taas-fg-success",
   },
   "Offer stage": {
@@ -83,8 +83,6 @@ export interface CandidateLifecycleInputs {
   matchStage?: string | null;
   /** Whether the match has been shared with the employer. */
   matchVisible?: boolean;
-  /** Interview state derived from the interviews rows. */
-  interviewState?: "none" | "requested" | "scheduled";
   /** Application withdrawn timestamp. */
   withdrawnAt?: string | null;
 }
@@ -98,11 +96,7 @@ export function toCandidateStatus(i: CandidateLifecycleInputs): CandidateStatus 
   if (i.matchStage === "not_moving_forward") return "Closed";
 
   if (i.matchStage === "offer" || i.matchStage === "hired") return "Offer stage";
-  if (
-    i.interviewState === "scheduled" ||
-    i.interviewState === "requested" ||
-    i.matchStage === "interview_process"
-  ) {
+  if (i.matchStage === "interview_process") {
     return "Interviewing";
   }
   if (i.matchVisible || i.matchStage === "shortlisted" || i.matchStage === "delivered") {

@@ -96,13 +96,13 @@ export const PROFILE_SECTIONS: readonly ProfileSectionMeta[] = [
   {
     id: "contact",
     title: "Contact",
-    hint: "How we reach you to confirm interview times.",
+    hint: "How we reach you.",
     fieldIds: ["p-full-name", "p-phone"],
   },
   {
     id: "location",
     title: "Location and time zone",
-    hint: "Roles are filtered by location, and interviews need your time zone.",
+    hint: "Roles are filtered by location and time zone.",
     fieldIds: ["p-location", "p-timezone"],
   },
   {

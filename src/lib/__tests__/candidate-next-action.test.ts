@@ -25,7 +25,7 @@ function facts(over: Partial<NextActionFacts> = {}): NextActionFacts {
     stage_changed_at: "2026-08-01T10:00:00.000Z",
     created_at: "2026-07-30T10:00:00.000Z",
     last_decision: null,
-    interviews: { total: 0, upcoming: 0, completed: 0, last_completed_at: null },
+    interviews: { total: 0, completed: 0, last_completed_at: null },
     scorecards: 0,
     hire_record: null,
     ...over,
@@ -167,5 +167,50 @@ describe("a dealbreaker cap is an outcome, not a fault", () => {
       );
       expect(a.step, state).toBe("review_disqualification");
     }
+  });
+});
+
+describe("interview stage next action", () => {
+  const now = new Date("2026-08-10T10:00:00.000Z").getTime();
+  const daysBefore = (d: number) => new Date(now - d * 86_400_000).toISOString();
+
+  it("is informational (no task) while the candidate is young in the interview stage", () => {
+    const a = deriveNextAction(
+      facts({ stage: "interview_process", stage_changed_at: daysBefore(2), last_decision: { decision: "request_interview", created_at: daysBefore(2) } }),
+      now,
+    );
+    expect(a.step).toBe("collect_scorecard");
+    expect(a.action).toEqual({ kind: "none" });
+    expect(a.action_label).toBeNull();
+  });
+
+  it("raises a feedback follow-up once past the interview aging threshold, with no interview row", () => {
+    const a = deriveNextAction(
+      facts({ stage: "interview_process", stage_changed_at: daysBefore(9) }),
+      now,
+    );
+    expect(a.step).toBe("collect_scorecard");
+    expect(a.action).toMatchObject({ kind: "follow_up", taskType: "feedback_submission" });
+  });
+
+  it("asks for the decision, not feedback, once a scorecard exists", () => {
+    const young = deriveNextAction(
+      facts({ stage: "interview_process", stage_changed_at: daysBefore(1), scorecards: 1 }),
+      now,
+    );
+    expect(young.step).toBe("await_post_interview_decision");
+    expect(young.action).toEqual({ kind: "none" });
+    const old = deriveNextAction(
+      facts({ stage: "interview_process", stage_changed_at: daysBefore(10), scorecards: 1 }),
+      now,
+    );
+    expect(old.action).toMatchObject({ kind: "follow_up", taskType: "candidate_review" });
+  });
+
+  it("does not nag about a freshly shortlisted candidate", () => {
+    const young = deriveNextAction(facts({ stage: "shortlisted", stage_changed_at: daysBefore(1) }), now);
+    expect(young.action).toEqual({ kind: "none" });
+    const old = deriveNextAction(facts({ stage: "shortlisted", stage_changed_at: daysBefore(6) }), now);
+    expect(old.action).toMatchObject({ kind: "follow_up", title: "Check in on the shortlist" });
   });
 });

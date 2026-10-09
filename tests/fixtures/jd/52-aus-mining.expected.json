@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Haul Truck Operator",
+    "salaryMin": 55,
+    "salaryMax": 55,
+    "currency": "AUD",
+    "compensationPeriod": "hour",
+    "targetStartDate": "2027-01-12"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "employmentType",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "HR licence",
+      "medicals"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

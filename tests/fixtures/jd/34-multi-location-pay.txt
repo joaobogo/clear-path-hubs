@@ -1,0 +1,9 @@
+Software Engineer II
+Location: California or New York
+
+The base pay range for this role is $120,000 - $150,000 per year in California and $130,000 - $160,000 per
+year in New York.
+
+Requirements
+- 3 years of professional software engineering
+- Experience with TypeScript and Node

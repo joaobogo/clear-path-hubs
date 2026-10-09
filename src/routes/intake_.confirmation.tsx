@@ -9,7 +9,11 @@ import { BLUEPRINT_STAGES } from "@/lib/express-intake-schema";
 import { CheckCircle2, CircleDashed, Loader2, TriangleAlert } from "lucide-react";
 import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
 import { buildDeliveryCommitment, type StoredCommitment } from "@/lib/delivery-commitment";
-import { KickoffBookingCard } from "@/components/booking/kickoff-booking-card";
+import {
+  FIRST_SHORTLIST_TIMING,
+  RESPONSE_TIME_SENTENCE,
+  TIMING_FINE_PRINT,
+} from "@/config/offer-facts";
 
 // A bad or stale value in the URL is a bad LINK, not a rejected form. A bare
 // zod schema THROWS out of validateSearch, and the router wraps that as an
@@ -82,7 +86,14 @@ function ConfirmationPage() {
           const done = body.blueprintStatus === "ready" || body.blueprintStatus === "failed";
           // If nothing has claimed the job yet (e.g. the tab was closed mid-run),
           // nudge it once so the client is never stuck on "queued".
-          if (!done && body.blueprintStatus === "queued" && !retriedRef.current) {
+          // Also when a run was dropped mid-way (the server reports it as
+          // needing a start) — it used to sit on "Reading your job
+          // description" forever because only "queued" was nudged.
+          if (
+            !done &&
+            (body.blueprintStatus === "queued" || body.analysisShouldStart === true) &&
+            !retriedRef.current
+          ) {
             retriedRef.current = true;
             void fetch("/api/public/blueprint-run", {
               method: "POST",
@@ -125,6 +136,14 @@ function ConfirmationPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-5 text-sm">
+          <div className="rounded-lg border bg-muted/40 p-4" data-testid="intake-next-steps">
+            <p className="font-medium">What happens next</p>
+            <p className="mt-1 text-muted-foreground">
+              A TaaSFlow team member will reply to the email you used. {RESPONSE_TIME_SENTENCE} We
+              confirm the role, the criteria and the pilot scope with you before any sourcing begins.{" "}
+              {FIRST_SHORTLIST_TIMING} {TIMING_FINE_PRINT}
+            </p>
+          </div>
           {!intake_id && (
             <p className="text-muted-foreground">
               We didn't receive a submission reference. If you just submitted and see this page, email{" "}
@@ -296,16 +315,6 @@ function ConfirmationPage() {
           )}
         </CardContent>
       </Card>
-
-      {intake_id && status && (
-        <div className="mt-4">
-          <KickoffBookingCard
-            intakeId={intake_id}
-            positionId={status.positionId}
-            roleTitle={status.roleTitle}
-          />
-        </div>
-      )}
     </FormShell>
   );
 }

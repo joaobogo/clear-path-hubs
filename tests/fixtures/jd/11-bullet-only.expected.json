@@ -1,0 +1,23 @@
+{
+  "fields": {},
+  "empty": [
+    "title",
+    "team",
+    "seniority",
+    "location",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [],
+    "nice": [],
+    "none": true
+  }
+}

@@ -224,7 +224,7 @@ function OverviewVisual() {
           </li>
           <li className="flex items-center gap-2">
             <Circle className="h-3 w-3 text-[color:var(--brand-ocean-text)]" />
-            Approve interview slot — Alex R.
+            Review interview notes — Alex R.
           </li>
           <li className="flex items-center gap-2">
             <CheckCircle2 className="h-3 w-3 text-[color:var(--brand-navy)]/80" />
@@ -476,7 +476,7 @@ function CollabVisual() {
     {
       icon: Activity,
       who: "System",
-      text: "Interview scheduled — Thu 3:00 PM.",
+      text: "Interview notes added for Priya.",
       when: "10m ago",
     },
   ];

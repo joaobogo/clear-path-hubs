@@ -14,6 +14,8 @@
  *    publicly and is tracked in docs/pricing/entitlement-confirmations.md.
  */
 
+import { RECORDS_NOTE } from "@/config/offer-facts";
+
 export type EntitlementValue =
   | { kind: "value"; label: string; note?: string }
   | { kind: "included" }
@@ -174,7 +176,7 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       growth: included(),
       scale: included(),
       volume: included(),
-      enterprise: value("Included + SSO and security review"),
+      enterprise: value("Included + security review"),
     },
   },
   {
@@ -192,7 +194,7 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
   {
     id: "integrations",
     label: "Integration access",
-    description: "Email and calendar coordination connected to your workspace.",
+    description: "Email and messaging connected to your workspace.",
     plans: {
       pilot: pending("Per-plan integration entitlements not defined commercially"),
       growth: pending("Per-plan integration entitlements not defined commercially"),
@@ -360,7 +362,7 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
   {
     id: "integrations",
     label: "Integration access",
-    description: "Email and calendar coordination connected to your workspace.",
+    description: "Email and messaging connected to your workspace.",
     plans: {
       pilot: pending("Per-plan integration entitlements not defined commercially"),
       growth: pending("Per-plan integration entitlements not defined commercially"),
@@ -448,7 +450,7 @@ export const ENTITLEMENT_POLICY: PolicyItem[] = [
     id: "retention",
     question: "How long is our data kept?",
     answer:
-      "Published plans include three months of access to candidate records and evidence in your workspace. Longer retention and specific data-residency requirements are set on enterprise agreements. You keep the candidates the platform surfaced — there are no placement fees or salary percentages.",
+      `${RECORDS_NOTE} Longer retention and data-residency requirements are set on enterprise agreements. There are no placement fees or salary percentages.`,
   },
   {
     id: "oversight",
@@ -457,6 +459,117 @@ export const ENTITLEMENT_POLICY: PolicyItem[] = [
       "Yes. Every plan includes human review of agent output before candidates reach your decision queue, plus calibration when your criteria shift. Higher bands add priority calibration and a named account structure. This is governance over the system's output — it is included in the plan, not billed as hours.",
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Public comparison table — every sold package                        */
+/*                                                                     */
+/* Additive. The tables above keep their shape; these derive from them  */
+/* and add the 40- and 100-position packages. A cell nobody has defined */
+/* says "Scoped with your account team" — never an invented feature.    */
+/* ------------------------------------------------------------------ */
+
+export const SCOPED_PUBLIC_LABEL = "Scoped with your account team";
+export const ABOVE_MAX_PLAN_LABEL = "More than 100 positions: scoped";
+
+export const PUBLIC_PLAN_IDS = [
+  "pilot",
+  "growth",
+  "scale",
+  "volume",
+  "portfolio",
+  "program",
+  "enterprise",
+] as const;
+
+export const PUBLIC_PLAN_LABELS: Record<string, string> = {
+  pilot: "1 position (pilot)",
+  growth: "Up to 10 positions",
+  scale: "Up to 20 positions",
+  volume: "Up to 30 positions",
+  portfolio: "Up to 40 positions",
+  program: "Up to 100 positions",
+  enterprise: ABOVE_MAX_PLAN_LABEL,
+};
+
+const scoped = () => value(SCOPED_PUBLIC_LABEL);
+
+/** Cells for the 40- and 100-position packages, by row. */
+const LARGE_PACKAGE_CELLS: Record<
+  EntitlementRowId,
+  { portfolio: EntitlementValue; program: EntitlementValue }
+> = {
+  active_roles: { portfolio: value("Up to 40"), program: value("Up to 100") },
+  workspace_seats: { portfolio: scoped(), program: scoped() },
+  agent_capacity: {
+    portfolio: value("Full agent layer", "Concurrent runs across all active roles"),
+    program: value("Full agent layer", "Concurrent runs across all active roles"),
+  },
+  candidate_records: {
+    portfolio: value("Unmetered for your roles", "No per-CV charges"),
+    program: value("Unmetered for your roles", "No per-CV charges"),
+  },
+  data_retention: { portfolio: value("3 months"), program: value("3 months") },
+  hiring_intelligence: { portfolio: included(), program: included() },
+  evidence_graph: { portfolio: included(), program: included() },
+  governance: { portfolio: included(), program: included() },
+  audit_exports: { portfolio: scoped(), program: scoped() },
+  integrations: { portfolio: scoped(), program: scoped() },
+  support: { portfolio: scoped(), program: scoped() },
+  expert_oversight: { portfolio: value("Included"), program: value("Included") },
+  included_results: {
+    portfolio: value("Ranked shortlists per role", "All roles run in parallel"),
+    program: value("Ranked shortlists per role", "All roles run in parallel"),
+  },
+};
+
+function toPublicRows(
+  rows: EntitlementRow[],
+  billing: "oneoff" | "subscription",
+): EntitlementRow[] {
+  return rows.map((row) => {
+    const plans: Record<string, EntitlementValue> = { ...row.plans };
+    plans.portfolio = LARGE_PACKAGE_CELLS[row.id].portfolio;
+    plans.program = LARGE_PACKAGE_CELLS[row.id].program;
+    if (row.id === "active_roles") {
+      plans.enterprise = value(SCOPED_PUBLIC_LABEL);
+      if (billing === "subscription") {
+        // Subscription capacity is the same package, charged monthly.
+        plans.growth = value("Up to 10");
+        plans.scale = value("Up to 20");
+        plans.volume = value("Up to 30");
+        plans.pilot = value("1", "Paid once, one pilot per company");
+      }
+    }
+    if (row.id === "included_results") {
+      // No cadence claim: the timing we state is the first-shortlist outcome.
+      for (const id of ["pilot", "growth", "scale", "volume"]) {
+        const v = plans[id];
+        if (v?.kind === "value" && v.note === "Refreshed weekly") {
+          plans[id] = value(v.label);
+        }
+      }
+      plans.enterprise = value("Ranked shortlists per role", SCOPED_PUBLIC_LABEL);
+    }
+    return { ...row, plans };
+  });
+}
+
+/** What the public /pricing comparison shows: every sold package. */
+export const PUBLIC_ONEOFF_ENTITLEMENTS: EntitlementRow[] = toPublicRows(
+  ONEOFF_ENTITLEMENTS,
+  "oneoff",
+);
+export const PUBLIC_SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = toPublicRows(
+  SUBSCRIPTION_ENTITLEMENTS,
+  "subscription",
+);
+
+/** Seats line for a package, read from the table so copy cannot drift from it. */
+export function publicSeatsLine(planId: string): string {
+  const v = PUBLIC_ONEOFF_ENTITLEMENTS.find((r) => r.id === "workspace_seats")?.plans[planId];
+  if (!v || v.kind !== "value") return SCOPED_PUBLIC_LABEL;
+  return v.note ? `${v.label}: ${v.note}` : v.label;
+}
 
 /** Entitlements awaiting internal commercial confirmation (internal use). */
 export function pendingEntitlements(rows: EntitlementRow[]) {

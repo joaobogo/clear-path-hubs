@@ -2,7 +2,7 @@
  * TaaSFlow — Calculator/selector shape for public pricing.
  * =======================================================
  * Every number here comes from src/config/pricing-core.ts, which holds the
- * only pricing rule: $699 for one position, then $900 (2–10), $850 (11–20),
+ * only pricing rule: package totals by capacity (see PACKAGES there).
  *
  * Rules
  *   • Never hard-code a price in this file.
@@ -145,11 +145,14 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
   },
 ] as const;
 
-/** Calculator defaults — see calculator-behavior.md. */
+/**
+ * Calculator defaults. Every one is an editable example, not an industry fact.
+ * One salary default is used on every pricing surface.
+ */
 export const CALCULATOR_DEFAULTS = {
   positions: 5,
   agencyFeePct: 0.20,
-  averageSalaryUsd: 85_000, // owner-review pending
+  averageSalaryUsd: 85_000, // example value; owner review pending
   recruiterHourlyUsd: 40,
   sourcingHoursPerRole: 25,
 } as const;
@@ -163,11 +166,11 @@ export const CALCULATOR_LIMITS = {
 } as const;
 
 export const CALCULATOR_DISCLAIMER =
-  "Estimates are directional and depend on role volume, salary, package, hiring complexity, and client context. Based on SHRM & Ashby 2025 benchmarks.";
+  "Illustrative estimate from the numbers you enter, not a quote. Every starting value is an editable example, not an industry fact.";
 
 /**
- * Calculator presets — one-click assumption bundles.
- * Presets only change input assumptions; the TaaSFlow total always comes from
+ * Calculator presets — example scenarios, not benchmarks. They use the same
+ * salary example as the defaults and only change input assumptions; the TaaSFlow total always comes from
  * `positionsTotalUsd()`.
  */
 export interface CalculatorPreset {
@@ -186,27 +189,27 @@ export interface CalculatorPreset {
 export const CALCULATOR_PRESETS: readonly CalculatorPreset[] = [
   {
     id: "one-critical",
-    label: "One Critical Hire",
+    label: "Scenario: one critical hire",
     description: "A single senior role you can't afford to get wrong.",
-    inputs: { positions: 1, averageSalaryUsd: 120_000, agencyFeePct: 0.22, recruiterHourlyUsd: 50, sourcingHoursPerRole: 35 },
+    inputs: { positions: 1, averageSalaryUsd: CALCULATOR_DEFAULTS.averageSalaryUsd, agencyFeePct: 0.22, recruiterHourlyUsd: 50, sourcingHoursPerRole: 35 },
   },
   {
     id: "growing-team",
-    label: "Growing Team",
+    label: "Scenario: growing team",
     description: "A handful of roles as the team scales.",
-    inputs: { positions: 3, averageSalaryUsd: 90_000, agencyFeePct: 0.20, recruiterHourlyUsd: 40, sourcingHoursPerRole: 25 },
+    inputs: { positions: 3, averageSalaryUsd: CALCULATOR_DEFAULTS.averageSalaryUsd, agencyFeePct: 0.20, recruiterHourlyUsd: 40, sourcingHoursPerRole: 25 },
   },
   {
     id: "hiring-sprint",
-    label: "Hiring Sprint",
+    label: "Scenario: hiring sprint",
     description: "Several roles running in parallel.",
-    inputs: { positions: 8, averageSalaryUsd: 85_000, agencyFeePct: 0.20, recruiterHourlyUsd: 40, sourcingHoursPerRole: 25 },
+    inputs: { positions: 8, averageSalaryUsd: CALCULATOR_DEFAULTS.averageSalaryUsd, agencyFeePct: 0.20, recruiterHourlyUsd: 40, sourcingHoursPerRole: 25 },
   },
   {
     id: "high-volume",
-    label: "High Volume",
+    label: "Scenario: high volume",
     description: "Continuous hiring across teams.",
-    inputs: { positions: 20, averageSalaryUsd: 80_000, agencyFeePct: 0.18, recruiterHourlyUsd: 40, sourcingHoursPerRole: 20 },
+    inputs: { positions: 20, averageSalaryUsd: CALCULATOR_DEFAULTS.averageSalaryUsd, agencyFeePct: 0.18, recruiterHourlyUsd: 40, sourcingHoursPerRole: 20 },
   },
 ] as const;
 

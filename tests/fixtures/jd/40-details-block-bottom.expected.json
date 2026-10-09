@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Community Manager",
+    "workModel": "remote",
+    "employmentType": "part_time",
+    "salaryMin": 28,
+    "salaryMax": 34,
+    "currency": "USD",
+    "compensationPeriod": "hour"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "online community",
+      "Excellent writing"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

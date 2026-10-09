@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Cocinero/a",
+    "location": "Valencia",
+    "employmentType": "part_time",
+    "salaryMin": 1200,
+    "salaryMax": 1200,
+    "currency": "EUR",
+    "compensationPeriod": "month"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "Experiencia mínima de un año",
+      "manipulador de alimentos",
+      "fines de semana"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

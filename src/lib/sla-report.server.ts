@@ -49,64 +49,6 @@ export function dayMetric(args: {
   };
 }
 
-/**
- * Average turnaround from an interview request to slots being offered. Only
- * interviews where slots actually went out (or a time was booked) count as
- * measured; the rest are open requests still on our clock.
- */
-export function interviewSlotMetric(interviews: AnyRow[], hours: number, now: number): SlaMetric {
-  const promise = `Interview slots within ${hours}h of a request`;
-  const measured: number[] = [];
-  const states: SlaState[] = [];
-  let lastActualAt: string | null = null;
-
-  for (const iv of interviews) {
-    const requestedAt = (iv.requested_at ?? iv.created_at) as string | null;
-    if (!requestedAt) continue;
-    const hasSlots =
-      (Array.isArray(iv.proposed_times) && iv.proposed_times.length > 0) || !!iv.scheduled_at;
-    const respondedAt = hasSlots ? ((iv.updated_at ?? iv.scheduled_at) as string | null) : null;
-    const dueAt = new Date(new Date(requestedAt).getTime() + hours * 60 * 60 * 1000).toISOString();
-    const { state } = evaluate(dueAt, respondedAt, now);
-    states.push(state);
-    if (respondedAt) {
-      measured.push(Math.max(diffHours(requestedAt, respondedAt), 0));
-      if (!lastActualAt || respondedAt > lastActualAt) lastActualAt = respondedAt;
-    }
-  }
-
-  if (states.length === 0) {
-    return {
-      key: "interview_slots",
-      label: "Interview slots",
-      promise,
-      dueAt: null,
-      actualAt: null,
-      actual: "no requests yet",
-      actualValue: null,
-      varianceValue: null,
-      varianceUnit: "hours",
-      variance: "—",
-      state: "pending",
-    };
-  }
-
-  const avg = measured.length ? measured.reduce((s, v) => s + v, 0) / measured.length : null;
-  return {
-    key: "interview_slots",
-    label: "Interview slots",
-    promise,
-    dueAt: null,
-    actualAt: lastActualAt,
-    actual: avg === null ? "waiting on us" : `${amountLabel(avg, "hours")} average`,
-    actualValue: avg,
-    varianceValue: avg === null ? null : avg - hours,
-    varianceUnit: "hours",
-    variance: avg === null ? "—" : varianceLabel(avg - hours, "hours"),
-    state: worstState(states),
-  };
-}
-
 export function summarise(roles: RoleSla[]): SlaSummary {
   let total = 0;
   let measured = 0;

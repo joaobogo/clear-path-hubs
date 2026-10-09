@@ -53,7 +53,7 @@ import {
   saveOnboardingWeights,
   saveOnboardingWorkspace,
 } from "@/lib/onboarding.functions";
-import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
+import { ensureRoleAnalysis, retryBlueprintAnalysis } from "@/lib/blueprint.functions";
 import { setRoleIntensity } from "@/lib/control-room.functions";
 import { EmptyState, ErrorState, PermissionDenied, SkeletonRows } from "@/components/client/states";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
@@ -622,6 +622,7 @@ const RUNNING_STATES = ["queued", "analyzing_jd", "researching_company", "drafti
 function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
   const confirm = useServerFn(confirmOnboardingBlueprint);
   const retry = useServerFn(retryBlueprintAnalysis);
+  const ensure = useServerFn(ensureRoleAnalysis);
   const pos = state.position;
   const status = pos?.blueprint_status ?? "not_started";
   const running = RUNNING_STATES.includes(status);
@@ -634,15 +635,20 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
   }, [running, onDone]);
 
   // Auto-start the blueprint when the user reaches this step and it has not
-  // yet been started or has failed. This removes the dependency on a manual
-  // "Compile" click and matches the event-driven public intake flow.
+  // yet been started. This removes the dependency on a manual "Compile" click
+  // and matches the event-driven public intake flow. The automatic start is
+  // the idempotent, capped one (never a forced retry): a forced retry fired
+  // here 200 ms after mount used to race the panel's own start and, before
+  // the runner refused to take over a live run, could start a second
+  // pipeline on the same role. "Try again" below stays a deliberate retry.
   useEffect(() => {
     if (!pos) return;
     if (running) return;
     if (status === "not_started" || status === "none" || status === "failed") {
-      const t = setTimeout(() => retry({ data: { positionId: pos.id } }).catch(() => {}), 200);
+      const t = setTimeout(() => ensure({ data: { positionId: pos.id } }).catch(() => {}), 200);
       return () => clearTimeout(t);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pos?.id, status, running]);
 
   const compile = useMutation({
@@ -708,9 +714,14 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
           position={{
             id: pos.id,
             title: pos.title,
+            status: pos.status,
             blueprint: pos.blueprint,
             blueprint_status: pos.blueprint_status,
             blueprint_error: pos.blueprint_error,
+            // Without the heartbeat and attempt count the panel cannot tell a
+            // healthy run from a dead one.
+            updated_at: pos.updated_at,
+            blueprint_attempts: pos.blueprint_attempts,
             blueprint_generated_at: pos.blueprint_generated_at,
             blueprint_confirmed_at: pos.blueprint_confirmed_at,
             description: pos.description,
@@ -929,11 +940,9 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
         <div className="space-y-3 rounded-lg border border-border/70 p-4">
           <p className="text-sm font-medium">Nothing connected yet</p>
           <p className="text-sm text-muted-foreground">
-            Connections are optional. Without them, interviews are scheduled with links you send
-            yourself and updates arrive by email from TaaSFlow.
+            Connections are optional. Without them, updates arrive by email from TaaSFlow.
           </p>
           <ul className="space-y-1 text-sm text-muted-foreground">
-            <li>Calendar — interview slots booked straight into your availability.</li>
             <li>Email — candidate threads kept in your own inbox.</li>
             <li>Messaging — shortlist and decision alerts in your team channel.</li>
           </ul>

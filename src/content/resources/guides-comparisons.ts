@@ -101,7 +101,6 @@ export const COMPARISON_GUIDES: ResourceGuide[] = [
       ],
     },
     related: [
-      "recruiting-as-a-service",
       "internal-recruiter-vs-recruiting-subscription",
       "cost-of-an-unfilled-position",
     ],
@@ -201,11 +200,11 @@ export const COMPARISON_GUIDES: ResourceGuide[] = [
         "Tiers scale with concurrent roles rather than headcount",
       ],
     },
-    related: ["subscription-recruiting-vs-contingency", "hiring-for-multiple-open-roles", "recruiting-as-a-service"],
+    related: ["subscription-recruiting-vs-contingency", "hiring-for-multiple-open-roles"],
     onward: [
       { to: "/pricing", label: "Pricing", desc: "What each tier includes, including seats." },
       { to: "/solutions", label: "Solutions", desc: "How teams structure the split." },
-      { to: "/book", label: "Book a call", desc: "Bring your role count and calendar." },
+      { to: "/contact", label: "Send us a message", desc: "Tell us your role count and timeline." },
     ],
   },
 
@@ -394,7 +393,7 @@ export const COMPARISON_GUIDES: ResourceGuide[] = [
         "A scoped pilot with agreed criteria before any subscription",
       ],
     },
-    related: ["subscription-recruiting-vs-contingency", "recruiting-as-a-service", "ats-vs-hiring-intelligence"],
+    related: ["subscription-recruiting-vs-contingency", "ats-vs-hiring-intelligence"],
     onward: [
       { to: "/pilot", label: "The pilot", desc: "Scope, timing and what you receive." },
       { to: "/trust", label: "Trust centre", desc: "How we handle your data." },

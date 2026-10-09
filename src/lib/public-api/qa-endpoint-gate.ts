@@ -48,3 +48,30 @@ export function qaEndpointDisabledResponse(isDev?: boolean): Response | null {
     headers: { "content-type": "text/plain; charset=utf-8" },
   });
 }
+
+/**
+ * True when a request carries the E2E opt-in cookie — and only on the dev
+ * server, where `qaEndpointsEnabled()` can be true at all. In a deployed build
+ * this is dead code: no cookie, header or env var re-opens it.
+ *
+ * The local E2E harness sets the cookie to QA_SEED_TOKEN when one is
+ * configured (see tests/e2e/helpers/qa.ts `allowTestFixtures`), so a matching
+ * token is required whenever the server has one.
+ */
+export function qaTestTrafficFromCookie(
+  cookieHeader: string | null | undefined,
+  isDev: boolean = isDevBuild(),
+): boolean {
+  if (!qaEndpointsEnabled(isDev)) return false;
+  const cookie = cookieHeader ?? "";
+  const match = new RegExp(`(?:^|;\\s*)${QA_E2E_COOKIE}=([^;]+)`).exec(cookie);
+  if (!match) return false;
+  let value = "";
+  try {
+    value = decodeURIComponent(match[1]!);
+  } catch {
+    return false;
+  }
+  const expected = (process.env.QA_SEED_TOKEN ?? "").trim();
+  return expected.length > 0 ? value === expected : value.length > 0;
+}

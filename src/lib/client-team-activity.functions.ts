@@ -18,8 +18,6 @@ export type TeamMemberActivity = {
   status: string;
   /** Decisions this person recorded in the last 30 days. */
   decisions_30d: number;
-  /** Interviews this person booked that are still upcoming. */
-  interviews_upcoming: number;
   /** Last sign-in, when the account has ever signed in. */
   last_sign_in_at: string | null;
   /** True when a role launched after this person last signed in. */
@@ -44,10 +42,9 @@ export const getClientTeamActivity = createServerFn({ method: "GET" })
   .handler(async ({ context, data }): Promise<TeamActivity> => {
     await assertWorkspaceTeamAccess(context.supabase, context.userId, data.orgId);
 
-    const nowIso = new Date().toISOString();
     const since30 = new Date(Date.now() - 30 * 86_400_000).toISOString();
 
-    const [membersRes, decisionsRes, interviewsRes, positionsRes, openRes] = await Promise.all([
+    const [membersRes, decisionsRes, positionsRes, openRes] = await Promise.all([
       context.supabase
         .from("memberships")
         .select("user_id, role, status")
@@ -59,11 +56,6 @@ export const getClientTeamActivity = createServerFn({ method: "GET" })
         .eq("organization_id", data.orgId)
         .is("reversed_at", null)
         .gte("created_at", since30),
-      context.supabase
-        .from("interviews")
-        .select("created_by, requested_by_user_id, scheduled_at, status")
-        .eq("organization_id", data.orgId)
-        .gte("scheduled_at", nowIso),
       context.supabase
         .from("positions")
         .select("created_at, status")
@@ -83,15 +75,6 @@ export const getClientTeamActivity = createServerFn({ method: "GET" })
       const actor = (row.actor_user_id as string | null) ?? null;
       if (!actor) continue;
       decisionCounts.set(actor, (decisionCounts.get(actor) ?? 0) + 1);
-    }
-
-    const interviewCounts = new Map<string, number>();
-    for (const row of (interviewsRes.data ?? []) as AnyRow[]) {
-      if (row.status === "cancelled") continue;
-      const booker =
-        ((row.requested_by_user_id as string | null) ?? (row.created_by as string | null)) ?? null;
-      if (!booker) continue;
-      interviewCounts.set(booker, (interviewCounts.get(booker) ?? 0) + 1);
     }
 
     const earliestLaunch =
@@ -131,7 +114,6 @@ export const getClientTeamActivity = createServerFn({ method: "GET" })
         role: (m.role as string) ?? "client_viewer",
         status: (m.status as string) ?? "active",
         decisions_30d: decisionCounts.get(uid) ?? 0,
-        interviews_upcoming: interviewCounts.get(uid) ?? 0,
         last_sign_in_at: lastSignIn,
         not_seen_since_launch: notSeen,
       };

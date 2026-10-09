@@ -82,7 +82,7 @@ export const KIND_LABEL: Record<RailKind, string> = {
   message_prepared: "Message prepared",
   message_sent: "Message sent",
   human_review_completed: "Human review completed",
-  coordination: "Interview coordination",
+  coordination: "Interview update",
   market_check: "Market check",
 };
 
@@ -220,8 +220,6 @@ export function kindFromAgentKey(agentKey: string): RailKind {
       return "evidence_extracted";
     case "outreach":
       return "message_prepared";
-    case "scheduling":
-      return "coordination";
     case "market_research":
       return "market_check";
     case "pipeline_watch":

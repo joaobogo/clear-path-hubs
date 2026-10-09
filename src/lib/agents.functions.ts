@@ -37,7 +37,6 @@ const AGENT_JOB_TYPES: Record<AgentKey, string[]> = {
   sourcing: ["sourcing_scan", "longlist_build"],
   screening: ["cv_extract", "cv_hydration", "scoring", "evidence_extract"],
   outreach: ["outreach_send", "outreach_sequence"],
-  scheduling: ["scheduling_offer", "interview_reminder"],
   market_research: ["market_refresh", "role_realism"],
   pipeline_watch: ["pipeline_scan", "sla_check"],
 };
@@ -63,7 +62,6 @@ const INSIGHTS_AGENT_RUN_TYPES = new Set([
   "message_sent",
   "clarification_requested",
   "contact_released",
-  "interview_scheduled",
   "interview_completed",
 ]);
 
@@ -84,10 +82,6 @@ function eventTypeToAgentKey(eventType: string): AgentKey | null {
     case "clarification_requested":
     case "application_received":
       return "outreach";
-    case "interview_scheduled":
-    case "interview_completed":
-    case "interview_cancelled":
-      return "scheduling";
     case "position_approved":
     case "position_published":
     case "blueprint_compiled":
@@ -121,12 +115,8 @@ function sentenceFromFeed(row: Db): string {
       return `A clarification was requested on ${title}.`;
     case "application_received":
       return `An application was received on ${title}.`;
-    case "interview_scheduled":
-      return `An interview was scheduled on ${title}.`;
     case "interview_completed":
       return `An interview was completed on ${title}.`;
-    case "interview_cancelled":
-      return `An interview was cancelled on ${title}.`;
     case "position_approved":
       return `${title} was approved and opened.`;
     case "position_published":

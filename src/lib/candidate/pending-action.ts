@@ -4,8 +4,7 @@
  *
  * Rules:
  *   1. An action is only returned when there is a concrete pending item — an
- *      unanswered question, an interview waiting on the candidate's times, or
- *      a CV we could not read. Never invented, never inferred from a stage.
+ *      unanswered question, or a CV we could not read. Never invented, never inferred from a stage.
  *   2. No estimated decision dates and no countdowns to events that may not
  *      happen. A deadline is only shown when the item itself carries one.
  *   3. When nothing is pending the caller says so explicitly; silence is what
@@ -17,7 +16,7 @@ import { formatDate } from "@/lib/format/datetime";
 
 export const NOTHING_NEEDED_LINE = "Nothing needed from you right now.";
 
-export type CandidatePendingActionKind = "info_request" | "interview_times" | "document";
+export type CandidatePendingActionKind = "info_request" | "document";
 
 export interface CandidatePendingAction {
   kind: CandidatePendingActionKind;
@@ -39,11 +38,6 @@ export interface PendingActionInputs {
   infoRequests: Array<{
     status: string;
     due_at: string | null;
-  }>;
-  interviews: Array<{
-    status: string;
-    scheduled_at: string | null;
-    cancelled_at?: string | null;
   }>;
   document: { received: boolean; parseState?: string | null; errorCode?: string | null } | null;
   /** Closed applications never ask anything of the candidate. */
@@ -73,24 +67,6 @@ export function computePendingAction(input: PendingActionInputs): CandidatePendi
       target: overdue ? "/me/messages" : "#info-requests",
       dueAt,
       overdue,
-    };
-  }
-
-  const awaitingTimes = input.interviews.find(
-    (i) =>
-      !i.cancelled_at &&
-      !i.scheduled_at &&
-      (i.status === "requested" || i.status === "scheduling"),
-  );
-  if (awaitingTimes) {
-    return {
-      kind: "interview_times",
-      title: "Give the times that work for your interview",
-      detail: "The employer asked for an interview and is waiting on your availability.",
-      actionLabel: "Share your availability",
-      target: "#interviews",
-      dueAt: null,
-      overdue: false,
     };
   }
 

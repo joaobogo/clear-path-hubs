@@ -21,7 +21,6 @@ export const DISALLOWED_PATHS = [
   "/login",
   "/auth",
   "/checkout",
-  "/book-call",
   "/share/",
   "/shortlist/",
   "/api/",
@@ -37,37 +36,19 @@ export const DISALLOWED_PATHS = [
 ] as const;
 
 /**
- * Crawlers named explicitly so answer engines (ChatGPT, Claude, Perplexity,
- * Google AI surfaces, Copilot) get the same allow/disallow set as Googlebot
- * instead of relying on their handling of the wildcard group.
+ * One `User-agent: *` group applies to every crawler, including GPTBot,
+ * ClaudeBot, PerplexityBot and Google-Extended. AI crawlers are intentionally
+ * allowed: the same rules as search engines, no per-bot overrides. Repeating
+ * the whole rule set per bot invites drift and adds nothing.
  */
-const NAMED_CRAWLERS = [
-  "Googlebot",
-  "Bingbot",
-  "Google-Extended",
-  "GPTBot",
-  "OAI-SearchBot",
-  "ChatGPT-User",
-  "ClaudeBot",
-  "Claude-User",
-  "anthropic-ai",
-  "PerplexityBot",
-  "Perplexity-User",
-  "Applebot",
-  "Applebot-Extended",
-  "CCBot",
-] as const;
-
 export function buildRobotsTxt(): string {
-  const group = (agent: string) => [
-    `User-agent: ${agent}`,
+  return [
+    "# AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) are intentionally",
+    "# allowed. They follow the same single group below; there are no per-bot rules.",
+    "User-agent: *",
     "Allow: /",
     ...DISALLOWED_PATHS.map((p) => `Disallow: ${p}`),
     "",
-  ];
-  return [
-    ...group("*"),
-    ...NAMED_CRAWLERS.flatMap((agent) => group(agent)),
     `Sitemap: ${SITEMAP_URL}`,
     "",
   ].join("\n");

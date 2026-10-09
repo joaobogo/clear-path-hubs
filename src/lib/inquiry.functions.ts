@@ -17,6 +17,12 @@ import {
   type LeadVolume,
 } from "@/lib/marketing/lead-routing";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
+import {
+  EmployerInquiryInput,
+  dedupeCutoffIso,
+  isDuplicate,
+  prepareInquiry,
+} from "@/lib/marketing/employer-inquiry";
 
 const InquiryInput = z.object({
   kind: z.enum(["call", "message", "enquiry", "estimate", "briefing", "exit"]),
@@ -132,6 +138,117 @@ export const submitInquiry = createServerFn({ method: "POST" })
       id: inserted?.id ?? null,
       prefillToken: (inserted?.prefill_token as string | null) ?? null,
     };
+  });
+
+/**
+ * Short employer inquiry (first name, work email, optional phone, position).
+ *
+ * Success is returned only after the row is stored. Idempotent without a
+ * schema change: the client key lives in `details.idempotency_key`, and an
+ * identical email + position inside ten minutes is treated as a repeat. A
+ * failing CRM or notification step is logged and never loses the lead.
+ */
+export const submitEmployerInquiry = createServerFn({ method: "POST" })
+  .inputValidator((raw) => EmployerInquiryInput.parse(raw))
+  .handler(async ({ data }) => {
+    throttlePublicFn("inquiry_submit");
+    // Honeypot triggered: look successful to a bot, store nothing.
+    if (data.website && data.website.length > 0) {
+      return { ok: true as const, id: null as string | null, duplicate: false };
+    }
+    const clean = prepareInquiry(data);
+    if (!clean) return { ok: false as const, error: "invalid_phone" as const };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // 1. Same client key, or same email + position inside the window.
+    const byKey = await supabaseAdmin
+      .from("marketing_inquiries")
+      .select("id, details, email, role_title, created_at")
+      .eq("details->>idempotency_key", clean.idempotencyKey)
+      .limit(1)
+      .maybeSingle();
+    let prior = byKey.data ?? null;
+    if (!prior) {
+      const byContent = await supabaseAdmin
+        .from("marketing_inquiries")
+        .select("id, details, email, role_title, created_at")
+        .eq("email", clean.email)
+        .eq("role_title", clean.position)
+        .gte("created_at", dedupeCutoffIso())
+        .limit(1)
+        .maybeSingle();
+      prior = byContent.data ?? null;
+    }
+    if (prior && isDuplicate(prior as never, clean)) {
+      return { ok: true as const, id: prior.id as string, duplicate: true };
+    }
+
+    const routing = routeLead({
+      verticalSlug: null,
+      seniority: "unknown",
+      volume: "unknown",
+      urgency: "unknown",
+      kind: "enquiry",
+      email: clean.email,
+    });
+
+    const { data: inserted, error } = await supabaseAdmin
+      .from("marketing_inquiries")
+      .insert({
+        kind: "enquiry",
+        name: clean.firstName,
+        email: clean.email,
+        role_title: clean.position,
+        source_path: clean.source,
+        details: {
+          form: "employer_inquiry_short",
+          idempotency_key: clean.idempotencyKey,
+          phone: clean.phone,
+          source: clean.source,
+        },
+        lead_score: routing.score,
+        priority: routing.priority,
+        owner_desk: routing.ownerDesk,
+        first_response_due_at: routing.firstResponseDueAt,
+        suggested_first_message: routing.suggestedFirstMessage,
+      })
+      .select("id")
+      .single();
+
+    if (error || !inserted) {
+      // Never leak DB detail, and never report success without a stored row.
+      throw new Error("We could not send your request. Please try again in a moment.");
+    }
+
+    try {
+      const { processLeadEvent } = await import("./leads/lead-pipeline.server");
+      await processLeadEvent({
+        leadType: "marketing_inquiry",
+        sourceId: inserted.id as string,
+        source: "employer_inquiry_short",
+        sourcePage: clean.source,
+        fullName: clean.firstName,
+        email: clean.email,
+        company: null,
+        message: null,
+        facts: [
+          { label: "Position needed", value: clean.position },
+          { label: "Phone", value: clean.phone },
+          { label: "Owner desk", value: routing.ownerDesk },
+          { label: "Reply due", value: routing.firstResponseDueAt },
+        ],
+        recordTable: "marketing_inquiries",
+        recordId: inserted.id as string,
+        linkPath: "/admin/pending-leads",
+        priority: routing.priority === "p1" ? "urgent" : routing.priority === "p2" ? "high" : null,
+      });
+    } catch {
+      // Logged without the lead's details; the stored row is the source of truth.
+      console.error("[inquiry] employer inquiry notification failed");
+    }
+
+    return { ok: true as const, id: inserted.id as string, duplicate: false };
   });
 
 /**

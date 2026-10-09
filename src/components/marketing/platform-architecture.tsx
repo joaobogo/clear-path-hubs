@@ -1,5 +1,5 @@
 /**
- * Interactive system architecture for /platform.
+ * Interactive system architecture, shown in the workspace section of /how-it-works.
  *
  * Every entry below is traceable to shipped code. `surface` names the real
  * in-product surface. Nothing here describes functionality that does not
@@ -10,6 +10,7 @@ import * as React from "react";
 import { ArrowRight, ChevronRight, RotateCcw } from "lucide-react";
 
 import { MODULE_SECTIONS } from "@/config/product-language";
+import { ACCEPTED_UPLOADS } from "@/config/offer-facts";
 
 type Status = "shipped" | "direction";
 
@@ -43,7 +44,7 @@ export const NODES: readonly Node[] = [
     summary: "Role requirements become structured data.",
     inputs: [
       "Role brief, must-haves, nice-to-haves, constraints",
-      "Job description upload (PDF)",
+      `Job description upload (${ACCEPTED_UPLOADS})`,
       "Compensation range, location and work-permission rules",
     ],
     does: [
@@ -108,7 +109,7 @@ export const NODES: readonly Node[] = [
     name: nameFor("evidence"),
     status: "shipped",
     summary: "Each requirement is linked to its supporting proof.",
-    inputs: ["Parsed CV text (PDF only)", "Application answers and notes"],
+    inputs: ["Parsed CV text (PDF)", "Application answers and notes"],
     does: [
       "Extracts evidence items and attaches them to specific requirements",
       "Flags requirements with no supporting evidence",
@@ -116,7 +117,7 @@ export const NODES: readonly Node[] = [
     ],
     produces: ["An evidence set per candidate, per requirement"],
     controls: [
-      "Expert oversight verifies or rejects each evidence item before release",
+      "A recruiter verifies or rejects each evidence item before release",
     ],
     records: ["Who verified or rejected each item, and when"],
     surface: "Evidence review",
@@ -151,13 +152,13 @@ export const NODES: readonly Node[] = [
     does: [
       "Shows a side-by-side comparison as the default view",
       "Walks each decision through valid pipeline states only",
-      "Runs interviews, scorecards and offers in the same thread",
+      "Records interview feedback, scorecards and offers in the same thread",
     ],
-    produces: ["Shortlists, interviews, offers and hires"],
+    produces: ["Shortlists, interview feedback, offers and hires"],
     controls: [
       "Approve, reject or advance — with a short undo window",
       "Reason capture on rejections",
-      "Escalate to a named platform expert in-thread",
+      "Escalate to a TaaSFlow recruiter in-thread",
     ],
     records: ["Every decision, reason and state change against your role"],
     surface: "Client decision queue and pipeline",
@@ -213,7 +214,7 @@ export function PlatformArchitecture() {
   const [activeKey, setActiveKey] = React.useState<string>(NODES[0]!.key);
   const active = NODES.find((n) => n.key === activeKey) ?? NODES[0]!;
 
-  // Deep links from the site navigation (/platform#agent-layer) select a module.
+  // Deep links from the site navigation (/how-it-works#agent-layer) select a module.
   React.useEffect(() => {
     const sync = () => {
       const hash = window.location.hash.replace("#", "");
@@ -249,7 +250,7 @@ export function PlatformArchitecture() {
                 type="button"
                 role="tab"
                 aria-selected={selected}
-                aria-controls="platform-module-detail"
+                aria-controls={`platform-module-detail-${n.key}`}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setActiveKey(n.key)}
                 onKeyDown={(e) => {
@@ -309,34 +310,38 @@ export function PlatformArchitecture() {
         </p>
       </div>
 
-      {/* Detail panel */}
+      {/* Detail panels: every module is in the server HTML; inactive ones are `hidden`. */}
+      <div className="min-w-0">
+      {NODES.map((node) => (
       <div
-        id="platform-module-detail"
+        key={node.key}
+        id={`platform-module-detail-${node.key}`}
         role="tabpanel"
-        aria-live="polite"
-        className="min-w-0 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-7"
+        aria-labelledby={node.anchor}
+        hidden={node.key !== active.key}
+        className="min-w-0 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-7 [&[hidden]]:hidden"
       >
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]">
-            {active.name}
+            {node.name}
           </h3>
           <span
             className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${
-              active.status === "shipped"
+              node.status === "shipped"
                 ? "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]"
                 : "bg-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]/70"
             }`}
           >
-            {active.status === "shipped" ? "In the product" : "Product direction"}
+            {node.status === "shipped" ? "In the product" : "Product direction"}
           </span>
         </div>
         <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-          Runs in: {active.surface}
+          Runs in: {node.surface}
         </p>
 
         <dl className="mt-6 grid gap-5 sm:grid-cols-2">
           {SECTION_LABELS.map(({ key, label }) => {
-            const items = active[key];
+            const items = node[key];
             return (
               <div key={label} className="min-w-0">
                 <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
@@ -362,6 +367,8 @@ export function PlatformArchitecture() {
             );
           })}
         </dl>
+      </div>
+      ))}
       </div>
     </div>
   );

@@ -104,8 +104,6 @@ export const PUBLIC_RATE_LIMITS = {
   intake_draft: { max: 30, windowMs: 60_000 },
   /** Status polling by id. Throttled against id enumeration. */
   public_status_read: { max: 40, windowMs: 60_000 },
-  /** Calendar file download for one booking. */
-  booking_ics: { max: 20, windowMs: 60_000 },
   /** Anonymous analytics beacons. Generous: one page view fires several. */
   analytics_beacon: { max: 120, windowMs: 60_000 },
   /** Key-gated scheduler endpoints. Caps brute force against the key. */

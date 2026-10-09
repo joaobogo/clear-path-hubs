@@ -131,24 +131,12 @@ export const brandingSchema = z.object({
 
 /** Map canonical rows onto the client-language vocabulary. */
 export function pipelineLanguageInput(rows: KpiRow[], status: string): PipelineStatusInput {
-  // Lane, not raw stage — a cancelled interview is not an interview.
-  const scheduled = rows.filter(
-    (r) => laneFor(r) === "interview_process" && r.interview_scheduled,
-  );
-  const nextInterviewAt =
-    scheduled
-      .map((r) => r.next_interview_at)
-      .filter((v): v is string => Boolean(v))
-      .sort()[0] ?? null;
   // Stage-shaped figures come from the canonical lane derivation.
   const { counts } = countLanes(rows);
   return {
     status,
     awaitingReview: counts.delivered,
     shortlisted: counts.shortlisted,
-    interviewsToConfirm: rows.filter((r) => r.interview_needs_confirmation).length,
-    interviewsScheduled: scheduled.length,
-    nextInterviewAt,
     offers: counts.offer,
     // A CONFIRMED hire, the same selector the Hires cell in the same table row
     // uses. This counted candidates parked in the Hired column instead, so the
@@ -166,7 +154,7 @@ export function nextMilestoneFor(rows: KpiRow[], status: string): string | null 
   if (rows.some((r) => r.stage === "offer")) return "Offer response";
   if (rows.some((r) => r.stage === "interview_process"))
     return "Interview outcome";
-  if (rows.some((r) => r.stage === "shortlisted")) return "Interview requests";
+  if (rows.some((r) => r.stage === "shortlisted")) return "Move to interview stage";
   if (rows.length > 0) return "Review new candidates";
   return "Awaiting first candidates";
 }

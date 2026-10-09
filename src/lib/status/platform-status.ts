@@ -158,7 +158,7 @@ export const SERVICES: readonly ServiceDefinition[] = [
   {
     key: "integrations",
     name: "Integrations",
-    covers: "Connections to calendars, CRM and messaging tools.",
+    covers: "Connections to CRM and messaging tools.",
     measured_by: "The most recent recorded check for each connection.",
   },
   {

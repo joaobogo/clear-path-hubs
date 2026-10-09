@@ -45,22 +45,6 @@ describe("candidate status projection", () => {
     expect(at("not_moving_forward")).toBe("Closed");
   });
 
-  it("counts a live interview row, ignoring cancelled ones", () => {
-    const withInterviews = (interviews: unknown[]) =>
-      toCandidateStatusDTO(
-        app({
-          status: "ready_for_review",
-          candidate_matches: [{ stage: "delivered", client_visibility: "visible", interviews }],
-        }),
-      );
-    expect(withInterviews([{ status: "cancelled", scheduled_at: "2026-09-01T09:00:00Z" }]).status).toBe(
-      "Shared with the employer",
-    );
-    const live = withInterviews([{ status: "scheduled", scheduled_at: "2026-09-01T09:00:00Z" }]);
-    expect(live.status).toBe("Interviewing");
-    expect(live.interview_state).toBe("scheduled");
-  });
-
   it("closes on withdrawal and on a closed role", () => {
     expect(toCandidateStatusDTO(app({ withdrawn_at: "2026-08-01T10:00:00Z" })).status).toBe("Closed");
     expect(toCandidateStatusDTO(app({ positions: { status: "filled" } })).status).toBe("Closed");
@@ -88,8 +72,6 @@ describe("candidate status projection", () => {
         matchStage: "interview_process",
         matchVisible: true,
         hasOpenInfoRequest: false,
-        interviewScheduled: false,
-        interviewRequested: false,
         needsSupport: false,
       }),
     ).toBe("interview_stage");

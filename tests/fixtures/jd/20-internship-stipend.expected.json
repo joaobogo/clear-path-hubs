@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "seniority": "intern",
+    "location": "Dublin, Ireland",
+    "employmentType": "internship"
+  },
+  "empty": [
+    "team",
+    "workModel",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "title"
+  ],
+  "requirements": {
+    "must": [
+      "enrolled in a degree programme",
+      "Strong writing skills",
+      "analytics"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

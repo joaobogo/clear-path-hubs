@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   EVENT_TYPES,
+  RETIRED_SCHEDULING_EVENTS,
   type Audience,
   type EventType,
   copyFor,
@@ -46,6 +47,9 @@ export async function emitEventFromServer(args: {
    */
   subject_label?: string | null;
 }) {
+  // Interview scheduling is gone: never store or send these.
+  if (RETIRED_SCHEDULING_EVENTS.has(args.event)) return { event_id: null, delivered: 0 };
+
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   // A "new message" notification that opens an empty thread is a dead end for
@@ -225,7 +229,7 @@ export async function emitEventFromServer(args: {
             : who && r.audience === "client" && args.event === "candidate_stage_changed"
               ? `Status changed by ${who}`
               : r.audience === "client" && args.event === "interview_requested"
-                ? "You requested an interview"
+                ? "Moved to interview stage"
                 : copy.title,
 
         // A clarification request is worthless without the question itself, so
@@ -559,9 +563,9 @@ export const listMyNotifications = createServerFn({ method: "GET" })
         r.event_type.startsWith("interview_") &&
         r.entity_type === "candidate_match"
       ) {
-        const interviewId = interviewByMatch.get(r.entity_id as string);
-        if (interviewId && (!link_path || !link_path.includes("interview="))) {
-          link_path = `/client/interviews?interview=${interviewId}`;
+        // The Interviews screen is gone: interview events open the candidate.
+        if (interviewByMatch.has(r.entity_id as string)) {
+          link_path = `/client/candidates/${r.entity_id as string}`;
         }
       }
       if (isClientRow && isAdminPath(link_path)) {
@@ -574,10 +578,10 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       return {
         ...r,
         title:
-          isClientRow && isInterviewRequest ? "You requested an interview" : r.title,
+          isClientRow && isInterviewRequest ? "Moved to interview stage" : r.title,
         body:
           isClientRow && isInterviewRequest
-            ? "This interview still needs a confirmed time"
+            ? "Interviews are arranged directly with the candidate."
             : r.body,
         link_path,
         actor_label: r.event_id ? (actorByEvent.get(r.event_id) ?? null) : null,

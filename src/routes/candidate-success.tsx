@@ -23,6 +23,7 @@ export const Route = createFileRoute("/candidate-success")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: CANONICAL },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
@@ -76,7 +77,7 @@ const JOURNEY = [
     step: "04",
     title: "Interview and decision",
     body:
-      "Interview activity, feedback and offers are captured in your dashboard so nothing slips.",
+      "Your interview stage, feedback and offers are tracked in your dashboard so nothing slips. The employer contacts you directly to arrange interviews.",
   },
 ];
 

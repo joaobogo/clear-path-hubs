@@ -32,7 +32,6 @@ export type UrgentKind =
   | "screening_review"
   | "awaiting_client_release"
   | "overdue_feedback"
-  | "interview_request"
   | "delivery_risk"
   | "integration_failure";
 
@@ -174,7 +173,6 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
   const now = Date.now();
   const overdueCut = iso(new Date(now - OVERDUE_FEEDBACK_DAYS * 86400_000));
   const agingCut = iso(new Date(now - AGING_HOURS * 3600_000));
-  const soon = iso(new Date(now + 48 * 3600_000));
 
   const matchSelect =
     "id,stage,admin_status,client_visibility,processing_state,processing_error_code," +
@@ -187,7 +185,6 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
     { data: review },
     { data: release },
     { data: overdue },
-    { data: interviews },
     { data: openPositions },
     { data: jobs },
   ] = await Promise.all([
@@ -247,19 +244,6 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
     )
       .order("delivered_at", { ascending: true })
       .limit(50),
-
-    (() => {
-      let q = s
-        .from("interviews")
-        .select(
-          "id,status,scheduled_at,requested_at,candidate_match_id,organization_id,position_id," +
-            "candidate_matches(candidate_profiles(full_name),positions(title),organizations(name))",
-        )
-        .or(`status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${soon})`);
-      if (f.org_id) q = q.eq("organization_id", f.org_id);
-      if (f.position_id) q = q.eq("position_id", f.position_id);
-      return q.order("scheduled_at", { ascending: true, nullsFirst: true }).limit(50);
-    })(),
 
     (() => {
       let q = s
@@ -378,28 +362,6 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
     );
   }
 
-  for (const iv of (interviews ?? []) as AnyRow[]) {
-    if (!inScope(positionIds, iv.position_id)) continue;
-    const cm = iv.candidate_matches ?? {};
-    items.push({
-      id: `interview_request:${iv.id}`,
-      kind: "interview_request",
-      title:
-        iv.status === "requested"
-          ? `Interview requested — ${cm.candidate_profiles?.full_name ?? "Candidate"}`
-          : `Interview within 48h — ${cm.candidate_profiles?.full_name ?? "Candidate"}`,
-      detail: `${cm.positions?.title ?? "—"} · ${cm.organizations?.name ?? "—"}`,
-      occurred_at: iv.scheduled_at ?? iv.requested_at,
-      severity: iv.status === "requested" ? "high" : "critical",
-      to: "/admin/candidates/$id",
-      param: iv.candidate_match_id,
-      organization_id: iv.organization_id ?? null,
-      organization_name: cm.organizations?.name ?? null,
-      position_id: iv.position_id ?? null,
-      position_title: cm.positions?.title ?? null,
-    });
-  }
-
   // Delivery risk: an open role with nothing delivered to the client yet.
   const openIds = ((openPositions ?? []) as AnyRow[]).map((p) => p.id);
   if (openIds.length > 0) {
@@ -509,15 +471,7 @@ export async function loadWorkload(f: CommandFilters): Promise<WorkloadClient[]>
     .in("position_id", ids);
   if (f.from) matchQ = matchQ.gte("created_at", f.from);
   if (f.to) matchQ = matchQ.lte("created_at", f.to);
-  const [{ data: matches }, { data: interviews }] = await Promise.all([
-    matchQ.limit(10000),
-    s
-      .from("interviews")
-      .select("id,position_id,status")
-      .in("position_id", ids)
-      .in("status", ["requested", "scheduled"])
-      .limit(5000),
-  ]);
+  const { data: matches } = await matchQ.limit(10000);
 
   const perPosition = new Map<string, WorkloadPosition>();
   for (const p of (positions ?? []) as AnyRow[]) {
@@ -539,10 +493,7 @@ export async function loadWorkload(f: CommandFilters): Promise<WorkloadClient[]>
     if (m.processing_state === "scored" && m.admin_status === "pending") row.awaiting_review += 1;
     if (m.admin_status === "approved" && m.client_visibility === "hidden") row.awaiting_release += 1;
     if (FAILED_STATES.includes(m.processing_state)) row.issues += 1;
-  }
-  for (const iv of (interviews ?? []) as AnyRow[]) {
-    const row = perPosition.get(iv.position_id);
-    if (row) row.interviews += 1;
+    if (m.stage === "interview_process") row.interviews += 1;
   }
 
   const byClient = new Map<string, WorkloadClient>();

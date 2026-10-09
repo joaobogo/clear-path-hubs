@@ -328,11 +328,6 @@ export function TeamTab() {
   Review your plan
   </Link>
   </Button>
-  <Button asChild size="sm" variant="outline">
-  <Link to="/book-call" search={{ position: undefined }}>
-  Talk to us about seats
-  </Link>
-  </Button>
   </div>
   </div>
   </div>
@@ -909,15 +904,6 @@ function MemberRow({
  aria-label="Start a seat upgrade on the plan tab"
  >
  Start a seat upgrade
- </Link>
- </Button>
- <Button asChild>
- <Link
- to="/book-call"
- search={{ position: undefined }}
- aria-label="Book a call to talk to us about adding seats"
- >
- Talk to us about seats
  </Link>
  </Button>
  </DialogFooter>

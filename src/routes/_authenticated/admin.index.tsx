@@ -25,7 +25,6 @@ import {
   Briefcase,
   ClipboardCheck,
   Clock,
-  CalendarClock,
   AlertOctagon,
   RefreshCw,
   CheckCircle2,
@@ -91,7 +90,6 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   setup: Briefcase,
   review: ClipboardCheck,
   client_overdue: Clock,
-  interviews: CalendarClock,
   delivery_failures: AlertOctagon,
   score_stale: RefreshCw,
   approvals: CheckCircle2,
@@ -127,7 +125,9 @@ function Header({
             `${total} item${total === 1 ? "" : "s"} waiting on ${scope === "mine" ? "you" : "the team"}. Every row opens the one action it needs.`
           )}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">
+        {/* A div, not a <p>: the scope notes below render their own <p>, and a
+            <p> inside a <p> is invalid HTML that breaks hydration. */}
+        <div className="mt-1 text-xs text-muted-foreground">
           {showTest
             ? "Including test and internal organizations."
             : "Test and internal organizations are hidden."}
@@ -142,7 +142,7 @@ function Header({
           ) : (
             <TestScopeEmptyNote className="mt-1 text-xs" />
           )}
-        </p>
+        </div>
       </div>
       <div className="flex items-center gap-2">
       <div role="group" aria-label="Queue scope" className="flex rounded-md border p-0.5">

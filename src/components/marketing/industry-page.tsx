@@ -6,8 +6,8 @@
  * declared order. Six distinct hero systems live at the bottom of this file.
  *
  * Design invariants
- *  - Primary hero CTA is always "Discuss your hiring needs" — no
- *    industry-name-baked "Book a X call" labels.
+ *  - Primary hero CTA is always CTA_PRIMARY (src/config/cta.ts) — no
+ *    industry-name-baked labels.
  *  - No "Sourcing live" pill, no decorative "Fit 92" overlay, no dark metric
  *    strip below the hero, no repeated three-chip strip below CTAs.
  *  - H1 uses `text-balance` and a bounded `max-w` so no line ends with a
@@ -21,7 +21,8 @@ import { Fragment } from "react";
 import { VerticalConfigurationSection } from "@/components/marketing/vertical-configuration";
 import { HeroPicture } from "@/components/marketing/hero-picture";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
 import type { IndustryEntry } from "@/content/industries-v2";
 import { type IndustrySectionKey } from "@/content/industry-archetypes";
 import {
@@ -42,10 +43,6 @@ import { IndustryRoleExplorer } from "@/components/marketing/industry-role-explo
 import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-explorer";
 import { IndustryInsights } from "@/components/marketing/industry-insights";
 import { IndustryHeroBackdrop } from "@/components/marketing/industry-hero-backdrop";
-import {
-  BookACallDialog,
-  BookACallSection,
-} from "@/components/marketing/book-a-call";
 import { SubtleCta } from "@/components/marketing/subtle-cta";
 
 /* ==========================================================================
@@ -85,6 +82,7 @@ export function IndustryPage({ entry }: { entry: IndustryEntry }) {
       {config.spec.sections.map((key) => (
         <Fragment key={key}>
           <SectionRenderer sectionKey={key} ctx={ctx} />
+          {key === "hero" && entry.boundary ? <SectionBoundary boundary={entry.boundary} /> : null}
           {key === configAnchor ? (
             <VerticalConfigurationSection slug={entry.slug} industryName={entry.name} />
           ) : null}
@@ -188,19 +186,12 @@ function HeroActions({
       : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]";
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <BookACallDialog
-        industrySlug={entry.slug}
-        industryName={entry.name}
-        trigger={
-          <button
-            type="button"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-          >
-            <CalendarDays className="h-4 w-4" aria-hidden />
-            {config.primaryCta.label}
-          </button>
-        }
-      />
+      <Link
+        to={CTA_PRIMARY.to}
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+      >
+        {CTA_PRIMARY.label}
+      </Link>
       {secondaryIsAnchor ? (
         <a
           href={config.secondaryCta.to}
@@ -1364,15 +1355,46 @@ function SectionFaq({ ctx }: { ctx: Ctx }) {
   );
 }
 
+function SectionBoundary({ boundary }: { boundary: { title: string; body: string } }) {
+  return (
+    <PublicSection className="border-y border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-8">
+      <PublicPage>
+        <div className="max-w-3xl">
+          <h2 className="text-lg font-semibold text-[color:var(--brand-navy)]">{boundary.title}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{boundary.body}</p>
+        </div>
+      </PublicPage>
+    </PublicSection>
+  );
+}
+
 function SectionCta({ ctx }: { ctx: Ctx }) {
   const { entry } = ctx;
   return (
-    <BookACallSection
-      industrySlug={entry.slug}
-      industryName={entry.name}
-      eyebrow={entry.eyebrow}
-      title={entry.cta.title}
-      description={entry.cta.description}
-    />
+    <PublicSection className="py-14">
+      <PublicPage>
+        <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-12 text-center text-white sm:px-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/60">{entry.eyebrow}</p>
+          <h2 className="mx-auto mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+            {entry.cta.title}
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base text-white/75">{entry.cta.description}</p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to={CTA_PRIMARY.to}
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-90"
+            >
+              {CTA_PRIMARY.label}
+            </Link>
+            <Link
+              to={CTA_MESSAGE.to}
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+            >
+              {CTA_MESSAGE.label}
+            </Link>
+          </div>
+        </div>
+      </PublicPage>
+    </PublicSection>
   );
 }

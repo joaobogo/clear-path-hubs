@@ -1,6 +1,6 @@
-import { BOOKING_ROUTE } from "@/config/booking";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
-import { MODULE_SECTIONS } from "@/config/product-language";
+import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
 
 
 /**
@@ -35,20 +35,20 @@ export type PrimaryItem =
 /* -------------------------------------------------------------- CTAs */
 
 export const PRIMARY_CTA: NavLink = {
-  to: "/pilot",
-  label: `Start a $${PRICE_PILOT_USD} pilot`,
-  description: "Run one role end-to-end before subscribing",
+  to: CTA_PRIMARY.to,
+  label: CTA_PRIMARY.label,
+  description: "Run one role end to end before you commit to more",
 };
 
-/** Secondary header CTA — rendered next to the primary CTA. */
-export const BOOK_CALL_CTA: NavLink = {
-  to: BOOKING_ROUTE,
-  label: "Book call",
-  description: "Talk to a founder about your roles",
+/** Secondary header CTA, rendered next to the primary CTA on wide screens. */
+export const MESSAGE_CTA: NavLink = {
+  to: CTA_MESSAGE.to,
+  label: CTA_MESSAGE.label,
+  description: "Send the team a note about your roles",
 };
 
 export const SECONDARY_CTAS: NavLink[] = [
-  { to: "/jobs",           label: "Browse Jobs" },
+  { to: "/jobs",           label: "Browse jobs" },
   { to: "/login",          label: "Sign in" },
 ];
 
@@ -83,32 +83,18 @@ export function isCandidateJourneyPath(pathname: string): boolean {
 
 /* -------------------------------------------------------------- Primary nav (ordered) */
 
+/**
+ * The header carries six items. The old "Platform" dropdown contents now live in
+ * the workspace section of the How it works page.
+ */
 export const PRIMARY_ITEMS: PrimaryItem[] = [
-  {
-    kind: "group",
-    label: "Platform",
-    links: [
-      { to: "/platform", label: "Platform overview", description: "The whole system, module by module" },
-      ...MODULE_SECTIONS.map((m) => ({
-        to: "/platform",
-        hash: m.anchor,
-        label: m.name,
-        description: m.description,
-      })),
-      { to: "/how-it-works", label: "How It Works", description: "Intake, sourcing, scoring, decision — step by step" },
-      { to: "/solutions", label: "Solutions", description: "How teams deploy the platform as they scale" },
-      { to: "/industries", label: "Industries", description: "Role libraries and rubrics by sector" },
-      { to: "/enterprise", label: "Enterprise", description: "Scale, controls, and procurement requirements" },
-      { to: "/integrations", label: "Integrations", description: "Connections we support today, with data and permissions" },
-    ],
-  },
-  { kind: "link", to: "/agents", label: "Agents" },
-  { kind: "link", to: "/system", label: "Intelligence" },
+  { kind: "link", to: "/how-it-works", label: "How it works" },
   { kind: "link", to: "/pricing", label: "Pricing" },
-  { kind: "link", to: "/case-studies", label: "Customers" },
+  { kind: "link", to: "/industries", label: "Industries" },
+  { kind: "link", to: "/compare", label: "Compare" },
+  { kind: "link", to: "/resources", label: "Resources" },
   { kind: "link", to: "/security", label: "Security" },
 ];
-
 
 /* Legacy exports retained for older imports — derived from PRIMARY_ITEMS. */
 
@@ -124,82 +110,72 @@ export const PRIMARY_NAV: NavLink[] = PRIMARY_ITEMS.filter(
 
 export const FOOTER_GROUPS: NavGroup[] = [
   {
-    // Product column.
     label: "Product",
     links: [
-      { to: "/platform", label: "Platform" },
-      { to: "/agents",   label: "Agents" },
-      { to: "/system",   label: "Intelligence" },
+      { to: "/how-it-works", label: "How it works" },
+      { to: "/agents", label: "Agents" },
       { to: "/integrations", label: "Integrations" },
       { to: "/security", label: "Security" },
-      { to: "/status",   label: "System Status" },
-      { to: "/changelog", label: "Changelog" },
     ],
   },
-
-
   {
-
-    label: "For Companies",
+    label: "For companies",
     links: [
-      { to: "/platform",              label: "Platform" },
-      { to: "/how-it-works",          label: "How It Works" },
-      { to: "/pricing",               label: "Pricing" },
-      { to: "/enterprise",            label: "Enterprise" },
-      { to: "/employer-onboarding",   label: "Employer Onboarding" },
-      { to: "/partnerships/staffing", label: "Staffing Partnerships" },
-      { to: "/intake",                label: "Start Hiring" },
+      { to: "/pricing", label: "Pricing" },
+      { to: "/compare", label: "Compare" },
+      { to: "/for-hr-teams", label: "For HR teams" },
+      { to: "/for-founders", label: "For founders" },
+      { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label },
+      { to: CTA_MESSAGE.to, label: CTA_MESSAGE.label },
+      { to: "/enterprise", label: "Enterprise" },
+      { to: "/partnerships/staffing", label: "Staffing partnerships" },
+      { to: "/login", label: "Sign in" },
     ],
   },
   {
     label: "Industries",
     links: [
-      { to: "/industries/technology",       label: "Technology" },
-      { to: "/industries/saas",       label: "SaaS" },
-      { to: "/industries/finance",    label: "Finance" },
+      { to: "/industries/technology", label: "Technology" },
+      { to: "/industries/saas", label: "SaaS" },
+      { to: "/industries/finance", label: "Finance" },
       { to: "/industries/healthcare", label: "Healthcare" },
-      { to: "/industries/legal",      label: "Legal" },
+      { to: "/industries/legal", label: "Legal" },
       { to: "/industries/consulting", label: "Consulting" },
-      { to: "/industries",            label: "View All Industries" },
+      { to: "/industries", label: "All industries" },
     ],
   },
   {
-    label: "For Candidates",
+    label: "For candidates",
     links: [
-      { to: "/jobs",              label: "Browse Jobs" },
-      { to: "/talent-network",    label: "Talent Network" },
-      { to: "/candidate-join",    label: "Join the Network" },
-      { to: "/login",             label: "Candidate Sign In" },
-      { to: "/candidate-success", label: "Candidate Stories" },
+      { to: "/jobs", label: "Browse jobs" },
+      { to: "/talent-network", label: "Talent network" },
+      { to: "/candidate-join", label: "Join the network" },
+      { to: "/login", label: "Sign in" },
     ],
   },
   {
     label: "Resources",
     links: [
-      { to: "/resources",      label: "Resources" },
-      { to: "/blog",           label: "Blog" },
-      { to: "/case-studies",   label: "Case Studies" },
-      { to: "/knowledge-base", label: "Knowledge Base" },
-      { to: "/faq",            label: "FAQ" },
+      { to: "/resources", label: "Resources" },
+      { to: "/blog", label: "Blog" },
+      { to: "/case-studies", label: "Case studies" },
+      { to: "/faq", label: "FAQ" },
     ],
   },
   {
     label: "Company",
     links: [
-      { to: "/about",   label: "About" },
-      { to: "/journey", label: "Journey" },
-      { to: "/trust",   label: "Trust Pack" },
+      { to: "/about", label: "About" },
+      { to: "/solutions", label: "Who we are for" },
       { to: "/contact", label: "Contact" },
     ],
   },
   {
+    // Rendered in the bottom bar, not as a column.
     label: "Legal",
     links: [
-      { to: "/security",    label: "Trust Center" },
-      { to: "/status",      label: "Status" },
-      { to: "/privacy",     label: "Privacy" },
-      { to: "/terms",       label: "Terms" },
-      { to: "/sitemap",     label: "Sitemap" },
+      { to: "/privacy", label: "Privacy" },
+      { to: "/terms", label: "Terms" },
     ],
   },
 ];
@@ -208,7 +184,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
 // Canonical brand boilerplate — same one-liner used in title tags, meta
 // descriptions and Organization schema, reused verbatim network-wide.
 export const FOOTER_DESCRIPTION =
-  "TaaSFlow is recruiting subscription and hiring infrastructure, powered by AI hiring intelligence. Agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace for one flat fee.";
+  `TaaSFlow is a ${OFFER_CATEGORY.toLowerCase()}. ${WHO_RUNS_THE_SEARCH_SHORT} Start with one role for $${PRICE_PILOT_USD}.`;
 
 export const SOCIAL_LINKS = [
   { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn" },
@@ -225,7 +201,7 @@ export function allNavHrefs(): string[] {
   });
   FOOTER_GROUPS.forEach((g) => g.links.forEach(push));
   push(PRIMARY_CTA);
-  push(BOOK_CALL_CTA);
+  push(MESSAGE_CTA);
   SECONDARY_CTAS.forEach(push);
   return Array.from(out);
 }

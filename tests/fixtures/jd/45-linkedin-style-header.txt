@@ -1,0 +1,10 @@
+Senior Engineer at Acme Robotics
+Austin, Texas, United States · Full-time · Hybrid
+
+About the job
+Acme Robotics builds warehouse robots.
+
+Qualifications
+- 7+ years of C++ experience
+- Experience with ROS
+- Comfortable with embedded systems

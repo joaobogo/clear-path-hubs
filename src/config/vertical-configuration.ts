@@ -128,7 +128,7 @@ export type VerticalConfig = {
 /* Configurations                                                      */
 /* ------------------------------------------------------------------ */
 
-const BASE_INTEGRATIONS = ["mcp", "calendly", "transactional-email", "workspace-analytics"];
+const BASE_INTEGRATIONS = ["mcp", "transactional-email", "workspace-analytics"];
 
 export const VERTICAL_CONFIGS: Record<string, VerticalConfig> = {
   technology: {
@@ -835,10 +835,44 @@ const SLUG_TO_CONFIG: Record<string, string> = {
   "higher-education": "public-education",
 };
 
+/**
+ * Public-page overrides for one slug inside a shared configuration. The shared
+ * `regulated-care` configuration also serves pharmaceuticals, biotech and
+ * medical devices, so healthcare-only wording lives here instead of changing
+ * `VERTICAL_CONFIGS`. Only `resolveVerticalConfig` (marketing pages) applies
+ * overrides; `VERTICAL_CONFIGS`, `VERTICAL_CONFIG_LIST` and `slugsForConfig`
+ * are unchanged for every other consumer.
+ */
+const SLUG_OVERRIDES: Record<string, Partial<VerticalConfig>> = {
+  healthcare: {
+    label: "Healthcare",
+    summary:
+      "Licence and registration claims from the CV are captured as requirements before ranking begins. Your team verifies them.",
+    roleFamilies: [
+      { name: "Clinical", examples: ["Registered nurses", "Physicians", "Allied health", "Care leadership"] },
+      { name: "Nonclinical operations", examples: ["Practice managers", "Revenue cycle", "Patient access", "Facility administration"] },
+      { name: "Health informatics", examples: ["EHR analysts", "Clinical informatics", "Health data analysis"] },
+    ],
+    requirementPatterns: [
+      "Licence or registration claims, with issuing body and expiry as stated on the CV",
+      "Setting-specific experience (acute, ambulatory, community, home care)",
+      "Regulatory frameworks the candidate says they have worked under",
+      "Shift pattern, rota and on-call availability",
+    ],
+    compliance: [
+      { label: "Licence claims trail", detail: "Every licence claim is recorded with its source line and reviewer decision. TaaSFlow does not verify licences with issuing bodies." },
+      { label: "Checks required by the role", detail: "Background checks and clearances the role needs are captured as requirements. Your team runs them; TaaSFlow does not." },
+      { label: "Sensitive data handling", detail: "CVs stay in private storage with scoped access; contact details release separately." },
+    ],
+  },
+};
+
 /** Resolve any industry slug (public or data-side) to its configuration. */
 export function resolveVerticalConfig(slug: string): VerticalConfig {
   const key = SLUG_TO_CONFIG[slug];
-  return (key ? VERTICAL_CONFIGS[key] : undefined) ?? VERTICAL_CONFIGS.generic;
+  const base = (key ? VERTICAL_CONFIGS[key] : undefined) ?? VERTICAL_CONFIGS.generic;
+  const override = SLUG_OVERRIDES[slug];
+  return override ? { ...base, ...override } : base;
 }
 
 /** Ordered list for comparison views (generic last). */

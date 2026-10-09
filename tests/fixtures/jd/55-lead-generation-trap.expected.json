@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Lead Generation Specialist",
+    "workModel": "remote",
+    "location": "EMEA"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "outbound prospecting",
+      "HubSpot"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

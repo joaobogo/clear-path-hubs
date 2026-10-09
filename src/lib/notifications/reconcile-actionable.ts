@@ -25,11 +25,9 @@ export type OpenActionable = {
 };
 
 /**
- * The staff task the no-show sweep raises, worded once.
- *
- * interview-reminders.server.ts writes this title and this module matches on
- * it, so the two cannot drift into a reconciler that silently stops matching.
- * Asserted directly by the guard test, which reads both files.
+ * The title of the legacy "no outcome" staff task. The sweep that raised it
+ * was removed with scheduling; the reconciler keeps matching on it so any
+ * rows still open in the database are cleared once the match has an outcome.
  */
 export const INTERVIEW_NO_OUTCOME_TITLE = "Interview slot passed with no outcome";
 

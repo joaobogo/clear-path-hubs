@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Director of Marketing",
+    "seniority": "director",
+    "location": "New York, NY",
+    "targetStartDate": "2026-11-01",
+    "salaryMin": 180000,
+    "salaryMax": 210000,
+    "currency": "USD",
+    "compensationPeriod": "year"
+  },
+  "empty": [
+    "team",
+    "workModel",
+    "employmentType",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "10+ years in B2B marketing",
+      "team of 8+",
+      "marketing analytics"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

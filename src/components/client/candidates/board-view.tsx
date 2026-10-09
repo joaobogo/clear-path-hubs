@@ -30,8 +30,6 @@ type AnyRow = any;
 type BoardRow = {
   id: string;
   stage: string;
-  interview_active: boolean | null;
-  interview_called_off: boolean | null;
   hire_confirmed: boolean | null;
   candidate_profiles: Record<string, unknown>;
   score_runs: Record<string, unknown>;
@@ -42,15 +40,7 @@ function toBoardRow(c: ClientCandidateDTO): BoardRow {
   return {
     id: c.match_id,
     stage: c.stage,
-    // laneFor needs BOTH of these to place a cancelled interview back in
-    // Shortlisted. They were dropped here, and because this returns AnyRow
-    // nothing caught it: groupRowsByStage called laneFor, laneFor saw
-    // undefined, and fell through to the raw stage. The board has been
-    // bucketing by stage while appearing to use the lane rule — a call that
-    // could never do anything (launch pass round 2/3).
-    interview_active: c.interview_active,
-    interview_called_off: c.interview_called_off,
-    // And laneFor needs this one to keep an unconfirmed hire out of the Hired
+    // laneFor needs this to keep an unconfirmed hire out of the Hired
     // column — the same class of omission, one lane along.
     hire_confirmed: c.hire_confirmed,
     candidate_profiles: {

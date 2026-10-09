@@ -12,7 +12,7 @@ import {
   Gauge,
 } from "lucide-react";
 
-import { marketingHead } from "@/lib/marketing/head";
+import { noindexMarketingHead } from "@/lib/marketing/noindex-head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { getPlatformStatus } from "@/lib/status/platform-status.functions";
 import {
@@ -35,10 +35,10 @@ export const statusQuery = queryOptions({
 export const Route = createFileRoute("/status")({
   loader: ({ context }) => context.queryClient.ensureQueryData(statusQuery),
   head: () =>
-    marketingHead(undefined, "/status", {
-      title: "System status — TaaSFlow platform availability",
+    noindexMarketingHead(undefined, "/status", {
+      title: "System status | TaaSFlow platform",
       description:
-        "Live, measured status for the TaaSFlow platform: public website, authentication, client workspace, role management, agent processing, candidate data, scoring, integrations, notifications and billing.",
+        "Service status for the TaaSFlow platform, checked when the page loads. Services that could not be measured are marked as not yet measured.",
     }),
   component: StatusPage,
   errorComponent: makeRouteErrorComponent("public", "status"),
@@ -54,6 +54,15 @@ const ICON: Record<StatusLevel, typeof CheckCircle2> = {
   major_outage: AlertOctagon,
   maintenance: Wrench,
   unknown: HelpCircle,
+};
+
+/**
+ * Public wording only. The shared label for `unknown` is "Unknown"; on this
+ * page it reads "Not yet measured", which says what actually happened.
+ */
+const PUBLIC_STATUS_LABEL: Record<StatusLevel, string> = {
+  ...STATUS_LABEL,
+  unknown: "Not yet measured",
 };
 
 /** Colour is a reinforcement here; the label always carries the meaning. */
@@ -98,7 +107,7 @@ function StatusPill({ level }: { level: StatusLevel }) {
       className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${tone.band} ${tone.text}`}
     >
       <Icon className="h-3.5 w-3.5" aria-hidden />
-      {STATUS_LABEL[level]}
+      {PUBLIC_STATUS_LABEL[level]}
     </span>
   );
 }
@@ -203,7 +212,7 @@ function StatusPage() {
 
           <p className="mt-4 max-w-3xl text-sm text-[color:var(--brand-navy)]/70">
             Every status below comes from a check run when this page loaded. Where a check could not
-            run, the service reads <strong>Unknown</strong> rather than a guess. We do not publish
+            run, the service reads <strong>Not yet measured</strong> rather than a guess. We do not publish
             uptime percentages, because we do not run continuous external monitoring that would make
             such a figure honest.
           </p>

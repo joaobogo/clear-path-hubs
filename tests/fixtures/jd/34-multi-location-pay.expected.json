@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Software Engineer II"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "3 years of professional software engineering",
+      "TypeScript and Node"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

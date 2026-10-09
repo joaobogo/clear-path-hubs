@@ -412,7 +412,7 @@ export const OPERATIONS_GUIDES: ResourceGuide[] = [
         "Quarterly analytics on where days and spend actually went",
       ],
     },
-    related: ["hiring-for-multiple-open-roles", "cost-of-an-unfilled-position", "recruiting-as-a-service"],
+    related: ["hiring-for-multiple-open-roles", "cost-of-an-unfilled-position"],
     onward: [
       { to: "/how-it-works", label: "How it works", desc: "Stage-by-stage with typical timing." },
       { to: "/pilot", label: "Start with a pilot", desc: "One role, agreed criteria." },

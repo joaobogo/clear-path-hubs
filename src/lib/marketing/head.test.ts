@@ -88,3 +88,54 @@ describe("clampDescription", () => {
     expect(clampDescription("y".repeat(400)).length).toBeLessThan(160);
   });
 });
+
+describe("head length warnings (P12)", () => {
+  it("reports when a title or description had to be shortened, with the original", async () => {
+    const { clampTitleDetailed, clampDescriptionDetailed, lengthWarnings } = await import(
+      "@/lib/marketing/head"
+    );
+    const t = clampTitleDetailed("Skills-Based Hiring: How to Drop Degree Requirements Without Lowering the Bar");
+    const d = clampDescriptionDetailed("word ".repeat(60));
+    expect(t.clamped).toBe(true);
+    expect(t.original).toContain("Without Lowering the Bar");
+    const warnings = lengthWarnings({ title: t, description: d }, "/x");
+    expect(warnings).toHaveLength(2);
+    expect(warnings[0]).toContain("Without Lowering the Bar");
+    expect(lengthWarnings({ title: clampTitleDetailed("Short"), description: clampDescriptionDetailed("Short") }, "/x")).toEqual([]);
+  });
+
+  it("lets the content entry win over the route fallback", () => {
+    const entry = { markdown: "", meta: { title: "Entry title", description: "Entry description" } } as unknown as Parameters<typeof marketingHead>[0];
+    const head = marketingHead(entry, "/p", { title: "Fallback title", description: "Fallback description" });
+    expect((head.meta.find((m) => "title" in m) as { title: string }).title).toBe("Entry title");
+  });
+});
+
+describe("structured data scoping (P13)", () => {
+  const types = (path: string) =>
+    (marketingHead(undefined, path, { title: "T", description: "D" }).scripts ?? []).map(
+      (s) => JSON.parse(s.children)["@type"],
+    );
+
+  it("emits WebApplication only on /how-it-works", () => {
+    expect(types("/how-it-works")).toContain("WebApplication");
+    expect(types("/")).not.toContain("WebApplication");
+    expect(types("/pricing")).not.toContain("WebApplication");
+  });
+
+  it("adds the pilot Offer to the pricing Service, with no per-position prices", async () => {
+    const { serviceScript } = await import("@/lib/marketing/head");
+    const svc = JSON.parse(serviceScript({ name: "n", description: "d", path: "/pricing" }).children);
+    expect(svc.offers).toMatchObject({ "@type": "Offer", price: "699", priceCurrency: "USD" });
+    expect(Object.keys(svc.offers)).not.toContain("priceSpecification");
+    const other = JSON.parse(serviceScript({ name: "n", description: "d", path: "/pilot" }).children);
+    expect(other.offers).toBeUndefined();
+  });
+
+  it("emits a robots directive only when asked", () => {
+    const has = (h: ReturnType<typeof marketingHead>) =>
+      h.meta.some((m) => "name" in m && m.name === "robots");
+    expect(has(marketingHead(undefined, "/a", { title: "T", description: "D" }))).toBe(false);
+    expect(has(marketingHead(undefined, "/a", { title: "T", description: "D" }, { robots: "noindex, follow" }))).toBe(true);
+  });
+});

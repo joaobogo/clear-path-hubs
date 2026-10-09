@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Staff Engineer"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "location",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "distributed systems",
+      "cross-team technical projects"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

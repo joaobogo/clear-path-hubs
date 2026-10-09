@@ -133,7 +133,6 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       processing_failures,
       client_requests,
       aging,
-      urgent_interviews,
       intake_inbox,
     ] = await Promise.all([
       // Fresh intake submissions (canonical source, not positions)
@@ -187,16 +186,6 @@ export const getAdminOverview = createServerFn({ method: "GET" })
             .lt("processing_updated_at", dayAgo),
         { testFlag: true },
       ),
-      // Urgent interview activity: requested awaiting scheduling, or
-      // scheduled within the next 48h.
-      count(
-        "interviews",
-        (q) =>
-          q.or(
-            `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * 3600_000).toISOString()})`,
-          ),
-        { orgCol: "organization_id", positionCol: "position_id" },
-      ),
       // Intake submissions still needing platform action (not yet converted or resolved)
       count(
         "intake_submissions",
@@ -214,7 +203,6 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       { data: readyPublish },
       { data: processingIssues },
       { data: clientRequests },
-      { data: urgentInterviews },
       { data: intakeInbox },
       { data: recentActivity },
     ] = await Promise.all([
@@ -320,25 +308,6 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           };
         }),
       s
-        .from("interviews")
-        .select(
-          "id,status,scheduled_at,requested_at,organization_id,position_id,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
-        )
-        .or(
-          `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * 3600_000).toISOString()})`,
-        )
-        .order("scheduled_at", { ascending: true, nullsFirst: true })
-        .limit(6)
-        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
-          if (showTest) return res;
-          return {
-            ...res,
-            data: (res.data ?? []).filter((r: AnyRow) => {
-              return !scope.orgIds.includes(r.organization_id) && !scope.positionIds.includes(r.position_id);
-            }),
-          };
-        }),
-      s
         .from("intake_submissions")
         .select(
           "id,company_name,role_title,status,workspace_status,requisition_pending,created_at,position_id,organization_id",
@@ -388,7 +357,6 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       processing_failures,
       client_requests,
       aging,
-      urgent_interviews,
       intake_inbox,
       lists: {
         new_intakes: (newIntakes ?? []) as AnyRow[],
@@ -398,7 +366,6 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         candidates_ready_to_publish: (readyPublish ?? []) as AnyRow[],
         processing_issues: (processingIssues ?? []) as AnyRow[],
         client_requests: (clientRequests ?? []) as AnyRow[],
-        urgent_interviews: (urgentInterviews ?? []) as AnyRow[],
         intake_inbox: (intakeInbox ?? []) as AnyRow[],
       },
 
@@ -1559,12 +1526,7 @@ export const getClientPreview = createServerFn({ method: "GET" })
       await import("@/lib/client-candidate-hydrate.server")
     ).hydrateClientCandidateProfiles([m as AnyRow]);
 
-    const [interviewsRes, decisionsRes, answersRes, evidenceRes] = await Promise.all([
-      supabaseAdmin
-        .from("interviews")
-        .select("id, status, requested_at, scheduled_at, completed_at, notes")
-        .eq("candidate_match_id", data.match_id)
-        .order("created_at", { ascending: false }),
+    const [decisionsRes, answersRes, evidenceRes] = await Promise.all([
       supabaseAdmin
         .from("client_decisions")
         .select("id, decision, feedback, created_at")
@@ -1587,12 +1549,8 @@ export const getClientPreview = createServerFn({ method: "GET" })
         (a.screening_questions?.display_order ?? 0) - (b.screening_questions?.display_order ?? 0),
     );
 
-    const ACTIVE_INTERVIEW_STATUSES = ["requested", "scheduling", "scheduled", "completed"];
     const matchWithAnswers = {
       ...hydratedMatch,
-      interview_active: ((interviewsRes.data as AnyRow[]) ?? []).some((iv) =>
-        ACTIVE_INTERVIEW_STATUSES.includes(String(iv.status)),
-      ),
       evidence_items: evidenceRes.get(data.match_id) ?? [],
       application_answers: answers,
       audit_events: [], // Admin preview doesn't need full audit list
@@ -1601,7 +1559,6 @@ export const getClientPreview = createServerFn({ method: "GET" })
     const { toClientCandidateDTO } = await import("@/lib/client-kpi.server");
     return {
       candidate: toClientCandidateDTO(matchWithAnswers as AnyRow),
-      interviews: (interviewsRes.data as AnyRow[]) ?? [],
       decisions: (decisionsRes.data as AnyRow[]) ?? [],
       /** True when the score shown is not yet approved, so this is a forecast. */
       usingUnapprovedRun,
@@ -1610,27 +1567,6 @@ export const getClientPreview = createServerFn({ method: "GET" })
 
 
 // ─── Pipeline Health ─────────────────────────────────────────────────────────
-
-/**
- * The admin interviews desk. /admin/interviews used to redirect silently to
- * the decision backlog while the overview counted "Interviews to coordinate 3"
- * with nowhere to coordinate them (audit A-09). One list, newest need first.
- */
-export const getAdminInterviews = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    await requireStaff(context.userId);
-    const s = await getAdmin();
-    const { data, error } = await s
-      .from("interviews")
-      .select(
-        "id,status,requested_at,scheduled_at,completed_at,notes,candidate_match_id,candidate_matches!inner(id,organization_id,candidate_profiles(full_name),positions!inner(id,title,organizations!inner(id,name)))",
-      )
-      .order("requested_at", { ascending: true })
-      .limit(200);
-    if (error) throw new Error(error.message);
-    return { interviews: (data ?? []) as AnyRow[] };
-  });
 
 export const getPipelineHealth = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -1685,11 +1621,37 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
       .eq("error_code", "provider_error")
       .gte("created_at", weekAgo);
 
+    // Role analysis (Role Blueprint) health: the silent ways it can fail to
+    // run in an environment — a missing AI key, a drain that cannot run, and
+    // roles stuck or waiting. Shown as notes on the Pipeline Health page.
+    const { blueprintHealthNotes, BLUEPRINT_IN_PROGRESS_STATUSES, BLUEPRINT_STALE_MS } =
+      await import("@/lib/blueprint-trigger");
+    const bpCutoff = new Date(Date.now() - BLUEPRINT_STALE_MS).toISOString();
+    const countWhere = async (statuses: string[], olderThan: string | null) => {
+      let q = s.from("positions").select("id", { count: "exact", head: true }).in("blueprint_status", statuses);
+      if (olderThan) q = q.lt("updated_at", olderThan);
+      const { count } = await q;
+      return count ?? 0;
+    };
+    const [bpStuck, bpWaiting, bpFailed] = await Promise.all([
+      countWhere([...BLUEPRINT_IN_PROGRESS_STATUSES], bpCutoff),
+      countWhere(["queued", "not_started"], bpCutoff),
+      countWhere(["failed"], null),
+    ]);
+    const blueprint_notes = blueprintHealthNotes({
+      hasAiKey: Boolean((process.env.LOVABLE_API_KEY ?? "").trim()),
+      hasCronSecret: Boolean((process.env.CRON_INVOKE_SECRET ?? "").trim()),
+      stuck: bpStuck,
+      waiting: bpWaiting,
+      failed: bpFailed,
+    });
+
     return {
       states: stateCounts,
       stale,
       failed_jobs: (failedJobs ?? []) as AnyRow[],
       provider_incidents: providerIncidents ?? 0,
+      blueprint_notes,
     };
   });
 

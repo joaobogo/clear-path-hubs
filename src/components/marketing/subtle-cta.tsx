@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
 
 /**
  * Subtle inline CTA. Two variants:
- *  - "hire": drives to /intake and /how-it-works
+ *  - "hire": drives to the pilot request and /how-it-works
  *  - "candidate": drives to /jobs and /candidate-join
  *
  * Renders as a low-contrast strip so it fits mid-page without shouting.
@@ -20,14 +21,14 @@ export function SubtleCta({
   const title =
     headline ??
     (hire
-      ? "Hiring for this? TaaSFlow ships ranked candidates weekly."
-      : "Looking for your next role? See what TaaSFlow is hiring for now.");
+      ? "Hiring for this? Start with one role and a ranked shortlist."
+      : "Looking for your next role? See the roles open now.");
 
   const primary = hire
-    ? { to: "/intake", label: "Start hiring" }
+    ? { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label }
     : { to: "/jobs", label: "Browse open roles" };
   const secondary = hire
-    ? { to: "/how-it-works", label: "See how it works" }
+    ? { to: CTA_HOW_IT_WORKS.to, label: CTA_HOW_IT_WORKS.label }
     : { to: "/candidate-success", label: "Candidate stories" };
 
   return (

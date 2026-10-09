@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Legal Counsel",
+    "location": "Madrid, Spain"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "Qualified lawyer",
+      "Fluent Spanish and English"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

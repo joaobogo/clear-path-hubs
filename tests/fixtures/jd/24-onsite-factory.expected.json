@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Maintenance Technician - 2nd Shift",
+    "location": "Detroit, MI",
+    "workModel": "onsite",
+    "employmentType": "full_time",
+    "salaryMin": 30,
+    "salaryMax": 38,
+    "currency": "USD",
+    "compensationPeriod": "hour"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "Journeyman card",
+      "electrical schematics",
+      "hand tools"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

@@ -1,0 +1,8 @@
+Cargo: Assistente Administrativo
+Local: Belo Horizonte - MG
+Salário: R$ 2.800,00
+
+Requisitos:
+- Ensino médio completo
+- Experiência com rotinas administrativas
+- Pacote Office

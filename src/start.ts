@@ -1,7 +1,14 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
+import { legacyRedirectTarget } from "@/config/legacy-redirects";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+import {
+  NON_PRODUCTION_ROBOTS,
+  htmlCacheControlFor,
+  isIndexableHost,
+  legacyBookingRedirectFor,
+} from "@/lib/seo/edge-policy";
 
 const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   // Lovable email/webhook routes authenticate themselves — never intercept them.
@@ -34,6 +41,45 @@ const canonicalHostMiddleware = createMiddleware().server(async ({ next, request
   const host = url.hostname.toLowerCase();
   if (host.startsWith("www.") && host.endsWith("taasflow.com")) {
     url.hostname = host.slice(4);
+    const status = request.method === "GET" || request.method === "HEAD" ? 301 : 308;
+    return new Response(null, {
+      status,
+      headers: { location: url.toString(), "cache-control": "public, max-age=3600" },
+    });
+  }
+  return next();
+});
+
+/**
+ * Retired booking URLs (/book, /book-call, /book-a-call, /schedule, /demo) 301
+ * to /contact. See `src/lib/seo/edge-policy.ts`.
+ */
+const legacyBookingMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const url = new URL(request.url);
+  const target = legacyBookingRedirectFor(url.pathname);
+  if (target) {
+    url.pathname = target;
+    const status = request.method === "GET" || request.method === "HEAD" ? 301 : 308;
+    return new Response(null, {
+      status,
+      headers: { location: url.toString(), "cache-control": "public, max-age=3600" },
+    });
+  }
+  return next();
+});
+
+/**
+ * Merged pages (/platform, /system, /employer-onboarding, /trust, /journey)
+ * 301 to the page and section that now carries their content. The table lives
+ * in `src/config/legacy-redirects.ts`; the query string is kept.
+ */
+const legacyPageMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const url = new URL(request.url);
+  const target = legacyRedirectTarget(url.pathname);
+  if (target) {
+    const [path, hash] = target.split("#");
+    url.pathname = path!;
+    url.hash = hash ? `#${hash}` : "";
     const status = request.method === "GET" || request.method === "HEAD" ? 301 : 308;
     return new Response(null, {
       status,
@@ -120,13 +166,28 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next, reque
       ? holder.response
       : (result as unknown as Response);
   if (!(response instanceof Response)) return result;
+  const url = new URL(request.url);
+  const extra: Array<[string, string]> = [...SECURITY_HEADERS];
+  // Preview and other non-production hosts must never compete with the
+  // canonical domain in search. Canonical tags still point at taasflow.com.
+  const host = request.headers.get("host") ?? url.host;
+  if (!isIndexableHost(host)) extra.push(["x-robots-tag", NON_PRODUCTION_ROBOTS]);
+  // HTML must revalidate so a CDN cannot serve a stale copy of a public page.
+  const cacheControl = htmlCacheControlFor({
+    pathname: url.pathname,
+    status: response.status,
+    contentType: response.headers.get("content-type"),
+    hasCacheControl: response.headers.has("cache-control"),
+    hasSetCookie: response.headers.has("set-cookie"),
+  });
+  if (cacheControl) extra.push(["cache-control", cacheControl]);
   try {
-    for (const [name, value] of SECURITY_HEADERS) response.headers.set(name, value);
+    for (const [name, value] of extra) response.headers.set(name, value);
     return result;
   } catch {
     // Immutable headers (some runtimes) — rebuild the response instead.
     const headers = new Headers(response.headers);
-    for (const [name, value] of SECURITY_HEADERS) headers.set(name, value);
+    for (const [name, value] of extra) headers.set(name, value);
     const rebuilt = new Response(response.body, {
       status: response.status,
       statusText: response.statusText,
@@ -144,6 +205,8 @@ export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
   requestMiddleware: [
     canonicalHostMiddleware,
+    legacyBookingMiddleware,
+    legacyPageMiddleware,
     canonicalPathMiddleware,
     securityHeadersMiddleware,
     errorMiddleware,

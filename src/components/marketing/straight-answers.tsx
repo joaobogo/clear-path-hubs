@@ -8,17 +8,22 @@ import {
   Bot,
 } from "lucide-react";
 import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
+import { PRICE_PILOT_USD } from "@/config/pricing-core";
+import {
+  ATS_NOTE,
+  FIRST_SHORTLIST_TIMING,
+  HUMAN_OVERSIGHT_NOTE,
+  PILOT_IS_PAID_NOTE,
+  RECORDS_NOTE,
+  RESPONSE_TIME_SENTENCE,
+  TIMING_FINE_PRINT,
+  WHO_RUNS_THE_SEARCH,
+} from "@/config/offer-facts";
 
 /**
- * Straight-answers band — resolves the six most common buyer anxieties
- * before a call is needed. No adjectives, no hidden logic.
- *
- * 1. Pricing        — flat monthly, no placement fee, cancel anytime.
- * 2. ROI            — assumptions are editable in the calculator, not baked in.
- * 3. Delivery       — first ranked shortlist in days of intake.
- * 4. Ownership      — you keep the candidates, the ATS, and the final call.
- * 5. Next step      — what happens in the 48h after you submit intake.
- * 6. Human vs AI    — humans decide, AI structures — the boundary is explicit.
+ * Straight-answers band. Every answer is built from `offer-facts.ts` and
+ * `pricing-core.ts`, so it cannot disagree with the rest of the site. Not
+ * rendered on the home page (which has one FAQ); kept for pages that want it.
  */
 
 export const ITEMS: {
@@ -30,47 +35,40 @@ export const ITEMS: {
   {
     icon: Wallet,
     question: "What does it cost?",
-    answer: "A flat monthly subscription. No percentage-of-salary placement fee.",
-    detail:
-      "Tiers are listed on the pricing page. Month-to-month, cancel anytime. No fee is triggered when a candidate we deliver is hired.",
+    answer: `The pilot is $${PRICE_PILOT_USD} for one role, one time per company.`,
+    detail: `${PILOT_IS_PAID_NOTE} There is no placement fee. Packages for more roles are on the pricing page.`,
   },
   {
     icon: ShieldCheck,
-    question: "How honest is the ROI math?",
-    answer: "The calculator ships with editable assumptions. Nothing is baked in.",
+    question: "Can I compare the cost with an agency?",
+    answer: "Yes. The cost comparison on the pricing page uses assumptions you can change.",
     detail:
-      "Adjust hires per year, salary band, agency fee, and internal recruiter cost. The comparison recomputes live — you can screenshot it and share.",
+      "Adjust the salary, the agency fee and your internal recruiter cost, and the comparison recalculates.",
   },
   {
     icon: Calendar,
-    question: "What is the delivery promise?",
-    answer:
-      "A first ranked shortlist in days of intake sign-off. Weekly refresh after that.",
-    detail:
-      "If a role is unusually niche, we surface that in intake — not on delivery day. No vague 'we'll get back to you' timelines.",
+    question: "How fast do we get candidates?",
+    answer: FIRST_SHORTLIST_TIMING,
+    detail: TIMING_FINE_PRINT,
   },
   {
     icon: UserCheck,
     question: "Who owns the candidates?",
-    answer: "You do. Every candidate delivered is yours to hire, keep, or archive.",
-    detail:
-      "No placement fee is charged for hiring a candidate we delivered — this month, next month, or a year later. Your ATS stays the source of truth.",
+    answer: "You do. Every candidate delivered is yours to hire, keep or archive.",
+    detail: `${RECORDS_NOTE} ${ATS_NOTE}`,
   },
   {
     icon: Database,
-    question: "What happens after I submit intake?",
-    answer:
-      "A recruiter reviews the brief within one business day and confirms the rubric with you.",
+    question: "What happens after I submit a role?",
+    answer: "A recruiter reviews the brief and confirms the criteria with you.",
     detail:
-      "You'll see the confirmed brief, the rubric, and the sourcing plan in the workspace before any candidate is contacted. No black-box handoff.",
+      `${RESPONSE_TIME_SENTENCE} You see the confirmed brief and the sourcing plan before any candidate is contacted.`,
   },
   {
     icon: Bot,
-    question: "What do humans do vs the AI?",
-    answer:
-      "Humans decide. AI structures the evidence, drafts the rubric, and speeds up sourcing.",
-    detail:
-      "Every shortlist is reviewed by a named recruiter before it reaches you. AI never sends a candidate; it prepares the file the recruiter signs off on.",
+    question: "Who does the work?",
+    answer: WHO_RUNS_THE_SEARCH,
+    detail: HUMAN_OVERSIGHT_NOTE,
   },
 ];
 
@@ -89,10 +87,10 @@ export function StraightAnswers() {
             id="straight-answers-heading"
             className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl"
           >
-            The six questions we get before every first call.
+            Six questions buyers ask first.
           </h2>
           <p className="mt-3 text-[color:var(--brand-navy)]/80">
-            Answered here so you don't have to book a call to find out.
+            Answered here so you can decide before you get in touch.
           </p>
         </div>
 
@@ -123,10 +121,10 @@ export function StraightAnswers() {
         <p className="mt-8 text-sm text-[color:var(--brand-navy)]/80">
           Still want to talk it through?{" "}
           <Link
-            to="/book"
+            to="/contact"
             className="font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] py-1"
           >
-            Book a call →
+            Send us a message
           </Link>
         </p>
       </PublicPage>

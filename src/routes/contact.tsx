@@ -8,6 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { toast } from "sonner";
 import { marketingHead } from "@/lib/marketing/head";
+import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
+import { RESPONSE_TIME_SENTENCE } from "@/config/offer-facts";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +25,6 @@ import {
   LogIn,
   Search,
   Clock,
-  CheckCircle2,
   Mail,
 } from "lucide-react";
 
@@ -34,8 +35,6 @@ type IntentSpec = {
   label: string;
   tagline: string;
   icon: React.ComponentType<{ className?: string }>;
-  responseSla: string;
-  respondsFrom: string;
   primaryCta: { label: string; to?: string; anchor?: string; icon?: React.ComponentType<{ className?: string }> };
   secondaryCta?: { label: string; to?: string; anchor?: string; icon?: React.ComponentType<{ className?: string }> };
   backup: string;
@@ -51,14 +50,12 @@ const INTENTS: IntentSpec[] = [
     label: "Hire talent",
     tagline: "Start a role or talk to sales.",
     icon: Briefcase,
-    responseSla: "Same business day",
-    respondsFrom: "Sales team",
-    primaryCta: { label: "Start Hiring", to: "/intake", icon: ArrowRight },
-    secondaryCta: { label: "Contact sales", anchor: "#contact-form" },
-    backup: "Prefer email? sales@taasflow.com",
+    primaryCta: { label: CTA_PRIMARY.label, to: CTA_PRIMARY.to, icon: ArrowRight },
+    secondaryCta: { label: CTA_MESSAGE.label, anchor: "#contact-form-hire" },
+    backup: "Sales: sales@taasflow.com",
     fields: ["name", "email", "company", "role", "message"],
     formHeading: "Talk to sales",
-    formDescription: "Tell us who you are and the role you need to fill. We reply within one business day.",
+    formDescription: "Tell us who you are and the role you need to fill.",
     topic: "hire_talent",
   },
   {
@@ -66,10 +63,8 @@ const INTENTS: IntentSpec[] = [
     label: "Candidate",
     tagline: "Browse roles or manage your application.",
     icon: UserCircle2,
-    responseSla: "Within 2 business days",
-    respondsFrom: "Talent team",
-    primaryCta: { label: "Browse Jobs", to: "/jobs", icon: Search },
-    secondaryCta: { label: "Candidate Sign In", to: "/login", icon: LogIn },
+    primaryCta: { label: "Browse jobs", to: "/jobs", icon: Search },
+    secondaryCta: { label: "Candidate sign in", to: "/login", icon: LogIn },
     backup: "Application questions: talent@taasflow.com",
     fields: ["name", "email", "url", "message"],
     formHeading: "Ask the talent team",
@@ -81,10 +76,8 @@ const INTENTS: IntentSpec[] = [
     label: "Existing client",
     tagline: "Reach your account team.",
     icon: Building2,
-    responseSla: "Within 4 business hours",
-    respondsFrom: "Your account manager",
-    primaryCta: { label: "Client Sign In", to: "/login", icon: LogIn },
-    secondaryCta: { label: "Send a message", anchor: "#contact-form" },
+    primaryCta: { label: "Client sign in", to: "/login", icon: LogIn },
+    secondaryCta: { label: CTA_MESSAGE.label, anchor: "#contact-form-existing_client" },
     backup: "Fastest route: message us inside your workspace.",
     fields: ["name", "email", "company", "message"],
     formHeading: "Message your account team",
@@ -96,9 +89,7 @@ const INTENTS: IntentSpec[] = [
     label: "Support",
     tagline: "Report an issue with your account or workspace.",
     icon: LifeBuoy,
-    responseSla: "Within 4 business hours",
-    respondsFrom: "Support team",
-    primaryCta: { label: "Report an issue", anchor: "#contact-form", icon: ArrowRight },
+    primaryCta: { label: "Report an issue", anchor: "#contact-form-support", icon: ArrowRight },
     secondaryCta: { label: "Sign in first", to: "/login", icon: LogIn },
     backup: "Urgent workspace outage? support@taasflow.com",
     fields: ["name", "email", "url", "message"],
@@ -111,10 +102,8 @@ const INTENTS: IntentSpec[] = [
     label: "General inquiry",
     tagline: "Press, partnerships, anything else.",
     icon: MessageSquare,
-    responseSla: "Within 3 business days",
-    respondsFrom: "Comms team",
-    primaryCta: { label: "Send a message", anchor: "#contact-form", icon: ArrowRight },
-    secondaryCta: { label: "See our journey", to: "/journey" },
+    primaryCta: { label: CTA_MESSAGE.label, anchor: "#contact-form-general", icon: ArrowRight },
+    secondaryCta: { label: "About TaaSFlow", to: "/about" },
     backup: "Press: press@taasflow.com · Partnerships: partners@taasflow.com",
     fields: ["name", "email", "company", "message"],
     formHeading: "General inquiry",
@@ -128,14 +117,13 @@ export const Route = createFileRoute("/contact")({
     marketingHead(undefined, "/contact", {
       title: "Contact TaaSFlow — Sales, Support, Candidates, Partnerships",
       description:
-        "Pick the path that fits: hire talent, candidate questions, existing client, support, or general inquiry. Each route has its own SLA and the right team on the other end.",
+        "Pick the path that fits: hire talent, candidate questions, existing client, support, or general inquiry. We reply within one business day.",
     }),
   component: ContactPage,
 });
 
 function ContactPage() {
   const [intentId, setIntentId] = useState<Intent>("hire");
-  const intent = INTENTS.find((i) => i.id === intentId)!;
 
   return (
     <SiteShell>
@@ -149,8 +137,8 @@ function ContactPage() {
             Pick your path. We route from there.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            Five paths, five teams. Choose the one that fits and you'll see the right CTA,
-            an honest response time, and a backup channel — before you fill a single field.
+            Choose the path that fits and you will see the right next step and the right address
+            before you fill in a field. {RESPONSE_TIME_SENTENCE}
           </p>
         </PublicPage>
       </PublicSection>
@@ -191,11 +179,14 @@ function ContactPage() {
       {/* Context panel: spec + form */}
       <PublicSection className="py-10">
         <PublicPage>
+          {INTENTS.map((intent) => (
           <div
+            key={intent.id}
             role="tabpanel"
             id={`panel-${intent.id}`}
             aria-labelledby={`tab-${intent.id}`}
-            className="grid gap-6 lg:grid-cols-5"
+            hidden={intent.id !== intentId}
+            className={intent.id === intentId ? "grid gap-6 lg:grid-cols-5" : undefined}
           >
             {/* Left: spec card */}
             <div className="lg:col-span-2">
@@ -253,16 +244,9 @@ function ContactPage() {
                   <div>
                     <dt className="flex items-center gap-3 font-semibold text-[color:var(--brand-navy)]">
                       <Clock className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
-                      Expected response
+                      Response time
                     </dt>
-                    <dd className="mt-0.5 pl-7 text-[color:var(--brand-navy)]/80">{intent.responseSla}</dd>
-                  </div>
-                  <div>
-                    <dt className="flex items-center gap-3 font-semibold text-[color:var(--brand-navy)]">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
-                      Responded to by
-                    </dt>
-                    <dd className="mt-0.5 pl-7 text-[color:var(--brand-navy)]/80">{intent.respondsFrom}</dd>
+                    <dd className="mt-0.5 pl-7 text-[color:var(--brand-navy)]/80">{RESPONSE_TIME_SENTENCE}</dd>
                   </div>
                   <div>
                     <dt className="flex items-center gap-3 font-semibold text-[color:var(--brand-navy)]">
@@ -277,12 +261,13 @@ function ContactPage() {
             </div>
 
             {/* Right: form */}
-            <div id="contact-form" className="lg:col-span-3">
+            <div id={`contact-form-${intent.id}`} className="lg:col-span-3">
               <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
                 <ContactForm intent={intent} />
               </div>
             </div>
           </div>
+          ))}
         </PublicPage>
       </PublicSection>
     </SiteShell>
@@ -479,9 +464,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
           Thanks — we've got it.
         </h3>
         <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
-          Expected response: <span className="font-semibold">{intent.responseSla}</span>, from{" "}
-          <span className="font-semibold">{intent.respondsFrom}</span>. We'll reply to the email
-          you provided.
+          {RESPONSE_TIME_SENTENCE} We will reply to the email you provided.
         </p>
         {/* newTraceId("contact") returns "contact-<stamp>-<random>", and the
             reference used to render traceId.slice(0, 8). "contact-" is exactly
@@ -698,10 +681,10 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
           disabled={submitting}
           className="min-h-11 bg-[color:var(--brand-navy)] text-white hover:opacity-90"
         >
-          {submitting ? "Sending…" : "Send message"}
+          {submitting ? "Sending…" : CTA_MESSAGE.label}
         </Button>
         <span className="text-xs text-[color:var(--brand-navy)]/80">
-          Expected reply: {intent.responseSla.toLowerCase()}.
+          {RESPONSE_TIME_SENTENCE}
         </span>
       </div>
     </form>

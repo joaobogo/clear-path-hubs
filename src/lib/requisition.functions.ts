@@ -450,6 +450,14 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
       owner_user_id: p.owner_user_id ?? null,
       reference_code: p.reference_code ?? "",
       compensation_collected: !!p.compensation_collected,
+      status: p.status ?? "draft",
+      // What the intake recorded, so an intake role is not told its city or
+      // time zone are missing when the client answered them there.
+      work_model: p.work_model ?? "",
+      location_text: p.location ?? "",
+      remote_timezones: Array.isArray(ctx.remote_timezones) ? (ctx.remote_timezones as string[]) : [],
+      remote_anywhere_in_country: ctx.remote_anywhere_in_country === true,
+      open_worldwide: ctx.open_worldwide === true,
     };
 
     // The assessed input travels back so live editors (the role wizard) can

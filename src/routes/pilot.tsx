@@ -1,148 +1,132 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
-import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
+import { EmployerInquiryForm } from "@/components/marketing/employer-inquiry-form";
 import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
+import { CTA_MESSAGE, CTA_FULL_INTAKE, CTA_PRICING } from "@/config/cta";
+import {
+  FIRST_SHORTLIST_TIMING,
+  HUMAN_OVERSIGHT_NOTE,
+  OFFER_LAST_UPDATED_LABEL,
+  PILOT_IS_PAID_NOTE,
+  PROCESS_STEPS,
+  RECORDS_NOTE,
+  SEATS_NOTE,
+  SHORTLIST_LABEL,
+  TIMING_FINE_PRINT,
+  WHO_RUNS_THE_SEARCH,
+} from "@/config/offer-facts";
 
 const entry = getPage("pilot");
+
+export const PILOT_TITLE = `Recruiting Pilot: One Role, ${PRICE_PILOT_DISPLAY} | TaaSFlow`;
+export const PILOT_DESCRIPTION = `Evaluate TaaSFlow on one agreed role for ${PRICE_PILOT_DISPLAY}. Review pilot eligibility, what is included, and the next steps before recruiting begins.`;
 
 export const Route = createFileRoute("/pilot")({
   head: () =>
     marketingHead(entry, "/pilot", {
-      title: `${PRICE_PILOT_DISPLAY} Hiring Intelligence Pilot | TaaSFlow`,
-      description:
-        "Validate candidate quality before you subscribe. One role, intake to a ranked, evidence-backed shortlist in a live Decision Workspace.",
+      title: PILOT_TITLE,
+      description: PILOT_DESCRIPTION,
     }),
   component: PilotPage,
 });
 
-const TIMELINE = [
-  {
-    n: "01",
-    title: "Intake",
-    when: "Day 1–2",
-    body:
-      "You create your workspace and upload the job description. TaaSFlow builds the role blueprint, screening criteria and sourcing plan automatically, and you review or edit every detail before the search goes live.",
-  },
-  {
-    n: "02",
-    title: "Sourcing and scoring",
-    when: "Day 3–10",
-    body:
-      "Sourcing agents continuously identify candidates across talent signals, then the Scoring Engine scores every candidate against your rubric. Each score is tied to evidence pulled from the CV, so you can see why a candidate ranks where they do.",
-  },
-  {
-    n: "03",
-    title: "Ranked shortlist review",
-    when: "Within days",
-    body:
-      "Reviewed, evidence-backed candidates are published to your dashboard, ranked. You review, message your platform experts, and give feedback that shapes the next round.",
-  },
-];
-
 const RECEIVE = [
-  "One role scoped end-to-end with our team",
-  "A live client dashboard with pipeline, messages, and status",
-  "A ranked shortlist of pre-screened candidates",
-  "Evidence per requirement, tied to CV quotes",
-  "Full candidate profiles and CV downloads",
-  "Configurable expert oversight, reachable in the workspace",
+  `${SHORTLIST_LABEL}, ranked, with the evidence behind each score`,
+  "A candidate workspace where you review the shortlist and give feedback",
+  "A recruiter who reviews every shortlist before you see it",
+  "Scope and delivery schedule confirmed with you before work begins",
 ];
 
 const NOT_INCLUDED = [
-  "More than one role — the pilot covers a single active role",
-  "A second pilot — each company can run the pilot once",
+  "More than one role. The pilot covers a single agreed role.",
+  "A second pilot. Each company can run the pilot once.",
   "Interview scheduling and offer negotiation on your behalf",
   "Executive search retainers or contingency placements",
   "Background checks, assessments, or payroll",
-  "Ongoing weekly delivery — that starts with a subscription",
+  "Ongoing delivery beyond the agreed role",
 ];
 
-const AFTER = [
-  {
-    title: "Continue on a subscription",
-    body:
-      "Move to a flat monthly fee and keep the same workspace, rubric, and expert oversight. Nothing is rebuilt.",
-  },
-  {
-    title: "Stop after the pilot",
-    body:
-      "No commitment, no placement fee. You keep every candidate the platform surfaced and the evidence behind each score.",
-  },
-];
+const linkClass =
+  "font-semibold text-[color:var(--brand-ocean-text)] underline underline-offset-4 hover:no-underline";
 
 function PilotPage() {
   return (
     <SiteShell>
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-            {PRICE_PILOT_DISPLAY} one-time pilot · one role · one per company
-          </p>
-          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Run one role end-to-end for {PRICE_PILOT_DISPLAY}.
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            The pilot is a one-time, single-role engagement that runs the full TaaSFlow process —
-            intake, sourcing, evidence-based scoring, and a ranked shortlist in a live dashboard — so
-            you can judge candidate quality on real work before committing to a subscription. Each
-            company can run it once.
-          </p>
-          <div className="mt-6 max-w-2xl rounded-xl border border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/5 p-4 text-sm text-[color:var(--brand-navy)]/80">
-            <span className="font-semibold text-[color:var(--brand-navy)]">Best for:</span>{" "}
-            teams that need to validate candidate quality before starting a monthly subscription.
-          </div>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/intake"
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-            >
-              Start the pilot intake
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-            >
-              Send us a message
-            </Link>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:items-start">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
+                {PRICE_PILOT_DISPLAY} pilot · one role · once per company
+              </p>
+              <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+                Try TaaSFlow on one role for {PRICE_PILOT_DISPLAY}.
+              </h1>
+              <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
+                See how our recruiting process and candidate workspace support your team before
+                discussing a larger engagement. Your pilot covers one agreed role and is available
+                once per company. We confirm the scope and delivery schedule before work begins.
+              </p>
+              <p className="mt-4 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+                {PILOT_IS_PAID_NOTE} {SHORTLIST_LABEL} is delivered in your workspace.
+              </p>
+              <p className="mt-6 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+                Already have a job description?{" "}
+                <Link to={CTA_FULL_INTAKE.to} className={linkClass}>
+                  {CTA_FULL_INTAKE.label}
+                </Link>
+                {" · "}
+                <Link to={CTA_MESSAGE.to} className={linkClass}>
+                  {CTA_MESSAGE.label}
+                </Link>
+              </p>
+              <p className="mt-3 text-sm">
+                <Link to="/sample-shortlist" className={linkClass}>
+                  See a sample top 10
+                </Link>
+              </p>
+              <p className="mt-3 text-xs text-[color:var(--brand-navy)]/70" data-testid="last-updated">
+                {OFFER_LAST_UPDATED_LABEL}
+              </p>
+            </div>
+            <EmployerInquiryForm source="pilot-hero" idPrefix="pilot-hero" />
           </div>
         </PublicPage>
       </PublicSection>
 
-      {/* What happens in the pilot — 3-step timeline */}
       <PublicSection className="py-8">
         <PublicPage>
           <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             What happens in the {PRICE_PILOT_DISPLAY} pilot
           </h2>
           <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Three stages, one role, one fixed price. The pilot is a one-time engagement available once
-            per company. First candidate activity usually begins within 3–5 days after the search goes
-            live.
+            {FIRST_SHORTLIST_TIMING} {TIMING_FINE_PRINT}
           </p>
-          <ol className="mt-8 grid gap-4 md:grid-cols-3">
-            {TIMELINE.map((s) => (
+          <ol className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {PROCESS_STEPS.map((s, i) => (
               <li
-                key={s.n}
+                key={s.title}
                 className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/5 font-[family-name:var(--brand-font-display)] text-sm font-semibold text-[color:var(--brand-navy)]">
-                    {s.n}
-                  </span>
-                  <span className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
-                    {s.when}
-                  </span>
-                </div>
+                <span
+                  aria-hidden
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/5 font-[family-name:var(--brand-font-display)] text-sm font-semibold text-[color:var(--brand-navy)]"
+                >
+                  {i + 1}
+                </span>
                 <h3 className="mt-4 text-lg font-semibold">{s.title}</h3>
                 <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </li>
             ))}
           </ol>
+          <p className="mt-4 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+            {WHO_RUNS_THE_SEARCH}
+          </p>
         </PublicPage>
       </PublicSection>
 
-      {/* Receive / not included */}
       <PublicSection className="py-8">
         <PublicPage>
           <div className="grid gap-6 md:grid-cols-2">
@@ -155,12 +139,13 @@ function PilotPage() {
                   <li key={x} className="flex gap-2">
                     <span
                       aria-hidden
-                      className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-ocean)]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-ocean)]"
                     />
                     {x}
                   </li>
                 ))}
               </ul>
+              <p className="mt-4 text-sm text-[color:var(--brand-navy)]/80">{SEATS_NOTE}</p>
             </div>
             <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
               <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold">
@@ -171,7 +156,7 @@ function PilotPage() {
                   <li key={x} className="flex gap-2">
                     <span
                       aria-hidden
-                      className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]/25"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]/25"
                     />
                     {x}
                   </li>
@@ -182,42 +167,22 @@ function PilotPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* After the pilot */}
       <PublicSection className="py-8">
         <PublicPage>
           <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             What happens after the pilot
           </h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {AFTER.map((a) => (
-              <div
-                key={a.title}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-              >
-                <h3 className="text-lg font-semibold">{a.title}</h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{a.body}</p>
-              </div>
-            ))}
-          </div>
+          <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+            You decide whether to talk about a larger engagement. If you stop after the pilot,
+            nothing further is owed. {RECORDS_NOTE} {HUMAN_OVERSIGHT_NOTE}
+          </p>
           <p className="mt-4 text-sm text-[color:var(--brand-navy)]/80">
-            Either way: no placement fees and no salary percentages.{" "}
-            <Link
-              to="/pricing"
-              className="font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:underline"
-            >
-              See subscription pricing
+            <Link to={CTA_PRICING.to} className={linkClass}>
+              {CTA_PRICING.label}
             </Link>
           </p>
         </PublicPage>
       </PublicSection>
-
-      <CtaSection
-        eyebrow="Next step"
-        title={`Submit a role to start your ${PRICE_PILOT_DISPLAY} pilot.`}
-        description="The intake walks through every question we need. We reply to schedule alignment."
-        primary={{ to: "/intake", label: "Start intake" }}
-        secondary={{ to: "/how-it-works", label: "See the process" }}
-      />
     </SiteShell>
   );
 }

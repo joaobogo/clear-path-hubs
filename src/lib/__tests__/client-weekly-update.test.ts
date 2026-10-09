@@ -31,7 +31,8 @@ describe("metricLabel", () => {
   it("resolves singular and plural against the count", () => {
     expect(metricLabel("delivered", 1)).toBe("Candidate delivered");
     expect(metricLabel("delivered", 2)).toBe("Candidates delivered");
-    expect(metricLabel("interviews_held", 0)).toBe("Interviews held");
+    expect(metricLabel("interviews_held", 0)).toBe("Interviews");
+    expect(metricLabel("interviews_held", 1)).toBe("Interview");
     expect(metricLabel("decisions_made", 1)).toBe("Decision made");
   });
 });
@@ -54,7 +55,7 @@ describe("weeklyEmailLines", () => {
   it("renders one line per non-zero metric, matching the card counts", () => {
     expect(weeklyEmailLines(update())).toEqual([
       "3 candidates delivered",
-      "1 interview held",
+      "1 interview",
     ]);
   });
 

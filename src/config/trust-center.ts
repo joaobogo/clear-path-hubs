@@ -11,6 +11,18 @@
  * option or compliance-framework claim appears here.
  */
 
+/**
+ * Added for the security page: the single compliance statement, shared with the
+ * rest of the site through offer-facts. HIPAA is named explicitly because buyers
+ * in healthcare ask. Do not weaken without owner sign-off.
+ */
+export const NO_HIPAA_CERTIFICATION_NOTE =
+  "TaaSFlow holds no HIPAA certification, and no SOC 2 or ISO 27001 certification." as const;
+
+/** Added: the contact for the legal entity name and registered address. */
+export const LEGAL_ENTITY_CONTACT_NOTE =
+  "For the legal entity name and registered address, contact legal@taasflow.com." as const;
+
 export const TRUST_LAST_REVIEWED = "4 August 2026";
 
 export type ClaimSource = "code" | "doc" | "legal";
@@ -62,7 +74,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
       {
         text: "Sensitive tables — audit events, scoring runs, extracted evidence, processing jobs, contact submissions — are readable by platform staff only.",
         source: "doc",
-        reference: "Tenant isolation certification, 23 July 2026",
+        reference: "Internal tenant isolation review, 23 July 2026",
       },
     ],
   },
@@ -94,7 +106,10 @@ export const TRUST_SECTIONS: TrustSection[] = [
         reference: "Privacy Notice §9",
       },
     ],
-    links: [{ label: "Read the Privacy Notice", to: "/privacy" }],
+    links: [
+      { label: "Read the Privacy Notice", to: "/privacy" },
+      { label: "How AI is used in hiring", to: "/ai-in-hiring" },
+    ],
   },
   {
     id: "tenant-isolation",
@@ -111,7 +126,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
       {
         text: "Isolation was probed across two live organisations with real positions, candidates, messages, interviews, files and audit rows. Edited URLs, copied record IDs, filter manipulation, global search, realtime subscriptions and direct file access all returned nothing cross-tenant.",
         source: "doc",
-        reference: "Tenant isolation certification, 23 July 2026",
+        reference: "Internal tenant isolation review, 23 July 2026",
       },
       {
         text: "Candidates only become visible to a client organisation after an explicit approval for that organisation and role; releasing contact details is a separate permission again.",
@@ -121,7 +136,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
       {
         text: "Realtime updates inherit the same policies, so a live subscription cannot deliver another organisation's changes.",
         source: "doc",
-        reference: "Tenant isolation certification — realtime vector",
+        reference: "Internal tenant isolation review — realtime",
       },
     ],
   },
@@ -150,7 +165,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
       {
         text: "Support access by platform staff runs as a bounded, expiring session; every action is written to a support-action log and to the change history with the real actor retained.",
         source: "doc",
-        reference: "Support-mode safety certification",
+        reference: "Internal support-mode safety review",
       },
     ],
   },
@@ -183,7 +198,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
       {
         text: "Membership can be deactivated by an organisation admin, and the change is recorded in the change history.",
         source: "doc",
-        reference: "Multi-org and revocation certification",
+        reference: "Internal multi-organisation and revocation review",
       },
     ],
   },
@@ -269,17 +284,17 @@ export const TRUST_SECTIONS: TrustSection[] = [
       {
         text: "Database triggers write an audit event on insert, update and delete for memberships, organisations, positions, candidate matches, scoring runs, scoring decisions, client decisions, interviews, files and screening questions.",
         source: "doc",
-        reference: "Audit-trail completeness certification",
+        reference: "Internal audit-trail completeness review",
       },
       {
         text: "Each event stores the acting user, the organisation, the record, the action, and the state before and after the change.",
         source: "doc",
-        reference: "Audit-trail completeness certification",
+        reference: "Internal audit-trail completeness review",
       },
       {
         text: "Domain actions that are not a plain row change — invitations, support sessions, publication decisions, membership deactivation, reconciliation runs — are written explicitly by the server.",
         source: "doc",
-        reference: "Audit-trail completeness certification",
+        reference: "Internal audit-trail completeness review",
       },
       {
         text: "Scoring runs are append-only: once written, a run and the evidence it used cannot be edited, only superseded by a new run.",
@@ -307,7 +322,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
       },
     ],
     links: [{ label: "View the subprocessor register", to: "/privacy" }],
-    note: "The register and the international-transfer wording are pending review by our legal counsel. Corrections are welcome at privacy@taasflow.com.",
+    note: "Questions or corrections about the register are welcome at privacy@taasflow.com.",
   },
   {
     id: "data-residency",
@@ -332,7 +347,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
     id: "incident-response",
     title: "Incident response",
     summary:
-      "Operational runbooks exist and are used. The externally-facing incident policy is being written down.",
+      "Incident response: policy in preparation. Operational runbooks exist and are used; the externally-facing policy is not yet published.",
     state: "in-progress",
     claims: [
       {
@@ -351,7 +366,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
         reference: "Runbook 10 — provider outage",
       },
     ],
-    note: "Documentation in progress: a published incident-response policy with customer notification timelines and severity definitions. We are not stating a notification SLA until that document is signed off.",
+    note: "Not yet published: an incident-response policy with customer notification timelines and severity definitions. We are not stating a notification time commitment until that document exists.",
   },
   {
     id: "business-continuity",
@@ -370,7 +385,7 @@ export const TRUST_SECTIONS: TrustSection[] = [
         reference: "Runbook 10 — provider outage",
       },
     ],
-    note: "Documentation in progress: backup and restore procedures, tested recovery objectives, and a disaster-recovery plan. We make no uptime guarantee, and we will not publish recovery targets before they have been tested.",
+    note: "Not yet published: backup and restore procedures, tested recovery objectives, and a disaster-recovery plan. We make no uptime guarantee, and we will not publish recovery targets before they have been tested.",
   },
   {
     id: "not-claimed",
@@ -426,16 +441,11 @@ export const TRUST_SECTIONS: TrustSection[] = [
         source: "legal",
         reference: "/terms",
       },
-      {
-        text: "Commercial trust pack — how pricing works, what you keep, and how scoring works.",
-        source: "legal",
-        reference: "/trust",
-      },
     ],
     links: [
       { label: "Privacy Notice", to: "/privacy" },
       { label: "Terms of Service", to: "/terms" },
-      { label: "Commercial trust pack", to: "/trust" },
+      { label: "How AI is used in hiring", to: "/ai-in-hiring" },
     ],
     note: "A Data Processing Agreement and a security questionnaire response pack are in progress. Ask us and we will send the current draft rather than a marketing summary.",
   },

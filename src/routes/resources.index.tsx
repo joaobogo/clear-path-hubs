@@ -21,6 +21,8 @@ import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { RESOURCE_GUIDES, guideReadMinutes } from "@/content/resources";
+import { CTA_PRIMARY, CTA_HOW_IT_WORKS } from "@/config/cta";
+import { FIRST_SHORTLIST_TIMING, WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
 
 
 const entry = getPage("resources");
@@ -30,7 +32,7 @@ export const Route = createFileRoute("/resources/")({
     marketingHead(entry, "/resources", {
       title: "Resources — hiring intelligence guides | TaaSFlow",
       description:
-        "Hiring guides, industry insights, calculators, case studies and candidate resources — every insight links to its full source.",
+        "Hiring guides, checklists, calculators and industry pages from TaaSFlow, written for teams choosing how to hire.",
     }),
   component: ResourcesPage,
 });
@@ -442,14 +444,14 @@ function ResourcesPage() {
       <EditorialHero
         eyebrow="Resources"
         title="Guides, insights, and tools"
-        lead="Short, visual, and linked. Every insight leads to a full guide, calculator, or industry page."
+        lead="Short, practical and linked. Each summary leads to a full guide, calculator or industry page."
         image={resourcesHero}
         imageAlt="A desk still life with notebooks, a laptop and morning light"
         tone="warm"
         stats={[
           { value: `${RESOURCE_GUIDES.length}`, label: "Evergreen guides" },
-          { value: "Evidence-first", label: "Every claim sourced" },
-          { value: "Maintained", label: "Reviewed regularly" },
+          { value: "Plain language", label: "Sources named where cited" },
+          { value: "Updated", label: "As the offer changes" },
         ]}
       />
 
@@ -460,7 +462,7 @@ function ResourcesPage() {
           id="library"
           eyebrow="Authority library"
           title="The twelve guides that answer the hard questions"
-          description="Evergreen, evidence-first, and maintained. Start here if you are choosing a hiring model."
+          description="Evergreen guides. Start here if you are choosing a hiring model."
         >
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {RESOURCE_GUIDES.map((g) => (
@@ -519,7 +521,7 @@ function ResourcesPage() {
           id="industry-hiring"
           eyebrow="Industry hiring"
           title="Context varies by industry"
-          description="No fabricated statistics — every claim links to its source."
+          description="Qualitative guidance only. Figures are shown only where we can name their source."
         >
           <div className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {BENCHMARKS.map((b) => (
@@ -578,21 +580,20 @@ function ResourcesPage() {
             Ready to see delivery in your own workspace?
           </h2>
           <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Start hiring with TaaSFlow and get a scored, ranked shortlist
-            delivered inside your dedicated workspace.
+            {FIRST_SHORTLIST_TIMING} {WHO_RUNS_THE_SEARCH_SHORT}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              to="/intake"
+              to={CTA_PRIMARY.to}
               className="rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy)]/90"
             >
-              Start hiring
+              {CTA_PRIMARY.label}
             </Link>
             <Link
               to="/how-it-works"
               className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:border-[color:var(--brand-ocean)]/40"
             >
-              See how it works
+              {CTA_HOW_IT_WORKS.label}
             </Link>
           </div>
         </section>

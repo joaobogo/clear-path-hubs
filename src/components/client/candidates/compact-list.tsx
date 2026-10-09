@@ -120,20 +120,8 @@ export function CompactList({
                     hideEvidenceChip
                   />
                 </td>
-                {/* The stage word alone said "Shortlisted" for a candidate
-                    whose interview had already been requested, while the
-                    overview asked the client to confirm a time for that same
-                    person (audit #6, A6-23). */}
                 <td data-label="Stage" className="py-3 px-3 text-muted-foreground align-middle whitespace-nowrap">
-                  {c.interview_awaiting_time
-                    ? "Interview requested"
-                    : c.interview_called_off && c.stage === "interview_process"
-                      ? /* The stage stays at interview_process after a
-                           cancellation, so the word alone read "Interviewing"
-                           for someone whose only interview was called off
-                           (audit #8, TF8-08). */
-                        "Interview cancelled"
-                      : clientStageLabel(c.stage)}
+                  {clientStageLabel(c.stage)}
                 </td>
                 <td data-label="Action" className="py-3 px-3 text-right align-middle">
                   {orgId ? (
@@ -144,9 +132,6 @@ export function CompactList({
                       candidateName={c.candidate.display_name}
                       fitLabel={c.fit_label}
                       score={c.score}
-                      interviewRequested={c.interview_awaiting_time}
-                      interviewCalledOff={c.interview_called_off}
-                      interviewCompleted={c.interview_completed}
                       size="sm"
                     />
                   ) : (

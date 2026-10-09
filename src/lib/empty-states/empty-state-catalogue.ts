@@ -628,7 +628,7 @@ export function resolveNoApprovalsState(signals: {
     title: "You're clear — nothing needs approval",
     why: "Every gate on your roles is either open or not reached yet.",
     expected: EXPECTED_QUIET,
-    populates: "New shortlists, interview requests and offers appear here when they need your sign-off.",
+    populates: "New shortlists, candidates ready for the interview stage and offers appear here when they need your sign-off.",
     activity: "Your searches are running without waiting on you.",
     action: { label: "See role progress", to: "/client/positions" },
   };
@@ -682,7 +682,7 @@ export function resolveNoNotificationsState(signals: {
       title: "No notifications yet",
       why: "Notifications follow role activity, and there is no live role to report on.",
       expected: EXPECTED_NEW,
-      populates: "Deliveries, interview requests, decisions and SLA warnings on your roles.",
+      populates: "Deliveries, stage moves, decisions and SLA warnings on your roles.",
       activity: NOTHING_RUNNING,
       action: { label: "Add a role", to: "/intake" },
     };
@@ -731,7 +731,7 @@ export function resolveNoOutcomesState(signals: {
       expected: EXPECTED_PROCESSING,
       populates: "An accepted offer creates the hire record and the outcome shown here.",
       activity: "Offer follow-up is in progress.",
-      action: { label: "Review offers", to: "/client/offers" },
+      action: { label: "Track offers on the board", to: "/client/candidates?view=board&stage=offer" },
     };
   }
   if (interviews > 0) {
@@ -743,8 +743,8 @@ export function resolveNoOutcomesState(signals: {
       why: `${interviews} candidate${interviews === 1 ? " is" : "s are"} still interviewing — nothing has reached an offer.`,
       expected: EXPECTED_PROCESSING,
       populates: "Outcomes appear when an offer is made and accepted or declined.",
-      activity: "Interview coordination is in progress.",
-      action: { label: "See interviews", to: "/client/interviews" },
+      activity: "Candidates are at the interview stage.",
+      action: { label: "See who is interviewing", to: "/client/candidates?stage=interview_process" },
     };
   }
   return {

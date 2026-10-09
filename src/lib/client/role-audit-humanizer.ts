@@ -37,8 +37,8 @@ export function humanizeRoleAction(action: string): string {
     "candidate.stage.changed": "Candidate status changed",
     
     // Interviews
-    "interview.schedule": "Interview scheduled",
-    "interview.reschedule": "Interview rescheduled",
+    "interview.schedule": "Interview recorded",
+    "interview.reschedule": "Interview updated",
     "interview.cancel": "Interview cancelled",
     
     // Communication

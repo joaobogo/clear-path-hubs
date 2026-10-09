@@ -92,15 +92,7 @@ export function CandidateCard({
           evidence={c.evidence_support}
           unicorn={c.unicorn}
         />
-        {/* Same three-way read as the compact list, so the card and the table
-            cannot describe one candidate differently (audit #8, TF8-08). */}
-        <span className="text-xs text-muted-foreground">
-          {c.interview_awaiting_time
-            ? "Interview requested"
-            : c.interview_called_off && c.stage === "interview_process"
-              ? "Interview cancelled"
-              : clientStageLabel(c.stage)}
-        </span>
+        <span className="text-xs text-muted-foreground">{clientStageLabel(c.stage)}</span>
       </div>
 
       <div className="mt-3">
@@ -112,9 +104,6 @@ export function CandidateCard({
             candidateName={c.candidate.display_name}
             fitLabel={c.fit_label}
             score={c.score}
-            interviewRequested={c.interview_awaiting_time}
-                      interviewCalledOff={c.interview_called_off}
-                      interviewCompleted={c.interview_completed}
           />
         ) : (
           <Link

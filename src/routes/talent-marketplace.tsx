@@ -1,3 +1,5 @@
+import { CTA_PRIMARY } from "@/config/cta";
+import { FIRST_SHORTLIST_TIMING_SHORT } from "@/config/offer-facts";
 import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -9,9 +11,9 @@ import {
 } from "@/components/marketing/site-shell";
 
 const CANONICAL = canonicalUrl("/talent-marketplace");
-const TITLE = "Talent Marketplace — briefs meet specialists | TaaSFlow";
+const TITLE = "Curated job board for employers and candidates | TaaSFlow";
 const DESC =
-  "The TaaSFlow Talent Marketplace connects live employer briefs with vetted, evidence-scored candidates. Curated, private and role-specific — not a job board.";
+  "The TaaSFlow job board is curated and role-specific: live employer roles, with every application scored against what the role asks for."; // job board: one name site-wide
 
 export const Route = createFileRoute("/talent-marketplace")({
   head: () => ({
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/talent-marketplace")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: CANONICAL },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "noindex, follow" },
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
@@ -32,15 +35,15 @@ export const Route = createFileRoute("/talent-marketplace")({
 const HOW = [
   {
     step: "01",
-    title: "Employer publishes a brief",
+    title: "Employer shares a role",
     body:
-      "Structured intake captures role, seniority, requirements, working model and eligibility before the search opens.",
+      "The intake captures role, seniority, requirements, working model and eligibility before the search opens.",
   },
   {
     step: "02",
-    title: "Candidates opt in",
+    title: "Candidates apply",
     body:
-      "Members apply to briefs that fit, or are surfaced privately when their profile matches. Consent is always explicit.",
+      "Candidates apply to roles that fit, and consent is always explicit.",
   },
   {
     step: "03",
@@ -57,43 +60,42 @@ const HOW = [
 ];
 
 const FOR_CANDIDATES = [
-  "Only briefs matching your captured direction, seniority and region.",
+  "Roles that match your direction, seniority and region.",
   "Structured status in your dashboard: submitted, review, shortlist, interview, decision.",
-  "Downloadable score evidence on briefs you consent to.",
-  "Never public, never sold — introductions are per-brief and per-client.",
+  "The evidence behind your score on roles you apply to.",
+  "Never sold. Introductions are per role and per client.",
 ];
 
 const FOR_EMPLOYERS = [
-  "Ranked shortlists in your workspace within days, not weeks.",
+  `Ranked shortlists in your workspace. ${FIRST_SHORTLIST_TIMING_SHORT}.`,
   "Evidence side-by-side with each requirement — no keyword guesses.",
   "Kanban pipeline, direct messaging and structured decision capture.",
-  "One canonical intake per role — no re-briefing between rounds.",
+  "One intake per role, with no re-briefing between rounds.",
 ];
 
 const NOT = [
-  { label: "Public job board with mass listings" },
+  { label: "A mass-listing aggregator" },
   { label: "Freelance bidding or hourly auctions" },
   { label: "Anonymous CV database sold to recruiters" },
-  { label: "Volume outreach or spam" },
 ];
 
 function TalentMarketplacePage() {
   return (
     <SiteShell>
-      <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Talent Marketplace" }]} />
+      <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Job board" }]} />
 
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-            The marketplace
+            The job board
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            A curated marketplace, not a job board.
+            A curated job board, scored on evidence.
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            TaaSFlow connects real employer briefs to vetted, evidence-scored candidates. Ranked
-            shortlists arrive in a shared workspace — private to the client, transparent to the
-            candidate.
+            TaaSFlow connects real employer roles to candidates who are scored against what each
+            role asks for. Ranked shortlists arrive in a shared workspace, private to the client
+            and transparent to the candidate.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -101,13 +103,13 @@ function TalentMarketplacePage() {
               to="/jobs"
               className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
             >
-              Browse open briefs
+              Browse open roles
             </Link>
             <Link
-              to="/intake"
+              to={CTA_PRIMARY.to}
               className="inline-flex items-center rounded-lg border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-medium text-[color:var(--brand-navy)]"
             >
-              Post a brief
+              {CTA_PRIMARY.label}
             </Link>
             <Link
               to="/login"
@@ -122,7 +124,7 @@ function TalentMarketplacePage() {
       <PublicSection className="py-10">
         <PublicPage>
           <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold sm:text-3xl">
-            How the marketplace works
+            How the job board works
           </h2>
           <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {HOW.map((h) => (
@@ -160,7 +162,7 @@ function TalentMarketplacePage() {
                   to="/jobs"
                   className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-medium text-white"
                 >
-                  Browse briefs
+                  Browse open roles
                 </Link>
                 <Link
                   to="/talent-network"
@@ -184,10 +186,10 @@ function TalentMarketplacePage() {
               </ul>
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
-                  to="/intake"
+                  to={CTA_PRIMARY.to}
                   className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-medium text-white"
                 >
-                  Post a brief
+                  {CTA_PRIMARY.label}
                 </Link>
                 <Link
                   to="/how-it-works"
@@ -205,7 +207,7 @@ function TalentMarketplacePage() {
         <PublicPage>
           <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
             <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold sm:text-3xl">
-              What the marketplace is not
+              What the job board is not
             </h2>
             <ul className="mt-5 grid gap-2 text-sm text-[color:var(--brand-navy)]/80 sm:grid-cols-2">
               {NOT.map((n) => (
@@ -220,11 +222,11 @@ function TalentMarketplacePage() {
       </PublicSection>
 
       <CtaSection
-        eyebrow="The marketplace"
+        eyebrow="The job board"
         title="Meet the shortlist, not the pile."
-        description="Candidates: apply to a brief that fits. Employers: publish a brief and get a ranked shortlist with evidence."
-        primary={{ to: "/jobs", label: "Browse briefs" }}
-        secondary={{ to: "/intake", label: "Post a brief" }}
+        description="Candidates: apply to a role that fits. Employers: share a role and get a ranked shortlist with evidence."
+        primary={{ to: "/jobs", label: "Browse open roles" }}
+        secondary={CTA_PRIMARY}
       />
     </SiteShell>
   );

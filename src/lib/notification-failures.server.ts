@@ -20,10 +20,6 @@ const SPIKE_WINDOW_HOURS = 6;
 
 /** Events where a late re-send is misleading rather than helpful. */
 const TIME_SENSITIVE_EVENTS = new Set<string>([
-  "interview_scheduled",
-  "interview_cancelled",
-  "interview_requested",
-  "interview_reminder",
   "clarification_requested",
   "message_sent",
 ]);

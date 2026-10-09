@@ -1164,7 +1164,6 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
     );
   }
   const dto = (data as Any).candidate;
-  const interviews = (data as Any).interviews ?? [];
   const decisions = (data as Any).decisions ?? [];
 
   return (
@@ -1204,9 +1203,7 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
             <AvailabilityPanel candidate={dto} />
             <ProfilePanel candidate={dto} />
             <LinksPanel candidate={dto} />
-            {interviews.length > 0 && (
-              <ActivitySection interviews={interviews} decisions={decisions} />
-            )}
+            {decisions.length > 0 && <ActivitySection decisions={decisions} />}
           </aside>
         </div>
       </div>

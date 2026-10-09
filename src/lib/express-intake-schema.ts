@@ -39,6 +39,12 @@ export const MIN_JD_TEXT = 1;
  * keystroke, short enough that a paste feels immediate.
  */
 export const JD_REPARSE_DELAY_MS = 1_500;
+/**
+ * After a PASTE (or a drop) the description is complete, so the model read
+ * starts almost at once; the instant in-browser read has already filled the
+ * form by then.
+ */
+export const JD_PASTE_DELAY_MS = 250;
 export const MIN_ACCOUNT_PASSWORD = 8;
 
 /** Role-brief minimums. Enforced identically on the client and the server. */
@@ -76,7 +82,10 @@ export function companyWebsiteFromEmail(email: string): string | null {
   const at = (email ?? "").trim().toLowerCase().lastIndexOf("@");
   if (at === -1) return null;
   const domain = email.trim().toLowerCase().slice(at + 1);
-  if (!domain || !/^[\w-]+(\.[\w-]+)+$/.test(domain)) return null;
+  // The last label must be a real-looking top-level domain (two or more
+  // letters). Without this, typing "me@co-kreator.com" derives "co-kreator.c"
+  // one keystroke before the end and the half-typed domain gets shown.
+  if (!domain || !/^[\w-]+(\.[\w-]+)*\.(?:[a-z]{2,}|xn--[a-z0-9-]{2,})$/.test(domain)) return null;
   if (FREE_MAIL_DOMAINS.has(domain)) return null;
   return domain;
 }

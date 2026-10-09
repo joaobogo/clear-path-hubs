@@ -15,14 +15,15 @@ import {
   Building2,
   ArrowRight,
 } from "lucide-react";
+import { CTA_HOW_IT_WORKS, CTA_MESSAGE } from "@/config/cta";
 import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/partnerships/staffing")({
   head: () =>
     marketingHead(undefined, "/partnerships/staffing", {
-      title: "Staffing partnerships — TaaSFlow",
+      title: "Staffing partnerships | TaaSFlow",
       description:
-        "A partnership model for staffing and recruiting agencies. Extend delivery capacity, keep the client relationship, and operate inside an AI Hiring Intelligence Platform with ranked candidates and evidence per requirement.",
+        "A partnership model for staffing and recruiting agencies. Extend delivery capacity and keep the client relationship, with ranked candidates and evidence per requirement. TaaSFlow supplies sourcing and screening, not placements.",
     }),
   component: PartnershipsStaffingPage,
 });
@@ -41,22 +42,23 @@ function PartnershipsStaffingPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow extends staffing and search firms with ranked delivery,
-            evidence per requirement, and a workspace clients can see into —
-            while you keep the relationship and the fee. Sourcing agents +
-            AI-supported structure. Subscription, not placement.
+            evidence per requirement, and a workspace clients can see into,
+            while you keep the relationship and the fee. TaaSFlow is not a
+            staffing agency: we supply sourcing and screening execution to
+            agencies, and we do not employ or place workers.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/contact"
               className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
             >
-              Discuss a Partnership
+              {CTA_MESSAGE.label}
             </Link>
             <Link
-              to="/how-it-works"
+              to={CTA_HOW_IT_WORKS.to}
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              See How It Works
+              {CTA_HOW_IT_WORKS.label}
             </Link>
           </div>
         </PublicPage>
@@ -88,7 +90,7 @@ function PartnershipsStaffingPage() {
               {
                 icon: Handshake,
                 title: "Keep the client relationship",
-                body: "You remain the primary contact. We operate as a delivery layer behind your brand or alongside it.",
+                body: "You remain the primary contact. We supply sourcing and screening behind your brand or alongside it.",
               },
               {
                 icon: Eye,
@@ -169,7 +171,7 @@ function PartnershipsStaffingPage() {
                 "Consistent quality across every role type you deliver",
                 "One clear process from brief through shortlist",
                 "Visibility instead of black-box updates and PDFs",
-                "Faster feedback loops with hiring managers",
+                "A shared place for feedback from hiring managers",
               ].map((point) => (
                 <li key={point} className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
@@ -326,14 +328,14 @@ function PartnershipsStaffingPage() {
                   to="/contact"
                   className="inline-flex min-h-11 items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-90"
                 >
-                  Discuss a Partnership
+                  {CTA_MESSAGE.label}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <Link
-                  to="/how-it-works"
+                  to={CTA_HOW_IT_WORKS.to}
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
                 >
-                  See How It Works
+                  {CTA_HOW_IT_WORKS.label}
                 </Link>
               </div>
             </div>
@@ -342,9 +344,9 @@ function PartnershipsStaffingPage() {
       </PublicSection>
 
           <PageConnections
-        commercial={{ to: "/contact", label: "Talk to partnerships", desc: "Scope a white-label or referral engagement." }}
+        commercial={{ to: "/contact", label: CTA_MESSAGE.label, desc: "Scope a partnership engagement." }}
         explainer={{ to: "/how-it-works", label: "How sourcing runs", desc: "What agencies get from a TaaSFlow-powered pipeline." }}
-        resource={{ to: "/case-studies", label: "Partner outcomes", desc: "Ranked shortlists, delivered weekly." }}
+        resource={{ to: "/case-studies", label: "Example engagements", desc: "Example engagements and how we measure them." }}
         audience={{ to: "/enterprise", label: "Enterprise co-delivery", desc: "Serving enterprise clients together." }}
       />
     </SiteShell>

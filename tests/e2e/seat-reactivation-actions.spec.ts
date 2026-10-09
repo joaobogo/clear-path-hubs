@@ -96,17 +96,6 @@ test.describe("reactivation blocked dialog actions", () => {
     await expect(page.getByRole("main")).toContainText(/plan/i, { timeout: 30_000 });
   });
 
-  test("the seats conversation button points at the call booking page", async ({ page }) => {
-    await seedSeatScenario({ pendingInvites: 1, extraActive: true });
-    await loginAs(page, "client", CLIENT_ADMIN, QA_PASSWORD);
-    const dialog = await openBlockedDialog(page, await openTeamTab(page));
-
-    const talk = dialog.getByRole("link", { name: /talk to us about seats/i });
-    await expect(talk).toHaveAttribute("href", /\/book-call/);
-    await talk.click();
-    await expect(page).toHaveURL(/\/book-call/, { timeout: 15_000 });
-  });
-
   test("closing the dialog leaves the member suspended", async ({ page }) => {
     await seedSeatScenario({ pendingInvites: 1, extraActive: true });
     await loginAs(page, "client", CLIENT_ADMIN, QA_PASSWORD);

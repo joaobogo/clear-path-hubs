@@ -41,6 +41,9 @@ export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
 
         let blueprintStatus = "not_started";
         let blueprintError: string | null = null;
+        // True when the analysis needs (re)starting: never picked up, or a run
+        // that died mid-way. The confirmation page nudges blueprint-run on it.
+        let analysisShouldStart = false;
         let summary: { mustHaves: number; screeningQuestions: number; confidence: number } | null = null;
         // The delivery commitment is returned only when a row exists and is
         // attached to this role, so the confirmation can never show a date the
@@ -51,12 +54,15 @@ export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
         if (intake.position_id) {
           const { data: pos } = await admin
             .from("positions")
-            .select("blueprint_status, blueprint_error, blueprint")
+            .select("blueprint_status, blueprint_error, blueprint, blueprint_attempts, updated_at")
             .eq("id", intake.position_id)
             .maybeSingle();
           if (pos) {
             blueprintStatus = pos.blueprint_status ?? "not_started";
             blueprintError = pos.blueprint_error ?? null;
+            const { analysisDecision } = await import("@/lib/blueprint-trigger");
+            const decision = analysisDecision(pos);
+            analysisShouldStart = decision.shouldStart && decision.state !== "failed";
             const bp = (pos.blueprint ?? {}) as Record<string, unknown>;
             if (blueprintStatus === "ready") {
               const conf = (bp.confidence ?? {}) as Record<string, unknown>;
@@ -70,7 +76,7 @@ export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
             const { data: row } = await admin
               .from("position_commitments")
               .select(
-                "position_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at",
+                "position_id, first_shortlist_days, shortlist_size, baseline_at",
               )
               .eq("position_id", intake.position_id)
               .maybeSingle();
@@ -103,6 +109,7 @@ export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
           blueprintStatus,
           // Reasons are operational detail — surface only that it failed.
           blueprintFailed: blueprintStatus === "failed",
+          analysisShouldStart,
           blueprintErrorCode: blueprintError ? blueprintError.split(":")[0] : null,
           summary,
           commitment,

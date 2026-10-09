@@ -1,0 +1,14 @@
+Position: Quality Assurance Engineer
+Department: Engineering
+Location: Kraków, Poland
+Contract type: Contract (B2B)
+
+Requirements:
+1. 3+ years of experience in manual and automated testing
+2. Experience with Cypress or Playwright
+3) Understanding of CI/CD pipelines
+(a) Good English
+
+Preferred Qualifications:
+1. ISTQB certification
+2. Experience testing payment flows
