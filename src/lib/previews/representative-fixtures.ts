@@ -594,6 +594,64 @@ const SAMPLE_CANDIDATE_INPUTS: SampleCandidateInput[] = [
   },
 ];
 
+/**
+ * The example brief's weights, one per requirement, totalling 100. The first
+ * three are the sliders in the Brief chapter; the rest are chips.
+ */
+export const SAMPLE_RUBRIC_WEIGHTS: Record<SampleRequirementKey, number> = {
+  ops: 35,
+  pnl: 25,
+  guest: 15,
+  team: 15,
+  brand: 10,
+};
+
+/**
+ * An excerpt of the top example candidate's CV, invented like the rest of
+ * this fixture. Each sentence that earns points names its requirement, so the
+ * Score chapter's quotes are, character for character, the sentences it
+ * highlights. The guest-satisfaction requirement has no sentence on purpose:
+ * the gap is shown as plainly as the hits.
+ */
+export const SAMPLE_CV_EXCERPT: readonly { text: string; requirement?: SampleRequirementKey }[] = [
+  { text: "General manager, Harbourside Hotel (240 rooms), 2019 to 2025." },
+  {
+    text: "Ran rooms, food and beverage and events with all three department heads reporting to me.",
+    requirement: "ops",
+  },
+  {
+    text: "Owned the annual budget of $18.4m and signed off the monthly forecast for five years.",
+    requirement: "pnl",
+  },
+  { text: "Led a department-head team of eight and promoted three from within.", requirement: "team" },
+  { text: "Passed two brand standards audits as the accountable manager.", requirement: "brand" },
+  { text: "Earlier: resident manager, then front office manager, at two city hotels." },
+];
+
+/** The recruiter's one-line note on each of the top five, as the Sign-off chapter shows them. */
+export const SAMPLE_RECRUITER_NOTES: readonly string[] = [
+  "Runs a hotel this size already. Ask about the opening timeline.",
+  "Strongest on service recovery; budget ownership is shared.",
+  "Convention-scale operator. Confirm the P&L share in the interview.",
+  "Group-level numbers, but one property's guest scores only.",
+  "Boutique scale; the team evidence is thin. Worth a conversation.",
+];
+
+/** What the recruiter wrote above the signed list. */
+export const SAMPLE_RECRUITER_SIGN_OFF =
+  "Ten read in full. Six have run a property of this size; four are a step up. Two need a direct question on budget ownership, flagged on their rows. Nothing here was scored by software alone." as const;
+
+/**
+ * Three representative runs on the one clock, as the Proof chapter draws
+ * them: brief approved on day 0, the list signed within the promise. Example
+ * timings, not client results; each links to its example engagement.
+ */
+export const SAMPLE_RUNS: readonly { sector: string; role: string; signedDay: number; signedTime: string; to: string }[] = [
+  { sector: "Hospitality", role: "Hotel general manager", signedDay: 4, signedTime: "15:10", to: "/case-studies" },
+  { sector: "Healthcare", role: "Registered nurse", signedDay: 5, signedTime: "09:00", to: "/case-studies" },
+  { sector: "Industrial", role: "Warehouse supervisor", signedDay: 3, signedTime: "16:40", to: "/case-studies" },
+];
+
 export const SAMPLE_SHORTLIST: SampleShortlistCandidate[] = SAMPLE_CANDIDATE_INPUTS.map(
   (c, i) => {
     const scores = SAMPLE_SHORTLIST_REQUIREMENTS.map((q) => c.results[q.key].score);

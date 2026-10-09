@@ -60,6 +60,22 @@ export const CHANNEL_AGENT_COUNT = CHANNEL_FAMILIES.reduce(
   0,
 );
 
+/**
+ * Channels named in public, approved by the owner on 9 October 2026. The
+ * Broadcast chapter fans these out from the role card; the remaining
+ * channels of the 23 stay as unnamed lines. Vendor and partner names stay
+ * private.
+ */
+export const CHANNELS_NAMED_IN_PUBLIC: readonly string[] = [
+  "LinkedIn",
+  "Email outreach",
+  "Paid ads",
+  "Sponsored placements",
+  "Radio",
+  "Partnerships",
+  "Billboards",
+];
+
 /** What is the same across every channel — the honest, publishable part. */
 export const CHANNEL_AGENT_INVARIANTS: readonly string[] = [
   "One rubric. A candidate from any channel is scored against the same frozen rubric version.",

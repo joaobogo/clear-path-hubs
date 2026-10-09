@@ -8,14 +8,14 @@ import { offer } from "@/config/offer";
  * page. "Run your role.", the role input at its largest, three facts, and
  * the pilot and message links. It replaces the old sticky pilot bar.
  */
-export function ClosingBand({ role = "", source = "closing_band" }: { role?: string; source?: string }) {
+export function ClosingBand({ role = "", source = "closing_band", id }: { role?: string; source?: string; id?: string }) {
   const facts = [
     `One role, run end to end.`,
     `Up to ${offer.pilot.candidates} candidates, reviewed by a recruiter.`,
     `Usually ${offer.pilot.businessDays} business days from an approved brief.`,
   ];
   return (
-    <section aria-labelledby="closing-band-title" className="blue">
+    <section id={id} aria-labelledby="closing-band-title" className="blue scroll-mt-[72px]">
       <div className="mx-auto w-full max-w-[calc(var(--max)+2*var(--margin))] px-[var(--margin)] py-20 sm:py-24">
         <h2
           id="closing-band-title"

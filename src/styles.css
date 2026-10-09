@@ -10,6 +10,7 @@
 @import "./styles/workspace-system.css";
 @import "./styles/client-mobile.css";
 @import "./styles/run-transition.css";
+@import "./styles/run.css";
 
 @custom-variant dark (&:is(.dark *));
 

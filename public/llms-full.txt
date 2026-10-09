@@ -6,17 +6,6 @@
 
 What the service is and who it is for.
 
-- Each requirement points to the line in the CV or application that supports it, so you can check the reasoning.
-- Your team reviews candidates, compares them and moves them forward in one place.
-- A recruiter reviews every shortlist before it reaches you. Your team runs the interviews and decides who to hire.
-- Roles at hotels, restaurants, resorts and event venues.
-- Clinical, administrative and leadership roles where credentials matter.
-- Roles you fill in numbers, such as retail and store teams.
-- TaaSFlow helps your team find and evaluate candidates, with recruiting execution and a shared workspace to review the evidence. Your team keeps control of interviews and hiring decisions.
-- A shortlist you can check, not a stack of CVs.
-- Four steps from role brief to shortlist.
-- Enter your own salary, agency fee and hiring volume. Every starting value is an editable example, not an industry average.
-
 ## Pricing — https://taasflow.com/pricing
 
 The exact total for any position count from 1 to 100.
