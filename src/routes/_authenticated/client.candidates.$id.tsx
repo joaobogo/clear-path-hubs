@@ -3,6 +3,7 @@ import { UndoWindow } from "@/components/client/undo-window";
 import { IntroVideoPanel } from "@/components/client/intro-video-panel";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ViewerReadOnlyNotice } from "@/components/client/states";
 
 import { useMemo, useRef, useState } from "react";
@@ -441,7 +442,15 @@ function CandidateDetailPage() {
   {/* 4 — THE DEAL-BREAKER FACTS: pay and availability decide as many rejections
       as the evidence does, so they are answered before the long read rather
       than being buried inside a tab further down. */}
-  <div id="sec-facts" className="scroll-mt-24 grid grid-cols-1 gap-4 lg:grid-cols-2">
+  {/* Availability renders nothing without a date or a time zone; the pay panel
+      then takes the full width instead of sitting beside an empty cell. */}
+  <div
+    id="sec-facts"
+    className={cn(
+      "scroll-mt-24 grid grid-cols-1 gap-4",
+      (candidate.candidate.availability || candidate.candidate.timezone) && "lg:grid-cols-2",
+    )}
+  >
   {compQuery.isError ? (
   <QueryErrorCard
     compact

@@ -65,7 +65,7 @@ export function CompensationPanel({
           expectation — we won't fill the gap with an estimate.
         </div>
       ) : (
-        <dl className="mt-3 grid gap-3 sm:grid-cols-3">
+        <dl className="mt-3 grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr))]">
           {signal.figures.map((f) => (
             <div key={f.label} className="rounded-md border bg-background/40 p-3">
               <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
