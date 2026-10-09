@@ -6,7 +6,6 @@
  */
 import { describe, expect, it } from "vitest";
 import { normalizeJdText, parseUnambiguousDate, quickReadJd } from "@/lib/jd-quick-read";
-import { guessTitleAndTeam } from "@/lib/jd-title-guess";
 
 const NOW = new Date("2026-10-08T12:00:00Z");
 const read = (t: string) => quickReadJd(t, { now: NOW }).blueprint;
@@ -45,6 +44,9 @@ describe("compensation formats", () => {
     "We raised $40M and process $2 billion a year.",
     "Benefits: $1,500 learning budget per year and a $1,000 referral bonus.",
     "Sign-on bonus of $5,000.",
+    "Compensation includes a $20,000 sign-on bonus.",
+    "Compensation includes a $20,000 signing bonus and a $3,000 relocation allowance.",
+    "You also receive a $1,000 annual wellness stipend.",
     "Salary: $80,000 - $95,000 per year. Location: Toronto", // "$" could be CAD
     "Sueldo: $35,000 - $45,000 MXN al mes",
     "Salário: R$ 2.800,00", // BRL with no period: monthly or yearly is a guess
@@ -119,6 +121,32 @@ describe("never guesses from prose", () => {
     expect(read("Lead Generation Specialist").seniority).toBeUndefined();
     expect(read("Contract Manager").employmentType).toBeUndefined();
   });
+
+  it("does not read a level out of a noun that only looks like one", () => {
+    for (const t of ["Data Entry Clerk", "Senior Care Assistant", "Senior Living Sales Counselor", "Graduate Recruiter", "Senior Citizens Programme Coordinator"]) {
+      expect(read(t).seniority, t).toBeUndefined();
+    }
+    expect(read("Senior Accountant").seniority?.value).toBe("senior");
+    expect(read("Entry Level Analyst").seniority?.value).toBe("junior");
+    expect(read("Graduate Engineer").seniority?.value).toBe("junior");
+  });
+
+  it("does not take the employment type from a benefits sentence", () => {
+    expect(read("Health insurance is available for full time employees.").employmentType).toBeUndefined();
+    expect(read("We are seeking a full-time pastry chef.").employmentType?.value).toBe("full_time");
+  });
+
+  it("does not take a work model from a conditional sentence", () => {
+    expect(read("Whether the position is remote depends on the team.").workModel).toBeUndefined();
+    expect(read("If the role is remote you will travel quarterly.").workModel).toBeUndefined();
+    expect(read("This position is remote.").workModel?.value).toBe("remote");
+  });
+
+  it("does not read the Portuguese team label 'time' in an English description", () => {
+    const b = read("Job Title: Barista\nTime: Flexible\nArea: Downtown\nRequirements\n- Latte art");
+    expect(b.team).toBeUndefined();
+    expect(read("Cargo: Barista\nEmpresa: Café Azul\nTime: Atendimento\nRequisitos\n- Experiência").team?.value).toBe("Atendimento");
+  });
 });
 
 describe("start dates", () => {
@@ -159,11 +187,21 @@ describe("requirements", () => {
     ]);
   });
 
-  it("never gives more must-haves than the product advises", () => {
+  it("keeps the tag the description gives, even past six must-haves", () => {
+    // The form's own "I want all N treated as must-haves" acknowledgement
+    // handles the cap; silently re-tagging the 7th item would mislabel it
+    // while saying it was "read from your job description".
     const bullets = Array.from({ length: 10 }, (_, i) => `- Requirement number ${i + 1}`).join("\n");
     const { requirements } = quickReadJd(`Requirements\n${bullets}`, { now: NOW });
-    expect(requirements.filter((r) => r.tag === "must_have")).toHaveLength(6);
-    expect(requirements).toHaveLength(10);
+    expect(requirements.filter((r) => r.tag === "must_have")).toHaveLength(10);
+  });
+
+  it("closes the section at a sub-heading it does not recognise", () => {
+    const { requirements } = quickReadJd(
+      "Requirements\n- 3 years with React\n\nOur stack:\n- React 19\n- Postgres\n\nTechnical skills:\n- TypeScript\n",
+      { now: NOW },
+    );
+    expect(requirements.map((r) => r.text)).toEqual(["3 years with React", "TypeScript"]);
   });
 
   it("returns nothing when there is no requirements section", () => {
@@ -224,14 +262,5 @@ describe("properties", () => {
     const once = normalizeJdText(text);
     expect(normalizeJdText(once)).toBe(once);
     expect(quickReadJd(once, { now: NOW })).toEqual(quickReadJd(text, { now: NOW }));
-  });
-});
-
-describe("guessTitleAndTeam stays available", () => {
-  it("delegates to the quick read", () => {
-    expect(guessTitleAndTeam("Job title: Senior Accountant\nTeam: Finance Operations")).toEqual({
-      title: "Senior Accountant",
-      team: "Finance Operations",
-    });
   });
 });

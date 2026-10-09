@@ -20,7 +20,7 @@
  * Pure, so the rules are tested directly rather than through the page.
  */
 import type { JdBlueprint } from "@/lib/jd-blueprint";
-import { MAX_MUST_HAVES, normalizeRequirementKey, type RequirementItem } from "@/lib/express-intake-schema";
+import { normalizeRequirementKey, type RequirementItem } from "@/lib/express-intake-schema";
 
 /** The form fields a blueprint can fill, and the blank each one returns to. */
 export const JD_FORM_DEFAULTS = {
@@ -126,18 +126,22 @@ export function planBlueprintApply(
 }
 
 /** A list as the form should hold it: never more must-haves than the product advises. */
+/**
+ * De-duplicates a read's requirements. Every item keeps the tag the text
+ * stated: a seventh must-have used to be re-tagged "nice to have" here while
+ * the form still said "Read from your job description", which misrepresented
+ * the description. The form itself asks the client to confirm more than
+ * MAX_MUST_HAVES must-haves (express-intake-schema), so the cap is theirs to
+ * accept or relax, never a silent re-tag.
+ */
 export function capMustHaves(items: RequirementItem[]): RequirementItem[] {
-  let musts = 0;
   const seen = new Set<string>();
   const out: RequirementItem[] = [];
   for (const it of items) {
     const key = normalizeRequirementKey(it.text);
     if (!key || seen.has(key)) continue;
     seen.add(key);
-    if (it.tag === "must_have") {
-      musts += 1;
-      out.push(musts > MAX_MUST_HAVES ? { text: it.text, tag: "nice_to_have" } : { text: it.text, tag: it.tag });
-    } else out.push({ text: it.text, tag: it.tag });
+    out.push({ text: it.text, tag: it.tag });
   }
   return out;
 }

@@ -5,7 +5,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { planBlueprintApply, mayReplaceRequirements, capMustHaves, requirementsSignature } from "@/lib/jd-apply";
 import { jdCacheKey, requestJdParse } from "@/lib/jd-parse-client";
-import { checkPublicUrl, fetchPublicPage } from "@/lib/jd-url-guard";
+import { checkPublicUrl, fetchPublicPage, resolvePublicHost } from "@/lib/jd-url-guard";
 import { decodeTextBytes, extractJdFile, rtfToText, sniffKind } from "@/lib/jd-extract.server";
 import { htmlToText, jobPageToText } from "@/lib/jd-html";
 import { quickReadJd } from "@/lib/jd-quick-read";
@@ -83,9 +83,10 @@ describe("a read lands without ever overwriting the client", () => {
     expect(mayReplaceRequirements(read, { edited: false, autoSignature: "" })).toBe(false);
   });
 
-  it("caps must-haves at six", () => {
-    const many = Array.from({ length: 8 }, (_, i) => ({ text: `Skill ${i}`, tag: "must_have" as const }));
-    expect(capMustHaves(many).filter((r) => r.tag === "must_have")).toHaveLength(6);
+  it("keeps every stated must-have past six: the form asks the client to confirm, never re-tags", () => {
+    const many = Array.from({ length: 8 }, (_, n) => ({ text: `Skill ${n + 1}`, tag: "must_have" as const }));
+    expect(capMustHaves(many).filter((r) => r.tag === "must_have")).toHaveLength(8);
+    expect(capMustHaves([...many, { text: "skill 1", tag: "must_have" }])).toHaveLength(8);
   });
 });
 
@@ -150,6 +151,9 @@ describe("the browser request", () => {
   });
 });
 
+/** A resolver that answers every public name with a public address. */
+const publicDns = async () => ["93.184.216.34"];
+
 describe("the link guard", () => {
   it.each([
     "http://localhost/",
@@ -188,7 +192,7 @@ describe("the link guard", () => {
     const fetchImpl = vi.fn().mockResolvedValue(
       new Response(null, { status: 302, headers: { location: "http://169.254.169.254/latest/" } }),
     );
-    const out = await fetchPublicPage("https://jobs.example.com/1", { maxBytes: 1000, timeoutMs: 1000, fetchImpl });
+    const out = await fetchPublicPage("https://jobs.example.com/1", { maxBytes: 1000, timeoutMs: 1000, fetchImpl, resolver: publicDns });
     expect(out).toEqual({ ok: false, reason: "blocked" });
     expect(fetchImpl).toHaveBeenCalledTimes(1);
     expect(fetchImpl.mock.calls[0]![1]).toMatchObject({ redirect: "manual" });
@@ -198,18 +202,57 @@ describe("the link guard", () => {
     const loop = vi.fn().mockImplementation(
       async () => new Response(null, { status: 301, headers: { location: "https://jobs.example.com/again" } }),
     );
-    expect(await fetchPublicPage("https://jobs.example.com/", { maxBytes: 10, timeoutMs: 1000, fetchImpl: loop })).toEqual({
+    expect(await fetchPublicPage("https://jobs.example.com/", { maxBytes: 10, timeoutMs: 1000, fetchImpl: loop, resolver: publicDns })).toEqual({
       ok: false,
       reason: "too_many_redirects",
     });
     const big = vi.fn().mockResolvedValue(new Response("x".repeat(5000), { headers: { "content-type": "text/html" } }));
-    const page = await fetchPublicPage("https://jobs.example.com/", { maxBytes: 100, timeoutMs: 1000, fetchImpl: big });
+    const page = await fetchPublicPage("https://jobs.example.com/", { maxBytes: 100, timeoutMs: 1000, fetchImpl: big, resolver: publicDns });
     expect(page.ok && page.html.length).toBe(100);
+  });
+
+  it("refuses a name that resolves to a private address, on any answer", async () => {
+    const u = new URL("http://127.0.0.1.nip.io/");
+    expect(await resolvePublicHost(u, async () => ["127.0.0.1"])).toEqual({ ok: false, reason: "dns_private" });
+    expect(await resolvePublicHost(u, async () => ["93.184.216.34", "10.0.0.5"])).toEqual({ ok: false, reason: "dns_private" });
+    expect(await resolvePublicHost(u, async () => ["2606:4700::1111", "::ffff:169.254.169.254"])).toEqual({ ok: false, reason: "dns_private" });
+    expect(await resolvePublicHost(u, async () => ["93.184.216.34", "2606:4700::1111"])).toMatchObject({ ok: true });
+  });
+
+  it("fails closed when the lookup gives nothing, errors or times out", async () => {
+    const u = new URL("https://jobs.example.com/");
+    expect(await resolvePublicHost(u, async () => [])).toEqual({ ok: false, reason: "dns_failed" });
+    expect(await resolvePublicHost(u, async () => { throw new Error("dns down"); })).toEqual({ ok: false, reason: "dns_failed" });
+    expect(await resolvePublicHost(u, async () => ["jobs.example.com.cdn.net"])).toEqual({ ok: false, reason: "dns_failed" });
+    const slow = (_h: string, signal: AbortSignal) =>
+      new Promise<string[]>((_r, reject) => signal.addEventListener("abort", () => reject(new Error("aborted"))));
+    expect(await resolvePublicHost(u, slow, 20)).toEqual({ ok: false, reason: "dns_failed" });
+    // An IP literal needs no lookup.
+    expect(await resolvePublicHost(new URL("https://8.8.8.8/"), async () => { throw new Error("never"); })).toMatchObject({ ok: true });
+  });
+
+  it("never fetches a name that resolves privately, even after a public first hop", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      new Response(null, { status: 302, headers: { location: "https://internal.example.net/" } }),
+    );
+    const resolver = async (host: string) => (host === "internal.example.net" ? ["192.168.1.10"] : ["93.184.216.34"]);
+    const out = await fetchPublicPage("https://jobs.example.com/1", { maxBytes: 1000, timeoutMs: 1000, fetchImpl, resolver });
+    expect(out).toEqual({ ok: false, reason: "blocked" });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("refuses a response with no content-type", async () => {
+    // A string body would get text/plain added for free; bytes carry no type.
+    const bare = vi.fn().mockResolvedValue(new Response(new TextEncoder().encode("<html>x</html>")));
+    expect(await fetchPublicPage("https://jobs.example.com/", { maxBytes: 100, timeoutMs: 1000, fetchImpl: bare, resolver: publicDns })).toEqual({
+      ok: false,
+      reason: "not_html",
+    });
   });
 
   it("refuses a page that is not HTML", async () => {
     const pdf = vi.fn().mockResolvedValue(new Response("%PDF", { headers: { "content-type": "application/pdf" } }));
-    expect(await fetchPublicPage("https://jobs.example.com/", { maxBytes: 100, timeoutMs: 1000, fetchImpl: pdf })).toEqual({
+    expect(await fetchPublicPage("https://jobs.example.com/", { maxBytes: 100, timeoutMs: 1000, fetchImpl: pdf, resolver: publicDns })).toEqual({
       ok: false,
       reason: "not_html",
     });

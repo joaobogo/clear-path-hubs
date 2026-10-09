@@ -23,7 +23,6 @@
  * Languages: English, Brazilian Portuguese and Spanish labels and phrases.
  */
 import {
-  MAX_MUST_HAVES,
   MAX_REQUIREMENT_CHARS,
   MIN_REQUIREMENT_CHARS,
   normalizeRequirementKey,
@@ -224,17 +223,37 @@ const LABELS: Record<Field, string[]> = {
 const LABEL_FIELD = new Map<string, Field>();
 for (const f of Object.keys(LABELS) as Field[]) for (const l of LABELS[f]) LABEL_FIELD.set(l, f);
 
+/**
+ * Labels that are ordinary English words elsewhere: "Time: Flexible" is not a
+ * team ("time" is Portuguese for team), "Area: Downtown" is not either. They
+ * count only when the text reads as Portuguese or Spanish.
+ */
+const PT_ES_ONLY_LABELS = new Set(["time", "area", "local", "lugar", "sede", "regime", "formato", "contrato", "inicio", "nivel"]);
+const PT_ES_SIGNAL =
+  /\b(?:vaga|cargo|requisitos|salario|salario|puesto|empresa|equipe|equipo|ubicacion|localizacao|modalidade|modalidad|contratacao|jornada|sueldo|remuneracao|remuneracion|desejavel|deseable|experiencia|conhecimento|conocimiento|beneficios|atividades|funciones|responsabilidades|voce|usted|nosotros|estamos|buscamos|procuramos|trabalho|trabajo)\b/;
+
+function textLooksPtEs(foldedPrefix: string): boolean {
+  let hits = 0;
+  const re = new RegExp(PT_ES_SIGNAL.source, "g");
+  while (re.exec(foldedPrefix) && ++hits < 2) {
+    /* two independent signals are enough */
+  }
+  return hits >= 2;
+}
+
 /** "Job Title :", "Location - London", "Local: São Paulo". Colon, or a spaced dash. */
 const LABEL_SPLIT = /^([^:：]{2,40}?)\s*[:：]\s*(.*)$|^([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ ]{1,30}?)\s+[-–—]\s+(.+)$/;
 
-function splitLabel(t: string): { field: Field; value: string } | null {
+function splitLabel(t: string, ptEs = true): { field: Field; value: string } | null {
   const m = LABEL_SPLIT.exec(t);
   if (!m) return null;
   const label = m[1] ?? m[3];
   const value = (m[1] !== undefined ? m[2] : m[4]) ?? "";
   if (!label) return null;
-  const field = LABEL_FIELD.get(fold(label).replace(/[^a-z0-9 ]/g, "").trim());
+  const key = fold(label).replace(/[^a-z0-9 ]/g, "").trim();
+  const field = LABEL_FIELD.get(key);
   if (!field) return null;
+  if (!ptEs && PT_ES_ONLY_LABELS.has(key)) return null;
   return { field, value: value.trim() };
 }
 
@@ -402,7 +421,8 @@ const WM_PROSE: Array<[WorkModel, RegExp]> = [
   ["onsite", /\b(?:100%|totalmente) presencial\b/g],
   ["onsite", /\b(?:vaga|trabalho|regime|modalidade|formato|posicao) presencial\b/g],
 ];
-const NEGATION_BEFORE = /\b(?:not|non|no|nao|sin|never)\s+(?:a\s+|an\s+)?$/;
+/** "not remote", "whether the position is remote": a phrase that does not state the model. */
+const NEGATION_BEFORE = /\b(?:not|non|no|nao|sin|never|whether|if|unless|se|si)\s+(?:a\s+|an\s+|the\s+|this\s+)?(?:\w+\s+){0,3}$/;
 
 function proseWorkModels(flatFolded: string): Set<WorkModel> {
   const out = new Set<WorkModel>();
@@ -411,7 +431,7 @@ function proseWorkModels(flatFolded: string): Set<WorkModel> {
     let m: RegExpExecArray | null;
     let guard = 0;
     while ((m = re.exec(flatFolded)) && guard++ < 20) {
-      const before = flatFolded.slice(Math.max(0, m.index - 14), m.index);
+      const before = flatFolded.slice(Math.max(0, m.index - 40), m.index);
       if (NEGATION_BEFORE.test(before)) continue;
       out.add(wm);
       break;
@@ -451,11 +471,11 @@ function resolveEmployment(kinds: Set<Emp>): Emp | null {
 const EMP_PROSE: Array<[Emp, RegExp]> = [
   ["full_time", /\b(?:this|the) (?:position |role |job )?is (?:a )?full ?time\b/g],
   ["full_time", /\bfull ?time (?:position|role|job|opportunity|basis|permanent|employee position|employment)\b/g],
-  ["full_time", /\b(?:seeking|hiring|looking for|recruiting|needs?|for) (?:an? )?full ?time\b/g],
+  ["full_time", /\b(?:seeking|hiring|looking for|recruiting|needs?) (?:an? )?full ?time\b/g],
   ["full_time", /\b(?:vaga|regime|contratacao|jornada|periodo|trabalho) (?:em |de )?(?:tempo integral|clt)\b|\bregime clt\b|\bcontratacao clt\b/g],
   ["part_time", /\b(?:this|the) (?:position |role |job )?is (?:a )?part ?time\b/g],
   ["part_time", /\bpart ?time (?:position|role|job|opportunity|basis|hours|employment)\b/g],
-  ["part_time", /\b(?:seeking|hiring|looking for|recruiting|needs?|for) (?:an? )?part ?time\b/g],
+  ["part_time", /\b(?:seeking|hiring|looking for|recruiting|needs?) (?:an? )?part ?time\b/g],
   ["part_time", /\b(?:vaga|regime|contratacao|jornada|periodo|trabalho) (?:em |de )?(?:meio periodo|tempo parcial)\b/g],
   ["contract", /\b(?:\d+|six|twelve|three|nine|eighteen|twenty four) months? (?:fixed term )?contract\b/g],
   ["contract", /\bcontract (?:position|role|job|opportunity|basis|to hire|engagement|assignment)\b/g],
@@ -473,7 +493,7 @@ function proseEmployment(flatFolded: string): Set<Emp> {
     let m: RegExpExecArray | null;
     let guard = 0;
     while ((m = re.exec(v)) && guard++ < 20) {
-      const before = v.slice(Math.max(0, m.index - 14), m.index);
+      const before = v.slice(Math.max(0, m.index - 40), m.index);
       if (NEGATION_BEFORE.test(before)) continue;
       out.add(e);
       break;
@@ -557,9 +577,11 @@ function seniorityFromWords(textFolded: string): BlueprintSeniority | null {
   if (has(/ (?:director|head of|diretor|diretora|directora|director a|vp of) /) && !has(/ (?:director of photography) /)) hits.add("director");
   if (has(/ (?:principal|distinguished) /)) hits.add("principal");
   if (has(/ (?:lead|tech lead|team lead|lider|lider tecnico|jefe de equipo|technical lead) /) && !has(/ lead (?:generation|gen|gen\w*|developer|qualification|nurturing)/)) hits.add("lead");
-  if (has(/ (?:senior|sr|sênior|senior|sr\.) /)) hits.add("senior");
+  // "Senior Care Assistant", "Senior Living Sales Counselor": the word names the clients, not the level.
+  if (has(/ (?:senior|sr|sênior|sr\.) /) && !has(/ senior (?:care|living|citizens?|services?|housing|support) /)) hits.add("senior");
   if (has(/ (?:mid|mid level|midlevel|intermediate|intermediario|intermediaria|pleno|plena|semi senior|semisenior|ssr|semi sr|intermedio|intermedia) /)) hits.add("mid");
-  if (has(/ (?:junior|jr|entry level|entry|graduate|juniors|jnr) /) && !has(/ graduate (?:program|school)/)) hits.add("junior");
+  // "Data Entry Clerk" is not entry level; "Graduate Recruiter" recruits graduates.
+  if (has(/ (?:junior|jr|entry level|graduate|juniors|jnr) /) && !has(/ graduate (?:recruit\w*|program|programme|school|admissions?|affairs|studies) /)) hits.add("junior");
   if (has(/ (?:intern|interns|internship|estagiario|estagiaria|estagio|pasante|becario|becaria) /)) hits.add("intern");
   if (hits.size === 0) return null;
   const arr = [...hits];
@@ -591,7 +613,7 @@ const COMP_WORD_AFTER = /^[^a-z0-9]{0,3}(?:\w+ ){0,2}(?:salary|base|gross|compen
 const BAD_BEFORE =
   /\b(?:bonus|stipend|allowance|budget|relocation|reimbursement|commission|equity|funding|funded|raised|revenue|valuation|ote|on target earnings|overtime|differential|referral|signing|sign on|tuition|perk|perks|bonificacao|auxilio|comissao|plr|vale|premio|gratificacao|bono|comision|incentive|incentives|credit|discount|fee|fees|deductible|insurance|401k|match|savings|loan)\W+(?:\w+\W+){0,3}$/;
 const BAD_AFTER =
-  /^(?:\w+ )?(?:bonus|stipend|allowance|budget|relocation|reimbursement|commission|equity|funding|revenue|valuation|signing|referral|in sales|in revenue|in funding|credit|discount|fee|incentive|auxilio|bonificacao|bono)\b/;
+  /^(?:\w+ ){0,2}(?:bonus|stipend|allowance|budget|relocation|reimbursement|commission|equity|funding|revenue|valuation|signing|sign[- ]?on|signon|referral|in sales|in revenue|in funding|credit|discount|fee|incentive|auxilio|bonificacao|bono)\b/;
 const BAD_FORM = /\b(?:million|billion|trillion)\b/;
 
 type Cand = {
@@ -1073,11 +1095,10 @@ function readRequirements(lines: Ln[]): BlueprintRequirement[] {
         else if (kind.kind === "nice") section = "nice";
         else if (kind.kind === "other") section = null;
         else if (kind.kind === "unknown") {
-          // A sub-heading ("Technical skills:") inside a requirements section keeps
-          // the section open; an all-caps or markdown heading ends it.
-          if (section && !ln.md && /:$/.test(ln.t) && !isAllCaps(ln.t)) {
-            /* keep section */
-          } else section = null;
+          // Any heading we do not recognise ends the section: "Our stack:" under
+          // "Requirements" introduces tools, not requirements. A requirement
+          // sub-heading ("Technical skills:") is recognised above and keeps it open.
+          section = null;
         }
         continue;
       }
@@ -1104,17 +1125,9 @@ function readRequirements(lines: Ln[]): BlueprintRequirement[] {
     lastWasBullet = false;
   }
   flush();
-  // Never hand the client more must-haves than the product itself advises.
-  let musts = 0;
-  const capped: BlueprintRequirement[] = [];
-  for (const it of items) {
-    if (it.tag === "must_have") {
-      musts += 1;
-      capped.push(musts > MAX_MUST_HAVES ? { text: it.text, tag: "nice_to_have" } : it);
-    } else capped.push(it);
-    if (capped.length >= MAX_REQUIREMENTS) break;
-  }
-  return capped;
+  // Tags are reported as the description states them. More than six must-haves
+  // is the client's call: the form already asks them to confirm or re-tag.
+  return items.slice(0, MAX_REQUIREMENTS);
 }
 
 /* ------------------------------------------------------------------ main */
@@ -1141,6 +1154,7 @@ function quickReadUnsafe(text: string, opts: QuickReadOptions): QuickReadResult 
     .map(prepLine);
 
   const bp: JdBlueprint = {};
+  const ptEs = textLooksPtEs(fold(norm.slice(0, 4000)));
 
   /* ---- labelled lines and headline tokens ---- */
   const st = {
@@ -1231,7 +1245,7 @@ function quickReadUnsafe(text: string, opts: QuickReadOptions): QuickReadResult 
     for (let si = 0; si < segments.length; si += 1) {
       const seg = segments[si]!.trim();
       if (!seg) continue;
-      const lab = splitLabel(seg);
+      const lab = splitLabel(seg, ptEs);
       if (lab) {
         let value = lab.value;
         // Value on the next line: "Location:\nLondon".
@@ -1239,7 +1253,7 @@ function quickReadUnsafe(text: string, opts: QuickReadOptions): QuickReadResult 
           let j = i + 1;
           while (j < lines.length && lines[j]!.blank && j < i + 2) j += 1;
           const nxt = lines[j];
-          if (nxt && !nxt.blank && !nxt.bullet && !nxt.md && !splitLabel(nxt.t) && nxt.t.length <= 80) {
+          if (nxt && !nxt.blank && !nxt.bullet && !nxt.md && !splitLabel(nxt.t, ptEs) && nxt.t.length <= 80) {
             value = nxt.t;
             if (si === segments.length - 1) lines[j] = { ...nxt, t: "", blank: true };
           }
@@ -1287,7 +1301,7 @@ function quickReadUnsafe(text: string, opts: QuickReadOptions): QuickReadResult 
       nonBlank += 1;
       if (ln.bullet) break;
       const t = ln.t;
-      const lab = splitLabel(t);
+      const lab = splitLabel(t, ptEs);
       if (lab) continue;
       if (COMPANY_SUFFIX.test(t) || /^(?:careers?|jobs?|vagas?|empleos?)\b/i.test(fold(t))) continue;
       const segs = t.split(/\s+\|\s+/);

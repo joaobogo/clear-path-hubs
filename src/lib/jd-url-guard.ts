@@ -13,10 +13,15 @@
  *  - no single-label, .local, .internal, .localhost, metadata or .arpa hosts;
  *  - every redirect hop is checked again (see `fetchPublicPage`).
  *
- * A hostname that RESOLVES to a private address cannot be checked here (the
- * edge runtime has no DNS API); the edge fetch itself cannot reach private
- * networks, and the size, time and hop caps bound what a hostile public host
- * can do.
+ * A hostname that RESOLVES to a private address ("127.0.0.1.nip.io", a
+ * rebinding domain) is caught by `resolvePublicHost`: every hostname is looked
+ * up over DNS-over-HTTPS (Cloudflare 1.1.1.1, 2 s deadline) before each hop
+ * and EVERY A and AAAA answer must pass the same private-range checks. The
+ * lookup fails closed: no answer, a timeout or a resolver error refuses the
+ * fetch. The fetch itself then connects by hostname, so a resolver that answers
+ * differently moments later (classic rebinding) is the one residual gap; the
+ * Cloudflare Workers target cannot reach private ranges at all, and on a Node
+ * deploy the size, time and hop caps bound what such a host could return.
  */
 
 export type UrlVerdict = { ok: true; url: URL } | { ok: false; reason: string };
@@ -98,6 +103,68 @@ export function checkPublicUrl(input: string | URL): UrlVerdict {
   return { ok: true, url };
 }
 
+/** How a hostname is turned into addresses. Injectable for tests. */
+export type HostResolver = (host: string, signal: AbortSignal) => Promise<string[]>;
+
+const DOH_URL = "https://cloudflare-dns.com/dns-query";
+const DOH_TIMEOUT_MS = 2_000;
+
+/** DNS-over-HTTPS: both record types, every answer returned. Throws on any failure. */
+export async function resolveOverHttps(host: string, signal: AbortSignal, fetchImpl: typeof fetch = fetch): Promise<string[]> {
+  const ask = async (type: "A" | "AAAA"): Promise<string[]> => {
+    const res = await fetchImpl(`${DOH_URL}?name=${encodeURIComponent(host)}&type=${type}`, {
+      headers: { Accept: "application/dns-json" },
+      signal,
+    });
+    if (!res.ok) throw new Error(`dns_${res.status}`);
+    const json = (await res.json()) as { Status?: number; Answer?: Array<{ type?: number; data?: string }> };
+    if (json.Status !== 0 && json.Status !== 3) throw new Error(`dns_status_${json.Status}`);
+    return (json.Answer ?? [])
+      .filter((a) => (type === "A" ? a.type === 1 : a.type === 28))
+      .map((a) => String(a.data ?? "").trim())
+      .filter(Boolean);
+  };
+  const [a, aaaa] = await Promise.all([ask("A"), ask("AAAA")]);
+  return [...a, ...aaaa];
+}
+
+/**
+ * Refuses a hostname unless every address it resolves to is public. An IP
+ * literal needs no lookup (checkPublicUrl already judged it).
+ */
+export async function resolvePublicHost(
+  url: URL,
+  resolver: HostResolver,
+  timeoutMs = DOH_TIMEOUT_MS,
+): Promise<{ ok: true; addresses: string[] } | { ok: false; reason: "dns_private" | "dns_failed" }> {
+  const host = url.hostname.toLowerCase().replace(/\.+$/, "");
+  if (host.startsWith("[") || host.includes(":") || parseIpv4(host)) return { ok: true, addresses: [host] };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const addresses = await resolver(host, controller.signal);
+    if (addresses.length === 0) return { ok: false, reason: "dns_failed" };
+    for (const addr of addresses) {
+      const v4 = parseIpv4(addr);
+      if (v4) {
+        if (ipv4Blocked(v4[0], v4[1], v4[2])) return { ok: false, reason: "dns_private" };
+        continue;
+      }
+      if (addr.includes(":")) {
+        if (ipv6Blocked(addr)) return { ok: false, reason: "dns_private" };
+        continue;
+      }
+      // Anything that is not an address (a CNAME left in the answer, garbage) fails closed.
+      return { ok: false, reason: "dns_failed" };
+    }
+    return { ok: true, addresses };
+  } catch {
+    return { ok: false, reason: "dns_failed" };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export type FetchPageResult =
   | { ok: true; html: string; finalUrl: string }
   | { ok: false; reason: "blocked" | "http_error" | "not_html" | "too_many_redirects" | "timeout" | "network" };
@@ -109,9 +176,17 @@ export type FetchPageResult =
  */
 export async function fetchPublicPage(
   start: string,
-  opts: { maxBytes: number; timeoutMs: number; maxRedirects?: number; fetchImpl?: typeof fetch },
+  opts: {
+    maxBytes: number;
+    timeoutMs: number;
+    maxRedirects?: number;
+    fetchImpl?: typeof fetch;
+    /** Defaults to DNS-over-HTTPS; tests inject a resolver. */
+    resolver?: HostResolver;
+  },
 ): Promise<FetchPageResult> {
   const doFetch = opts.fetchImpl ?? fetch;
+  const resolver: HostResolver = opts.resolver ?? ((host, signal) => resolveOverHttps(host, signal));
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeoutMs);
   try {
@@ -119,6 +194,9 @@ export async function fetchPublicPage(
     for (let hop = 0; hop <= (opts.maxRedirects ?? 3); hop += 1) {
       const verdict = checkPublicUrl(current);
       if (!verdict.ok) return { ok: false, reason: "blocked" };
+      // The name must point only at public addresses, on every hop.
+      const resolved = await resolvePublicHost(verdict.url, resolver);
+      if (!resolved.ok) return { ok: false, reason: "blocked" };
       const res = await doFetch(verdict.url.toString(), {
         redirect: "manual",
         signal: controller.signal,
@@ -139,7 +217,8 @@ export async function fetchPublicPage(
         return { ok: false, reason: "http_error" };
       }
       const type = (res.headers.get("content-type") ?? "").toLowerCase();
-      if (type && !/text\/html|application\/xhtml|text\/plain|application\/ld\+json/.test(type)) {
+      // No content-type is not "probably HTML": a bare response is refused.
+      if (!/text\/html|application\/xhtml|text\/plain|application\/ld\+json/.test(type)) {
         await res.body?.cancel().catch(() => {});
         return { ok: false, reason: "not_html" };
       }

@@ -42,8 +42,8 @@ Basis: every status below comes from reading the current working tree (393 chang
 | --- | --- |
 | Status | Done |
 | Root cause | The description was read only after the client reached step 2, and a failed read left both fields empty with no sign. |
-| What changed | New `src/lib/jd-title-guess.ts` (`guessTitleAndTeam`): a deterministic read of labelled lines ("Job title:", "Team:", "Department:") or a title-shaped first line; never guesses from prose. In `src/routes/intake.tsx` the effect now runs on steps 1 and 2 (`:1482` `if (stepIndex > 1) return`), applies the guess at once (`:1485`) and then the model read. `guessedRef` (`:1366`) lets the model result replace a guess, but never a value the client typed (`applyBlueprint`, `:1381`). |
-| Verified by | `src/lib/__tests__/jd-title-guess.test.ts`: "reads labelled lines", "reads a title-shaped first line and a department line", "does not turn company boilerplate or a sentence into a title", "never invents a team from prose", "handles empty input". The replace-guess logic lives inside the component and has no unit test of its own; it was covered by the browser check (reported). |
+| What changed | New `src/lib/jd-title-guess.ts` (`guessTitleAndTeam`; since folded into `src/lib/jd-quick-read.ts`, 9 Oct): a deterministic read of labelled lines ("Job title:", "Team:", "Department:") or a title-shaped first line; never guesses from prose. In `src/routes/intake.tsx` the effect now runs on steps 1 and 2 (`:1482` `if (stepIndex > 1) return`), applies the guess at once (`:1485`) and then the model read. `guessedRef` (`:1366`) lets the model result replace a guess, but never a value the client typed (`applyBlueprint`, `:1381`). |
+| Verified by | `src/lib/__tests__/jd-quick-read.test.ts` (formerly `jd-title-guess.test.ts`): "reads labelled lines", "reads a title-shaped first line and a department line", "does not turn company boilerplate or a sentence into a title", "never invents a team from prose", "handles empty input". The replace-guess logic lives inside the component and has no unit test of its own; it was covered by the browser check (reported). |
 
 ### A3. "Ideal start date": remove "We will tell you honestly…"
 
@@ -323,7 +323,7 @@ Round 3 found no critical or high issues. Round-3 verification: typecheck clean;
 | `npm run build` with all prebuild guards | Passed | Reported by the main agent; deliberately not run in this audit |
 | Playwright, real browser | The five requests confirmed | Reported by the main agent; not re-run here |
 | Round 1 crawl | 219 URLs | Reported by the main agent |
-| New or changed tests for this work | `jd-title-guess`, `interview-feedback-queue`, `interview-activity`, `legacy-interview`, `interview-history-list`, `intake-review` (full description), `intake-step-shape` (partial domains), `edge-policy` (booking redirects), `stage-counts-read-the-lane`, `notification-names-its-subject` | Present in the tree |
+| New or changed tests for this work | `jd-quick-read` (was `jd-title-guess`), `interview-feedback-queue`, `interview-activity`, `legacy-interview`, `interview-history-list`, `intake-review` (full description), `intake-step-shape` (partial domains), `edge-policy` (booking redirects), `stage-counts-read-the-lane`, `notification-names-its-subject` | Present in the tree |
 
 Browser checks reported by the main agent: intake step 1 to 2 carries job title and team; start-date and Timeline hints; confirm screen shows the full description; "What we read" shows the full domain (including a typed `co-kreator.com`); retired booking URLs redirect to `/contact`; CTA labels; the Round 1 public crawl. I could not confirm the exact list of pages the browser run visited.
 

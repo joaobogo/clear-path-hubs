@@ -1,0 +1,25 @@
+Data Entry Clerk
+Location: Columbus, OH
+
+Compensation includes a $20,000 sign-on bonus for candidates who start before year end, and a
+$500 home-office allowance. Health insurance is available for full time employees after 90 days.
+Whether the position is remote depends on the team you join.
+
+Time: Flexible
+Area: Downtown
+
+Requirements
+- Typing speed of 60 words per minute
+- Attention to detail
+- Two years of data entry experience
+- Comfortable with Excel
+- Reliable attendance
+- High school diploma
+- Experience with Salesforce
+
+Our stack:
+- Salesforce
+- Google Workspace
+
+Preferred
+- Previous experience in healthcare administration

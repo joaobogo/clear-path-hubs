@@ -1453,7 +1453,7 @@ function ExpressIntakePage() {
   useEffect(() => () => parseRef.current.controller?.abort(), []);
 
   const applyBlueprint = React.useCallback(
-    (bp: JdBlueprint, source: "model" | "guess" = "model", opts: { clearMissing?: boolean } = {}) => {
+    (bp: JdBlueprint, opts: { clearMissing?: boolean } = {}) => {
       const current = latestStateRef.current as unknown as Record<string, unknown>;
       const plan = planBlueprintApply(current, bp, {
         edited: new Set(editedRef.current),
@@ -1483,7 +1483,6 @@ function ExpressIntakePage() {
           return nextSet;
         });
       }
-      void source;
     },
     [],
   );
@@ -1524,7 +1523,7 @@ function ExpressIntakePage() {
       if (jd.length < MIN_JD_TEXT || lastQuickRef.current === jd) return;
       lastQuickRef.current = jd;
       const quick = quickReadJd(jd);
-      applyBlueprint(quick.blueprint, "guess");
+      applyBlueprint(quick.blueprint);
       applyRequirements(quick.requirements);
     },
     [applyBlueprint, applyRequirements],
@@ -1579,7 +1578,7 @@ function ExpressIntakePage() {
         // This text has just been read; the description effect must not bill it again.
         suggestedForRef.current = textSignature(readText.trim());
         setState((s) => (s.jobDescriptionText.trim().length > 0 ? s : { ...s, jobDescriptionText: readText }));
-        applyBlueprint(quick.blueprint, "guess");
+        applyBlueprint(quick.blueprint);
         applyRequirements(quick.requirements);
       }
 
@@ -1599,7 +1598,7 @@ function ExpressIntakePage() {
       // older description that neither read supports are cleared.
       const sameText = input.text ?? readText ?? "";
       const base = sameText ? quickReadJd(sameText).blueprint : {};
-      applyBlueprint({ ...base, ...outcome.data.blueprint }, "model", { clearMissing: true });
+      applyBlueprint({ ...base, ...outcome.data.blueprint }, { clearMissing: true });
       const items = outcome.data.suggestions ?? [];
       if (applyRequirements(items) || items.length === 0) setSuggestions({ kind: "idle" });
       else setSuggestions({ kind: "ready", items });

@@ -1,0 +1,19 @@
+{
+  "fields": {
+    "title": "Senior Care Assistant",
+    "team": "Residential Care",
+    "location": "Norwich, UK",
+    "employmentType": "full_time",
+    "salaryMin": 13.2,
+    "salaryMax": 13.2,
+    "currency": "GBP",
+    "compensationPeriod": "hour"
+  },
+  "empty": ["seniority", "workModel", "targetStartDate", "requiresExistingWorkAuth"],
+  "skip": [],
+  "requirements": {
+    "must": ["NVQ Level 3", "residential care setting", "Medication administration"],
+    "nice": ["Dementia care training"],
+    "none": false
+  }
+}
