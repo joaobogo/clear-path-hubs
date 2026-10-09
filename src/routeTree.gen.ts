@@ -14,9 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AccessDeniedRouteImport } from './routes/access-denied'
 import { Route as AgentsRouteImport } from './routes/agents'
-import { Route as AiInHiringRouteImport } from './routes/ai-in-hiring'
-import { Route as AiRecruitingAgencyRouteImport } from './routes/ai-recruiting-agency'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BookRouteImport } from './routes/book'
 import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
 import { Route as CandidateSuccessRouteImport } from './routes/candidate-success'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
@@ -25,9 +24,6 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as EmployerOnboardingRouteImport } from './routes/employer-onboarding'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as FaqRouteImport } from './routes/faq'
-import { Route as FlatFeeRecruitingRouteImport } from './routes/flat-fee-recruiting'
-import { Route as ForFoundersRouteImport } from './routes/for-founders'
-import { Route as ForHrTeamsRouteImport } from './routes/for-hr-teams'
 import { Route as GlobalTalentRouteImport } from './routes/global-talent'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as IntakeRouteImport } from './routes/intake'
@@ -42,21 +38,13 @@ import { Route as PitchRouteImport } from './routes/pitch'
 import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as RecruiterFeesRouteImport } from './routes/recruiter-fees'
-import { Route as RecruitingAsAServiceRouteImport } from './routes/recruiting-as-a-service'
-import { Route as RecruitmentAgencyAlternativeRouteImport } from './routes/recruitment-agency-alternative'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as SampleShortlistRouteImport } from './routes/sample-shortlist'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as SitemapRouteImport } from './routes/sitemap'
-import { Route as SitemapBlogDotxmlRouteImport } from './routes/sitemap-blog[.]xml'
-import { Route as SitemapIndustriesDotxmlRouteImport } from './routes/sitemap-industries[.]xml'
-import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as StatusRouteImport } from './routes/status'
-import { Route as SubscriptionRecruitingRouteImport } from './routes/subscription-recruiting'
 import { Route as SystemRouteImport } from './routes/system'
 import { Route as TalentMarketplaceRouteImport } from './routes/talent-marketplace'
 import { Route as TalentNetworkRouteImport } from './routes/talent-network'
@@ -67,6 +55,7 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedBoardroomRouteImport } from './routes/_authenticated/boardroom'
+import { Route as AuthenticatedBookCallRouteImport } from './routes/_authenticated/book-call'
 import { Route as AuthenticatedBrandCenterRouteImport } from './routes/_authenticated/brand-center'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
@@ -77,8 +66,6 @@ import { Route as ApplyEligibilityOutcomeRouteImport } from './routes/apply.elig
 import { Route as ApplyStatusRouteImport } from './routes/apply.status'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
-import { Route as CompareIndexRouteImport } from './routes/compare.index'
-import { Route as CompareRecruitingAgenciesRouteImport } from './routes/compare.recruiting-agencies'
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as DevIndustryCoverageRouteImport } from './routes/dev.industry-coverage'
 import { Route as DevTrackingRouteImport } from './routes/dev.tracking'
@@ -108,6 +95,7 @@ import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
 import { Route as AuthenticatedAdminIntakeQualityRouteImport } from './routes/_authenticated/admin.intake-quality'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated/admin.integrations'
+import { Route as AuthenticatedAdminInterviewsRouteImport } from './routes/_authenticated/admin.interviews'
 import { Route as AuthenticatedAdminLeadDeliveryRouteImport } from './routes/_authenticated/admin.lead-delivery'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminMyDayRouteImport } from './routes/_authenticated/admin.my-day'
@@ -219,6 +207,7 @@ import { Route as AuthenticatedAdminPositionsIdPublishRouteImport } from './rout
 import { Route as AuthenticatedAdminScoringReviewIndexRouteImport } from './routes/_authenticated/admin.scoring.review.index'
 import { Route as AuthenticatedAdminScoringReviewMatchIdRouteImport } from './routes/_authenticated/admin.scoring.review.$matchId'
 import { Route as AuthenticatedClientPositionsIdEditRouteImport } from './routes/_authenticated/client.positions.$id_.edit'
+import { Route as ApiPublicBookingSessionIdIcsRouteImport } from './routes/api/public/booking.$sessionId.ics'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -244,19 +233,14 @@ const AgentsRoute = AgentsRouteImport.update({
   path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AiInHiringRoute = AiInHiringRouteImport.update({
-  id: '/ai-in-hiring',
-  path: '/ai-in-hiring',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AiRecruitingAgencyRoute = AiRecruitingAgencyRouteImport.update({
-  id: '/ai-recruiting-agency',
-  path: '/ai-recruiting-agency',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CandidateJoinRoute = CandidateJoinRouteImport.update({
@@ -297,21 +281,6 @@ const EnterpriseRoute = EnterpriseRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FlatFeeRecruitingRoute = FlatFeeRecruitingRouteImport.update({
-  id: '/flat-fee-recruiting',
-  path: '/flat-fee-recruiting',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForFoundersRoute = ForFoundersRouteImport.update({
-  id: '/for-founders',
-  path: '/for-founders',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForHrTeamsRoute = ForHrTeamsRouteImport.update({
-  id: '/for-hr-teams',
-  path: '/for-hr-teams',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GlobalTalentRoute = GlobalTalentRouteImport.update({
@@ -384,22 +353,6 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RecruiterFeesRoute = RecruiterFeesRouteImport.update({
-  id: '/recruiter-fees',
-  path: '/recruiter-fees',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecruitingAsAServiceRoute = RecruitingAsAServiceRouteImport.update({
-  id: '/recruiting-as-a-service',
-  path: '/recruiting-as-a-service',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecruitmentAgencyAlternativeRoute =
-  RecruitmentAgencyAlternativeRouteImport.update({
-    id: '/recruitment-agency-alternative',
-    path: '/recruitment-agency-alternative',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -410,11 +363,6 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SampleShortlistRoute = SampleShortlistRouteImport.update({
-  id: '/sample-shortlist',
-  path: '/sample-shortlist',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SecurityRoute = SecurityRouteImport.update({
   id: '/security',
   path: '/security',
@@ -423,21 +371,6 @@ const SecurityRoute = SecurityRouteImport.update({
 const SitemapRoute = SitemapRouteImport.update({
   id: '/sitemap',
   path: '/sitemap',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapBlogDotxmlRoute = SitemapBlogDotxmlRouteImport.update({
-  id: '/sitemap-blog.xml',
-  path: '/sitemap-blog.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapIndustriesDotxmlRoute = SitemapIndustriesDotxmlRouteImport.update({
-  id: '/sitemap-industries.xml',
-  path: '/sitemap-industries.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
-  id: '/sitemap-pages.xml',
-  path: '/sitemap-pages.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -453,11 +386,6 @@ const SolutionsRoute = SolutionsRouteImport.update({
 const StatusRoute = StatusRouteImport.update({
   id: '/status',
   path: '/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SubscriptionRecruitingRoute = SubscriptionRecruitingRouteImport.update({
-  id: '/subscription-recruiting',
-  path: '/subscription-recruiting',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SystemRoute = SystemRouteImport.update({
@@ -512,6 +440,11 @@ const AuthenticatedBoardroomRoute = AuthenticatedBoardroomRouteImport.update({
   path: '/boardroom',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBookCallRoute = AuthenticatedBookCallRouteImport.update({
+  id: '/book-call',
+  path: '/book-call',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBrandCenterRoute =
   AuthenticatedBrandCenterRouteImport.update({
     id: '/brand-center',
@@ -563,17 +496,6 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CompareIndexRoute = CompareIndexRouteImport.update({
-  id: '/compare/',
-  path: '/compare/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CompareRecruitingAgenciesRoute =
-  CompareRecruitingAgenciesRouteImport.update({
-    id: '/compare/recruiting-agencies',
-    path: '/compare/recruiting-agencies',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const DevCatalogueRoute = DevCatalogueRouteImport.update({
   id: '/dev/catalogue',
   path: '/dev/catalogue',
@@ -731,6 +653,12 @@ const AuthenticatedAdminIntegrationsRoute =
   AuthenticatedAdminIntegrationsRouteImport.update({
     id: '/integrations',
     path: '/integrations',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminInterviewsRoute =
+  AuthenticatedAdminInterviewsRouteImport.update({
+    id: '/interviews',
+    path: '/interviews',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminLeadDeliveryRoute =
@@ -1364,15 +1292,20 @@ const AuthenticatedClientPositionsIdEditRoute =
     path: '/$id/edit',
     getParentRoute: () => AuthenticatedClientPositionsRoute,
   } as any)
+const ApiPublicBookingSessionIdIcsRoute =
+  ApiPublicBookingSessionIdIcsRouteImport.update({
+    id: '/api/public/booking/$sessionId/ics',
+    path: '/api/public/booking/$sessionId/ics',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
-  '/ai-in-hiring': typeof AiInHiringRoute
-  '/ai-recruiting-agency': typeof AiRecruitingAgencyRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1381,9 +1314,6 @@ export interface FileRoutesByFullPath {
   '/employer-onboarding': typeof EmployerOnboardingRoute
   '/enterprise': typeof EnterpriseRoute
   '/faq': typeof FaqRoute
-  '/flat-fee-recruiting': typeof FlatFeeRecruitingRoute
-  '/for-founders': typeof ForFoundersRoute
-  '/for-hr-teams': typeof ForHrTeamsRoute
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
@@ -1398,21 +1328,13 @@ export interface FileRoutesByFullPath {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/recruiter-fees': typeof RecruiterFeesRoute
-  '/recruiting-as-a-service': typeof RecruitingAsAServiceRoute
-  '/recruitment-agency-alternative': typeof RecruitmentAgencyAlternativeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/sample-shortlist': typeof SampleShortlistRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
-  '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
-  '/sitemap-industries.xml': typeof SitemapIndustriesDotxmlRoute
-  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/status': typeof StatusRoute
-  '/subscription-recruiting': typeof SubscriptionRecruitingRoute
   '/system': typeof SystemRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
@@ -1423,6 +1345,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/boardroom': typeof AuthenticatedBoardroomRoute
+  '/book-call': typeof AuthenticatedBookCallRoute
   '/brand-center': typeof AuthenticatedBrandCenterRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
@@ -1432,7 +1355,6 @@ export interface FileRoutesByFullPath {
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
-  '/compare/recruiting-agencies': typeof CompareRecruitingAgenciesRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/dev/tracking': typeof DevTrackingRoute
@@ -1444,7 +1366,6 @@ export interface FileRoutesByFullPath {
   '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
-  '/compare/': typeof CompareIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/resources/': typeof ResourcesIndexRoute
@@ -1463,6 +1384,7 @@ export interface FileRoutesByFullPath {
   '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -1574,6 +1496,7 @@ export interface FileRoutesByFullPath {
   '/admin/positions/$id/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
+  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/admin/scoring/review/': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRoutesByTo {
@@ -1581,9 +1504,8 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
-  '/ai-in-hiring': typeof AiInHiringRoute
-  '/ai-recruiting-agency': typeof AiRecruitingAgencyRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1592,9 +1514,6 @@ export interface FileRoutesByTo {
   '/employer-onboarding': typeof EmployerOnboardingRoute
   '/enterprise': typeof EnterpriseRoute
   '/faq': typeof FaqRoute
-  '/flat-fee-recruiting': typeof FlatFeeRecruitingRoute
-  '/for-founders': typeof ForFoundersRoute
-  '/for-hr-teams': typeof ForHrTeamsRoute
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
@@ -1609,21 +1528,13 @@ export interface FileRoutesByTo {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/recruiter-fees': typeof RecruiterFeesRoute
-  '/recruiting-as-a-service': typeof RecruitingAsAServiceRoute
-  '/recruitment-agency-alternative': typeof RecruitmentAgencyAlternativeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/sample-shortlist': typeof SampleShortlistRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
-  '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
-  '/sitemap-industries.xml': typeof SitemapIndustriesDotxmlRoute
-  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/status': typeof StatusRoute
-  '/subscription-recruiting': typeof SubscriptionRecruitingRoute
   '/system': typeof SystemRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
@@ -1633,6 +1544,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/boardroom': typeof AuthenticatedBoardroomRoute
+  '/book-call': typeof AuthenticatedBookCallRoute
   '/brand-center': typeof AuthenticatedBrandCenterRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/admin/approvals': typeof AdminApprovalsRoute
@@ -1640,7 +1552,6 @@ export interface FileRoutesByTo {
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
-  '/compare/recruiting-agencies': typeof CompareRecruitingAgenciesRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/dev/tracking': typeof DevTrackingRoute
@@ -1652,7 +1563,6 @@ export interface FileRoutesByTo {
   '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog': typeof BlogIndexRoute
-  '/compare': typeof CompareIndexRoute
   '/industries': typeof IndustriesIndexRoute
   '/jobs': typeof JobsIndexRoute
   '/resources': typeof ResourcesIndexRoute
@@ -1668,6 +1578,7 @@ export interface FileRoutesByTo {
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -1775,6 +1686,7 @@ export interface FileRoutesByTo {
   '/admin/positions/$id/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
+  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/admin/scoring/review': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRoutesById {
@@ -1784,9 +1696,8 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
-  '/ai-in-hiring': typeof AiInHiringRoute
-  '/ai-recruiting-agency': typeof AiRecruitingAgencyRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1795,9 +1706,6 @@ export interface FileRoutesById {
   '/employer-onboarding': typeof EmployerOnboardingRoute
   '/enterprise': typeof EnterpriseRoute
   '/faq': typeof FaqRoute
-  '/flat-fee-recruiting': typeof FlatFeeRecruitingRoute
-  '/for-founders': typeof ForFoundersRoute
-  '/for-hr-teams': typeof ForHrTeamsRoute
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
@@ -1812,21 +1720,13 @@ export interface FileRoutesById {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/recruiter-fees': typeof RecruiterFeesRoute
-  '/recruiting-as-a-service': typeof RecruitingAsAServiceRoute
-  '/recruitment-agency-alternative': typeof RecruitmentAgencyAlternativeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/sample-shortlist': typeof SampleShortlistRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
-  '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
-  '/sitemap-industries.xml': typeof SitemapIndustriesDotxmlRoute
-  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/status': typeof StatusRoute
-  '/subscription-recruiting': typeof SubscriptionRecruitingRoute
   '/system': typeof SystemRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
@@ -1837,6 +1737,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/boardroom': typeof AuthenticatedBoardroomRoute
+  '/_authenticated/book-call': typeof AuthenticatedBookCallRoute
   '/_authenticated/brand-center': typeof AuthenticatedBrandCenterRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
@@ -1846,7 +1747,6 @@ export interface FileRoutesById {
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
-  '/compare/recruiting-agencies': typeof CompareRecruitingAgenciesRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/dev/tracking': typeof DevTrackingRoute
@@ -1858,7 +1758,6 @@ export interface FileRoutesById {
   '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
-  '/compare/': typeof CompareIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/resources/': typeof ResourcesIndexRoute
@@ -1877,6 +1776,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/_authenticated/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/_authenticated/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/_authenticated/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -1988,6 +1888,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/positions/$id_/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/_authenticated/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/_authenticated/client/positions/$id_/edit': typeof AuthenticatedClientPositionsIdEditRoute
+  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/_authenticated/admin/scoring/review/': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRouteTypes {
@@ -1997,9 +1898,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/agents'
-    | '/ai-in-hiring'
-    | '/ai-recruiting-agency'
     | '/auth'
+    | '/book'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -2008,9 +1908,6 @@ export interface FileRouteTypes {
     | '/employer-onboarding'
     | '/enterprise'
     | '/faq'
-    | '/flat-fee-recruiting'
-    | '/for-founders'
-    | '/for-hr-teams'
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
@@ -2025,21 +1922,13 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
-    | '/recruiter-fees'
-    | '/recruiting-as-a-service'
-    | '/recruitment-agency-alternative'
     | '/reset-password'
     | '/robots.txt'
-    | '/sample-shortlist'
     | '/security'
     | '/sitemap'
-    | '/sitemap-blog.xml'
-    | '/sitemap-industries.xml'
-    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/solutions'
     | '/status'
-    | '/subscription-recruiting'
     | '/system'
     | '/talent-marketplace'
     | '/talent-network'
@@ -2050,6 +1939,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/boardroom'
+    | '/book-call'
     | '/brand-center'
     | '/checkout'
     | '/client'
@@ -2059,7 +1949,6 @@ export interface FileRouteTypes {
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
-    | '/compare/recruiting-agencies'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
     | '/dev/tracking'
@@ -2071,7 +1960,6 @@ export interface FileRouteTypes {
     | '/resources/$slug'
     | '/share/$token'
     | '/blog/'
-    | '/compare/'
     | '/industries/'
     | '/jobs/'
     | '/resources/'
@@ -2090,6 +1978,7 @@ export interface FileRouteTypes {
     | '/admin/intake'
     | '/admin/intake-quality'
     | '/admin/integrations'
+    | '/admin/interviews'
     | '/admin/lead-delivery'
     | '/admin/messages'
     | '/admin/my-day'
@@ -2201,6 +2090,7 @@ export interface FileRouteTypes {
     | '/admin/positions/$id/publish'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
+    | '/api/public/booking/$sessionId/ics'
     | '/admin/scoring/review/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -2208,9 +2098,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/agents'
-    | '/ai-in-hiring'
-    | '/ai-recruiting-agency'
     | '/auth'
+    | '/book'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -2219,9 +2108,6 @@ export interface FileRouteTypes {
     | '/employer-onboarding'
     | '/enterprise'
     | '/faq'
-    | '/flat-fee-recruiting'
-    | '/for-founders'
-    | '/for-hr-teams'
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
@@ -2236,21 +2122,13 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
-    | '/recruiter-fees'
-    | '/recruiting-as-a-service'
-    | '/recruitment-agency-alternative'
     | '/reset-password'
     | '/robots.txt'
-    | '/sample-shortlist'
     | '/security'
     | '/sitemap'
-    | '/sitemap-blog.xml'
-    | '/sitemap-industries.xml'
-    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/solutions'
     | '/status'
-    | '/subscription-recruiting'
     | '/system'
     | '/talent-marketplace'
     | '/talent-network'
@@ -2260,6 +2138,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/boardroom'
+    | '/book-call'
     | '/brand-center'
     | '/checkout'
     | '/admin/approvals'
@@ -2267,7 +2146,6 @@ export interface FileRouteTypes {
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
-    | '/compare/recruiting-agencies'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
     | '/dev/tracking'
@@ -2279,7 +2157,6 @@ export interface FileRouteTypes {
     | '/resources/$slug'
     | '/share/$token'
     | '/blog'
-    | '/compare'
     | '/industries'
     | '/jobs'
     | '/resources'
@@ -2295,6 +2172,7 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/admin/intake-quality'
     | '/admin/integrations'
+    | '/admin/interviews'
     | '/admin/lead-delivery'
     | '/admin/messages'
     | '/admin/my-day'
@@ -2402,6 +2280,7 @@ export interface FileRouteTypes {
     | '/admin/positions/$id/publish'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
+    | '/api/public/booking/$sessionId/ics'
     | '/admin/scoring/review'
   id:
     | '__root__'
@@ -2410,9 +2289,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/agents'
-    | '/ai-in-hiring'
-    | '/ai-recruiting-agency'
     | '/auth'
+    | '/book'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -2421,9 +2299,6 @@ export interface FileRouteTypes {
     | '/employer-onboarding'
     | '/enterprise'
     | '/faq'
-    | '/flat-fee-recruiting'
-    | '/for-founders'
-    | '/for-hr-teams'
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
@@ -2438,21 +2313,13 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
-    | '/recruiter-fees'
-    | '/recruiting-as-a-service'
-    | '/recruitment-agency-alternative'
     | '/reset-password'
     | '/robots.txt'
-    | '/sample-shortlist'
     | '/security'
     | '/sitemap'
-    | '/sitemap-blog.xml'
-    | '/sitemap-industries.xml'
-    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/solutions'
     | '/status'
-    | '/subscription-recruiting'
     | '/system'
     | '/talent-marketplace'
     | '/talent-network'
@@ -2463,6 +2330,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/boardroom'
+    | '/_authenticated/book-call'
     | '/_authenticated/brand-center'
     | '/_authenticated/checkout'
     | '/_authenticated/client'
@@ -2472,7 +2340,6 @@ export interface FileRouteTypes {
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
-    | '/compare/recruiting-agencies'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
     | '/dev/tracking'
@@ -2484,7 +2351,6 @@ export interface FileRouteTypes {
     | '/resources/$slug'
     | '/share/$token'
     | '/blog/'
-    | '/compare/'
     | '/industries/'
     | '/jobs/'
     | '/resources/'
@@ -2503,6 +2369,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/intake'
     | '/_authenticated/admin/intake-quality'
     | '/_authenticated/admin/integrations'
+    | '/_authenticated/admin/interviews'
     | '/_authenticated/admin/lead-delivery'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/my-day'
@@ -2614,6 +2481,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/positions/$id_/publish'
     | '/_authenticated/admin/scoring/review/$matchId'
     | '/_authenticated/client/positions/$id_/edit'
+    | '/api/public/booking/$sessionId/ics'
     | '/_authenticated/admin/scoring/review/'
   fileRoutesById: FileRoutesById
 }
@@ -2623,9 +2491,8 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AccessDeniedRoute: typeof AccessDeniedRoute
   AgentsRoute: typeof AgentsRoute
-  AiInHiringRoute: typeof AiInHiringRoute
-  AiRecruitingAgencyRoute: typeof AiRecruitingAgencyRoute
   AuthRoute: typeof AuthRoute
+  BookRoute: typeof BookRoute
   CandidateJoinRoute: typeof CandidateJoinRoute
   CandidateSuccessRoute: typeof CandidateSuccessRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
@@ -2634,9 +2501,6 @@ export interface RootRouteChildren {
   EmployerOnboardingRoute: typeof EmployerOnboardingRoute
   EnterpriseRoute: typeof EnterpriseRoute
   FaqRoute: typeof FaqRoute
-  FlatFeeRecruitingRoute: typeof FlatFeeRecruitingRoute
-  ForFoundersRoute: typeof ForFoundersRoute
-  ForHrTeamsRoute: typeof ForHrTeamsRoute
   GlobalTalentRoute: typeof GlobalTalentRoute
   HowItWorksRoute: typeof HowItWorksRoute
   IntakeRoute: typeof IntakeRoute
@@ -2651,21 +2515,13 @@ export interface RootRouteChildren {
   PlatformRoute: typeof PlatformRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
-  RecruiterFeesRoute: typeof RecruiterFeesRoute
-  RecruitingAsAServiceRoute: typeof RecruitingAsAServiceRoute
-  RecruitmentAgencyAlternativeRoute: typeof RecruitmentAgencyAlternativeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
-  SampleShortlistRoute: typeof SampleShortlistRoute
   SecurityRoute: typeof SecurityRoute
   SitemapRoute: typeof SitemapRoute
-  SitemapBlogDotxmlRoute: typeof SitemapBlogDotxmlRoute
-  SitemapIndustriesDotxmlRoute: typeof SitemapIndustriesDotxmlRoute
-  SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolutionsRoute: typeof SolutionsRoute
   StatusRoute: typeof StatusRoute
-  SubscriptionRecruitingRoute: typeof SubscriptionRecruitingRoute
   SystemRoute: typeof SystemRoute
   TalentMarketplaceRoute: typeof TalentMarketplaceRoute
   TalentNetworkRoute: typeof TalentNetworkRoute
@@ -2679,7 +2535,6 @@ export interface RootRouteChildren {
   ApplyEligibilityOutcomeRoute: typeof ApplyEligibilityOutcomeRoute
   ApplyStatusRoute: typeof ApplyStatusRoute
   BlogSlugRoute: typeof BlogSlugRoute
-  CompareRecruitingAgenciesRoute: typeof CompareRecruitingAgenciesRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   DevIndustryCoverageRoute: typeof DevIndustryCoverageRoute
   DevTrackingRoute: typeof DevTrackingRoute
@@ -2691,7 +2546,6 @@ export interface RootRouteChildren {
   ResourcesSlugRoute: typeof ResourcesSlugRoute
   ShareTokenRoute: typeof ShareTokenRoute
   BlogIndexRoute: typeof BlogIndexRoute
-  CompareIndexRoute: typeof CompareIndexRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
   ResourcesIndexRoute: typeof ResourcesIndexRoute
@@ -2729,6 +2583,7 @@ export interface RootRouteChildren {
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  ApiPublicBookingSessionIdIcsRoute: typeof ApiPublicBookingSessionIdIcsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2768,25 +2623,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ai-in-hiring': {
-      id: '/ai-in-hiring'
-      path: '/ai-in-hiring'
-      fullPath: '/ai-in-hiring'
-      preLoaderRoute: typeof AiInHiringRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ai-recruiting-agency': {
-      id: '/ai-recruiting-agency'
-      path: '/ai-recruiting-agency'
-      fullPath: '/ai-recruiting-agency'
-      preLoaderRoute: typeof AiRecruitingAgencyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/candidate-join': {
@@ -2843,27 +2691,6 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/flat-fee-recruiting': {
-      id: '/flat-fee-recruiting'
-      path: '/flat-fee-recruiting'
-      fullPath: '/flat-fee-recruiting'
-      preLoaderRoute: typeof FlatFeeRecruitingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/for-founders': {
-      id: '/for-founders'
-      path: '/for-founders'
-      fullPath: '/for-founders'
-      preLoaderRoute: typeof ForFoundersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/for-hr-teams': {
-      id: '/for-hr-teams'
-      path: '/for-hr-teams'
-      fullPath: '/for-hr-teams'
-      preLoaderRoute: typeof ForHrTeamsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/global-talent': {
@@ -2964,27 +2791,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/recruiter-fees': {
-      id: '/recruiter-fees'
-      path: '/recruiter-fees'
-      fullPath: '/recruiter-fees'
-      preLoaderRoute: typeof RecruiterFeesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recruiting-as-a-service': {
-      id: '/recruiting-as-a-service'
-      path: '/recruiting-as-a-service'
-      fullPath: '/recruiting-as-a-service'
-      preLoaderRoute: typeof RecruitingAsAServiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recruitment-agency-alternative': {
-      id: '/recruitment-agency-alternative'
-      path: '/recruitment-agency-alternative'
-      fullPath: '/recruitment-agency-alternative'
-      preLoaderRoute: typeof RecruitmentAgencyAlternativeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -2999,13 +2805,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sample-shortlist': {
-      id: '/sample-shortlist'
-      path: '/sample-shortlist'
-      fullPath: '/sample-shortlist'
-      preLoaderRoute: typeof SampleShortlistRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/security': {
       id: '/security'
       path: '/security'
@@ -3018,27 +2817,6 @@ declare module '@tanstack/react-router' {
       path: '/sitemap'
       fullPath: '/sitemap'
       preLoaderRoute: typeof SitemapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-blog.xml': {
-      id: '/sitemap-blog.xml'
-      path: '/sitemap-blog.xml'
-      fullPath: '/sitemap-blog.xml'
-      preLoaderRoute: typeof SitemapBlogDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-industries.xml': {
-      id: '/sitemap-industries.xml'
-      path: '/sitemap-industries.xml'
-      fullPath: '/sitemap-industries.xml'
-      preLoaderRoute: typeof SitemapIndustriesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-pages.xml': {
-      id: '/sitemap-pages.xml'
-      path: '/sitemap-pages.xml'
-      fullPath: '/sitemap-pages.xml'
-      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -3060,13 +2838,6 @@ declare module '@tanstack/react-router' {
       path: '/status'
       fullPath: '/status'
       preLoaderRoute: typeof StatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/subscription-recruiting': {
-      id: '/subscription-recruiting'
-      path: '/subscription-recruiting'
-      fullPath: '/subscription-recruiting'
-      preLoaderRoute: typeof SubscriptionRecruitingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/system': {
@@ -3139,6 +2910,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBoardroomRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/book-call': {
+      id: '/_authenticated/book-call'
+      path: '/book-call'
+      fullPath: '/book-call'
+      preLoaderRoute: typeof AuthenticatedBookCallRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/brand-center': {
       id: '/_authenticated/brand-center'
       path: '/brand-center'
@@ -3207,20 +2985,6 @@ declare module '@tanstack/react-router' {
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/compare/': {
-      id: '/compare/'
-      path: '/compare'
-      fullPath: '/compare/'
-      preLoaderRoute: typeof CompareIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/compare/recruiting-agencies': {
-      id: '/compare/recruiting-agencies'
-      path: '/compare/recruiting-agencies'
-      fullPath: '/compare/recruiting-agencies'
-      preLoaderRoute: typeof CompareRecruitingAgenciesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/catalogue': {
@@ -3424,6 +3188,13 @@ declare module '@tanstack/react-router' {
       path: '/integrations'
       fullPath: '/admin/integrations'
       preLoaderRoute: typeof AuthenticatedAdminIntegrationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/interviews': {
+      id: '/_authenticated/admin/interviews'
+      path: '/interviews'
+      fullPath: '/admin/interviews'
+      preLoaderRoute: typeof AuthenticatedAdminInterviewsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/lead-delivery': {
@@ -4203,6 +3974,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientPositionsIdEditRouteImport
       parentRoute: typeof AuthenticatedClientPositionsRoute
     }
+    '/api/public/booking/$sessionId/ics': {
+      id: '/api/public/booking/$sessionId/ics'
+      path: '/api/public/booking/$sessionId/ics'
+      fullPath: '/api/public/booking/$sessionId/ics'
+      preLoaderRoute: typeof ApiPublicBookingSessionIdIcsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -4303,6 +4081,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
   AuthenticatedAdminIntakeQualityRoute: typeof AuthenticatedAdminIntakeQualityRoute
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
+  AuthenticatedAdminInterviewsRoute: typeof AuthenticatedAdminInterviewsRoute
   AuthenticatedAdminLeadDeliveryRoute: typeof AuthenticatedAdminLeadDeliveryRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminMyDayRoute: typeof AuthenticatedAdminMyDayRoute
@@ -4347,6 +4126,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
   AuthenticatedAdminIntakeQualityRoute: AuthenticatedAdminIntakeQualityRoute,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
+  AuthenticatedAdminInterviewsRoute: AuthenticatedAdminInterviewsRoute,
   AuthenticatedAdminLeadDeliveryRoute: AuthenticatedAdminLeadDeliveryRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminMyDayRoute: AuthenticatedAdminMyDayRoute,
@@ -4529,6 +4309,7 @@ const AuthenticatedMeRouteWithChildren = AuthenticatedMeRoute._addFileChildren(
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedBoardroomRoute: typeof AuthenticatedBoardroomRoute
+  AuthenticatedBookCallRoute: typeof AuthenticatedBookCallRoute
   AuthenticatedBrandCenterRoute: typeof AuthenticatedBrandCenterRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
@@ -4539,6 +4320,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedBoardroomRoute: AuthenticatedBoardroomRoute,
+  AuthenticatedBookCallRoute: AuthenticatedBookCallRoute,
   AuthenticatedBrandCenterRoute: AuthenticatedBrandCenterRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
@@ -4555,9 +4337,8 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AccessDeniedRoute: AccessDeniedRoute,
   AgentsRoute: AgentsRoute,
-  AiInHiringRoute: AiInHiringRoute,
-  AiRecruitingAgencyRoute: AiRecruitingAgencyRoute,
   AuthRoute: AuthRoute,
+  BookRoute: BookRoute,
   CandidateJoinRoute: CandidateJoinRoute,
   CandidateSuccessRoute: CandidateSuccessRoute,
   CaseStudiesRoute: CaseStudiesRoute,
@@ -4566,9 +4347,6 @@ const rootRouteChildren: RootRouteChildren = {
   EmployerOnboardingRoute: EmployerOnboardingRoute,
   EnterpriseRoute: EnterpriseRoute,
   FaqRoute: FaqRoute,
-  FlatFeeRecruitingRoute: FlatFeeRecruitingRoute,
-  ForFoundersRoute: ForFoundersRoute,
-  ForHrTeamsRoute: ForHrTeamsRoute,
   GlobalTalentRoute: GlobalTalentRoute,
   HowItWorksRoute: HowItWorksRoute,
   IntakeRoute: IntakeRoute,
@@ -4583,21 +4361,13 @@ const rootRouteChildren: RootRouteChildren = {
   PlatformRoute: PlatformRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
-  RecruiterFeesRoute: RecruiterFeesRoute,
-  RecruitingAsAServiceRoute: RecruitingAsAServiceRoute,
-  RecruitmentAgencyAlternativeRoute: RecruitmentAgencyAlternativeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
-  SampleShortlistRoute: SampleShortlistRoute,
   SecurityRoute: SecurityRoute,
   SitemapRoute: SitemapRoute,
-  SitemapBlogDotxmlRoute: SitemapBlogDotxmlRoute,
-  SitemapIndustriesDotxmlRoute: SitemapIndustriesDotxmlRoute,
-  SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolutionsRoute: SolutionsRoute,
   StatusRoute: StatusRoute,
-  SubscriptionRecruitingRoute: SubscriptionRecruitingRoute,
   SystemRoute: SystemRoute,
   TalentMarketplaceRoute: TalentMarketplaceRoute,
   TalentNetworkRoute: TalentNetworkRoute,
@@ -4612,7 +4382,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApplyEligibilityOutcomeRoute: ApplyEligibilityOutcomeRoute,
   ApplyStatusRoute: ApplyStatusRoute,
   BlogSlugRoute: BlogSlugRoute,
-  CompareRecruitingAgenciesRoute: CompareRecruitingAgenciesRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   DevIndustryCoverageRoute: DevIndustryCoverageRoute,
   DevTrackingRoute: DevTrackingRoute,
@@ -4624,7 +4393,6 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesSlugRoute: ResourcesSlugRoute,
   ShareTokenRoute: ShareTokenRoute,
   BlogIndexRoute: BlogIndexRoute,
-  CompareIndexRoute: CompareIndexRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
   ResourcesIndexRoute: ResourcesIndexRoute,
@@ -4664,6 +4432,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  ApiPublicBookingSessionIdIcsRoute: ApiPublicBookingSessionIdIcsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

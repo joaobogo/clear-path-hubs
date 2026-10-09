@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useRouter } from "@tanstack/react-router";
+import { useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { describeError } from "@/lib/error-copy";
 
@@ -13,10 +13,7 @@ import { describeError } from "@/lib/error-copy";
 export function GlobalRouteError({
   error,
   reset,
-}: {
-  error: Error;
-  reset: () => void;
-}) {
+}: ErrorComponentProps) {
   const router = useRouter();
 
   const pathname =

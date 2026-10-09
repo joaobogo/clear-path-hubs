@@ -39,10 +39,12 @@ export function LifecycleBar({
   position,
   onDone,
   includeVisibilityCheck,
+  canOverrideApproval = false,
 }: {
   position: Any;
   onDone: () => Promise<void>;
   includeVisibilityCheck?: boolean;
+  canOverrideApproval?: boolean;
 }) {
   const statusFn = useServerFn(setPositionStatus);
   const visibilityFn = useServerFn(setPositionVisibility);
@@ -104,14 +106,17 @@ export function LifecycleBar({
   }
 
   async function confirmApprove() {
-    if (blockers.length > 0) {
+    if (blockers.length > 0 && !canOverrideApproval) {
       toast.error(`Cannot approve yet — ${blockers.length} decision-critical items missing.`);
       return;
     }
     const r = await confirm({
       title: "Approve this requisition",
       object: roleName,
-      description: "Approving confirms the requisition is complete and ready to be activated.",
+      description: "Approving records your decision. It does not publish the role, change its payment status, or fill missing details.",
+      impact: blockers.length > 0
+        ? [`${blockers.length} missing items will remain on the role after approval.`]
+        : undefined,
       confirmLabel: "Approve role",
       reason: {
         label: "Approval note (kept on the audit trail)",
@@ -190,6 +195,9 @@ export function LifecycleBar({
 
   if (s === "draft") {
     primary = { key: "submit", label: "Submit for review", onClick: () => doStatus("submit", "Submitted") };
+    if (canOverrideApproval) {
+      secondary.push({ key: "approve", label: "Approve", onClick: confirmApprove });
+    }
   } else if (s === "submitted") {
     primary = { key: "start_review", label: "Start review", onClick: confirmStartReview };
     secondary.push({ key: "approve", label: "Approve", onClick: confirmApprove });
@@ -254,7 +262,7 @@ export function LifecycleBar({
     }
   }
 
-  const approveBlocked = blockers.length > 0;
+  const approveBlocked = blockers.length > 0 && !canOverrideApproval;
 
   return (
     <div className="flex items-center gap-2">
