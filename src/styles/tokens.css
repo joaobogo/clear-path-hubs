@@ -25,16 +25,17 @@
   --rule-2: #b7c3d9;
   --paper: #f6f8fd;
   --white: #ffffff;
-  /* PLACEHOLDER: regenerate these nine steps from the logo's blue. */
-  --blue-50: #f0f5ff;
-  --blue-100: #e1ebff;
-  --blue-200: #c5d7ff;
-  --blue-300: #98b8ff;
-  --blue-400: #6593ff;
-  --blue-500: #3672ff;
-  --blue-600: #1552f0;
-  --blue-700: #0e3fc4;
-  --blue-800: #0b2e8e;
+  /* Nine steps generated from the logo's blue, #42669E (oklch 0.51 0.10 259):
+     one hue, lightness stepped, chroma peaking at 600. White on 600 is 5.8:1. */
+  --blue-50: #f2f7ff;
+  --blue-100: #e3eefe;
+  --blue-200: #c7dcfd;
+  --blue-300: #9fbff2;
+  --blue-400: #7299d6;
+  --blue-500: #537bb8;
+  --blue-600: #42669e;
+  --blue-700: #2f5289;
+  --blue-800: #1e3c6c;
   --alert: #e5533d;
   --alert-ink: #b4321f;
   --alert-wash: #fde9e5;
@@ -89,8 +90,8 @@
   --bg: var(--blue-50);
   --surface: #ffffff;
   --surface-2: var(--blue-100);
-  --line: #d2dff8;
-  --line-2: #a8beea;
+  --line: #d3e2fb;
+  --line-2: #a9c6ee;
   --text: var(--ink);
   --text-2: var(--slate);
   --text-3: #56637f;
