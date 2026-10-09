@@ -3,14 +3,16 @@ import { expressIntakeSchema, requirementsToLines } from "@/lib/express-intake-s
 import {
   editFormToPositionPatch,
   intakePayloadToPosition,
+  isoDateOrNull,
   positionToEditForm,
   roleIntakeAnswersShape,
   roleRequiredness,
+  seededLocation,
+  storedDescription,
   type PositionEditInitial,
 } from "@/lib/positions/role-form";
 import { positionShapeFor } from "@/lib/positions/field-registry";
 import { assessJobQuality, requisitionMetaSchema, DEFAULT_WEIGHTS } from "@/lib/requisition-schema";
-import { seededLocation } from "@/components/positions/RequisitionEditor";
 import { z } from "zod";
 
 /**
@@ -349,5 +351,52 @@ describe("values the old editor refused", () => {
       expressIntakeSchema.parse({ ...fullIntake, ...requirementsToLines(fullIntake.requirements as never) }),
     );
     expect(position.blueprint_status).toBe("queued");
+  });
+});
+
+
+describe("review fixes on the role mapping", () => {
+  it("refuses an impossible calendar date instead of letting the database reject the save", () => {
+    expect(isoDateOrNull("2026-02-31")).toBeNull();
+    expect(isoDateOrNull("2026-13-01")).toBeNull();
+    expect(isoDateOrNull("2026-02-28")).toBe("2026-02-28");
+    expect(isoDateOrNull("2028-02-29")).toBe("2028-02-29");
+    expect(isoDateOrNull("As soon as possible")).toBeNull();
+  });
+
+  it("an untouched save never changes who may see the pay range", () => {
+    const row = {
+      id: "p1",
+      title: "Clinical Operations Manager",
+      description: "Run our clinics.",
+      requirements: [{ label: "CQC inspection experience", kind: "must_have" }],
+      preferred_requirements: [],
+      dealbreakers: [],
+      intake_context: {},
+      compensation: { currency: "GBP", min: 70000, max: 85000, period: "year" },
+      compensation_visibility: "internal",
+      work_authorization: {},
+      location: "Manchester, United Kingdom",
+      work_model: "remote",
+    };
+    const form = positionToEditForm(row);
+    expect(form.budget_min).toBe("70000");
+    const patch = editFormToPositionPatch(form as never, row as never) as Record<string, unknown>;
+    expect(patch).not.toHaveProperty("compensation_visibility");
+    expect(patch.compensation_collected).toBe(true);
+  });
+
+  it("reads the description an uploaded-file role keeps in jd_text, so a no-op save is a no-op", () => {
+    const row = { description: null, intake_context: {}, jd_text: "We are hiring a nurse.", blueprint: null };
+    expect(storedDescription(row)).toBe("We are hiring a nurse.");
+    expect(positionToEditForm({ ...row, requirements: [], preferred_requirements: [], dealbreakers: [] }).description).toBe(
+      "We are hiring a nurse.",
+    );
+  });
+
+  it("turns the intake's one-line location into a structured row", () => {
+    const seeded = seededLocation(false, "hybrid", "Manchester, United Kingdom");
+    expect(seeded).toMatchObject({ city: "Manchester", country_code: "GB", work_model: "hybrid", is_primary: true, notes: "" });
+    expect(seededLocation(true, "remote", "Anywhere").country_code).toBe("");
   });
 });

@@ -4,7 +4,7 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ensureRoleAnalysis, retryBlueprintAnalysis } from "@/lib/blueprint.functions";
-import { analysisDecision } from "@/lib/blueprint-trigger";
+import { analysisDecision, isPositionAnalysable } from "@/lib/blueprint-trigger";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/tracking/pixels";
 import {
@@ -119,16 +119,22 @@ export function GeneratedBlueprintPanel({
   const positionStatus = position?.status ?? "draft";
   const isDecisionReady = positionStatus === "active" || positionStatus === "closed" || positionStatus === "archived";
   const ready = status === "ready";
-  const decision = analysisDecision(position ?? {});
+  // The lifecycle status is part of the decision: a live, paused or closed
+  // role is never analysed on a page view, whatever its analysis status says
+  // (the server refuses it too — ensureRoleAnalysis).
+  const decision = analysisDecision({ ...(position ?? {}), status: positionStatus });
   const stalled = decision.state === "stalled" || decision.state === "exhausted";
-  const analysing = !ready && status !== "none" && !!status && status !== "failed";
+  // The widget is only rendered for a role whose analysis is pending, running
+  // or failed. Nothing below may start or poll when it is not on screen.
+  const rendered =
+    positionStatus !== "closed" && !ready && status !== "none" && !!status && !isDecisionReady;
 
   // Start the analysis without anyone pressing anything. Idempotent on the
   // server (a conditional claim), so several tabs start at most one run.
   // The run is carried by this request; the page does not wait for it.
   const ensuredFor = useRef<string | null>(null);
   const positionId = position?.id as string | undefined;
-  const shouldStart = decision.shouldStart && positionStatus !== "closed";
+  const shouldStart = rendered && decision.shouldStart && isPositionAnalysable(positionStatus);
   useEffect(() => {
     if (!positionId || !shouldStart) return;
     const key = `${positionId}:${status}:${position?.blueprint_attempts ?? 0}`;
@@ -141,13 +147,17 @@ export function GeneratedBlueprintPanel({
   }, [positionId, shouldStart, status]);
 
   // While it runs, keep the page current so each stage ticks over and the
-  // brief appears the moment it is ready.
+  // brief appears the moment it is ready. Only while something can still
+  // change: an exhausted or failed analysis, or a role this widget is not
+  // shown for, must not reload every loader every five seconds forever.
+  const polling =
+    rendered && (decision.state === "waiting" || decision.state === "running" || decision.state === "stalled");
   useEffect(() => {
-    if (!analysing && !shouldStart) return;
+    if (!polling) return;
     const t = window.setInterval(refresh, 5000);
     return () => window.clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [analysing, shouldStart]);
+  }, [polling]);
 
   function refresh() {
     if (typeof window !== "undefined") window.dispatchEvent(new Event("client:refresh"));

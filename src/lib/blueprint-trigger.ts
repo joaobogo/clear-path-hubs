@@ -36,10 +36,20 @@ export const BLUEPRINT_IN_PROGRESS_STATUSES = [
 /** A run that has not touched its row for this long is considered dead. */
 export const BLUEPRINT_STALE_MS = 10 * 60 * 1000;
 
+/**
+ * Key in positions.intake_context set by a save that changed the job
+ * description or must-haves WHILE a run was in flight. The pipeline clears it
+ * on completion and queues one more run (no migration: it rides in the
+ * existing jsonb column).
+ */
+export const BLUEPRINT_RERUN_FLAG = "blueprint_rerun_requested_at";
+
 /** Automatic attempts before a person has to press "Try again". */
 export const BLUEPRINT_MAX_AUTO_ATTEMPTS = 5;
 
 export type BlueprintRowLike = {
+  /** The position's lifecycle status, when the caller has it. */
+  status?: string | null;
   blueprint_status?: string | null;
   updated_at?: string | null;
   blueprint_attempts?: number | null;
@@ -52,11 +62,31 @@ export function isBlueprintInProgress(status: string | null | undefined): boolea
   return (BLUEPRINT_IN_PROGRESS_STATUSES as readonly string[]).includes(statusOf(status));
 }
 
-export function isBlueprintRunnable(status: string | null | undefined): boolean {
-  return (BLUEPRINT_RUNNABLE_STATUSES as readonly string[]).includes(statusOf(status));
+/**
+ * Position statuses whose role analysis may be started automatically. A live,
+ * paused or closed role is never re-analysed on a page view: the run rewrites
+ * the description, fills columns, inserts screening questions and emails the
+ * client, which is setup work, not something to redo on a search in flight.
+ */
+export const ANALYSABLE_POSITION_STATUSES = [
+  "draft",
+  "submitted",
+  "under_review",
+  "needs_clarification",
+  "approved",
+] as const;
+
+export function isPositionAnalysable(status: string | null | undefined): boolean {
+  return (ANALYSABLE_POSITION_STATUSES as readonly string[]).includes(String(status ?? "draft") || "draft");
 }
 
-/** In progress on paper, but nothing has touched it for BLUEPRINT_STALE_MS. */
+/**
+ * In progress on paper, but nothing has touched it for BLUEPRINT_STALE_MS.
+ *
+ * A row with no readable heartbeat is NOT treated as dead: a caller that did
+ * not load updated_at cannot prove the run stopped, and guessing "stale" made
+ * the onboarding wizard show "Restarting the analysis" over a healthy run.
+ */
 export function isBlueprintStale(
   status: string | null | undefined,
   updatedAt: string | null | undefined,
@@ -64,7 +94,7 @@ export function isBlueprintStale(
 ): boolean {
   if (!isBlueprintInProgress(status)) return false;
   const t = updatedAt ? Date.parse(updatedAt) : NaN;
-  if (!Number.isFinite(t)) return true;
+  if (!Number.isFinite(t)) return false;
   return now - t > BLUEPRINT_STALE_MS;
 }
 
@@ -75,7 +105,15 @@ export function isTransientBlueprintError(reason: string | null | undefined): bo
   return /^(rate_limited|gateway_unreachable|gateway_5\d\d|empty_completion|non_json_completion|pipeline_error)/.test(r);
 }
 
-export type AnalysisState = "ready" | "running" | "stalled" | "waiting" | "failed" | "exhausted";
+export type AnalysisState =
+  | "ready"
+  | "running"
+  | "stalled"
+  | "waiting"
+  | "failed"
+  | "exhausted"
+  /** The role's lifecycle status rules the analysis out (live, paused, closed). */
+  | "skipped";
 
 export type AnalysisDecision = {
   state: AnalysisState;
@@ -94,6 +132,11 @@ export function analysisDecision(row: BlueprintRowLike, now: number = Date.now()
   const attempts = Number(row.blueprint_attempts ?? 0);
   if (status === "ready" || status === "confirmed") {
     return { state: "ready", shouldStart: false, label: "Role analysed" };
+  }
+  // A role that is live, paused or closed is never started automatically,
+  // whatever its analysis status says.
+  if (row.status != null && !isPositionAnalysable(row.status)) {
+    return { state: "skipped", shouldStart: false, label: "Analysis not needed for this role" };
   }
   if (isBlueprintInProgress(status)) {
     if (isBlueprintStale(status, row.updated_at, now)) {

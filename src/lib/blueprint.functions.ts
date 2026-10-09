@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { analysisDecision, BLUEPRINT_STALE_MS } from "@/lib/blueprint-trigger";
+import { analysisDecision, isPositionAnalysable } from "@/lib/blueprint-trigger";
 
 const input = z.object({ positionId: z.string().uuid() });
 
@@ -13,17 +13,25 @@ async function adminClient(): Promise<AnyRow> {
   return supabaseAdmin as AnyRow;
 }
 
-/** The caller must be able to see the role's workspace (or be staff). */
-async function assertCanSeePosition(userId: string, positionId: string) {
+/**
+ * Loads the role and checks the caller's seat. "read": any workspace member
+ * or staff. "write": editors, admins and staff in their own console — a
+ * read-only viewer seat, or staff in support view, may not start the writes
+ * a pipeline run makes.
+ */
+async function loadPositionFor(userId: string, positionId: string, access: "read" | "write") {
   const admin = await adminClient();
   const { data: pos } = await admin
     .from("positions")
-    .select("id, organization_id, blueprint_status, blueprint_attempts, blueprint_error, updated_at")
+    .select(
+      "id, organization_id, status, blueprint_status, blueprint_attempts, blueprint_error, updated_at",
+    )
     .eq("id", positionId)
     .maybeSingle();
   if (!pos) throw new Error("position_not_found");
-  const { assertWorkspaceAccess } = await import("@/lib/authz/workspace-access");
-  await assertWorkspaceAccess(admin, userId, pos.organization_id as string);
+  const { assertWorkspaceAccess, assertWorkspaceWrite } = await import("@/lib/authz/workspace-access");
+  if (access === "write") await assertWorkspaceWrite(admin, userId, pos.organization_id as string);
+  else await assertWorkspaceAccess(admin, userId, pos.organization_id as string);
   return pos as AnyRow;
 }
 
@@ -31,16 +39,18 @@ async function assertCanSeePosition(userId: string, positionId: string) {
  * Deliberate re-run of the Role Blueprint for one position ("Try analysis
  * again").
  *
- * Authorization: the caller must have access to the role's workspace. (This
- * used to run for any signed-in user and any position id.) Re-entrancy is
- * guarded by the same conditional claim the background runner uses, so a
- * double click cannot start two runs.
+ * Authorization: the caller must be able to WRITE in the role's workspace —
+ * the run rewrites the brief, so a viewer seat cannot start it. (This used
+ * to run for any signed-in user and any position id.) Re-entrancy is guarded
+ * by the same conditional claim the background runner uses, so a double
+ * click, or a second tab, cannot start two runs: a live run is never taken
+ * over, only a finished or dead one.
  */
 export const retryBlueprintAnalysis = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => input.parse(raw))
   .handler(async ({ data, context }) => {
-    await assertCanSeePosition(context.userId as string, data.positionId);
+    await loadPositionFor(context.userId as string, data.positionId, "write");
     const { runBlueprintForPosition } = await import("@/lib/blueprint-pipeline.server");
     return runBlueprintForPosition(data.positionId, { force: true });
   });
@@ -59,7 +69,14 @@ export const ensureRoleAnalysis = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => input.parse(raw))
   .handler(async ({ data, context }) => {
-    const pos = await assertCanSeePosition(context.userId as string, data.positionId);
+    // Read access is enough: the analysis is the system's own setup work on
+    // a brand-new role, not an edit by the viewer, and it is idempotent and
+    // capped. What a viewer cannot do is start it on a role that is already
+    // live, paused or closed — refused here as well as on the page.
+    const pos = await loadPositionFor(context.userId as string, data.positionId, "read");
+    if (!isPositionAnalysable(pos.status)) {
+      return { ok: true, started: false, state: "skipped" as const, reason: "role_status_not_analysable" };
+    }
     const decision = analysisDecision(pos);
     if (!decision.shouldStart) {
       return { ok: true, started: false, state: decision.state, reason: null as string | null };
@@ -92,5 +109,3 @@ export const backfillStuckBlueprints = createServerFn({ method: "POST" })
       results: results.map((r) => ({ id: r.id, ok: r.result === "started", reason: r.result })),
     };
   });
-
-export { BLUEPRINT_STALE_MS };

@@ -207,6 +207,12 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!position) return null;
+    // Only the failure CODE crosses to the workspace. The full value can carry
+    // an upstream message ("pipeline_error:<message>", "gateway_unreachable:
+    // <message>"), which the public status route also strips.
+    if (typeof (position as AnyRow).blueprint_error === "string") {
+      (position as AnyRow).blueprint_error = String((position as AnyRow).blueprint_error).split(":")[0];
+    }
 
     // Client-visible candidates only. Wrong-tenant / unpublished filtered at source.
     const { data: rawMatches } = await context.supabase

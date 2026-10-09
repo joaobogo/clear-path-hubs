@@ -429,6 +429,8 @@ export type QualityInput = {
   reference_code: string;
   compensation_collected: boolean;
   open_worldwide?: boolean;
+  /** The role's lifecycle status, so the summary is worded for where it is. */
+  status?: string | null;
   /** The role's own work model and one-line location, as the intake records them. */
   work_model?: string | null;
   location_text?: string | null;
@@ -437,6 +439,12 @@ export type QualityInput = {
   remote_anywhere_in_country?: boolean | null;
 };
 
+
+/** Statuses in which the role has not been submitted yet. */
+export function isDraftLikeStatus(status: string | null | undefined): boolean {
+  const v = String(status ?? "draft") || "draft";
+  return v === "draft" || v === "needs_clarification";
+}
 
 export function assessJobQuality(i: QualityInput): {
   gaps: QualityGap[];
@@ -457,8 +465,12 @@ export function assessJobQuality(i: QualityInput): {
     add({ id: "must_haves", severity: "blocking", label: "At least one must-have requirement", why: "Must-haves are the backbone of evidence-based scoring.", step: 2 });
   else if (i.must_have_skills.length < 3)
     add({ id: "must_haves_depth", severity: "degrades", label: "Three or more must-haves", why: "Fewer than three makes ranking less precise.", step: 2 });
+  // Seniority and employment type are optional on the intake and on save
+  // (roleRequiredness), so the checklist must not call them "required": a
+  // role submitted without a seniority opened the editor on a red "1 required
+  // answer still missing — you can't submit this role yet".
   if (!i.seniority.trim())
-    add({ id: "seniority", severity: "blocking", label: "Seniority level", why: "Scope and level decide whether strong candidates are over- or under-qualified.", step: 1 });
+    add({ id: "seniority", severity: "degrades", label: "Seniority level", why: "Scope and level decide whether strong candidates are over- or under-qualified.", step: 1 });
   // Where the role is based is answered by structured rows, by the intake's
   // one-line location, or by the role being remote (a remote role does not
   // need a place). Missing, it is a gap to improve — never a blocker.
@@ -472,7 +484,7 @@ export function assessJobQuality(i: QualityInput): {
     add({ id: "locations", severity: "degrades", label: "Where the role is based", why: "Eligibility checks (right to work, commute) work better with a place.", step: 3 });
 
   if (!i.employment_type.trim())
-    add({ id: "employment_type", severity: "blocking", label: "Employment type", why: "Contract vs permanent changes both the candidate pool and the eligibility checks.", step: 1 });
+    add({ id: "employment_type", severity: "degrades", label: "Employment type", why: "Contract vs permanent changes both the candidate pool and the eligibility checks.", step: 1 });
 
   if (i.disqualifier_tags.length === 0)
     add({ id: "disqualifiers", severity: "degrades", label: "Disqualifiers / critical gates", why: "Without hard gates, unsuitable candidates reach your shortlist and dilute it.", step: 4 });
@@ -534,12 +546,22 @@ export function assessJobQuality(i: QualityInput): {
 
   const readiness = blocking.length > 0 ? "not_scoreable" : degrades.length > 0 ? "scoreable_with_gaps" : "decision_ready";
 
-  const summary =
-    readiness === "not_scoreable"
-      ? `${blocking.length} required answer${blocking.length === 1 ? "" : "s"} still missing — you can keep editing, but you can't submit this role yet.`
+  // Worded by where the role is: "you can't submit this role yet" is only
+  // true while it is still a draft. A role already submitted or live is told
+  // what keeps the brief complete, not that it cannot be submitted.
+  const n = blocking.length;
+  const d = degrades.length;
+  const summary = isDraftLikeStatus(i.status)
+    ? readiness === "not_scoreable"
+      ? `${n} required answer${n === 1 ? "" : "s"} still missing — you can keep editing, but you can't submit this role yet.`
       : readiness === "scoreable_with_gaps"
-        ? `Ready to submit. ${degrades.length} optional answer${degrades.length === 1 ? "" : "s"} would improve your shortlist.`
-        : "Ready to submit — every answer scoring depends on is present.";
+        ? `Ready to submit. ${d} optional answer${d === 1 ? "" : "s"} would improve your shortlist.`
+        : "Ready to submit — every answer scoring depends on is present."
+    : readiness === "not_scoreable"
+      ? `${n} answer${n === 1 ? "" : "s"} sourcing needs ${n === 1 ? "is" : "are"} still missing — add ${n === 1 ? "it" : "them"} to keep the brief complete.`
+      : readiness === "scoreable_with_gaps"
+        ? `Brief complete enough to source. ${d} optional answer${d === 1 ? "" : "s"} would improve your shortlist.`
+        : "Every answer scoring depends on is present.";
 
 
   return { gaps, blocking, degrades, optional, readiness, summary };

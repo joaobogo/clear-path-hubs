@@ -184,6 +184,9 @@ export type OnboardingPositionState = {
   intensity: string;
   blueprint_status: string;
   blueprint_error: string | null;
+  /** Heartbeat and attempt count, so the panel can tell a live run from a dead one. */
+  updated_at: string | null;
+  blueprint_attempts: number;
   blueprint_generated_at: string | null;
   blueprint_confirmed_at: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -345,7 +348,7 @@ export const getOnboardingState = createServerFn({ method: "GET" })
       supabase
         .from("positions")
         .select(
-          "id, title, status, description, location, work_model, employment_type, seniority, requirements, preferred_requirements, dealbreakers, evaluation_weights, intensity, blueprint, blueprint_status, blueprint_error, blueprint_generated_at, blueprint_confirmed_at, intake_context, payment_status, search_live_at, created_at",
+          "id, title, status, description, location, work_model, employment_type, seniority, requirements, preferred_requirements, dealbreakers, evaluation_weights, intensity, blueprint, blueprint_status, blueprint_error, blueprint_attempts, updated_at, blueprint_generated_at, blueprint_confirmed_at, intake_context, payment_status, search_live_at, created_at",
         )
         .eq("organization_id", org)
         .order("created_at", { ascending: false })
@@ -402,6 +405,8 @@ export const getOnboardingState = createServerFn({ method: "GET" })
         intensity: row.intensity ?? "standard",
         blueprint_status: row.blueprint_status ?? "not_started",
         blueprint_error: row.blueprint_error ?? null,
+        updated_at: row.updated_at ?? null,
+        blueprint_attempts: Number(row.blueprint_attempts ?? 0),
         blueprint_generated_at: row.blueprint_generated_at ?? null,
         blueprint_confirmed_at: row.blueprint_confirmed_at ?? null,
         blueprint:

@@ -54,6 +54,7 @@ import {
 import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import { normalizeSeniority } from "@/lib/position-seniority";
 import { positionField } from "@/lib/positions/field-registry";
+import { normalizeCountryCode, type RequisitionLocation } from "@/lib/requisition-schema";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -116,8 +117,19 @@ export function isoDateOrNull(raw: unknown): string | null {
   const v = asStr(raw).trim();
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v);
   if (!m) return null;
-  const d = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`);
-  if (Number.isNaN(d.getTime())) return null;
+  const [year, month, day] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const d = new Date(Date.UTC(year, month - 1, day));
+  // "2026-02-31" parses (JavaScript rolls it to 3 March) but Postgres rejects
+  // it, which failed the whole save with a raw database message. Only a date
+  // that reads back as itself is a date.
+  if (
+    Number.isNaN(d.getTime()) ||
+    d.getUTCFullYear() !== year ||
+    d.getUTCMonth() !== month - 1 ||
+    d.getUTCDate() !== day
+  ) {
+    return null;
+  }
   return `${m[1]}-${m[2]}-${m[3]}`;
 }
 
@@ -361,6 +373,31 @@ function readStages(v: unknown): RoleStage[] {
 }
 
 /**
+ * The job description the edit screen shows for a row: the column first, then
+ * the places an older brief or an uploaded-file role keeps it.
+ *
+ * Exported so the save handler compares a save against the SAME text the
+ * form was pre-filled with. A role whose description lived only in jd_text
+ * (uploaded file) used to be compared against the null column, so saving it
+ * untouched read as "the description changed", queued a fresh analysis and
+ * hid a ready brief.
+ */
+export function storedDescription(p: AnyRow): string {
+  const ctx = obj(p.intake_context);
+  const brief = obj(ctx.brief);
+  const blueprintRole = obj(obj(p.blueprint).role);
+  return firstText(
+    p.description,
+    ctx.job_description,
+    ctx.jobDescriptionText,
+    brief.jobDescription,
+    brief.jobDescriptionText,
+    p.jd_text,
+    blueprintRole.summary,
+  );
+}
+
+/**
  * Everything the edit screen shows, read from where each answer is actually
  * stored. Every intake answer has exactly one place it is read from first;
  * the generated blueprint only fills what nobody answered.
@@ -447,15 +484,7 @@ export function positionToEditForm(p: AnyRow, screeningRows: AnyRow[] = []): Pos
         : typeof blueprintRole.headcount === "number"
           ? blueprintRole.headcount
           : "",
-    description: firstText(
-      p.description,
-      ctx.job_description,
-      ctx.jobDescriptionText,
-      brief.jobDescription,
-      brief.jobDescriptionText,
-      p.jd_text,
-      blueprintRole.summary,
-    ),
+    description: storedDescription(p),
 
     open_worldwide: Boolean(
       ctx.open_worldwide ?? brief.openWorldwide ?? blueprintGeography.open_worldwide,
@@ -557,6 +586,49 @@ export function positionToEditForm(p: AnyRow, screeningRows: AnyRow[] = []): Pos
     (form as Record<string, unknown>)[key] = fitted;
   }
   return form;
+}
+
+/* ------------------------------------------------------------------ */
+/* One-line location → first structured location row                  */
+/* ------------------------------------------------------------------ */
+
+/**
+ * First structured row for the locations editor, read from the one-line
+ * location the intake recorded. "Manchester, United Kingdom" becomes
+ * City = Manchester, Country = GB, instead of the whole answer landing in
+ * "notes" with no country — which is how an intake role used to open there
+ * looking like nobody had said where it was.
+ */
+export function seededLocation(
+  openWorldwide: boolean,
+  workModel: string,
+  location: string,
+): RequisitionLocation {
+  const empty: RequisitionLocation = {
+    country_code: "",
+    region: "",
+    city: "",
+    work_model: "remote",
+    is_primary: false,
+    headcount: null,
+    timezone: "",
+    onsite_days_per_week: null,
+    notes: "",
+  };
+  if (openWorldwide) return empty;
+  const parts = (location || "").split(",").map((part) => part.trim()).filter(Boolean);
+  const country = parts.length > 0 ? normalizeCountryCode(parts[parts.length - 1]) : "";
+  const placeParts = country ? parts.slice(0, -1) : [];
+  const model = workModel === "hybrid" || workModel === "onsite" ? workModel : "remote";
+  return {
+    ...empty,
+    work_model: model,
+    country_code: country,
+    city: placeParts[0] ?? "",
+    region: placeParts.slice(1).join(", "),
+    notes: country ? "" : location || "",
+    is_primary: true,
+  };
 }
 
 /* ------------------------------------------------------------------ */
@@ -811,10 +883,12 @@ export function editFormToPositionPatch(
       equity: data.equity || null,
     },
     // Typing a range is the act of collecting it: without this flag the
-    // range is treated as never gathered and reads as "Not disclosed".
-    ...(data.budget_min || data.budget_max
-      ? { compensation_collected: true, compensation_visibility: "public" }
-      : {}),
+    // range is treated as never gathered and reads as "Not disclosed". Who
+    // may SEE it is not decided here: the intake stores the range as
+    // internal, and a save used to flip it to public — so opening an intake
+    // role and saving it untouched put the salary on the job board.
+    // Visibility has its own control (RequisitionEditor) and stays as it is.
+    ...(data.budget_min || data.budget_max ? { compensation_collected: true } : {}),
     work_authorization: {
       ...priorWA,
       countries: data.target_countries,

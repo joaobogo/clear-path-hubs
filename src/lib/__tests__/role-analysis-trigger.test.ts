@@ -285,3 +285,78 @@ describe("analysisDecision", () => {
     expect(notes.map((n) => n.text).join(" ")).toMatch(/CRON_INVOKE_SECRET/);
   });
 });
+
+describe("review fixes: no takeover, no analysis on live roles, no background retry of dead ends", () => {
+  it("a forced 'Try again' never takes over a live run", async () => {
+    seedPosition({ blueprint_status: "drafting_blueprint", updated_at: ago(1), blueprint_attempts: 1 });
+    const { runBlueprintForPosition } = await import("@/lib/blueprint-pipeline.server");
+    const res = await runBlueprintForPosition(POS, { force: true });
+    expect(res.reason).toBe("already_running");
+    expect(updates).toEqual([]);
+  });
+
+  it("a forced retry reclaims a dead run, and only while it is still dead", async () => {
+    seedPosition({ blueprint_status: "drafting_blueprint", updated_at: ago(30), blueprint_attempts: 1 });
+    const { runBlueprintForPosition } = await import("@/lib/blueprint-pipeline.server");
+    const res = await runBlueprintForPosition(POS, { force: true });
+    expect(res.reason).not.toBe("already_running");
+    expect(updates[0]?.patch.blueprint_status).toBe("analyzing_jd");
+  });
+
+  it("a row without a readable heartbeat is not called dead", async () => {
+    const { isBlueprintStale, analysisDecision } = await import("@/lib/blueprint-trigger");
+    expect(isBlueprintStale("analyzing_jd", null)).toBe(false);
+    expect(analysisDecision({ blueprint_status: "analyzing_jd" }).state).toBe("running");
+  });
+
+  it("a live, paused or closed role is never analysed from a page view", async () => {
+    const { analysisDecision } = await import("@/lib/blueprint-trigger");
+    for (const status of ["active", "paused", "closed", "archived", "filled"]) {
+      const d = analysisDecision({ status, blueprint_status: "queued" });
+      expect(d.shouldStart, status).toBe(false);
+      expect(d.state, status).toBe("skipped");
+    }
+    expect(analysisDecision({ status: "submitted", blueprint_status: "queued" }).shouldStart).toBe(true);
+
+    seedPosition({ status: "active", blueprint_status: "queued" });
+    const { ensureRoleAnalysis } = await import("@/lib/blueprint.functions");
+    const res = (await ensureRoleAnalysis({
+      data: { positionId: POS },
+      context: { userId: "33333333-3333-4333-8333-333333333333" },
+    } as never)) as { started: boolean; state: string };
+    expect(res.started).toBe(false);
+    expect(res.state).toBe("skipped");
+    expect(updates).toEqual([]);
+  });
+
+  it("the drain leaves a dead-end failure to a person and skips a live role", async () => {
+    seedPosition({ blueprint_status: "failed", blueprint_error: "job_description_unreadable", updated_at: ago(30), blueprint_attempts: 1 });
+    db.positions.push({
+      ...db.positions[0],
+      id: "33333333-3333-4333-8333-333333333333",
+      status: "active",
+      blueprint_status: "queued",
+      updated_at: ago(30),
+    });
+    const { drainStuckBlueprints } = await import("@/lib/blueprint-drain.server");
+    const results = await drainStuckBlueprints(admin as never);
+    expect(results.map((r) => r.result).sort()).toEqual(["skipped:failed", "skipped:skipped"]);
+    expect(updates).toEqual([]);
+  });
+
+  it("an edit made while a run is in flight asks for one more run instead of being lost", async () => {
+    seedPosition({ blueprint_status: "drafting_blueprint", updated_at: ago(1), blueprint_attempts: 1 });
+    const { savePositionEdit } = await import("@/lib/position-edit.functions");
+    const { positionToEditForm } = await import("@/lib/positions/role-form");
+    const form = positionToEditForm(db.positions[0]);
+    const { organization_id: _o, organization_name: _n, status: _s, visibility: _v, ...rest } = form;
+    const res = (await savePositionEdit({
+      data: { ...rest, headcount: 1, description: "Run our clinics across the whole region." },
+      context: { userId: "33333333-3333-4333-8333-333333333333" },
+    } as never)) as { analysis: string };
+    expect(res.analysis).toBe("rerun_requested");
+    const saved = db.positions[0].intake_context as Record<string, unknown>;
+    expect(typeof saved.blueprint_rerun_requested_at).toBe("string");
+    expect(db.positions[0].blueprint_status).toBe("drafting_blueprint");
+  });
+});

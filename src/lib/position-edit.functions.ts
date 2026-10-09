@@ -23,10 +23,11 @@ import {
   positionToEditForm,
   roleIntakeAnswersShape,
   roleRequiredness,
+  storedDescription,
   type RoleSaveData,
   type ScreeningInput,
 } from "@/lib/positions/role-form";
-import { analysisDecision } from "@/lib/blueprint-trigger";
+import { BLUEPRINT_RERUN_FLAG, analysisDecision } from "@/lib/blueprint-trigger";
 import { sanitizeInlineMarkup, stripInlineMarkup } from "@/lib/marketing/inline-format";
 
 async function getAdmin() {
@@ -189,7 +190,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     const { data: existing } = await s
       .from("positions")
       .select(
-        "intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers,location,work_model,description,blueprint_status,blueprint_attempts,updated_at,blueprint_error",
+        "intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers,location,work_model,description,jd_text,blueprint,status,blueprint_status,blueprint_attempts,updated_at,blueprint_error",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -205,12 +206,24 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     // request the role page opens for it (ensureRoleAnalysis) — see
     // blueprint-trigger.ts for why it is not started inside this request.
     const decision = analysisDecision((existing ?? {}) as AnyRow);
-    const inputsChanged = analysisInputsChanged(existing ?? {}, {
-      description: patch.description as string | null,
-      requirements: patch.requirements,
-    });
-    let analysis: "queued" | "running" | "ready" = decision.state === "running" ? "running" : "ready";
-    if (decision.state !== "running" && (decision.state !== "ready" || inputsChanged)) {
+    // Compared against the text the form was pre-filled with (the same
+    // fallback chain), not the bare column: a file-JD role keeps its text in
+    // jd_text and a null column read as "changed" on every untouched save.
+    const inputsChanged = analysisInputsChanged(
+      { description: storedDescription(existing ?? {}), requirements: existing?.requirements },
+      { description: patch.description as string | null, requirements: patch.requirements },
+    );
+    let analysis: "queued" | "running" | "ready" | "rerun_requested" | "skipped" =
+      decision.state === "running" ? "running" : decision.state === "skipped" ? "skipped" : "ready";
+    if (decision.state === "running") {
+      // The run in flight read the OLD description. It cannot be stopped
+      // (it is carried by another request), so the brief is marked for one
+      // more run; the pipeline honours the marker when it completes.
+      if (inputsChanged) {
+        (patch.intake_context as AnyRow)[BLUEPRINT_RERUN_FLAG] = new Date().toISOString();
+        analysis = "rerun_requested";
+      }
+    } else if (decision.state !== "skipped" && (decision.state !== "ready" || inputsChanged)) {
       patch.blueprint_status = "queued";
       patch.blueprint_error = null;
       // A person's edit is a fresh start for the automatic retry budget.

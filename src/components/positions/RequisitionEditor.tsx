@@ -7,6 +7,7 @@ import { toastError } from "@/lib/toast-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
+import { seededLocation } from "@/lib/positions/role-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -74,28 +75,6 @@ const emptyLocation = (): RequisitionLocation => ({
 });
 
 type WorkModel = "remote" | "hybrid" | "onsite" | "";
-
-/**
- * First structured row, read from the one-line location the intake recorded.
- * "Manchester, United Kingdom" becomes City = Manchester, Country = GB, instead
- * of the whole answer landing in "notes" with no country — which is how an
- * intake role used to open here looking like nobody had said where it was.
- */
-export function seededLocation(openWorldwide: boolean, workModel: WorkModel, location: string): RequisitionLocation {
-  if (openWorldwide) return emptyLocation();
-  const parts = (location || "").split(",").map((p) => p.trim()).filter(Boolean);
-  const country = parts.length > 0 ? normalizeCountryCode(parts[parts.length - 1]) : "";
-  const placeParts = country ? parts.slice(0, -1) : [];
-  return {
-    ...emptyLocation(),
-    work_model: workModel || "remote",
-    country_code: country,
-    city: placeParts[0] ?? "",
-    region: placeParts.slice(1).join(", "),
-    notes: country ? "" : location || "",
-    is_primary: true,
-  };
-}
 
 type Form = {
   reference_code: string;

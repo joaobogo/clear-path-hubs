@@ -16,8 +16,10 @@ import {
 import { normalizeTravelExpectation, normalizeTimezoneAnchor } from "@/lib/requisition-schema";
 import {
   BLUEPRINT_MAX_AUTO_ATTEMPTS,
+  BLUEPRINT_RERUN_FLAG,
   BLUEPRINT_RUNNABLE_STATUSES,
   BLUEPRINT_STALE_MS,
+  isBlueprintInProgress,
   isBlueprintStale,
 } from "@/lib/blueprint-trigger";
 
@@ -117,16 +119,38 @@ export async function runBlueprintPipeline(input: BlueprintRunInput): Promise<{ 
     await applyScreeningQuestions(admin, input.positionId, bp);
     await enrichOrganization(admin, input.organizationId, bp);
 
+    // An edit to the job description or must-haves made while this run was
+    // in flight could not be read by it. The save leaves a marker in the
+    // brief; honouring it here queues one more run instead of calling a
+    // brief built from the old description "ready".
+    const { data: latest } = await admin
+      .from("positions")
+      .select("intake_context")
+      .eq("id", input.positionId)
+      .maybeSingle();
+    const latestContext = (latest?.intake_context ?? {}) as Record<string, unknown>;
+    const rerunRequested = Boolean(latestContext[BLUEPRINT_RERUN_FLAG]);
+    const { [BLUEPRINT_RERUN_FLAG]: _rerun, ...contextWithoutFlag } = latestContext;
+
     await admin
       .from("positions")
       .update({
         blueprint: bp as unknown as Record<string, unknown>,
-        blueprint_status: "ready",
+        blueprint_status: rerunRequested ? "queued" : "ready",
         blueprint_error: null,
         blueprint_model: bp.model,
         blueprint_generated_at: bp.generated_at,
+        ...(rerunRequested
+          ? { blueprint_attempts: 0, intake_context: contextWithoutFlag }
+          : {}),
       })
       .eq("id", input.positionId);
+
+    if (rerunRequested) {
+      // The next run (started by the role page or the drain) sends the
+      // "ready" notice, so the client is told once, about the current brief.
+      return { ok: true, reason: "rerun_queued" };
+    }
 
     if (input.intakeId) {
       await admin
@@ -416,6 +440,13 @@ export async function runBlueprintForPosition(
   // it ended) leaves the role "in progress" forever. Its heartbeat — updated_at,
   // touched at every stage — tells us it is dead, and it may be reclaimed.
   const stale = isBlueprintStale(status, position.updated_at as string | null);
+  // A live run is never taken over — not even by a forced "Try analysis
+  // again" from a second tab. Claiming it would start a second pipeline
+  // writing stages, the description, the brief and screening questions over
+  // the first, and both would email "ready".
+  if (isBlueprintInProgress(status) && !stale) {
+    return { ok: true, status, reason: "already_running" };
+  }
   if (!RUNNABLE.includes(status) && !stale && !opts.force) {
     return { ok: true, status, reason: "already_running" };
   }
@@ -438,12 +469,15 @@ export async function runBlueprintForPosition(
     claimQuery = claimQuery.or(
       `blueprint_status.in.(${RUNNABLE.filter(Boolean).join(",")}),blueprint_status.is.null`,
     );
-  } else if (stale && !opts.force) {
+  } else if (stale) {
+    // Forced or not, a dead run is only reclaimed while it is still dead: if
+    // its heartbeat moved since we read it, someone else has it.
     claimQuery = claimQuery
       .eq("blueprint_status", status)
       .lt("updated_at", new Date(Date.now() - BLUEPRINT_STALE_MS).toISOString());
   } else {
-    // Forced retry of a live run: only take it if nobody moved it meanwhile.
+    // Forced re-run of a finished analysis (ready/confirmed): only take it if
+    // nobody moved it meanwhile.
     claimQuery = claimQuery.eq("blueprint_status", status);
   }
   const { data: claimed } = await claimQuery.select("id");
