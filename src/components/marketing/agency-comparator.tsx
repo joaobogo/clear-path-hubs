@@ -22,7 +22,6 @@ import { CTA_PRIMARY, CTA_MESSAGE, CTA_ENTERPRISE } from "@/config/cta";
 import {
   COMPARISON_DEFAULTS,
   DEFAULT_LABEL,
-  MAX_COMPARISON_MONTHS,
   compareCosts,
   describeDifference,
 } from "@/lib/pricing-comparison";
@@ -31,7 +30,6 @@ import {
 const RANGES = {
   positions: { min: 1, max: MAX_POSITIONS, step: 1 },
   hires: { min: 1, max: 100, step: 1 },
-  months: { min: 1, max: MAX_COMPARISON_MONTHS, step: 1 },
   salary: { min: 20_000, max: 300_000, step: 5_000 },
   agencyPct: { min: 5, max: 40, step: 1 },
 } as const;
@@ -49,7 +47,7 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 export function AgencyComparator() {
   const [positions, setPositions] = useState<number>(DEFAULTS.positions);
   const [hires, setHires] = useState<number>(DEFAULTS.hires);
-  const [months, setMonths] = useState<number>(DEFAULTS.months);
+  const months = DEFAULTS.months;
   const [salary, setSalary] = useState<number>(DEFAULTS.salary);
   const [agencyPct, setAgencyPct] = useState<number>(DEFAULTS.agencyPct);
   const ids = useId();
@@ -88,15 +86,6 @@ export function AgencyComparator() {
               range={RANGES.positions}
               display={plural(positions, "position", "positions")}
               hint={pkg ? `Covered by the ${pkg.capacityLabel.toLowerCase()} package` : "Above the largest package — scoped with your account team"}
-            />
-            <SliderField
-              id={`${ids}-months`}
-              label="Months on the package"
-              value={months}
-              onChange={setMonths}
-              range={RANGES.months}
-              display={plural(months, "month", "months")}
-              hint="How long you expect to keep hiring"
             />
             <SliderField
               id={`${ids}-hires`}
