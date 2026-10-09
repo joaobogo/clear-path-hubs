@@ -154,7 +154,7 @@ export function nextMilestoneFor(rows: KpiRow[], status: string): string | null 
   if (rows.some((r) => r.stage === "offer")) return "Offer response";
   if (rows.some((r) => r.stage === "interview_process"))
     return "Interview outcome";
-  if (rows.some((r) => r.stage === "shortlisted")) return "Interview requests";
+  if (rows.some((r) => r.stage === "shortlisted")) return "Move to interview stage";
   if (rows.length > 0) return "Review new candidates";
   return "Awaiting first candidates";
 }

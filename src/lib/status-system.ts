@@ -74,7 +74,7 @@ export const PUBLISH_STATUS = {
   published: def(stage("live", "success", "check")),
 } as const;
 
-/** Interview scheduling state. */
+/** Legacy interview-row state (stage tracking only; nothing is scheduled here). */
 export const INTERVIEW_STATUS = {
   proposed: def(stage("proposed", "warning", "clock")),
   scheduled: def(stage("scheduled", "info", "check")),

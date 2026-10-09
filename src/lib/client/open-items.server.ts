@@ -216,7 +216,7 @@ export async function loadClientOpenItems(
       label: name ? `Offer for ${name} — ${holder}` : `Offer — ${holder}`,
       context: roleLine(row.position_id),
       position_id: row.position_id ?? null,
-      href: "/client/offers",
+      href: `/client/candidates/${row.id}`,
       due_at: due,
       overdue: isOverdue(due, now),
       waiting_since: offer?.movedAt ?? row.stage_entered_at,

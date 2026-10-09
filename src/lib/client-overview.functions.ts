@@ -354,7 +354,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       if (posRows.some((r) => r.stage === "offer")) next = "Offer response";
       else if (posRows.some((r) => r.stage === "interview_process"))
         next = "Interview outcome";
-      else if (posRows.some((r) => r.stage === "shortlisted")) next = "Interview requests";
+      else if (posRows.some((r) => r.stage === "shortlisted")) next = "Move to interview stage";
 
       else if (posRows.some((r) => r.stage === "delivered")) next = "Review new candidates";
 
@@ -481,7 +481,7 @@ export const loadClientOverview = createServerFn({ method: "GET" })
       due_label: iv.prompt_from ? openItemDueLabel({ due_at: iv.prompt_from } as any, nowMs) : "Due soon",
       waiting_since: iv.happened_at,
       action: "Feedback",
-      to: `/client/interviews?interview=${iv.interview_id}&feedback=1`,
+      to: `/client/candidates/${iv.candidate_match_id}`,
     }));
 
     const queueGroups = buildQueue([...otherQueueItems, ...feedbackQueueItems]);

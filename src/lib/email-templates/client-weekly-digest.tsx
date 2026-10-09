@@ -163,7 +163,7 @@ export const template = {
           waitingSince: '11 Mar',
         },
       ],
-      nextWeek: ['1 booked interview to run and write up'],
+      nextWeek: ['1 interview to write up'],
       noMovement: false,
       noMovementReason: null,
     },

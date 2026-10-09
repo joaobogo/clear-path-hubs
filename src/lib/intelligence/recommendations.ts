@@ -530,6 +530,6 @@ export const BEST_PRACTICES: BestPractice[] = [
     key: "keep_feedback_fast",
     title: "Give interview feedback within a day",
     body: "Structured feedback recorded while it is fresh keeps the scorecard useful and keeps candidates warm.",
-    link: { label: "Open interviews", to: "/client/interviews" },
+    link: { label: "Open candidates", to: "/client/candidates" },
   },
 ];

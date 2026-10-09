@@ -15,13 +15,10 @@ import {
 import type { MatchStage } from "@/lib/client-match-stage";
 import { isNotRecommendedFit } from "@/lib/client-fit-presentation";
 
-type PrimaryActionKey = "shortlist" | "request_interview" | "offer" | "hire" | "not_moving_forward";
+type PrimaryActionKey = "shortlist" | "not_moving_forward";
 
 const RESULT_STAGE: Record<PrimaryActionKey, MatchStage> = {
   shortlist: "shortlisted",
-  request_interview: "interview_process",
-  offer: "offer",
-  hire: "hired",
   not_moving_forward: "not_moving_forward",
 };
 
@@ -35,22 +32,21 @@ const UNDO_TOAST_MS = 12_000;
 type AdvanceStep = { action: PrimaryActionKey; label: string; done: string };
 
 /**
- * The next decision for a candidate, derived from the stage alone. TaaSFlow no
- * longer schedules interviews, so no interview record gates the action: the
- * employer arranges interviews directly with the candidate and moves the
- * candidate on when ready.
+ * The one-click decision for a candidate, derived from the stage alone.
+ *
+ * TaaSFlow delivers the list; it does not run interviews or offers. Those
+ * happen directly between the employer and the candidate, so no card or row
+ * carries an interview, offer or hire button. Those stages exist only as
+ * tracking columns on the candidates board, where a card is dragged to record
+ * what happened off-system.
  */
 export function advanceFor(stage: MatchStage): AdvanceStep | null {
   return (
     {
       delivered: { action: "shortlist", label: "Shortlist", done: "Added to your shortlist" },
-      shortlisted: {
-        action: "request_interview",
-        label: "Move to interview stage",
-        done: "Moved to interview stage",
-      },
-      interview_process: { action: "offer", label: "Make offer", done: "Moved to offer stage" },
-      offer: { action: "hire", label: "Mark hired", done: "Marked as hired" },
+      shortlisted: null,
+      interview_process: null,
+      offer: null,
       hired: null,
       not_moving_forward: {
         action: "shortlist",

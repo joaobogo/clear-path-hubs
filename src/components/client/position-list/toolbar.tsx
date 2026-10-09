@@ -31,8 +31,8 @@ function ActionLink({ row }: { row: Row }) {
   const cls = "text-xs font-medium text-primary hover:underline shrink-0";
   if (target?.kind === "offer_response") {
     return (
-      <Link to="/client/offers" className={cls}>
-        See the offer →
+      <Link to="/client/candidates" search={target.search} className={cls}>
+        Track the offer →
       </Link>
     );
   }

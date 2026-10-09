@@ -234,7 +234,7 @@ export function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"]
         {rows.length > 0 && (
           <p className="mt-3 text-xs text-muted-foreground">
             &ldquo;Needs your input&rdquo; counts candidates waiting on a decision
-            or interview confirmation from your team.
+            from your team.
           </p>
         )}
 
@@ -386,8 +386,7 @@ export function FooterLine({ generated_at }: { generated_at: string }) {
   return (
     <p className="text-xs text-muted-foreground">
       Generated {formatDateTime(generated_at)} · Numbers are live from your
-      workspace. See <Link to="/client/offers" className="underline">Offers</Link>,{" "}
-      <Link to="/client/positions" className="underline">Roles</Link>, and{" "}
+      workspace. See <Link to="/client/positions" className="underline">Roles</Link> and{" "}
       <Link to="/client/candidates" className="underline">Candidates</Link> for the detail.
     </p>
   );

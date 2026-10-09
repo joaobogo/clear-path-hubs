@@ -987,7 +987,7 @@ export const nudgeOffer = createServerFn({ method: "POST" })
           body:
             data.note?.trim() ||
             "This offer has had no movement for more than 48 hours. Chase the candidate or update the record.",
-          link_path: "/client/offers",
+          link_path: "/client/candidates?view=board&stage=offer",
         } as never);
       } catch {
         // notification failure must not fail the nudge

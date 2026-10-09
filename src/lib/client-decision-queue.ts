@@ -24,7 +24,7 @@ export const QUEUE_TYPE_LABEL: Record<QueueKind, string> = {
   feedback: "Give feedback",
   offer: "Offer response",
   info_request: "Answer request",
-  interview: "Confirm time",
+  interview: "Interview update",
 };
 
 

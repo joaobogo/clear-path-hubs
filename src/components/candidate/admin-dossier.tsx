@@ -435,7 +435,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
       {/* Interviews */}
       <Section title="Interviews">
         {(interviews as Any[]).length === 0 ? (
-          <p className="text-sm text-muted-foreground">No interviews scheduled.</p>
+          <p className="text-sm text-muted-foreground">No interviews on record.</p>
         ) : (
           <ul className="space-y-2 text-sm">
             {(interviews as Any[]).map((i) => (

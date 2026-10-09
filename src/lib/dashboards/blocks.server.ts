@@ -269,10 +269,10 @@ async function offerStatus(sb: AnySupabase, org: string): Promise<BlockData | nu
       ...Array.from(counts.entries()).map(([label, value]) => ({
         label: label.replace(/_/g, " "),
         value,
-        href: "/client/offers",
+        href: "/client/candidates?view=board&stage=offer",
       })),
       ...(stalled > 0
-        ? [{ label: "no movement in 48h", value: stalled, href: "/client/offers" }]
+        ? [{ label: "no movement in 48h", value: stalled, href: "/client/candidates?view=board&stage=offer" }]
         : []),
     ],
   };

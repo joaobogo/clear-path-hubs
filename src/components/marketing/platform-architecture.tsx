@@ -152,9 +152,9 @@ export const NODES: readonly Node[] = [
     does: [
       "Shows a side-by-side comparison as the default view",
       "Walks each decision through valid pipeline states only",
-      "Runs interviews, scorecards and offers in the same thread",
+      "Records interview feedback, scorecards and offers in the same thread",
     ],
-    produces: ["Shortlists, interviews, offers and hires"],
+    produces: ["Shortlists, interview feedback, offers and hires"],
     controls: [
       "Approve, reject or advance — with a short undo window",
       "Reason capture on rejections",

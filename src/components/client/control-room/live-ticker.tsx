@@ -99,7 +99,7 @@ export function LiveTicker({ orgId }: { orgId: string }) {
       ) : !data?.length ? (
         <p className="mt-3 text-sm text-muted-foreground">
           Nothing has moved yet today. When a candidate arrives, a stage changes
-          or an interview is booked, it will show here.
+          or feedback is recorded, it will show here.
         </p>
 
       ) : (

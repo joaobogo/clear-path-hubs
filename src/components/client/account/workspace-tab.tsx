@@ -463,7 +463,7 @@ function TimezoneSection({
  <SectionCard
  icon={<Clock className="h-5 w-5" />}
  title="Timezone"
- description="Interview times, digests, and activity timestamps use this timezone."
+ description="Digests and activity timestamps use this timezone."
  >
  <div className="space-y-2">
  <Label htmlFor="tz-select" className="text-sm">

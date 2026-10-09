@@ -98,7 +98,7 @@ export function buildPipelineActionLabel(
  *
  * Every target is an exact-id deep link into an existing client surface:
  *  - awaiting review  → candidates list, filtered to this role's new arrivals
- *  - offer outstanding → candidates list at offer stage for this role
+ *  - offer outstanding → candidates board at offer stage for this role
  */
 export type PipelineActionTarget =
   | {
@@ -106,7 +106,11 @@ export type PipelineActionTarget =
       to: "/client/candidates";
       search: { position: string; review: "awaiting"; stage: "delivered" };
     }
-  | { kind: "offer_response"; to: "/client/offers" };
+  | {
+      kind: "offer_response";
+      to: "/client/candidates";
+      search: { position: string; stage: "offer"; view: "board" };
+    };
 
 export function buildPipelineActionTarget(
   input: Pick<PipelineStatusInput, "status" | "awaitingReview" | "offers"> & {
@@ -120,10 +124,13 @@ export function buildPipelineActionTarget(
       to: "/client/candidates",
       search: { position: input.positionId, review: "awaiting", stage: "delivered" },
     };
+  // Offers are made directly with the candidate; the board is where the
+  // outcome is tracked.
   if (input.offers > 0)
     return {
       kind: "offer_response",
-      to: "/client/offers",
+      to: "/client/candidates",
+      search: { position: input.positionId, stage: "offer", view: "board" },
     };
   return null;
 }

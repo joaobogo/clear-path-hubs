@@ -40,7 +40,7 @@ export function HiringProcessSection({
         <ProcessStep
           n={4}
           title="Offer"
-          body="Extend an offer through TaaSFlow so we can track acceptance."
+          body="Make the offer directly with the candidate, then track it on the board."
           done={offersTotal > 0}
         />
         <ProcessStep

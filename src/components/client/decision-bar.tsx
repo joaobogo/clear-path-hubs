@@ -30,9 +30,6 @@ import {
 /** Where each decision lands the candidate, so we can promise what follows. */
 const RESULT_STAGE: Partial<Record<DecisionActionKey, MatchStage>> = {
   shortlist: "shortlisted",
-  request_interview: "interview_process",
-  offer: "offer",
-  hire: "hired",
   not_moving_forward: "not_moving_forward",
 };
 
@@ -49,7 +46,12 @@ const UNDO_TOAST_MS = 12_000;
 
 type AdvanceStep = { action: DecisionActionKey; label: string; done: string };
 
-/** The single forward move available from each stage, in client language. */
+/**
+ * The single one-click move available from each stage, in client language.
+ * Interviews, offers and hires are not decisions taken here: they happen
+ * directly with the candidate and are tracked by dragging the card on the
+ * candidates board.
+ */
 export function advanceFor(stage: MatchStage): AdvanceStep | null {
   return (
     {
@@ -58,13 +60,9 @@ export function advanceFor(stage: MatchStage): AdvanceStep | null {
         label: "Advance to shortlist",
         done: "Added to your shortlist",
       },
-      shortlisted: {
-        action: "request_interview",
-        label: "Advance to interview",
-        done: "Moved to interview stage",
-      },
-      interview_process: { action: "offer", label: "Advance to offer", done: "Moved to offer stage" },
-      offer: { action: "hire", label: "Mark hired", done: "Marked as hired" },
+      shortlisted: null,
+      interview_process: null,
+      offer: null,
       hired: null,
       not_moving_forward: { action: "shortlist", label: "Reopen", done: "Back on your shortlist" },
     } as const

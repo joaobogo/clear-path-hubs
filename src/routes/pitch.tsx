@@ -98,7 +98,7 @@ const ENGINE_STEPS = [
 const CONTROL = [
   { label: "Same workspace, same evidence", body: "The screen your team sees is the screen the platform runs on." },
   { label: "Score the score", body: "Override any candidate rating. The system logs your reasoning next to ours." },
-  { label: "Move the pipeline", body: "Drag candidates through stages. Reject with reason. Trigger interview outreach." },
+  { label: "Move the pipeline", body: "Drag candidates through stages. Reject with a reason." },
   { label: "Share on your terms", body: "Send a stakeholder link that expires. Revoke it anytime." },
 ];
 

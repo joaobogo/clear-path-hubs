@@ -74,7 +74,7 @@ export function TeamActivityPanel({ orgId }: { orgId: string | null }) {
         <div className="min-w-0">
           <h2 className="truncate text-sm font-semibold">Who is doing what</h2>
           <p className="text-xs text-muted-foreground">
-            Decisions recorded, interviews booked, and last sign-in — straight from the record.
+            Decisions recorded, interview feedback left, and last sign-in — straight from the record.
           </p>
         </div>
         {!!data && (

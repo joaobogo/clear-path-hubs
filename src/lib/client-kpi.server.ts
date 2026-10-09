@@ -781,11 +781,11 @@ const AUDIT_ACTION_LABEL: Record<string, string> = {
   "contact_released": "Contact details released",
   "candidate_match.stage_changed": "Stage changed",
   "candidate_match.publish": "Added to your candidates",
-  "interview.scheduled": "Interview scheduled",
-  "interview.requested": "Interview requested",
+  "interview.scheduled": "Interview recorded",
+  "interview.requested": "Moved to interview stage",
   "interview.completed": "Interview completed",
   "interview.cancelled": "Interview cancelled",
-  "interview.rescheduled": "Interview rescheduled",
+  "interview.rescheduled": "Interview updated",
   "decision.recorded": "Decision recorded",
 };
 

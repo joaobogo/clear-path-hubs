@@ -34,7 +34,7 @@ export const POSITION_PUBLISH_OFFER = {
     "One active role published to the job board and our sourcing network",
     "Sourcing, outreach and application handling by our team",
     "Evidence-backed shortlist in your workspace — no CV dumps",
-    "Full ATS: pipeline, interviews, scorecards and offers",
+    "Full ATS: pipeline, interview feedback, scorecards and offers",
   ],
   nextSteps: [
     "Your role goes live the moment payment clears — no extra step from you.",

@@ -253,7 +253,7 @@ const AUDIT_ACTIONS: Record<string, string> = {
   "match.visibility.visible": "Candidate made visible to the client",
   "match.visibility.hidden": "Candidate hidden from the client",
   "client.shortlist": "Client shortlisted a candidate",
-  "client.request_interview": "Client requested an interview",
+  "client.request_interview": "Client moved a candidate to the interview stage",
   "client.not_moving_forward": "Client passed on a candidate",
   "client.position.create": "Client created a role",
   score_approval_noop: "Score approval had nothing to change",

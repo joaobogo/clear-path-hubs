@@ -263,7 +263,8 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
   if (summary.offers > 0) {
     actionRequired.push({
       label: `${summary.offers} offer${summary.offers === 1 ? "" : "s"} awaiting response`,
-      href: "/client/offers",
+      href: "/client/candidates",
+      search: { position: id, stage: "offer", view: "board" },
     });
   }
   if (position.status === "needs_clarification") {

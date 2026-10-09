@@ -13,10 +13,10 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
     id: "roles",
     label: "Roles",
     tabs: [
+      // Interviews and offers happen directly between the client and the
+      // candidate, outside TaaSFlow. The old Interviews and Offers screens
+      // redirect to the candidates board, where every stage is tracked.
       { to: "/client/positions", label: "Roles" },
-      { to: "/client/interviews", label: "Interviews" },
-      { to: "/client/offers", label: "Offers" },
-      
     ],
   },
   {

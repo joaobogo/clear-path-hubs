@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Loader2, MessageSquare, MoreHorizontal, Sparkles } from "lucide-react";
+import { KanbanSquare, Loader2, MessageSquare, MoreHorizontal, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,16 +13,18 @@ import type { MatchStage } from "@/lib/client-kpi.server";
 
 // ─── Stage → primary + secondary actions ─────────────────────────────────────
 
+/**
+ * What a client can do with a candidate inside TaaSFlow. Interviews, offers
+ * and hires are not actions here: they happen directly between the client
+ * and the candidate, and the stage is tracked on the candidates board.
+ */
 export type ActionKey =
   | "shortlist"
-  | "request_interview"
   | "request_more_information"
   | "hold"
   | "request_contact_release"
   | "submit_feedback"
-  | "not_moving_forward"
-  | "offer"
-  | "hire";
+  | "not_moving_forward";
 
 export type ActionDef = { key: ActionKey; label: string };
 
@@ -36,22 +38,18 @@ export const COMMON_MORE: ActionDef[] = [
 export const ACTIONS_BY_STAGE: Record<MatchStage, { primary: ActionDef | null; more: ActionDef[] }> = {
   delivered: {
     primary: { key: "shortlist", label: "Shortlist" },
-    more: [
-      { key: "request_interview", label: "Move to interview stage" },
-      ...COMMON_MORE,
-      { key: "not_moving_forward", label: "Decline for this role" },
-    ],
+    more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
   },
   shortlisted: {
-    primary: { key: "request_interview", label: "Move to interview stage" },
+    primary: null,
     more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
   },
   interview_process: {
-    primary: { key: "offer", label: "Extend offer" },
+    primary: null,
     more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
   },
   offer: {
-    primary: { key: "hire", label: "Mark hired" },
+    primary: null,
     more: [
       { key: "submit_feedback", label: "Add feedback" },
       { key: "not_moving_forward", label: "Decline for this role" },
@@ -96,9 +94,14 @@ export function ActionArea({
       </div>
       {stage === "hired" ? (
         <p className="text-sm text-muted-foreground">Candidate marked as hired. 🎉</p>
+      ) : stage === "delivered" || stage === "not_moving_forward" ? (
+        <p className="mb-3 text-xs text-muted-foreground">
+          Decide on this candidate. Every decision is logged.
+        </p>
       ) : (
         <p className="mb-3 text-xs text-muted-foreground">
-          Recommend the next move for this candidate. Every decision is logged.
+          Interviews and offers happen directly between you and the candidate. Record
+          how it went on the candidates board.
         </p>
       )}
       <div className="flex items-center gap-2">
@@ -188,6 +191,16 @@ export function ActionArea({
           <MessageSquare className="h-3.5 w-3.5" />
           Message team
         </Link>
+        {stage !== "hired" && stage !== "not_moving_forward" && (
+          <Link
+            to="/client/candidates"
+            search={{ view: "board" } as never}
+            className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline"
+          >
+            <KanbanSquare className="h-3.5 w-3.5" />
+            Track on the board
+          </Link>
+        )}
       </div>
     </div>
   );
@@ -209,10 +222,10 @@ export function MobileActionBar({
   subject?: string;
 }) {
   const forSubject = subject ? ` for ${subject}` : "";
-  if (!actions.primary) return null;
   // Declining is a decision, not an overflow item: it stays on screen at 375px.
   const decline = actions.more.find((a) => a.key === "not_moving_forward") ?? null;
   const rest = actions.more.filter((a) => a.key !== "not_moving_forward");
+  if (!actions.primary && !decline) return null;
   return (
     <div
       role="toolbar"
@@ -221,24 +234,26 @@ export function MobileActionBar({
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
     >
       <div className="mx-auto flex max-w-3xl items-center gap-2">
-        <Button
-          className="min-h-11 flex-1"
-          disabled={pending}
-          onClick={() => onAct(actions.primary!.key)}
-        >
-          {pendingKey === actions.primary.key ? (
-            <>
-              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden="true" />
-              Saving…
-            </>
-          ) : (
-            actions.primary.label
-          )}
-        </Button>
+        {actions.primary && (
+          <Button
+            className="min-h-11 flex-1"
+            disabled={pending}
+            onClick={() => onAct(actions.primary!.key)}
+          >
+            {pendingKey === actions.primary.key ? (
+              <>
+                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden="true" />
+                Saving…
+              </>
+            ) : (
+              actions.primary.label
+            )}
+          </Button>
+        )}
         {decline && (
           <Button
             variant="outline"
-            className="min-h-11 shrink-0 text-destructive hover:text-destructive"
+            className={cn("min-h-11 text-destructive hover:text-destructive", actions.primary ? "shrink-0" : "flex-1")}
             disabled={pending}
             onClick={() => onAct(decline.key)}
           >

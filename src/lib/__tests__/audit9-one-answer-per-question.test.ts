@@ -112,9 +112,9 @@ describe("promises match the engine", () => {
     expect(hires, "the column has to be selected to be reported").toMatch(
       /salary_amount, salary_currency/,
     );
-    expect(strip(src("src/routes/_authenticated/client.offers.tsx"))).toMatch(
-      /formatMoneyMajorCompact\(\s*report\.totals\.avg_salary,\s*report\.totals\.salary_currency/,
-    );
+    // The client Offers screen is gone (offers are made directly with the
+    // candidate and tracked on the board), so the only consumer of the report
+    // is the admin side; the report itself still carries the currency.
   });
 });
 

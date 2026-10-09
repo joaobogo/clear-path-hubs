@@ -72,7 +72,7 @@ export function PortfolioSnapshot({
       value: data.interviewing,
       href: "/client/candidates?stage=interview_process",
     },
-    { label: "Offers", value: data.offers, href: "/client/offers" },
+    { label: "Offers", value: data.offers, href: "/client/candidates?stage=offer" },
     {
       label: "Hires",
       value: data.hires,
@@ -304,7 +304,7 @@ export function progressSummary(p: Row): string {
   if (k.interviewing > 0)
     return `${k.interviewing} candidate${k.interviewing === 1 ? "" : "s"} in the interview process.`;
   if (k.shortlisted > 0)
-    return `${k.shortlisted} shortlisted candidate${k.shortlisted === 1 ? "" : "s"} ready for interview requests.`;
+    return `${k.shortlisted} shortlisted candidate${k.shortlisted === 1 ? "" : "s"} ready to move to the interview stage.`;
   if (k.delivered > 0)
     return `${k.delivered} candidate${k.delivered === 1 ? "" : "s"} delivered${k.top > 0 ? `, ${k.top} top match${k.top === 1 ? "" : "es"}` : ""}. Waiting on your review.`;
   return "TaaSFlow is building the first shortlist for this role.";

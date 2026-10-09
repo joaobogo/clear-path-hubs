@@ -187,9 +187,7 @@ function CandidateDetailPage() {
     onSuccess: (res, p) => {
       const back = stageBeforeRef.current;
       toast.success(
-        p.action === "request_interview"
-          ? "Moved to the interview stage — arrange the interview directly with the candidate."
-          : "Recorded — the TaaSFlow team has been notified.",
+        "Recorded — the TaaSFlow team has been notified.",
         {
           description: nextStepAfterRef.current ?? undefined,
           duration: 12_000,
@@ -263,9 +261,6 @@ function CandidateDetailPage() {
   const NO_REASON_NEEDED = new Set<ActionKey>(["shortlist"]);
  const RESULT_STAGE: Partial<Record<ActionKey, MatchStage>> = {
  shortlist: "shortlisted",
- request_interview: "interview_process",
- offer: "offer",
- hire: "hired",
  not_moving_forward: "not_moving_forward",
  };
   const handleAct = (k: ActionKey, fromStage: MatchStage) => {
@@ -591,13 +586,15 @@ function CandidateDetailPage() {
  <TabsContent value="interview" className="mt-4 space-y-4">
  <InterviewGuide candidate={candidate} />
  <div className="rounded-xl border bg-card p-4">
- <h2 className="text-sm font-semibold">Interview feedback</h2>
+ <h2 className="text-sm font-semibold">After the interview</h2>
  <p className="mt-1 text-sm text-muted-foreground">
- Arrange interviews directly with the candidate, outside TaaSFlow. Feedback
- on past interviews is kept in one place.
+ Interviews are arranged directly between you and the candidate, outside
+ TaaSFlow. Use <strong>Add feedback</strong> in the stage actions to record what
+ you learned, and move the card on the candidates board to track where things
+ stand.
  </p>
  <Button asChild variant="outline" size="sm" className="mt-3">
- <Link to="/client/interviews" search={{ interview: undefined, feedback: undefined }}>Go to interviews →</Link>
+ <Link to="/client/candidates" search={{ view: "board" } as never}>Open the board →</Link>
  </Button>
  </div>
   </TabsContent>
