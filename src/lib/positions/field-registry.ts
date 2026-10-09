@@ -113,7 +113,9 @@ export const POSITION_FIELDS: readonly PositionField[] = [
     intakeKey: "roleTitle",
     label: "Job title",
     type: "text",
-    schema: z.string().trim().min(3, "Job title must be at least 3 characters").max(200),
+    // Same floor as the intake ("QA", "PM" are real titles): a role the
+    // intake accepted must never fail its first save in the editor.
+    schema: z.string().trim().min(2, "Job title must be at least 2 characters").max(200),
     requiredAtIntake: true,
     clientEditable: true,
     adminEditable: true,
@@ -148,7 +150,9 @@ export const POSITION_FIELDS: readonly PositionField[] = [
     label: "How does it work?",
     type: "select",
     options: WORK_MODEL_OPTIONS,
-    schema: z.enum(["remote", "hybrid", "onsite"]),
+    // Optional on save, like on the intake: an unanswered work model marks the
+    // brief incomplete, it never makes the role unsavable.
+    schema: z.enum(["remote", "hybrid", "onsite", ""]).default(""),
     requiredAtIntake: true,
     clientEditable: true,
     adminEditable: true,
@@ -194,7 +198,9 @@ export const POSITION_FIELDS: readonly PositionField[] = [
     label: "Job description",
     hint: "Paste the JD or write it here. We use this to enrich matching.",
     type: "textarea",
-    schema: z.string().trim().max(20_000).default(""),
+    // The intake accepts a 60,000-character description; the editor must
+    // be able to save what the intake stored.
+    schema: z.string().trim().max(60_000).default(""),
     requiredAtIntake: false,
     clientEditable: true,
     adminEditable: true,
@@ -294,7 +300,9 @@ export const POSITION_FIELDS: readonly PositionField[] = [
     intakeKey: "mustHaves",
     label: "Must-have skills",
     type: "list",
-    schema: list(30, 80),
+    // Items up to 200 characters: the intake allows 120 and generated
+    // requirements can run longer. 80 failed the save of untouched roles.
+    schema: list(30, 200),
     requiredAtIntake: true,
     clientEditable: true,
     adminEditable: true,
@@ -306,7 +314,7 @@ export const POSITION_FIELDS: readonly PositionField[] = [
     intakeKey: "niceToHaves",
     label: "Nice-to-have skills",
     type: "list",
-    schema: list(30, 80),
+    schema: list(30, 200),
     requiredAtIntake: false,
     clientEditable: true,
     adminEditable: true,

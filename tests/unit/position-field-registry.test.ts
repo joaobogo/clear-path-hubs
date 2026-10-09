@@ -36,7 +36,8 @@ describe("position field registry", () => {
     const schema = positionSchemaFor("admin");
     const parsed = schema.parse({ title: "Senior Engineer", work_model: "remote", headcount: 2 });
     expect((parsed as Record<string, unknown>)["department"]).toBe("");
-    expect(() => schema.parse({ title: "no", work_model: "remote", headcount: 1 })).toThrow();
+    // Same floor as the intake: two characters ("QA") is a title, one is not.
+    expect(() => schema.parse({ title: "x", work_model: "remote", headcount: 1 })).toThrow();
   });
 
   it("marks public fields explicitly", () => {
@@ -82,8 +83,10 @@ describe("position field registry", () => {
   it("the save path validates with the shared shape", () => {
     const server = read("src/lib/position-edit.functions.ts");
     expect(server).toContain('positionShapeFor("admin")');
-    // Public sections read posting.*, so the writer must fill them.
-    expect(server).toContain("responsibilities: data.responsibilities");
+    // Public sections read posting.*, so the writer must fill them. The
+    // patch is built by the shared role mapping the save handler calls.
+    expect(server).toContain("editFormToPositionPatch(");
+    expect(read("src/lib/positions/role-form.ts")).toContain("responsibilities: data.responsibilities");
   });
 
   it("the public listing takes its headings from the registry", () => {

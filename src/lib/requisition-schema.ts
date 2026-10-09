@@ -325,13 +325,11 @@ export const requisitionMetaSchema = z
     change_reason: z.string().trim().max(500).default(""),
   })
   .superRefine((v, ctx) => {
-    if (v.locations.length === 0) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["locations"],
-        message: "Add at least one location — fully remote roles still need the countries you can hire in.",
-      });
-    }
+    // No location rows is a valid save. The intake records where a role is
+    // based as one line ("Manchester, United Kingdom") on the role itself and
+    // never creates structured rows, so requiring one here refused every save
+    // of an intake role (owner report, 8 Oct: "it kept saying I didn't put
+    // the city"). Structured rows are an optional refinement.
     if (v.locations.filter((l) => l.is_primary).length > 1) {
       ctx.addIssue({ code: "custom", path: ["locations"], message: "Only one location can be primary." });
     }
@@ -342,20 +340,9 @@ export const requisitionMetaSchema = z
         ctx.addIssue({ code: "custom", path: ["locations"], message: `Duplicate location: ${locationLabel(l)}` });
       }
       seen.add(key);
-      if (l.work_model !== "remote" && !l.city.trim() && !l.region.trim()) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["locations"],
-          message: `${countryName(l.country_code)} is ${l.work_model} — add a city or region so candidates know where to show up.`,
-        });
-      }
-      if (l.work_model === "hybrid" && l.onsite_days_per_week === null) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["locations"],
-          message: `${locationLabel(l)} is hybrid — set how many days per week are on-site.`,
-        });
-      }
+      // A city/region and an on-site day count are worth having, but they are
+      // optional answers on the intake, so they are never a reason a save
+      // fails here. The quality checklist mentions them instead.
       if (l.work_model === "remote" && l.onsite_days_per_week !== null && l.onsite_days_per_week > 0) {
         ctx.addIssue({
           code: "custom",
@@ -442,6 +429,12 @@ export type QualityInput = {
   reference_code: string;
   compensation_collected: boolean;
   open_worldwide?: boolean;
+  /** The role's own work model and one-line location, as the intake records them. */
+  work_model?: string | null;
+  location_text?: string | null;
+  /** Intake answers that bound a remote role without a city or anchor zone. */
+  remote_timezones?: string[] | null;
+  remote_anywhere_in_country?: boolean | null;
 };
 
 
@@ -456,27 +449,47 @@ export function assessJobQuality(i: QualityInput): {
   const gaps: QualityGap[] = [];
   const add = (g: QualityGap) => gaps.push(g);
 
-  if (i.title.trim().length < 3)
+  if (i.title.trim().length < 2)
     add({ id: "title", severity: "blocking", label: "Job title", why: "Nothing can be matched without the role being named.", step: 1 });
-  if (i.must_have_skills.length < 3)
-    add({ id: "must_haves", severity: "blocking", label: "At least 3 must-have requirements", why: "Must-haves are the backbone of evidence-based scoring; fewer than three makes ranking arbitrary.", step: 2 });
+  // Same floor as the intake: one must-have. Three or more is better, and
+  // says so without blocking.
+  if (i.must_have_skills.length < 1)
+    add({ id: "must_haves", severity: "blocking", label: "At least one must-have requirement", why: "Must-haves are the backbone of evidence-based scoring.", step: 2 });
+  else if (i.must_have_skills.length < 3)
+    add({ id: "must_haves_depth", severity: "degrades", label: "Three or more must-haves", why: "Fewer than three makes ranking less precise.", step: 2 });
   if (!i.seniority.trim())
     add({ id: "seniority", severity: "blocking", label: "Seniority level", why: "Scope and level decide whether strong candidates are over- or under-qualified.", step: 1 });
-  if (i.locations.length === 0)
-    add({ id: "locations", severity: "blocking", label: "At least one location", why: "Eligibility gates (right to work, timezone, commute) cannot run without locations.", step: 3 });
+  // Where the role is based is answered by structured rows, by the intake's
+  // one-line location, or by the role being remote (a remote role does not
+  // need a place). Missing, it is a gap to improve — never a blocker.
+  const workModel = (i.work_model ?? "").trim();
+  const placeAnswered =
+    i.locations.length > 0 ||
+    Boolean((i.location_text ?? "").trim()) ||
+    workModel === "remote" ||
+    i.open_worldwide === true;
+  if (!placeAnswered)
+    add({ id: "locations", severity: "degrades", label: "Where the role is based", why: "Eligibility checks (right to work, commute) work better with a place.", step: 3 });
 
   if (!i.employment_type.trim())
     add({ id: "employment_type", severity: "blocking", label: "Employment type", why: "Contract vs permanent changes both the candidate pool and the eligibility checks.", step: 1 });
 
   if (i.disqualifier_tags.length === 0)
-    add({ id: "disqualifiers", severity: "degrades", label: "Disqualifiers / critical gates", why: "Without hard gates, unsuitable candidates reach your shortlist and dilute it.", step: 2 });
+    add({ id: "disqualifiers", severity: "degrades", label: "Disqualifiers / critical gates", why: "Without hard gates, unsuitable candidates reach your shortlist and dilute it.", step: 4 });
   if (!i.experience.trim())
     add({ id: "experience", severity: "degrades", label: "Required experience", why: "Experience bands anchor the seniority signal in scoring.", step: 2 });
   if (i.responsibilities.trim().length < 40 && i.description.trim().length < 120)
     add({ id: "outcomes", severity: "degrades", label: "Role outcomes / responsibilities", why: "Outcomes let evidence extraction look for what this person must actually deliver.", step: 2 });
-  const needsTz = i.locations.some((l) => l.work_model === "remote");
-  if (needsTz && !i.primary_timezone.trim() && i.timezone_overlap_hours === null)
-    add({ id: "timezone", severity: "degrades", label: "Timezone anchor or overlap", why: "Remote hiring across countries fails on collaboration hours more often than on skills.", step: 3 });
+  // Time zone is optional, always. Remote time-zone bands or "anywhere in the
+  // country" from the intake answer it as well as an anchor zone does.
+  const needsTz = workModel === "remote" || i.locations.some((l) => l.work_model === "remote");
+  const tzAnswered =
+    Boolean(i.primary_timezone.trim()) ||
+    i.timezone_overlap_hours !== null ||
+    (i.remote_timezones ?? []).length > 0 ||
+    i.remote_anywhere_in_country === true;
+  if (needsTz && !tzAnswered)
+    add({ id: "timezone", severity: "optional", label: "Time zones you can work with", why: "Remote hiring across countries fails on collaboration hours more often than on skills.", step: 3 });
   if (!i.headcount)
     add({ id: "headcount", severity: "degrades", label: "Hiring volume", why: "Volume drives pipeline sizing and delivery commitments.", step: 1 });
   // Unowned requisitions stall — nobody is accountable for delivery.
@@ -486,11 +499,11 @@ export function assessJobQuality(i: QualityInput): {
     add({ id: "owner", severity: "degrades", label: "Responsible admin", why: "Assignment ensures accountability for delivery.", step: 3 });
 
   if (!i.travel_expectation.trim())
-    add({ id: "travel", severity: "optional", label: "Travel expectations", why: "Surfacing travel early avoids late-stage drop-off.", step: 3 });
+    add({ id: "travel", severity: "optional", label: "Travel expectations", why: "Surfacing travel early avoids late-stage drop-off.", step: 4 });
   if (!i.target_start_date.trim())
-    add({ id: "start_date", severity: "optional", label: "Target start date", why: "Notice periods can quietly disqualify otherwise perfect candidates.", step: 1 });
+    add({ id: "start_date", severity: "optional", label: "Target start date", why: "Notice periods can quietly disqualify otherwise perfect candidates.", step: 3 });
   if (!i.interview_process.trim())
-    add({ id: "interview_process", severity: "optional", label: "Interview process", why: "Candidates convert better when the process is known upfront.", step: 2 });
+    add({ id: "interview_process", severity: "optional", label: "Interview process", why: "Candidates convert better when the process is known upfront.", step: 4 });
   if (i.screening_questions.length === 0)
     add({ id: "screening", severity: "optional", label: "Screening questions", why: "Role-specific questions capture evidence a CV never contains.", step: 2 });
   // A published question must state the must-have it maps to and why it is

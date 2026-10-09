@@ -1614,11 +1614,37 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
       .eq("error_code", "provider_error")
       .gte("created_at", weekAgo);
 
+    // Role analysis (Role Blueprint) health: the silent ways it can fail to
+    // run in an environment — a missing AI key, a drain that cannot run, and
+    // roles stuck or waiting. Shown as notes on the Pipeline Health page.
+    const { blueprintHealthNotes, BLUEPRINT_IN_PROGRESS_STATUSES, BLUEPRINT_STALE_MS } =
+      await import("@/lib/blueprint-trigger");
+    const bpCutoff = new Date(Date.now() - BLUEPRINT_STALE_MS).toISOString();
+    const countWhere = async (statuses: string[], olderThan: string | null) => {
+      let q = s.from("positions").select("id", { count: "exact", head: true }).in("blueprint_status", statuses);
+      if (olderThan) q = q.lt("updated_at", olderThan);
+      const { count } = await q;
+      return count ?? 0;
+    };
+    const [bpStuck, bpWaiting, bpFailed] = await Promise.all([
+      countWhere([...BLUEPRINT_IN_PROGRESS_STATUSES], bpCutoff),
+      countWhere(["queued", "not_started"], bpCutoff),
+      countWhere(["failed"], null),
+    ]);
+    const blueprint_notes = blueprintHealthNotes({
+      hasAiKey: Boolean((process.env.LOVABLE_API_KEY ?? "").trim()),
+      hasCronSecret: Boolean((process.env.CRON_INVOKE_SECRET ?? "").trim()),
+      stuck: bpStuck,
+      waiting: bpWaiting,
+      failed: bpFailed,
+    });
+
     return {
       states: stateCounts,
       stale,
       failed_jobs: (failedJobs ?? []) as AnyRow[],
       provider_incidents: providerIncidents ?? 0,
+      blueprint_notes,
     };
   });
 

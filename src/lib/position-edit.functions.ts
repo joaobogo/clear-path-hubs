@@ -15,9 +15,18 @@ import {
 type AnyRow = any;
 
 import { assertWorkspaceAccess, assertWorkspaceWrite } from "@/lib/authz/workspace-access";
-import { normalizeSeniority } from "@/lib/position-seniority";
 import { normalizeTravelExpectation } from "@/lib/requisition-schema";
 import { positionShapeFor } from "@/lib/positions/field-registry";
+import {
+  analysisInputsChanged,
+  editFormToPositionPatch,
+  positionToEditForm,
+  roleIntakeAnswersShape,
+  roleRequiredness,
+  type RoleSaveData,
+  type ScreeningInput,
+} from "@/lib/positions/role-form";
+import { analysisDecision } from "@/lib/blueprint-trigger";
 import { sanitizeInlineMarkup, stripInlineMarkup } from "@/lib/marketing/inline-format";
 
 async function getAdmin() {
@@ -89,107 +98,10 @@ async function writeAudit(opts: {
 const traceId = () =>
   `pe_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
-export type ScreeningInput = {
-  id?: string;
-  question: string;
-  answer_type: "text" | "boolean" | "number";
-  required: boolean;
-  dealbreaker: boolean;
-  /** The must-have on the brief this question tests. */
-  must_have: string;
-  /** One line the candidate reads explaining why it is asked. */
-  why_asked: string;
-};
-
-
-export type PositionEditInitial = {
-  id: string;
-  organization_id: string;
-  organization_name: string;
-  status: string;
-  visibility: string;
-
-  // Step 1 — Role Definition
-  title: string;
-  department: string;
-  location: string;
-  work_model: "" | "remote" | "hybrid" | "onsite";
-  employment_type: "" | "full_time" | "part_time" | "contract" | "temporary" | "internship";
-  seniority: string;
-  headcount: number | "";
-  description: string;
-  open_worldwide: boolean;
-  target_countries: string[];
-  states_regions: string[];
-  metro_areas: string[];
-  search_radius: string;
-  hiring_urgency: string;
-  target_start_date: string;
-  time_to_hire: string;
-
-  // Step 2 — Candidate Profile
-  must_have_skills: string[];
-  nice_to_have_skills: string[];
-  certifications_list: string[];
-  tools_platforms: string[];
-  experience: string;
-  education: string;
-  timezone_requirements: string;
-  responsibilities: string;
-  additional_requirements: string;
-
-  // Step 3 — Compensation
-  currency: string;
-  budget_period: string;
-  budget_min: string;
-  budget_max: string;
-  compensation: string;
-
-  // Step 4 — Search Criteria
-  target_titles: string[];
-  title_match_timing: "" | "current" | "previous" | "either";
-  target_company_types: string[];
-  include_keywords: string[];
-  exclude_keywords: string[];
-  disqualifier_tags: string[];
-  interview_process: string;
-  additional_context: string;
-  screening_questions: ScreeningInput[];
-
-  // Step 6 — Job post personalisation (stored in intake_context.posting)
-  company_intro: string;
-  benefits: string;
-  languages: string;
-  travel: string;
-  work_authorization_note: string;
-  accessibility_note: string;
-  eeo_statement: string;
-  brand_tone: string;
-  application_deadline: string;
-  confidentiality: string;
-};
-
-function fromJsonArray(v: unknown): string[] {
-  if (!Array.isArray(v)) return [];
-  return v
-    .map((x) =>
-      typeof x === "string"
-        ? x
-        : x && typeof x === "object" && "label" in (x as AnyRow)
-          ? String((x as AnyRow).label ?? "")
-          : "",
-    )
-    .filter(Boolean);
-}
-
-function asStr(v: unknown): string {
-  if (typeof v === "string") return v;
-  if (typeof v === "number" && Number.isFinite(v)) return String(v);
-  return "";
-}
-function asStrArr(v: unknown): string[] {
-  return Array.isArray(v) ? v.filter((x) => typeof x === "string") : [];
-}
+// The edit form and its mappings live in role-form.ts, shared with the
+// intake handler, so an intake answer is always read back from where it was
+// written (role-form-roundtrip.test.ts).
+export type { ScreeningInput, PositionEditInitial } from "@/lib/positions/role-form";
 
 export const getPositionForEdit = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -211,156 +123,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
     ]);
     const p = posRes.data as AnyRow;
     if (!p) throw new Error("position_not_found");
-    const comp = (p.compensation ?? {}) as AnyRow;
-    const wa = (p.work_authorization ?? {}) as AnyRow;
-    const ctx = (p.intake_context ?? {}) as AnyRow;
-    const brief = (ctx.brief ?? {}) as AnyRow;
-    const blueprint = (p.blueprint ?? {}) as AnyRow;
-    const blueprintRole = (blueprint.role ?? {}) as AnyRow;
-    const blueprintProfile = (blueprint.candidate_profile ?? {}) as AnyRow;
-    const blueprintGeography = (blueprint.geography ?? {}) as AnyRow;
-    const blueprintTimeline = (blueprint.timeline ?? {}) as AnyRow;
-    const blueprintSourcing = (blueprint.sourcing_plan ?? {}) as AnyRow;
-    const blueprintComp = (blueprint.compensation ?? {}) as AnyRow;
-    const posting = (ctx.posting ?? {}) as AnyRow;
-    const firstText = (...values: unknown[]) => {
-      for (const value of values) {
-        const text = asStr(value).trim();
-        if (text) return text;
-      }
-      return "";
-    };
-    const firstList = (...values: unknown[]) => {
-      for (const value of values) {
-        const list = fromJsonArray(value);
-        if (list.length > 0) return list;
-      }
-      return [];
-    };
-    const rawWorkModel = firstText(p.work_model, ctx.work_model, brief.workModel, blueprintRole.work_model);
-    const workModel: PositionEditInitial["work_model"] =
-      rawWorkModel === "remote" || rawWorkModel === "hybrid" || rawWorkModel === "onsite"
-        ? rawWorkModel
-        : "";
-    const rawEmploymentType = firstText(
-      p.employment_type,
-      ctx.employment_type,
-      brief.employmentType,
-      blueprintRole.employment_type,
-    );
-    const employmentType: PositionEditInitial["employment_type"] =
-      rawEmploymentType === "full_time" ||
-      rawEmploymentType === "part_time" ||
-      rawEmploymentType === "contract" ||
-      rawEmploymentType === "temporary" ||
-      rawEmploymentType === "internship"
-        ? rawEmploymentType
-        : "";
-
-    const initial: PositionEditInitial = {
-      id: p.id,
-      organization_id: p.organization_id,
-      organization_name: p.organizations?.name ?? "",
-      status: p.status ?? "draft",
-      visibility: p.visibility ?? "private",
-
-      title: firstText(p.title, brief.roleTitle, blueprintRole.title),
-      department: firstText(p.department, ctx.team, brief.team, blueprintRole.department),
-      location: firstText(p.location, ctx.location, brief.location, blueprintRole.location),
-      work_model: workModel,
-      employment_type: employmentType,
-      // Stored briefs use mixed casing; the picker only matches its own labels.
-      seniority: normalizeSeniority(firstText(p.seniority, ctx.seniority, brief.seniority, blueprintRole.seniority)),
-      headcount:
-        typeof p.openings === "number"
-          ? p.openings
-          : typeof blueprintRole.headcount === "number"
-            ? blueprintRole.headcount
-            : "",
-      description: firstText(
-        p.description,
-        ctx.job_description,
-        ctx.jobDescriptionText,
-        brief.jobDescription,
-        brief.jobDescriptionText,
-        blueprintRole.summary,
-      ),
-
-      open_worldwide: Boolean(
-        ctx.open_worldwide ?? brief.openWorldwide ?? blueprintGeography.open_worldwide,
-      ),
-      target_countries: firstList(wa.countries, ctx.target_countries, blueprintGeography.target_countries),
-      states_regions: asStrArr(ctx.states_regions),
-      metro_areas: asStrArr(ctx.metro_areas),
-      search_radius: asStr(ctx.search_radius),
-      hiring_urgency: firstText(
-        comp.urgency,
-        ctx.hiring_urgency,
-        ctx.hiring_timeline,
-        blueprintTimeline.hiring_urgency,
-      ),
-      target_start_date: firstText(
-        p.target_start_date,
-        ctx.target_start_date,
-        brief.targetStartDate,
-        blueprintTimeline.target_start_date,
-      ),
-      time_to_hire: firstText(ctx.time_to_hire, blueprintTimeline.time_to_hire),
-
-      must_have_skills: firstList(p.requirements, ctx.must_have_skills, blueprint.must_have_skills),
-      nice_to_have_skills: firstList(
-        p.preferred_requirements,
-        ctx.nice_to_have_skills,
-        blueprint.nice_to_have_skills,
-      ),
-      certifications_list: firstList(ctx.certifications_list, blueprint.certifications),
-      tools_platforms: firstList(ctx.tools_platforms, blueprint.tools_platforms),
-      experience: firstText(ctx.experience, blueprintProfile.experience),
-      education: firstText(ctx.education, blueprintProfile.education),
-      timezone_requirements: firstText(
-        ctx.timezone_requirements,
-        blueprintGeography.timezone_requirements,
-      ),
-      responsibilities: firstList(ctx.responsibilities, blueprint.responsibilities).join("\n"),
-      additional_requirements: asStr(ctx.additional_requirements),
-
-      currency: firstText(comp.currency, ctx.currency, blueprintComp.currency) || "USD",
-      budget_period: firstText(comp.budget_period, comp.period, ctx.budget_period) || "year",
-      budget_min: firstText(comp.budget_min, comp.min, ctx.budget_min, blueprintComp.min),
-      budget_max: firstText(comp.budget_max, comp.max, ctx.budget_max, blueprintComp.max),
-      compensation: firstText(comp.summary, comp.text, comp.note, blueprintComp.note),
-
-      target_titles: firstList(wa.target_titles, ctx.target_titles, blueprintSourcing.target_titles),
-      title_match_timing: (asStr(ctx.title_match_timing) as PositionEditInitial["title_match_timing"]) || "",
-      target_company_types: firstList(ctx.target_company_types, blueprintSourcing.target_company_types),
-      include_keywords: firstList(ctx.include_keywords, blueprintSourcing.include_keywords),
-      exclude_keywords: firstList(ctx.exclude_keywords, blueprintSourcing.exclude_keywords),
-      disqualifier_tags: firstList(p.dealbreakers, blueprint.dealbreakers),
-      interview_process: asStr(ctx.interview_process),
-      additional_context: asStr(ctx.additional_context),
-      company_intro: asStr(posting.company_intro),
-      benefits: asStr(posting.benefits),
-      languages: asStr(posting.languages),
-      travel: asStr(posting.travel) || asStr(p.travel_expectation) || asStr(brief.travelExpectation),
-      work_authorization_note: asStr(posting.work_authorization_note),
-      accessibility_note: asStr(posting.accessibility_note),
-      eeo_statement: asStr(posting.eeo_statement),
-      brand_tone: asStr(posting.brand_tone),
-      application_deadline: asStr(posting.application_deadline),
-      confidentiality: asStr(posting.confidentiality) || "public",
-      screening_questions: ((screeningRes.data ?? []) as AnyRow[]).map((r) => ({
-        id: r.id,
-        question: r.question,
-        answer_type: r.answer_type,
-        required: !!r.required,
-        dealbreaker: !!r.dealbreaker,
-        must_have: (r.must_have as string) ?? "",
-        why_asked: (r.why_asked as string) ?? "",
-      })),
-
-    };
-
-    return initial;
+    return positionToEditForm(p, (screeningRes.data ?? []) as AnyRow[]);
   });
 
 /**
@@ -368,62 +131,14 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
  * enum values come from the shared registry, so the intake wizard, the client
  * editor and the admin editor validate identically.
  */
-type SaveInputData = {
-  id: string;
-  title: string;
-  department: string;
-  location: string;
-  work_model: "remote" | "hybrid" | "onsite";
-  employment_type: "" | "full_time" | "part_time" | "contract" | "temporary" | "internship";
-  seniority: string;
-  headcount: number | null;
-  description: string;
-  open_worldwide: boolean;
-  target_countries: string[];
-  states_regions: string[];
-  metro_areas: string[];
-  search_radius: string;
-  hiring_urgency: string;
-  target_start_date: string;
-  time_to_hire: string;
-  must_have_skills: string[];
-  nice_to_have_skills: string[];
-  certifications_list: string[];
-  tools_platforms: string[];
-  experience: string;
-  education: string;
-  timezone_requirements: string;
-  responsibilities: string;
-  additional_requirements: string;
-  currency: string;
-  budget_period: "year" | "month" | "hour";
-  budget_min: string;
-  budget_max: string;
-  compensation: string;
-  target_titles: string[];
-  title_match_timing: "" | "current" | "previous" | "either";
-  target_company_types: string[];
-  include_keywords: string[];
-  exclude_keywords: string[];
-  disqualifier_tags: string[];
-  interview_process: string;
-  additional_context: string;
-  company_intro: string;
-  benefits: string;
-  languages: string;
-  travel: string;
-  work_authorization_note: string;
-  accessibility_note: string;
-  eeo_statement: string;
-  brand_tone: string;
-  application_deadline: string;
-  confidentiality: "" | "public" | "confidential";
-  screening_questions: ScreeningInput[];
-};
+type SaveInputData = RoleSaveData & { screening_questions: ScreeningInput[] };
 
 const saveInput = z.object({
   id: z.string().uuid(),
   ...positionShapeFor("admin"),
+  // The intake's own answers (time zones, sponsorship, stages, …), so every
+  // intake answer can be edited and saved, not only the registry fields.
+  ...roleIntakeAnswersShape,
 
   screening_questions: z
     .array(
@@ -463,148 +178,45 @@ export const savePositionEdit = createServerFn({ method: "POST" })
 
     // Formatting tags are not content: length is measured on the words only.
     const description = sanitizeInlineMarkup(data.description);
-    if (data.must_have_skills.length < 3 && stripInlineMarkup(description).trim().length < 40) {
-      throw new Error(
-        "Provide at least 3 must-have skills or a job description of at least 40 characters",
-      );
-    }
+    // One rule set with the edit screen: only what sourcing cannot start
+    // without can refuse a save. Time zone, city, work model, seniority… are
+    // hints ("Brief incomplete"), never errors.
+    const required = roleRequiredness({ ...data, description: stripInlineMarkup(description) });
+    const firstError = Object.values(required.errors)[0];
+    if (firstError) throw new Error(firstError);
 
     // Preserve unknown intake_context/compensation/work_authorization fields
     const { data: existing } = await s
       .from("positions")
-      .select("intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers,location")
+      .select(
+        "intake_context,compensation,work_authorization,requirements,preferred_requirements,dealbreakers,location,work_model,description,blueprint_status,blueprint_attempts,updated_at,blueprint_error",
+      )
       .eq("id", data.id)
       .maybeSingle();
-    const priorCtx = (existing?.intake_context ?? {}) as AnyRow;
-    const priorComp = (existing?.compensation ?? {}) as AnyRow;
-    const priorWA = (existing?.work_authorization ?? {}) as AnyRow;
-    const preserveRequirementMetadata = (labels: string[], current: unknown, kind?: string) => {
-      const rows = Array.isArray(current) ? (current as AnyRow[]) : [];
-      return labels.map((label) => {
-        const matched = rows.find(
-          (row) =>
-            typeof row === "object" &&
-            row !== null &&
-            String(row.label ?? "").trim().toLowerCase() === label.trim().toLowerCase(),
-        );
-        return matched ? { ...matched, label } : { label, ...(kind ? { kind } : {}) };
-      });
-    };
-    const priorBrief = (priorCtx.brief ?? {}) as AnyRow;
-    // Step 3 owns positions.location: saveRequisitionMeta mirrors the primary
-    // structured location (position_locations) into this column. Step 1 has had
-    // no location input since locations moved to step 3, so `data.location` is
-    // only ever a stale echo of whatever was loaded, and writing it back blanked
-    // a location the user had just saved. That is how the role-page banner
-    // ("Ready to submit", computed from position_locations by assessJobQuality)
-    // and the Publish desk ("Location missing", computed from this column by
-    // evaluatePublishGate) ended up disagreeing about the same role. Fall back to
-    // the wizard value only when the column is empty, so a legacy role whose
-    // location lives in intake_context still gets backfilled on save.
-    const nextLocation = (existing?.location as string | null) || data.location || null;
 
     const patch: AnyRow = {
-      title: data.title,
-      department: data.department || null,
-      location: nextLocation,
-      work_model: data.work_model,
-      employment_type: data.employment_type || null,
-      seniority: data.seniority || null,
-      description: description || null,
-      requirements: preserveRequirementMetadata(
-        data.must_have_skills,
-        existing?.requirements,
-        "must_have",
-      ),
-      preferred_requirements: preserveRequirementMetadata(
-        data.nice_to_have_skills,
-        existing?.preferred_requirements,
-      ),
-      dealbreakers: preserveRequirementMetadata(data.disqualifier_tags, existing?.dealbreakers),
-      compensation: {
-        ...priorComp,
-        summary: data.compensation || null,
-        urgency: data.hiring_urgency || null,
-        currency: data.currency || null,
-        budget_period: data.budget_period || null,
-        period: data.budget_period || null,
-        budget_min: data.budget_min || null,
-        min: data.budget_min || null,
-        budget_max: data.budget_max || null,
-        max: data.budget_max || null,
-      },
-      // Typing a range is the act of collecting it: without this flag the
-      // range is treated as never gathered and reads as "Not disclosed".
-      ...(data.budget_min || data.budget_max
-        ? { compensation_collected: true, compensation_visibility: "public" }
-        : {}),
-
-      work_authorization: {
-        ...priorWA,
-        countries: data.target_countries,
-        target_titles: data.target_titles,
-      },
-      intake_context: {
-        ...priorCtx,
-        // Keep the legacy brief projection synchronized while canonical columns
-        // remain authoritative. Older roles and downstream exports still read it.
-        brief: {
-          ...priorBrief,
-          roleTitle: data.title,
-          team: data.department || "",
-          location: nextLocation ?? "",
-          workModel: data.work_model,
-          employmentType: data.employment_type || "",
-          seniority: data.seniority || "",
-          jobDescription: data.description || "",
-          jobDescriptionText: data.description || "",
-          targetStartDate: data.target_start_date || "",
-        },
-        team: data.department || "",
-        jobDescriptionText: data.description || "",
-        work_model: data.work_model,
-        employment_type: data.employment_type || "",
-        seniority: data.seniority || "",
-        open_worldwide: data.open_worldwide,
-        states_regions: data.states_regions,
-        metro_areas: data.metro_areas,
-        search_radius: data.search_radius || "",
-        target_start_date: data.target_start_date || "",
-        time_to_hire: data.time_to_hire || "",
-        certifications_list: data.certifications_list,
-        tools_platforms: data.tools_platforms,
-        experience: data.experience || "",
-        education: data.education || "",
-        timezone_requirements: data.timezone_requirements || "",
-        responsibilities: data.responsibilities || "",
-        additional_requirements: data.additional_requirements || "",
-        title_match_timing: data.title_match_timing || "",
-        target_company_types: data.target_company_types,
-        include_keywords: data.include_keywords,
-        exclude_keywords: data.exclude_keywords,
-        interview_process: data.interview_process || "",
-        additional_context: data.additional_context || "",
-        posting: {
-          ...((priorCtx.posting ?? {}) as AnyRow),
-          company_intro: data.company_intro || "",
-          // The public listing reads its sections from posting.*, so anything
-          // marked public in the field registry must be written here too.
-          responsibilities: data.responsibilities || "",
-          benefits: data.benefits || "",
-          languages: data.languages || "",
-          travel: data.travel || "",
-          work_authorization_note: data.work_authorization_note || "",
-          accessibility_note: data.accessibility_note || "",
-          eeo_statement: data.eeo_statement || "",
-          brand_tone: data.brand_tone || "",
-          application_deadline: data.application_deadline || "",
-          confidentiality: data.confidentiality || "public",
-        },
-      },
+      ...editFormToPositionPatch(data, existing as AnyRow, { sanitizedDescription: description }),
       travel_expectation: normalizeTravelExpectation(data.travel) || null,
-      openings: typeof data.headcount === "number" ? data.headcount : 1,
-      updated_at: new Date().toISOString(),
     };
+
+    // A saved role is analysed without anyone pressing anything: a role whose
+    // analysis never ran (or died) is queued again, and so is one whose job
+    // description or must-haves just changed. The run itself happens in the
+    // request the role page opens for it (ensureRoleAnalysis) — see
+    // blueprint-trigger.ts for why it is not started inside this request.
+    const decision = analysisDecision((existing ?? {}) as AnyRow);
+    const inputsChanged = analysisInputsChanged(existing ?? {}, {
+      description: patch.description as string | null,
+      requirements: patch.requirements,
+    });
+    let analysis: "queued" | "running" | "ready" = decision.state === "running" ? "running" : "ready";
+    if (decision.state !== "running" && (decision.state !== "ready" || inputsChanged)) {
+      patch.blueprint_status = "queued";
+      patch.blueprint_error = null;
+      // A person's edit is a fresh start for the automatic retry budget.
+      patch.blueprint_attempts = 0;
+      analysis = "queued";
+    }
 
     const { data: after, error } = await s
       .from("positions")
@@ -666,7 +278,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       trace_id,
     });
 
-    return { ok: true as const, trace_id, position: after };
+    return { ok: true as const, trace_id, position: after, analysis, brief_missing: required.missing };
   });
 
 const publishInput = z.object({

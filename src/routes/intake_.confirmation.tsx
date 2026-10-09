@@ -86,7 +86,14 @@ function ConfirmationPage() {
           const done = body.blueprintStatus === "ready" || body.blueprintStatus === "failed";
           // If nothing has claimed the job yet (e.g. the tab was closed mid-run),
           // nudge it once so the client is never stuck on "queued".
-          if (!done && body.blueprintStatus === "queued" && !retriedRef.current) {
+          // Also when a run was dropped mid-way (the server reports it as
+          // needing a start) — it used to sit on "Reading your job
+          // description" forever because only "queued" was nudged.
+          if (
+            !done &&
+            (body.blueprintStatus === "queued" || body.analysisShouldStart === true) &&
+            !retriedRef.current
+          ) {
             retriedRef.current = true;
             void fetch("/api/public/blueprint-run", {
               method: "POST",

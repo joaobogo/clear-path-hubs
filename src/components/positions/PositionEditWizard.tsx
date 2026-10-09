@@ -56,13 +56,40 @@ import {
   fieldOptions,
 } from "@/lib/positions/field-registry";
 import { RichTextInput } from "@/components/ui/rich-text-input";
+import { ROLE_FIELD_STEP, roleRequiredness } from "@/lib/positions/role-form";
+import {
+  COMPENSATION_HONEST_LINE,
+  COMP_EQUITY,
+  COMP_EQUITY_LABELS,
+  COMP_PERIOD_LABELS,
+  COMP_PERIODS,
+  DEFAULT_INTERVIEW_STAGE_TEMPLATE,
+  INTERVIEW_PROCESS_WHY_IT_MATTERS,
+  INTERVIEW_STAGE_FORMATS,
+  INTERVIEW_STAGE_FORMAT_LABELS,
+  MAX_INTERVIEW_STAGES,
+  REQUIREMENT_TAG_EFFECTS,
+  REQUIREMENT_TAG_LABELS,
+  SPONSORSHIP_OPTIONS,
+  SPONSORSHIP_WHY_IT_MATTERS,
+  TIMEZONE_BANDS,
+  WORK_MODELS,
+  WORK_MODEL_LABELS,
+  type InterviewStageFormat,
+} from "@/lib/express-intake-schema";
+import { DEAL_BREAKER_WHY_IT_MATTERS } from "@/lib/client-deal-breakers";
 import { stripInlineMarkup } from "@/lib/marketing/inline-format";
 
-/** Same three steps, same words, as the client intake form. */
+/**
+ * The intake's own sections, in its own order and words: the edit screen is
+ * the saved intake, reopened. Step 4 ends with the optional structured
+ * locations and scoring priorities.
+ */
 const STEPS = [
   { id: 1, label: "The role" },
-  { id: 2, label: "Requirements" },
-  { id: 3, label: "Details and confirm" },
+  { id: 2, label: "Who you need" },
+  { id: 3, label: "Practicalities" },
+  { id: 4, label: "Process and confirm" },
 ];
 const LAST_STEP = STEPS.length;
 
@@ -106,30 +133,23 @@ function initialState(initial: PositionEditInitial): State {
   return { ...rest };
 }
 
+/**
+ * The blocking errors for one step. The rules are roleRequiredness() — the
+ * same function the save handler runs — so the screen and the server can
+ * never disagree. Time zone, city, work model, seniority, employment type and
+ * headcount are never required to save.
+ */
 function validateStep(step: number, s: State): Record<string, string> {
-  const e: Record<string, string> = {};
-  if (step === 1) {
-    // Mirrors the server schema exactly (title: min 3 chars, max 200).
-    if (s.title.trim().length < 3) e.title = "Role title must be at least 3 characters";
-    if (s.title.trim().length > 200) e.title = "Role title must be 200 characters or fewer";
-    if (!s.work_model) e.work_model = "Select a work arrangement";
-    if (!s.employment_type) e.employment_type = "Select an employment type";
-    if (!s.seniority) e.seniority = "Select a seniority level";
-    if (!s.headcount || (typeof s.headcount === "number" && s.headcount < 1))
-      e.headcount = "At least 1 position";
+  const { errors } = roleRequiredness({ ...s, description: stripInlineMarkup(s.description) });
+  const out: Record<string, string> = {};
+  for (const [field, message] of Object.entries(errors)) {
+    if ((ROLE_FIELD_STEP[field] ?? 1) === step) out[field] = message;
+  }
+  return out;
+}
 
-    const min = Number(String(s.budget_min).replace(/[^0-9.]/g, ""));
-    const max = Number(String(s.budget_max).replace(/[^0-9.]/g, ""));
-    if (min && max && min >= max) e.budget_max = "Maximum must be higher than the minimum.";
-  }
-  if (step === 2) {
-    if (s.must_have_skills.length < 3 && stripInlineMarkup(s.description).trim().length < 40) {
-      e.must_have_skills =
-        "Add at least 3 must-have skills or a job description of 40+ characters on Step 1";
-    }
-    // Target titles are optional: we can source from the role title alone.
-  }
-  return e;
+function allErrors(s: State): Record<string, string> {
+  return roleRequiredness({ ...s, description: stripInlineMarkup(s.description) }).errors;
 }
 
 export function PositionEditWizard({
@@ -270,17 +290,13 @@ export function PositionEditWizard({
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const all = {
-        ...validateStep(1, state),
-        ...validateStep(2, state),
-      };
+      const all = allErrors(state);
       if (Object.keys(all).length > 0) {
         setErrors(all);
         setFocusToken((n) => n + 1);
-        if (all.title || all.work_model || all.employment_type || all.seniority || all.headcount || all.budget_max)
-          setStep(1);
-        else if (all.must_have_skills || all.target_titles) setStep(2);
-        throw new Error("Please fix the highlighted fields");
+        const first = Object.keys(all)[0];
+        setStep(ROLE_FIELD_STEP[first] ?? 1);
+        throw new Error(Object.values(all)[0] ?? "Please fix the highlighted fields");
       }
       return save({
         data: {
@@ -288,7 +304,10 @@ export function PositionEditWizard({
           title: state.title.trim(),
           department: state.department.trim(),
           location: state.location.trim(),
-          work_model: state.work_model as "remote" | "hybrid" | "onsite",
+          // Tells the server the client answered the location here, so it is
+          // written as typed rather than kept from the structured rows.
+          location_changed: state.location.trim() !== (initial.location ?? "").trim(),
+          work_model: state.work_model,
           employment_type: state.employment_type,
           seniority: state.seniority.trim(),
           headcount: typeof state.headcount === "number" ? state.headcount : null,
@@ -336,11 +355,28 @@ export function PositionEditWizard({
           screening_questions: state.screening_questions.filter(
             (q) => q.question.trim().length >= 3,
           ),
-        },
+          // The intake's own answers, saved back where the intake keeps them.
+          remote_timezones: state.work_model === "remote" && !state.remote_anywhere_in_country ? state.remote_timezones : [],
+          remote_anywhere_in_country: state.work_model === "remote" && state.remote_anywhere_in_country,
+          onsite_days: state.work_model === "hybrid" ? state.onsite_days : "",
+          sponsorship_available: state.sponsorship_available,
+          work_authorization_rule: state.work_authorization_rule,
+          work_authorization_rule_note: state.work_authorization_rule_note,
+          compensation_undecided: state.compensation_undecided,
+          compensation_flexible: state.compensation_flexible,
+          bonus_structure: state.bonus_structure,
+          equity: state.equity,
+          trainable_skills: unique(state.trainable_skills),
+          interview_stages: state.interview_stages.filter((st) => st.name.trim().length > 0),
+          decision_maker: state.decision_maker.trim(),
+          decision_maker_email: state.decision_maker_email.trim(),
+        } as never,
       });
     },
-    onSuccess: async () => {
-      toast.success("Role saved");
+    onSuccess: async (res: { analysis?: string } | undefined) => {
+      toast.success(
+        res?.analysis === "queued" ? "Role saved. Analysing your changes now." : "Role saved",
+      );
       if (typeof window !== "undefined") window.localStorage.removeItem(draftKey);
       setSavedAt(null);
       setState((cur) => ({ ...cur }));
@@ -369,6 +405,13 @@ export function PositionEditWizard({
     // here would show the same error twice.
   });
 
+  // "Brief incomplete" — the intake's own list, shown as a hint and never as
+  // a reason a save fails.
+  const briefHints = useMemo(
+    () => roleRequiredness({ ...state, description: stripInlineMarkup(state.description) }).missing,
+    [state],
+  );
+
   const progress = useMemo(() => Math.round(((step - 1) / (STEPS.length - 1)) * 100), [step]);
 
   // Focus the first offending field, but only right after a submit attempt —
@@ -390,7 +433,7 @@ export function PositionEditWizard({
   useClearResolvedErrors(
     errors,
     setErrors,
-    () => ({ ...validateStep(1, state), ...validateStep(2, state) }),
+    () => allErrors(state),
     [JSON.stringify(state)],
   );
 
@@ -410,6 +453,11 @@ export function PositionEditWizard({
       screening_questions: state.screening_questions,
       target_start_date: state.target_start_date,
       headcount: typeof state.headcount === "number" ? state.headcount : null,
+      work_model: state.work_model,
+      location_text: state.location,
+      remote_timezones: state.remote_timezones,
+      remote_anywhere_in_country: state.remote_anywhere_in_country,
+      open_worldwide: state.open_worldwide,
     }),
     [state],
   );
@@ -570,10 +618,10 @@ export function PositionEditWizard({
                         onChange={(e) => set("department", e.target.value)}
                       />
                     </Field>
-                    {/* Location is asked once, on step 3 (Country / City), so the
-                        wizard never collects the same answer twice. */}
+                    {/* Location and work model are asked once, on Practicalities,
+                        exactly as the intake asks them. */}
 
-                    <Field label={fieldLabel("employment_type")} error={errors.employment_type} required>
+                    <Field label={fieldLabel("employment_type")} error={errors.employment_type}>
                       <Select
                         value={state.employment_type}
                         onValueChange={(v) => set("employment_type", v as State["employment_type"])}
@@ -590,24 +638,7 @@ export function PositionEditWizard({
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Field label={fieldLabel("work_model")} error={errors.work_model} required>
-                      <Select
-                        value={state.work_model}
-                        onValueChange={(v) => set("work_model", v as State["work_model"])}
-                      >
-                        <SelectTrigger data-field="work_model">
-                          <SelectValue placeholder="Select…" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {fieldOptions("work_model").map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </Field>
-                    <Field label={fieldLabel("seniority")} error={errors.seniority} required>
+                    <Field label={fieldLabel("seniority")} error={errors.seniority}>
                       <Select value={state.seniority} onValueChange={(v) => set("seniority", v)}>
                         <SelectTrigger data-field="seniority">
                           <SelectValue placeholder="Select…" />
@@ -621,7 +652,7 @@ export function PositionEditWizard({
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Field label={fieldLabel("headcount")} error={errors.headcount} required>
+                    <Field label={fieldLabel("headcount")} error={errors.headcount}>
                       <Input
                         data-field="headcount"
                         type="number"
@@ -651,131 +682,41 @@ export function PositionEditWizard({
                     </p>
                   </Field>
 
-                  <AdvancedSection label="Pay and timing">
-                  <SectionHeader
-                    title="Compensation"
-                    subtitle="Budget range and structure. Used to filter and set expectations."
-                  />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <Field label={fieldLabel("currency")}>
-                      <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
-                        <SelectTrigger aria-label="Currency" data-field="currency">
-                          <SelectValue placeholder="Select…" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {fieldOptions("currency").map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </Field>
-                    <Field label={fieldLabel("budget_period")}>
-                      <Select
-                        value={state.budget_period || "year"}
-                        onValueChange={(v) => set("budget_period", v)}
-                      >
-                        <SelectTrigger aria-label="Period" data-field="budget_period">
-                          <SelectValue placeholder="Select…" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {fieldOptions("budget_period").map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </Field>
-                    <Field label={fieldLabel("budget_min")} hint={fieldHint("budget_min")}>
-                      <Input
-                        type="number"
-                        min={0}
-                        value={state.budget_min}
-                        onChange={(e) => set("budget_min", e.target.value)}
-                        placeholder="80000"
-                        aria-label="Minimum compensation"
-                        data-field="budget_min"
-                      />
-                    </Field>
-                    <Field label={fieldLabel("budget_max")} error={errors.budget_max}>
-                      <Input
-                        type="number"
-                        min={0}
-                        value={state.budget_max}
-                        onChange={(e) => set("budget_max", e.target.value)}
-                        placeholder="120000"
-                        aria-label="Maximum compensation"
-                        data-field="budget_max"
-                      />
-                    </Field>
-                  </div>
-                  <Field label={fieldLabel("compensation")} hint={fieldHint("compensation")}>
-                    <Textarea
-                      rows={3}
-                      value={state.compensation}
-                      onChange={(e) => set("compensation", e.target.value)}
-                      placeholder="e.g. Base + 20% bonus + equity. Fully remote stipend."
-                    />
-                  </Field>
 
-                  <SectionHeader title="Timeline & Availability" subtitle="Optional." />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <Field label={fieldLabel("hiring_urgency")}>
-                      <Select
-                        value={state.hiring_urgency}
-                        onValueChange={(v) => set("hiring_urgency", v)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Indicate your hiring timeline" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="asap">ASAP</SelectItem>
-                          <SelectItem value="30_days">Within 30 days</SelectItem>
-                          <SelectItem value="60_days">Within 60 days</SelectItem>
-                          <SelectItem value="90_days">Within 90 days</SelectItem>
-                          <SelectItem value="exploratory">Exploratory</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </Field>
-                    <Field label={fieldLabel("target_start_date")}>
-                      <Input
-                        type="date"
-                        value={state.target_start_date}
-                        onChange={(e) => set("target_start_date", e.target.value)}
-                      />
-                    </Field>
-                    <Field label={fieldLabel("time_to_hire")} hint="How fast do you need to close?">
-                      <Input
-                        value={state.time_to_hire}
-                        onChange={(e) => set("time_to_hire", e.target.value)}
-                        placeholder="e.g. 4 weeks"
-                      />
-                    </Field>
-                  </div>
-                  </AdvancedSection>
                 </div>
               )}
 
               {/* STEP 2 — Candidate profile and gates */}
               {step === 2 && (
                 <div className="space-y-6">
+                  <p className="text-sm text-muted-foreground">
+                    One list per tag, as on the intake. Each additional must-have narrows the search.
+                  </p>
                   <ChipInput
-                    label={fieldLabel("must_have_skills")}
-                    hint="Add at least 3 or provide a job description of at least 40 characters on Step 1."
+                    label={REQUIREMENT_TAG_LABELS.must_have}
+                    hint={`${REQUIREMENT_TAG_EFFECTS.must_have} At least one, or a job description on step 1.`}
                     error={errors.must_have_skills}
                     values={state.must_have_skills}
                     onChange={(v) => set("must_have_skills", v)}
-                    placeholder="Type a skill and press Enter"
+                    placeholder="Type a requirement and press Enter"
                     dataField="must_have_skills"
+                    required
                   />
                   <ChipInput
-                    label={fieldLabel("nice_to_have_skills")}
-                    hint="Bonus skills that strengthen a candidate."
+                    label={REQUIREMENT_TAG_LABELS.nice_to_have}
+                    hint={REQUIREMENT_TAG_EFFECTS.nice_to_have}
                     values={state.nice_to_have_skills}
                     onChange={(v) => set("nice_to_have_skills", v)}
                     placeholder="e.g. GraphQL, Terraform"
+                    dataField="nice_to_have_skills"
+                  />
+                  <ChipInput
+                    label={REQUIREMENT_TAG_LABELS.trainable}
+                    hint={REQUIREMENT_TAG_EFFECTS.trainable}
+                    values={state.trainable_skills}
+                    onChange={(v) => set("trainable_skills", v)}
+                    placeholder="e.g. Our internal tooling"
+                    dataField="trainable_skills"
                   />
                   <AdvancedSection label="More about the ideal candidate">
                   <ChipInput
@@ -822,7 +763,7 @@ export function PositionEditWizard({
                       placeholder="Own X. Lead Y. Deliver Z."
                     />
                   </Field>
-                  <AdvancedSection label="Sourcing rules and deal-breakers">
+                  <AdvancedSection label="Sourcing rules">
                   <Field
                     label={fieldLabel("additional_requirements")}
                     hint="Anything else the candidate must have."
@@ -903,74 +844,6 @@ export function PositionEditWizard({
                   </>
                   )}
 
-                  {/* Free-text deal-breakers, in the client's own words, as captured
-                      at intake — editable here so a rule learned later can be added. */}
-                  <ChipInput
-                    label={fieldLabel("disqualifier_tags")}
-                    hint="Short rules that rule someone out, e.g. no hands-on Postgres experience."
-                    values={state.disqualifier_tags.filter(
-                      (t) => !(DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
-                    )}
-                    onChange={(v) =>
-                      set("disqualifier_tags", [
-                        ...state.disqualifier_tags.filter((t) =>
-                          (DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
-                        ),
-                        ...v.map((t) => t.slice(0, 120)),
-                      ])
-                    }
-                    placeholder="e.g. no restaurant-scale experience"
-                  />
-
-                  {/* Auto-rejection is opt-in: nobody is filtered out by a rule the
-                      client did not deliberately open and choose. */}
-                  <Collapsible className="rounded-xl border bg-card/50">
-                    <CollapsibleTrigger asChild>
-                      <button
-                        type="button"
-                        className="group flex w-full items-center justify-between gap-3 px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      >
-                        <span className="text-sm font-medium">Add automatic disqualifiers</span>
-                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                          Optional
-                          <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
-                        </span>
-                      </button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="border-t px-4 pb-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-                      <p className="mb-3 mt-3 text-xs text-muted-foreground">
-                        Anything you tick here rejects candidates automatically — that
-                        decision, and its consequences, stay yours.
-                      </p>
-                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                        {DISQUALIFIER_OPTIONS.map((opt) => (
-                          <label key={opt} className="flex items-center gap-2 text-sm">
-                            <Checkbox
-                              checked={state.disqualifier_tags.includes(opt)}
-                              onCheckedChange={() => toggleIn("disqualifier_tags", opt)}
-                            />
-                            <span>{opt}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-
-                  <Field label={fieldLabel("interview_process")} hint={fieldHint("interview_process")}>
-                    <Textarea
-                      rows={3}
-                      value={state.interview_process}
-                      onChange={(e) => set("interview_process", e.target.value)}
-                      placeholder="Screen → Technical → Panel → Offer"
-                    />
-                  </Field>
-                  <Field label={fieldLabel("additional_context")} hint={fieldHint("additional_context")}>
-                    <Textarea
-                      rows={3}
-                      value={state.additional_context}
-                      onChange={(e) => set("additional_context", e.target.value)}
-                    />
-                  </Field>
                   </AdvancedSection>
 
                   <AdvancedSection label="Screening questions">
@@ -1138,20 +1011,573 @@ export function PositionEditWizard({
               )}
 
               {/* STEP 3 — Locations, ownership, evaluation priorities */}
+              {/* STEP 3 — Practicalities: the intake's own questions, prefilled
+                  from what the client answered there. Nothing here is required. */}
               {step === 3 && (
-                <RequisitionEditor
-                  positionId={state.id}
-                  onDirtyChange={setReqDirty}
-                  saveRef={reqSaveRef}
-                  audience={audience}
-                  openWorldwide={state.open_worldwide}
-                  workModel={state.work_model}
-                  location={state.location}
-                  currency={state.currency}
-                  budgetMin={state.budget_min}
-                  budgetMax={state.budget_max}
-                  budgetPeriod={state.budget_period}
-                />
+                <div className="space-y-6" data-testid="edit-practicalities">
+                  <p className="text-sm text-muted-foreground">
+                    Money, place, authorisation, timing. If you do not have an answer yet, leave it —
+                    the role is simply marked <span className="font-medium">Brief incomplete</span>{" "}
+                    until you do. Nothing on this step is required to save.
+                  </p>
+
+                  <SectionHeader title="Location and working model" />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field
+                      label={fieldLabel("location")}
+                      hint={
+                        state.work_model === "remote"
+                          ? "Optional for a remote role."
+                          : "City and country, or the region candidates must live in."
+                      }
+                    >
+                      <Input
+                        data-field="location"
+                        value={state.location}
+                        onChange={(e) => set("location", e.target.value)}
+                        placeholder="Manchester, United Kingdom"
+                      />
+                    </Field>
+                    <Field label={fieldLabel("work_model")} error={errors.work_model}>
+                      <Select
+                        value={state.work_model || "unset"}
+                        onValueChange={(v) =>
+                          set("work_model", (v === "unset" ? "" : v) as State["work_model"])
+                        }
+                      >
+                        <SelectTrigger data-field="work_model">
+                          <SelectValue placeholder="Choose one" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unset">Choose one</SelectItem>
+                          {WORK_MODELS.map((m) => (
+                            <SelectItem key={m} value={m}>
+                              {WORK_MODEL_LABELS[m]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                  </div>
+
+                  {state.work_model === "hybrid" && (
+                    <Field
+                      label="Days on site each week"
+                      hint="Optional. Between 1 and 5 — candidates ask this first."
+                    >
+                      <Input
+                        data-field="onsite_days"
+                        inputMode="numeric"
+                        className="max-w-[8rem]"
+                        value={state.onsite_days}
+                        onChange={(e) => {
+                          const digits = e.target.value.replace(/[^\d]/g, "").slice(0, 1);
+                          set("onsite_days", digits === "" ? "" : Math.min(7, Number(digits)));
+                        }}
+                        placeholder="3"
+                      />
+                    </Field>
+                  )}
+
+                  {state.work_model === "remote" && (
+                    <fieldset className="space-y-3 rounded-lg border p-4" data-field="remote_timezones">
+                      <legend className="px-1 text-sm font-medium">
+                        Acceptable timezones
+                        <span className="ml-2 text-xs font-normal text-muted-foreground">Optional</span>
+                      </legend>
+                      <p className="text-sm text-muted-foreground">
+                        Pick the working-hours bands you can live with, or say anywhere in the country.
+                      </p>
+                      <label className="flex cursor-pointer items-start gap-3 text-sm">
+                        <Checkbox
+                          checked={state.remote_anywhere_in_country}
+                          onCheckedChange={(c) =>
+                            setState((cur) => ({
+                              ...cur,
+                              remote_anywhere_in_country: c === true,
+                              remote_timezones: c === true ? [] : cur.remote_timezones,
+                            }))
+                          }
+                          aria-label="Anywhere in the country — timezone does not matter"
+                        />
+                        <span>Anywhere in the country — timezone does not matter</span>
+                      </label>
+                      {!state.remote_anywhere_in_country && (
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {TIMEZONE_BANDS.map((tz) => (
+                            <label key={tz.value} className="flex cursor-pointer items-start gap-3 text-sm">
+                              <Checkbox
+                                checked={state.remote_timezones.includes(tz.value)}
+                                onCheckedChange={() => toggleIn("remote_timezones", tz.value)}
+                                aria-label={tz.label}
+                                data-timezone={tz.value}
+                              />
+                              <span>{tz.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </fieldset>
+                  )}
+
+                  <SectionHeader title="Visa sponsorship" subtitle={SPONSORSHIP_WHY_IT_MATTERS} />
+                  <div className="space-y-2" role="radiogroup" aria-label="Can you sponsor a visa?">
+                    {SPONSORSHIP_OPTIONS.map((opt) => (
+                      <label
+                        key={opt.value}
+                        className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm"
+                      >
+                        <input
+                          type="radio"
+                          name="edit-sponsorship-available"
+                          value={opt.value}
+                          checked={state.sponsorship_available === opt.value}
+                          onChange={() =>
+                            setState((cur) => ({
+                              ...cur,
+                              sponsorship_available: opt.value,
+                              // Same derivation as the intake: one answer, not two.
+                              work_authorization_rule:
+                                opt.value === "yes" ? "will_sponsor" : "already_authorized",
+                            }))
+                          }
+                          className="mt-1"
+                        />
+                        <span>
+                          <span className="font-medium">{opt.label}</span>
+                          <span className="block text-xs text-muted-foreground">{opt.hint}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+
+                  <SectionHeader title="Compensation" subtitle={COMPENSATION_HONEST_LINE} />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <Field label={fieldLabel("currency")}>
+                      <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
+                        <SelectTrigger aria-label="Currency" data-field="currency">
+                          <SelectValue placeholder="Select…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {fieldOptions("currency").map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label={fieldLabel("budget_min")} hint={fieldHint("budget_min")}>
+                      <Input
+                        inputMode="numeric"
+                        disabled={state.compensation_undecided}
+                        value={state.budget_min}
+                        onChange={(e) => set("budget_min", e.target.value.replace(/[^\d.]/g, ""))}
+                        placeholder="70000"
+                        aria-label="Minimum compensation"
+                        data-field="budget_min"
+                      />
+                    </Field>
+                    <Field label={fieldLabel("budget_max")} error={errors.budget_max}>
+                      <Input
+                        inputMode="numeric"
+                        disabled={state.compensation_undecided}
+                        value={state.budget_max}
+                        onChange={(e) => set("budget_max", e.target.value.replace(/[^\d.]/g, ""))}
+                        placeholder="85000"
+                        aria-label="Maximum compensation"
+                        data-field="budget_max"
+                      />
+                    </Field>
+                    <Field label={fieldLabel("budget_period")}>
+                      <Select
+                        value={state.budget_period || "year"}
+                        onValueChange={(v) => set("budget_period", v)}
+                      >
+                        <SelectTrigger aria-label="Period" data-field="budget_period">
+                          <SelectValue placeholder="Select…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COMP_PERIODS.map((p) => (
+                            <SelectItem key={p} value={p}>
+                              {COMP_PERIOD_LABELS[p]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                  </div>
+                  <label className="flex cursor-pointer items-start gap-3 text-sm">
+                    <Checkbox
+                      checked={state.compensation_undecided}
+                      onCheckedChange={(c) =>
+                        setState((cur) => ({
+                          ...cur,
+                          compensation_undecided: c === true,
+                          budget_min: c === true ? "" : cur.budget_min,
+                          budget_max: c === true ? "" : cur.budget_max,
+                        }))
+                      }
+                      aria-label="Not decided yet"
+                    />
+                    <span>
+                      Not decided yet
+                      <span className="block text-xs text-muted-foreground">
+                        Recorded as undecided, never as zero.
+                      </span>
+                    </span>
+                  </label>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="Equity">
+                      <Select
+                        value={state.equity || "unset"}
+                        onValueChange={(v) => set("equity", (v === "unset" ? "" : v) as State["equity"])}
+                      >
+                        <SelectTrigger aria-label="Equity">
+                          <SelectValue placeholder="Not stated" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unset">Not stated</SelectItem>
+                          {COMP_EQUITY.map((k) => (
+                            <SelectItem key={k} value={k}>
+                              {COMP_EQUITY_LABELS[k]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="Bonus">
+                      <Input
+                        value={state.bonus_structure}
+                        onChange={(e) => set("bonus_structure", e.target.value)}
+                        placeholder="10% annual bonus"
+                      />
+                    </Field>
+                  </div>
+                  <label className="flex cursor-pointer items-start gap-3 text-sm">
+                    <Checkbox
+                      checked={state.compensation_flexible}
+                      onCheckedChange={(c) => set("compensation_flexible", c === true)}
+                      aria-label="Flexible for the right person"
+                    />
+                    <span>Flexible for the right person</span>
+                  </label>
+                  <Field label={fieldLabel("compensation")} hint="Bonus, relocation, shift premium, or where exactly you have room.">
+                    <Textarea
+                      rows={2}
+                      value={state.compensation}
+                      onChange={(e) => set("compensation", e.target.value)}
+                      placeholder="Can stretch to 90k for someone exceptional"
+                    />
+                  </Field>
+
+                  <SectionHeader title={fieldLabel("target_start_date")} />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="When would you like them to start?">
+                      <Input
+                        type="date"
+                        data-field="target_start_date"
+                        value={state.target_start_date}
+                        onChange={(e) => set("target_start_date", e.target.value)}
+                      />
+                    </Field>
+                    <Field label={fieldLabel("hiring_urgency")}>
+                      <Select
+                        value={state.hiring_urgency || "unset"}
+                        onValueChange={(v) => set("hiring_urgency", v === "unset" ? "" : v)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Indicate your hiring timeline" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unset">Not stated</SelectItem>
+                          <SelectItem value="asap">ASAP</SelectItem>
+                          <SelectItem value="30_days">Within 30 days</SelectItem>
+                          <SelectItem value="60_days">Within 60 days</SelectItem>
+                          <SelectItem value="90_days">Within 90 days</SelectItem>
+                          <SelectItem value="exploratory">Exploratory</SelectItem>
+                          {state.hiring_urgency &&
+                            !["asap", "30_days", "60_days", "90_days", "exploratory"].includes(state.hiring_urgency) && (
+                              <SelectItem value={state.hiring_urgency}>{state.hiring_urgency}</SelectItem>
+                            )}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4 — Process and confirm, as on the intake. */}
+              {step === 4 && (
+                <div className="space-y-6" data-testid="edit-process">
+                  <SectionHeader title="What rules someone out?" subtitle={DEAL_BREAKER_WHY_IT_MATTERS} />
+                  {/* Free-text deal-breakers, in the client's own words, as captured
+                      at intake — editable here so a rule learned later can be added. */}
+                  <ChipInput
+                    label={fieldLabel("disqualifier_tags")}
+                    hint="Short rules that rule someone out, e.g. no hands-on Postgres experience."
+                    values={state.disqualifier_tags.filter(
+                      (t) => !(DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
+                    )}
+                    onChange={(v) =>
+                      set("disqualifier_tags", [
+                        ...state.disqualifier_tags.filter((t) =>
+                          (DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
+                        ),
+                        ...v.map((t) => t.slice(0, 120)),
+                      ])
+                    }
+                    placeholder="e.g. no restaurant-scale experience"
+                  />
+
+                  {/* Auto-rejection is opt-in: nobody is filtered out by a rule the
+                      client did not deliberately open and choose. */}
+                  <Collapsible className="rounded-xl border bg-card/50">
+                    <CollapsibleTrigger asChild>
+                      <button
+                        type="button"
+                        className="group flex w-full items-center justify-between gap-3 px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <span className="text-sm font-medium">Add automatic disqualifiers</span>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          Optional
+                          <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                        </span>
+                      </button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="border-t px-4 pb-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                      <p className="mb-3 mt-3 text-xs text-muted-foreground">
+                        Anything you tick here rejects candidates automatically — that
+                        decision, and its consequences, stay yours.
+                      </p>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {DISQUALIFIER_OPTIONS.map((opt) => (
+                          <label key={opt} className="flex items-center gap-2 text-sm">
+                            <Checkbox
+                              checked={state.disqualifier_tags.includes(opt)}
+                              onCheckedChange={() => toggleIn("disqualifier_tags", opt)}
+                            />
+                            <span>{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  <Field label={fieldLabel("interview_process")} hint={fieldHint("interview_process")}>
+                    <Textarea
+                      rows={3}
+                      value={state.interview_process}
+                      onChange={(e) => set("interview_process", e.target.value)}
+                      placeholder="Screen → Technical → Panel → Offer"
+                    />
+                  </Field>
+                  <Field label={fieldLabel("additional_context")} hint={fieldHint("additional_context")}>
+                    <Textarea
+                      rows={3}
+                      value={state.additional_context}
+                      onChange={(e) => set("additional_context", e.target.value)}
+                    />
+                  </Field>
+                  <SectionHeader title="Your interview process" subtitle={INTERVIEW_PROCESS_WHY_IT_MATTERS} />
+                  {state.interview_stages.length === 0 ? (
+                    <div className="rounded-lg border border-dashed p-4 text-sm">
+                      <p className="font-medium">Most clients run three stages</p>
+                      <p className="mt-1 text-muted-foreground">
+                        {DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((st) => st.name).join(" → ")}.
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            set(
+                              "interview_stages",
+                              DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((st) => ({
+                                name: st.name,
+                                format: st.format,
+                                ownerName: "",
+                                ownerEmail: "",
+                              })),
+                            )
+                          }
+                        >
+                          Use this as a starting point
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={() =>
+                            set("interview_stages", [
+                              { name: "", format: "video_call", ownerName: "", ownerEmail: "" },
+                            ])
+                          }
+                        >
+                          Build my own
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3" data-field="interview_stages">
+                      {state.interview_stages.map((stage, index) => {
+                        const update = (patch: Partial<State["interview_stages"][number]>) =>
+                          set(
+                            "interview_stages",
+                            state.interview_stages.map((st, i) => (i === index ? { ...st, ...patch } : st)),
+                          );
+                        return (
+                          <div key={index} className="rounded-lg border p-3" data-testid="interview-stage">
+                            <div className="flex items-center justify-between border-b pb-2">
+                              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                Stage {index + 1}
+                              </span>
+                              <button
+                                type="button"
+                                className="text-xs underline text-muted-foreground"
+                                onClick={() =>
+                                  set(
+                                    "interview_stages",
+                                    state.interview_stages.filter((_, i) => i !== index),
+                                  )
+                                }
+                              >
+                                Remove
+                              </button>
+                            </div>
+                            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                              <Field label="What is this stage?">
+                                <Input
+                                  value={stage.name}
+                                  maxLength={60}
+                                  onChange={(e) => update({ name: e.target.value })}
+                                  placeholder="Hiring manager interview"
+                                />
+                              </Field>
+                              <Field label="Format">
+                                <Select
+                                  value={stage.format}
+                                  onValueChange={(v) => update({ format: v as InterviewStageFormat })}
+                                >
+                                  <SelectTrigger aria-label={`Stage ${index + 1} format`}>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {INTERVIEW_STAGE_FORMATS.map((f) => (
+                                      <SelectItem key={f} value={f}>
+                                        {INTERVIEW_STAGE_FORMAT_LABELS[f]}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </Field>
+                              <Field label="Who runs it?">
+                                <Input
+                                  value={stage.ownerName}
+                                  onChange={(e) => update({ ownerName: e.target.value })}
+                                  placeholder="Dana Okoro"
+                                />
+                              </Field>
+                              <Field label="Their email">
+                                <Input
+                                  type="email"
+                                  value={stage.ownerEmail}
+                                  onChange={(e) => update({ ownerEmail: e.target.value })}
+                                  placeholder="dana@company.com"
+                                />
+                              </Field>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {state.interview_stages.length < MAX_INTERVIEW_STAGES && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            set("interview_stages", [
+                              ...state.interview_stages,
+                              { name: "", format: "video_call", ownerName: "", ownerEmail: "" },
+                            ])
+                          }
+                        >
+                          Add a stage
+                        </Button>
+                      )}
+                      {errors.interview_stages && (
+                        <p role="alert" className="text-xs text-destructive">{errors.interview_stages}</p>
+                      )}
+                    </div>
+                  )}
+
+                  <SectionHeader title="Timeline" />
+                  <Field label={fieldLabel("time_to_hire")} hint="Days, e.g. 21. Optional.">
+                    <Input
+                      className="max-w-[12rem]"
+                      value={state.time_to_hire}
+                      onChange={(e) => set("time_to_hire", e.target.value)}
+                      placeholder="21"
+                      data-field="time_to_hire"
+                    />
+                  </Field>
+
+                  <SectionHeader title="Decision maker" />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="Who makes the final decision?" hint="Name and role.">
+                      <Input
+                        data-field="decision_maker"
+                        value={state.decision_maker}
+                        onChange={(e) => set("decision_maker", e.target.value)}
+                        placeholder="Dana Okoro, Operations Director"
+                      />
+                    </Field>
+                    <Field label="Their email" error={errors.decision_maker_email}>
+                      <Input
+                        type="email"
+                        data-field="decision_maker_email"
+                        value={state.decision_maker_email}
+                        onChange={(e) => set("decision_maker_email", e.target.value)}
+                        placeholder="dana@company.com"
+                      />
+                    </Field>
+                  </div>
+
+                  {/* Structured locations and scoring priorities: an optional
+                      refinement. A client never has to open it. */}
+                  {audience === "admin" ? (
+                    <RequisitionEditor
+                      positionId={state.id}
+                      onDirtyChange={setReqDirty}
+                      saveRef={reqSaveRef}
+                      audience={audience}
+                      openWorldwide={state.open_worldwide}
+                      workModel={state.work_model}
+                      location={state.location}
+                      currency={state.currency}
+                      budgetMin={state.budget_min}
+                      budgetMax={state.budget_max}
+                      budgetPeriod={state.budget_period}
+                    />
+                  ) : (
+                    <AdvancedSection label="Several locations, travel and scoring priorities">
+                      <RequisitionEditor
+                        positionId={state.id}
+                        onDirtyChange={setReqDirty}
+                        saveRef={reqSaveRef}
+                        audience={audience}
+                        openWorldwide={state.open_worldwide}
+                        workModel={state.work_model}
+                        location={state.location}
+                        currency={state.currency}
+                        budgetMin={state.budget_min}
+                        budgetMax={state.budget_max}
+                        budgetPeriod={state.budget_period}
+                      />
+                    </AdvancedSection>
+                  )}
+                </div>
               )}
             </CardContent>
           </Card>
@@ -1165,23 +1591,25 @@ export function PositionEditWizard({
             >
               Back
             </Button>
-            {step < LAST_STEP ? (
-              <Button type="button" onClick={next}>
-                Continue
+            {/* Save is offered on every step: the edit screen is the saved
+                intake, and a client fixing one answer should not have to walk
+                to the last step to keep it. */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                variant={step < LAST_STEP || canSubmit ? "outline" : "default"}
+                onClick={() => stepSaveMutation.mutate()}
+                disabled={stepSaveMutation.isPending || saveMutation.isPending || !dirty}
+                data-testid="save-role"
+              >
+                {stepSaveMutation.isPending || saveMutation.isPending ? "Saving…" : "Save this role"}
               </Button>
-            ) : (
-              <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  type="button"
-                  variant={canSubmit ? "outline" : "default"}
-                  onClick={() => stepSaveMutation.mutate()}
-                  disabled={stepSaveMutation.isPending || saveMutation.isPending || !dirty}
-                >
-                  {stepSaveMutation.isPending || saveMutation.isPending
-                    ? "Saving…"
-                    : "Save this role"}
+              {step < LAST_STEP ? (
+                <Button type="button" onClick={next}>
+                  Continue
                 </Button>
-                {canSubmit && (
+              ) : (
+                canSubmit && (
                   <Button
                     type="button"
                     onClick={() => submitMutation.mutate()}
@@ -1194,10 +1622,15 @@ export function PositionEditWizard({
                   >
                     {submitMutation.isPending ? "Submitting…" : "Submit for review"}
                   </Button>
-                )}
-              </div>
-            )}
+                )
+              )}
+            </div>
           </div>
+          {briefHints.length > 0 && (
+            <p className="text-xs text-muted-foreground" data-testid="brief-incomplete-hint">
+              Brief incomplete — you can save now and add these later: {briefHints.join(", ")}.
+            </p>
+          )}
           {step === LAST_STEP && canSubmit && blockingGaps.length > 0 && (
             <p className="text-xs text-muted-foreground">
               Before you can submit, answer: {blockingGaps.map((g) => g.label).join(", ")}. Everything

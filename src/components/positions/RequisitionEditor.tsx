@@ -48,6 +48,7 @@ import {
   countryName,
   explainWeights,
   locationLabel,
+  normalizeCountryCode,
   requisitionMetaSchema,
   TIMEZONE_ANCHOR_SUGGESTIONS,
   type EvaluationWeights,
@@ -74,12 +75,24 @@ const emptyLocation = (): RequisitionLocation => ({
 
 type WorkModel = "remote" | "hybrid" | "onsite" | "";
 
-function seededLocation(openWorldwide: boolean, workModel: WorkModel, location: string): RequisitionLocation {
+/**
+ * First structured row, read from the one-line location the intake recorded.
+ * "Manchester, United Kingdom" becomes City = Manchester, Country = GB, instead
+ * of the whole answer landing in "notes" with no country — which is how an
+ * intake role used to open here looking like nobody had said where it was.
+ */
+export function seededLocation(openWorldwide: boolean, workModel: WorkModel, location: string): RequisitionLocation {
   if (openWorldwide) return emptyLocation();
+  const parts = (location || "").split(",").map((p) => p.trim()).filter(Boolean);
+  const country = parts.length > 0 ? normalizeCountryCode(parts[parts.length - 1]) : "";
+  const placeParts = country ? parts.slice(0, -1) : [];
   return {
     ...emptyLocation(),
     work_model: workModel || "remote",
-    notes: location || "",
+    country_code: country,
+    city: placeParts[0] ?? "",
+    region: placeParts.slice(1).join(", "),
+    notes: country ? "" : location || "",
     is_primary: true,
   };
 }
@@ -217,7 +230,12 @@ export function RequisitionEditor({
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!form) throw new Error("Not ready");
-      const parsed = requisitionMetaSchema.safeParse({ position_id: positionId, ...form });
+      // An untouched blank row (no country, no place) is not an answer: drop
+      // it rather than refusing the save with "Choose a country".
+      const locations = form.locations.filter(
+        (l) => l.country_code || l.city.trim() || l.region.trim(),
+      );
+      const parsed = requisitionMetaSchema.safeParse({ position_id: positionId, ...form, locations });
       if (!parsed.success) {
         const msgs = parsed.error.issues.map((i) => i.message);
         setErrors(msgs);

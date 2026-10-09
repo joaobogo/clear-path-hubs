@@ -1,9 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
+import { ensureRoleAnalysis, retryBlueprintAnalysis } from "@/lib/blueprint.functions";
+import { analysisDecision } from "@/lib/blueprint-trigger";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/tracking/pixels";
 import {
@@ -113,10 +114,45 @@ export function GeneratedBlueprintPanel({
   const router = useRouter();
   const retry = useServerFn(retryBlueprintAnalysis);
   const [retrying, setRetrying] = useState(false);
+  const ensure = useServerFn(ensureRoleAnalysis);
   const status: string = position?.blueprint_status ?? "none";
   const positionStatus = position?.status ?? "draft";
   const isDecisionReady = positionStatus === "active" || positionStatus === "closed" || positionStatus === "archived";
   const ready = status === "ready";
+  const decision = analysisDecision(position ?? {});
+  const stalled = decision.state === "stalled" || decision.state === "exhausted";
+  const analysing = !ready && status !== "none" && !!status && status !== "failed";
+
+  // Start the analysis without anyone pressing anything. Idempotent on the
+  // server (a conditional claim), so several tabs start at most one run.
+  // The run is carried by this request; the page does not wait for it.
+  const ensuredFor = useRef<string | null>(null);
+  const positionId = position?.id as string | undefined;
+  const shouldStart = decision.shouldStart && positionStatus !== "closed";
+  useEffect(() => {
+    if (!positionId || !shouldStart) return;
+    const key = `${positionId}:${status}:${position?.blueprint_attempts ?? 0}`;
+    if (ensuredFor.current === key) return;
+    ensuredFor.current = key;
+    void ensure({ data: { positionId } })
+      .catch(() => undefined)
+      .finally(() => refresh());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [positionId, shouldStart, status]);
+
+  // While it runs, keep the page current so each stage ticks over and the
+  // brief appears the moment it is ready.
+  useEffect(() => {
+    if (!analysing && !shouldStart) return;
+    const t = window.setInterval(refresh, 5000);
+    return () => window.clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [analysing, shouldStart]);
+
+  function refresh() {
+    if (typeof window !== "undefined") window.dispatchEvent(new Event("client:refresh"));
+    void router.invalidate();
+  }
 
   // If the search is closed, we don't show the builder widget.
   if (positionStatus === "closed") return null;
@@ -124,6 +160,7 @@ export function GeneratedBlueprintPanel({
   // If the blueprint is already prepared, or if the role is decision-ready (active/archived),
   // we don't show the "being built" widget.
   if (ready || status === "none" || !status || isDecisionReady) return null;
+  const failedOrStalled = status === "failed" || stalled;
 
   async function handleRetry() {
     if (retrying) return;
@@ -149,7 +186,7 @@ export function GeneratedBlueprintPanel({
   const confirmedAt = position?.blueprint_confirmed_at as string | null;
 
   return (
-    <section className="rounded-xl border bg-card">
+    <section className="rounded-xl border bg-card" data-testid="role-analysis" data-state={ready ? "ready" : failed ? "failed" : stalled ? "stalled" : "analysing"}>
       <header className="flex flex-wrap items-start justify-between gap-3 border-b p-4">
         <div className="flex items-start gap-3">
           <span className="mt-0.5 rounded-lg border bg-muted/40 p-2">
@@ -157,7 +194,7 @@ export function GeneratedBlueprintPanel({
           </span>
           <div>
             <h2 className="text-base font-semibold">
-              {ready || failed ? "Role brief" : "Your role is being built"}
+              {ready || failed ? "Role brief" : stalled ? "Restarting the analysis" : "Analysing your role…"}
             </h2>
             <p className="text-sm text-muted-foreground">
             {ready
@@ -186,8 +223,8 @@ export function GeneratedBlueprintPanel({
               </Link>
             </Button>
           )}
-          {failed && (
-            <Button size="sm" onClick={handleRetry} disabled={retrying}>
+          {failedOrStalled && (
+            <Button size="sm" onClick={handleRetry} disabled={retrying} data-testid="retry-analysis">
               {retrying ? "Analyzing…" : "Try analysis again"}
             </Button>
           )}

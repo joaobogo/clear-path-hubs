@@ -14,6 +14,12 @@ import {
   type RoleBlueprint,
 } from "./blueprint-engine.server";
 import { normalizeTravelExpectation, normalizeTimezoneAnchor } from "@/lib/requisition-schema";
+import {
+  BLUEPRINT_MAX_AUTO_ATTEMPTS,
+  BLUEPRINT_RUNNABLE_STATUSES,
+  BLUEPRINT_STALE_MS,
+  isBlueprintStale,
+} from "@/lib/blueprint-trigger";
 
 
 type Stage =
@@ -397,36 +403,50 @@ export async function runBlueprintForPosition(
   const { data: position } = await admin
     .from("positions")
     .select(
-      "id, title, description, blueprint_status, blueprint_attempts, " +
+      "id, title, description, blueprint_status, blueprint_attempts, updated_at, " +
         "jd_file_path, jd_file_name, organization_id, created_by",
     )
     .eq("id", positionId)
     .maybeSingle();
   if (!position) return { ok: false, reason: "position_not_found" };
 
-  const RUNNABLE = ["queued", "failed", "not_started", ""];
+  const RUNNABLE = [...BLUEPRINT_RUNNABLE_STATUSES] as string[];
   const status = String(position.blueprint_status ?? "not_started") || "not_started";
-  if (!RUNNABLE.includes(status) && !opts.force) {
+  // A run that claimed the job and was then dropped (the request that carried
+  // it ended) leaves the role "in progress" forever. Its heartbeat — updated_at,
+  // touched at every stage — tells us it is dead, and it may be reclaimed.
+  const stale = isBlueprintStale(status, position.updated_at as string | null);
+  if (!RUNNABLE.includes(status) && !stale && !opts.force) {
     return { ok: true, status, reason: "already_running" };
   }
 
   const attempts = Number(position.blueprint_attempts ?? 0);
-  if (!opts.force && attempts >= 5) {
+  if (!opts.force && attempts >= BLUEPRINT_MAX_AUTO_ATTEMPTS) {
     return { ok: false, reason: "attempt_limit_reached", status };
   }
 
-  // Claim the job so concurrent drains / retries don't duplicate work.
-  const { data: claimed } = await admin
-    .from("positions")
-    .update({
-      blueprint_status: "analyzing_jd",
-      blueprint_error: null,
-      blueprint_attempts: attempts + 1,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", position.id)
-    .or(`blueprint_status.in.(${RUNNABLE.filter(Boolean).join(",")}),blueprint_status.is.null`)
-    .select("id");
+  // Claim the job so concurrent drains / retries don't duplicate work. The
+  // update is conditional, so of two callers exactly one gets the row back.
+  const claimPatch = {
+    blueprint_status: "analyzing_jd",
+    blueprint_error: null,
+    blueprint_attempts: attempts + 1,
+    updated_at: new Date().toISOString(),
+  };
+  let claimQuery = admin.from("positions").update(claimPatch).eq("id", position.id);
+  if (RUNNABLE.includes(status)) {
+    claimQuery = claimQuery.or(
+      `blueprint_status.in.(${RUNNABLE.filter(Boolean).join(",")}),blueprint_status.is.null`,
+    );
+  } else if (stale && !opts.force) {
+    claimQuery = claimQuery
+      .eq("blueprint_status", status)
+      .lt("updated_at", new Date(Date.now() - BLUEPRINT_STALE_MS).toISOString());
+  } else {
+    // Forced retry of a live run: only take it if nobody moved it meanwhile.
+    claimQuery = claimQuery.eq("blueprint_status", status);
+  }
+  const { data: claimed } = await claimQuery.select("id");
   if (!claimed || claimed.length === 0) {
     return { ok: true, reason: "already_running" };
   }
