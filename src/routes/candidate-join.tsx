@@ -109,7 +109,7 @@ function CandidateJoinPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/jobs"
-              className="inline-flex min-h-11 items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
+              className="inline-flex min-h-11 items-center rounded-lg bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-medium text-white"
             >
               Browse roles — your first application creates your account
             </Link>
@@ -133,7 +133,7 @@ function CandidateJoinPage() {
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/85">
                 {PREP.map((p) => (
                   <li key={p} className="flex gap-2">
-                    <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                    <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]" />
                     {p}
                   </li>
                 ))}
@@ -146,7 +146,7 @@ function CandidateJoinPage() {
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/85">
                 {AFTER.map((p) => (
                   <li key={p} className="flex gap-2">
-                    <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                    <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]" />
                     {p}
                   </li>
                 ))}

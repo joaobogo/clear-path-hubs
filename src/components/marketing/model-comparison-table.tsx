@@ -165,7 +165,7 @@ export function ModelComparisonTable({ className }: { className?: string }) {
 
         <Link
           to="/pilot"
-          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
         >
           Start with a ${PRICE_PILOT_USD} pilot
         </Link>

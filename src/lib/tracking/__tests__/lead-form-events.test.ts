@@ -55,7 +55,7 @@ describe("EmployerInquiryForm contract", () => {
   });
 
   it("uses the shared CTA label and the agreed copy", () => {
-    expect(src).toContain("CTA_PRIMARY.label");
+    expect(src).toContain("CTA_PILOT_REQUEST.label");
     expect(src).toContain("Your request has been received");
     expect(src).not.toContain("Choose a time");
     expect(src).toContain("We will contact you within one business day to confirm the role and the pilot scope.");

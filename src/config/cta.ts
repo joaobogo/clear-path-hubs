@@ -10,8 +10,19 @@ import { PRICE_PILOT_USD } from "@/config/pricing-core";
 
 /** Primary employer action. Goes to the pilot page, which opens with the short inquiry form. */
 export const CTA_PRIMARY = {
-  label: `Request my $${PRICE_PILOT_USD} pilot`,
+  label: `Start a $${PRICE_PILOT_USD} pilot`,
   to: "/pilot",
+} as const;
+
+/** The pilot form's own submit button: the request itself (payments are off). */
+export const CTA_PILOT_REQUEST = {
+  label: `Request my $${PRICE_PILOT_USD} pilot`,
+} as const;
+
+/** The role input's button, wherever the "I'm hiring a" input appears. */
+export const CTA_RUN_ROLE = {
+  label: "Run this role",
+  to: "/intake",
 } as const;
 
 /** Quiet link for visitors who want to see the process first. */

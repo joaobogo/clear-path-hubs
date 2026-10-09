@@ -145,7 +145,7 @@ export function EnterpriseStakeholderSelector() {
               className={cn(
                 "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition",
                 selected
-                  ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                  ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-white"
                   : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:bg-[color:var(--brand-navy)]/[0.04]",
               )}
             >
@@ -188,7 +188,7 @@ export function EnterpriseStakeholderSelector() {
               >
                 <span
                   aria-hidden
-                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]"
                 />
                 {p}
               </li>

@@ -40,7 +40,7 @@ export function FormShell({
     <div className="flex min-h-dvh flex-col bg-[color:var(--brand-paper)] text-[color:var(--brand-navy)]">
       <a
         href="#form-main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-[color:var(--brand-navy)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-[color:var(--blue-600)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white"
       >
         Skip to form
       </a>
@@ -76,7 +76,7 @@ export function FormShell({
                 aria-valuemax={progress.total}
               >
                 <div
-                  className="h-full rounded-full bg-[color:var(--brand-navy)] transition-all"
+                  className="h-full rounded-full bg-[color:var(--blue-600)] transition-all"
                   style={{ width: `${Math.round((progress.step / progress.total) * 100)}%` }}
                 />
               </div>
@@ -101,7 +101,7 @@ export function FormShell({
             aria-valuemax={progress.total}
           >
             <div
-              className="h-full bg-[color:var(--brand-navy)] transition-all"
+              className="h-full bg-[color:var(--blue-600)] transition-all"
               style={{ width: `${Math.round((progress.step / progress.total) * 100)}%` }}
             />
           </div>

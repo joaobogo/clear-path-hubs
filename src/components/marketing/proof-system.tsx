@@ -178,7 +178,7 @@ export function ProofSystem() {
         {/* 3 — Operator credibility + 4 — Product patterns (two-column) */}
         <div className="mt-14 grid gap-6 lg:grid-cols-[1fr_1.15fr]">
           {/* Operator credibility */}
-          <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-navy)] p-6 text-white sm:p-8">
+          <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--blue-600)] p-6 text-white sm:p-8">
             <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">
               Who runs this
             </span>

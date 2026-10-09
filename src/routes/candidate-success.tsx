@@ -106,7 +106,7 @@ function CandidateSuccessPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/jobs"
-              className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
+              className="inline-flex items-center rounded-lg bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-medium text-white"
             >
               Browse open briefs
             </Link>

@@ -160,7 +160,7 @@ function ContactPage() {
                   className={
                     "flex min-h-20 flex-col items-start gap-1.5 rounded-xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-navy)]/40 " +
                     (active
-                      ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                      ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-white"
                       : "border-[color:var(--brand-navy)]/15 bg-white hover:border-[color:var(--brand-navy)]/40")
                   }
                 >
@@ -203,7 +203,7 @@ function ContactPage() {
                   {intent.primaryCta.to ? (
                     <Link
                       to={intent.primaryCta.to}
-                      className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                      className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
                     >
                       {intent.primaryCta.icon ? <intent.primaryCta.icon className="mr-2 h-4 w-4" /> : null}
                       {intent.primaryCta.label}
@@ -211,7 +211,7 @@ function ContactPage() {
                   ) : (
                     <a
                       href={intent.primaryCta.anchor}
-                      className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                      className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
                     >
                       {intent.primaryCta.icon ? <intent.primaryCta.icon className="mr-2 h-4 w-4" /> : null}
                       {intent.primaryCta.label}
@@ -679,7 +679,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         <Button
           type="submit"
           disabled={submitting}
-          className="min-h-11 bg-[color:var(--brand-navy)] text-white hover:opacity-90"
+          className="min-h-11 bg-[color:var(--blue-600)] text-white hover:opacity-90"
         >
           {submitting ? "Sending…" : CTA_MESSAGE.label}
         </Button>

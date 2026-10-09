@@ -174,7 +174,7 @@ export function AudienceSelector() {
 
           <Link
             to={a.cta.to}
-            className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[color:var(--brand-ocean)]"
+            className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[color:var(--brand-ocean)]"
           >
             {a.cta.label}
             <ArrowRight className="h-4 w-4" aria-hidden />

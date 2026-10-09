@@ -128,7 +128,8 @@ export const Route = createRootRouteWithContext<{
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap",
+        // One family, on its width and weight axes (The Run, tokens.css).
+        href: "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap",
       },
     ],
     // NOTE: the key is `scripts` — TanStack ignores a `script` key silently,

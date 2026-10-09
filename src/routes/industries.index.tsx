@@ -169,7 +169,7 @@ function IndustriesIndex() {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               to={CTA_PRIMARY.to}
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {CTA_PRIMARY.label}
             </Link>
@@ -302,7 +302,7 @@ function IndustriesIndex() {
                 <button
                   type="button"
                   onClick={reset}
-                  className="rounded-full bg-[color:var(--brand-navy)] px-4 py-2 text-xs font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
+                  className="rounded-full bg-[color:var(--blue-600)] px-4 py-2 text-xs font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
                 >
                   View all industries
                 </button>
@@ -349,7 +349,7 @@ function IndustriesIndex() {
                 <Link
                   to="/how-it-works"
                   hash="scoring"
-                  className="inline-flex min-h-11 items-center justify-center gap-1 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
+                  className="inline-flex min-h-11 items-center justify-center gap-1 rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
                 >
                   See the scoring methodology <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
@@ -372,7 +372,7 @@ function IndustriesIndex() {
                   key={row.t}
                   className="flex items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--taas-surface-card)] p-4"
                 >
-                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] font-semibold text-[color:var(--brand-on-dark)]">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--blue-600)] text-[10px] font-semibold text-[color:var(--brand-on-dark)]">
                     0{i + 1}
                   </span>
                   <div>
@@ -411,7 +411,7 @@ function IndustriesIndex() {
             <div className="flex flex-col gap-3 sm:items-end">
               <Link
                 to={CTA_MESSAGE.to}
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
               >
                 {CTA_MESSAGE.label}
               </Link>
@@ -449,7 +449,7 @@ function FamilyChip({
       onClick={onClick}
       className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold sm:min-h-9 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] ${
         active
-          ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-[color:var(--brand-on-dark)]"
+          ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-[color:var(--brand-on-dark)]"
           : "border-[color:var(--brand-navy)]/15 bg-[color:var(--taas-surface-card)] text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"
       }`}
     >

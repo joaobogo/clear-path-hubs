@@ -38,7 +38,7 @@ export function AudiencePage(props: AudiencePageProps) {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to={CTA_PRIMARY.to}
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
             >
               {CTA_PRIMARY.label}
             </Link>
@@ -74,7 +74,7 @@ export function AudiencePage(props: AudiencePageProps) {
                   <li key={b} className="flex gap-2">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]"
                     />
                     {b}
                   </li>

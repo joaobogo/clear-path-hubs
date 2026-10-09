@@ -18,7 +18,6 @@ const RETIRED = [
   "Open your first role",
   "Start hiring",
   "Start a role",
-  "Start a $699 pilot",
   "Book call",
   "Book a call with the founders",
   "Book a discovery call",
@@ -39,25 +38,23 @@ describe("public navigation", () => {
     expect(SECONDARY_CTAS.map((c) => c.to)).toEqual(["/jobs", "/login"]);
   });
 
-  it("has six header items", () => {
+  it("has five header links and no dropdowns", () => {
     expect(PRIMARY_ITEMS.map((i) => i.label)).toEqual([
-      "How it works",
+      "How a role runs",
       "Pricing",
+      "Results",
       "Industries",
-      "Compare",
-      "Resources",
-      "Security",
+      "Agents",
     ]);
+    expect(PRIMARY_ITEMS.every((i) => i.kind === "link")).toBe(true);
   });
 
   it("footer has the agreed columns and no retired pages", () => {
     expect(FOOTER_GROUPS.map((g) => g.label)).toEqual([
       "Product",
-      "For companies",
-      "Industries",
-      "For candidates",
-      "Resources",
-      "Company",
+      "Buying",
+      "Proof",
+      "Candidates",
       "Legal",
     ]);
     const hrefs = allNavHrefs();

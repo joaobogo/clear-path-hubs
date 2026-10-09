@@ -188,7 +188,7 @@ function HeroActions({
     <div className="flex flex-wrap items-center gap-3">
       <Link
         to={CTA_PRIMARY.to}
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
       >
         {CTA_PRIMARY.label}
       </Link>
@@ -451,7 +451,7 @@ function HeroTrustCompliance({ ctx }: { ctx: Ctx }) {
                   key={g.title}
                   className="flex items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3"
                 >
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] font-semibold text-white">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[color:var(--blue-600)] text-[10px] font-semibold text-white">
                     {i + 1}
                   </span>
                   <div className="min-w-0">
@@ -764,7 +764,7 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
                 )}
                 <div className="h-full rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 text-[color:var(--brand-navy)] shadow-[0_1px_0_rgba(0,0,0,0.02)]">
                   <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/80">
-                    <span aria-hidden className="grid h-5 w-5 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] text-white">{i + 1}</span>
+                    <span aria-hidden className="grid h-5 w-5 place-items-center rounded-full bg-[color:var(--blue-600)] text-[10px] text-white">{i + 1}</span>
                     Node
                   </div>
                   <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug">{c.title}</h3>
@@ -782,7 +782,7 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
   // 2. RISK-JUDGMENT → decision gates: parchment cards on ink with a gate badge
   if (config.archetype === "risk-judgment") {
     return (
-      <PublicSection className="bg-[color:var(--brand-navy)] py-16 text-[color:var(--brand-cream)]">
+      <PublicSection className="bg-[color:var(--blue-600)] py-16 text-[color:var(--brand-cream)]">
         <PublicPage>
           <div className="text-[color:var(--brand-cream)]">
             <SectionHeading
@@ -899,7 +899,7 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
           {entry.challenges.map((c, i) => (
             <li key={c.title} className="grid gap-4 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 md:grid-cols-[auto_1fr_1fr] md:items-start md:gap-6">
               <div className="flex items-center gap-3 md:flex-col md:items-start">
-                <span aria-hidden className="grid h-9 w-9 place-items-center rounded-full bg-[color:var(--brand-navy)] font-[family-name:var(--brand-font-display)] text-sm font-semibold text-white">{i + 1}</span>
+                <span aria-hidden className="grid h-9 w-9 place-items-center rounded-full bg-[color:var(--blue-600)] font-[family-name:var(--brand-font-display)] text-sm font-semibold text-white">{i + 1}</span>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">Rung</span>
               </div>
               <div>
@@ -1212,7 +1212,7 @@ function SectionProcess({ ctx }: { ctx: Ctx }) {
           <ol className="mt-8 space-y-6 border-l-2 border-[color:var(--brand-navy)]/10 pl-6">
             {steps.map((s) => (
               <li key={s.n} className="relative">
-                <span className="absolute -left-[33px] top-0 grid h-6 w-6 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] font-semibold text-white">
+                <span className="absolute -left-[33px] top-0 grid h-6 w-6 place-items-center rounded-full bg-[color:var(--blue-600)] text-[10px] font-semibold text-white">
                   {s.n}
                 </span>
                 <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
@@ -1373,7 +1373,7 @@ function SectionCta({ ctx }: { ctx: Ctx }) {
   return (
     <PublicSection className="py-14">
       <PublicPage>
-        <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-12 text-center text-white sm:px-12">
+        <div className="rounded-2xl bg-[color:var(--blue-600)] px-6 py-12 text-center text-white sm:px-12">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/60">{entry.eyebrow}</p>
           <h2 className="mx-auto mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             {entry.cta.title}

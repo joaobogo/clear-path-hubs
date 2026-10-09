@@ -132,7 +132,7 @@ const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]";
 
 const primaryButton =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-6 py-3 text-base font-semibold text-white shadow-[var(--brand-shadow-sm)] hover:bg-[color:var(--brand-navy-dark)] " +
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--blue-600)] px-6 py-3 text-base font-semibold text-white shadow-[var(--brand-shadow-sm)] hover:bg-[color:var(--blue-700)] " +
   focusRing;
 
 /* ------------------------------------------------------------------ page */
@@ -222,7 +222,7 @@ function Home() {
       {/* 2 — TRUST: factual attributes only */}
       <section
         aria-label="What to expect"
-        className="bg-[color:var(--brand-navy)] text-white"
+        className="bg-[color:var(--blue-600)] text-white"
       >
         <PublicPage>
           <ul className="grid grid-cols-1 gap-x-8 gap-y-3 py-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -453,7 +453,7 @@ function Home() {
       {/* 9 — FINAL CTA */}
       <PublicSection>
         <PublicPage>
-          <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-12 text-center text-white sm:px-12 sm:py-14">
+          <div className="rounded-2xl bg-[color:var(--blue-600)] px-6 py-12 text-center text-white sm:px-12 sm:py-14">
             <H2 light>Start with one role.</H2>
             <p className="mx-auto mt-3 max-w-xl text-base text-white/80">
               Request the ${PRICE_PILOT_USD} pilot or send us a message, and we

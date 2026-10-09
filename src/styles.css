@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "./styles/tokens.css";
 @import "./styles/brand-tokens.css";
 @import "./styles/motion.css";
 @import "./styles/product-motion.css";
@@ -8,6 +9,7 @@
 @import "./styles/density.css";
 @import "./styles/workspace-system.css";
 @import "./styles/client-mobile.css";
+@import "./styles/run-transition.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -215,10 +217,9 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--taas-font-sans);
-    font-feature-settings: "cv05" 1, "ss01" 1;
   }
 
-  /* Headings carry the industrial display face; body copy stays IBM Plex Sans. */
+  /* One family (Archivo). Marketing headings go wide in run-transition.css. */
   h1, h2, h3, h4 {
     font-family: var(--taas-font-display);
     letter-spacing: -0.02em;

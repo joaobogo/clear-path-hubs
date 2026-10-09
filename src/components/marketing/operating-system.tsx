@@ -297,7 +297,7 @@ function Chip({ children, tone = "muted" }: { children: React.ReactNode; tone?: 
     tone === "ocean"
       ? "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]"
       : tone === "navy"
-        ? "bg-[color:var(--brand-navy)] text-white"
+        ? "bg-[color:var(--blue-600)] text-white"
         : "bg-white text-[color:var(--brand-navy)]/80 border border-[color:var(--brand-navy)]/12";
   return <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${c}`}>{children}</span>;
 }

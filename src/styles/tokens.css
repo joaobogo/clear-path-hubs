@@ -1,0 +1,152 @@
+/* ============================================================
+ * The Run — design tokens (redesign v3, white and blue)
+ * ============================================================
+ * Loaded before every other stylesheet. Components read only the names
+ * inside the three surface blocks (.day, .tint, .blue); the raw scale in
+ * :root exists so the surfaces can be defined once.
+ *
+ *   .day   white      people read and decide (the default)
+ *   .tint  pale blue  agents are working
+ *   .blue  solid blue the band where something goes out
+ *
+ * Blue works, ink signs, coral is attention only. No dark sections, no
+ * gradients between hues, and only paper casts a shadow.
+ *
+ * One rename from the source document: its surface variable `--accent` is
+ * `--action` here, because `--accent` already belongs to the shadcn layer
+ * that the workspace components read (dropdown and select hovers).
+ * ============================================================ */
+
+:root {
+  --ink: #0f172a;
+  --slate: #45526e;
+  --faint: #5f6b88;
+  --rule: #dde4f0;
+  --rule-2: #b7c3d9;
+  --paper: #f6f8fd;
+  --white: #ffffff;
+  /* PLACEHOLDER: regenerate these nine steps from the logo's blue. */
+  --blue-50: #f0f5ff;
+  --blue-100: #e1ebff;
+  --blue-200: #c5d7ff;
+  --blue-300: #98b8ff;
+  --blue-400: #6593ff;
+  --blue-500: #3672ff;
+  --blue-600: #1552f0;
+  --blue-700: #0e3fc4;
+  --blue-800: #0b2e8e;
+  --alert: #e5533d;
+  --alert-ink: #b4321f;
+  --alert-wash: #fde9e5;
+  --r-1: 6px;
+  --r-2: 10px;
+  --r-3: 16px;
+  --r-4: 24px;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --t-instant: 120ms;
+  --t-quick: 220ms;
+  --t-base: 400ms;
+  --t-story: 2400ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --max: 1248px;
+  --margin: clamp(20px, 6.7vw, 96px);
+  /* The one shadow on the site: paper (the receipt). */
+  --shadow-paper: 0 1px 0 rgba(15, 23, 42, 0.04), 0 18px 40px -18px rgba(15, 23, 42, 0.28);
+  --font-run: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.day {
+  /* White: people read and decide. The default. */
+  --bg: #ffffff;
+  --surface: var(--paper);
+  --surface-2: #e8edf7;
+  --line: var(--rule);
+  --line-2: var(--rule-2);
+  --text: var(--ink);
+  --text-2: var(--slate);
+  --text-3: var(--faint);
+  --action: var(--blue-600);
+  --human: var(--ink);
+  --danger: var(--alert-ink);
+  --btn-bg: var(--blue-600);
+  --btn-bg-hover: var(--blue-700);
+  --btn-fg: #ffffff;
+  --wash: var(--blue-50);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.tint {
+  /* Pale blue: agents are working. */
+  --bg: var(--blue-50);
+  --surface: #ffffff;
+  --surface-2: var(--blue-100);
+  --line: #d2dff8;
+  --line-2: #a8beea;
+  --text: var(--ink);
+  --text-2: var(--slate);
+  --text-3: #56637f;
+  --action: var(--blue-600);
+  --human: var(--ink);
+  --danger: var(--alert-ink);
+  --btn-bg: var(--blue-600);
+  --btn-bg-hover: var(--blue-700);
+  --btn-fg: #ffffff;
+  --wash: var(--blue-100);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.blue {
+  /* Solid blue: the band where something goes out. */
+  --bg: var(--blue-600);
+  --surface: rgba(255, 255, 255, 0.12);
+  --line: rgba(255, 255, 255, 0.28);
+  --line-2: rgba(255, 255, 255, 0.55);
+  --text: #ffffff;
+  --text-2: #e6eeff;
+  --text-3: #d2e0ff;
+  --action: #ffffff;
+  --human: #ffffff;
+  --danger: #ffd9d2;
+  --btn-bg: #ffffff;
+  --btn-bg-hover: var(--blue-50);
+  --btn-fg: var(--blue-700);
+  --wash: rgba(255, 255, 255, 0.14);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.wide {
+  font-stretch: 125%;
+}
+.narrow {
+  font-stretch: 88%;
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+.display {
+  font-stretch: 125%;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.94;
+}
+.paper {
+  box-shadow: var(--shadow-paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

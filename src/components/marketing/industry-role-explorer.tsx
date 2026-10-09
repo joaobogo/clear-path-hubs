@@ -97,7 +97,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
                   className={[
                     "inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs font-medium sm:min-h-9 transition-colors",
                     selected
-                      ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                      ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-white"
                       : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40",
                   ].join(" ")}
                 >
@@ -176,7 +176,7 @@ function RolePanel({
           <p className="text-sm text-[color:var(--brand-navy)]/80">{view.cta}</p>
           <a
             href={CTA_PRIMARY.to}
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
           >
             {CTA_PRIMARY.label}
           </a>

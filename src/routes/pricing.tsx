@@ -150,7 +150,7 @@ function PricingPage() {
                 className={
                   "flex-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors min-h-11 sm:min-h-0 sm:py-2 " +
                   (mode === value
-                    ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
+                    ? "bg-[color:var(--blue-600)] text-white shadow-sm"
                     : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")
                 }
               >
@@ -419,7 +419,7 @@ function PricingPage() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to={CTA_PRIMARY.to}
-              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {CTA_PRIMARY.label}
             </Link>

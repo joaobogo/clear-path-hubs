@@ -84,17 +84,21 @@ export function isCandidateJourneyPath(pathname: string): boolean {
 /* -------------------------------------------------------------- Primary nav (ordered) */
 
 /**
- * The header carries six items. The old "Platform" dropdown contents now live in
- * the workspace section of the How it works page.
+ * The header carries five links (The Run): how a role runs, what it costs,
+ * what it produced, who it is for, and who does the work. No dropdowns.
+ * "Platform" in the redesign document is "Agents" until /platform is rebuilt
+ * (it currently redirects into How it works).
  */
 export const PRIMARY_ITEMS: PrimaryItem[] = [
-  { kind: "link", to: "/how-it-works", label: "How it works" },
+  { kind: "link", to: "/how-it-works", label: "How a role runs" },
   { kind: "link", to: "/pricing", label: "Pricing" },
+  { kind: "link", to: "/case-studies", label: "Results" },
   { kind: "link", to: "/industries", label: "Industries" },
-  { kind: "link", to: "/compare", label: "Compare" },
-  { kind: "link", to: "/resources", label: "Resources" },
-  { kind: "link", to: "/security", label: "Security" },
+  { kind: "link", to: "/agents", label: "Agents" },
 ];
+
+/** The line beside the wordmark in the header, the footer and share cards. */
+export const BRAND_LINE = "Hiring, handled." as const;
 
 /* Legacy exports retained for older imports — derived from PRIMARY_ITEMS. */
 
@@ -108,44 +112,44 @@ export const PRIMARY_NAV: NavLink[] = PRIMARY_ITEMS.filter(
 
 /* -------------------------------------------------------------- Footer groups */
 
+/** Footer: the brand column, then these four, then one legal row. */
 export const FOOTER_GROUPS: NavGroup[] = [
   {
     label: "Product",
     links: [
-      { to: "/how-it-works", label: "How it works" },
+      { to: "/how-it-works", label: "How a role runs" },
       { to: "/agents", label: "Agents" },
+      { to: "/industries", label: "Industries" },
       { to: "/integrations", label: "Integrations" },
       { to: "/security", label: "Security" },
     ],
   },
   {
-    label: "For companies",
+    label: "Buying",
     links: [
       { to: "/pricing", label: "Pricing" },
+      { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label },
+      { to: "/enterprise", label: "Enterprise" },
       { to: "/compare", label: "Compare" },
       { to: "/for-hr-teams", label: "For HR teams" },
       { to: "/for-founders", label: "For founders" },
-      { to: CTA_PRIMARY.to, label: CTA_PRIMARY.label },
-      { to: CTA_MESSAGE.to, label: CTA_MESSAGE.label },
-      { to: "/enterprise", label: "Enterprise" },
       { to: "/partnerships/staffing", label: "Staffing partnerships" },
-      { to: "/login", label: "Sign in" },
+      { to: CTA_MESSAGE.to, label: CTA_MESSAGE.label },
     ],
   },
   {
-    label: "Industries",
+    label: "Proof",
     links: [
-      { to: "/industries/technology", label: "Technology" },
-      { to: "/industries/saas", label: "SaaS" },
-      { to: "/industries/finance", label: "Finance" },
-      { to: "/industries/healthcare", label: "Healthcare" },
-      { to: "/industries/legal", label: "Legal" },
-      { to: "/industries/consulting", label: "Consulting" },
-      { to: "/industries", label: "All industries" },
+      { to: "/case-studies", label: "Results" },
+      { to: "/about", label: "About" },
+      { to: "/solutions", label: "Who we are for" },
+      { to: "/resources", label: "Resources" },
+      { to: "/blog", label: "Blog" },
+      { to: "/faq", label: "FAQ" },
     ],
   },
   {
-    label: "For candidates",
+    label: "Candidates",
     links: [
       { to: "/jobs", label: "Browse jobs" },
       { to: "/talent-network", label: "Talent network" },
@@ -154,24 +158,6 @@ export const FOOTER_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: "Resources",
-    links: [
-      { to: "/resources", label: "Resources" },
-      { to: "/blog", label: "Blog" },
-      { to: "/case-studies", label: "Case studies" },
-      { to: "/faq", label: "FAQ" },
-    ],
-  },
-  {
-    label: "Company",
-    links: [
-      { to: "/about", label: "About" },
-      { to: "/solutions", label: "Who we are for" },
-      { to: "/contact", label: "Contact" },
-    ],
-  },
-  {
-    // Rendered in the bottom bar, not as a column.
     label: "Legal",
     links: [
       { to: "/privacy", label: "Privacy" },
@@ -180,9 +166,6 @@ export const FOOTER_GROUPS: NavGroup[] = [
   },
 ];
 
-
-// Canonical brand boilerplate — same one-liner used in title tags, meta
-// descriptions and Organization schema, reused verbatim network-wide.
 export const FOOTER_DESCRIPTION =
   `TaaSFlow is a ${OFFER_CATEGORY.toLowerCase()}. ${WHO_RUNS_THE_SEARCH_SHORT} Start with one role for $${PRICE_PILOT_USD}.`;
 

@@ -24,7 +24,7 @@ import {
   trackLeadFormStart,
   trackLeadFormView,
 } from "@/lib/tracking/lead-form-events";
-import { CTA_PRIMARY } from "@/config/cta";
+import { CTA_PILOT_REQUEST } from "@/config/cta";
 import { SALES_EMAIL } from "@/config/booking";
 import { cn } from "@/lib/utils";
 
@@ -294,10 +294,10 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60 sm:w-auto"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60 sm:w-auto"
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
-          {pending ? "Sending your request" : CTA_PRIMARY.label}
+          {pending ? "Sending your request" : CTA_PILOT_REQUEST.label}
         </button>
         <p className="text-sm text-[color:var(--brand-navy)]/80">{INQUIRY_HELPER}</p>
       </form>

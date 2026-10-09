@@ -449,7 +449,7 @@ function FaqPage() {
       {/* ── Still stuck CTA ─────────────────────────────────────── */}
       <PublicSection className="py-16">
         <PublicPage>
-          <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-12 text-white sm:px-12">
+          <div className="rounded-2xl bg-[color:var(--blue-600)] px-6 py-12 text-white sm:px-12">
             <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-white">

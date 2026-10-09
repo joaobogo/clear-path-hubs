@@ -163,7 +163,7 @@ function IntegrationsPage() {
   const chip = (active: boolean) =>
     `rounded-full border px-3 py-1.5 text-sm transition ${
       active
-        ? "border-[color:var(--brand-navy)]/70 bg-[color:var(--brand-navy)] text-white"
+        ? "border-[color:var(--brand-navy)]/70 bg-[color:var(--blue-600)] text-white"
         : "border-[color:var(--brand-navy)]/12 text-[color:var(--brand-navy)]/70 hover:bg-[color:var(--brand-navy)]/5"
     }`;
 
@@ -265,7 +265,7 @@ function IntegrationsPage() {
                 </button>
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-medium text-white"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--blue-600)] px-4 py-1.5 text-sm font-medium text-white"
                 >
                   {CTA_MESSAGE.label}
                   <ArrowRight className="h-4 w-4" aria-hidden />

@@ -407,7 +407,7 @@ function Choice({
             aria-pressed={value === o.value}
             className={`rounded-full border px-3 py-1.5 text-xs transition ${
               value === o.value
-                ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-[color:var(--brand-cream)]"
+                ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-[color:var(--brand-cream)]"
                 : "border-[color:var(--brand-navy)]/20 text-[color:var(--brand-navy)]/75 hover:border-[color:var(--brand-navy)]/50"
             }`}
           >

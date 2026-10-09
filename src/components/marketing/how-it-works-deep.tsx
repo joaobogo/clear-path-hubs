@@ -126,7 +126,7 @@ export function RoleBlueprintMock() {
               </span>
               <div className="h-1.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10">
                 <div
-                  className="h-full rounded-full bg-[color:var(--brand-navy)]"
+                  className="h-full rounded-full bg-[color:var(--blue-600)]"
                   style={{ width: `${r.w * 3}%` }}
                 />
               </div>
@@ -516,7 +516,7 @@ export function RankingDemo() {
                       <span aria-hidden>·</span>
                       <span>{row.ref}</span>
                     </span>
-                    <span className="rounded-md bg-[color:var(--brand-navy)] px-2 py-0.5 text-[11px] font-semibold text-white">
+                    <span className="rounded-md bg-[color:var(--blue-600)] px-2 py-0.5 text-[11px] font-semibold text-white">
                       <span aria-hidden>· </span>Score {score}
                     </span>
                   </button>
@@ -681,7 +681,7 @@ export function StepRail() {
           key={s.n}
           className="relative flex items-start gap-2 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2.5"
         >
-          <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[color:var(--brand-navy)] text-[10px] font-semibold text-white">
+          <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[color:var(--blue-600)] text-[10px] font-semibold text-white">
             {s.n}
           </span>
           <span className="flex min-w-0 flex-col gap-0.5">

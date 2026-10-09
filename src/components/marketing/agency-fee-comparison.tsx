@@ -163,7 +163,7 @@ export function AgencyFeeComparison() {
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <Link
           to={CTA_PRIMARY.to}
-          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--blue-700)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
         >
           {CTA_PRIMARY.label}{" "}
           <ArrowRight className="h-4 w-4" aria-hidden />
