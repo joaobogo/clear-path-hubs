@@ -6,13 +6,18 @@ import { ArrowRight } from "lucide-react";
  * Cost comparison calculator.
  *
  * Compares the SAME hires over the SAME period on both sides: agency fees for
- * those hires against the total of the one TaaSFlow package that covers them.
- * The math lives in `src/lib/pricing-comparison.ts` (pure, unit-tested). Every
- * default is an editable example, not an industry fact. Inputs never leave the
- * browser and are not sent to analytics.
+ * those hires against the total of the one TaaSFlow monthly package that
+ * covers them. The math lives in `src/lib/pricing-comparison.ts` (pure,
+ * unit-tested). Every default is an editable example, not an industry fact.
+ * Inputs never leave the browser and are not sent to analytics.
+ *
+ * Four sliders, no typing: the owner found the typed version confusing, and
+ * the one-off project comparison was dropped from this view — the monthly
+ * package is the comparison that matters here.
  */
 
-import { formatUsdExact } from "@/config/pricing-core";
+import { Slider } from "@/components/ui/slider";
+import { MAX_POSITIONS, formatUsdExact, packageForPositions } from "@/config/pricing-core";
 import { CTA_PRIMARY, CTA_MESSAGE, CTA_ENTERPRISE } from "@/config/cta";
 import {
   COMPARISON_DEFAULTS,
@@ -20,132 +25,104 @@ import {
   MAX_COMPARISON_MONTHS,
   compareCosts,
   describeDifference,
-  type ComparisonMode,
 } from "@/lib/pricing-comparison";
 
-const toNumber = (s: string) => (s.trim() === "" ? Number.NaN : Number(s));
+/** Slider ranges. Wide enough for any real plan, coarse enough to drag to. */
+const RANGES = {
+  positions: { min: 1, max: MAX_POSITIONS, step: 1 },
+  hires: { min: 1, max: 100, step: 1 },
+  months: { min: 1, max: MAX_COMPARISON_MONTHS, step: 1 },
+  salary: { min: 20_000, max: 300_000, step: 5_000 },
+  agencyPct: { min: 5, max: 40, step: 1 },
+} as const;
+
+const DEFAULTS = {
+  positions: COMPARISON_DEFAULTS.positions,
+  hires: Math.max(COMPARISON_DEFAULTS.hires, 10),
+  months: COMPARISON_DEFAULTS.months,
+  salary: COMPARISON_DEFAULTS.salaryUsd,
+  agencyPct: COMPARISON_DEFAULTS.agencyFeePct,
+} as const;
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 export function AgencyComparator() {
-  const [mode, setMode] = useState<ComparisonMode>(COMPARISON_DEFAULTS.mode);
-  const [hires, setHires] = useState(String(COMPARISON_DEFAULTS.hires));
-  const [positions, setPositions] = useState(String(COMPARISON_DEFAULTS.positions));
-  const [agencyPct, setAgencyPct] = useState(String(COMPARISON_DEFAULTS.agencyFeePct));
-  const [salary, setSalary] = useState(String(COMPARISON_DEFAULTS.salaryUsd));
-  const [months, setMonths] = useState(String(COMPARISON_DEFAULTS.months));
+  const [positions, setPositions] = useState<number>(DEFAULTS.positions);
+  const [hires, setHires] = useState<number>(DEFAULTS.hires);
+  const [months, setMonths] = useState<number>(DEFAULTS.months);
+  const [salary, setSalary] = useState<number>(DEFAULTS.salary);
+  const [agencyPct, setAgencyPct] = useState<number>(DEFAULTS.agencyPct);
   const ids = useId();
 
   const result = useMemo(
-    () =>
-      compareCosts({
-        mode,
-        hires: toNumber(hires),
-        positions: toNumber(positions),
-        agencyFeePct: toNumber(agencyPct),
-        salaryUsd: toNumber(salary),
-        months: toNumber(months),
-      }),
-    [mode, hires, positions, agencyPct, salary, months],
+    () => compareCosts({ mode: "recurring", hires, positions, agencyFeePct: agencyPct, salaryUsd: salary, months }),
+    [hires, positions, agencyPct, salary, months],
   );
-
+  const pkg = packageForPositions(positions);
   const quoteOnly = result.status === "quote-only";
 
   return (
     <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-8 lg:p-12">
       <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-14">
         {/* -------- Inputs column -------- */}
-        <div className="order-2 space-y-6 lg:order-1 lg:col-span-5">
+        <div className="order-2 space-y-7 lg:order-1 lg:col-span-5">
           <header className="space-y-3">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--brand-navy)]/80">
               Cost calculator
             </p>
             <h3 className="font-[family-name:var(--brand-font-display)] text-3xl leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
-              Compare agency fees with a flat package.
+              Compare agency fees with a monthly package.
             </h3>
             <p className="max-w-sm text-sm text-[color:var(--brand-navy)]/80 sm:text-base">
-              Change any number to match your plan. {DEFAULT_LABEL} applies to every
-              starting value below. Nothing you type is saved or sent.
+              Drag the sliders to match your plan. {DEFAULT_LABEL} applies to every starting
+              value. Nothing you set is saved or sent.
             </p>
           </header>
 
-          <fieldset>
-            <legend className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-              What are you comparing?
-            </legend>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              {(
-                [
-                  ["project", "One hiring project, paid once"],
-                  ["recurring", "A recurring monthly package"],
-                ] as const
-              ).map(([value, text]) => (
-                <label
-                  key={value}
-                  className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm text-[color:var(--brand-navy)] has-[:checked]:border-[color:var(--brand-navy)] has-[:checked]:bg-[color:var(--brand-navy)]/[0.04] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[color:var(--brand-focus-ring)]"
-                >
-                  <input
-                    type="radio"
-                    name={`${ids}-mode`}
-                    value={value}
-                    checked={mode === value}
-                    onChange={() => setMode(value)}
-                    className="accent-[color:var(--brand-navy)]"
-                  />
-                  {text}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            <NumberField
+          <div className="space-y-6">
+            <SliderField
+              id={`${ids}-positions`}
+              label="Positions open at once"
+              value={positions}
+              onChange={setPositions}
+              range={RANGES.positions}
+              display={plural(positions, "position", "positions")}
+              hint={pkg ? `Covered by the ${pkg.capacityLabel.toLowerCase()} package` : "Above the largest package — scoped with your account team"}
+            />
+            <SliderField
+              id={`${ids}-months`}
+              label="Months on the package"
+              value={months}
+              onChange={setMonths}
+              range={RANGES.months}
+              display={plural(months, "month", "months")}
+              hint="How long you expect to keep hiring"
+            />
+            <SliderField
               id={`${ids}-hires`}
-              label={mode === "project" ? "Hires (and positions)" : "Hires in the period"}
+              label="Hires in that time"
               value={hires}
               onChange={setHires}
-              min={1}
-              step={1}
-              hint="Whole number"
+              range={RANGES.hires}
+              display={plural(hires, "hire", "hires")}
+              hint="What an agency would charge a fee on"
             />
-            {mode === "recurring" ? (
-              <NumberField
-                id={`${ids}-positions`}
-                label="Positions open at once"
-                value={positions}
-                onChange={setPositions}
-                min={1}
-                step={1}
-                hint="Decides the package"
-              />
-            ) : null}
-            {mode === "recurring" ? (
-              <NumberField
-                id={`${ids}-months`}
-                label="Months"
-                value={months}
-                onChange={setMonths}
-                min={1}
-                max={MAX_COMPARISON_MONTHS}
-                step={1}
-                hint={`1 to ${MAX_COMPARISON_MONTHS}`}
-              />
-            ) : null}
-            <NumberField
+            <SliderField
               id={`${ids}-salary`}
-              label="Average salary (USD)"
+              label="Average salary"
               value={salary}
               onChange={setSalary}
-              min={1}
-              step={1000}
+              range={RANGES.salary}
+              display={formatUsdExact(salary)}
               hint="Example value"
             />
-            <NumberField
+            <SliderField
               id={`${ids}-pct`}
-              label="Agency fee (% of salary)"
+              label="Agency fee"
               value={agencyPct}
               onChange={setAgencyPct}
-              min={0}
-              max={100}
-              step={1}
+              range={RANGES.agencyPct}
+              display={`${agencyPct}% of salary`}
               hint="Example value"
             />
           </div>
@@ -154,7 +131,7 @@ export function AgencyComparator() {
             <p className="font-semibold text-[color:var(--brand-navy)]">How it is worked out</p>
             <p className="mt-1 leading-relaxed">
               {result.status === "invalid"
-                ? "Agency fees = hires × average salary × agency fee percentage. TaaSFlow = the total of the package that covers your positions."
+                ? "Agency fees = hires × average salary × agency fee percentage. TaaSFlow = the monthly package that covers your positions × the number of months."
                 : result.formula}
             </p>
             {result.status !== "invalid" ? (
@@ -176,7 +153,7 @@ export function AgencyComparator() {
             aria-atomic="true"
           >
             <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80">
-              Estimated cost comparison for this hiring project
+              Estimated cost comparison for this plan
             </span>
 
             {result.status === "invalid" ? (
@@ -219,6 +196,9 @@ export function AgencyComparator() {
                     <p className="mt-2 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums sm:text-3xl">
                       {formatUsdExact(result.agencyTotalUsd)}
                     </p>
+                    <p className="mt-1 text-xs text-white/75">
+                      {plural(result.hires, "hire", "hires")} × {formatUsdExact(salary)} × {agencyPct}%
+                    </p>
                   </div>
                   <div className="min-w-0">
                     <span className="block text-[10px] uppercase tracking-[0.18em] text-white/80">
@@ -228,9 +208,7 @@ export function AgencyComparator() {
                       {formatUsdExact(result.taasTotalUsd)}
                     </p>
                     <p className="mt-1 text-xs text-white/75">
-                      {result.mode === "project"
-                        ? "Paid once"
-                        : `${formatUsdExact(result.taasTotalUsd / result.months)} a month × ${result.months}`}
+                      {formatUsdExact(result.taasTotalUsd / result.months)} a month × {result.months}
                     </p>
                   </div>
                 </div>
@@ -258,9 +236,9 @@ export function AgencyComparator() {
             Illustrative
           </p>
           <p className="mt-1 px-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/80">
-            This is an estimate from the numbers you entered, not a quote. Agency fees, salaries and
-            hiring volume vary. The package total is the published price for the package that
-            covers your positions.
+            This is an estimate from the values you set, not a quote. Agency fees, salaries and
+            hiring volume vary. The package total is the published monthly price for the package
+            that covers your positions, before any annual-prepay discount.
           </p>
         </div>
       </div>
@@ -268,48 +246,68 @@ export function AgencyComparator() {
   );
 }
 
-function NumberField({
+function SliderField({
   id,
   label,
   value,
   onChange,
-  min,
-  max,
-  step,
+  range,
+  display,
   hint,
 }: {
   id: string;
   label: string;
-  value: string;
-  onChange: (v: string) => void;
-  min: number;
-  max?: number;
-  step: number;
+  value: number;
+  onChange: (v: number) => void;
+  range: { min: number; max: number; step: number };
+  /** The value in words, shown large beside the label and read by screen readers. */
+  display: string;
   hint: string;
 }) {
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80"
-      >
-        {label}
-      </label>
-      <input
+      <div className="flex items-baseline justify-between gap-3">
+        <label
+          id={`${id}-label`}
+          htmlFor={id}
+          className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80"
+        >
+          {label}
+        </label>
+        <output
+          htmlFor={id}
+          aria-live="off"
+          className="font-[family-name:var(--brand-font-display)] text-xl tabular-nums text-[color:var(--brand-navy)]"
+        >
+          {display}
+        </output>
+      </div>
+      <Slider
         id={id}
-        type="number"
-        inputMode="decimal"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
+        className="mt-3 [&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&_[role=slider]]:border-[color:var(--brand-navy)] [&_[role=slider]]:bg-white [&_[data-orientation=horizontal]>span]:bg-[color:var(--brand-navy)] [&>span]:h-2 [&>span]:bg-[color:var(--brand-navy)]/15"
+        min={range.min}
+        max={range.max}
+        step={range.step}
+        value={[value]}
+        onValueChange={(v) => onChange(v[0] ?? value)}
+        aria-labelledby={`${id}-label`}
+        aria-valuetext={display}
         aria-describedby={`${id}-hint`}
-        onChange={(e) => onChange(e.target.value)}
-        className="mt-1.5 min-h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 py-2 text-base tabular-nums text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
       />
+      <div className="mt-1.5 flex justify-between text-[11px] text-[color:var(--brand-navy)]/60">
+        <span>{formatBound(range.min, display)}</span>
+        <span>{formatBound(range.max, display)}</span>
+      </div>
       <p id={`${id}-hint`} className="mt-1 text-xs text-[color:var(--brand-navy)]/70">
         {hint}
       </p>
     </div>
   );
+}
+
+/** Range ends in the same unit as the value ("$20,000", "40%", or the plain number). */
+function formatBound(n: number, display: string): string {
+  if (display.startsWith("$")) return formatUsdExact(n);
+  if (display.includes("%")) return `${n}%`;
+  return String(n);
 }
