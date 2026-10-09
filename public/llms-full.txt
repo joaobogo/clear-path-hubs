@@ -10,22 +10,10 @@ What the service is and who it is for.
 
 The exact total for any position count from 1 to 100.
 
-- Evidence-backed scoring on every candidate
-- Export your candidate records at any time
-- A single flat fee, paid once, for a fixed number of positions. Best when you know which roles are open now.
-- The same packages and totals, charged each month. Best when hiring is continuous.
-- The total you see is the total on your invoice.
-- Larger one-off packages: total, billing, seats and next step
-- Larger subscription packages: monthly total, billing, seats and next step
 - Entitlements by one-off package, from the pilot to more than 100 positions
 - Entitlements by subscription package, from the pilot to more than 100 positions
-- Anonymised examples by industry and company type. Your own search depends on the role and the market.
-- Same platform, more positions. Every package and its total is also in the comparison table below.
-- Plain answers to the questions that decide whether a plan fits. Your signed quote or agreement is always the authority on commercial terms.
-- Every plan opens the same Decision Workspace. Plans differ in seats, concurrent roles and entitlements — not in the product.
-- Baseline platform capabilities, regardless of plan size.
-- Charges you will never see on a TaaSFlow invoice.
-- The questions we get before a first engagement.
+- Every package is the full platform with managed execution. Tell us how many roles you have open and read the whole bill.
+- Your signed quote or agreement is always the authority on commercial terms.
 
 ## How it works — https://taasflow.com/how-it-works
 
@@ -179,7 +167,7 @@ The one-time single-role pilot: what it includes and what it costs.
 - Interview scheduling and offer negotiation on your behalf
 - Executive search retainers or contingency placements
 - Background checks, assessments, or payroll
-- See how our recruiting process and candidate workspace support your team before discussing a larger engagement. Your pilot covers one agreed role and is available once per company. We confirm the scope and delivery schedule before work begins.
+- A paid evaluation of the real thing: one role, run end to end, once per company. If you stop afterwards, nothing further is owed.
 
 ## Agents — https://taasflow.com/agents
 
