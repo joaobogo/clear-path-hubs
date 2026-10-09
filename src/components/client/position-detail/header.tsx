@@ -185,6 +185,8 @@ export function PositionHeader({
           <Badge variant="secondary">{clientRoleStatusLabel(clientStatus)}</Badge>
         </div>
         <div className="mt-1 text-sm text-muted-foreground">
+          {/* A remote role whose location is also "Remote" read "Remote · Remote";
+              each word appears once. */}
           {[
             position.department ?? undefined,
             position.location ?? undefined,
@@ -192,7 +194,9 @@ export function PositionHeader({
             formatEnumLabel(position.employment_type) || undefined,
             formatEnumLabel(position.seniority) || undefined,
           ]
-            .filter(Boolean)
+            .filter((part, i, all): part is string =>
+              !!part && all.findIndex((p) => p?.toLowerCase() === part.toLowerCase()) === i,
+            )
             .join(" · ")}
         </div>
         {supportReadOnly ? (

@@ -290,7 +290,9 @@ export function buildMilestone(input: {
   if (count("offer") > 0) {
     return {
       headline: "Waiting on an offer response",
-      detail: `${count("offer")} offer${count("offer") === 1 ? "" : "s"} outstanding. We chase daily and post the answer here.`,
+      // The offer is between the client and the candidate; TaaSFlow does not
+      // chase it. The board is where the answer gets recorded.
+      detail: `${count("offer")} offer${count("offer") === 1 ? "" : "s"} outstanding. Record the answer on the candidates board when it comes in.`,
       criteria: "Based on candidates currently at offer stage.",
     };
   }
