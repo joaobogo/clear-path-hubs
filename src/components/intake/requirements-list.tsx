@@ -51,6 +51,7 @@ export function RequirementsList({
   roleTitle,
   suggestions,
   onRetrySuggestions,
+  fromJd,
 }: {
   items: RequirementItem[];
   onChange: (next: RequirementItem[]) => void;
@@ -62,6 +63,8 @@ export function RequirementsList({
   roleTitle: string;
   suggestions: SuggestionState;
   onRetrySuggestions?: () => void;
+  /** True while the list is exactly what was read from the job description. */
+  fromJd?: boolean;
 }) {
   const mustHaves = countMustHaves(items);
   /** Over the cap and not yet acknowledged — this is what blocks Continue. */
@@ -128,11 +131,24 @@ export function RequirementsList({
         ))}
       </ul>
 
-      {suggestions.kind === "loading" && (
+      {fromJd && items.length > 0 && (
+        <p className="text-xs text-[color:var(--brand-navy)]/70" data-testid="requirements-from-jd">
+          Read from your job description — check the wording and the tags.
+        </p>
+      )}
+
+      {suggestions.kind === "loading" && items.length > 0 && (
+        <p className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/70" aria-live="polite">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+          Reading your description… The list below stays yours to edit.
+        </p>
+      )}
+
+      {suggestions.kind === "loading" && items.length === 0 && (
         <div className="space-y-2" aria-live="polite" aria-busy="true">
           <p className="flex items-center gap-2 text-sm text-[color:var(--brand-navy)]/75">
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-            Reading your job description for suggestions…
+            Reading your description… The list below stays yours to edit.
           </p>
           {[0, 1, 2].map((i) => (
             <div
@@ -150,8 +166,7 @@ export function RequirementsList({
         >
           <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <span>
-            We could not read suggestions from your job description. Write your requirements below —
-            nothing is lost.{" "}
+            We could not read the description automatically — fill the fields below; nothing is lost.{" "}
             {onRetrySuggestions && (
               <button
                 type="button"

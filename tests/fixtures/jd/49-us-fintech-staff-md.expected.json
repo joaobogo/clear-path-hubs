@@ -1,0 +1,31 @@
+{
+  "fields": {
+    "title": "Senior Software Engineer, Payments",
+    "seniority": "senior",
+    "location": "New York, NY",
+    "workModel": "hybrid",
+    "salaryMin": 175000,
+    "salaryMax": 215000,
+    "currency": "USD"
+  },
+  "empty": [
+    "team",
+    "employmentType",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "compensationPeriod"
+  ],
+  "requirements": {
+    "must": [
+      "5+ years building backend systems",
+      "distributed systems",
+      "Java or Kotlin"
+    ],
+    "nice": [
+      "PCI-DSS"
+    ],
+    "none": false
+  }
+}

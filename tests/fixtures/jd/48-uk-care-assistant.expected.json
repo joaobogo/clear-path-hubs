@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "title": "Care Assistant – Nights",
+    "employmentType": "full_time",
+    "salaryMin": 12.6,
+    "salaryMax": 12.6,
+    "currency": "GBP",
+    "compensationPeriod": "hour",
+    "requiresExistingWorkAuth": true
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "location",
+    "workModel",
+    "targetStartDate"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "kind, patient approach",
+      "NVQ Level 2"
+    ],
+    "nice": [
+      "care setting"
+    ],
+    "none": false
+  }
+}

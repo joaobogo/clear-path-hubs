@@ -1,0 +1,32 @@
+{
+  "fields": {
+    "title": "Operations Analyst",
+    "team": "Supply Chain",
+    "location": "Rotterdam, Netherlands"
+  },
+  "empty": [
+    "seniority",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "Bachelor's degree in logistics, business or a related field",
+      "2 years of experience in freight forwarding or customs",
+      "Advanced Excel skills, including pivot tables and lookups",
+      "Fluent English and Dutch"
+    ],
+    "nice": [
+      "TMS such as CargoWise",
+      "German"
+    ],
+    "none": false
+  }
+}

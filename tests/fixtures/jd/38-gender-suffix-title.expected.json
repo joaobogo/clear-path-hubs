@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Mechanical Engineer",
+    "location": "Munich, Germany",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "mechanical engineering",
+      "SolidWorks"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

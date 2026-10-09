@@ -1,0 +1,14 @@
+Technical Writer (Contract)
+
+This is a 6-month contract role, fully remote, with a strong chance of extension.
+
+Rate: $45/hr
+
+Responsibilities
+- Write and maintain developer documentation for our public API
+- Review pull requests for documentation impact
+
+Requirements
+- 3+ years writing developer documentation
+- Comfortable reading code in Python or JavaScript
+- Experience with docs-as-code workflows

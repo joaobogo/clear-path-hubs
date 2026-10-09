@@ -1,0 +1,30 @@
+{
+  "fields": {
+    "title": "Analista de Marketing Digital",
+    "workModel": "remote",
+    "employmentType": "contract"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "location",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "Google Ads e Meta Ads",
+      "Google Analytics 4",
+      "relatórios claros"
+    ],
+    "nice": [
+      "HTML e CSS"
+    ],
+    "none": false
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "title": "Senior Data Analyst",
+    "seniority": "senior",
+    "workModel": "remote",
+    "salaryMin": 90000,
+    "salaryMax": 110000,
+    "currency": "USD",
+    "compensationPeriod": "year"
+  },
+  "empty": [
+    "team",
+    "location",
+    "employmentType",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "5 years of experience in analytics",
+      "Advanced SQL",
+      "dbt",
+      "executives"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

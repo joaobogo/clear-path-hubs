@@ -1,0 +1,33 @@
+{
+  "fields": {
+    "title": "Senior Backend Engineer",
+    "team": "Platform",
+    "seniority": "senior",
+    "workModel": "remote",
+    "employmentType": "full_time",
+    "salaryMin": 140000,
+    "salaryMax": 180000,
+    "currency": "USD",
+    "compensationPeriod": "year"
+  },
+  "empty": [
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "6+ years of backend engineering experience",
+      "Production experience with Go",
+      "relational databases",
+      "AWS or GCP"
+    ],
+    "nice": [
+      "payments or ledger systems",
+      "Kubernetes experience"
+    ],
+    "none": false
+  }
+}

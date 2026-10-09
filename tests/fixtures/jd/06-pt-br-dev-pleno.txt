@@ -1,0 +1,25 @@
+Vaga: Desenvolvedor Backend Pleno
+Empresa: Fintech Aurora
+
+Área: Tecnologia
+Local: São Paulo - SP
+Modelo de trabalho: Híbrido (2 dias no escritório)
+Regime: CLT
+Salário: R$ 8.000 a R$ 12.000 por mês
+
+Sobre a vaga
+Você vai atuar no time de pagamentos, construindo APIs que processam milhões de transações.
+
+Requisitos e qualificações
+- Experiência sólida com Java ou Kotlin
+- Conhecimento em bancos de dados relacionais (PostgreSQL)
+- Vivência com mensageria (Kafka ou RabbitMQ)
+- Boa comunicação e trabalho em equipe
+
+Diferenciais
+- Experiência com AWS
+- Conhecimento em meios de pagamento
+
+Benefícios
+- Vale refeição de R$ 40 por dia
+- Plano de saúde

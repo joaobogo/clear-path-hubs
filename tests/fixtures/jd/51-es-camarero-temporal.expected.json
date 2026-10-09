@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "location": "Ibiza",
+    "employmentType": "temporary",
+    "salaryMin": 1650,
+    "salaryMax": 1650,
+    "currency": "EUR",
+    "compensationPeriod": "month"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "title"
+  ],
+  "requirements": {
+    "must": [
+      "restauración",
+      "Inglés"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

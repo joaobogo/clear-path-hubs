@@ -1,0 +1,32 @@
+{
+  "fields": {
+    "title": "Quality Assurance Engineer",
+    "team": "Engineering",
+    "location": "Kraków, Poland",
+    "employmentType": "contract"
+  },
+  "empty": [
+    "seniority",
+    "workModel",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "3+ years of experience in manual and automated testing",
+      "Cypress or Playwright",
+      "CI/CD",
+      "Good English"
+    ],
+    "nice": [
+      "ISTQB",
+      "payment flows"
+    ],
+    "none": false
+  }
+}

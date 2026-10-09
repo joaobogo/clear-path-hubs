@@ -1,0 +1,25 @@
+{
+  "fields": {
+    "salaryMin": 95000,
+    "salaryMax": 115000,
+    "currency": "EUR",
+    "requiresExistingWorkAuth": true
+  },
+  "empty": [
+    "team",
+    "location",
+    "workModel",
+    "employmentType",
+    "targetStartDate"
+  ],
+  "skip": [
+    "compensationPeriod",
+    "seniority",
+    "title"
+  ],
+  "requirements": {
+    "must": [],
+    "nice": [],
+    "none": true
+  }
+}

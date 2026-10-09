@@ -1,4 +1,14 @@
-import { guessTitleAndTeam } from "@/lib/jd-title-guess";
+import { quickReadJd } from "@/lib/jd-quick-read";
+import { requestJdParse } from "@/lib/jd-parse-client";
+import {
+  capMustHaves,
+  isEmpty,
+  mayReplaceRequirements,
+  planBlueprintApply,
+  requirementsSignature,
+  type JdFormKey,
+  type JdFormValues,
+} from "@/lib/jd-apply";
 import { screenDealBreakers, usableDealBreakers } from "@/lib/deal-breaker-screening";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -94,6 +104,7 @@ import {
   validateInterviewStages,
   type InterviewStage,
   JD_REPARSE_DELAY_MS,
+  JD_PASTE_DELAY_MS,
   type EmploymentType,
   companyWebsiteFromEmail,
 } from "@/lib/express-intake-schema";
@@ -136,7 +147,7 @@ import {
 } from "@/config/offer-facts";
 import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
-import { buildIntakeReview } from "@/lib/intake-review";
+import { buildIntakeReview, formatCompensationRange, humanizeEnum } from "@/lib/intake-review";
 import { intakeSubmitBlockers } from "@/lib/intake-submit-blockers";
 import { CARRY_NOTICE, type CarryForward } from "@/lib/intake-carry";
 import {
@@ -489,11 +500,14 @@ function ExpressIntakePage() {
     const compensation = state.compensationUndecided
       ? "Not decided yet"
       : [
-          state.salaryMin && state.salaryMax
-            ? `${state.currency} ${Number(state.salaryMin).toLocaleString(APP_LOCALE)}–${Number(
-                state.salaryMax,
-              ).toLocaleString(APP_LOCALE)} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-            : "",
+          // Any bound on its own still shows ("From …", "Up to …"); the old
+          // line needed both, so a minimum-only salary vanished from review.
+          formatCompensationRange({
+            currency: state.currency,
+            min: state.salaryMin,
+            max: state.salaryMax,
+            periodLabel: COMP_PERIOD_LABELS[state.compensationPeriod as "year"] ?? "",
+          }),
           state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
           state.equity ? COMP_EQUITY_LABELS[state.equity as "none"] : "",
           state.compensationFlexible ? "Flexible for the right person" : "",
@@ -546,6 +560,31 @@ function ExpressIntakePage() {
         workEmail: state.workEmail,
         phone: state.phone,
         contactLinkedin: state.contactLinkedin,
+        seniority: state.seniority ? humanizeEnum(state.seniority) : "",
+        employmentType: state.employmentType ? humanizeEnum(state.employmentType) : "",
+        interviewStageDetails: state.interviewStages
+          .filter((st) => st.name.trim())
+          .map((st) => {
+            const format = INTERVIEW_STAGE_FORMAT_LABELS[st.format as "other"] ?? "";
+            const owner = [st.ownerName?.trim(), st.ownerEmail?.trim() ? `<${st.ownerEmail.trim()}>` : ""]
+              .filter(Boolean)
+              .join(" ");
+            return [st.name.trim(), format, owner ? `run by ${owner}` : ""].filter(Boolean).join(" — ");
+          }),
+        collaboratorsLine: (() => {
+          if (!state.inviteCollaborators) return "";
+          // Same rule as the checkbox on the final step (collaboratorCandidates).
+          const people = collaboratorCandidates(state.interviewStages, {
+            name: state.decisionMaker,
+            email: state.decisionMakerEmail,
+          });
+          if (people.length === 0) return "";
+          return `Invite ${people.length === 1 ? "1 person" : `${people.length} people`} from the interview stages to the workspace`;
+        })(),
+        termsAccepted: state.consent,
+        pilotAcknowledged: state.pilotAcknowledgement,
+        researchConsent: state.researchConsent,
+        passwordSet: state.password.length > 0,
       },
       required: req,
       // Answers that live outside the text state: ticks, files, typed secrets.
@@ -903,14 +942,19 @@ function ExpressIntakePage() {
     const restored = withRequirements(payload as Partial<FormState>) as Record<string, unknown>;
     // Keep whatever the client typed while the draft was still loading.
     for (const key of editedRef.current) delete restored[key];
+    // A draft never carries the password or the consents, so a restore starts
+    // them blank — unless the client already typed or ticked them in this
+    // session. Blanking those too sent the review back to "Password is
+    // missing" after the client had filled it in on step 1.
+    const typed = (key: keyof FormState) => editedRef.current.has(key as string);
     setState((s) => ({
       ...s,
       ...(restored as Partial<FormState>),
-      password: "",
-      confirmPassword: "",
-      consent: false,
-      pilotAcknowledgement: false,
-      researchConsent: false,
+      password: typed("password") ? s.password : "",
+      confirmPassword: typed("confirmPassword") ? s.confirmPassword : "",
+      consent: typed("consent") ? s.consent : false,
+      pilotAcknowledgement: typed("pilotAcknowledgement") ? s.pilotAcknowledgement : false,
+      researchConsent: typed("researchConsent") ? s.researchConsent : false,
     }));
   };
 
@@ -1359,50 +1403,137 @@ function ExpressIntakePage() {
   }, [state.workEmail, state.companyWebsite]);
 
   /**
-   * Values the quick text read filled in (see `guessTitleAndTeam`). The model
-   * read may replace exactly these, and only while the client has not touched
-   * the field; anything the client typed is never overwritten.
+   * The job description is read twice: instantly in the browser
+   * (`quickReadJd`, no network) and then by the model. Both land through
+   * `planBlueprintApply`, whose rules are the whole safety story: a field the
+   * client typed in (`editedRef`) is never written, an empty field may be
+   * filled, and a value a reader put there (`autoRef`) may be replaced by a
+   * newer read only while it is unchanged. Restored drafts and carried answers
+   * are never touched.
    */
-  const guessedRef = useRef<Record<string, string>>({});
-  const applyBlueprint = React.useCallback((bp: JdBlueprint, source: "model" | "guess" = "model") => {
-    const DEFAULTED = new Set(["currency", "compensationPeriod"]);
-    setState((s) => {
-      const next: Partial<FormState> = {};
-      const put = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-        if (editedRef.current.has(key as string)) return;
-        const current = s[key];
-        const isEmpty =
-          current === "" || current === null || current === undefined ||
-          (Array.isArray(current) && current.length === 0);
-        // A value the quick text read filled in may be replaced by a better read
-        // (the model's, or a new guess from a replaced description) — never one
-        // the client typed (editedRef above).
-        const replaceGuess =
-          typeof current === "string" && guessedRef.current[key as string] === current;
-        if (!isEmpty && !DEFAULTED.has(key as string) && !replaceGuess) return;
-        if (source === "guess" && typeof value === "string") guessedRef.current[key as string] = value;
-        else delete guessedRef.current[key as string];
-        next[key] = value;
-      };
+  const autoRef = useRef<Partial<JdFormValues>>({});
+  const autoReqRef = useRef<string>("");
+  const latestStateRef = useRef(state);
+  latestStateRef.current = state;
+  /** Fields the description filled, so each can say so until the client edits it. */
+  const [readFields, setReadFields] = useState<Set<string>>(() => new Set());
+  const isRead = (field: string) => readFields.has(field) && !editedRef.current.has(field);
+  /** One line under the description saying what was read, so a paste visibly lands. */
+  const jdReadSummary = (() => {
+    const parts: string[] = [];
+    const named: Array<[string, string]> = [
+      ["roleTitle", "job title"],
+      ["team", "team"],
+      ["location", "location"],
+      ["workModel", "working model"],
+      ["employmentType", "employment type"],
+      ["salaryMin", "pay"],
+      ["targetStartDate", "start date"],
+      ["sponsorshipAvailable", "visa sponsorship"],
+    ];
+    for (const [k, label] of named) if (isRead(k)) parts.push(label);
+    const reqs = state.requirements.filter((r) => r.text.trim()).length;
+    if (isRead("requirements") && reqs > 0) parts.push(`${reqs} requirement${reqs === 1 ? "" : "s"}`);
+    return parts.join(", ");
+  })();
+  /** Shown beside the description when the model read fails. Never blocks anything. */
+  const [jdReadNote, setJdReadNote] = useState<string | null>(null);
+  /** The one model read in flight: newer reads abort it, and a stale reply is dropped by id. */
+  const parseRef = useRef<{ id: number; controller: AbortController | null; kind: string }>({
+    id: 0,
+    controller: null,
+    kind: "",
+  });
+  /** Set by a paste into the description, so the model read starts almost at once. */
+  const pasteRef = useRef(false);
+  /** When the model read of the current text is due, so re-renders do not postpone it. */
+  const pendingReadRef = useRef<{ signature: string; dueAt: number }>({ signature: "", dueAt: 0 });
+  /** The description text the latest model read was for. */
+  const readTextRef = useRef<string>("");
+  useEffect(() => () => parseRef.current.controller?.abort(), []);
 
-      if (bp.title) put("roleTitle", bp.title.value);
-      if (bp.location) put("location", bp.location.value);
-      if (bp.workModel) put("workModel", bp.workModel.value);
-      if (bp.seniority) put("seniority", bp.seniority.value);
-      if (bp.employmentType) put("employmentType", bp.employmentType.value);
-      if (bp.team) put("team", bp.team.value);
-      if (bp.salaryMin) put("salaryMin", String(bp.salaryMin.value));
-      if (bp.salaryMax) put("salaryMax", String(bp.salaryMax.value));
-      if (bp.currency) put("currency", bp.currency.value);
-      if (bp.compensationPeriod) put("compensationPeriod", bp.compensationPeriod.value);
-      if (bp.targetStartDate) put("targetStartDate", bp.targetStartDate.value);
-      // A description that states the employer will not sponsor answers the
-      // visa question, so the client is not asked it twice (INT-015).
-      if (bp.requiresExistingWorkAuth?.value === true) put("sponsorshipAvailable", "no");
-      if (Object.keys(next).length === 0) return s;
-      return { ...s, ...next };
-    });
+  const applyBlueprint = React.useCallback(
+    (bp: JdBlueprint, source: "model" | "guess" = "model", opts: { clearMissing?: boolean } = {}) => {
+      const current = latestStateRef.current as unknown as Record<string, unknown>;
+      const plan = planBlueprintApply(current, bp, {
+        edited: new Set(editedRef.current),
+        auto: autoRef.current,
+        clearMissing: opts.clearMissing,
+      });
+      autoRef.current = plan.auto;
+      const keys = Object.keys(plan.patch) as JdFormKey[];
+      if (keys.length === 0) return;
+      setState((s) => {
+        const next: Partial<FormState> = {};
+        for (const key of keys) {
+          // Re-checked against the newest state: a keystroke that landed after
+          // the plan was made still wins.
+          if (editedRef.current.has(key)) continue;
+          const live = String((s as unknown as Record<string, unknown>)[key] ?? "");
+          if (live !== String(current[key] ?? "") && !isEmpty(key, live)) continue;
+          (next as Record<string, unknown>)[key] = plan.patch[key];
+        }
+        return Object.keys(next).length === 0 ? s : { ...s, ...next };
+      });
+      if (plan.filled.length > 0 || plan.cleared.length > 0) {
+        setReadFields((prev) => {
+          const nextSet = new Set(prev);
+          for (const k of plan.filled) nextSet.add(k);
+          for (const k of plan.cleared) nextSet.delete(k);
+          return nextSet;
+        });
+      }
+      void source;
+    },
+    [],
+  );
+
+  /**
+   * A read's requirements become the client's list only while that list is
+   * untouched (empty, or exactly what the last read put there). Once the client
+   * edits it, a later read's items are offered as suggestions instead.
+   */
+  const applyRequirements = React.useCallback((items: RequirementItem[]): boolean => {
+    const capped = capMustHaves(items);
+    if (capped.length === 0) return false;
+    const current = latestStateRef.current.requirements;
+    if (
+      !mayReplaceRequirements(current, {
+        edited: editedRef.current.has("requirements"),
+        autoSignature: autoReqRef.current,
+      })
+    ) {
+      return false;
+    }
+    autoReqRef.current = requirementsSignature(capped);
+    setState((s) => (editedRef.current.has("requirements") ? s : { ...s, requirements: capped }));
+    setReadFields((prev) => (prev.has("requirements") ? prev : new Set(prev).add("requirements")));
+    return true;
   }, []);
+
+  /**
+   * The instant read, run in the same event as the keystroke or paste that
+   * changed the text, so React paints the text and the filled form in one
+   * frame. The effect below runs it too, for text that arrives any other way
+   * (a restored draft, a read file); `lastQuickRef` keeps it from running twice.
+   */
+  const lastQuickRef = useRef<string>("");
+  const quickReadNow = React.useCallback(
+    (text: string) => {
+      const jd = text.trim();
+      if (jd.length < MIN_JD_TEXT || lastQuickRef.current === jd) return;
+      lastQuickRef.current = jd;
+      const quick = quickReadJd(jd);
+      applyBlueprint(quick.blueprint, "guess");
+      applyRequirements(quick.requirements);
+    },
+    [applyBlueprint, applyRequirements],
+  );
+
+  const textSignature = React.useCallback(
+    (jd: string) => `text:${editedRef.current.has("roleTitle") ? latestStateRef.current.roleTitle.trim() : ""}::${jd}`,
+    [],
+  );
 
   /**
    * Reads the job description, however it arrived.
@@ -1412,7 +1543,8 @@ function ExpressIntakePage() {
    * extracted, and the page still promised "upload the job description and
    * TaaSFlow will build the complete role blueprint" (audit 15 Sep, INT-010).
    *
-   * Failure stays non-fatal: the list works by hand, exactly as before.
+   * Failure stays non-fatal: the instant read stays in place, every field is
+   * still editable, and a quiet note says the automatic read did not happen.
    */
   const runJdParse = React.useCallback(
     async (input: {
@@ -1421,59 +1553,70 @@ function ExpressIntakePage() {
       url?: string;
       roleTitle: string;
     }) => {
+      const kind = input.file ? "file" : input.url ? "url" : "text";
+      parseRef.current.controller?.abort();
+      const controller = new AbortController();
+      const id = parseRef.current.id + 1;
+      parseRef.current = { id, controller, kind };
+      if (input.text) readTextRef.current = input.text.trim();
       setSuggestions({ kind: "loading" });
-      try {
-        const res = await fetch("/api/public/jd-requirements", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            roleTitle: input.roleTitle,
-            jobDescriptionText: input.text ?? "",
-            file: input.file,
-            url: input.url,
-          }),
-        });
-        const json = (await res.json()) as {
-          ok?: boolean;
-          suggestions?: RequirementItem[];
-          blueprint?: JdBlueprint;
-          text?: string;
-          message?: string;
-        };
-        if (!json.ok) {
-          // A file we genuinely could not read is worth saying out loud; every
-          // other failure stays quiet and the client just types.
-          if (json.message) toast.error(json.message);
-          setSuggestions({ kind: "idle" });
-          return;
-        }
-        // Text read out of a file or a link becomes the draft's job
-        // description, so it persists, submits and re-parses like pasted text.
-        if (json.text && json.text.trim().length > 0) {
-          setState((s) =>
-            s.jobDescriptionText.trim().length > 0 ? s : { ...s, jobDescriptionText: json.text! },
-          );
-        }
-        if (json.blueprint) applyBlueprint(json.blueprint);
-        if (Array.isArray(json.suggestions) && json.suggestions.length > 0) {
-          setSuggestions({ kind: "ready", items: json.suggestions });
-        } else {
-          setSuggestions({ kind: "idle" });
-        }
-      } catch {
-        setSuggestions({ kind: "idle" });
+      setJdReadNote(null);
+      const outcome = await requestJdParse(
+        { roleTitle: input.roleTitle, jobDescriptionText: input.text, file: input.file, url: input.url },
+        { signal: controller.signal },
+      );
+      // A newer read started (or this one was cancelled): this reply is stale.
+      if (outcome.kind === "aborted" || parseRef.current.id !== id) return;
+      parseRef.current.controller = null;
+
+      // Text read out of a file or a link becomes the draft's job
+      // description, so it persists, submits and re-parses like pasted text —
+      // and is read instantly even when the model read failed.
+      const readText = outcome.kind === "ok" ? outcome.data.text : outcome.kind === "failed" ? outcome.text : undefined;
+      if (readText && readText.trim().length > 0) {
+        readTextRef.current = readText.trim();
+        const quick = quickReadJd(readText);
+        // This text has just been read; the description effect must not bill it again.
+        suggestedForRef.current = textSignature(readText.trim());
+        setState((s) => (s.jobDescriptionText.trim().length > 0 ? s : { ...s, jobDescriptionText: readText }));
+        applyBlueprint(quick.blueprint, "guess");
+        applyRequirements(quick.requirements);
       }
+
+      if (outcome.kind === "failed") {
+        // A file or link we genuinely could not read is worth saying out loud.
+        if (outcome.message && kind !== "text") toast.error(outcome.message);
+        setJdReadNote(
+          outcome.message && kind !== "text"
+            ? outcome.message
+            : "We could not read the description automatically — fill the fields below; nothing is lost.",
+        );
+        setSuggestions({ kind: "failed" });
+        return;
+      }
+      // The model's reading wins where it differs; what it leaves out but the
+      // instant read of the SAME text states is kept, and only values from an
+      // older description that neither read supports are cleared.
+      const sameText = input.text ?? readText ?? "";
+      const base = sameText ? quickReadJd(sameText).blueprint : {};
+      applyBlueprint({ ...base, ...outcome.data.blueprint }, "model", { clearMissing: true });
+      const items = outcome.data.suggestions ?? [];
+      if (applyRequirements(items) || items.length === 0) setSuggestions({ kind: "idle" });
+      else setSuggestions({ kind: "ready", items });
     },
-    [applyBlueprint],
+    [applyBlueprint, applyRequirements, textSignature],
   );
 
   /**
    * Re-reads the description whenever it changes, not only on a page reload.
    *
-   * Keyed on the CONTENT, not its length: replacing a job description with a
-   * different one of the same length used to leave the old suggestions in
-   * place (INT-012/INT-016). Debounced so typing does not bill a model call
-   * per keystroke.
+   * The instant read runs on every change (it costs a few milliseconds), so a
+   * pasted description fills the role before the client reaches the next
+   * screen. The model read is keyed on the CONTENT, not its length: replacing
+   * a job description with a different one of the same length used to leave
+   * the old suggestions in place (INT-012/INT-016). A paste starts it almost
+   * at once; typing is debounced so it does not bill a model call per
+   * keystroke. A read in flight for older text is cancelled.
    */
   useEffect(() => {
     // Steps 1 and 2: the description is read as soon as it is given, so the job
@@ -1482,26 +1625,41 @@ function ExpressIntakePage() {
     if (stepIndex > 1) return;
     const jd = state.jobDescriptionText.trim();
     if (jd.length < MIN_JD_TEXT) return;
-    const quick = guessTitleAndTeam(jd);
-    if (quick.title || quick.team) {
-      applyBlueprint(
-        {
-          ...(quick.title ? { title: { value: quick.title, confidence: "low" as const } } : {}),
-          ...(quick.team ? { team: { value: quick.team, confidence: "low" as const } } : {}),
-        },
-        "guess",
-      );
-    }
+    quickReadNow(jd);
     // Only a title the client typed belongs in the signature: a guessed or read
     // title changing must not trigger a second model call for the same text.
     const signature = `text:${editedRef.current.has("roleTitle") ? state.roleTitle.trim() : ""}::${jd}`;
     if (suggestedForRef.current === signature) return;
+    // The same text with only a newly typed title: the read already made (or
+    // in flight) stands — a title is context for the model, not a new
+    // description, and is never worth a second paid call.
+    if (readTextRef.current === jd) {
+      suggestedForRef.current = signature;
+      return;
+    }
+    // The text moved on: a model read of the old text must not land on it.
+    if (parseRef.current.controller && parseRef.current.kind === "text") {
+      parseRef.current.controller.abort();
+      parseRef.current = { id: parseRef.current.id + 1, controller: null, kind: "" };
+      setSuggestions((cur) => (cur.kind === "loading" ? { kind: "idle" } : cur));
+    }
+    // Re-renders caused by the instant read itself must not push the model
+    // read back: the first schedule for this text keeps its due time.
+    const now = Date.now();
+    if (pendingReadRef.current.signature !== signature) {
+      pendingReadRef.current = {
+        signature,
+        dueAt: now + (pasteRef.current ? JD_PASTE_DELAY_MS : JD_REPARSE_DELAY_MS),
+      };
+    }
+    pasteRef.current = false;
     const timer = window.setTimeout(() => {
       suggestedForRef.current = signature;
+      pendingReadRef.current = { signature: "", dueAt: 0 };
       void runJdParse({ text: jd, roleTitle: state.roleTitle });
-    }, JD_REPARSE_DELAY_MS);
+    }, Math.max(0, pendingReadRef.current.dueAt - now));
     return () => window.clearTimeout(timer);
-  }, [stepIndex, state.jobDescriptionText, state.roleTitle, runJdParse, applyBlueprint]);
+  }, [stepIndex, state.jobDescriptionText, state.roleTitle, runJdParse, quickReadNow]);
 
   const setRequirements = (next: RequirementItem[]) => {
     if (!startedRef.current) {
@@ -1986,6 +2144,20 @@ function ExpressIntakePage() {
         return;
       }
 
+      // Start the role analysis FIRST, before tracking, sign-in or anything
+      // else that could throw. The server leaves the role "queued" and this
+      // request carries the run (it stays open while the analysis works; the
+      // SPA navigation below does not cancel it). Not awaited — the
+      // confirmation and role pages show real progress, and restart it if this
+      // request never lands (see src/lib/blueprint-trigger.ts).
+      if (body.intakeId) {
+        void fetch("/api/public/blueprint-run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ intakeId: body.intakeId }),
+        }).catch(() => undefined);
+      }
+
 
 
       trackFgv(FGV_EVENTS.formSubmit, { form_type: "employer_intake" });
@@ -2051,16 +2223,6 @@ function ExpressIntakePage() {
         } catch {
           signedIn = false;
         }
-      }
-
-      // Kick off blueprint preparation. Deliberately not awaited — the role
-      // page shows real progress while it runs.
-      if (body.intakeId) {
-        void fetch("/api/public/blueprint-run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ intakeId: body.intakeId }),
-        }).catch(() => undefined);
       }
 
       // The brief is in: mark the draft submitted so a stale tab can never
@@ -2662,7 +2824,13 @@ function ExpressIntakePage() {
                 id="jd-text"
                 ref={jdTextRef}
                 value={state.jobDescriptionText}
-                onChange={(e) => set("jobDescriptionText", e.target.value)}
+                onChange={(e) => {
+                  set("jobDescriptionText", e.target.value);
+                  quickReadNow(e.target.value);
+                }}
+                onPaste={() => {
+                  pasteRef.current = true;
+                }}
                 onKeyDown={jdShortcuts}
                 rows={8}
                 className="rounded-t-none"
@@ -2722,6 +2890,27 @@ function ExpressIntakePage() {
                 instead.
               </p>
             </div>
+            {jdReadSummary && (
+              <p className="text-xs text-[color:var(--brand-navy)]/75" aria-live="polite" data-testid="jd-quick-summary">
+                <CheckCircle2 className="mr-1 inline h-3.5 w-3.5 align-[-2px] text-[color:var(--brand-teal)]" aria-hidden="true" />
+                Read from your description: {jdReadSummary}. You confirm everything on the next screens.
+              </p>
+            )}
+            {jdReadNote && (
+              <p
+                className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3 text-xs text-[color:var(--brand-navy)]/80"
+                aria-live="polite"
+                data-testid="jd-read-note"
+              >
+                {jdReadNote}
+              </p>
+            )}
+            {suggestions.kind === "loading" && !jdReadNote && (
+              <p className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/70" aria-live="polite">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                Reading your description… You can carry on.
+              </p>
+            )}
             {errors.jobDescriptionText && (
               <p id="intake-jobDescriptionText-error" data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.jobDescriptionText}
@@ -2753,15 +2942,25 @@ function ExpressIntakePage() {
               />
             </Field>
           )}
+          {suggestions.kind === "loading" && (
+            <p
+              className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/70"
+              aria-live="polite"
+              data-testid="jd-reading"
+            >
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+              Reading your description… You can carry on — nothing you type is overwritten.
+            </p>
+          )}
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label={intakeFieldLabel("roleTitle")} error={errors.roleTitle} required={req["roleTitle"]}>
+            <Field label={intakeFieldLabel("roleTitle")} fromJd={isRead("roleTitle")} error={errors.roleTitle} required={req["roleTitle"]}>
               <Input
                 value={state.roleTitle}
                 onChange={(e) => set("roleTitle", e.target.value)}
                 placeholder="Clinical Operations Manager"
               />
             </Field>
-            <Field label={intakeFieldLabel("team")} error={errors.team} required={req["team"]} hint={intakeFieldHint("team")}>
+            <Field label={intakeFieldLabel("team")} fromJd={isRead("team")} error={errors.team} required={req["team"]} hint={intakeFieldHint("team")}>
               <Input
                 value={state.team}
                 onChange={(e) => set("team", e.target.value)}
@@ -2801,6 +3000,7 @@ function ExpressIntakePage() {
               }}
               roleTitle={state.roleTitle}
               suggestions={suggestions}
+              fromJd={isRead("requirements")}
               onRetrySuggestions={() => {
                 // Re-analyse reads whatever the client gave us, in the same
                 // order the parser does: an attached file first, then the text.
@@ -2842,7 +3042,7 @@ function ExpressIntakePage() {
           <SectionGroup title="Location and working model">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
-                label={intakeFieldLabel("location")} carried={isCarried("location")}
+                label={intakeFieldLabel("location")} carried={isCarried("location")} fromJd={isRead("location")}
                 error={errors.location}
                 required={req["location"]}
                 hint="City and country, or the region candidates must live in."
@@ -2853,7 +3053,7 @@ function ExpressIntakePage() {
                   placeholder="Manchester, United Kingdom"
                 />
               </Field>
-              <Field label={intakeFieldLabel("workModel")} carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
+              <Field label={intakeFieldLabel("workModel")} carried={isCarried("workModel")} fromJd={isRead("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
                 <select
                   id="work-model"
                   value={state.workModel}
@@ -3009,7 +3209,7 @@ function ExpressIntakePage() {
             <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
               <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
               <div className="grid gap-3 sm:grid-cols-4">
-                <Field label={intakeFieldLabel("currency")} carried={isCarried("currency")} htmlFor="currency">
+                <Field label={intakeFieldLabel("currency")} carried={isCarried("currency")} fromJd={isRead("currency")} htmlFor="currency">
                   <select
                     id="currency"
                     value={state.currency}
@@ -3023,7 +3223,7 @@ function ExpressIntakePage() {
                     ))}
                   </select>
                 </Field>
-                <Field label={intakeFieldLabel("salaryMin")} error={errors.salaryMin} required={req["salaryMin"]}>
+                <Field label={intakeFieldLabel("salaryMin")} fromJd={isRead("salaryMin")} error={errors.salaryMin} required={req["salaryMin"]}>
                   <Input
                     value={state.salaryMin}
                     disabled={state.compensationUndecided}
@@ -3032,7 +3232,7 @@ function ExpressIntakePage() {
                     placeholder="70000"
                   />
                 </Field>
-                <Field label={intakeFieldLabel("salaryMax")} error={errors.salaryMax} required={req["salaryMax"]}>
+                <Field label={intakeFieldLabel("salaryMax")} fromJd={isRead("salaryMax")} error={errors.salaryMax} required={req["salaryMax"]}>
                   <Input
                     value={state.salaryMax}
                     disabled={state.compensationUndecided}
@@ -3041,7 +3241,7 @@ function ExpressIntakePage() {
                     placeholder="85000"
                   />
                 </Field>
-                <Field label={intakeFieldLabel("compensationPeriod")} carried={isCarried("compensationPeriod")} htmlFor="comp-period">
+                <Field label={intakeFieldLabel("compensationPeriod")} carried={isCarried("compensationPeriod")} fromJd={isRead("compensationPeriod")} htmlFor="comp-period">
                   <select
                     id="comp-period"
                     value={state.compensationPeriod}
@@ -3167,6 +3367,7 @@ function ExpressIntakePage() {
           <SectionGroup title={intakeFieldLabel("startDate")}>
             <Field
               label="When would you like them to start?"
+              fromJd={isRead("targetStartDate")}
               error={errors.targetStartDate}
               required={req["targetStartDate"]}
             >
@@ -4026,6 +4227,9 @@ function SectionGroup({
   );
 }
 
+/** Said under a field the job description filled, until the client edits it. */
+const JD_READ_NOTICE = "Read from your job description — check it.";
+
 function Field({
 
   label,
@@ -4035,6 +4239,7 @@ function Field({
   required,
   htmlFor,
   carried,
+  fromJd,
 }: {
   label: string;
   children: React.ReactNode;
@@ -4043,6 +4248,8 @@ function Field({
   required?: boolean;
   /** True when the value arrived from the company profile and is worth checking. */
   carried?: boolean;
+  /** True when the value was read from the job description and is worth checking. */
+  fromJd?: boolean;
   /** Set when the control is nested inside wrapper markup and carries its own id. */
   htmlFor?: string;
 }) {
@@ -4089,6 +4296,11 @@ function Field({
       {control}
       {carried && !error && (
         <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
+      )}
+      {fromJd && !carried && !error && (
+        <p className="text-xs text-[color:var(--brand-navy)]/70" data-testid="jd-read-marker">
+          {JD_READ_NOTICE}
+        </p>
       )}
       {hint && !error && (
         <p id={hintId} className="text-xs text-[color:var(--brand-navy)]/75">

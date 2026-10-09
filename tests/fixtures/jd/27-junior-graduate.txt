@@ -1,0 +1,13 @@
+Junior Frontend Developer
+Entry level - graduates welcome
+
+Location: Leeds, UK
+Work model: On-site
+Employment type: Full-time
+
+Learn from a senior team while building features in React and TypeScript.
+
+Requirements
+- A degree in computer science or equivalent practical experience
+- Basic React knowledge
+- A portfolio or GitHub profile

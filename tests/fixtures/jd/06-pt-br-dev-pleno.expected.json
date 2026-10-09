@@ -1,0 +1,33 @@
+{
+  "fields": {
+    "title": "Desenvolvedor Backend Pleno",
+    "team": "Tecnologia",
+    "seniority": "mid",
+    "workModel": "hybrid",
+    "employmentType": "full_time",
+    "salaryMin": 8000,
+    "salaryMax": 12000,
+    "currency": "BRL",
+    "compensationPeriod": "month"
+  },
+  "empty": [
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "Java ou Kotlin",
+      "bancos de dados relacionais",
+      "mensageria",
+      "comunicação"
+    ],
+    "nice": [
+      "AWS",
+      "meios de pagamento"
+    ],
+    "none": false
+  }
+}

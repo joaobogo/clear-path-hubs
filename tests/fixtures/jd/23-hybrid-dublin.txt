@@ -1,0 +1,10 @@
+Platform Engineer
+Team: Infrastructure
+Location: Dublin, Ireland
+Work model: Hybrid, two days in the office
+Salary: €70,000 - €85,000
+
+Requirements
+- Terraform and Kubernetes in production
+- On-call experience
+- Scripting in Python or Bash

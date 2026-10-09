@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "salaryMin": 85000,
+    "salaryMax": 95000,
+    "currency": "USD",
+    "compensationPeriod": "year"
+  },
+  "empty": [
+    "title",
+    "team",
+    "seniority",
+    "location",
+    "workModel",
+    "employmentType",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "3+ years in customer success",
+      "written communication",
+      "data and dashboards"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

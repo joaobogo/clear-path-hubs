@@ -1,0 +1,31 @@
+{
+  "fields": {
+    "location": "Doncaster",
+    "workModel": "onsite",
+    "employmentType": "part_time",
+    "salaryMin": 12.5,
+    "salaryMax": 12.5,
+    "currency": "GBP",
+    "compensationPeriod": "hour"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "title"
+  ],
+  "requirements": {
+    "must": [
+      "lift 15kg",
+      "Reliable and punctual"
+    ],
+    "nice": [
+      "warehouse experience",
+      "Forklift licence"
+    ],
+    "none": false
+  }
+}

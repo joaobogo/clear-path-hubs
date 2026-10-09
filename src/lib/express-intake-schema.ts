@@ -39,6 +39,12 @@ export const MIN_JD_TEXT = 1;
  * keystroke, short enough that a paste feels immediate.
  */
 export const JD_REPARSE_DELAY_MS = 1_500;
+/**
+ * After a PASTE (or a drop) the description is complete, so the model read
+ * starts almost at once; the instant in-browser read has already filled the
+ * form by then.
+ */
+export const JD_PASTE_DELAY_MS = 250;
 export const MIN_ACCOUNT_PASSWORD = 8;
 
 /** Role-brief minimums. Enforced identically on the client and the server. */

@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Receptionist",
+    "location": "Cardiff",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "telephone manner",
+      "appointment software"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Head of People",
+    "seniority": "director",
+    "workModel": "remote"
+  },
+  "empty": [
+    "team",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "employmentType",
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "10+ years in HR",
+      "scaling a company"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

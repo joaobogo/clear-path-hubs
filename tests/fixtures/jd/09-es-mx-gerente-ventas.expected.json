@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "title": "Gerente de Ventas",
+    "location": "Monterrey, Nuevo León, México",
+    "workModel": "onsite",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "Licenciatura en Administración",
+      "4 años de experiencia en ventas B2B",
+      "CRM",
+      "viajar"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

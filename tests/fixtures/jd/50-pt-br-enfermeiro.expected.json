@@ -1,0 +1,31 @@
+{
+  "fields": {
+    "title": "Enfermeiro(a) UTI",
+    "employmentType": "full_time",
+    "salaryMin": 6500,
+    "salaryMax": 6500,
+    "currency": "BRL",
+    "compensationPeriod": "month"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "Graduação em Enfermagem",
+      "COREN ativo",
+      "1 ano em UTI"
+    ],
+    "nice": [
+      "terapia intensiva"
+    ],
+    "none": false
+  }
+}

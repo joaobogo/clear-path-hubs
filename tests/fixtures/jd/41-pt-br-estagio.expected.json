@@ -1,0 +1,31 @@
+{
+  "fields": {
+    "title": "Estagiário de Marketing",
+    "seniority": "intern",
+    "employmentType": "internship",
+    "salaryMin": 1500,
+    "salaryMax": 1500,
+    "currency": "BRL",
+    "compensationPeriod": "month"
+  },
+  "empty": [
+    "team",
+    "workModel",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "Cursando Publicidade",
+      "Boa escrita",
+      "redes sociais"
+    ],
+    "nice": [
+      "Canva"
+    ],
+    "none": false
+  }
+}

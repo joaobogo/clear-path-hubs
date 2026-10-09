@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "title": "Assistente Administrativo"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "location"
+  ],
+  "requirements": {
+    "must": [
+      "Ensino médio completo",
+      "rotinas administrativas",
+      "Pacote Office"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

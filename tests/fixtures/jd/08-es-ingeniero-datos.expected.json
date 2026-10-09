@@ -1,0 +1,32 @@
+{
+  "fields": {
+    "title": "Ingeniero de Datos Senior",
+    "seniority": "senior",
+    "location": "Madrid, España",
+    "workModel": "hybrid",
+    "employmentType": "full_time",
+    "salaryMin": 50000,
+    "salaryMax": 60000,
+    "currency": "EUR",
+    "compensationPeriod": "year"
+  },
+  "empty": [
+    "team",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "5 años de experiencia",
+      "Python y SQL",
+      "Airflow y dbt",
+      "inglés"
+    ],
+    "nice": [
+      "Snowflake",
+      "Terraform"
+    ],
+    "none": false
+  }
+}

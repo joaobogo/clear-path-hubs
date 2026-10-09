@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Bartender",
+    "location": "Nashville, TN",
+    "employmentType": "part_time",
+    "salaryMin": 15,
+    "salaryMax": 15,
+    "currency": "USD",
+    "compensationPeriod": "hour"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "2 years behind a cocktail bar",
+      "Food handler card",
+      "Weekend availability"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

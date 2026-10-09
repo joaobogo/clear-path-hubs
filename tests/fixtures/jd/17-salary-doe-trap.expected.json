@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Project Coordinator",
+    "team": "Construction",
+    "location": "Phoenix, AZ",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "seniority",
+    "workModel",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "construction project coordination",
+      "Procore",
+      "OSHA 10"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

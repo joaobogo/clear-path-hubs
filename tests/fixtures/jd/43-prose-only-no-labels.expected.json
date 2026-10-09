@@ -1,0 +1,25 @@
+{
+  "fields": {
+    "salaryMin": 30000,
+    "salaryMax": 30000,
+    "currency": "GBP"
+  },
+  "empty": [
+    "title",
+    "team",
+    "seniority",
+    "location",
+    "workModel",
+    "employmentType",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "compensationPeriod"
+  ],
+  "requirements": {
+    "must": [],
+    "nice": [],
+    "none": true
+  }
+}

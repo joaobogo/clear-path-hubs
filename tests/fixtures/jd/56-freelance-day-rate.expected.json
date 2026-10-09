@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Freelance Video Editor",
+    "location": "London",
+    "workModel": "onsite"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "employmentType"
+  ],
+  "requirements": {
+    "must": [
+      "Premiere Pro",
+      "showreel"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Senior Engineer",
+    "seniority": "senior",
+    "workModel": "hybrid",
+    "employmentType": "full_time"
+  },
+  "empty": [
+    "team",
+    "location",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "7+ years of C++",
+      "ROS",
+      "embedded systems"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

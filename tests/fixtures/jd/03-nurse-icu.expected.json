@@ -1,0 +1,30 @@
+{
+  "fields": {
+    "title": "Registered Nurse - ICU (Night Shift)",
+    "location": "Austin, TX",
+    "employmentType": "full_time",
+    "salaryMin": 38,
+    "salaryMax": 52,
+    "currency": "USD",
+    "compensationPeriod": "hour",
+    "targetStartDate": "2026-11-16"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "Active Texas or compact state RN license",
+      "BLS and ACLS",
+      "1 year of acute care"
+    ],
+    "nice": [
+      "BSN preferred"
+    ],
+    "none": false
+  }
+}

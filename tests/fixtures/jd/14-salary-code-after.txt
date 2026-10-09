@@ -1,0 +1,13 @@
+Senior Data Analyst
+Remote
+
+Compensation: 90,000 - 110,000 USD per year
+
+The analytics team supports finance, product and growth with trusted numbers. You will own the
+reporting layer and the weekly business review.
+
+Qualifications
+- 5 years of experience in analytics
+- Advanced SQL
+- Experience with dbt and a modern BI tool
+- Ability to explain findings to executives

@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Technical Writer",
+    "workModel": "remote",
+    "employmentType": "contract",
+    "salaryMin": 45,
+    "salaryMax": 45,
+    "currency": "USD",
+    "compensationPeriod": "hour"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "location",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "3+ years writing developer documentation",
+      "Python or JavaScript",
+      "docs-as-code"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

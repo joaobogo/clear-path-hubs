@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Chief Financial Officer",
+    "seniority": "executive",
+    "location": "Zurich, Switzerland"
+  },
+  "empty": [
+    "team",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "salaryMax",
+    "currency",
+    "compensationPeriod",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "12+ years in senior finance roles",
+      "PE-backed",
+      "CPA, ACCA"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

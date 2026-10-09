@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "title": "Senior Accountant",
+    "team": "Finance",
+    "seniority": "senior",
+    "location": "Denver, CO",
+    "workModel": "hybrid",
+    "employmentType": "full_time",
+    "salaryMin": 110000,
+    "salaryMax": 130000,
+    "currency": "USD",
+    "compensationPeriod": "year",
+    "requiresExistingWorkAuth": true
+  },
+  "empty": [
+    "targetStartDate"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "CPA licence",
+      "5+ years of accounting experience",
+      "Excel"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

@@ -16,18 +16,15 @@ import {
   ALLOWED_JD_MIME,
   MAX_JD_BYTES,
   UNREADABLE_JD_EXT,
-  briefCompleteness,
   jdFileExt,
-  splitLines,
   collaboratorCandidates,
-  interviewProcessSummary,
-  type RequirementTag,
 
 } from "@/lib/express-intake-schema";
-import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import { readJsonWithLimit } from "@/lib/public-api/body-limit";
 import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
 import { assertNoQaContamination, qaGuardValues } from "@/lib/qa-guard";
+import { qaTestTrafficFromCookie } from "@/lib/public-api/qa-endpoint-gate";
+import { intakePayloadToPosition } from "@/lib/positions/role-form";
 
 
 /**
@@ -308,7 +305,13 @@ export const Route = createFileRoute("/api/public/express-intake")({
             email: data.decisionMakerEmail,
           }).flatMap((c) => [c.name, c.email]),
         ];
-        if (organizationId) {
+        // The local E2E harness submits QA-named roles through the real form.
+        // Only the dev server can recognise its cookie; deployed builds never
+        // skip the guard.
+        const e2eTraffic = qaTestTrafficFromCookie(request.headers.get("cookie"));
+        if (e2eTraffic) {
+          /* QA fixture names are expected here */
+        } else if (organizationId) {
           const qa = await assertNoQaContamination(admin, organizationId, qaFields);
           if (!qa.ok) {
             return Response.json(
@@ -496,166 +499,32 @@ export const Route = createFileRoute("/api/public/express-intake")({
         // Steps 3 and 4 of the intake are optional. Anything the client left
         // blank is stored as null — never as an invented default — and the
         // brief is labelled incomplete until they finish it.
-        // The tagged list is the source of truth when the client sent one: it
-        // carries the order they chose and the tag that decides how each item is
-        // used. Older payloads only had the three strings, so fall back to those.
-        const tagged = (data.requirements ?? []).filter((r) => r.text.trim().length > 0);
-        const pickTagged = (tag: RequirementTag) =>
-          tagged.filter((r) => r.tag === tag).map((r) => r.text.trim());
-        const mustHaves = tagged.length > 0 ? pickTagged("must_have") : splitLines(data.mustHaves);
-        const trainable = tagged.length > 0 ? pickTagged("trainable") : splitLines(data.trainable);
-        const niceToHaves =
-          tagged.length > 0 ? pickTagged("nice_to_have") : splitLines(data.niceToHaves);
-        /**
-         * The structured list is the record of truth; the text version is
-         * derived so surfaces that read prose keep working.
-         */
-        const dealbreakerLines =
-          (data.dealBreakerList ?? []).length > 0
-            ? normalizeDealBreakers(data.dealBreakerList)
-            : splitLines((data.dealBreakers ?? "").trim());
-        const dealBreakersText = dealbreakerLines.join("\n");
-        const locationText = (data.location ?? "").trim();
-        /**
-         * The structured stages are the record of truth; the text version is
-         * derived so surfaces that read prose keep working.
-         */
-        const interviewStages = (data.interviewStages ?? []).filter(
-          (s) => (s.name ?? "").trim().length > 0,
-        );
-        const targetDaysToOffer =
-          typeof data.targetDaysToOffer === "number" ? data.targetDaysToOffer : null;
-        const interviewProcessText =
-          interviewStages.length > 0
-            ? interviewProcessSummary(interviewStages, targetDaysToOffer)
-            : (data.interviewProcess ?? "").trim();
-        const decisionMakerText = (data.decisionMaker ?? "").trim();
-        const decisionMakerEmailText = (data.decisionMakerEmail ?? "").trim().toLowerCase();
-        // Owners are recorded, never contacted. Invitations require the opt-in.
-        const inviteCollaborators = data.inviteCollaborators === true;
-        const collaborators = collaboratorCandidates(interviewStages, {
-          name: decisionMakerText,
-          email: decisionMakerEmailText,
-        });
-
-        const hasComp = typeof data.salaryMin === "number" && typeof data.salaryMax === "number";
-        const compUndecided = data.compensationUndecided === true;
-        /**
-         * Compensation is stored as what the client said: a range, or an
-         * explicit "undecided". Never a zero standing in for "we don't know".
-         */
-        const compensationRecord =
-          hasComp || compUndecided || data.compensationFlexible || data.equity || data.bonusStructure
-            ? {
-                undecided: compUndecided,
-                currency: hasComp ? data.currency : null,
-                period: hasComp ? data.compensationPeriod : null,
-                min: hasComp ? data.salaryMin : null,
-                max: hasComp ? data.salaryMax : null,
-                bonus: (data.bonusStructure ?? "").trim() || null,
-                equity: data.equity || null,
-                flexible: data.compensationFlexible === true,
-                wide_range_confirmed: data.wideRangeConfirmed === true,
-                note: (data.compensationNote ?? "").trim() || null,
-                source: "client_intake",
-              }
-            // The column is NOT NULL; "nothing said yet" is an empty record,
-            // never a null that would reject the whole submission.
-            : {};
-        const brief = briefCompleteness({
-          location: locationText,
-          workModel: data.workModel ?? "",
-          remoteTimezones: data.remoteTimezones ?? [],
-          remoteAnywhereInCountry: data.remoteAnywhereInCountry === true,
-          salaryMin: data.salaryMin ?? 0,
-          workAuthorization: data.workAuthorization ?? "",
-          interviewProcess: interviewProcessText,
-          decisionMaker: decisionMakerText,
-          dealBreakers: dealBreakersText,
-          dealBreakerList: dealbreakerLines,
-        });
+        //
+        // The mapping lives in role-form.ts so the edit screen reads every
+        // answer back from exactly where it is written here (the round-trip is
+        // under test in role-form-roundtrip.test.ts).
+        const mapped = intakePayloadToPosition(data);
+        const {
+          brief,
+          tagged,
+          mustHaves,
+          niceToHaves,
+          trainable,
+          dealbreakerLines,
+          interviewStages,
+          interviewProcessText,
+          targetDaysToOffer,
+          decisionMakerText,
+          decisionMakerEmailText,
+          inviteCollaborators,
+          compensationRecord,
+          locationText,
+        } = mapped;
         const { data: pos, error: posErr } = await admin
           .from("positions")
           .insert({
             organization_id: organizationId,
-            title: data.roleTitle.trim(),
-            department: (data.team ?? "").trim() || null,
-            work_model: data.workModel || null,
-            // Both come from the job description, not from a question the
-            // client was asked. The publish gate requires them, so a brief
-            // that carries them arrives ready instead of going back for
-            // details (audit 15 Sep, INT-002).
-            seniority: (data.seniority ?? "").trim() || null,
-            employment_type: data.employmentType || "full_time",
-            location: locationText || null,
-            description: (data.jobDescriptionText ?? "").trim() || null,
-            // Must-haves filter the shortlist and drive the evidence bullets the
-            // client reads. Nice-to-haves order it. Trainable items are stored
-            // as explicitly non-filtering so nothing downstream can screen on them.
-            requirements: mustHaves.map((label, i) => ({
-              label,
-              kind: "must_have",
-              rank: i + 1,
-              filters: true,
-              source: tagged.length > 0 ? "client_tagged" : "client_intake",
-            })),
-            preferred_requirements: [
-              ...niceToHaves.map((label, i) => ({
-                label,
-                kind: "nice_to_have",
-                rank: i + 1,
-                filters: false,
-                orders: true,
-                source: tagged.length > 0 ? "client_tagged" : "client_intake",
-              })),
-              ...trainable.map((label, i) => ({
-                label,
-                kind: "trainable",
-                rank: i + 1,
-                filters: false,
-                orders: false,
-                source: tagged.length > 0 ? "client_tagged" : "client_intake",
-              })),
-            ],
-            dealbreakers: dealbreakerLines.map((label) => ({ label })),
-            compensation: compensationRecord,
-            compensation_collected: hasComp,
-            compensation_visibility: "internal",
-            work_authorization: {
-              // Sponsorship is always answered, so it is always recorded.
-              sponsorship_available: data.sponsorshipAvailable === "yes",
-              ...(data.workAuthorization
-                ? {
-                    rule: data.workAuthorization,
-                    note: (data.workAuthorizationNote ?? "").trim() || null,
-                  }
-                : {}),
-            },
-            target_start_date: (data.targetStartDate ?? "").trim() || null,
-            intake_context: {
-              team: (data.team ?? "").trim() || null,
-              deal_breakers: dealBreakersText || null,
-              deal_breaker_list: dealbreakerLines,
-              interview_process: interviewProcessText || null,
-              interview_stages: interviewStages,
-              target_days_to_offer: targetDaysToOffer,
-              decision_maker: decisionMakerText || null,
-              decision_maker_email: decisionMakerEmailText || null,
-              // Recorded so the team can offer invitations later, on request.
-              collaborator_invites_opted_in: inviteCollaborators,
-              collaborator_candidates: inviteCollaborators ? collaborators : [],
-
-              onsite_days: data.onsiteDays ?? null,
-              remote_timezones: data.remoteTimezones ?? [],
-              remote_anywhere_in_country: data.remoteAnywhereInCountry === true,
-              sponsorship_available: data.sponsorshipAvailable,
-              brief_complete: brief.complete,
-              brief_missing: brief.missing,
-              collected_at: new Date().toISOString(),
-              collected_via: "express_intake",
-            },
-            jd_source: data.jobDescriptionFile ? "file" : "pasted",
-            blueprint_status: "queued",
+            ...mapped.position,
             status: "submitted",
             visibility: "private",
             created_by: authUserId,
@@ -897,16 +766,15 @@ export const Route = createFileRoute("/api/public/express-intake")({
           console.error("[express-intake] confirmation email failed (non-critical)", err);
         }
 
-        // Start the blueprint pipeline immediately — event-driven progression
-        // means the tracker should advance without a manual admin action.
-        try {
-          const { runBlueprintForPosition } = await import("@/lib/blueprint-pipeline.server");
-          runBlueprintForPosition(positionId).catch((err) => {
-            console.error("[express-intake] blueprint pipeline failed", err);
-          });
-        } catch (err) {
-          console.error("[express-intake] could not import blueprint pipeline", err);
-        }
+        // The role analysis is NOT started from inside this request any more.
+        // It used to be fired un-awaited here; on Workers that work is dropped
+        // once the response is sent, but not before it had claimed the job —
+        // so the browser's own trigger was told "already running" and the role
+        // sat on "Reading your job description" forever (owner report, 8 Oct).
+        // The role stays "queued" and the run happens in a request that stays
+        // open for it: /api/public/blueprint-run, called by the intake page
+        // the moment this returns, then by the confirmation and role pages if
+        // that call never landed. Stale runs are reclaimed (blueprint-trigger.ts).
 
         return Response.json({
           ok: true,
@@ -920,7 +788,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
           pilotEligible,
           pilotReason,
           pilotMessage,
-          blueprintStatus: "analyzing_jd",
+          blueprintStatus: "queued",
         });
 
       })();

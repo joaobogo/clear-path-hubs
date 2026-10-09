@@ -1,0 +1,30 @@
+{
+  "fields": {
+    "title": "Financial Controller",
+    "team": "Finance",
+    "location": "London, UK",
+    "workModel": "hybrid",
+    "employmentType": "full_time",
+    "salaryMin": 90000,
+    "salaryMax": 105000,
+    "currency": "GBP"
+  },
+  "empty": [
+    "seniority",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "compensationPeriod"
+  ],
+  "requirements": {
+    "must": [
+      "Qualified accountant",
+      "multi-entity group close",
+      "NetSuite",
+      "non-finance leaders"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

@@ -1,0 +1,14 @@
+## Senior Software Engineer, Payments
+
+**Location:** New York, NY (Hybrid, 3 days/week in office)
+**Salary:** $175,000–$215,000 + equity
+
+We're a Series C fintech. You'll join the Payments team.
+
+### Requirements
+- 5+ years building backend systems
+- Deep knowledge of distributed systems
+- Fluency in Java or Kotlin
+
+### Nice to have
+- PCI-DSS experience

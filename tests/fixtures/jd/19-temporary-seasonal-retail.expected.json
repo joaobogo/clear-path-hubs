@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "title": "Seasonal Retail Associate",
+    "location": "Manchester Arndale",
+    "employmentType": "temporary",
+    "salaryMin": 11.8,
+    "salaryMax": 12.4,
+    "currency": "GBP",
+    "compensationPeriod": "hour",
+    "workModel": "onsite"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "customers",
+      "weekends and bank holidays"
+    ],
+    "nice": [
+      "retail experience preferred"
+    ],
+    "none": false
+  }
+}

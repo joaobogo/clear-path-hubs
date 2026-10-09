@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "title": "Account Executive",
+    "location": "Austin, TX",
+    "salaryMin": 60000,
+    "salaryMax": 60000,
+    "currency": "USD",
+    "compensationPeriod": "year"
+  },
+  "empty": [
+    "team",
+    "seniority",
+    "workModel",
+    "employmentType",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [],
+  "requirements": {
+    "must": [
+      "2 years of B2B sales",
+      "hitting quota"
+    ],
+    "nice": [],
+    "none": false
+  }
+}

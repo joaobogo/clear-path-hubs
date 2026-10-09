@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "title": "Sales Director, Enterprise",
+    "seniority": "director",
+    "location": "Chicago, IL",
+    "salaryMax": 120000,
+    "currency": "USD"
+  },
+  "empty": [
+    "team",
+    "workModel",
+    "employmentType",
+    "salaryMin",
+    "targetStartDate",
+    "requiresExistingWorkAuth"
+  ],
+  "skip": [
+    "compensationPeriod"
+  ],
+  "requirements": {
+    "must": [
+      "8+ years in enterprise software sales",
+      "managing a team",
+      "exceeding quota"
+    ],
+    "nice": [],
+    "none": false
+  }
+}
