@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { useCallback, useRef, useState } from "react";
+import { ConvergenceField } from "@/components/signature/convergence-field";
 import { EvidenceStrip, type EvidenceState } from "@/components/signature/evidence-strip";
 import { RoleInput } from "@/components/system/role-input";
 import { offer } from "@/config/offer";
@@ -11,6 +13,7 @@ import {
   SAMPLE_SHORTLIST_REQUIREMENTS,
   SAMPLE_SHORTLIST_ROLE,
 } from "@/lib/previews/representative-fixtures";
+import { FIELD_GATES, type Point } from "@/lib/run/field";
 import { cn } from "@/lib/utils";
 
 /**
@@ -30,16 +33,51 @@ function evidenceState(score: number): EvidenceState {
 
 const nf = new Intl.NumberFormat("en-US");
 
-export function RunHero({ role }: { role?: string }) {
+const RUN_COUNTS = PREVIEW_RUN_FUNNEL.map((s) => s.count) as [number, number, number, number];
+
+/**
+ * Where each count lands as the field's front travels: the reach count as the
+ * lines enter, the next two at their gates, the signed count when the ten
+ * lines land on the names.
+ */
+const COUNT_LANDS_AT = [0.12, FIELD_GATES[0], FIELD_GATES[1], 1] as const;
+
+function countAt(count: number, front: number, landsAt: number): number {
+  if (front >= landsAt) return count;
+  const t = front / landsAt;
+  return Math.round(count * t * t);
+}
+
+export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string) => void }) {
   const roleTitle = role || SAMPLE_SHORTLIST_ROLE;
+  const hostRef = useRef<HTMLElement>(null);
+  const rowRefs = useRef<(HTMLLIElement | null)[]>([]);
+  // Full counts before scripts run; the field then ticks them in as it draws.
+  const [front, setFront] = useState(1);
+
+  const getTargets = useCallback((): Point[] => {
+    const host = hostRef.current?.getBoundingClientRect();
+    if (!host) return [];
+    return rowRefs.current.filter(Boolean).map((li) => {
+      const r = li!.getBoundingClientRect();
+      return { x: r.left - host.left, y: r.top - host.top + r.height / 2 };
+    });
+  }, []);
   const [agentsLine, peopleLine] = [
     `${offer.agents} agents open it on ${offer.channels} channels the same day and score every applicant against your rubric.`,
     "A senior recruiter signs the ten worth interviewing. One flat fee.",
   ];
 
   return (
-    <section aria-labelledby="run-hero-title" className="day relative overflow-hidden">
-      <div className="mx-auto w-full max-w-[calc(var(--max)+2*var(--margin))] px-[var(--margin)]">
+    <section ref={hostRef} aria-labelledby="run-hero-title" className="day relative overflow-hidden">
+      <ConvergenceField
+        seed={roleTitle}
+        counts={RUN_COUNTS}
+        getTargets={getTargets}
+        onFront={setFront}
+        stillSrc="/run-field.png"
+      />
+      <div className="relative z-10 mx-auto w-full max-w-[calc(var(--max)+2*var(--margin))] px-[var(--margin)]">
         <div className="grid gap-12 pt-14 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-16 lg:pt-20">
           <div className="min-w-0 max-w-[800px]">
             <h1
@@ -56,6 +94,7 @@ export function RunHero({ role }: { role?: string }) {
                 source="home_hero"
                 defaultRole={role ?? ""}
                 suggestions={ROLE_SUGGESTIONS}
+                onRun={onRun}
                 className="border-[color:var(--blue-200)] [box-shadow:0_18px_40px_-24px_var(--blue-300)]"
               />
             </div>
@@ -71,8 +110,14 @@ export function RunHero({ role }: { role?: string }) {
               </span>
             </div>
             <ol className="divide-y divide-[color:var(--rule)]">
-              {SAMPLE_SHORTLIST.map((c) => (
-                <li key={c.ref} className="flex h-11 items-center gap-3">
+              {SAMPLE_SHORTLIST.map((c, i) => (
+                <li
+                  key={c.ref}
+                  ref={(el) => {
+                    rowRefs.current[i] = el;
+                  }}
+                  className="flex h-11 items-center gap-3 bg-white/80"
+                >
                   <span className="narrow num w-5 text-[13px] font-medium text-[color:var(--faint)]">
                     {c.rank}
                   </span>
@@ -129,7 +174,7 @@ export function RunHero({ role }: { role?: string }) {
                     human ? "text-[color:var(--ink)]" : "text-[color:var(--blue-600)]",
                   )}
                 >
-                  {nf.format(stage.count)}
+                  {nf.format(countAt(stage.count, front, COUNT_LANDS_AT[i]!))}
                 </dd>
               </div>
             );

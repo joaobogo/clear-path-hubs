@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, BarChart3, FileSearch, LayoutDashboard, UserCheck } from "lucide-react";
 
 import { RunHero } from "@/components/home/run-hero";
@@ -129,10 +129,15 @@ const primaryButton =
 
 function Home() {
   const { role } = Route.useSearch();
+  const navigate = useNavigate();
+  // Running a role from the hero keeps the visitor here: the address gains
+  // the role, the field redraws and every chapter speaks about it.
+  const runRole = (next: string) =>
+    void navigate({ to: "/", search: next ? { role: next } : {}, replace: true, resetScroll: false });
   return (
     <SiteShell hideLinkHub role={role}>
       {/* The cold open: headline, role input, top 10, the run bar. */}
-      <RunHero role={role} />
+      <RunHero role={role} onRun={runRole} />
 
       {/* 3 — WHAT YOU RECEIVE */}
       <PublicSection>
