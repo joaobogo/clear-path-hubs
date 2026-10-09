@@ -516,6 +516,7 @@ export function validateInterviewStages(
 export function interviewProcessSummary(
   stages: InterviewStage[],
   targetDaysToOffer?: number | null,
+  additionalDetails?: string,
 ): string {
   const lines = stages
     .filter((s) => (s.name ?? "").trim().length > 0)
@@ -529,7 +530,9 @@ export function interviewProcessSummary(
   if (targetDaysToOffer && Number.isFinite(targetDaysToOffer)) {
     lines.push(`Target: shortlist to offer in ${targetDaysToOffer} days`);
   }
-  return lines.join("\n");
+  return [lines.join("\n"), additionalDetails?.trim() ? additionalDetails : ""]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 /** Owners the client entered, de-duplicated by email. Never contacted here. */
