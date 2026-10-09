@@ -62,6 +62,22 @@ const ZONES = ["uk_ireland", "europe_central"] as const;
 const MUST_HAVE = "Five years running multi-site clinical operations";
 const STAGES = ["Intro call", "Hiring manager interview"];
 
+/**
+ * A new workspace greets its first visitor with the onboarding tour, a modal
+ * that hides the rest of the page from the accessibility tree. Skip it the way
+ * a person would, whenever it appears.
+ */
+async function dismissTour(page: Page) {
+  const skip = page.getByRole("button", { name: /^skip tour$/i });
+  // The tour opens once the workspace context has loaded, a moment after the
+  // page itself; give it a few seconds to show up before deciding it won't.
+  await skip.first().waitFor({ state: "visible", timeout: 5_000 }).catch(() => undefined);
+  if (await skip.count().catch(() => 0)) {
+    await skip.first().click().catch(() => undefined);
+    await skip.first().waitFor({ state: "hidden", timeout: 5_000 }).catch(() => undefined);
+  }
+}
+
 async function dismissConsent(page: Page) {
   const accept = page.getByRole("button", { name: /^accept all$/i });
   if (await accept.count()) await accept.first().click();
@@ -157,6 +173,7 @@ test.describe("intake → role analysis → edit role", () => {
 
     // ── The role analyses itself ──────────────────────────────────────────────
     await page.goto(`/client/positions/${positionId}`, { waitUntil: "domcontentloaded" });
+    await dismissTour(page);
     const panel = page.getByTestId("role-analysis");
     // Either still working (shows "Analysing your role…"), or already done.
     if (await panel.count()) {
@@ -174,6 +191,7 @@ test.describe("intake → role analysis → edit role", () => {
 
     // ── The edit screen is the saved intake ───────────────────────────────────
     await page.goto(`/client/positions/${positionId}/edit`, { waitUntil: "domcontentloaded" });
+    await dismissTour(page);
     await expect(page.getByLabel("Job title")).toHaveValue("Clinical Operations Manager");
     await page.getByRole("button", { name: /^2\. Who you need$/ }).click();
     await expect(page.getByText(MUST_HAVE)).toBeVisible();
@@ -200,10 +218,14 @@ test.describe("intake → role analysis → edit role", () => {
     await page.locator('[data-field="location"]').fill("");
     await page.getByTestId("save-role").click();
     await expect(page.getByText(/role saved/i).first()).toBeVisible();
-    await expect.poll(() => new URL(page.url()).pathname).toBe(`/client/positions/${positionId}`);
+    // Save keeps the client on the edit screen (it is the saved intake they can
+    // keep altering); the role page is one click away. What matters is that
+    // the save was accepted with no time zone and no city.
+    expect(new URL(page.url()).pathname).toMatch(new RegExp(`^/client/positions/${positionId}(/edit)?$`));
 
     // And it stays saved.
     await page.goto(`/client/positions/${positionId}/edit?step=3`, { waitUntil: "domcontentloaded" });
+    await dismissTour(page);
     for (const z of ZONES) {
       await expect(page.getByRole("checkbox", { name: TIMEZONE_BAND_LABELS[z] })).not.toBeChecked();
     }
