@@ -1005,7 +1005,7 @@ export const getPosition = createServerFn({ method: "GET" })
         .from("screening_questions")
         .select("*")
         .eq("position_id", data.id)
-        .order("position_order", { ascending: true }),
+        .order("display_order", { ascending: true }),
       s
         .from("candidate_matches")
         .select(

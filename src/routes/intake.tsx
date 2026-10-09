@@ -1771,6 +1771,7 @@ function ExpressIntakePage() {
           ? interviewProcessSummary(
               submittedStages,
               state.targetDaysToOffer === "" ? null : Number(state.targetDaysToOffer),
+              state.interviewProcess,
             )
           : state.interviewProcess,
       interviewStages: submittedStages,
