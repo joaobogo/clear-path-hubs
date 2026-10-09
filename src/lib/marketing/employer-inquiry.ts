@@ -12,7 +12,7 @@ export const INQUIRY_LIMITS = {
   firstName: 80,
   email: 254,
   phone: 30,
-  position: 200,
+  jobDescriptionUrl: 2048,
   source: 80,
   key: 64,
 } as const;
@@ -20,8 +20,8 @@ export const INQUIRY_LIMITS = {
 export const INQUIRY_MESSAGES = {
   firstName: "Enter your first name.",
   email: "Enter a valid work email address, for example name@company.com.",
-  phone: "Enter a phone number with 7 to 15 digits, or leave it empty.",
-  position: "Tell us which role you need to fill.",
+  phone: "Enter a phone number with 7 to 15 digits.",
+  jobDescriptionUrl: "Paste the link to the job description, for example https://company.com/careers/role.",
 } as const;
 
 const EMAIL_RE = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']{2,}$/;
@@ -75,11 +75,32 @@ export function cleanLine(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
 
+/**
+ * The job description link, normalised: trimmed, "https://" added when the
+ * scheme was left off, and only http(s) with a real host (a dot in it)
+ * accepted. Returns null when the value is not a usable link.
+ */
+export function normaliseJobDescriptionUrl(value: string | null | undefined): string | null {
+  const raw = cleanLine(value ?? "");
+  if (!raw || raw.length > INQUIRY_LIMITS.jobDescriptionUrl) return null;
+  const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `https://${raw}`;
+  let url: URL;
+  try {
+    url = new URL(withScheme);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(url.hostname)) return null;
+  if (url.username || url.password) return null;
+  return url.toString();
+}
+
 export type InquiryFields = {
   firstName: string;
   email: string;
   phone: string;
-  position: string;
+  jobDescriptionUrl: string;
 };
 
 export type InquiryErrors = Partial<Record<keyof InquiryFields, string>>;
@@ -91,10 +112,12 @@ export function validateInquiryFields(values: InquiryFields): InquiryErrors {
   if (!first) errors.firstName = INQUIRY_MESSAGES.firstName;
   else if (first.length > INQUIRY_LIMITS.firstName) errors.firstName = INQUIRY_MESSAGES.firstName;
   if (!isValidEmail(values.email)) errors.email = INQUIRY_MESSAGES.email;
-  if (normalisePhone(values.phone) === null) errors.phone = INQUIRY_MESSAGES.phone;
-  const position = cleanLine(values.position);
-  if (!position || position.length > INQUIRY_LIMITS.position) {
-    errors.position = INQUIRY_MESSAGES.position;
+  // Every field is required: the team calls the lead back, so a phone number
+  // is part of the request, not an extra.
+  const phone = normalisePhone(values.phone);
+  if (phone === null || phone === "") errors.phone = INQUIRY_MESSAGES.phone;
+  if (normaliseJobDescriptionUrl(values.jobDescriptionUrl) === null) {
+    errors.jobDescriptionUrl = INQUIRY_MESSAGES.jobDescriptionUrl;
   }
   return errors;
 }
@@ -110,8 +133,8 @@ export function inquiryErrorCategory(errors: InquiryErrors): string {
 export const EmployerInquiryInput = z.object({
   firstName: z.string().trim().min(1).max(INQUIRY_LIMITS.firstName),
   email: z.string().trim().max(INQUIRY_LIMITS.email).refine(isValidEmail, "invalid_email"),
-  phone: z.string().trim().max(INQUIRY_LIMITS.phone).optional().or(z.literal("")),
-  position: z.string().trim().min(1).max(INQUIRY_LIMITS.position),
+  phone: z.string().trim().min(1).max(INQUIRY_LIMITS.phone),
+  jobDescriptionUrl: z.string().trim().min(1).max(INQUIRY_LIMITS.jobDescriptionUrl),
   source: z.string().trim().max(INQUIRY_LIMITS.source).optional().or(z.literal("")),
   idempotencyKey: z.string().uuid(),
   // Honeypot — must be empty.
@@ -123,30 +146,33 @@ export type EmployerInquiryInputT = z.infer<typeof EmployerInquiryInput>;
 export type CleanInquiry = {
   firstName: string;
   email: string;
-  phone: string | null;
-  position: string;
+  phone: string;
+  jobDescriptionUrl: string;
   source: string;
   idempotencyKey: string;
 };
 
 /**
- * Normalises validated input for storage (raw text, control characters removed). Returns null when the
- * phone number is not plausible, so the caller can reject it.
+ * Normalises validated input for storage (raw text, control characters
+ * removed). Returns null when the phone number or the job description link is
+ * not usable, so the caller can reject it.
  */
 export function prepareInquiry(input: EmployerInquiryInputT): CleanInquiry | null {
-  const phone = normalisePhone(input.phone ?? "");
-  if (phone === null) return null;
+  const phone = normalisePhone(input.phone);
+  if (!phone) return null;
+  const jobDescriptionUrl = normaliseJobDescriptionUrl(input.jobDescriptionUrl);
+  if (!jobDescriptionUrl) return null;
   return {
     firstName: sanitizeText(cleanLine(input.firstName)),
     email: normaliseEmail(input.email),
-    phone: phone || null,
-    position: sanitizeText(cleanLine(input.position)),
+    phone,
+    jobDescriptionUrl,
     source: sanitizeText(cleanLine(input.source ?? "")) || "unknown",
     idempotencyKey: input.idempotencyKey,
   };
 }
 
-/** Window inside which an identical email + position counts as a duplicate. */
+/** Window inside which an identical email + job description link counts as a duplicate. */
 export const DEDUPE_WINDOW_MS = 10 * 60 * 1000;
 
 export function dedupeCutoffIso(now: number = Date.now()): string {
@@ -158,7 +184,7 @@ export function dedupeCutoffIso(now: number = Date.now()): string {
  * rule is testable without a database.
  */
 export function isDuplicate(
-  prior: { id: string; details?: unknown; email: string; role_title: string | null; created_at: string } | null,
+  prior: { id: string; details?: unknown; email: string; created_at: string } | null,
   clean: CleanInquiry,
   now: number = Date.now(),
 ): boolean {
@@ -166,9 +192,10 @@ export function isDuplicate(
   const details = (prior.details ?? {}) as Record<string, unknown>;
   if (details["idempotency_key"] === clean.idempotencyKey) return true;
   const age = now - new Date(prior.created_at).getTime();
+  const priorUrl = String(details["job_description_url"] ?? "").toLowerCase();
   return (
     prior.email.toLowerCase() === clean.email &&
-    (prior.role_title ?? "").toLowerCase() === clean.position.toLowerCase() &&
+    priorUrl === clean.jobDescriptionUrl.toLowerCase() &&
     age >= 0 &&
     age <= DEDUPE_WINDOW_MS
   );

@@ -1,7 +1,8 @@
 /**
  * EmployerInquiryForm — the short employer inquiry (first name, work email,
- * optional phone, position needed). One primary action, no account, no job
- * description. Success is shown only after the server has stored the request.
+ * phone, link to the job description). Every field is required. One primary
+ * action, no account. Success is shown only after the server has stored the
+ * request.
  */
 import { useEffect, useId, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -10,6 +11,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { submitEmployerInquiry } from "@/lib/inquiry.functions";
 import {
   INQUIRY_LIMITS,
+  INQUIRY_MESSAGES,
   inquiryErrorCategory,
   validateInquiryFields,
   type InquiryErrors,
@@ -27,7 +29,7 @@ import { SALES_EMAIL } from "@/config/booking";
 import { cn } from "@/lib/utils";
 
 export const INQUIRY_HELPER =
-  "No account or job description needed to send an inquiry. We will contact you to confirm fit and next steps." as const;
+  "No account needed. Share the link to the job description and we will contact you to confirm fit and next steps." as const;
 
 export const INQUIRY_DEFAULT_HEADING = "What role do you need to fill?" as const;
 
@@ -38,7 +40,7 @@ type Props = {
   idPrefix?: string;
 };
 
-const EMPTY: InquiryFields = { firstName: "", email: "", phone: "", position: "" };
+const EMPTY: InquiryFields = { firstName: "", email: "", phone: "", jobDescriptionUrl: "" };
 
 const inputClass =
   "mt-1 block min-h-11 w-full rounded-md border border-[color:var(--brand-navy)]/25 bg-white px-3 py-2 text-base text-[color:var(--brand-navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--brand-ocean)] aria-[invalid=true]:border-red-700";
@@ -95,7 +97,7 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
           firstName: values.firstName,
           email: values.email,
           phone: values.phone,
-          position: values.position,
+          jobDescriptionUrl: values.jobDescriptionUrl,
           source,
           idempotencyKey: keyRef.current,
           website,
@@ -103,7 +105,11 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
       });
       if (!result.ok) {
         trackLeadFormError(source, "server_rejected");
-        setErrors({ phone: "Enter a phone number with 7 to 15 digits, or leave it empty." });
+        setErrors(
+          result.error === "invalid_url"
+            ? { jobDescriptionUrl: INQUIRY_MESSAGES.jobDescriptionUrl }
+            : { phone: INQUIRY_MESSAGES.phone },
+        );
         requestAnimationFrame(() => summaryRef.current?.focus());
         return;
       }
@@ -263,12 +269,13 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
             autoComplete: "tel",
             inputMode: "tel",
             maxLength: INQUIRY_LIMITS.phone,
-          }, false)}
-          {field("position", "Position needed", {
-            type: "text",
-            autoComplete: "organization-title",
-            maxLength: INQUIRY_LIMITS.position,
-            placeholder: "For example, senior accountant",
+          }, true)}
+          {field("jobDescriptionUrl", "Job description link", {
+            type: "url",
+            autoComplete: "url",
+            inputMode: "url",
+            maxLength: INQUIRY_LIMITS.jobDescriptionUrl,
+            placeholder: "https://company.com/careers/role",
           }, true)}
         </div>
 

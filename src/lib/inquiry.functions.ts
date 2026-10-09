@@ -22,6 +22,7 @@ import {
   dedupeCutoffIso,
   isDuplicate,
   prepareInquiry,
+  normalisePhone,
 } from "@/lib/marketing/employer-inquiry";
 
 const InquiryInput = z.object({
@@ -141,12 +142,14 @@ export const submitInquiry = createServerFn({ method: "POST" })
   });
 
 /**
- * Short employer inquiry (first name, work email, optional phone, position).
+ * Short employer inquiry (first name, work email, phone, job description
+ * link — all required).
  *
  * Success is returned only after the row is stored. Idempotent without a
  * schema change: the client key lives in `details.idempotency_key`, and an
- * identical email + position inside ten minutes is treated as a repeat. A
- * failing CRM or notification step is logged and never loses the lead.
+ * identical email + job description link inside ten minutes is treated as a
+ * repeat. A failing CRM or notification step is logged and never loses the
+ * lead.
  */
 export const submitEmployerInquiry = createServerFn({ method: "POST" })
   .inputValidator((raw) => EmployerInquiryInput.parse(raw))
@@ -157,14 +160,17 @@ export const submitEmployerInquiry = createServerFn({ method: "POST" })
       return { ok: true as const, id: null as string | null, duplicate: false };
     }
     const clean = prepareInquiry(data);
-    if (!clean) return { ok: false as const, error: "invalid_phone" as const };
+    if (!clean) {
+      const error = normalisePhone(data.phone) ? ("invalid_url" as const) : ("invalid_phone" as const);
+      return { ok: false as const, error };
+    }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // 1. Same client key, or same email + position inside the window.
+    // 1. Same client key, or same email + job description link inside the window.
     const byKey = await supabaseAdmin
       .from("marketing_inquiries")
-      .select("id, details, email, role_title, created_at")
+      .select("id, details, email, created_at")
       .eq("details->>idempotency_key", clean.idempotencyKey)
       .limit(1)
       .maybeSingle();
@@ -172,9 +178,9 @@ export const submitEmployerInquiry = createServerFn({ method: "POST" })
     if (!prior) {
       const byContent = await supabaseAdmin
         .from("marketing_inquiries")
-        .select("id, details, email, role_title, created_at")
+        .select("id, details, email, created_at")
         .eq("email", clean.email)
-        .eq("role_title", clean.position)
+        .eq("details->>job_description_url", clean.jobDescriptionUrl)
         .gte("created_at", dedupeCutoffIso())
         .limit(1)
         .maybeSingle();
@@ -199,12 +205,16 @@ export const submitEmployerInquiry = createServerFn({ method: "POST" })
         kind: "enquiry",
         name: clean.firstName,
         email: clean.email,
-        role_title: clean.position,
+        // The role is read from the linked description; the link itself is
+        // the message so every lead surface shows it without a schema change.
+        role_title: null,
+        message: clean.jobDescriptionUrl,
         source_path: clean.source,
         details: {
           form: "employer_inquiry_short",
           idempotency_key: clean.idempotencyKey,
           phone: clean.phone,
+          job_description_url: clean.jobDescriptionUrl,
           source: clean.source,
         },
         lead_score: routing.score,
@@ -233,7 +243,7 @@ export const submitEmployerInquiry = createServerFn({ method: "POST" })
         company: null,
         message: null,
         facts: [
-          { label: "Position needed", value: clean.position },
+          { label: "Job description link", value: clean.jobDescriptionUrl },
           { label: "Phone", value: clean.phone },
           { label: "Owner desk", value: routing.ownerDesk },
           { label: "Reply due", value: routing.firstResponseDueAt },
