@@ -131,7 +131,7 @@ function BriefingPage() {
       <div className="mx-auto max-w-3xl px-6 py-12 print:py-0">
         <header className="flex items-start justify-between gap-6 border-b border-[color:var(--brand-navy)]/15 pb-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/70">
+            <p className="text-sm text-[color:var(--slate)]">
               TaaSFlow · industry hiring guide
             </p>
             <h1 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-navy)]">

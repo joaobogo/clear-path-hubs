@@ -341,7 +341,7 @@ function StatusPage() {
             <div className="mt-3 flex flex-wrap gap-2">
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-1.5 rounded-md bg-[color:var(--brand-navy)] px-3.5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                className="inline-flex items-center gap-1.5 rounded-md bg-[color:var(--blue-600)] px-3.5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
                 <Mail className="h-4 w-4" aria-hidden />
                 Contact support

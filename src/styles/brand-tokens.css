@@ -11,39 +11,38 @@
  * ============================================================ */
 
 :root {
-  /* Marketing palette (public site) */
-  --brand-navy:        oklch(0.29 0.055 262);
-  --brand-navy-light:  oklch(0.45 0.055 262);
-  --brand-navy-dark:   oklch(0.22 0.055 262);
-  --brand-ocean:       oklch(0.60 0.19 258);
-  /* Text-safe ocean: meets WCAG AA (4.5:1) for small text on white/paper.
-     Use for links and accents rendered as text; --brand-ocean stays for fills. */
-  --brand-ocean-text:  oklch(0.52 0.19 258);
-  --brand-ocean-light: oklch(0.68 0.16 258);
-  --brand-sky:         oklch(0.92 0.017 245);
-  --brand-sky-dark:    oklch(0.87 0.020 245);
-  --brand-ink:         oklch(0.18 0.03 262);
-  --brand-paper:       oklch(0.985 0.003 245);
-  /* Warm paper used by industry page intros (was the raw #fbf6ee). */
-  --brand-cream:       #fbf6ee;
-  /* Confirmation teal used by intake progress + success affirmations
-     (previously only present as an inline #0f766e fallback). */
+  /* Marketing palette, mapped onto The Run tokens (src/styles/tokens.css).
+     The old names stay so existing components keep working while pages are
+     rebuilt; every value now comes from the white-and-blue scale.
+       navy  -> ink    (people sign)
+       ocean -> blue   (agents work)
+       sky   -> blue-100, mist/cream -> paper, gold/sand -> slate */
+  --brand-navy:        var(--ink);
+  --brand-navy-light:  var(--slate);
+  --brand-navy-dark:   var(--ink);
+  --brand-ocean:       var(--blue-600);
+  /* Text-safe blue: #1552F0 is 6:1 on white, so text and fills share it. */
+  --brand-ocean-text:  var(--blue-600);
+  --brand-ocean-light: var(--blue-400);
+  --brand-sky:         var(--blue-100);
+  --brand-sky-dark:    var(--blue-200);
+  --brand-ink:         var(--ink);
+  --brand-paper:       var(--paper);
+  /* Warm paper used by industry page intros: now the one paper. */
+  --brand-cream:       var(--paper);
+  /* Confirmation teal used by intake progress + success affirmations. */
   --brand-teal:        #0f766e;
   /* Product-screenshot window chrome dots (decorative, macOS-accurate). */
   --brand-chrome-close:    #ff5f56;
   --brand-chrome-minimise: #ffbd2e;
   --brand-chrome-expand:   #27c93f;
 
-  /* Mist — the quiet section background that alternates with paper across the
-     marketing pages. 66 component usages referenced this before it existed,
-     which silently dropped those backgrounds. Sits between paper and sky. */
-  --brand-mist:        oklch(0.957 0.009 245);
-  /* Brass accents for editorial eyebrow labels ("Signal ·", "Evidence ·").
-     Gold is tuned for small text on white/mist (AA); sand is its counterpart
-     for the same labels sitting on navy. */
-  --brand-gold:        oklch(0.53 0.10 75);
-  --brand-sand:        oklch(0.86 0.06 80);
-  /* Amber caution outline used by the intake wizard (was an inline #b45309). */
+  /* Mist — the quiet section background that alternates with white. */
+  --brand-mist:        var(--paper);
+  /* Eyebrow labels are no longer coloured: both read as slate. */
+  --brand-gold:        var(--slate);
+  --brand-sand:        var(--blue-100);
+  /* Amber caution outline used by the intake wizard. */
   --brand-amber:       oklch(0.53 0.14 55);
 
 
@@ -58,9 +57,9 @@
   --brand-info:    oklch(0.49 0.19 258);
 
   /* Gradients */
-  --brand-gradient-hero:   linear-gradient(180deg, oklch(0.985 0.003 245) 0%, oklch(0.965 0.005 245) 100%);
-  --brand-gradient-cta:    linear-gradient(180deg, oklch(0.30 0.055 262) 0%, oklch(0.22 0.055 262) 100%);
-  --brand-gradient-accent: linear-gradient(180deg, oklch(0.62 0.19 258) 0%, oklch(0.55 0.19 258) 100%);
+  --brand-gradient-hero:   linear-gradient(var(--white), var(--white));
+  --brand-gradient-cta:    linear-gradient(var(--blue-600), var(--blue-600));
+  --brand-gradient-accent: linear-gradient(var(--blue-600), var(--blue-600));
 
   /* Shadows */
   --brand-shadow-xs: 0 1px 2px 0 oklch(0.22 0.055 262 / 0.04);
@@ -109,17 +108,16 @@
   --brand-focus-ring-inset: inset 0 0 0 2px oklch(0.60 0.19 258 / 0.55);
 
   /* Typography stacks */
-  /* Body: IBM Plex Sans — systematic, engineered, deliberately not Inter.
-     Display: Space Grotesk — industrial, tight, technical. */
-  --brand-font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --brand-font-display: "Space Grotesk", "IBM Plex Sans", ui-sans-serif, sans-serif;
+  /* One family: Archivo, on its width axis (wide headlines, normal body,
+     narrow labels). See tokens.css. */
+  --brand-font-sans: var(--font-run);
+  --brand-font-display: var(--font-run);
   --brand-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
   /* Body alias — long-form article copy asks for --brand-font-body. */
   --brand-font-body: var(--brand-font-sans);
-  /* Serif: pull-quotes and editorial pull-outs on industry pages only. */
-  --brand-font-serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  /* Pull-quotes no longer switch family. */
+  --brand-font-serif: var(--font-run);
 
   /* ============================================================
    * Semantic --taas-* token layer (canonical brand API)
@@ -328,9 +326,8 @@
 
 /* ─── Focus visibility (global) ─── */
 :where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
-  outline: none;
-  box-shadow: var(--brand-focus-ring);
-  border-radius: var(--brand-radius-sm);
+  outline: 2px solid var(--blue-600);
+  outline-offset: 3px;
 }
 
 /* ─── Reusable brand utilities (opt-in; do not affect dashboards) ─── */
@@ -344,7 +341,7 @@
 
 .brand-surface-hero   { background: var(--brand-gradient-hero); }
 .brand-surface-accent { background: var(--brand-gradient-accent); color: oklch(1 0 0); }
-.brand-surface-navy   { background: var(--brand-navy); color: oklch(1 0 0); }
+.brand-surface-navy   { background: var(--blue-600); color: #ffffff; } /* The Run: no dark sections; the band is blue. */
 
 .brand-shadow-card    { box-shadow: var(--brand-shadow-sm); }
 .brand-shadow-elevate { box-shadow: var(--brand-shadow-lg); }
@@ -395,63 +392,52 @@
    ages together.
    ========================================================================== */
 :root {
-  /* Hospitality — warm brass */
-  --sector-hospitality-1: oklch(0.459 0.089 58.8);
-  --sector-hospitality-2: oklch(0.578 0.098 57.7);
-  --sector-hospitality-3: oklch(0.742 0.107 74.0);
-  --sector-hospitality-accent: oklch(0.742 0.107 74.0);
+  /* The Run: one blue for every sector and category. Six hue families read
+     as six brands; the case studies are one product on one clock. The names
+     stay so the old layouts keep rendering until Phase 6 rebuilds them. */
+  --sector-hospitality-1: var(--blue-600);
+  --sector-hospitality-2: var(--blue-600);
+  --sector-hospitality-3: var(--blue-600);
+  --sector-hospitality-accent: var(--blue-200);
+  --sector-finance-1: var(--blue-600);
+  --sector-finance-2: var(--blue-600);
+  --sector-finance-3: var(--blue-600);
+  --sector-finance-accent: var(--blue-200);
+  --sector-health-1: var(--blue-600);
+  --sector-health-2: var(--blue-600);
+  --sector-health-3: var(--blue-600);
+  --sector-health-accent: var(--blue-200);
+  --sector-tech-1: var(--blue-600);
+  --sector-tech-2: var(--blue-600);
+  --sector-tech-3: var(--blue-600);
+  --sector-tech-accent: var(--blue-200);
+  --sector-consumer-1: var(--blue-600);
+  --sector-consumer-2: var(--blue-600);
+  --sector-consumer-3: var(--blue-600);
+  --sector-consumer-accent: var(--blue-200);
+  --sector-industrial-1: var(--blue-600);
+  --sector-industrial-2: var(--blue-600);
+  --sector-industrial-3: var(--blue-600);
+  --sector-industrial-accent: var(--blue-200);
+  --sector-panel-1: var(--blue-600);
+  --sector-panel-2: var(--blue-600);
+  --sector-panel-3: var(--blue-600);
 
-  /* Finance — deep ocean */
-  --sector-finance-1: oklch(0.266 0.058 248.7);
-  --sector-finance-2: oklch(0.384 0.089 248.2);
-  --sector-finance-3: oklch(0.573 0.118 242.9);
-  --sector-finance-accent: oklch(0.792 0.094 235.3);
-
-  /* Healthcare — clinical teal */
-  --sector-health-1: oklch(0.329 0.049 188.8);
-  --sector-health-2: oklch(0.519 0.095 172.7);
-  --sector-health-3: oklch(0.732 0.112 172.6);
-  --sector-health-accent: oklch(0.839 0.101 173.1);
-
-  /* Technology — violet */
-  --sector-tech-1: oklch(0.229 0.080 284.3);
-  --sector-tech-2: oklch(0.377 0.149 282.9);
-  --sector-tech-3: oklch(0.599 0.230 286.2);
-  --sector-tech-accent: oklch(0.774 0.126 292.5);
-
-  /* Consumer — plum */
-  --sector-consumer-1: oklch(0.337 0.099 354.8);
-  --sector-consumer-2: oklch(0.487 0.156 359.3);
-  --sector-consumer-3: oklch(0.715 0.143 354.7);
-  --sector-consumer-accent: oklch(0.868 0.067 350.7);
-
-  /* Industrial — bronze */
-  --sector-industrial-1: oklch(0.220 0.016 84.4);
-  --sector-industrial-2: oklch(0.359 0.047 79.5);
-  --sector-industrial-3: oklch(0.698 0.122 77.0);
-  --sector-industrial-accent: oklch(0.869 0.113 86.0);
-
-  /* Case-study closing panel */
-  --sector-panel-1: oklch(0.214 0.049 251.6);
-  --sector-panel-2: oklch(0.266 0.058 248.7);
-  --sector-panel-3: oklch(0.352 0.081 249.1);
-
-  /* Industry capability categories */
-  --category-systems-1: oklch(0.233 0.067 266.6);
-  --category-systems-2: oklch(0.528 0.096 248.8);
-  --category-trust-1: oklch(0.951 0.014 248.0);
-  --category-trust-2: oklch(0.694 0.077 136.1);
-  --category-trust-fg: oklch(0.255 0.062 255.5);
-  --category-risk-1: oklch(0.964 0.007 88.6);
-  --category-risk-2: oklch(0.395 0.080 244.7);
-  --category-risk-fg: oklch(0.159 0 90);
-  --category-operations-1: oklch(0.335 0.033 260.9);
-  --category-operations-2: oklch(0.683 0.139 63.8);
-  --category-service-1: oklch(0.613 0.128 36.7);
-  --category-service-2: oklch(0.782 0.096 55.3);
-  --category-expertise-1: oklch(0.957 0.012 79.8);
-  --category-expertise-2: oklch(0.517 0.099 169.8);
-  --category-expertise-fg: oklch(0.159 0 90);
+  --category-systems-1: var(--blue-600);
+  --category-systems-2: var(--blue-600);
+  --category-operations-1: var(--blue-600);
+  --category-operations-2: var(--blue-600);
+  --category-service-1: var(--blue-600);
+  --category-service-2: var(--blue-600);
+  --category-trust-1: var(--blue-50);
+  --category-trust-2: var(--blue-50);
+  --category-trust-fg: var(--ink);
+  --category-risk-1: var(--blue-50);
+  --category-risk-2: var(--blue-50);
+  --category-risk-fg: var(--ink);
+  --category-expertise-1: var(--blue-50);
+  --category-expertise-2: var(--blue-50);
+  --category-expertise-fg: var(--ink);
 
   /* Product-window chrome dots */
   --chrome-dot-close: oklch(0.694 0.196 26.4);

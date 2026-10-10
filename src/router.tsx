@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
-import { routerWithQueryClient } from "@tanstack/react-router-with-query";
+import { routerWithQueryClient } from "@/lib/router-with-query";
 import { routeTree } from "./routeTree.gen";
 import { GlobalRouteError } from "./components/global-error";
 import { PublicNotFound } from "./components/marketing/site-shell";

@@ -142,7 +142,7 @@ function SampleShortlistPage() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to={CTA_PRIMARY.to}
-              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-6 py-3 text-base font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
+              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--blue-600)] px-6 py-3 text-base font-semibold text-white hover:bg-[color:var(--blue-700)]"
             >
               {CTA_PRIMARY.label}
             </Link>

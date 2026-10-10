@@ -55,7 +55,7 @@ describe("EmployerInquiryForm contract", () => {
   });
 
   it("uses the shared CTA label and the agreed copy", () => {
-    expect(src).toContain("CTA_PRIMARY.label");
+    expect(src).toContain("CTA_PILOT_REQUEST.label");
     expect(src).toContain("Your request has been received");
     expect(src).not.toContain("Choose a time");
     expect(src).toContain("We will contact you within one business day to confirm the role and the pilot scope.");
@@ -66,7 +66,7 @@ describe("EmployerInquiryForm contract", () => {
 describe("funnel pages", () => {
   it("/pilot uses the new headline and no retired labels", () => {
     const src = read("src/routes/pilot.tsx");
-    expect(src).toContain("Try TaaSFlow on one role for");
+    expect(src).toContain("One role. Ten candidates. Five days.");
     expect(src).toContain('source="pilot-hero"');
     expect(src).not.toMatch(/Start the pilot intake|Start intake|Day 3|free trial|weekly/i);
   });

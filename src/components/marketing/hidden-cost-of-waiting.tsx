@@ -52,7 +52,7 @@ export function HiddenCostOfWaiting() {
   return (
     <PublicSection
       aria-labelledby="hidden-cost-heading"
-      className="bg-[color:var(--brand-navy)] text-white"
+      className="bg-[color:var(--blue-600)] text-white"
     >
       <PublicPage>
         <div className="max-w-3xl">

@@ -1,55 +1,43 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { marketingHead, faqScript, serviceScript } from "@/lib/marketing/head";
-import {
-  SiteShell,
-  PublicPage,
-  PublicSection,
-} from "@/components/marketing/site-shell";
-import { EditorialHero } from "@/components/marketing/editorial-hero";
-import pricingHero from "@/assets/page-pricing-hero.jpg";
-import { PricingTierCard } from "@/components/marketing/pricing-tier-card";
-import { SubscriptionTierCard } from "@/components/marketing/subscription-tier-card";
+import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
-import {
-  PRICING_TIERS,
-  NEVER_CHARGED,
-  PRICING_GUARANTEES,
-  INCLUDED_ON_EVERY_PLAN,
-} from "@/content/pricing";
+import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
+import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
+import { Receipt, type ReceiptDetail, type ReceiptLine } from "@/components/signature/receipt";
+import { PackageSelector, type PackageStop } from "@/components/system/package-selector";
+import { RunLinkButton } from "@/components/system/run-button";
+import { NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
 import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
-import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import {
-  PRICE_PILOT_DISPLAY,
+  ABOVE_MAX_ROLES_LABEL,
   ANNUAL_DISCOUNT_NOTE,
   MAX_POSITIONS,
-  PACKAGE_10,
+  PACKAGES,
+  PRICE_PILOT_DISPLAY,
+  formatUsdExact,
+  subscriptionTotalsUsd,
+  type PackageId,
 } from "@/config/pricing-core";
-import { OFFER_CATEGORY, OFFER_LAST_UPDATED_LABEL, PILOT_IS_PAID_NOTE, SEATS_NOTE, TIMING_FINE_PRINT } from "@/config/offer-facts";
-import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
-import { LargerPackagesTable } from "@/components/marketing/larger-packages-table";
-import { Check, X } from "lucide-react";
-import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
-import { RiskProof } from "@/components/marketing/risk-proof";
-import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
-import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
-import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
-import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
+import { offer } from "@/config/offer";
+import { OFFER_CATEGORY, OFFER_LAST_UPDATED_LABEL, PILOT_IS_PAID_NOTE, TIMING_FINE_PRINT } from "@/config/offer-facts";
+import { CTA_ENTERPRISE, CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import {
+  ENTITLEMENT_POLICY,
   PUBLIC_ONEOFF_ENTITLEMENTS,
-  PUBLIC_SUBSCRIPTION_ENTITLEMENTS,
   PUBLIC_PLAN_IDS,
   PUBLIC_PLAN_LABELS,
-  ENTITLEMENT_POLICY,
+  PUBLIC_SUBSCRIPTION_ENTITLEMENTS,
+  SCOPED_PUBLIC_LABEL,
   publicSeatsLine,
 } from "@/config/pricing-entitlements";
-import { PAYMENTS_ENABLED } from "@/config/commerce";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
     marketingHead(undefined, "/pricing", {
       title: `Recruiting Packages & ${PRICE_PILOT_DISPLAY} Pilot | TaaSFlow`,
-      description: `Compare TaaSFlow recruiting packages, one-off and recurring options, and the ${PRICE_PILOT_DISPLAY} one-role pilot. Review scope and request a conversation.`,
+      description: `Your invoice before you sign: TaaSFlow recruiting packages by number of roles, paid once or monthly, and the ${PRICE_PILOT_DISPLAY} one-role pilot. No placement fee.`,
     }, {
       breadcrumbs: [
         { name: "Home", path: "/" },
@@ -69,182 +57,213 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
-function PricingPage() {
-  const [mode, setMode] = useState<"oneoff" | "subscription">("oneoff");
+/* ------------------------------------------------------------------ data */
 
-  const cardTiers = PRICING_TIERS.filter((t) => t.card);
-  const cardSubs = SUBSCRIPTION_TIERS.filter((t) => t.card);
-  const largerOneOff = PRICING_TIERS.filter((t) => !t.card).map((t) => ({
-    id: t.id,
-    name: t.name,
-    total: t.priceDisplay,
-    billing: t.oneTime === null ? "Scoped with your account team" : "Paid once",
-    seats: publicSeatsLine(t.id),
-    ctaLabel: t.ctaLabel,
-    ctaTo: t.ctaTo,
-  }));
-  const largerSubs = SUBSCRIPTION_TIERS.filter((t) => !t.card).map((t) => ({
-    id: t.id,
-    name: t.name,
-    total: t.monthly === null ? t.priceDisplay : `${t.priceDisplay} a month`,
-    billing: t.monthly === null ? "Scoped with your account team" : "Billed monthly",
-    seats: publicSeatsLine(t.id),
-    ctaLabel: t.ctaLabel,
-    ctaTo: t.ctaTo,
-  }));
+/** The seven stops, in the order they sell: the pilot, five packages, scoped. */
+const STOPS: readonly PackageStop[] = [
+  ...PACKAGES.map((p) => ({
+    id: p.id,
+    roles: p.capacity,
+    label: p.capacityLabel,
+    short: String(p.capacity),
+  })),
+  { id: "enterprise", roles: null, label: ABOVE_MAX_ROLES_LABEL, short: `${MAX_POSITIONS}+` },
+];
+
+const ENTERPRISE_ID = "enterprise";
+
+/** Support level for a package, read from the published entitlement table. */
+function supportFor(planId: string, rows: typeof PUBLIC_ONEOFF_ENTITLEMENTS): string {
+  const v = rows.find((r) => r.id === "support")?.plans[planId];
+  return v && v.kind === "value" ? v.label : SCOPED_PUBLIC_LABEL;
+}
+
+type Billing = "once" | "monthly";
+
+/* ------------------------------------------------------------------ page */
+
+function PricingPage() {
+  const [stopId, setStopId] = useState<string>("growth");
+  const [billing, setBilling] = useState<Billing>("once");
+
+  const stop = STOPS.find((s) => s.id === stopId) ?? STOPS[1]!;
+  const pkg = PACKAGES.find((p) => p.id === stop.id);
+  const isPilot = stop.id === "pilot";
+  const isEnterprise = stop.id === ENTERPRISE_ID;
+  const rows = billing === "once" ? PUBLIC_ONEOFF_ENTITLEMENTS : PUBLIC_SUBSCRIPTION_ENTITLEMENTS;
+
+  // The pilot is paid once whatever the billing mode; packages follow it.
+  const monthlyTotals = pkg && !isPilot ? subscriptionTotalsUsd(pkg.capacity) : null;
+  const paidMonthly = billing === "monthly" && monthlyTotals !== null;
+  const total = pkg ? (paidMonthly ? monthlyTotals!.monthly : pkg.totalUsd) : 0;
+
+  const lines: ReceiptLine[] = pkg
+    ? [
+        {
+          label: isPilot ? "Pilot, one role" : `Package, ${pkg.capacityLabel.toLowerCase()}`,
+          note: isPilot ? "Once per company" : paidMonthly ? "Charged each month" : "Paid once",
+          amount: total,
+        },
+        ...NEVER_CHARGED.slice(0, 3).map((label) => ({ label, amount: 0 })),
+      ]
+    : [];
+  const details: ReceiptDetail[] = pkg
+    ? [
+        { label: "Seats", value: publicSeatsLine(pkg.id) },
+        { label: "Support", value: supportFor(pkg.id, rows) },
+        { label: "Workspace access", value: `${offer.accessMonths} months` },
+      ]
+    : [];
+
+  const maxTotal = Math.max(...PACKAGES.map((p) => p.totalUsd));
 
   return (
     <SiteShell>
-      <EditorialHero
-        eyebrow="Pricing"
-        title={`Flat-fee recruiting. ${PRICE_PILOT_DISPLAY} for your first role.`}
-        lead={`Every package is the full ${OFFER_CATEGORY.toLowerCase()}. What changes is capacity: positions, seats and support.`}
-        image={pricingHero}
-        imageAlt="A hiring team planning roles together in a light-filled meeting room"
-        stats={[
-          { value: PRICE_PILOT_DISPLAY, label: "One-role pilot, paid once" },
-          { value: "0%", label: "Placement fee on any package" },
-          { value: String(MAX_POSITIONS), label: "Positions in the largest published package" },
-        ]}
-        primary={CTA_PRIMARY}
-        secondary={CTA_MESSAGE}
-      >
-        <ul className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
-          {[
-            "No salary percentage fees",
-            "Evidence-backed scoring on every candidate",
-            "A recruiter reviews every shortlist",
-            "Export your candidate records at any time",
-          ].map((x) => (
-            <li key={x} className="flex items-start gap-2">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
-              {x}
-            </li>
-          ))}
-        </ul>
-        <p className="mt-4 text-xs text-[color:var(--brand-navy)]/70" data-testid="last-updated">
-          {OFFER_LAST_UPDATED_LABEL}
-        </p>
-      </EditorialHero>
-
-      {/* One-off vs recurring selector */}
-      <PublicSection className="pt-4">
+      <PublicSection className="pb-0 pt-14 sm:pb-0 sm:pt-20 lg:pb-0">
         <PublicPage>
-          <div
-            role="tablist"
-            aria-label="Billing model"
-            className="mx-auto inline-flex w-full max-w-md items-center rounded-full border border-[color:var(--brand-navy)]/12 bg-white p-1 sm:flex"
-          >
-            {(
-              [
-                ["oneoff", "One-off package"],
-                ["subscription", "Monthly subscription"],
-              ] as const
-            ).map(([value, text]) => (
-              <button
-                key={value}
-                type="button"
-                role="tab"
-                aria-selected={mode === value}
-                onClick={() => setMode(value)}
-                className={
-                  "flex-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors min-h-11 sm:min-h-0 sm:py-2 " +
-                  (mode === value
-                    ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
-                    : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")
-                }
-              >
-                {text}
-              </button>
-            ))}
-          </div>
-          <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/80">
-            {mode === "oneoff"
-              ? "A single flat fee, paid once, for a fixed number of positions. Best when you know which roles are open now."
-              : "The same packages and totals, charged each month. Best when hiring is continuous."}
+          <h1 className="display max-w-[14ch] text-[clamp(40px,5.5vw,60px)] text-[color:var(--ink)]">
+            Your invoice, before you sign.
+          </h1>
+          <p className="mt-6 max-w-[640px] text-[21px] leading-[1.45] text-[color:var(--slate)]">
+            Every package is the full platform with managed execution. Tell us how many roles you have
+            open and read the whole bill.
+          </p>
+          <p className="mt-3 text-sm text-[color:var(--faint)]" data-testid="last-updated">
+            {OFFER_LAST_UPDATED_LABEL}
           </p>
         </PublicPage>
       </PublicSection>
 
-      <PublicSection className="pt-6">
+      {/* One control, one invoice */}
+      <PublicSection className="pt-10 sm:pt-12 lg:pt-12">
         <PublicPage>
-          <p className="mb-6 max-w-3xl text-sm text-[color:var(--brand-navy)]/85">
-            The pilot is one role, once per company. The smallest package covers up to{" "}
-            {PACKAGE_10.capacity} positions for one total, so packages suit teams hiring for
-            several roles. {PILOT_IS_PAID_NOTE}
-          </p>
-          {mode === "oneoff" ? (
-            <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {cardTiers.map((tier) => (
-                <PricingTierCard key={tier.id} tier={tier} />
+          <div className="flex flex-col gap-6 border-t border-[color:var(--ink)] pt-8 lg:flex-row lg:items-end lg:justify-between">
+            <PackageSelector stops={STOPS} value={stopId} onChange={setStopId} />
+            <div role="radiogroup" aria-label="Billing" className="flex gap-2">
+              {(
+                [
+                  ["once", "Paid once"],
+                  ["monthly", "Billed monthly"],
+                ] as const
+              ).map(([value, text]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={billing === value}
+                  onClick={() => setBilling(value)}
+                  className={
+                    "inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--blue-600)] " +
+                    (billing === value
+                      ? "border-[color:var(--ink)] bg-[color:var(--ink)] text-white"
+                      : "border-[color:var(--rule-2)] bg-white text-[color:var(--ink)]")
+                  }
+                >
+                  {text}
+                </button>
               ))}
             </div>
-          ) : (
-            <>
-              <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {cardSubs.map((tier) => (
-                  <SubscriptionTierCard key={tier.id} tier={tier} />
-                ))}
+          </div>
+
+          <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
+            {isEnterprise ? (
+              <div className="tint rounded-[var(--r-3)] p-8">
+                <p className="wide text-2xl font-semibold text-[color:var(--text)]">{ABOVE_MAX_ROLES_LABEL}</p>
+                <p className="mt-3 max-w-[480px] text-[17px] text-[color:var(--text-2)]">
+                  Above {MAX_POSITIONS} positions we scope the package with you rather than print a price we have
+                  not committed to. Tell us the roles and the timing, and you will have a written quote within one
+                  business day.
+                </p>
+                <RunLinkButton to={CTA_ENTERPRISE.to} className="mt-6">
+                  {CTA_ENTERPRISE.label}
+                </RunLinkButton>
               </div>
-              <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
-                <span className="font-semibold text-[color:var(--brand-navy)]">
-                  {ANNUAL_DISCOUNT_NOTE}
-                </span>{" "}
-                {PAYMENTS_ENABLED
-                  ? "The total you see is the total charged at checkout."
-                  : "The total you see is the total on your invoice."}
-              </p>
-            </>
-          )}
+            ) : (
+              <Receipt
+                title={stop.label}
+                subtitle={isPilot ? "One role, once per company" : paidMonthly ? "Charged each month" : "Paid once, for the whole package"}
+                lines={lines}
+                details={details}
+                total={{ label: paidMonthly ? "A month" : "Total", amount: total }}
+                tilt={-0.4}
+                footer={
+                  <p>
+                    {paidMonthly ? `${ANNUAL_DISCOUNT_NOTE} ` : ""}
+                    {isPilot ? PILOT_IS_PAID_NOTE : "No placement fee, however many of the ten you hire."}
+                  </p>
+                }
+              />
+            )}
 
-          <h2 className="mt-10 font-[family-name:var(--brand-font-display)] text-xl font-semibold tracking-tight">
-            Larger packages
-          </h2>
-          <p className="mb-4 mt-1 text-sm text-[color:var(--brand-navy)]/80">
-            Same platform, more positions. Every package and its total is also in the comparison
-            table below.
-          </p>
-          <LargerPackagesTable
-            rows={mode === "oneoff" ? largerOneOff : largerSubs}
-            caption={
-              mode === "oneoff"
-                ? "Larger one-off packages: total, billing, seats and next step"
-                : "Larger subscription packages: monthly total, billing, seats and next step"
-            }
-          />
+            <div className="min-w-0">
+              <p className="narrow text-[13px] font-medium text-[color:var(--faint)]">Every published package, one total each</p>
+              <ol className="mt-4 flex flex-col gap-3" aria-label="Package totals">
+                {PACKAGES.map((p) => {
+                  const selected = p.id === stop.id;
+                  return (
+                    <li key={p.id}>
+                      <button
+                        type="button"
+                        onClick={() => setStopId(p.id)}
+                        aria-pressed={selected}
+                        className="group grid w-full grid-cols-[150px_minmax(0,1fr)_96px] items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--blue-600)]"
+                      >
+                        <span className={"text-[15px] " + (selected ? "font-semibold text-[color:var(--ink)]" : "text-[color:var(--slate)]")}>
+                          {p.capacityLabel}
+                        </span>
+                        <span className="h-3 w-full rounded-full bg-[color:var(--blue-100)]" aria-hidden>
+                          <span
+                            className={"block h-3 rounded-full " + (selected ? "bg-[color:var(--blue-600)]" : "bg-[color:var(--blue-200)] group-hover:bg-[color:var(--blue-300)]")}
+                            style={{ width: `${Math.max(6, (p.totalUsd / maxTotal) * 100)}%` }}
+                          />
+                        </span>
+                        <span className={"wide num text-right text-base " + (selected ? "font-semibold text-[color:var(--ink)]" : "text-[color:var(--slate)]")}>
+                          {p.totalDisplay}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+              <p className="mt-4 text-sm text-[color:var(--faint)]">{TIMING_FINE_PRINT}</p>
 
-          <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
-            {TIMING_FINE_PRINT} {SEATS_NOTE}
-          </p>
-          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80">
-            {PRICING_GUARANTEES.map((g) => (
-              <span key={g} className="inline-flex items-center gap-2">
-                <Check className="h-4 w-4 text-[color:var(--brand-navy)]" aria-hidden />
-                {g}
-              </span>
-            ))}
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <RunLinkButton to={CTA_PRIMARY.to}>{CTA_PRIMARY.label}</RunLinkButton>
+                {!isPilot ? (
+                  <RunLinkButton to={isEnterprise ? CTA_ENTERPRISE.to : CTA_MESSAGE.to} variant="ghost">
+                    Ask about {stop.label.toLowerCase()}
+                  </RunLinkButton>
+                ) : null}
+              </div>
+              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-1 text-sm text-[color:var(--slate)]">
+                {PRICING_GUARANTEES.map((g) => (
+                  <li key={g}>{g}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </PublicPage>
       </PublicSection>
 
-      {/* Entitlement comparison — platform capacity per plan */}
-      <PublicSection className="py-10">
+      {/* The table follows the selector */}
+      <PublicSection>
         <PublicPage>
-          <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
-            What each plan entitles you to
+          <h2 className="max-w-[20ch] text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px] sm:leading-[1.04]">
+            What each package entitles you to.
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
-            The platform is the same on every plan. These are the entitlements that
-            differ: capacity, seats and support. Where a cell says &ldquo;Scoped with your
-            account team&rdquo;, we set it with you rather than print a limit we have not committed to.
+          <p className="mt-4 max-w-[640px] text-[17px] text-[color:var(--slate)]">
+            The platform is the same on every package. What differs is capacity, seats and support. Where a
+            cell says “{SCOPED_PUBLIC_LABEL}”, we set it with you rather than print a limit we have not
+            committed to.
           </p>
-          <div className="mt-6">
+          <div className="mt-8">
             <EntitlementMatrix
-              rows={mode === "oneoff" ? PUBLIC_ONEOFF_ENTITLEMENTS : PUBLIC_SUBSCRIPTION_ENTITLEMENTS}
+              rows={rows}
               planIds={PUBLIC_PLAN_IDS}
               planLabels={PUBLIC_PLAN_LABELS}
+              selectedPlanId={stop.id}
               caption={
-                mode === "oneoff"
+                billing === "once"
                   ? "Entitlements by one-off package, from the pilot to more than 100 positions"
                   : "Entitlements by subscription package, from the pilot to more than 100 positions"
               }
@@ -253,182 +272,65 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Entitlement rules — active roles, limits, billing, upgrades, retention */}
-      <PublicSection className="py-10">
+      {/* Commercial terms: seven short answers */}
+      <PublicSection>
         <PublicPage>
-          <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
-            How our commercial options work.
+          <h2 className="max-w-[20ch] text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px] sm:leading-[1.04]">
+            The terms, in seven answers.
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
-            Plain answers to the questions that decide whether a plan fits. Your
-            signed quote or agreement is always the authority on commercial terms.
+          <p className="mt-4 max-w-[640px] text-[17px] text-[color:var(--slate)]">
+            Your signed quote or agreement is always the authority on commercial terms.
           </p>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <dl className="mt-8 grid gap-x-12 md:grid-cols-2">
             {ENTITLEMENT_POLICY.map((item) => (
-              <div
-                key={item.id}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6"
-              >
-                <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                  {item.question}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
-                  {item.answer}
-                </p>
+              <div key={item.id} className="border-t border-[color:var(--rule)] py-5">
+                <dt className="text-base font-semibold text-[color:var(--ink)]">{item.question}</dt>
+                <dd className="mt-2 text-[15px] leading-relaxed text-[color:var(--slate)]">{item.answer}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </PublicPage>
       </PublicSection>
 
-
-
-      {/* Static agency-fee comparison — example math for 1, 3, 10 hires */}
-      <PublicSection className="py-10">
-        <PublicPage>
-          <AgencyFeeComparison />
-        </PublicPage>
-      </PublicSection>
-
-      {/* Operating-model comparison — agency vs sourcing tools vs TaaSFlow */}
-      <PublicSection className="py-10">
+      {/* The three-way comparison, moved from the homepage */}
+      <PublicSection>
         <PublicPage>
           <ModelComparisonTable />
         </PublicPage>
       </PublicSection>
 
-
-      {/* Live agency comparator */}
-      <PublicSection className="py-10">
+      {/* Your own numbers against an agency */}
+      <PublicSection>
         <PublicPage>
           <AgencyComparator />
         </PublicPage>
       </PublicSection>
 
-      {/* What the subscription actually gives you */}
-      <PublicSection className="py-10">
+      {/* Questions */}
+      <PublicSection>
         <PublicPage>
-          <div className="max-w-2xl">
-            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
-              What you actually get access to.
-            </h2>
-            <p className="mt-3 text-[color:var(--brand-navy)]/80">
-              Every plan opens the same Decision Workspace. Plans differ in seats,
-              concurrent roles and entitlements — not in the product.
-            </p>
-          </div>
-          <div className="mt-8 max-w-3xl">
-            <DecisionWorkspacePreview />
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* Example engagements */}
-      <PublicSection className="py-10">
-        <PublicPage>
-          <CaseStudyPreviews
-            count={2}
-            title="Example engagements by industry"
-            intro="Anonymised examples by industry and company type. Your own search depends on the role and the market."
-          />
-        </PublicPage>
-      </PublicSection>
-
-      {/* Proof that lowers hiring risk */}
-      <PublicSection className="py-10">
-        <PublicPage>
-          <RiskProof />
-        </PublicPage>
-      </PublicSection>
-
-
-      {/* Never charged */}
-      <PublicSection className="py-10">
-        <PublicPage>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
-              <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
-                Included on every plan
-              </h2>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
-                Baseline platform capabilities, regardless of plan size.
-              </p>
-              <ul className="mt-5 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85">
-                {INCLUDED_ON_EVERY_PLAN.map((x) => (
-                  <li key={x} className="flex gap-2">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
-                    <span>{x}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-cream)] p-6 sm:p-8">
-              <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
-                What you will never be charged
-              </h2>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
-                Charges you will never see on a TaaSFlow invoice.
-              </p>
-              <ul className="mt-5 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85">
-                {NEVER_CHARGED.map((x) => (
-                  <li key={x} className="flex gap-2">
-                    <X className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
-                    <span>{x}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* FAQ */}
-      <PublicSection className="py-10">
-        <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-            Pricing FAQ
-          </p>
-          <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-            The questions we get before a first engagement.
+          <h2 className="max-w-[20ch] text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px] sm:leading-[1.04]">
+            Before you sign.
           </h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <p className="mt-4 text-[17px] text-[color:var(--slate)]">
+            More answers are on the{" "}
+            <Link to="/faq" className="font-medium text-[color:var(--blue-600)] underline underline-offset-4">
+              FAQ page
+            </Link>
+            .
+          </p>
+          <div className="mt-8 divide-y divide-[color:var(--rule)] border-y border-[color:var(--rule)]">
             {FAQ.map((f) => (
-              <details
-                key={f.q}
-                className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 [&_summary::-webkit-details-marker]:hidden"
-              >
-                <summary className="flex cursor-pointer items-start justify-between gap-4">
-                  <span className="font-semibold text-[color:var(--brand-navy)]">{f.q}</span>
-                  <span
-                    aria-hidden
-                    className="mt-0.5 text-[color:var(--brand-navy)]/80 transition-transform group-open:rotate-45"
-                  >
+              <details key={f.q} className="group py-4 [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-[color:var(--ink)]">
+                  <span>{f.q}</span>
+                  <span aria-hidden className="text-xl leading-none text-[color:var(--faint)] group-open:rotate-45">
                     +
                   </span>
                 </summary>
-                <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
-                  {f.a}
-                </p>
+                <p className="mt-2 max-w-[640px] text-[15px] leading-relaxed text-[color:var(--slate)]">{f.a}</p>
               </details>
             ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
-      <PublicSection className="py-10">
-        <PublicPage>
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              to={CTA_PRIMARY.to}
-              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              {CTA_PRIMARY.label}
-            </Link>
-            <Link
-              to={CTA_MESSAGE.to}
-              className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              {CTA_MESSAGE.label}
-            </Link>
           </div>
         </PublicPage>
       </PublicSection>

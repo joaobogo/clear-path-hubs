@@ -265,7 +265,7 @@ export function PlatformArchitecture() {
                 }}
                 className={`scroll-mt-24 min-w-0 rounded-xl border px-3.5 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] ${
                   selected
-                    ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                    ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-white"
                     : "border-[color:var(--brand-navy)]/10 bg-white text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
                 }`}
               >

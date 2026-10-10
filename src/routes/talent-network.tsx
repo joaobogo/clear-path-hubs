@@ -45,7 +45,7 @@ function TalentNetworkPage() {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               to="/jobs"
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
             >
               Browse Open Roles
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -137,7 +137,7 @@ function TalentNetworkPage() {
                 "People who prefer briefed matches over cold pitches",
               ].map((point) => (
                 <li key={point} className="flex gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]" />
                   <span className="text-[color:var(--brand-navy)]/80">{point}</span>
                 </li>
               ))}
@@ -290,7 +290,7 @@ function TalentNetworkPage() {
       {/* ── Final CTA ───────────────────────────────────────────── */}
       <PublicSection className="py-16">
         <PublicPage>
-          <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-14 text-white sm:px-12 sm:py-16">
+          <div className="rounded-2xl bg-[color:var(--blue-600)] px-6 py-14 text-white sm:px-12 sm:py-16">
             <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-white">

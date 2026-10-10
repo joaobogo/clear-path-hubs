@@ -124,7 +124,7 @@ const ACTOR_STYLE: Record<
     label: "Client",
   },
   agency: {
-    chip: "bg-[color:var(--brand-navy)] text-white",
+    chip: "bg-[color:var(--blue-600)] text-white",
     ring: "border-[color:var(--brand-navy)]",
     label: "Your agency",
   },

@@ -136,7 +136,7 @@ export function AgencyComparator() {
         {/* -------- Results column -------- */}
         <div className="order-1 min-w-0 lg:order-2 lg:col-span-7">
           <div
-            className="relative overflow-hidden rounded-2xl bg-[color:var(--brand-navy)] p-6 text-white shadow-2xl sm:p-10"
+            className="relative overflow-hidden rounded-2xl bg-[color:var(--blue-600)] p-6 text-white shadow-2xl sm:p-10"
             role="status"
             aria-live="polite"
             aria-atomic="true"
@@ -273,7 +273,7 @@ function SliderField({
       </div>
       <Slider
         id={id}
-        className="mt-3 [&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&_[role=slider]]:border-[color:var(--brand-navy)] [&_[role=slider]]:bg-white [&_[data-orientation=horizontal]>span]:bg-[color:var(--brand-navy)] [&>span]:h-2 [&>span]:bg-[color:var(--brand-navy)]/15"
+        className="mt-3 [&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&_[role=slider]]:border-[color:var(--brand-navy)] [&_[role=slider]]:bg-white [&_[data-orientation=horizontal]>span]:bg-[color:var(--blue-600)] [&>span]:h-2 [&>span]:bg-[color:var(--brand-navy)]/15"
         min={range.min}
         max={range.max}
         step={range.step}

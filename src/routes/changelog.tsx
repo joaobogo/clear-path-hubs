@@ -78,7 +78,7 @@ function FilterRow<T extends string>({
             onClick={() => onChange(option)}
             className={`inline-flex min-h-9 items-center rounded-full border px-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] ${
               active
-                ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-[color:var(--brand-paper)]"
+                ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-[color:var(--brand-paper)]"
                 : "border-[color:var(--brand-navy)]/15 text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/35"
             }`}
           >

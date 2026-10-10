@@ -46,7 +46,7 @@ export function SubtleCta({
       <div className="flex flex-wrap items-center gap-3">
         <Link
           to={primary.to}
-          className="inline-flex min-h-10 items-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
+          className="inline-flex min-h-10 items-center rounded-md bg-[color:var(--blue-600)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--blue-700)]"
         >
           {primary.label}
         </Link>

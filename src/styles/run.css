@@ -1,0 +1,32 @@
+/* ============================================================
+ * The Run — the two chapter sequences drawn with CSS
+ * ============================================================
+ * Broadcast fan: lines leave the role card one after another when the
+ * chapter is in view. Evidence connect: the wire between a requirement and
+ * its sentence draws on hover. Reduced motion jumps to the final frame via
+ * the global rule in tokens.css.
+ * ============================================================ */
+
+@keyframes run-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.run-fan path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.run-fan.is-in path {
+  animation: run-draw var(--t-base) var(--ease) forwards;
+  animation-delay: calc(var(--i) * 60ms);
+}
+
+.run-wire {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: run-draw var(--t-quick) var(--ease) forwards;
+}

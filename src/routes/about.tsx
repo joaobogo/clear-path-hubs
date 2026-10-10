@@ -198,7 +198,7 @@ function AboutPage() {
                     ) : (
                       <div
                         aria-hidden
-                        className="flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--brand-navy)] font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-white"
+                        className="flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--blue-600)] font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-white"
                       >
                         {initials}
                       </div>
@@ -264,7 +264,7 @@ function AboutPage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/how-it-works"
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
               >
                 See how it works
               </Link>

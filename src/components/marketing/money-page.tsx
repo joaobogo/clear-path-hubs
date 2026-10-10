@@ -151,7 +151,7 @@ export function MoneyPageView({ page }: { page: MoneyPageContent }) {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 to={CTA_PRIMARY.to}
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm hover:opacity-90"
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm hover:opacity-90"
               >
                 {CTA_PRIMARY.label}
               </Link>

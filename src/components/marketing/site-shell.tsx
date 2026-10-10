@@ -1,35 +1,16 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
-import { ChevronRight, ChevronDown, Loader2, Menu, Linkedin, Mail } from "lucide-react";
-import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
+import type { ReactNode } from "react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { InternalLinkHub } from "@/components/marketing/internal-link-hub";
-import { ProductionLink } from "@/components/marketing/production-link";
-import { getSessionContext } from "@/lib/auth.functions";
-import { landingPathForRole } from "@/lib/roles";
-
-import { brand } from "@/config/brand";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { ClosingBand } from "@/components/layout/closing-band";
+import { RunLinkButton } from "@/components/system/run-button";
 import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { EcosystemFooterRow } from "@/components/marketing/ecosystem-footer-row";
-import { ConsentPreferencesLink } from "@/components/analytics/consent-banner";
 import { cn } from "@/lib/utils";
 import {
-  PRIMARY_ITEMS,
   PRIMARY_NAV as CONFIG_PRIMARY_NAV,
-  PRIMARY_CTA,
-  MESSAGE_CTA,
-  SECONDARY_CTAS,
-  CANDIDATE_PRIMARY_CTA,
-  CANDIDATE_SECONDARY_CTA,
   isCandidateJourneyPath,
-  FOOTER_GROUPS,
-  FOOTER_DESCRIPTION,
-  SOCIAL_LINKS,
-  type NavLink,
 } from "@/config/public-navigation";
 
 
@@ -40,41 +21,7 @@ import {
 
 export const PRIMARY_NAV = CONFIG_PRIMARY_NAV;
 
-const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
-  LinkedIn: Linkedin,
-  Email: Mail,
-};
 
-
-/* ---------------------------------------------------------------- Brand mark */
-
-function BrandMark({
-  compact = false,
-  /** Footer mark is always below the fold — defer it so it never competes with LCP. */
-  lazy = false,
-}: {
-  compact?: boolean;
-  lazy?: boolean;
-}) {
-  const height = compact ? 28 : 32;
-  // Cropped logo intrinsic aspect ratio is ~4.15:1. Width attribute must reflect
-  // that so the browser reserves enough horizontal space for the full wordmark.
-  const width = Math.round(height * 4.15);
-  return (
-    <Link to="/" className="inline-flex shrink-0 items-center rounded-md" aria-label="TaaSFlow — Home">
-      <img
-        src={brand.logos.primary}
-        alt="TaaSFlow"
-        width={width}
-        height={height}
-        loading={lazy ? "lazy" : "eager"}
-        decoding={lazy ? "async" : "sync"}
-        {...(lazy ? {} : { fetchPriority: "high" as const })}
-        className={cn(compact ? "h-7" : "h-8", "w-auto max-w-none shrink-0")}
-      />
-    </Link>
-  );
-}
 
 /* ---------------------------------------------------------------- Skip link */
 
@@ -82,461 +29,52 @@ export function SkipNav() {
   return (
     <a
       href="#main"
-      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-[color:var(--brand-navy)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
+      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-[color:var(--blue-600)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
     >
       Skip to main content
     </a>
   );
 }
 
-/* ---------------------------------------------------------------- Header */
-
-function DesktopNavLink({ to, label }: { to: string; label: string }) {
-  return (
-    <Link
-      to={to}
-      className="whitespace-nowrap rounded-md px-2 py-1.5 text-sm text-[color:var(--brand-navy)]/80 transition-colors hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-      activeProps={{ className: "text-[color:var(--brand-navy)] font-semibold" }}
-    >
-      {label}
-    </Link>
-  );
-}
-
-function GroupTrigger({ label }: { label: string }) {
-  return (
-    <NavigationMenuPrimitive.Trigger
-      className="group inline-flex h-9 items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-[color:var(--brand-navy)]/80 outline-none transition-colors hover:text-[color:var(--brand-navy)] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] data-[state=open]:text-[color:var(--brand-navy)]"
-    >
-      {label}
-      <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" aria-hidden />
-    </NavigationMenuPrimitive.Trigger>
-  );
-}
-
-function GroupContent({ links }: { links: NavLink[] }) {
-  const visible = links.filter((l) => !l.hidden);
-  return (
-    <NavigationMenuPrimitive.Content className="absolute left-0 top-0 data-[motion=from-start]:animate-in data-[motion=to-start]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out">
-      <ul className="grid w-[min(560px,90vw)] gap-1 p-3 sm:grid-cols-2">
-        {visible.map((l) => (
-          <li key={`${l.to}-${l.label}`}>
-            <NavigationMenuPrimitive.Link asChild>
-              <Link
-                to={l.to}
-                hash={l.hash}
-                className="block rounded-md px-3 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-              >
-                <span className="block font-medium">{l.label}</span>
-                {l.description ? (
-                  <span className="mt-0.5 block text-xs text-[color:var(--brand-navy)]/80">
-                    {l.description}
-                  </span>
-                ) : null}
-              </Link>
-            </NavigationMenuPrimitive.Link>
-          </li>
-        ))}
-      </ul>
-    </NavigationMenuPrimitive.Content>
-  );
-}
-
-function useSessionCta() {
-  const [cta, setCta] = useState<{ to: string; label: string } | null>(null);
-  const ctx = useServerFn(getSessionContext);
-
-  useEffect(() => {
-    let mounted = true;
-
-    async function resolve() {
-      const { data } = await supabase.auth.getSession();
-      if (!mounted) return;
-      if (!data.session) {
-        setCta(null);
-        return;
-      }
-      try {
-        const session = await ctx();
-        if (!mounted) return;
-        setCta({ to: landingPathForRole(session.primary_role), label: "Open workspace" });
-      } catch {
-        if (!mounted) return;
-        setCta(null);
-      }
-    }
-
-    resolve();
-    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN" || event === "SIGNED_OUT") resolve();
-    });
-
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
-  }, [ctx]);
-
-  return cta;
-}
-
-function Header() {
-  const [open, setOpen] = useState(false);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-
-  // Close mobile sheet when route changes.
-  useEffect(() => { setOpen(false); }, [pathname]);
-
-  const candidateMode = isCandidateJourneyPath(pathname);
-  const ctaPrimary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
-  const ctaSecondary = candidateMode ? CANDIDATE_SECONDARY_CTA : MESSAGE_CTA;
-
-  const sessionCta = useSessionCta();
-  const signIn = sessionCta ?? (SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" });
-  const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse jobs") ?? { to: "/jobs", label: "Browse jobs" };
-
-  return (
-    <>
-      <header className="sticky top-0 z-40 w-full border-b border-[color:var(--brand-navy)]/10 bg-white/85 backdrop-blur supports-[backdrop-filter]:bg-white/70">
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-4 px-4 sm:px-6 lg:px-8">
-          <BrandMark />
-
-          <NavigationMenuPrimitive.Root
-            aria-label="Primary"
-            className="relative hidden flex-1 items-center justify-center xl:flex"
-          >
-            <NavigationMenuPrimitive.List className="flex items-center gap-1">
-              {PRIMARY_ITEMS.map((item) =>
-                item.kind === "link" ? (
-                  <NavigationMenuPrimitive.Item key={item.to}>
-                    <NavigationMenuPrimitive.Link asChild>
-                      <DesktopNavLink to={item.to} label={item.label} />
-                    </NavigationMenuPrimitive.Link>
-                  </NavigationMenuPrimitive.Item>
-                ) : (
-                  <NavigationMenuPrimitive.Item key={item.label}>
-                    <GroupTrigger label={item.label} />
-                    <GroupContent links={item.links} />
-                  </NavigationMenuPrimitive.Item>
-                ),
-              )}
-            </NavigationMenuPrimitive.List>
-            <div className="absolute left-0 top-full flex w-full justify-center">
-              <NavigationMenuPrimitive.Viewport className="origin-top-center relative mt-2 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-xl border border-[color:var(--brand-navy)]/10 bg-white text-[color:var(--brand-navy)] shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]" />
-            </div>
-          </NavigationMenuPrimitive.Root>
-
-          <div className="ml-auto hidden items-center gap-1 xl:flex">
-            <Link
-              to={candidateMode ? "/" : browseJobs.to}
-              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              {candidateMode ? "For employers" : "For candidates"}
-            </Link>
-            <ProductionLink
-              to={signIn.to}
-              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              {signIn.label}
-            </ProductionLink>
-            {ctaSecondary ? (
-              <Link
-                to={ctaSecondary.to}
-                className="ml-1 whitespace-nowrap rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3.5 py-1.5 text-sm font-semibold text-[color:var(--brand-navy)] transition-colors hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-              >
-                {ctaSecondary.label}
-              </Link>
-            ) : null}
-            <Link
-              to={ctaPrimary.to}
-              className="whitespace-nowrap rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              {ctaPrimary.label}
-            </Link>
-          </div>
-
-          {/* Mobile trigger */}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label="Open navigation menu"
-                className="ml-auto h-11 w-11 xl:hidden"
-              >
-                <Menu className="h-5 w-5" aria-hidden />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="flex w-full max-w-sm flex-col bg-white p-0">
-              <SheetHeader className="border-b border-[color:var(--brand-navy)]/10 px-5 py-4 text-left">
-                <SheetTitle className="text-base font-semibold text-[color:var(--brand-navy)]">
-                  Menu
-                </SheetTitle>
-                <SheetDescription className="sr-only">
-                  Primary site navigation
-                </SheetDescription>
-              </SheetHeader>
-              <div className="flex-1 overflow-y-auto">
-                <Accordion type="multiple" className="px-3 py-4">
-                  {PRIMARY_ITEMS.map((item) =>
-                    item.kind === "link" ? (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                        activeProps={{ className: "bg-[color:var(--brand-navy)]/5 font-semibold" }}
-                      >
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <AccordionItem key={item.label} value={item.label} className="border-b-0">
-                        <AccordionTrigger className="min-h-11 rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 hover:no-underline">
-                          {item.label}
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1">
-                          <ul className="flex flex-col">
-                            {item.links.filter((l) => !l.hidden).map((l) => (
-                              <li key={`${l.to}-${l.label}`}>
-                                <Link
-                                  to={l.to}
-                                  hash={l.hash}
-                                  className="block min-h-11 rounded-md px-6 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
-                                  activeProps={{ className: "font-semibold text-[color:var(--brand-navy)]" }}
-                                >
-                                  {l.label}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ),
-                  )}
-                </Accordion>
-                <div className="border-t border-[color:var(--brand-navy)]/10 px-3 py-4">
-                  <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
-                    For candidates
-                  </p>
-                  <Link
-                    to={browseJobs.to}
-                    className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-                  >
-                    {browseJobs.label}
-                  </Link>
-                </div>
-              </div>
-              <div className="space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
-                <Link
-                  to={ctaPrimary.to}
-                  className="flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2.5 text-sm font-semibold text-white"
-                >
-                  {ctaPrimary.label}
-                </Link>
-                {ctaSecondary ? (
-                  <Link
-                    to={ctaSecondary.to}
-                    className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
-                  >
-                    {ctaSecondary.label}
-                  </Link>
-                ) : null}
-                <ProductionLink
-                  to={signIn.to}
-                  className="flex min-h-11 items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]/80"
-                >
-                  {signIn.label}
-                </ProductionLink>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </header>
-    </>
-  );
-}
-
-/* ---------------------------------------------------------------- Footer */
-
-function FooterCol({ title, links }: { title: string; links: NavLink[] }) {
-  const visible = links.filter((l) => !l.hidden);
-  return (
-    <div>
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
-        {title}
-      </h3>
-      <ul className="mt-2 space-y-0.5 sm:mt-4">
-        {visible.map((l) => (
-          <li key={`${l.to}-${l.label}`}>
-            {l.external ? (
-              <a
-                href={l.to}
-                className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-              >
-                {l.label}
-              </a>
-            ) : (
-              <Link
-                to={l.to}
-                className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-              >
-                {l.label}
-              </Link>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export function SiteFooter() {
-  const legalGroup = FOOTER_GROUPS.find((g) => g.label === "Legal");
-  const columnGroups = FOOTER_GROUPS.filter((g) => g.label !== "Legal");
-
-  return (
-    <footer className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)]">
-      <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-          <div className="sm:col-span-2 md:col-span-3 lg:col-span-6">
-            <BrandMark lazy />
-            <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/80">
-              {FOOTER_DESCRIPTION}
-            </p>
-            <div className="mt-5 flex items-center gap-3">
-              {SOCIAL_LINKS.map(({ href, label }) => {
-                const Icon = SOCIAL_ICONS[label] ?? Mail;
-                return (
-                  <a
-                    key={label}
-                    href={href}
-                    aria-label={label}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/30 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                  >
-                    <Icon className="h-4 w-4" aria-hidden />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-
-          {columnGroups.map((group) => (
-            <FooterCol key={group.label} title={group.label} links={group.links} />
-          ))}
-        </div>
-
-        <EcosystemFooterRow />
-
-        <div className="mt-12 flex flex-col gap-4 border-t border-[color:var(--brand-navy)]/10 pt-6 text-sm text-[color:var(--brand-navy)]/80 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} TaaSFlow. All rights reserved.</p>
-          {legalGroup ? (
-            <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              {legalGroup.links.filter((l) => !l.hidden).map((l) =>
-                l.external ? (
-                  <a key={l.label} href={l.to} className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
-                    {l.label}
-                  </a>
-                ) : (
-                  <Link key={l.label} to={l.to} className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
-                    {l.label}
-                  </Link>
-                ),
-              )}
-              <ConsentPreferencesLink className="inline-flex min-h-11 items-center underline-offset-4 hover:underline hover:text-[color:var(--brand-navy)]" />
-              <a href="mailto:hello@taasflow.com" className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
-                hello@taasflow.com
-              </a>
-            </nav>
-          ) : null}
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-
-/* ------------------------------------------------- Mobile sticky CTA bar */
-
-/**
- * One-handed action bar for phones. It shows the primary action only, after the
- * visitor has scrolled past the first screen. It sits above the consent banner
- * (which pushes `[data-consent-offset]` elements up by its height), keeps the bottom safe
- * area, and hides while a form field is focused so it never covers an input
- * or the on-screen keyboard's target.
+/* ---------------------------------------------------------------- Header and footer
+ * The Run: src/components/layout/site-header.tsx and site-footer.tsx.
+ * SiteFooter is re-exported here for older imports.
  */
-function MobileCtaBar() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [scrolled, setScrolled] = useState(false);
-  const [typing, setTyping] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 520);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+export { SiteFooter };
 
-  useEffect(() => {
-    const isField = (el: EventTarget | null) =>
-      el instanceof HTMLElement &&
-      (el.matches("input, textarea, select") || el.isContentEditable);
-    const onIn = (e: FocusEvent) => setTyping(isField(e.target));
-    const onOut = () => setTyping(false);
-    document.addEventListener("focusin", onIn);
-    document.addEventListener("focusout", onOut);
-    return () => {
-      document.removeEventListener("focusin", onIn);
-      document.removeEventListener("focusout", onOut);
-    };
-  }, []);
-
-  const candidateMode = isCandidateJourneyPath(pathname);
-  const primary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
-  const shown = scrolled && !typing;
-
-  return (
-    <div
-      data-consent-offset
-      className={cn(
-        "fixed inset-x-0 bottom-0 z-40 border-t border-[color:var(--brand-navy)]/10 bg-white/95 backdrop-blur transition-transform duration-200 motion-reduce:transition-none md:hidden",
-        "pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2",
-        shown ? "translate-y-0" : "pointer-events-none translate-y-[200%]",
-      )}
-      aria-hidden={!shown}
-    >
-      <div className="mx-auto flex max-w-[1200px] items-center px-4">
-        <Link
-          to={primary.to}
-          tabIndex={shown ? undefined : -1}
-          className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl bg-[color:var(--brand-navy)] px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-        >
-          {primary.label}
-        </Link>
-      </div>
-    </div>
-  );
-}
+/** Paths whose own form is the action: no closing band competes with it. */
+const NO_CLOSING_BAND_PATHS = ["/pilot", "/contact"];
 
 /* ---------------------------------------------------------------- Shell */
 
 export function SiteShell({
   children,
   hideLinkHub = false,
+  hideClosingBand = false,
+  role,
 }: {
   children: ReactNode;
   hideLinkHub?: boolean;
+  hideClosingBand?: boolean;
+  /** The page's own role, pre-filled in the closing band's role input. */
+  role?: string;
 }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const showBand =
+    !hideClosingBand &&
+    !isCandidateJourneyPath(pathname) &&
+    !NO_CLOSING_BAND_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   return (
-    <div className="flex min-h-dvh flex-col bg-[color:var(--brand-paper)] text-[color:var(--brand-navy)]">
+    <div className="site-run day flex min-h-dvh flex-col">
       <SkipNav />
-      <Header />
-      <main id="main" tabIndex={-1} className="flex-1 pb-16 focus:outline-none md:pb-0">
+      <SiteHeader />
+      <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         {children}
       </main>
       {!hideLinkHub && <InternalLinkHub />}
+      {showBand ? <ClosingBand role={role} /> : null}
       <SiteFooter />
-      <MobileCtaBar />
     </div>
   );
 }
@@ -625,37 +163,23 @@ export function CtaSection({
   return (
     <PublicSection>
       <PublicPage>
-        <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-14 text-center text-white sm:px-12 sm:py-16">
-          {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/60">
-              {eyebrow}
-            </p>
-          )}
-          <h2 className="mx-auto mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+        <div className="border-t border-[color:var(--rule)] pt-12 text-left">
+          {eyebrow && <p className="text-[13px] font-medium text-[color:var(--faint)] [font-stretch:88%]">{eyebrow}</p>}
+          <h2 className="mt-2 max-w-3xl text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px] sm:leading-[1.04]">
             {title}
           </h2>
-          {description && (
-            <p className="mx-auto mt-4 max-w-xl text-base text-white/75">{description}</p>
-          )}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to={primary.to}
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-            >
-              {primary.label}
-            </Link>
-            <Link
-              to={secondary.to}
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-            >
+          {description && <p className="mt-4 max-w-2xl text-lg text-[color:var(--slate)]">{description}</p>}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <RunLinkButton to={primary.to}>{primary.label}</RunLinkButton>
+            <RunLinkButton to={secondary.to} variant="ghost">
               {secondary.label}
-            </Link>
+            </RunLinkButton>
           </div>
           {tertiary && (
             <div className="mt-5">
               <Link
                 to={tertiary.to}
-                className="inline-flex items-center gap-1 rounded text-sm font-medium text-white/75 underline-offset-4 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="inline-flex min-h-11 items-center gap-1 text-base font-medium text-[color:var(--blue-600)] underline-offset-4 hover:underline"
               >
                 {tertiary.label}
                 <ChevronRight className="h-4 w-4" aria-hidden />
@@ -699,7 +223,7 @@ export function PublicNotFound() {
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
                 to="/"
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--blue-700)]"
               >
                 Go to home
               </Link>
@@ -745,7 +269,7 @@ export function PublicErrorState({
                 <button
                   type="button"
                   onClick={onRetry}
-                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--blue-700)]"
                 >
                   Try again
                 </button>

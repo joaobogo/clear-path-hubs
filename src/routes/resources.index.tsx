@@ -585,7 +585,7 @@ function ResourcesPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to={CTA_PRIMARY.to}
-              className="rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy)]/90"
+              className="rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--blue-700)]"
             >
               {CTA_PRIMARY.label}
             </Link>

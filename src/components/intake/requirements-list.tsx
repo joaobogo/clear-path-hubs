@@ -33,7 +33,7 @@ export type SuggestionState =
 
 const TAG_STYLES: Record<RequirementTag, string> = {
   must_have:
-    "border-[color:var(--brand-navy)]/70 bg-[color:var(--brand-navy)] text-white",
+    "border-[color:var(--brand-navy)]/70 bg-[color:var(--blue-600)] text-white",
   nice_to_have:
     "border-[color:var(--brand-navy)]/25 bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]",
   trainable:

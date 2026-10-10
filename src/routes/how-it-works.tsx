@@ -191,7 +191,7 @@ function HowItWorksPage() {
                   <li key={t} className="flex gap-2">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]"
                     />
                     {t}
                   </li>
@@ -226,7 +226,7 @@ function HowItWorksPage() {
                   <li key={t} className="flex gap-2">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]"
                     />
                     {t}
                   </li>
@@ -307,7 +307,7 @@ function HowItWorksPage() {
             <ul className="space-y-2 text-sm text-[color:var(--brand-navy)]/80">
               {SCORING_POINTS.map((t) => (
                 <li key={t} className="flex gap-2">
-                  <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                  <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]" />
                   {t}
                 </li>
               ))}

@@ -51,7 +51,7 @@ export function TrustStrip() {
   return (
     <section
       aria-label="How TaaSFlow earns trust"
-      className="relative bg-[color:var(--brand-navy)] text-white"
+      className="relative bg-[color:var(--blue-600)] text-white"
     >
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="flex items-center gap-3">

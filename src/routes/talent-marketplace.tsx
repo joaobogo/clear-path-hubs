@@ -101,7 +101,7 @@ function TalentMarketplacePage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/jobs"
-              className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
+              className="inline-flex items-center rounded-lg bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-medium text-white"
             >
               Browse open roles
             </Link>
@@ -152,7 +152,7 @@ function TalentMarketplacePage() {
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/85">
                 {FOR_CANDIDATES.map((c) => (
                   <li key={c} className="flex gap-2">
-                    <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                    <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]" />
                     {c}
                   </li>
                 ))}
@@ -160,7 +160,7 @@ function TalentMarketplacePage() {
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
                   to="/jobs"
-                  className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-medium text-white"
+                  className="inline-flex items-center rounded-lg bg-[color:var(--blue-600)] px-4 py-2 text-sm font-medium text-white"
                 >
                   Browse open roles
                 </Link>
@@ -179,7 +179,7 @@ function TalentMarketplacePage() {
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/85">
                 {FOR_EMPLOYERS.map((c) => (
                   <li key={c} className="flex gap-2">
-                    <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                    <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]" />
                     {c}
                   </li>
                 ))}
@@ -187,7 +187,7 @@ function TalentMarketplacePage() {
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
                   to={CTA_PRIMARY.to}
-                  className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-medium text-white"
+                  className="inline-flex items-center rounded-lg bg-[color:var(--blue-600)] px-4 py-2 text-sm font-medium text-white"
                 >
                   {CTA_PRIMARY.label}
                 </Link>

@@ -24,7 +24,7 @@ import {
   trackLeadFormStart,
   trackLeadFormView,
 } from "@/lib/tracking/lead-form-events";
-import { CTA_PRIMARY } from "@/config/cta";
+import { CTA_PILOT_REQUEST } from "@/config/cta";
 import { SALES_EMAIL } from "@/config/booking";
 import { cn } from "@/lib/utils";
 
@@ -38,14 +38,17 @@ type Props = {
   heading?: string;
   className?: string;
   idPrefix?: string;
+  /** "blue": the fields in white on the Pilot order card, one white button. */
+  variant?: "card" | "blue";
 };
 
 const EMPTY: InquiryFields = { firstName: "", email: "", phone: "", jobDescriptionUrl: "" };
 
 const inputClass =
-  "mt-1 block min-h-11 w-full rounded-md border border-[color:var(--brand-navy)]/25 bg-white px-3 py-2 text-base text-[color:var(--brand-navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--brand-ocean)] aria-[invalid=true]:border-red-700";
+  "mt-1 block min-h-[50px] w-full rounded-[var(--r-1)] border border-[color:var(--rule-2)] bg-white px-3 py-2 text-base text-[color:var(--ink)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--blue-600)] aria-[invalid=true]:border-[color:var(--alert-ink)]";
 
-export function EmployerInquiryForm({ source, heading, className, idPrefix }: Props) {
+export function EmployerInquiryForm({ source, heading, className, idPrefix, variant = "card" }: Props) {
+  const blue = variant === "blue";
   const autoId = useId().replace(/:/g, "");
   const prefix = idPrefix ?? `inquiry-${autoId}`;
   const submit = useServerFn(submitEmployerInquiry);
@@ -145,7 +148,7 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
       <section
         aria-labelledby={headingId}
         className={cn(
-          "rounded-2xl border border-[color:var(--brand-navy)]/15 bg-white p-6 sm:p-8",
+          blue ? "" : "rounded-[var(--r-3)] border border-[color:var(--rule)] bg-white p-6 sm:p-8",
           className,
         )}
       >
@@ -156,14 +159,14 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
         >
           Your request has been received
         </h2>
-        <p role="status" className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
+        <p role="status" className={cn("mt-2 text-sm", blue ? "text-[color:var(--text-2)]" : "text-[color:var(--slate)]")}>
           We will contact you within one business day to confirm the role and the pilot scope.
           Nothing has been charged and no sourcing has started.
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-4">
           <a
             href={`mailto:${SALES_EMAIL}`}
-            className="text-sm font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:underline"
+            className={cn("text-sm font-semibold underline-offset-4 hover:underline", blue ? "text-white" : "text-[color:var(--blue-600)]")}
           >
             Prefer email? {SALES_EMAIL}
           </a>
@@ -182,9 +185,9 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
     const err = errors[name];
     return (
       <div>
-        <label htmlFor={id} className="text-sm font-semibold text-[color:var(--brand-navy)]">
+        <label htmlFor={id} className={cn("text-sm font-semibold", blue ? "text-white" : "text-[color:var(--ink)]")}>
           {label}
-          {required ? null : <span className="font-normal text-[color:var(--brand-navy)]/70"> (optional)</span>}
+          {required ? null : <span className="font-normal opacity-70"> (optional)</span>}
         </label>
         <input
           id={id}
@@ -199,7 +202,7 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
           {...attrs}
         />
         {err ? (
-          <p id={`${id}-error`} className="mt-1 text-sm text-red-700">
+          <p id={`${id}-error`} className={cn("mt-1 text-sm", blue ? "text-[color:var(--danger)]" : "text-[color:var(--alert-ink)]")}>
             {err}
           </p>
         ) : null}
@@ -211,14 +214,11 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
     <section
       aria-labelledby={headingId}
       className={cn(
-        "rounded-2xl border border-[color:var(--brand-navy)]/15 bg-white p-6 sm:p-8",
+        blue ? "" : "rounded-[var(--r-3)] border border-[color:var(--rule)] bg-white p-6 sm:p-8",
         className,
       )}
     >
-      <h2
-        id={headingId}
-        className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]"
-      >
+      <h2 id={headingId} className={cn("text-2xl font-semibold", blue ? "text-white" : "text-[color:var(--ink)]")}>
         {heading ?? INQUIRY_DEFAULT_HEADING}
       </h2>
       <form noValidate onSubmit={onSubmit} className="mt-5 space-y-4" data-testid="employer-inquiry-form">
@@ -231,7 +231,7 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
           className={cn(
             errorKeys.length === 0 && !serverError
               ? "sr-only"
-              : "rounded-md border border-red-700/40 bg-red-50 p-3 text-sm text-red-800",
+              : "rounded-[var(--r-1)] border border-[color:var(--alert)] bg-[color:var(--alert-wash)] p-3 text-sm text-[color:var(--alert-ink)]",
           )}
         >
           {serverError ? (
@@ -294,12 +294,17 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix }: Pr
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60 sm:w-auto"
+          className={cn(
+            "inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[var(--r-1)] px-6 text-base font-semibold disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-[3px]",
+            blue
+              ? "bg-white text-[color:var(--blue-700)] hover:bg-[color:var(--blue-50)] focus-visible:outline-white"
+              : "bg-[color:var(--blue-600)] text-white hover:bg-[color:var(--blue-700)] focus-visible:outline-[color:var(--blue-600)] sm:w-auto",
+          )}
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
-          {pending ? "Sending your request" : CTA_PRIMARY.label}
+          {pending ? "Sending your request" : CTA_PILOT_REQUEST.label}
         </button>
-        <p className="text-sm text-[color:var(--brand-navy)]/80">{INQUIRY_HELPER}</p>
+        <p className={cn("text-sm", blue ? "text-[color:var(--text-2)]" : "text-[color:var(--slate)]")}>{INQUIRY_HELPER}</p>
       </form>
     </section>
   );

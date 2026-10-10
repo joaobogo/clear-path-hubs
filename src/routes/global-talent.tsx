@@ -119,7 +119,7 @@ function GlobalTalentPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to={CTA_PRIMARY.to}
-              className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
+              className="inline-flex items-center rounded-lg bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-medium text-white"
             >
               {CTA_PRIMARY.label}
             </Link>
@@ -179,7 +179,7 @@ function GlobalTalentPage() {
                   <li key={r} className="flex gap-2">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]"
                     />
                     {r}
                   </li>
@@ -195,7 +195,7 @@ function GlobalTalentPage() {
                   <li key={s} className="flex gap-2">
                     <span
                       aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
+                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]"
                     />
                     {s}
                   </li>

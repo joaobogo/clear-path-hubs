@@ -58,7 +58,7 @@ export function IndustryInsights({
                     />
                   </div>
                 ) : (
-                  <div className="aspect-[16/9] bg-gradient-to-br from-[color:var(--brand-navy)] to-[color:var(--brand-navy)]/60" />
+                  <div className="aspect-[16/9] bg-[color:var(--blue-100)]" />
                 )}
                 <div className="flex flex-1 flex-col p-5">
                   {p.category && (

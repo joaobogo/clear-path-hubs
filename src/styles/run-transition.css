@@ -1,0 +1,71 @@
+/* ============================================================
+ * The Run — transition layer for marketing pages (Phase 1)
+ * ============================================================
+ * Every marketing page sits inside `.site-run` (SiteShell). Until each page
+ * is rebuilt from the component inventory (Phases 2 to 6), this layer makes
+ * the old layouts obey the house rules: white pages, Archivo wide headlines,
+ * no shadows except paper, no all-caps letter-spaced labels, no hover lift,
+ * no fade-in on scroll.
+ *
+ * Delete this file in Phase 6, when no page uses an old layout.
+ * The workspace is not affected: nothing here applies outside `.site-run`.
+ * ============================================================ */
+
+.site-run {
+  /* Old shadow tokens resolve to nothing on marketing pages. */
+  --brand-shadow-xs: none;
+  --brand-shadow-sm: none;
+  --brand-shadow-md: none;
+  --brand-shadow-lg: none;
+  --brand-shadow-xl: none;
+  --brand-shadow-glow: none;
+  font-family: var(--font-run);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+/* Headlines: wide 125, weight 600. In the base layer, so a utility on the
+   element (a narrow label set as h2, say) still wins. */
+@layer base {
+  .site-run :where(h1, h2) {
+    font-family: var(--font-run);
+    font-stretch: 125%;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .site-run :where(h3) {
+    font-family: var(--font-run);
+    font-stretch: 112%;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Only paper casts a shadow. Tailwind shadow utilities go flat; rings
+   (focus, outlines drawn with ring-*) are untouched. */
+.site-run [class*="shadow"]:not(.paper) {
+  --tw-shadow: 0 0 #0000 !important;
+}
+
+/* Sentence case: no all-caps, letter-spaced eyebrows. */
+.site-run .uppercase {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+/* No hover lift. */
+.site-run [class*="hover:-translate-y"]:hover,
+.site-run [class*="hover:translate-y"]:hover {
+  --tw-translate-y: 0 !important;
+}
+.site-run [class*="hover:scale"]:hover {
+  --tw-scale-x: 100% !important;
+  --tw-scale-y: 100% !important;
+}
+
+/* No fade-in on scroll: content is simply there. */
+.site-run :is(.motion-reveal, .motion-reveal-in, [data-reveal]) {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}

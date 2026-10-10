@@ -161,7 +161,7 @@ export function IndustryExplorer({ compact = false }: { compact?: boolean }) {
                 }}
                 className={`inline-flex shrink-0 snap-start items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
                   isActive
-                    ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                    ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-white"
                     : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-ocean)]/40"
                 }`}
               >
@@ -282,7 +282,7 @@ function IndustryDetail({
         <Link
           to="/industries/$slug"
           params={{ slug: toPublicSlug(entry.slug) }}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[color:var(--brand-navy)] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[color:var(--brand-ocean)]"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[color:var(--blue-600)] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[color:var(--brand-ocean)]"
         >
           Open industry page
           <ArrowRight className="h-3.5 w-3.5" aria-hidden />

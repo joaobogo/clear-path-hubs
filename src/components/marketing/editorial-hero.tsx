@@ -71,7 +71,7 @@ export function EditorialHero({
                 {primary ? (
                   <Link
                     to={primary.to}
-                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
                   >
                     {primary.label}
                   </Link>

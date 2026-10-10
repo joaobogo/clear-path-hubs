@@ -42,8 +42,8 @@ describe("sample shortlist page and links", () => {
     expect(page).toContain("CTA_MESSAGE");
     expect(page).toContain("breadcrumbs");
   });
-  it("is linked from the homepage and the pilot page", () => {
-    for (const f of ["src/routes/index.tsx", "src/routes/pilot.tsx"]) {
+  it("is linked from the homepage hero and the pilot page", () => {
+    for (const f of ["src/components/home/run-hero.tsx", "src/routes/pilot.tsx"]) {
       const src = read(f);
       expect(src).toContain('to="/sample-shortlist"');
       expect(src).toContain("See a sample top 10");

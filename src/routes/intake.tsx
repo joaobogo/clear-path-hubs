@@ -157,17 +157,29 @@ import {
 import { getPositionDuplicateDraft } from "@/lib/position-duplicate.functions";
 import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
+import { roleFromSearch } from "@/lib/marketing/role-input";
+import { LiveBrief } from "@/components/intake/live-brief";
+
+/** The step that asks for the role; a visitor arriving with ?role= starts here. */
+const ROLE_STEP_INDEX = Math.max(0, INTAKE_STEPS.findIndex((s) => s.key === "role"));
 
 export const Route = createFileRoute("/intake")({
   /**
    * ?carry=<intake id> or ?carry=org starts a second role from the company
    * profile instead of a blank form. Anything else is ignored.
    */
-  validateSearch: (search: Record<string, unknown>): { carry?: string; duplicate?: string } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { carry?: string; duplicate?: string; role?: string } => {
     const carry = typeof search["carry"] === "string" ? (search["carry"] as string).trim() : "";
     const duplicate =
       typeof search["duplicate"] === "string" ? (search["duplicate"] as string).trim() : "";
-    return { ...(carry ? { carry } : {}), ...(duplicate ? { duplicate } : {}) };
+    const role = roleFromSearch(search["role"]);
+    return {
+      ...(carry ? { carry } : {}),
+      ...(duplicate ? { duplicate } : {}),
+      ...(role ? { role } : {}),
+    };
   },
   head: () => ({
     meta: [
@@ -439,7 +451,7 @@ function ExpressIntakePage() {
   const suggestedForRef = useRef<string>("");
   const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
-  const { carry: carryParam, duplicate: duplicateParam } = Route.useSearch();
+  const { carry: carryParam, duplicate: duplicateParam, role: roleParam } = Route.useSearch();
   const loadCompanyCarry = useServerFn(getCompanyCarryForward);
   const loadDuplicateDraft = useServerFn(getPositionDuplicateDraft);
   // Duplicating a role copies the brief and nothing else. What came across and
@@ -937,6 +949,18 @@ function ExpressIntakePage() {
   });
   const { savedAt, setSavedAt, saving: savingDraft, saveError, submittedElsewhere, queueSave, saveNow } =
     draftSaver;
+
+  // A role typed into "I'm hiring a …" on a marketing page arrives as ?role=.
+  // It fills the job title once any saved draft has loaded, never over one.
+  const roleAppliedRef = useRef(false);
+  useEffect(() => {
+    if (roleAppliedRef.current || draftPhase !== "ready" || !roleParam) return;
+    roleAppliedRef.current = true;
+    setState((s) => (s.roleTitle.trim() ? s : { ...s, roleTitle: roleParam }));
+    // Intake opens at the role step with the title filled in; the earlier
+    // details are asked once the brief is drafted.
+    setStepIndex((i) => (i === 0 ? ROLE_STEP_INDEX : i));
+  }, [draftPhase, roleParam]);
 
   const applyDraftPayload = (payload: Record<string, unknown>) => {
     const restored = withRequirements(payload as Partial<FormState>) as Record<string, unknown>;
@@ -2304,9 +2328,23 @@ function ExpressIntakePage() {
   return (
     <FormShell
       width="lg"
+      exitLabel="Save and exit"
       eyebrow="Full role intake"
       title={`Share your role in about ${INTAKE_TOTAL_MINUTES} minutes.`}
       description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
+      progress={{
+        step: stepIndex + 1,
+        total: INTAKE_STEPS.length,
+        label: `Step ${stepIndex + 1} of ${INTAKE_STEPS.length}: ${currentStep.title}`,
+      }}
+      aside={
+        <LiveBrief
+          groups={review.groups}
+          step={stepIndex}
+          roleTitle={state.roleTitle}
+          companyName={state.companyName}
+        />
+      }
     >
       <div
         className="space-y-6"
@@ -2455,7 +2493,7 @@ function ExpressIntakePage() {
                     aria-current={current ? "step" : undefined}
                     className={`w-full rounded-md border px-2 py-2 text-left text-xs transition ${
                       current
-                        ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                        ? "border-[color:var(--brand-navy)] bg-[color:var(--blue-600)] text-white"
                         : done
                           ? "border-[color:var(--brand-teal)]/40 bg-[color:var(--brand-teal)]/8"
                           : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/70"
@@ -4201,7 +4239,7 @@ function Section({
   return (
     <section id={id} className="space-y-6 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-6 sm:p-8">
       <div className="flex items-center gap-3 border-b border-[color:var(--brand-navy)]/10 pb-4">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-sm font-bold text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--blue-600)] text-sm font-bold text-white">
           {step}
         </span>
         <h2 className="text-lg font-bold text-[color:var(--brand-navy)]">{title}</h2>

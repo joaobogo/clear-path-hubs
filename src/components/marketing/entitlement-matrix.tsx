@@ -54,12 +54,16 @@ export function EntitlementMatrix({
   planIds,
   planLabels,
   caption,
+  selectedPlanId,
 }: {
   rows: EntitlementRow[];
   planIds: readonly string[];
   planLabels: Record<string, string>;
   caption: string;
+  /** The package chosen above the table: its column sits on pale blue with a blue top rule. */
+  selectedPlanId?: string;
 }) {
+  const selectedCol = (id: string) => (id === selectedPlanId ? "bg-[color:var(--blue-50)]" : "");
   return (
     <div>
       {/* Desktop / tablet table */}
@@ -78,7 +82,10 @@ export function EntitlementMatrix({
                 <th
                   key={id}
                   scope="col"
-                  className="px-5 py-4 text-sm font-semibold text-[color:var(--brand-navy)]"
+                  aria-current={id === selectedPlanId ? "true" : undefined}
+                  className={`px-5 py-4 text-sm font-semibold text-[color:var(--brand-navy)] ${selectedCol(id)} ${
+                    id === selectedPlanId ? "border-t-2 border-[color:var(--blue-600)]" : ""
+                  }`}
                 >
                   {planLabels[id]}
                 </th>
@@ -100,7 +107,7 @@ export function EntitlementMatrix({
                   </span>
                 </th>
                 {planIds.map((id) => (
-                  <td key={id} className="px-5 py-4">
+                  <td key={id} className={`px-5 py-4 ${selectedCol(id)}`}>
                     <ValueCell v={row.plans[id] ?? { kind: "not-included" }} />
                   </td>
                 ))}
@@ -112,10 +119,12 @@ export function EntitlementMatrix({
 
       {/* Mobile: per-plan stacked cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:hidden">
-        {planIds.map((id) => (
+        {[...planIds].sort((a, b) => (a === selectedPlanId ? -1 : b === selectedPlanId ? 1 : 0)).map((id) => (
           <div
             key={id}
-            className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5"
+            className={`rounded-2xl border bg-white p-5 ${
+              id === selectedPlanId ? "border-[color:var(--blue-600)] bg-[color:var(--blue-50)]" : "border-[color:var(--brand-navy)]/10"
+            }`}
           >
             <h3 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
               {planLabels[id]}

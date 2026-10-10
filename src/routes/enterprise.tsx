@@ -237,7 +237,7 @@ function EnterprisePage() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               to={CTA_ENTERPRISE.to}
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-center text-sm font-semibold text-white hover:opacity-90"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-center text-sm font-semibold text-white hover:opacity-90"
             >
               {CTA_ENTERPRISE.label}
             </Link>
@@ -466,7 +466,7 @@ function EnterprisePage() {
                   "Role-based access so people see the pipelines they own",
                 ].map((x) => (
                   <li key={x} className="flex gap-2">
-                    <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                    <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]" />
                     {x}
                   </li>
                 ))}
@@ -502,7 +502,7 @@ function EnterprisePage() {
                   "Same standard applied across every role",
                 ].map((x) => (
                   <li key={x} className="flex gap-2">
-                    <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                    <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-600)]" />
                     {x}
                   </li>
                 ))}
@@ -691,7 +691,7 @@ function EnterprisePage() {
           <div className="mt-8">
             <Link
               to={CTA_ENTERPRISE.to}
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
             >
               {CTA_ENTERPRISE.label}
             </Link>
@@ -882,7 +882,7 @@ function RequisitionPortfolioMock() {
             </div>
             <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10">
               <div
-                className="h-full rounded-full bg-[color:var(--brand-navy)]"
+                className="h-full rounded-full bg-[color:var(--blue-600)]"
                 style={{ width: `${r.pct}%` }}
               />
             </div>
@@ -924,7 +924,7 @@ function RankedEvidenceMock() {
               </span>
               <div className="h-1.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10">
                 <div
-                  className="h-full rounded-full bg-[color:var(--brand-navy)]"
+                  className="h-full rounded-full bg-[color:var(--blue-600)]"
                   style={{ width: `${r.score}%` }}
                 />
               </div>
@@ -993,7 +993,7 @@ function ReportingMock() {
               </span>
               <div className="h-1.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10">
                 <div
-                  className="h-full rounded-full bg-[color:var(--brand-navy)]"
+                  className="h-full rounded-full bg-[color:var(--blue-600)]"
                   style={{ width: `${(s.n / max) * 100}%` }}
                 />
               </div>

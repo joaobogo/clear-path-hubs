@@ -50,7 +50,7 @@ export function ComparePageView({ page }: { page: ComparePageContent }) {
             <p className="mt-6 text-lg leading-relaxed text-[color:var(--brand-navy)]/90">{page.directAnswer}</p>
             <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">Last updated: {COMPARE_LAST_UPDATED}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link to={CTA_PRIMARY.to} className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm hover:opacity-90">
+              <Link to={CTA_PRIMARY.to} className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm hover:opacity-90">
                 {CTA_PRIMARY.label}
               </Link>
               <Link to={CTA_MESSAGE.to} className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5">
