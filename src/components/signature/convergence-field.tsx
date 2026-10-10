@@ -79,9 +79,9 @@ function draw(
     ctx.save();
     clipAlong(lastGate, front);
     ctx.strokeStyle = palette.ink;
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = flow === "right" ? 1.5 : 1.1;
     ctx.shadowColor = palette.glow;
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = flow === "right" ? 8 : 0;
     for (const l of lines) if (l.passed === 3) stroke(l);
     ctx.restore();
   }
@@ -94,6 +94,7 @@ export function ConvergenceField({
   getTargets,
   onFront,
   stillSrc,
+  getFrame,
 }: {
   /** The role; the same role always draws the same field. */
   seed: string;
@@ -104,6 +105,12 @@ export function ConvergenceField({
   onFront?: (progress: number) => void;
   /** The static image shown when scripts do not run. */
   stillSrc: string;
+  /**
+   * Where the field may draw, in pixels from the host's parent, or null for
+   * the whole parent. On a phone the hero passes the band around the list so
+   * the field never runs through the headline and paragraph.
+   */
+  getFrame?: () => { top: number; height: number } | null;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -134,6 +141,10 @@ export function ConvergenceField({
     let cancelled = false;
 
     const layout = () => {
+      const frame = getFrame?.() ?? null;
+      host.style.top = frame ? `${frame.top}px` : "0px";
+      host.style.height = frame ? `${frame.height}px` : "";
+      host.style.bottom = frame ? "auto" : "0px";
       const rect = host.getBoundingClientRect();
       w = Math.max(1, Math.round(rect.width));
       h = Math.max(1, Math.round(rect.height));
@@ -147,10 +158,12 @@ export function ConvergenceField({
       // A phone draws a quarter of the crowd, fainter: the field runs top to
       // bottom through the text there, and the text must stay the first thing
       // read.
+      // Row anchors are measured against the parent; shift them into the band.
+      const offset = frame?.top ?? 0;
       lines = buildField({
         width: w,
         height: h,
-        targets: getTargets(),
+        targets: getTargets().map((p) => ({ x: p.x, y: p.y - offset })),
         counts,
         seed,
         flow,
@@ -216,7 +229,7 @@ export function ConvergenceField({
       cancelAnimationFrame(frame);
       ro.disconnect();
     };
-  }, [seed, reduced, counts, getTargets]);
+  }, [seed, reduced, counts, getTargets, getFrame]);
 
   return (
     <div ref={hostRef} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">

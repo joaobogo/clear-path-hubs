@@ -51,9 +51,23 @@ function countAt(count: number, front: number, landsAt: number): number {
 export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string) => void }) {
   const roleTitle = role || SAMPLE_SHORTLIST_ROLE;
   const hostRef = useRef<HTMLElement>(null);
+  const listRef = useRef<HTMLElement>(null);
   const rowRefs = useRef<(HTMLLIElement | null)[]>([]);
   // Full counts before scripts run; the field then ticks them in as it draws.
   const [front, setFront] = useState(1);
+
+  // Below 1024 the list sits under the text; the field is confined to the
+  // band from just above the list to its last row, so the headline, the
+  // paragraph and the input stay on plain white.
+  const getFrame = useCallback(() => {
+    const host = hostRef.current;
+    const list = listRef.current;
+    if (!host || !list || host.getBoundingClientRect().width >= 1024) return null;
+    const h = host.getBoundingClientRect();
+    const l = list.getBoundingClientRect();
+    const top = Math.max(0, l.top - h.top - 72);
+    return { top, height: l.bottom - h.top - top };
+  }, []);
 
   const getTargets = useCallback((): Point[] => {
     const host = hostRef.current?.getBoundingClientRect();
@@ -74,6 +88,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
         seed={roleTitle}
         counts={RUN_COUNTS}
         getTargets={getTargets}
+        getFrame={getFrame}
         onFront={setFront}
         stillSrc="/run-field.png"
       />
@@ -100,7 +115,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
             </div>
           </div>
 
-          <aside aria-labelledby="run-hero-list-title" className="min-w-0">
+          <aside ref={listRef} aria-labelledby="run-hero-list-title" className="min-w-0">
             <div className="flex items-baseline justify-between border-b border-[color:var(--ink)] pb-2">
               <h2 id="run-hero-list-title" className="text-base font-semibold [font-stretch:100%] text-[color:var(--ink)]">
                 Top 10 · {roleTitle}
