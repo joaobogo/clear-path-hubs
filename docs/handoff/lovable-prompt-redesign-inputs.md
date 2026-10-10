@@ -1,6 +1,6 @@
 # Paste this into Lovable (one message)
 
-Before you paste: in Lovable's GitHub settings, switch the project to the branch `claude/tender-faraday-kfzxe7`. If Lovable can only work on `main`, paste it anyway and we merge `main` into the branch afterwards.
+The redesign is merged into `main`, so Lovable works on its usual branch. Paste as is.
 
 Fill the OWNER FACTS block first. Leave a line blank when you do not have the fact; Lovable then keeps that item unpublished instead of inventing it.
 
@@ -76,4 +76,4 @@ Make the list 24 real job titles that a hospitality, healthcare, logistics, indu
 Create `src/content/run-emails.ts` exporting three plain-text email bodies as string constants: `BRIEF_CONFIRMED`, `LIST_SIGNED`, `INVOICE_SENT`. Sentence case, under 120 words each, reading from `offer` for counts and days, no prices typed in, the one link in each pointing to `/login` (the workspace opens from there). Do not connect them to any sender.
 
 ## When you finish
-Reply with: the list of files changed, the figures you left unpublished because OWNER FACTS was blank, the test and check output (pass or fail, verbatim), and the commit hashes. Do not merge to `main`. Do not open a pull request.
+Reply with: the list of files changed, the figures you left unpublished because OWNER FACTS was blank, the test and check output (pass or fail, verbatim), and the commit hashes. Do not open a pull request, and do not change files outside the ones named above.
