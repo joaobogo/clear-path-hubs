@@ -68,3 +68,11 @@ Local dev server, local Supabase stack, Playwright (Chromium).
 - Founder photographs, recruiter names for the seal.
 - Before phase 4: a recruiter-written blueprint for Hospitality, Healthcare and Logistics, and three photographs.
 - Merge the branch into `main` with a merge commit when ready; Lovable then pulls and publishes.
+
+## Handoff to Lovable
+
+- `docs/handoff/lovable-house-rules.md`: the rules every Lovable change follows (what must not break, design rules, checks, report).
+- `docs/handoff/run-spec-phases-4-6.md`: the document's specification for phases 4 to 6, adapted to this repository.
+- `docs/handoff/lovable-prompt-redesign-inputs.md`: the inputs prompt (proof sources, examples, blueprints, photographs).
+- `docs/handoff/lovable-prompts-phases-4-6.md`: one prompt per step for phases 4, 5 and 6, in order.
+
