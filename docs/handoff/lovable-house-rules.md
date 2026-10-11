@@ -47,7 +47,11 @@ npm run check:scaled-content
 npm run check:internal-links
 npm run build
 ```
-Two tests are known to fail without a database: `message-history-log.test.ts` and `messaging-history.test.ts`. Any other failure is yours to fix. Never skip, delete or weaken a test to get green.
+Database-dependent tests. Some tests only run when a database is connected, and their result depends on the data in that database, not on the code you changed: `tests/kpis/kpi-sync.test.ts` (business figures agree with the raw rows), `src/lib/__tests__/message-history-log.test.ts` and `src/lib/__tests__/messaging-history.test.ts`. Depending on the environment they pass, fail or are skipped. Before you start a task, run the suite once and note which of these fail. That is the baseline.
+- If only these tests fail, and they failed the same way in the baseline, carry on with the task and list them in your report as "baseline database tests, unchanged".
+- Never change code in `src/lib/kpis/`, queries, views or data to make these tests pass. That is separate work the owner will ask for.
+- If one of them starts failing because of your change, or any other test fails, fix it before committing.
+Never skip, delete or weaken a test to get green.
 
 Then search the source you changed for: `\$[0-9]`, `business days`, `channels`, `INSTRUÇÃO`, `TEXTO DO USUÁRIO`, `MVP readiness`. Numbers must come from `offer.ts`; the three phrases must not exist.
 
