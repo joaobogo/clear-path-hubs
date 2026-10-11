@@ -89,16 +89,35 @@ describe.skipIf(!live)("business figures agree with the raw rows", () => {
   });
 
   it("interviews held in the rolling window", async () => {
+    // Interview activity is stage-aware since scheduling was removed: legacy
+    // interview rows, plus matches that entered the interview stage, plus
+    // standing client requests for an interview, counted once per match
+    // (an interview row with no match counts once by its own id).
     const now = new Date();
     const w = interviewWindow(now);
     const raw = sqlCount(
-      `select count(*) as n from public.interviews
-        where ${org} and status <> 'cancelled' and cancelled_at is null
-          and (
-            (completed_at >= '${w.startIso}' and completed_at <= '${w.endIso}')
-            or (scheduled_at >= '${w.startIso}' and scheduled_at <= '${w.endIso}'
-                and scheduled_at <= '${now.toISOString()}')
-          )`,
+      `select count(distinct k) as n from (
+         select coalesce(candidate_match_id::text, id::text) as k
+           from public.interviews
+          where ${org} and status <> 'cancelled' and cancelled_at is null
+            and (
+              (completed_at >= '${w.startIso}' and completed_at <= '${w.endIso}')
+              or (scheduled_at >= '${w.startIso}' and scheduled_at <= '${w.endIso}'
+                  and scheduled_at <= '${now.toISOString()}')
+            )
+         union
+         select candidate_match_id::text
+           from public.candidate_stage_history
+          where ${org} and to_stage = 'interview_process'
+            and candidate_match_id is not null
+            and created_at >= '${w.startIso}' and created_at <= '${w.endIso}'
+         union
+         select candidate_match_id::text
+           from public.client_decisions
+          where ${org} and decision = 'request_interview' and reversed_at is null
+            and candidate_match_id is not null
+            and created_at >= '${w.startIso}' and created_at <= '${w.endIso}'
+       ) activity`,
     );
     expect(await countInterviewsHeld(supabase, orgId!, w, now)).toBe(raw);
   });
@@ -122,14 +141,31 @@ describe.skipIf(!live)("business figures agree with the raw rows", () => {
   });
 
   it("open offers", async () => {
+    // The lane rule (src/lib/client-pipeline-lane.ts): a candidate at the
+    // offer stage, or parked at hired without a confirmed hire, holds an open
+    // offer. A hire is confirmed by match id or by position and profile, and a
+    // record stamped hired with no close reason or decline counts as confirmed
+    // (normalizeOfferRecord). Written as an anti-join so it stays fast.
     const raw = sqlCount(
-      `select count(*) as n from public.candidate_matches m
-        where m.${org.replace("organization_id", "organization_id")}
+      `with confirmed as (
+         select candidate_match_id, position_id, candidate_profile_id
+           from public.hire_records
+          where ${org}
+            and (
+              status = 'hire_confirmed'
+              or (status in ('closed_lost', 'offer_declined')
+                  and hired_at is not null and close_reason is null and declined_at is null)
+            )
+       )
+       select count(*) as n from public.candidate_matches m
+        where m.${org}
           and m.client_visibility = 'visible' and m.is_test_record = false
-          and m.stage = 'offer'
+          and m.stage in ('offer', 'hired')
+          and not exists (select 1 from confirmed c where c.candidate_match_id = m.id)
           and not exists (
-            select 1 from public.hire_records h
-             where h.candidate_match_id = m.id and h.status = 'hire_confirmed'
+            select 1 from confirmed c
+             where c.position_id = m.position_id
+               and c.candidate_profile_id = m.candidate_profile_id
           )`,
     );
     expect(await countOpenOffers(supabase, orgId!)).toBe(raw);

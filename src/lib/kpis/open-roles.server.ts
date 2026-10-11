@@ -34,12 +34,21 @@ export async function loadOpenRoles(
   return selectOpenClientRoles(await loadOrgRoles(supabase, orgId));
 }
 
-/** `{ open, total }` for one organization. */
+/**
+ * `{ open, total }` for one organization.
+ *
+ * Reads every role of the organization, not `loadOrgRoles`: `total` counts
+ * drafts and archived roles too, because they belong to the account and the
+ * Roles page lists them under "All". Only test records are left out. Passing
+ * the pre-filtered roles made `total` drop drafts and archived roles here
+ * while the admin rollup (`org-rollups.server.ts`) counted them, so the same
+ * account had two totals. `open` is unchanged either way.
+ */
 export async function countRolesForOrg(
   supabase: AnyRow,
   orgId: string,
 ): Promise<{ open: number; total: number }> {
-  return countClientRoles(await loadOrgRoles(supabase, orgId));
+  return countClientRoles(await readOrgRows(supabase, orgId, "positions", SELECT));
 }
 
 export async function countOpenRolesForOrg(
