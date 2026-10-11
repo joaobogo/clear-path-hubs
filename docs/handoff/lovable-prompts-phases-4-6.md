@@ -7,7 +7,9 @@
    - `docs/handoff/lovable-house-rules.md`: what must never break, the design rules, the checks to run, the report format.
    - `docs/handoff/run-spec-phases-4-6.md`: the redesign document's specification for these phases.
 4. Run the inputs prompt first (`docs/handoff/lovable-prompt-redesign-inputs.md`). Several prompts below use what it produces.
-5. If a report shows any red check other than the two known database tests, reply "Fix the failing checks before anything else, then report again."
+5. Some tests only run against Lovable's database (the business-figure check in `tests/kpis/kpi-sync.test.ts` and two messaging tests). Their failures come from the data, not from the redesign, and the house rules tell Lovable to note them and carry on. If a report shows any other red check, reply "Fix the failing checks before anything else, then report again."
+7. Lovable only changes files when the message tells it to build something. Prompt 0 and uploading these files are read-only on purpose. The building starts with the inputs prompt and prompt 4.1.
+8. Ignore Lovable's suggestion chips (for example "Draft the greenfield architecture"). Paste the next prompt from this file instead.
 6. Things only you can supply are marked OWNER. Lovable leaves those parts hidden until you provide them.
 
 ---
