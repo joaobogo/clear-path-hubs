@@ -113,7 +113,7 @@ function SectionHead({
 
 function HowItWorksPage() {
   return (
-    <SiteShell>
+    <SiteShell hideClosingBand>
       {/* ── Hero ────────────────────────────────────────────────── */}
       <EditorialHero
         eyebrow="How it works"

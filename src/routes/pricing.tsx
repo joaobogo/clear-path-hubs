@@ -10,7 +10,6 @@ import { RunButton, RunLinkButton } from "@/components/system/run-button";
 import { PhotoBand } from "@/components/marketing/editorial-hero";
 import pricingTeam from "@/assets/page-pricing-hero.jpg";
 import { NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
-import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
 import {
   ABOVE_MAX_ROLES_LABEL,
   ANNUAL_DISCOUNT_NOTE,
@@ -51,7 +50,7 @@ export const Route = createFileRoute("/pricing")({
           path: "/pricing",
           serviceType: "Recruiting",
         }),
-        faqScript(FAQ),
+        faqScript(ENTITLEMENT_POLICY.map((item) => ({ q: item.question, a: item.answer }))),
       ],
     }),
   component: PricingPage,
