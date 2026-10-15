@@ -46,3 +46,20 @@
   stroke-dashoffset: 1;
   animation: run-draw var(--t-quick) var(--ease) forwards;
 }
+
+.editorial-photograph img {
+  transition: transform var(--taas-motion-slower) var(--taas-ease-emphasized);
+}
+.editorial-photograph[data-entered="false"] img { transform: scale(1.025); }
+.editorial-photograph[data-entered="true"] img { transform: scale(1); }
+.editorial-cover {
+  --photo-scrim: linear-gradient(to top, var(--ink), color-mix(in oklab, var(--ink) 70%, transparent) 35%, transparent 80%);
+  background: var(--ink);
+  color: var(--white);
+}
+.editorial-cover-scrim { background: var(--photo-scrim); }
+.editorial-cover-copy { color: var(--white); }
+.editorial-cover-muted { color: color-mix(in oklab, var(--white) 85%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  .editorial-photograph img { transform: none !important; transition: none; }
+}

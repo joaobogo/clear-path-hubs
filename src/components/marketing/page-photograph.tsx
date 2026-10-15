@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
 
 type PagePhotographProps = {
   src: string;
@@ -13,8 +14,20 @@ type PagePhotographProps = {
 export function PagePhotograph({
   src, alt, width = 1920, height = 1088, priority = false, className,
 }: PagePhotographProps) {
+  const ref = useRef<HTMLElement>(null);
+  const [entered, setEntered] = useState(priority);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || entered) return;
+    if (!("IntersectionObserver" in window)) { setEntered(true); return; }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) { setEntered(true); observer.disconnect(); }
+    }, { threshold: 0.12 });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [entered]);
   return (
-    <figure className={cn("m-0 overflow-hidden", className)}>
+    <figure ref={ref} data-entered={entered} className={cn("editorial-photograph m-0 overflow-hidden", className)}>
       <img
         src={src}
         alt={alt}
