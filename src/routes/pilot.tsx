@@ -6,6 +6,8 @@ import { EmployerInquiryForm } from "@/components/marketing/employer-inquiry-for
 import { NEVER_CHARGED } from "@/content/pricing";
 import { offer, pilotPriceLabel } from "@/config/offer";
 import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
+import { PagePhotograph } from "@/components/marketing/page-photograph";
+import pilotReview from "@/assets/page-pilot-review.jpg";
 import { CTA_MESSAGE, CTA_FULL_INTAKE, CTA_PRICING } from "@/config/cta";
 import {
   FIRST_SHORTLIST_TIMING,
@@ -83,6 +85,12 @@ function PilotPage() {
               </p>
 
               {/* Four steps on the clock */}
+              <PagePhotograph
+                src={pilotReview}
+                alt="A recruiter and hiring manager reviewing a candidate's application together."
+                priority
+                className="mt-8 aspect-[16/9]"
+              />
               <ol className="mt-12 divide-y divide-[color:var(--rule)] border-y border-[color:var(--rule)]" aria-label="The four steps of the pilot">
                 {PROCESS_STEPS.map((s, i) => (
                   <li key={s.title} className="grid gap-2 py-5 sm:grid-cols-[140px_minmax(0,1fr)] sm:gap-6">

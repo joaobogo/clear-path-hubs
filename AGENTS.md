@@ -12,3 +12,4 @@
 - Role approval overrides use the authenticated caller's database client, not the privileged client, so the database can verify platform-admin permissions independently; activation and publishing retain their separate gates.
 - Homepage chapter backgrounds extend across the viewport while content stays constrained, so the chapter rail does not leave a blank side gutter.
 - Industry cards and detail pages use the shared hero-image registry and managed media pointers, so sector imagery stays consistent without third-party hotlinks.
+- Public page photography uses shared image primitives with intrinsic dimensions and eager loading only above the fold, preserving stable layouts and accessible descriptions.

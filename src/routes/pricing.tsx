@@ -8,6 +8,8 @@ import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
 import { Receipt, type ReceiptDetail, type ReceiptLine } from "@/components/signature/receipt";
 import { PackageSelector, type PackageStop } from "@/components/system/package-selector";
 import { RunLinkButton } from "@/components/system/run-button";
+import { PagePhotograph } from "@/components/marketing/page-photograph";
+import pricingTeam from "@/assets/page-pricing-hero.jpg";
 import { NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
 import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
 import {
@@ -131,6 +133,14 @@ function PricingPage() {
           <p className="mt-3 text-sm text-[color:var(--faint)]" data-testid="last-updated">
             {OFFER_LAST_UPDATED_LABEL}
           </p>
+          <PagePhotograph
+            src={pricingTeam}
+            alt="A hiring team comparing their recruitment plans in a sunlit workspace."
+            width={1600}
+            height={1008}
+            priority
+            className="mt-8 h-[200px] sm:h-[280px] lg:h-[320px]"
+          />
         </PublicPage>
       </PublicSection>
 
