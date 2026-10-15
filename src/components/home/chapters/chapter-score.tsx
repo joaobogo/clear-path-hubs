@@ -52,7 +52,7 @@ export function ChapterScore() {
       chapter={chapter}
       index={3}
       title="Every score points at a sentence."
-      lead="Agents read each CV against your rubric and quote the line that earned the points. Where the CV is silent, the gap is named."
+      lead="Agents connect your requirements to CV evidence. Missing evidence stays visible."
     >
       <div ref={hostRef} className="relative grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16">
         {wire ? (
@@ -121,13 +121,11 @@ export function ChapterScore() {
                     <span className="wide text-base font-semibold text-[color:var(--action)]">{sentence ? result.score : "—"}</span>
                   </p>
                 </div>
-                {sentence ? (
-                  <blockquote className="mt-1.5 text-[15px] text-[color:var(--text-2)]">“{sentence.text}”</blockquote>
-                ) : (
+                {!sentence ? (
                   <p className="mt-1.5 text-[15px] text-[color:var(--text)]">
                     <span className="font-semibold">No sentence found.</span> {result.evidence}
                   </p>
-                )}
+                ) : null}
               </li>
             );
           })}

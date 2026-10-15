@@ -738,7 +738,7 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
     <SectionHeading
       eyebrow="Hiring reality"
       title={`${entry.name} hiring challenges`}
-      intro={`What ${entry.name} teams tell us before switching to a structured, evidence-based workflow — and how TaaSFlow turns each risk into a scoring signal.`}
+      intro="The hiring risks we check — and the evidence we look for."
     />
   );
 
@@ -931,17 +931,17 @@ function SectionSolutions({ ctx }: { ctx: Ctx }) {
         />
         <div className="mt-8 grid gap-5 md:grid-cols-2">
           {entry.solutions.map((s) => (
-            <div
+            <details
               key={s.title}
-              className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
+              className="rounded-lg border border-border bg-card p-6"
             >
-              <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
+              <summary className="min-h-11 cursor-pointer content-center text-lg font-semibold text-foreground">
                 {s.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {s.body}
               </p>
-            </div>
+            </details>
           ))}
         </div>
       </PublicPage>

@@ -4,6 +4,25 @@ import { INDUSTRY_ENTRIES } from "../../src/content/industries-v2";
 import { getIndustryHeroImage } from "../../src/content/industry-hero-images";
 
 describe("Industry pictures", () => {
+  it("prioritizes takeaways while keeping full examples accessible", () => {
+    const examples = readFileSync("src/routes/case-studies.tsx", "utf8");
+    expect(examples).toContain("The takeaway");
+    expect(examples).toContain("Read the full example");
+    expect(examples).toContain("{study.situation}");
+    expect(examples).toContain("{study.outcome}");
+    expect(examples).toContain("{study.timeline.map");
+    expect(examples).not.toContain("line-clamp");
+    const agents = readFileSync("src/routes/agents.tsx", "utf8");
+    expect(agents.indexOf('label="Outputs"')).toBeLessThan(agents.indexOf('label="Inputs"'));
+    expect(agents).toContain("View representative activity");
+    const process = readFileSync("src/routes/how-it-works.tsx", "utf8");
+    expect(process).toContain("Your part & our part");
+    expect(process).toContain("{STEP_DETAIL[i]?.you}");
+    expect(process).toContain("{STEP_DETAIL[i]?.we}");
+    const score = readFileSync("src/components/home/chapters/chapter-score.tsx", "utf8");
+    expect(score).not.toContain("<blockquote");
+    expect(score).toContain("No sentence found.");
+  });
   it("keeps pricing scannable and avoids repeated comparison and FAQ blocks", () => {
     const pricing = readFileSync("src/routes/pricing.tsx", "utf8");
     expect(pricing).toContain('aria-label="Pricing sections"');
