@@ -220,12 +220,12 @@ function PricingPage() {
                         </span>
                         <span className="hidden h-3 w-full rounded-full bg-[color:var(--blue-100)] sm:block" aria-hidden>
                           <span
-                            className={"block h-3 rounded-full " + (selected ? "bg-[color:var(--blue-600)]" : "bg-[color:var(--blue-200)] group-hover:bg-[color:var(--blue-300)]")}
+                            className={"package-bar block h-3 rounded-full " + (selected ? "bg-[color:var(--blue-600)]" : "bg-[color:var(--blue-200)] group-hover:bg-[color:var(--blue-300)]")}
                             style={{ width: `${Math.max(6, (p.totalUsd / maxTotal) * 100)}%` }}
                           />
                         </span>
                         <span className={"wide num text-right text-base " + (selected ? "font-semibold text-[color:var(--ink)]" : "text-[color:var(--slate)]")}>
-                          {p.totalDisplay}
+                          {billing === "monthly" && p.id !== "pilot" ? formatUsdExact(subscriptionTotalsUsd(p.capacity).monthly) : p.totalDisplay}
                         </span>
                       </RunButton>
                     </li>

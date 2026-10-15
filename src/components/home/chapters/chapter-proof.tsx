@@ -3,9 +3,12 @@ import { Chapter } from "@/components/home/chapters/chapter";
 import { offer } from "@/config/offer";
 import { RUN_CHAPTERS, RUN_SIGN_OFF_DAY } from "@/config/run-chapters";
 import { SAMPLE_RUNS } from "@/lib/previews/representative-fixtures";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
+import { HeroPicture } from "@/components/marketing/hero-picture";
 
-const chapter = RUN_CHAPTERS[5]!;
+const chapter = RUN_CHAPTERS[5];
 const DAYS = RUN_SIGN_OFF_DAY;
+const SECTOR_IMAGES: Record<string, string> = { Hospitality: "hospitality", Healthcare: "healthcare", Industrial: "logistics" };
 
 /**
  * Chapter 6, Proof (since launch, white). Figures the Results page publishes
@@ -13,6 +16,7 @@ const DAYS = RUN_SIGN_OFF_DAY;
  * on one day axis, each line turning from blue to ink as it closes.
  */
 export function ChapterProof() {
+  if (!chapter) return null;
   const figures = offer.proof;
   const hasFigures = figures.length > 0;
 
@@ -36,14 +40,18 @@ export function ChapterProof() {
 
       <ol className="flex flex-col gap-6" aria-label="Three representative runs, brief to signed list">
         {SAMPLE_RUNS.map((r) => {
+          const image = getIndustryHeroImage(SECTOR_IMAGES[r.sector] ?? "tech");
           const [h, m] = r.signedTime.split(":").map(Number);
           const closes = (r.signedDay + ((h ?? 0) * 60 + (m ?? 0)) / (24 * 60)) / DAYS;
           const pctClose = Math.min(100, closes * 100);
           return (
-            <li key={r.sector} className="grid gap-3 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center">
-              <div>
+            <li key={r.sector} className="grid gap-5 border-b border-[color:var(--rule)] pb-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
+              <div className="flex items-center gap-4">
+                {image ? <Link to={r.to} aria-label={`View ${r.sector.toLowerCase()} example engagement`} className="sector-run-photo block size-20 shrink-0 overflow-hidden rounded-[var(--r-1)]"><HeroPicture src={image.src} alt={image.alt} width={image.width} height={image.height} className="h-full w-full object-cover" /></Link> : null}
+                <div>
                 <p className="font-semibold text-[color:var(--ink)]">{r.sector}</p>
                 <p className="text-sm text-[color:var(--slate)]">{r.role}</p>
+                </div>
               </div>
               <div>
                 <div className="relative h-3 w-full rounded-full bg-[color:var(--blue-100)]" role="img" aria-label={`${r.sector}: list signed Day ${r.signedDay}, ${r.signedTime}`}>
@@ -54,7 +62,7 @@ export function ChapterProof() {
                     style={{ left: `${pctClose}%` }}
                   />
                 </div>
-                <div className="num mt-2 flex justify-between text-[13px] text-[color:var(--faint)]">
+                <div className="num mt-2 flex flex-wrap justify-between gap-2 text-[13px] text-[color:var(--faint)]">
                   <span>Day 0, 09:00 · brief approved</span>
                   <span className="text-[color:var(--ink)]">Day {r.signedDay}, {r.signedTime} · signed</span>
                 </div>

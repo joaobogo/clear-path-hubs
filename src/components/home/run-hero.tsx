@@ -1,5 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
+import { Pause, Play, RotateCcw, ArrowUpRight } from "lucide-react";
+import { RunButton } from "@/components/system/run-button";
+import { usePrefersReducedMotion } from "@/lib/motion/use-motion";
 import { ConvergenceField } from "@/components/signature/convergence-field";
 import { EvidenceStrip, type EvidenceState } from "@/components/signature/evidence-strip";
 import { RoleInput } from "@/components/system/role-input";
@@ -55,6 +58,11 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
   const rowRefs = useRef<(HTMLLIElement | null)[]>([]);
   // Full counts before scripts run; the field then ticks them in as it draws.
   const [front, setFront] = useState(1);
+  const [paused, setPaused] = useState(false);
+  const [replay, setReplay] = useState(0);
+  const [selectedRef, setSelectedRef] = useState(SAMPLE_SHORTLIST[0]?.ref ?? "");
+  const selected = SAMPLE_SHORTLIST.find((candidate) => candidate.ref === selectedRef);
+  const reduced = usePrefersReducedMotion();
 
   // Below 1024 the list sits under the text; the field is confined to the
   // band from just above the list to its last row, so the headline, the
@@ -72,9 +80,10 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
   const getTargets = useCallback((): Point[] => {
     const host = hostRef.current?.getBoundingClientRect();
     if (!host) return [];
-    return rowRefs.current.filter(Boolean).map((li) => {
-      const r = li!.getBoundingClientRect();
-      return { x: r.left - host.left, y: r.top - host.top + r.height / 2 };
+    return rowRefs.current.flatMap((li) => {
+      if (!li) return [];
+      const r = li.getBoundingClientRect();
+      return [{ x: r.left - host.left, y: r.top - host.top + r.height / 2 }];
     });
   }, []);
   const [agentsLine, peopleLine] = [
@@ -91,17 +100,19 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
         getFrame={getFrame}
         onFront={setFront}
         stillSrc="/run-field.png"
+        paused={paused}
+        replay={replay}
       />
       <div className="relative z-10 mx-auto w-full max-w-[calc(var(--max)+2*var(--margin))] px-[var(--margin)]">
         <div className="grid gap-12 pt-14 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-16 lg:pt-20">
           <div className="min-w-0 max-w-[800px]">
             <h1
               id="run-hero-title"
-              className="display text-[clamp(44px,6vw,86px)] text-[color:var(--ink)] [text-shadow:0_0_18px_var(--paper,white),0_0_6px_var(--paper,white)]"
+              className="run-hero-heading display text-[44px] text-[color:var(--ink)] sm:text-[64px] xl:text-[80px]"
             >
               Post the role. Sourcing agents deliver your shortlist.
             </h1>
-            <p className="mt-6 max-w-[640px] rounded-xl bg-white/85 px-4 py-3 -mx-4 text-[21px] font-medium leading-[1.45] text-[color:var(--ink)] shadow-[0_12px_32px_-20px_var(--blue-300)] backdrop-blur-sm">
+            <p className="run-hero-lead mt-6 max-w-[640px] text-[19px] leading-[1.55] text-[color:var(--slate)] sm:text-[21px]">
               {agentsLine} {peopleLine}
             </p>
             <div className="mt-10 max-w-[590px]">
@@ -112,6 +123,13 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
                 onRun={onRun}
                 className="border-[color:var(--blue-200)] [box-shadow:0_18px_40px_-24px_var(--blue-300)]"
               />
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+              <Link to="/how-it-works" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[color:var(--blue-600)]">How a role runs <ArrowUpRight className="size-4" aria-hidden /></Link>
+              {!reduced ? <div className="flex items-center gap-1" aria-label="Line animation">
+                <RunButton variant="ghost" size="sm" className="size-11 min-h-11 border-0 p-0" aria-label={paused ? "Play line animation" : "Pause line animation"} title={paused ? "Play line animation" : "Pause line animation"} onClick={() => setPaused((value) => !value)}>{paused ? <Play className="size-4" /> : <Pause className="size-4" />}</RunButton>
+                <RunButton variant="ghost" size="sm" className="size-11 min-h-11 border-0 p-0" aria-label="Replay line animation" title="Replay line animation" onClick={() => { setPaused(false); setReplay((value) => value + 1); }}><RotateCcw className="size-4" /></RunButton>
+              </div> : null}
             </div>
           </div>
 
@@ -131,8 +149,9 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
                   ref={(el) => {
                     rowRefs.current[i] = el;
                   }}
-                  className="flex h-11 items-center gap-3 bg-white/80"
+                  className="h-11"
                 >
+                  <RunButton variant="ghost" size="sm" aria-pressed={selectedRef === c.ref} aria-label={`View evidence for ${c.ref.replace(/^Example candidate /, "Candidate ")}`} onClick={() => setSelectedRef(c.ref)} className={cn("hero-candidate h-11 w-full min-h-11 justify-start gap-3 rounded-none border-0 px-0", selectedRef === c.ref && "is-selected")}>
                   <span className="narrow num w-5 text-[13px] font-medium text-[color:var(--faint)]">
                     {c.rank}
                   </span>
@@ -146,9 +165,14 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
                   <span className="wide num w-8 text-right text-[15px] font-semibold text-[color:var(--ink)]">
                     {c.score}
                   </span>
+                  </RunButton>
                 </li>
               ))}
             </ol>
+            <div className="hero-evidence mt-3 min-h-[148px] border-l-2 border-primary p-4" aria-live="polite" aria-atomic="true">
+              <p className="text-xs font-semibold text-[color:var(--blue-600)]">{selected?.ref.replace(/^Example candidate /, "Candidate ")} · licence evidence</p>
+              <p className="mt-2 whitespace-normal text-sm font-normal leading-relaxed text-[color:var(--ink)]">{selected?.results.licence.evidence}</p>
+            </div>
             <p className="mt-3 text-sm text-[color:var(--slate)]">
               <Link
                 to="/sample-shortlist"
@@ -189,7 +213,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
                     human ? "text-[color:var(--ink)]" : "text-[color:var(--blue-600)]",
                   )}
                 >
-                  {nf.format(countAt(stage.count, front, COUNT_LANDS_AT[i]!))}
+                    {nf.format(countAt(stage.count, front, COUNT_LANDS_AT[i] ?? 1))}
                 </dd>
               </div>
             );

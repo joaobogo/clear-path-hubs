@@ -95,6 +95,8 @@ export function ConvergenceField({
   onFront,
   stillSrc,
   getFrame,
+  paused = false,
+  replay = 0,
 }: {
   /** The role; the same role always draws the same field. */
   seed: string;
@@ -111,6 +113,8 @@ export function ConvergenceField({
    * the field never runs through the headline and paragraph.
    */
   getFrame?: () => { top: number; height: number } | null;
+  paused?: boolean;
+  replay?: number;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -139,6 +143,11 @@ export function ConvergenceField({
     let flow: "right" | "down" = "right";
     let frame = 0;
     let cancelled = false;
+    let visible = true;
+    let settled = false;
+    let lastPulse = 0;
+    const still = document.createElement("canvas");
+    const stillContext = still.getContext("2d");
 
     const layout = () => {
       const frame = getFrame?.() ?? null;
@@ -174,6 +183,36 @@ export function ConvergenceField({
     const finish = () => {
       draw(ctx, lines, w, h, flow, 1, palette);
       onFrontRef.current?.(1);
+      settled = true;
+      still.width = canvas.width;
+      still.height = canvas.height;
+      stillContext?.drawImage(canvas, 0, 0);
+      if (!reduced && !paused && visible && document.visibilityState !== "hidden") {
+        frame = requestAnimationFrame(pulse);
+      }
+    };
+
+    const pulse = (now: number) => {
+      if (cancelled || !visible || document.visibilityState === "hidden") return;
+      if (now - lastPulse >= 40 && stillContext) {
+        lastPulse = now;
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(still, 0, 0, w, h);
+        ctx.fillStyle = palette.blue;
+        const survivors = lines.filter((line) => line.passed === 3);
+        survivors.forEach((line, index) => {
+          const t = ((now / 6200) + index / survivors.length) % 1;
+          const u = 1 - t;
+          const x = u ** 3 * line.p0.x + 3 * u ** 2 * t * line.c1.x + 3 * u * t ** 2 * line.c2.x + t ** 3 * line.p1.x;
+          const y = u ** 3 * line.p0.y + 3 * u ** 2 * t * line.c1.y + 3 * u * t ** 2 * line.c2.y + t ** 3 * line.p1.y;
+          ctx.globalAlpha = Math.sin(t * Math.PI) * 0.8;
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+      }
+      frame = requestAnimationFrame(pulse);
     };
 
     const animate = (ms: number) => {
@@ -193,12 +232,13 @@ export function ConvergenceField({
         draw(ctx, lines, w, h, flow, p, palette);
         onFrontRef.current?.(p);
         if (p < 1) frame = requestAnimationFrame(tick);
+        else finish();
       };
       frame = requestAnimationFrame(tick);
     };
 
     layout();
-    if (reduced || document.visibilityState === "hidden") {
+    if (reduced || paused || document.visibilityState === "hidden") {
       finish();
     } else {
       // The first drawing takes the story's time; a new role redraws faster.
@@ -209,11 +249,25 @@ export function ConvergenceField({
     // A resize re-fits the finished field to the new rows; it never replays.
     const ro = new ResizeObserver(() => {
       if (cancelled) return;
+      const rect = host.getBoundingClientRect();
+      if (Math.round(rect.width) === w && Math.round(rect.height) === h) return;
       cancelAnimationFrame(frame);
       layout();
       finish();
     });
     ro.observe(host);
+    const resume = () => {
+      cancelAnimationFrame(frame);
+      if (!visible || document.visibilityState === "hidden") return;
+      if (settled) finish();
+      else if (!reduced && !paused) animate(FIELD_REDRAW_MS);
+    };
+    const visibility = new IntersectionObserver(([entry]) => {
+      visible = entry?.isIntersecting ?? false;
+      resume();
+    });
+    visibility.observe(host);
+    document.addEventListener("visibilitychange", resume);
 
     if (import.meta.env.DEV) {
       // Lets a script capture the finished frame as the static fallback image.
@@ -228,8 +282,10 @@ export function ConvergenceField({
       cancelled = true;
       cancelAnimationFrame(frame);
       ro.disconnect();
+      visibility.disconnect();
+      document.removeEventListener("visibilitychange", resume);
     };
-  }, [seed, reduced, counts, getTargets, getFrame]);
+  }, [seed, reduced, counts, getTargets, getFrame, paused, replay]);
 
   return (
     <div ref={hostRef} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
