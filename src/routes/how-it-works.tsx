@@ -25,12 +25,10 @@ import {
   FIRST_SHORTLIST_BUSINESS_DAYS,
   FIRST_SHORTLIST_TIMING,
   JOB_BOARD_NOTE,
-  OFFER_CATEGORY,
   PROCESS_STEPS,
   PROCESS_STEP_COUNT,
   SEATS_NOTE,
   TIMING_FINE_PRINT,
-  WHO_RUNS_THE_SEARCH,
 } from "@/config/offer-facts";
 
 export const Route = createFileRoute("/how-it-works")({

@@ -191,7 +191,7 @@ function StudyCard({ study }: { study: Study }) {
               {study.testimonial.role}
             </figcaption>
           </figure>
-        ) : null
+        ) : null}
       </div>
 
     </article>

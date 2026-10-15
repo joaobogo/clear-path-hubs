@@ -4,6 +4,28 @@ import { INDUSTRY_ENTRIES } from "../../src/content/industries-v2";
 import { getIndustryHeroImage } from "../../src/content/industry-hero-images";
 
 describe("Industry pictures", () => {
+  it("keeps pricing scannable and avoids repeated comparison and FAQ blocks", () => {
+    const pricing = readFileSync("src/routes/pricing.tsx", "utf8");
+    expect(pricing).toContain('aria-label="Pricing sections"');
+    expect(pricing).toContain('id="packages"');
+    expect(pricing).toContain('id="included"');
+    expect(pricing).toContain('id="terms"');
+    expect(pricing).not.toContain("<ModelComparisonTable");
+    expect(pricing).not.toContain("{FAQ.map");
+    expect(pricing).toContain("pilot paid once");
+  });
+
+  it("illustrates examples honestly without empty testimonial placeholders", () => {
+    const examples = readFileSync("src/routes/case-studies.tsx", "utf8");
+    expect(examples).toContain("getIndustryHeroImage(STUDY_INDUSTRIES[study.slug]");
+    expect(examples).toContain("<HeroPicture");
+    expect(examples).toContain("They are not reported client results");
+    expect(examples).not.toContain("<ProcessStrip");
+    expect(examples).not.toContain("No quote is published");
+    expect(examples).toContain('aria-label="Example industries"');
+    const rail = readFileSync("src/components/layout/chapter-rail.tsx", "utf8");
+    expect(rail).toContain("overflow-x-auto");
+  });
   it("provides a distinct picture and description for every industry", () => {
     const images = INDUSTRY_ENTRIES.map((entry) => getIndustryHeroImage(entry.slug));
     for (const image of images) {

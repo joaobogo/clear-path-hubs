@@ -321,7 +321,7 @@ function EnterprisePage() {
             How the model scales with your requisition count.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Choose a package by hiring capacity. Your role families, delivery cadence and oversight are agreed before sourcing starts.
+            Choose a package by hiring capacity. Your role families, search timing and oversight are agreed before sourcing starts.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             Above {MAX_POSITIONS} positions there is no published price — we
