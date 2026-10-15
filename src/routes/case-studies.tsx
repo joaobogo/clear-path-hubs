@@ -132,11 +132,11 @@ function StudyCard({ study }: { study: Study }) {
         ))}
       </div>
 
-      {/* Situation + roles needed */}
-      <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">Example situation</p>
-          <p className="mt-2 text-sm leading-relaxed">{study.situation}</p>
+      {/* Key takeaway + roles needed */}
+      <div className="grid gap-6 p-6 md:grid-cols-[1.2fr_1fr] md:p-8">
+        <div className="border-l-4 border-primary pl-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">The takeaway</p>
+          <p className="mt-2 font-display text-lg font-semibold leading-snug text-[color:var(--brand-navy)]">{study.outcomeHighlight}</p>
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">Roles needed</p>
@@ -150,11 +150,11 @@ function StudyCard({ study }: { study: Study }) {
         </div>
       </div>
 
-      {/* Timeline to first shortlist */}
-      <details className="border-t border-border/60 p-6 md:p-8">
-        <summary className="min-h-11 cursor-pointer text-sm font-semibold text-[color:var(--ink)]">
-          View the example timeline · first shortlist: {study.timeToFirstShortlist}
-        </summary>
+      {/* Timeline: always visible as a compact visual strip */}
+      <div className="border-t border-border/60 p-6 md:p-8">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
+          First shortlist: {study.timeToFirstShortlist}
+        </p>
         <ol className="relative mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {study.timeline.map((t, i) => (
             <li key={i} className="relative">
@@ -168,19 +168,25 @@ function StudyCard({ study }: { study: Study }) {
             </li>
           ))}
         </ol>
-      </details>
+      </div>
 
-      {/* Outcome + testimonial (only rendered when a real, approved quote exists) */}
-      <div className="grid gap-6 border-t border-border/60 bg-muted/20 p-6  md:p-8">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
-            What this example shows
-          </p>
-          <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">{study.outcomeHighlight}</p>
-          <p className="mt-2 text-sm leading-relaxed">{study.outcome}</p>
+      {/* Full story on demand; testimonial only when a real, approved quote exists */}
+      <details className="border-t border-border/60 bg-muted/20 p-6 md:p-8">
+        <summary className="min-h-11 cursor-pointer text-sm font-semibold text-[color:var(--ink)]">
+          Read the full example
+        </summary>
+        <div className="mt-4 grid gap-5 md:grid-cols-2">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">Situation</p>
+            <p className="mt-2 text-sm leading-relaxed">{study.situation}</p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">What it shows</p>
+            <p className="mt-2 text-sm leading-relaxed">{study.outcome}</p>
+          </div>
         </div>
         {study.testimonial ? (
-          <figure className="rounded-2xl border border-border/60 bg-background p-5">
+          <figure className="mt-5 rounded-2xl border border-border/60 bg-background p-5">
             <Quote className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             <blockquote className="mt-2 text-sm italic leading-relaxed">
               "{study.testimonial.quote}"
@@ -192,7 +198,7 @@ function StudyCard({ study }: { study: Study }) {
             </figcaption>
           </figure>
         ) : null}
-      </div>
+      </details>
 
     </article>
   );
@@ -200,14 +206,12 @@ function StudyCard({ study }: { study: Study }) {
 
 function MetricDefinitions() {
   return (
-    <section className="mt-16 rounded-2xl border border-border/60 bg-background p-6 md:p-8" aria-labelledby="metric-definitions">
-      <h2 id="metric-definitions" className="font-display text-2xl font-semibold tracking-tight">
-        How we define metrics
-      </h2>
-      <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
-        Hiring metrics are easy to mix up, so these are the definitions we use. When a figure is published on
-        this site, it states where it comes from.
-      </p>
+    <details className="mt-16 rounded-2xl border border-border/60 bg-background p-6 md:p-8">
+      <summary className="min-h-11 cursor-pointer">
+        <h2 id="metric-definitions" className="inline font-display text-2xl font-semibold tracking-tight">
+          How we define metrics
+        </h2>
+      </summary>
       <dl className="mt-5 grid gap-4 md:grid-cols-3">
         <div>
           <dt className="text-sm font-semibold">Offer acceptance rate</dt>
@@ -229,7 +233,7 @@ function MetricDefinitions() {
           </dd>
         </div>
       </dl>
-    </section>
+    </details>
   );
 }
 
@@ -262,12 +266,10 @@ function CaseStudiesPage() {
             What an engagement looks like
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            Six example engagements across hospitality, finance, healthcare, technology, consumer and
-            industrial hiring. They show how a search runs from brief to shortlist.
+            Six industries. One path from brief to shortlist.
           </p>
-          <p className="mt-4 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
-            These are examples built from representative data. They are not reported client results, and
-            we publish no client name or testimonial without written approval.
+          <p className="mt-3 max-w-2xl text-xs text-[color:var(--brand-navy)]/70">
+            Representative examples. They are not reported client results.
           </p>
         </header>
 
