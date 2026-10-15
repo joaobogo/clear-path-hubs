@@ -28,6 +28,8 @@ import {
 } from "@/config/offer-facts";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
+import { EditorialCover } from "@/components/marketing/editorial-cover";
+import enterpriseTeam from "@/assets/page-enterprise-team.jpg";
 import {
   PRICE_PILOT_DISPLAY,
   PACKAGE_10,
@@ -221,15 +223,14 @@ function EnterprisePage() {
   return (
     <SiteShell>
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <PublicSection className="pb-10 pt-16 sm:pt-20">
-        <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
+      <EditorialCover image={enterpriseTeam} alt="A cross-functional hiring committee reviewing application documents in a bright meeting room.">
+          <p className="editorial-cover-muted text-xs font-semibold uppercase tracking-[0.14em]">
             Enterprise
           </p>
-          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="editorial-cover-copy mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold sm:text-5xl">
             Your hiring function. Scaled. On one workspace.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
+          <p className="editorial-cover-muted mt-5 max-w-2xl text-lg">
             Every open role, every ranked candidate, every piece of evidence —
             in a single account your TA, hiring managers, and executives share.{" "}
             {WHO_RUNS_THE_SEARCH}
@@ -243,13 +244,16 @@ function EnterprisePage() {
             </Link>
             <Link
               to={CTA_PRIMARY.to}
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-center text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-on-dark)]/40 px-5 py-2.5 text-center text-sm font-semibold text-[color:var(--brand-on-dark)] hover:bg-[color:var(--brand-on-dark)]/10"
             >
               {CTA_PRIMARY.label}
             </Link>
           </div>
 
-          <nav aria-label="Enterprise decision path" className="mt-10">
+      </EditorialCover>
+      <PublicSection className="py-6">
+        <PublicPage>
+          <nav aria-label="Enterprise decision path">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               What enterprise buyers ask
             </p>

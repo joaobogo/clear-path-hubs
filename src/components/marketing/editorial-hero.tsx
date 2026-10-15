@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { EditorialCover } from "@/components/marketing/editorial-cover";
+import { PagePhotograph } from "@/components/marketing/page-photograph";
 
 /**
  * Editorial hero and photo band for the public sub-pages.
@@ -47,31 +49,18 @@ export function EditorialHero({
   tone = "cool",
 }: EditorialHeroProps) {
   return (
-    <section
-      className={cn(
-        "relative overflow-hidden border-b border-[color:var(--brand-navy)]/10",
-        tone === "warm"
-          ? "bg-[color:var(--brand-cream)]"
-          : "bg-[color:var(--brand-navy)]/[0.035]",
-      )}
-    >
-      <div className="mx-auto w-full max-w-[1200px] px-4 pb-10 pt-12 sm:px-6 sm:pt-14 lg:px-8 lg:pb-14">
-        <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
-              {eyebrow}
-            </p>
-            <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
-              {title}
-            </h1>
-            <p className="mt-4 max-w-xl text-lg text-[color:var(--brand-navy)]/80">{lead}</p>
+    <EditorialCover image={image} alt={imageAlt} width={1600} height={1008} className={tone === "warm" ? "editorial-warm" : undefined}>
+          <div className="max-w-3xl">
+            <p className="editorial-cover-muted text-xs font-semibold uppercase tracking-[0.16em]">{eyebrow}</p>
+            <h1 className="editorial-cover-copy mt-3 text-balance font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.08] sm:text-5xl">{title}</h1>
+            <p className="editorial-cover-muted mt-4 max-w-2xl text-lg">{lead}</p>
 
             {primary || secondary ? (
               <div className="mt-7 flex flex-wrap gap-3">
                 {primary ? (
                   <Link
                     to={primary.to}
-                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--blue-600)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
                   >
                     {primary.label}
                   </Link>
@@ -79,7 +68,7 @@ export function EditorialHero({
                 {secondary ? (
                   <Link
                     to={secondary.to}
-                    className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 bg-white/70 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-white"
+                    className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-on-dark)]/40 bg-[color:var(--brand-on-dark)]/10 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:bg-[color:var(--brand-on-dark)]/20"
                   >
                     {secondary.label}
                   </Link>
@@ -88,7 +77,7 @@ export function EditorialHero({
             ) : null}
 
             {note ? (
-              <p className="mt-3 text-sm font-semibold text-[color:var(--brand-navy)]">{note}</p>
+              <p className="mt-3 text-sm font-semibold editorial-cover-copy">{note}</p>
             ) : null}
 
             {stats?.length ? (
@@ -97,10 +86,10 @@ export function EditorialHero({
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
-                      <span className="block font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]">
+                      <span className="block font-[family-name:var(--brand-font-display)] text-2xl font-semibold editorial-cover-copy">
                         {stat.value}
                       </span>
-                      <span className="mt-0.5 block text-xs uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+                      <span className="mt-0.5 block text-xs uppercase tracking-[0.12em] editorial-cover-muted">
                         {stat.label}
                       </span>
                     </dd>
@@ -109,27 +98,8 @@ export function EditorialHero({
               </dl>
             ) : null}
           </div>
-
-          <figure className="relative m-0">
-            <div className="overflow-hidden rounded-2xl bg-[color:var(--brand-navy)]/5 shadow-[0_24px_60px_-30px_rgba(12,35,64,0.45)]">
-              <img
-                src={image}
-                alt={imageAlt}
-                width={1600}
-                height={1008}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                sizes="(max-width: 1024px) 100vw, 560px"
-                className="aspect-[16/11] w-full object-cover"
-              />
-            </div>
-          </figure>
-        </div>
-
         {children ? <div className="mt-10">{children}</div> : null}
-      </div>
-    </section>
+    </EditorialCover>
   );
 }
 
@@ -151,29 +121,17 @@ type PhotoBandProps = {
 export function PhotoBand({ image, imageAlt, caption, eyebrow, stats, className }: PhotoBandProps) {
   return (
     <section className={cn("relative", className)}>
-      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        <figure className="relative m-0 overflow-hidden rounded-2xl">
-          <img
-            src={image}
-            alt={imageAlt}
-            width={1600}
-            height={1008}
-            loading="lazy"
-            decoding="async"
-            sizes="(max-width: 1200px) 100vw, 1136px"
-            className="aspect-[21/9] w-full object-cover"
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-gradient-to-t from-[color:var(--brand-navy)]/85 via-[color:var(--brand-navy)]/35 to-transparent"
-          />
-          <figcaption className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
+      <div className="editorial-cover relative">
+        <figure className="relative m-0 overflow-hidden">
+          <PagePhotograph src={image} alt={imageAlt} width={1600} height={704} className="h-[260px] sm:h-[380px]" />
+          <div aria-hidden className="editorial-cover-scrim pointer-events-none absolute inset-0 hidden sm:block" />
+          <figcaption className="relative mx-auto max-w-[1200px] px-4 py-6 sm:absolute sm:inset-x-0 sm:bottom-0 sm:px-6 sm:py-8 lg:px-8">
             {eyebrow ? (
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/70">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-on-dark)]/70">
                 {eyebrow}
               </p>
             ) : null}
-            <p className="mt-1.5 max-w-2xl font-[family-name:var(--brand-font-display)] text-xl font-semibold text-white sm:text-2xl">
+            <p className="mt-1.5 max-w-2xl font-[family-name:var(--brand-font-display)] text-xl font-semibold text-[color:var(--brand-on-dark)] sm:text-2xl">
               {caption}
             </p>
             {stats?.length ? (
@@ -182,8 +140,8 @@ export function PhotoBand({ image, imageAlt, caption, eyebrow, stats, className 
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
-                      <span className="block text-lg font-semibold text-white">{stat.value}</span>
-                      <span className="block text-xs uppercase tracking-[0.12em] text-white/70">
+                      <span className="block text-lg font-semibold text-[color:var(--brand-on-dark)]">{stat.value}</span>
+                      <span className="block text-xs uppercase tracking-[0.12em] text-[color:var(--brand-on-dark)]/70">
                         {stat.label}
                       </span>
                     </dd>

@@ -49,10 +49,8 @@ describe("Industry pictures", () => {
 
   it("adds meaningful photographs without replacing conversion controls", () => {
     for (const [file, control] of [
-      ["src/components/home/run-hero.tsx", "<RoleInput"],
-      ["src/routes/pricing.tsx", "<PackageSelector"],
+      ["src/components/home/chapters/chapter-signoff.tsx", "<DecisionCell"],
       ["src/routes/pilot.tsx", "<EmployerInquiryForm"],
-      ["src/components/marketing/money-page.tsx", "{page.directAnswer}"],
     ]) {
       const source = readFileSync(file, "utf8");
       expect(source).toContain("<PagePhotograph");
@@ -63,5 +61,22 @@ describe("Industry pictures", () => {
     expect(photo).toContain("width={width}");
     expect(photo).toContain("height={height}");
     expect(photo).toContain("alt={alt}");
+  });
+  it("integrates buying-page imagery without delaying pricing controls", () => {
+    const pricing = readFileSync("src/routes/pricing.tsx", "utf8");
+    expect(pricing.indexOf("<PackageSelector")).toBeLessThan(pricing.indexOf("<PhotoBand"));
+    const money = readFileSync("src/components/marketing/money-page.tsx", "utf8");
+    expect(money).toContain("BUYER_PAGE_PHOTOGRAPHS[page.slug]");
+    expect(money).toContain("<EditorialCover");
+    expect(money).toContain("{page.directAnswer}");
+    expect(readFileSync("src/components/home/run-hero.tsx", "utf8")).not.toContain("<PagePhotograph");
+  });
+  it("keeps photography visible with reduced motion and captions below images on mobile", () => {
+    const css = readFileSync("src/styles/run.css", "utf8");
+    expect(css).toContain("prefers-reduced-motion: reduce");
+    expect(css).toContain("transform: none !important; transition: none");
+    const bands = readFileSync("src/components/marketing/editorial-hero.tsx", "utf8");
+    expect(bands).toContain('className="relative mx-auto max-w-[1200px]');
+    expect(bands).toContain("sm:absolute");
   });
 });

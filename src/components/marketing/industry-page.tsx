@@ -1305,13 +1305,17 @@ function SectionRelated({ ctx }: { ctx: Ctx }) {
           </Link>
         </div>
         <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {items.map((r) => (
+          {items.map((r) => {
+            const picture = getIndustryHeroImage(r.slug);
+            return (
             <Link
               key={r.slug}
               to="/industries/$slug"
               params={{ slug: toPublicSlug(r.slug) }}
-              className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="group overflow-hidden rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-on-dark)] transition-colors hover:border-[color:var(--brand-ocean)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
+              {picture ? <HeroPicture src={picture.src} alt={picture.alt} width={picture.width} height={picture.height} className="aspect-[4/3] w-full object-cover" style={{ objectPosition: picture.focal }} /> : null}
+              <div className="p-5">
               <h3 className="text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean-text)]">
                 {r.name}
               </h3>
@@ -1323,8 +1327,9 @@ function SectionRelated({ ctx }: { ctx: Ctx }) {
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)]">
                 Explore <ArrowRight className="h-4 w-4" />
               </span>
+              </div>
             </Link>
-          ))}
+          ); })}
         </div>
       </PublicPage>
     </PublicSection>

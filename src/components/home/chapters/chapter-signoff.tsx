@@ -12,6 +12,8 @@ import {
   SAMPLE_SHORTLIST_REQUIREMENTS,
 } from "@/lib/previews/representative-fixtures";
 import { cn } from "@/lib/utils";
+import { PagePhotograph } from "@/components/marketing/page-photograph";
+import recruiterEvidence from "@/assets/page-recruiter-evidence.jpg";
 
 const chapter = RUN_CHAPTERS[3]!;
 const UNDO_SECONDS = 5 * 60;
@@ -107,9 +109,12 @@ export function ChapterSignOff() {
       title="Ten people, read and signed."
       lead="A senior recruiter reads every finalist, writes a note on each and signs the list before it reaches you."
     >
-      <div className="border-2 border-[color:var(--ink)] p-6 sm:flex sm:items-start sm:justify-between sm:gap-10 sm:p-8">
+      <div className="grid gap-6 border-y border-[color:var(--ink)] py-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center">
+        <PagePhotograph src={recruiterEvidence} alt="A senior recruiter reading application documents and checking evidence at her desk." className="aspect-[4/3]" />
+        <div className="min-w-0">
         <blockquote className="max-w-[640px] text-[17px] leading-[1.55] text-[color:var(--ink)]">{SAMPLE_RECRUITER_SIGN_OFF}</blockquote>
-        <Seal what="Top 10 signed off" at={PREVIEW_RUN_SIGNED_AT} className="mt-6 shrink-0 sm:mt-0" />
+        <Seal what="Top 10 signed off" at={PREVIEW_RUN_SIGNED_AT} className="mt-6" />
+        </div>
       </div>
 
       {/* A phone turns the six-column table into cards; the table stays for assistive tech from 768 up. */}
