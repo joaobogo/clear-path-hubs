@@ -306,13 +306,14 @@ function HeroImageBand({ ctx }: { ctx: Ctx }) {
   const heroImage = getIndustryHeroImage(entry.slug);
   if (!heroImage) return null;
   return (
-    <figure className="relative mt-10 overflow-hidden rounded-3xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-[0_30px_90px_-45px_rgba(10,20,50,0.45)]">
-      <div className="relative aspect-[16/10] w-full sm:aspect-[21/8]">
+    <figure className="relative mb-10 overflow-hidden">
+      <div className="relative h-[220px] w-full sm:h-[300px] lg:h-[360px]">
         <HeroPicture
           src={heroImage.src}
           alt={heroImage.alt}
           width={heroImage.width}
           height={heroImage.height}
+          priority
           style={{ objectPosition: heroImage.focal ?? "50% 40%" }}
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -345,6 +346,7 @@ function HeroSystemsCapability({ ctx }: { ctx: Ctx }) {
         }}
       />
       <PublicPage className="relative">
+        <HeroImageBand ctx={ctx} />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-start">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
@@ -384,7 +386,6 @@ function HeroSystemsCapability({ ctx }: { ctx: Ctx }) {
             </aside>
           ) : null}
         </div>
-        <HeroImageBand ctx={ctx} />
       </PublicPage>
     </PublicSection>
   );
@@ -423,7 +424,7 @@ function HeroTrustCompliance({ ctx }: { ctx: Ctx }) {
             className="relative rounded-3xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/50 p-5"
           >
             {heroImage ? (
-              <div className="mb-4 aspect-[16/9] overflow-hidden rounded-2xl">
+              <div className="mb-4 aspect-[4/3] overflow-hidden">
                 <HeroPicture
                   src={heroImage.src}
                   alt={heroImage.alt}
@@ -485,6 +486,7 @@ function HeroRiskJudgment({ ctx }: { ctx: Ctx }) {
   return (
     <PublicSection className="bg-[color:var(--brand-paper)] pb-10 pt-12 sm:pt-16">
       <PublicPage>
+        <HeroImageBand ctx={ctx} />
         <div className="grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-end">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-navy)]/80">
@@ -528,7 +530,6 @@ function HeroRiskJudgment({ ctx }: { ctx: Ctx }) {
             </div>
           </aside>
         </div>
-        <HeroImageBand ctx={ctx} />
       </PublicPage>
     </PublicSection>
   );
@@ -555,6 +556,7 @@ function HeroOperationsDelivery({ ctx }: { ctx: Ctx }) {
         }}
       />
       <PublicPage className="relative">
+        <HeroImageBand ctx={ctx} />
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
           {entry.eyebrow} · {config.familyLabel}
         </p>
@@ -579,7 +581,6 @@ function HeroOperationsDelivery({ ctx }: { ctx: Ctx }) {
             <FlowNode label="Outcome evidenced" value={flowOutcome} />
           </div>
         </div>
-        <HeroImageBand ctx={ctx} />
       </PublicPage>
     </PublicSection>
   );
@@ -614,8 +615,8 @@ function HeroServiceExperience({ ctx }: { ctx: Ctx }) {
   return (
     <PublicSection className="pb-6 pt-6 sm:pt-8">
       <PublicPage>
-        <figure className="relative overflow-hidden rounded-3xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-[0_40px_120px_-40px_rgba(10,20,50,0.55)]">
-          <div className="relative aspect-[16/11] w-full sm:aspect-[21/9]">
+        <figure className="relative overflow-hidden bg-[color:var(--brand-navy)]">
+          <div className="relative h-[240px] w-full sm:h-[520px]">
             {heroImage ? (
               <HeroPicture
                 src={heroImage.src}
@@ -637,7 +638,7 @@ function HeroServiceExperience({ ctx }: { ctx: Ctx }) {
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[color:var(--brand-navy)]/85 via-[color:var(--brand-navy)]/35 to-transparent" />
           </div>
-          <figcaption className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
+          <figcaption className="relative p-6 sm:absolute sm:inset-x-0 sm:bottom-0 sm:p-10">
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/80">
               {entry.eyebrow} · {config.familyLabel}
             </p>
@@ -679,6 +680,7 @@ function HeroExpertiseGrowth({ ctx }: { ctx: Ctx }) {
   return (
     <PublicSection className="pb-8 pt-12 sm:pt-16">
       <PublicPage>
+        <HeroImageBand ctx={ctx} />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
@@ -718,7 +720,6 @@ function HeroExpertiseGrowth({ ctx }: { ctx: Ctx }) {
             </aside>
           ) : null}
         </div>
-        <HeroImageBand ctx={ctx} />
       </PublicPage>
     </PublicSection>
   );
