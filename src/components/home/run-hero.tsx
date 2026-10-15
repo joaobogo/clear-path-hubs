@@ -15,8 +15,6 @@ import {
 } from "@/lib/previews/representative-fixtures";
 import { FIELD_GATES, type Point } from "@/lib/run/field";
 import { cn } from "@/lib/utils";
-import { PagePhotograph } from "@/components/marketing/page-photograph";
-import homeTeam from "@/assets/page-home-team.jpg";
 
 /**
  * The homepage hero (The Run, cold open). White. Headline, the role input,
@@ -115,12 +113,6 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
                 className="border-[color:var(--blue-200)] [box-shadow:0_18px_40px_-24px_var(--blue-300)]"
               />
             </div>
-            <PagePhotograph
-              src={homeTeam}
-              alt="Recruiting professionals reviewing application notes together in a bright office."
-              priority
-              className="mt-8 h-[200px] sm:h-[240px]"
-            />
           </div>
 
           <aside ref={listRef} aria-labelledby="run-hero-list-title" className="min-w-0">
