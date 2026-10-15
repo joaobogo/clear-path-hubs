@@ -13,7 +13,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  Check,
   ChevronDown,
   Lock,
   ShieldCheck,
