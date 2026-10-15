@@ -97,11 +97,11 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
           <div className="min-w-0 max-w-[800px]">
             <h1
               id="run-hero-title"
-              className="display text-[clamp(44px,6vw,86px)] text-[color:var(--ink)]"
+              className="display text-[clamp(44px,6vw,86px)] text-[color:var(--ink)] [text-shadow:0_0_18px_var(--paper,white),0_0_6px_var(--paper,white)]"
             >
               Post the role. Sourcing agents deliver your shortlist.
             </h1>
-            <p className="mt-6 max-w-[640px] text-[21px] leading-[1.45] text-[color:var(--slate)]">
+            <p className="mt-6 max-w-[640px] rounded-xl bg-white/85 px-4 py-3 -mx-4 text-[21px] font-medium leading-[1.45] text-[color:var(--ink)] shadow-[0_12px_32px_-20px_var(--blue-300)] backdrop-blur-sm">
               {agentsLine} {peopleLine}
             </p>
             <div className="mt-10 max-w-[590px]">
