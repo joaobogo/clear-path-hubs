@@ -21,7 +21,7 @@ export function Chapter({
   children: ReactNode;
   className?: string;
 }) {
-  const surface = chapter.surface === "paper" ? "day bg-[color:var(--paper)]" : chapter.surface;
+  const surface = chapter.surface === "paper" ? "day [--bg:var(--paper)]" : chapter.surface;
   return (
     <section
       id={`chapter-${chapter.id}`}
