@@ -99,7 +99,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
               id="run-hero-title"
               className="display text-[clamp(44px,6vw,86px)] text-[color:var(--ink)]"
             >
-              Everyone hears about your role. You meet ten.
+              Post the role. Sourcing agents deliver your shortlist.
             </h1>
             <p className="mt-6 max-w-[640px] text-[21px] leading-[1.45] text-[color:var(--slate)]">
               {agentsLine} {peopleLine}

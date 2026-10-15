@@ -15,7 +15,7 @@ import { SAMPLE_SHORTLIST_ROLE } from "@/lib/previews/representative-fixtures";
 // homepage chunk (~890 KiB) and delays hydration.
 
 const HOME_TITLE = "Recruiting Subscription & Candidate Sourcing | TaaSFlow";
-const HOME_DESCRIPTION = `Everyone hears about your role. You meet ten. Agents open it on every channel the same day, a senior recruiter signs the shortlist. Start with one role for $${PRICE_PILOT_USD}.`;
+const HOME_DESCRIPTION = `Post the role. Sourcing agents deliver your shortlist. Agents open it on every channel the same day, a senior recruiter signs the shortlist. Start with one role for $${PRICE_PILOT_USD}.`;
 
 export const Route = createFileRoute("/")({
   /** The role typed into the hero. Every chapter below speaks about it. */
