@@ -136,7 +136,7 @@ export function MoneyPageView({ page }: { page: MoneyPageContent }) {
   const photograph = BUYER_PAGE_PHOTOGRAPHS[page.slug] ?? BUYER_PAGE_PHOTOGRAPHS["recruiting-as-a-service"];
   if (!photograph) return null;
   return (
-    <SiteShell>
+    <SiteShell hideClosingBand>
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: page.breadcrumbLabel }]} />
 
       <EditorialCover image={photograph.src} alt={photograph.alt} width={photograph.width} height={photograph.height}>

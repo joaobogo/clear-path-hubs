@@ -3,15 +3,13 @@ import { useState } from "react";
 import { marketingHead, faqScript, serviceScript } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
-import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
 import { Receipt, type ReceiptDetail, type ReceiptLine } from "@/components/signature/receipt";
 import { PackageSelector, type PackageStop } from "@/components/system/package-selector";
-import { RunLinkButton } from "@/components/system/run-button";
+import { RunButton, RunLinkButton } from "@/components/system/run-button";
 import { PhotoBand } from "@/components/marketing/editorial-hero";
 import pricingTeam from "@/assets/page-pricing-hero.jpg";
 import { NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
-import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
 import {
   ABOVE_MAX_ROLES_LABEL,
   ANNUAL_DISCOUNT_NOTE,
@@ -20,7 +18,6 @@ import {
   PRICE_PILOT_DISPLAY,
   formatUsdExact,
   subscriptionTotalsUsd,
-  type PackageId,
 } from "@/config/pricing-core";
 import { offer } from "@/config/offer";
 import { OFFER_CATEGORY, OFFER_LAST_UPDATED_LABEL, PILOT_IS_PAID_NOTE, TIMING_FINE_PRINT } from "@/config/offer-facts";
@@ -53,7 +50,7 @@ export const Route = createFileRoute("/pricing")({
           path: "/pricing",
           serviceType: "Recruiting",
         }),
-        faqScript(FAQ),
+        faqScript(ENTITLEMENT_POLICY.map((item) => ({ q: item.question, a: item.answer }))),
       ],
     }),
   component: PricingPage,
@@ -88,7 +85,8 @@ function PricingPage() {
   const [stopId, setStopId] = useState<string>("growth");
   const [billing, setBilling] = useState<Billing>("once");
 
-  const stop = STOPS.find((s) => s.id === stopId) ?? STOPS[1]!;
+  const stop = STOPS.find((s) => s.id === stopId) ?? STOPS[0];
+  if (!stop) return null;
   const pkg = PACKAGES.find((p) => p.id === stop.id);
   const isPilot = stop.id === "pilot";
   const isEnterprise = stop.id === ENTERPRISE_ID;
@@ -97,7 +95,7 @@ function PricingPage() {
   // The pilot is paid once whatever the billing mode; packages follow it.
   const monthlyTotals = pkg && !isPilot ? subscriptionTotalsUsd(pkg.capacity) : null;
   const paidMonthly = billing === "monthly" && monthlyTotals !== null;
-  const total = pkg ? (paidMonthly ? monthlyTotals!.monthly : pkg.totalUsd) : 0;
+  const total = pkg ? (paidMonthly && monthlyTotals ? monthlyTotals.monthly : pkg.totalUsd) : 0;
 
   const lines: ReceiptLine[] = pkg
     ? [
@@ -124,20 +122,24 @@ function PricingPage() {
       <PublicSection className="pb-0 pt-14 sm:pb-0 sm:pt-20 lg:pb-0">
         <PublicPage>
           <h1 className="display max-w-[14ch] text-[clamp(40px,5.5vw,60px)] text-[color:var(--ink)]">
-            Your invoice, before you sign.
+            Recruiting packages. Clear prices.
           </h1>
           <p className="mt-6 max-w-[640px] text-[21px] leading-[1.45] text-[color:var(--slate)]">
-            Every package is the full platform with managed execution. Tell us how many roles you have
-            open and read the whole bill.
+            ATS, sourcing agents, outreach and recruiter-reviewed shortlists. Choose your hiring capacity and billing.
           </p>
           <p className="mt-3 text-sm text-[color:var(--faint)]" data-testid="last-updated">
             {OFFER_LAST_UPDATED_LABEL}
           </p>
+          <nav aria-label="Pricing sections" className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-[color:var(--blue-600)]">
+            {[["packages", "Choose a package"], ["included", "What’s included"], ["compare-costs", "Compare costs"], ["terms", "Terms & questions"]].map(([id, label]) => (
+              <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center underline underline-offset-4">{label}</a>
+            ))}
+          </nav>
         </PublicPage>
       </PublicSection>
 
       {/* One control, one invoice */}
-      <PublicSection className="pt-10 sm:pt-12 lg:pt-12">
+      <PublicSection id="packages" className="scroll-mt-24 pt-10 sm:pt-12 lg:pt-12">
         <PublicPage>
           <div className="flex flex-col gap-6 border-t border-[color:var(--ink)] pt-8 lg:flex-row lg:items-end lg:justify-between">
             <PackageSelector stops={STOPS} value={stopId} onChange={setStopId} />
@@ -148,7 +150,7 @@ function PricingPage() {
                   ["monthly", "Billed monthly"],
                 ] as const
               ).map(([value, text]) => (
-                <button
+                <RunButton
                   key={value}
                   type="button"
                   role="radio"
@@ -157,12 +159,12 @@ function PricingPage() {
                   className={
                     "inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--blue-600)] " +
                     (billing === value
-                      ? "border-[color:var(--ink)] bg-[color:var(--ink)] text-white"
-                      : "border-[color:var(--rule-2)] bg-white text-[color:var(--ink)]")
+                      ? "border-[color:var(--ink)] bg-[color:var(--ink)] text-[color:var(--white)]"
+                      : "border-[color:var(--rule-2)] bg-[color:var(--background)] text-[color:var(--ink)]")
                   }
                 >
                   {text}
-                </button>
+                </RunButton>
               ))}
             </div>
           </div>
@@ -172,9 +174,7 @@ function PricingPage() {
               <div className="tint rounded-[var(--r-3)] p-8">
                 <p className="wide text-2xl font-semibold text-[color:var(--text)]">{ABOVE_MAX_ROLES_LABEL}</p>
                 <p className="mt-3 max-w-[480px] text-[17px] text-[color:var(--text-2)]">
-                  Above {MAX_POSITIONS} positions we scope the package with you rather than print a price we have
-                  not committed to. Tell us the roles and the timing, and you will have a written quote within one
-                  business day.
+                  A tailored package for more than {MAX_POSITIONS} positions. Tell us your roles and timing to discuss scope.
                 </p>
                 <RunLinkButton to={CTA_ENTERPRISE.to} className="mt-6">
                   {CTA_ENTERPRISE.label}
@@ -191,29 +191,29 @@ function PricingPage() {
                 footer={
                   <p>
                     {paidMonthly ? `${ANNUAL_DISCOUNT_NOTE} ` : ""}
-                    {isPilot ? PILOT_IS_PAID_NOTE : "No placement fee, however many of the ten you hire."}
+                    {isPilot ? PILOT_IS_PAID_NOTE : "No placement fee, regardless of how many candidates you hire."}
                   </p>
                 }
               />
             )}
 
             <div className="min-w-0">
-              <p className="narrow text-[13px] font-medium text-[color:var(--faint)]">Every published package, one total each</p>
+              <p className="narrow text-[13px] font-medium text-[color:var(--faint)]">{billing === "monthly" ? "Package prices · per month (pilot paid once)" : "Package prices · paid once"}</p>
               <ol className="mt-4 flex flex-col gap-3" aria-label="Package totals">
                 {PACKAGES.map((p) => {
                   const selected = p.id === stop.id;
                   return (
                     <li key={p.id}>
-                      <button
+                      <RunButton variant="ghost"
                         type="button"
                         onClick={() => setStopId(p.id)}
                         aria-pressed={selected}
-                        className="group grid w-full grid-cols-[150px_minmax(0,1fr)_96px] items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--blue-600)]"
+                        className="group grid w-full grid-cols-[minmax(0,1fr)_80px] items-center gap-3 whitespace-normal border-0 px-0 text-left sm:grid-cols-[150px_minmax(0,1fr)_96px]"
                       >
                         <span className={"text-[15px] " + (selected ? "font-semibold text-[color:var(--ink)]" : "text-[color:var(--slate)]")}>
                           {p.capacityLabel}
                         </span>
-                        <span className="h-3 w-full rounded-full bg-[color:var(--blue-100)]" aria-hidden>
+                        <span className="hidden h-3 w-full rounded-full bg-[color:var(--blue-100)] sm:block" aria-hidden>
                           <span
                             className={"block h-3 rounded-full " + (selected ? "bg-[color:var(--blue-600)]" : "bg-[color:var(--blue-200)] group-hover:bg-[color:var(--blue-300)]")}
                             style={{ width: `${Math.max(6, (p.totalUsd / maxTotal) * 100)}%` }}
@@ -222,7 +222,7 @@ function PricingPage() {
                         <span className={"wide num text-right text-base " + (selected ? "font-semibold text-[color:var(--ink)]" : "text-[color:var(--slate)]")}>
                           {p.totalDisplay}
                         </span>
-                      </button>
+                      </RunButton>
                     </li>
                   );
                 })}
@@ -248,15 +248,13 @@ function PricingPage() {
       </PublicSection>
 
       {/* The table follows the selector */}
-      <PublicSection>
+      <PublicSection id="included" className="scroll-mt-24">
         <PublicPage>
           <h2 className="max-w-[20ch] text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px] sm:leading-[1.04]">
-            What each package entitles you to.
+            What’s included.
           </h2>
           <p className="mt-4 max-w-[640px] text-[17px] text-[color:var(--slate)]">
-            The platform is the same on every package. What differs is capacity, seats and support. Where a
-            cell says “{SCOPED_PUBLIC_LABEL}”, we set it with you rather than print a limit we have not
-            committed to.
+            Every package includes the platform and managed recruiting. Capacity, seats and support vary below.
           </p>
           <div className="mt-8">
             <EntitlementMatrix
@@ -276,67 +274,33 @@ function PricingPage() {
 
       {/* Commercial terms: seven short answers */}
       <PhotoBand image={pricingTeam} imageAlt="A hiring team comparing recruitment plans together in a bright workspace." eyebrow="Managed execution" caption="The platform and the people behind your search." />
-      <PublicSection>
+      <PublicSection id="terms" className="scroll-mt-24">
         <PublicPage>
           <h2 className="max-w-[20ch] text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px] sm:leading-[1.04]">
-            The terms, in seven answers.
+            Terms & questions.
           </h2>
           <p className="mt-4 max-w-[640px] text-[17px] text-[color:var(--slate)]">
             Your signed quote or agreement is always the authority on commercial terms.
           </p>
-          <dl className="mt-8 grid gap-x-12 md:grid-cols-2">
+          <div className="mt-8 divide-y divide-[color:var(--rule)] border-y border-[color:var(--rule)]">
             {ENTITLEMENT_POLICY.map((item) => (
-              <div key={item.id} className="border-t border-[color:var(--rule)] py-5">
-                <dt className="text-base font-semibold text-[color:var(--ink)]">{item.question}</dt>
-                <dd className="mt-2 text-[15px] leading-relaxed text-[color:var(--slate)]">{item.answer}</dd>
-              </div>
+              <details key={item.id} className="py-4">
+                <summary className="min-h-11 cursor-pointer content-center text-base font-semibold text-[color:var(--ink)]">{item.question}</summary>
+                <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-[color:var(--slate)]">{item.answer}</p>
+              </details>
             ))}
-          </dl>
-        </PublicPage>
-      </PublicSection>
-
-      {/* The three-way comparison, moved from the homepage */}
-      <PublicSection>
-        <PublicPage>
-          <ModelComparisonTable />
+          </div>
+          <p className="mt-6 text-sm text-[color:var(--slate)]">Still deciding? <Link to="/faq" className="font-semibold text-[color:var(--blue-600)] underline underline-offset-4">Browse all questions</Link> or <Link to="/compare" className="font-semibold text-[color:var(--blue-600)] underline underline-offset-4">compare recruiting models</Link>.</p>
         </PublicPage>
       </PublicSection>
 
       {/* Your own numbers against an agency */}
-      <PublicSection>
+      <PublicSection id="compare-costs" className="scroll-mt-24">
         <PublicPage>
           <AgencyComparator />
         </PublicPage>
       </PublicSection>
 
-      {/* Questions */}
-      <PublicSection>
-        <PublicPage>
-          <h2 className="max-w-[20ch] text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px] sm:leading-[1.04]">
-            Before you sign.
-          </h2>
-          <p className="mt-4 text-[17px] text-[color:var(--slate)]">
-            More answers are on the{" "}
-            <Link to="/faq" className="font-medium text-[color:var(--blue-600)] underline underline-offset-4">
-              FAQ page
-            </Link>
-            .
-          </p>
-          <div className="mt-8 divide-y divide-[color:var(--rule)] border-y border-[color:var(--rule)]">
-            {FAQ.map((f) => (
-              <details key={f.q} className="group py-4 [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-[color:var(--ink)]">
-                  <span>{f.q}</span>
-                  <span aria-hidden className="text-xl leading-none text-[color:var(--faint)] group-open:rotate-45">
-                    +
-                  </span>
-                </summary>
-                <p className="mt-2 max-w-[640px] text-[15px] leading-relaxed text-[color:var(--slate)]">{f.a}</p>
-              </details>
-            ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
     </SiteShell>
   );
 }
