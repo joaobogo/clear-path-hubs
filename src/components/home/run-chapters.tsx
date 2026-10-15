@@ -14,7 +14,7 @@ import { ChapterRail, useActiveChapter } from "@/components/layout/chapter-rail"
 export function RunChapters({ role, lastUpdated }: { role: string; lastUpdated: string }) {
   const active = useActiveChapter();
   return (
-    <div className="day mx-auto w-full max-w-[calc(var(--max)+2*var(--margin))] px-[var(--margin)]">
+    <div className="run-chapters day mx-auto w-full max-w-[calc(var(--max)+2*var(--margin))] px-[var(--margin)]">
       <div className="grid gap-x-10 lg:grid-cols-[200px_minmax(0,1fr)]">
         <ChapterRail active={active} />
         <div className="min-w-0 divide-y divide-[color:var(--rule)]">

@@ -49,9 +49,9 @@ export function ChapterRail({ active, chapters = RUN_CHAPTERS }: { active: RunCh
   return (
     <>
       {/* 1024 and up: the rail. */}
-      <nav aria-label="Chapters" className="day sticky top-[96px] hidden self-start lg:block">
-        <RunClock day={active.clock.day} label={label} size={128} className="text-[color:var(--ink)]" />
-        <ol className="mt-8 flex flex-col border-l border-[color:var(--rule)]">
+      <nav aria-label="Chapters" className={cn(active.surface === "paper" ? "day" : active.surface, "sticky top-[96px] z-10 hidden self-start bg-transparent lg:block")}>
+        <RunClock day={active.clock.day} label={label} size={128} className="text-[color:var(--text)]" />
+        <ol className="mt-8 flex flex-col border-l border-[color:var(--line)]">
           {chapters.map((c, i) => {
             const state = i < activeIndex ? "done" : i === activeIndex ? "current" : "ahead";
             return (
@@ -61,14 +61,14 @@ export function ChapterRail({ active, chapters = RUN_CHAPTERS }: { active: RunCh
                   aria-current={state === "current" ? "step" : undefined}
                   className={cn(
                     "-ml-px flex min-h-11 items-center gap-2 border-l-2 pl-3 pr-1 text-[15px]",
-                    state === "current" && "border-[color:var(--blue-600)] text-[color:var(--blue-600)]",
-                    state === "done" && "border-[color:var(--blue-300)] text-[color:var(--slate)]",
-                    state === "ahead" && "border-transparent text-[color:var(--faint)]",
+                    state === "current" && "border-[color:var(--action)] text-[color:var(--action)]",
+                    state === "done" && "border-[color:var(--line-2)] text-[color:var(--text-2)]",
+                    state === "ahead" && "border-transparent text-[color:var(--text-3)]",
                   )}
                 >
                   <span className="narrow num w-4 text-[13px]">{i + 1}</span>
                   <span className={cn(state === "current" && "font-semibold")}>{c.title}</span>
-                  <span className="narrow num ml-auto whitespace-nowrap text-[12px] text-[color:var(--faint)]">
+                  <span className="narrow num ml-auto whitespace-nowrap text-[12px] text-[color:var(--text-3)]">
                     {clockLabel(c.clock)}
                   </span>
                 </a>
