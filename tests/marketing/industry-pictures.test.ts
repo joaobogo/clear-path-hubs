@@ -4,6 +4,29 @@ import { INDUSTRY_ENTRIES } from "../../src/content/industries-v2";
 import { getIndustryHeroImage } from "../../src/content/industry-hero-images";
 
 describe("Industry pictures", () => {
+  it("offers accessible homepage evidence and controllable line motion", () => {
+    const hero = readFileSync("src/components/home/run-hero.tsx", "utf8");
+    expect(hero).toContain('aria-label="Replay line animation"');
+    expect(hero).toContain('"Pause line animation"');
+    expect(hero).toContain('aria-pressed={selectedRef === c.ref}');
+    expect(hero).toContain('selected?.results.licence.evidence');
+    expect(hero).toContain('aria-live="polite"');
+    expect(hero).not.toContain("bg-white/");
+    const field = readFileSync("src/components/signature/convergence-field.tsx", "utf8");
+    expect(field).toContain('document.addEventListener("visibilitychange", resume)');
+    expect(field).toContain('visibility.disconnect()');
+    expect(field).toContain('reduced || paused');
+    expect(field).toContain('ctx.drawImage(still, 0, 0, w, h)');
+    expect(field).toContain('if (Math.round(rect.width) === w');
+  });
+  it("illustrates homepage sectors and keeps recurring package prices monthly", () => {
+    const proof = readFileSync("src/components/home/chapters/chapter-proof.tsx", "utf8");
+    expect(proof).toContain("getIndustryHeroImage(SECTOR_IMAGES[r.sector]");
+    expect(proof).toContain("<HeroPicture");
+    const pricing = readFileSync("src/routes/pricing.tsx", "utf8");
+    expect(pricing).toContain('billing === "monthly" && p.id !== "pilot"');
+    expect(pricing).toContain('formatUsdExact(subscriptionTotalsUsd(p.capacity)?.monthly ?? p.totalUsd)');
+  });
   it("prioritizes takeaways while keeping full examples accessible", () => {
     const examples = readFileSync("src/routes/case-studies.tsx", "utf8");
     expect(examples).toContain("The takeaway");
