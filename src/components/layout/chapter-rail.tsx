@@ -49,7 +49,7 @@ export function ChapterRail({ active, chapters = RUN_CHAPTERS }: { active: RunCh
   return (
     <>
       {/* 1024 and up: the rail. */}
-      <nav aria-label="Chapters" className={cn(active.surface === "paper" ? "day" : active.surface, "sticky top-[96px] z-10 hidden self-start bg-transparent lg:block")}>
+      <nav aria-label="Chapters" className={cn(active.surface === "paper" ? "day" : active.surface, "sticky top-[96px] z-10 hidden self-start bg-transparent xl:block")}>
         <RunClock day={active.clock.day} label={label} size={128} className="text-[color:var(--text)]" />
         <ol className="mt-8 flex flex-col border-l border-[color:var(--line)]">
           {chapters.map((c, i) => {
@@ -81,7 +81,7 @@ export function ChapterRail({ active, chapters = RUN_CHAPTERS }: { active: RunCh
       {/* Below 1024: a 48 px bar under the header. A phone shows only the clock. */}
       <div
         aria-live="polite"
-        className="day sticky top-[72px] z-30 -mx-[var(--margin)] flex h-12 items-center gap-3 border-b border-[color:var(--rule)] px-[var(--margin)] lg:hidden"
+        className="day sticky top-[72px] z-30 -mx-[var(--margin)] flex h-12 items-center gap-3 border-b border-[color:var(--rule)] px-[var(--margin)] xl:hidden"
       >
         <RunClock day={active.clock.day} label={label} size={26} />
         <span className="num text-sm font-semibold text-[color:var(--ink)]">{label}</span>
