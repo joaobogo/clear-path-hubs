@@ -225,7 +225,7 @@ function PricingPage() {
                           />
                         </span>
                         <span className={"wide num text-right text-base " + (selected ? "font-semibold text-[color:var(--ink)]" : "text-[color:var(--slate)]")}>
-                          {billing === "monthly" && p.id !== "pilot" ? formatUsdExact(subscriptionTotalsUsd(p.capacity).monthly) : p.totalDisplay}
+                          {billing === "monthly" && p.id !== "pilot" ? formatUsdExact(subscriptionTotalsUsd(p.capacity)?.monthly ?? p.totalUsd) : p.totalDisplay}
                         </span>
                       </RunButton>
                     </li>

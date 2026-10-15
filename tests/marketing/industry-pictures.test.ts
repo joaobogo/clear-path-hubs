@@ -25,7 +25,7 @@ describe("Industry pictures", () => {
     expect(proof).toContain("<HeroPicture");
     const pricing = readFileSync("src/routes/pricing.tsx", "utf8");
     expect(pricing).toContain('billing === "monthly" && p.id !== "pilot"');
-    expect(pricing).toContain('formatUsdExact(subscriptionTotalsUsd(p.capacity).monthly)');
+    expect(pricing).toContain('formatUsdExact(subscriptionTotalsUsd(p.capacity)?.monthly ?? p.totalUsd)');
   });
   it("prioritizes takeaways while keeping full examples accessible", () => {
     const examples = readFileSync("src/routes/case-studies.tsx", "utf8");
