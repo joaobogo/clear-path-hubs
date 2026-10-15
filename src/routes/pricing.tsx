@@ -8,7 +8,6 @@ import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
 import { Receipt, type ReceiptDetail, type ReceiptLine } from "@/components/signature/receipt";
 import { PackageSelector, type PackageStop } from "@/components/system/package-selector";
 import { RunLinkButton } from "@/components/system/run-button";
-import { PagePhotograph } from "@/components/marketing/page-photograph";
 import { PhotoBand } from "@/components/marketing/editorial-hero";
 import pricingTeam from "@/assets/page-pricing-hero.jpg";
 import { NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";

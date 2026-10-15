@@ -13,3 +13,4 @@
 - Homepage chapter backgrounds extend across the viewport while content stays constrained, so the chapter rail does not leave a blank side gutter.
 - Industry cards and detail pages use the shared hero-image registry and managed media pointers, so sector imagery stays consistent without third-party hotlinks.
 - Public page photography uses shared image primitives with intrinsic dimensions and eager loading only above the fold, preserving stable layouts and accessible descriptions.
+- Editorial covers use the shared cover primitive and buyer-page image registry; image motion never hides content and respects reduced motion.
