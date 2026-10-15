@@ -28,4 +28,31 @@ describe("Industry pictures", () => {
     expect(css).toContain("clip-path: inset(0 -100vmax)");
     expect(css).toContain("pointer-events: none");
   });
+
+  it("puts sector photographs before diagram-led hero copy", () => {
+    const source = readFileSync("src/components/marketing/industry-page.tsx", "utf8");
+    for (const name of ["HeroSystemsCapability", "HeroRiskJudgment", "HeroOperationsDelivery", "HeroExpertiseGrowth"]) {
+      const body = source.slice(source.indexOf(`function ${name}(`));
+      expect(body.indexOf("<HeroImageBand")).toBeLessThan(body.indexOf("{entry.eyebrow}"));
+    }
+    expect(source).toContain("relative p-6 sm:absolute");
+  });
+
+  it("adds meaningful photographs without replacing conversion controls", () => {
+    for (const [file, control] of [
+      ["src/components/home/run-hero.tsx", "<RoleInput"],
+      ["src/routes/pricing.tsx", "<PackageSelector"],
+      ["src/routes/pilot.tsx", "<EmployerInquiryForm"],
+      ["src/components/marketing/money-page.tsx", "{page.directAnswer}"],
+    ]) {
+      const source = readFileSync(file, "utf8");
+      expect(source).toContain("<PagePhotograph");
+      expect(source).toContain(control);
+    }
+    const photo = readFileSync("src/components/marketing/page-photograph.tsx", "utf8");
+    expect(photo).toContain('loading={priority ? "eager" : "lazy"}');
+    expect(photo).toContain("width={width}");
+    expect(photo).toContain("height={height}");
+    expect(photo).toContain("alt={alt}");
+  });
 });
