@@ -18,6 +18,8 @@ import {
 import { faqScript, marketingHead, serviceScript } from "@/lib/marketing/head";
 import { CTA_MESSAGE, CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
 import { FIRST_SHORTLIST_TIMING, TIMING_FINE_PRINT } from "@/config/offer-facts";
+import { PagePhotograph } from "@/components/marketing/page-photograph";
+import recruitingService from "@/assets/page-recruiting-service.jpg";
 import {
   DIMENSION_LABELS,
   MODEL_CELLS,
@@ -163,6 +165,12 @@ export function MoneyPageView({ page }: { page: MoneyPageContent }) {
               </Link>
             </div>
           </div>
+          <PagePhotograph
+            src={recruitingService}
+            alt="Recruiting colleagues reviewing CV evidence and sourcing candidates in a bright studio."
+            priority
+            className="mt-8 h-[240px] sm:h-[320px] lg:h-[380px]"
+          />
         </PublicPage>
       </PublicSection>
 
