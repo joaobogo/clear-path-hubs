@@ -5,6 +5,11 @@ import { PublicPage, PublicSection, SiteShell, CtaSection } from "@/components/m
 import { marketingHead } from "@/lib/marketing/head";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
+import { PagePhotograph } from "@/components/marketing/page-photograph";
+import hrTeam from "@/assets/page-pricing-hero.jpg";
+import foundersTeam from "@/assets/page-founders-team.jpg";
+import staffingTeam from "@/assets/page-recruiting-service.jpg";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
 
 export const Route = createFileRoute("/solutions")({
   head: () =>
@@ -19,6 +24,8 @@ export const Route = createFileRoute("/solutions")({
 const AUDIENCES = [
   {
     icon: Briefcase,
+    image: hrTeam,
+    imageAlt: "A talent team discussing its hiring requirements around a shared desk.",
     title: "HR and talent teams",
     body: "Not an agency. Sourcing capacity for your team at a flat fee, with the evidence behind every score.",
     to: "/for-hr-teams",
@@ -26,6 +33,8 @@ const AUDIENCES = [
   },
   {
     icon: Building2,
+    image: getIndustryHeroImage("hospitality")?.src,
+    imageAlt: getIndustryHeroImage("hospitality")?.alt ?? "Hospitality professionals at work in a hotel.",
     title: "Hospitality and frontline operators",
     body: "Hiring for multi-site and shift-based roles, with a shortlist built around the requirements of the role.",
     to: "/industries/hospitality",
@@ -33,6 +42,8 @@ const AUDIENCES = [
   },
   {
     icon: Rocket,
+    image: foundersTeam,
+    imageAlt: "Founders and an engineering lead discussing their next hire at a studio table.",
     title: "Founders",
     body: `Your first recruiter, for $${PRICE_PILOT_USD} a role. One pilot per company.`,
     to: "/for-founders",
@@ -40,6 +51,8 @@ const AUDIENCES = [
   },
   {
     icon: Handshake,
+    image: staffingTeam,
+    imageAlt: "Recruiting partners reviewing application evidence and sourcing candidates.",
     title: "Staffing agencies",
     body: "Add sourcing and screening capacity behind your own client relationships. TaaSFlow does not place workers.",
     to: "/partnerships/staffing",
@@ -72,8 +85,10 @@ function SolutionsPage() {
             {AUDIENCES.map((a) => (
               <article
                 key={a.title}
-                className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
+                className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-on-dark)]"
               >
+                {a.image ? <PagePhotograph src={a.image} alt={a.imageAlt} priority className="aspect-[16/9]" /> : null}
+                <div className="flex flex-1 flex-col p-6">
                 <a.icon className="h-6 w-6 text-[color:var(--brand-ocean-text)]" aria-hidden />
                 <h2 className="mt-4 text-xl font-semibold text-[color:var(--brand-navy)]">{a.title}</h2>
                 <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/80">{a.body}</p>
@@ -90,6 +105,7 @@ function SolutionsPage() {
                     {a.cta} →
                   </Link>
                 )}
+                </div>
               </article>
             ))}
           </div>

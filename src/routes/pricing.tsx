@@ -9,6 +9,7 @@ import { Receipt, type ReceiptDetail, type ReceiptLine } from "@/components/sign
 import { PackageSelector, type PackageStop } from "@/components/system/package-selector";
 import { RunLinkButton } from "@/components/system/run-button";
 import { PagePhotograph } from "@/components/marketing/page-photograph";
+import { PhotoBand } from "@/components/marketing/editorial-hero";
 import pricingTeam from "@/assets/page-pricing-hero.jpg";
 import { NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
 import { PRICING_FAQ as FAQ } from "@/content/pricing-faq";
@@ -133,14 +134,6 @@ function PricingPage() {
           <p className="mt-3 text-sm text-[color:var(--faint)]" data-testid="last-updated">
             {OFFER_LAST_UPDATED_LABEL}
           </p>
-          <PagePhotograph
-            src={pricingTeam}
-            alt="A hiring team comparing their recruitment plans in a sunlit workspace."
-            width={1600}
-            height={1008}
-            priority
-            className="mt-8 h-[200px] sm:h-[280px] lg:h-[320px]"
-          />
         </PublicPage>
       </PublicSection>
 
@@ -283,6 +276,7 @@ function PricingPage() {
       </PublicSection>
 
       {/* Commercial terms: seven short answers */}
+      <PhotoBand image={pricingTeam} imageAlt="A hiring team comparing recruitment plans together in a bright workspace." eyebrow="Managed execution" caption="The platform and the people behind your search." />
       <PublicSection>
         <PublicPage>
           <h2 className="max-w-[20ch] text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px] sm:leading-[1.04]">
