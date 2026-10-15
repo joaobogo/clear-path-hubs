@@ -182,7 +182,7 @@ function AgentsPage() {
   );
 
   return (
-    <SiteShell>
+    <SiteShell hideClosingBand>
       {/* INTRO */}
       <EditorialHero
         eyebrow={PRODUCT_CATEGORY}
@@ -197,23 +197,7 @@ function AgentsPage() {
         ]}
         primary={CTA_PRIMARY}
         secondary={CTA_MESSAGE}
-      >
-        <ul className="grid gap-2 sm:grid-cols-3">
-          {[
-            `${countWordCapitalised(ROSTER_COUNTS.agents)} agents you switch on or pause`,
-            `${countWordCapitalised(ROSTER_COUNTS.automations)} always-on system automations`,
-            `Coverage across ${CHANNEL_AGENT_COUNT} channels, chosen per role`,
-          ].map((t) => (
-            <li
-              key={t}
-              className="inline-flex items-start gap-2 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
-            >
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]" aria-hidden />
-              <span className="min-w-0">{t}</span>
-            </li>
-          ))}
-        </ul>
-      </EditorialHero>
+      />
 
       {/* ROSTER */}
       <PublicSection className="bg-white">
