@@ -26,7 +26,7 @@ export function Chapter({
     <section
       id={`chapter-${chapter.id}`}
       aria-labelledby={`chapter-${chapter.id}-title`}
-      className={cn(surface, "scroll-mt-[120px] px-6 pb-[120px] pt-[112px] sm:px-10 lg:px-14", className)}
+      className={cn(surface, "run-chapter scroll-mt-[120px] px-6 pb-[120px] pt-[112px] sm:px-10 lg:px-14", className)}
     >
       <p className="narrow num text-[13px] font-medium text-[color:var(--text-3)]">
         {index}. {clockLabel(chapter.clock)}

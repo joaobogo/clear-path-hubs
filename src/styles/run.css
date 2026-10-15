@@ -7,6 +7,22 @@
  * the global rule in tokens.css.
  * ============================================================ */
 
+.run-chapters .run-chapter {
+  position: relative;
+  isolation: isolate;
+}
+
+.run-chapters .run-chapter::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: inherit;
+  box-shadow: 0 0 0 100vmax var(--bg);
+  clip-path: inset(0 -100vmax);
+  pointer-events: none;
+}
+
 @keyframes run-draw {
   from {
     stroke-dashoffset: 1;
