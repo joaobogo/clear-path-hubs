@@ -125,8 +125,13 @@ function PricingPage() {
             Recruiting packages. Clear prices.
           </h1>
           <p className="mt-6 max-w-[640px] text-[21px] leading-[1.45] text-[color:var(--slate)]">
-            ATS, sourcing agents, outreach and recruiter-reviewed shortlists. Choose your hiring capacity and billing.
+            Choose your hiring capacity. See your price before you start.
           </p>
+          <ul className="mt-5 grid gap-x-8 gap-y-3 text-sm font-semibold text-[color:var(--ink)] sm:grid-cols-2 lg:grid-cols-4" aria-label="Included in every package">
+            {["Your own ATS", "Sourcing agents", "Candidate outreach", "Recruiter-reviewed shortlists"].map((item) => (
+              <li key={item} className="border-l-2 border-primary pl-3">{item}</li>
+            ))}
+          </ul>
           <p className="mt-3 text-sm text-[color:var(--faint)]" data-testid="last-updated">
             {OFFER_LAST_UPDATED_LABEL}
           </p>

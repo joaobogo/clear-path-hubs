@@ -122,27 +122,24 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
         {agent.purpose}
       </p>
 
-      <p className="mt-3 rounded-lg bg-[color:var(--brand-paper)] px-3 py-2 text-xs leading-snug text-[color:var(--brand-navy)]/80">
-        <span className="font-semibold text-[color:var(--brand-navy)]">
-          Operating state:
-        </span>{" "}
-        {agent.operatingState}
-      </p>
-
-      <dl className="mt-4 grid gap-4">
-        <DetailList label="Inputs" items={agent.inputs} />
+      <dl className="mt-4 grid gap-4 border-l-2 border-primary pl-4">
         <DetailList label="Outputs" items={agent.outputs} />
       </dl>
 
       <details className="group mt-4 rounded-lg border border-[color:var(--brand-navy)]/10">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]">
-          Controls, approvals and records
+          Inputs, controls & approval details
           <ChevronDown
             className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
             aria-hidden
           />
         </summary>
         <dl className="grid gap-4 border-t border-[color:var(--brand-navy)]/8 px-3 py-3">
+          <div>
+            <dt className="text-xs font-semibold">Operating state</dt>
+            <dd className="mt-1 text-sm text-muted-foreground">{agent.operatingState}</dd>
+          </div>
+          <DetailList label="Inputs" items={agent.inputs} />
           <DetailList label="What you control" items={agent.controls} />
           <div className="min-w-0">
             <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
@@ -160,7 +157,9 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
         </dl>
       </details>
 
-      <div className="mt-4 rounded-lg border border-dashed border-[color:var(--brand-navy)]/20 bg-[color:var(--brand-paper)] p-3">
+      <details className="mt-4 border-t border-border pt-3">
+        <summary className="min-h-11 cursor-pointer text-xs font-semibold text-muted-foreground">View representative activity</summary>
+      <div className="mt-2 rounded-lg border border-dashed border-[color:var(--brand-navy)]/20 bg-[color:var(--brand-paper)] p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/70">
             {REP_LABEL}
@@ -171,6 +170,7 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
           {agent.representative.activity}
         </p>
       </div>
+      </details>
     </li>
   );
 }
