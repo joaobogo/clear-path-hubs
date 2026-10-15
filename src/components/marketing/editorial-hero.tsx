@@ -97,7 +97,7 @@ export function EditorialHero({
                 ))}
               </dl>
             ) : null}
-  
+          </div>
         {children ? <div className="mt-10">{children}</div> : null}
     </EditorialCover>
   );
