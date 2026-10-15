@@ -321,9 +321,7 @@ function EnterprisePage() {
             How the model scales with your requisition count.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            The rate is set by your total position count and applies to every
-            position. Volume can move up or down between review cycles, and the
-            total never falls as the count rises.
+            Choose a package by hiring capacity. Your role families, delivery cadence and oversight are agreed before sourcing starts.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             Above {MAX_POSITIONS} positions there is no published price — we
@@ -339,7 +337,7 @@ function EnterprisePage() {
               <li key={b.band} className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-4">
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-semibold text-[color:var(--brand-navy)]">{b.band}</span>
-                  <span className="shrink-0 font-semibold text-[color:var(--brand-navy)]">{b.price}</span>
+                  <span className="shrink-0 font-semibold text-[color:var(--brand-navy)]"><Link to="/pricing" hash="packages" className="underline underline-offset-4">{b.price}</Link></span>
                 </div>
                 <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">{b.fit}</p>
                 <dl className="mt-3 space-y-1.5 text-sm">
@@ -377,7 +375,7 @@ function EnterprisePage() {
                       <span className="font-semibold text-[color:var(--brand-navy)]">{b.band}</span>
                       <span className="mt-1 block text-xs text-[color:var(--brand-navy)]/80">{b.fit}</span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-4 font-semibold text-[color:var(--brand-navy)]">{b.price}</td>
+                    <td className="whitespace-nowrap px-4 py-4 font-semibold text-[color:var(--brand-navy)]"><Link to="/pricing" hash="packages" className="underline underline-offset-4">{b.price}</Link></td>
                     <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.cadence}</td>
                     <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.agentCapacity}</td>
                   </tr>

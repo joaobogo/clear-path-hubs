@@ -79,16 +79,16 @@ export function ChapterRail({ active, chapters = RUN_CHAPTERS }: { active: RunCh
       </nav>
 
       {/* Below 1024: a 48 px bar under the header. A phone shows only the clock. */}
-      <div
-        aria-live="polite"
+      <nav
+        aria-label="Chapters"
         className="day sticky top-[72px] z-30 -mx-[var(--margin)] flex h-12 items-center gap-3 border-b border-[color:var(--rule)] px-[var(--margin)] xl:hidden"
       >
         <RunClock day={active.clock.day} label={label} size={26} />
         <span className="num text-sm font-semibold text-[color:var(--ink)]">{label}</span>
-        <span className="hidden text-sm text-[color:var(--slate)] sm:inline">
-          · {activeIndex + 1} {active.title}
-        </span>
-      </div>
+        <div className="flex min-w-0 flex-1 gap-4 overflow-x-auto">
+          {chapters.map((c) => <a key={c.id} href={`#chapter-${c.id}`} aria-current={active.id === c.id ? "step" : undefined} className={cn("inline-flex min-h-11 shrink-0 items-center text-sm", active.id === c.id ? "font-semibold text-[color:var(--blue-600)]" : "text-[color:var(--slate)]")}>{c.title}</a>)}
+        </div>
+      </nav>
     </>
   );
 }

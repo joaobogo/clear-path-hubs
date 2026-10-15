@@ -1,27 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { publishableMetrics } from "@/config/case-study-metrics";
-import {
-  Hotel,
-  Landmark,
-  HeartPulse,
-  Cpu,
-  ShoppingBag,
-  Factory,
-  Globe2,
-  MapPin,
-  TrendingUp,
-  Users,
-  Clock,
-  Sparkles,
-  ArrowUpRight,
-  Quote,
-  CheckCircle2,
-  Target,
-  Search,
-  ListChecks,
-  Handshake,
-  ShieldCheck,
-} from "lucide-react";
+import { Globe2, MapPin, TrendingUp, Users, Clock, Sparkles, Quote, Handshake, ShieldCheck } from "lucide-react";
+import { HeroPicture } from "@/components/marketing/hero-picture";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
@@ -29,7 +10,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
 import { LifecyclePreview } from "@/components/marketing/product-preview/lifecycle-preview";
 import { CASE_STUDIES, EXAMPLE_ENGAGEMENT_LABEL, type CaseStudy } from "@/content/case-studies";
 import { CTA_PRIMARY, CTA_MESSAGE, CTA_HOW_IT_WORKS } from "@/config/cta";
-import { FIRST_SHORTLIST_TIMING, PROCESS_STEPS, PROCESS_STEP_COUNT, TIMING_FINE_PRINT, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
+import { FIRST_SHORTLIST_TIMING, TIMING_FINE_PRINT, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
 
 const entry = getPage("case-studies");
 
@@ -48,128 +29,16 @@ export const Route = createFileRoute("/case-studies")({
 // with written client approval are added individually.
 // -----------------------------------------------------------------------------
 
-// --- Patterns -----------------------------------------------------------------
-
-const HotelPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.18]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    <defs>
-      <pattern id="hotel-windows" x="0" y="0" width="28" height="34" patternUnits="userSpaceOnUse">
-        <rect x="6" y="8" width="16" height="20" rx="1.5" fill="currentColor" opacity="0.7" />
-      </pattern>
-    </defs>
-    <rect width="400" height="240" fill="url(#hotel-windows)" />
-  </svg>
-);
-
-const FinancePattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.22]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    <polyline points="0,180 40,160 80,170 120,120 160,140 200,90 240,110 280,70 320,85 360,40 400,55" fill="none" stroke="currentColor" strokeWidth="2" />
-    {Array.from({ length: 12 }).map((_, i) => (
-      <rect key={i} x={i * 34 + 6} y={200 - (i % 4) * 12 - 8} width="14" height={(i % 4) * 12 + 8} fill="currentColor" opacity="0.35" />
-    ))}
-  </svg>
-);
-
-const HealthPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    <path d="M0,140 L60,140 L75,110 L95,170 L115,90 L135,180 L155,130 L400,130" fill="none" stroke="currentColor" strokeWidth="2" />
-    <path d="M0,80 L400,80" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.6" />
-    <path d="M0,200 L400,200" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.6" />
-  </svg>
-);
-
-const TechPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    {Array.from({ length: 8 }).map((_, r) =>
-      Array.from({ length: 14 }).map((_, c) => (
-        <circle key={`${r}-${c}`} cx={c * 30 + 15} cy={r * 30 + 15} r={((r + c) % 3) + 1} fill="currentColor" opacity={0.4} />
-      ))
-    )}
-    <path d="M0,120 Q100,60 200,120 T400,120" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
-  </svg>
-);
-
-const RetailPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    <defs>
-      <pattern id="retail-bags" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-        <rect x="10" y="14" width="20" height="20" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M14 14 Q14 8 20 8 Q26 8 26 14" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      </pattern>
-    </defs>
-    <rect width="400" height="240" fill="url(#retail-bags)" />
-  </svg>
-);
-
-const IndustrialPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    {Array.from({ length: 6 }).map((_, i) => (
-      <g key={i} transform={`translate(${i * 70 + 30},${120})`}>
-        <circle r="18" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <circle r="6" fill="currentColor" opacity="0.6" />
-        {Array.from({ length: 8 }).map((_, j) => (
-          <rect key={j} x="-2" y="-24" width="4" height="8" fill="currentColor" transform={`rotate(${j * 45})`} />
-        ))}
-      </g>
-    ))}
-  </svg>
-);
-
-type VisualMeta = {
-  icon: typeof Hotel;
-  gradient: string;
-  accent: string;
-  pattern: React.ReactNode;
+const STUDY_INDUSTRIES: Record<string, string> = {
+  "hospitality-luxury-group": "hospitality",
+  "finance-mid-market-pe": "finance",
+  "healthcare-clinical-network": "healthcare",
+  "tech-series-c-platform": "tech",
+  "consumer-dtc-scaleup": "retail",
+  "industrial-energy-transition": "energy",
 };
-
-// Visual treatment per engagement, keyed by slug. Text/data content lives in
-// the shared @/content/case-studies module (single source of truth used by
-// both this page and the CaseStudyPreviews component).
-const VISUALS: Record<string, VisualMeta> = {
-  "hospitality-luxury-group": {
-    icon: Hotel,
-    gradient: "from-[color:var(--sector-hospitality-1)] via-[color:var(--sector-hospitality-2)] to-[color:var(--sector-hospitality-3)]",
-    accent: "text-[color:var(--sector-hospitality-accent)]",
-    pattern: HotelPattern,
-  },
-  "finance-mid-market-pe": {
-    icon: Landmark,
-    gradient: "from-[color:var(--sector-finance-1)] via-[color:var(--sector-finance-2)] to-[color:var(--sector-finance-3)]",
-    accent: "text-[color:var(--sector-finance-accent)]",
-    pattern: FinancePattern,
-  },
-  "healthcare-clinical-network": {
-    icon: HeartPulse,
-    gradient: "from-[color:var(--sector-health-1)] via-[color:var(--sector-health-2)] to-[color:var(--sector-health-3)]",
-    accent: "text-[color:var(--sector-health-accent)]",
-    pattern: HealthPattern,
-  },
-  "tech-series-c-platform": {
-    icon: Cpu,
-    gradient: "from-[color:var(--sector-tech-1)] via-[color:var(--sector-tech-2)] to-[color:var(--sector-tech-3)]",
-    accent: "text-[color:var(--sector-tech-accent)]",
-    pattern: TechPattern,
-  },
-  "consumer-dtc-scaleup": {
-    icon: ShoppingBag,
-    gradient: "from-[color:var(--sector-consumer-1)] via-[color:var(--sector-consumer-2)] to-[color:var(--sector-consumer-3)]",
-    accent: "text-[color:var(--sector-consumer-accent)]",
-    pattern: RetailPattern,
-  },
-  "industrial-energy-transition": {
-    icon: Factory,
-    gradient: "from-[color:var(--sector-industrial-1)] via-[color:var(--sector-industrial-2)] to-[color:var(--sector-industrial-3)]",
-    accent: "text-[color:var(--sector-industrial-accent)]",
-    pattern: IndustrialPattern,
-  },
-};
-
-type Study = CaseStudy & VisualMeta;
-
-const STUDIES: Study[] = CASE_STUDIES.map((study) => ({
-  ...study,
-  ...VISUALS[study.slug],
-}));
+type Study = CaseStudy;
+const STUDIES = CASE_STUDIES;
 
 // --- Sections -----------------------------------------------------------------
 
@@ -221,60 +90,31 @@ function HeroMetrics() {
   );
 }
 
-function ProcessStrip() {
-  const icons = [Target, Search, ListChecks, Handshake];
-  const steps = PROCESS_STEPS.map((step, i) => ({ icon: icons[i] ?? Target, label: step.title, sub: step.body }));
-  return (
-    <div className="mt-8 rounded-2xl border border-border/60 bg-background p-6">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
-        Every engagement runs the same {PROCESS_STEP_COUNT} steps
-      </p>
-      <ol className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {steps.map((s, i) => (
-          <li key={s.label} className="relative flex items-start gap-3 rounded-xl border border-border/60 bg-card p-4">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[color:var(--brand-ocean-text)]">
-              <s.icon className="h-4 w-4" aria-hidden />
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
-                Step {i + 1}
-              </p>
-              <p className="text-sm font-semibold">{s.label}</p>
-              <p className="text-xs text-[color:var(--brand-navy)]/80">{s.sub}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
-
 function StudyCard({ study }: { study: Study }) {
-  const Icon = study.icon;
+  const photo = getIndustryHeroImage(STUDY_INDUSTRIES[study.slug] ?? "tech");
   return (
-    <article className="group relative overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition-shadow hover:shadow-xl">
+    <article id={study.slug} className="group relative scroll-mt-24 overflow-hidden rounded-lg border border-border bg-card">
       {/* Visual header */}
-      <div className={`relative overflow-hidden bg-gradient-to-br ${study.gradient} p-8 text-[color:var(--brand-on-dark)]`}>
-        <div className={study.accent}>{study.pattern}</div>
+      {photo ? <HeroPicture src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} className="aspect-[16/7] w-full object-cover" /> : null}
+      <div className="relative p-6 text-[color:var(--ink)] sm:p-8">
         <div className="relative flex items-start justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-on-dark)]/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
-                <Icon className="h-3.5 w-3.5" aria-hidden />
+              <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--ink)]/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
                 {study.industry}
               </div>
               {study.representative !== false && (
-                <span className="inline-flex items-center rounded-full border border-[color:var(--brand-on-dark)]/30 px-2.5 py-1 text-[10px] font-medium uppercase tracking-widest text-[color:var(--brand-on-dark)]/90">
+                <span className="inline-flex items-center rounded-full border border-[color:var(--ink)]/30 px-2.5 py-1 text-[10px] font-medium uppercase tracking-widest text-[color:var(--ink)]/90">
                   {EXAMPLE_ENGAGEMENT_LABEL}
                 </span>
               )}
             </div>
-            <p className="mt-2 text-xs font-medium text-[color:var(--brand-on-dark)]/90">{study.companyType}</p>
-            <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[color:var(--brand-on-dark)]/80">
+            <p className="mt-2 text-xs font-medium text-[color:var(--ink)]/90">{study.companyType}</p>
+            <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[color:var(--ink)]/80">
               <MapPin className="h-3.5 w-3.5" aria-hidden /> {study.region}
             </p>
           </div>
-          <ArrowUpRight className="h-6 w-6 text-[color:var(--brand-on-dark)]/70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+
         </div>
         <h3 className="relative mt-8 font-display text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
           {study.headline}
@@ -311,10 +151,10 @@ function StudyCard({ study }: { study: Study }) {
       </div>
 
       {/* Timeline to first shortlist */}
-      <div className="border-t border-border/60 bg-muted/10 p-6 md:p-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
-          How the engagement runs (first shortlist: {study.timeToFirstShortlist})
-        </p>
+      <details className="border-t border-border/60 p-6 md:p-8">
+        <summary className="min-h-11 cursor-pointer text-sm font-semibold text-[color:var(--ink)]">
+          View the example timeline · first shortlist: {study.timeToFirstShortlist}
+        </summary>
         <ol className="relative mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {study.timeline.map((t, i) => (
             <li key={i} className="relative">
@@ -328,10 +168,10 @@ function StudyCard({ study }: { study: Study }) {
             </li>
           ))}
         </ol>
-      </div>
+      </details>
 
       {/* Outcome + testimonial (only rendered when a real, approved quote exists) */}
-      <div className="grid gap-6 border-t border-border/60 bg-muted/20 p-6 md:grid-cols-[1.4fr_1fr] md:p-8">
+      <div className="grid gap-6 border-t border-border/60 bg-muted/20 p-6  md:p-8">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
             What this example shows
@@ -351,16 +191,7 @@ function StudyCard({ study }: { study: Study }) {
               {study.testimonial.role}
             </figcaption>
           </figure>
-        ) : (
-          <figure className="rounded-2xl border border-dashed border-border/60 bg-background/60 p-5">
-            <Quote className="h-5 w-5 text-[color:var(--brand-navy)]/40" aria-hidden />
-            <figcaption className="mt-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
-              No quote is published for an example engagement. We publish a
-              testimonial only when a client has written it and approved it for
-              attribution.
-            </figcaption>
-          </figure>
-        )}
+        ) : null
       </div>
 
     </article>
@@ -421,7 +252,7 @@ function ProgressionPreview() {
 
 function CaseStudiesPage() {
   return (
-    <SiteShell>
+    <SiteShell hideClosingBand>
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         <header className="max-w-3xl">
           <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
@@ -441,7 +272,9 @@ function CaseStudiesPage() {
         </header>
 
         <HeroMetrics />
-        <ProcessStrip />
+        <nav aria-label="Example industries" className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-y border-[color:var(--rule)] py-4">
+          {STUDIES.map((study) => <a key={study.slug} href={`#${study.slug}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-[color:var(--blue-600)] underline underline-offset-4">{study.industry}</a>)}
+        </nav>
 
         {/* Studies */}
         <div className="mt-16 space-y-10">
@@ -455,7 +288,7 @@ function CaseStudiesPage() {
         <ProgressionPreview />
 
         {/* CTA */}
-        <section className="mt-12 rounded-3xl border border-border/60 bg-gradient-to-br from-primary/10 via-background to-background p-8 md:p-12">
+        <section className="mt-12 border-t border-border py-10">
           <h2 className="font-display text-3xl font-semibold tracking-tight">
             See how it would run for your role.
           </h2>

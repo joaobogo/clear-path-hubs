@@ -120,7 +120,7 @@ function HowItWorksPage() {
       <EditorialHero
         eyebrow="How it works"
         title="From your hiring brief to a ranked shortlist."
-        lead={`TaaSFlow is a ${OFFER_CATEGORY.toLowerCase()}. ${PROCESS_STEP_COUNT} steps, and who owns each one. ${WHO_RUNS_THE_SEARCH}`}
+        lead="Sourcing agents find and screen candidates. A recruiter reviews the shortlist. Your team chooses who to hire."
         image={hiwHero}
         imageAlt="A hiring team reviewing candidate shortlists together at a table"
         stats={[
@@ -133,12 +133,18 @@ function HowItWorksPage() {
         note={TIMING_FINE_PRINT}
       />
 
+      <PublicPage>
+        <nav aria-label="How it works sections" className="flex flex-wrap gap-x-6 gap-y-2 border-b border-[color:var(--rule)] py-5 text-sm font-semibold text-[color:var(--blue-600)]">
+          {[["steps", "The process"], ["scoring", "Scoring & evidence"], ["workspace", "Your workspace"], ["responsibilities", "Who does what"]].map(([id, label]) => <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center underline underline-offset-4">{label}</a>)}
+        </nav>
+      </PublicPage>
+
       {/* ── The four steps ─────────────────────────────────────── */}
       <PublicSection id="steps" className="scroll-mt-24 py-12">
         <PublicPage>
           <SectionHead
             eyebrow={`${PROCESS_STEP_COUNT} steps`}
-            title="From your brief to a ranked shortlist."
+            title="Four steps. Clear responsibilities."
             lead="The same four steps for every role, with what you do and what happens on our side."
           />
           <ol className="mt-8 grid gap-4 md:grid-cols-2">
