@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { EditorialCover } from "@/components/marketing/editorial-cover";
+import { PagePhotograph } from "@/components/marketing/page-photograph";
 
 /**
  * Editorial hero and photo band for the public sub-pages.
