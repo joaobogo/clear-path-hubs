@@ -130,7 +130,6 @@ import {
   savedAtLabel,
   stripNeverPersisted,
 } from "@/lib/intake-draft-shared";
-import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { trackDashboardSignup } from "@/lib/tracking/conversions";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
@@ -2184,38 +2183,7 @@ function ExpressIntakePage() {
 
 
       trackFgv(FGV_EVENTS.formSubmit, { form_type: "employer_intake" });
-      void submitToCrm({
-        formId: "employer-intake",
-        email: parsed.data.workEmail,
-        fullName: `${parsed.data.firstName} ${parsed.data.lastName}`.trim(),
-        phone: parsed.data.phone || null,
-        jobTitle: parsed.data.contactTitle || null,
-        linkedin: parsed.data.contactLinkedin || null,
-        companyName: parsed.data.companyName || null,
-        companyDomain: parsed.data.companyWebsite || null,
-        answers: {
-          "Role title": parsed.data.roleTitle ?? "",
-          "Company website": parsed.data.companyWebsite ?? "",
-          "Company LinkedIn": parsed.data.companyLinkedin ?? "",
-          "Job description provided": parsed.data.jobDescriptionText ? "pasted" : jdFile ? "uploaded" : "none",
-        },
-        consentStatus: parsed.data.consent ? "accepted_terms" : null,
-        honeypot: parsed.data.companyFax ?? "",
-      }).then((result) => {
-        if (result.ok) {
-          trackConfirmedConversion({
-            formType: "employer_intake",
-            serviceInterest: "recruiting_subscription",
-            destinationBrand: "taasflow",
-            submissionId: result.submissionId,
-          });
-        } else {
-          trackFgv(FGV_EVENTS.formError, {
-            form_type: "employer_intake",
-            error_code: result.error,
-          });
-        }
-      });
+      trackConfirmedConversion({ formType: "employer_intake", serviceInterest: "recruiting_subscription", destinationBrand: "taasflow", submissionId: body.intakeId ?? "" });
 
       trackEvent("express_intake_submitted", {
         flow: "express_onboarding",

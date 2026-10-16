@@ -195,6 +195,19 @@ export async function processLeadEvent(input: LeadEventInput): Promise<LeadDispa
     return result;
   }
 
+  // CRM capture shares the persisted lead path, not browser navigation.
+  try {
+    const { captureLeadToCrm } = await import("@/lib/crm/lead-capture.server");
+    const crm = await captureLeadToCrm(input);
+    if (result.leadNotificationId) {
+      await admin.from("lead_notifications").update({ crm_status: crm.status, crm_detail: crm.detail }).eq("id", result.leadNotificationId);
+    }
+  } catch {
+    if (result.leadNotificationId) {
+      await admin.from("lead_notifications").update({ crm_status: "failed", crm_detail: "Could not prepare Attio delivery." }).eq("id", result.leadNotificationId);
+    }
+  }
+
   // 2) Email.
   const email = await sendEmail(event, recipients);
   result.email = { ...email, recipients };
