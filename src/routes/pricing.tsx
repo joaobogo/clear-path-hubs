@@ -96,15 +96,15 @@ function PricingPage() {
 
   return (
     <SiteShell>
-      <PublicSection className="pb-0 pt-14 sm:pb-0 sm:pt-20 lg:pb-0">
+      <PublicSection className="pb-0 pt-8 sm:pb-0 sm:pt-20 lg:pb-0">
         <PublicPage>
           <h1 className="display max-w-[20ch] text-[40px] text-[color:var(--ink)] sm:text-[52px] lg:text-[60px]">
             Recruiting packages. Clear prices.
           </h1>
-          <p className="mt-6 max-w-[640px] text-[21px] leading-[1.45] text-[color:var(--slate)]">
+          <p className="mt-4 max-w-[640px] text-lg leading-[1.45] text-[color:var(--slate)] sm:mt-6 sm:text-[21px]">
             Choose your hiring capacity. See your price before you start.
           </p>
-          <ul className="mt-5 grid gap-x-8 gap-y-3 text-sm font-semibold text-[color:var(--ink)] sm:grid-cols-2 lg:grid-cols-4" aria-label="Included in every package">
+          <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 text-sm font-semibold text-[color:var(--ink)] sm:gap-x-8 lg:grid-cols-4" aria-label="Included in every package">
             {["Your own ATS", "Sourcing agents", "Candidate outreach", "Recruiter-reviewed shortlists"].map((item) => (
               <li key={item} className="border-l-2 border-primary pl-3">{item}</li>
             ))}
@@ -112,7 +112,7 @@ function PricingPage() {
           <p className="mt-3 text-sm text-[color:var(--faint)]" data-testid="last-updated">
             {OFFER_LAST_UPDATED_LABEL}
           </p>
-          <nav aria-label="Pricing sections" className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-[color:var(--blue-600)]">
+          <nav aria-label="Pricing sections" className="mt-3 flex flex-wrap gap-x-6 gap-y-0 text-sm font-semibold text-[color:var(--blue-600)] sm:mt-6 sm:gap-y-2">
             {[["packages", "Choose a package"], ["included", "What’s included"], ["compare-costs", "Compare costs"], ["terms", "Terms & questions"]].map(([id, label]) => (
               <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center underline underline-offset-4">{label}</a>
             ))}
@@ -121,7 +121,7 @@ function PricingPage() {
       </PublicSection>
 
       {/* Pick billing, pick a tier */}
-      <PublicSection id="packages" className="scroll-mt-24 pt-10 sm:pt-12 lg:pt-12">
+      <PublicSection id="packages" className="scroll-mt-24 pt-6 sm:pt-12 lg:pt-12">
         <PublicPage>
           <div className="flex flex-col items-center gap-3 text-center">
             <div role="radiogroup" aria-label="Billing" className="inline-flex rounded-full border border-[color:var(--rule-2)] bg-[color:var(--background)] p-1">

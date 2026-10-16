@@ -26,7 +26,7 @@ export function ProductTour() {
             <p className="narrow text-xs font-semibold text-[color:var(--blue-600)]">TaaSFlow · the connected system</p>
             <h2 id="product-tour-title" className="mt-3 max-w-[22ch] text-[32px] leading-[1.08] text-[color:var(--ink)] sm:text-[44px]">ATS. Recruiting. Outreach.<br />Together.</h2>
           </div>
-          <Link to="/pricing" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[color:var(--blue-600)]">One package. See pricing <ArrowRight className="size-4" aria-hidden /></Link>
+          <Link to="/pricing" className="inline-flex min-h-11 shrink-0 items-center gap-2 text-sm font-semibold text-[color:var(--blue-600)]">One package. See pricing <ArrowRight className="size-4" aria-hidden /></Link>
         </div>
         <div role="tablist" aria-label="Explore TaaSFlow" className="mt-6 grid grid-cols-3 border-b border-[color:var(--rule-2)] sm:mt-9">
           {VIEWS.map((view, index) => {
@@ -40,7 +40,7 @@ export function ProductTour() {
             }}><Icon className="size-5 shrink-0" aria-hidden /><span>{view.label}</span></RunButton>;
           })}
         </div>
-        {VIEWS.map((view, index) => <div key={view.id} id={`tour-panel-${view.id}`} role="tabpanel" aria-labelledby={`tour-tab-${view.id}`} hidden={selected !== index} className="product-tour-panel grid min-w-0 gap-6 pt-6 sm:gap-8 sm:pt-9 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] [&[hidden]]:hidden">
+        {VIEWS.map((view, index) => <div key={view.id} id={`tour-panel-${view.id}`} role="tabpanel" aria-labelledby={`tour-tab-${view.id}`} hidden={selected !== index} className="product-tour-panel grid min-w-0 gap-6 pt-6 sm:gap-8 sm:pt-9 md:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] [&[hidden]]:hidden">
           <div className="min-w-0 lg:pt-6">
             <span className="wide num text-sm font-semibold text-[color:var(--blue-600)]">0{index + 1} / 03</span>
             <h3 className="mt-4 text-[28px] leading-tight text-[color:var(--ink)] sm:text-[36px]">{view.title}</h3>
