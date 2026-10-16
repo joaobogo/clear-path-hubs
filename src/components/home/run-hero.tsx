@@ -220,6 +220,10 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
               </div>
             ))}
           </dl>
+          <p className="narrow -mt-1 text-[13px] leading-relaxed text-[color:var(--faint)]">
+            Recruited in <span className="text-[color:var(--ink)]">English, German, Portuguese, Dutch, Mandarin,
+            Japanese, Arabic and French</span> — and more.
+          </p>
         </div>
       </div>
     </section>
