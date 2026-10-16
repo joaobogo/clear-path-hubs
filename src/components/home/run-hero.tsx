@@ -185,40 +185,42 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
           </aside>
         </div>
 
-        {/* The run bar: four counts in one order. The first three are agent
-            work, the last is a person's. */}
-        <dl
-          aria-label="One run, as four counts"
-          className="mt-14 grid min-h-[112px] grid-cols-2 border-t border-[color:var(--ink)] lg:grid-cols-4"
-        >
-          {PREVIEW_RUN_FUNNEL.map((stage, i) => {
-            const human = stage.key === "signed";
-            return (
+        {/* Proof bar: track record, not a sample funnel. */}
+        <div className="mt-14 border-t border-[color:var(--ink)] pt-4">
+          <p className="narrow text-[13px] font-semibold uppercase tracking-[0.12em] text-[color:var(--blue-600)]">
+            Proof of concept
+          </p>
+          <dl
+            aria-label="Track record"
+            className="mt-2 grid min-h-[112px] grid-cols-2 lg:grid-cols-4"
+          >
+            {[
+              { value: "4", label: "Continents hired across" },
+              { value: "Multi", label: "Languages recruited in" },
+              { value: "500+", label: "Positions run" },
+              { value: "0", label: "Positions left unfilled" },
+            ].map((item, i) => (
               <div
-                key={stage.key}
+                key={item.label}
                 className={cn(
                   "flex flex-col justify-center gap-1 py-5 pr-4",
                   i > 0 && "border-l border-[color:var(--rule)] pl-5",
-                  i === 2 && "lg:border-l",
-                  i === 1 && "border-l",
+                  i === 2 && "max-lg:border-l-0 max-lg:pl-0",
                 )}
               >
-                <dt className="narrow text-[13px] font-medium text-[color:var(--faint)]">
-                  {stage.label}
-                  {human ? ` · ${PREVIEW_RUN_SIGNED_AT}` : ""}
-                </dt>
                 <dd
                   className={cn(
-                    "wide num text-[40px] font-semibold leading-none sm:text-[52px]",
-                    human ? "text-[color:var(--ink)]" : "text-[color:var(--blue-600)]",
+                    "wide num order-2 text-[40px] font-semibold leading-none sm:text-[52px]",
+                    i === 3 ? "text-[color:var(--ink)]" : "text-[color:var(--blue-600)]",
                   )}
                 >
-                    {nf.format(countAt(stage.count, front, COUNT_LANDS_AT[i] ?? 1))}
+                  {item.value}
                 </dd>
+                <dt className="narrow order-1 text-[13px] font-medium text-[color:var(--faint)]">{item.label}</dt>
               </div>
-            );
-          })}
-        </dl>
+            ))}
+          </dl>
+        </div>
       </div>
     </section>
   );
