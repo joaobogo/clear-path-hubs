@@ -147,6 +147,7 @@ export function EntitlementMatrix({
                   <th
                     key={id}
                     scope="col"
+                    abbr={planLabels[id]}
                     aria-current={id === selectedPlanId ? "true" : undefined}
                     className={`px-4 py-3 text-sm font-semibold text-[color:var(--brand-navy)] ${selectedCol(id)} ${
                       id === selectedPlanId ? "border-t-2 border-[color:var(--blue-600)]" : ""
@@ -162,7 +163,6 @@ export function EntitlementMatrix({
                     ) : (
                       planLabels[id]
                     )}
-                    <span className="sr-only">{planLabels[id]}</span>
                   </th>
                 );
               })}
