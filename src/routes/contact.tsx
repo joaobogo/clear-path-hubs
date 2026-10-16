@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { AlertTriangle } from "lucide-react";
-import { submitToCrm } from "@/lib/crm/submit-form";
 import { getAttribution, getPageContext } from "@/lib/crm/attribution";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -407,36 +406,6 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       }
       if (topic !== "support" && topic !== "candidate") {
         trackFgv(FGV_EVENTS.formSubmit, { form_type: "sales_contact" });
-        void submitToCrm({
-          formId: "contact-page",
-          email: payload.email,
-          fullName: payload.name,
-          companyName: payload.company || null,
-          answers: {
-            Topic: topic,
-            Role: roleExtra,
-            Link: urlExtra,
-            Message: rawMessage,
-            // The visitor's actual choices, recorded verbatim.
-            "Privacy acknowledged": privacyAcknowledged,
-            "Marketing consent": marketingConsent,
-          },
-          // The real value the visitor selected — not a synthesised
-          // "form was submitted" marker.
-          consentStatus: marketingConsent
-            ? "marketing_opt_in"
-            : "reply_only_no_marketing_consent",
-
-          honeypot: payload.website,
-        }).then((result) => {
-          // Conversion fires only on a server-confirmed submission id.
-          if (result.ok) {
-            trackConfirmedConversion({
-              formType: "sales_contact",
-              serviceInterest: "recruiting_subscription",
-              destinationBrand: "taasflow",
-              submissionId: result.submissionId,
-            });
           } else {
             trackFgv(FGV_EVENTS.formError, {
               form_type: "sales_contact",
