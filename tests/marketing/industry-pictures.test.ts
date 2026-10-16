@@ -53,7 +53,7 @@ describe("Industry pictures", () => {
     expect(pricing).toContain('id="terms"');
     expect(pricing).not.toContain("<ModelComparisonTable");
     expect(pricing).not.toContain("{FAQ.map");
-    expect(pricing).toContain("pilot paid once");
+    expect(pricing).toContain("Pay once for the whole package.");
   });
 
   it("illustrates examples honestly without empty testimonial placeholders", () => {
