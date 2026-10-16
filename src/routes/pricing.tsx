@@ -11,15 +11,13 @@ import pricingTeam from "@/assets/page-pricing-hero.jpg";
 import { PRICING_GUARANTEES } from "@/content/pricing";
 import {
   ABOVE_MAX_ROLES_LABEL,
-  ANNUAL_DISCOUNT_NOTE,
   MAX_POSITIONS,
   PACKAGES,
   PRICE_PILOT_DISPLAY,
   formatUsdExact,
   subscriptionTotalsUsd,
 } from "@/config/pricing-core";
-import { offer } from "@/config/offer";
-import { OFFER_CATEGORY, OFFER_LAST_UPDATED_LABEL, PILOT_IS_PAID_NOTE, TIMING_FINE_PRINT } from "@/config/offer-facts";
+import { OFFER_CATEGORY, OFFER_LAST_UPDATED_LABEL } from "@/config/offer-facts";
 import { CTA_ENTERPRISE, CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import {
   ENTITLEMENT_POLICY,
@@ -27,7 +25,6 @@ import {
   PUBLIC_PLAN_IDS,
   PUBLIC_PLAN_LABELS,
   PUBLIC_SUBSCRIPTION_ENTITLEMENTS,
-  SCOPED_PUBLIC_LABEL,
   publicSeatsLine,
 } from "@/config/pricing-entitlements";
 
@@ -181,7 +178,7 @@ function PricingPage() {
                   </p>
                   <p className="mt-3 text-[15px] text-[color:var(--slate)]">{TIER_BLURB[p.id]}</p>
                   <ul className="mt-5 flex flex-col gap-2 text-[15px] text-[color:var(--ink)]">
-                    {[isPilotTier ? "1 role" : p.capacityLabel, "Ranked shortlist per role", publicSeatsLine(p.id)].map((b) => (
+                    {[isPilotTier ? "1 role" : p.capacityLabel, "Ranked shortlist for every role", publicSeatsLine(p.id)].map((b) => (
                       <li key={b} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />{b}</li>
                     ))}
                   </ul>
