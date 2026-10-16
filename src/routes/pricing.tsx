@@ -4,12 +4,11 @@ import { marketingHead, faqScript, serviceScript } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
-import { Receipt, type ReceiptDetail, type ReceiptLine } from "@/components/signature/receipt";
-import { PackageSelector, type PackageStop } from "@/components/system/package-selector";
+import { Check } from "lucide-react";
 import { RunButton, RunLinkButton } from "@/components/system/run-button";
 import { PhotoBand } from "@/components/marketing/editorial-hero";
 import pricingTeam from "@/assets/page-pricing-hero.jpg";
-import { NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
+import { PRICING_GUARANTEES } from "@/content/pricing";
 import {
   ABOVE_MAX_ROLES_LABEL,
   ANNUAL_DISCOUNT_NOTE,
@@ -59,7 +58,7 @@ export const Route = createFileRoute("/pricing")({
 /* ------------------------------------------------------------------ data */
 
 /** The seven stops, in the order they sell: the pilot, five packages, scoped. */
-const STOPS: readonly PackageStop[] = [
+const STOPS: readonly { id: string; roles: number | null; label: string; short: string }[] = [
   ...PACKAGES.map((p) => ({
     id: p.id,
     roles: p.capacity,
@@ -71,10 +70,19 @@ const STOPS: readonly PackageStop[] = [
 
 const ENTERPRISE_ID = "enterprise";
 
-/** Support level for a package, read from the published entitlement table. */
-function supportFor(planId: string, rows: typeof PUBLIC_ONEOFF_ENTITLEMENTS): string {
-  const v = rows.find((r) => r.id === "support")?.plans[planId];
-  return v && v.kind === "value" ? v.label : SCOPED_PUBLIC_LABEL;
+const MAIN_TIERS = PACKAGES.filter((p) => ["pilot", "growth", "scale"].includes(p.id));
+const LARGER_TIERS = PACKAGES.filter((p) => !["pilot", "growth", "scale"].includes(p.id));
+
+const TIER_BLURB: Record<string, string> = {
+  pilot: "Try the full workflow on one role. Once per company.",
+  growth: "For teams hiring steadily across several roles.",
+  scale: "For growing teams with a busy hiring plan.",
+};
+
+/** Monthly on a subscription, the package total when paid once. Pilot is always once. */
+function priceFor(id: string, capacity: number, totalUsd: number, billing: "once" | "monthly"): number {
+  if (id === "pilot" || billing === "once") return totalUsd;
+  return subscriptionTotalsUsd(capacity)?.monthly ?? totalUsd;
 }
 
 type Billing = "once" | "monthly";
@@ -83,39 +91,11 @@ type Billing = "once" | "monthly";
 
 function PricingPage() {
   const [stopId, setStopId] = useState<string>("growth");
-  const [billing, setBilling] = useState<Billing>("once");
+  const [billing, setBilling] = useState<Billing>("monthly");
 
   const stop = STOPS.find((s) => s.id === stopId) ?? STOPS[0];
   if (!stop) return null;
-  const pkg = PACKAGES.find((p) => p.id === stop.id);
-  const isPilot = stop.id === "pilot";
-  const isEnterprise = stop.id === ENTERPRISE_ID;
   const rows = billing === "once" ? PUBLIC_ONEOFF_ENTITLEMENTS : PUBLIC_SUBSCRIPTION_ENTITLEMENTS;
-
-  // The pilot is paid once whatever the billing mode; packages follow it.
-  const monthlyTotals = pkg && !isPilot ? subscriptionTotalsUsd(pkg.capacity) : null;
-  const paidMonthly = billing === "monthly" && monthlyTotals !== null;
-  const total = pkg ? (paidMonthly && monthlyTotals ? monthlyTotals.monthly : pkg.totalUsd) : 0;
-
-  const lines: ReceiptLine[] = pkg
-    ? [
-        {
-          label: isPilot ? "Pilot, one role" : `Package, ${pkg.capacityLabel.toLowerCase()}`,
-          note: isPilot ? "Once per company" : paidMonthly ? "Charged each month" : "Paid once",
-          amount: total,
-        },
-        ...NEVER_CHARGED.slice(0, 3).map((label) => ({ label, amount: 0 })),
-      ]
-    : [];
-  const details: ReceiptDetail[] = pkg
-    ? [
-        { label: "Seats", value: publicSeatsLine(pkg.id) },
-        { label: "Support", value: supportFor(pkg.id, rows) },
-        { label: "Workspace access", value: `${offer.accessMonths} months` },
-      ]
-    : [];
-
-  const maxTotal = Math.max(...PACKAGES.map((p) => p.totalUsd));
 
   return (
     <SiteShell>
@@ -143,16 +123,15 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* One control, one invoice */}
+      {/* Pick billing, pick a tier */}
       <PublicSection id="packages" className="scroll-mt-24 pt-10 sm:pt-12 lg:pt-12">
         <PublicPage>
-          <div className="flex flex-col gap-6 border-t border-[color:var(--ink)] pt-8 lg:flex-row lg:items-end lg:justify-between">
-            <PackageSelector stops={STOPS} value={stopId} onChange={setStopId} />
-            <div role="radiogroup" aria-label="Billing" className="flex gap-2">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div role="radiogroup" aria-label="Billing" className="inline-flex rounded-full border border-[color:var(--rule-2)] bg-[color:var(--background)] p-1">
               {(
                 [
-                  ["once", "Paid once"],
-                  ["monthly", "Billed monthly"],
+                  ["monthly", "Subscription"],
+                  ["once", "One-off package"],
                 ] as const
               ).map(([value, text]) => (
                 <RunButton
@@ -162,93 +141,89 @@ function PricingPage() {
                   aria-checked={billing === value}
                   onClick={() => setBilling(value)}
                   className={
-                    "inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--blue-600)] " +
+                    "inline-flex min-h-11 items-center rounded-full border-0 px-5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--blue-600)] " +
                     (billing === value
-                      ? "border-[color:var(--ink)] bg-[color:var(--ink)] text-[color:var(--white)]"
-                      : "border-[color:var(--rule-2)] bg-[color:var(--background)] text-[color:var(--ink)]")
+                      ? "bg-[color:var(--ink)] text-[color:var(--white)]"
+                      : "bg-transparent text-[color:var(--ink)]")
                   }
                 >
                   {text}
                 </RunButton>
               ))}
             </div>
+            <p className="text-sm text-[color:var(--slate)]">
+              {billing === "monthly" ? "Billed monthly. Cancel any month. Pay a year up front and save 10%." : "Pay once for the whole package."}
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
-            {isEnterprise ? (
-              <div className="tint rounded-[var(--r-3)] p-8">
-                <p className="wide text-2xl font-semibold text-[color:var(--text)]">{ABOVE_MAX_ROLES_LABEL}</p>
-                <p className="mt-3 max-w-[480px] text-[17px] text-[color:var(--text-2)]">
-                  A tailored package for more than {MAX_POSITIONS} positions. Tell us your roles and timing to discuss scope.
-                </p>
-                <RunLinkButton to={CTA_ENTERPRISE.to} className="mt-6">
-                  {CTA_ENTERPRISE.label}
-                </RunLinkButton>
-              </div>
-            ) : (
-              <Receipt
-                title={stop.label}
-                subtitle={isPilot ? "One role, once per company" : paidMonthly ? "Charged each month" : "Paid once, for the whole package"}
-                lines={lines}
-                details={details}
-                total={{ label: paidMonthly ? "A month" : "Total", amount: total }}
-                tilt={-0.4}
-                footer={
-                  <p>
-                    {paidMonthly ? `${ANNUAL_DISCOUNT_NOTE} ` : ""}
-                    {isPilot ? PILOT_IS_PAID_NOTE : "No placement fee, regardless of how many candidates you hire."}
+          <ul className="mt-10 grid gap-5 md:grid-cols-3" aria-label="Pricing tiers">
+            {MAIN_TIERS.map((p) => {
+              const isPilotTier = p.id === "pilot";
+              const popular = p.id === "growth";
+              const price = priceFor(p.id, p.capacity, p.totalUsd, billing);
+              return (
+                <li
+                  key={p.id}
+                  className={
+                    "flex flex-col rounded-[var(--r-3)] border bg-[color:var(--background)] p-6 sm:p-7 " +
+                    (popular ? "border-[color:var(--blue-600)] ring-1 ring-[color:var(--blue-600)]" : "border-[color:var(--rule-2)]")
+                  }
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-lg font-semibold text-[color:var(--ink)]">{isPilotTier ? "Pilot" : p.capacityLabel}</h3>
+                    {popular ? (
+                      <span className="rounded-full bg-[color:var(--blue-600)] px-3 py-1 text-xs font-semibold text-[color:var(--white)]">Most popular</span>
+                    ) : null}
+                  </div>
+                  <p className="mt-5 flex items-baseline gap-2">
+                    <span className="wide num text-[44px] font-semibold leading-none text-[color:var(--ink)]">{formatUsdExact(price)}</span>
+                    <span className="text-sm text-[color:var(--slate)]">{isPilotTier ? "one time" : billing === "monthly" ? "/ month" : "one total"}</span>
                   </p>
-                }
-              />
-            )}
+                  <p className="mt-3 text-[15px] text-[color:var(--slate)]">{TIER_BLURB[p.id]}</p>
+                  <ul className="mt-5 flex flex-col gap-2 text-[15px] text-[color:var(--ink)]">
+                    {[isPilotTier ? "1 role" : p.capacityLabel, "Ranked shortlist per role", publicSeatsLine(p.id)].map((b) => (
+                      <li key={b} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />{b}</li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto pt-7">
+                    <RunLinkButton
+                      to={isPilotTier ? CTA_PRIMARY.to : CTA_MESSAGE.to}
+                      variant={popular ? undefined : "ghost"}
+                      className="w-full justify-center"
+                      onClick={() => setStopId(p.id)}
+                    >
+                      {isPilotTier ? CTA_PRIMARY.label : "Get started"}
+                    </RunLinkButton>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
 
-            <div className="min-w-0">
-              <p className="narrow text-[13px] font-medium text-[color:var(--faint)]">{billing === "monthly" ? "Package prices · per month (pilot paid once)" : "Package prices · paid once"}</p>
-              <ol className="mt-4 flex flex-col gap-3" aria-label="Package totals">
-                {PACKAGES.map((p) => {
-                  const selected = p.id === stop.id;
-                  return (
-                    <li key={p.id}>
-                      <RunButton variant="ghost"
-                        type="button"
-                        onClick={() => setStopId(p.id)}
-                        aria-pressed={selected}
-                        className="group grid w-full grid-cols-[minmax(0,1fr)_80px] items-center gap-3 whitespace-normal border-0 px-0 text-left sm:grid-cols-[150px_minmax(0,1fr)_96px]"
-                      >
-                        <span className={"text-[15px] " + (selected ? "font-semibold text-[color:var(--ink)]" : "text-[color:var(--slate)]")}>
-                          {p.capacityLabel}
-                        </span>
-                        <span className="hidden h-3 w-full rounded-full bg-[color:var(--blue-100)] sm:block" aria-hidden>
-                          <span
-                            className={"package-bar block h-3 rounded-full " + (selected ? "bg-[color:var(--blue-600)]" : "bg-[color:var(--blue-200)] group-hover:bg-[color:var(--blue-300)]")}
-                            style={{ width: `${Math.max(6, (p.totalUsd / maxTotal) * 100)}%` }}
-                          />
-                        </span>
-                        <span className={"wide num text-right text-base " + (selected ? "font-semibold text-[color:var(--ink)]" : "text-[color:var(--slate)]")}>
-                          {billing === "monthly" && p.id !== "pilot" ? formatUsdExact(subscriptionTotalsUsd(p.capacity)?.monthly ?? p.totalUsd) : p.totalDisplay}
-                        </span>
-                      </RunButton>
-                    </li>
-                  );
-                })}
-              </ol>
-              <p className="mt-4 text-sm text-[color:var(--faint)]">{TIMING_FINE_PRINT}</p>
-
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <RunLinkButton to={CTA_PRIMARY.to}>{CTA_PRIMARY.label}</RunLinkButton>
-                {!isPilot ? (
-                  <RunLinkButton to={isEnterprise ? CTA_ENTERPRISE.to : CTA_MESSAGE.to} variant="ghost">
-                    Ask about {stop.label.toLowerCase()}
-                  </RunLinkButton>
-                ) : null}
-              </div>
-              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-1 text-sm text-[color:var(--slate)]">
-                {PRICING_GUARANTEES.map((g) => (
-                  <li key={g}>{g}</li>
-                ))}
-              </ul>
-            </div>
+          <div className="mt-6 rounded-[var(--r-3)] border border-[color:var(--rule-2)] p-5 sm:p-6">
+            <p className="text-sm font-semibold text-[color:var(--ink)]">Hiring more?</p>
+            <ul className="mt-3 grid gap-3 sm:grid-cols-4" aria-label="Larger packages">
+              {LARGER_TIERS.map((p) => (
+                <li key={p.id} className="flex items-baseline justify-between gap-2 sm:flex-col sm:items-start">
+                  <span className="text-sm text-[color:var(--slate)]">{p.capacityLabel}</span>
+                  <span className="wide num text-lg font-semibold text-[color:var(--ink)]">
+                    {formatUsdExact(priceFor(p.id, p.capacity, p.totalUsd, billing))}
+                    <span className="text-sm font-normal text-[color:var(--slate)]">{billing === "monthly" ? " / month" : ""}</span>
+                  </span>
+                </li>
+              ))}
+              <li className="flex items-baseline justify-between gap-2 sm:flex-col sm:items-start">
+                <span className="text-sm text-[color:var(--slate)]">{ABOVE_MAX_ROLES_LABEL}</span>
+                <Link to={CTA_ENTERPRISE.to} className="text-lg font-semibold text-[color:var(--blue-600)] underline underline-offset-4">Talk to us</Link>
+              </li>
+            </ul>
           </div>
+
+          <ul className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-[color:var(--slate)]">
+            {PRICING_GUARANTEES.map((g) => (
+              <li key={g}>{g}</li>
+            ))}
+          </ul>
         </PublicPage>
       </PublicSection>
 
