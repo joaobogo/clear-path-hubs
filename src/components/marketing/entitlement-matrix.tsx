@@ -178,7 +178,7 @@ export function EntitlementMatrix({
                   <span className="sr-only">{row.description}</span>
                 </th>
                 {planIds.map((id) => (
-                  <td key={id} className={`px-4 py-3 ${selectedCol(id)}`}>
+                  <td key={id} className={`relative px-4 py-3 ${selectedCol(id)}`}>
                     <Cell v={row.plans[id] ?? { kind: "not-included" }} />
                   </td>
                 ))}
