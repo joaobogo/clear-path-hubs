@@ -108,7 +108,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
           <div className="min-w-0 max-w-[800px]">
             <h1
               id="run-hero-title"
-              className="run-hero-heading display text-[44px] text-[color:var(--ink)] sm:text-[64px] xl:text-[80px]"
+              className="run-hero-heading display text-[36px] text-[color:var(--ink)] [text-wrap:balance] min-[400px]:text-[44px] sm:text-[64px] xl:text-[80px]"
             >
               Post the role. Sourcing agents deliver your shortlist.
             </h1>
