@@ -27,6 +27,10 @@ export type LeadEventInput = {
   email?: string | null;
   company?: string | null;
   phone?: string | null
+  linkedin?: string | null;
+  contactTitle?: string | null;
+  companyWebsite?: string | null;
+  consentStatus?: string | null;
   /** Free-text the person wrote (message, role summary, notes). */
   message?: string | null;
   /** Extra label/value rows shown in Teams and email, in order. */
