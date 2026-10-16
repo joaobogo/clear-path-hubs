@@ -113,7 +113,7 @@ function PricingPage() {
             {OFFER_LAST_UPDATED_LABEL}
           </p>
           <nav aria-label="Pricing sections" className="mt-3 flex flex-wrap gap-x-6 gap-y-0 text-sm font-semibold text-[color:var(--blue-600)] sm:mt-6 sm:gap-y-2">
-            {[["packages", "Choose a package"], ["included", "What’s included"], ["compare-costs", "Compare costs"], ["terms", "Terms & questions"]].map(([id, label]) => (
+            {[["packages", "Choose a package"], ["compare-costs", "Compare costs"], ["included", "What’s included"], ["terms", "Terms & questions"]].map(([id, label]) => (
               <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center underline underline-offset-4">{label}</a>
             ))}
           </nav>
@@ -268,13 +268,6 @@ function PricingPage() {
             ))}
           </div>
           <p className="mt-6 text-sm text-[color:var(--slate)]">Still deciding? <Link to="/faq" className="font-semibold text-[color:var(--blue-600)] underline underline-offset-4">Browse all questions</Link> or <Link to="/compare" className="font-semibold text-[color:var(--blue-600)] underline underline-offset-4">compare recruiting models</Link>.</p>
-        </PublicPage>
-      </PublicSection>
-
-      {/* Your own numbers against an agency */}
-      <PublicSection id="compare-costs" className="scroll-mt-24">
-        <PublicPage>
-          <AgencyComparator />
         </PublicPage>
       </PublicSection>
 
