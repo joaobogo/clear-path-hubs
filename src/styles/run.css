@@ -62,6 +62,8 @@
 .editorial-cover-muted { color: color-mix(in oklab, var(--white) 85%, transparent); }
 .run-hero-heading { text-shadow: 0 0 8px var(--white), 0 0 18px var(--white); text-wrap: balance; }
 .run-hero-lead { background: color-mix(in oklab, var(--white) 94%, transparent); box-shadow: 0 0 18px 12px var(--white); }
+.run-hero > [aria-hidden] { opacity: 0.6; }
+.hero-proof { position: relative; background: var(--white); box-shadow: 0 0 24px 16px var(--white); }
 .hero-candidate { background: color-mix(in oklab, var(--white) 94%, transparent); transition: background var(--t-quick) var(--ease); }
 .hero-candidate:hover, .hero-candidate.is-selected, .hero-evidence { background: var(--blue-50); }
 .hero-candidate.is-selected { box-shadow: inset 2px 0 var(--blue-600); padding-left: 8px; }

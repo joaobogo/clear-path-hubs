@@ -92,7 +92,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
   ];
 
   return (
-    <section ref={hostRef} aria-labelledby="run-hero-title" className="day relative overflow-hidden">
+    <section ref={hostRef} aria-labelledby="run-hero-title" className="run-hero day relative overflow-hidden">
       <ConvergenceField
         seed={roleTitle}
         counts={RUN_COUNTS}
@@ -187,7 +187,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
         </div>
 
         {/* Proof bar: track record, not a sample funnel. */}
-        <div className="mt-14 border-t border-[color:var(--ink)] pt-4">
+        <div className="hero-proof mt-14 border-t border-[color:var(--ink)] pt-4">
           <p className="narrow text-[13px] font-semibold uppercase tracking-[0.12em] text-[color:var(--blue-600)]">
             Proof of concept
           </p>

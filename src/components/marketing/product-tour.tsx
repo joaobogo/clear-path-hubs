@@ -28,7 +28,7 @@ export function ProductTour() {
           </div>
           <Link to="/pricing" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[color:var(--blue-600)]">One package. See pricing <ArrowRight className="size-4" aria-hidden /></Link>
         </div>
-        <div role="tablist" aria-label="Explore TaaSFlow" className="mt-9 grid grid-cols-3 border-b border-[color:var(--rule-2)]">
+        <div role="tablist" aria-label="Explore TaaSFlow" className="mt-6 grid grid-cols-3 border-b border-[color:var(--rule-2)] sm:mt-9">
           {VIEWS.map((view, index) => {
             const Icon = view.icon;
             return <RunButton key={view.id} variant="ghost" role="tab" id={`tour-tab-${view.id}`} aria-selected={selected === index} aria-controls={`tour-panel-${view.id}`} tabIndex={selected === index ? 0 : -1} className={cn("product-tour-tab min-w-0 flex-col gap-2 rounded-none border-0 px-2 py-4 sm:flex-row sm:gap-3", selected === index && "is-active")} onClick={() => setSelected(index)} onKeyDown={(event) => {
@@ -40,12 +40,12 @@ export function ProductTour() {
             }}><Icon className="size-5 shrink-0" aria-hidden /><span>{view.label}</span></RunButton>;
           })}
         </div>
-        {VIEWS.map((view, index) => <div key={view.id} id={`tour-panel-${view.id}`} role="tabpanel" aria-labelledby={`tour-tab-${view.id}`} hidden={selected !== index} className="product-tour-panel grid min-w-0 gap-8 pt-9 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] [&[hidden]]:hidden">
+        {VIEWS.map((view, index) => <div key={view.id} id={`tour-panel-${view.id}`} role="tabpanel" aria-labelledby={`tour-tab-${view.id}`} hidden={selected !== index} className="product-tour-panel grid min-w-0 gap-6 pt-6 sm:gap-8 sm:pt-9 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] [&[hidden]]:hidden">
           <div className="min-w-0 lg:pt-6">
             <span className="wide num text-sm font-semibold text-[color:var(--blue-600)]">0{index + 1} / 03</span>
             <h3 className="mt-4 text-[28px] leading-tight text-[color:var(--ink)] sm:text-[36px]">{view.title}</h3>
             <p className="mt-4 max-w-[34ch] text-lg leading-relaxed text-[color:var(--slate)]">{view.description}</p>
-            <ul className="mt-6 space-y-3">{view.points.map((point) => <li key={point} className="flex items-center gap-3 text-sm text-[color:var(--ink)]"><span className="size-1.5 shrink-0 bg-[color:var(--blue-600)]" aria-hidden />{point}</li>)}</ul>
+            <ul className="mt-5 space-y-2 sm:mt-6 sm:space-y-3">{view.points.map((point) => <li key={point} className="flex items-center gap-3 text-sm text-[color:var(--ink)]"><span className="size-1.5 shrink-0 bg-[color:var(--blue-600)]" aria-hidden />{point}</li>)}</ul>
             <Link to={view.link} hash={"hash" in view ? view.hash : undefined} className="mt-7 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[color:var(--blue-600)]">{view.linkLabel}<ArrowRight className="size-4" aria-hidden /></Link>
           </div>
           <div className="min-w-0">
