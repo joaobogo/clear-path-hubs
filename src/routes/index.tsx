@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { RunChapters } from "@/components/home/run-chapters";
 import { RunHero } from "@/components/home/run-hero";
+import { SectorBand } from "@/components/home/sector-band";
 import { ClosingBand } from "@/components/layout/closing-band";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { OFFER_LAST_UPDATED_LABEL } from "@/config/offer-facts";
@@ -45,6 +46,7 @@ function Home() {
   return (
     <SiteShell hideLinkHub hideClosingBand>
       <RunHero role={role} onRun={runRole} />
+      <SectorBand />
       <RunChapters role={roleTitle} lastUpdated={OFFER_LAST_UPDATED_LABEL} />
       <ClosingBand id="chapter-start" role={role} source="home_closing" />
     </SiteShell>
