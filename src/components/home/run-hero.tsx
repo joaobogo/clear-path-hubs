@@ -196,7 +196,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
           >
             {[
               { value: "4", label: "Continents hired across" },
-              { value: "Multi", label: "Languages recruited in" },
+              { value: "8+", label: "Languages recruited in" },
               { value: "500+", label: "Positions run" },
               { value: "0", label: "Positions left unfilled" },
             ].map((item, i) => (
