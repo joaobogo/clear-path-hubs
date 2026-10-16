@@ -24,8 +24,7 @@ describe("Industry pictures", () => {
     expect(proof).toContain("getIndustryHeroImage(SECTOR_IMAGES[r.sector]");
     expect(proof).toContain("<HeroPicture");
     const pricing = readFileSync("src/routes/pricing.tsx", "utf8");
-    expect(pricing).toContain('billing === "monthly" && p.id !== "pilot"');
-    expect(pricing).toContain('formatUsdExact(subscriptionTotalsUsd(p.capacity)?.monthly ?? p.totalUsd)');
+    expect(pricing).toContain('subscriptionTotalsUsd(capacity)?.monthly ?? totalUsd');
   });
   it("prioritizes takeaways while keeping full examples accessible", () => {
     const examples = readFileSync("src/routes/case-studies.tsx", "utf8");
@@ -54,7 +53,7 @@ describe("Industry pictures", () => {
     expect(pricing).toContain('id="terms"');
     expect(pricing).not.toContain("<ModelComparisonTable");
     expect(pricing).not.toContain("{FAQ.map");
-    expect(pricing).toContain("pilot paid once");
+    expect(pricing).toContain("Pay once for the whole package.");
   });
 
   it("illustrates examples honestly without empty testimonial placeholders", () => {
@@ -128,7 +127,7 @@ describe("Industry pictures", () => {
   });
   it("integrates buying-page imagery without delaying pricing controls", () => {
     const pricing = readFileSync("src/routes/pricing.tsx", "utf8");
-    expect(pricing.indexOf("<PackageSelector")).toBeLessThan(pricing.indexOf("<PhotoBand"));
+    expect(pricing.indexOf('aria-label="Pricing tiers"')).toBeLessThan(pricing.indexOf("<PhotoBand"));
     const money = readFileSync("src/components/marketing/money-page.tsx", "utf8");
     expect(money).toContain("BUYER_PAGE_PHOTOGRAPHS[page.slug]");
     expect(money).toContain("<EditorialCover");
