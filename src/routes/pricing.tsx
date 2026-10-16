@@ -231,7 +231,7 @@ function PricingPage() {
             What’s included.
           </h2>
           <p className="mt-4 max-w-[640px] text-[17px] text-[color:var(--slate)]">
-            Every package includes the platform and managed recruiting. Capacity, seats and support vary below.
+            The platform and managed recruiting are in every package. This is what changes:
           </p>
           <div className="mt-8">
             <EntitlementMatrix
