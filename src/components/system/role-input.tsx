@@ -1,10 +1,10 @@
-import { useNavigate } from "@tanstack/react-router";
 import { useId, useState, type FormEvent } from "react";
 import { CTA_RUN_ROLE } from "@/config/cta";
 import { cleanRole, ROLE_INPUT_MAX } from "@/lib/marketing/role-input";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { cn } from "@/lib/utils";
 import { runButtonClass } from "@/components/system/run-button";
+import { RunRoleDialog } from "@/components/system/run-role-dialog";
 
 /**
  * RoleInput (The Run): "I'm hiring a …", a typed role, one button.
@@ -37,21 +37,25 @@ export function RoleInput({
 }) {
   const id = useId();
   const listId = `${id}-roles`;
-  const navigate = useNavigate();
   const [role, setRole] = useState(defaultRole);
+  const [dialogRole, setDialogRole] = useState<string | null>(null);
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const clean = cleanRole(role);
     trackEvent("role_typed", { source, has_role: clean.length > 0 });
-    if (onRun) {
-      onRun(clean);
-      return;
-    }
-    void navigate({ to: CTA_RUN_ROLE.to, search: clean ? { role: clean } : {} });
+    onRun?.(clean);
+    setDialogRole(clean);
   };
 
   return (
+    <>
+    <RunRoleDialog
+      open={dialogRole !== null}
+      onOpenChange={(o) => !o && setDialogRole(null)}
+      role={dialogRole ?? ""}
+      source={source}
+    />
     <form
       onSubmit={submit}
       role="search"
@@ -101,5 +105,6 @@ export function RoleInput({
         {CTA_RUN_ROLE.label}
       </button>
     </form>
+    </>
   );
 }
