@@ -102,7 +102,7 @@ function DetailList({ label, items }: { label: string; items: readonly string[] 
 
 function AgentCard({ agent }: { agent: RosterEntry }) {
   return (
-    <li className="flex min-w-0 flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6">
+    <li className="flex min-w-0 flex-col rounded-[var(--r-3)] border border-[color:var(--rule-2)] bg-[color:var(--white)] p-5 sm:p-6">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
           {agent.role}
@@ -124,11 +124,15 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
 
       <dl className="mt-4 grid gap-4 border-l-2 border-primary pl-4">
         <DetailList label="Outputs" items={agent.outputs} />
+        <div className="min-w-0">
+          <dt className="text-xs font-semibold text-[color:var(--slate)]">Approval required</dt>
+          <dd className="mt-2 flex items-start gap-2 text-sm leading-relaxed text-[color:var(--ink)]"><Lock className="mt-0.5 size-4 shrink-0 text-[color:var(--brand-success)]" aria-hidden /><span>{agent.approval}</span></dd>
+        </div>
       </dl>
 
       <details className="group mt-4 rounded-lg border border-[color:var(--brand-navy)]/10">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]">
-          Inputs, controls & approval details
+          Inputs, controls & recorded events
           <ChevronDown
             className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
             aria-hidden
@@ -141,18 +145,6 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
           </div>
           <DetailList label="Inputs" items={agent.inputs} />
           <DetailList label="What you control" items={agent.controls} />
-          <div className="min-w-0">
-            <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
-              Approval required
-            </dt>
-            <dd className="mt-1.5 flex items-start gap-2 text-sm leading-snug text-[color:var(--brand-navy)]/85">
-              <Lock
-                className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/70"
-                aria-hidden
-              />
-              <span className="min-w-0">{agent.approval}</span>
-            </dd>
-          </div>
           <DetailList label="Events recorded" items={agent.events} />
         </dl>
       </details>

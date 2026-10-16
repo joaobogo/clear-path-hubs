@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, FileCheck2, Network, PanelsTopLeft, ShieldCheck } from "lucide-react";
 import { RunButton } from "@/components/system/run-button";
@@ -15,7 +15,6 @@ const VIEWS = [
 
 export function ProductTour() {
   const [selected, setSelected] = useState(0);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const active = VIEWS[selected];
   if (!active) return null;
 
@@ -32,7 +31,7 @@ export function ProductTour() {
         <div role="tablist" aria-label="Explore TaaSFlow" className="mt-9 grid grid-cols-3 border-b border-[color:var(--rule-2)]">
           {VIEWS.map((view, index) => {
             const Icon = view.icon;
-            return <RunButton key={view.id} ref={undefined} variant="ghost" role="tab" id={`tour-tab-${view.id}`} aria-selected={selected === index} aria-controls={`tour-panel-${view.id}`} tabIndex={selected === index ? 0 : -1} className={cn("product-tour-tab min-w-0 flex-col gap-2 rounded-none border-0 px-2 py-4 sm:flex-row sm:gap-3", selected === index && "is-active")} onClick={() => setSelected(index)} onKeyDown={(event) => {
+            return <RunButton key={view.id} variant="ghost" role="tab" id={`tour-tab-${view.id}`} aria-selected={selected === index} aria-controls={`tour-panel-${view.id}`} tabIndex={selected === index ? 0 : -1} className={cn("product-tour-tab min-w-0 flex-col gap-2 rounded-none border-0 px-2 py-4 sm:flex-row sm:gap-3", selected === index && "is-active")} onClick={() => setSelected(index)} onKeyDown={(event) => {
               const direction = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
               const next = event.key === "Home" ? 0 : event.key === "End" ? VIEWS.length - 1 : (index + direction + VIEWS.length) % VIEWS.length;
               if (!direction && event.key !== "Home" && event.key !== "End") return;
