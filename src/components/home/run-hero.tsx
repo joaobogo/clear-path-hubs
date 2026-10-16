@@ -170,7 +170,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
               ))}
             </ol>
             <div className="hero-evidence mt-3 min-h-[148px] border-l-2 border-primary p-4" aria-live="polite" aria-atomic="true">
-              <p className="text-xs font-semibold text-[color:var(--blue-600)]">{selected?.ref.replace(/^Example candidate /, "Candidate ")} · licence evidence</p>
+              <p className="text-xs font-semibold text-[color:var(--blue-600)]">{selected?.ref.replace(/^Example candidate /, "Candidate ")} · evidence from the CV</p>
               <p className="mt-2 whitespace-normal text-sm font-normal leading-relaxed text-[color:var(--ink)]">{selected?.results.licence.evidence}</p>
             </div>
             <p className="mt-3 text-sm text-[color:var(--slate)]">
