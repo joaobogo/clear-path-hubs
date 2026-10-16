@@ -73,11 +73,21 @@
 .package-bar { transition: width var(--t-base) var(--ease), background var(--t-quick) var(--ease); }
 .sector-run-photo img { transition: transform var(--t-base) var(--ease); }
 .sector-run-photo:hover img { transform: scale(1.025); }
+.product-tour-tab { color: var(--slate); border-bottom: 2px solid transparent; transition: color var(--t-quick) var(--ease), background var(--t-quick) var(--ease), border-color var(--t-quick) var(--ease); }
+.product-tour-tab.is-active { color: var(--blue-600); background: var(--blue-50); border-bottom-color: var(--blue-600); }
+.product-tour-panel:not([hidden]) { animation: tour-enter var(--t-base) var(--ease) both; }
+.page-connection { transition: border-color var(--t-quick) var(--ease), box-shadow var(--t-base) var(--ease), transform var(--t-base) var(--ease); }
+.page-connection:hover { border-color: var(--blue-600); box-shadow: var(--brand-shadow-md); transform: translateY(-3px); }
+.site-run :where(details) > summary:focus-visible { outline: 2px solid var(--blue-600); outline-offset: 4px; }
+@keyframes tour-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (min-width: 1024px) {
   .editorial-cover-scrim { background: linear-gradient(to right, var(--ink), color-mix(in oklab, var(--ink) 78%, transparent) 38%, color-mix(in oklab, var(--ink) 12%, transparent) 100%); }
   .editorial-cover > div:last-child > div:first-child { max-width: 660px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .product-tour-panel:not([hidden]) { animation: none; }
+  .page-connection, .product-tour-tab { transition: none; }
+  .page-connection:hover { transform: none; }
   .editorial-photograph img { transform: none !important; transition: none; }
   .sector-run-photo img { transform: none !important; transition: none; }
 }

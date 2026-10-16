@@ -98,7 +98,7 @@ function PricingPage() {
     <SiteShell>
       <PublicSection className="pb-0 pt-14 sm:pb-0 sm:pt-20 lg:pb-0">
         <PublicPage>
-          <h1 className="display max-w-[14ch] text-[clamp(40px,5.5vw,60px)] text-[color:var(--ink)]">
+          <h1 className="display max-w-[20ch] text-[40px] text-[color:var(--ink)] sm:text-[52px] lg:text-[60px]">
             Recruiting packages. Clear prices.
           </h1>
           <p className="mt-6 max-w-[640px] text-[21px] leading-[1.45] text-[color:var(--slate)]">
@@ -197,7 +197,7 @@ function PricingPage() {
             })}
           </ul>
 
-          <div className="mt-6 rounded-[var(--r-3)] border border-[color:var(--rule-2)] p-5 sm:p-6">
+          <div className="mt-6 border-y border-[color:var(--rule-2)] py-5 sm:py-6">
             <p className="text-sm font-semibold text-[color:var(--ink)]">Hiring more?</p>
             <ul className="mt-3 grid gap-3 sm:grid-cols-4" aria-label="Larger packages">
               {LARGER_TIERS.map((p) => (

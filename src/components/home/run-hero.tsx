@@ -88,7 +88,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
   }, []);
   const [agentsLine, peopleLine] = [
     `${offer.agents} agents open it on ${offer.channels} channels the same day and score every applicant against your rubric.`,
-    "A senior recruiter signs the ten worth interviewing. One flat fee.",
+    "Recruiter-reviewed shortlists. Your own ATS. One flat fee.",
   ];
 
   return (
@@ -113,8 +113,9 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
               Post the role. Sourcing agents deliver your shortlist.
             </h1>
             <p className="run-hero-lead mt-6 max-w-[640px] text-[19px] leading-[1.55] text-[color:var(--slate)] sm:text-[21px]">
-              {agentsLine} {peopleLine}
+              {peopleLine}
             </p>
+            <p className="run-hero-lead mt-3 max-w-[560px] text-sm leading-relaxed text-[color:var(--slate)]">{agentsLine}</p>
             <div className="mt-10 max-w-[590px]">
               <RoleInput
                 source="home_hero"
@@ -136,7 +137,7 @@ export function RunHero({ role, onRun }: { role?: string; onRun?: (role: string)
           <aside ref={listRef} aria-labelledby="run-hero-list-title" className="min-w-0">
             <div className="flex items-baseline justify-between border-b border-[color:var(--ink)] pb-2">
               <h2 id="run-hero-list-title" className="text-base font-semibold [font-stretch:100%] text-[color:var(--ink)]">
-                Top 10 · {roleTitle}
+                Top 10 · {SAMPLE_SHORTLIST_ROLE}
               </h2>
               <span className="narrow text-[13px] font-medium text-[color:var(--faint)]">
                 {REPRESENTATIVE_LABEL}
