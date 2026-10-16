@@ -2183,13 +2183,7 @@ function ExpressIntakePage() {
 
 
       trackFgv(FGV_EVENTS.formSubmit, { form_type: "employer_intake" });
-        } else {
-          trackFgv(FGV_EVENTS.formError, {
-            form_type: "employer_intake",
-            error_code: result.error,
-          });
-        }
-      });
+      trackConfirmedConversion({ formType: "employer_intake", serviceInterest: "recruiting_subscription", destinationBrand: "taasflow", submissionId: body.intakeId ?? "" });
 
       trackEvent("express_intake_submitted", {
         flow: "express_onboarding",

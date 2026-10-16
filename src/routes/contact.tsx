@@ -406,13 +406,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       }
       if (topic !== "support" && topic !== "candidate") {
         trackFgv(FGV_EVENTS.formSubmit, { form_type: "sales_contact" });
-          } else {
-            trackFgv(FGV_EVENTS.formError, {
-              form_type: "sales_contact",
-              error_code: result.error,
-            });
-          }
-        });
+        trackConfirmedConversion({ formType: "sales_contact", serviceInterest: "recruiting_subscription", destinationBrand: "taasflow", submissionId: json.trace_id ?? "" });
       }
       setDone({ traceId: json.trace_id ?? "" });
       toast.success("Message sent. We'll be in touch.");
