@@ -82,7 +82,7 @@ export function PageConnections({
                 <Link
                   to={link.to as never}
                   params={link.params as never}
-                  className="group block h-full rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-5 transition hover:border-[color:var(--brand-navy)]/30 hover:shadow-sm"
+                  className={`page-connection group block h-full rounded-[var(--r-3)] border p-5 ${kind === "commercial" ? "border-[color:var(--blue-600)] bg-[color:var(--blue-50)]" : "border-[color:var(--rule-2)] bg-[color:var(--white)]"}`}
                 >
                   <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/80">
                     <Icon className="h-4 w-4" />
@@ -92,7 +92,7 @@ export function PageConnections({
                   </div>
                   <p className="mt-3 flex items-center gap-1.5 font-[family-name:var(--brand-font-display)] text-lg font-semibold tracking-tight text-[color:var(--brand-navy)]">
                     {link.label}
-                    <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+                    <ArrowRight className="ml-auto h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1 motion-reduce:transform-none" aria-hidden />
                   </p>
                   <p className="mt-1.5 text-sm text-[color:var(--brand-navy)]/80">
                     {link.desc}

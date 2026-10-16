@@ -136,7 +136,7 @@ function StudyCard({ study }: { study: Study }) {
       <div className="grid gap-6 p-6 md:grid-cols-[1.2fr_1fr] md:p-8">
         <div className="border-l-4 border-primary pl-4">
           <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">The takeaway</p>
-          <p className="mt-2 font-display text-lg font-semibold leading-snug text-[color:var(--brand-navy)]">{study.outcomeHighlight}</p>
+          <p className="mt-2 font-display text-xl font-semibold leading-snug text-[color:var(--brand-navy)] sm:text-2xl">{study.outcomeHighlight}</p>
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">Roles needed</p>
