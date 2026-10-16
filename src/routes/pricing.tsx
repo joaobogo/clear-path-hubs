@@ -224,6 +224,13 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
+      {/* Your own numbers against an agency: the difference, shown before the detail. */}
+      <PublicSection id="compare-costs" className="scroll-mt-24">
+        <PublicPage>
+          <AgencyComparator />
+        </PublicPage>
+      </PublicSection>
+
       {/* The table follows the selector */}
       <PublicSection id="included" className="scroll-mt-24">
         <PublicPage>
