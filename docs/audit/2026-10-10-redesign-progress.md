@@ -76,3 +76,16 @@ Local dev server, local Supabase stack, Playwright (Chromium).
 - `docs/handoff/lovable-prompt-redesign-inputs.md`: the inputs prompt (proof sources, examples, blueprints, photographs).
 - `docs/handoff/lovable-prompts-phases-4-6.md`: one prompt per step for phases 4, 5 and 6, in order.
 
+
+## Audit, 18 October 2026 (before publishing)
+
+Branch merged with Lovable's 83 commits on `main` (photographs, Run this role dialog, server-side CRM capture, page rewrites). Local dev server and Supabase stack, Playwright.
+
+- Dashboard code: no file under `src/routes/_authenticated`, `src/components/client`, `src/components/admin` or `src/components/workspace` differs from before the redesign, apart from the unicorn markers below. Shared changes that reach the dashboard: the query-client wrapper (`src/lib/router-with-query.tsx`), the role-total fix, colours and the font.
+- Unicorn beside every 95+ candidate's name: role board and Candidates board view, comparison headers, talent memory list and sheet (already on the Candidates list, cards and candidate page). Render tests added.
+- Workspace sweep: 176 page loads (34 client pages, 38 admin pages, 8 candidate pages, phone and desktop): no errors, no failed requests. Admin settings is 4 px wide on a phone; it was 18 px with the old font, so it predates the redesign.
+- Client actions exercised and checked in the database: Shortlist, Request more information, Put on hold, Add feedback, Request contact details, Decline; each saved and each Undo reversed it. Board stage move and back. Compare. Message thread created and message saved.
+- Public sweep: 224 page loads (all 57 industry pages, phone and desktop): no errors, no overflow, one h1. Broken images are Lovable-hosted files the sandbox cannot reach.
+- Fixed: the structured-data check contradicted itself on WebApplication; nine links pointed at retired blog posts.
+- Checks: typecheck, guards, structured data, 2,514 tests (the two database-bound messaging tests aside), production build.
+- For the owner: the Run this role dialog collects name and work email without a privacy notice; proof figures stay unpublished until each has a source.
