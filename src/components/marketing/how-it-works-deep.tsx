@@ -244,7 +244,7 @@ export function SourcingEcosystemMap() {
         {groups.map((g) => (
           <div
             key={g.heading}
-            className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3"
+            className="min-w-0 overflow-hidden rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3"
           >
             <div className="mb-2">
               <div className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
@@ -254,7 +254,7 @@ export function SourcingEcosystemMap() {
                 {g.caption}
               </div>
             </div>
-            <ul className="grid gap-1.5">
+            <ul className="grid min-w-0 grid-cols-1 gap-1.5">
               {g.channels.map((c) => (
                 <ChannelPill key={c.label} {...c} />
               ))}
@@ -282,15 +282,15 @@ function ChannelPill({
   note: string;
 }) {
   return (
-    <li className="flex items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2.5">
+    <li className="flex min-w-0 items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2.5">
       <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]">
         {icon}
       </span>
       <div className="min-w-0">
-        <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
+        <div className="text-sm font-semibold leading-snug text-[color:var(--brand-navy)]">
           {label}
         </div>
-        <div className="truncate text-[11px] text-[color:var(--brand-navy)]/80">
+        <div className="text-[11px] leading-snug text-[color:var(--brand-navy)]/80">
           {note}
         </div>
       </div>
