@@ -33,6 +33,7 @@ import {
   type SilverConsent,
 } from "@/lib/talent-memory.functions";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
@@ -130,6 +131,7 @@ export function MemorySheet({
               <SheetTitle className="flex items-center gap-2">
                 <Award className="h-4 w-4 text-warning-strong" />
                 {m.candidate.display_name}
+                <UnicornMarker score={m.score_snapshot} />
               </SheetTitle>
             </SheetHeader>
 

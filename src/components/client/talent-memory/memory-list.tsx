@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Award, Clock, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { REASON_LABELS, type TalentMemoryDTO } from "@/lib/talent-memory.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
@@ -53,7 +54,10 @@ export function MemoryCard({
       <button className="w-full text-left" onClick={onOpen}>
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="truncate font-medium">{memory.candidate.display_name}</p>
+            <p className="truncate font-medium">
+              {memory.candidate.display_name}
+              <UnicornMarker score={memory.score_snapshot} className="ml-1" />
+            </p>
             {memory.candidate.headline && (
               <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
                 {memory.candidate.headline}

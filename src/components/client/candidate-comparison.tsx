@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { VisibilityNote } from "@/components/client/visibility-note";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { ComparisonPdfExportButton } from "@/components/client/candidates/comparison-pdf-export";
 import {
   Tooltip,
@@ -301,7 +302,10 @@ export function CompareSheet({
               <div className="text-xs font-medium text-muted-foreground">Requirement</div>
               {candidates.map((c) => (
                 <div key={c.match_id} className="min-w-0">
-                  <div className="font-semibold truncate">{c.candidate.display_name}</div>
+                  <div className="font-semibold truncate">
+                    {c.candidate.display_name}
+                    <UnicornMarker unicorn={c.unicorn} className="ml-1" />
+                  </div>
                   <div className="text-xs text-muted-foreground truncate">
                     {c.candidate.headline ?? c.position?.title}
                   </div>
@@ -731,6 +735,7 @@ function RequirementGrid({
                     <div key={c.match_id} className="min-w-0">
                       <div className="truncate text-sm font-semibold">
                         {c.candidate.display_name}
+                        <UnicornMarker unicorn={c.unicorn} className="ml-1" />
                       </div>
                       {t.total > 0 && (
                         <div className="text-[11px] text-muted-foreground">
