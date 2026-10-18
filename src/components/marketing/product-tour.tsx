@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, FileCheck2, Network, PanelsTopLeft, ShieldCheck } from "lucide-react";
 import { RunButton } from "@/components/system/run-button";
@@ -13,8 +13,16 @@ const VIEWS = [
   { id: "workspace", label: "Your ATS", icon: PanelsTopLeft, title: "One place to decide.", description: "Compare candidates, review their evidence and keep your team aligned.", points: ["Ranked candidate queue", "Side-by-side comparison", "Recorded team decisions"], link: "/how-it-works", hash: "workspace", linkLabel: "Explore your workspace" },
 ] as const;
 
+const TOUR_FALLBACK = `(function(){var r=document.currentScript&&document.currentScript.closest("section");if(!r)return;r.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest('[role="tab"]');if(!t)return;r.querySelectorAll('[role="tab"]').forEach(function(b){var on=b===t;b.setAttribute("aria-selected",on?"true":"false");b.classList.toggle("is-active",on);var p=document.getElementById(b.getAttribute("aria-controls"));if(p)p.hidden=!on;});});})();`;
+
 export function ProductTour() {
   const [selected, setSelected] = useState(0);
+  // Clicks made before the page finishes loading are handled by the inline
+  // script below; once React is ready, adopt whichever tab the visitor picked.
+  useEffect(() => {
+    const idx = VIEWS.findIndex((v) => document.getElementById(`tour-tab-${v.id}`)?.getAttribute("aria-selected") === "true");
+    if (idx > 0) setSelected(idx);
+  }, []);
   const active = VIEWS[selected];
   if (!active) return null;
 
@@ -52,6 +60,7 @@ export function ProductTour() {
             {view.id === "sourcing" ? <AgentRunsPreview /> : view.id === "evidence" ? <EvidenceReviewPanel /> : <DecisionWorkspacePreview />}
           </div>
         </div>)}
+        <script dangerouslySetInnerHTML={{ __html: TOUR_FALLBACK }} />
         <p className="mt-8 flex items-center gap-2 border-t border-[color:var(--rule)] pt-5 text-sm text-[color:var(--slate)]"><ShieldCheck className="size-4 shrink-0 text-[color:var(--brand-success)]" aria-hidden />Agents do the work. People approve the shortlist. You choose who to hire.</p>
       </div>
     </section>
