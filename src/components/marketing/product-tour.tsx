@@ -13,7 +13,7 @@ const VIEWS = [
   { id: "workspace", label: "Your ATS", icon: PanelsTopLeft, title: "One place to decide.", description: "Compare candidates, review their evidence and keep your team aligned.", points: ["Ranked candidate queue", "Side-by-side comparison", "Recorded team decisions"], link: "/how-it-works", hash: "workspace", linkLabel: "Explore your workspace" },
 ] as const;
 
-const TOUR_FALLBACK = `(function(){var r=document.currentScript&&document.currentScript.closest("section");if(!r)return;r.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest('[role="tab"]');if(!t)return;r.querySelectorAll('[role="tab"]').forEach(function(b){var on=b===t;b.setAttribute("aria-selected",on?"true":"false");b.classList.toggle("is-active",on);var p=document.getElementById(b.getAttribute("aria-controls"));if(p)p.hidden=!on;});});})();`;
+const TOUR_FALLBACK = `(function(){var r=document.currentScript&&document.currentScript.closest("section");if(!r)return;r.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest('[role="tab"]');if(!t||!t.id||t.id.indexOf("tour-tab-")!==0)return;r.querySelectorAll('[role="tab"]').forEach(function(b){if(!b.id||b.id.indexOf("tour-tab-")!==0)return;var on=b===t;b.setAttribute("aria-selected",on?"true":"false");b.classList.toggle("is-active",on);var p=document.getElementById(b.getAttribute("aria-controls"));if(p)p.hidden=!on;});});})();`;
 
 export function ProductTour() {
   const [selected, setSelected] = useState(0);
