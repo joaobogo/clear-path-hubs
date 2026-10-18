@@ -10,6 +10,7 @@ import {
 import { Users } from "lucide-react";
 import { plural } from "@/lib/format/plural";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { UnicornMarker } from "@/components/unicorn-marker";
 import { isUnicornMatch } from "@/lib/scoring/bands";
 import {
   publishedScore,
@@ -145,6 +146,16 @@ export function PipelineBoard({
                         className="relative z-10 block text-sm font-medium hover:underline"
                       >
                         {m.candidate_profiles?.full_name ?? "Candidate"}
+                        {/* The standout marker beside the name, as on the
+                            Candidates list and the candidate page. Same rule
+                            and same voiding as the badge below: published
+                            score of 95 or more, never from an unreadable CV. */}
+                        <UnicornMarker
+                          unicorn={isUnicornMatch({
+                            score: scoreVoidedByUnreadableCv(m) ? null : publishedScore(m.score_runs),
+                            hired: m.stage === "hired",
+                          })}
+                        />
                       </Link>
                       <div className="text-xs text-muted-foreground truncate">{cardHeadline(m)}</div>
                       {showRole && (

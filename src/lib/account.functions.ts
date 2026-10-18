@@ -146,8 +146,9 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     const invitedSeats = seatCount.pendingInvites;
     const limit = seatCount.seatLimit;
 
-    // One roles reader: drafts, archived roles and test records are not part of
-    // the account, and the Roles page counts them the same way.
+    // One roles reader. Open roles leave out drafts, archived roles and test
+    // records; the total keeps drafts and archived roles, as the Roles page's
+    // "All" tab and the admin rollup do. Only test records are never counted.
     const positionRows = await countRolesForOrg(supabase, data.orgId);
     const rolesOpen = positionRows.open;
 
