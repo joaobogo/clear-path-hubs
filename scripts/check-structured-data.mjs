@@ -48,8 +48,14 @@ const collectTypes = (node, out = []) => {
   return out;
 };
 
-/** Schema types that must appear on exactly one page (or a stated set of pages). */
-const ONLY_ON = { WebApplication: ["/platform"] };
+/**
+ * Schema types that must appear on exactly one page (or a stated set of pages).
+ * WebApplication belongs to /how-it-works: that is where `marketingHead` emits
+ * it (src/lib/marketing/head.ts, pinned by head.test.ts) and where EXPECTED
+ * above requires it. This said /platform, so the check failed on the one page
+ * it also required the schema on.
+ */
+const ONLY_ON = { WebApplication: ["/how-it-works"] };
 
 /** Every node in a JSON-LD tree that carries @type or @id, flattened. */
 const collectNodes = (node, out = []) => {
