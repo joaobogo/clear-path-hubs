@@ -5,6 +5,11 @@ import { PublicPage, PublicSection, SiteShell, CtaSection } from "@/components/m
 import { marketingHead } from "@/lib/marketing/head";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH } from "@/config/offer-facts";
+import { PagePhotograph } from "@/components/marketing/page-photograph";
+import hrTeam from "@/assets/page-pricing-hero.jpg";
+import foundersTeam from "@/assets/page-founders-team.jpg";
+import staffingTeam from "@/assets/page-recruiting-service.jpg";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
 
 export const Route = createFileRoute("/solutions")({
   head: () =>
@@ -19,6 +24,8 @@ export const Route = createFileRoute("/solutions")({
 const AUDIENCES = [
   {
     icon: Briefcase,
+    image: hrTeam,
+    imageAlt: "A talent team discussing its hiring requirements around a shared desk.",
     title: "HR and talent teams",
     body: "Not an agency. Sourcing capacity for your team at a flat fee, with the evidence behind every score.",
     to: "/for-hr-teams",
@@ -26,20 +33,26 @@ const AUDIENCES = [
   },
   {
     icon: Building2,
-    title: "Hospitality and frontline operators",
+    image: getIndustryHeroImage("hospitality")?.src,
+    imageAlt: getIndustryHeroImage("hospitality")?.alt ?? "Hospitality professionals at work in a hotel.",
+    title: "Hospitality operators",
     body: "Hiring for multi-site and shift-based roles, with a shortlist built around the requirements of the role.",
     to: "/industries/hospitality",
     cta: "Hospitality hiring",
   },
   {
     icon: Rocket,
+    image: foundersTeam,
+    imageAlt: "Founders and an engineering lead discussing their next hire at a studio table.",
     title: "Founders",
-    body: `Your first recruiter, for $${PRICE_PILOT_USD} a role. One pilot per company.`,
+    body: `Start with a $${PRICE_PILOT_USD} one-role pilot, once per company. Build your shortlist without building a recruiting team.`,
     to: "/for-founders",
     cta: "For founders",
   },
   {
     icon: Handshake,
+    image: staffingTeam,
+    imageAlt: "Recruiting partners reviewing application evidence and sourcing candidates.",
     title: "Staffing agencies",
     body: "Add sourcing and screening capacity behind your own client relationships. TaaSFlow does not place workers.",
     to: "/partnerships/staffing",
@@ -52,14 +65,14 @@ const LINK_CLASS =
 
 function SolutionsPage() {
   return (
-    <SiteShell>
+    <SiteShell hideClosingBand>
       <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage className="max-w-4xl">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
             Who TaaSFlow is for
           </p>
           <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
-            Pick the page that matches how you hire.
+            Recruiting that fits your team.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow is a {OFFER_CATEGORY.toLowerCase()}. {WHO_RUNS_THE_SEARCH}
@@ -72,8 +85,10 @@ function SolutionsPage() {
             {AUDIENCES.map((a) => (
               <article
                 key={a.title}
-                className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
+                className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-on-dark)]"
               >
+                {a.image ? <PagePhotograph src={a.image} alt={a.imageAlt} className="aspect-[16/9]" /> : null}
+                <div className="flex flex-1 flex-col p-6">
                 <a.icon className="h-6 w-6 text-[color:var(--brand-ocean-text)]" aria-hidden />
                 <h2 className="mt-4 text-xl font-semibold text-[color:var(--brand-navy)]">{a.title}</h2>
                 <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/80">{a.body}</p>
@@ -90,9 +105,16 @@ function SolutionsPage() {
                     {a.cta} →
                   </Link>
                 )}
+                </div>
               </article>
             ))}
           </div>
+        </PublicPage>
+      </PublicSection>
+      <PublicSection className="border-t border-[color:var(--rule)]">
+        <PublicPage>
+          <h2 className="text-2xl font-semibold text-[color:var(--ink)]">Hiring in a specific industry?</h2>
+          <Link to="/industries" className="mt-4 inline-flex min-h-11 items-center font-semibold text-[color:var(--blue-600)] underline underline-offset-4">Browse industry-specific hiring →</Link>
         </PublicPage>
       </PublicSection>
       <CtaSection

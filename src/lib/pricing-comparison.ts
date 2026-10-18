@@ -143,11 +143,15 @@ export function compareCosts(input: ComparisonInput): ComparisonResult {
   const direction =
     differenceUsd > 0 ? "taasflow-lower" : differenceUsd < 0 ? "taasflow-higher" : "equal";
   const period = mode === "project" ? "for this project" : `over ${m} ${m === 1 ? "month" : "months"}`;
+  // Recurring mode always states the TaaSFlow price as the monthly figure,
+  // never the accumulated total.
+  const taasPriceDisplay =
+    mode === "project" ? formatUsdExact(pkg.totalUsd) : `${formatUsdExact(pkg.totalUsd)} a month`;
   const explanation =
     direction === "taasflow-lower"
-      ? `On these inputs, ${pkg.capacityLabel.toLowerCase()} at ${formatUsdExact(taasTotalUsd)} costs ${formatUsdExact(differenceUsd)} less than agency fees of ${formatUsdExact(agencyTotalUsd)} ${period}.`
+      ? `On these inputs, ${pkg.capacityLabel.toLowerCase()} at ${taasPriceDisplay} costs ${formatUsdExact(differenceUsd)} less than agency fees of ${formatUsdExact(agencyTotalUsd)} ${period}.`
       : direction === "taasflow-higher"
-        ? `On these inputs, ${pkg.capacityLabel.toLowerCase()} at ${formatUsdExact(taasTotalUsd)} costs ${formatUsdExact(-differenceUsd)} more than agency fees of ${formatUsdExact(agencyTotalUsd)} ${period}. The cheaper option here is the agency.`
+        ? `On these inputs, ${pkg.capacityLabel.toLowerCase()} at ${taasPriceDisplay} costs ${formatUsdExact(-differenceUsd)} more than agency fees of ${formatUsdExact(agencyTotalUsd)} ${period}. The cheaper option here is the agency.`
         : `On these inputs, both options cost ${formatUsdExact(agencyTotalUsd)} ${period}.`;
 
   return {

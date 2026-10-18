@@ -726,6 +726,11 @@ export const Route = createFileRoute("/api/public/express-intake")({
             fullName: `${data.firstName} ${data.lastName}`.trim(),
             email: data.workEmail,
             company: data.companyName.trim(),
+            phone: data.phone || null,
+            linkedin: data.contactLinkedin || null,
+            contactTitle: data.contactTitle || null,
+            companyWebsite: data.companyWebsite || null,
+            consentStatus: data.consent ? "accepted_terms" : null,
             facts: [
               { label: "Role", value: data.roleTitle.trim() },
               { label: "Job description", value: data.jobDescriptionFile ? "uploaded file" : "pasted text" },

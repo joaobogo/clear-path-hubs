@@ -194,11 +194,9 @@ export function AgencyComparator() {
                       TaaSFlow · {result.packageLabel}
                     </span>
                     <p className="mt-2 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums sm:text-3xl">
-                      {formatUsdExact(result.taasTotalUsd)}
+                      {formatUsdExact(result.taasTotalUsd / result.months)}
                     </p>
-                    <p className="mt-1 text-xs text-white/75">
-                      {formatUsdExact(result.taasTotalUsd / result.months)} a month × {result.months}
-                    </p>
+                    <p className="mt-1 text-xs text-white/75">a month, billed monthly</p>
                   </div>
                 </div>
               </div>

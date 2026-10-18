@@ -14,10 +14,10 @@ import { ChapterRail, useActiveChapter } from "@/components/layout/chapter-rail"
 export function RunChapters({ role, lastUpdated }: { role: string; lastUpdated: string }) {
   const active = useActiveChapter();
   return (
-    <div className="day mx-auto w-full max-w-[calc(var(--max)+2*var(--margin))] px-[var(--margin)]">
-      <div className="grid gap-x-10 lg:grid-cols-[200px_minmax(0,1fr)]">
+    <div className="run-chapters day mx-auto w-full max-w-[calc(var(--max)+384px+2*var(--margin))] px-[var(--margin)]">
+      <div className="grid gap-x-8 xl:grid-cols-[160px_minmax(0,1fr)_160px]">
         <ChapterRail active={active} />
-        <div className="min-w-0 divide-y divide-[color:var(--rule)]">
+        <div className="mx-auto w-full min-w-0 max-w-[var(--max)] divide-y divide-[color:var(--rule)]">
           <ChapterBrief role={role} />
           <ChapterBroadcast role={role} />
           <ChapterScore />

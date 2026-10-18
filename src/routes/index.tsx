@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { RunChapters } from "@/components/home/run-chapters";
 import { RunHero } from "@/components/home/run-hero";
+import { SectorBand } from "@/components/home/sector-band";
+import { ProductTour } from "@/components/marketing/product-tour";
 import { ClosingBand } from "@/components/layout/closing-band";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { OFFER_LAST_UPDATED_LABEL } from "@/config/offer-facts";
@@ -15,7 +17,7 @@ import { SAMPLE_SHORTLIST_ROLE } from "@/lib/previews/representative-fixtures";
 // homepage chunk (~890 KiB) and delays hydration.
 
 const HOME_TITLE = "Recruiting Subscription & Candidate Sourcing | TaaSFlow";
-const HOME_DESCRIPTION = `Everyone hears about your role. You meet ten. Agents open it on every channel the same day, a senior recruiter signs the shortlist. Start with one role for $${PRICE_PILOT_USD}.`;
+const HOME_DESCRIPTION = `Post the role. Sourcing agents deliver your shortlist. Agents open it on every channel the same day, a senior recruiter signs the shortlist. Start with one role for $${PRICE_PILOT_USD}.`;
 
 export const Route = createFileRoute("/")({
   /** The role typed into the hero. Every chapter below speaks about it. */
@@ -45,6 +47,8 @@ function Home() {
   return (
     <SiteShell hideLinkHub hideClosingBand>
       <RunHero role={role} onRun={runRole} />
+      <ProductTour />
+      <SectorBand />
       <RunChapters role={roleTitle} lastUpdated={OFFER_LAST_UPDATED_LABEL} />
       <ClosingBand id="chapter-start" role={role} source="home_closing" />
     </SiteShell>

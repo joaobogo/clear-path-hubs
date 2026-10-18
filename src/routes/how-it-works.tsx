@@ -25,12 +25,10 @@ import {
   FIRST_SHORTLIST_BUSINESS_DAYS,
   FIRST_SHORTLIST_TIMING,
   JOB_BOARD_NOTE,
-  OFFER_CATEGORY,
   PROCESS_STEPS,
   PROCESS_STEP_COUNT,
   SEATS_NOTE,
   TIMING_FINE_PRINT,
-  WHO_RUNS_THE_SEARCH,
 } from "@/config/offer-facts";
 
 export const Route = createFileRoute("/how-it-works")({
@@ -115,12 +113,12 @@ function SectionHead({
 
 function HowItWorksPage() {
   return (
-    <SiteShell>
+    <SiteShell hideClosingBand>
       {/* ── Hero ────────────────────────────────────────────────── */}
       <EditorialHero
         eyebrow="How it works"
         title="From your hiring brief to a ranked shortlist."
-        lead={`TaaSFlow is a ${OFFER_CATEGORY.toLowerCase()}. ${PROCESS_STEP_COUNT} steps, and who owns each one. ${WHO_RUNS_THE_SEARCH}`}
+        lead="Sourcing agents find and screen candidates. A recruiter reviews the shortlist. Your team chooses who to hire."
         image={hiwHero}
         imageAlt="A hiring team reviewing candidate shortlists together at a table"
         stats={[
@@ -133,12 +131,18 @@ function HowItWorksPage() {
         note={TIMING_FINE_PRINT}
       />
 
+      <PublicPage>
+        <nav aria-label="How it works sections" className="flex flex-wrap gap-x-6 gap-y-2 border-b border-[color:var(--rule)] py-5 text-sm font-semibold text-[color:var(--blue-600)]">
+          {[["steps", "The process"], ["scoring", "Scoring & evidence"], ["workspace", "Your workspace"], ["responsibilities", "Who does what"]].map(([id, label]) => <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center underline underline-offset-4">{label}</a>)}
+        </nav>
+      </PublicPage>
+
       {/* ── The four steps ─────────────────────────────────────── */}
       <PublicSection id="steps" className="scroll-mt-24 py-12">
         <PublicPage>
           <SectionHead
             eyebrow={`${PROCESS_STEP_COUNT} steps`}
-            title="From your brief to a ranked shortlist."
+            title="Four steps. Clear responsibilities."
             lead="The same four steps for every role, with what you do and what happens on our side."
           />
           <ol className="mt-8 grid gap-4 md:grid-cols-2">
@@ -154,7 +158,9 @@ function HowItWorksPage() {
                   <div className="min-w-0">
                     <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">{step.title}</h3>
                     <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">{step.body}</p>
-                    <dl className="mt-3 space-y-2 text-sm text-[color:var(--brand-navy)]/80">
+                    <details className="mt-3 border-t border-border pt-2">
+                      <summary className="min-h-11 cursor-pointer content-center text-sm font-semibold text-[color:var(--brand-navy)]">Your part & our part</summary>
+                    <dl className="mt-2 space-y-3 text-sm text-[color:var(--brand-navy)]/80">
                       <div>
                         <dt className="inline font-semibold text-[color:var(--brand-navy)]">You: </dt>
                         <dd className="inline">{STEP_DETAIL[i]?.you}</dd>
@@ -164,6 +170,7 @@ function HowItWorksPage() {
                         <dd className="inline">{STEP_DETAIL[i]?.we}</dd>
                       </div>
                     </dl>
+                    </details>
                   </div>
                 </div>
               </li>
@@ -180,7 +187,7 @@ function HowItWorksPage() {
               <SectionHead
                 eyebrow="Approve the plan"
                 title="The intake becomes an approved blueprint."
-                lead="Your intake is not filed away — it becomes the scoring rubric, the search plan, and the screening spec. Weights and deal-breakers are approved before sourcing starts."
+                lead="Approve the requirements, weights and search plan before sourcing starts."
               />
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/80">
                 {[
@@ -212,8 +219,10 @@ function HowItWorksPage() {
               <SectionHead
                 eyebrow="Sourcing and screening"
                 title={`${CHANNEL_AGENT_COUNT} channels, one rubric.`}
-                lead="Professional networks, sponsored ads, university partnerships, email, public-signal scanning, referrals, events, inbound applications and more. Channels are chosen per role, and every source feeds the same evidence-first scoring bar."
+                lead="Channels are chosen for your role. Every candidate is reviewed against the same requirements."
               />
+              <details className="mt-4 border-t border-border pt-2">
+                <summary className="min-h-11 cursor-pointer content-center text-sm font-semibold text-[color:var(--brand-navy)]">Explore the sourcing approach</summary>
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/80">
                 {[
                   `${CHANNEL_FAMILIES.length} families of channels: digital, direct, AI and intent, inbound, and offline`,
@@ -232,6 +241,7 @@ function HowItWorksPage() {
                   </li>
                 ))}
               </ul>
+              </details>
             </div>
           </div>
         </PublicPage>
@@ -243,7 +253,7 @@ function HowItWorksPage() {
           <SectionHead
             eyebrow="Review your shortlist"
             title="What you get in the workspace."
-            lead="The delivery is a workspace, not a PDF. You and your TaaSFlow recruiter share it: stage moves are validated, threads are scoped per role, and every decision is recorded next to the candidate it applies to."
+            lead="A ranked shortlist, candidate evidence and your decisions — together in one shared workspace."
           />
           <div className="mt-6">
             <WorkspaceDeliveryDemo />
@@ -300,8 +310,8 @@ function HowItWorksPage() {
         <PublicPage>
           <SectionHead
             eyebrow="Evidence review"
-            title="How candidates are scored: the evidence behind each score."
-            lead="Before you see a shortlist, a recruiter reviews each candidate against the rubric and checks the evidence behind every requirement. A requirement that cannot be evidenced is flagged, not hidden."
+            title="See why each candidate fits."
+            lead="A recruiter checks the evidence before release. Missing evidence is flagged, not hidden."
           />
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-start">
             <ul className="space-y-2 text-sm text-[color:var(--brand-navy)]/80">

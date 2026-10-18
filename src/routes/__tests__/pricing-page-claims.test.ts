@@ -35,13 +35,13 @@ describe("/pricing page", () => {
   });
 
   it("has the approved H1 and the title built from the price constant", () => {
-    expect(page).toContain("Your invoice, before you sign.");
+    expect(page).toContain("Recruiting packages. Clear prices.");
     expect(page).toContain("Recruiting Packages & ${PRICE_PILOT_DISPLAY} Pilot | TaaSFlow");
   });
 
   it("is one control and one invoice: no plan cards, previews or examples", () => {
-    expect(page).toContain("<PackageSelector");
-    expect(page).toContain("<Receipt");
+    expect(page).toContain('aria-label="Pricing tiers"');
+    expect(page).toContain('["monthly", "Subscription"]');
     expect(page).toContain("selectedPlanId={stop.id}");
     for (const gone of [
       "EcosystemCrossSell",

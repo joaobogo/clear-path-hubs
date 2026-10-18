@@ -28,6 +28,8 @@ import {
 } from "@/config/offer-facts";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
+import { EditorialCover } from "@/components/marketing/editorial-cover";
+import enterpriseTeam from "@/assets/page-enterprise-team.jpg";
 import {
   PRICE_PILOT_DISPLAY,
   PACKAGE_10,
@@ -221,15 +223,14 @@ function EnterprisePage() {
   return (
     <SiteShell>
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <PublicSection className="pb-10 pt-16 sm:pt-20">
-        <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
+      <EditorialCover image={enterpriseTeam} alt="A cross-functional hiring committee reviewing application documents in a bright meeting room.">
+          <p className="editorial-cover-muted text-xs font-semibold uppercase tracking-[0.14em]">
             Enterprise
           </p>
-          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="editorial-cover-copy mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold sm:text-5xl">
             Your hiring function. Scaled. On one workspace.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
+          <p className="editorial-cover-muted mt-5 max-w-2xl text-lg">
             Every open role, every ranked candidate, every piece of evidence —
             in a single account your TA, hiring managers, and executives share.{" "}
             {WHO_RUNS_THE_SEARCH}
@@ -243,13 +244,16 @@ function EnterprisePage() {
             </Link>
             <Link
               to={CTA_PRIMARY.to}
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-center text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-on-dark)]/40 px-5 py-2.5 text-center text-sm font-semibold text-[color:var(--brand-on-dark)] hover:bg-[color:var(--brand-on-dark)]/10"
             >
               {CTA_PRIMARY.label}
             </Link>
           </div>
 
-          <nav aria-label="Enterprise decision path" className="mt-10">
+      </EditorialCover>
+      <PublicSection className="py-6">
+        <PublicPage>
+          <nav aria-label="Enterprise decision path">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               What enterprise buyers ask
             </p>
@@ -317,9 +321,7 @@ function EnterprisePage() {
             How the model scales with your requisition count.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            The rate is set by your total position count and applies to every
-            position. Volume can move up or down between review cycles, and the
-            total never falls as the count rises.
+            Choose a package by hiring capacity. Your role families, search timing and oversight are agreed before sourcing starts.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             Above {MAX_POSITIONS} positions there is no published price — we
@@ -335,7 +337,7 @@ function EnterprisePage() {
               <li key={b.band} className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-4">
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-semibold text-[color:var(--brand-navy)]">{b.band}</span>
-                  <span className="shrink-0 font-semibold text-[color:var(--brand-navy)]">{b.price}</span>
+                  <span className="shrink-0 font-semibold text-[color:var(--brand-navy)]"><Link to="/pricing" hash="packages" className="underline underline-offset-4">{b.price}</Link></span>
                 </div>
                 <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">{b.fit}</p>
                 <dl className="mt-3 space-y-1.5 text-sm">
@@ -373,7 +375,7 @@ function EnterprisePage() {
                       <span className="font-semibold text-[color:var(--brand-navy)]">{b.band}</span>
                       <span className="mt-1 block text-xs text-[color:var(--brand-navy)]/80">{b.fit}</span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-4 font-semibold text-[color:var(--brand-navy)]">{b.price}</td>
+                    <td className="whitespace-nowrap px-4 py-4 font-semibold text-[color:var(--brand-navy)]"><Link to="/pricing" hash="packages" className="underline underline-offset-4">{b.price}</Link></td>
                     <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.cadence}</td>
                     <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.agentCapacity}</td>
                   </tr>

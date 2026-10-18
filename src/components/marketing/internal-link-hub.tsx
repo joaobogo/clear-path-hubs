@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { CTA_PRIMARY } from "@/config/cta";
 import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
@@ -25,7 +24,7 @@ const SOLUTION_LINKS = [
 
 const RESOURCE_LINKS = [
   { to: "/blog", label: "Talent strategy blog" },
-  { to: "/case-studies", label: "Case studies & outcomes" },
+  { to: "/case-studies", label: "Example engagements" },
   { to: "/resources", label: "Playbooks & templates" },
   { to: "/faq", label: "Frequently asked questions" },
   { to: "/about", label: "About TaaSFlow" },
@@ -82,30 +81,6 @@ export function InternalLinkHub() {
       className="border-t border-[color:var(--brand-navy)]/10 bg-white"
     >
       <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
-        {/* Subtle inline CTA band */}
-        <div className="mb-10 flex flex-col items-start justify-between gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] px-5 py-4 sm:flex-row sm:items-center">
-          <p className="text-sm text-[color:var(--brand-navy)]/80">
-            <span className="font-semibold text-[color:var(--brand-navy)]">
-              Ready when you are.
-            </span>{" "}
-            Start with one role, or see how TaaSFlow works first.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              to={CTA_PRIMARY.to}
-              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--blue-600)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--blue-700)]"
-            >
-              {CTA_PRIMARY.label}
-            </Link>
-            <Link
-              to="/how-it-works"
-              className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/15 px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-            >
-              How it works
-            </Link>
-          </div>
-        </div>
-
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">

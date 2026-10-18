@@ -13,7 +13,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  Check,
   ChevronDown,
   Lock,
   ShieldCheck,
@@ -103,7 +102,7 @@ function DetailList({ label, items }: { label: string; items: readonly string[] 
 
 function AgentCard({ agent }: { agent: RosterEntry }) {
   return (
-    <li className="flex min-w-0 flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6">
+    <li className="flex min-w-0 flex-col rounded-[var(--r-3)] border border-[color:var(--rule-2)] bg-[color:var(--white)] p-5 sm:p-6">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
           {agent.role}
@@ -123,45 +122,36 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
         {agent.purpose}
       </p>
 
-      <p className="mt-3 rounded-lg bg-[color:var(--brand-paper)] px-3 py-2 text-xs leading-snug text-[color:var(--brand-navy)]/80">
-        <span className="font-semibold text-[color:var(--brand-navy)]">
-          Operating state:
-        </span>{" "}
-        {agent.operatingState}
-      </p>
-
-      <dl className="mt-4 grid gap-4">
-        <DetailList label="Inputs" items={agent.inputs} />
+      <dl className="mt-4 grid gap-4 border-l-2 border-primary pl-4">
         <DetailList label="Outputs" items={agent.outputs} />
+        <div className="min-w-0">
+          <dt className="text-xs font-semibold text-[color:var(--slate)]">Approval required</dt>
+          <dd className="mt-2 flex items-start gap-2 text-sm leading-relaxed text-[color:var(--ink)]"><Lock className="mt-0.5 size-4 shrink-0 text-[color:var(--brand-success)]" aria-hidden /><span>{agent.approval}</span></dd>
+        </div>
       </dl>
 
       <details className="group mt-4 rounded-lg border border-[color:var(--brand-navy)]/10">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]">
-          Controls, approvals and records
+          Inputs, controls & recorded events
           <ChevronDown
             className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
             aria-hidden
           />
         </summary>
         <dl className="grid gap-4 border-t border-[color:var(--brand-navy)]/8 px-3 py-3">
-          <DetailList label="What you control" items={agent.controls} />
-          <div className="min-w-0">
-            <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
-              Approval required
-            </dt>
-            <dd className="mt-1.5 flex items-start gap-2 text-sm leading-snug text-[color:var(--brand-navy)]/85">
-              <Lock
-                className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/70"
-                aria-hidden
-              />
-              <span className="min-w-0">{agent.approval}</span>
-            </dd>
+          <div>
+            <dt className="text-xs font-semibold">Operating state</dt>
+            <dd className="mt-1 text-sm text-muted-foreground">{agent.operatingState}</dd>
           </div>
+          <DetailList label="Inputs" items={agent.inputs} />
+          <DetailList label="What you control" items={agent.controls} />
           <DetailList label="Events recorded" items={agent.events} />
         </dl>
       </details>
 
-      <div className="mt-4 rounded-lg border border-dashed border-[color:var(--brand-navy)]/20 bg-[color:var(--brand-paper)] p-3">
+      <details className="mt-4 border-t border-border pt-3">
+        <summary className="min-h-11 cursor-pointer text-xs font-semibold text-muted-foreground">View representative activity</summary>
+      <div className="mt-2 rounded-lg border border-dashed border-[color:var(--brand-navy)]/20 bg-[color:var(--brand-paper)] p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/70">
             {REP_LABEL}
@@ -172,6 +162,7 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
           {agent.representative.activity}
         </p>
       </div>
+      </details>
     </li>
   );
 }
@@ -182,7 +173,7 @@ function AgentsPage() {
   );
 
   return (
-    <SiteShell>
+    <SiteShell hideClosingBand>
       {/* INTRO */}
       <EditorialHero
         eyebrow={PRODUCT_CATEGORY}
@@ -197,23 +188,7 @@ function AgentsPage() {
         ]}
         primary={CTA_PRIMARY}
         secondary={CTA_MESSAGE}
-      >
-        <ul className="grid gap-2 sm:grid-cols-3">
-          {[
-            `${countWordCapitalised(ROSTER_COUNTS.agents)} agents you switch on or pause`,
-            `${countWordCapitalised(ROSTER_COUNTS.automations)} always-on system automations`,
-            `Coverage across ${CHANNEL_AGENT_COUNT} channels, chosen per role`,
-          ].map((t) => (
-            <li
-              key={t}
-              className="inline-flex items-start gap-2 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
-            >
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]" aria-hidden />
-              <span className="min-w-0">{t}</span>
-            </li>
-          ))}
-        </ul>
-      </EditorialHero>
+      />
 
       {/* ROSTER */}
       <PublicSection className="bg-white">

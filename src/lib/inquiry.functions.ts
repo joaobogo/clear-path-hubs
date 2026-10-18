@@ -113,6 +113,7 @@ export const submitInquiry = createServerFn({ method: "POST" })
         sourcePage: data.source_path ?? null,
         fullName: data.name,
         email: data.email,
+        linkedin: typeof data.details?.linkedin === "string" ? data.details.linkedin : null,
         company: data.company ?? null,
         message: data.message ?? null,
         facts: [
@@ -241,6 +242,7 @@ export const submitEmployerInquiry = createServerFn({ method: "POST" })
         fullName: clean.firstName,
         email: clean.email,
         company: null,
+        phone: clean.phone,
         message: null,
         facts: [
           { label: "Job description link", value: clean.jobDescriptionUrl },

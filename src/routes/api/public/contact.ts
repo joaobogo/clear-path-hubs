@@ -109,7 +109,7 @@ export const Route = createFileRoute("/api/public/contact")({
         );
         const userAgent = request.headers.get("user-agent") ?? null;
 
-        const { error } = await supabaseAdmin
+        const { data: contact, error } = await supabaseAdmin
           .from("contact_messages")
           .insert({
             name: data.name,
@@ -131,15 +131,15 @@ export const Route = createFileRoute("/api/public/contact")({
             utm_campaign: str(attr["utm_campaign"], attr["last_touch_campaign"], attr["first_touch_campaign"]),
             landing_page: str(attr["landing_page"], page["landing_page"]),
             referrer: str(attr["latest_referrer"], attr["original_referrer"], page["referrer"]),
-          });
+          }).select("id").single();
 
-        if (error) {
+        if (error || !contact) {
           return Response.json(
             {
               ok: false,
               trace_id: traceId,
               error: "persist_failed",
-              message: error.message,
+              message: "Could not save your message.",
             },
             { status: 500 },
           );
@@ -150,16 +150,17 @@ export const Route = createFileRoute("/api/public/contact")({
           const { processLeadEvent } = await import("@/lib/leads/lead-pipeline.server");
           await processLeadEvent({
             leadType: "contact_message",
-            sourceId: traceId,
+            sourceId: contact.id,
             source: data.source,
             sourcePage: str(page["path"], page["source_page_url"], attr["landing_page"]),
             fullName: data.name,
             email: data.email,
             company: data.company || null,
+            consentStatus: data.marketingConsent ? "marketing_opt_in" : "reply_only_no_marketing_consent",
             message: data.message,
             facts: [{ label: "Topic", value: data.topic }],
             recordTable: "contact_messages",
-            recordId: traceId,
+            recordId: contact.id,
             linkPath: "/admin/messages",
             priority: data.topic === "hire_talent" ? "urgent" : null,
             attribution: data.attribution ?? null,

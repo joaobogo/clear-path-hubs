@@ -5,11 +5,12 @@
  * imports the industry content bundle.
  */
 export const ROLE_SUGGESTIONS = [
-  "Registered nurse",
+  "Warehouse supervisor",
   "Hotel general manager",
+  "Software engineer",
+  "Registered nurse",
   "Front desk agent",
   "Line cook",
-  "Warehouse supervisor",
   "Store manager",
   "Maintenance technician",
   "Medical assistant",

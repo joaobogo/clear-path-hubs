@@ -18,6 +18,8 @@ import {
 import { faqScript, marketingHead, serviceScript } from "@/lib/marketing/head";
 import { CTA_MESSAGE, CTA_HOW_IT_WORKS, CTA_PRIMARY } from "@/config/cta";
 import { FIRST_SHORTLIST_TIMING, TIMING_FINE_PRINT } from "@/config/offer-facts";
+import { EditorialCover } from "@/components/marketing/editorial-cover";
+import { BUYER_PAGE_PHOTOGRAPHS } from "@/content/buyer-page-photographs";
 import {
   DIMENSION_LABELS,
   MODEL_CELLS,
@@ -131,21 +133,22 @@ function ComparisonTable({ page }: { page: MoneyPageContent }) {
 }
 
 export function MoneyPageView({ page }: { page: MoneyPageContent }) {
+  const photograph = BUYER_PAGE_PHOTOGRAPHS[page.slug] ?? BUYER_PAGE_PHOTOGRAPHS["recruiting-as-a-service"];
+  if (!photograph) return null;
   return (
-    <SiteShell>
+    <SiteShell hideClosingBand>
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: page.breadcrumbLabel }]} />
 
-      <PublicSection className="pb-6 pt-8 sm:pt-12">
-        <PublicPage>
+      <EditorialCover image={photograph.src} alt={photograph.alt} width={photograph.width} height={photograph.height}>
           <div className="max-w-3xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
+            <p className="editorial-cover-muted text-[11px] font-semibold uppercase tracking-[0.22em]">
               {page.eyebrow}
             </p>
-            <h1 className="mt-4 font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.1] tracking-tight text-balance text-[color:var(--brand-navy)] sm:text-5xl">
+            <h1 className="editorial-cover-copy mt-4 font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.1] text-balance sm:text-5xl">
               {page.h1}
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-[color:var(--brand-navy)]/90">{page.directAnswer}</p>
-            <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+            <p className="editorial-cover-muted mt-6 text-lg leading-relaxed">{page.directAnswer}</p>
+            <p className="editorial-cover-muted mt-3 text-sm">
               Last updated: {MONEY_PAGES_LAST_UPDATED}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -157,14 +160,13 @@ export function MoneyPageView({ page }: { page: MoneyPageContent }) {
               </Link>
               <Link
                 to={CTA_MESSAGE.to}
-                className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-on-dark)]/40 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:bg-[color:var(--brand-on-dark)]/10"
               >
                 {CTA_MESSAGE.label}
               </Link>
             </div>
           </div>
-        </PublicPage>
-      </PublicSection>
+      </EditorialCover>
 
       <PublicSection className="pt-6">
         <PublicPage>

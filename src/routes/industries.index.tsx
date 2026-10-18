@@ -16,6 +16,8 @@ import {
   FAMILY_TAGLINE,
   type IndustryFamily,
 } from "@/content/industry-archetypes";
+import { HeroPicture } from "@/components/marketing/hero-picture";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { getIndustryConfig } from "@/content/industry-config";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
@@ -57,8 +59,6 @@ type Tile = {
   familyLabel: string;
   challenge: { title: string; body: string } | null;
   roleGroups: string[];
-  motifSeed: number;
-  paletteToken: IndustryFamily;
 };
 
 const TILES: Tile[] = INDUSTRY_ENTRIES.map((entry) => {
@@ -75,8 +75,6 @@ const TILES: Tile[] = INDUSTRY_ENTRIES.map((entry) => {
     familyLabel: cfg.familyLabel,
     challenge: entry.challenges?.[0] ?? null,
     roleGroups,
-    motifSeed: hashSeed(entry.slug),
-    paletteToken: cfg.family,
   };
 }).sort((a, b) => a.name.localeCompare(b.name));
 
@@ -470,20 +468,26 @@ function FamilyChip({
 /* ----------------------------------------------------------------- Industry card */
 
 function IndustryCard({ tile }: { tile: Tile }) {
+  const image = getIndustryHeroImage(tile.slug);
   return (
     <Link
       to="/industries/$slug"
       params={{ slug: tile.publicSlug }}
-      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--taas-surface-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-[0_20px_60px_-30px_rgba(10,20,50,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+      className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--taas-surface-card)] transition-colors hover:border-[color:var(--brand-ocean)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
       aria-label={`${tile.name} — ${tile.familyLabel}`}
     >
-      {/* Family-motif band */}
-      <div
-        className={`relative aspect-[16/6] w-full overflow-hidden ${FAMILY_BAND_BG[tile.family]}`}
-        aria-hidden
-      >
-        <FamilyMotif family={tile.family} seed={tile.motifSeed} />
-      </div>
+      {image ? (
+        <div className="aspect-[16/9] w-full overflow-hidden bg-[color:var(--brand-mist)]">
+          <HeroPicture
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            className="h-full w-full object-cover"
+            style={{ objectPosition: image.focal ?? "50% 40%" }}
+          />
+        </div>
+      ) : null}
       <div className="flex flex-1 flex-col p-5">
         <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-ocean-text)]">
           {tile.familyLabel}
@@ -519,122 +523,8 @@ function IndustryCard({ tile }: { tile: Tile }) {
   );
 }
 
-/* Family palette bands — subdued, editorial. Never a random stock photo. */
-const FAMILY_BAND_BG: Record<IndustryFamily, string> = {
-  "systems-capability": "bg-gradient-to-br from-[color:var(--category-systems-1)] to-[color:var(--category-systems-2)] text-[color:var(--brand-on-dark)]",
-  "trust-compliance": "bg-gradient-to-br from-[color:var(--category-trust-1)] to-[color:var(--category-trust-2)] text-[color:var(--category-trust-fg)]",
-  "risk-judgment": "bg-gradient-to-br from-[color:var(--category-risk-1)] to-[color:var(--category-risk-2)] text-[color:var(--category-risk-fg)]",
-  "operations-delivery": "bg-gradient-to-br from-[color:var(--category-operations-1)] to-[color:var(--category-operations-2)] text-[color:var(--brand-on-dark)]",
-  "service-experience": "bg-gradient-to-br from-[color:var(--category-service-1)] to-[color:var(--category-service-2)] text-[color:var(--brand-on-dark)]",
-  "expertise-growth": "bg-gradient-to-br from-[color:var(--category-expertise-1)] to-[color:var(--category-expertise-2)] text-[color:var(--category-expertise-fg)]",
-};
-
-function FamilyMotif({
-  family,
-  seed,
-}: {
-  family: IndustryFamily;
-  seed: number;
-}) {
-  switch (family) {
-    case "systems-capability":
-      return (
-        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-40">
-          <defs>
-            <pattern id={`sc-${seed}`} x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-              <path d="M24 0 L0 0 L0 24" fill="none" stroke="currentColor" strokeWidth="0.6" />
-            </pattern>
-          </defs>
-          <rect width="400" height="100" fill={`url(#sc-${seed})`} />
-        </svg>
-      );
-    case "trust-compliance":
-      return (
-        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-35">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <path
-              key={i}
-              d={`M0,${30 + i * 20} Q100,${10 + i * 20} 200,${30 + i * 20} T400,${30 + i * 20}`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.2}
-            />
-          ))}
-        </svg>
-      );
-    case "risk-judgment":
-      return (
-        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-30">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <line
-              key={i}
-              x1={i * 34}
-              y1={0}
-              x2={i * 34}
-              y2={100}
-              stroke="currentColor"
-              strokeWidth={i % 3 === 0 ? 1.2 : 0.5}
-            />
-          ))}
-        </svg>
-      );
-    case "operations-delivery":
-      return (
-        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-30">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <rect
-              key={i}
-              x={20 + i * 46}
-              y={50 - ((i * 13 + seed) % 30)}
-              width={18}
-              height={40 + ((i * 17 + seed) % 30)}
-              fill="currentColor"
-              opacity={0.6}
-            />
-          ))}
-        </svg>
-      );
-    case "service-experience":
-      return (
-        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-40">
-          {Array.from({ length: 40 }).map((_, i) => (
-            <circle
-              key={i}
-              cx={(i * 47 + seed) % 400}
-              cy={(i * 29 + seed) % 100}
-              r={1 + ((i + seed) % 2)}
-              fill="currentColor"
-              opacity={0.7}
-            />
-          ))}
-        </svg>
-      );
-    case "expertise-growth":
-      return (
-        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-35">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <rect
-              key={i}
-              x={30 + i * 70}
-              y={70 - i * 12}
-              width={40}
-              height={20 + i * 12}
-              fill="currentColor"
-              opacity={0.55}
-            />
-          ))}
-        </svg>
-      );
-  }
-}
-
 // Family-tagline currently unused in the compact card, but exposed via a
 // small explainer if we ever want to render it — kept referenced so
 // consumers can lint on unused exports without breaking the API surface.
 export { FAMILY_TAGLINE as INDUSTRIES_FAMILY_TAGLINES };
 
-function hashSeed(s: string) {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-  return Math.abs(h);
-}
