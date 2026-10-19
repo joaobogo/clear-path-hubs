@@ -15,6 +15,13 @@
       "when": 1791496396982,
       "tag": "0001_restrict_tracking_policy_public_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792418853092,
+      "tag": "0002_widen_marketing_inquiry_kinds",
+      "breakpoints": true
     }
   ]
 }
