@@ -37,6 +37,7 @@ export function RunRoleDialog({
   const [form, setForm] = useState({ name: "", email: "", linkedin: "", website: "" });
   const [errors, setErrors] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const goToIntake = () => {
     onOpenChange(false);
@@ -68,7 +69,7 @@ export function RunRoleDialog({
       });
       storeLeadPrefill({ token: res.prefillToken, name: parsed.data.name, email: parsed.data.email, roleTitle: role });
       trackEvent("lead_submitted", { source, kind: "run_role" });
-      goToIntake();
+      setSent(true);
     } catch {
       setErrors({ form: "We couldn't save that just now. Try again, or skip straight to the full intake." });
     } finally {
@@ -105,8 +106,31 @@ export function RunRoleDialog({
   );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(o) => { if (!o) setSent(false); onOpenChange(o); }}>
       <DialogContent className="sm:max-w-md">
+        {sent ? (
+          <>
+            <DialogHeader>
+              <DialogTitle>Thanks, {form.name.trim().split(" ")[0]}. We've got it.</DialogTitle>
+              <DialogDescription>Our team will get in touch with you shortly at {form.email.trim()}.</DialogDescription>
+            </DialogHeader>
+            <button
+              type="button"
+              onClick={goToIntake}
+              className={cn(runButtonClass("primary", "md"), "w-full bg-[color:var(--blue-600)] text-white hover:bg-[color:var(--blue-700)]")}
+            >
+              Speed things up: fill in the full intake
+            </button>
+            <button
+              type="button"
+              onClick={() => { setSent(false); onOpenChange(false); }}
+              className="text-sm font-medium text-[color:var(--blue-600)] underline-offset-4 hover:underline"
+            >
+              Close
+            </button>
+          </>
+        ) : (
+        <>
         <DialogHeader>
           <DialogTitle>{role ? `Let's run your ${role} role` : "Let's run your role"}</DialogTitle>
           <DialogDescription>Tell us who you are. We'll carry it into the full intake.</DialogDescription>
@@ -130,7 +154,7 @@ export function RunRoleDialog({
             disabled={busy}
             className={cn(runButtonClass("primary", "md"), "w-full bg-[color:var(--blue-600)] text-white hover:bg-[color:var(--blue-700)]")}
           >
-            {busy ? "Saving…" : "Continue to intake"}
+            {busy ? "Sending…" : "Send"}
           </button>
           <button
             type="button"
@@ -140,6 +164,8 @@ export function RunRoleDialog({
             Skip — go straight to the full intake
           </button>
         </form>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );
