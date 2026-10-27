@@ -119,7 +119,6 @@ export function SiteHeader() {
           {!candidateMode ? (
             <ProductionLink
               to={CANDIDATE_HEADER_LINK.to}
-              title={CANDIDATE_HEADER_LINK.description}
               className="hidden min-h-11 items-center gap-2 rounded-full border border-[color:var(--rule-2)] px-3 hover:border-[color:var(--blue-600)]/40 lg:inline-flex"
             >
               <Briefcase className="h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />
