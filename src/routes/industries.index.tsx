@@ -31,18 +31,15 @@ import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
  * explainer and a "can't find your industry?" contact CTA.
  */
 
-type IndustriesSearch = { q: string; family: string };
+type IndustriesSearch = { q?: string; family?: string };
 
 const validateIndustriesSearch = (raw: Record<string, unknown>): IndustriesSearch => ({
-  q: typeof raw.q === "string" ? raw.q : "",
-  family: typeof raw.family === "string" ? raw.family : "",
+  q: typeof raw.q === "string" && raw.q ? raw.q : undefined,
+  family: typeof raw.family === "string" && raw.family ? raw.family : undefined,
 });
 
 export const Route = createFileRoute("/industries/")({
   validateSearch: validateIndustriesSearch,
-  search: {
-    middlewares: [stripSearchParams<IndustriesSearch>({ q: "", family: "" })],
-  },
   head: () =>
     marketingHead(undefined, "/industries", {
       title: "Recruiting by Industry | TaaSFlow",
