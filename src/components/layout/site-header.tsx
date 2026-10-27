@@ -117,7 +117,7 @@ export function SiteHeader() {
 
         <div className="ml-auto flex items-center gap-3 sm:gap-4 lg:ml-6">
           {!candidateMode ? (
-            <ProductionLink
+            <Link
               to={CANDIDATE_HEADER_LINK.to}
               className="hidden min-h-11 items-center gap-2 rounded-full border border-[color:var(--rule-2)] px-3 hover:border-[color:var(--blue-600)]/40 lg:inline-flex"
             >
@@ -128,7 +128,7 @@ export function SiteHeader() {
               <span className="whitespace-nowrap text-[15px] font-medium text-[color:var(--ink)]">
                 {CANDIDATE_HEADER_LINK.label}
               </span>
-            </ProductionLink>
+            </Link>
           ) : null}
           <ProductionLink to={signIn.to} className={cn(linkClass, inactiveClass, "hidden lg:inline-flex")}>
             {signIn.label}
