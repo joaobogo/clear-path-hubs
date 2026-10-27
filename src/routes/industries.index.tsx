@@ -31,15 +31,17 @@ import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
  * explainer and a "can't find your industry?" contact CTA.
  */
 
-const searchSchema = z.object({
-  q: fallback(z.string(), "").default(""),
-  family: fallback(z.string(), "").default(""),
+type IndustriesSearch = { q: string; family: string };
+
+const validateIndustriesSearch = (raw: Record<string, unknown>): IndustriesSearch => ({
+  q: typeof raw.q === "string" ? raw.q : "",
+  family: typeof raw.family === "string" ? raw.family : "",
 });
 
 export const Route = createFileRoute("/industries/")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: validateIndustriesSearch,
   search: {
-    middlewares: [stripSearchParams({ q: "", family: "" })],
+    middlewares: [stripSearchParams<IndustriesSearch>({ q: "", family: "" })],
   },
   head: () =>
     marketingHead(undefined, "/industries", {
