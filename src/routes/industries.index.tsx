@@ -31,16 +31,15 @@ import { CTA_PRIMARY, CTA_MESSAGE } from "@/config/cta";
  * explainer and a "can't find your industry?" contact CTA.
  */
 
-const searchSchema = z.object({
-  q: fallback(z.string(), "").default(""),
-  family: fallback(z.string(), "").default(""),
+type IndustriesSearch = { q?: string; family?: string };
+
+const validateIndustriesSearch = (raw: Record<string, unknown>): IndustriesSearch => ({
+  q: typeof raw.q === "string" && raw.q ? raw.q : undefined,
+  family: typeof raw.family === "string" && raw.family ? raw.family : undefined,
 });
 
 export const Route = createFileRoute("/industries/")({
-  validateSearch: zodValidator(searchSchema),
-  search: {
-    middlewares: [stripSearchParams({ q: "", family: "" })],
-  },
+  validateSearch: validateIndustriesSearch,
   head: () =>
     marketingHead(undefined, "/industries", {
       title: "Recruiting by Industry | TaaSFlow",
@@ -82,10 +81,10 @@ function IndustriesIndex() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/industries/" });
   const resultsRef = useRef<HTMLHeadingElement>(null);
-  const [inputQ, setInputQ] = useState(search.q);
+  const [inputQ, setInputQ] = useState(search.q ?? "");
 
   useEffect(() => {
-    setInputQ(search.q);
+    setInputQ(search.q ?? "");
   }, [search.q]);
 
   const activeFamily: IndustryFamily | "all" = useMemo(() => {
@@ -116,7 +115,7 @@ function IndustriesIndex() {
 
   function setFamily(fam: IndustryFamily | "all") {
     navigate({
-      search: (prev: { q: string; family: string }) => ({ ...prev, family: fam === "all" ? "" : fam }),
+      search: (prev: IndustriesSearch) => ({ ...prev, family: fam === "all" ? undefined : fam }),
       resetScroll: false,
     });
     // Announce and focus the results heading for screen readers.
@@ -125,14 +124,14 @@ function IndustriesIndex() {
 
   function commitQuery(next: string) {
     navigate({
-      search: (prev: { q: string; family: string }) => ({ ...prev, q: next.trim() }),
+      search: (prev: IndustriesSearch) => ({ ...prev, q: next.trim() || undefined }),
       resetScroll: false,
     });
   }
 
   function reset() {
     setInputQ("");
-    navigate({ search: () => ({ q: "", family: "" }), resetScroll: false });
+    navigate({ search: () => ({}), resetScroll: false });
     setTimeout(() => resultsRef.current?.focus(), 30);
   }
 
