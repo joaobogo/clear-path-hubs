@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   MESSAGE_CTA,
+  CANDIDATE_HEADER_LINK,
   CANDIDATE_PRIMARY_CTA,
   FOOTER_GROUPS,
   PRIMARY_CTA,
@@ -36,6 +37,12 @@ describe("public navigation", () => {
   it("keeps the candidate CTA split unchanged", () => {
     expect(CANDIDATE_PRIMARY_CTA.to).toBe("/jobs");
     expect(SECONDARY_CTAS.map((c) => c.to)).toEqual(["/jobs", "/login"]);
+  });
+
+  it("gives candidates a job board entry in the header", () => {
+    expect(CANDIDATE_HEADER_LINK.to).toBe("/jobs");
+    expect(CANDIDATE_HEADER_LINK.label).toBe("Job board");
+    expect(allNavHrefs()).toContain(CANDIDATE_HEADER_LINK.to);
   });
 
   it("has five header links and no dropdowns", () => {
