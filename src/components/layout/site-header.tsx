@@ -216,6 +216,19 @@ export function SiteHeader() {
           </Sheet>
         </div>
       </div>
+      {!candidateMode ? (
+        <div className="border-t border-[color:var(--rule)] lg:hidden">
+          <Link
+            to={CANDIDATE_HEADER_LINK.to}
+            className="mx-auto flex min-h-10 w-full max-w-[calc(var(--max)+2*var(--margin))] items-center gap-2 px-[var(--margin)] text-[13px] text-[color:var(--slate)]"
+          >
+            <Briefcase className="h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />
+            <span className="font-medium text-[color:var(--ink)]">For candidates:</span>
+            <span className="truncate">Job board — browse open roles</span>
+            <ChevronRight className="ml-auto h-4 w-4 shrink-0" aria-hidden />
+          </Link>
+        </div>
+      ) : null}
     </header>
   );
 }
