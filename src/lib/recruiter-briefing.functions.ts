@@ -42,7 +42,8 @@ export const updateRecruiterBriefing = createServerFn({ method: "POST" })
         .map((key) => `${JSON.stringify(key)}:${stable((value as Record<string, unknown>)[key])}`).join(",")}}`;
       return JSON.stringify(value);
     };
-    if (stable(evidence.extracted) !== stable(data.expected_extracted)) {
+    if (stable(evidence.extracted) !== stable(data.expected_extracted) &&
+        stable(evidence.extracted) !== stable(data.extracted)) {
       throw new Error("Evidence changed. Reload before saving.");
     }
     const { error, data: updated } = await s.from("candidate_evidence")
@@ -62,10 +63,15 @@ export const updateRecruiterBriefing = createServerFn({ method: "POST" })
         candidate_match_id: match.id, organization_id: match.organization_id,
         body: data.note, visibility: "internal", author_user_id: context.userId,
         note_type: "general", client_shareable: false,
+        revision_group_id: crypto.randomUUID(), revision_number: 1,
       });
       if (noteError) throw new Error(noteError.message);
     }
     for (const change of data.changes) {
+      const { data: previous } = await s.from("audit_events").select("after_state")
+        .eq("entity_id", match.id).eq("action", "recruiter_dossier_field_edit");
+      if (previous?.some((event: AnyRow) => event.after_state?.reason === data.reason &&
+          event.after_state?.change_id === change.change_id && event.after_state?.field === change.field)) continue;
       const { error: auditError } = await s.from("audit_events").insert({
         actor_user_id: context.userId, organization_id: match.organization_id,
         entity_type: "candidate_match", entity_id: match.id,
