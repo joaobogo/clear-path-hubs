@@ -271,9 +271,10 @@ export async function submitApplicationImpl(
         const { data: created, error: createErr } = await admin.auth.admin.createUser({
           email: emailLower,
           password: data.password,
-          // Ownership of the address must be proven by confirmation before the
-          // account counts as verified anywhere in the product.
-          email_confirm: false,
+          // Applicants sign in straight away to track their application; the
+          // application-received email they get serves as the record of the
+          // account. Confirmation is not required.
+          email_confirm: true,
           user_metadata: { full_name: data.full_name, role: "candidate" },
         });
         if (createErr) {
@@ -293,16 +294,6 @@ export async function submitApplicationImpl(
         } else if (created?.user?.id) {
           authUserId = created.user.id as string;
           accountOutcome = "created";
-          // The account is unusable until the address is confirmed, so send
-          // the confirmation email now — otherwise the applicant can never
-          // sign in to the tracker they just set a password for.
-          const { error: confirmErr } = await admin.auth.resend({
-            type: "signup",
-            email: emailLower,
-          });
-          if (confirmErr) {
-            console.error("[submitApplication] confirmation email failed", trace_id, confirmErr);
-          }
         }
       }
 
