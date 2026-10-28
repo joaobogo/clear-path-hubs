@@ -1,6 +1,6 @@
 type Interval = { start: number; end: number };
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-const DATE = "(?:[A-Za-z]{3,9}\\s+)?(?:19|20)\\d{2}";
+const DATE = "(?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\s+)?(?:19|20)\\d{2}";
 
 function monthIndex(value: string, asOf: Date, isEnd: boolean): number | null {
   if (/^(present|current|now|ongoing)$/i.test(value.trim())) return asOf.getUTCFullYear() * 12 + asOf.getUTCMonth();
@@ -15,7 +15,10 @@ function monthIndex(value: string, asOf: Date, isEnd: boolean): number | null {
 export function employmentIntervals(text: string, asOf = new Date()): Interval[] {
   const intervals: Interval[] = [];
   const pattern = new RegExp(`(${DATE})\\s*(?:[–—-]|to)\\s*(${DATE}|present|current|now|ongoing)`, "gi");
-  const lines = text.split(/\r?\n/);
+  const compact = text.replace(/\b(?:[A-Z]\s+){3,}[A-Z]\b/g, (heading) => heading.replace(/\s/g, ""))
+    .replace(/(PROFESSIONAL|WORK|CAREER|EMPLOYMENT)(EXPERIENCE|HISTORY)/g, "$1 $2");
+  const sections = compact.replace(/\b((?:PROFESSIONAL|WORK|CAREER|EMPLOYMENT)\s+(?:EXPERIENCE|HISTORY)|EXPERIENCE|EMPLOYMENT|EDUCATION|QUALIFICATIONS|CERTIFICATIONS|LANGUAGES|SKILLS|INTERESTS)\b/gi, "\n$1\n");
+  const lines = sections.split(/\r?\n/);
   let inEmployment = false;
   const now = asOf.getUTCFullYear() * 12 + asOf.getUTCMonth();
   for (const line of lines) {

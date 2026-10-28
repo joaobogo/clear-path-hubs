@@ -3,7 +3,7 @@ import { isGarbageCvText } from "./cv/parse-facts";
 
 /** One bounded attempt. Failures stay on the file for explicit staff retry. */
 export async function readScannedCv(bytes: Uint8Array, filename: string): Promise<string> {
-  const key = process.env.LOVABLE_API_KEY;
+  const key = process.env['LOVABLE_API_KEY'];
   if (!key) throw new Error("Document reader is not configured.");
   if (!bytes.length) throw new Error("The PDF is empty.");
   const { result } = createResponsesCall(new Request("https://taasflow.com", { method: "POST" }), {

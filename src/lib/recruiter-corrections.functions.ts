@@ -84,3 +84,13 @@ export const updateRecruiterBriefing = createServerFn({ method: "POST" })
     }
     return { ok: true, changed_fields: data.changes.length };
   });
+
+export const reassessRecruiterCandidate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ match_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const { executeScoring } = await import("./scoring-service.server");
+    return executeScoring(data.match_id, { force: true, actor_user_id: context.userId,
+      reason: "Recruiter review against current approved criteria" });
+  });
