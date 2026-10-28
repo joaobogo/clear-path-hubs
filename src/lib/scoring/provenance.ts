@@ -51,6 +51,8 @@ type RunLike = {
 
 type DecisionLike = {
   decision_type?: string | null;
+  /** The column a recruiter override is written to (score_decisions.approved_score). */
+  approved_score?: number | null;
   score_override?: number | null;
   override_score?: number | null;
   reason?: string | null;
@@ -83,7 +85,12 @@ export function resolveScoreProvenance(args: {
     .sort((a, b) => String(b.created_at ?? "").localeCompare(String(a.created_at ?? "")))[0];
 
   const overrideValue = overrideDecision
-    ? (numOrNull(overrideDecision.score_override) ?? numOrNull(overrideDecision.override_score))
+    ? // `manual_override` writes score_decisions.approved_score
+      // (processing.functions.ts); the other two names are older aliases. Reading
+      // only the aliases made every stored override resolve to the engine score.
+      (numOrNull(overrideDecision.approved_score) ??
+        numOrNull(overrideDecision.score_override) ??
+        numOrNull(overrideDecision.override_score))
     : null;
 
   const finalValue = numOrNull(run?.final_score) ?? numOrNull(run?.score) ?? engineValue;
