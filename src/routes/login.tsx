@@ -293,6 +293,13 @@ function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
+        if (error.code === "email_not_confirmed") {
+          toast.error(
+            "Confirm your email address first — check your inbox for the confirmation link.",
+          );
+          setMode("confirm");
+          return;
+        }
         const status = typeof error.status === "number" ? error.status : 0;
         toast.error(status >= 500 ? TEMPORARY_SIGNIN_ERROR : GENERIC_SIGNIN_ERROR);
         return;
