@@ -10,6 +10,18 @@ Written 29 October 2026 after reading the code on GitHub. Paste each prompt into
 - The platform already has the right mechanism: a human-adjusted run (`src/lib/scoring/human-adjusted-run.server.ts`). It inserts a NEW run with `evaluation_method = 'human_adjusted'`, the reviewer and the reason, points the candidate at it and keeps the machine run unchanged. Every screen then shows the same number with no other change.
 - Lovable's work since 19 October is not on GitHub (latest commit there: 19 Oct, "Added Attio and email notif"), so it cannot be reviewed.
 
+## Order of work
+
+1. Prompt A: Lovable pushes its unsynced work to GitHub.
+2. Claude merges it with the scoring fixes waiting on the branch `claude/tender-faraday-kfzxe7`, into `main`, with your go:
+   - Recruiter-style rules (engine v1.6.0) for the degree field, the "if outside the UAE, relocate" condition and minimum years.
+   - The override reader fix.
+3. Prompt B: the read-only check.
+4. Your decisions on `docs/handoff/stratium-recruiter-review.md`, the per-candidate review and recommended overrides.
+5. Prompt C: re-score on v1.6.0 and make each agreed override the candidate's current run. Use the override values you agreed in step 4, not the list printed in the prompt.
+
+If Prompt C runs before step 2, the re-score uses the old keyword rules and the degree, relocation and years rows stay wrong.
+
 ---
 
 ## Prompt A. Push your work to GitHub (no other change)
@@ -68,7 +80,8 @@ Goal: one number per candidate on every screen, admin and client. Never approve,
    - Set fit_label from the overridden score with the same band rule the scorer uses (src/lib/scoring/bands.ts), so the band words match the number.
    - Point candidate_matches.current_score_run_id at the new run. The machine run stays unchanged and readable.
    - Keep the score_decisions override row as the audit record, and write one History & Audit entry per candidate with reason "Recruiter final profile 28 Oct 2026".
-   Overrides: Radwa 80, Kumar 75, Amalie 75, Nora 70, Tarek 66, Shailesh 66, Syed Mansoor Hussain 60, Arindam 58, Reda 55, Shaima 55, Dylan 48, Lilian 45, Tehmina 40, Sana 38. None for Boral or Alvito.
+   Overrides (as recorded on 28 Oct; replace with the values you agree in the recruiter review): Radwa 80, Kumar 75, Amalie 75, Nora 70, Tarek 66, Shailesh 66, Syed Mansoor Hussain 60, Arindam 58, Reda 55, Shaima 55, Dylan 48, Lilian 45, Tehmina 40, Sana 38. None for Boral or Alvito.
+   First confirm that src/lib/scoring/engine-version.ts says taasflow-scoring-v1.6.0. If it does not, stop: the new rules are not deployed yet.
 
 3. Remove any screen-specific override logic you added (for example in src/lib/scoring/published-score.ts, src/routes/_authenticated/admin.candidates.$id.tsx or the 0004 "override rankings" migration) if it reads score_decisions directly. With step 2 every screen already reads the right number; a second path is how screens drift apart again.
 
