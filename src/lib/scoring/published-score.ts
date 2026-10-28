@@ -28,6 +28,7 @@ export type PublishedScoreRun = {
    * publishedScore.
    */
   processing_state?: string | null;
+  processing_error_code?: string | null;
   /**
    * The post-bonus total BEFORE the ceiling was applied, set by
    * withVideoIntroBonus when the cap bit.
@@ -203,9 +204,21 @@ export function withPublishedRun<T extends Record<string, unknown>>(row: T) {
  * wearing "41 · Not recommended" while its state said unreadable (H1).
  */
 export function scoreVoidedByUnreadableCv(
-  match: { processing_state?: string | null } | null | undefined,
+  match: { processing_state?: string | null; processing_error_code?: string | null } | null | undefined,
 ): boolean {
-  return String(match?.processing_state ?? "") === "ocr_required";
+  return String(match?.processing_state ?? "") === "ocr_required" ||
+    ["cv_employment_history_missing", "cv_missing", "cv_file_missing", "cv_unparsed"].includes(match?.processing_error_code ?? "");
+}
+
+/** Recorded decisions override only the same run; they never approve or mutate it. */
+export function withRecordedOverride<T extends { id?: unknown; score?: unknown; final_score?: unknown }>(
+  run: T | null | undefined,
+  decisions: readonly { decision_type?: string; score_run_id?: string; approved_score?: number | null }[],
+): T | null | undefined {
+  if (!run) return run;
+  const decision = decisions.find((item) => item.decision_type === "override" && item.score_run_id === run.id && item.approved_score != null);
+  if (!decision || decision.approved_score == null) return run;
+  return { ...run, score: decision.approved_score, final_score: decision.approved_score };
 }
 
 /**

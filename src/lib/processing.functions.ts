@@ -1159,7 +1159,7 @@ export const getAdminMatch = createServerFn({ method: "GET" })
         .order("completed_at", { ascending: false }),
       supabase
         .from("score_decisions")
-        .select("id,decision_type,approved_score,reason,actor_user_id,created_at")
+        .select("id,score_run_id,decision_type,approved_score,reason,actor_user_id,created_at")
         .eq("candidate_match_id", data.id)
         .order("created_at", { ascending: false }),
       supabase

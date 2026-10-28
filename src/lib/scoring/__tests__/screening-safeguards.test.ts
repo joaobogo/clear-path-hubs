@@ -1,8 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { isProtectedAttributeText, removeProtectedSentences, sanitizeGeneratedText } from "../protected-attributes";
 import { employmentIntervals, yearsFromEmploymentDates } from "../../cv/employment-dates";
+import { publishedScore, withRecordedOverride, scoreVoidedByUnreadableCv } from "../published-score";
 
 describe("screening safeguards", () => {
+  it("uses the recorded 80 override without mutating the automated 66 run", () => {
+    const run = { id: "radwa-run", score: 66, final_score: 66 };
+    expect(publishedScore(withRecordedOverride(run, [{ decision_type: "override", score_run_id: "radwa-run", approved_score: 80 }]))).toBe(80);
+    expect(run.final_score).toBe(66);
+  });
+  it("ignores an override from a previous scoring run", () => {
+    expect(publishedScore(withRecordedOverride({ id: "new", score: 60 }, [{ decision_type: "override", score_run_id: "old", approved_score: 75 }]))).toBe(60);
+  });
+  it("voids Boral's 62 ranking when dated employment is missing", () => {
+    expect(publishedScore({ score: 62, processing_state: "manual_review_required", processing_error_code: "cv_employment_history_missing" })).toBeNull();
+    expect(scoreVoidedByUnreadableCv({ processing_state: "manual_review_required" })).toBe(false);
+  });
   it("strips protected text from every nested briefing field while preserving experience", () => {
     const clean = sanitizeGeneratedText({ headline_suggested: "An Egyptian candidate.", screening_analysis: [{ note: "British passport. Worked in Singapore." }], strengths: [{ detail: "Indian heritage. Leads retail." }] });
     expect(clean.headline_suggested).toBe("");
