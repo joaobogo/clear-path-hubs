@@ -10,6 +10,7 @@ import {
 } from "./scoring/engine-calibration";
 
 import { ENGINE_VERSION } from "./scoring/engine-version";
+import { evaluateStructuredRequirement } from "./scoring/structured-requirements";
 import { cleanQuote } from "./evidence/quote-hygiene";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
 import { deriveStrengths } from "./scoring/strengths";
@@ -54,6 +55,12 @@ export interface RequirementAssessment {
   matched_terms: string[];
   evidence: EvidenceRef[];
   needs_validation?: boolean;
+  /**
+   * Set when a recruiter-style rule decided the row instead of keyword
+   * overlap (degree field, conditional relocation, minimum years): what was
+   * read and why. See scoring/structured-requirements.ts.
+   */
+  rule_note?: string;
 }
 
 export interface ScoringResult {
@@ -541,6 +548,35 @@ export function scoreCandidate(input: {
 
   const evidence: EvidenceRef[] = [];
   const assessment: RequirementAssessment[] = requirements.map((r) => {
+    // Degree field, conditional relocation and minimum years are judged the
+    // way a recruiter reads them, not by keyword overlap (v1.6.0).
+    const structured = evaluateStructuredRequirement(r.text, cv);
+    if (structured) {
+      const refs: EvidenceRef[] = structured.evidence.map((e) => ({
+        requirement_id: r.id,
+        requirement_text: r.text,
+        source: "cv",
+        matched_terms: [`rule:${structured.rule}`],
+        snippet: e.snippet,
+        location: `cv:${e.start}-${e.end}`,
+      }));
+      evidence.push(...refs);
+      // No quote, no claim — the same rule the keyword path follows below.
+      const status =
+        refs.length === 0 && (structured.status === "met" || structured.status === "partial")
+          ? "unknown"
+          : structured.status;
+      return {
+        id: r.id,
+        text: r.text,
+        required: r.required,
+        status,
+        matched_terms: [`rule:${structured.rule}`],
+        evidence: refs,
+        needs_validation: structured.needs_validation || status !== structured.status,
+        rule_note: structured.note,
+      };
+    }
     const matched: string[] = [];
     const negated: string[] = [];
     /**
