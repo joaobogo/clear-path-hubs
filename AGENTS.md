@@ -19,4 +19,5 @@
 - Public product tours reuse the shared labelled example previews; tab changes are user-controlled and never write to live workspace data.
 - Screening excludes protected-attribute criteria and requires dated employment evidence; chronology uses the assessment date, not model knowledge.
 - Recruiter editorial corrections preserve immutable score runs and client-release gates and record field-level audit history.
+- Incomplete CV assessments clear only the current ranking pointer; immutable runs remain in history, and recorded overrides resolve separately from automated totals without granting approval.
 - PDF ingestion extracts URI annotations and attempts validated OCR once; failed document reads require explicit staff retry rather than automatic rebilling.
