@@ -351,6 +351,20 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       }
       const bytes = new Uint8Array(await dl.data.arrayBuffer());
       const ext = await extractCvText(bytes, ctx.file.mime_type ?? "", ctx.file.filename ?? "");
+      if (ext.needs_ocr && (ctx.file.extraction_attempts ?? 0) === 0) {
+        try {
+          const { readScannedCv } = await import("./cv-ocr.server");
+          ext.text = await readScannedCv(bytes, ctx.file.filename ?? "cv.pdf");
+          ext.chars = ext.text.length;
+          ext.needs_ocr = false;
+          ext.reason = undefined;
+        } catch (error) {
+          ext.reason = error instanceof Error ? error.message : "Document reading failed.";
+        }
+      }
+      const linkedIn = ext.links?.find((link) => /^https:\/\/(?:[a-z]+\.)?linkedin\.com\/in\//i.test(link));
+      if (linkedIn) await s.from("candidate_profiles").update({ linkedin_url: linkedIn })
+        .eq("id", ctx.match.candidate_profile_id).is("linkedin_url", null);
       // Provenance: which extractor produced this text, when, and how many tries.
       await setFile({
         extracted_text: ext.text,
