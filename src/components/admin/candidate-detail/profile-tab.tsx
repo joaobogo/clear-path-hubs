@@ -272,6 +272,11 @@ function InsightsBriefing({
   // is not supportable by what produced it. They differ only in wording.
   const suppressed = capped || unreadable;
   const rec = String(insights?.overall_recommendation ?? "consider");
+  // A recruiter who finalises the briefing also sets the verdict. Shown as the
+  // recruiter's, without the model's confidence, so the page never says
+  // "AI read: Reject · 95%" over a candidate the recruiter ranked first
+  // (Stratium Partners, 29 Oct 2026).
+  const recruiterRead = insights?.recommendation_source === "recruiter";
   const recTone =
     rec === "advance" ? "bg-success/15 text-success dark:text-success"
     : rec === "reject" ? "bg-destructive/15 text-destructive"
@@ -305,10 +310,10 @@ function InsightsBriefing({
           </span>
         ) : (
           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${recTone}`}>
-            AI read: {rec}
+            {recruiterRead ? "Recruiter read" : "AI read"}: {rec}
           </span>
         )}
-        {!suppressed && typeof insights?.confidence === "number" && (
+        {!suppressed && !recruiterRead && typeof insights?.confidence === "number" && (
           <span className="text-xs text-muted-foreground">
             confidence {Math.round(insights.confidence * 100)}%
           </span>
