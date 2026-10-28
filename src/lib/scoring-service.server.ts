@@ -42,6 +42,7 @@ import { buildReplaySnapshot } from "./scoring/replay";
 import { classifyScoreBand } from "@/config/scoring-bands";
 import type { Json } from "@/integrations/supabase/types";
 import { randomUUID } from "crypto";
+import { employmentIntervals } from "./cv/employment-dates";
 
 
 export const SCORING_BLUEPRINT_VERSION = "taasflow-blueprint-v1.0.0";
@@ -437,6 +438,15 @@ export async function executeScoring(
 
     const cvText: string = ctx.cvFile.extracted_text ?? "";
     if (cvText.length < 60) throw new Error("cv_unparsed");
+    if (employmentIntervals(cvText).length === 0) {
+      await releaseLock(s, matchId, "manual_review_required", trace_id, {
+        code: "cv_employment_history_missing",
+        message: "The CV has no dated employment history. Request a complete CV before assessment.",
+      });
+      return { ok: false, match_id: matchId, trace_id, final_state: "manual_review_required",
+        blockers: ["cv_employment_history_missing"], code: "cv_employment_history_missing",
+        message: "A complete CV with dated roles is required before assessment." };
+    }
 
     // 5) Resolve the governing rubric version FIRST: it owns the calibration,
     //    so every constant behind the number is stored alongside the criteria

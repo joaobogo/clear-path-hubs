@@ -62,7 +62,7 @@ export const updateRecruiterBriefing = createServerFn({ method: "POST" })
       const { error: noteError } = await s.from("candidate_notes").insert({
         candidate_match_id: match.id, organization_id: match.organization_id,
         body: data.note, visibility: "internal", author_user_id: context.userId,
-        note_type: "general", client_shareable: false,
+        note_type: "screening", client_shareable: false,
         revision_group_id: crypto.randomUUID(), revision_number: 1,
       });
       if (noteError) throw new Error(noteError.message);
