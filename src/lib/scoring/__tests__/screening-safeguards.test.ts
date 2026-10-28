@@ -17,4 +17,7 @@ describe("screening safeguards", () => {
   it("does not double count concurrent employment", () => {
     expect(yearsFromEmploymentDates("WORK EXPERIENCE\nDirector Jan 2010 – Jan 2020\nConsultant Jan 2015 – Jan 2020", new Date("2026-10-28"))).toBe(10);
   });
+  it("reads flattened PDF text and letter-spaced headings", () => {
+    expect(employmentIntervals("Nora P R O F E S S I O N A L E X P E R I E N C E SAFI GROUP Feb 2025 – Present Marketing Director E D U C A T I O N 2010 – 2014", new Date("2026-10-28"))).toHaveLength(1);
+  });
 });
