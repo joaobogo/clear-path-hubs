@@ -860,14 +860,16 @@ function ApplyPage() {
       try {
         localStorage.removeItem(draftKey);
       } catch { /* ignore */ }
-      // Account just created for this applicant. It stays unconfirmed until
-      // they click the email link, so an immediate sign-in would fail with
-      // "Email not confirmed" — tell them to confirm instead.
+      // Account just created for this applicant → sign them straight in so the
+      // confirmation page can take them to their application tracker.
       if (result.account === "created" && password) {
-        toast.info(
-          "We sent a confirmation link to your email. Confirm it, then sign in to track your application.",
-          { duration: 10000 },
-        );
+        try {
+          const { supabase } = await import("@/integrations/supabase/client");
+          await supabase.auth.signInWithPassword({
+            email: form.email.trim().toLowerCase(),
+            password,
+          });
+        } catch { /* non-blocking: they can sign in later */ }
       }
       setPassword("");
       setPassword2("");
