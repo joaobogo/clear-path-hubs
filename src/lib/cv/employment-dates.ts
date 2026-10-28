@@ -15,7 +15,8 @@ function monthIndex(value: string, asOf: Date, isEnd: boolean): number | null {
 export function employmentIntervals(text: string, asOf = new Date()): Interval[] {
   const intervals: Interval[] = [];
   const pattern = new RegExp(`(${DATE})\\s*(?:[–—-]|to)\\s*(${DATE}|present|current|now|ongoing)`, "gi");
-  const compact = text.replace(/\b(?:[A-Z]\s+){3,}[A-Z]\b/g, (heading) => heading.replace(/\s/g, ""));
+  const compact = text.replace(/\b(?:[A-Z]\s+){3,}[A-Z]\b/g, (heading) => heading.replace(/\s/g, ""))
+    .replace(/(PROFESSIONAL|WORK|CAREER|EMPLOYMENT)(EXPERIENCE|HISTORY)/g, "$1 $2");
   const sections = compact.replace(/\b((?:PROFESSIONAL|WORK|CAREER|EMPLOYMENT)\s+(?:EXPERIENCE|HISTORY)|EXPERIENCE|EMPLOYMENT|EDUCATION|QUALIFICATIONS|CERTIFICATIONS|LANGUAGES|SKILLS|INTERESTS)\b/gi, "\n$1\n");
   const lines = sections.split(/\r?\n/);
   let inEmployment = false;
