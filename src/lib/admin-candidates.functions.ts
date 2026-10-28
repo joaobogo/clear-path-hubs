@@ -704,7 +704,8 @@ export const updateRecruiterBriefing = createServerFn({ method: "POST" })
     const { error, data: updated } = await s.from("candidate_evidence")
       .update({ extracted: data.extracted as never })
       .eq("id", evidence.id).eq("extracted", data.expected_extracted as never).select("id");
-    if (error || updated?.length !== 1) throw new Error("Evidence changed. Reload before saving.");
+    if (error) throw new Error(error.message);
+    if (updated?.length !== 1) throw new Error("Evidence changed. Reload before saving.");
     if (Object.keys(data.profile).length) {
       const { error: profileError } = await s.from("candidate_profiles")
         .update(data.profile).eq("id", match.candidate_profile_id);
