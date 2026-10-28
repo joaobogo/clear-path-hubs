@@ -5,7 +5,7 @@ Written 29 October 2026 after reading the code on GitHub. Paste each prompt into
 ## Why scores disagree today
 
 - A recruiter override is stored as a decision record (`score_decisions.approved_score`). The candidate's score run is not touched.
-- Every list, board, ranking, export, band label, unicorn and client screen reads the candidate's current score run (`final_score`, else `score`, via `src/lib/scoring/published-score.ts`).
+- Admin lists, rankings, band labels and the unicorn read the candidate's current score run; client screens read the run that was approved (`approved_score_run_id`), and approval takes the current run. Both use `final_score`, else `score` (`src/lib/scoring/published-score.ts`). Neither reads `score_decisions`.
 - So any screen Lovable did not edit by hand still shows the platform score (Radwa 66) while the screens it edited show the override (Radwa 80). That is the inconsistency.
 - The platform already has the right mechanism: a human-adjusted run (`src/lib/scoring/human-adjusted-run.server.ts`). It inserts a NEW run with `evaluation_method = 'human_adjusted'`, the reviewer and the reason, points the candidate at it and keeps the machine run unchanged. Every screen then shows the same number with no other change.
 - Lovable's work since 19 October is not on GitHub (latest commit there: 19 Oct, "Added Attio and email notif"), so it cannot be reviewed.
@@ -83,4 +83,4 @@ Goal: one number per candidate on every screen, admin and client. Never approve,
 
 ## For the owner to decide
 
-- After approval, should the client see the recruiter's number (Radwa 80) or the platform's (66)? Prompt C shows the recruiter's number everywhere, with the platform's run kept for the record. If you want the client to see the platform number, say so before running Prompt C.
+- After approval, should the client see the recruiter's number (Radwa 80) or the platform's (66)? With Prompt C, approval publishes the current run, so the client sees the recruiter's number and the platform's run stays on record. If you want clients to see the platform number, say so before running Prompt C.
