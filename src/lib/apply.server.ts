@@ -293,6 +293,16 @@ export async function submitApplicationImpl(
         } else if (created?.user?.id) {
           authUserId = created.user.id as string;
           accountOutcome = "created";
+          // The account is unusable until the address is confirmed, so send
+          // the confirmation email now — otherwise the applicant can never
+          // sign in to the tracker they just set a password for.
+          const { error: confirmErr } = await admin.auth.resend({
+            type: "signup",
+            email: emailLower,
+          });
+          if (confirmErr) {
+            console.error("[submitApplication] confirmation email failed", trace_id, confirmErr);
+          }
         }
       }
 
