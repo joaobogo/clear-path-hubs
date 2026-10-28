@@ -385,6 +385,9 @@ export async function executeScoring(
   // 1) Readiness — one round-trip, precise blockers.
   const readiness = await checkScoringReadiness(matchId);
   if (!readiness.ok) {
+    if (readiness.blockers.some((code) => ["cv_missing", "cv_file_missing", "cv_unparsed"].includes(code))) {
+      await s.from("candidate_matches").update({ current_score_run_id: null }).eq("id", matchId);
+    }
     await releaseLock(s, matchId, "manual_review_required", trace_id, {
       code: "readiness_blocked",
       message: readiness.blockers.join(","),
@@ -439,9 +442,10 @@ export async function executeScoring(
     const cvText: string = ctx.cvFile.extracted_text ?? "";
     if (cvText.length < 60) throw new Error("cv_unparsed");
     if (employmentIntervals(cvText).length === 0) {
+      await s.from("candidate_matches").update({ current_score_run_id: null }).eq("id", matchId);
       await releaseLock(s, matchId, "manual_review_required", trace_id, {
         code: "cv_employment_history_missing",
-        message: "The CV has no dated employment history. Request a complete CV before assessment.",
+        message: "Manual review required - incomplete document. The CV has no dated employment history.",
       });
       return { ok: false, match_id: matchId, trace_id, final_state: "manual_review_required",
         blockers: ["cv_employment_history_missing"], code: "cv_employment_history_missing",
