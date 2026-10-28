@@ -94,3 +94,39 @@ export const reassessRecruiterCandidate = createServerFn({ method: "POST" })
     return executeScoring(data.match_id, { force: true, actor_user_id: context.userId,
       reason: "Recruiter review against current approved criteria" });
   });
+
+export const sanitizePositionBriefings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ position_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { sanitizeGeneratedText } = await import("./scoring/protected-attributes");
+    const { data: matches, error: matchError } = await s.from("candidate_matches")
+      .select("id,organization_id").eq("position_id", data.position_id);
+    if (matchError) throw new Error(matchError.message);
+    let changed = 0;
+    for (const match of matches ?? []) {
+      const { data: evidenceRows, error: readError } = await s.from("candidate_evidence")
+        .select("id,extracted").eq("candidate_match_id", match.id);
+      if (readError) throw new Error(readError.message);
+      for (const row of evidenceRows ?? []) {
+        if (!row.extracted?.insights) continue;
+        const insights = sanitizeGeneratedText(row.extracted.insights);
+        if (JSON.stringify(insights) === JSON.stringify(row.extracted.insights)) continue;
+        const { error } = await s.from("candidate_evidence").update({
+          extracted: { ...row.extracted, insights },
+        }).eq("id", row.id);
+        if (error) throw new Error(error.message);
+        const { error: auditError } = await s.from("audit_events").insert({
+          actor_user_id: context.userId, organization_id: match.organization_id,
+          entity_type: "candidate_match", entity_id: match.id,
+          action: "briefing_protected_attributes_removed",
+          after_state: { reason: "Removed protected-attribute text from generated briefing", evidence_id: row.id },
+        });
+        if (auditError) throw new Error(auditError.message);
+        changed++;
+      }
+    }
+    return { checked: matches?.length ?? 0, changed };
+  });

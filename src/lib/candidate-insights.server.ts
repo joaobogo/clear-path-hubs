@@ -5,7 +5,8 @@
 //
 // Server-only. Uses the Lovable AI gateway (LOVABLE_API_KEY).
 
-import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
+import { isProtectedAttributeText, sanitizeGeneratedText } from "./scoring/protected-attributes";
+import { employmentIntervals } from "./cv/employment-dates";
 export type Verdict = "met" | "partial" | "missing" | "contradicted";
 export type CvSupport = "yes" | "no" | "unclear";
 export type Recommendation = "advance" | "consider" | "reject";
@@ -135,6 +136,7 @@ export async function generateCandidateInsights(
   if (!key) return { ok: false, reason: "no_lovable_api_key" };
   const trimmedCv = (input.cv_text ?? "").slice(0, 20_000);
   if (trimmedCv.trim().length < 60) return { ok: false, reason: "cv_too_short" };
+  if (!employmentIntervals(trimmedCv).length) return { ok: false, reason: "cv_employment_history_missing" };
 
   const positionBlock = [
     `HIRING ORGANIZATION: ${input.position.hiring_organization_name}`,
@@ -278,17 +280,11 @@ export async function generateCandidateInsights(
       generated_at: new Date().toISOString(),
     };
 
-    clean.pitch_summary = removeProtectedSentences(clean.pitch_summary);
-    clean.narrative = removeProtectedSentences(clean.narrative);
-    clean.highlights = clean.highlights.filter((item) => !isProtectedAttributeText(item));
-    clean.strengths = clean.strengths.filter((item) => !isProtectedAttributeText(JSON.stringify(item)));
-    clean.concerns = clean.concerns.filter((item) => !isProtectedAttributeText(JSON.stringify(item)));
-    clean.requirement_verdicts = clean.requirement_verdicts.filter((item) => !isProtectedAttributeText(JSON.stringify(item)));
     if (isProtectedAttributeText(JSON.stringify(parsed))) {
       clean.overall_recommendation = "consider";
       clean.confidence = Math.min(clean.confidence, 0.5);
     }
-    return { ok: true, data: clean };
+    return { ok: true, data: sanitizeGeneratedText(clean) };
   } catch (e) {
     return { ok: false, reason: `fetch_failed:${(e as Error).message?.slice(0, 120)}` };
   }

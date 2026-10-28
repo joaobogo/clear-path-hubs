@@ -1,8 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { isProtectedAttributeText, removeProtectedSentences } from "../protected-attributes";
+import { isProtectedAttributeText, removeProtectedSentences, sanitizeGeneratedText } from "../protected-attributes";
 import { employmentIntervals, yearsFromEmploymentDates } from "../../cv/employment-dates";
 
 describe("screening safeguards", () => {
+  it("strips protected text from every nested briefing field while preserving experience", () => {
+    const clean = sanitizeGeneratedText({ headline_suggested: "An Egyptian candidate.", screening_analysis: [{ note: "British passport. Worked in Singapore." }], strengths: [{ detail: "Indian heritage. Leads retail." }] });
+    expect(clean.headline_suggested).toBe("");
+    expect(clean.screening_analysis[0]?.note).toBe("Worked in Singapore.");
+    expect(clean.strengths[0]?.detail).toBe("Leads retail.");
+  });
   it("excludes inferred nationality but preserves UAE relocation", () => {
     expect(isProtectedAttributeText("Egyptian heritage inferred from university")).toBe(true);
     expect(isProtectedAttributeText("Must be willing to relocate to the UAE")).toBe(false);
