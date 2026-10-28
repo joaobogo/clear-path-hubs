@@ -701,9 +701,18 @@ export const updateRecruiterBriefing = createServerFn({ method: "POST" })
       .select("id,extracted").eq("id", data.evidence_id)
       .eq("candidate_match_id", data.match_id).single();
     if (evidenceError || !evidence) throw new Error("Candidate evidence not found.");
+    const stable = (value: unknown): string => {
+      if (Array.isArray(value)) return `[${value.map(stable).join(",")}]`;
+      if (value && typeof value === "object") return `{${Object.keys(value).sort()
+        .map((key) => `${JSON.stringify(key)}:${stable((value as Record<string, unknown>)[key])}`).join(",")}}`;
+      return JSON.stringify(value);
+    };
+    if (stable(evidence.extracted) !== stable(data.expected_extracted)) {
+      throw new Error("Evidence changed. Reload before saving.");
+    }
     const { error, data: updated } = await s.from("candidate_evidence")
       .update({ extracted: data.extracted as never })
-      .eq("id", evidence.id).eq("extracted", JSON.stringify(data.expected_extracted)).select("id");
+      .eq("id", evidence.id).select("id");
     if (error) throw new Error(error.message);
     if (updated?.length !== 1) throw new Error("Evidence changed. Reload before saving.");
     if (Object.keys(data.profile).length) {
