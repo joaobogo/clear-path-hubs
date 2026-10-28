@@ -351,12 +351,14 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       }
       const bytes = new Uint8Array(await dl.data.arrayBuffer());
       const ext = await extractCvText(bytes, ctx.file.mime_type ?? "", ctx.file.filename ?? "");
+      let ocrUsed = false;
       if (ext.needs_ocr && (ctx.file.extraction_attempts ?? 0) === 0) {
         try {
           const { readScannedCv } = await import("./cv-ocr.server");
           ext.text = await readScannedCv(bytes, ctx.file.filename ?? "cv.pdf");
           ext.chars = ext.text.length;
           ext.needs_ocr = false;
+          ocrUsed = true;
           ext.reason = undefined;
         } catch (error) {
           ext.reason = error instanceof Error ? error.message : "Document reading failed.";
@@ -370,7 +372,8 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
         extracted_text: ext.text,
         extraction_completed_at: new Date().toISOString(),
         extraction_attempts: (ctx.file.extraction_attempts ?? 0) + 1,
-        parser: ext.extractor,
+        parser: ocrUsed ? "pdf_ocr" : ext.extractor,
+        ocr_used: ocrUsed,
         parser_version: ENGINE_VERSION,
         page_count: ext.page_count ?? null,
       });
