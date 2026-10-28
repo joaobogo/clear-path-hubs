@@ -18,7 +18,8 @@ Written 29 October 2026 after reading the code on GitHub. Paste each prompt into
    - The override reader fix.
 3. Prompt B: the read-only check.
 4. Your decisions on `docs/handoff/stratium-recruiter-review.md`, the per-candidate review and recommended overrides.
-5. Prompt C: re-score on v1.6.0 and make each agreed override the candidate's current run. Use the override values you agreed in step 4, not the list printed in the prompt.
+5. Prompt D, then the candidate prompts 02 to 17 again: writes each briefing field by field, with no merging and no duplicates, and the recruiter's verdict in place of the stale AI read.
+6. Prompt C: re-score on v1.6.0 and make each agreed override the candidate's current run. Use the override values you agreed in step 4, not the list printed in the prompt.
 
 If Prompt C runs before step 2, the re-score uses the old keyword rules and the degree, relocation and years rows stay wrong.
 
@@ -97,3 +98,31 @@ Goal: one number per candidate on every screen, admin and client. Never approve,
 ## For the owner to decide
 
 - After approval, should the client see the recruiter's number (Radwa 80) or the platform's (66)? With Prompt C, approval publishes the current run, so the client sees the recruiter's number and the platform's run stays on record. If you want clients to see the platform number, say so before running Prompt C.
+
+---
+
+## Prompt D. Write each briefing exactly, field by field (fixes the duplicated and merged briefings)
+
+What the admin page showed for Radwa on 29 Oct: "AI read: Reject, confidence 95%" on the top-ranked candidate; one merged paragraph shown twice (as the pitch and again below it); 9 highlights where prompt 02 set 6, mixing the old AI list back in (including figures the pack left out on purpose); "Why they fit" still the old AI items; shortfall details repeating their own titles. Prompt 02 was merged into the old briefing instead of replacing it. Paste this once, then paste the candidate prompts 02 to 17 again, one at a time.
+
+```
+For the Stratium Partners "Group Marketing Manager" candidates, when I paste a candidate prompt (02 to 17), write the briefing to the stored insights record EXACTLY like this. Replace each field whole; never merge with old values, never keep old items, never add, paraphrase or reorder.
+
+- "CANDIDATE BRIEFING TITLE LINE" -> insights.headline_suggested (exact text)
+- The read section ("TaaSFlow's pitch", "Honest read" or "Balanced view"):
+    paragraph 1 -> insights.pitch_summary
+    paragraphs 2 and onward -> insights.narrative, separated by one blank line
+    Never put the same text in both fields.
+- The heading of that section sets insights.pitch_tone: "TaaSFlow's pitch" = "sell", "Honest read" = "cautious", "Balanced view" = "balanced".
+- "HIGHLIGHTS" -> insights.highlights, an array with exactly the items given, in order.
+- "WHY THEY FIT" -> insights.strengths, an array of { title, detail, cv_quote } with exactly the items given. "Text" goes to detail and "Quote" to cv_quote. Do not repeat the title inside detail.
+- "WHERE THEY MAY FALL SHORT" -> insights.concerns, an array of { title, detail } with exactly the items given. Do not repeat the title inside detail.
+- Verdict: set insights.overall_recommendation from the recruiter's override score (70 or more = "advance", 50 to 69 = "consider", under 50 = "reject"), set insights.recommendation_source = "recruiter", and set insights.confidence = null. The page then shows "Recruiter read: <verdict>" instead of the model's old read. For Boral Al Tarifi and Alvito Tereza (no override) leave the verdict fields unchanged.
+- Profile fields (headline, location, experience, LinkedIn, name aliases) go to the candidate profile exactly as given.
+- Review notes and the override follow the original prompt rules.
+- Any automatic regeneration of insights must skip a record where recommendation_source = "recruiter", so recruiter text is never overwritten. Show me the code that enforces this, or add it.
+
+After each candidate, print every one of these fields back exactly as stored, with the count of highlights, strengths and concerns, and confirm pitch_summary and narrative share no sentence.
+Do not approve, publish or change client visibility.
+```
+
