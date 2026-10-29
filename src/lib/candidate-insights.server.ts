@@ -5,6 +5,8 @@
 //
 // Server-only. Uses the Lovable AI gateway (LOVABLE_API_KEY).
 
+import { isProtectedAttributeText, sanitizeGeneratedText } from "./scoring/protected-attributes";
+import { employmentIntervals } from "./cv/employment-dates";
 export type Verdict = "met" | "partial" | "missing" | "contradicted";
 export type CvSupport = "yes" | "no" | "unclear";
 export type Recommendation = "advance" | "consider" | "reject";
@@ -65,6 +67,8 @@ const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const SYSTEM = `You are a senior recruiter analyst. Given a candidate's CV, the position brief, and the candidate's screening answers, produce a rigorous, evidence-first briefing for the hiring organization.
 
 Non-negotiables:
+- Never infer, use, or report nationality, ethnicity, race, citizenship or heritage from names, photos, education, phone numbers or languages. Ignore such hiring criteria. Assess explicit UAE work authorisation or relocation separately.
+- Compare employment dates against the supplied assessment_date_utc, never a remembered current date. July 2025 is past when the assessment date is in October 2026.
 - The hiring organization is explicitly named in the input as "hiring_organization_name". You MUST use this name when referring to the employer.
 - NEVER name any company as the hiring entity other than "hiring_organization_name" — not the platform, not another client, not a company mentioned in the CV. Naming a different organisation as the employer is a data-contamination error, not a style issue.
 - FIX THE POSSESSIVE: When referring to the hiring organization in a possessive context, use standard English grammar (e.g. "Northwind Talent's", not "Northwind Talent' technical").
@@ -132,6 +136,7 @@ export async function generateCandidateInsights(
   if (!key) return { ok: false, reason: "no_lovable_api_key" };
   const trimmedCv = (input.cv_text ?? "").slice(0, 20_000);
   if (trimmedCv.trim().length < 60) return { ok: false, reason: "cv_too_short" };
+  if (!employmentIntervals(trimmedCv).length) return { ok: false, reason: "cv_employment_history_missing" };
 
   const positionBlock = [
     `HIRING ORGANIZATION: ${input.position.hiring_organization_name}`,
@@ -154,6 +159,7 @@ export async function generateCandidateInsights(
     : "SCREENING ANSWERS: (none captured)";
 
   const userMsg = [
+    `assessment_date_utc: ${new Date().toISOString().slice(0, 10)}`,
     "Analyse the candidate against the position and screening below.",
     "",
     "POSITION:",
@@ -274,7 +280,11 @@ export async function generateCandidateInsights(
       generated_at: new Date().toISOString(),
     };
 
-    return { ok: true, data: clean };
+    if (isProtectedAttributeText(JSON.stringify(parsed))) {
+      clean.overall_recommendation = "consider";
+      clean.confidence = Math.min(clean.confidence, 0.5);
+    }
+    return { ok: true, data: sanitizeGeneratedText(clean) };
   } catch (e) {
     return { ok: false, reason: `fetch_failed:${(e as Error).message?.slice(0, 120)}` };
   }

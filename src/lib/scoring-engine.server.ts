@@ -17,6 +17,7 @@ import { deriveStrengths } from "./scoring/strengths";
 import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
 import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
+import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
 
 export { ENGINE_VERSION, EVALUATION_METHOD };
 
@@ -509,6 +510,12 @@ export function scoreCandidate(input: {
   /** Explicit calibration (tests, replay of a historical run). */
   calibration?: EngineCalibration;
 }): ScoringResult {
+  input = {
+    ...input,
+    cv_text: removeProtectedSentences(input.cv_text ?? ""),
+    requirements: input.requirements.filter((r) => !isProtectedAttributeText(r.text)),
+    screening: input.screening.filter((s) => !isProtectedAttributeText(s.question)),
+  };
   const cv = input.cv_text ?? "";
   const cal = input.calibration ?? resolveCalibration(input.role_family);
   const engine_version = ENGINE_VERSION;
