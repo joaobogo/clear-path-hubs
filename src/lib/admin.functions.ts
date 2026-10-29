@@ -1,3 +1,4 @@
+import { roleProtectedFindings, protectedFindingsMessage } from "@/lib/jobs/protected-content";
 import { pilotEndsAt } from "@/lib/pilot-state";
 // Admin dashboard service — canonical read + mutation server fns for Phase 7.
 // Every mutation validates input, enforces staff, writes an audit event, and returns
@@ -2436,6 +2437,10 @@ export const saveScreeningQuestions = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => saveScreeningInput.parse(i))
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
+    {
+      const findings = roleProtectedFindings({ screening_questions: data.questions });
+      if (findings.length) throw new Error(protectedFindingsMessage(findings));
+    }
     const trace_id = traceId();
     const s = await getAdmin();
     const { data: pos } = await s

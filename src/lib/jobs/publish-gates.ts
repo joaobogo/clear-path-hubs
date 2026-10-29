@@ -1,3 +1,4 @@
+import { findProtectedInFields } from "@/lib/scoring/protected-attributes";
 /**
  * What blocks publishing a role, and what merely improves it.
  *
@@ -45,7 +46,31 @@ export type PublishGateInput = {
    * and fed into scoring (audit 1 Sep, F14).
    */
   screening_questions?: Array<{ id?: string | null; question?: string | null }> | null;
+  /** Free-text role fields checked by the protected-attribute detector (B1). */
+  preferred_requirements?: unknown[] | null;
+  dealbreakers?: unknown[] | null;
+  description?: string | null;
+  jd_text?: string | null;
+  posting?: string | null;
 };
+
+/** Protected-attribute findings across every text field of a role. Never waivable. */
+export function protectedAttributeGaps(input: PublishGateInput): PublishGap[] {
+  return findProtectedInFields({
+    requirements: (input.requirements ?? []).map((r) => (r as { text?: string }).text ?? ""),
+    preferred_requirements: input.preferred_requirements ?? [],
+    dealbreakers: input.dealbreakers ?? [],
+    description: input.description ?? "",
+    jd_text: input.jd_text ?? "",
+    posting: input.posting ?? "",
+    screening_questions: (input.screening_questions ?? []).map((q) => q.question ?? ""),
+  }).map((f, i) => ({
+    key: `protected_attribute.${f.field}.${f.index ?? i}`,
+    question: `${f.findings[0].message} ("${f.text.slice(0, 80)}")`,
+    group: "blocking" as const,
+    owner: "client" as const,
+  }));
+}
 
 const text = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
 
@@ -137,7 +162,10 @@ export function publishGaps(input: PublishGateInput): PublishGap[] {
     }
   }
 
-  return gaps.filter((g) => !(g.group === "blocking" && waived.has(g.key)));
+  return [
+    ...protectedAttributeGaps(input),
+    ...gaps.filter((g) => !(g.group === "blocking" && waived.has(g.key))),
+  ];
 }
 
 /** Generation of candidate-facing content stays off while anything blocks. */

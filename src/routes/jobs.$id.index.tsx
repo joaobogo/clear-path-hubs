@@ -124,12 +124,15 @@ export const Route = createFileRoute("/jobs/$id/")({
           : []),
       ],
       links: [{ rel: "canonical", href: canonical }],
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify(buildJobPostingJsonLd(pos, canonical)),
-        },
-      ],
+      scripts:
+        pos.syndicate === false
+          ? []
+          : [
+              {
+                type: "application/ld+json",
+                children: JSON.stringify(buildJobPostingJsonLd(pos, canonical)),
+              },
+            ],
     };
   },
   // A failed load shows one error card for the whole page — never a partial

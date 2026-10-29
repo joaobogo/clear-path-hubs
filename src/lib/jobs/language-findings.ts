@@ -8,6 +8,7 @@
  */
 
 import { findProhibitedContent } from "./work-authorisation";
+import { detectProtectedAttributes } from "@/lib/scoring/protected-attributes";
 
 export type LanguageCategory =
   | "gendered"
@@ -112,6 +113,22 @@ export function findLanguageIssues(draft: string): LanguageFinding[] {
       suggestion: "Remove this. It cannot be published.",
       blocking: true,
     });
+  }
+
+  // Shared protected-attribute detector (B1): one source of truth with scoring.
+  const seenSpans = new Set(findings.filter((f) => f.blocking).map((f) => f.span.toLowerCase()));
+  for (const sentence of text.split(/(?<=[.!?])\s+|\n+/)) {
+    for (const f of detectProtectedAttributes(sentence)) {
+      if (seenSpans.has(f.match.toLowerCase())) continue;
+      seenSpans.add(f.match.toLowerCase());
+      findings.push({
+        span: f.match,
+        category: "prohibited",
+        reason: f.message,
+        suggestion: f.rewrite === "" ? "Remove this line. It cannot be published." : `Use: "${f.rewrite}"`,
+        blocking: true,
+      });
+    }
   }
 
   return findings;

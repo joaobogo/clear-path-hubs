@@ -1,3 +1,4 @@
+import { roleProtectedFindings, protectedFindingsMessage } from "@/lib/jobs/protected-content";
 // Sourcing operations service — the admin-managed record behind every role's
 // sourcing story. Staff own the writes; clients only ever read derived state
 // through the client workspace, never these mutations.
@@ -304,6 +305,16 @@ export const saveSourcingCampaign = createServerFn({ method: "POST" })
           : undefined,
       owner_user_id: context.userId,
     };
+
+    // B1: no ad outreach for a role whose text screens on a protected attribute.
+    if (data.status === "active" && row.position_id) {
+      const [{ data: roleText }, { data: qs }] = await Promise.all([
+        s.from("positions").select("requirements,preferred_requirements,dealbreakers,description,jd_text,intake_context").eq("id", row.position_id).maybeSingle(),
+        s.from("screening_questions").select("question").eq("position_id", row.position_id),
+      ]);
+      const findings = roleProtectedFindings({ ...(roleText ?? {}), screening_questions: qs ?? [] });
+      if (findings.length) throw new Error(`Outreach can't start for this role yet. ${protectedFindingsMessage(findings)}`);
+    }
 
     let before: AnyRow = null;
     let after: AnyRow = null;
