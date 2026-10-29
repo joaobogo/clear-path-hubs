@@ -46,14 +46,30 @@ export const Route = createFileRoute("/api/public/scoring/reconcile-freshness")(
         }
 
         try {
-          const { reconcileScoreFreshness } = await import(
+          const { reconcileScoreFreshness, scanScoringGuardrails } = await import(
             "@/lib/scoring/freshness-reconcile.server"
           );
           const out = await reconcileScoreFreshness({
             limit: parsed.data.limit,
             dryRun: parsed.data.dry_run,
           });
-          return Response.json({ ok: true, ...out });
+          // The guardrail health check rides along: counts only, never a write.
+          let guardrails: Record<string, number> | null = null;
+          try {
+            const g = await scanScoringGuardrails();
+            guardrails = {
+              ineligible_without_failed_check: g.ineligible_without_failed_check.length,
+              unscored_without_task: g.unscored_without_task.length,
+              positions_with_protected_wording: g.positions_with_protected_wording.length,
+              outdated_engine_scores: g.outdated_engine_scores.length,
+            };
+            if (Object.values(guardrails).some((n) => n > 0)) {
+              console.warn("[reconcile-freshness] scoring guardrails flagged", guardrails);
+            }
+          } catch (err) {
+            console.error("[reconcile-freshness] guardrail scan failed", (err as Error)?.message);
+          }
+          return Response.json({ ok: true, ...out, guardrails });
         } catch (err) {
           console.error("[reconcile-freshness] failed", (err as Error)?.message);
           return new Response(

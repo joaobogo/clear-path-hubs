@@ -29,6 +29,8 @@
  * location line or the CV's own header.
  */
 
+import { placesIn, regionsOf, REGION_TERMS, type Place, type Region } from "./geography";
+
 export type StructuredStatus = "met" | "partial" | "missing" | "unknown";
 
 export type StructuredEvidence = { snippet: string; start: number; end: number };
@@ -188,12 +190,30 @@ export function findDegrees(cv: string): DegreeFound[] {
     const nextIsDegree =
       next &&
       (BACHELOR_RE.test(next.text) || MASTER_RE.test(next.text) || PRO_DIPLOMA_RE.test(next.text));
+    // The subject is what follows the degree, not the rest of the line: in a
+    // CV stored as one line the "line" can run on into the next section, and
+    // "BSc Civil Engineering ... Digital Marketing certificate" must not read
+    // as a marketing degree.
+    const levelRe =
+      level === "bachelor" ? BACHELOR_RE : level === "master" ? MASTER_RE : PRO_DIPLOMA_RE;
+    const hit = levelRe.exec(l.text);
+    const at = hit?.index ?? 0;
+    const skip = hit?.[0].length ?? 0;
+    let own = l.text.slice(at, at + 90);
+    // Stop at the next qualification after this one ("... MBA (Marketing)").
+    const nextDegreeAt = own
+      .slice(skip)
+      .search(
+        new RegExp(`${BACHELOR_RE.source}|${MASTER_RE.source}|${PRO_DIPLOMA_RE.source}`, "i"),
+      );
+    if (nextDegreeAt > 0) own = own.slice(0, skip + nextDegreeAt);
+    own = own.split(/\s(?:19|20)\d{2}\b|\s[|•▪·]\s/)[0] ?? own;
     const subjectLine =
       next &&
       !nextIsDegree &&
       /^(major|minor|specialisation|specialization|concentration|field|subject)\b/i.test(next.text)
-        ? `${l.text} ${next.text}`
-        : l.text;
+        ? `${own} ${next.text}`
+        : own;
     // The degree abbreviations themselves (BBA, B.Com, MBA) name a business
     // subject; "B.Sc" and "BA" do not.
     const families = familiesIn(subjectLine);
@@ -202,7 +222,7 @@ export function findDegrees(cv: string): DegreeFound[] {
       level,
       families,
       unrelated,
-      subjectless: families.length === 0 && !unrelated && isSubjectless(l.text),
+      subjectless: families.length === 0 && !unrelated && isSubjectless(own),
       line: l,
     });
   }
@@ -485,7 +505,8 @@ const RANGE_RE = new RegExp(`(?:${POINT})\\s*(?:-|–|—|to|until|till)\\s*(?:$
 /** The same pattern without the global flag, for a yes/no test. */
 const DATE_RANGE = new RegExp(RANGE_RE.source, "i");
 
-type Span = { from: number; to: number; line: Line };
+/** A dated range: months covered, its line, and where in the line it sits. */
+type Span = { from: number; to: number; line: Line; at: number };
 
 /** Month index since year 0, for arithmetic. */
 function monthIndex(year: number, month: number): number {
@@ -521,7 +542,7 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
         to = Math.min(monthIndex(endYear, endMonth), now);
       }
       const from = monthIndex(startYear, Math.min(Math.max(startMonth, 0), 11));
-      if (to >= from && startYear >= 1960) out.push({ from, to, line: l });
+      if (to >= from && startYear >= 1960) out.push({ from, to, line: l, at: m.index });
     }
   }
   return out;
@@ -545,7 +566,27 @@ function unionMonths(spans: Span[]): number {
 }
 
 const EDUCATION_LINE =
-  /\b(university|college|school|academy|institute|bachelor|master|mba|degree|diploma|b\.?\s?sc|bsc|bba)\b/i;
+  /\b(university|college|school|academy|institute|bachelors?|masters?|mba|degree|diploma|b\.?\s?sc|bsc|bba)\b/i;
+const EDUCATION_HEADING = /\b(EDUCATION|QUALIFICATIONS|ACADEMIC|Education|Qualifications)\b/g;
+const WORK_HEADING =
+  /\b(EXPERIENCE|EMPLOYMENT|CAREER|Experience|Employment|Career Overview|Work History)\b/g;
+
+/**
+ * An education date rather than a role: the words just before the range name
+ * a school or degree, or the nearest heading before it is Education. Judged at
+ * the range itself, because one line of a stored CV can hold both sections.
+ */
+function isEducationSpan(s: Span): boolean {
+  const before = s.line.text.slice(0, s.at);
+  if (EDUCATION_LINE.test(before.slice(-80))) return true;
+  const lastOf = (re: RegExp) => {
+    let last = -1;
+    for (const m of before.matchAll(re)) last = m.index ?? last;
+    return last;
+  };
+  const edu = lastOf(EDUCATION_HEADING);
+  return edu >= 0 && edu > lastOf(WORK_HEADING);
+}
 const SENIOR_TITLE =
   /\b(head|director|vice\s+president|vp|svp|evp|avp|chief|cmo|cco|general\s+manager|gm|managing\s+director|partner|founder|co-?founder)\b/i;
 const LEAD_TITLE = new RegExp(`${SENIOR_TITLE.source}|\\b(manager|lead|leader)\\b`, "i");
@@ -653,22 +694,26 @@ export function evaluateYearsRequirement(
 
   const dated = evaluateDatedYears(req, marketingOnly, cv, today);
   if (claim && claim.years >= req.min && dated.verdict.status !== "met") {
-    // A stated career length a recruiter would accept from a summary. It is
-    // the candidate's own figure, so it is flagged for a check unless the
-    // dated roles already come close to it.
+    // A stated career length counts when the dated roles do not contradict
+    // it: no dates to check against, or dates that come close. When the dated
+    // roles show far less ("11+ years" against roles dated from 2021), a
+    // recruiter believes the dates: the claim lifts the row to partial at most.
+    const datesAgree = dated.years === 0 || dated.years >= req.min * 0.75;
+    const level =
+      req.kind === "senior"
+        ? " in senior leadership"
+        : req.kind === "leadership"
+          ? " in leadership"
+          : "";
     return {
       rule: "minimum_years",
-      status: "met",
-      needs_validation: dated.years < req.min * 0.75,
-      note: `The CV states ${claim.years}+ years${
-        req.kind === "senior"
-          ? " in senior leadership"
-          : req.kind === "leadership"
-            ? " in leadership"
-            : ""
-      }, against ${req.min} required${
-        dated.years > 0 ? `; dated roles on the CV show ${dated.years}` : ""
-      }.`,
+      status: datesAgree ? "met" : "partial",
+      needs_validation: true,
+      note: datesAgree
+        ? `The CV states ${claim.years}+ years${level}, against ${req.min} required${
+            dated.years > 0 ? `; dated roles on the CV show ${dated.years}` : ""
+          }. Confirm at screening.`
+        : `The CV states ${claim.years}+ years${level}, but dated roles show ${dated.years}, against ${req.min} required. Ask for the undated years.`,
       evidence: [quote(claim.line, 200), ...dated.verdict.evidence.slice(0, 2)],
     };
   }
@@ -684,7 +729,7 @@ function evaluateDatedYears(
   cv: string,
   today: Date,
 ): { years: number; verdict: StructuredVerdict } {
-  const roles = findDatedRanges(cv, today).filter((s) => !EDUCATION_LINE.test(s.line.text));
+  const roles = findDatedRanges(cv, today).filter((s) => !isEducationSpan(s));
   let counted = roles;
   if (req.kind === "senior") counted = roles.filter((s) => SENIOR_TITLE.test(titleContext(cv, s)));
   else if (req.kind === "leadership")
@@ -743,37 +788,17 @@ function evaluateDatedYears(
 // ---------------------------------------------------------------------------
 
 /**
- * Countries a requirement can name, each with the cities a CV would name
- * instead. Only places: never a nationality, a language or a demonym, so
- * "Korean national" or "speaks Japanese" can never satisfy it.
+ * Countries come from the shared geography dictionary (scoring/geography.ts):
+ * every country a role is commonly hired for, with its common names,
+ * abbreviations and business cities. Only places: never a nationality, a
+ * language or a demonym, so "Korean national" or "speaks Japanese" can never
+ * satisfy it. An adjective counts only directly before "market(s)".
  */
-const MARKETS: Array<{ name: string; re: RegExp }> = [
-  {
-    name: "South Korea",
-    re: /\b(south\s+korea|korea|republic\s+of\s+korea|seoul|busan|incheon)\b/i,
-  },
-  { name: "Japan", re: /\b(japan|tokyo|osaka|yokohama|kyoto|nagoya|fukuoka|sapporo|kobe)\b/i },
-  { name: "Singapore", re: /\bsingapore\b/i },
-  { name: "Hong Kong", re: /\b(hong\s+kong|hk\s*sar|kowloon)\b/i },
-  {
-    name: "China",
-    re: /\b(china|mainland\s+china|prc|shanghai|beijing|shenzhen|guangzhou|chengdu|hangzhou)\b/i,
-  },
-  {
-    name: "Vietnam",
-    re: /\b(vietnam|viet\s+nam|hanoi|ho\s+chi\s+minh(?:\s+city)?|saigon|hcmc|da\s+nang)\b/i,
-  },
-  { name: "Taiwan", re: /\b(taiwan|taipei)\b/i },
-  { name: "Thailand", re: /\b(thailand|bangkok)\b/i },
-  { name: "Malaysia", re: /\b(malaysia|kuala\s+lumpur)\b/i },
-  { name: "Indonesia", re: /\b(indonesia|jakarta)\b/i },
-  { name: "Philippines", re: /\b(philippines|manila)\b/i },
-  { name: "India", re: /\b(india|mumbai|delhi|bangalore|bengaluru)\b/i },
-];
+type Market = Place;
 
 /** Lines about the person rather than their work. Never evidence of market experience. */
 const PERSONAL_LINE =
-  /\b(born|birth|nationality|citizen(?:ship)?|passport|native\s+of|hometown|ethnic|heritage|origin|visa\s+status|languages?)\b/i;
+  /\b(born|birth|nationality|citizen(?:ship)?|passport|native\s+of|hometown|ethnic|heritage|origin|visa\s+status|languages?)\b|\bnationals?\b(?=\s*(?:$|[,.;|)]))|\bnational\s+of\b/i;
 /** A mention that is not operating in the market: study, a course, a trip, buying from it. */
 const WEAK_CONTEXT =
   /\b(training|trained|course|workshop|seminar|conference|visit(?:ed)?|trip|exchange|studied|study\s+tour|university|college|school|degree|sourcing|sourced|source\s+markets?|suppliers?|supplier\s+negotiations?|import(?:ed|s)?\s+from|benchmark(?:ed|ing)?|knowledge\s+of|negotiat\w*|trading|traded|exports?\s+to|visitors?|tourists?|tourism|inbound|destination|partners?\s+(?:in|from))\b/i;
@@ -784,11 +809,39 @@ const WEAK_CONTEXT =
 const OWNS_MARKET =
   /(?:based\s+in|located\s+in|relocated\s+to|lived\s+in|worked\s+in|launch(?:ed|ing)?\b[^.;]{0,40}\bin|entered|expan(?:ded|sion)\s+(?:in)?to|go-to-market\s+in|country\s+(?:manager|head|director|lead)\b[^.;]{0,30}|(?:head|director|vp|lead)\s+of\s+[^.;]{0,30}\b(?:for|in)|(?:led|managed|ran|owned)\s+[^.;]{0,50}\b(?:in|for|across)|markets?\s+(?:incl(?:uding|\.)?|such\s+as|across|covering)|responsib\w+\s+for\s+[^.;]{0,40})[\s,:(/-]*(?:[A-Z][\w.&-]*[\s,/-]+){0,4}$/i;
 
-export function parseMarketRequirement(text: string): { markets: typeof MARKETS } | null {
-  if (!/\b(experience|worked|working|exposure|background)\b/i.test(text)) return null;
-  const markets = MARKETS.filter((m) => m.re.test(text));
-  // A list of markets, not a single location requirement ("based in Dubai").
-  return markets.length >= 2 ? { markets } : null;
+/** Work-authorisation and residence wording is about the person's status, not market experience. */
+const NOT_MARKET_EXPERIENCE =
+  /\b(eligible|eligibility|authori[sz]ed|authori[sz]ation|right\s+to\s+work|permit|visa|sponsor\w*|reloca\w*|based|located|residen\w*|living)\b/i;
+
+/**
+ * A requirement about operating in named markets.
+ *
+ * Two or more countries ("Korea, Japan or Singapore"; a group such as "the
+ * GCC" counts as its members), or a single country named as a market ("the
+ * Korean market", "experience in the UK"). A single location named only by a
+ * city ("Experience in Dubai retail") or as where someone must live ("Based
+ * in Dubai") is left to the relocation rule and the keyword matcher.
+ */
+export function parseMarketRequirement(text: string): { markets: Market[] } | null {
+  if (!/\b(experience|experienced|worked|working|exposure|background|markets?)\b/i.test(text)) return null;
+  const markets = placesIn(text);
+  const countries = markets.filter((m) => m.region !== null);
+  if (countries.length >= 2) {
+    // "Eligible to work in the UK or the US" is authorisation, not experience.
+    if (NOT_MARKET_EXPERIENCE.test(text) && !/\b(experience|exposure|background|markets?)\b/i.test(text))
+      return null;
+    return { markets };
+  }
+  if (countries.length !== 1) return null;
+  const only = countries[0]!;
+  if (!only.namedAsCountry(text)) return null;
+  if (NOT_MARKET_EXPERIENCE.test(text)) return null;
+  const asMarket =
+    /\bmarkets?\b/i.test(text) ||
+    /\b(experience|experienced|exposure|background|worked|working)\b[^.;]{0,40}?\b(in|within|across|for)\s+(?:the\s+)?\S/i.test(
+      text,
+    );
+  return asMarket ? { markets } : null;
 }
 
 export function evaluateMarketRequirement(
@@ -804,9 +857,7 @@ export function evaluateMarketRequirement(
   const weak: Line[] = [];
   ls.forEach((l) => {
     if (PERSONAL_LINE.test(l.text)) return;
-    const hits = req.markets.flatMap((m) =>
-      [...l.text.matchAll(new RegExp(m.re.source, "gi"))].map((h) => h.index!),
-    );
+    const hits = req.markets.flatMap((m) => m.indexes(l.text));
     if (hits.length === 0) return;
     // Indirect exposure anywhere on the line (training, sourcing, visitors
     // from the market) makes the line partial at most.
@@ -830,7 +881,7 @@ export function evaluateMarketRequirement(
     (inRole || owned ? strong : weak).push(l);
   });
   const names = (found: Line[]) =>
-    req.markets.filter((m) => found.some((l) => m.re.test(l.text))).map((m) => m.name);
+    req.markets.filter((m) => found.some((l) => m.test(l.text))).map((m) => m.name);
   if (strong.length > 0) {
     return {
       rule: "market_experience",
@@ -849,17 +900,25 @@ export function evaluateMarketRequirement(
       evidence: weak.slice(0, 2).map((l) => quote(l)),
     };
   }
-  const regional = ls.find(
-    (l) =>
-      !PERSONAL_LINE.test(l.text) &&
-      /\b(asia[\s-]?pacific|apac|south[\s-]?east\s+asia|east\s+asia|far\s+east)\b/i.test(l.text),
-  );
+  // A broad region that holds the named markets ("APAC" for Korea and
+  // Japan, "EMEA" for Germany) is a question for screening, not evidence.
+  const regions = regionsOf(req.markets);
+  let regional: Line | undefined;
+  let regionName: Region | undefined;
+  for (const l of ls) {
+    if (PERSONAL_LINE.test(l.text)) continue;
+    regionName = regions.find((r) => REGION_TERMS[r].test(l.text));
+    if (regionName) {
+      regional = l;
+      break;
+    }
+  }
   return {
     rule: "market_experience",
     status: "missing",
     needs_validation: Boolean(regional),
     note: regional
-      ? "Mentions Asia-Pacific in general but none of the named markets. Ask which markets at screening."
+      ? `Mentions ${regionName} in general but none of the named markets. Ask which markets at screening.`
       : "None of the named markets appear in the CV.",
     evidence: regional ? [quote(regional)] : [],
   };

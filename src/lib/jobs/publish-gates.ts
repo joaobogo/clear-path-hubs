@@ -13,6 +13,7 @@ import { screeningPayDrift } from "@/lib/jobs/screening-pay-drift";
 import { resolveCompensationDecision, type CompensationDecisionInput } from "./compensation-decision";
 import { authorisationStatement, type WorkAuthorisationInput } from "./work-authorisation";
 import type { BriefRequirement } from "./brief-requirements";
+import { findProtectedCriteria } from "@/lib/scoring/protected-attributes";
 
 export type PublishGap = {
   key: string;
@@ -99,6 +100,30 @@ export function publishGaps(input: PublishGateInput): PublishGap[] {
     });
   }
 
+  // A requirement or screening question that states a protected attribute
+  // (nationality, age, gender, ...) cannot be published or waived.
+  for (const r of input.requirements ?? []) {
+    const found = findProtectedCriteria(r.text);
+    if (found.length === 0) continue;
+    const fix = found[0]!.suggestion ? ` Suggested: "${found[0]!.replacement}".` : " Remove it.";
+    gaps.push({
+      key: `protected_criteria.${r.id}`,
+      question: `"${r.text}": ${found[0]!.message}${fix}`,
+      group: "blocking",
+      owner: "client",
+    });
+  }
+  for (const q of input.screening_questions ?? []) {
+    const found = findProtectedCriteria(q?.question ?? "");
+    if (found.length === 0) continue;
+    gaps.push({
+      key: `protected_criteria.question.${String(q?.id ?? "question")}`,
+      question: `Screening question "${q?.question}": ${found[0]!.message}`,
+      group: "blocking",
+      owner: "taasflow",
+    });
+  }
+
   const musts = (input.requirements ?? []).filter((r) => r.kind === "must_have");
   if (musts.length < 3) {
     gaps.push({
@@ -137,7 +162,10 @@ export function publishGaps(input: PublishGateInput): PublishGap[] {
     }
   }
 
-  return gaps.filter((g) => !(g.group === "blocking" && waived.has(g.key)));
+  // A protected-attribute finding is never waivable.
+  return gaps.filter(
+    (g) => !(g.group === "blocking" && waived.has(g.key) && !g.key.startsWith("protected_criteria.")),
+  );
 }
 
 /** Generation of candidate-facing content stays off while anything blocks. */

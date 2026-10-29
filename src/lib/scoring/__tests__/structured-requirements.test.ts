@@ -11,6 +11,7 @@ import {
   findDatedRanges,
 } from "@/lib/scoring/structured-requirements";
 import { scoreCandidate } from "@/lib/scoring-engine.server";
+import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 
 const DEGREE = "Bachelor's degree in Marketing, Business Administration or a related field";
 const RELOCATE = "If outside the UAE, must be willing to relocate to Dubai";
@@ -284,6 +285,6 @@ describe("in the engine", () => {
     expect(loc.status).toBe("met");
     expect(deg.rule_note).toBeTruthy();
     expect(deg.evidence[0]?.snippet).toMatch(/Postgraduate Diploma in Marketing/);
-    expect(result.engine_version).toBe("taasflow-scoring-v1.7.0");
+    expect(result.engine_version).toBe(ENGINE_VERSION);
   });
 });

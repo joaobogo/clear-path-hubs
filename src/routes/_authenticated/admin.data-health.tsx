@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Activity, AlertTriangle, CheckCircle2, Database } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { getDataHealth } from "@/lib/data-system.functions";
+import { getScoringGuardrails } from "@/lib/scoring/guardrail-health.functions";
 import { DataHealthExceptionsPanel } from "@/components/admin/data-health-exceptions-panel";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -262,6 +263,70 @@ function DataHealthMetrics() {
   );
 }
 
+/**
+ * Scoring guardrails: ineligible candidates with no failed dealbreaker on
+ * record, unscored candidates nobody owns, roles whose criteria state a
+ * protected attribute, and scores from an older engine on active roles.
+ * The same check runs with the nightly freshness reconciliation.
+ */
+function ScoringGuardrailsPanel() {
+  const fn = useServerFn(getScoringGuardrails);
+  const { data, isPending, error } = useQuery({
+    queryKey: ["scoring-guardrails"],
+    queryFn: () => fn(),
+    refetchInterval: 300_000,
+  });
+  return (
+    <section className="mt-8 rounded-lg border border-border bg-card p-5" data-testid="scoring-guardrails">
+      <h2 className="flex items-center gap-2 text-sm font-semibold">
+        <AlertTriangle className="h-4 w-4 text-muted-foreground" aria-hidden />
+        Scoring guardrails
+      </h2>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Each row should read 0. Counts only; nothing here changes a record.
+      </p>
+      {isPending ? (
+        <p className="mt-3 text-sm text-muted-foreground">Checking scoring guardrails…</p>
+      ) : error || !data ? (
+        <p className="mt-3 text-sm text-destructive">
+          Could not read scoring guardrails. {(error as Error)?.message}
+        </p>
+      ) : (
+        <>
+          <ul className="mt-3 space-y-3 text-sm">
+            {data.rows.map((r) => (
+              <li key={r.key}>
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">{r.label}</span>
+                  <span className={"tabular-nums " + (r.count > 0 ? "font-semibold text-destructive" : "")}>
+                    {r.count.toLocaleString(APP_LOCALE)}
+                  </span>
+                </div>
+                {r.count > 0 && <p className="mt-0.5 text-xs text-muted-foreground">{r.action}</p>}
+              </li>
+            ))}
+          </ul>
+          {data.positions_with_protected_wording.length > 0 && (
+            <ul className="mt-3 space-y-1 text-xs">
+              {data.positions_with_protected_wording.map((p) => (
+                <li key={p.position_id}>
+                  <a className="underline" href={`/admin/positions/${p.position_id}/edit`}>
+                    {p.title}
+                  </a>{" "}
+                  <span className="text-muted-foreground">
+                    · {p.findings} finding{p.findings === 1 ? "" : "s"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-3 text-xs text-muted-foreground">Measured {when(data.generated_at)}</p>
+        </>
+      )}
+    </section>
+  );
+}
+
 function DataHealthPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
@@ -279,6 +344,8 @@ function DataHealthPage() {
       <div className="mt-8">
         <DataHealthExceptionsPanel />
       </div>
+
+      <ScoringGuardrailsPanel />
 
       <DataHealthMetrics />
     </div>
