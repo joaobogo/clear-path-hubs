@@ -101,7 +101,7 @@ async function loadInputs(matchId: string) {
   const s = await getAdmin();
   const { data: match } = await s
     .from("candidate_matches")
-    .select("id,application_id,candidate_profile_id,position_id,organization_id,processing_state,current_score_run_id")
+    .select("id,application_id,candidate_profile_id,position_id,organization_id,processing_state,current_score_run_id,eligibility_status,score_stale")
     .eq("id", matchId)
     .maybeSingle();
   if (!match) throw new Error("match_not_found");
@@ -653,6 +653,23 @@ export async function executeScoring(
       })
       .eq("id", matchId);
 
+    if ((ctx.match as Any).eligibility_status !== eligibility.status) {
+      await s.from("audit_events").insert({
+        organization_id: ctx.match.organization_id,
+        entity_type: "candidate_match",
+        entity_id: matchId,
+        action: "scoring.eligibility_changed",
+        before_state: { eligibility_status: (ctx.match as Any).eligibility_status ?? null } as unknown as Json,
+        after_state: { eligibility_status: eligibility.status, position_id: ctx.match.position_id, checks: eligibility.checks.map((c) => c.qualifier_key) } as unknown as Json,
+        trace_id,
+      });
+    }
+    if ((ctx.match as Any).score_stale) {
+      await notifyRescoreBatchIfDone(s, ctx.match.position_id, ctx.match.organization_id, matchId).catch((e) =>
+        console.error("[scoring] rescore batch notify failed", (e as Error)?.message),
+      );
+    }
+
     const finalState: "scored" | "manual_review_required" =
       raw.contradiction_status === "disqualifying_answer" ||
       raw.overall_confidence < calibration.manual_review_confidence
@@ -735,4 +752,42 @@ export async function assertPublishGate(matchId: string, runId: string): Promise
   void run.evidence;
   if (run.contradiction_status === "disqualifying_answer") return { ok: false, reason: "disqualifying_contradiction" };
   return { ok: true };
+}
+
+
+/**
+ * B2: once the last queued match of a requirement-change batch is rescored,
+ * tell platform staff "N rescored, M changed eligibility". One notice per batch.
+ */
+async function notifyRescoreBatchIfDone(s: Any, positionId: string, orgId: string, justScored: string) {
+  const { data: batch } = await s.from("audit_events").select("id,created_at")
+    .eq("entity_type", "position").eq("entity_id", positionId)
+    .eq("action", "scoring.requirements_rescore_batch")
+    .order("created_at", { ascending: false }).limit(1).maybeSingle();
+  if (!batch) return;
+  const { count: pending } = await s.from("candidate_matches").select("id", { count: "exact", head: true })
+    .eq("position_id", positionId).neq("id", justScored)
+    .in("processing_state", ["queued", "parsing", "enriching", "scoring", "ready_to_score"]);
+  if ((pending ?? 0) > 0) return;
+  const { data: already } = await s.from("audit_events").select("id")
+    .eq("entity_type", "position").eq("entity_id", positionId)
+    .eq("action", "scoring.requirements_rescore_notified").gte("created_at", batch.created_at).limit(1);
+  if (already && already.length) return;
+  const { count: rescored } = await s.from("score_runs").select("id", { count: "exact", head: true })
+    .eq("position_id", positionId).gte("created_at", batch.created_at);
+  const { count: changed } = await s.from("audit_events").select("id", { count: "exact", head: true })
+    .eq("action", "scoring.eligibility_changed").contains("after_state", { position_id: positionId })
+    .gte("created_at", batch.created_at);
+  await s.from("audit_events").insert({
+    organization_id: orgId, entity_type: "position", entity_id: positionId,
+    action: "scoring.requirements_rescore_notified",
+    after_state: { rescored: rescored ?? 0, eligibility_changed: changed ?? 0, batch_id: batch.id },
+  });
+  await s.rpc("notify_platform_staff", {
+    _organization_id: orgId,
+    _event_type: "scoring_completed",
+    _title: "Candidates rescored after a criteria change",
+    _body: `${rescored ?? 0} rescored, ${changed ?? 0} changed eligibility.`,
+    _link_path: `/admin/positions/${positionId}`,
+  });
 }
