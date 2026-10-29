@@ -215,3 +215,25 @@ describe("the protected-attribute filter keeps the CV's structure", () => {
     expect(out).toBe("Name\nDubai, UAE\nHead of Marketing\nJan 2015 - Present");
   });
 });
+
+describe("location in a contact block", () => {
+  const REQ = "If outside the UAE must be willing to relocate";
+  it("reads the place beside a phone, email or LinkedIn, and quotes only the place", () => {
+    const cv =
+      "EXECUTIVE PROFILE placeholder words to push the place further from the start of the text " +
+      "+971 50 000 0000 | jane@example.com | Jane Doe | LinkedIn | Dubai, UAE E X E C U T I V E P R O F I L E Marketing leader.";
+    const v = evaluateRelocationRequirement(REQ, cv);
+    expect(v?.status).toBe("met");
+    expect(v?.evidence[0]?.snippet).toBe("Dubai, UAE");
+  });
+
+  it("reads a 📍 pin", () => {
+    const cv = "JANE DOE Insight • Activation 📍 Dubai, UAE 📞 +971 50 000 0000 ✉ jane@example.com";
+    expect(evaluateRelocationRequirement(REQ, cv)?.evidence[0]?.snippet).toBe("Dubai, UAE");
+  });
+
+  it("does not read a past job in Dubai deep in the CV as a home address", () => {
+    const cv = `Jane Doe | London, UK | +44 7000 000000 ${"Led campaigns across Europe. ".repeat(40)}Head of Brand, Dubai Mall 2012 - 2014`;
+    expect(evaluateRelocationRequirement(REQ, cv)?.status).toBe("unknown");
+  });
+});

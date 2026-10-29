@@ -341,27 +341,84 @@ export function parseRelocationRequirement(text: string): { place: RegExp } | nu
 }
 
 const LOCATION_LABEL =
-  /^(location|address|based\s+in|current\s+location|residence|city|lives?\s+in)\b/i;
+  /^(?:📍\s*)?(location|address|based\s+in|current\s+location|residence|city|lives?\s+in)\b|^📍/i;
 
 /** Where the candidate says they are now: an explicit location line, or a short header line. */
+/**
+ * Where the candidate says they are now, quoted as the place only ("Dubai,
+ * UAE"): the phone number and email beside it are not evidence and must not
+ * travel into a briefing.
+ */
 function candidateLocationLine(cv: string, place: RegExp): Line | null {
+  const line = locationLine(cv, place);
+  if (!line) return null;
+  const m = line.text.match(place);
+  if (!m) return line;
+  const at = m.index ?? 0;
+  // The place, then at most a country after it ("Dubai, UAE", "Dubai - UAE").
+  const after = line.text
+    .slice(at + m[0].length)
+    .match(
+      /^\s*[,\-–]\s*(?:U\.?A\.?E\.?|United\s+Arab\s+Emirates|[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/,
+    );
+  const text = m[0] + (after?.[0] ?? "");
+  return { text, start: line.start + at, end: line.start + at + text.length };
+}
+
+function locationLine(cv: string, place: RegExp): Line | null {
   const ls = lines(cv);
+  // "Location: Dubai", or "based in Dubai" said of the person in a short line.
+  // In a long sentence "based in" describes a project or an employer.
   const labelled = ls.find(
-    (l) => (LOCATION_LABEL.test(l.text) || /\bbased\s+in\b/i.test(l.text)) && place.test(l.text),
+    (l) =>
+      place.test(l.text) &&
+      (LOCATION_LABEL.test(l.text) ||
+        (l.text.length <= 120 &&
+          new RegExp(
+            `\\b(?:i\\s+am\\s+|currently\\s+)?based\\s+in\\s+(?:the\\s+)?(?:${place.source})`,
+            "i",
+          ).test(l.text))),
   );
   if (labelled) return labelled;
   // The CV header: the first lines, short ones only, so a summary sentence
   // about past work in Dubai is not read as where someone lives.
-  const header = ls.slice(0, 8).find((l) => l.text.length <= 120 && place.test(l.text));
+  const historyAt = cv.search(SECTION_START);
+  const topEnd = Math.min(700, historyAt >= 0 ? historyAt : Infinity);
+  const header = ls
+    .slice(0, 8)
+    .find(
+      (l) =>
+        l.text.length <= 120 &&
+        place.test(l.text) &&
+        (cv.includes("\n") || l.start + (l.text.match(place)?.index ?? 0) < topEnd),
+    );
   if (header) return header;
-  // A CV stored without line breaks has no short lines: its header is the
-  // opening of the text (name, city, phone), read up to the first sentence.
-  if (!cv.includes("\n") && ls[0]) {
-    const opening = ls[0].text.slice(0, 120).split(/(?<=[a-z]{3}[.!?])\s/)[0] ?? "";
-    if (place.test(opening)) return { ...ls[0], text: opening, end: ls[0].start + opening.length };
-  }
-  return null;
+  // The contact block: a place written beside a phone number, an email, a
+  // LinkedIn link or a 📍 pin, before the work history starts. In a CV stored
+  // as one line this is the only header there is
+  // ("+971 … | name@… | LinkedIn | Dubai, UAE").
+  const topLines = ls.filter((l) => l.start < topEnd);
+  const contact = topLines.find((l, i) => {
+    const m = l.text.match(place);
+    if (!m || l.start + (m.index ?? 0) >= topEnd) return false;
+    const at = m.index ?? 0;
+    const around = [
+      topLines[i - 1]?.text ?? "",
+      l.text.slice(Math.max(0, at - 60), at + m[0].length + 40),
+      topLines[i + 1]?.text ?? "",
+    ].join(" ");
+    return CONTACT_MARK.test(around);
+  });
+  return contact ?? null;
 }
+
+/** Where the work history or education begins: after it, a place is an employer's. */
+const SECTION_START =
+  /\b(?:WORK|PROFESSIONAL|CAREER|EMPLOYMENT)\s+(?:EXPERIENCE|HISTORY)\b|\b(?:Work|Professional|Career|Employment)\s+(?:Experience|History)\b|\bEXPERIENCE\b|\bEDUCATION\b/;
+
+/** Signs of a contact block: a pin, a phone number, an email address, LinkedIn. */
+const CONTACT_MARK =
+  /📍|☎|📞|✉|\+\d{2,3}[\s\d-]{6,}|\S+@\S+\.\w+|linkedin|\b(?:tel|phone|mobile|email)\s*:/i;
 
 export function evaluateRelocationRequirement(text: string, cv: string): StructuredVerdict | null {
   const req = parseRelocationRequirement(text);
@@ -424,6 +481,9 @@ const MONTH_NAME =
 const POINT = `(?:${MONTH_NAME}\\.?\\s+)?((?:19|20)\\d{2})|(\\d{1,2})\\/((?:19|20)\\d{2})`;
 const END = `(present|current|now|today|ongoing|to\\s+date|date)|${POINT}`;
 const RANGE_RE = new RegExp(`(?:${POINT})\\s*(?:-|–|—|to|until|till)\\s*(?:${END})`, "gi");
+
+/** The same pattern without the global flag, for a yes/no test. */
+const DATE_RANGE = new RegExp(RANGE_RE.source, "i");
 
 type Span = { from: number; to: number; line: Line };
 
@@ -716,10 +776,13 @@ const PERSONAL_LINE =
   /\b(born|birth|nationality|citizen(?:ship)?|passport|native\s+of|hometown|ethnic|heritage|origin|visa\s+status|languages?)\b/i;
 /** A mention that is not operating in the market: study, a course, a trip, buying from it. */
 const WEAK_CONTEXT =
-  /\b(training|trained|course|workshop|seminar|conference|visit(?:ed)?|trip|exchange|studied|study\s+tour|university|college|school|degree|sourcing|sourced|source\s+markets?|suppliers?|supplier\s+negotiations?|import(?:ed|s)?\s+from|benchmark(?:ed|ing)?|knowledge\s+of)\b/i;
-/** Signs the line describes doing the work in or for that market. */
-const WORK_CONTEXT =
-  /\b(market(?:s|ing)?|launch(?:ed|es)?|led|lead|managed|managing|head|director|manager|vp|president|country|regional|region|e-?com\w*|retail|brand|campaigns?|stores?|expansion|entered|go-to-market|gtm|p&l|operations?)\b/i;
+  /\b(training|trained|course|workshop|seminar|conference|visit(?:ed)?|trip|exchange|studied|study\s+tour|university|college|school|degree|sourcing|sourced|source\s+markets?|suppliers?|supplier\s+negotiations?|import(?:ed|s)?\s+from|benchmark(?:ed|ing)?|knowledge\s+of|negotiat\w*|trading|traded|exports?\s+to|visitors?|tourists?|tourism|inbound|destination|partners?\s+(?:in|from))\b/i;
+/**
+ * Words that place the work in the market: a role there, a launch there, a
+ * remit that names it. They must come shortly before the market's name.
+ */
+const OWNS_MARKET =
+  /(?:based\s+in|located\s+in|relocated\s+to|lived\s+in|worked\s+in|launch(?:ed|ing)?\b[^.;]{0,40}\bin|entered|expan(?:ded|sion)\s+(?:in)?to|go-to-market\s+in|country\s+(?:manager|head|director|lead)\b[^.;]{0,30}|(?:head|director|vp|lead)\s+of\s+[^.;]{0,30}\b(?:for|in)|(?:led|managed|ran|owned)\s+[^.;]{0,50}\b(?:in|for|across)|markets?\s+(?:incl(?:uding|\.)?|such\s+as|across|covering)|responsib\w+\s+for\s+[^.;]{0,40})[\s,:(/-]*(?:[A-Z][\w.&-]*[\s,/-]+){0,4}$/i;
 
 export function parseMarketRequirement(text: string): { markets: typeof MARKETS } | null {
   if (!/\b(experience|worked|working|exposure|background)\b/i.test(text)) return null;
@@ -739,17 +802,32 @@ export function evaluateMarketRequirement(
   const datedLines = new Set(findDatedRanges(cv, today).map((s) => s.line.start));
   const strong: Line[] = [];
   const weak: Line[] = [];
-  ls.forEach((l, i) => {
+  ls.forEach((l) => {
     if (PERSONAL_LINE.test(l.text)) return;
-    if (!req.markets.some((m) => m.re.test(l.text))) return;
-    // A dated role naming the market, or a line that does the work there.
-    const nearDate =
-      datedLines.has(l.start) ||
-      datedLines.has(ls[i + 1]?.start ?? -1) ||
-      datedLines.has(ls[i - 1]?.start ?? -1);
-    if (WEAK_CONTEXT.test(l.text)) weak.push(l);
-    else if (nearDate || WORK_CONTEXT.test(l.text)) strong.push(l);
-    else weak.push(l);
+    const hits = req.markets.flatMap((m) =>
+      [...l.text.matchAll(new RegExp(m.re.source, "gi"))].map((h) => h.index!),
+    );
+    if (hits.length === 0) return;
+    // Indirect exposure anywhere on the line (training, sourcing, visitors
+    // from the market) makes the line partial at most.
+    if (WEAK_CONTEXT.test(l.text)) {
+      weak.push(l);
+      return;
+    }
+    // Met: the market sits in a dated role's own line (where the job was),
+    // or the words just before it place the work there.
+    // On a CV with real lines the role header is short and its dates sit on
+    // it or the line beside it; in a flattened segment the date must be close.
+    const idx = ls.indexOf(l);
+    const besideDates =
+      l.text.length <= 160 &&
+      [ls[idx - 1], l, ls[idx + 1]].some((x) => x && datedLines.has(x.start));
+    const inRole =
+      besideDates ||
+      (datedLines.has(l.start) &&
+        hits.some((at) => DATE_RANGE.test(l.text.slice(Math.max(0, at - 90), at + 90))));
+    const owned = hits.some((at) => OWNS_MARKET.test(l.text.slice(Math.max(0, at - 80), at)));
+    (inRole || owned ? strong : weak).push(l);
   });
   const names = (found: Line[]) =>
     req.markets.filter((m) => found.some((l) => m.re.test(l.text))).map((m) => m.name);
