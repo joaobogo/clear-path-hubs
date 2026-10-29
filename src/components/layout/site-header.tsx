@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Menu } from "lucide-react";
+import { Briefcase, ChevronRight, Menu } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getSessionContext } from "@/lib/auth.functions";
 import { landingPathForRole } from "@/lib/roles";
@@ -17,6 +17,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
+  CANDIDATE_HEADER_LINK,
   CANDIDATE_PRIMARY_CTA,
   MESSAGE_CTA,
   PRIMARY_CTA,
@@ -115,6 +116,20 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-3 sm:gap-4 lg:ml-6">
+          {!candidateMode ? (
+            <Link
+              to={CANDIDATE_HEADER_LINK.to}
+              className="hidden min-h-11 items-center gap-2 rounded-full border border-[color:var(--rule-2)] px-3 hover:border-[color:var(--blue-600)]/40 lg:inline-flex"
+            >
+              <Briefcase className="h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />
+              <span className="hidden whitespace-nowrap text-[13px] text-[color:var(--slate)] [font-stretch:88%] xl:inline">
+                For candidates:
+              </span>
+              <span className="whitespace-nowrap text-[15px] font-medium text-[color:var(--ink)]">
+                {CANDIDATE_HEADER_LINK.label}
+              </span>
+            </Link>
+          ) : null}
           <ProductionLink to={signIn.to} className={cn(linkClass, inactiveClass, "hidden lg:inline-flex")}>
             {signIn.label}
           </ProductionLink>
@@ -143,6 +158,31 @@ export function SiteHeader() {
                 <SheetDescription className="sr-only">Primary site navigation</SheetDescription>
               </SheetHeader>
               <nav aria-label="Primary" className="flex flex-1 flex-col overflow-y-auto px-3 py-4">
+                {candidateMode ? (
+                  <Link
+                    to="/"
+                    className="mb-3 flex min-h-12 items-center gap-2 rounded-[var(--r-1)] border border-[color:var(--rule-2)] px-3 text-base text-[color:var(--slate)]"
+                  >
+                    For employers
+                    <ChevronRight className="h-4 w-4 shrink-0" aria-hidden />
+                  </Link>
+                ) : (
+                  <Link
+                    to={CANDIDATE_HEADER_LINK.to}
+                    className="mb-4 flex items-center gap-3 rounded-[var(--r-1)] border border-[color:var(--blue-600)]/25 bg-[color:var(--blue-50)] px-3 py-3"
+                  >
+                    <Briefcase className="h-5 w-5 shrink-0 text-[color:var(--blue-600)]" aria-hidden />
+                    <span className="flex-1">
+                      <span className="block text-base font-semibold text-[color:var(--ink)]">
+                        {CANDIDATE_HEADER_LINK.label}
+                      </span>
+                      <span className="block text-sm text-[color:var(--slate)]">
+                        {CANDIDATE_HEADER_LINK.description}
+                      </span>
+                    </span>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />
+                  </Link>
+                )}
                 {NAV_LINKS.map((l) => (
                   <Link
                     key={l.to}
@@ -154,12 +194,6 @@ export function SiteHeader() {
                     {l.label}
                   </Link>
                 ))}
-                <Link
-                  to={candidateMode ? "/" : "/jobs"}
-                  className="mt-4 flex min-h-12 items-center rounded-[var(--r-1)] border-t border-[color:var(--rule)] px-3 pt-4 text-base text-[color:var(--slate)]"
-                >
-                  {candidateMode ? "For employers" : "For candidates: browse jobs"}
-                </Link>
               </nav>
               <div className="space-y-2 border-t border-[color:var(--rule)] p-4">
                 <RunLinkButton to={primary.to} className="w-full">
@@ -181,6 +215,19 @@ export function SiteHeader() {
           </Sheet>
         </div>
       </div>
+      {!candidateMode ? (
+        <div className="border-t border-[color:var(--rule)] lg:hidden">
+          <Link
+            to={CANDIDATE_HEADER_LINK.to}
+            className="mx-auto flex min-h-10 w-full max-w-[calc(var(--max)+2*var(--margin))] items-center gap-2 px-[var(--margin)] text-[13px] text-[color:var(--slate)]"
+          >
+            <Briefcase className="h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />
+            <span className="font-medium text-[color:var(--ink)]">For candidates:</span>
+            <span className="truncate">Job board — browse open roles</span>
+            <ChevronRight className="ml-auto h-4 w-4 shrink-0" aria-hidden />
+          </Link>
+        </div>
+      ) : null}
     </header>
   );
 }

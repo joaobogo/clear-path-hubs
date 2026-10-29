@@ -812,7 +812,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
 
     if (data.action === "manual_override") {
       if (data.approved_score == null) throw new Error("approved_score_required");
-      await supabase.from("score_decisions").insert({
+      const { error: overrideError } = await supabase.from("score_decisions").insert({
         candidate_match_id: data.match_id,
         score_run_id: runIdForDecision,
         decision_type: "override",
@@ -820,6 +820,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         reason: data.reason ?? null,
         actor_user_id: context.userId,
       });
+      if (overrideError) throw new Error(overrideError.message);
       await writeAudit("score_manual_override", {
         ...beforeState,
         score_run_id: runIdForDecision,
@@ -1158,7 +1159,7 @@ export const getAdminMatch = createServerFn({ method: "GET" })
         .order("completed_at", { ascending: false }),
       supabase
         .from("score_decisions")
-        .select("id,decision_type,approved_score,reason,actor_user_id,created_at")
+        .select("id,score_run_id,decision_type,approved_score,reason,actor_user_id,created_at")
         .eq("candidate_match_id", data.id)
         .order("created_at", { ascending: false }),
       supabase

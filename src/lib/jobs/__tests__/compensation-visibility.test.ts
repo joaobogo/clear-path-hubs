@@ -12,7 +12,7 @@
  * Never observed in live data. This makes it unobservable.
  */
 import { describe, expect, it } from "vitest";
-import { resolveCompensation, RANGE_ON_CALL, NOT_SPECIFIED } from "@/lib/jobs/public-facts";
+import { resolveCompensation, resolvePublicSalary, RANGE_ON_CALL, NOT_SPECIFIED } from "@/lib/jobs/public-facts";
 
 const RANGE = { budget_min: 3500, budget_max: 5000, currency: "BRL", period: "month" };
 const LEGACY = { approved: true, display: "R$3,500 – R$5,000 per month" };
@@ -31,6 +31,13 @@ const NOT_PUBLIC = [
 ] as const;
 
 describe("compensation visibility", () => {
+  it("keeps the yearly GBP range consistent for numeric and budget field shapes", () => {
+    const compensation = { min: 40000, max: 50000, budget_min: "40000", budget_max: "50000", currency: "GBP", period: "year" };
+    expect(resolvePublicSalary(compensation, "public")).toEqual({
+      min: 40000, max: 50000, currency: "GBP", period: "YEAR",
+    });
+  });
+
   it("publishes a range when visibility is exactly public", () => {
     const out = resolveCompensation(RANGE, "public");
     expect(out.display).toContain("3,500");

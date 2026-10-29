@@ -10,7 +10,7 @@ import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-quer
 import { lazy, Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getAdminMatch, getMatchHeavyDetail } from "@/lib/processing.functions";
-import { resolvePublishedRun, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
+import { resolvePublishedRun, scoreVoidedByUnreadableCv, withRecordedOverride } from "@/lib/scoring/published-score";
 import {
   User,
   FileText,
@@ -108,6 +108,11 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/$id")({
   head: () => ({
     meta: [
       { title: "Candidate workspace · TaaSFlow admin" },
+      { name: "description", content: "Review candidate evidence, assessments and recorded decisions in TaaSFlow." },
+      { property: "og:title", content: "Candidate workspace · TaaSFlow admin" },
+      { property: "og:description", content: "Review candidate evidence, assessments and recorded decisions in TaaSFlow." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -200,7 +205,7 @@ function CandidateWorkspace() {
   // runs[0] is the latest engine opinion, which after a rescore can be an
   // unapproved figure: feeding it to the header made the headline change
   // value when a heavy tab's fuller run history arrived.
-  const publishedRun = (resolvePublishedRun(runs, m) ?? currentRun) as Any | undefined;
+  const publishedRun = withRecordedOverride(resolvePublishedRun(runs, m) ?? currentRun, decisions ?? []) as Any | undefined;
   const heavyPending = HEAVY_TABS.has(tab) && heavyQuery.isPending;
 
   const invalidate = async () => {

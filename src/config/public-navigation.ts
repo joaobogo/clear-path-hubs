@@ -52,6 +52,14 @@ export const SECONDARY_CTAS: NavLink[] = [
   { to: "/login",          label: "Sign in" },
 ];
 
+/** Candidate entry point rendered in the site header on employer pages, so a
+ *  job seeker can see where to apply without opening the phone menu. */
+export const CANDIDATE_HEADER_LINK: NavLink = {
+  to: "/jobs",
+  label: "Job board",
+  description: "Live roles you can apply to right now",
+};
+
 /** Candidate-journey CTAs — used on candidate-facing public pages so the
  *  header never pushes an employer offer at a job seeker. */
 export const CANDIDATE_PRIMARY_CTA: NavLink = {
@@ -185,6 +193,7 @@ export function allNavHrefs(): string[] {
   FOOTER_GROUPS.forEach((g) => g.links.forEach(push));
   push(PRIMARY_CTA);
   push(MESSAGE_CTA);
+  push(CANDIDATE_HEADER_LINK);
   SECONDARY_CTAS.forEach(push);
   return Array.from(out);
 }

@@ -10,6 +10,7 @@
  * English and Portuguese.
  */
 
+import { yearsFromEmploymentDates } from "./employment-dates";
 export type ParsedCvFacts = {
   years_experience: number | null;
   languages: string[];
@@ -217,7 +218,7 @@ export function isGarbageCvText(text: string | null | undefined): boolean {
 export function parseCvFacts(cvText: string): ParsedCvFacts {
   const text = cvText ?? "";
   return {
-    years_experience: extractYearsExperience(text),
+    years_experience: extractYearsExperience(text) ?? yearsFromEmploymentDates(text),
     languages: extractLanguages(text),
     skills: extractSkills(text),
     linkedin_url: extractLinkedinUrl(text),
