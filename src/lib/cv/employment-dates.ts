@@ -20,11 +20,20 @@ function monthIndex(value: string, asOf: Date, isEnd: boolean): number | null {
   return Number(m[2]) * 12 + month;
 }
 
-const HEADING_WORDS = [
+/** Headings that open a work history. */
+const WORK_HEADINGS = [
   "Professional Experience", "Work Experience", "Career Experience", "Employment Experience",
-  "Professional History", "Work History", "Career History", "Employment History",
-  "Experience", "Employment", "Education", "Qualifications", "Certifications", "Languages", "Skills", "Interests",
+  "Relevant Experience", "Professional History", "Work History", "Career History", "Employment History",
+  "Career Overview", "Professional Background", "Employment Record", "Positions Held",
+  "Experience", "Employment",
 ];
+/** Headings that close it. */
+const OTHER_HEADINGS = ["Education", "Qualifications", "Certifications", "Languages", "Skills", "Interests"];
+const HEADING_WORDS = [...WORK_HEADINGS, ...OTHER_HEADINGS];
+const isHeading = (line: string, list: string[]) => {
+  const t = line.trim().replace(/\s*[:–-]\s*$/, "").replace(/\s+/g, " ").toLowerCase();
+  return list.some((h) => h.toLowerCase() === t);
+};
 const HEADING = new RegExp(
   `\\b(${HEADING_WORDS.flatMap((w) => [w.toUpperCase(), w]).map((w) => w.replace(/ /g, "\\s+")).join("|")})\\b`,
   "g",
@@ -44,8 +53,8 @@ export function employmentIntervals(text: string, asOf = new Date()): Interval[]
   let inEmployment = false;
   const now = asOf.getUTCFullYear() * 12 + asOf.getUTCMonth();
   for (const line of lines) {
-    if (/^\s*(?:professional |work |career |employment )?(?:experience|history)\s*[:–-]?\s*$/i.test(line) || /^\s*employment\s*[:–-]?\s*$/i.test(line)) inEmployment = true;
-    if (/^\s*(education|qualifications|certifications|languages|skills|interests)\s*[:–-]?\s*$/i.test(line)) inEmployment = false;
+    if (isHeading(line, WORK_HEADINGS)) inEmployment = true;
+    if (isHeading(line, OTHER_HEADINGS)) inEmployment = false;
     if (!inEmployment) continue;
     for (const m of line.matchAll(pattern)) {
       const start = monthIndex(m[1] ?? "", asOf, false);

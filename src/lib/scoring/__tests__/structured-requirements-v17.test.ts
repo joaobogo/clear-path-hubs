@@ -237,3 +237,15 @@ describe("location in a contact block", () => {
     expect(evaluateRelocationRequirement(REQ, cv)?.status).toBe("unknown");
   });
 });
+
+describe("work history under other headings", () => {
+  it("reads roles listed under 'Career Overview:' in a one-line CV", () => {
+    const text =
+      "JANE DOE A results-oriented professional. Key skills: ▪ Team Leadership ▪ Lean management " +
+      "Career Overview: Service Delivery Manager | Example Services, Northampton, UK November 2024 – Present ▪ Leading operations. " +
+      "Operations Supervisor | Example Recycling, Milton Keynes, UK June 2023- September 2024 ▪ Led 75 staff. " +
+      "Duty Manager, Example Centre, Loughborough, UK April 2022- May 2023 ▪ Supervised shifts. " +
+      "Education MSc Management, Example University, UK";
+    expect(employmentIntervals(text, TODAY)).toHaveLength(3);
+  });
+});
