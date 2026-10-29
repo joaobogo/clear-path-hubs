@@ -34,6 +34,17 @@ function normalize(s: string): string {
     .trim();
 }
 
+/**
+ * Text stored before line breaks were kept: a PDF read into one long line.
+ * Re-reading the original file restores its structure at no cost, so the
+ * pipeline treats this like short or garbled text and extracts again (OCR
+ * text is left alone; OCR is billed and its retries are a staff decision).
+ */
+export function isFlattenedCvText(text: string | null | undefined, ocrUsed?: boolean | null): boolean {
+  if (!text || ocrUsed) return false;
+  return text.length >= 1500 && !text.includes("\n");
+}
+
 function looksLikePdf(bytes: Uint8Array): boolean {
   return bytes.length >= 4 && bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46;
 }
@@ -50,7 +61,11 @@ export async function extractCvText(bytes: Uint8Array, mime: string, filename?: 
   if (mimeLower.includes("pdf") || looksLikePdf(bytes) || nameLower.endsWith(".pdf")) {
     try {
       const pdf = await getDocumentProxy(bytes);
-      const { text, totalPages } = await unpdfExtractText(pdf, { mergePages: true });
+      // Pages are read one by one and joined here. unpdf's own mergePages
+      // collapses every line break into a space in the version deployed
+      // (1.6.x), which stored every CV as one long line and cost the scorer
+      // the header, the job title above each date and the education section.
+      const { text, totalPages } = await unpdfExtractText(pdf, { mergePages: false });
       const { links: rawLinks } = await extractLinks(pdf);
       const links = rawLinks.filter((link) => {
         try { const url = new URL(link); return url.protocol === "https:" && !url.username && !url.password; }

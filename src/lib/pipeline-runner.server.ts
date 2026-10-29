@@ -5,7 +5,7 @@
 // candidate_matches.processing_state so the Admin dashboard reflects
 // progress without any drawer being opened.
 
-import { extractCvText } from "./cv-extractor.server";
+import { extractCvText, isFlattenedCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
 import { parseCvFacts, isGarbageCvText } from "./cv/parse-facts";
 import { decideStateAfterEnrichment } from "./scoring/enrichment-state-policy";
@@ -334,7 +334,12 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
     // Stored text that is binary garbage must be re-extracted, not reused —
     // one CV's raw PDF bytes were scored 28.6 and quoted as evidence
     // (audit #3, finding 4).
-    if (!cvText || cvText.length < 200 || isGarbageCvText(cvText)) {
+    if (
+      !cvText ||
+      cvText.length < 200 ||
+      isGarbageCvText(cvText) ||
+      isFlattenedCvText(cvText, ctx.file.ocr_used)
+    ) {
       await setFile({
         parse_state: "parsing",
         parse_started_at: new Date().toISOString(),

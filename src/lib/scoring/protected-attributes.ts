@@ -13,6 +13,29 @@ export function sanitizeGeneratedText<T>(value: T): T {
   return value;
 }
 
+/**
+ * Drop the sentences (and bar- or bullet-separated fields) that state a
+ * protected attribute, keeping everything else exactly where it was.
+ *
+ * Line breaks are kept. The scorer reads a CV line by line (the header for
+ * where someone lives, the line above a date for the job title, the education
+ * section for degrees), so joining the CV into one line would cost every
+ * candidate that structure. Only what states the attribute goes:
+ * "Nationality: Indian | Dubai, UAE" keeps "Dubai, UAE".
+ */
 export function removeProtectedSentences(text: string): string {
-  return text.split(/(?<=[.!?])\s+|\n+/).filter((sentence) => !isProtectedAttributeText(sentence)).join(" ");
+  const kept: string[] = [];
+  for (const line of text.split(/\r?\n/)) {
+    // Pieces alternate with the separators that joined them.
+    const parts = line.split(/((?<=[.!?])\s+|\s*[|•·]\s*)/);
+    let out = "";
+    for (let i = 0; i < parts.length; i += 2) {
+      const piece = parts[i] ?? "";
+      if (isProtectedAttributeText(piece)) continue;
+      out += (out && i > 0 ? (parts[i - 1] ?? " ") : "") + piece;
+    }
+    // A line that held only the attribute goes; a line that was already blank stays.
+    if (out.trim() || !line.trim()) kept.push(out);
+  }
+  return kept.join("\n");
 }
