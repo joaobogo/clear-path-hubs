@@ -67,6 +67,7 @@ describe("needsReviewTask", () => {
     expect(
       needsReviewTask({ final_state: "manual_review_required", steps: ran }, { current_score_run_id: "run1" }),
     ).toBe(false);
+    expect(needsReviewTask({ final_state: "failed", steps: ran }, { current_score_run_id: "run1" })).toBe(false);
     // A run that hit the retry ceiling did act, so it does get one.
     expect(
       needsReviewTask({ final_state: "manual_review_required", steps: [{ step: "skip", ok: false }] }, {}),

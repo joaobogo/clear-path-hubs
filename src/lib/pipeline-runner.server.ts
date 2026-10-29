@@ -418,9 +418,12 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       if (dl.error || !dl.data) {
         const msg = dl.error?.message ?? "download_failed";
         await setFile({ parse_state: "failed", parse_error_code: "storage_unreadable", parse_error: msg });
-        await setState(s, matchId, "manual_review_required", { trace_id, code: "storage_unreadable", message: msg });
+        // A candidate never scored goes to a person (with a task); a scored
+        // one keeps its score ("failed" + a live run is written as scored).
+        const unreadState: State = hasScore ? "failed" : "manual_review_required";
+        await setState(s, matchId, unreadState, { trace_id, code: "storage_unreadable", message: msg });
         await recordJob(s, matchId, "parse", "failed", trace_id, { code: "cv_unreadable", message: msg });
-        return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [{ step: "parse", ok: false, note: msg }] };
+        return { match_id: matchId, trace_id, final_state: unreadState, steps: [{ step: "parse", ok: false, note: msg }] };
       }
       const bytes = new Uint8Array(await dl.data.arrayBuffer());
       const ext = await extractCvText(bytes, ctx.file.mime_type ?? "", ctx.file.filename ?? "");
@@ -516,14 +519,15 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
         });
         // Read twice and still empty: a person decides (an admin task is
         // opened by runPipelineForMatch). Not "failed": nothing will retry it.
-        await setState(s, matchId, "manual_review_required", {
-          trace_id, code: "extract_empty",
+        const emptyState: State = hasScore ? "failed" : "manual_review_required";
+        await setState(s, matchId, emptyState, {
+          trace_id, code: hasScore ? "cv_unreadable" : "extract_empty",
           message: ext.reason ?? `Unable to extract text (${ext.extractor}).`,
         });
         await recordJob(s, matchId, "parse", "failed", trace_id, {
           code: "cv_unreadable", message: ext.reason ?? "extract_empty",
         });
-        return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [...steps, { step: "parse", ok: false, note: ext.reason }] };
+        return { match_id: matchId, trace_id, final_state: emptyState, steps: [...steps, { step: "parse", ok: false, note: ext.reason }] };
       }
       // Still thin after its one retry, on a candidate never scored: too
       // little to score fairly. A person looks (admin task); the file is on

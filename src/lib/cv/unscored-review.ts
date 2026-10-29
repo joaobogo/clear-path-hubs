@@ -63,9 +63,9 @@ export function needsReviewTask(
   // "Already terminal" or "another worker holds it": this run did nothing.
   const only = outcome.steps.length === 1 ? outcome.steps[0] : null;
   if (only && only.step === "skip" && only.ok) return false;
-  // A scored match sent to review for low confidence already has its review.
-  if (outcome.final_state === "manual_review_required" && match.current_score_run_id) return false;
-  return true;
+  // A match with a current score is not unscored: a low-confidence review or
+  // a failed re-read leaves that score in place, and it has its own queue.
+  return !match.current_score_run_id;
 }
 
 export type ReviewTask = {
