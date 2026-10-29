@@ -157,6 +157,18 @@ export const Route = createFileRoute("/api/public/express-intake")({
           return Response.json({ ok: true, trace_id: traceId, intakeId: null, skipped: true });
         }
 
+        // Hiring criteria that set a condition on a protected attribute
+        // (nationality, age, gender, ...) are refused here, not filtered later:
+        // the form shows the same findings with a suggested rewrite the client
+        // accepts with one click. Nothing is rewritten on the client's behalf.
+        {
+          const { intakeProtectedCriteriaResponse } = await import("@/lib/positions/protected-criteria-guard");
+          const refusal = intakeProtectedCriteriaResponse(data);
+          if (refusal) {
+            return Response.json({ ok: false, trace_id: traceId, ...refusal }, { status: 400 });
+          }
+        }
+
         // ---------- Job description file checks ----------
         let jdBytes: Uint8Array | null = null;
         let jdExt = "";

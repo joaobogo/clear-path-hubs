@@ -10,12 +10,13 @@ import {
   type PublishGateInput,
 } from "./publish-gate";
 import { isQaFixtureTitle } from "./client/test-record-filter";
+import { storedCriteriaPublishDetail } from "./positions/protected-criteria-guard";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
 
 const SELECT =
-  "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location, requirements";
+  "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location, requirements, preferred_requirements, dealbreakers";
 
 /** Statuses where publishing is still the next meaningful step. */
 const UNPUBLISHED_STATUSES = ["draft", "submitted", "under_review", "needs_clarification", "approved"];
@@ -52,6 +53,9 @@ function toGateInput(p: Any): PublishGateInput {
     seniority: p['seniority'] ?? null,
     location: p['location'] ?? null,
     requirements: p['requirements'] ?? null,
+    preferred_requirements: p['preferred_requirements'] ?? null,
+    dealbreakers: p['dealbreakers'] ?? null,
+    screening_questions: Array.isArray(p['screening_questions']) ? p['screening_questions'] : null,
   };
 }
 
@@ -64,8 +68,21 @@ export async function assertPositionPublishable(admin: Any, positionId: string):
   const { data, error } = await admin.from("positions").select(SELECT).eq("id", positionId).maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) throw new Error("position_not_found");
-  const blockers = evaluatePublishGate(toGateInput(data)).filter((b) => b !== "not_approved");
-  if (blockers.length > 0) throw new Error(publishBlockedMessage(blockers));
+  // Screening questions are read too: a question can ask for a protected
+  // attribute as easily as a requirement can state one.
+  const { data: questions } = await admin
+    .from("screening_questions")
+    .select("question")
+    .eq("position_id", positionId);
+  const row = { ...data, screening_questions: questions ?? [] };
+  const blockers = evaluatePublishGate(toGateInput(row)).filter((b) => b !== "not_approved");
+  if (blockers.length > 0) {
+    // Name each criterion and its suggested rewrite, not only the category.
+    const detail = blockers.includes("protected_criteria")
+      ? storedCriteriaPublishDetail({ ...row, title: data.title ?? null })
+      : null;
+    throw new Error(publishBlockedMessage(blockers) + (detail ? ` ${detail}` : ""));
+  }
 }
 
 export async function loadPublishGateQueue(

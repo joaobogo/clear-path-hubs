@@ -11,6 +11,7 @@
  * off it is not a blocker at all — see isPaymentSatisfied.
  */
 import { PAYMENTS_ENABLED } from "@/config/commerce";
+import { storedPositionProtectedCriteria } from "@/lib/positions/protected-criteria-fields";
 
 export type PublishBlocker =
   | "payment_unpaid"
@@ -21,7 +22,8 @@ export type PublishBlocker =
   | "missing_work_model"
   | "missing_seniority"
   | "missing_location"
-  | "missing_requirements";
+  | "missing_requirements"
+  | "protected_criteria";
 
 export const PUBLISH_BLOCKER_LABEL: Record<PublishBlocker, string> = {
   payment_unpaid: "Payment not complete",
@@ -33,6 +35,8 @@ export const PUBLISH_BLOCKER_LABEL: Record<PublishBlocker, string> = {
   missing_seniority: "Seniority missing",
   missing_location: "Location missing (required unless fully remote)",
   missing_requirements: "At least one requirement is needed to score candidates",
+  protected_criteria:
+    "A requirement, deal-breaker or screening question states a protected attribute (nationality, age, gender…)",
 };
 
 /** Field on the position edit form that resolves each blocker, when there is one. */
@@ -44,6 +48,7 @@ export const PUBLISH_BLOCKER_FIELD: Partial<Record<PublishBlocker, string>> = {
   missing_seniority: "seniority",
   missing_location: "location",
   missing_requirements: "requirements",
+  protected_criteria: "requirements",
 };
 
 export const PAID_PAYMENT_STATES = ["paid", "exempt", "covered"] as const;
@@ -60,6 +65,10 @@ export type PublishGateInput = {
   seniority: string | null;
   location: string | null;
   requirements?: unknown;
+  preferred_requirements?: unknown;
+  dealbreakers?: unknown;
+  /** Screening question text, when the caller loaded it. */
+  screening_questions?: ReadonlyArray<{ question?: string | null }> | null;
 };
 
 /**
@@ -104,6 +113,10 @@ export function evaluatePublishGate(p: PublishGateInput): PublishBlocker[] {
 
   const reqs = Array.isArray(p.requirements) ? p.requirements : [];
   if (reqs.length === 0) blockers.push("missing_requirements");
+
+  // A criterion that sets a condition on nationality, age, gender and the
+  // like can't go live: the role editor names each one with a rewrite.
+  if (storedPositionProtectedCriteria(p).length > 0) blockers.push("protected_criteria");
 
   // Approval is a workflow gate, not a data gate: only mention it once the
   // role is otherwise ready, so the list surfaces the real work first.
@@ -164,6 +177,11 @@ export function humanizePublishBlockedMessage(message: string): string {
   }
   if (hasPayment) return "Approval blocked: payment or exemption required";
   if (hasRequirements) return "Approval blocked: add at least one must-have requirement";
+  if (inner.includes(PUBLISH_BLOCKER_LABEL.protected_criteria)) {
+    // The detail after the fixed sentence names each criterion and its rewrite.
+    const tail = message.split("publishing is not bypassable.")[1]?.trim();
+    return `Approval blocked: a hiring criterion states a protected attribute.${tail ? ` ${tail}` : " Open the role editor to see the suggested wording."}`;
+  }
   if (hasApproval) return "Approval blocked: not approved for publishing yet";
 
   // Generic fallback for the remaining data blockers.

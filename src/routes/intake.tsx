@@ -158,6 +158,12 @@ import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 import { roleFromSearch } from "@/lib/marketing/role-input";
 import { LiveBrief } from "@/components/intake/live-brief";
+import { ProtectedCriteriaNotice } from "@/components/positions/ProtectedCriteriaNotice";
+import { intakeCriteriaFields } from "@/lib/positions/protected-criteria-fields";
+import {
+  findProtectedCriteriaInFields,
+  type CriteriaFieldFinding,
+} from "@/lib/scoring/protected-attributes";
 
 /** The step that asks for the role; a visitor arriving with ?role= starts here. */
 const ROLE_STEP_INDEX = Math.max(0, INTAKE_STEPS.findIndex((s) => s.key === "role"));
@@ -1810,6 +1816,34 @@ function ExpressIntakePage() {
     duplicate.sourceTitle !== null &&
     state.roleTitle.trim().toLowerCase() === duplicate.sourceTitle.trim().toLowerCase();
   const dupBlockers: string[] = [];
+
+  /**
+   * Requirements and deal-breakers that state a protected attribute
+   * (nationality, age, gender, ...). The server refuses them, so they are
+   * named here first, each with a suggested rewrite the client applies with
+   * one click. Nothing is rewritten without that click.
+   */
+  const protectedFindings = React.useMemo(
+    () =>
+      findProtectedCriteriaInFields(
+        intakeCriteriaFields({ requirements: state.requirements, dealBreakerList: state.dealBreakerList }),
+        { roleTitle: state.roleTitle },
+      ),
+    [state.requirements, state.dealBreakerList, state.roleTitle],
+  );
+  const applyProtectedRewrite = (f: CriteriaFieldFinding) => {
+    const i = f.index ?? -1;
+    if (f.field === "requirements" && i >= 0) {
+      const next = [...state.requirements];
+      if (!next[i]) return;
+      if (f.replacement) next[i] = { ...next[i]!, text: f.replacement };
+      else next.splice(i, 1);
+      setRequirements(next);
+    } else if (f.field === "dealBreakerList" && i >= 0) {
+      if (f.replacement) setDealBreaker(i, f.replacement);
+      else removeDealBreaker(i);
+    }
+  };
   if (dupTitleUnchanged && !dupTitleConfirmed) dupBlockers.push("Confirm or change the job title");
   if (duplicate?.compensationStale && !dupCompReviewed) {
     dupBlockers.push("Check the copied compensation is still right");
@@ -2066,6 +2100,14 @@ function ExpressIntakePage() {
   }, [state, jdFile, authed, review.missing]);
 
   const submit = async (intent: "pay" | "call" = PAYMENTS_ENABLED ? "pay" : "call") => {
+    if (protectedFindings.length > 0) {
+      toast.error("Some criteria can't be used as written. Use the suggested wording or remove them.");
+      const reqStep = INTAKE_STEPS.findIndex((s) =>
+        STEP_FIELDS[s.key].some((f) => f === "requirements" || f === "dealBreakerList"),
+      );
+      if (reqStep >= 0 && reqStep !== stepIndex) setStepIndex(reqStep);
+      return;
+    }
     const payload = buildSubmitPayload(idem.current || newIdempotencyKey());
 
     const parsed = expressIntakeSchema.safeParse(payload);
@@ -3022,6 +3064,11 @@ function ExpressIntakePage() {
                 void runJdParse({ text: jd, roleTitle: state.roleTitle });
               }}
             />
+            <ProtectedCriteriaNotice
+              className="mt-3"
+              findings={protectedFindings.filter((f) => f.field === "requirements")}
+              onApply={applyProtectedRewrite}
+            />
             {/* The example helper belongs INSIDE Requirements. As its own
                 section it read as a second requirements question and made the
                 step look twice as long as it is. */}
@@ -3457,6 +3504,11 @@ function ExpressIntakePage() {
                   );
                 })}
               </div>
+
+              <ProtectedCriteriaNotice
+                findings={protectedFindings.filter((f) => f.field === "dealBreakerList")}
+                onApply={applyProtectedRewrite}
+              />
 
               {dealBreakerIssues.listError && (
                 <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
@@ -4013,7 +4065,7 @@ function ExpressIntakePage() {
                       type="button"
                       data-testid="intake-submit-pay"
                       onClick={() => void submit("pay")}
-                      disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
+                      disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0 || protectedFindings.length > 0}
                       className="min-h-12 w-full"
                     >
                       {submitting ? (
@@ -4030,7 +4082,7 @@ function ExpressIntakePage() {
                       variant="outline"
                       data-testid="intake-submit-call"
                       onClick={() => void submit("call")}
-                      disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
+                      disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0 || protectedFindings.length > 0}
                       className="min-h-12 w-full"
                     >
                       Save the role and talk first
@@ -4041,7 +4093,7 @@ function ExpressIntakePage() {
                     type="button"
                     data-testid="intake-submit-call"
                     onClick={() => void submit("call")}
-                    disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0}
+                    disabled={submitting || review.missing.length > 0 || submitBlockers.length > 0 || dupBlockers.length > 0 || protectedFindings.length > 0}
                     className="min-h-12 w-full"
                   >
                     {submitting ? (
@@ -4085,6 +4137,11 @@ function ExpressIntakePage() {
                   </ul>
                 </div>
               )}
+              <ProtectedCriteriaNotice
+                className="mt-3"
+                findings={protectedFindings}
+                onApply={applyProtectedRewrite}
+              />
               {dupBlockers.length > 0 && (
                 <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
                   Before you submit this duplicate: {dupBlockers.join(" \u00b7 ")}.

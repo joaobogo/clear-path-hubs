@@ -29,6 +29,7 @@ import {
 } from "@/lib/positions/role-form";
 import { BLUEPRINT_RERUN_FLAG, analysisDecision } from "@/lib/blueprint-trigger";
 import { sanitizeInlineMarkup, stripInlineMarkup } from "@/lib/marketing/inline-format";
+import { assertRoleFormCriteriaAllowed } from "@/lib/positions/protected-criteria-guard";
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -185,6 +186,11 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     const required = roleRequiredness({ ...data, description: stripInlineMarkup(description) });
     const firstError = Object.values(required.errors)[0];
     if (firstError) throw new Error(firstError);
+
+    // Criteria that state a protected attribute are refused with the
+    // suggested wording; the editor shows the same findings inline with a
+    // one-click "Use suggested wording". Never rewritten here.
+    assertRoleFormCriteriaAllowed(data);
 
     // Preserve unknown intake_context/compensation/work_authorization fields
     const { data: existing } = await s

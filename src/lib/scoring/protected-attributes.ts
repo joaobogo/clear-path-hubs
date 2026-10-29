@@ -291,7 +291,11 @@ function removeSpan(text: string, start: number, end: number): string {
   const out = (text.slice(0, a) + text.slice(b))
     .replace(/\s{2,}/g, " ")
     .replace(/\s+([,.;:!?])/g, "$1")
-    .trim();
+    .trim()
+    // A sentence left holding only "Must be" goes with what it introduced.
+    .split(/(?<=[.!?])\s+/)
+    .filter((piece) => !FILLER.test(piece.replace(/[.!?]+$/, "")))
+    .join(" ");
   if (FILLER.test(out)) return "";
   return out.replace(/^[,;:\s-]+/, "").replace(/^\p{Ll}/u, (c) => c.toUpperCase());
 }

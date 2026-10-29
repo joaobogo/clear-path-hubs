@@ -46,6 +46,12 @@ import { setPositionLifecycle } from "@/lib/position-lifecycle.functions";
 import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { RoleEditorLifecycleActions } from "@/components/positions/RoleEditorLifecycleActions";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
+import { ProtectedCriteriaNotice } from "@/components/positions/ProtectedCriteriaNotice";
+import { roleFormCriteriaFields } from "@/lib/positions/protected-criteria-fields";
+import {
+  findProtectedCriteriaInFields,
+  type CriteriaFieldFinding,
+} from "@/lib/scoring/protected-attributes";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import type { QualityInput } from "@/lib/requisition-schema";
@@ -288,8 +294,39 @@ export function PositionEditWizard({
   };
   const back = () => setStep((n) => Math.max(1, n - 1));
 
+  // Criteria that state a protected attribute (nationality, age, gender, ...).
+  // The server refuses the save with the same findings; here each one is
+  // shown with a suggested rewrite the person applies with one click.
+  const protectedFindings = useMemo(
+    () => findProtectedCriteriaInFields(roleFormCriteriaFields(state), { roleTitle: state.title }),
+    [state],
+  );
+  const applyProtectedRewrite = (f: CriteriaFieldFinding) => {
+    const i = f.index ?? -1;
+    if (i < 0) return;
+    if (f.field === "screening_questions") {
+      const qs = [...state.screening_questions];
+      if (!qs[i]) return;
+      if (f.replacement) qs[i] = { ...qs[i]!, question: f.replacement };
+      else qs.splice(i, 1);
+      set("screening_questions", qs);
+      return;
+    }
+    const key = f.field as "must_have_skills" | "nice_to_have_skills" | "trainable_skills" | "disqualifier_tags";
+    if (!Array.isArray(state[key])) return;
+    const list = [...(state[key] as string[])];
+    if (f.replacement) list[i] = f.replacement;
+    else list.splice(i, 1);
+    set(key, list as State[typeof key]);
+  };
+
   const saveMutation = useMutation({
     mutationFn: async () => {
+      if (protectedFindings.length > 0) {
+        throw new Error(
+          "Some criteria can't be used as written. Use the suggested wording shown above the Save button, or remove them.",
+        );
+      }
       const all = allErrors(state);
       if (Object.keys(all).length > 0) {
         setErrors(all);
@@ -1581,6 +1618,8 @@ export function PositionEditWizard({
               )}
             </CardContent>
           </Card>
+
+          <ProtectedCriteriaNotice findings={protectedFindings} onApply={applyProtectedRewrite} />
 
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Button

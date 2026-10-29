@@ -22,6 +22,8 @@ import {
   isBlueprintInProgress,
   isBlueprintStale,
 } from "@/lib/blueprint-trigger";
+import { screenBlueprintCriteria } from "@/lib/positions/protected-criteria-fields";
+import { hasProtectedCriteria } from "@/lib/scoring/protected-attributes";
 
 
 type Stage =
@@ -211,9 +213,13 @@ async function applyBlueprintToPosition(
   // A blueprint has already been applied to this role once, so a person may
   // have edited these fields since. Generated values are gap-fillers only:
   // they never replace data a client or staff member already provided.
-  const requirements = bp.must_have_skills.map((label) => ({ label, kind: "skill", weight: 1 }));
-  const preferred = bp.nice_to_have_skills.map((label) => ({ label }));
-  const dealbreakers = bp.dealbreakers.map((label) => ({ label }));
+  // Generated criteria pass the protected-attribute detector before they are
+  // saved. A flagged item is held back with its suggested rewrite for a
+  // person to accept; it is never rewritten or saved as generated.
+  const screened = screenBlueprintCriteria(bp);
+  const requirements = screened.mustHaves.map((label) => ({ label, kind: "skill", weight: 1 }));
+  const preferred = screened.niceToHaves.map((label) => ({ label }));
+  const dealbreakers = screened.dealbreakers.map((label) => ({ label }));
   const compensation =
     bp.compensation.note || bp.compensation.min || bp.compensation.max
       ? {
@@ -269,7 +275,7 @@ async function applyBlueprintToPosition(
     industry_experience: bp.candidate_profile.industry_experience,
     certifications_list: bp.certifications,
     tools_platforms: bp.tools_platforms,
-    nice_to_have_skills: bp.nice_to_have_skills,
+    nice_to_have_skills: screened.niceToHaves,
     timezone_requirements: bp.geography.timezone_requirements,
     open_worldwide: bp.geography.open_worldwide,
     hiring_timeline: bp.timeline.hiring_urgency,
@@ -281,7 +287,7 @@ async function applyBlueprintToPosition(
     target_company_types: bp.sourcing_plan.target_company_types,
     include_keywords: bp.sourcing_plan.include_keywords,
     exclude_keywords: bp.sourcing_plan.exclude_keywords,
-    disqualifiers: bp.sourcing_plan.disqualifiers,
+    disqualifiers: screened.disqualifiers,
     additional_context: bp.role.summary,
   };
   const mergedContext: Record<string, unknown> = { ...existingContext };
@@ -290,6 +296,8 @@ async function applyBlueprintToPosition(
     if (isEmptyValue(value)) continue;
     mergedContext[key] = value;
   }
+  // Replaced, not merged: it describes this run's output.
+  mergedContext.held_back_generated_criteria = screened.held;
   patch.intake_context = mergedContext;
 
   await admin.from("positions").update(patch).eq("id", positionId);
@@ -335,7 +343,11 @@ async function applyScreeningQuestions(admin: Admin, positionId: string, bp: Rol
     );
   };
 
-  const rows = bp.screening_questions.map((q, i) => ({
+  // A generated question that asks for a protected attribute is not saved
+  // (screenBlueprintCriteria records it, with its rewrite, on the role).
+  const allowed = bp.screening_questions.filter((q) => !hasProtectedCriteria(q.question));
+  if (allowed.length === 0) return;
+  const rows = allowed.map((q, i) => ({
     position_id: positionId,
     question: q.dealbreaker ? compQuestion(q.question) : q.question,
     answer_type: q.answer_type,
