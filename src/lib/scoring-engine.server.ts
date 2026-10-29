@@ -19,6 +19,7 @@ import { expandTerm } from "./scoring/term-synonyms";
 import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
 import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
 import { asBoolean } from "./scoring/eligibility";
+import { normaliseLetterSpacing } from "./cv/letter-spacing";
 
 export { ENGINE_VERSION, EVALUATION_METHOD };
 
@@ -552,7 +553,9 @@ export function scoreCandidate(input: {
 }): ScoringResult {
   input = {
     ...input,
-    cv_text: removeProtectedSentences(input.cv_text ?? ""),
+    // Letter-spaced PDF capitals ("A U G 2 0 2 3") are rebuilt so dates and
+    // titles can be read; other text is unchanged.
+    cv_text: removeProtectedSentences(normaliseLetterSpacing(input.cv_text ?? "")),
     requirements: input.requirements.filter((r) => !isProtectedAttributeText(r.text)),
     screening: input.screening.filter((s) => !isProtectedAttributeText(s.question)),
   };

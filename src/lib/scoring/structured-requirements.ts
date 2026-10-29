@@ -188,12 +188,30 @@ export function findDegrees(cv: string): DegreeFound[] {
     const nextIsDegree =
       next &&
       (BACHELOR_RE.test(next.text) || MASTER_RE.test(next.text) || PRO_DIPLOMA_RE.test(next.text));
+    // The subject is what follows the degree, not the rest of the line: in a
+    // CV stored as one line the "line" can run on into the next section, and
+    // "BSc Civil Engineering ... Digital Marketing certificate" must not read
+    // as a marketing degree.
+    const levelRe =
+      level === "bachelor" ? BACHELOR_RE : level === "master" ? MASTER_RE : PRO_DIPLOMA_RE;
+    const hit = levelRe.exec(l.text);
+    const at = hit?.index ?? 0;
+    const skip = hit?.[0].length ?? 0;
+    let own = l.text.slice(at, at + 90);
+    // Stop at the next qualification after this one ("... MBA (Marketing)").
+    const nextDegreeAt = own
+      .slice(skip)
+      .search(
+        new RegExp(`${BACHELOR_RE.source}|${MASTER_RE.source}|${PRO_DIPLOMA_RE.source}`, "i"),
+      );
+    if (nextDegreeAt > 0) own = own.slice(0, skip + nextDegreeAt);
+    own = own.split(/\s(?:19|20)\d{2}\b|\s[|•▪·]\s/)[0] ?? own;
     const subjectLine =
       next &&
       !nextIsDegree &&
       /^(major|minor|specialisation|specialization|concentration|field|subject)\b/i.test(next.text)
-        ? `${l.text} ${next.text}`
-        : l.text;
+        ? `${own} ${next.text}`
+        : own;
     // The degree abbreviations themselves (BBA, B.Com, MBA) name a business
     // subject; "B.Sc" and "BA" do not.
     const families = familiesIn(subjectLine);
@@ -202,7 +220,7 @@ export function findDegrees(cv: string): DegreeFound[] {
       level,
       families,
       unrelated,
-      subjectless: families.length === 0 && !unrelated && isSubjectless(l.text),
+      subjectless: families.length === 0 && !unrelated && isSubjectless(own),
       line: l,
     });
   }
@@ -485,7 +503,8 @@ const RANGE_RE = new RegExp(`(?:${POINT})\\s*(?:-|–|—|to|until|till)\\s*(?:$
 /** The same pattern without the global flag, for a yes/no test. */
 const DATE_RANGE = new RegExp(RANGE_RE.source, "i");
 
-type Span = { from: number; to: number; line: Line };
+/** A dated range: months covered, its line, and where in the line it sits. */
+type Span = { from: number; to: number; line: Line; at: number };
 
 /** Month index since year 0, for arithmetic. */
 function monthIndex(year: number, month: number): number {
@@ -521,7 +540,7 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
         to = Math.min(monthIndex(endYear, endMonth), now);
       }
       const from = monthIndex(startYear, Math.min(Math.max(startMonth, 0), 11));
-      if (to >= from && startYear >= 1960) out.push({ from, to, line: l });
+      if (to >= from && startYear >= 1960) out.push({ from, to, line: l, at: m.index });
     }
   }
   return out;
@@ -545,7 +564,27 @@ function unionMonths(spans: Span[]): number {
 }
 
 const EDUCATION_LINE =
-  /\b(university|college|school|academy|institute|bachelor|master|mba|degree|diploma|b\.?\s?sc|bsc|bba)\b/i;
+  /\b(university|college|school|academy|institute|bachelors?|masters?|mba|degree|diploma|b\.?\s?sc|bsc|bba)\b/i;
+const EDUCATION_HEADING = /\b(EDUCATION|QUALIFICATIONS|ACADEMIC|Education|Qualifications)\b/g;
+const WORK_HEADING =
+  /\b(EXPERIENCE|EMPLOYMENT|CAREER|Experience|Employment|Career Overview|Work History)\b/g;
+
+/**
+ * An education date rather than a role: the words just before the range name
+ * a school or degree, or the nearest heading before it is Education. Judged at
+ * the range itself, because one line of a stored CV can hold both sections.
+ */
+function isEducationSpan(s: Span): boolean {
+  const before = s.line.text.slice(0, s.at);
+  if (EDUCATION_LINE.test(before.slice(-80))) return true;
+  const lastOf = (re: RegExp) => {
+    let last = -1;
+    for (const m of before.matchAll(re)) last = m.index ?? last;
+    return last;
+  };
+  const edu = lastOf(EDUCATION_HEADING);
+  return edu >= 0 && edu > lastOf(WORK_HEADING);
+}
 const SENIOR_TITLE =
   /\b(head|director|vice\s+president|vp|svp|evp|avp|chief|cmo|cco|general\s+manager|gm|managing\s+director|partner|founder|co-?founder)\b/i;
 const LEAD_TITLE = new RegExp(`${SENIOR_TITLE.source}|\\b(manager|lead|leader)\\b`, "i");
@@ -653,22 +692,26 @@ export function evaluateYearsRequirement(
 
   const dated = evaluateDatedYears(req, marketingOnly, cv, today);
   if (claim && claim.years >= req.min && dated.verdict.status !== "met") {
-    // A stated career length a recruiter would accept from a summary. It is
-    // the candidate's own figure, so it is flagged for a check unless the
-    // dated roles already come close to it.
+    // A stated career length counts when the dated roles do not contradict
+    // it: no dates to check against, or dates that come close. When the dated
+    // roles show far less ("11+ years" against roles dated from 2021), a
+    // recruiter believes the dates: the claim lifts the row to partial at most.
+    const datesAgree = dated.years === 0 || dated.years >= req.min * 0.75;
+    const level =
+      req.kind === "senior"
+        ? " in senior leadership"
+        : req.kind === "leadership"
+          ? " in leadership"
+          : "";
     return {
       rule: "minimum_years",
-      status: "met",
-      needs_validation: dated.years < req.min * 0.75,
-      note: `The CV states ${claim.years}+ years${
-        req.kind === "senior"
-          ? " in senior leadership"
-          : req.kind === "leadership"
-            ? " in leadership"
-            : ""
-      }, against ${req.min} required${
-        dated.years > 0 ? `; dated roles on the CV show ${dated.years}` : ""
-      }.`,
+      status: datesAgree ? "met" : "partial",
+      needs_validation: true,
+      note: datesAgree
+        ? `The CV states ${claim.years}+ years${level}, against ${req.min} required${
+            dated.years > 0 ? `; dated roles on the CV show ${dated.years}` : ""
+          }. Confirm at screening.`
+        : `The CV states ${claim.years}+ years${level}, but dated roles show ${dated.years}, against ${req.min} required. Ask for the undated years.`,
       evidence: [quote(claim.line, 200), ...dated.verdict.evidence.slice(0, 2)],
     };
   }
@@ -684,7 +727,7 @@ function evaluateDatedYears(
   cv: string,
   today: Date,
 ): { years: number; verdict: StructuredVerdict } {
-  const roles = findDatedRanges(cv, today).filter((s) => !EDUCATION_LINE.test(s.line.text));
+  const roles = findDatedRanges(cv, today).filter((s) => !isEducationSpan(s));
   let counted = roles;
   if (req.kind === "senior") counted = roles.filter((s) => SENIOR_TITLE.test(titleContext(cv, s)));
   else if (req.kind === "leadership")

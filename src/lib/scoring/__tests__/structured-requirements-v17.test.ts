@@ -17,6 +17,7 @@ import {
 } from "@/lib/scoring/protected-attributes";
 import { employmentIntervals } from "@/lib/cv/employment-dates";
 import { isFlattenedCvText } from "@/lib/cv-extractor.server";
+import { normaliseLetterSpacing } from "@/lib/cv/letter-spacing";
 
 const TODAY = new Date("2026-10-29T00:00:00Z");
 const MARKET =
@@ -247,5 +248,45 @@ describe("work history under other headings", () => {
       "Duty Manager, Example Centre, Loughborough, UK April 2022- May 2023 ▪ Supervised shifts. " +
       "Education MSc Management, Example University, UK";
     expect(employmentIntervals(text, TODAY)).toHaveLength(3);
+  });
+});
+
+describe("second-review findings, 29 Oct", () => {
+  it("a degree is read from its own words, not from the rest of a one-line CV", () => {
+    for (const text of [
+      "EDUCATION BSc Civil Engineering 2010 Leeds Metropolitan University CERTIFICATIONS Chartered Institute of Marketing Member, Digital Marketing Strategy",
+      "EDUCATION Bachelor's Degree in Applied Mathematics 2011 Hassan II University | Google Ads certified, performance marketing",
+    ]) {
+      expect(evaluateDegreeRequirement(DEGREE, text)?.status, text).toBe("missing");
+    }
+    expect(
+      evaluateDegreeRequirement(DEGREE, "EDUCATION Bachelors in Commerce M G University 2009 – 2012 EXPERIENCE")?.status,
+    ).toBe("met");
+  });
+
+  it("a stated career length that the dated roles contradict is partial, not met", () => {
+    const cv =
+      "Marketing leader with 11+ years of experience in F&B marketing. WORK EXPERIENCE Marketing Director, Example Hospitality Jan 2026 – Present. " +
+      "Manager – Marketing, Example Kitchens 2021 – 2025. EDUCATION Bachelors in Commerce 2009 – 2012";
+    const v = evaluateYearsRequirement(TEN, cv, TODAY);
+    expect(v?.status).toBe("partial");
+    expect(v?.note).toMatch(/dated roles show/);
+  });
+
+  it("a stated career length with no dated roles to check is met but flagged", () => {
+    const v = evaluateYearsRequirement(TEN, "Name\nVP Marketing with 20+ years of marketing experience across FMCG.", TODAY);
+    expect(v?.status).toBe("met");
+    expect(v?.needs_validation).toBe(true);
+  });
+
+  it("letter-spaced capitals are rebuilt so dates and titles count", () => {
+    const cv =
+      "Jane Doe Dubai, UAE W O R K E X P E R I E N C E A U G 2 0 2 3 P R E S E N T C L U S T E R D I R E C T O R O F M A R K E T I N G Example Hotels. " +
+      "A U G 2 0 2 2 - A U G 2 0 2 3 D I R E C T O R O F M A R K E T I N G Example Resort. " +
+      "J A N 2 0 1 0 - J U L 2 0 2 2 C L U S T E R M A R K E T I N G M A N A G E R Example Group. E D U C A T I O N";
+    expect(normaliseLetterSpacing(cv)).toMatch(/AUG 2023 - PRESENT CLUSTER DIRECTOR OF MARKETING Example Hotels/);
+    expect(employmentIntervals(cv, TODAY)).toHaveLength(3);
+    expect(evaluateYearsRequirement(TEN, normaliseLetterSpacing(cv), TODAY)?.status).toBe("met");
+    expect(normaliseLetterSpacing("An ordinary line, I A M fine.")).toBe("An ordinary line, I A M fine.");
   });
 });

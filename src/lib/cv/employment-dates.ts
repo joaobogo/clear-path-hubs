@@ -1,3 +1,5 @@
+import { normaliseLetterSpacing } from "./letter-spacing";
+
 type Interval = { start: number; end: number };
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 // "Mar 2019", "Sept. 2019", "03/2019", "2019".
@@ -43,7 +45,7 @@ const HEADING = new RegExp(
 export function employmentIntervals(text: string, asOf = new Date()): Interval[] {
   const intervals: Interval[] = [];
   const pattern = new RegExp(`(${DATE})\\s*${SEPARATOR}\\s*(${DATE}|${OPEN_END})`, "gi");
-  const compact = text.replace(/\b(?:[A-Z]\s+){3,}[A-Z]\b/g, (heading) => heading.replace(/\s/g, ""))
+  const compact = normaliseLetterSpacing(text).replace(/\b(?:[A-Z]\s+){3,}[A-Z]\b/g, (heading) => heading.replace(/\s/g, ""))
     .replace(/(PROFESSIONAL|WORK|CAREER|EMPLOYMENT)(EXPERIENCE|HISTORY)/g, "$1 $2");
   // Headings are written in capitals or title case. Matching the words in any
   // case made "skills" or "experience" in a sentence a section break, which
