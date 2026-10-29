@@ -111,7 +111,7 @@ async function loadInputs(matchId: string) {
       .select("id,status,requirements,preferred_requirements,title,organization_id")
       .eq("id", match.position_id).maybeSingle(),
     s.from("candidate_profiles")
-      .select("id,current_cv_file_id")
+      .select("id,current_cv_file_id,location,city,country")
       .eq("id", match.candidate_profile_id).maybeSingle(),
     s.from("application_answers")
       .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have)")
@@ -492,6 +492,7 @@ export async function executeScoring(
       cv_text: cvText,
       requirements: ctx.requirements,
       screening: ctx.screening,
+      candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
       calibration,
     });
 
