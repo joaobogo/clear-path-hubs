@@ -99,6 +99,9 @@ async function writeAudit(opts: {
   });
 }
 
+/** The screening-question columns that change a score or an eligibility decision. */
+const SQ_SNAPSHOT = "id,question,answer_type,required,dealbreaker,must_have,preferred_answer";
+
 const traceId = () =>
   `pe_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
@@ -250,7 +253,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     // Sync screening questions: delete removed, upsert kept/new, keep order
     const { data: existingSQ } = await s
       .from("screening_questions")
-      .select("id")
+      .select(SQ_SNAPSHOT)
       .eq("position_id", data.id);
     const existingIds = new Set(((existingSQ ?? []) as AnyRow[]).map((r) => r.id));
     const keepIds = new Set(
@@ -299,7 +302,33 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       trace_id,
     });
 
-    return { ok: true as const, trace_id, position: after, analysis, brief_missing: required.missing };
+    // Changed criteria rescore every match on the role through the full
+    // pipeline and recompute eligibility; admins get a one-line summary.
+    // The save has already succeeded, so a failure here is logged, not thrown.
+    let rescore: { queued: number; changed: boolean } | null = null;
+    try {
+      const { data: afterSQ } = await s
+        .from("screening_questions")
+        .select(SQ_SNAPSHOT)
+        .eq("position_id", data.id);
+      const { rescoreAfterCriteriaChange } = await import("./scoring/requirement-change-rescore.server");
+      const out = await rescoreAfterCriteriaChange({
+        admin: s,
+        positionId: data.id,
+        organizationId: before.organization_id ?? null,
+        title: (after?.title as string | null) ?? data.title,
+        before: { ...before, screening_questions: (existingSQ ?? []) as AnyRow[] },
+        after: { ...(after ?? {}), screening_questions: (afterSQ ?? []) as AnyRow[] },
+        actorUserId: context.userId,
+        savedAt: (after?.updated_at as string | null) ?? null,
+        trace_id,
+      });
+      rescore = { queued: out.queued, changed: out.changed };
+    } catch (err) {
+      console.error("[position-edit] rescore after criteria change failed", data.id, (err as Error)?.message);
+    }
+
+    return { ok: true as const, trace_id, position: after, analysis, brief_missing: required.missing, rescore };
   });
 
 const publishInput = z.object({

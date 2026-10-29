@@ -415,9 +415,15 @@ export function PositionEditWizard({
         } as never,
       });
     },
-    onSuccess: async (res: { analysis?: string } | undefined) => {
+    onSuccess: async (
+      res: { analysis?: string; rescore?: { queued: number; changed: boolean } | null } | undefined,
+    ) => {
+      const queued = res?.rescore?.queued ?? 0;
       toast.success(
-        res?.analysis === "queued" ? "Role saved. Analysing your changes now." : "Role saved",
+        (res?.analysis === "queued" ? "Role saved. Analysing your changes now." : "Role saved") +
+          (queued > 0
+            ? ` ${queued} candidate${queued === 1 ? "" : "s"} will be rescored against the new criteria.`
+            : ""),
       );
       if (typeof window !== "undefined") window.localStorage.removeItem(draftKey);
       setSavedAt(null);

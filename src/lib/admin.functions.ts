@@ -1032,6 +1032,19 @@ export const updatePosition = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .maybeSingle();
     if (!before) throw new Error("position_not_found");
+    // Criteria written here pass the same protected-attribute check as the
+    // role editor, with the suggested wording in the refusal.
+    {
+      const { storedPositionProtectedCriteria } = await import("./positions/protected-criteria-fields");
+      const { protectedCriteriaErrorMessage } = await import("./scoring/protected-attributes");
+      const found = storedPositionProtectedCriteria({
+        title: (data.patch.title ?? before.title) as string | null,
+        requirements: data.patch.requirements,
+        preferred_requirements: data.patch.preferred_requirements,
+        dealbreakers: data.patch.dealbreakers,
+      });
+      if (found.length > 0) throw new Error(protectedCriteriaErrorMessage(found));
+    }
     const { data: after, error } = await s
       .from("positions")
       .update(data.patch)
@@ -1039,6 +1052,25 @@ export const updatePosition = createServerFn({ method: "POST" })
       .select("*")
       .maybeSingle();
     if (error) throw new Error(error.message);
+    // Changed criteria rescore every match through the pipeline queue.
+    if (data.patch.requirements || data.patch.preferred_requirements || data.patch.dealbreakers) {
+      try {
+        const { rescoreAfterCriteriaChange } = await import("./scoring/requirement-change-rescore.server");
+        await rescoreAfterCriteriaChange({
+          admin: s,
+          positionId: data.id,
+          organizationId: before.organization_id ?? null,
+          title: (after?.title ?? before.title ?? "Role") as string,
+          before,
+          after: after ?? before,
+          actorUserId: context.userId,
+          savedAt: (after?.updated_at as string | null) ?? null,
+          trace_id,
+        });
+      } catch (e) {
+        console.error("[updatePosition] rescore after criteria change failed", trace_id, e);
+      }
+    }
     await writeAudit({
       actor: context.userId,
       action: "position.update",
