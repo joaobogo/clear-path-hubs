@@ -85,3 +85,44 @@ export function decideScreeningEligibility(answers: ScreeningEligibilityAnswer[]
   }));
   return { status: checks.length ? "not_eligible" : "eligible", checks };
 }
+
+export type ExistingCheck = { qualifier_key: string; status: string | null };
+
+export type RecomputePlan = {
+  next_status: "eligible" | "not_eligible" | null; // null = leave unchanged
+  upserts: DealbreakerCheck[];
+  stale_keys: string[]; // screening-derived checks no longer supported
+  changed: boolean;
+};
+
+const SCREENING_KEY = /^(?:disq:|screening_dealbreaker$)/;
+
+/**
+ * Idempotent plan for one match. Screening-derived checks are rebuilt from the
+ * dealbreaker rule; any other blocking check (staff-recorded qualifiers) keeps
+ * the match not_eligible. Excepted / needs_validation states are left alone.
+ */
+export function planEligibilityRecompute(input: {
+  current_status: string | null;
+  answers: ScreeningEligibilityAnswer[];
+  existing_checks: ExistingCheck[];
+}): RecomputePlan {
+  const decision = decideScreeningEligibility(input.answers);
+  const wanted = new Set(decision.checks.map((c) => c.qualifier_key));
+  const stale_keys = input.existing_checks
+    .filter((c) => SCREENING_KEY.test(c.qualifier_key) && !wanted.has(c.qualifier_key))
+    .map((c) => c.qualifier_key);
+  const otherBlocking = input.existing_checks.some(
+    (c) => !SCREENING_KEY.test(c.qualifier_key) && c.status === "not_eligible",
+  );
+  const have = new Set(input.existing_checks.map((c) => c.qualifier_key));
+  const upserts = decision.checks.filter((c) => !have.has(c.qualifier_key));
+  let next: RecomputePlan["next_status"] =
+    decision.status === "not_eligible" || otherBlocking ? "not_eligible" : "eligible";
+  if (input.current_status === "excepted" || input.current_status === "needs_validation") {
+    next = decision.status === "not_eligible" ? "not_eligible" : null;
+  }
+  const changed =
+    upserts.length > 0 || stale_keys.length > 0 || (next !== null && next !== input.current_status);
+  return { next_status: next, upserts, stale_keys, changed };
+}
