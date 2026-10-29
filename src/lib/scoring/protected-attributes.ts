@@ -76,6 +76,8 @@ type Rule = {
   re: RegExp;
   message: string;
   rewrite: (text: string, m: RegExpMatchArray) => string;
+  /** Only applies to hiring criteria, not to CVs/briefings (e.g. "Young Lions award"). */
+  criteriaOnly?: boolean;
 };
 
 function demonymRewrite(word: string, preferLanguage: boolean): string {
@@ -143,18 +145,33 @@ const RULES: Rule[] = [
     re: /\breligio(?:n|us)\b|\b(?:muslim|christian|hindu|jewish|buddhist|sikh)s?\b(?!\s+(?:market|audience|consumers?))/i,
     message: "Religion can never be a hiring criterion.",
     rewrite: () => "",
+    criteriaOnly: true,
   },
   {
     category: "age",
-    re: /\b(?:under|below|over|above|younger than|older than|not older than|max(?:imum)?\.?|min(?:imum)?\.?)\s+(?:the\s+)?age\s+(?:of\s+)?\d{2}\b|\bage[ds]?\s*(?:limit|range|between|:)?\s*\d{2}\s*(?:-|–|to)\s*\d{2}\b|\b(?:under|below|over|younger than|older than)\s+\d{2}\b(?!\s*(?:years? of experience|\+?\s*years? (?:in|of|experience)|%|people|staff|employees|team|reports|countries|markets|brands|stores|outlets))|\bdate of birth\b|\b(?:young|youthful|recent graduates? only)\b|\bdigital native\b/i,
+    re: /\b(?:under|below|over|above|younger than|older than|not older than|max(?:imum)?\.?|min(?:imum)?\.?)\s+(?:the\s+)?age\s+(?:of\s+)?\d{2}\b|\bage[ds]?\s*(?:limit|range|between|:)?\s*\d{2}\s*(?:-|–|to)\s*\d{2}\b|\b(?:under|below|over|younger than|older than)\s+\d{2}\b(?!\s*(?:years? of experience|\+?\s*years? (?:in|of|experience)|%|people|staff|employees|team|reports|countries|markets|brands|stores|outlets))|\bdate of birth\b/i,
     message: "Age limits are discriminatory. Describe the experience you need instead; this line will be removed.",
     rewrite: () => "",
   },
   {
+    category: "age",
+    re: /\b(?:young|youthful|recent graduates? only)\b(?!\s+lions?)|\bdigital native\b/i,
+    message: "Age-coded wording discourages older applicants. Describe the experience you need instead.",
+    rewrite: () => "",
+    criteriaOnly: true,
+  },
+  {
     category: "gender",
-    re: /\b(?:male|female|men|women|man|woman|gender|sex)\s+(?:only|candidates?|applicants?|preferred)\b|\b(?:must be|only)\s+(?:a\s+)?(?:male|female|man|woman)\b|\bgender\b/i,
+    re: /\b(?:male|female|men|women|man|woman|gender|sex)\s+(?:only|candidates?|applicants?|preferred)\b|\b(?:must be|only)\s+(?:a\s+)?(?:male|female|man|woman)\b/i,
     message: "Gender can never be a hiring criterion.",
     rewrite: () => "",
+  },
+  {
+    category: "gender",
+    re: /\bgender\b(?!\s+(?:diversity|equality|balance|pay))/i,
+    message: "Gender can never be a hiring criterion.",
+    rewrite: () => "",
+    criteriaOnly: true,
   },
   {
     category: "marital_status",
@@ -176,22 +193,22 @@ const RULES: Rule[] = [
   },
 ];
 
-/** Market/country experience is a skill, not an identity — never flag it. */
-const MARKET_EXPERIENCE =
-  /\b(?:experience|worked|working|background|exposure|knowledge|track record|launch(?:ed|ing)?|market(?:s|ing)?)\b[^.]{0,40}\b(?:in|across|with|of|for)\b/i;
-
 /** All findings for a piece of text. Empty means compliant. */
-export function detectProtectedAttributes(text: string | null | undefined): ProtectedFinding[] {
+export function detectProtectedAttributes(
+  text: string | null | undefined,
+  opts: { context?: "criteria" | "document" } = {},
+): ProtectedFinding[] {
+  const context = opts.context ?? "criteria";
   const t = (text ?? "").trim();
   if (!t) return [];
   const out: ProtectedFinding[] = [];
   const seen = new Set<ProtectedCategory>();
   for (const rule of RULES) {
     const m = t.match(rule.re);
+    if (rule.criteriaOnly && context === "document") continue;
     if (!m || seen.has(rule.category)) continue;
     // "Marketing experience in South Korea…" names places, not people. The
     // demonym rules only fire on identity nouns, so this guards the generic ones.
-    if (rule.category === "nationality" && rule.re.source.startsWith("\\bnationalit") && MARKET_EXPERIENCE.test(t) && !/\bnationalit/i.test(t)) continue;
     seen.add(rule.category);
     out.push({ category: rule.category, match: m[0], message: rule.message, rewrite: rule.rewrite(t, m) });
   }
@@ -258,5 +275,8 @@ export function sanitizeGeneratedText<T>(value: T): T {
 }
 
 export function removeProtectedSentences(text: string): string {
-  return text.split(/(?<=[.!?])\s+|\n+/).filter((sentence) => !isProtectedAttributeText(sentence)).join(" ");
+  return text
+    .split(/(?<=[.!?])\s+|\n+/)
+    .filter((sentence) => detectProtectedAttributes(sentence, { context: "document" }).length === 0)
+    .join(" ");
 }
