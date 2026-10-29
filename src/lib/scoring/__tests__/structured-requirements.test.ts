@@ -284,6 +284,6 @@ describe("in the engine", () => {
     expect(loc.status).toBe("met");
     expect(deg.rule_note).toBeTruthy();
     expect(deg.evidence[0]?.snippet).toMatch(/Postgraduate Diploma in Marketing/);
-    expect(result.engine_version).toBe("taasflow-scoring-v1.6.0");
+    expect(result.engine_version).toBe("taasflow-scoring-v1.7.0");
   });
 });

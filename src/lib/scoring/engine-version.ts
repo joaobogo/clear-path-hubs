@@ -143,4 +143,23 @@
  * cannot settle is Unknown with needs_validation, never a zero. All other
  * requirements are scored exactly as in v1.5.4.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.6.0";
+/**
+ * v1.7.0 — screening and CV structure (owner, 29 Oct 2026, same role).
+ *   1. Eligibility comes from dealbreaker answers only (disqualifying_answers);
+ *      a "no" to an optional question is no longer counted against the
+ *      candidate in screening alignment either.
+ *   2. A yes/no answer counts for the must-have its question was written for
+ *      (screening_questions.must_have): alone it is Partial, with CV support
+ *      it is Met.
+ *   3. Career length stated in the CV ("25+ years of marketing experience")
+ *      counts beside dated roles; numbers that are not durations do not.
+ *      "Based in X or willing to relocate" is read like the "if outside X"
+ *      wording.
+ *   4. A requirement listing markets ("experience in Korea, Japan or
+ *      Singapore") is met by working in those countries or their cities,
+ *      never by nationality, birthplace or language.
+ *   5. CVs stored as one long line are read in segments, and the protected-
+ *      attribute filter keeps line breaks, so the rules above see the CV's
+ *      structure.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.0";

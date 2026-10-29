@@ -18,6 +18,7 @@ import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
 import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
 import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
+import { asBoolean } from "./scoring/eligibility";
 
 export { ENGINE_VERSION, EVALUATION_METHOD };
 
@@ -35,6 +36,12 @@ export interface ScreeningAnswer {
   answer_type: string;
   value: unknown;
   disqualifying_condition?: { operator: "equals" | "min" | "max"; value: unknown } | null;
+  /**
+   * The must-have this question checks, as the client wrote it when setting
+   * the question (screening_questions.must_have). When present it decides
+   * which requirement a "yes" is evidence for.
+   */
+  must_have?: string | null;
 }
 
 export interface EvidenceRef {
@@ -114,6 +121,16 @@ export interface ScoringResult {
     aligned: "aligned" | "misaligned" | "unknown";
   }>;
   contradiction_status: "none" | "screening_contradicts_cv" | "disqualifying_answer";
+  /**
+   * The answers that disqualify: answers to dealbreaker questions only. The
+   * one source for a match's eligibility, so eligibility can never be decided
+   * by a question the client did not mark as a dealbreaker.
+   */
+  disqualifying_answers: Array<{
+    question_id: string;
+    question: string;
+    normalized_value: string;
+  }>;
   /**
    * The specific answer/requirement pairs behind a screening_contradicts_cv
    * flag. Empty unless the status is raised — a flag with no rows to resolve
@@ -434,6 +451,10 @@ function normalizeScreeningValue(a: ScreeningAnswer): string {
   const v = a.value;
   if (v == null || v === "") return "unknown";
   if (typeof v === "boolean") return v ? "yes" : "no";
+  if (a.answer_type === "boolean") {
+    const b = asBoolean(v);
+    if (b !== null) return b ? "yes" : "no";
+  }
   if (typeof v === "number") return String(v);
   if (Array.isArray(v)) return v.map(String).join(", ");
   return String(v);
@@ -443,8 +464,11 @@ function screeningAlignment(a: ScreeningAnswer, cvText: string): "aligned" | "mi
   const norm = normalizeScreeningValue(a);
   if (norm === "unknown") return "unknown";
   if (a.answer_type === "boolean") {
-    // A "no" to a required boolean is misaligned; "yes" is aligned.
-    return norm === "yes" ? "aligned" : "misaligned";
+    // A "no" to a required boolean is misaligned; "yes" is aligned. A "no" to
+    // an optional question is a preference the matching nice-to-have already
+    // weighs, so it is not counted against the candidate a second time.
+    if (norm === "yes") return "aligned";
+    return a.required || a.disqualifying_condition ? "misaligned" : "unknown";
   }
   if (a.answer_type === "long_text" || a.answer_type === "short_text") {
     const toks = tokenize(norm).slice(0, 5);
@@ -455,10 +479,26 @@ function screeningAlignment(a: ScreeningAnswer, cvText: string): "aligned" | "mi
   return "aligned";
 }
 
+/**
+ * Two short texts about the same requirement in different words: "Location and
+ * work eligibility in Dubai, UAE" and "If outside the UAE must be willing to
+ * relocate"; "Bachelor's degree in Marketing" and "a degree in Business".
+ */
+const LINK_CONCEPTS: RegExp[] = [
+  /\b(relocat\w*|location|based\s+in|resid\w*|on-?site|commute)\b/i,
+  /\b(bachelor\w*|degree|graduate|diploma|mba|master\w*)\b/i,
+  /\b(licen[cs]e\w*|certif\w*|registration|registered)\b/i,
+];
+function sameConcept(a: string, b: string): boolean {
+  return LINK_CONCEPTS.some((re) => re.test(a) && re.test(b));
+}
+
 function isDisqualifying(a: ScreeningAnswer): boolean {
   const cond = a.disqualifying_condition;
   if (!cond) return false;
   const v = a.value;
+  // Stored answers arrive as true, "true", "yes" or {value: true}.
+  if (cond.operator === "equals" && typeof cond.value === "boolean") return asBoolean(v) === cond.value;
   if (cond.operator === "equals") return v === cond.value;
   if (cond.operator === "min" && typeof v === "number" && typeof cond.value === "number") return v < cond.value;
   if (cond.operator === "max" && typeof v === "number" && typeof cond.value === "number") return v > cond.value;
@@ -930,37 +970,62 @@ export function scoreCandidate(input: {
   // v1.4.1 flagged the silent case as a contradiction, which punished the
   // candidate for the CV not repeating their answer. Absence of corroboration
   // is a thing to verify, not a conflict.
+  //
+  // v1.7.0: a question carries the must-have it was written for
+  // (screening_questions.must_have), and that link decides which requirement
+  // the answer speaks for, so "Are you based in or willing to relocate to
+  // Dubai?" counts for "If outside the UAE must be willing to relocate"
+  // although the two share no wording. CV in part plus a yes is "met". A
+  // rule-based "missing" that quotes the CV stays missing and is recorded as
+  // a contradiction with the answer.
   const contradiction_rows: ScoringResult["contradiction_rows"] = [];
   if (!disqualified) {
     const meaningful = (text: string) =>
       tokenize(text).filter((t) => t.length >= 4 && !REQUIREMENT_FRAMING.has(t));
     for (const s of input.screening) {
       if (s.answer_type !== "boolean" || normalizeScreeningValue(s) !== "yes") continue;
-      const qTokens = new Set(meaningful(s.question ?? ""));
+      // A question linked to a must-have speaks for that must-have; an
+      // unlinked one for any requirement it shares two content words with.
+      const linkText = (s.must_have ?? "").trim();
+      const qTokens = new Set(meaningful(linkText || s.question || ""));
       if (qTokens.size === 0) continue;
       for (const a of assessment) {
         if (!a.required) continue;
         const overlap = new Set(meaningful(a.text).filter((t) => qTokens.has(t)));
-        if (overlap.size < 2) continue;
-        if (a.status === "missing" || a.status === "unknown") {
-          a.status = "partial";
-          a.needs_validation = true;
-          const ref: EvidenceRef = {
-            requirement_id: a.id,
-            requirement_text: a.text,
-            source: "screening",
-            matched_terms: [...overlap],
-            snippet: `Answered yes to: "${s.question}"`,
-            location: `screening:${s.question_id}`,
-          };
-          a.evidence.push(ref);
-          evidence.push(ref);
-        } else if (a.status === "contradicted") {
+        const linked =
+          overlap.size >= 2 || (linkText !== "" && sameConcept(linkText, a.text));
+        if (!linked) continue;
+        const ref: EvidenceRef = {
+          requirement_id: a.id,
+          requirement_text: a.text,
+          source: "screening",
+          matched_terms: overlap.size ? [...overlap] : [`must_have:${linkText.slice(0, 60)}`],
+          snippet: `Answered yes to: "${s.question}"`,
+          location: `screening:${s.question_id}`,
+        };
+        // A rule that read the CV and quoted a clear "no" (a degree in an
+        // unrelated subject) is a conflict with the answer, not a gap it fills.
+        const ruleSaysNo =
+          a.status === "missing" &&
+          a.matched_terms.some((t) => t.startsWith("rule:")) &&
+          a.evidence.length > 0;
+        if (a.status === "contradicted" || ruleSaysNo) {
           contradiction_rows.push({
             question_id: s.question_id,
             question: s.question,
             requirement: a.text,
           });
+        } else if (a.status === "missing" || a.status === "unknown") {
+          // The answer alone: weak positive evidence, never "met" on its own.
+          a.status = "partial";
+          a.needs_validation = true;
+          a.evidence.push(ref);
+          evidence.push(ref);
+        } else if (a.status === "partial" && substance.verdict !== "keyword_echo") {
+          // The CV supports it in part and the candidate confirms it: met.
+          a.status = "met";
+          a.evidence.push(ref);
+          evidence.push(ref);
         }
       }
     }
@@ -1212,6 +1277,11 @@ export function scoreCandidate(input: {
     evidence: evidence.slice(0, cal.keyword_cap),
     screening_evidence,
     contradiction_status,
+    disqualifying_answers: disqualifyingAnswers.map((a) => ({
+      question_id: a.question_id,
+      question: a.question,
+      normalized_value: normalizeScreeningValue(a),
+    })),
     contradiction_rows,
     evidence_substance: substance,
     completed_at,

@@ -43,6 +43,7 @@ import { classifyScoreBand } from "@/config/scoring-bands";
 import type { Json } from "@/integrations/supabase/types";
 import { randomUUID } from "crypto";
 import { employmentIntervals } from "./cv/employment-dates";
+import { dealbreakerCondition } from "./scoring/eligibility";
 
 
 export const SCORING_BLUEPRINT_VERSION = "taasflow-blueprint-v1.0.0";
@@ -113,7 +114,7 @@ async function loadInputs(matchId: string) {
       .select("id,current_cv_file_id")
       .eq("id", match.candidate_profile_id).maybeSingle(),
     s.from("application_answers")
-      .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)")
+      .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have)")
       .eq("application_id", match.application_id),
   ]);
 
@@ -151,15 +152,14 @@ async function loadInputs(matchId: string) {
     const value = r.answer && typeof r.answer === "object" && "value" in r.answer
       ? (r.answer as { value: unknown }).value
       : r.answer;
-    let disq: ScreeningAnswer["disqualifying_condition"] = null;
-    if (q?.dealbreaker && q?.answer_type === "boolean") disq = { operator: "equals", value: false };
     return {
       question_id: r.question_id,
       question: q?.question ?? "",
       required: q?.required ?? false,
       answer_type: q?.answer_type ?? "text",
       value,
-      disqualifying_condition: disq,
+      disqualifying_condition: dealbreakerCondition(q),
+      must_have: q?.must_have ?? null,
     };
   });
 
@@ -610,25 +610,42 @@ export async function executeScoring(
     }
 
 
-    // F-008: write eligibility checks for disqualifying answers
-    const disqualifying = raw.screening_evidence.filter(s => s.aligned === "misaligned");
-    if (disqualifying.length > 0) {
-      const checks = disqualifying.map(d => ({
-        candidate_match_id: matchId,
-        organization_id: ctx.match.organization_id,
-        position_id: ctx.match.position_id,
-        qualifier_key: `disq:${d.question_id}`,
-        qualifier_label: d.question,
-        qualifier_kind: "disqualifier",
-        status: "not_eligible",
-        reason: `Disqualifying answer: ${d.normalized_value}`,
-        evidence: { question_id: d.question_id, value: d.normalized_value },
-        updated_at: new Date().toISOString()
-      }));
-      await s.from("eligibility_checks").upsert(checks, { 
-        onConflict: "candidate_match_id,qualifier_key" 
-      });
+    // F-008: eligibility comes from dealbreaker answers only. A "no" to any
+    // other question is weighed by the scorer, never a gate: reading every
+    // misaligned yes/no answer here marked candidates ineligible for a
+    // nice-to-have (no Arabic on a role where Arabic is preferred).
+    const disqualifying = raw.disqualifying_answers;
+    const checks = disqualifying.map((d) => ({
+      candidate_match_id: matchId,
+      organization_id: ctx.match.organization_id,
+      position_id: ctx.match.position_id,
+      qualifier_key: `disq:${d.question_id}`,
+      qualifier_label: d.question,
+      qualifier_kind: "disqualifier",
+      // eligibility_checks.status accepts passed / failed / unknown / excepted.
+      // The old "not_eligible" was rejected by that check on every write, and
+      // the error was never read, so no exclusion ever left a record.
+      status: "failed",
+      reason: `Dealbreaker answer: ${d.normalized_value}`,
+      evidence: { question_id: d.question_id, value: d.normalized_value },
+      updated_at: new Date().toISOString(),
+    }));
+    if (checks.length > 0) {
+      const { error: checkErr } = await s
+        .from("eligibility_checks")
+        .upsert(checks, { onConflict: "candidate_match_id,qualifier_key" });
+      if (checkErr) throw new Error(`eligibility_check_write_failed: ${checkErr.message}`);
     }
+    // A dealbreaker answer that no longer disqualifies (the question was
+    // changed, or the answer corrected) must not leave a failed check behind.
+    const keep = checks.map((c) => c.qualifier_key);
+    let stale = s
+      .from("eligibility_checks")
+      .delete()
+      .eq("candidate_match_id", matchId)
+      .like("qualifier_key", "disq:%");
+    if (keep.length > 0) stale = stale.not("qualifier_key", "in", `(${keep.map((k) => `"${k}"`).join(",")})`);
+    await stale;
 
     await s
       .from("candidate_matches")

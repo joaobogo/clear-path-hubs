@@ -34,7 +34,7 @@ export type StructuredStatus = "met" | "partial" | "missing" | "unknown";
 export type StructuredEvidence = { snippet: string; start: number; end: number };
 
 export type StructuredVerdict = {
-  rule: "degree_field" | "conditional_relocation" | "minimum_years";
+  rule: "degree_field" | "conditional_relocation" | "minimum_years" | "market_experience";
   status: StructuredStatus;
   needs_validation: boolean;
   /** One sentence a reviewer can read: what was found and why it decided this. */
@@ -48,15 +48,53 @@ export type StructuredVerdict = {
 
 type Line = { text: string; start: number; end: number };
 
+/** Longer than this, a "line" is a flattened page rather than a line. */
+const MAX_LINE = 280;
+/** Where a flattened page can be cut: after a sentence, around a bullet or a bar. */
+const SEGMENT_BREAK = /(?<=[.!?;])\s+(?=[A-Z0-9•▪●■◦·|-])|\s*[•▪●■◦|]\s*|\s+[·]\s+|\s{2,}/g;
+
+/**
+ * The CV as lines, with offsets into the original text.
+ *
+ * Many stored CVs have no line breaks at all: the PDF reader in production
+ * joined every page into one line (fixed in cv-extractor, but the stored
+ * text predates it). A rule that reads "the line" would then read the whole
+ * CV as one line: every date sits next to "University", the header is the
+ * whole document. A long line is therefore cut into segments at sentence
+ * ends, bullets and bars, and anything still too long is wrapped at a space.
+ */
 function lines(cv: string): Line[] {
   const out: Line[] = [];
+  const push = (text: string, start: number) => {
+    const lead = text.length - text.trimStart().length;
+    const t = text.trim();
+    if (t) out.push({ text: t, start: start + lead, end: start + lead + t.length });
+  };
   let pos = 0;
   for (const raw of cv.split("\n")) {
-    const start = pos;
-    const end = pos + raw.length;
-    pos = end + 1;
-    const text = raw.trim();
-    if (text) out.push({ text, start, end });
+    const lineStart = pos;
+    pos += raw.length + 1;
+    if (raw.length <= MAX_LINE) {
+      push(raw, lineStart);
+      continue;
+    }
+    let from = 0;
+    const pieces: Array<[number, number]> = [];
+    for (const m of raw.matchAll(SEGMENT_BREAK)) {
+      pieces.push([from, m.index!]);
+      from = m.index! + m[0].length;
+    }
+    pieces.push([from, raw.length]);
+    for (const [a, b] of pieces) {
+      let s = a;
+      while (b - s > MAX_LINE) {
+        const cut = raw.lastIndexOf(" ", s + MAX_LINE);
+        const at = cut > s ? cut : s + MAX_LINE;
+        push(raw.slice(s, at), lineStart + s);
+        s = at;
+      }
+      push(raw.slice(s, b), lineStart + s);
+    }
   }
   return out;
 }
@@ -277,7 +315,7 @@ const UAE_PLACES =
 function placePattern(requirement: string): RegExp | null {
   if (UAE_PLACES.test(requirement)) return UAE_PLACES;
   const m = requirement.match(
-    /\boutside\s+(?:of\s+)?(?:the\s+)?([A-Z][A-Za-z.]+(?:\s+[A-Z][A-Za-z.]+){0,3})/,
+    /\b(?:outside|based\s+in|located\s+in|living\s+in|resident\s+in)\s+(?:of\s+)?(?:the\s+)?([A-Z][A-Za-z.]+(?:\s+[A-Z][A-Za-z.]+){0,3})/,
   );
   if (!m) return null;
   const name = m[1]!.trim().replace(/\.$/, "");
@@ -289,10 +327,13 @@ function placePattern(requirement: string): RegExp | null {
 
 export function parseRelocationRequirement(text: string): { place: RegExp } | null {
   if (!/\breloca\w*/i.test(text)) return null;
+  // Two wordings of one condition: "if outside X, willing to relocate" and
+  // "based in X or willing to relocate". Either way, living there satisfies it.
   if (
     !/\b(if|unless|when)\b[^.]*\b(outside|not\s+(?:based|located|living|resident)|abroad|overseas)\b/i.test(
       text,
-    )
+    ) &&
+    !/\b(based|located|living|resident)\s+in\b[^.]*\bor\b[^.]*\breloca/i.test(text)
   )
     return null;
   const place = placePattern(text);
@@ -311,7 +352,15 @@ function candidateLocationLine(cv: string, place: RegExp): Line | null {
   if (labelled) return labelled;
   // The CV header: the first lines, short ones only, so a summary sentence
   // about past work in Dubai is not read as where someone lives.
-  return ls.slice(0, 8).find((l) => l.text.length <= 120 && place.test(l.text)) ?? null;
+  const header = ls.slice(0, 8).find((l) => l.text.length <= 120 && place.test(l.text));
+  if (header) return header;
+  // A CV stored without line breaks has no short lines: its header is the
+  // opening of the text (name, city, phone), read up to the first sentence.
+  if (!cv.includes("\n") && ls[0]) {
+    const opening = ls[0].text.slice(0, 120).split(/(?<=[a-z]{3}[.!?])\s/)[0] ?? "";
+    if (place.test(opening)) return { ...ls[0], text: opening, end: ls[0].start + opening.length };
+  }
+  return null;
 }
 
 export function evaluateRelocationRequirement(text: string, cv: string): StructuredVerdict | null {
@@ -476,6 +525,52 @@ export function parseYearsRequirement(
   return { min, kind };
 }
 
+type YearsClaim = {
+  years: number;
+  kind: "any" | "leadership" | "senior";
+  marketing: boolean;
+  line: Line;
+};
+
+const CLAIM_RE = /\b(\d{1,2})\s*\+?\s*(?:years?|yrs?)\b/gi;
+/** Words after a number that make it something other than a length of career. */
+const NOT_A_DURATION =
+  /^\W{0,3}(?:old|of\s+age|ago|gap|break|warranty|contract|guarantee|lease|plan|anniversary|celebration)\b|^-?\s*(?:old|gap)\b/i;
+
+/**
+ * Statements of career length in the CV's own words: "25+ years of retail
+ * marketing experience", "16 years in leadership roles". A number counts only
+ * when experience, a career or a field follows it; "a 10-year gap", "5 years
+ * old" and "a 3-year contract" are not durations of experience.
+ */
+export function findYearsClaims(cv: string): YearsClaim[] {
+  const out: YearsClaim[] = [];
+  for (const l of lines(cv)) {
+    for (const m of l.text.matchAll(CLAIM_RE)) {
+      const after = l.text.slice(m.index! + m[0].length, m.index! + m[0].length + 90);
+      if (NOT_A_DURATION.test(after)) continue;
+      if (
+        !/^\W{0,3}(?:of\s+)?(?:[\w&/,'’-]+\s+){0,6}?(?:experience|expertise|career|track\s+record|in\s+(?:the\s+)?(?:[\w&/-]+\s+){0,3}?(?:marketing|brand\w*|communications?|retail|leadership|management|industry|sector|roles?|positions?))\b/i.test(
+          after,
+        )
+      )
+        continue;
+      const years = Number(m[1]);
+      if (!Number.isFinite(years) || years <= 0 || years > 50) continue;
+      const window = `${l.text.slice(Math.max(0, m.index! - 40), m.index!)} ${after}`;
+      const kind = /\b(senior\s+leadership|executive|c-?suite|board)\b/i.test(window)
+        ? "senior"
+        : /\b(leadership|leading|led|managing|management|manager|head|director|team\s+lead)\b/i.test(
+              window,
+            )
+          ? "leadership"
+          : "any";
+      out.push({ years, kind, marketing: MARKETING_TITLE.test(window), line: l });
+    }
+  }
+  return out;
+}
+
 export function evaluateYearsRequirement(
   text: string,
   cv: string,
@@ -485,6 +580,50 @@ export function evaluateYearsRequirement(
   if (!req) return null;
   const marketingOnly = /\bmarketing\b/i.test(text);
 
+  // The CV's own statement of career length, for this kind of experience.
+  const claim = findYearsClaims(cv)
+    .filter((c) =>
+      req.kind === "senior"
+        ? c.kind === "senior"
+        : req.kind === "leadership"
+          ? c.kind !== "any"
+          : !marketingOnly || c.marketing,
+    )
+    .sort((a, b) => b.years - a.years)[0];
+
+  const dated = evaluateDatedYears(req, marketingOnly, cv, today);
+  if (claim && claim.years >= req.min && dated.verdict.status !== "met") {
+    // A stated career length a recruiter would accept from a summary. It is
+    // the candidate's own figure, so it is flagged for a check unless the
+    // dated roles already come close to it.
+    return {
+      rule: "minimum_years",
+      status: "met",
+      needs_validation: dated.years < req.min * 0.75,
+      note: `The CV states ${claim.years}+ years${
+        req.kind === "senior"
+          ? " in senior leadership"
+          : req.kind === "leadership"
+            ? " in leadership"
+            : ""
+      }, against ${req.min} required${
+        dated.years > 0 ? `; dated roles on the CV show ${dated.years}` : ""
+      }.`,
+      evidence: [quote(claim.line, 200), ...dated.verdict.evidence.slice(0, 2)],
+    };
+  }
+  return dated.verdict;
+}
+
+type Requirement = { min: number; kind: "any" | "leadership" | "senior" };
+
+/** Years from the dated roles on the CV, with the verdict those years give on their own. */
+function evaluateDatedYears(
+  req: Requirement,
+  marketingOnly: boolean,
+  cv: string,
+  today: Date,
+): { years: number; verdict: StructuredVerdict } {
   const roles = findDatedRanges(cv, today).filter((s) => !EDUCATION_LINE.test(s.line.text));
   let counted = roles;
   if (req.kind === "senior") counted = roles.filter((s) => SENIOR_TITLE.test(titleContext(cv, s)));
@@ -499,14 +638,17 @@ export function evaluateYearsRequirement(
 
   if (counted.length === 0) {
     return {
-      rule: "minimum_years",
-      status: "unknown",
-      needs_validation: true,
-      note:
-        roles.length === 0
-          ? "No dated roles could be read from the CV. Confirm the years at screening."
-          : "The dated roles do not show which were at this level. Confirm at screening.",
-      evidence: [],
+      years: 0,
+      verdict: {
+        rule: "minimum_years",
+        status: "unknown",
+        needs_validation: true,
+        note:
+          roles.length === 0
+            ? "No dated roles could be read from the CV. Confirm the years at screening."
+            : "The dated roles do not show which were at this level. Confirm at screening.",
+        evidence: [],
+      },
     };
   }
 
@@ -524,11 +666,124 @@ export function evaluateYearsRequirement(
         ? " in leadership roles"
         : "";
   return {
-    rule: "minimum_years",
-    status,
-    needs_validation: status !== "met",
-    note: `${years} years${level} from dated roles on the CV, against ${req.min} required.`,
-    evidence,
+    years,
+    verdict: {
+      rule: "minimum_years",
+      status,
+      needs_validation: status !== "met",
+      note: `${years} years${level} from dated roles on the CV, against ${req.min} required.`,
+      evidence,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 4. Market experience: "Marketing experience in at least one of: South Korea,
+//    Japan, Singapore, Hong Kong, China or Vietnam"
+// ---------------------------------------------------------------------------
+
+/**
+ * Countries a requirement can name, each with the cities a CV would name
+ * instead. Only places: never a nationality, a language or a demonym, so
+ * "Korean national" or "speaks Japanese" can never satisfy it.
+ */
+const MARKETS: Array<{ name: string; re: RegExp }> = [
+  {
+    name: "South Korea",
+    re: /\b(south\s+korea|korea|republic\s+of\s+korea|seoul|busan|incheon)\b/i,
+  },
+  { name: "Japan", re: /\b(japan|tokyo|osaka|yokohama|kyoto|nagoya|fukuoka|sapporo|kobe)\b/i },
+  { name: "Singapore", re: /\bsingapore\b/i },
+  { name: "Hong Kong", re: /\b(hong\s+kong|hk\s*sar|kowloon)\b/i },
+  {
+    name: "China",
+    re: /\b(china|mainland\s+china|prc|shanghai|beijing|shenzhen|guangzhou|chengdu|hangzhou)\b/i,
+  },
+  {
+    name: "Vietnam",
+    re: /\b(vietnam|viet\s+nam|hanoi|ho\s+chi\s+minh(?:\s+city)?|saigon|hcmc|da\s+nang)\b/i,
+  },
+  { name: "Taiwan", re: /\b(taiwan|taipei)\b/i },
+  { name: "Thailand", re: /\b(thailand|bangkok)\b/i },
+  { name: "Malaysia", re: /\b(malaysia|kuala\s+lumpur)\b/i },
+  { name: "Indonesia", re: /\b(indonesia|jakarta)\b/i },
+  { name: "Philippines", re: /\b(philippines|manila)\b/i },
+  { name: "India", re: /\b(india|mumbai|delhi|bangalore|bengaluru)\b/i },
+];
+
+/** Lines about the person rather than their work. Never evidence of market experience. */
+const PERSONAL_LINE =
+  /\b(born|birth|nationality|citizen(?:ship)?|passport|native\s+of|hometown|ethnic|heritage|origin|visa\s+status|languages?)\b/i;
+/** A mention that is not operating in the market: study, a course, a trip, buying from it. */
+const WEAK_CONTEXT =
+  /\b(training|trained|course|workshop|seminar|conference|visit(?:ed)?|trip|exchange|studied|study\s+tour|university|college|school|degree|sourcing|sourced|source\s+markets?|suppliers?|supplier\s+negotiations?|import(?:ed|s)?\s+from|benchmark(?:ed|ing)?|knowledge\s+of)\b/i;
+/** Signs the line describes doing the work in or for that market. */
+const WORK_CONTEXT =
+  /\b(market(?:s|ing)?|launch(?:ed|es)?|led|lead|managed|managing|head|director|manager|vp|president|country|regional|region|e-?com\w*|retail|brand|campaigns?|stores?|expansion|entered|go-to-market|gtm|p&l|operations?)\b/i;
+
+export function parseMarketRequirement(text: string): { markets: typeof MARKETS } | null {
+  if (!/\b(experience|worked|working|exposure|background)\b/i.test(text)) return null;
+  const markets = MARKETS.filter((m) => m.re.test(text));
+  // A list of markets, not a single location requirement ("based in Dubai").
+  return markets.length >= 2 ? { markets } : null;
+}
+
+export function evaluateMarketRequirement(
+  text: string,
+  cv: string,
+  today: Date = new Date(),
+): StructuredVerdict | null {
+  const req = parseMarketRequirement(text);
+  if (!req) return null;
+  const ls = lines(cv);
+  const datedLines = new Set(findDatedRanges(cv, today).map((s) => s.line.start));
+  const strong: Line[] = [];
+  const weak: Line[] = [];
+  ls.forEach((l, i) => {
+    if (PERSONAL_LINE.test(l.text)) return;
+    if (!req.markets.some((m) => m.re.test(l.text))) return;
+    // A dated role naming the market, or a line that does the work there.
+    const nearDate =
+      datedLines.has(l.start) ||
+      datedLines.has(ls[i + 1]?.start ?? -1) ||
+      datedLines.has(ls[i - 1]?.start ?? -1);
+    if (WEAK_CONTEXT.test(l.text)) weak.push(l);
+    else if (nearDate || WORK_CONTEXT.test(l.text)) strong.push(l);
+    else weak.push(l);
+  });
+  const names = (found: Line[]) =>
+    req.markets.filter((m) => found.some((l) => m.re.test(l.text))).map((m) => m.name);
+  if (strong.length > 0) {
+    return {
+      rule: "market_experience",
+      status: "met",
+      needs_validation: false,
+      note: `Worked in or for ${names(strong).join(", ")}.`,
+      evidence: strong.slice(0, 3).map((l) => quote(l)),
+    };
+  }
+  if (weak.length > 0) {
+    return {
+      rule: "market_experience",
+      status: "partial",
+      needs_validation: true,
+      note: `Mentions ${names(weak).join(", ")}, but as training, sourcing or indirect exposure rather than working in the market. Confirm at screening.`,
+      evidence: weak.slice(0, 2).map((l) => quote(l)),
+    };
+  }
+  const regional = ls.find(
+    (l) =>
+      !PERSONAL_LINE.test(l.text) &&
+      /\b(asia[\s-]?pacific|apac|south[\s-]?east\s+asia|east\s+asia|far\s+east)\b/i.test(l.text),
+  );
+  return {
+    rule: "market_experience",
+    status: "missing",
+    needs_validation: Boolean(regional),
+    note: regional
+      ? "Mentions Asia-Pacific in general but none of the named markets. Ask which markets at screening."
+      : "None of the named markets appear in the CV.",
+    evidence: regional ? [quote(regional)] : [],
   };
 }
 
@@ -542,6 +797,7 @@ export function evaluateStructuredRequirement(
 ): StructuredVerdict | null {
   return (
     evaluateRelocationRequirement(text, cv) ??
+    evaluateMarketRequirement(text, cv, today) ??
     evaluateDegreeRequirement(text, cv) ??
     evaluateYearsRequirement(text, cv, today)
   );
