@@ -70,6 +70,18 @@ export const PARSE_FAILURES: Record<string, ParseFailure> = {
     candidateMessage:
       "Your CV is password protected, so we cannot open it. Please upload a version without a password.",
   },
+  cv_text_thin: {
+    code: "cv_text_thin",
+    label: "Very little text",
+    cause:
+      "The file was read twice and still produced under 1,500 characters, too little to score fairly.",
+    nextAction:
+      "Open the document: if the CV is genuinely short, score it by hand; if text is missing, ask for a re-upload.",
+    owner: "recruiter",
+    reuploadFixes: true,
+    candidateMessage:
+      "We could only read a small part of your CV. Please upload it again as a PDF that contains selectable text.",
+  },
   extract_empty: {
     code: "extract_empty",
     label: "Empty text layer",
