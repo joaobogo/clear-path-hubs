@@ -40,8 +40,15 @@
     {
       "idx": 5,
       "version": "7",
-      "when": 1793270000000,
-      "tag": "0005_recompute_screening_eligibility",
+      "when": 1793272207650,
+      "tag": "0005_auto_rescore_live_positions_on_criteria_change",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793280000000,
+      "tag": "0006_recompute_screening_eligibility",
       "breakpoints": true
     }
   ]

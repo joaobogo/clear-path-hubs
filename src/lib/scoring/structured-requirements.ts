@@ -440,10 +440,19 @@ const SECTION_START =
 const CONTACT_MARK =
   /📍|☎|📞|✉|\+\d{2,3}[\s\d-]{6,}|\S+@\S+\.\w+|linkedin|\b(?:tel|phone|mobile|email)\s*:/i;
 
-export function evaluateRelocationRequirement(text: string, cv: string): StructuredVerdict | null {
+export function evaluateRelocationRequirement(
+  text: string,
+  cv: string,
+  profileLocation?: string | null,
+): StructuredVerdict | null {
   const req = parseRelocationRequirement(text);
   if (!req) return null;
-  const here = candidateLocationLine(cv, req.place);
+  let here = candidateLocationLine(cv, req.place);
+  // The location the candidate gave on their profile, when the CV is silent.
+  if (!here && profileLocation && req.place.test(profileLocation)) {
+    const shown = `Profile location: ${profileLocation.trim()}`;
+    here = { text: shown, start: 0, end: 0 };
+  }
   if (here) {
     return {
       rule: "conditional_relocation",
@@ -931,9 +940,10 @@ export function evaluateStructuredRequirement(
   text: string,
   cv: string,
   today: Date = new Date(),
+  opts: { profileLocation?: string | null } = {},
 ): StructuredVerdict | null {
   return (
-    evaluateRelocationRequirement(text, cv) ??
+    evaluateRelocationRequirement(text, cv, opts.profileLocation) ??
     evaluateMarketRequirement(text, cv, today) ??
     evaluateDegreeRequirement(text, cv) ??
     evaluateYearsRequirement(text, cv, today)

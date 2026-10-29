@@ -179,4 +179,11 @@
  * that dated roles contradict is partial, education dates are judged at the
  * range, and letter-spaced PDF capitals are rebuilt before reading.
  */
+/**
+ * Note: Lovable's 29 Oct edit (3b96eeb) also labelled its engine
+ * "taasflow-scoring-v1.6.0" with its own structured-requirement rules. Those
+ * rules were superseded on merge by the v1.6.0-v1.7.2 rules above, which were
+ * checked against the role's 32 CVs; runs stamped v1.6.0 after 29 Oct 11:18 UTC
+ * came from that build.
+ */
 export const ENGINE_VERSION = "taasflow-scoring-v1.7.2";

@@ -152,7 +152,17 @@ export function asBoolean(value: unknown): boolean | null {
 export function dealbreakerCondition(
   q: QuestionLike | null | undefined,
 ): ScreeningAnswer["disqualifying_condition"] {
-  if (!q?.dealbreaker || q.answer_type !== "boolean") return null;
+  if (!q?.dealbreaker) return null;
+  if (q.answer_type !== "boolean") {
+    // A choice or text dealbreaker disqualifies an answer outside the
+    // preferred one(s); with no preference recorded it cannot disqualify.
+    const pref = q.preferred_answer && typeof q.preferred_answer === "object" && !Array.isArray(q.preferred_answer)
+      && "value" in (q.preferred_answer as Record<string, unknown>)
+      ? (q.preferred_answer as { value: unknown }).value
+      : q.preferred_answer;
+    const list = (Array.isArray(pref) ? pref : [pref]).filter((x) => x != null && String(x).trim() !== "");
+    return list.length > 0 ? { operator: "not_in", value: list } : null;
+  }
   const preferred = asBoolean(q.preferred_answer);
   return { operator: "equals", value: preferred === false ? true : false };
 }

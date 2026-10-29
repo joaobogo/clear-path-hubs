@@ -20,7 +20,7 @@ Before step 1:
 A. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.2"
    (or a later v1.7.x). If it is older, stop and tell me: the code fixes are
    not in this build. Lovable must be synced with GitHub main first.
-B. Apply drizzle migration 0005_recompute_screening_eligibility. The function
+B. Apply drizzle migration 0006_recompute_screening_eligibility. The function
    already exists in the database (created 29 Oct); re-running it is harmless.
 
 In step 4 (eligibility + rescore), in this order:

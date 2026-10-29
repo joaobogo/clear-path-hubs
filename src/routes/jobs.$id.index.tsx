@@ -124,7 +124,10 @@ export const Route = createFileRoute("/jobs/$id/")({
           : []),
       ],
       links: [{ rel: "canonical", href: canonical }],
-      scripts: [
+      scripts:
+        pos.syndicate === false
+          ? []
+          : [
         {
           type: "application/ld+json",
           children: JSON.stringify(buildJobPostingJsonLd(pos, canonical)),
