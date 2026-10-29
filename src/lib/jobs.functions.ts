@@ -1,3 +1,4 @@
+import { roleFailsProtectedCheck } from "@/lib/jobs/protected-content";
 // Public job board — reads via publishable-key client (anon RLS policies).
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
@@ -140,7 +141,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
     let query = supabase
       .from("positions")
       .select(
-        "id,title,location,work_model,employment_type,seniority,description,requirements,compensation,compensation_visibility,published_at,openings",
+        "id,title,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,dealbreakers,compensation,compensation_visibility,published_at,openings",
       )
       .eq("status", "active")
       .eq("visibility", "public");
@@ -152,7 +153,8 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
     if (error) throw new Error(error.message);
 
     const allowed = await publishableIds(supabase, (allRows ?? []).map((p) => p.id));
-    const data = (allRows ?? []).filter((p) => allowed.has(p.id));
+    // B1: a role whose text screens on a protected attribute is never syndicated.
+    const data = (allRows ?? []).filter((p) => allowed.has(p.id) && !roleFailsProtectedCheck(p));
 
     // The public list uses the same location-country augmentation as the detail
     // page so "Curitiba, PR" becomes "Curitiba, PR, Brazil" without the UI
@@ -258,7 +260,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     let detail = supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,published_at,openings,status",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,dealbreakers,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,published_at,openings,status",
       )
       .eq("id", data.id)
       .in("status", ["active", "paused"])
