@@ -10,6 +10,7 @@ import {
 } from "@/lib/positions/protected-criteria-guard";
 import {
   intakeCriteriaFields,
+  postingCopyFields,
   roleFormCriteriaFields,
   screenBlueprintCriteria,
   storedPositionCriteriaFields,
@@ -105,6 +106,18 @@ describe("role editor save", () => {
       expect((e as Error).message).toMatch(/Must-have 2 \("Native English speaker"\).*Suggested: "Fluent English speaker"/);
       expect((e as Error).message).toMatch(/Screening question 1 \("What is your nationality\?"\)/);
     }
+  });
+
+  it("checks posting copy saved with the role, but not the EEO statement", () => {
+    const fields = roleFormCriteriaFields({ languages: "Native Arabic speaker", benefits: "Health cover" });
+    expect(fields.map((f) => [f.field, f.index])).toEqual([
+      ["languages", undefined],
+      ["benefits", undefined],
+    ]);
+    expect(() => assertRoleFormCriteriaAllowed({ languages: "Native Arabic speaker" })).toThrow(
+      /Languages \("Native Arabic speaker"\).*Suggested: "Fluent Arabic speaker"/,
+    );
+    expect(postingCopyFields({ languages: "" })).toEqual([]);
   });
 
   it("lets a clean form through", () => {

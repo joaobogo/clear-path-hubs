@@ -30,6 +30,8 @@ import {
 import { BLUEPRINT_RERUN_FLAG, analysisDecision } from "@/lib/blueprint-trigger";
 import { sanitizeInlineMarkup, stripInlineMarkup } from "@/lib/marketing/inline-format";
 import { assertRoleFormCriteriaAllowed } from "@/lib/positions/protected-criteria-guard";
+import { assertNoProtectedCriteria } from "@/lib/scoring/protected-attributes";
+import { postingCopyFields } from "@/lib/positions/protected-criteria-fields";
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -323,6 +325,11 @@ export const publishPosition = createServerFn({ method: "POST" })
     const before = await assertCanEdit(context.userId, data.id);
     const trace_id = traceId();
     const s = await getAdmin();
+
+    // Posting copy is candidate-facing: "Native Arabic speaker" in the
+    // languages line or "Under 35" in the intro is refused with its rewrite.
+    // The EEO statement is not read here (it names attributes to rule them out).
+    assertNoProtectedCriteria(postingCopyFields(data), { roleTitle: (before.title as string | null) ?? null });
 
     const { data: existing } = await s
       .from("positions")

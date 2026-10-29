@@ -303,13 +303,18 @@ export function PositionEditWizard({
   );
   const applyProtectedRewrite = (f: CriteriaFieldFinding) => {
     const i = f.index ?? -1;
-    if (i < 0) return;
-    if (f.field === "screening_questions") {
+    if (f.field === "screening_questions" && i >= 0) {
       const qs = [...state.screening_questions];
       if (!qs[i]) return;
       if (f.replacement) qs[i] = { ...qs[i]!, question: f.replacement };
       else qs.splice(i, 1);
       set("screening_questions", qs);
+      return;
+    }
+    if (f.index === undefined) {
+      // A posting-copy field: the whole text takes the suggested wording.
+      const textKey = f.field as "languages" | "company_intro" | "benefits" | "travel" | "work_authorization_note";
+      if (typeof state[textKey] === "string") set(textKey, f.replacement as State[typeof textKey]);
       return;
     }
     const key = f.field as "must_have_skills" | "nice_to_have_skills" | "trainable_skills" | "disqualifier_tags";

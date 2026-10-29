@@ -67,8 +67,34 @@ export function intakeCriteriaFields(data: IntakeCriteriaInput): CriteriaField[]
   return out;
 }
 
-/** The criteria the role editor saves. */
-export type RoleFormCriteriaInput = {
+/**
+ * Candidate-facing posting copy. The EEO statement is deliberately absent:
+ * it names protected attributes in order to rule them out.
+ */
+export type PostingCopyInput = {
+  languages?: string | null;
+  company_intro?: string | null;
+  benefits?: string | null;
+  travel?: string | null;
+  work_authorization_note?: string | null;
+};
+
+const POSTING_LABELS: Array<[keyof PostingCopyInput, string]> = [
+  ["languages", "Languages"],
+  ["company_intro", "Company introduction"],
+  ["benefits", "Benefits"],
+  ["travel", "Travel"],
+  ["work_authorization_note", "Work authorisation note"],
+];
+
+export function postingCopyFields(data: PostingCopyInput): CriteriaField[] {
+  return POSTING_LABELS.map(([field, label]) => ({ field, label, text: String(data[field] ?? "") })).filter(
+    (f) => f.text.trim().length > 0,
+  );
+}
+
+/** The criteria the role editor saves, and the posting copy it saves with them. */
+export type RoleFormCriteriaInput = PostingCopyInput & {
   must_have_skills?: readonly string[] | null;
   nice_to_have_skills?: readonly string[] | null;
   trainable_skills?: readonly string[] | null;
@@ -87,6 +113,7 @@ export function roleFormCriteriaFields(data: RoleFormCriteriaInput): CriteriaFie
       "Screening question",
       (data.screening_questions ?? []).map((q) => q?.question ?? ""),
     ),
+    ...postingCopyFields(data),
   ];
 }
 
