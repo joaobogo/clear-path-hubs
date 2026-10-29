@@ -4,7 +4,7 @@
  * Each returns null when the requirement isn't its shape, so the keyword
  * engine's verdict stands.
  */
-import { computeEmploymentYears } from "@/lib/cv/employment-dates";
+import { yearsFromEmploymentDates } from "@/lib/cv/employment-dates";
 import { countriesIn, evaluateMarketExperience, isMarketExperienceRequirement, termsFor } from "./geography";
 
 export type StructuredStatus = "met" | "partial" | "missing";
@@ -147,7 +147,7 @@ export function evaluateStructuredRequirement(input: {
     let have = claims.total;
     let snippet = claims.totalSnippet;
     try {
-      const dated = computeEmploymentYears(cv, input.asOf ?? new Date());
+      const dated = yearsFromEmploymentDates(cv, input.asOf ?? new Date());
       if (dated && dated > have) {
         have = Math.floor(dated);
         snippet = `${have} years from dated roles`;
