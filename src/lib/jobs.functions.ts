@@ -141,7 +141,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
     let query = supabase
       .from("positions")
       .select(
-        "id,title,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,dealbreakers,compensation,compensation_visibility,published_at,openings",
+        "id,title,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,compensation_visibility,published_at,openings",
       )
       .eq("status", "active")
       .eq("visibility", "public");
@@ -260,7 +260,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     let detail = supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,dealbreakers,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,published_at,openings,status",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,published_at,openings,status",
       )
       .eq("id", data.id)
       .in("status", ["active", "paused"])
