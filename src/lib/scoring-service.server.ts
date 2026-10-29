@@ -101,7 +101,7 @@ async function loadInputs(matchId: string) {
   const s = await getAdmin();
   const { data: match } = await s
     .from("candidate_matches")
-    .select("id,application_id,candidate_profile_id,position_id,organization_id,processing_state,current_score_run_id")
+    .select("id,application_id,candidate_profile_id,position_id,organization_id,processing_state,current_score_run_id,eligibility_status,score_stale")
     .eq("id", matchId)
     .maybeSingle();
   if (!match) throw new Error("match_not_found");
@@ -111,7 +111,7 @@ async function loadInputs(matchId: string) {
       .select("id,status,requirements,preferred_requirements,title,organization_id")
       .eq("id", match.position_id).maybeSingle(),
     s.from("candidate_profiles")
-      .select("id,current_cv_file_id")
+      .select("id,current_cv_file_id,location,city,country")
       .eq("id", match.candidate_profile_id).maybeSingle(),
     s.from("application_answers")
       .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have)")
@@ -476,6 +476,7 @@ export async function executeScoring(
       cv_text: cvText,
       requirements: ctx.requirements,
       screening: ctx.screening,
+      candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
       calibration,
     });
 
@@ -638,6 +639,7 @@ export async function executeScoring(
     }
     // A dealbreaker answer that no longer disqualifies (the question was
     // changed, or the answer corrected) must not leave a failed check behind.
+    const eligibilityStatus = disqualifying.length > 0 ? "not_eligible" : "eligible";
     const keep = checks.map((c) => c.qualifier_key);
     let stale = s
       .from("eligibility_checks")
@@ -651,10 +653,28 @@ export async function executeScoring(
       .from("candidate_matches")
       .update({
         current_score_run_id: runId,
-        eligibility_status: disqualifying.length > 0 ? "not_eligible" : "eligible",
+        eligibility_status: eligibilityStatus,
+        eligibility_updated_at: new Date().toISOString(),
         ...(reused ? {} : { evidence_confidence: raw.evidence_confidence }),
       })
       .eq("id", matchId);
+
+    if ((ctx.match as Any).eligibility_status !== eligibilityStatus) {
+      await s.from("audit_events").insert({
+        organization_id: ctx.match.organization_id,
+        entity_type: "candidate_match",
+        entity_id: matchId,
+        action: "scoring.eligibility_changed",
+        before_state: { eligibility_status: (ctx.match as Any).eligibility_status ?? null } as unknown as Json,
+        after_state: { eligibility_status: eligibilityStatus, position_id: ctx.match.position_id, checks: keep } as unknown as Json,
+        trace_id,
+      });
+    }
+    if ((ctx.match as Any).score_stale) {
+      await notifyRescoreBatchIfDone(s, ctx.match.position_id, ctx.match.organization_id, matchId).catch((e) =>
+        console.error("[scoring] rescore batch notify failed", (e as Error)?.message),
+      );
+    }
 
     const finalState: "scored" | "manual_review_required" =
       raw.contradiction_status === "disqualifying_answer" ||
@@ -738,4 +758,42 @@ export async function assertPublishGate(matchId: string, runId: string): Promise
   void run.evidence;
   if (run.contradiction_status === "disqualifying_answer") return { ok: false, reason: "disqualifying_contradiction" };
   return { ok: true };
+}
+
+
+/**
+ * B2: once the last queued match of a requirement-change batch is rescored,
+ * tell platform staff "N rescored, M changed eligibility". One notice per batch.
+ */
+async function notifyRescoreBatchIfDone(s: Any, positionId: string, orgId: string, justScored: string) {
+  const { data: batch } = await s.from("audit_events").select("id,created_at")
+    .eq("entity_type", "position").eq("entity_id", positionId)
+    .eq("action", "scoring.requirements_rescore_batch")
+    .order("created_at", { ascending: false }).limit(1).maybeSingle();
+  if (!batch) return;
+  const { count: pending } = await s.from("candidate_matches").select("id", { count: "exact", head: true })
+    .eq("position_id", positionId).neq("id", justScored)
+    .in("processing_state", ["queued", "parsing", "enriching", "scoring", "ready_to_score"]);
+  if ((pending ?? 0) > 0) return;
+  const { data: already } = await s.from("audit_events").select("id")
+    .eq("entity_type", "position").eq("entity_id", positionId)
+    .eq("action", "scoring.requirements_rescore_notified").gte("created_at", batch.created_at).limit(1);
+  if (already && already.length) return;
+  const { count: rescored } = await s.from("score_runs").select("id", { count: "exact", head: true })
+    .eq("position_id", positionId).gte("created_at", batch.created_at);
+  const { count: changed } = await s.from("audit_events").select("id", { count: "exact", head: true })
+    .eq("action", "scoring.eligibility_changed").contains("after_state", { position_id: positionId })
+    .gte("created_at", batch.created_at);
+  await s.from("audit_events").insert({
+    organization_id: orgId, entity_type: "position", entity_id: positionId,
+    action: "scoring.requirements_rescore_notified",
+    after_state: { rescored: rescored ?? 0, eligibility_changed: changed ?? 0, batch_id: batch.id },
+  });
+  await s.rpc("notify_platform_staff", {
+    _organization_id: orgId,
+    _event_type: "scoring_completed",
+    _title: "Candidates rescored after a criteria change",
+    _body: `${rescored ?? 0} rescored, ${changed ?? 0} changed eligibility.`,
+    _link_path: `/admin/positions/${positionId}`,
+  });
 }

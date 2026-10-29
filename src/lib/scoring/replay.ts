@@ -31,11 +31,13 @@ export const ReplayScreeningSchema = z.object({
   value: z.unknown().nullable(),
   disqualifying_condition: z
     .object({
-      operator: z.enum(["equals", "min", "max"]),
+      operator: z.enum(["equals", "min", "max", "not_in"]),
       value: z.unknown(),
     })
     .nullable()
     .optional(),
+  /** The must-have the question was written for (engine v1.7.0+). */
+  must_have: z.string().nullable().optional(),
 });
 
 export const ReplaySnapshotSchema = z.object({
@@ -57,7 +59,8 @@ export function buildReplaySnapshot(input: {
     required?: boolean;
     answer_type?: string;
     value: unknown;
-    disqualifying_condition?: { operator: "equals" | "min" | "max"; value: unknown } | null;
+    disqualifying_condition?: { operator: "equals" | "min" | "max" | "not_in"; value: unknown } | null;
+    must_have?: string | null;
   }>;
   role_family?: string | null;
 }): ReplaySnapshot {
@@ -76,6 +79,7 @@ export function buildReplaySnapshot(input: {
       answer_type: s.answer_type ?? "text",
       value: (s.value ?? null) as never,
       disqualifying_condition: s.disqualifying_condition ?? null,
+      must_have: s.must_have ?? null,
     })),
     role_family: input.role_family ?? null,
   };

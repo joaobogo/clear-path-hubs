@@ -36,7 +36,7 @@ export interface ScreeningAnswer {
   required: boolean;
   answer_type: string;
   value: unknown;
-  disqualifying_condition?: { operator: "equals" | "min" | "max"; value: unknown } | null;
+  disqualifying_condition?: { operator: "equals" | "min" | "max" | "not_in"; value: unknown } | null;
   /**
    * The must-have this question checks, as the client wrote it when setting
    * the question (screening_questions.must_have). When present it decides
@@ -433,7 +433,12 @@ export function computeInputHash(parts: {
   cv_text: string;
   requirements: RequirementInput[];
   screening: ScreeningAnswer[];
+  /** Recorded profile location; it can decide a relocation requirement. */
+  candidate_location?: string | null;
 }): string {
+  // Fields added after v1.6 are included only when set, so a run without
+  // them keeps the hash it always had.
+  const loc = (parts.candidate_location ?? "").trim().toLowerCase();
   const canon = JSON.stringify({
     v: parts.engine_version,
     cal: parts.calibration_version ?? DEFAULT_CALIBRATION.calibration_version,
@@ -442,8 +447,14 @@ export function computeInputHash(parts: {
       .map((r) => ({ id: r.id, text: r.text.trim().toLowerCase(), req: r.required }))
       .sort((a, b) => a.id.localeCompare(b.id)),
     s: parts.screening
-      .map((s) => ({ q: s.question_id, v: s.value }))
+      .map((s) => ({
+        q: s.question_id,
+        v: s.value,
+        ...(s.must_have ? { m: s.must_have.trim().toLowerCase() } : {}),
+        ...(s.disqualifying_condition ? { d: s.disqualifying_condition } : {}),
+      }))
       .sort((a, b) => a.q.localeCompare(b.q)),
+    ...(loc ? { loc } : {}),
   });
   return `${fnv1a(canon)}-${canon.length.toString(16)}`;
 }
@@ -501,6 +512,13 @@ function isDisqualifying(a: ScreeningAnswer): boolean {
   // Stored answers arrive as true, "true", "yes" or {value: true}.
   if (cond.operator === "equals" && typeof cond.value === "boolean") return asBoolean(v) === cond.value;
   if (cond.operator === "equals") return v === cond.value;
+  // A choice dealbreaker: disqualified when no chosen option is an accepted one.
+  if (cond.operator === "not_in" && Array.isArray(cond.value)) {
+    const accepted = cond.value.map((x) => String(x).trim().toLowerCase());
+    const raw = v && typeof v === "object" && !Array.isArray(v) && "value" in v ? (v as { value: unknown }).value : v;
+    const chosen = (Array.isArray(raw) ? raw : [raw]).filter((x) => x != null && String(x).trim() !== "");
+    return chosen.length > 0 && !chosen.some((x) => accepted.includes(String(x).trim().toLowerCase()));
+  }
   if (cond.operator === "min" && typeof v === "number" && typeof cond.value === "number") return v < cond.value;
   if (cond.operator === "max" && typeof v === "number" && typeof cond.value === "number") return v > cond.value;
   return false;
@@ -548,6 +566,10 @@ export function scoreCandidate(input: {
   screening: ScreeningAnswer[];
   /** Role family used to resolve calibration overrides. */
   role_family?: string | null;
+  /** Candidate's recorded location, for "based in X" requirements. */
+  candidate_location?: string | null;
+  /** Assessment date for date-range arithmetic. */
+  as_of?: Date;
   /** Explicit calibration (tests, replay of a historical run). */
   calibration?: EngineCalibration;
 }): ScoringResult {
@@ -568,6 +590,7 @@ export function scoreCandidate(input: {
     cv_text: input.cv_text,
     requirements: input.requirements,
     screening: input.screening,
+    candidate_location: input.candidate_location ?? null,
   });
   const completed_at = new Date().toISOString();
 
@@ -600,7 +623,9 @@ export function scoreCandidate(input: {
   const assessment: RequirementAssessment[] = requirements.map((r) => {
     // Degree field, conditional relocation and minimum years are judged the
     // way a recruiter reads them, not by keyword overlap (v1.6.0).
-    const structured = evaluateStructuredRequirement(r.text, cv);
+    const structured = evaluateStructuredRequirement(r.text, cv, input.as_of ?? new Date(), {
+      profileLocation: input.candidate_location ?? null,
+    });
     if (structured) {
       const refs: EvidenceRef[] = structured.evidence.map((e) => ({
         requirement_id: r.id,

@@ -463,3 +463,56 @@ export function listFields(field: string, noun: string, values: readonly unknown
     .map((v, i) => ({ field, index: i, label: `${noun} ${i + 1}`, text: typeof v === "string" ? v : "" }))
     .filter((f) => f.text.trim().length > 0);
 }
+
+// ---------------------------------------------------------------------------
+// Names used by Lovable's 29 Oct edit (protected-content, publish gates,
+// language findings), kept as adapters over the one detector above so every
+// path applies the same rule.
+// ---------------------------------------------------------------------------
+
+/** One finding with the field it was found in. */
+export type FieldFinding = { field: string; index?: number; text: string; findings: ProtectedFinding[] };
+
+/** Findings for a piece of text, with `match` (the words) and `rewrite` (the fixed text). */
+export function detectProtectedAttributes(
+  text: string | null | undefined,
+): Array<ProtectedFinding & { match: string; rewrite: string }> {
+  return findProtectedCriteria(text).map((f) => ({ ...f, match: f.span, rewrite: f.replacement }));
+}
+
+/** The rewrite to offer for a line, or null when it is fine. "" means remove it. */
+export function suggestCompliantRewrite(text: string): string | null {
+  return hasProtectedCriteria(text) ? suggestedRewrite(text) : null;
+}
+
+/** Check named fields: strings (checked sentence by sentence) or lists of strings / {label|text} rows. */
+export function findProtectedInFields(fields: Record<string, unknown>): FieldFinding[] {
+  const out: FieldFinding[] = [];
+  const asText = (v: unknown): string | null => {
+    if (typeof v === "string") return v;
+    if (v && typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      const s = o.label ?? o.text ?? o.name ?? o.requirement ?? o.question;
+      return typeof s === "string" ? s : null;
+    }
+    return null;
+  };
+  for (const [field, value] of Object.entries(fields)) {
+    if (Array.isArray(value)) {
+      value.forEach((v, index) => {
+        const text = asText(v);
+        if (!text) return;
+        const findings = findProtectedCriteria(text);
+        if (findings.length) out.push({ field, index, text, findings });
+      });
+    } else {
+      const text = asText(value);
+      if (!text) continue;
+      for (const sentence of text.split(/(?<=[.!?])\s+|\n+/).map((s) => s.trim()).filter(Boolean)) {
+        const findings = findProtectedCriteria(sentence);
+        if (findings.length) out.push({ field, text: sentence, findings });
+      }
+    }
+  }
+  return out;
+}
