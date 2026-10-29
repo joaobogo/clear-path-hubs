@@ -1,4 +1,4 @@
-# Group Marketing Manager: what Lovable must do after the v1.7.0 code
+# Group Marketing Manager: what Lovable must do after the v1.7.x code
 
 Paste this at the end of the Lovable prompt for position
 228cd1ec-1ec1-4205-828c-7a92b1be42e1. It covers what can't be done in code.
@@ -17,17 +17,19 @@ below are live.
 
 ```
 Before step 1:
-A. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.0".
-   If it does not, stop and tell me: the code fixes are not in this build.
-B. Apply drizzle migration 0005_recompute_screening_eligibility. It only
-   creates a function; it changes no data.
+A. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.2"
+   (or a later v1.7.x). If it is older, stop and tell me: the code fixes are
+   not in this build. Lovable must be synced with GitHub main first.
+B. Apply drizzle migration 0005_recompute_screening_eligibility. The function
+   already exists in the database (created 29 Oct); re-running it is harmless.
 
 In step 4 (eligibility + rescore), in this order:
 C. Preview the eligibility recompute and show me the rows:
      select * from public.recompute_screening_eligibility('228cd1ec-1ec1-4205-828c-7a92b1be42e1');
-   Expected: 17 matches go from not_eligible to eligible (all answered "no"
-   only to the Arabic question). Nobody goes the other way.
-   Wait for my "go", then run it with apply = true:
+   Expected now: no rows. It was already applied on 29 Oct: 17 matches on
+   this role went from not_eligible to eligible (all had answered "no" only
+   to the Arabic question), each with an audit_events row. If rows appear,
+   show them to me before applying with apply = true:
      select * from public.recompute_screening_eligibility('228cd1ec-1ec1-4205-828c-7a92b1be42e1', true);
    Each change writes an audit_events row (action 'eligibility_recomputed').
    Run it a second time to show it returns no rows.
@@ -35,7 +37,7 @@ D. Rescore through the full pipeline (runPipelineForMatch with force: true),
    not "recompute score" alone. Every stored CV on this role is one long
    line; only the pipeline re-reads the original PDF with line breaks.
    The score-only path scores the old flattened text.
-E. Every new run must show engine_version taasflow-scoring-v1.7.0. Old runs
+E. Every new run must show engine_version taasflow-scoring-v1.7.2 or later. Old runs
    stay; nothing is approved; client_visibility stays hidden.
 F. In the report table, add: market requirement status (met / partial /
    missing) with the CV line it quoted, and eligibility before/after.
