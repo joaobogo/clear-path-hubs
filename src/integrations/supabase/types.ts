@@ -15523,6 +15523,17 @@ export type Database = {
       }
       purge_expired_intake_drafts: { Args: never; Returns: number }
       qa_purge_test_organizations: { Args: { _names: string[] }; Returns: Json }
+      recompute_screening_eligibility: {
+        Args: { p_apply?: boolean; p_position_id?: string }
+        Returns: {
+          applied: boolean
+          eligibility_after: string
+          eligibility_before: string
+          failed_dealbreakers: string[]
+          match_id: string
+          position_id: string
+        }[]
+      }
       record_authz_test_run: {
         Args: never
         Returns: {
