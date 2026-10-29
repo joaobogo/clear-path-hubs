@@ -993,7 +993,7 @@ export function scoreCandidate(input: {
       a.status = v.status;
       a.needs_validation = v.needs_validation ?? (v.status === "partial" ? true : a.needs_validation);
       if (v.snippet) {
-        a.evidence = [ref, ...a.evidence.filter((e) => !(v.kind.includes("years") && /\b\d+\b/.test(e.snippet) && e.source === "cv" && !/years?/i.test(e.snippet)))];
+        a.evidence = authoritative ? [ref, ...a.evidence.filter((e) => e.source === "screening")] : [ref, ...a.evidence];
         evidence.push(ref);
       }
     }
