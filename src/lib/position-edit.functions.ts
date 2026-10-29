@@ -1,3 +1,4 @@
+import { roleProtectedFindings, protectedFindingsMessage } from "@/lib/jobs/protected-content";
 // Shared wizard-based position editor. Auth: platform staff OR client_editor
 // on the position's organization. Mirrors the public intake wizard 1:1 so
 // admins and clients edit positions with the same questions candidates and
@@ -229,6 +230,20 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       // A person's edit is a fresh start for the automatic retry budget.
       patch.blueprint_attempts = 0;
       analysis = "queued";
+    }
+
+    // B1: block (never silently rewrite) role text that screens on a protected attribute.
+    {
+      const findings = roleProtectedFindings({
+        requirements: patch.requirements ?? existing?.requirements,
+        preferred_requirements: patch.preferred_requirements ?? existing?.preferred_requirements,
+        dealbreakers: patch.dealbreakers ?? existing?.dealbreakers,
+        description: (patch.description as string | null) ?? null,
+        jd_text: (patch.jd_text as string | null) ?? (existing?.jd_text as string | null) ?? null,
+        intake_context: patch.intake_context ?? existing?.intake_context,
+        screening_questions: (data as AnyRow).screening_questions ?? [],
+      });
+      if (findings.length) throw new Error(protectedFindingsMessage(findings));
     }
 
     const { data: after, error } = await s
