@@ -125,4 +125,13 @@
  * kept the old behaviour, so the guard test asserts the property across both
  * branches rather than the branch that was wrong this time.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.5.4";
+/**
+ * v1.6.0 — structured requirements. Years thresholds come from "N+ years"
+ * statements and dated roles (leadership counted separately) instead of the
+ * first number in a sentence; degree synonyms (BA, BSc, BCom, BBA, Bachelor
+ * of …) are met; "based in X or willing to relocate" uses location and the
+ * relocation answer; market experience uses a country/city matcher; and a
+ * yes to a screening question linked to a must-have counts as evidence.
+ * Only dealbreaker questions can disqualify.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.6.0";

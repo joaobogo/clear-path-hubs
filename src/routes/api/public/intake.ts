@@ -1,3 +1,4 @@
+import { roleProtectedFindings, protectedFindingsMessage } from "@/lib/jobs/protected-content";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { SCREENING_MAX_QUESTIONS, SCREENING_MAX_REQUIRED } from "@/lib/screening-limits";
@@ -214,6 +215,23 @@ export const Route = createFileRoute("/api/public/intake")({
           );
         }
         const data = parsed.data;
+
+        // B1: the intake form shows the same check inline; this is the backstop.
+        {
+          const findings = roleProtectedFindings({
+            requirements: data.mustHaveSkills ?? [],
+            preferred_requirements: (data.preferredRequirements || "").split(/\r?\n/),
+            dealbreakers: [...(data.dealbreakers || "").split(/\r?\n/), ...(data.disqualifiers ?? [])],
+            description: data.jobDescription || "",
+            screening_questions: data.screeningQuestions ?? [],
+          });
+          if (findings.length) {
+            return Response.json(
+              { ok: false, trace_id: traceId, error: "protected_attribute", message: protectedFindingsMessage(findings) },
+              { status: 400 },
+            );
+          }
+        }
 
         // Honeypot: bots fill hidden fields. Respond like a success, persist nothing.
         if ((data.companyFax ?? "").trim() !== "") {

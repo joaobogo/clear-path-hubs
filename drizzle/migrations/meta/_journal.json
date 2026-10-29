@@ -36,6 +36,13 @@
       "when": 1793228637311,
       "tag": "0004_resolve_admin_candidate_override_rankings",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793272207650,
+      "tag": "0005_auto_rescore_live_positions_on_criteria_change",
+      "breakpoints": true
     }
   ]
 }

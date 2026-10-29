@@ -1,3 +1,4 @@
+import { isProtectedAttributeText } from "@/lib/scoring/protected-attributes";
 // Runs the express-onboarding preparation for one role, end to end:
 // read the job description → review permitted public company information →
 // generate the Role Blueprint → apply it to the position, rubric and screening
@@ -335,7 +336,8 @@ async function applyScreeningQuestions(admin: Admin, positionId: string, bp: Rol
     );
   };
 
-  const rows = bp.screening_questions.map((q, i) => ({
+  // B1: generated questions must pass the protected-attribute detector.
+  const rows = bp.screening_questions.filter((q) => !isProtectedAttributeText(q.question)).map((q, i) => ({
     position_id: positionId,
     question: q.dealbreaker ? compQuestion(q.question) : q.question,
     answer_type: q.answer_type,

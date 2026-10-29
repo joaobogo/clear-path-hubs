@@ -1,3 +1,4 @@
+import { roleProtectedFindings, protectedFindingsMessage } from "@/lib/jobs/protected-content";
 /**
  * Approvals inbox — data layer.
  *
@@ -498,6 +499,16 @@ export async function approveApproval(
     if (error) throw new Error(error.message);
     if (!before) throw new Error("position_not_found");
     if (before.published_at) return { ok: true, already: true, errors, approved: [args.target_id] };
+    {
+      const [{ data: roleText }, { data: qs }] = await Promise.all([
+        admin.from("positions").select("requirements,preferred_requirements,dealbreakers,description,jd_text,intake_context").eq("id", args.target_id).maybeSingle(),
+        admin.from("screening_questions").select("question").eq("position_id", args.target_id),
+      ]);
+      const findings = roleProtectedFindings({ ...(roleText ?? {}), screening_questions: qs ?? [] });
+      if (findings.length > 0) {
+        throw new Error(`This role can't go live yet. ${protectedFindingsMessage(findings)}`);
+      }
+    }
     const nowIso = new Date().toISOString();
     const { data: after, error: updErr } = await admin
       .from("positions")

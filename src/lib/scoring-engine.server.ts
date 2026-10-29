@@ -10,6 +10,7 @@ import {
 } from "./scoring/engine-calibration";
 
 import { ENGINE_VERSION } from "./scoring/engine-version";
+import { evaluateStructuredRequirement } from "./scoring/structured-requirements";
 import { cleanQuote } from "./evidence/quote-hygiene";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
 import { deriveStrengths } from "./scoring/strengths";
@@ -34,6 +35,8 @@ export interface ScreeningAnswer {
   answer_type: string;
   value: unknown;
   disqualifying_condition?: { operator: "equals" | "min" | "max"; value: unknown } | null;
+  /** Text of the positions.requirements item this question evidences (screening_questions.must_have). */
+  must_have?: string | null;
 }
 
 export interface EvidenceRef {
@@ -500,6 +503,10 @@ export function scoreCandidate(input: {
   screening: ScreeningAnswer[];
   /** Role family used to resolve calibration overrides. */
   role_family?: string | null;
+  /** Candidate's recorded location, for "based in X" requirements. */
+  candidate_location?: string | null;
+  /** Assessment date for date-range arithmetic. */
+  as_of?: Date;
   /** Explicit calibration (tests, replay of a historical run). */
   calibration?: EngineCalibration;
 }): ScoringResult {
@@ -929,6 +936,69 @@ export function scoreCandidate(input: {
       }
     }
   }
+  // v1.6.0 — explicit screening links (A2). A boolean "yes" to a question
+  // linked to a must-have floors that requirement at partial with screening
+  // evidence; if the CV already evidences it, it is met.
+  const norm = (t: string) => t.toLowerCase().replace(/\s+/g, " ").trim();
+  for (const s of input.screening) {
+    if (!s.must_have || s.answer_type !== "boolean" || normalizeScreeningValue(s) !== "yes") continue;
+    const target = assessment.find((a) => norm(a.text) === norm(s.must_have as string));
+    if (!target) continue;
+    const ref: EvidenceRef = {
+      requirement_id: target.id,
+      requirement_text: target.text,
+      source: "screening",
+      matched_terms: [],
+      snippet: `Answered yes to: "${s.question}"`,
+      location: `screening:${s.question_id}`,
+    };
+    if (target.status === "partial" && target.evidence.some((e) => e.source === "cv")) {
+      target.status = "met";
+    } else if (target.status === "missing" || target.status === "unknown") {
+      target.status = "partial";
+      target.needs_validation = true;
+    }
+    if (!target.evidence.some((e) => e.location === ref.location)) {
+      target.evidence.push(ref);
+      evidence.push(ref);
+    }
+  }
+
+  // v1.6.0 — structured requirements (A3/A4): years thresholds, leadership
+  // years, degree synonyms, location/relocation and market experience are
+  // judged by explicit parsers, not keyword overlap.
+  for (const a of assessment) {
+    if (a.status === "contradicted") continue;
+    const v = evaluateStructuredRequirement({
+      text: a.text,
+      cv,
+      screening: input.screening,
+      candidateLocation: input.candidate_location ?? null,
+      asOf: input.as_of,
+    });
+    if (!v) continue;
+    const viaScreening = v.snippet.startsWith("Answered yes");
+    const ref: EvidenceRef = {
+      requirement_id: a.id,
+      requirement_text: a.text,
+      source: viaScreening ? "screening" : "cv",
+      matched_terms: [v.kind],
+      snippet: v.snippet,
+      location: `${viaScreening ? "screening" : "cv"}:structured-${v.kind}`,
+    };
+    // Years are judged against the threshold authoritatively; other shapes only raise.
+    const rank = { missing: 0, unknown: 0, partial: 1, met: 2 } as const;
+    const authoritative = v.kind === "years" || v.kind === "leadership_years";
+    if (authoritative || rank[v.status] > rank[a.status as keyof typeof rank]) {
+      a.status = v.status;
+      a.needs_validation = v.needs_validation ?? (v.status === "partial" ? true : a.needs_validation);
+      if (v.snippet) {
+        a.evidence = authoritative ? [ref, ...a.evidence.filter((e) => e.source === "screening")] : [ref, ...a.evidence];
+        evidence.push(ref);
+      }
+    }
+  }
+
   let contradiction_status: ScoringResult["contradiction_status"] = "none";
   if (disqualified) contradiction_status = "disqualifying_answer";
   else if (contradiction_rows.length > 0) contradiction_status = "screening_contradicts_cv";

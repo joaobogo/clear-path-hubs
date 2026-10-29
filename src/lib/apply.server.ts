@@ -1,3 +1,5 @@
+import { decideScreeningEligibility } from "@/lib/scoring/screening-eligibility";
+import type { Json } from "@/integrations/supabase/types";
 // Application submission implementation (server-only).
 //
 // Extracted verbatim from the submitApplication server function so that both the
@@ -113,16 +115,19 @@ export async function submitApplicationImpl(
           };
         }
 
-        // F-008: Check for dealbreaker answers.
-        if (q.dealbreaker && !empty) {
-          const val = a.value;
-          const pref = q.preferred_answer;
-          // For booleans, the dealbreaker is usually answering differently than preferred.
-          if (q.answer_type === "boolean" && pref != null && val !== pref) {
-            disqualifyingReasons.push(q.question);
-          }
-        }
       }
+      // F-008: only dealbreaker = true questions can disqualify (shared rule).
+      const screeningEligibility = decideScreeningEligibility(
+        (questions ?? []).map((q) => ({
+          question_id: q.id,
+          question: q.question,
+          dealbreaker: q.dealbreaker,
+          answer_type: q.answer_type,
+          preferred_answer: q.preferred_answer,
+          value: data.answers.find((x) => x.question_id === q.id)?.value ?? null,
+        })),
+      );
+      for (const c of screeningEligibility.checks) disqualifyingReasons.push(c.evidence.question);
       // Drop answers that don't match a question on this position.
       const cleanAnswers = data.answers.filter((a) => qMap.has(a.question_id));
       const isDisqualified = disqualifyingReasons.length > 0;
@@ -621,18 +626,16 @@ export async function submitApplicationImpl(
 
       // F-008: Record eligibility checks for disqualified candidates.
       if (matchId && isDisqualified) {
-        const checkRows = disqualifyingReasons.map((reason) => ({
+        const checkRows = screeningEligibility.checks.map((c) => ({
+          ...c,
           candidate_match_id: matchId,
           position_id: data.position_id,
           organization_id: pos.organization_id,
-          qualifier_key: "screening_dealbreaker",
-          qualifier_label: "Screening dealbreaker",
-          qualifier_kind: "disqualifier",
-          status: "not_eligible",
-          reason: `Disqualified by screening question: "${reason}"`,
-          evidence: { question: reason, outcome: "dealbreaker_hit" },
+          evidence: c.evidence as unknown as Json,
         }));
-        await supabaseAdmin.from("eligibility_checks").insert(checkRows);
+        await supabaseAdmin
+          .from("eligibility_checks")
+          .upsert(checkRows, { onConflict: "candidate_match_id,qualifier_key" });
 
       }
 
