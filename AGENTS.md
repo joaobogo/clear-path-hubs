@@ -23,3 +23,6 @@
 - PDF ingestion extracts URI annotations and attempts validated OCR once; failed document reads require explicit staff retry rather than automatic rebilling.
 - CV text keeps its line structure from PDF extraction through protected-attribute filtering; text stored flattened is re-read from the original file, and the scorer reads any remaining long lines in segments.
 - Eligibility is decided by dealbreaker answers only; answers to other questions are weighed by the scorer, and eligibility checks are stored in the table's passed/failed vocabulary.
+- Market-experience rules read places from the shared geography dictionary only; nationalities, languages and demonyms never satisfy a market requirement, and an adjective counts only before "market(s)".
+- Hiring criteria pass the shared protected-attribute detector on every save path (intake, role editor, admin patch, publish, generated blueprints); a finding blocks the save with a suggested rewrite the author applies, never a silent rewrite.
+- Criteria changes queue every match on the role for a full-pipeline rescore and notify admins without approving anything or changing client visibility; a candidate the pipeline cannot score always has an open admin task.

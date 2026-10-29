@@ -140,3 +140,79 @@ export async function clearScoreStaleness(matchId: string): Promise<void> {
     console.error("[freshness] clear failed", matchId, (err as Error)?.message);
   }
 }
+
+/**
+ * Scoring guardrail health check, run with the nightly reconciliation and
+ * read by the admin data-health page. Reads only; the flagging rules live in
+ * scoring/guardrail-health.ts.
+ */
+export async function scanScoringGuardrails(
+  opts: { includeTest?: boolean } = {},
+): Promise<import("./guardrail-health").GuardrailReport & { generated_at: string }> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { flagGuardrails } = await import("./guardrail-health");
+  const { ENGINE_VERSION } = await import("./engine-version");
+  const s = supabaseAdmin as Any;
+  const LIMIT = 20000;
+
+  let mq = s
+    .from("candidate_matches")
+    .select("id,position_id,eligibility_status,current_score_run_id,processing_state,created_at,is_test_record")
+    .limit(LIMIT);
+  if (!opts.includeTest) mq = mq.eq("is_test_record", false);
+  const [matchesRes, checksRes, tasksRes, positionsRes] = await Promise.all([
+    mq,
+    s.from("eligibility_checks").select("candidate_match_id").eq("status", "failed").limit(LIMIT),
+    s
+      .from("tasks")
+      .select("candidate_match_id")
+      .in("status", ["open", "in_progress"])
+      .is("deleted_at", null)
+      .not("candidate_match_id", "is", null)
+      .limit(LIMIT),
+    s
+      .from("positions")
+      .select("id,title,status,requirements,preferred_requirements,dealbreakers")
+      .not("status", "in", "(filled,closed,archived)")
+      .limit(5000),
+  ]);
+  for (const r of [matchesRes, checksRes, tasksRes, positionsRes]) {
+    if (r.error) throw new Error(`guardrail_scan_failed:${r.error.message}`);
+  }
+  const matches = (matchesRes.data ?? []) as Any[];
+  const positions = (positionsRes.data ?? []) as Any[];
+
+  const positionIds = positions.map((p) => p.id as string);
+  const questions: Any[] = [];
+  for (let i = 0; i < positionIds.length; i += 200) {
+    const { data } = await s
+      .from("screening_questions")
+      .select("position_id,question")
+      .in("position_id", positionIds.slice(i, i + 200));
+    questions.push(...((data ?? []) as Any[]));
+  }
+
+  const runIds = [...new Set(matches.map((m) => m.current_score_run_id).filter(Boolean))] as string[];
+  const runEngine = new Map<string, string | null>();
+  for (let i = 0; i < runIds.length; i += 200) {
+    const { data } = await s.from("score_runs").select("id,engine_version").in("id", runIds.slice(i, i + 200));
+    for (const r of (data ?? []) as Any[]) runEngine.set(r.id, r.engine_version ?? null);
+  }
+  const currentRunEngine = new Map<string, string | null>(
+    matches
+      .filter((m) => m.current_score_run_id)
+      .map((m) => [m.id as string, runEngine.get(m.current_score_run_id) ?? null]),
+  );
+
+  const report = flagGuardrails({
+    now: new Date(),
+    engineVersion: ENGINE_VERSION,
+    matches,
+    failedCheckMatchIds: new Set(((checksRes.data ?? []) as Any[]).map((c) => c.candidate_match_id)),
+    openTaskMatchIds: new Set(((tasksRes.data ?? []) as Any[]).map((t) => t.candidate_match_id)),
+    positions,
+    screeningQuestions: questions,
+    currentRunEngine,
+  });
+  return { ...report, generated_at: new Date().toISOString() };
+}

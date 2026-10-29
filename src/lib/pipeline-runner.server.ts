@@ -12,6 +12,13 @@ import { decideStateAfterEnrichment } from "./scoring/enrichment-state-policy";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
 import { generateCandidateInsights, type CandidateInsights } from "./candidate-insights.server";
+import {
+  THIN_CV_CHARS,
+  candidateReviewTask,
+  needsExtractionRetry,
+  needsReviewTask,
+  storedTextNeedsReread,
+} from "./cv/unscored-review";
 import type { Json } from "@/integrations/supabase/types";
 
 type State =
@@ -276,8 +283,58 @@ export async function runPipelineForMatch(
   opts: { force?: boolean } = {},
 ): Promise<PipelineOutcome> {
   const outcome = await runPipelineForMatchInner(matchId, opts);
-  await notifyPipelineOutcome(await getAdmin(), outcome);
+  const s = await getAdmin();
+  await notifyPipelineOutcome(s, outcome);
+  await ensureUnscoredReviewTask(s, outcome);
   return outcome;
+}
+
+/**
+ * A match the pipeline could not score always has one open admin task that
+ * says why and what to do next. Idempotent: an open pipeline task for the
+ * match is reused, not duplicated. Never contacts the candidate.
+ */
+async function ensureUnscoredReviewTask(s: Any, outcome: PipelineOutcome): Promise<void> {
+  try {
+    const { data: match } = await s
+      .from("candidate_matches")
+      .select(
+        "id,organization_id,position_id,candidate_profile_id,current_score_run_id,processing_error_code,processing_error_message,positions(title),candidate_profiles(full_name)",
+      )
+      .eq("id", outcome.match_id)
+      .maybeSingle();
+    if (!match || !needsReviewTask(outcome, match)) return;
+    const { data: open } = await s
+      .from("tasks")
+      .select("id")
+      .eq("candidate_match_id", outcome.match_id)
+      .eq("task_type", "candidate_review")
+      .in("status", ["open", "in_progress"])
+      .is("deleted_at", null)
+      .contains("metadata", { source: "pipeline" })
+      .limit(1);
+    if ((open ?? []).length > 0) return;
+    const task = candidateReviewTask({
+      code: match.processing_error_code ?? outcome.final_state,
+      message: match.processing_error_message ?? null,
+      candidateName: (match.candidate_profiles as Any)?.full_name ?? null,
+      positionTitle: (match.positions as Any)?.title ?? null,
+    });
+    await s.from("tasks").insert({
+      organization_id: match.organization_id,
+      position_id: match.position_id ?? null,
+      candidate_match_id: outcome.match_id,
+      candidate_profile_id: match.candidate_profile_id ?? null,
+      task_type: "candidate_review",
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      status: "open",
+      metadata: { source: "pipeline", reason: task.reason, final_state: outcome.final_state, trace_id: outcome.trace_id },
+    });
+  } catch (e) {
+    console.error("[pipeline] review task failed", outcome.match_id, (e as Error)?.message);
+  }
 }
 
 async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean } = {}): Promise<PipelineOutcome> {
@@ -334,11 +391,19 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
     // Stored text that is binary garbage must be re-extracted, not reused —
     // one CV's raw PDF bytes were scored 28.6 and quoted as evidence
     // (audit #3, finding 4).
+    const hasScore = Boolean(ctx.match.current_score_run_id);
     if (
       !cvText ||
       cvText.length < 200 ||
       isGarbageCvText(cvText) ||
-      isFlattenedCvText(cvText, ctx.file.ocr_used)
+      isFlattenedCvText(cvText, ctx.file.ocr_used) ||
+      // Thin text on a candidate never scored gets its one re-read.
+      storedTextNeedsReread({
+        chars: cvText.length,
+        ocrUsed: Boolean(ctx.file.ocr_used),
+        attempts: ctx.file.extraction_attempts ?? 0,
+        hasScore,
+      })
     ) {
       await setFile({
         parse_state: "parsing",
@@ -346,13 +411,19 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
         parse_error: null,
         parse_error_code: null,
       });
-      const dl = await s.storage.from(ctx.file.storage_bucket).download(ctx.file.storage_path);
+      const download = () => s.storage.from(ctx.file.storage_bucket).download(ctx.file.storage_path);
+      let dl = await download();
+      // A failed read is retried once before anyone is asked to look at it.
+      if (dl.error || !dl.data) dl = await download();
       if (dl.error || !dl.data) {
         const msg = dl.error?.message ?? "download_failed";
         await setFile({ parse_state: "failed", parse_error_code: "storage_unreadable", parse_error: msg });
-        await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: msg });
+        // A candidate never scored goes to a person (with a task); a scored
+        // one keeps its score ("failed" + a live run is written as scored).
+        const unreadState: State = hasScore ? "failed" : "manual_review_required";
+        await setState(s, matchId, unreadState, { trace_id, code: "storage_unreadable", message: msg });
         await recordJob(s, matchId, "parse", "failed", trace_id, { code: "cv_unreadable", message: msg });
-        return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "parse", ok: false, note: msg }] };
+        return { match_id: matchId, trace_id, final_state: unreadState, steps: [{ step: "parse", ok: false, note: msg }] };
       }
       const bytes = new Uint8Array(await dl.data.arrayBuffer());
       const ext = await extractCvText(bytes, ctx.file.mime_type ?? "", ctx.file.filename ?? "");
@@ -369,6 +440,33 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
           ext.reason = error instanceof Error ? error.message : "Document reading failed.";
         }
       }
+      // Thin or failed text is read once more, and only once: the count is the
+      // file's extraction_attempts, and a retry is never a second OCR call.
+      let attemptsThisRun = 1;
+      const priorAttempts = ctx.file.extraction_attempts ?? 0;
+      if (
+        needsExtractionRetry({
+          chars: (ext.text ?? "").length,
+          needsOcr: ext.needs_ocr,
+          garbage: (ext.text ?? "").length >= 60 && isGarbageCvText(ext.text ?? ""),
+          ocrUsed,
+          priorAttempts,
+        })
+      ) {
+        attemptsThisRun = 2;
+        const again = await download();
+        if (!again.error && again.data) {
+          const second = await extractCvText(
+            new Uint8Array(await again.data.arrayBuffer()),
+            ctx.file.mime_type ?? "",
+            ctx.file.filename ?? "",
+          );
+          if (!second.needs_ocr && (second.text ?? "").length > (ext.text ?? "").length) {
+            Object.assign(ext, second);
+          }
+        }
+        steps.push({ step: "parse_retry", ok: true, note: `${(ext.text ?? "").length} chars` });
+      }
       const linkedIn = ext.links?.find((link) => /^https:\/\/(?:[a-z]+\.)?linkedin\.com\/in\//i.test(link));
       if (linkedIn) await s.from("candidate_profiles").update({ linkedin_url: linkedIn })
         .eq("id", ctx.match.candidate_profile_id).is("linkedin_url", null);
@@ -376,7 +474,7 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       await setFile({
         extracted_text: ext.text,
         extraction_completed_at: new Date().toISOString(),
-        extraction_attempts: (ctx.file.extraction_attempts ?? 0) + 1,
+        extraction_attempts: priorAttempts + attemptsThisRun,
         parser: ocrUsed ? "pdf_ocr" : ext.extractor,
         ocr_used: ocrUsed,
         parser_version: ENGINE_VERSION,
@@ -419,14 +517,27 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
           parse_error_code: "extract_empty",
           parse_error: ext.reason ?? `Unable to extract text (${ext.extractor}).`,
         });
-        await setState(s, matchId, "failed", {
-          trace_id, code: "cv_unreadable",
+        // Read twice and still empty: a person decides (an admin task is
+        // opened by runPipelineForMatch). Not "failed": nothing will retry it.
+        const emptyState: State = hasScore ? "failed" : "manual_review_required";
+        await setState(s, matchId, emptyState, {
+          trace_id, code: hasScore ? "cv_unreadable" : "extract_empty",
           message: ext.reason ?? `Unable to extract text (${ext.extractor}).`,
         });
         await recordJob(s, matchId, "parse", "failed", trace_id, {
           code: "cv_unreadable", message: ext.reason ?? "extract_empty",
         });
-        return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "parse", ok: false, note: ext.reason }] };
+        return { match_id: matchId, trace_id, final_state: emptyState, steps: [...steps, { step: "parse", ok: false, note: ext.reason }] };
+      }
+      // Still thin after its one retry, on a candidate never scored: too
+      // little to score fairly. A person looks (admin task); the file is on
+      // the parse-failure desk with a drafted re-upload request, unsent.
+      if (cvText.length < THIN_CV_CHARS && !hasScore) {
+        const message = `Only ${cvText.length} characters could be read from the CV after ${priorAttempts + attemptsThisRun} attempts.`;
+        await setFile({ parse_state: "review_required", parse_error_code: "cv_text_thin", parse_error: message });
+        await setState(s, matchId, "manual_review_required", { trace_id, code: "cv_text_thin", message });
+        await recordJob(s, matchId, "parse", "completed", trace_id);
+        return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [...steps, { step: "parse", ok: false, note: "cv_text_thin" }] };
       }
       await setFile({ parse_state: "parsed", parse_error: null, parse_error_code: null });
     } else if (ctx.file.parse_state !== "parsed") {

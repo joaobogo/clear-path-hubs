@@ -8,6 +8,7 @@
  */
 
 import { findProhibitedContent } from "./work-authorisation";
+import { findProtectedCriteria } from "@/lib/scoring/protected-attributes";
 
 export type LanguageCategory =
   | "gendered"
@@ -104,7 +105,23 @@ export function findLanguageIssues(draft: string): LanguageFinding[] {
     }
   }
 
+  // The shared protected-attribute detector: the same findings the intake,
+  // the role editor and the publish gate refuse, with the suggested rewrite.
+  for (const f of findProtectedCriteria(text)) {
+    findings.push({
+      span: f.span,
+      category: "prohibited",
+      reason: f.message,
+      suggestion: f.suggestion
+        ? `Use "${f.suggestion}" instead.`
+        : "Remove this. It cannot be published.",
+      blocking: true,
+    });
+  }
+
   for (const p of findProhibitedContent(text)) {
+    // Already named by the detector above, with a better suggestion.
+    if (findings.some((f) => f.blocking && f.span.toLowerCase().includes(p.span.toLowerCase()))) continue;
     findings.push({
       span: p.span,
       category: "prohibited",

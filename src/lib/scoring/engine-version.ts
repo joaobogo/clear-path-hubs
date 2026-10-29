@@ -162,4 +162,15 @@
  *      attribute filter keeps line breaks, so the rules above see the CV's
  *      structure.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.0";
+/**
+ * v1.7.1 — market experience for any country (owner, 29 Oct 2026). The fixed
+ * list of twelve Asian markets is replaced by a shared geography dictionary
+ * (scoring/geography.ts): countries in every region with their common names,
+ * abbreviations (UK, USA, UAE, KSA, HK, PRC) and business cities, plus groups
+ * such as the GCC or Benelux. Places only: a nationality, a language or a
+ * demonym never satisfies a market requirement; an adjective counts only
+ * directly before "market(s)" ("the Korean market"). A single country named
+ * as a market ("experience in the UK") is now read by the rule as well.
+ * Requirements that name no market are scored exactly as in v1.7.0.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.1";

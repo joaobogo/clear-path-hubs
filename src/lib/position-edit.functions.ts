@@ -29,6 +29,9 @@ import {
 } from "@/lib/positions/role-form";
 import { BLUEPRINT_RERUN_FLAG, analysisDecision } from "@/lib/blueprint-trigger";
 import { sanitizeInlineMarkup, stripInlineMarkup } from "@/lib/marketing/inline-format";
+import { assertRoleFormCriteriaAllowed } from "@/lib/positions/protected-criteria-guard";
+import { assertNoProtectedCriteria } from "@/lib/scoring/protected-attributes";
+import { postingCopyFields } from "@/lib/positions/protected-criteria-fields";
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -95,6 +98,9 @@ async function writeAudit(opts: {
     trace_id: opts.trace_id,
   });
 }
+
+/** The screening-question columns that change a score or an eligibility decision. */
+const SQ_SNAPSHOT = "id,question,answer_type,required,dealbreaker,must_have,preferred_answer";
 
 const traceId = () =>
   `pe_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
@@ -186,6 +192,11 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     const firstError = Object.values(required.errors)[0];
     if (firstError) throw new Error(firstError);
 
+    // Criteria that state a protected attribute are refused with the
+    // suggested wording; the editor shows the same findings inline with a
+    // one-click "Use suggested wording". Never rewritten here.
+    assertRoleFormCriteriaAllowed(data);
+
     // Preserve unknown intake_context/compensation/work_authorization fields
     const { data: existing } = await s
       .from("positions")
@@ -242,7 +253,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     // Sync screening questions: delete removed, upsert kept/new, keep order
     const { data: existingSQ } = await s
       .from("screening_questions")
-      .select("id")
+      .select(SQ_SNAPSHOT)
       .eq("position_id", data.id);
     const existingIds = new Set(((existingSQ ?? []) as AnyRow[]).map((r) => r.id));
     const keepIds = new Set(
@@ -291,7 +302,33 @@ export const savePositionEdit = createServerFn({ method: "POST" })
       trace_id,
     });
 
-    return { ok: true as const, trace_id, position: after, analysis, brief_missing: required.missing };
+    // Changed criteria rescore every match on the role through the full
+    // pipeline and recompute eligibility; admins get a one-line summary.
+    // The save has already succeeded, so a failure here is logged, not thrown.
+    let rescore: { queued: number; changed: boolean } | null = null;
+    try {
+      const { data: afterSQ } = await s
+        .from("screening_questions")
+        .select(SQ_SNAPSHOT)
+        .eq("position_id", data.id);
+      const { rescoreAfterCriteriaChange } = await import("./scoring/requirement-change-rescore.server");
+      const out = await rescoreAfterCriteriaChange({
+        admin: s,
+        positionId: data.id,
+        organizationId: before.organization_id ?? null,
+        title: (after?.title as string | null) ?? data.title,
+        before: { ...before, screening_questions: (existingSQ ?? []) as AnyRow[] },
+        after: { ...(after ?? {}), screening_questions: (afterSQ ?? []) as AnyRow[] },
+        actorUserId: context.userId,
+        savedAt: (after?.updated_at as string | null) ?? null,
+        trace_id,
+      });
+      rescore = { queued: out.queued, changed: out.changed };
+    } catch (err) {
+      console.error("[position-edit] rescore after criteria change failed", data.id, (err as Error)?.message);
+    }
+
+    return { ok: true as const, trace_id, position: after, analysis, brief_missing: required.missing, rescore };
   });
 
 const publishInput = z.object({
@@ -317,6 +354,11 @@ export const publishPosition = createServerFn({ method: "POST" })
     const before = await assertCanEdit(context.userId, data.id);
     const trace_id = traceId();
     const s = await getAdmin();
+
+    // Posting copy is candidate-facing: "Native Arabic speaker" in the
+    // languages line or "Under 35" in the intro is refused with its rewrite.
+    // The EEO statement is not read here (it names attributes to rule them out).
+    assertNoProtectedCriteria(postingCopyFields(data), { roleTitle: (before.title as string | null) ?? null });
 
     const { data: existing } = await s
       .from("positions")
