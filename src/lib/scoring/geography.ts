@@ -49,7 +49,7 @@ const COUNTRIES: CountryDef[] = [
     names: ["South Korea", "Republic of Korea"],
     raw: ["(?<!north[\\s-])korea"],
     cities: ["Seoul", "Busan", "Incheon", "Pangyo"],
-    adjectives: ["Korean", "South Korean"],
+    adjectives: ["South Korean", "Korean"],
   },
   {
     name: "Japan",
@@ -120,7 +120,7 @@ const COUNTRIES: CountryDef[] = [
     names: ["United Arab Emirates"],
     abbr: ["UAE", "U.A.E."],
     cities: ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Fujairah", "Al Ain"],
-    adjectives: ["Emirati", "UAE"],
+    adjectives: ["UAE", "Emirati"],
   },
   {
     name: "Saudi Arabia",
@@ -177,7 +177,7 @@ const COUNTRIES: CountryDef[] = [
     names: ["United Kingdom", "Great Britain", "Britain", "England", "Scotland", "Wales", "Northern Ireland"],
     abbr: ["UK", "U.K."],
     cities: ["London", "Manchester", "Birmingham", "Edinburgh", "Glasgow", "Leeds", "Bristol", "Belfast", "Liverpool"],
-    adjectives: ["British", "UK"],
+    adjectives: ["UK", "British", "English", "Scottish", "Welsh"],
   },
   { name: "Ireland", region: "Europe", names: ["Ireland", "Republic of Ireland"], cities: ["Dublin"], adjectives: ["Irish"] },
   {
@@ -233,7 +233,7 @@ const COUNTRIES: CountryDef[] = [
     names: ["United States", "United States of America"],
     abbr: ["US", "USA", "U.S.", "U.S.A."],
     cities: ["New York", "NYC", "San Francisco", "Los Angeles", "Chicago", "Boston", "Seattle", "Miami", "Atlanta", "Houston", "Washington DC", "Washington D.C.", "Silicon Valley", "Denver", "Philadelphia"],
-    adjectives: ["American", "US", "U.S."],
+    adjectives: ["US", "American", "U.S."],
   },
   { name: "Canada", region: "North America", names: ["Canada"], cities: ["Toronto", "Vancouver", "Montreal", "Montréal", "Calgary", "Ottawa"], adjectives: ["Canadian"] },
   { name: "Mexico", region: "Latin America", names: ["México"], raw: ["(?<!new\\s)mexico"], cities: ["Mexico City", "Monterrey", "Guadalajara"], adjectives: ["Mexican"] },
@@ -402,4 +402,36 @@ export function placesIn(text: string): Place[] {
 /** The broad regions the named places sit in, for the "region only" fallback. */
 export function regionsOf(places: Place[]): Region[] {
   return [...new Set(places.map((p) => p.region).filter((r): r is Region => r !== null))];
+}
+
+/**
+ * For rewriting only, never for matching: the country a demonym or an
+ * abbreviation refers to ("Korean" -> South Korea, "British" -> United
+ * Kingdom), with the wording a rewrite uses for its market ("the South Korean
+ * market") and for working there ("work in the UK"). A requirement that
+ * states a nationality is rewritten as a market or work-authorisation
+ * requirement; the nationality itself is never read as a place.
+ */
+export function countryForDemonym(
+  word: string,
+): { name: string; marketAdjective: string; workIn: string } | null {
+  const w = word.trim().toLowerCase().replace(/\./g, "");
+  if (!w) return null;
+  for (const def of COUNTRIES) {
+    const forms = [...(def.adjectives ?? []), ...(def.abbr ?? [])].map((x) => x.toLowerCase().replace(/\./g, ""));
+    if (!forms.includes(w)) continue;
+    const short = def.abbr?.find((a) => /^[A-Z]{2,3}$/.test(a) && ["UK", "US", "UAE"].includes(a));
+    const workIn = short
+      ? `the ${short}`
+      : /^(united|netherlands|philippines|czech|dominican)/i.test(def.name)
+        ? `the ${def.name}`
+        : def.name;
+    return { name: def.name, marketAdjective: def.adjectives?.[0] ?? def.name, workIn };
+  }
+  return null;
+}
+
+/** Every adjectival form in the dictionary ("Korean", "British"), for the protected-attribute detector. */
+export function demonymWords(): string[] {
+  return [...new Set(COUNTRIES.flatMap((d) => d.adjectives ?? []))];
 }
