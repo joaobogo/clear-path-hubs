@@ -173,4 +173,10 @@
  * as a market ("experience in the UK") is now read by the rule as well.
  * Requirements that name no market are scored exactly as in v1.7.0.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.1";
+/**
+ * v1.7.2 — fixes found by the second review of 32 Group Marketing Manager
+ * CVs: a degree's subject is read from its own words, a stated career length
+ * that dated roles contradict is partial, education dates are judged at the
+ * range, and letter-spaced PDF capitals are rebuilt before reading.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.2";
