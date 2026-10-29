@@ -1,4 +1,5 @@
 import { decideScreeningEligibility } from "@/lib/scoring/screening-eligibility";
+import type { Json } from "@/integrations/supabase/types";
 // Application submission implementation (server-only).
 //
 // Extracted verbatim from the submitApplication server function so that both the

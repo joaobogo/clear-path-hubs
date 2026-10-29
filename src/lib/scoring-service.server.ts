@@ -1,3 +1,4 @@
+import { decideScreeningEligibility, isDealbreakerHit } from "@/lib/scoring/screening-eligibility";
 // Canonical scoring service. SERVER-ONLY.
 //
 // This is the ONLY entry point that may:
@@ -113,7 +114,7 @@ async function loadInputs(matchId: string) {
       .select("id,current_cv_file_id")
       .eq("id", match.candidate_profile_id).maybeSingle(),
     s.from("application_answers")
-      .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)")
+      .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have)")
       .eq("application_id", match.application_id),
   ]);
 
@@ -152,7 +153,10 @@ async function loadInputs(matchId: string) {
       ? (r.answer as { value: unknown }).value
       : r.answer;
     let disq: ScreeningAnswer["disqualifying_condition"] = null;
-    if (q?.dealbreaker && q?.answer_type === "boolean") disq = { operator: "equals", value: false };
+    if (q && isDealbreakerHit({
+      question_id: r.question_id, question: q.question ?? "", dealbreaker: q.dealbreaker,
+      answer_type: q.answer_type, preferred_answer: q.preferred_answer, value,
+    })) disq = { operator: "equals", value };
     return {
       question_id: r.question_id,
       question: q?.question ?? "",
@@ -160,10 +164,22 @@ async function loadInputs(matchId: string) {
       answer_type: q?.answer_type ?? "text",
       value,
       disqualifying_condition: disq,
+      must_have: typeof q?.must_have === "string" ? q.must_have : null,
+    };
+  });
+  const screeningRaw = (ansRes.data ?? []).map((r: Any) => {
+    const q = Array.isArray(r.screening_questions) ? r.screening_questions[0] : r.screening_questions;
+    return {
+      question_id: r.question_id as string,
+      question: (q?.question ?? "") as string,
+      dealbreaker: q?.dealbreaker ?? false,
+      answer_type: q?.answer_type ?? "text",
+      preferred_answer: q?.preferred_answer ?? null,
+      value: r.answer,
     };
   });
 
-  return { match, position: posRes.data, profile: profRes.data, cvFile, requirements, screening };
+  return { match, position: posRes.data, profile: profRes.data, cvFile, requirements, screening, screeningRaw };
 }
 
 /**
@@ -610,23 +626,19 @@ export async function executeScoring(
     }
 
 
-    // F-008: write eligibility checks for disqualifying answers
-    const disqualifying = raw.screening_evidence.filter(s => s.aligned === "misaligned");
-    if (disqualifying.length > 0) {
-      const checks = disqualifying.map(d => ({
+    // F-008: only dealbreaker = true questions can disqualify (shared rule).
+    const eligibility = decideScreeningEligibility(ctx.screeningRaw);
+    if (eligibility.checks.length > 0) {
+      const checks = eligibility.checks.map((c) => ({
+        ...c,
         candidate_match_id: matchId,
         organization_id: ctx.match.organization_id,
         position_id: ctx.match.position_id,
-        qualifier_key: `disq:${d.question_id}`,
-        qualifier_label: d.question,
-        qualifier_kind: "disqualifier",
-        status: "not_eligible",
-        reason: `Disqualifying answer: ${d.normalized_value}`,
-        evidence: { question_id: d.question_id, value: d.normalized_value },
-        updated_at: new Date().toISOString()
+        evidence: c.evidence as unknown as Json,
+        updated_at: new Date().toISOString(),
       }));
-      await s.from("eligibility_checks").upsert(checks, { 
-        onConflict: "candidate_match_id,qualifier_key" 
+      await s.from("eligibility_checks").upsert(checks, {
+        onConflict: "candidate_match_id,qualifier_key",
       });
     }
 
@@ -634,7 +646,8 @@ export async function executeScoring(
       .from("candidate_matches")
       .update({
         current_score_run_id: runId,
-        eligibility_status: disqualifying.length > 0 ? "not_eligible" : "eligible",
+        eligibility_status: eligibility.status,
+        eligibility_updated_at: new Date().toISOString(),
         ...(reused ? {} : { evidence_confidence: raw.evidence_confidence }),
       })
       .eq("id", matchId);
