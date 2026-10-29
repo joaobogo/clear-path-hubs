@@ -125,4 +125,41 @@
  * kept the old behaviour, so the guard test asserts the property across both
  * branches rather than the branch that was wrong this time.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.5.4";
+/**
+ * v1.6.0 — recruiter-style rules for three requirement shapes (owner, 29 Oct
+ * 2026, Stratium Partners / Group Marketing Manager).
+ *
+ * Keyword overlap cannot judge "Bachelor's degree in Marketing, Business
+ * Administration or a related field" (no CV says "related field"), "If outside
+ * the UAE, must be willing to relocate to Dubai" (a Dubai resident never
+ * writes "relocate", so the row cost her points for a condition that did not
+ * apply) or "10 or more years of ... experience" (the number was never
+ * compared with anything). scoring/structured-requirements.ts now decides
+ * those three shapes: the degree subject is read and compared by field family
+ * (a postgraduate qualification in the field counts, since it presupposes a
+ * first degree); relocation is met when the CV places the candidate there;
+ * years are counted from dated roles, by level when the requirement asks for
+ * leadership. Every Met carries the CV line it relied on, and anything the CV
+ * cannot settle is Unknown with needs_validation, never a zero. All other
+ * requirements are scored exactly as in v1.5.4.
+ */
+/**
+ * v1.7.0 — screening and CV structure (owner, 29 Oct 2026, same role).
+ *   1. Eligibility comes from dealbreaker answers only (disqualifying_answers);
+ *      a "no" to an optional question is no longer counted against the
+ *      candidate in screening alignment either.
+ *   2. A yes/no answer counts for the must-have its question was written for
+ *      (screening_questions.must_have): alone it is Partial, with CV support
+ *      it is Met.
+ *   3. Career length stated in the CV ("25+ years of marketing experience")
+ *      counts beside dated roles; numbers that are not durations do not.
+ *      "Based in X or willing to relocate" is read like the "if outside X"
+ *      wording.
+ *   4. A requirement listing markets ("experience in Korea, Japan or
+ *      Singapore") is met by working in those countries or their cities,
+ *      never by nationality, birthplace or language.
+ *   5. CVs stored as one long line are read in segments, and the protected-
+ *      attribute filter keeps line breaks, so the rules above see the CV's
+ *      structure.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.0";

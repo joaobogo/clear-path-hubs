@@ -45,6 +45,19 @@ describe("resolveEligibility", () => {
 });
 
 describe("resolveEligibilityFromRows (stored eligibility_checks rows)", () => {
+  it("reads the statuses the eligibility_checks table actually stores", () => {
+    // The table's check constraint allows passed / failed / unknown / excepted.
+    expect(
+      resolveEligibilityFromRows([
+        { qualifier_key: "disq:q1", qualifier_kind: "disqualifier", status: "failed" },
+      ]).status,
+    ).toBe("not_eligible");
+    expect(
+      resolveEligibilityFromRows([{ qualifier_key: "license", qualifier_kind: "qualifier", status: "passed" }])
+        .status,
+    ).toBe("eligible");
+  });
+
   it("maps stored statuses used by the staff review surface", () => {
     expect(
       resolveEligibilityFromRows([

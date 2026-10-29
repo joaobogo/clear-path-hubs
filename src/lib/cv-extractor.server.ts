@@ -6,7 +6,7 @@
 //
 // Never throws — always returns a decision the pipeline can act on.
 
-import { extractText as unpdfExtractText, getDocumentProxy } from "unpdf";
+import { extractText as unpdfExtractText, getDocumentProxy, extractLinks } from "unpdf";
 import mammoth from "mammoth";
 
 export type ExtractResult = {
@@ -16,6 +16,7 @@ export type ExtractResult = {
   page_count: number | null;
   chars: number;
   reason?: string;
+  links?: string[];
 };
 
 /** Validates a CV's text layer immediately after upload to detect scanned images. */
@@ -31,6 +32,17 @@ function normalize(s: string): string {
     .replace(/[ \t]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+/**
+ * Text stored before line breaks were kept: a PDF read into one long line.
+ * Re-reading the original file restores its structure at no cost, so the
+ * pipeline treats this like short or garbled text and extracts again (OCR
+ * text is left alone; OCR is billed and its retries are a staff decision).
+ */
+export function isFlattenedCvText(text: string | null | undefined, ocrUsed?: boolean | null): boolean {
+  if (!text || ocrUsed) return false;
+  return text.length >= 1500 && !text.includes("\n");
 }
 
 function looksLikePdf(bytes: Uint8Array): boolean {
@@ -49,10 +61,19 @@ export async function extractCvText(bytes: Uint8Array, mime: string, filename?: 
   if (mimeLower.includes("pdf") || looksLikePdf(bytes) || nameLower.endsWith(".pdf")) {
     try {
       const pdf = await getDocumentProxy(bytes);
-      const { text, totalPages } = await unpdfExtractText(pdf, { mergePages: true });
+      // Pages are read one by one and joined here. unpdf's own mergePages
+      // collapses every line break into a space in the version deployed
+      // (1.6.x), which stored every CV as one long line and cost the scorer
+      // the header, the job title above each date and the education section.
+      const { text, totalPages } = await unpdfExtractText(pdf, { mergePages: false });
+      const { links: rawLinks } = await extractLinks(pdf);
+      const links = rawLinks.filter((link) => {
+        try { const url = new URL(link); return url.protocol === "https:" && !url.username && !url.password; }
+        catch { return false; }
+      });
       const merged = normalize(Array.isArray(text) ? text.join("\n\n") : text);
       if (merged.length >= 200) {
-        return { text: merged, needs_ocr: false, extractor: "pdf", page_count: totalPages ?? null, chars: merged.length };
+        return { text: merged, needs_ocr: false, extractor: "pdf", page_count: totalPages ?? null, chars: merged.length, links };
       }
       // If we got exactly zero characters, it's definitely unreadable (scanned/image).
       // If we got some text but it's very short, it's likely a header-only or bad extract.
@@ -62,6 +83,7 @@ export async function extractCvText(bytes: Uint8Array, mime: string, filename?: 
         extractor: "pdf",
         page_count: totalPages ?? null,
         chars: merged.length,
+        links,
         reason: merged.length === 0 ? "cv_unreadable" : "text_layer_too_short",
       };
     } catch (e) {

@@ -12,6 +12,7 @@ import { formatWorkAuthorization } from "@/lib/human-labels";
 import { updateCandidateProfileField } from "@/lib/admin-candidates.functions";
 import { IntroVideoCard } from "@/components/admin/candidate-detail/intro-video-card";
 import { scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
+import { detailWithoutTitle, narrativeToShow, uniqueByTitle, uniqueHighlights } from "@/lib/briefing/display-guards";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -271,13 +272,20 @@ function InsightsBriefing({
   // is not supportable by what produced it. They differ only in wording.
   const suppressed = capped || unreadable;
   const rec = String(insights?.overall_recommendation ?? "consider");
+  // A recruiter who finalises the briefing also sets the verdict. Shown as the
+  // recruiter's, without the model's confidence, so the page never says
+  // "AI read: Reject · 95%" over a candidate the recruiter ranked first
+  // (Stratium Partners, 29 Oct 2026).
+  const recruiterRead = insights?.recommendation_source === "recruiter";
   const recTone =
     rec === "advance" ? "bg-success/15 text-success dark:text-success"
     : rec === "reject" ? "bg-destructive/15 text-destructive"
     : "bg-warning/15 text-warning-foreground dark:text-warning-foreground";
-  const highlights: string[] = Array.isArray(insights?.highlights) ? insights.highlights : [];
-  const strengths: Any[] = Array.isArray(insights?.strengths) ? insights.strengths : [];
-  const concerns: Any[] = Array.isArray(insights?.concerns) ? insights.concerns : [];
+  // Each thing once, whatever the stored briefing holds (see display-guards).
+  const highlights: string[] = uniqueHighlights(insights?.highlights);
+  const strengths: Any[] = uniqueByTitle<Any>(insights?.strengths);
+  const concerns: Any[] = uniqueByTitle<Any>(insights?.concerns);
+  const narrative = narrativeToShow(insights?.pitch_summary, insights?.narrative);
   return (
     <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-transparent p-5">
       <div className="flex flex-wrap items-center gap-2">
@@ -302,10 +310,10 @@ function InsightsBriefing({
           </span>
         ) : (
           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${recTone}`}>
-            AI read: {rec}
+            {recruiterRead ? "Recruiter read" : "AI read"}: {rec}
           </span>
         )}
-        {!suppressed && typeof insights?.confidence === "number" && (
+        {!suppressed && !recruiterRead && typeof insights?.confidence === "number" && (
           <span className="text-xs text-muted-foreground">
             confidence {Math.round(insights.confidence * 100)}%
           </span>
@@ -346,9 +354,9 @@ function InsightsBriefing({
           {insights.pitch_summary}
         </div>
       )}
-      {!suppressed && insights?.narrative && (
+      {!suppressed && narrative && (
         <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
-          {insights.narrative}
+          {narrative}
         </div>
       )}
       {!suppressed && highlights.length > 0 && (
@@ -372,7 +380,9 @@ function InsightsBriefing({
               {strengths.map((s, i) => (
                 <li key={i}>
                   <div className="font-medium">{s.title}</div>
-                  {s.detail && <div className="text-xs text-muted-foreground">{s.detail}</div>}
+                  {s.detail && (
+                    <div className="text-xs text-muted-foreground">{detailWithoutTitle(s.title, s.detail)}</div>
+                  )}
                   {s.cv_quote && (
                     <div className="mt-1 border-l-2 border-success/40 pl-2 text-xs italic text-muted-foreground">
                       "{s.cv_quote}"
@@ -391,7 +401,9 @@ function InsightsBriefing({
               {concerns.map((c, i) => (
                 <li key={i}>
                   <div className="font-medium">{c.title}</div>
-                  {c.detail && <div className="text-xs text-muted-foreground">{c.detail}</div>}
+                  {c.detail && (
+                    <div className="text-xs text-muted-foreground">{detailWithoutTitle(c.title, c.detail)}</div>
+                  )}
                 </li>
               ))}
             </ul>

@@ -22,6 +22,27 @@
       "when": 1792418853092,
       "tag": "0002_widen_marketing_inquiry_kinds",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793225350853,
+      "tag": "0003_repair_scoring_readiness_blocker_append",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793228637311,
+      "tag": "0004_resolve_admin_candidate_override_rankings",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793270000000,
+      "tag": "0005_recompute_screening_eligibility",
+      "breakpoints": true
     }
   ]
 }

@@ -14498,6 +14498,7 @@ export type Database = {
           admin_status: string | null
           application_id: string | null
           applied_at: string | null
+          automated_score: number | null
           brief_updated_at: string | null
           candidate_profile_id: string | null
           canonical_state: string | null
@@ -14523,6 +14524,8 @@ export type Database = {
           match_id: string | null
           org_name: string | null
           organization_id: string | null
+          override_reason: string | null
+          override_score: number | null
           phone: string | null
           position_id: string | null
           position_status: string | null
