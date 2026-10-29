@@ -367,6 +367,8 @@ export const getPublicPosition = createServerFn({ method: "GET" })
 
 
     return {
+      // B1: never syndicated (JSON-LD, boards) while any role text fails the detector.
+      syndicate: !roleFailsProtectedCheck({ ...pos, screening_questions: questions ?? [] }),
       id: pos.id,
       title: pos.title,
       department: pos.department,
