@@ -10,6 +10,7 @@
  *    absence of gates is not a blocker.
  */
 
+import type { ScreeningAnswer } from "../scoring-engine.server";
 import type {
   EligibilityStatus,
   QualifierCheckStatus,
@@ -97,15 +98,61 @@ export function resolveEligibilityFromRows(
     qualifier_kind: (r.qualifier_kind === "disqualifier"
       ? "disqualifier"
       : "qualifier") as QualifierKind,
+    // The table stores passed / failed / unknown / excepted (its check
+    // constraint); the eligibility words are accepted for older callers.
     status:
-      r.status === "not_eligible"
+      r.status === "failed" || r.status === "not_eligible"
         ? "failed"
         : r.status === "excepted"
           ? "excepted"
-          : r.status === "eligible"
+          : r.status === "passed" || r.status === "eligible"
             ? "passed"
             : "unknown",
     has_active_exception: r.status === "excepted",
   }));
   return resolveEligibility(checks);
+}
+
+// ---------------------------------------------------------------------------
+// Which screening answers can make a candidate ineligible (engine v1.7.0).
+//
+// Only a question the client marked as a dealbreaker can. A "no" to any other
+// question (Arabic on a role where Arabic is a nice-to-have) is a preference
+// the scorer weighs, never a gate: before this, any "no" to a yes/no question
+// set the match to not_eligible after scoring, which on one role hid 17 of 32
+// candidates for not speaking Arabic.
+// ---------------------------------------------------------------------------
+
+type QuestionLike = {
+  dealbreaker?: boolean | null;
+  answer_type?: string | null;
+  preferred_answer?: unknown;
+};
+
+/** true / false from the shapes a stored answer or preference takes. */
+export function asBoolean(value: unknown): boolean | null {
+  if (value && typeof value === "object" && "value" in (value as Record<string, unknown>)) {
+    return asBoolean((value as { value: unknown }).value);
+  }
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const v = value.trim().toLowerCase();
+    if (["true", "yes", "y"].includes(v)) return true;
+    if (["false", "no", "n"].includes(v)) return false;
+  }
+  return null;
+}
+
+/**
+ * The disqualifying condition for a question, or null when no answer to it
+ * can disqualify. A yes/no dealbreaker disqualifies the answer opposite to
+ * the preferred one; with no preference recorded, "no" disqualifies (the
+ * question asks whether the candidate meets the bar).
+ */
+export function dealbreakerCondition(
+  q: QuestionLike | null | undefined,
+): ScreeningAnswer["disqualifying_condition"] {
+  if (!q?.dealbreaker || q.answer_type !== "boolean") return null;
+  const preferred = asBoolean(q.preferred_answer);
+  return { operator: "equals", value: preferred === false ? true : false };
 }
