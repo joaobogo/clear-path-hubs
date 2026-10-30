@@ -15527,6 +15527,16 @@ export type Database = {
         Args: { _position_id: string; _reason: string }
         Returns: number
       }
+      reapply_claude_overrides: {
+        Args: { p_apply?: boolean; p_position_id: string }
+        Returns: {
+          applied: boolean
+          from_run: string
+          match_id: string
+          score: number
+          to_run: string
+        }[]
+      }
       recompute_screening_eligibility: {
         Args: { p_apply?: boolean; p_position_id?: string }
         Returns: {
