@@ -111,3 +111,43 @@ Open
   docs/handoff/gmm-v17-lovable-addendum.md).
 - The shared research conversation the owner linked could not be read
   (bot check). Paste its text or attach its PDF to use it.
+
+## 30 Oct 2026, morning: owner's market rule, re-judgment and completion
+
+Profiles
+- Profile summary, education and skills were filled from the CVs for 39 of
+  40 candidates; Alvito Tereza has no readable CV. Fixes: Hany Badr's MBA is
+  marked in progress, and Wael's and Radwa's summaries now open with their
+  names.
+
+Owner's rule
+- Marketing for a company or brand from a target market counts as
+  experience of that market, wherever the person sat. The owner's example
+  was Myreine Abdel Massih, marketing Japanese brands from Dubai.
+- Engine v1.7.3 (merged to main) adds a brand-origin dictionary and
+  "Japanese brands"-style phrases. Campaigns aimed at a market's consumers
+  count; an unnamed APAC or EMEA remit is partial instead of missing.
+
+Re-judgment
+- All 38 briefed candidates were re-judged under that rule, and every red
+  verdict was checked for partial credit. Concerns calling brand-based or
+  remote market work a weakness were removed.
+- Notable changes: Radwa 83→85, Nora 76→78, Janice 72→74, Reda 58→72
+  (Raffles), Matin 55→70, Shaima 60→67 (LG), Shailesh 70→72 (Hello
+  Kitty), Fares 66→69, Tarek 64→67, Hemal 58→61, Dadirai 68→70; smaller
+  Arabic and qualification partials elsewhere.
+- New overrides were recorded on the current runs where the score changed.
+  Each candidate has a "Claude re-judgment · 30 Oct 2026" note.
+
+New applicant
+- Omer Ikram (05:22 UTC) was scored 63.5 by v1.5.4 with no briefing (AI
+  out of credits).
+- Full profile written. Proposed 75, market met (ZTE China regional sales
+  and marketing; Huawei, China Mobile Zong).
+
+Checks
+- 02:51, 04:51 and 06:51 UTC: no unexplained exclusions; Lovable unchanged
+  (latest edit 3b96eeb).
+- Admin task 2f7a394c now carries the final ranking of all 41.
+- Top: Melissa Wingfield 86, Myreine Abdel Massih 86, Kumar Sambhav Verma
+  85, Radwa Abdel Ghani 85, Nora Tourky 78.

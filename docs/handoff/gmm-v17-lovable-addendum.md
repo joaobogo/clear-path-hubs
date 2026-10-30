@@ -27,7 +27,7 @@ completed directly in the database on 29–30 Oct.
 4. Publish.
 5. Rescore every candidate on position 228cd1ec-1ec1-4205-828c-7a92b1be42e1
    through the full pipeline: runPipelineForMatch(matchId, { force: true })
-   for all 40 matches, including the four in manual review (Nour Moussa,
+   for all 41 matches, including the four in manual review (Nour Moussa,
    Dadirai Mutasa, Boral Al Tarifi, Alvito Tereza). Not "recompute score":
    only the pipeline re-reads each CV file with its line breaks. The
    candidate briefings were written by hand against the current
@@ -39,7 +39,7 @@ completed directly in the database on 29–30 Oct.
    - every current score run shows engine_version taasflow-scoring-v1.7.3;
    - no match is not_eligible without a failed eligibility_checks row;
    - every candidate's latest candidate_evidence still has its briefing
-     (extracted.insights with authored_by set) for the 38 that had one;
+     (extracted.insights with authored_by set) for the 39 that have one;
    - nothing was approved and every client_visibility is still hidden;
    - a table: name, engine score -> new engine score, Claude's score, and
      the market requirement status (met / partial / missing).
@@ -68,11 +68,11 @@ Candidates:
 - The code on `main` now keeps the previous briefing when generation fails.
   It also keeps a hand-written briefing while it still covers the current
   requirements.
-- All 40 candidates were reviewed. 38 have a complete hand-written briefing:
+- All 41 candidates were reviewed. 39 have a complete hand-written briefing:
   10 requirement verdicts, 5 screening answers, CV quotes checked word for
   word, and public evidence identity-matched on two points with sources.
 - Profile fields were completed from the CVs: headline, years of
-  experience and work history (summary, education and skills: see the run log).
+  experience and work history , summary, education and skills.
   Names were
   corrected to match the CV: Sebastian Fernandes, Wael Kanaan, Janice Lee and
   Radwa Abdel Ghani.
