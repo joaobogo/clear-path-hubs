@@ -1,13 +1,36 @@
 # Claude second review: runbook
 
 Claude is the primary scorer (owner, 30 Oct 2026); the engine's number is
-the first pass. The scheduled run covers the Mushroom Harvesting Manager
-role only, every 12 hours, and does nothing when no new candidate has
-arrived (owner, 30 Oct 2026). On a new candidate Claude reads the CV as a
-director of recruitment would, checks the engine's verdict on every
+the first pass. A review runs only when the owner asks for one (owner,
+30 Oct 2026, 15:40: no schedule). On a new candidate Claude reads the CV as
+a director of recruitment would, checks the engine's verdict on every
 requirement, looks for public professional evidence beyond the CV, records
-what it found, and records its score as an override on the current run.
+what it found as the briefing (`candidate_evidence.extracted.insights`,
+one verdict per requirement with a CV quote), and then publishes the
+reviewed verdicts with `apply_reviewed_verdicts(position, true)`, which
+scores them with the platform formula on a new human-adjusted run. That
+run's `final_score` is the one number every surface shows.
 This file is the procedure each run follows.
+
+## One published number (30 Oct 2026 incident)
+
+The client reads `score_runs.final_score` of the approved run. The admin
+list used to prefer the latest `override` decision, so a reviewed score
+recorded only as an override showed 87 to staff and 98 to the client for
+the same candidate. Rules now:
+
+- A reviewed score is never a hand-typed number. It is the platform
+  formula over the reviewed requirement verdicts, written as a
+  human-adjusted score run by `apply_reviewed_verdicts` (migration 0009).
+- The trigger `score_decisions_override_matches_run` refuses an override
+  decision whose score differs from its run.
+- Rows the client cannot quote (a bare "Dubai, UAE" or a date) carry the
+  reviewer's CV quote and the linked screening answer, so the client's
+  requirement rows match the score. A verified "not evidenced" row is
+  shown as such (client-fit-presentation, 30 Oct).
+- Check any time: `select * from apply_reviewed_verdicts('<position>', false)`
+  must return only `unchanged`; the admin index and the approved run must
+  agree (see docs/ops/second-review-log.md, 30 Oct 16:45, for the query).
 
 ## What a run may and may not do
 
@@ -26,9 +49,11 @@ Never:
 - approve a score, release a candidate, publish, or change
   `client_visibility` or `admin_status`;
 - write a `score_decisions` row of any type other than `override`
-  (reason_code `claude_primary_review`, actor_user_id null). An override is
-  Claude's recorded score, not an approval: it never sets
-  `approved_score_run_id`, `admin_status` or `client_visibility`;
+  (reason_code `claude_primary_review`, actor_user_id null), and an
+  override must equal the run's `final_score` (the trigger refuses any
+  other). The reviewed score lives on the human-adjusted run written by
+  `apply_reviewed_verdicts`; an override never sets `approved_score_run_id`,
+  `admin_status` or `client_visibility`;
 - edit an existing score run (runs are immutable);
 - email or message a candidate or a client;
 - record or use nationality, citizenship, ethnicity, religion, age, gender,

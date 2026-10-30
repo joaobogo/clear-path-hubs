@@ -64,6 +64,13 @@
       "when": 1793322000000,
       "tag": "0008_reapply_claude_overrides",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793376000000,
+      "tag": "0009_apply_reviewed_verdicts",
+      "breakpoints": true
     }
   ]
 }

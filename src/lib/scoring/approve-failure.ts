@@ -36,6 +36,16 @@ function label(state: string): string {
 
 export function explainApproveFailure(message: string): ApproveFailure {
   const raw = (message || "unknown_error").trim();
+  if (raw.includes("score_override_retired")) {
+    return {
+      raw,
+      title: "Score overrides are retired",
+      detail:
+        "The published score is the score run's final score, so staff and the client always see the same number. A separate override would show one figure to you and another to the client.",
+      retryable: false,
+      nextStep: "Adjust the requirement verdicts (Review → Adjust) and the score follows; the client sees the same run.",
+    };
+  }
 
   if (raw === "forbidden") {
     return {

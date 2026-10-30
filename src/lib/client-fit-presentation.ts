@@ -348,8 +348,14 @@ export function evidenceSupport(
    * up with no quote of its own we look across the whole record for passages
    * that plainly speak to it and cite those instead.
    */
+  // A requirement a person verified reads exactly as that person decided it.
+  // The cross-requirement rescue below exists for machine rows whose quote was
+  // tagged to a neighbour; it must not turn a verified "not evidenced" into
+  // "partially met" because an unrelated passage shares a keyword with the
+  // label (the MBA row read "Partially met" from a quote about marketing).
+  const humanDecidedMissing = declared?.human_verified === true && declared?.status === "missing";
   const rescued =
-    evidence.length === 0
+    evidence.length === 0 && !humanDecidedMissing
       ? rawEvidence
           .filter((e: any) => !e.contradiction && !isCandidateHeadline(evidenceSnippet(e)))
           .filter((e: any) => passageSupportsRequirement(cleanQuote(evidenceSnippet(e)), r.label))
