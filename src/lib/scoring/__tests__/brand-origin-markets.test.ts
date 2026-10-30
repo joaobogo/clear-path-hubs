@@ -43,6 +43,16 @@ describe("brand origin counts as market experience", () => {
     expect(status("Regional Marketing Manager 2016 – 2020\nBrand frameworks for GCC, SEA & India; South East Asia distributors.")).toBe("partial");
   });
 
+  it("does not count an advertising platform or marketplace as a brand", () => {
+    expect(status("Head of Marketing, Retailer, Dubai Jan 2019 – Jun 2024\nPaid marketing on Meta, Google, TikTok, Snapchat & CTV; listings on Shopee and Tmall.")).toBe("missing");
+    expect(status("Marketing Manager, Agency, Dubai Jan 2018 – Dec 2022\nPerformance media across Meta, Google and TikTok; WeChat mini-programme for Chinese tourists.")).not.toBe("met");
+  });
+
+  it("treats a brand named as a channel as weak, not marketed", () => {
+    expect(status("Digital Lead, Telco, Dubai Jan 2017 – Dec 2021\nRan acquisition campaigns on Samsung's smart TV platform and Sony ads.")).toBe("partial");
+    expect(status("Brand Manager, Distributor, Dubai Jan 2017 – Dec 2021\nLaunched the Samsung Galaxy range across GCC retail.")).toBe("met");
+  });
+
   it("stays missing with no link at all", () => {
     expect(status("Marketing Director, Emaar Malls, Dubai 2012 – 2020\nLed campaigns across the UAE and KSA.")).toBe("missing");
   });

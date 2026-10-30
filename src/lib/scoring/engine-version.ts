@@ -195,4 +195,11 @@
  * without naming a market ("APAC", "EMEA") is partial instead of missing.
  * Sourcing, supplier, study and training links stay partial.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.3";
+/**
+ * v1.7.4 — a platform is not a brand. Advertising platforms and marketplaces
+ * (TikTok, WeChat, Tmall, Shopee…) are off the brand-origin list, and a brand
+ * named as a channel ("campaigns on Samsung's platform") is weak, not met:
+ * seven CVs that ran paid media on TikTok had been credited with marketing a
+ * Chinese brand.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.4";
