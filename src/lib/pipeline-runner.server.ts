@@ -12,7 +12,7 @@ import { decideStateAfterEnrichment } from "./scoring/enrichment-state-policy";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
 import { generateCandidateInsights, type CandidateInsights } from "./candidate-insights.server";
-import { carryForwardInsights, type PriorEvidenceRow } from "./evidence/carry-forward-insights";
+import { carryForwardInsights, recruiterBriefingStillCurrent, type PriorEvidenceRow } from "./evidence/carry-forward-insights";
 import {
   THIN_CV_CHARS,
   candidateReviewTask,
@@ -93,20 +93,35 @@ function buildScreening(rows: Any[]): ScreeningAnswer[] {
   });
 }
 
-// A failed generation keeps the match's previous briefing instead of writing
-// null over it (see evidence/carry-forward-insights.ts).
-async function keepPriorInsightsOnFailure(
+// Requirements are stored either as plain strings or as objects.
+const requirementText = (r: Any): string =>
+  typeof r === "string"
+    ? r.trim()
+    : String(r?.text ?? r?.requirement ?? r?.title ?? r?.label ?? r?.name ?? "").trim();
+
+// The briefing for this run. A recruiter-written briefing that still covers
+// the role's requirements is kept without calling the AI; a failed generation
+// keeps the match's previous briefing instead of writing null over it (see
+// evidence/carry-forward-insights.ts).
+async function resolveInsights(
   s: Any,
   matchId: string,
-  fresh: { insights: CandidateInsights | null; insights_error: string | null },
+  position: Any,
+  generate: () => Promise<{ insights: CandidateInsights | null; insights_error: string | null }>,
 ): Promise<{ insights: CandidateInsights | null; insights_error: string | null }> {
-  if (fresh.insights) return fresh;
   const { data } = await s.from("candidate_evidence")
     .select("id,created_at,extracted")
     .eq("candidate_match_id", matchId)
     .order("created_at", { ascending: false })
     .limit(10);
-  return carryForwardInsights(fresh, (data ?? []) as PriorEvidenceRow[]);
+  const previous = (data ?? []) as PriorEvidenceRow[];
+  const requirementTexts = [
+    ...(Array.isArray(position?.requirements) ? position.requirements : []),
+    ...(Array.isArray(position?.preferred_requirements) ? position.preferred_requirements : []),
+  ].map(requirementText).filter(Boolean);
+  const kept = recruiterBriefingStillCurrent(previous, requirementTexts);
+  if (kept) return { insights: kept.insights as unknown as CandidateInsights, insights_error: null };
+  return carryForwardInsights(await generate(), previous);
 }
 
 // Best-effort LLM insights (narrative + per-requirement verdicts + screening
@@ -124,19 +139,15 @@ async function buildInsights(args: {
   // objects. Both shapes must produce a requirement here, otherwise a role with
   // string requirements silently reports "no_requirements" and no evidence is
   // ever written up for its candidates.
-  const reqText = (r: Any): string =>
-    typeof r === "string"
-      ? r.trim()
-      : String(r?.text ?? r?.requirement ?? r?.title ?? r?.label ?? r?.name ?? "").trim();
   const reqs = [
     ...(Array.isArray(pos.requirements) ? pos.requirements : []).map((r: Any, i: number) => ({
       id: String((typeof r === "string" ? null : r?.id) ?? `must-${i}`),
-      text: reqText(r),
+      text: requirementText(r),
       required: true,
     })),
     ...(Array.isArray(pos.preferred_requirements) ? pos.preferred_requirements : []).map((r: Any, i: number) => ({
       id: String((typeof r === "string" ? null : r?.id) ?? `pref-${i}`),
-      text: reqText(r),
+      text: requirementText(r),
       required: false,
     })),
   ].filter((r) => r.text);
@@ -592,7 +603,7 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       .eq("id", ctx.match.candidate_profile_id)
       .maybeSingle();
     const screening = buildScreening(ctx.answers);
-    const { insights, insights_error } = await keepPriorInsightsOnFailure(s, matchId, await buildInsights({
+    const { insights, insights_error } = await resolveInsights(s, matchId, ctx.position, () => buildInsights({
       cvText,
       position: ctx.position,
       organizationName: (ctx.match.organizations as any)?.name ?? "the organization",
@@ -786,7 +797,7 @@ export async function runEnrichmentOnly(
       .select("id,skills,experience,headline,location,consent,languages,years_experience")
       .eq("id", ctx.match.candidate_profile_id).maybeSingle();
     const screening = buildScreening(ctx.answers);
-    const { insights, insights_error } = await keepPriorInsightsOnFailure(s, matchId, await buildInsights({
+    const { insights, insights_error } = await resolveInsights(s, matchId, ctx.position, () => buildInsights({
       cvText,
       position: ctx.position,
       organizationName: (ctx.match.organizations as any)?.name ?? "the organization",
