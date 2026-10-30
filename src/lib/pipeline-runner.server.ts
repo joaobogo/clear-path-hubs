@@ -12,6 +12,7 @@ import { decideStateAfterEnrichment } from "./scoring/enrichment-state-policy";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
 import { generateCandidateInsights, type CandidateInsights } from "./candidate-insights.server";
+import { carryForwardInsights, type PriorEvidenceRow } from "./evidence/carry-forward-insights";
 import {
   THIN_CV_CHARS,
   candidateReviewTask,
@@ -90,6 +91,22 @@ function buildScreening(rows: Any[]): ScreeningAnswer[] {
       disqualifying_condition: null,
     };
   });
+}
+
+// A failed generation keeps the match's previous briefing instead of writing
+// null over it (see evidence/carry-forward-insights.ts).
+async function keepPriorInsightsOnFailure(
+  s: Any,
+  matchId: string,
+  fresh: { insights: CandidateInsights | null; insights_error: string | null },
+): Promise<{ insights: CandidateInsights | null; insights_error: string | null }> {
+  if (fresh.insights) return fresh;
+  const { data } = await s.from("candidate_evidence")
+    .select("id,created_at,extracted")
+    .eq("candidate_match_id", matchId)
+    .order("created_at", { ascending: false })
+    .limit(10);
+  return carryForwardInsights(fresh, (data ?? []) as PriorEvidenceRow[]);
 }
 
 // Best-effort LLM insights (narrative + per-requirement verdicts + screening
@@ -575,12 +592,12 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       .eq("id", ctx.match.candidate_profile_id)
       .maybeSingle();
     const screening = buildScreening(ctx.answers);
-    const { insights, insights_error } = await buildInsights({
+    const { insights, insights_error } = await keepPriorInsightsOnFailure(s, matchId, await buildInsights({
       cvText,
       position: ctx.position,
       organizationName: (ctx.match.organizations as any)?.name ?? "the organization",
       screening,
-    });
+    }));
     // Deterministic fallback facts — PT/EN section parsing fills what the
     // hydration model missed, so "Parsed facts" never shows "—" for a fact
     // that is plainly in the CV (audit S-20).
@@ -769,12 +786,12 @@ export async function runEnrichmentOnly(
       .select("id,skills,experience,headline,location,consent,languages,years_experience")
       .eq("id", ctx.match.candidate_profile_id).maybeSingle();
     const screening = buildScreening(ctx.answers);
-    const { insights, insights_error } = await buildInsights({
+    const { insights, insights_error } = await keepPriorInsightsOnFailure(s, matchId, await buildInsights({
       cvText,
       position: ctx.position,
       organizationName: (ctx.match.organizations as any)?.name ?? "the organization",
       screening,
-    });
+    }));
     const cvFacts = parseCvFacts(cvText);
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,
