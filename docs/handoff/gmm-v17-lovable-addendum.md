@@ -72,14 +72,16 @@ Candidates:
   10 requirement verdicts, 5 screening answers, CV quotes checked word for
   word, and public evidence identity-matched on two points with sources.
 - Profile fields were completed from the CVs: headline, years of
-  experience and work history , summary, education and skills.
-  Names were
+  experience, work history, summary, education and skills. Names were
   corrected to match the CV: Sebastian Fernandes, Wael Kanaan, Janice Lee and
   Radwa Abdel Ghani.
-- Each candidate has an internal note dated 30 Oct.
-- Claude's scores are recorded as overrides on the current runs (36
+- Each candidate has internal notes dated 30 Oct.
+- Claude's scores are recorded as overrides on the current runs (37
   candidates). The admin ranking shows them. Nothing is approved and no
   candidate is visible to the client.
+- The owner's market rule is applied throughout: marketing a brand from one
+  of the six markets counts as experience of that market wherever the
+  candidate sat. Engine v1.7.3 applies the same rule.
 - Every unscored candidate on an active role has an open admin task saying
   what is needed.
 
