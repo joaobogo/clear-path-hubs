@@ -30,6 +30,7 @@
  */
 
 import { placesIn, regionsOf, REGION_TERMS, type Place, type Region } from "./geography";
+import { brandOriginsIn } from "./brand-origins";
 
 export type StructuredStatus = "met" | "partial" | "missing" | "unknown";
 
@@ -811,6 +812,16 @@ const PERSONAL_LINE =
 /** A mention that is not operating in the market: study, a course, a trip, buying from it. */
 const WEAK_CONTEXT =
   /\b(training|trained|course|workshop|seminar|conference|visit(?:ed)?|trip|exchange|studied|study\s+tour|university|college|school|degree|sourcing|sourced|source\s+markets?|suppliers?|supplier\s+negotiations?|import(?:ed|s)?\s+from|benchmark(?:ed|ing)?|knowledge\s+of|negotiat\w*|trading|traded|exports?\s+to|visitors?|tourists?|tourism|inbound|destination|partners?\s+(?:in|from))\b/i;
+/** Indirect only in the sense of buying, studying or visiting: never lifted to met. */
+const WEAK_ALWAYS =
+  /\b(training|trained|course|workshop|seminar|conference|trip|exchange|studied|study\s+tour|university|college|school|degree|sourcing|sourced|suppliers?|supplier\s+negotiations?|import(?:ed|s)?\s+from|benchmark(?:ed|ing)?|knowledge\s+of|negotiat\w*|trading|traded)\b/i;
+/**
+ * Marketing aimed at the market's own consumers ("campaigns targeting Chinese
+ * source markets", "roadshows for Japanese travellers") is marketing into
+ * that market, which the requirement counts.
+ */
+const MARKETING_INTO =
+  /\b(campaigns?|roadshows?|targeted|targeting|aimed\s+at|activations?|advertis\w+|promot\w+|go-to-market|launch(?:ed|es|ing)?)\b/i;
 /**
  * Words that place the work in the market: a role there, a launch there, a
  * remit that names it. They must come shortly before the market's name.
@@ -869,9 +880,10 @@ export function evaluateMarketRequirement(
     const hits = req.markets.flatMap((m) => m.indexes(l.text));
     if (hits.length === 0) return;
     // Indirect exposure anywhere on the line (training, sourcing, visitors
-    // from the market) makes the line partial at most.
+    // from the market) makes the line partial at most, unless the line is
+    // marketing aimed at that market's consumers.
     if (WEAK_CONTEXT.test(l.text)) {
-      weak.push(l);
+      (!WEAK_ALWAYS.test(l.text) && MARKETING_INTO.test(l.text) ? strong : weak).push(l);
       return;
     }
     // Met: the market sits in a dated role's own line (where the job was),
@@ -900,17 +912,41 @@ export function evaluateMarketRequirement(
       evidence: strong.slice(0, 3).map((l) => quote(l)),
     };
   }
-  if (weak.length > 0) {
+  // Marketing for a company or brand from the market (Nissan for Japan,
+  // Haier for China) is experience of that market wherever the work was done.
+  const wanted = new Set(req.markets.map((m) => m.name));
+  const branded: Array<{ line: Line; brand: string; country: string }> = [];
+  const brandedWeak: Line[] = [];
+  for (const l of ls) {
+    if (PERSONAL_LINE.test(l.text)) continue;
+    const found = brandOriginsIn(l.text).filter((b) => wanted.has(b.country));
+    if (found.length === 0) continue;
+    if (WEAK_ALWAYS.test(l.text)) brandedWeak.push(l);
+    else branded.push(...found.map((b) => ({ line: l, brand: b.brand, country: b.country })));
+  }
+  if (branded.length > 0) {
+    const shown = [...new Map(branded.map((b) => [b.brand.toLowerCase(), b])).values()].slice(0, 3);
+    return {
+      rule: "market_experience",
+      status: "met",
+      needs_validation: false,
+      note: `Marketed ${shown.map((b) => `${b.brand} (${b.country})`).join(", ")}: brands from the named markets.`,
+      evidence: [...new Set(shown.map((b) => b.line))].map((l) => quote(l)),
+    };
+  }
+  if (weak.length > 0 || brandedWeak.length > 0) {
+    const all = [...weak, ...brandedWeak];
     return {
       rule: "market_experience",
       status: "partial",
       needs_validation: true,
-      note: `Mentions ${names(weak).join(", ")}, but as training, sourcing or indirect exposure rather than working in the market. Confirm at screening.`,
-      evidence: weak.slice(0, 2).map((l) => quote(l)),
+      note: `Mentions ${[...new Set([...names(all), ...brandedWeak.flatMap((l) => brandOriginsIn(l.text).filter((b) => wanted.has(b.country)).map((b) => b.country))])].join(", ")}, but as training, sourcing or indirect exposure rather than marketing for the market. Confirm at screening.`,
+      evidence: all.slice(0, 2).map((l) => quote(l)),
     };
   }
   // A broad region that holds the named markets ("APAC" for Korea and
-  // Japan, "EMEA" for Germany) is a question for screening, not evidence.
+  // Japan) is real but unnamed exposure: partial, with the markets asked
+  // about at screening.
   const regions = regionsOf(req.markets);
   let regional: Line | undefined;
   let regionName: Region | undefined;
@@ -922,14 +958,21 @@ export function evaluateMarketRequirement(
       break;
     }
   }
+  if (regional) {
+    return {
+      rule: "market_experience",
+      status: "partial",
+      needs_validation: true,
+      note: `Works across ${regionName} without naming one of the markets. Ask which markets at screening.`,
+      evidence: [quote(regional)],
+    };
+  }
   return {
     rule: "market_experience",
     status: "missing",
-    needs_validation: Boolean(regional),
-    note: regional
-      ? `Mentions ${regionName} in general but none of the named markets. Ask which markets at screening.`
-      : "None of the named markets appear in the CV.",
-    evidence: regional ? [quote(regional)] : [],
+    needs_validation: false,
+    note: "None of the named markets, or brands from them, appear in the CV.",
+    evidence: [],
   };
 }
 

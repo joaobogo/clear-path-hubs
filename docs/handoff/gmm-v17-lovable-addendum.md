@@ -6,7 +6,7 @@ secondary. Everything that can be done from the database is done (see "Already
 done"). What remains needs Lovable only because the running app is built from
 Lovable's own copy of the code. That copy is still on engine v1.5.4: Lovable's
 GitHub sync has carried nothing in either direction since 27 Oct, so the
-v1.7.2 scorer and tonight's fixes on GitHub `main` have never reached it.
+v1.7.3 scorer and tonight's fixes on GitHub `main` have never reached it.
 
 ## Paste-ready prompt
 
@@ -19,8 +19,8 @@ completed directly in the database on 29–30 Oct.
 1. Bring this project in line with GitHub main (joaobogo/clear-path-hubs,
    the latest commit). If the GitHub connection is broken, say so and tell me
    exactly what to reconnect; do not re-create the code by hand.
-2. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.2"
-   (or a later v1.7.x) and that src/lib/evidence/carry-forward-insights.ts
+2. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.3"
+   (or later) and that src/lib/evidence/carry-forward-insights.ts
    exists. If not, stop and tell me.
 3. Apply drizzle migrations 0006, 0007 and 0008. All three already exist in
    the database; re-running them is harmless.
@@ -36,7 +36,7 @@ completed directly in the database on 29–30 Oct.
      select * from public.reapply_claude_overrides('228cd1ec-1ec1-4205-828c-7a92b1be42e1', true);
    It moves Claude's scores onto the new score runs.
 7. Check and report, without changing anything else:
-   - every current score run shows engine_version taasflow-scoring-v1.7.2;
+   - every current score run shows engine_version taasflow-scoring-v1.7.3;
    - no match is not_eligible without a failed eligibility_checks row;
    - every candidate's latest candidate_evidence still has its briefing
      (extracted.insights with authored_by set) for the 38 that had one;
@@ -63,7 +63,7 @@ Role data (as the PDF specified):
 Candidates:
 - A partial rescore on the live v1.5.4 build regenerated briefings through
   the AI gateway, which is out of credits, and wiped 17 of them. The
-  remaining 18 rescores are held (`rescore_held` audit rows) until v1.7.2 is
+  remaining 18 rescores are held (`rescore_held` audit rows) until v1.7.3 is
   live.
 - The code on `main` now keeps the previous briefing when generation fails.
   It also keeps a hand-written briefing while it still covers the current
@@ -72,7 +72,7 @@ Candidates:
   10 requirement verdicts, 5 screening answers, CV quotes checked word for
   word, and public evidence identity-matched on two points with sources.
 - Profile fields were completed from the CVs: headline, years of
-  experience and work history (summary, education and skills in progress).
+  experience and work history (summary, education and skills: see the run log).
   Names were
   corrected to match the CV: Sebastian Fernandes, Wael Kanaan, Janice Lee and
   Radwa Abdel Ghani.
