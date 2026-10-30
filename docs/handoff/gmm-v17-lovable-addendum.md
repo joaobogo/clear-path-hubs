@@ -1,76 +1,89 @@
 # Group Marketing Manager: the one thing left for Lovable
 
 Position 228cd1ec-1ec1-4205-828c-7a92b1be42e1 (Stratium Partners, Dubai).
-Everything that could be done from the database was done on 29–30 Oct 2026
-(see "Already done" below). What remains needs Lovable only because the
-running app is still built from Lovable's own copy of the code, which is on
-engine v1.5.4: Lovable's GitHub sync has carried nothing in either direction
-since 27 Oct, so the v1.7.2 scorer on GitHub `main` has never reached it.
+Claude is the primary scorer on this platform (owner, 30 Oct 2026); Lovable is
+secondary. Everything that can be done from the database is done (see "Already
+done"). What remains needs Lovable only because the running app is built from
+Lovable's own copy of the code. That copy is still on engine v1.5.4: Lovable's
+GitHub sync has carried nothing in either direction since 27 Oct, so the
+v1.7.2 scorer and tonight's fixes on GitHub `main` have never reached it.
 
 ## Paste-ready prompt
 
 ```
 Sync, publish and rescore only. Do not edit any data on the Group Marketing
-Manager role; requirements, job description, posting text, rubric and
-eligibility were all updated directly in the database on 29–30 Oct.
+Manager role or its candidates: requirements, job description, posting text,
+rubric, eligibility, candidate briefings, profiles and scores were all
+completed directly in the database on 29–30 Oct.
 
 1. Bring this project in line with GitHub main (joaobogo/clear-path-hubs,
-   commit 2910f1b or later). If the GitHub connection is broken, say so and
-   tell me exactly what to reconnect; do not re-create the code by hand.
+   the latest commit). If the GitHub connection is broken, say so and tell me
+   exactly what to reconnect; do not re-create the code by hand.
 2. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.2"
-   (or a later v1.7.x). If not, stop and tell me.
-3. Apply drizzle migrations 0006 and 0007. Both already exist in the
-   database; re-running them is harmless.
+   (or a later v1.7.x) and that src/lib/evidence/carry-forward-insights.ts
+   exists. If not, stop and tell me.
+3. Apply drizzle migrations 0006, 0007 and 0008. All three already exist in
+   the database; re-running them is harmless.
 4. Publish.
 5. Rescore every candidate on position 228cd1ec-1ec1-4205-828c-7a92b1be42e1
    through the full pipeline: runPipelineForMatch(matchId, { force: true })
    for all 40 matches, including the four in manual review (Nour Moussa,
    Dadirai Mutasa, Boral Al Tarifi, Alvito Tereza). Not "recompute score":
-   only the pipeline re-reads each CV file with its line breaks.
-6. Check and report, without changing anything else:
+   only the pipeline re-reads each CV file with its line breaks. The
+   candidate briefings were written by hand against the current
+   requirements; the new build keeps them and does not regenerate them.
+6. Then run, in SQL:
+     select * from public.reapply_claude_overrides('228cd1ec-1ec1-4205-828c-7a92b1be42e1', true);
+   It moves Claude's scores onto the new score runs.
+7. Check and report, without changing anything else:
    - every current score run shows engine_version taasflow-scoring-v1.7.2;
    - no match is not_eligible without a failed eligibility_checks row;
+   - every candidate's latest candidate_evidence still has its briefing
+     (extracted.insights with authored_by set) for the 38 that had one;
    - nothing was approved and every client_visibility is still hidden;
-   - a table: name, old score -> new score, the market requirement status
-     (met / partial / missing) with the CV line it quoted.
+   - a table: name, engine score -> new engine score, Claude's score, and
+     the market requirement status (met / partial / missing).
 ```
 
 ## Already done (no Lovable needed)
 
-On 29 Oct, in the database:
-- Eligibility recompute: 18 matches restored in the morning. 7 more
-  restored at 23:20 UTC, all on this role: Mehdi Rajan, Aaron Mahmoudi,
-  Ghazal Rezvani, Erum Ehsan, Sebastian, Myreine Abdel Massih and Marios
-  Tirkides. The live v1.5.4 engine had excluded each of them only for
-  answering "no" to the optional Arabic question. Each change has an
-  `eligibility_recomputed` audit row.
-- A database guard (migration 0007) now refuses such exclusions whichever
-  build is running. A blocked attempt leaves an `eligibility_guard_blocked`
-  audit row.
-- Role data, as the PDF specified:
-  - requirements: target-market experience is the first must-have, and the
-    senior-leadership wording is fixed;
-  - the Asia item is removed from the nice-to-haves;
-  - description and jd_text: the Requirements section is replaced, and the
-    text above it is unchanged;
-  - posting EEO statement and languages are set.
-  - Content version 5. The automatic rescore was queued by the database's
-    own trigger.
-- Rubric version 5 records the new criteria. v4 is superseded. v1 (the one
-  that mentions nationality) is marked superseded, so it can never govern a
-  score.
-- Protected-attribute checks: both detectors (the shared detector and the
-  role publish check) find nothing in any of the new text.
+Eligibility:
+- Two recompute runs restored 25 wrongly excluded candidates: 18 on 29 Oct
+  and 7 more that night. The deployed v1.5.4 engine had excluded them for a
+  "no" to optional questions such as Arabic. Each change has an audit row.
+- A database guard (migration 0007) refuses such exclusions whatever build
+  is running. During tonight's partial rescore it blocked 9 of them.
 
-Not done, owner decision: the PDF asks for a sixth screening question on
-target markets. A posting is capped at five questions by a database rule,
-and removing one (the sector question) would delete all 40 candidates'
-answers to it. The market requirement is read from the CV meanwhile (engine
-v1.7.2 and the second-review notes). To add it, choose a question to retire
-for new applicants.
+Role data (as the PDF specified):
+- New requirements, nice-to-haves, job description and posting text are in
+  place (content version 5).
+- Rubric v5 records the criteria. The nationality-era rubric v1 is
+  superseded and can never govern a score.
 
-## Open decision for the owner (unchanged)
+Candidates:
+- A partial rescore on the live v1.5.4 build regenerated briefings through
+  the AI gateway, which is out of credits, and wiped 17 of them. The
+  remaining 18 rescores are held (`rescore_held` audit rows) until v1.7.2 is
+  live.
+- The code on `main` now keeps the previous briefing when generation fails.
+  It also keeps a hand-written briefing while it still covers the current
+  requirements.
+- All 40 candidates were reviewed. 38 have a complete hand-written briefing:
+  10 requirement verdicts, 5 screening answers, CV quotes checked word for
+  word, and public evidence identity-matched on two points with sources.
+- Profile fields were completed from the CVs: headline, years of
+  experience and work history (summary, education and skills in progress).
+  Names were
+  corrected to match the CV: Sebastian Fernandes, Wael Kanaan, Janice Lee and
+  Radwa Abdel Ghani.
+- Each candidate has an internal note dated 30 Oct.
+- Claude's scores are recorded as overrides on the current runs (36
+  candidates). The admin ranking shows them. Nothing is approved and no
+  candidate is visible to the client.
+- Every unscored candidate on an active role has an open admin task saying
+  what is needed.
 
-Each must-have counts the same in the engine. If "no target-market
-experience, no shortlist" is the rule, make target markets a dealbreaker (as
-a screening question, see above) or weight that requirement more heavily.
+Not done, owner decision: a sixth screening question on target markets. A
+posting is capped at five questions, and removing the sector question would
+delete all 40 candidates' answers to it. Target markets are read from the
+CV and recorded in each briefing instead.
