@@ -302,6 +302,7 @@ export const getReviewRecord = createServerFn({ method: "POST" })
         .select("id,decision_type,approved_score,reason,actor_user_id,created_at,score_run_id")
         .eq("candidate_match_id", data.match_id)
         .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
         .limit(50),
       s
         .from("application_answers")

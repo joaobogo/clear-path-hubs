@@ -1161,7 +1161,10 @@ export const getAdminMatch = createServerFn({ method: "GET" })
         .from("score_decisions")
         .select("id,score_run_id,decision_type,approved_score,reason,actor_user_id,created_at")
         .eq("candidate_match_id", data.id)
-        .order("created_at", { ascending: false }),
+        // Two decisions written in one transaction share created_at; the id
+        // tiebreak keeps this page and the admin index on the same row.
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false }),
       supabase
         .from("processing_jobs")
         .select("id,job_type,status,error_code,error_message,trace_id,created_at,completed_at")
