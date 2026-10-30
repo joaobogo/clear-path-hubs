@@ -22,8 +22,8 @@ completed directly in the database on 29–30 Oct.
 2. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.4"
    (or later) and that src/lib/evidence/carry-forward-insights.ts
    exists. If not, stop and tell me.
-3. Apply drizzle migrations 0006, 0007 and 0008. All three already exist in
-   the database; re-running them is harmless.
+3. Apply drizzle migrations 0006, 0007, 0008 and 0009. All four already
+   exist in the database; re-running them is harmless.
 4. Publish.
 5. Rescore every candidate on position 228cd1ec-1ec1-4205-828c-7a92b1be42e1
    through the full pipeline: runPipelineForMatch(matchId, { force: true })
@@ -33,14 +33,19 @@ completed directly in the database on 29–30 Oct.
    candidate briefings were written by hand against the current
    requirements; the new build keeps them and does not regenerate them.
 6. Then run, in SQL:
-     select * from public.reapply_claude_overrides('228cd1ec-1ec1-4205-828c-7a92b1be42e1', true);
-   It moves Claude's scores onto the new score runs.
+     select * from public.apply_reviewed_verdicts('228cd1ec-1ec1-4205-828c-7a92b1be42e1', true);
+   It writes the reviewed verdicts onto new human-adjusted runs, scored by
+   the platform formula; that run's final_score is the one number every
+   surface shows (admin list and client workspace).
 7. Check and report, without changing anything else:
    - every current score run shows engine_version taasflow-scoring-v1.7.3 or v1.7.4;
    - no match is not_eligible without a failed eligibility_checks row;
    - every candidate's latest candidate_evidence still has its briefing
      (extracted.insights with authored_by set) for the 39 that have one;
-   - nothing was approved and every client_visibility is still hidden;
+   - every client_visibility is unchanged;
+   - the admin list and the client workspace show the same score for
+     every candidate (apply_reviewed_verdicts(..., false) returns only
+     "unchanged");
    - a table: name, engine score -> new engine score, Claude's score, and
      the market requirement status (met / partial / missing).
 ```

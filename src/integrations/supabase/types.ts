@@ -15527,6 +15527,20 @@ export type Database = {
         Args: { _position_id: string; _reason: string }
         Returns: number
       }
+      apply_reviewed_verdicts: {
+        Args: { p_apply?: boolean; p_position_id: string }
+        Returns: {
+          after_score: number
+          before_score: number
+          from_run: string
+          full_name: string
+          match_id: string
+          note: string
+          quotes_added: number
+          rows_changed: number
+          to_run: string
+        }[]
+      }
       reapply_claude_overrides: {
         Args: { p_apply?: boolean; p_position_id: string }
         Returns: {

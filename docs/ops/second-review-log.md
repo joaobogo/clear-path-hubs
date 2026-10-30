@@ -186,3 +186,61 @@ Checks
 - Known: the raw engine numbers run high on thin links (Wael 100, Shaima
   97.5); the override is the score to use. Lovable's 08:39 edit was a
   roadmap note and regenerated types (added to main).
+
+## 30 Oct 2026, 15:00–16:50 (owner online): one published number
+
+- Incident: the owner approved and published seven Group Marketing Manager
+  candidates. The client workspace showed the engine's number of the
+  approved run (Radwa 98, Myreine 98, Marios 96 with the intro-video bonus,
+  Kumar 91, Samar 90, Nora 85, Melissa 81) while the admin list showed the
+  review overrides (87, 91, 74, 89, 82, 78, 91). Two further approvals
+  (Amrith Gopinath, Erum Ehsan) failed with "Nothing was changed"
+  (TF-9A56ABBA): the evidence gate blocks a must-have with no evidence and
+  no written override. The owner unpublished the seven at 15:30.
+- Cause: the client reads `score_runs.final_score`; the review scores were
+  only `score_decisions` overrides, which the admin index prefers and the
+  client never reads. Hand-typed override numbers also could not be
+  reconciled with the requirement rows the client shows.
+- Fix (database, live at once): `apply_reviewed_verdicts(position, apply)`
+  (migration 0009) writes each candidate's reviewed verdicts as a
+  human-adjusted score run scored by the platform formula (coverage x
+  weights, carried caps, must-have floor, and "a candidate missing a
+  must-have is not shown as Top", cap 84), supersedes the engine run and
+  re-points current and approved pointers. Reviewed rows are marked
+  human-verified; met and partial rows carry the reviewer's CV quote and
+  the linked screening answer so the client's requirement rows match.
+  Trigger `score_decisions_override_matches_run` refuses an override that
+  differs from its run. `reapply_claude_overrides` now delegates to it.
+  Evidence-gate justifications recorded for the strong candidates whose
+  target-market must-have is not evidenced (Amrith, Erum, Amalie, Kajall,
+  Sana Gul, Mohammad Khateeb, Syed Mansoor, Oksana, Baburaj, Lilian).
+- Result: 45 human-adjusted runs (43 GMM, 2 Hughes); admin index =
+  current run = approved run for every candidate; no override differs from
+  its run; the function reports `unchanged` on re-run. Scores are now the
+  formula over verified verdicts: Wael Kanaan 100, Hany Badr 97.5
+  (screening contradicts CV flag), Radwa 97.5, Samar 97.5, Myreine 95.5,
+  Basma 95, Fares 95 (+5 video), Nora 95, Shaima 95, Kumar 93, Omer 93,
+  Sebastian 93, Nour 92.5, Umair 90.5, Tarek 90, Melissa 88, Shailesh 88,
+  Marios 85.5 (+5 video), Mehdi 85.5, Reda 85, Mohammad 84, Syed 84,
+  Amrith 83, Arindam 83, Hemal 83, Kajall 83, Matin 83, Sana Gul 83,
+  Aaron 80.5 (+5 video), Erum 80.5, Brianna 78.5, Amalie 78, Dadirai 78,
+  Dylan 78, Janice 78, Oksana 75.5, Baburaj 73, Lilian 73, Maria 71,
+  Ghazal 63, Tehmina 63, Sana Shajahan 63, Chiedza 58, Thaddeus 57.
+  The seven still carry admin_status approved and are hidden until the
+  owner re-publishes.
+- Consistency query (run any time):
+  `with v as (select * from v_admin_candidate_index where position_id = :p)
+   select count(*) filter (where v.final_score is distinct from cur.final_score) admin_vs_run,
+          count(*) filter (where app.final_score is not null and app.final_score is distinct from v.final_score) client_vs_admin
+   from v join candidate_matches cm on cm.id = v.match_id
+   left join score_runs cur on cur.id = cm.current_score_run_id
+   left join score_runs app on app.id = cm.approved_score_run_id;` — both 0.
+- Code on main: client requirement rows honour a verified verdict (no
+  keyword rescue of a verified "not evidenced" row); approval errors name
+  the retired override; migration 0009 with metadata; types.
+- Still true on the live v1.5.4 build until Lovable pulls main: a nice-to-
+  have the review marked "not evidenced" can read "Partially met" on the
+  client page when the CV mentions a related word (Melissa and Nora, MBA
+  row); the score is unaffected. The intro-video bonus (+5) shows on the
+  client list and, on main, on the admin list too.
+
