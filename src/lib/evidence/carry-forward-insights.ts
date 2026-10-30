@@ -60,3 +60,34 @@ export function carryForwardInsights<T extends object>(
   }
   return fresh;
 }
+
+/**
+ * A briefing a recruiter wrote by hand (insights.authored_by set) is kept on a
+ * rescore while it still covers the role's current requirements: regenerating
+ * it would replace researched, verified evidence with a generic summary. Once
+ * the requirements change, it no longer describes the role and is regenerated.
+ */
+export function recruiterBriefingStillCurrent(
+  previous: PriorEvidenceRow[],
+  requirementTexts: string[],
+): { evidence_id: string; insights: Record<string, unknown> } | null {
+  const strip = (s: string) => s.replace(/^\s*(MUST|NICE):\s*/i, "").trim().toLowerCase();
+  const wanted = new Set(requirementTexts.map(strip).filter(Boolean));
+  if (wanted.size === 0) return null;
+  const newestFirst = [...previous].sort((a, b) =>
+    String(b.created_at ?? "").localeCompare(String(a.created_at ?? "")),
+  );
+  for (const row of newestFirst) {
+    const insights = priorInsights(row);
+    if (!insights) continue;
+    if (typeof insights.authored_by !== "string" || !insights.authored_by.trim()) return null;
+    const verdicts = Array.isArray(insights.requirement_verdicts) ? insights.requirement_verdicts : [];
+    const covered = new Set(
+      verdicts.map((v) => strip(String((v as Record<string, unknown>)?.requirement_text ?? ""))),
+    );
+    if (covered.size !== wanted.size) return null;
+    for (const w of wanted) if (!covered.has(w)) return null;
+    return { evidence_id: row.id, insights };
+  }
+  return null;
+}
