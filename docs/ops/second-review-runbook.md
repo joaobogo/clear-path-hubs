@@ -1,10 +1,13 @@
 # Claude second review: runbook
 
-Lovable's engine does the first scoring. Every two hours Claude does the
-second review: it reads each candidate as a director of recruitment would,
-checks the engine's verdict on every requirement, looks for public
-professional evidence beyond the CV for the strongest candidates, and
-records what it found. This file is the procedure each run follows.
+Claude is the primary scorer (owner, 30 Oct 2026); the engine's number is
+the first pass. The scheduled run covers the Mushroom Harvesting Manager
+role only, every 12 hours, and does nothing when no new candidate has
+arrived (owner, 30 Oct 2026). On a new candidate Claude reads the CV as a
+director of recruitment would, checks the engine's verdict on every
+requirement, looks for public professional evidence beyond the CV, records
+what it found, and records its score as an override on the current run.
+This file is the procedure each run follows.
 
 ## What a run may and may not do
 
@@ -22,8 +25,10 @@ May:
 Never:
 - approve a score, release a candidate, publish, or change
   `client_visibility` or `admin_status`;
-- write a `score_decisions` row. An override is a person's decision; the
-  run proposes one in the note and the task, and an admin applies it;
+- write a `score_decisions` row of any type other than `override`
+  (reason_code `claude_primary_review`, actor_user_id null). An override is
+  Claude's recorded score, not an approval: it never sets
+  `approved_score_run_id`, `admin_status` or `client_visibility`;
 - edit an existing score run (runs are immutable);
 - email or message a candidate or a client;
 - record or use nationality, citizenship, ethnicity, religion, age, gender,
