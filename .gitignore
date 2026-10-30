@@ -34,3 +34,5 @@ dist-ssr
 # Playwright run artefacts
 test-results/
 playwright-report/
+
+.claude/settings.local.json
