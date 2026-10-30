@@ -151,3 +151,38 @@ Checks
 - Admin task 2f7a394c now carries the final ranking of all 41.
 - Top: Melissa Wingfield 86, Myreine Abdel Massih 86, Kumar Sambhav Verma
   85, Radwa Abdel Ghani 85, Nora Tourky 78.
+
+## 30 Oct 2026, afternoon: offline rescore and final ranking
+
+- Owner's instruction: do everything from here; Lovable only pulls from
+  GitHub at the end.
+- Offline rescore tool (src/lib/scoring/offline-rescore.ts,
+  scripts/offline-rescore): scores a role with the repository's engine and
+  writes each run as one self-verifying SQL transaction (result, snapshot
+  and CV text fingerprints). 42 Group Marketing Manager matches rescored
+  on v1.7.3 in five batches; every statement passed its fingerprints.
+  Two CVs carry private-use bullet glyphs that do not survive copying;
+  the agents restored them from the database positions, and the SQL
+  carried them as JSON escapes (same jsonb value).
+- Found and fixed v1.7.4: advertising platforms (TikTok, WeChat, Tmall,
+  Shopee…) were on the brand list, so "paid media on TikTok" counted as
+  marketing a Chinese brand for 8 CVs; a brand named as a channel is now
+  weak. Those 8 are being rescored on v1.7.4.
+- Round-2 research file (owner) applied to the 9 newest candidates:
+  profile fixes, verified web additions with sources, headlines and
+  summaries, personal data removed from CV text, evidence and audit
+  copies. Degree verdicts were restored to met for five candidates with
+  postgraduate degrees (the file's "bachelor's to confirm" is a screening
+  question).
+- New applicants: Samar El Alam (full profile, 82, market met thin);
+  Brianna Phares, Maria Dodero, George Schempers (being completed);
+  Christian Abdel Nour (not eligible: no bachelor's, dealbreaker; the
+  missing check record was written). Hughes: Thaddeus Kwasi Armoh (second
+  review in progress).
+- Claude's scores carried onto the new runs (reapply_claude_overrides,
+  37) and, on the owner's "lift where there is proof": Melissa Wingfield
+  91, Myreine Abdel Massih 91, Kumar Sambhav Verma 89, Radwa Abdel Ghani
+  87. Final ranking in task 2f7a394c. Nothing approved; all hidden.
+- Known: the raw engine numbers run high on thin links (Wael 100, Shaima
+  97.5); the override is the score to use. Lovable's 08:39 edit was a
+  roadmap note and regenerated types (added to main).
