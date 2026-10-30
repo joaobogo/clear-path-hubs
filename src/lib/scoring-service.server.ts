@@ -174,7 +174,7 @@ async function loadInputs(matchId: string) {
  *   2. applying the recorded caps to raw_score reproduces the final score,
  *   3. raw_score >= final_score, with a cap present whenever they differ.
  */
-function reconcile(result: ScoringResult): {
+export function reconcile(result: ScoringResult): {
   reconciled: boolean;
   raw: number;
   computed: number;
@@ -720,7 +720,7 @@ export async function executeScoring(
   }
 }
 
-function buildExplanation(r: ScoringResult, caps: Array<{ reason: string; cap: number }>): string {
+export function buildExplanation(r: ScoringResult, caps: Array<{ reason: string; cap: number }>): string {
   // The engine's fit_label uses its own vocabulary (strong_fit /
   // worth_considering / not_a_fit) while every surface bands the NUMBER
   // through the canonical table. Leading with the raw label produced
