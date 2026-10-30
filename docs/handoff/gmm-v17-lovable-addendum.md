@@ -1,67 +1,76 @@
-# Group Marketing Manager: what Lovable must do after the v1.7.x code
+# Group Marketing Manager: the one thing left for Lovable
 
-Paste this at the end of the Lovable prompt for position
-228cd1ec-1ec1-4205-828c-7a92b1be42e1. It covers what can't be done in code.
+Position 228cd1ec-1ec1-4205-828c-7a92b1be42e1 (Stratium Partners, Dubai).
+Everything that could be done from the database was done on 29–30 Oct 2026
+(see "Already done" below). What remains needs Lovable only because the
+running app is still built from Lovable's own copy of the code, which is on
+engine v1.5.4: Lovable's GitHub sync has carried nothing in either direction
+since 27 Oct, so the v1.7.2 scorer on GitHub `main` has never reached it.
 
-## Before anything else: GitHub sync
-
-Lovable's edits since 27 Oct (protected attributes, recruiter corrections,
-OCR, drizzle 0003/0004, Hughes client) never reached GitHub. The newest
-Lovable commit is 07c2a1e; the newest on GitHub main is 0ebc8c5 (19 Oct).
-The branch `claude/tender-faraday-kfzxe7` carries an exact copy of those
-edits plus the v1.7.0 fixes, so it merges cleanly either way. Until main
-holds this branch, Lovable is running engine v1.5.4 and none of the fixes
-below are live.
-
-## Paste-ready addendum
+## Paste-ready prompt
 
 ```
-Before step 1:
-A. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.2"
-   (or a later v1.7.x). If it is older, stop and tell me: the code fixes are
-   not in this build. Lovable must be synced with GitHub main first.
-B. Apply drizzle migration 0006_recompute_screening_eligibility. The function
-   already exists in the database (created 29 Oct); re-running it is harmless.
+Sync, publish and rescore only. Do not edit any data on the Group Marketing
+Manager role; requirements, job description, posting text, rubric and
+eligibility were all updated directly in the database on 29–30 Oct.
 
-In step 4 (eligibility + rescore), in this order:
-C. Preview the eligibility recompute and show me the rows:
-     select * from public.recompute_screening_eligibility('228cd1ec-1ec1-4205-828c-7a92b1be42e1');
-   Expected now: no rows. It was already applied on 29 Oct: 17 matches on
-   this role went from not_eligible to eligible (all had answered "no" only
-   to the Arabic question), each with an audit_events row. If rows appear,
-   show them to me before applying with apply = true:
-     select * from public.recompute_screening_eligibility('228cd1ec-1ec1-4205-828c-7a92b1be42e1', true);
-   Each change writes an audit_events row (action 'eligibility_recomputed').
-   Run it a second time to show it returns no rows.
-D. Rescore through the full pipeline (runPipelineForMatch with force: true),
-   not "recompute score" alone. Every stored CV on this role is one long
-   line; only the pipeline re-reads the original PDF with line breaks.
-   The score-only path scores the old flattened text.
-E. Every new run must show engine_version taasflow-scoring-v1.7.2 or later. Old runs
-   stay; nothing is approved; client_visibility stays hidden.
-F. In the report table, add: market requirement status (met / partial /
-   missing) with the CV line it quoted, and eligibility before/after.
+1. Bring this project in line with GitHub main (joaobogo/clear-path-hubs,
+   commit 2910f1b or later). If the GitHub connection is broken, say so and
+   tell me exactly what to reconnect; do not re-create the code by hand.
+2. Confirm src/lib/scoring/engine-version.ts says "taasflow-scoring-v1.7.2"
+   (or a later v1.7.x). If not, stop and tell me.
+3. Apply drizzle migrations 0006 and 0007. Both already exist in the
+   database; re-running them is harmless.
+4. Publish.
+5. Rescore every candidate on position 228cd1ec-1ec1-4205-828c-7a92b1be42e1
+   through the full pipeline: runPipelineForMatch(matchId, { force: true })
+   for all 40 matches, including the four in manual review (Nour Moussa,
+   Dadirai Mutasa, Boral Al Tarifi, Alvito Tereza). Not "recompute score":
+   only the pipeline re-reads each CV file with its line breaks.
+6. Check and report, without changing anything else:
+   - every current score run shows engine_version taasflow-scoring-v1.7.2;
+   - no match is not_eligible without a failed eligibility_checks row;
+   - nothing was approved and every client_visibility is still hidden;
+   - a table: name, old score -> new score, the market requirement status
+     (met / partial / missing) with the CV line it quoted.
 ```
 
-## What to expect (dry run on the stored CVs, nothing written)
+## Already done (no Lovable needed)
 
-New requirements, scored on the stored one-line text. Scores after the
-PDFs are re-read with line breaks may shift by a few points.
+On 29 Oct, in the database:
+- Eligibility recompute: 18 matches restored in the morning. 7 more
+  restored at 23:20 UTC, all on this role: Mehdi Rajan, Aaron Mahmoudi,
+  Ghazal Rezvani, Erum Ehsan, Sebastian, Myreine Abdel Massih and Marios
+  Tirkides. The live v1.5.4 engine had excluded each of them only for
+  answering "no" to the optional Arabic question. Each change has an
+  `eligibility_recomputed` audit row.
+- A database guard (migration 0007) now refuses such exclusions whichever
+  build is running. A blocked attempt leaves an `eligibility_guard_blocked`
+  audit row.
+- Role data, as the PDF specified:
+  - requirements: target-market experience is the first must-have, and the
+    senior-leadership wording is fixed;
+  - the Asia item is removed from the nice-to-haves;
+  - description and jd_text: the Requirements section is replaced, and the
+    text above it is unchanged;
+  - posting EEO statement and languages are set.
+  - Content version 5. The automatic rescore was queued by the database's
+    own trigger.
+- Rubric version 5 records the new criteria. v4 is superseded. v1 (the one
+  that mentions nationality) is marked superseded, so it can never govern a
+  score.
+- Protected-attribute checks: both detectors (the shared detector and the
+  role publish check) find nothing in any of the new text.
 
-| | Market requirement | Score |
-|---|---|---|
-| Kumar Sambhav Verma | Met (Tokyo role, Nov 2021 – Jun 2023) | 90.5, top |
-| Radwa, Nora, Hany, Dylan | Partial (indirect exposure) | 90 / 85 / 77.5 / 73 |
-| Melissa Wingfield | Missing | 80.5 (was 50) |
-| Everyone else | Missing | 30 – 90 |
+Not done, owner decision: the PDF asks for a sixth screening question on
+target markets. A posting is capped at five questions by a database rule,
+and removing one (the sector question) would delete all 40 candidates'
+answers to it. The market requirement is read from the CV meanwhile (engine
+v1.7.2 and the second-review notes). To add it, choose a question to retire
+for new applicants.
 
-Range: 30 to 90.5 (was 50 to 66).
+## Open decision for the owner (unchanged)
 
-## Open decision for the owner
-
-Each must-have counts the same. A candidate who meets the other five and
-lacks the market experience still scores about 90 (Wael Kanan).
-If AK means "no market experience, no shortlist", the market question has
-to be a dealbreaker (it then gates eligibility), or the requirement needs
-more weight than the others. The PDF says dealbreaker = false, so I left
-it that way.
+Each must-have counts the same in the engine. If "no target-market
+experience, no shortlist" is the rule, make target markets a dealbreaker (as
+a screening question, see above) or weight that requirement more heavily.
