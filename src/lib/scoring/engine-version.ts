@@ -186,4 +186,13 @@
  * checked against the role's 32 CVs; runs stamped v1.6.0 after 29 Oct 11:18 UTC
  * came from that build.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.2";
+/**
+ * v1.7.3 — market experience counts the brands a person marketed. Marketing
+ * for a company or brand from a named market (Nissan or Mikimoto for Japan,
+ * Haier for China; "Korean brands") is experience of that market wherever
+ * the work was done (scoring/brand-origins.ts). Campaigns aimed at a market's
+ * consumers count as marketing into it. A remit that covers the region
+ * without naming a market ("APAC", "EMEA") is partial instead of missing.
+ * Sourcing, supplier, study and training links stay partial.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.3";

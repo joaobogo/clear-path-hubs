@@ -86,13 +86,13 @@ describe("market experience", () => {
     }
   });
 
-  it("a general Asia-Pacific mention is missing but flagged as a question", () => {
+  it("a general Asia-Pacific mention is partial and flagged as a question", () => {
     const v = evaluateMarketRequirement(
       MARKET,
       "Name\nLed APAC retail strategy for a GCC group",
       TODAY,
     );
-    expect(v?.status).toBe("missing");
+    expect(v?.status).toBe("partial");
     expect(v?.needs_validation).toBe(true);
   });
 

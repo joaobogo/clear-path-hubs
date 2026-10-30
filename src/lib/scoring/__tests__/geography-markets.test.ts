@@ -162,9 +162,9 @@ describe("evaluateMarketRequirement for any country", () => {
     expect(v?.status).toBe("met");
   });
 
-  it("EMEA alone is a screening question for European markets", () => {
+  it("EMEA alone is partial, with the markets asked at screening", () => {
     const v = evaluateMarketRequirement(REQ, "Name\nLed EMEA retail strategy for a US group", TODAY);
-    expect(v?.status).toBe("missing");
+    expect(v?.status).toBe("partial");
     expect(v?.needs_validation).toBe(true);
     expect(v?.note).toMatch(/Europe/);
   });
