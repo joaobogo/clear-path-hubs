@@ -815,6 +815,9 @@ const WEAK_CONTEXT =
 /** Indirect only in the sense of buying, studying or visiting: never lifted to met. */
 const WEAK_ALWAYS =
   /\b(training|trained|course|workshop|seminar|conference|trip|exchange|studied|study\s+tour|university|college|school|degree|sourcing|sourced|suppliers?|supplier\s+negotiations?|import(?:ed|s)?\s+from|benchmark(?:ed|ing)?|knowledge\s+of|negotiat\w*|trading|traded)\b/i;
+/** The brand is where the ads ran or the goods were listed, not what was marketed. */
+const CHANNEL_BEFORE = /\b(on|via|through|across|using|platforms?|channels?)\b[^.;:]{0,40}$/i;
+const CHANNEL_AFTER = /^['’]?s?\s*(ads?|advertising|shop|store|marketplace|app|platform|listings?)\b/i;
 /**
  * Marketing aimed at the market's own consumers ("campaigns targeting Chinese
  * source markets", "roadshows for Japanese travellers") is marketing into
@@ -921,8 +924,16 @@ export function evaluateMarketRequirement(
     if (PERSONAL_LINE.test(l.text)) continue;
     const found = brandOriginsIn(l.text).filter((b) => wanted.has(b.country));
     if (found.length === 0) continue;
-    if (WEAK_ALWAYS.test(l.text)) brandedWeak.push(l);
-    else branded.push(...found.map((b) => ({ line: l, brand: b.brand, country: b.country })));
+    // A brand named as a channel ("campaigns on Samsung's platform", "ads
+    // across Sony devices") is a tool the person used, not a brand they
+    // marketed: weak, like sourcing.
+    const marketed = found.filter((b) => {
+      const before = l.text.slice(Math.max(0, b.index - 40), b.index);
+      const after = l.text.slice(b.index + b.brand.length, b.index + b.brand.length + 24);
+      return !CHANNEL_BEFORE.test(before) && !CHANNEL_AFTER.test(after);
+    });
+    if (WEAK_ALWAYS.test(l.text) || marketed.length === 0) brandedWeak.push(l);
+    else branded.push(...marketed.map((b) => ({ line: l, brand: b.brand, country: b.country })));
   }
   if (branded.length > 0) {
     const shown = [...new Map(branded.map((b) => [b.brand.toLowerCase(), b])).values()].slice(0, 3);

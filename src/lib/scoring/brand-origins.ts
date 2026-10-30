@@ -7,6 +7,10 @@
  * its brand standards and its home team. The client's own wording says the
  * same ("working in-market or marketing brands from or into those markets").
  *
+ * Advertising platforms and marketplaces (TikTok, WeChat, Tmall, Shopee, Rakuten…)
+ * are left out on purpose: running ads or listings on one is using a channel,
+ * not marketing the brand or working for the company.
+ *
  * Only distinctive names are matched case-insensitively. Names that are also
  * common words or initials (LG, Kia, OPPO, TCL) must appear as written.
  * Country names must match scoring/geography.ts.
@@ -24,8 +28,7 @@ const BRANDS: BrandDef[] = [
       "Sony", "Panasonic", "Toshiba", "Hitachi", "Nikon", "Fujifilm", "Olympus", "Ricoh", "Epson", "Daikin",
       "Casio", "Seiko", "Grand Seiko", "Mikimoto", "Mikomoto", "Tasaki", "Shiseido", "Kanebo", "SK-II", "SK II",
       "Clé de Peau", "Cle de Peau", "Uniqlo", "Muji", "Daiso", "Onitsuka Tiger", "ASICS", "Mizuno",
-      "Issey Miyake", "Comme des Garçons", "Comme des Garcons", "Nintendo", "Sanrio", "Bandai", "Rakuten",
-      "SoftBank", "Takeda", "Kikkoman", "Ajinomoto", "Yakult", "Nissin", "Kirin", "Asahi", "Suntory",
+      "Issey Miyake", "Comme des Garçons", "Comme des Garcons", "Nintendo", "Sanrio", "Bandai", "SoftBank", "Takeda", "Kikkoman", "Ajinomoto", "Yakult", "Nissin", "Kirin", "Asahi", "Suntory",
       "Dentsu", "Hakuhodo", "Isetan", "Takashimaya", "Mitsukoshi", "AEON", "Japan Airlines", "Nomura",
       "Mizuho", "MUFG", "Makita", "Shimano", "Marugame", "Ippudo", "Yoshinoya", "Lawson",
     ],
@@ -36,8 +39,7 @@ const BRANDS: BrandDef[] = [
     names: [
       "Samsung", "Hyundai", "SsangYong", "Daewoo", "Hanwha", "Doosan", "Lotte", "Shinsegae", "Amorepacific",
       "Amore Pacific", "Sulwhasoo", "Laneige", "Innisfree", "Etude House", "Missha", "COSRX", "Gentle Monster",
-      "Paris Baguette", "Tous les Jours", "Bibigo", "Nongshim", "Binggrae", "Olive Young", "Coupang", "Naver",
-      "Kakao", "HYBE", "SM Entertainment", "YG Entertainment", "JYP Entertainment", "Korean Air", "Asiana",
+      "Paris Baguette", "Tous les Jours", "Bibigo", "Nongshim", "Binggrae", "Olive Young", "HYBE", "SM Entertainment", "YG Entertainment", "JYP Entertainment", "Korean Air", "Asiana",
       "SK Telecom", "SK Group", "SK Hynix", "CJ CheilJedang", "CJ ENM", "CJ Group", "Hite Jinro",
     ],
     exact: ["LG", "Kia", "KIA"],
@@ -48,8 +50,7 @@ const BRANDS: BrandDef[] = [
       "Huawei", "Xiaomi", "OnePlus", "Realme", "Lenovo", "Haier", "Hisense", "Midea", "BYD", "Geely", "Chery",
       "Jetour", "Changan", "Great Wall Motors", "Haval", "Hongqi", "XPeng", "Zeekr", "Lynk & Co", "Li Auto",
       "MG Motor", "SAIC", "Dongfeng", "Foton", "JAC Motors", "Omoda", "Exeed", "Bestune", "Alibaba",
-      "AliExpress", "Tmall", "Taobao", "JD.com", "Tencent", "WeChat", "ByteDance", "TikTok", "Douyin",
-      "Shein", "Temu", "Anta", "Li-Ning", "Li Ning", "Luckin", "Mixue", "Chagee", "Haidilao", "Tsingtao",
+      "ByteDance", "Shein", "Anta", "Li-Ning", "Li Ning", "Luckin", "Mixue", "Chagee", "Haidilao", "Tsingtao",
       "Moutai", "Pop Mart", "Miniso", "DJI", "Anker", "Transsion", "Tecno", "Infinix", "ZTE", "Air China",
       "China Southern", "China Eastern", "Bank of China", "ICBC", "Fosun", "Dalian Wanda", "Wanda Group",
     ],
@@ -68,7 +69,7 @@ const BRANDS: BrandDef[] = [
     country: "Singapore",
     names: [
       "Singapore Airlines", "CapitaLand", "Charles & Keith", "Charles and Keith", "TWG Tea", "Banyan Tree",
-      "Raffles", "GrabFood", "GrabPay", "Grab Holdings", "Shopee", "Lazada", "Sea Limited", "Tiger Beer",
+      "Raffles", "Grab Holdings", "Sea Limited", "Tiger Beer",
       "Tiger Balm", "Olam", "Wilmar", "BreadTalk", "Ya Kun", "Bengawan Solo", "Love, Bonito", "Love Bonito",
       "Singtel", "StarHub", "Mediacorp", "Temasek", "Marina Bay Sands", "Resorts World Sentosa", "Sentosa",
     ],
