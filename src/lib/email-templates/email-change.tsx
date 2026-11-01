@@ -20,7 +20,7 @@ export const EmailChangeEmail = ({
   newEmail,
   confirmationUrl,
 }: EmailChangeEmailProps) => (
-  <Shell
+  <Shell replyable={false}
     preview="Confirm your email change for TaaSFlow"
     heading="Confirm your email change"
   >

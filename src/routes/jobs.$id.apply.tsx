@@ -57,6 +57,8 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/dat
 // The number candidates are promised comes from the engine, not from copy.
 // This page said "10 points" long after the award became 5 (audit #9).
 import { VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
+import { EmailText, DirectContactLine } from "@/components/marketing/direct-contact";
 
 
 const EMPTY_FORM = {
@@ -928,7 +930,7 @@ function ApplyPage() {
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">
               We have your application for {pos.title} and it is with our team. We could not load
-              its details just now — email hello@taasflow.com and a person will send you the date,
+              its details just now — email {DIRECT_CONTACT_EMAIL} and a person will send you the date,
               status and reference.
             </p>
             <div className="mt-6">
@@ -1055,15 +1057,18 @@ function ApplyPage() {
                 <span className="block mt-1">
                   Your answers are still here, but submitting again will give the same result. If
                   this is a genuine application, email{" "}
-                  <a className="underline" href="mailto:hello@taasflow.com">
-                    hello@taasflow.com
+                  <a className="underline [overflow-wrap:anywhere]" href={`mailto:${DIRECT_CONTACT_EMAIL}`}>
+                    <EmailText />
                   </a>{" "}
                   quoting the reference below and we will sort it out.
                 </span>
               ) : (
                 <span className="block mt-1">
                   Nothing was sent and nothing was lost — your answers are still here. Press submit
-                  again when you're ready.
+                  again when you're ready. If it fails again, reach us directly:{" "}
+                  <DirectContactLine
+                    subject={serverError.trace_id ? `Application ${serverError.trace_id}` : "Application problem"}
+                  />
                 </span>
               )}
               {serverError.trace_id && (

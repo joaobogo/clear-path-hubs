@@ -34,6 +34,7 @@ import {
   MAX_POSITIONS,
   TURNAROUND_LABEL,
 } from "@/config/pricing-core";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 
 // ---------------------------------------------------------------------------
@@ -307,8 +308,8 @@ export const BUSINESS_RULES_DEFAULTS = {
     sign_in: { label: "Sign in", to: "/auth", description: "Existing users sign in to their workspace." },
   } satisfies Record<CtaKey, Cta>,
   contact: {
-    salesEmail: "hello@taasflow.com",
-    supportEmail: "support@taasflow.com",
+    salesEmail: DIRECT_CONTACT_EMAIL,
+    supportEmail: DIRECT_CONTACT_EMAIL,
     privacyEmail: "privacy@taasflow.com",
   },
   legal: {

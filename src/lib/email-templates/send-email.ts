@@ -2,6 +2,7 @@ import * as React from 'react'
 import { render } from '@react-email/render'
 import { EmailAPIError, sendLovableEmail } from '@lovable.dev/email-js'
 import { TEMPLATES } from './registry'
+import { DIRECT_CONTACT_EMAIL } from '../../config/direct-contact'
 
 // Server-only: reads LOVABLE_API_KEY. Never import from client components.
 
@@ -77,7 +78,9 @@ export async function sendTemplateEmail(
         purpose: 'transactional',
         label: templateName,
         idempotency_key: options.idempotencyKey || crypto.randomUUID(),
-        reply_to: options.replyTo,
+        // Mail goes out from noreply@; a reply from a client or candidate must
+        // still reach a person. Internal templates (fixed `to`) keep their own.
+        reply_to: options.replyTo ?? (template.internal || template.to ? undefined : DIRECT_CONTACT_EMAIL),
       },
       { apiKey, sendUrl: process.env.LOVABLE_SEND_URL }
     )

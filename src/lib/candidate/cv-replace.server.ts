@@ -1,3 +1,4 @@
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 /**
  * Replace the CV on a candidate's own existing application.
  * Verified by application id + the email on that application — only the
@@ -28,7 +29,7 @@ export async function replaceCvForApplication(input: {
     return {
       ok: false,
       message:
-        "We couldn't find that application. Email hello@taasflow.com and we'll sort it out with you.",
+        `We couldn't find that application. Email ${DIRECT_CONTACT_EMAIL} and we'll sort it out with you.`,
     };
   }
   const cp = app.candidate_profiles as unknown as { email?: string | null } | null;
@@ -36,7 +37,7 @@ export async function replaceCvForApplication(input: {
     return {
       ok: false,
       message:
-        "That email doesn't match the one on this application. Email hello@taasflow.com and we'll help.",
+        `That email doesn't match the one on this application. Email ${DIRECT_CONTACT_EMAIL} and we'll help.`,
     };
   }
   if (app.withdrawn_at || app.status === "rejected" || app.status === "archived") {

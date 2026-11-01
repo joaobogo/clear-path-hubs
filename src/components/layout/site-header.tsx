@@ -26,6 +26,7 @@ import {
   isCandidateJourneyPath,
 } from "@/config/public-navigation";
 import { cn } from "@/lib/utils";
+import { DirectContactLine } from "@/components/marketing/direct-contact";
 
 const NAV_LINKS = PRIMARY_ITEMS.filter(
   (i): i is Extract<(typeof PRIMARY_ITEMS)[number], { kind: "link" }> => i.kind === "link",
@@ -122,14 +123,24 @@ export function SiteHeader() {
               className="hidden min-h-11 items-center gap-2 rounded-full border border-[color:var(--rule-2)] px-3 hover:border-[color:var(--blue-600)]/40 lg:inline-flex"
             >
               <Briefcase className="h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />
-              <span className="hidden whitespace-nowrap text-[13px] text-[color:var(--slate)] [font-stretch:88%] xl:inline">
-                For candidates:
-              </span>
+              {/* The visible prefix gave way to the Contact link (1 Nov 2026): both
+                  together pushed the primary button off-screen at 1280-1350px.
+                  Contact shows from 1350px, where the row fits its column.
+                  Screen readers still hear the prefix. */}
+              <span className="sr-only">For candidates:</span>
               <span className="whitespace-nowrap text-[15px] font-medium text-[color:var(--ink)]">
                 {CANDIDATE_HEADER_LINK.label}
               </span>
             </Link>
           ) : null}
+          <Link
+            to="/contact"
+            className={cn(linkClass, "hidden min-[1350px]:inline-flex")}
+            activeProps={{ className: activeClass, "aria-current": "page" }}
+            inactiveProps={{ className: inactiveClass }}
+          >
+            Contact
+          </Link>
           <ProductionLink to={signIn.to} className={cn(linkClass, inactiveClass, "hidden lg:inline-flex")}>
             {signIn.label}
           </ProductionLink>
@@ -194,6 +205,10 @@ export function SiteHeader() {
                     {l.label}
                   </Link>
                 ))}
+                <p className="px-3 pb-2 pt-4 text-sm text-[color:var(--slate)]">
+                  Talk to us directly:{" "}
+                  <DirectContactLine />
+                </p>
               </nav>
               <div className="space-y-2 border-t border-[color:var(--rule)] p-4">
                 <RunLinkButton to={primary.to} className="w-full">

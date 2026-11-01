@@ -9,7 +9,7 @@ interface MagicLinkEmailProps {
 }
 
 export const MagicLinkEmail = ({ confirmationUrl }: MagicLinkEmailProps) => (
-  <Shell preview="Your TaaSFlow login link" heading="Your login link">
+  <Shell replyable={false} preview="Your TaaSFlow login link" heading="Your login link">
     <Text style={text}>
       Use the button below to sign in to your TaaSFlow dashboard. The link
       expires shortly for your security.

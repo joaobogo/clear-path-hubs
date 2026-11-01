@@ -40,6 +40,7 @@ import {
   MAX_POSITIONS,
 } from "@/config/pricing-core";
 import { FIRST_SHORTLIST_TIMING_SHORT, RESPONSE_TIME_SENTENCE, TIMING_FINE_PRINT } from "@/config/offer-facts";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 type Props = {
   verticalSlug: string;
@@ -163,7 +164,7 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
           : "Got it. A person will reply, not an autoresponder.",
       );
     } catch {
-      toast.error("That didn't send. Try again, or email hello@taasflow.com.");
+      toast.error(`That didn't send. Try again, or email ${DIRECT_CONTACT_EMAIL}.`);
     } finally {
       setBusy(false);
     }

@@ -1,3 +1,4 @@
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 /**
  * Single source of truth for internal lead-notification routing.
  *
@@ -58,8 +59,12 @@ export const LEAD_TYPE_DEFAULT_LINK: Record<LeadType, string> = {
   candidate_application: "/admin/candidates",
 };
 
-/** Last-resort recipient when nothing is configured in the environment. */
-export const FALLBACK_LEAD_RECIPIENT = "john.kasprzak@taasflow.com";
+/**
+ * Last-resort recipient when nothing is configured in the environment. The
+ * live environment sets none, so every lead alert lands here: the owner's
+ * direct, monitored inbox (1 Nov 2026).
+ */
+export const FALLBACK_LEAD_RECIPIENT: string = DIRECT_CONTACT_EMAIL;
 
 function parseList(raw: string | undefined | null): string[] {
   return (raw ?? "")

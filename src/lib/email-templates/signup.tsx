@@ -15,7 +15,7 @@ export const SignupEmail = ({
   recipient,
   confirmationUrl,
 }: SignupEmailProps) => (
-  <Shell preview="Confirm your email for TaaSFlow" heading="Confirm your email">
+  <Shell replyable={false} preview="Confirm your email for TaaSFlow" heading="Confirm your email">
     <Text style={text}>
       Thanks for signing up for{' '}
       <Link href={siteUrl} style={link}>

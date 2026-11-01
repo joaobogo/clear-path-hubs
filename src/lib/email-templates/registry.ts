@@ -23,6 +23,11 @@ export interface TemplateEntry {
   previewData?: Record<string, any>
   /** Fixed recipient — overrides caller-provided recipientEmail when set. */
   to?: string
+  /**
+   * Staff-only alert. It never gets the direct inbox as Reply-To (a reply must
+   * reach the lead or nobody) and its Shell skips the client "talk to us" footer.
+   */
+  internal?: boolean
 }
 
 /**

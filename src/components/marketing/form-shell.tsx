@@ -4,6 +4,8 @@ import { FGV } from "@/config/ecosystem";
 import type { ReactNode } from "react";
 import { brand } from "@/config/brand";
 import { cn } from "@/lib/utils";
+import { DIRECT_CONTACTS, DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
+import { EmailText } from "@/components/marketing/direct-contact";
 
 /**
  * FormShell — focused chrome for long, high-intent flows
@@ -149,12 +151,25 @@ export function FormShell({
           <span>
             © {new Date().getFullYear()} TaaSFlow — part of {FGV.name}
           </span>
-          <nav aria-label="Form legal" className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <Link to="/privacy" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--blue-600)]">Privacy</Link>
-            <Link to="/terms" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--blue-600)]">Terms</Link>
-            <a href="mailto:hello@taasflow.com" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--blue-600)]">
-              hello@taasflow.com
+          <nav aria-label="Legal and contact" className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <Link to="/privacy" className="inline-flex min-h-11 items-center py-1 hover:text-[color:var(--blue-600)] sm:min-h-6">Privacy</Link>
+            <Link to="/terms" className="inline-flex min-h-11 items-center py-1 hover:text-[color:var(--blue-600)] sm:min-h-6">Terms</Link>
+            <a href={`mailto:${DIRECT_CONTACT_EMAIL}`} className="inline-flex min-h-11 items-center py-1 hover:text-[color:var(--blue-600)] [overflow-wrap:anywhere] sm:min-h-6">
+              <span>
+                <EmailText />
+              </span>
             </a>
+            {DIRECT_CONTACTS.map((p) => (
+              <a
+                key={p.name}
+                href={p.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center py-1 hover:text-[color:var(--blue-600)] sm:min-h-6"
+              >
+                {p.name.split(" ")[0]} on LinkedIn
+              </a>
+            ))}
           </nav>
         </div>
       </footer>

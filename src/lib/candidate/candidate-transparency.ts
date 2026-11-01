@@ -1,3 +1,4 @@
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 /**
  * Candidate-facing transparency layer.
  * ------------------------------------------------------------------
@@ -121,7 +122,7 @@ export const CANDIDATE_STATES: Record<CandidateStateKey, CandidateStateCopy> = {
     happening:
       "This may be a file we could not read, a detail that does not match, or a fault on our side. It is not a judgement about your application.",
     needed:
-      "Write to hello@taasflow.com with your reference and we will sort it out by hand. Nothing you sent has been lost.",
+      `Write to ${DIRECT_CONTACT_EMAIL} with your reference and we will sort it out by hand. Nothing you sent has been lost.`,
     tone: "taas-bg-warning-soft taas-fg-warning",
     humanInvolved: true,
   },
@@ -203,12 +204,12 @@ export function transparencySections(company?: string | null): TransparencySecti
       id: "support",
       title: "Getting help from a person",
       body: [
-        "Email hello@taasflow.com with your 6-character reference for anything about your application, or privacy@taasflow.com for questions about your data.",
+        `Email ${DIRECT_CONTACT_EMAIL} with your 6-character reference for anything about your application, or privacy@taasflow.com for questions about your data.`,
         "If you need an adjustment at any stage of the process, tell us — it stays between you and the TaaSFlow team unless you ask us to pass it on.",
       ],
     },
   ];
 }
 
-export const SUPPORT_EMAIL = "hello@taasflow.com";
+export const SUPPORT_EMAIL = DIRECT_CONTACT_EMAIL;
 export const PRIVACY_EMAIL = "privacy@taasflow.com";

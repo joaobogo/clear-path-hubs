@@ -7,6 +7,7 @@ import {
 import { marketingHead } from "@/lib/marketing/head";
 import { OFFER_CATEGORY } from "@/config/offer-facts";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { DIRECT_CONTACTS, directContactMailto } from "@/config/direct-contact";
 
 // ─── LEADERSHIP — single source of truth for the named leadership narrative ──
 // Canonical version: the two named leaders published on Flow Group Ventures'
@@ -24,7 +25,7 @@ const LEADERS = [
     title: "Chief Executive Officer",
     location: "North America · Europe",
     photoUrl: "/__l5e/assets-v1/15766c52-abcb-4608-ada7-4a2c2a5b34e9/christian-brogger.jpg",
-    linkedin: "https://www.linkedin.com/in/christian-brogger/",
+    linkedin: DIRECT_CONTACTS[1]!.linkedin,
     quote:
       "Great hiring starts with great process. We just made it repeatable.",
     bio: "25 years designing and driving value creation across Fortune 500s and private equity. Former Director at UBS Investment Bank, and led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Pragmatic and disruption-minded, with technology as the enabler — and deep experience working directly with leadership teams to execute business strategy.",
@@ -35,10 +36,9 @@ const LEADERS = [
     title: "Chief Marketing Officer",
     location: "Global · LATAM lead",
     photoUrl: "/__l5e/assets-v1/be65771c-f2ae-41cd-b895-a60020362f38/joao-bogo.jpg",
-    // Unverified: the previously published slug (/in/joaomarcoscsilva/) spells a
-    // different name and LinkedIn serves an auth wall for every slug, so it
-    // cannot be confirmed. Restore only once the profile URL is confirmed.
-    linkedin: "",
+    // Confirmed by the owner, 1 Nov 2026 (src/config/direct-contact.ts).
+    linkedin: DIRECT_CONTACTS[0]!.linkedin,
+    email: DIRECT_CONTACTS[0]!.email,
     quote:
       "The best candidates aren't looking. You need to know where they are and how to reach them.",
     bio: "Former strategist for Hilton, Marriott, Four Seasons and Philips. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe and the Gulf, focused on employer branding, global talent markets and building real connections at scale.",
@@ -212,16 +212,26 @@ function AboutPage() {
                     ))}
                   </ul>
 
-                  {leader.linkedin ? (
-                    <a
-                      href={leader.linkedin}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="mx-6 mb-6 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-navy)] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                    >
-                      Connect on LinkedIn →
-                    </a>
-                  ) : null}
+                  <div className="mx-6 mb-6 flex flex-wrap gap-x-5">
+                    {leader.linkedin ? (
+                      <a
+                        href={leader.linkedin}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="inline-flex min-h-11 w-fit items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-navy)] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                      >
+                        Connect on LinkedIn →
+                      </a>
+                    ) : null}
+                    {"email" in leader && leader.email ? (
+                      <a
+                        href={directContactMailto()}
+                        className="inline-flex min-h-11 w-fit items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-navy)] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                      >
+                        Email {leader.name.includes("John") ? "John" : leader.name.split(" ")[0]} →
+                      </a>
+                    ) : null}
+                  </div>
                 </figure>
               );
             })}

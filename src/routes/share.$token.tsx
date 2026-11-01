@@ -44,6 +44,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
+import { DIRECT_CONTACT_EMAIL, directContactMailto } from "@/config/direct-contact";
 
 export const Route = createFileRoute("/share/$token")({
   head: () => ({
@@ -103,7 +104,11 @@ function ShareGate({ message }: { message: string }) {
       <h1 className="mt-4 text-xl font-semibold">Access unavailable</h1>
       <p className="mt-2 text-muted-foreground">{message}</p>
       <p className="mt-6 text-xs text-muted-foreground">
-        Contact your TaaSFlow client contact for a fresh link.
+        Ask your TaaSFlow contact for a fresh link, or write to{" "}
+        <a className="underline [overflow-wrap:anywhere]" href={directContactMailto("Shared shortlist link")}>
+          {DIRECT_CONTACT_EMAIL}
+        </a>
+        .
       </p>
     </div>
   );

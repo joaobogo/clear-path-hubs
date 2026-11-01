@@ -10,7 +10,7 @@ interface InviteEmailProps {
 }
 
 export const InviteEmail = ({ siteUrl, confirmationUrl }: InviteEmailProps) => (
-  <Shell
+  <Shell replyable={false}
     preview="You've been invited to TaaSFlow"
     heading="You've been invited"
   >

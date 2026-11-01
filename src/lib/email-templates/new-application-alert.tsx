@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { Shell, button, footer, text } from './brand'
 import type { TemplateEntry } from './registry'
+import { DIRECT_CONTACT_EMAIL } from '../../config/direct-contact'
 
 interface NewApplicationAlertProps {
   candidateName?: string
@@ -20,7 +21,7 @@ const NewApplicationAlert = ({
   receivedAt,
   reviewUrl,
 }: NewApplicationAlertProps) => (
-  <Shell preview={`New application — ${positionTitle ?? 'open role'}`} heading="New application received">
+  <Shell internal preview={`New application — ${positionTitle ?? 'open role'}`} heading="New application received">
     <Text style={text}>
       <strong>{candidateName ?? 'A candidate'}</strong> applied for{' '}
       <strong>{positionTitle ?? 'an open role'}</strong>
@@ -47,7 +48,8 @@ export const template = {
   subject: (data: Record<string, any>) =>
     `New application — ${data.positionTitle ?? 'open role'}`,
   displayName: 'New application alert (internal)',
-  to: 'john.kasprzak@taasflow.com',
+  to: DIRECT_CONTACT_EMAIL,
+  internal: true,
   previewData: {
     candidateName: 'Ana Souza',
     positionTitle: 'Social Media & Design Specialist',

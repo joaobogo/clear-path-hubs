@@ -1,6 +1,7 @@
 import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { OFFER_CATEGORY, WHO_RUNS_THE_SEARCH_SHORT } from "@/config/offer-facts";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 
 /**
@@ -177,9 +178,16 @@ export const FOOTER_GROUPS: NavGroup[] = [
 export const FOOTER_DESCRIPTION =
   `TaaSFlow is a ${OFFER_CATEGORY.toLowerCase()}. ${WHO_RUNS_THE_SEARCH_SHORT} Start with one role for $${PRICE_PILOT_USD}.`;
 
+/**
+ * Company channels only. These feed the Organization `sameAs` in __root.tsx, so a
+ * person's profile never belongs here (it would tell search engines the company
+ * IS that person). The founders' profiles are rendered from DIRECT_CONTACTS.
+ */
+export const COMPANY_LINKEDIN = "https://www.linkedin.com/company/taasflow" as const;
+
 export const SOCIAL_LINKS = [
-  { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn" },
-  { href: "mailto:hello@taasflow.com",                 label: "Email" },
+  { href: COMPANY_LINKEDIN, label: "TaaSFlow on LinkedIn" },
+  { href: `mailto:${DIRECT_CONTACT_EMAIL}`, label: "Email John" },
 ] as const;
 
 /** Utility: flat list of all rendered hrefs for QA / crawling. */

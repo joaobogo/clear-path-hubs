@@ -12,6 +12,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { DIRECT_CONTACT_EMAIL } from '../../config/direct-contact'
 
 interface Fact {
   label: string
@@ -123,6 +124,7 @@ export const template = {
     return `${flag}${data.leadTypeLabel ?? 'New lead'} — ${who}`
   },
   displayName: 'Internal lead alert',
+  internal: true,
   previewData: {
     leadTypeLabel: 'Employer intake',
     priority: 'urgent',
@@ -134,7 +136,7 @@ export const template = {
     facts: [{ label: 'Role', value: 'Warehouse Supervisor' }, { label: 'Volume', value: '3 hires' }],
     source: 'employer_intake',
     sourcePage: '/intake',
-    ownerEmail: 'john.kasprzak@taasflow.com',
+    ownerEmail: DIRECT_CONTACT_EMAIL,
     reference: 'INT-4821',
     receivedAt: new Date().toISOString(),
     actionUrl: 'https://taasflow.com/admin/intake',

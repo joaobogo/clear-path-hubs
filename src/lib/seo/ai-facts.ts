@@ -29,6 +29,7 @@ import {
   TIMING_FINE_PRINT,
   WHO_RUNS_THE_SEARCH,
 } from "@/config/offer-facts";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 export const AI_FACTS = {
   origin: CANONICAL_ORIGIN,
@@ -106,6 +107,7 @@ export function buildLlmsTxt(): string {
     "",
     "## Contact",
     `- [Contact](${abs(AI_FACTS.contactPath)})`,
+    `- Email: ${DIRECT_CONTACT_EMAIL}`,
     "",
     `Full text of the canonical pages: ${abs("/llms-full.txt")}`,
     "",
