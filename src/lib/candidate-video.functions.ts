@@ -68,6 +68,11 @@ export const resolveIntroVideo = createServerFn({ method: "GET" })
     const link = parseLoomLink(row?.intro_video_url);
     if (!link) return { available: false as boolean, url: null, embed_url: null, duration_seconds: null };
 
+    // Drive has no public metadata endpoint; its player shows its own notice
+    // when a file is not shared, so a Drive link is treated as available.
+    if (link.provider === "drive") {
+      return { available: true as boolean, url: link.url, embed_url: link.embedUrl, duration_seconds: null };
+    }
     const { probeLoomVideo } = await import("@/lib/media/loom-oembed.server");
     const probe = await probeLoomVideo(link.url);
     return {

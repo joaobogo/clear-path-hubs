@@ -50,7 +50,7 @@ export const applySchema = z.object({
     .max(500)
     .optional()
     .or(z.literal(""))
-    .refine((v) => !v || isLoomLink(v), `That is not a Loom link. ${LOOM_LINK_HINT}`),
+    .refine((v) => !v || isLoomLink(v), `That is not a Loom or Google Drive video link. ${LOOM_LINK_HINT}`),
   accommodation_request: z.string().trim().max(2000).optional().or(z.literal("")),
   answers: z.array(answerSchema).max(50).default([]),
   consent_terms: z.literal(true, {
