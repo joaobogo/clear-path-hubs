@@ -164,6 +164,7 @@ import {
   findProtectedCriteriaInFields,
   type CriteriaFieldFinding,
 } from "@/lib/scoring/protected-attributes";
+import { DirectContactLine } from "@/components/marketing/direct-contact";
 
 /** The step that asks for the role; a visitor arriving with ?role= starts here. */
 const ROLE_STEP_INDEX = Math.max(0, INTAKE_STEPS.findIndex((s) => s.key === "role"));
@@ -4046,6 +4047,10 @@ function ExpressIntakePage() {
                 >
                   Retry
                 </Button>
+                <p className="text-sm text-[color:var(--brand-navy)]/80">
+                  Still not going through? Reach us directly:{" "}
+                  <DirectContactLine subject="Intake problem" />
+                </p>
               </div>
             )}
 

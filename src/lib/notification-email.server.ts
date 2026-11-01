@@ -18,6 +18,12 @@ import {
   normalizeCandidatePrefs,
 } from "./candidate/notification-prefs";
 import { isSuppressed } from "./notification-suppression.server";
+import { DIRECT_CONTACTS, DIRECT_CONTACT_EMAIL, directContactMailto } from "@/config/direct-contact";
+
+/** Default help line: replies reach a person, and the direct routes are named. */
+const DEFAULT_HELP_FOOTER_HTML =
+  `Need help? Reply to this email or write to <a href="${directContactMailto()}" style="color:inherit">${DIRECT_CONTACT_EMAIL}</a>. ` +
+  `You can also message ${DIRECT_CONTACTS.map((p) => `<a href="${p.linkedin}" style="color:inherit">${p.name}</a>`).join(" or ")} on LinkedIn.`;
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -219,7 +225,7 @@ export function renderEmail(args: {
       <a href="${esc(args.actionUrl)}" style="background:${ocean};color:#ffffff;font-size:15px;font-weight:600;border-radius:8px;padding:14px 24px;text-decoration:none;display:inline-block">${esc(args.actionLabel)}</a>
     </p>
     <p style="font-size:13px;color:${muted};line-height:1.6;margin:0;border-top:1px solid ${border};padding-top:16px">
-      ${esc(args.footerNote ?? "Need help? Reply to this email and our team will pick it up.")}
+      ${args.footerNote ? esc(args.footerNote) : DEFAULT_HELP_FOOTER_HTML}
     </p>
   </div>
 </div>
@@ -399,6 +405,8 @@ async function sendViaProvider(args: {
         text: args.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
         purpose: "transactional",
         idempotency_key: args.idempotencyKey,
+        // Sent from notifications@; a reply must still reach a person.
+        reply_to: DIRECT_CONTACT_EMAIL,
       },
       { apiKey, sendUrl: process.env.LOVABLE_SEND_URL },
     );
@@ -623,6 +631,7 @@ function renderIntakeWelcomeEmail(args: {
       <p style="font-size:13px;line-height:1.6;color:#8496a8;margin:14px 0 0">
         Reference ${esc(args.reference.slice(0, 8))} · A TaaSFlow reviewer confirms scope within one business day.
       </p>
+      <p style="font-size:13px;line-height:1.6;color:#5a6b80;margin:14px 0 0">${DEFAULT_HELP_FOOTER_HTML}</p>
     </div>
   </div>
   <p style="font-size:12px;color:#8496a8;text-align:center;margin:16px 0 0">TaaSFlow · Subscription recruiting</p>

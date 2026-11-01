@@ -28,6 +28,7 @@ import { PrivacySummaryNote } from "@/components/candidate/candidate-notes";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
+import { EmailText } from "@/components/marketing/direct-contact";
 
 // fallback() rather than a bare schema: a bare one THROWS, and the router
 // renders that as form-submission copy on a page with no form (audit 17 Sep).
@@ -191,8 +192,8 @@ function StatusPage() {
           <AlertDescription>
             We couldn't match that reference and email. Check both against your confirmation email —
             or write to{" "}
-            <a className="underline break-all" href={`mailto:${DIRECT_CONTACT_EMAIL}`}>
-              {DIRECT_CONTACT_EMAIL}
+            <a className="underline [overflow-wrap:anywhere]" href={`mailto:${DIRECT_CONTACT_EMAIL}`}>
+              <EmailText />
             </a>{" "}
             and we'll find it for you.
           </AlertDescription>

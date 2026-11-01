@@ -411,7 +411,7 @@ export const requestMyDataExport = createServerFn({ method: "POST" })
       return {
         ok: false,
         message:
-          "We couldn't log that request. Please email privacy@taasflow.com and we'll handle it by hand.",
+          `We couldn't log that request. Please email ${DIRECT_CONTACT_EMAIL} and we'll handle it by hand.`,
       };
     }
 

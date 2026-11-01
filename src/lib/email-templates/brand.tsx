@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { Body, Container, Head, Heading, Html, Preview, Section, Text } from '@react-email/components'
+import { Body, Container, Head, Heading, Html, Link, Preview, Section, Text } from '@react-email/components'
+import { DIRECT_CONTACTS, DIRECT_CONTACT_EMAIL, directContactMailto } from '../../config/direct-contact'
 
 /** TaaSFlow email brand palette (hex mirrors of brand-tokens.css — email clients
  *  cannot resolve CSS variables or oklch()). */
@@ -95,10 +96,13 @@ export const Shell = ({
   preview,
   heading,
   children,
+  internal = false,
 }: {
   preview: string
   heading: string
   children: React.ReactNode
+  /** Staff-only alerts skip the "talk to us" footer. */
+  internal?: boolean
 }) => (
   <Html lang="en" dir="ltr">
     <Head />
@@ -112,6 +116,19 @@ export const Shell = ({
         <Section style={card}>
           <Heading style={h1}>{heading}</Heading>
           {children}
+          {internal ? null : (
+            <Text style={footer}>
+              Questions? Reply to this email or write to{' '}
+              <Link href={directContactMailto()}>{DIRECT_CONTACT_EMAIL}</Link>. You can also message{' '}
+              {DIRECT_CONTACTS.map((p, i) => (
+                <React.Fragment key={p.name}>
+                  {i > 0 ? ' or ' : ''}
+                  <Link href={p.linkedin}>{p.name}</Link>
+                </React.Fragment>
+              ))}{' '}
+              on LinkedIn.
+            </Text>
+          )}
         </Section>
       </Container>
     </Body>

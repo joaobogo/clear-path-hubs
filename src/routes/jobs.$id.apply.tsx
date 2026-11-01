@@ -58,6 +58,7 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/dat
 // This page said "10 points" long after the award became 5 (audit #9).
 import { VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
+import { EmailText, DirectContactLine } from "@/components/marketing/direct-contact";
 
 
 const EMPTY_FORM = {
@@ -1056,15 +1057,18 @@ function ApplyPage() {
                 <span className="block mt-1">
                   Your answers are still here, but submitting again will give the same result. If
                   this is a genuine application, email{" "}
-                  <a className="underline break-all" href={`mailto:${DIRECT_CONTACT_EMAIL}`}>
-                    {DIRECT_CONTACT_EMAIL}
+                  <a className="underline [overflow-wrap:anywhere]" href={`mailto:${DIRECT_CONTACT_EMAIL}`}>
+                    <EmailText />
                   </a>{" "}
                   quoting the reference below and we will sort it out.
                 </span>
               ) : (
                 <span className="block mt-1">
                   Nothing was sent and nothing was lost — your answers are still here. Press submit
-                  again when you're ready.
+                  again when you're ready. If it fails again, reach us directly:{" "}
+                  <DirectContactLine
+                    subject={serverError.trace_id ? `Application ${serverError.trace_id}` : "Application problem"}
+                  />
                 </span>
               )}
               {serverError.trace_id && (

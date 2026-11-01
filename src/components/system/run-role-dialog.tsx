@@ -8,6 +8,7 @@ import { submitInquiry } from "@/lib/inquiry.functions";
 import { storeLeadPrefill } from "@/lib/marketing/lead-prefill";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { cn } from "@/lib/utils";
+import { DirectContactLine } from "@/components/marketing/direct-contact";
 
 const Schema = z.object({
   name: z.string().trim().min(1, "Tell us your name.").max(120),
@@ -114,6 +115,10 @@ export function RunRoleDialog({
               <DialogTitle>Thanks, {form.name.trim().split(" ")[0]}. We've got it.</DialogTitle>
               <DialogDescription>Our team will get in touch with you shortly at {form.email.trim()}.</DialogDescription>
             </DialogHeader>
+            <p className="text-sm text-[color:var(--slate)]">
+              Want to talk now?{" "}
+              <DirectContactLine subject={role ? `Run a role: ${role}` : undefined} />
+            </p>
             <button
               type="button"
               onClick={goToIntake}
@@ -148,7 +153,14 @@ export function RunRoleDialog({
             value={form.website}
             onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))}
           />
-          {errors.form ? <p className="text-sm text-destructive">{errors.form}</p> : null}
+          {errors.form ? (
+            <div className="space-y-1">
+              <p className="text-sm text-destructive">{errors.form}</p>
+              <p className="text-sm text-[color:var(--slate)]">
+                Or reach us directly: <DirectContactLine subject={role ? `Run a role: ${role}` : undefined} />
+              </p>
+            </div>
+          ) : null}
           <button
             type="submit"
             disabled={busy}

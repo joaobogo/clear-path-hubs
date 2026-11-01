@@ -135,7 +135,7 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix, vari
       trackLeadFormError(source, limited ? "rate_limited" : "network_error");
       setServerError(
         limited
-          ? "Too many attempts from this connection. Wait a minute and try again."
+          ? `Too many attempts from this connection. Wait a minute and try again, or email ${SALES_EMAIL}.`
           : `We could not send your request. Your details are still here, so you can try again, or email ${SALES_EMAIL}.`,
       );
       requestAnimationFrame(() => summaryRef.current?.focus());
@@ -172,6 +172,7 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix, vari
             Prefer email? {SALES_EMAIL}
           </a>
           <DirectContactLine
+            showEmail={false}
             className={cn("text-sm", blue ? "text-white/85" : "text-[color:var(--slate)]")}
           />
         </div>

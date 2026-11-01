@@ -6,6 +6,19 @@ import {
   directContactMailto,
 } from "@/config/direct-contact";
 
+/** The address with a soft break after "@", so narrow boxes break it cleanly. */
+export function EmailText({ email = DIRECT_CONTACT_EMAIL }: { email?: string }) {
+  const at = email.indexOf("@");
+  if (at < 0) return <>{email}</>;
+  return (
+    <>
+      {email.slice(0, at + 1)}
+      <wbr />
+      {email.slice(at + 1)}
+    </>
+  );
+}
+
 /**
  * "Talk to us directly": the founders' LinkedIn profiles and the direct inbox.
  * Shown wherever a visitor might otherwise rely on a form or a shared address
@@ -15,14 +28,18 @@ export function DirectContactCard({
   title = "Talk to us directly",
   description = "Message John or Christian on LinkedIn, or email John. A person reads every message.",
   subject,
+  headingLevel = 2,
   className,
 }: {
   title?: string;
+  /** Heading level for the card title; use 3 inside a page section that already has an h2. */
+  headingLevel?: 2 | 3;
   description?: string;
   /** Pre-filled email subject, e.g. a submission reference. */
   subject?: string;
   className?: string;
 }) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   return (
     <section
       aria-label={title}
@@ -31,9 +48,9 @@ export function DirectContactCard({
         className,
       )}
     >
-      <h2 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold tracking-tight text-[color:var(--brand-navy)]">
+      <Heading className="font-[family-name:var(--brand-font-display)] text-lg font-semibold tracking-tight text-[color:var(--brand-navy)]">
         {title}
-      </h2>
+      </Heading>
       <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">{description}</p>
       <ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {DIRECT_CONTACTS.map((person) => (
@@ -70,32 +87,40 @@ export function DirectContactCard({
           </li>
         ))}
       </ul>
-      <p className="mt-3 break-all text-sm text-[color:var(--brand-navy)]/70">
+      <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70 [overflow-wrap:anywhere]">
         <a className="underline underline-offset-4" href={directContactMailto(subject)}>
-          {DIRECT_CONTACT_EMAIL}
+          <EmailText />
         </a>
       </p>
     </section>
   );
 }
 
-/** One-line version for tight spots: "Email john@… · John on LinkedIn · Christian on LinkedIn". */
+/** One-line version for tight spots: "john@… · John on LinkedIn · Christian on LinkedIn". */
 export function DirectContactLine({
   subject,
+  showEmail = true,
   className,
 }: {
   subject?: string;
+  /** False when the caller already shows the address next to this line. */
+  showEmail?: boolean;
   className?: string;
 }) {
+  const link = "inline-flex items-center underline underline-offset-4";
   return (
-    <span className={cn("inline-flex flex-wrap items-center gap-x-3 gap-y-1", className)}>
-      <a className="underline underline-offset-4 break-all" href={directContactMailto(subject)}>
-        {DIRECT_CONTACT_EMAIL}
-      </a>
+    <span className={cn("inline-flex flex-wrap items-center gap-x-3 gap-y-0", className)}>
+      {showEmail ? (
+        <a className={cn(link, "[overflow-wrap:anywhere]")} href={directContactMailto(subject)}>
+          <span>
+            <EmailText />
+          </span>
+        </a>
+      ) : null}
       {DIRECT_CONTACTS.map((person) => (
         <a
           key={person.name}
-          className="underline underline-offset-4"
+          className={link}
           href={person.linkedin}
           target="_blank"
           rel="noopener noreferrer"

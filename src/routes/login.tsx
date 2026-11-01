@@ -31,6 +31,7 @@ import {
 } from "@/lib/roles";
 
 import { sanitizeRedirect, sanitizeRedirectForRole } from "@/lib/safe-redirect";
+import { DIRECT_CONTACT_EMAIL, directContactMailto } from "@/config/direct-contact";
 
 // fallback() rather than a bare schema: a bare one THROWS, and the router
 // renders that as form-submission copy on a page with no form (audit 17 Sep).
@@ -534,7 +535,11 @@ function LoginPage() {
                 <Link to="/intake" className="underline">
                   start an intake
                 </Link>{" "}
-                to talk to our team.
+                to talk to our team. Trouble signing in? Email{" "}
+                <a className="underline [overflow-wrap:anywhere]" href={directContactMailto("Sign-in problem")}>
+                  {DIRECT_CONTACT_EMAIL}
+                </a>
+                .
               </p>
               </form>
             </div>

@@ -26,6 +26,7 @@ import {
   isCandidateJourneyPath,
 } from "@/config/public-navigation";
 import { cn } from "@/lib/utils";
+import { DirectContactLine } from "@/components/marketing/direct-contact";
 
 const NAV_LINKS = PRIMARY_ITEMS.filter(
   (i): i is Extract<(typeof PRIMARY_ITEMS)[number], { kind: "link" }> => i.kind === "link",
@@ -130,6 +131,9 @@ export function SiteHeader() {
               </span>
             </Link>
           ) : null}
+          <Link to="/contact" className={cn(linkClass, inactiveClass, "hidden xl:inline-flex")}>
+            Contact
+          </Link>
           <ProductionLink to={signIn.to} className={cn(linkClass, inactiveClass, "hidden lg:inline-flex")}>
             {signIn.label}
           </ProductionLink>
@@ -210,6 +214,10 @@ export function SiteHeader() {
                 >
                   {signIn.label}
                 </ProductionLink>
+                <p className="pt-2 text-center text-sm text-[color:var(--slate)]">
+                  Talk to us directly:{" "}
+                  <DirectContactLine className="justify-center" />
+                </p>
               </div>
             </SheetContent>
           </Sheet>

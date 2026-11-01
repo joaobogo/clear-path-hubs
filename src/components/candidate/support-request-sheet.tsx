@@ -21,6 +21,7 @@ import {
 } from "@/lib/candidate/support";
 import { submitSupportRequest } from "@/lib/candidate/support.functions";
 import { track } from "@/lib/candidate/funnel-events.functions";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 /**
  * In-product support route. The candidate never has to find an address or
@@ -51,10 +52,13 @@ export function SupportRequestSheet({
         setBody("");
         setOpen(false);
       } else {
-        toast.error(r.message ?? "We could not send that. Please try again.");
+        toast.error(r.message ?? `We could not send that. Please try again, or email ${DIRECT_CONTACT_EMAIL}.`, {
+          duration: 15000,
+        });
       }
     },
-    onError: () => toast.error("We could not send that. Please try again."),
+    onError: () =>
+      toast.error(`We could not send that. Please try again, or email ${DIRECT_CONTACT_EMAIL}.`, { duration: 15000 }),
   });
 
   return (

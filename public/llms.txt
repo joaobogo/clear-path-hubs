@@ -32,5 +32,6 @@
 
 ## Contact
 - [Contact](https://taasflow.com/contact)
+- Email: john.kasprzak@flowgroupventures.com
 
 Full text of the canonical pages: https://taasflow.com/llms-full.txt

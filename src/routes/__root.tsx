@@ -29,6 +29,7 @@ import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { GlobalRouteError } from "@/components/global-error";
 import { PublicNotFound } from "@/components/marketing/site-shell";
 import "@/styles.css";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -168,6 +169,10 @@ export const Route = createRootRouteWithContext<{
               sameAs: SOCIAL_LINKS.filter((l) => l.href.startsWith("https://")).map(
                 (l) => l.href,
               ),
+              contactPoint: [
+                { "@type": "ContactPoint", contactType: "sales", email: DIRECT_CONTACT_EMAIL, availableLanguage: ["en"] },
+                { "@type": "ContactPoint", contactType: "customer support", email: DIRECT_CONTACT_EMAIL, availableLanguage: ["en"] },
+              ],
             },
             {
               "@type": "WebSite",

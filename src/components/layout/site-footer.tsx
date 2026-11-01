@@ -8,7 +8,8 @@ import {
   SOCIAL_LINKS,
   type NavLink,
 } from "@/config/public-navigation";
-import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
+import { DIRECT_CONTACTS, DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
+import { EmailText } from "@/components/marketing/direct-contact";
 
 const footLink =
   "inline-flex min-h-11 items-center text-[15px] text-[color:var(--slate)] hover:text-[color:var(--blue-600)] hover:underline underline-offset-4";
@@ -43,7 +44,11 @@ export function SiteFooter() {
               {FOOTER_DESCRIPTION}
             </p>
             <ul className="mt-4 flex flex-wrap gap-x-5">
-              {SOCIAL_LINKS.map(({ href, label }) => (
+              {[
+                SOCIAL_LINKS[0],
+                ...DIRECT_CONTACTS.map((p) => ({ href: p.linkedin, label: `${p.name.split(" ")[0]} on LinkedIn` })),
+                ...SOCIAL_LINKS.slice(1),
+              ].map(({ href, label }) => (
                 <li key={label}>
                   <a
                     href={href}
@@ -87,8 +92,8 @@ export function SiteFooter() {
                   <FooterLink key={l.label} link={l} />
                 ))}
               <ConsentPreferencesLink className={footLink} />
-              <a href={`mailto:${DIRECT_CONTACT_EMAIL}`} className={`${footLink} break-all`}>
-                {DIRECT_CONTACT_EMAIL}
+              <a href={`mailto:${DIRECT_CONTACT_EMAIL}`} className={`${footLink} [overflow-wrap:anywhere]`}>
+                <EmailText />
               </a>
             </nav>
           ) : null}

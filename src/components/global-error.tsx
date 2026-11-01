@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { describeError } from "@/lib/error-copy";
+import { DIRECT_CONTACTS, DIRECT_CONTACT_EMAIL, directContactMailto } from "@/config/direct-contact";
 
 /**
  * Router-level error fallback used as `defaultErrorComponent` in src/router.tsx.
@@ -66,6 +67,26 @@ export function GlobalRouteError({
           Reference for support: {copy.reference}
         </p>
       ) : null}
+      {pathname.startsWith("/admin") ? null : (
+        <p className="text-sm text-[color:var(--brand-navy,#0a1533)]/80 [overflow-wrap:anywhere]">
+          Still stuck? Email{" "}
+          <a
+            className="underline underline-offset-4"
+            href={directContactMailto(copy.reference ? `Website error ${copy.reference}` : "Website error")}
+          >
+            {DIRECT_CONTACT_EMAIL}
+          </a>
+          {DIRECT_CONTACTS.map((p, i) => (
+            <span key={p.name}>
+              {i === 0 ? " or message " : " or "}
+              <a className="underline underline-offset-4" href={p.linkedin} target="_blank" rel="noopener noreferrer">
+                {p.name.split(" ")[0]} on LinkedIn
+              </a>
+            </span>
+          ))}
+          .
+        </p>
+      )}
     </div>
   );
 }

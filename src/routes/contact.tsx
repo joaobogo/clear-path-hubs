@@ -10,8 +10,8 @@ import { marketingHead } from "@/lib/marketing/head";
 import { CTA_MESSAGE, CTA_PRIMARY } from "@/config/cta";
 import { RESPONSE_TIME_SENTENCE } from "@/config/offer-facts";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
-import { DirectContactCard, DirectContactLine } from "@/components/marketing/direct-contact";
-import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
+import { DirectContactCard, DirectContactLine, EmailText } from "@/components/marketing/direct-contact";
+import { directContactMailto } from "@/config/direct-contact";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,7 +53,7 @@ const INTENTS: IntentSpec[] = [
     icon: Briefcase,
     primaryCta: { label: CTA_PRIMARY.label, to: CTA_PRIMARY.to, icon: ArrowRight },
     secondaryCta: { label: CTA_MESSAGE.label, anchor: "#contact-form-hire" },
-    backup: `Email John directly: ${DIRECT_CONTACT_EMAIL}`,
+    backup: "Email John directly:",
     fields: ["name", "email", "company", "role", "message"],
     formHeading: "Talk to sales",
     formDescription: "Tell us who you are and the role you need to fill.",
@@ -66,7 +66,7 @@ const INTENTS: IntentSpec[] = [
     icon: UserCircle2,
     primaryCta: { label: "Browse jobs", to: "/jobs", icon: Search },
     secondaryCta: { label: "Candidate sign in", to: "/login", icon: LogIn },
-    backup: `Application questions: ${DIRECT_CONTACT_EMAIL}`,
+    backup: "Application questions:",
     fields: ["name", "email", "url", "message"],
     formHeading: "Ask the talent team",
     formDescription: "Share your LinkedIn or a link to your work, and the question you'd like answered.",
@@ -79,7 +79,7 @@ const INTENTS: IntentSpec[] = [
     icon: Building2,
     primaryCta: { label: "Client sign in", to: "/login", icon: LogIn },
     secondaryCta: { label: CTA_MESSAGE.label, anchor: "#contact-form-existing_client" },
-    backup: `Message us inside your workspace, or email ${DIRECT_CONTACT_EMAIL}`,
+    backup: "Message us inside your workspace, or email",
     fields: ["name", "email", "company", "message"],
     formHeading: "Message your account team",
     formDescription: "Use the email tied to your workspace so we can find the right account.",
@@ -92,7 +92,7 @@ const INTENTS: IntentSpec[] = [
     icon: LifeBuoy,
     primaryCta: { label: "Report an issue", anchor: "#contact-form-support", icon: ArrowRight },
     secondaryCta: { label: "Sign in first", to: "/login", icon: LogIn },
-    backup: `Urgent workspace outage? ${DIRECT_CONTACT_EMAIL}`,
+    backup: "Urgent workspace outage?",
     fields: ["name", "email", "url", "message"],
     formHeading: "Support request",
     formDescription: "Include your account email and the URL where you hit the issue. Screenshots welcome — reply to the confirmation email to attach.",
@@ -105,7 +105,7 @@ const INTENTS: IntentSpec[] = [
     icon: MessageSquare,
     primaryCta: { label: CTA_MESSAGE.label, anchor: "#contact-form-general", icon: ArrowRight },
     secondaryCta: { label: "About TaaSFlow", to: "/about" },
-    backup: `Press and partnerships: ${DIRECT_CONTACT_EMAIL}`,
+    backup: "Press and partnerships:",
     fields: ["name", "email", "company", "message"],
     formHeading: "General inquiry",
     formDescription: "Press, partnerships, or anything else. We'll route it to the right team.",
@@ -258,7 +258,12 @@ function ContactPage() {
                       <Mail className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
                       Backup channel
                     </dt>
-                    <dd className="mt-0.5 pl-7 text-[color:var(--brand-navy)]/80">{intent.backup}</dd>
+                    <dd className="mt-0.5 pl-7 text-[color:var(--brand-navy)]/80 [overflow-wrap:anywhere]">
+                      {intent.backup}{" "}
+                      <a className="underline underline-offset-4" href={directContactMailto(intent.formHeading)}>
+                        <EmailText />
+                      </a>
+                    </dd>
                   </div>
                 </dl>
 
@@ -287,6 +292,8 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { traceId: string }>(null);
   const [error, setError] = useState<string | null>(null);
+  /** A real send failure (server or network), never a validation miss. */
+  const [sendError, setSendError] = useState<string | null>(null);
   /** Affirmative marketing consent. Never defaulted to true. */
   const [marketingConsent, setMarketingConsent] = useState(false);
   /** Required privacy-notice acknowledgement. Never defaulted to true. */
@@ -341,6 +348,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
 
     const next: Record<string, string> = {};
     setError(null);
+    setSendError(null);
     setConsentError(null);
 
     if (payload.name.length < 1 || payload.name.length > 120) {
@@ -399,7 +407,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       };
       if (!res.ok || !json.ok) {
         submittedRef.current = false;
-        setError(
+        setSendError(
           json.error === "rate_limited"
             ? json.message ||
               "We've received a few submissions from your connection already. Please try again shortly."
@@ -419,7 +427,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       form.reset();
     } catch {
       submittedRef.current = false;
-      setError("Network error. Please try again.");
+      setSendError("Network error. Please try again.");
       toast.error("Network error.");
     } finally {
       setSubmitting(false);
@@ -648,16 +656,15 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         </label>
       </div>
 
-      {error ? (
+      {sendError ? (
         <Alert
           variant="destructive"
-          role="alert"
           className="border-[color:var(--brand-danger)]/20 bg-[color:var(--brand-danger)]/5 text-[color:var(--brand-danger)]"
         >
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
           <AlertTitle>Your message did not send</AlertTitle>
           <AlertDescription>
-            {error} Your details are still here. You can also reach us directly:{" "}
+            {sendError} Your details are still here. You can also reach us directly:{" "}
             <DirectContactLine />
           </AlertDescription>
         </Alert>

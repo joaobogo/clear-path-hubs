@@ -8,6 +8,7 @@ import type {
   CandidateEditableDetails,
   CandidateUpdateResult,
 } from "@/lib/candidate-self-service.functions";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 const MAX_CV_BYTES = 10 * 1024 * 1024;
 
@@ -112,7 +113,7 @@ export function ManageApplication({
       setExportMessage(res.message);
     } catch {
       setExportMessage(
-        "We couldn't log that request. Please email privacy@taasflow.com and we'll handle it by hand.",
+        `We couldn't log that request. Please email ${DIRECT_CONTACT_EMAIL} and we'll handle it by hand.`,
       );
     } finally {
       setExporting(false);
@@ -126,7 +127,7 @@ export function ManageApplication({
       setDeleteMessage(res.message);
     } catch {
       setDeleteMessage(
-        "We couldn't log that request. Please email privacy@taasflow.com and we'll handle it by hand.",
+        `We couldn't log that request. Please email ${DIRECT_CONTACT_EMAIL} and we'll handle it by hand.`,
       );
     } finally {
       setDeleting(false);

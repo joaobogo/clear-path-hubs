@@ -12,7 +12,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
-import { DIRECT_CONTACT_EMAIL } from '@/config/direct-contact'
+import { DIRECT_CONTACT_EMAIL } from '../../config/direct-contact'
 
 interface Fact {
   label: string
