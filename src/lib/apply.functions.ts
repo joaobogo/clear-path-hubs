@@ -8,6 +8,7 @@ import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 import { greetingName } from "@/lib/candidate/display-name";
 import type { SubmitApplicationResult } from "./apply-types";
 import { publicOrgName } from "@/lib/org/public-org-name";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 export type { SubmitApplicationResult };
 
@@ -100,7 +101,7 @@ export const replaceApplicationCv = createServerFn({ method: "POST" })
       return {
         ok: false as const,
         message:
-          "Something went wrong on our end. Your existing application is unaffected — email hello@taasflow.com if this keeps happening.",
+          `Something went wrong on our end. Your existing application is unaffected — email ${DIRECT_CONTACT_EMAIL} if this keeps happening.`,
       };
     }
   });

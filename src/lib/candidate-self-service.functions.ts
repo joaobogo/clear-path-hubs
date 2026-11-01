@@ -9,6 +9,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { statusLookupSchema } from "./apply-status.functions";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 const POSITION_OPEN_STATUSES = ["active", "approved", "paused"];
 
@@ -303,7 +304,7 @@ export const requestMyDataDeletion = createServerFn({ method: "POST" })
         return {
           ok: false,
           message:
-            "We couldn't log that request. Please email hello@taasflow.com and we'll handle it by hand.",
+            `We couldn't log that request. Please email ${DIRECT_CONTACT_EMAIL} and we'll handle it by hand.`,
         };
       }
 
@@ -318,7 +319,7 @@ export const requestMyDataDeletion = createServerFn({ method: "POST" })
 
       try {
         const { sendTemplateEmail } = await import("./email-templates/send-email");
-        await sendTemplateEmail("new-application-alert", "john.kasprzak@taasflow.com", {
+        await sendTemplateEmail("new-application-alert", DIRECT_CONTACT_EMAIL, {
           idempotencyKey: `deletion-request-${app.id}`,
           templateData: {
             candidateName: app.full_name ?? app.email,

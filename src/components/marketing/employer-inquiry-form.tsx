@@ -27,6 +27,7 @@ import {
 import { CTA_PILOT_REQUEST } from "@/config/cta";
 import { SALES_EMAIL } from "@/config/booking";
 import { cn } from "@/lib/utils";
+import { DirectContactLine } from "@/components/marketing/direct-contact";
 
 export const INQUIRY_HELPER =
   "No account needed. Share the link to the job description and we will contact you to confirm fit and next steps." as const;
@@ -170,6 +171,9 @@ export function EmployerInquiryForm({ source, heading, className, idPrefix, vari
           >
             Prefer email? {SALES_EMAIL}
           </a>
+          <DirectContactLine
+            className={cn("text-sm", blue ? "text-white/85" : "text-[color:var(--slate)]")}
+          />
         </div>
       </section>
     );

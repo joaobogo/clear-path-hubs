@@ -4,6 +4,7 @@ import { FGV } from "@/config/ecosystem";
 import type { ReactNode } from "react";
 import { brand } from "@/config/brand";
 import { cn } from "@/lib/utils";
+import { DIRECT_CONTACTS, DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 /**
  * FormShell — focused chrome for long, high-intent flows
@@ -152,9 +153,20 @@ export function FormShell({
           <nav aria-label="Form legal" className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <Link to="/privacy" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--blue-600)]">Privacy</Link>
             <Link to="/terms" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--blue-600)]">Terms</Link>
-            <a href="mailto:hello@taasflow.com" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--blue-600)]">
-              hello@taasflow.com
+            <a href={`mailto:${DIRECT_CONTACT_EMAIL}`} className="inline-flex min-h-6 items-center break-all py-1 hover:text-[color:var(--blue-600)]">
+              {DIRECT_CONTACT_EMAIL}
             </a>
+            {DIRECT_CONTACTS.map((p) => (
+              <a
+                key={p.name}
+                href={p.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--blue-600)]"
+              >
+                {p.name.split(" ")[0]} on LinkedIn
+              </a>
+            ))}
           </nav>
         </div>
       </footer>

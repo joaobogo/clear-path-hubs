@@ -1,3 +1,4 @@
+import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 /**
  * Retired booking configuration — client-safe.
  *
@@ -21,6 +22,6 @@ export const BOOKING_REDIRECT_TARGET = "/contact" as const;
 
 /**
  * The one sales address used as the fallback whenever a form cannot complete.
- * Same address the contact page lists.
+ * Same address the contact page lists: the direct, monitored inbox.
  */
-export const SALES_EMAIL = "sales@taasflow.com" as const;
+export const SALES_EMAIL = DIRECT_CONTACT_EMAIL;

@@ -14,6 +14,8 @@ import {
   RESPONSE_TIME_SENTENCE,
   TIMING_FINE_PRINT,
 } from "@/config/offer-facts";
+import { DIRECT_CONTACT_EMAIL, directContactMailto } from "@/config/direct-contact";
+import { DirectContactCard } from "@/components/marketing/direct-contact";
 
 // A bad or stale value in the URL is a bad LINK, not a rejected form. A bare
 // zod schema THROWS out of validateSearch, and the router wraps that as an
@@ -144,11 +146,15 @@ function ConfirmationPage() {
               {FIRST_SHORTLIST_TIMING} {TIMING_FINE_PRINT}
             </p>
           </div>
+          <DirectContactCard
+            title="Questions before we reply? Talk to us directly"
+            subject={intake_id ? `Intake ${intake_id}` : undefined}
+          />
           {!intake_id && (
             <p className="text-muted-foreground">
               We didn't receive a submission reference. If you just submitted and see this page, email{" "}
-              <a className="underline" href="mailto:hello@taasflow.com">
-                hello@taasflow.com
+              <a className="underline break-all" href={`mailto:${DIRECT_CONTACT_EMAIL}`}>
+                {DIRECT_CONTACT_EMAIL}
               </a>
               .
             </p>
@@ -169,8 +175,8 @@ function ConfirmationPage() {
               <DeliveryCommitmentBlock commitment={null} reference={intake_id} datesFollowByEmail />
               <p className="text-muted-foreground">
                 Email{" "}
-                <a className="underline" href="mailto:hello@taasflow.com">
-                  hello@taasflow.com
+                <a className="underline break-all" href={directContactMailto(`Intake ${intake_id}`)}>
+                  {DIRECT_CONTACT_EMAIL}
                 </a>{" "}
                 and include your reference.
               </p>

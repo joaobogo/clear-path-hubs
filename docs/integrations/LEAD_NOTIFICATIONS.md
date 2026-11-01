@@ -46,7 +46,7 @@ at a call site.
 | `TEAMS_TEAM_ID` / `TEAMS_CHANNEL_ID` | Teams destination |
 | `PUBLIC_APP_URL` | Origin used in Teams and email deep links |
 
-With no variables set, alerts go to `john.kasprzak@taasflow.com` so a lead is
+With no variables set, alerts go to `john.kasprzak@flowgroupventures.com` (the owner's direct inbox, `DIRECT_CONTACT_EMAIL` in src/config/direct-contact.ts) so a lead is
 never silently un-notified.
 
 ## Monitoring and retry

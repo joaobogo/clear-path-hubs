@@ -35,10 +35,8 @@ const LEADERS = [
     title: "Chief Marketing Officer",
     location: "Global · LATAM lead",
     photoUrl: "/__l5e/assets-v1/be65771c-f2ae-41cd-b895-a60020362f38/joao-bogo.jpg",
-    // Unverified: the previously published slug (/in/joaomarcoscsilva/) spells a
-    // different name and LinkedIn serves an auth wall for every slug, so it
-    // cannot be confirmed. Restore only once the profile URL is confirmed.
-    linkedin: "",
+    // Confirmed by the owner, 1 Nov 2026.
+    linkedin: "https://www.linkedin.com/in/joaokasprzak/",
     quote:
       "The best candidates aren't looking. You need to know where they are and how to reach them.",
     bio: "Former strategist for Hilton, Marriott, Four Seasons and Philips. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe and the Gulf, focused on employer branding, global talent markets and building real connections at scale.",
