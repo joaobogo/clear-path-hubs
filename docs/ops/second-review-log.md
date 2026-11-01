@@ -244,3 +244,36 @@ Checks
   row); the score is unaffected. The intro-video bonus (+5) shows on the
   client list and, on main, on the admin list too.
 
+
+## 2 Nov 2026 — Mushroom Harvesting Manager fixes and Adiya Vatsa
+
+- Bug: `apply_reviewed_verdicts` matched verdicts to requirement rows by
+  id. The Mushroom role numbers verdicts from 1 and rows from 0, so each
+  verdict landed one row down (Thaddeus's people-management row read as
+  missing). Migration 0010 matches by wording (`requirement_text_key`),
+  always builds from the latest engine run, reads only authored briefings
+  (a machine briefing is never applied as a human verdict; unreviewed
+  candidates are skipped), and compares rows regardless of order.
+- Consistency rule: a direct "yes" to the rota screening question, or a CV
+  statement of flexible hours, counts as met for "Flexible approach to
+  working hours".
+- Thaddeus Armoh 57 → 64 (rota met; picking and supervision still
+  missing). Chiedza Chaya 58, each verdict checked against her CV.
+- Adiya Vatsa: CV and introduction video sent to John Kasprzak on 1 Nov;
+  record created by staff on the owner's instruction (application
+  reference 8FAAA3, source direct email, privacy notice not yet
+  acknowledged). Engine run 50; authored review 67.5 (hands-on mushroom
+  cultivation and harvesting met; management and food-safety partial; no
+  commercial farm experience). Hidden and pending. Work authorisation:
+  owner reports she lives in the UK and holds a UK visa; the CV says
+  Skilled Worker sponsorship required, so visa type and end date are
+  recorded as to confirm. Video: Google Drive, shared with anyone who has
+  the link (migration 0010 lets the database accept Drive links).
+- The PDF itself is not in file storage yet (this environment cannot reach
+  it); only the text is stored. To attach it: taasflow.com/apply/status,
+  reference 8FAAA3 and her email, "Replace your CV". The pipeline then
+  re-reads it; re-run `apply_reviewed_verdicts` for the role afterwards.
+  Her review is stored under its own label (`claude-review-2026-11-02`)
+  so the pipeline's briefing cannot overwrite it.
+- Five screening questions unanswered (three dealbreakers); eligibility
+  rests on the CV until she answers.

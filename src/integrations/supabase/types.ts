@@ -15570,6 +15570,7 @@ export type Database = {
           suite: string
         }[]
       }
+      requirement_text_key: { Args: { t: string }; Returns: string }
       resolve_talent_person: {
         Args: {
           _auth_user_id?: string
