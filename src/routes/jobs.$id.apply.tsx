@@ -1645,8 +1645,9 @@ function ApplyPage() {
                       explains the scoring model. "(optional)" already sits in the
                       label, so the old "skip it if you'd rather" line was cut. */}
                   <p id="loom_url-help" className="mt-1 text-xs text-muted-foreground">
-                    Record a 1–5 minute Loom in English introducing yourself and what you do
-                    best, then paste the link below. A video adds up to{" "}
+                    Record a 1–5 minute video in English introducing yourself and what you do
+                    best, then paste the Loom or Google Drive link below (set Drive sharing to
+                    &quot;Anyone with the link&quot;). A video adds up to{" "}
                     {VIDEO_INTRO_BONUS_PTS} points to your profile and helps recruiters and
                     clients get to know you even better.
                   </p>
@@ -1656,7 +1657,7 @@ function ApplyPage() {
                     data-field="loom_url"
                     {...fieldAria("loom_url")}
                     aria-describedby="loom_url-help"
-                    placeholder="https://www.loom.com/share/…"
+                    placeholder="https://www.loom.com/share/… or a Google Drive link"
                     className="mt-2"
                     value={form.loom_url}
                     onChange={(e) => setForm({ ...form, loom_url: e.target.value })}

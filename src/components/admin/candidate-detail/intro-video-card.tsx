@@ -1,8 +1,8 @@
 /**
- * Admin-side attachment of a candidate's Loom introduction.
+ * Admin-side attachment of a candidate's video introduction (Loom or Google Drive).
  *
  * The recruiting team attaches the link here; the client only watches it on the
- * candidate's client-facing profile. A non-Loom link is refused inline with a
+ * candidate's client-facing profile. Any other link is refused inline with a
  * plain sentence, and clearing the field removes the video.
  */
 import { useState } from "react";
@@ -66,9 +66,9 @@ export function IntroVideoCard({
               setDraft(e.target.value);
               setError(null);
             }}
-            placeholder="https://www.loom.com/share/…"
+            placeholder="https://www.loom.com/share/… or https://drive.google.com/file/d/…"
             aria-invalid={error ? true : undefined}
-            aria-label="Loom share link"
+            aria-label="Loom or Google Drive video link"
           />
           {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
         </div>

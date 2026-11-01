@@ -77,6 +77,7 @@ export function IntroVideoPanel({
       <link rel="preconnect" href="https://www.loom.com" />
       <link rel="preconnect" href="https://cdn.loom.com" crossOrigin="" />
       <link rel="dns-prefetch" href="https://www.loom.com" />
+      <link rel="dns-prefetch" href="https://drive.google.com" />
       <div className="relative mt-3 aspect-video w-full bg-muted">
         <iframe
           src={video.embed_url}
