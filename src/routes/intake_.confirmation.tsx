@@ -149,7 +149,6 @@ function ConfirmationPage() {
           </div>
           <DirectContactCard
             title="Questions before we reply? Talk to us directly"
-            headingLevel={3}
             subject={intake_id ? `Intake ${intake_id}` : undefined}
           />
           {!intake_id && (

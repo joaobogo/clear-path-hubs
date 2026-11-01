@@ -123,15 +123,22 @@ export function SiteHeader() {
               className="hidden min-h-11 items-center gap-2 rounded-full border border-[color:var(--rule-2)] px-3 hover:border-[color:var(--blue-600)]/40 lg:inline-flex"
             >
               <Briefcase className="h-4 w-4 shrink-0 text-[color:var(--blue-600)]" aria-hidden />
-              <span className="hidden whitespace-nowrap text-[13px] text-[color:var(--slate)] [font-stretch:88%] xl:inline">
-                For candidates:
-              </span>
+              {/* The visible prefix gave way to the Contact link (1 Nov 2026): both
+                  together pushed the primary button off-screen at 1280-1350px.
+                  Contact shows from 1350px, where the row fits its column.
+                  Screen readers still hear the prefix. */}
+              <span className="sr-only">For candidates:</span>
               <span className="whitespace-nowrap text-[15px] font-medium text-[color:var(--ink)]">
                 {CANDIDATE_HEADER_LINK.label}
               </span>
             </Link>
           ) : null}
-          <Link to="/contact" className={cn(linkClass, inactiveClass, "hidden xl:inline-flex")}>
+          <Link
+            to="/contact"
+            className={cn(linkClass, "hidden min-[1350px]:inline-flex")}
+            activeProps={{ className: activeClass, "aria-current": "page" }}
+            inactiveProps={{ className: inactiveClass }}
+          >
             Contact
           </Link>
           <ProductionLink to={signIn.to} className={cn(linkClass, inactiveClass, "hidden lg:inline-flex")}>
@@ -198,6 +205,10 @@ export function SiteHeader() {
                     {l.label}
                   </Link>
                 ))}
+                <p className="px-3 pb-2 pt-4 text-sm text-[color:var(--slate)]">
+                  Talk to us directly:{" "}
+                  <DirectContactLine />
+                </p>
               </nav>
               <div className="space-y-2 border-t border-[color:var(--rule)] p-4">
                 <RunLinkButton to={primary.to} className="w-full">
@@ -214,10 +225,6 @@ export function SiteHeader() {
                 >
                   {signIn.label}
                 </ProductionLink>
-                <p className="pt-2 text-center text-sm text-[color:var(--slate)]">
-                  Talk to us directly:{" "}
-                  <DirectContactLine className="justify-center" />
-                </p>
               </div>
             </SheetContent>
           </Sheet>

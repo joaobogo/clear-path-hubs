@@ -52,7 +52,7 @@ export function SupportRequestSheet({
         setBody("");
         setOpen(false);
       } else {
-        toast.error(r.message ?? `We could not send that. Please try again, or email ${DIRECT_CONTACT_EMAIL}.`, {
+        toast.error(`We could not send that. Please try again, or email ${DIRECT_CONTACT_EMAIL}.`, {
           duration: 15000,
         });
       }

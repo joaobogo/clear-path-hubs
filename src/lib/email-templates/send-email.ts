@@ -80,7 +80,7 @@ export async function sendTemplateEmail(
         idempotency_key: options.idempotencyKey || crypto.randomUUID(),
         // Mail goes out from noreply@; a reply from a client or candidate must
         // still reach a person. Internal templates (fixed `to`) keep their own.
-        reply_to: options.replyTo ?? (template.to ? undefined : DIRECT_CONTACT_EMAIL),
+        reply_to: options.replyTo ?? (template.internal || template.to ? undefined : DIRECT_CONTACT_EMAIL),
       },
       { apiKey, sendUrl: process.env.LOVABLE_SEND_URL }
     )

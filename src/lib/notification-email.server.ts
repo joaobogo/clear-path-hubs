@@ -20,6 +20,23 @@ import {
 import { isSuppressed } from "./notification-suppression.server";
 import { DIRECT_CONTACTS, DIRECT_CONTACT_EMAIL, directContactMailto } from "@/config/direct-contact";
 
+/**
+ * Plain-text part: web links keep their URL ("Name (https://…)") so a text-only
+ * reader can still follow them; mailto links keep just the address.
+ */
+function htmlToText(html: string): string {
+  return html
+    .replace(/<a\s[^>]*href="(https?:[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, (_m, href: string, label: string) => {
+      const text = label.replace(/<[^>]+>/g, " ").trim();
+      return text && text !== href ? `${text} (${href})` : href;
+    })
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .replace(/\s+([.,;:!?])/g, "$1")
+    .trim();
+}
+
 /** Default help line: replies reach a person, and the direct routes are named. */
 const DEFAULT_HELP_FOOTER_HTML =
   `Need help? Reply to this email or write to <a href="${directContactMailto()}" style="color:inherit">${DIRECT_CONTACT_EMAIL}</a>. ` +
@@ -332,6 +349,7 @@ export async function dispatchEmails(
           "No verified sender domain is configured, so no email was sent. The in-app notification was still delivered.";
       } else {
         try {
+          const staff = n.audience === "admin";
           const res = await sendWithRetries({
             to: address,
             subject: n.title,
@@ -340,7 +358,9 @@ export async function dispatchEmails(
               body: n.body ?? n.title,
               actionLabel: emailActionLabel(n.event_type),
               actionUrl: absoluteLink(n.link_path),
+              ...(staff ? { footerNote: "Internal notification for TaaSFlow staff." } : {}),
             }),
+            staff,
             idempotencyKey: `${n.id}:email`,
             senderDomain: cfg.senderDomain!,
           });
@@ -386,6 +406,8 @@ async function sendViaProvider(args: {
   to: string;
   subject: string;
   html: string;
+  /** Staff mail: no direct-inbox Reply-To. */
+  staff?: boolean;
   idempotencyKey: string;
   senderDomain: string;
 }): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
@@ -402,11 +424,12 @@ async function sendViaProvider(args: {
         sender_domain: args.senderDomain,
         subject: args.subject,
         html: args.html,
-        text: args.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+        text: htmlToText(args.html),
         purpose: "transactional",
         idempotency_key: args.idempotencyKey,
-        // Sent from notifications@; a reply must still reach a person.
-        reply_to: DIRECT_CONTACT_EMAIL,
+        // Sent from notifications@; a reply from a client or candidate must
+        // still reach a person. Staff mail has nobody to reply to.
+        ...(args.staff ? {} : { reply_to: DIRECT_CONTACT_EMAIL }),
       },
       { apiKey, sendUrl: process.env.LOVABLE_SEND_URL },
     );

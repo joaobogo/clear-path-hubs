@@ -49,6 +49,7 @@ export const template = {
     `New application — ${data.positionTitle ?? 'open role'}`,
   displayName: 'New application alert (internal)',
   to: DIRECT_CONTACT_EMAIL,
+  internal: true,
   previewData: {
     candidateName: 'Ana Souza',
     positionTitle: 'Social Media & Design Specialist',

@@ -124,6 +124,7 @@ export const template = {
     return `${flag}${data.leadTypeLabel ?? 'New lead'} — ${who}`
   },
   displayName: 'Internal lead alert',
+  internal: true,
   previewData: {
     leadTypeLabel: 'Employer intake',
     priority: 'urgent',

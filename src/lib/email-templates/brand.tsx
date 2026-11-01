@@ -97,12 +97,15 @@ export const Shell = ({
   heading,
   children,
   internal = false,
+  replyable = true,
 }: {
   preview: string
   heading: string
   children: React.ReactNode
   /** Staff-only alerts skip the "talk to us" footer. */
   internal?: boolean
+  /** False for mail sent without a monitored Reply-To (the auth emails). */
+  replyable?: boolean
 }) => (
   <Html lang="en" dir="ltr">
     <Head />
@@ -118,12 +121,17 @@ export const Shell = ({
           {children}
           {internal ? null : (
             <Text style={footer}>
-              Questions? Reply to this email or write to{' '}
-              <Link href={directContactMailto()}>{DIRECT_CONTACT_EMAIL}</Link>. You can also message{' '}
+              {replyable ? 'Questions? Reply to this email or write to ' : 'Questions? Write to '}
+              <Link href={directContactMailto()} style={link}>
+                {DIRECT_CONTACT_EMAIL}
+              </Link>
+              . You can also message{' '}
               {DIRECT_CONTACTS.map((p, i) => (
                 <React.Fragment key={p.name}>
                   {i > 0 ? ' or ' : ''}
-                  <Link href={p.linkedin}>{p.name}</Link>
+                  <Link href={p.linkedin} style={link}>
+                    {p.name}
+                  </Link>
                 </React.Fragment>
               ))}{' '}
               on LinkedIn.

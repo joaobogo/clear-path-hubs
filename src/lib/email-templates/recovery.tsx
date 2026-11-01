@@ -9,7 +9,7 @@ interface RecoveryEmailProps {
 }
 
 export const RecoveryEmail = ({ confirmationUrl }: RecoveryEmailProps) => (
-  <Shell preview="Reset your TaaSFlow password" heading="Reset your password">
+  <Shell replyable={false} preview="Reset your TaaSFlow password" heading="Reset your password">
     <Text style={text}>
       We received a request to reset the password for your TaaSFlow account.
       Choose a new one using the button below.

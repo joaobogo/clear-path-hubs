@@ -10,7 +10,7 @@ interface ReauthenticationEmailProps {
 export const ReauthenticationEmail = ({
   token,
 }: ReauthenticationEmailProps) => (
-  <Shell
+  <Shell replyable={false}
     preview="Your TaaSFlow verification code"
     heading="Confirm it's you"
   >
