@@ -128,11 +128,11 @@ export const Route = createFileRoute("/jobs/$id/")({
         pos.syndicate === false
           ? []
           : [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify(buildJobPostingJsonLd(pos, canonical)),
-        },
-      ],
+              {
+                type: "application/ld+json",
+                children: JSON.stringify(buildJobPostingJsonLd(pos, canonical)),
+              },
+            ],
     };
   },
   // A failed load shows one error card for the whole page — never a partial

@@ -159,7 +159,11 @@ describe("migration 0011: v_admin_candidate_index published columns", () => {
     const journal = JSON.parse(read("drizzle/migrations/meta/_journal.json")) as {
       entries: Array<{ idx: number; tag: string; when: number }>;
     };
-    const last = journal.entries[journal.entries.length - 1]!;
+    // Looked up by tag: later migrations (0012 onwards) follow it.
+    const last = journal.entries.find((e) => e.tag === "0011_admin_index_published_score")!;
+    expect(journal.entries.indexOf(last)).toBe(
+      journal.entries.findIndex((e) => e.tag.startsWith("0010_")) + 1,
+    );
     expect(last).toMatchObject({
       idx: 11,
       tag: "0011_admin_index_published_score",
