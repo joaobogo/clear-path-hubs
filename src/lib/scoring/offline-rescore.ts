@@ -21,7 +21,7 @@
  * Input rows come from the export query in scripts/offline-rescore/export.sql.
  */
 import { createHash, randomUUID } from "crypto";
-import { scoreCandidate, type RequirementInput, type ScreeningAnswer } from "../scoring-engine.server";
+import { scoreCandidate, type RequirementInput, type ScoringResult, type ScreeningAnswer } from "../scoring-engine.server";
 import { ENGINE_VERSION } from "./engine-version";
 import { EVALUATION_METHOD, parseCalibration, serialiseCalibration } from "./engine-calibration";
 import { buildReplaySnapshot } from "./replay";
@@ -81,7 +81,21 @@ export type OfflineContext = {
 
 export type OfflineOutcome =
   | { match_id: string; kind: "scored"; final_state: "scored" | "manual_review_required"; score: number; run_id: string; sql: string }
-  | { match_id: string; kind: "no_dated_roles"; sql: string }
+  | {
+      match_id: string;
+      kind: "no_dated_roles";
+      /** Eligibility block, then the incomplete-document marker (clears the current score pointer). */
+      sql: string;
+      /**
+       * The eligibility block alone: the dealbreaker checks, the
+       * unverified-claim flags and the eligibility the answers and the
+       * recruiter's decisions give. It leaves the score pointer alone, so it
+       * can be applied where clearing a reviewed score is not wanted.
+       */
+      eligibility_sql: string;
+      eligibility: "eligible" | "not_eligible" | "excepted";
+      unverified_claims: string[];
+    }
   | { match_id: string; kind: "skipped"; why: string };
 
 /** Postgres's jsonb text form: keys by length then bytes, ", " and ": " separators. */
@@ -184,6 +198,51 @@ function screeningOf(answers: OfflineAnswer[]): ScreeningAnswer[] {
   });
 }
 
+const num = (n: number | null | undefined) => (n == null ? "NULL" : String(n));
+const text = (s: string | null, tag: string) => (s == null ? "NULL" : dollar(s, tag));
+
+/** Refuse the write when the CV the score was computed from has changed. Needs `cv text` declared. */
+function cvGuardSql(m: OfflineMatch, mid: string, cvText: string): string {
+  return `  SELECT f.extracted_text INTO cv FROM candidate_matches m JOIN candidate_profiles cp ON cp.id = m.candidate_profile_id JOIN files f ON f.id = cp.current_cv_file_id WHERE m.id = ${mid};
+  IF cv IS NULL OR md5(cv) <> '${md5(cvText)}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: CV text changed since export'; END IF;`;
+}
+
+/** Refuse the write when the recruiter's decisions changed after the export. */
+function recruiterGuardSql(m: OfflineMatch, mid: string): string {
+  const reviewPrint = md5(recruiterReviewFingerprintText(m.eligibility_checks));
+  return `  IF (SELECT md5(coalesce(string_agg(qualifier_key || '=' || status || '=' || coalesce(evidence->>'question_id', ''), '|' ORDER BY qualifier_key COLLATE "C"), '')) FROM eligibility_checks WHERE candidate_match_id = ${mid} AND starts_with(qualifier_key, ${text(RECRUITER_REVIEW_KEY_PREFIX, "p")})) <> '${reviewPrint}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: recruiter decisions changed since export'; END IF;`;
+}
+
+/**
+ * The engine's own rows (disq:*, screening_claim_unverified:*) and the
+ * clean-up of stale ones. Recruiter rows are never in this list, and the
+ * clean-up only reaches these prefixes, so a recruiter_review row survives
+ * every rescore untouched.
+ */
+function engineChecksSql(m: OfflineMatch, mid: string, raw: ScoringResult): string {
+  const engineRows = engineCheckRows(raw);
+  const checks = engineRows.map((c) =>
+    `(${mid}, ${uuid(m.organization_id)}, ${uuid(m.position_id)}, ${text(c.qualifier_key, "k")}, ${text(c.qualifier_label, "q")}, '${c.qualifier_kind}', '${c.status}', ${text(c.reason, "w")}, ${dollar(JSON.stringify(c.evidence), "e")}::jsonb, now())`,
+  );
+  const keep = engineRows.map((c) => c.qualifier_key);
+  const stalePrefixes = ENGINE_CHECK_KEY_PREFIXES.map((p) => `starts_with(qualifier_key, ${text(p, "p")})`).join(" OR ");
+  return `${checks.length ? `  INSERT INTO eligibility_checks (candidate_match_id, organization_id, position_id, qualifier_key, qualifier_label, qualifier_kind, status, reason, evidence, updated_at)
+  VALUES ${checks.join(",\n    ")}
+  ON CONFLICT (candidate_match_id, qualifier_key) DO UPDATE SET qualifier_label = excluded.qualifier_label, qualifier_kind = excluded.qualifier_kind, status = excluded.status, reason = excluded.reason, evidence = excluded.evidence, updated_at = excluded.updated_at;\n` : ""}  DELETE FROM eligibility_checks WHERE candidate_match_id = ${mid} AND (${stalePrefixes})${keep.length ? ` AND qualifier_key NOT IN (${keep.map((k) => text(k, "k")).join(", ")})` : ""};`;
+}
+
+/** The audit row for an eligibility change (empty when it does not change). */
+function eligibilityAuditSql(
+  m: OfflineMatch,
+  mid: string,
+  decision: ReturnType<typeof resolveScoredEligibility>,
+  trace: string,
+): string {
+  if ((m.eligibility_status ?? null) === decision.status) return "";
+  return `  INSERT INTO audit_events (organization_id, entity_type, entity_id, action, before_state, after_state, trace_id)
+  VALUES (${uuid(m.organization_id)}, 'candidate_match', ${mid}, 'scoring.eligibility_changed', ${dollar(JSON.stringify({ eligibility_status: m.eligibility_status ?? null }), "b")}::jsonb, ${dollar(JSON.stringify({ eligibility_status: decision.status, position_id: m.position_id, checks: decision.decided_by }), "a")}::jsonb, '${trace}');\n`;
+}
+
 export function offlineRescore(
   m: OfflineMatch,
   ctx: OfflineContext,
@@ -194,17 +253,9 @@ export function offlineRescore(
   const mid = uuid(m.match_id);
   const trace = ids.trace_id ?? `sc_off_${randomUUID().slice(0, 8)}${Date.now().toString(36)}`;
 
-  if (employmentIntervals(cvText).length === 0) {
-    return {
-      match_id: m.match_id,
-      kind: "no_dated_roles",
-      sql: `UPDATE candidate_matches SET current_score_run_id = NULL, processing_state = 'manual_review_required', last_processing_trace_id = '${trace}', processing_error_code = 'cv_employment_history_missing', processing_error_message = 'Manual review required - incomplete document. The CV has no dated employment history.' WHERE id = ${mid};`,
-    };
-  }
-
   const requirements = requirementsOf(ctx.position);
   const screening = screeningOf(m.answers);
-  const calibration = parseCalibration(ctx.rubric.calibration);
+  const calibration = parseCalibration(ctx.rubric?.calibration);
   const raw = scoreCandidate({
     cv_text: cvText,
     requirements,
@@ -213,6 +264,34 @@ export function offlineRescore(
     calibration,
     eligibility_checks: m.eligibility_checks ?? [],
   });
+
+  if (employmentIntervals(cvText).length === 0) {
+    // No run without dated roles (as in executeScoring), but the dealbreaker
+    // checks, the unverified-claim flags and the recruiter's decisions still
+    // apply to eligibility.
+    const decision = resolveScoredEligibility({
+      disqualifying_answers: raw.disqualifying_answers,
+      eligibility_checks: m.eligibility_checks,
+    });
+    const eligibility_sql = `DO $do$
+DECLARE
+  cv text;
+BEGIN
+${cvGuardSql(m, mid, cvText)}
+${recruiterGuardSql(m, mid)}
+${engineChecksSql(m, mid, raw)}
+  UPDATE candidate_matches SET eligibility_status = '${decision.status}', eligibility_updated_at = now() WHERE id = ${mid};
+${eligibilityAuditSql(m, mid, decision, trace)}END $do$;`;
+    return {
+      match_id: m.match_id,
+      kind: "no_dated_roles",
+      sql: `${eligibility_sql}
+UPDATE candidate_matches SET current_score_run_id = NULL, processing_state = 'manual_review_required', last_processing_trace_id = '${trace}', processing_error_code = 'cv_employment_history_missing', processing_error_message = 'Manual review required - incomplete document. The CV has no dated employment history.' WHERE id = ${mid};`,
+      eligibility_sql,
+      eligibility: decision.status,
+      unverified_claims: raw.unverified_screening_claims.map((c) => c.question_id),
+    };
+  }
   const rec = reconcile(raw);
   if (!rec.reconciled) return { match_id: m.match_id, kind: "skipped", why: `reconciliation_failed:${rec.mismatch}` };
 
@@ -223,6 +302,7 @@ export function offlineRescore(
     screening,
     role_family: ctx.role_family,
     recruiter_exceptions: raw.recruiter_exceptions.map((x) => x.question_id),
+    reviewed_claims: raw.reviewed_screening_claims,
   });
   const { cv_text: _cv, ...snapshotRest } = snapshot as unknown as Record<string, unknown>;
   void _cv;
@@ -267,19 +347,6 @@ export function offlineRescore(
       : "scored";
   const explanation = buildExplanation(raw, rec.applied_caps);
   const capReason = rec.applied_caps.length ? rec.applied_caps.map((c) => c.reason).join(" | ") : null;
-  const num = (n: number | null | undefined) => (n == null ? "NULL" : String(n));
-  const text = (s: string | null, tag: string) => (s == null ? "NULL" : dollar(s, tag));
-
-  // The engine's own rows (disq:*, screening_claim_unverified:*). Recruiter
-  // rows are never in this list, and the clean-up below only reaches these
-  // prefixes, so a recruiter_review row survives every rescore untouched.
-  const engineRows = engineCheckRows(raw);
-  const checks = engineRows.map((c) =>
-    `(${mid}, ${uuid(m.organization_id)}, ${uuid(m.position_id)}, ${text(c.qualifier_key, "k")}, ${text(c.qualifier_label, "q")}, '${c.qualifier_kind}', '${c.status}', ${text(c.reason, "w")}, ${dollar(JSON.stringify(c.evidence), "e")}::jsonb, now())`,
-  );
-  const keep = engineRows.map((c) => c.qualifier_key);
-  const stalePrefixes = ENGINE_CHECK_KEY_PREFIXES.map((p) => `starts_with(qualifier_key, ${text(p, "p")})`).join(" OR ");
-  const reviewPrint = md5(recruiterReviewFingerprintText(m.eligibility_checks));
 
   const sql = `DO $do$
 DECLARE
@@ -289,9 +356,8 @@ DECLARE
 BEGIN
   IF md5(r::text) <> '${md5(jsonbText(result))}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: result fingerprint mismatch'; END IF;
   IF md5(s::text) <> '${md5(jsonbText(snap))}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: snapshot fingerprint mismatch'; END IF;
-  SELECT f.extracted_text INTO cv FROM candidate_matches m JOIN candidate_profiles cp ON cp.id = m.candidate_profile_id JOIN files f ON f.id = cp.current_cv_file_id WHERE m.id = ${mid};
-  IF cv IS NULL OR md5(cv) <> '${md5(cvText)}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: CV text changed since export'; END IF;
-  IF (SELECT md5(coalesce(string_agg(qualifier_key || '=' || status || '=' || coalesce(evidence->>'question_id', ''), '|' ORDER BY qualifier_key COLLATE "C"), '')) FROM eligibility_checks WHERE candidate_match_id = ${mid} AND starts_with(qualifier_key, ${text(RECRUITER_REVIEW_KEY_PREFIX, "p")})) <> '${reviewPrint}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: recruiter decisions changed since export'; END IF;
+${cvGuardSql(m, mid, cvText)}
+${recruiterGuardSql(m, mid)}
   UPDATE score_runs SET superseded_at = now() WHERE candidate_match_id = ${mid} AND status = 'completed' AND superseded_at IS NULL;
   INSERT INTO score_runs (id, candidate_match_id, position_id, application_id, candidate_profile_id, candidate_submission_id, organization_id,
     blueprint_version, rubric_version_id, raw_score, applied_cap, cap_reason, final_score, evaluation_method, fit_band, engine_version,
@@ -304,12 +370,9 @@ BEGIN
     now(), now(), '${trace}',
     r || jsonb_build_object('inputs', s || jsonb_build_object('cv_text', cv)),
     ${text(raw.fit_label, "fl")}, ${num(raw.must_have_coverage)}, ${num(raw.preferred_coverage)}, ${text(raw.contradiction_status, "cs")}, '${raw.input_hash}');
-${checks.length ? `  INSERT INTO eligibility_checks (candidate_match_id, organization_id, position_id, qualifier_key, qualifier_label, qualifier_kind, status, reason, evidence, updated_at)
-  VALUES ${checks.join(",\n    ")}
-  ON CONFLICT (candidate_match_id, qualifier_key) DO UPDATE SET qualifier_label = excluded.qualifier_label, qualifier_kind = excluded.qualifier_kind, status = excluded.status, reason = excluded.reason, evidence = excluded.evidence, updated_at = excluded.updated_at;\n` : ""}  DELETE FROM eligibility_checks WHERE candidate_match_id = ${mid} AND (${stalePrefixes})${keep.length ? ` AND qualifier_key NOT IN (${keep.map((k) => text(k, "k")).join(", ")})` : ""};
+${engineChecksSql(m, mid, raw)}
   UPDATE candidate_matches SET current_score_run_id = ${uuid(runId)}, eligibility_status = '${eligibility}', eligibility_updated_at = now(), evidence_confidence = ${num(raw.evidence_confidence)} WHERE id = ${mid};
-${(m.eligibility_status ?? null) !== eligibility ? `  INSERT INTO audit_events (organization_id, entity_type, entity_id, action, before_state, after_state, trace_id)
-  VALUES (${uuid(m.organization_id)}, 'candidate_match', ${mid}, 'scoring.eligibility_changed', ${dollar(JSON.stringify({ eligibility_status: m.eligibility_status ?? null }), "b")}::jsonb, ${dollar(JSON.stringify({ eligibility_status: eligibility, position_id: m.position_id, checks: decision.decided_by }), "a")}::jsonb, '${trace}');\n` : ""}  UPDATE candidate_matches SET processing_state = '${finalState}', last_processing_trace_id = '${trace}', processing_error_code = NULL, processing_error_message = NULL WHERE id = ${mid};
+${eligibilityAuditSql(m, mid, decision, trace)}  UPDATE candidate_matches SET processing_state = '${finalState}', last_processing_trace_id = '${trace}', processing_error_code = NULL, processing_error_message = NULL WHERE id = ${mid};
   INSERT INTO processing_jobs (entity_type, entity_id, job_type, status, attempts, trace_id, started_at, completed_at) VALUES ('candidate_match', ${mid}, 'score', 'completed', 1, '${trace}', now(), now());
   UPDATE candidate_matches SET score_stale = false, score_stale_reasons = '{}', score_stale_at = NULL, rescore_queued_at = NULL WHERE id = ${mid};
 END $do$;`;

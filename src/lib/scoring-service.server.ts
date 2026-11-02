@@ -237,6 +237,27 @@ export function reconcile(result: ScoringResult): {
  * requirements and stamp it approved — a score with no criteria list behind it
  * is unauditable (audit finding 1).
  */
+/**
+ * The position's governing rubric version, read only. A published rubric
+ * version is immutable, so its stored calibration — not today's defaults —
+ * governs every run that names it.
+ */
+async function findGoverningRubric(
+  s: Any,
+  positionId: string,
+): Promise<{ id: string; calibration: EngineCalibration } | null> {
+  const { data: existing } = await s
+    .from("rubric_versions")
+    .select("id,version_number,status,calibration")
+    .eq("position_id", positionId)
+    .in("status", ["approved", "active"])
+    .is("superseded_at", null)
+    .order("version_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return existing?.id ? { id: existing.id as string, calibration: parseCalibration(existing.calibration) } : null;
+}
+
 async function ensureRubricVersion(
   s: Any,
   position: {
@@ -249,20 +270,8 @@ async function ensureRubricVersion(
   /** Calibration written onto a NEWLY minted version. Existing versions keep theirs. */
   defaultCalibration: EngineCalibration,
 ): Promise<{ id: string; calibration: EngineCalibration }> {
-  const { data: existing } = await s
-    .from("rubric_versions")
-    .select("id,version_number,status,calibration")
-    .eq("position_id", position.id)
-    .in("status", ["approved", "active"])
-    .is("superseded_at", null)
-    .order("version_number", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (existing?.id) {
-    // A published rubric version is immutable, so its stored calibration — not
-    // today's defaults — governs every run that names it.
-    return { id: existing.id as string, calibration: parseCalibration(existing.calibration) };
-  }
+  const existing = await findGoverningRubric(s, position.id);
+  if (existing) return existing;
 
   const { data: latest } = await s
     .from("rubric_versions")
@@ -381,6 +390,82 @@ async function recordJob(
 }
 
 /**
+ * The engine's eligibility_checks rows for one result, and the eligibility
+ * they decide. Shared by a scored run and the no-dated-roles path (which
+ * writes no run but still records the dealbreaker checks and the
+ * unverified-claim flags, and still honours the recruiter's decisions).
+ *
+ * F-008: eligibility comes from dealbreaker answers only. A "no" to any other
+ * question is weighed by the scorer, never a gate: reading every misaligned
+ * yes/no answer here marked candidates ineligible for a nice-to-have (no
+ * Arabic on a role where Arabic is preferred).
+ *
+ * A recruiter decision (recruiter_review:*) always wins: 'failed' is
+ * not_eligible whatever the answers, 'excepted' or 'passed' lifts that
+ * dealbreaker answer. Those rows are read here, never written or deleted. The
+ * engine's own rows are disq:* (a dealbreaker that disqualifies) and
+ * screening_claim_unverified:* (a "yes" the CV does not back: a flag for
+ * review with status 'unknown', never a gate).
+ */
+async function writeEngineChecks(
+  s: Any,
+  matchId: string,
+  ctx: Awaited<ReturnType<typeof loadInputs>>,
+  raw: ScoringResult,
+) {
+  const decision = resolveScoredEligibility({
+    disqualifying_answers: raw.disqualifying_answers,
+    eligibility_checks: ctx.eligibilityChecks,
+  });
+  const checks = engineCheckRows(raw).map((c) => ({
+    ...c,
+    candidate_match_id: matchId,
+    organization_id: ctx.match.organization_id,
+    position_id: ctx.match.position_id,
+    updated_at: new Date().toISOString(),
+  }));
+  if (checks.length > 0) {
+    const { error: checkErr } = await s
+      .from("eligibility_checks")
+      .upsert(checks, { onConflict: "candidate_match_id,qualifier_key" });
+    if (checkErr) throw new Error(`eligibility_check_write_failed: ${checkErr.message}`);
+  }
+  // A dealbreaker answer that no longer disqualifies (the question was
+  // changed, the answer corrected, or a recruiter lifted it) and a claim the
+  // CV now backs (or a recruiter decided on) must not leave their rows behind.
+  const keep = checks.map((c) => c.qualifier_key);
+  for (const prefix of ENGINE_CHECK_KEY_PREFIXES) {
+    let stale = s
+      .from("eligibility_checks")
+      .delete()
+      .eq("candidate_match_id", matchId)
+      .like("qualifier_key", `${prefix}%`);
+    if (keep.length > 0) stale = stale.not("qualifier_key", "in", `(${keep.map((k) => `"${k}"`).join(",")})`);
+    await stale;
+  }
+  return decision;
+}
+
+async function auditEligibilityChange(
+  s: Any,
+  matchId: string,
+  ctx: Awaited<ReturnType<typeof loadInputs>>,
+  decision: ReturnType<typeof resolveScoredEligibility>,
+  trace_id: string,
+) {
+  if ((ctx.match as Any).eligibility_status === decision.status) return;
+  await s.from("audit_events").insert({
+    organization_id: ctx.match.organization_id,
+    entity_type: "candidate_match",
+    entity_id: matchId,
+    action: "scoring.eligibility_changed",
+    before_state: { eligibility_status: (ctx.match as Any).eligibility_status ?? null } as unknown as Json,
+    after_state: { eligibility_status: decision.status, position_id: ctx.match.position_id, checks: decision.decided_by } as unknown as Json,
+    trace_id,
+  });
+}
+
+/**
  * Canonical scoring entry point.
  *
  * @param matchId the specific candidate_match to score (identity = matchId).
@@ -455,6 +540,31 @@ export async function executeScoring(
     const cvText: string = ctx.cvFile.extracted_text ?? "";
     if (cvText.length < 60) throw new Error("cv_unparsed");
     if (employmentIntervals(cvText).length === 0) {
+      // No score run without dated roles, but the screening answers and the
+      // recruiter's decisions still decide eligibility, and a dealbreaker
+      // "yes" the CV gives no evidence for is still flagged for the
+      // recruiter. Read-only on the rubric: nothing is minted here.
+      try {
+        const roleFamily = await resolveRoleFamily(s, ctx.position.title ?? null);
+        const governing = await findGoverningRubric(s, ctx.match.position_id);
+        const flagsOnly = scoreCandidate({
+          cv_text: cvText,
+          requirements: ctx.requirements,
+          screening: ctx.screening,
+          candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
+          calibration: governing?.calibration ?? resolveCalibration(roleFamily),
+          eligibility_checks: ctx.eligibilityChecks,
+        });
+        const decision = await writeEngineChecks(s, matchId, ctx, flagsOnly);
+        await s
+          .from("candidate_matches")
+          .update({ eligibility_status: decision.status, eligibility_updated_at: new Date().toISOString() })
+          .eq("id", matchId);
+        await auditEligibilityChange(s, matchId, ctx, decision, trace_id);
+      } catch (e) {
+        // The document is still incomplete; the outcome below stands.
+        console.error("[scoring] no_dated_roles eligibility write failed", matchId, (e as Error)?.message);
+      }
       await s.from("candidate_matches").update({ current_score_run_id: null }).eq("id", matchId);
       await releaseLock(s, matchId, "manual_review_required", trace_id, {
         code: "cv_employment_history_missing",
@@ -536,6 +646,7 @@ export async function executeScoring(
           screening: ctx.screening,
           role_family: roleFamily,
           recruiter_exceptions: raw.recruiter_exceptions.map((x) => x.question_id),
+          reviewed_claims: raw.reviewed_screening_claims,
         }),
         evaluation_method: EVALUATION_METHOD,
         applied_caps: rec.applied_caps,
@@ -626,70 +737,20 @@ export async function executeScoring(
     }
 
 
-    // F-008: eligibility comes from dealbreaker answers only. A "no" to any
-    // other question is weighed by the scorer, never a gate: reading every
-    // misaligned yes/no answer here marked candidates ineligible for a
-    // nice-to-have (no Arabic on a role where Arabic is preferred).
-    //
-    // A recruiter decision (recruiter_review:*) always wins: 'failed' is
-    // not_eligible whatever the answers, 'excepted' lifts that dealbreaker
-    // answer. Those rows are read here, never written or deleted. The
-    // engine's own rows are disq:* (a dealbreaker that disqualifies) and
-    // screening_claim_unverified:* (a "yes" the CV does not back: a flag for
-    // review with status 'unknown', never a gate).
-    const decision = resolveScoredEligibility({
-      disqualifying_answers: raw.disqualifying_answers,
-      eligibility_checks: ctx.eligibilityChecks,
-    });
-    const checks = engineCheckRows(raw).map((c) => ({
-      ...c,
-      candidate_match_id: matchId,
-      organization_id: ctx.match.organization_id,
-      position_id: ctx.match.position_id,
-      updated_at: new Date().toISOString(),
-    }));
-    if (checks.length > 0) {
-      const { error: checkErr } = await s
-        .from("eligibility_checks")
-        .upsert(checks, { onConflict: "candidate_match_id,qualifier_key" });
-      if (checkErr) throw new Error(`eligibility_check_write_failed: ${checkErr.message}`);
-    }
-    // A dealbreaker answer that no longer disqualifies (the question was
-    // changed, the answer corrected, or a recruiter excepted it) and a claim
-    // the CV now backs must not leave their rows behind.
-    const eligibilityStatus = decision.status;
-    const keep = checks.map((c) => c.qualifier_key);
-    for (const prefix of ENGINE_CHECK_KEY_PREFIXES) {
-      let stale = s
-        .from("eligibility_checks")
-        .delete()
-        .eq("candidate_match_id", matchId)
-        .like("qualifier_key", `${prefix}%`);
-      if (keep.length > 0) stale = stale.not("qualifier_key", "in", `(${keep.map((k) => `"${k}"`).join(",")})`);
-      await stale;
-    }
-
+    // F-008: eligibility comes from dealbreaker answers and recruiter
+    // decisions only (writeEngineChecks).
+    const decision = await writeEngineChecks(s, matchId, ctx, raw);
     await s
       .from("candidate_matches")
       .update({
         current_score_run_id: runId,
-        eligibility_status: eligibilityStatus,
+        eligibility_status: decision.status,
         eligibility_updated_at: new Date().toISOString(),
         ...(reused ? {} : { evidence_confidence: raw.evidence_confidence }),
       })
       .eq("id", matchId);
+    await auditEligibilityChange(s, matchId, ctx, decision, trace_id);
 
-    if ((ctx.match as Any).eligibility_status !== eligibilityStatus) {
-      await s.from("audit_events").insert({
-        organization_id: ctx.match.organization_id,
-        entity_type: "candidate_match",
-        entity_id: matchId,
-        action: "scoring.eligibility_changed",
-        before_state: { eligibility_status: (ctx.match as Any).eligibility_status ?? null } as unknown as Json,
-        after_state: { eligibility_status: eligibilityStatus, position_id: ctx.match.position_id, checks: decision.decided_by } as unknown as Json,
-        trace_id,
-      });
-    }
     if ((ctx.match as Any).score_stale) {
       await notifyRescoreBatchIfDone(s, ctx.match.position_id, ctx.match.organization_id, matchId).catch((e) =>
         console.error("[scoring] rescore batch notify failed", (e as Error)?.message),

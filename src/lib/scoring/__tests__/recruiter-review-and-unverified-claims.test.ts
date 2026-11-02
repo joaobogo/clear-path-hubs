@@ -23,12 +23,17 @@ import { scoreCandidate, type RequirementInput, type ScreeningAnswer } from "@/l
 import { dealbreakerCondition, resolveEligibilityFromRows } from "@/lib/scoring/eligibility";
 import {
   engineCheckRows,
+  isRecruiterOnlyConcern,
+  planRecruiterDecision,
+  recruiterReviewNotes,
   resolveScoredEligibility,
   type StoredEligibilityCheck,
 } from "@/lib/scoring/recruiter-review";
+import { displayConcern } from "@/lib/client/contradiction-copy";
+import { buildValidationList } from "@/lib/client/validation-list";
 import { planEligibilityRecompute } from "@/lib/scoring/screening-eligibility";
 import { computePublishReadiness } from "@/lib/scoring/publish-gate";
-import { buildReplaySnapshot, fingerprintOf } from "@/lib/scoring/replay";
+import { buildReplaySnapshot, fingerprintOf, replayRecruiterChecks } from "@/lib/scoring/replay";
 import {
   offlineRescore,
   recruiterReviewFingerprintText,
@@ -201,7 +206,9 @@ describe("(a) a dealbreaker 'yes' the CV does not back is flagged, never exclude
     const claim = r.unverified_screening_claims.find((c) => c.question_id === Q_MUSHROOM);
     expect(claim).toBeDefined();
     expect(claim!.requirements).toContain("Hands-on mushroom picking experience");
-    expect(r.concerns).toContain(`Screening claim unverified: ${MUSHROOM_QUESTION}`);
+    // Recruiter-only: on the staff notes, never in the client-visible concerns.
+    expect(recruiterReviewNotes(r).some((n) => n.startsWith(`Screening claim unverified: ${MUSHROOM_QUESTION}`))).toBe(true);
+    expect(r.concerns.some((c) => /screening claim unverified/i.test(c))).toBe(false);
   });
 
   it("leaves the candidate eligible and the score untouched", () => {
@@ -218,7 +225,9 @@ describe("(a) a dealbreaker 'yes' the CV does not back is flagged, never exclude
     ]);
     expect(reviewed.unverified_screening_claims).toEqual([]);
     expect(reviewed.score).toBe(r.score);
-    expect(reviewed.input_hash).toBe(r.input_hash);
+    // ...and it is a new run, not a reuse of the one that carries the flag.
+    expect(reviewed.reviewed_screening_claims).toEqual([Q_MUSHROOM]);
+    expect(reviewed.input_hash).not.toBe(r.input_hash);
   });
 
   it("records an advisory eligibility check, never a gate", () => {
@@ -237,7 +246,7 @@ describe("(a) a dealbreaker 'yes' the CV does not back is flagged, never exclude
   it("judges the CV, not the answer: a CV that shows the work raises no flag", () => {
     const r = score(CV_MUSHROOM, ALL_YES);
     expect(r.unverified_screening_claims.map((c) => c.question_id)).not.toContain(Q_MUSHROOM);
-    expect(r.concerns).not.toContain(`Screening claim unverified: ${MUSHROOM_QUESTION}`);
+    expect(recruiterReviewNotes(r).join("\n")).not.toContain(MUSHROOM_QUESTION);
   });
 
   it("does not flag a 'no', or a question that is not a dealbreaker", () => {
@@ -266,7 +275,9 @@ describe("(b) a recruiter decision always wins over the dealbreaker answer", () 
     expect(r.contradiction_status).not.toBe("disqualifying_answer");
     expect(r.applied_caps.some((c) => c.reason.startsWith("disqualifying_answer"))).toBe(false);
     expect(r.score).toBeGreaterThan(15);
-    expect(r.concerns.some((c) => c.startsWith("Dealbreaker answered no; recruiter exception recorded"))).toBe(true);
+    // Recruiter wording stays on the staff notes, out of the client's concerns.
+    expect(recruiterReviewNotes(r).some((c) => c.startsWith("Dealbreaker answered no; recruiter exception recorded"))).toBe(true);
+    expect(r.concerns.some((c) => /recruiter exception/i.test(c))).toBe(false);
     expect(resolveScoredEligibility({ disqualifying_answers: r.disqualifying_answers, eligibility_checks: checks }).status).toBe(
       "excepted",
     );
@@ -295,9 +306,10 @@ describe("(b) a recruiter decision always wins over the dealbreaker answer", () 
     expect(score(CV_FOOD_SCIENCE, MUSHROOM_NO, [excepted(Q_MUSHROOM)]).input_hash).not.toBe(
       score(CV_FOOD_SCIENCE, MUSHROOM_NO).input_hash,
     );
-    // ...while a candidate with no exception keeps the hash it always had.
-    expect(score(CV_FOOD_SCIENCE, ALL_YES, [excepted(Q_MUSHROOM)]).input_hash).toBe(
-      score(CV_FOOD_SCIENCE, ALL_YES).input_hash,
+    // ...while a decision that changes nothing keeps the hash it always had
+    // (a "yes" the CV backs: nothing to lift, no flag to suppress).
+    expect(score(CV_MUSHROOM, ALL_YES, [excepted(Q_MUSHROOM)]).input_hash).toBe(
+      score(CV_MUSHROOM, ALL_YES).input_hash,
     );
   });
 
@@ -434,5 +446,283 @@ describe("offline rescore carries recruiter decisions and the unverified flag", 
         { qualifier_key: "recruiter_review:a", status: "excepted", evidence: { question_id: Q_MUSHROOM } },
       ]),
     ).toBe(`recruiter_review:a=excepted=${Q_MUSHROOM}|recruiter_review:b=failed=`);
+  });
+});
+
+/** Lab analyst: dated roles, no people management, no mention of English. */
+const CV_LAB = [
+  "Laboratory Analyst",
+  "Professional Experience",
+  "Laboratory Analyst, Fenland Soil Labs, Ely — Feb 2021 – Present",
+  "Run nutrient and moisture assays on compost samples, calibrate instruments and log results in the LIMS.",
+  "Prepare weekly sample reports and flag out-of-range batches to the quality lead.",
+  "Sample Technician, Anglia Grain Testing, Cambridge — Jul 2018 – Jan 2021",
+  "Collected and prepared grain samples for moisture and protein testing.",
+].join("\n");
+
+describe("review follow-ups: 'passed', withdrawn decisions, the English link", () => {
+  const passed = (questionId: string): StoredEligibilityCheck => ({
+    qualifier_key: `recruiter_review:${questionId}`,
+    status: "passed",
+    evidence: { question_id: questionId },
+  });
+
+  it("'passed' lifts a dealbreaker 'no' exactly as 'excepted' does, and reads 'eligible'", () => {
+    const viaPassed = score(CV_FOOD_SCIENCE, MUSHROOM_NO, [passed(Q_MUSHROOM)]);
+    const viaExcepted = score(CV_FOOD_SCIENCE, MUSHROOM_NO, [excepted(Q_MUSHROOM)]);
+    expect(viaPassed.disqualifying_answers).toEqual([]);
+    expect(viaPassed.contradiction_status).not.toBe("disqualifying_answer");
+    expect(viaPassed.applied_caps.some((c) => c.reason.startsWith("disqualifying_answer"))).toBe(false);
+    expect(viaPassed.score).toBe(viaExcepted.score);
+    expect(viaPassed.input_hash).toBe(viaExcepted.input_hash);
+    const checks = [passed(Q_MUSHROOM)];
+    expect(resolveScoredEligibility({ disqualifying_answers: viaPassed.disqualifying_answers, eligibility_checks: checks })).toEqual({
+      status: "eligible",
+      decided_by: [`recruiter_review:${Q_MUSHROOM}`],
+    });
+    // The stored rows and the recompute tool agree before any rescore.
+    expect(
+      resolveEligibilityFromRows([
+        { qualifier_key: `disq:${Q_MUSHROOM}`, qualifier_kind: "disqualifier", status: "failed" },
+        { qualifier_key: `recruiter_review:${Q_MUSHROOM}`, qualifier_kind: "disqualifier", status: "passed" },
+      ]).status,
+    ).toBe("eligible");
+    const plan = planEligibilityRecompute({
+      current_status: "not_eligible",
+      answers: [{ question_id: Q_MUSHROOM, question: MUSHROOM_QUESTION, dealbreaker: true, answer_type: "boolean", preferred_answer: null, value: { value: false } }],
+      existing_checks: [
+        { qualifier_key: `disq:${Q_MUSHROOM}`, status: "failed" },
+        { qualifier_key: `recruiter_review:${Q_MUSHROOM}`, status: "passed", evidence: [] },
+      ],
+    });
+    expect(plan.next_status).toBe("eligible");
+    expect(plan.stale_keys).toEqual([`disq:${Q_MUSHROOM}`]);
+  });
+
+  it("a withdrawn decision ('unknown') lifts nothing and is not a qualifier awaiting validation", () => {
+    const withdrawn: StoredEligibilityCheck = { qualifier_key: `recruiter_review:${Q_MUSHROOM}`, status: "unknown", evidence: [] };
+    const r = score(CV_FOOD_SCIENCE, MUSHROOM_NO, [withdrawn]);
+    expect(r.disqualifying_answers.map((d) => d.question_id)).toEqual([Q_MUSHROOM]);
+    expect(r.score).toBe(15);
+    expect(resolveEligibilityFromRows([{ qualifier_key: withdrawn.qualifier_key, qualifier_kind: "disqualifier", status: "unknown" }]).status).toBe(
+      "eligible",
+    );
+  });
+
+  it("does not flag the English answer for want of people-management evidence (Elena)", () => {
+    // "Fluent English (written and verbal)" shares only "written" and "verbal"
+    // with "...communication skills, written and verbal": not a shared subject.
+    const r = score(CV_LAB, ALL_YES);
+    expect(r.unverified_screening_claims.map((c) => c.question_id)).not.toContain(Q_ENGLISH);
+    expect(recruiterReviewNotes(r).join("\n")).not.toMatch(/fluent in English/);
+    // The mushroom claim on the same CV is still flagged: the link works where
+    // the subject is shared.
+    expect(r.unverified_screening_claims.map((c) => c.question_id)).toContain(Q_MUSHROOM);
+  });
+
+  it("still links an English answer to an English requirement the CV does not show", () => {
+    const requirements: RequirementInput[] = [
+      ...REQUIREMENTS,
+      { id: "req-english", text: "Fluent written English for audit reports", required: true, keywords: [] },
+    ];
+    const r = scoreCandidate({ cv_text: CV_LAB, requirements, screening: screening(ALL_YES) });
+    const english = r.unverified_screening_claims.find((c) => c.question_id === Q_ENGLISH);
+    expect(english?.requirements).toEqual(["Fluent written English for audit reports"]);
+  });
+});
+
+describe("the client never sees recruiter wording", () => {
+  const lines = [
+    `Screening claim unverified: ${MUSHROOM_QUESTION}`,
+    `Dealbreaker answered no; recruiter exception recorded: ${MUSHROOM_QUESTION}`,
+  ];
+
+  it("the engine's concerns carry neither the flag nor the exception", () => {
+    const flagged = score(CV_NO_MUSHROOM, ALL_YES);
+    const exceptedRun = score(CV_FOOD_SCIENCE, MUSHROOM_NO, [excepted(Q_MUSHROOM)]);
+    for (const r of [flagged, exceptedRun]) {
+      expect(r.concerns.filter(isRecruiterOnlyConcern)).toEqual([]);
+      expect(r.concerns.join("\n")).not.toMatch(/recruiter exception|screening claim unverified/i);
+    }
+  });
+
+  it("older stored text is dropped on every client read path", () => {
+    for (const l of lines) {
+      expect(isRecruiterOnlyConcern(l)).toBe(true);
+      expect(displayConcern(l)).toBeNull();
+    }
+    const items = buildValidationList([], [...lines, "Contradicting evidence for required: Forklift licence"]);
+    expect(items.map((i) => i.sentence).join("\n")).not.toMatch(/recruiter exception|screening claim unverified/i);
+    // An ordinary concern still shows.
+    expect(displayConcern("CV text could not be extracted with confidence.")).toBe("CV text could not be extracted with confidence.");
+  });
+});
+
+describe("the admin eligibility control writes recruiter_review rows", () => {
+  const disqRow = {
+    id: "a1111111-1111-4111-8111-111111111111",
+    qualifier_key: `disq:${Q_MUSHROOM}`,
+    qualifier_label: MUSHROOM_QUESTION,
+    qualifier_kind: "disqualifier",
+    status: "failed",
+    evidence: { question_id: Q_MUSHROOM, value: "no" },
+  };
+  const flagRow = {
+    id: "b2222222-2222-4222-8222-222222222222",
+    qualifier_key: `screening_claim_unverified:${Q_MUSHROOM}`,
+    qualifier_label: `Screening claim unverified: ${MUSHROOM_QUESTION}`,
+    qualifier_kind: "qualifier",
+    status: "unknown",
+    evidence: { question_id: Q_MUSHROOM, answer: "yes" },
+  };
+
+  it("a decision on the engine's disq: row becomes recruiter_review:<question>, never an edit of the engine row", () => {
+    const w = planRecruiterDecision({ check: disqRow, status: "excepted", reason: "Bundled question", actor_user_id: "u1", match_checks: [disqRow] });
+    expect(w).toEqual({
+      kind: "insert",
+      row: {
+        qualifier_key: `recruiter_review:${Q_MUSHROOM}`,
+        qualifier_label: MUSHROOM_QUESTION,
+        qualifier_kind: "disqualifier",
+        status: "excepted",
+        reason: "Bundled question",
+        actor_user_id: "u1",
+        evidence: { decided_by: "recruiter", question_id: Q_MUSHROOM, source_check: `disq:${Q_MUSHROOM}`, screening_answer: "no" },
+      },
+    });
+    // ...which the engine then honours on the next run.
+    const r = score(CV_FOOD_SCIENCE, MUSHROOM_NO, [{ qualifier_key: (w as { row: { qualifier_key: string } }).row.qualifier_key, status: "excepted", evidence: {} }]);
+    expect(r.disqualifying_answers).toEqual([]);
+  });
+
+  it("a decision on the unverified flag names the question, not the flag", () => {
+    const w = planRecruiterDecision({ check: flagRow, status: "passed", reason: "Confirmed by phone", actor_user_id: "u1", match_checks: [flagRow] });
+    expect(w.kind).toBe("insert");
+    if (w.kind !== "insert") return;
+    expect(w.row.qualifier_key).toBe(`recruiter_review:${Q_MUSHROOM}`);
+    expect(w.row.qualifier_label).toBe(MUSHROOM_QUESTION);
+    expect(w.row.evidence).toMatchObject({ screening_answer: "yes", source_check: flagRow.qualifier_key });
+  });
+
+  it("an existing decision on the question is updated in place, whatever its key", () => {
+    const live = {
+      id: "c3333333-3333-4333-8333-333333333333",
+      qualifier_key: "recruiter_review:mushroom-dealbreaker",
+      status: "excepted",
+      evidence: { question_id: Q_MUSHROOM },
+    };
+    const w = planRecruiterDecision({ check: disqRow, status: "failed", reason: "No farm work at all", actor_user_id: "u2", match_checks: [disqRow, live] });
+    expect(w).toEqual({
+      kind: "update",
+      id: live.id,
+      qualifier_key: live.qualifier_key,
+      patch: { status: "failed", reason: "No farm work at all", actor_user_id: "u2" },
+    });
+    // A recruiter_review row or a staff qualifier is edited in place.
+    expect(planRecruiterDecision({ check: live, status: "passed", reason: "Re-checked", actor_user_id: "u2", match_checks: [live] }).kind).toBe("update");
+    const staff = { id: "d4444444-4444-4444-8444-444444444444", qualifier_key: "right_to_work", status: "unknown" };
+    expect(planRecruiterDecision({ check: staff, status: "passed", reason: "Share code checked", actor_user_id: "u2", match_checks: [staff] })).toMatchObject({
+      kind: "update",
+      id: staff.id,
+    });
+  });
+
+  it("refuses an engine row that names no question", () => {
+    const bare = { id: "e5555555-5555-4555-8555-555555555555", qualifier_key: "disq:", status: "failed", evidence: [] };
+    expect(() => planRecruiterDecision({ check: bare, status: "excepted", reason: "whatever it is", actor_user_id: null, match_checks: [bare] })).toThrow(
+      "check_has_no_question",
+    );
+  });
+});
+
+describe("a CV with no dated roles still records the flag and honours the recruiter (Abdul, Chiedza)", () => {
+  const ctx: OfflineContext = {
+    position: { id: POSITION_ID, requirements: MUST_HAVES.map((label) => ({ label })), preferred_requirements: NICE_TO_HAVES.map((label) => ({ label })) },
+    rubric: { id: "05267eed-5042-41b1-aa25-e8fd165b7ea2", calibration: {} },
+    role_family: null,
+    reason: "test",
+  };
+  /** Supervision described, no dates anywhere. */
+  const CV_UNDATED = [
+    "Warehouse Supervisor",
+    "Supervised a team of 25 operatives on rotating shifts, including weekends and overtime in peak periods.",
+    "Trained new starters in health and safety and handled absence and disciplinary processes.",
+    "Planned daily manning and reported KPIs to the site manager.",
+  ].join("\n");
+  const undated = (answers: Record<string, unknown>, checks: StoredEligibilityCheck[] = [], status = "eligible"): OfflineMatch => ({
+    match_id: "3b45fb2e-0000-4000-8000-000000000001",
+    application_id: "3b45fb2e-0000-4000-8000-000000000002",
+    candidate_profile_id: "3b45fb2e-0000-4000-8000-000000000003",
+    position_id: POSITION_ID,
+    organization_id: "1def8e51-d266-48a4-8829-065d0201b447",
+    eligibility_status: status,
+    cv_text: CV_UNDATED,
+    location: null,
+    city: null,
+    country: null,
+    answers: QUESTIONS.filter((q) => q.id in answers).map((q) => ({
+      question_id: q.id,
+      answer: { value: answers[q.id] },
+      q: { question: q.question, answer_type: q.answer_type, required: q.required, dealbreaker: q.dealbreaker, preferred_answer: null, must_have: q.must_have },
+    })),
+    eligibility_checks: checks,
+  });
+
+  it("writes the screening_claim_unverified row ('unknown') and keeps the match eligible, with no run", () => {
+    const out = offlineRescore(undated(ALL_YES), ctx, { trace_id: "sc_test" });
+    expect(out.kind).toBe("no_dated_roles");
+    if (out.kind !== "no_dated_roles") return;
+    expect(out.unverified_claims).toContain(Q_MUSHROOM);
+    expect(out.eligibility).toBe("eligible");
+    expect(out.eligibility_sql).toContain(`screening_claim_unverified:${Q_MUSHROOM}`);
+    expect(out.eligibility_sql).toMatch(/'qualifier', 'unknown'/);
+    expect(out.eligibility_sql).toContain("eligibility_status = 'eligible'");
+    expect(out.eligibility_sql).toMatch(/recruiter decisions changed since export/);
+    expect(out.eligibility_sql).toMatch(/CV text changed since export/);
+    // The eligibility block alone never touches the score pointer or a run.
+    expect(out.eligibility_sql).not.toMatch(/current_score_run_id|score_runs/);
+    expect(out.eligibility_sql).not.toMatch(/INSERT INTO eligibility_checks[^;]*recruiter_review/);
+    // The full statement still marks the document incomplete.
+    expect(out.sql).toContain(out.eligibility_sql);
+    expect(out.sql).toMatch(/current_score_run_id = NULL, processing_state = 'manual_review_required'/);
+  });
+
+  it("a recruiter exception lifts the 'no'; a recruiter 'failed' is not_eligible", () => {
+    const ex = offlineRescore(undated(MUSHROOM_NO, [excepted(Q_MUSHROOM)], "not_eligible"), ctx, { trace_id: "sc_test" });
+    expect(ex.kind === "no_dated_roles" && ex.eligibility).toBe("excepted");
+    if (ex.kind !== "no_dated_roles") return;
+    expect(ex.eligibility_sql).not.toMatch(/'disq:/);
+    expect(ex.eligibility_sql).toContain("'scoring.eligibility_changed'");
+
+    const failed = offlineRescore(
+      undated(ALL_YES, [{ qualifier_key: "recruiter_review:student_work_only", status: "failed", evidence: {} }]),
+      ctx,
+      { trace_id: "sc_test" },
+    );
+    expect(failed.kind === "no_dated_roles" && failed.eligibility).toBe("not_eligible");
+  });
+});
+
+describe("replay reproduces a run whose flag a recruiter decision suppressed", () => {
+  it("stores the suppressed question and rebuilds the same hash", () => {
+    const checks: StoredEligibilityCheck[] = [{ qualifier_key: `recruiter_review:${Q_MUSHROOM}`, status: "failed", evidence: [] }];
+    const r = score(CV_NO_MUSHROOM, ALL_YES, checks);
+    expect(r.reviewed_screening_claims).toEqual([Q_MUSHROOM]);
+    const snap = buildReplaySnapshot({
+      cv_text: CV_NO_MUSHROOM,
+      requirements: REQUIREMENTS,
+      screening: screening(ALL_YES),
+      recruiter_exceptions: r.recruiter_exceptions.map((x) => x.question_id),
+      reviewed_claims: r.reviewed_screening_claims,
+    });
+    expect(snap.reviewed_claims).toEqual([Q_MUSHROOM]);
+    const replayed = scoreCandidate({
+      cv_text: snap.cv_text,
+      requirements: snap.requirements,
+      screening: snap.screening as ScreeningAnswer[],
+      eligibility_checks: replayRecruiterChecks(snap),
+    });
+    expect(fingerprintOf(replayed)).toEqual(fingerprintOf(r));
+    expect("reviewed_claims" in buildReplaySnapshot({ cv_text: "x", requirements: [], screening: [] })).toBe(false);
   });
 });

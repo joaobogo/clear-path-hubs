@@ -50,6 +50,11 @@ export const ReplaySnapshotSchema = z.object({
    * when there are some, so older snapshots keep their exact shape.
    */
   recruiter_exceptions: z.array(z.string()).optional(),
+  /**
+   * Dealbreaker "yes" answers whose unverified-claim flag a recruiter
+   * decision suppressed. Stored only when there are some.
+   */
+  reviewed_claims: z.array(z.string()).optional(),
 });
 
 export type ReplaySnapshot = z.infer<typeof ReplaySnapshotSchema>;
@@ -69,8 +74,10 @@ export function buildReplaySnapshot(input: {
   }>;
   role_family?: string | null;
   recruiter_exceptions?: string[];
+  reviewed_claims?: string[];
 }): ReplaySnapshot {
   const exceptions = [...new Set(input.recruiter_exceptions ?? [])].sort();
+  const reviewed = [...new Set(input.reviewed_claims ?? [])].sort();
   return {
     cv_text: input.cv_text,
     requirements: input.requirements.map((r) => ({
@@ -90,6 +97,7 @@ export function buildReplaySnapshot(input: {
     })),
     role_family: input.role_family ?? null,
     ...(exceptions.length ? { recruiter_exceptions: exceptions } : {}),
+    ...(reviewed.length ? { reviewed_claims: reviewed } : {}),
   };
 }
 
@@ -110,6 +118,22 @@ export type ReplayFingerprint = {
   input_hash: string;
   statuses: Array<{ id: string; status: string }>;
 };
+
+/**
+ * The recruiter decisions a stored snapshot implies, as eligibility_checks
+ * rows the engine reads: a lifted dealbreaker answer as 'excepted' (the same
+ * effect as 'passed' on that question), a suppressed unverified-claim flag as
+ * 'passed' (any decision suppresses it; the answer was "yes", so lifting it
+ * changes nothing).
+ */
+export function replayRecruiterChecks(
+  snapshot: Pick<ReplaySnapshot, "recruiter_exceptions" | "reviewed_claims">,
+): Array<{ qualifier_key: string; status: string }> {
+  return [
+    ...(snapshot.recruiter_exceptions ?? []).map((id) => ({ qualifier_key: `recruiter_review:${id}`, status: "excepted" })),
+    ...(snapshot.reviewed_claims ?? []).map((id) => ({ qualifier_key: `recruiter_review:${id}`, status: "passed" })),
+  ];
+}
 
 export function fingerprintOf(result: ScoringResult): ReplayFingerprint {
   const caps = result.applied_caps ?? [];

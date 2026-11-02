@@ -6,7 +6,7 @@
  * question is a missing nice-to-have and is scored, never disqualifying.
  * Every not_eligible decision carries a check naming the question.
  */
-import { exceptedQuestionIds, recruiterDecisions } from "./recruiter-review";
+import { liftedQuestionIds, recruiterDecisions } from "./recruiter-review";
 
 export type ScreeningEligibilityAnswer = {
   question_id: string;
@@ -103,17 +103,21 @@ const SCREENING_KEY = /^(?:disq:|screening_dealbreaker$)/;
  * Idempotent plan for one match. Screening-derived checks are rebuilt from the
  * dealbreaker rule; any other blocking check (staff-recorded qualifiers) keeps
  * the match not_eligible. Excepted / needs_validation states are left alone.
- * A recruiter decision (recruiter_review:*) wins: an excepted dealbreaker
- * answer is not a hit, and a recruiter 'failed' is not_eligible.
+ * A recruiter decision (recruiter_review:*) wins: a dealbreaker answer the
+ * recruiter excepted or passed is not a hit (the match reads 'excepted' when
+ * an exception was granted, 'eligible' for a pass), and a recruiter 'failed'
+ * is not_eligible. The recruiter's rows are never upserted or removed here.
  */
 export function planEligibilityRecompute(input: {
   current_status: string | null;
   answers: ScreeningEligibilityAnswer[];
   existing_checks: ExistingCheck[];
 }): RecomputePlan {
-  const excepted = exceptedQuestionIds(input.existing_checks);
-  const recruiterFailed = recruiterDecisions(input.existing_checks).some((d) => d.status === "failed");
-  const decision = decideScreeningEligibility(input.answers.filter((a) => !excepted.has(a.question_id)));
+  const lifted = liftedQuestionIds(input.existing_checks);
+  const decisions = recruiterDecisions(input.existing_checks);
+  const recruiterFailed = decisions.some((d) => d.status === "failed");
+  const recruiterExcepted = decisions.some((d) => d.status === "excepted");
+  const decision = decideScreeningEligibility(input.answers.filter((a) => !lifted.has(a.question_id)));
   const wanted = new Set(decision.checks.map((c) => c.qualifier_key));
   const stale_keys = input.existing_checks
     .filter((c) => SCREENING_KEY.test(c.qualifier_key) && !wanted.has(c.qualifier_key))
@@ -126,7 +130,7 @@ export function planEligibilityRecompute(input: {
   let next: RecomputePlan["next_status"] =
     decision.status === "not_eligible" || otherBlocking
       ? "not_eligible"
-      : excepted.size > 0
+      : recruiterExcepted
         ? "excepted"
         : "eligible";
   if (input.current_status === "excepted" || input.current_status === "needs_validation") {

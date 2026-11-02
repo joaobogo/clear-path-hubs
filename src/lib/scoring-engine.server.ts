@@ -20,7 +20,7 @@ import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-subs
 import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
 import { asBoolean } from "./scoring/eligibility";
 import {
-  exceptedQuestionIds,
+  liftedQuestionIds,
   reviewedQuestionIds,
   type StoredEligibilityCheck,
 } from "./scoring/recruiter-review";
@@ -138,10 +138,11 @@ export interface ScoringResult {
     normalized_value: string;
   }>;
   /**
-   * Dealbreaker answers that would disqualify but a recruiter excepted
-   * (eligibility_checks recruiter_review:* with status 'excepted'). They are
-   * not in disqualifying_answers and do not cap the score; the answer still
-   * counts as a gap.
+   * Dealbreaker answers that would disqualify but a recruiter lifted
+   * (eligibility_checks recruiter_review:* with status 'excepted' or
+   * 'passed'). They are not in disqualifying_answers and do not cap the
+   * score; the answer still counts as a gap. Staff-only: never written into
+   * `concerns`.
    */
   recruiter_exceptions: Array<{
     question_id: string;
@@ -151,7 +152,9 @@ export interface ScoringResult {
   /**
    * Dealbreakers answered "yes" whose linked must-have(s) the CV gives no
    * evidence for, judged on the requirement rows before any screening credit.
-   * A flag for recruiter review only: never a gate, never a score change.
+   * A flag for recruiter review only: never a gate, never a score change, and
+   * never written into `concerns` (which reach the client). It is recorded as
+   * the eligibility check screening_claim_unverified:<question_id>.
    */
   unverified_screening_claims: Array<{
     question_id: string;
@@ -159,6 +162,13 @@ export interface ScoringResult {
     /** The linked requirements the CV does not evidence. */
     requirements: string[];
   }>;
+  /**
+   * Question ids of dealbreaker "yes" answers that would have been flagged
+   * as unverified but a recruiter has already decided on. They enter the
+   * input hash (only when present), so a decision produces a new run rather
+   * than reusing one that still carries the flag.
+   */
+  reviewed_screening_claims: string[];
   /**
    * The specific answer/requirement pairs behind a screening_contradicts_cv
    * flag. Empty unless the status is raised — a flag with no rows to resolve
@@ -462,13 +472,16 @@ export function computeInputHash(parts: {
   screening: ScreeningAnswer[];
   /** Recorded profile location; it can decide a relocation requirement. */
   candidate_location?: string | null;
-  /** Dealbreaker answers a recruiter excepted; they change the result. */
+  /** Dealbreaker answers a recruiter excepted or passed; they change the result. */
   recruiter_exceptions?: string[];
+  /** Unverified-claim flags a recruiter decision suppressed; they change the result. */
+  reviewed_claims?: string[];
 }): string {
   // Fields added after v1.6 are included only when set, so a run without
   // them keeps the hash it always had.
   const loc = (parts.candidate_location ?? "").trim().toLowerCase();
   const exceptions = [...new Set(parts.recruiter_exceptions ?? [])].sort();
+  const reviewed = [...new Set(parts.reviewed_claims ?? [])].sort();
   const canon = JSON.stringify({
     v: parts.engine_version,
     cal: parts.calibration_version ?? DEFAULT_CALIBRATION.calibration_version,
@@ -486,6 +499,7 @@ export function computeInputHash(parts: {
       .sort((a, b) => a.q.localeCompare(b.q)),
     ...(loc ? { loc } : {}),
     ...(exceptions.length ? { x: exceptions } : {}),
+    ...(reviewed.length ? { rv: reviewed } : {}),
   });
   return `${fnv1a(canon)}-${canon.length.toString(16)}`;
 }
@@ -532,6 +546,16 @@ const LINK_CONCEPTS: RegExp[] = [
   /\b(bachelor\w*|degree|graduate|diploma|mba|master\w*)\b/i,
   /\b(licen[cs]e\w*|certif\w*|registration|registered)\b/i,
 ];
+/**
+ * Words that say how a skill is used, not what it is ("written and verbal",
+ * "fluent"). Two of them shared are not a shared subject (see linkedRequired).
+ */
+const LINK_MODALITY_WORDS = new Set([
+  "written", "verbal", "spoken", "oral", "fluent", "fluently", "native",
+  "proficient", "proficiency", "conversational", "reading", "writing", "speak",
+  "speaks", "read", "write",
+]);
+
 function sameConcept(a: string, b: string): boolean {
   return LINK_CONCEPTS.some((re) => re.test(a) && re.test(b));
 }
@@ -622,19 +646,11 @@ export function scoreCandidate(input: {
   const engine_version = ENGINE_VERSION;
 
   // A recruiter decision always wins over the answer (recruiter_review:*).
-  // An excepted dealbreaker answer does not disqualify; it is still a gap.
-  const excepted = exceptedQuestionIds(input.eligibility_checks);
+  // A dealbreaker answer the recruiter excepted or passed does not
+  // disqualify; it is still a gap.
+  const lifted = liftedQuestionIds(input.eligibility_checks);
   const dealbreakerHits = input.screening.filter(isDisqualifying);
-  const exceptedAnswers = dealbreakerHits.filter((s) => excepted.has(s.question_id));
-  const input_hash = computeInputHash({
-    engine_version,
-    calibration_version: cal.calibration_version,
-    cv_text: input.cv_text,
-    requirements: input.requirements,
-    screening: input.screening,
-    candidate_location: input.candidate_location ?? null,
-    recruiter_exceptions: exceptedAnswers.map((s) => s.question_id),
-  });
+  const exceptedAnswers = dealbreakerHits.filter((s) => lifted.has(s.question_id));
   const completed_at = new Date().toISOString();
 
   const requirements = input.requirements.map((r) => ({
@@ -1020,7 +1036,7 @@ export function scoreCandidate(input: {
     aligned: screeningAlignment(s, cv),
   }));
 
-  const disqualifyingAnswers = dealbreakerHits.filter((s) => !excepted.has(s.question_id));
+  const disqualifyingAnswers = dealbreakerHits.filter((s) => !lifted.has(s.question_id));
   const disqualified = disqualifyingAnswers.length > 0;
   const disqualifyingQuestions = disqualifyingAnswers.map(
     (s) => (s.question || "").trim() || `question ${s.question_id}`,
@@ -1054,7 +1070,15 @@ export function scoreCandidate(input: {
     tokenize(text).filter((t) => t.length >= 4 && !REQUIREMENT_FRAMING.has(t));
   // A question linked to a must-have speaks for that must-have; an unlinked
   // one for any requirement it shares two content words with.
-  const linkedRequired = (s: ScreeningAnswer) => {
+  //
+  // `concept` (the unverified-claim flag only): two shared words that only
+  // say HOW a skill is used ("written", "verbal") are not a shared subject.
+  // "Fluent English (written and verbal)" shares exactly those two words with
+  // "people management and communication skills, written and verbal", which
+  // flagged an English answer as unverified for want of management evidence.
+  // The screening credit below keeps the original link: changing it would
+  // move scores under the same engine version.
+  const linkedRequired = (s: ScreeningAnswer, opts: { concept?: boolean } = {}) => {
     const linkText = (s.must_have ?? "").trim();
     const qTokens = new Set(meaningful(linkText || s.question || ""));
     const out: Array<{ a: RequirementAssessment; overlap: Set<string> }> = [];
@@ -1062,7 +1086,8 @@ export function scoreCandidate(input: {
     for (const a of assessment) {
       if (!a.required) continue;
       const overlap = new Set(meaningful(a.text).filter((t) => qTokens.has(t)));
-      if (overlap.size >= 2 || (linkText !== "" && sameConcept(linkText, a.text))) {
+      const subject = opts.concept ? [...overlap].some((t) => !LINK_MODALITY_WORDS.has(t)) : true;
+      if ((overlap.size >= 2 && subject) || (linkText !== "" && sameConcept(linkText, a.text))) {
         out.push({ a, overlap });
       }
     }
@@ -1081,14 +1106,15 @@ export function scoreCandidate(input: {
   // Judged on the rows as the CV left them — before the answer's own credit
   // below — and only from CV-sourced evidence. A flag, never a gate: it does
   // not move the score or eligibility. A recruiter decision on the question
-  // (recruiter_review:*) means it has been looked at, so no flag.
+  // (recruiter_review:*) means it has been looked at, so no flag; the
+  // suppressed question is recorded for the input hash instead.
   const reviewed = reviewedQuestionIds(input.eligibility_checks);
   const unverified_screening_claims: ScoringResult["unverified_screening_claims"] = [];
+  const reviewed_screening_claims: string[] = [];
   for (const s of input.screening) {
     if (!s.disqualifying_condition || s.answer_type !== "boolean") continue;
     if (normalizeScreeningValue(s) !== "yes" || isDisqualifying(s)) continue;
-    if (reviewed.has(s.question_id)) continue;
-    const unbacked = linkedRequired(s)
+    const unbacked = linkedRequired(s, { concept: true })
       .links.map(({ a }) => a)
       .filter(
         (a) =>
@@ -1101,12 +1127,29 @@ export function scoreCandidate(input: {
           ),
       );
     if (unbacked.length === 0) continue;
+    if (reviewed.has(s.question_id)) {
+      reviewed_screening_claims.push(s.question_id);
+      continue;
+    }
     unverified_screening_claims.push({
       question_id: s.question_id,
       question: (s.question || "").trim() || `question ${s.question_id}`,
       requirements: unbacked.map((a) => a.text),
     });
   }
+
+  // Inputs that change the result. Recruiter decisions enter only when they
+  // applied, so every other run keeps the hash it always had.
+  const input_hash = computeInputHash({
+    engine_version,
+    calibration_version: cal.calibration_version,
+    cv_text: input.cv_text,
+    requirements: input.requirements,
+    screening: input.screening,
+    candidate_location: input.candidate_location ?? null,
+    recruiter_exceptions: exceptedAnswers.map((s) => s.question_id),
+    reviewed_claims: reviewed_screening_claims,
+  });
 
   if (!disqualified) {
     for (const s of input.screening) {
@@ -1337,15 +1380,11 @@ export function scoreCandidate(input: {
             ? `Contradicting evidence for required: ${a.text}`
             : `Partly evidenced — worth confirming: ${a.text}`,
     );
-  // Recruiter-review items lead the list, ahead of the requirement rows.
-  concerns.unshift(
-    ...exceptedAnswers.map((s) => {
-      const v = normalizeScreeningValue(s);
-      const answered = v === "no" ? "no" : `"${v}"`;
-      return `Dealbreaker answered ${answered}; recruiter exception recorded: ${(s.question || "").trim() || `question ${s.question_id}`}`;
-    }),
-    ...unverified_screening_claims.map((c) => `Screening claim unverified: ${c.question}`),
-  );
+  // Recruiter exceptions and unverified screening claims are NOT concerns:
+  // `concerns` reach the client workspace verbatim, and both are internal
+  // review notes. They live in recruiter_exceptions /
+  // unverified_screening_claims (staff-only run fields) and on the match's
+  // eligibility_checks rows, where the admin review page shows them.
   if (contradiction_status !== "none") {
     // Name the conflicting pair — an unexplained flag cannot be resolved.
     const named = contradiction_rows
@@ -1409,6 +1448,7 @@ export function scoreCandidate(input: {
       normalized_value: normalizeScreeningValue(a),
     })),
     unverified_screening_claims,
+    reviewed_screening_claims,
     contradiction_rows,
     evidence_substance: substance,
     completed_at,
