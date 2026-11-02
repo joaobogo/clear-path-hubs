@@ -78,6 +78,13 @@
       "when": 1793491200000,
       "tag": "0010_reviewed_verdicts_by_text_and_drive_video",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793577600000,
+      "tag": "0011_admin_index_published_score",
+      "breakpoints": true
     }
   ]
 }
