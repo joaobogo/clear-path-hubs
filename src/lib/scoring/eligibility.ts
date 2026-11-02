@@ -11,6 +11,12 @@
  */
 
 import type { ScreeningAnswer } from "../scoring-engine.server";
+import {
+  DEALBREAKER_KEY_PREFIX,
+  UNVERIFIED_CLAIM_KEY_PREFIX,
+  isRecruiterReviewKey,
+  liftedQuestionIds,
+} from "./recruiter-review";
 import type {
   EligibilityStatus,
   QualifierCheckStatus,
@@ -88,12 +94,28 @@ export type EligibilityCheckRow = {
   qualifier_key: string;
   qualifier_kind?: string | null;
   status: string | null;
+  evidence?: unknown;
 };
 
 export function resolveEligibilityFromRows(
   rows: EligibilityCheckRow[] | null | undefined,
 ): EligibilityResolution {
-  const checks: EligibilityCheckInput[] = (rows ?? []).map((r) => ({
+  // An unverified screening claim is a flag for review, never a gate; a
+  // dealbreaker a recruiter excepted or passed (recruiter_review:*) no longer
+  // blocks, even before the rescore that removes its disq: row; and a
+  // recruiter_review row with no decision (a withdrawn one, 'unknown') is
+  // not a qualifier waiting on validation.
+  const lifted = liftedQuestionIds(rows);
+  const gates = (rows ?? []).filter(
+    (r) =>
+      !r.qualifier_key.startsWith(UNVERIFIED_CLAIM_KEY_PREFIX) &&
+      !(
+        r.qualifier_key.startsWith(DEALBREAKER_KEY_PREFIX) &&
+        lifted.has(r.qualifier_key.slice(DEALBREAKER_KEY_PREFIX.length))
+      ) &&
+      !(isRecruiterReviewKey(r.qualifier_key) && !["passed", "failed", "excepted"].includes(String(r.status))),
+  );
+  const checks: EligibilityCheckInput[] = gates.map((r) => ({
     qualifier_key: r.qualifier_key,
     qualifier_kind: (r.qualifier_kind === "disqualifier"
       ? "disqualifier"

@@ -47,7 +47,14 @@ import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { RoleEditorLifecycleActions } from "@/components/positions/RoleEditorLifecycleActions";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { ProtectedCriteriaNotice } from "@/components/positions/ProtectedCriteriaNotice";
+import { CompoundDealbreakerNotice } from "@/components/positions/CompoundDealbreakerNotice";
 import { roleFormCriteriaFields } from "@/lib/positions/protected-criteria-fields";
+import {
+  applyDealbreakerSplit,
+  findCompoundDealbreakers,
+  keepAsOptionalQuestion,
+  type CompoundDealbreakerFinding,
+} from "@/lib/positions/compound-dealbreaker";
 import {
   findProtectedCriteriaInFields,
   type CriteriaFieldFinding,
@@ -325,11 +332,30 @@ export function PositionEditWizard({
     set(key, list as State[typeof key]);
   };
 
+  // Dealbreakers that ask for two requirements at once. Every one is shown
+  // with its split; only a new or reworded one blocks the save (the server
+  // applies the same rule against what was stored).
+  const bundledDealbreakers = useMemo(
+    () => findCompoundDealbreakers(state.screening_questions),
+    [state.screening_questions],
+  );
+  const blockingBundled = useMemo(
+    () => findCompoundDealbreakers(state.screening_questions, { stored: initial.screening_questions }),
+    [state.screening_questions, initial.screening_questions],
+  );
+  const splitDealbreaker = (f: CompoundDealbreakerFinding) =>
+    applyDealbreakerSplit(state.screening_questions, f);
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (protectedFindings.length > 0) {
         throw new Error(
           "Some criteria can't be used as written. Use the suggested wording shown above the Save button, or remove them.",
+        );
+      }
+      if (blockingBundled.length > 0) {
+        throw new Error(
+          "A dealbreaker asks for two requirements at once. Split or reword it, or keep it as an optional question, using the notice above the Save button.",
         );
       }
       const all = allErrors(state);
@@ -1631,6 +1657,17 @@ export function PositionEditWizard({
           </Card>
 
           <ProtectedCriteriaNotice findings={protectedFindings} onApply={applyProtectedRewrite} />
+          <CompoundDealbreakerNotice
+            findings={bundledDealbreakers}
+            canApply={(f) => splitDealbreaker(f) !== null}
+            onApply={(f) => {
+              const next = splitDealbreaker(f);
+              if (next) set("screening_questions", next);
+            }}
+            onKeepOptional={(f) =>
+              set("screening_questions", keepAsOptionalQuestion(state.screening_questions, f))
+            }
+          />
 
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Button

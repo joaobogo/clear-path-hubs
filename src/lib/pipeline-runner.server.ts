@@ -8,6 +8,11 @@
 import { extractCvText, isFlattenedCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
 import { parseCvFacts, isGarbageCvText } from "./cv/parse-facts";
+import {
+  PROFILE_BACKFILL_COLUMNS,
+  planProfileBackfill,
+  writeProfileBackfill,
+} from "./cv/profile-backfill";
 import { decideStateAfterEnrichment } from "./scoring/enrichment-state-policy";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
@@ -15,11 +20,11 @@ import { generateCandidateInsights, type CandidateInsights } from "./candidate-i
 import { carryForwardInsights, recruiterBriefingStillCurrent, type PriorEvidenceRow } from "./evidence/carry-forward-insights";
 import {
   THIN_CV_CHARS,
-  candidateReviewTask,
   needsExtractionRetry,
-  needsReviewTask,
   storedTextNeedsReread,
 } from "./cv/unscored-review";
+import { ensureUnscoredReviewTask } from "./cv/unscored-review.server";
+import { isScreeningAnswersJob } from "./candidate/screening-invite";
 import type { Json } from "@/integrations/supabase/types";
 
 type State =
@@ -313,56 +318,10 @@ export async function runPipelineForMatch(
   const outcome = await runPipelineForMatchInner(matchId, opts);
   const s = await getAdmin();
   await notifyPipelineOutcome(s, outcome);
+  // A match the pipeline could not score always has one open admin task that
+  // says why and what to do next (cv/unscored-review.server.ts).
   await ensureUnscoredReviewTask(s, outcome);
   return outcome;
-}
-
-/**
- * A match the pipeline could not score always has one open admin task that
- * says why and what to do next. Idempotent: an open pipeline task for the
- * match is reused, not duplicated. Never contacts the candidate.
- */
-async function ensureUnscoredReviewTask(s: Any, outcome: PipelineOutcome): Promise<void> {
-  try {
-    const { data: match } = await s
-      .from("candidate_matches")
-      .select(
-        "id,organization_id,position_id,candidate_profile_id,current_score_run_id,processing_error_code,processing_error_message,positions(title),candidate_profiles(full_name)",
-      )
-      .eq("id", outcome.match_id)
-      .maybeSingle();
-    if (!match || !needsReviewTask(outcome, match)) return;
-    const { data: open } = await s
-      .from("tasks")
-      .select("id")
-      .eq("candidate_match_id", outcome.match_id)
-      .eq("task_type", "candidate_review")
-      .in("status", ["open", "in_progress"])
-      .is("deleted_at", null)
-      .contains("metadata", { source: "pipeline" })
-      .limit(1);
-    if ((open ?? []).length > 0) return;
-    const task = candidateReviewTask({
-      code: match.processing_error_code ?? outcome.final_state,
-      message: match.processing_error_message ?? null,
-      candidateName: (match.candidate_profiles as Any)?.full_name ?? null,
-      positionTitle: (match.positions as Any)?.title ?? null,
-    });
-    await s.from("tasks").insert({
-      organization_id: match.organization_id,
-      position_id: match.position_id ?? null,
-      candidate_match_id: outcome.match_id,
-      candidate_profile_id: match.candidate_profile_id ?? null,
-      task_type: "candidate_review",
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      status: "open",
-      metadata: { source: "pipeline", reason: task.reason, final_state: outcome.final_state, trace_id: outcome.trace_id },
-    });
-  } catch (e) {
-    console.error("[pipeline] review task failed", outcome.match_id, (e as Error)?.message);
-  }
 }
 
 async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean } = {}): Promise<PipelineOutcome> {
@@ -599,7 +558,7 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
     // Reload profile to snapshot post-hydration state.
     const { data: freshProfile } = await s
       .from("candidate_profiles")
-      .select("id,skills,experience,headline,location,consent")
+      .select(`id,experience,headline,location,${PROFILE_BACKFILL_COLUMNS}`)
       .eq("id", ctx.match.candidate_profile_id)
       .maybeSingle();
     const screening = buildScreening(ctx.answers);
@@ -645,22 +604,18 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
 
     // Additive profile backfill: fill ONLY fields the profile does not have.
     // "LinkedIn Not provided" rendered for a candidate whose CV printed the
-    // URL (audit S-20); a deterministic extract closes that without ever
-    // overwriting hydrated or hand-entered values.
-    if (cvFacts.linkedin_url) {
-      await s
-        .from("candidate_profiles")
-        .update({ linkedin_url: cvFacts.linkedin_url })
-        .eq("id", ctx.match.candidate_profile_id)
-        .is("linkedin_url", null);
-    }
-    if (cvFacts.years_experience != null) {
-      await s
-        .from("candidate_profiles")
-        .update({ years_experience: cvFacts.years_experience })
-        .eq("id", ctx.match.candidate_profile_id)
-        .is("years_experience", null);
-    }
+    // URL (audit S-20), and certifications hydration parsed stayed in
+    // consent.extracted where no client page reads them (Hughes item 5). The
+    // plan never overwrites hydrated, recruiter- or candidate-entered values,
+    // and each write only lands if the field still holds what was read above
+    // (the insights model call sits in between).
+    await writeProfileBackfill(
+      s,
+      ctx.match.candidate_profile_id,
+      planProfileBackfill(freshProfile, cvFacts),
+      freshProfile,
+      { source: "auto_pipeline" },
+    );
 
     const pos = ctx.position;
     if (!pos || pos.status !== "active") {
@@ -794,7 +749,7 @@ export async function runEnrichmentOnly(
     }
     const { data: freshProfile } = await s
       .from("candidate_profiles")
-      .select("id,skills,experience,headline,location,consent,languages,years_experience")
+      .select(`id,experience,headline,location,${PROFILE_BACKFILL_COLUMNS}`)
       .eq("id", ctx.match.candidate_profile_id).maybeSingle();
     const screening = buildScreening(ctx.answers);
     const { insights, insights_error } = await resolveInsights(s, matchId, ctx.position, () => buildInsights({
@@ -840,26 +795,17 @@ export async function runEnrichmentOnly(
     // lines below (audit #6, 2.9i).
     //
     // Only ever fills a gap. A profile field a human or the candidate has set
-    // is never overwritten by the parser.
-    const profileBackfill: Record<string, unknown> = {};
-    if (
-      !Array.isArray(freshProfile?.languages) ||
-      (freshProfile?.languages as unknown[]).length === 0
-    ) {
-      if (cvFacts.languages.length > 0) profileBackfill.languages = cvFacts.languages;
-    }
-    if (!Array.isArray(freshProfile?.skills) || (freshProfile?.skills as unknown[]).length === 0) {
-      if (cvFacts.skills.length > 0) profileBackfill.skills = cvFacts.skills;
-    }
-    if (freshProfile?.years_experience == null && cvFacts.years_experience != null) {
-      profileBackfill.years_experience = cvFacts.years_experience;
-    }
-    if (Object.keys(profileBackfill).length > 0) {
-      await s
-        .from("candidate_profiles")
-        .update(profileBackfill)
-        .eq("id", ctx.match.candidate_profile_id);
-    }
+    // is never overwritten by the parser. Certifications come from what
+    // hydration parsed earlier (consent.extracted), so refreshing evidence
+    // repairs a profile without another model call. Each write only lands if
+    // the field still holds what was read before the insights call.
+    await writeProfileBackfill(
+      s,
+      ctx.match.candidate_profile_id,
+      planProfileBackfill(freshProfile, cvFacts),
+      freshProfile,
+      { source: "evidence_refresh" },
+    );
 
     await recordJob(s, matchId, "enrich", "completed", trace_id);
     const pos = ctx.position;
@@ -1123,6 +1069,34 @@ export async function drainApplicationJobs(
           error_code: "match_missing",
         });
         continue;
+      }
+
+      // A rescore queued by late screening answers runs only if the score is
+      // still unreviewed NOW: staff may have adjusted or approved it since the
+      // answers arrived, and a forced machine run would supersede the reviewed
+      // run and silently replace the published score. Held jobs are cancelled
+      // and staff get the re-review task; a failed check throws (retry), so a
+      // blind rescore never happens. Other parse_and_score jobs are unchanged.
+      if (isScreeningAnswersJob(row.trace_id)) {
+        const { holdScreeningRescoreIfReviewed } =
+          await import("./candidate/screening-rereview.server");
+        const held = await holdScreeningRescoreIfReviewed(s, {
+          applicationId: row.entity_id as string,
+          jobId: row.id as string,
+        });
+        if (held) {
+          await finishJob(s, row.id, "cancelled", {
+            code: "reviewed_score_kept",
+            message: held.message,
+          });
+          out.push({
+            ...base,
+            status: "cancelled",
+            error_code: "reviewed_score_kept",
+            error_message: held.message,
+          });
+          continue;
+        }
       }
 
       const outcome = await runPipelineForMatch(match.id as string, {

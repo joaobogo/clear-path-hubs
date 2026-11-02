@@ -180,7 +180,7 @@ export async function blockedRoles(supabase: Sb): Promise<CopilotToolResult> {
   const { data: positions, error } = await supabase
     .from("positions")
     .select(
-      "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location, requirements, organizations(name)"
+      "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location, requirements, organizations(name), screening_questions(question,dealbreaker)"
     )
     .in("status", ["draft", "submitted", "under_review", "needs_clarification", "approved"])
     .limit(100);
@@ -200,6 +200,7 @@ export async function blockedRoles(supabase: Sb): Promise<CopilotToolResult> {
       seniority: p.seniority,
       location: p.location,
       requirements: p.requirements,
+      screening_questions: Array.isArray(p.screening_questions) ? p.screening_questions : null,
     });
     // Align with the "Blocked roles" source of truth (e.g. Publish Gate Desk)
     // by only including roles with data/payment blockers. 'not_approved' is

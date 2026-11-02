@@ -2,7 +2,9 @@
 -- Returns one JSON document; save it and pass it to run.ts.
 with p as (select * from positions where id = '228cd1ec-1ec1-4205-828c-7a92b1be42e1')
 select json_build_object(
-  'position', json_build_object('id', p.id, 'requirements', p.requirements, 'preferred_requirements', p.preferred_requirements),
+  'position', json_build_object('id', p.id, 'title', p.title, 'requirements', p.requirements, 'preferred_requirements', p.preferred_requirements),
+  -- The client's name and the role title are not evidence (src/lib/scoring/evidence-sources.ts).
+  'organisation', (select json_build_object('name', o.name, 'brand_display_name', o.brand_display_name) from organizations o where o.id = p.organization_id),
   'rubric', (select json_build_object('id', rv.id, 'calibration', rv.calibration) from rubric_versions rv
              where rv.position_id = p.id and rv.status in ('approved', 'active') and rv.superseded_at is null
              order by rv.version_number desc limit 1),
@@ -11,12 +13,16 @@ select json_build_object(
       'match_id', m.id, 'application_id', m.application_id, 'candidate_profile_id', m.candidate_profile_id,
       'position_id', m.position_id, 'organization_id', m.organization_id,
       'eligibility_status', m.eligibility_status, 'cv_text', f.extracted_text,
-      'location', cp.location, 'city', cp.city, 'country', cp.country,
+      'location', cp.location, 'city', cp.city, 'country', cp.country, 'candidate_name', cp.full_name,
       'answers', (select coalesce(json_agg(json_build_object('question_id', a.question_id, 'answer', a.answer,
                     'q', json_build_object('question', q.question, 'answer_type', q.answer_type, 'required', q.required,
                          'dealbreaker', q.dealbreaker, 'preferred_answer', q.preferred_answer, 'must_have', q.must_have))), '[]')
                   from application_answers a left join screening_questions q on q.id = a.question_id
-                  where a.application_id = m.application_id))
+                  where a.application_id = m.application_id),
+      -- Recruiter decisions (recruiter_review:*) among these win over the answers.
+      'eligibility_checks', (select coalesce(json_agg(json_build_object('qualifier_key', ec.qualifier_key, 'status', ec.status,
+                    'evidence', ec.evidence) order by ec.qualifier_key), '[]')
+                  from eligibility_checks ec where ec.candidate_match_id = m.id))
     order by m.created_at)
     from candidate_matches m
     join candidate_profiles cp on cp.id = m.candidate_profile_id

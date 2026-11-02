@@ -30,6 +30,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
 import { scoreVoidedByUnreadableCv, publishedScore } from "@/lib/scoring/published-score";
+import {
+  isEngineCheckKey,
+  isRecruiterReviewKey,
+  type RecruiterDecisionStatus,
+} from "@/lib/scoring/recruiter-review";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
 import { resolveParseFailure } from "@/lib/parse-failure/parse-failure-codes";
 import { UnicornMarker } from "@/components/unicorn-marker";
@@ -979,7 +984,7 @@ function ReviewWorkspace() {
                     await decideEligibility({
                       data: { match_id: params.matchId, check_id: c.id, status, reason },
                     });
-                    toast.success("Eligibility updated.");
+                    toast.success("Decision recorded. Recompute the score for it to apply to the score.");
                     await refresh();
                   } catch (err) {
                     toast.error((err as Error).message || "Could not update eligibility.");
@@ -1141,6 +1146,14 @@ function ReviewWorkspace() {
   );
 }
 
+/** The recruiter's vocabulary: the table's own statuses, in words. */
+const DECISION_OPTIONS: Array<{ value: RecruiterDecisionStatus; label: string }> = [
+  { value: "passed", label: "Passed: answer accepted, not disqualifying" },
+  { value: "excepted", label: "Excepted: exception granted" },
+  { value: "failed", label: "Failed: not eligible" },
+  { value: "unknown", label: "No decision" },
+];
+
 function EligibilityRow({
   check,
   busy,
@@ -1148,55 +1161,69 @@ function EligibilityRow({
 }: {
   check: Any;
   busy: boolean;
-  onDecide: (
-    status: "eligible" | "not_eligible" | "needs_validation" | "excepted",
-    reason: string,
-  ) => Promise<void>;
+  onDecide: (status: RecruiterDecisionStatus, reason: string) => Promise<void>;
 }) {
+  // A decision on the engine's own row (disq:, screening_claim_unverified:)
+  // is recorded as a recruiter_review row for the question; the engine never
+  // overrides it. Synthesized rows (a configured gate no answer has tested)
+  // have nothing to decide yet.
+  const engineRow = isEngineCheckKey(check.qualifier_key);
+  const decidable = !String(check.id ?? "").startsWith("config-");
   const [reason, setReason] = useState("");
-  const [status, setStatus] = useState<string>(check.status ?? "needs_validation");
+  const [status, setStatus] = useState<string>(engineRow ? "" : (check.status ?? ""));
   return (
     <div className="space-y-2 rounded-md border p-3">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-medium">{check.qualifier_label ?? check.qualifier_key}</p>
         {/* Words, not enum keys — this printed "not_evaluated" (M18). */}
-        <Badge variant={check.status === "eligible" ? "default" : "outline"}>
+        <Badge variant={check.status === "passed" ? "default" : "outline"}>
           {humanizeCode(String(check.status ?? "unknown"))}
         </Badge>
       </div>
       {check.reason ? <p className="text-xs text-muted-foreground">{check.reason}</p> : null}
-      <select
-        aria-label={`Set ${check.qualifier_key} status`}
-        className="h-8 w-full rounded-md border bg-background px-2 text-xs"
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-      >
-        <option value="eligible">eligible</option>
-        <option value="not_eligible">not eligible</option>
-        <option value="needs_validation">needs validation</option>
-        <option value="excepted">excepted</option>
-      </select>
-      <Textarea
-        aria-label="Eligibility reason"
-        className="min-h-[60px] text-xs"
-        placeholder="Reason (required)"
-        value={reason}
-        onChange={(e) => setReason(e.target.value)}
-      />
-      <Button
-        size="sm"
-        variant="outline"
-        disabled={busy || reason.trim().length < 8 || status === check.status}
-        onClick={async () => {
-          await onDecide(
-            status as "eligible" | "not_eligible" | "needs_validation" | "excepted",
-            reason.trim(),
-          );
-          setReason("");
-        }}
-      >
-        Save qualifier
-      </Button>
+      {isRecruiterReviewKey(check.qualifier_key) ? (
+        <p className="text-xs text-muted-foreground">Recruiter decision. Scoring reads it and never overrides it.</p>
+      ) : null}
+      {decidable ? (
+        <>
+          <select
+            aria-label={`Recruiter decision on ${check.qualifier_label ?? check.qualifier_key}`}
+            className="h-8 w-full rounded-md border bg-background px-2 text-xs"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            {status === "" ? <option value="">Choose a decision</option> : null}
+            {DECISION_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+          <Textarea
+            aria-label="Decision reason"
+            className="min-h-[60px] text-xs"
+            placeholder="Reason (required)"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={
+              busy ||
+              reason.trim().length < 8 ||
+              status === "" ||
+              (!engineRow && status === check.status)
+            }
+            onClick={async () => {
+              await onDecide(status as RecruiterDecisionStatus, reason.trim());
+              setReason("");
+            }}
+          >
+            Record decision
+          </Button>
+        </>
+      ) : null}
     </div>
   );
 }
