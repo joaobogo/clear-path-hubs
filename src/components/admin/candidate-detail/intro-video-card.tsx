@@ -3,7 +3,9 @@
  *
  * The recruiting team attaches the link here; the client only watches it on the
  * candidate's client-facing profile. Any other link is refused inline with a
- * plain sentence, and clearing the field removes the video.
+ * plain sentence. Only the Remove button detaches a video: Save on an emptied
+ * field says so instead of clearing it, so a stray click cannot drop the video
+ * (and its score bonus) without anyone meaning to.
  */
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -12,6 +14,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { setCandidateIntroVideo } from "@/lib/candidate-video.functions";
 import { LOOM_LINK_HINT, parseLoomLink, validateLoomLink } from "@/lib/media/loom-link";
+
+export const USE_REMOVE_TO_DETACH = "Use Remove to detach the video.";
+
+/**
+ * Why a save is refused before it is sent, or null when it may go ahead. An
+ * emptied field with a video attached is refused: only Remove detaches one.
+ */
+export function introVideoSaveRefusal(
+  value: string,
+  hasAttachedVideo: boolean,
+  viaRemove: boolean,
+): string | null {
+  return !viaRemove && hasAttachedVideo && value.trim() === "" ? USE_REMOVE_TO_DETACH : null;
+}
+
+/**
+ * Every cached read that shows this match's video or its score: the workspace
+ * record, the Client preview tab and the player's availability probe. Missing
+ * the last two left the preview on a stale player and score after a save.
+ */
+export function introVideoQueryKeys(matchId: string): string[][] {
+  return [
+    ["admin-candidate", matchId],
+    ["client-preview", matchId],
+    ["intro-video", matchId],
+  ];
+}
 
 export function IntroVideoCard({
   matchId,
@@ -26,7 +55,12 @@ export function IntroVideoCard({
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const save = async (value: string) => {
+  const save = async (value: string, opts: { remove?: boolean } = {}) => {
+    const refusal = introVideoSaveRefusal(value, saved !== null, opts.remove === true);
+    if (refusal) {
+      setError(refusal);
+      return;
+    }
     const checked = validateLoomLink(value);
     if (checked.error) {
       setError(checked.error);
@@ -37,7 +71,9 @@ export function IntroVideoCard({
     try {
       await setCandidateIntroVideo({ data: { match_id: matchId, url: checked.link?.url ?? null } });
       toast.success(checked.link ? "Introduction video attached" : "Introduction video removed");
-      await qc.invalidateQueries({ queryKey: ["admin-candidate", matchId] });
+      await Promise.all(
+        introVideoQueryKeys(matchId).map((queryKey) => qc.invalidateQueries({ queryKey })),
+      );
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -83,7 +119,7 @@ export function IntroVideoCard({
             disabled={saving}
             onClick={() => {
               setDraft("");
-              void save("");
+              void save("", { remove: true });
             }}
           >
             Remove

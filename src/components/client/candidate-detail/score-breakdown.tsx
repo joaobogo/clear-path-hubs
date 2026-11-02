@@ -72,7 +72,8 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
     return { ...k, basisLabel, listBasis };
   });
   // Rounding happens once, on the total; the parts are whole points apportioned
-  // to add up to it exactly. A Loom introduction adds its own line on top.
+  // to add up to it exactly. An introduction video (Loom or Google Drive) adds
+  // its own line on top.
   const videoBonusPts = c.videoBonusPts ?? 0;
   const totalPts = c.grandTotalPts ?? c.totalPts + videoBonusPts;
 
@@ -136,7 +137,7 @@ function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
             <tr className="border-t align-baseline">
               <td data-label="Component" className="py-1.5 pr-2">Video introduction</td>
               <td data-label="How it did" className="py-1.5 pr-2 text-muted-foreground">
-                Loom link on the application
+                Introduction video on the profile
               </td>
               <td data-label="Points" className="py-1.5 text-right tabular-nums">
                 +{videoBonusPts} pts

@@ -8,6 +8,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { candidateIntroVideoValue } from "@/lib/candidate/employer-view";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -108,9 +109,10 @@ export const getMyEmployerPreview = createServerFn({ method: "GET" })
     });
 
     return {
-      // A recruiter's introduction video is written for the employer, not for
-      // the candidate: it never appears in the candidate's own preview.
-      dto: { ...dto, intro_video: null },
+      // The player is for the employer, so the candidate's preview carries no
+      // embed. It still says truthfully whether a video is attached, instead
+      // of reading "Not provided" beside a video the employer can play.
+      dto: { ...dto, intro_video: candidateIntroVideoValue(dto.intro_video) },
       contact_released: dto.contact_released,
     };
 

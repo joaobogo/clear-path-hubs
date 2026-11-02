@@ -24,6 +24,7 @@ import {
   PILOT_ROLES_LABEL,
   ABOVE_MAX_ROLES_LABEL,
 } from "@/config/pricing-core";
+import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 
 /**
@@ -71,6 +72,24 @@ export const Route = createFileRoute("/_authenticated/boardroom")({
 
 /* ─── Page ─────────────────────────────────────────────────────────────── */
 
+type ShortlistSlideRow = { rank: number; name: string; score: number | null; note: string };
+
+/**
+ * The top three of the overview's latest candidates, as the shortlist slide
+ * shows them. The overview sends client candidate DTOs, but this read fields
+ * that DTO does not have (`full_name`, `fit_score`), so every candidate showed
+ * as "Candidate N" with a fit of 0. The score is the published one (video bonus
+ * folded in); a voided score stays null and is shown as a dash, never as 0.
+ */
+export function boardroomShortlist(latest: readonly ClientCandidateDTO[]): ShortlistSlideRow[] {
+  return latest.slice(0, 3).map((c, i) => ({
+    rank: i + 1,
+    name: c.candidate?.display_name || `Candidate ${i + 1}`,
+    score: typeof c.score === "number" ? c.score : null,
+    note: c.strengths?.[0] ?? "Evidence available in workspace.",
+  }));
+}
+
 function BoardroomPage() {
   const orgId = useClientOrgSearch();
   const ctx = useServerFn(getClientContext);
@@ -102,11 +121,7 @@ function BoardroomPage() {
     status: string;
     delivered_pending: number;
   }>;
-  const latestCandidates = (overviewQ.data?.latest_candidates ?? []) as Array<{
-    full_name?: string;
-    fit_score?: number;
-    strengths?: string[];
-  }>;
+  const latestCandidates = (overviewQ.data?.latest_candidates ?? []) as ClientCandidateDTO[];
 
   const pendingRead = overviewQ.isPending && !!resolvedOrgId;
   // A slide must never sit on "Loading…" forever: after a bounded wait we
@@ -123,12 +138,7 @@ function BoardroomPage() {
     pending: p.delivered_pending ?? 0,
   }));
 
-  const candidates = latestCandidates.slice(0, 3).map((c, i) => ({
-    rank: i + 1,
-    name: c.full_name ?? `Candidate ${i + 1}`,
-    score: c.fit_score ?? 0,
-    note: c.strengths?.[0] ?? "Evidence available in workspace.",
-  }));
+  const candidates = boardroomShortlist(latestCandidates);
 
   /* Slides */
   const slides = useMemo(
@@ -346,12 +356,12 @@ function SlidePositions({
   );
 }
 
-function SlideShortlist({
+export function SlideShortlist({
   candidates,
   isLoading,
   loadFailed,
 }: {
-  candidates: { rank: number; name: string; score: number; note: string }[];
+  candidates: ShortlistSlideRow[];
   isLoading?: boolean;
   loadFailed?: boolean;
 }) {
@@ -390,7 +400,7 @@ function SlideShortlist({
               </div>
               <div className="text-right">
                 <p className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold">
-                  {c.score}
+                  {c.score ?? "—"}
                 </p>
                 <p className="text-[10px] uppercase tracking-widest text-white/50">fit</p>
               </div>

@@ -1605,7 +1605,7 @@ function ApplyPage() {
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="portfolio_url">Portfolio or Loom link</Label>
+                    <Label htmlFor="portfolio_url">Portfolio link</Label>
                     <Input
                       id="portfolio_url"
                       inputMode="url"
