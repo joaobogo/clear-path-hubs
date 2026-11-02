@@ -20,11 +20,10 @@ import { generateCandidateInsights, type CandidateInsights } from "./candidate-i
 import { carryForwardInsights, recruiterBriefingStillCurrent, type PriorEvidenceRow } from "./evidence/carry-forward-insights";
 import {
   THIN_CV_CHARS,
-  candidateReviewTask,
   needsExtractionRetry,
-  needsReviewTask,
   storedTextNeedsReread,
 } from "./cv/unscored-review";
+import { ensureUnscoredReviewTask } from "./cv/unscored-review.server";
 import type { Json } from "@/integrations/supabase/types";
 
 type State =
@@ -318,56 +317,10 @@ export async function runPipelineForMatch(
   const outcome = await runPipelineForMatchInner(matchId, opts);
   const s = await getAdmin();
   await notifyPipelineOutcome(s, outcome);
+  // A match the pipeline could not score always has one open admin task that
+  // says why and what to do next (cv/unscored-review.server.ts).
   await ensureUnscoredReviewTask(s, outcome);
   return outcome;
-}
-
-/**
- * A match the pipeline could not score always has one open admin task that
- * says why and what to do next. Idempotent: an open pipeline task for the
- * match is reused, not duplicated. Never contacts the candidate.
- */
-async function ensureUnscoredReviewTask(s: Any, outcome: PipelineOutcome): Promise<void> {
-  try {
-    const { data: match } = await s
-      .from("candidate_matches")
-      .select(
-        "id,organization_id,position_id,candidate_profile_id,current_score_run_id,processing_error_code,processing_error_message,positions(title),candidate_profiles(full_name)",
-      )
-      .eq("id", outcome.match_id)
-      .maybeSingle();
-    if (!match || !needsReviewTask(outcome, match)) return;
-    const { data: open } = await s
-      .from("tasks")
-      .select("id")
-      .eq("candidate_match_id", outcome.match_id)
-      .eq("task_type", "candidate_review")
-      .in("status", ["open", "in_progress"])
-      .is("deleted_at", null)
-      .contains("metadata", { source: "pipeline" })
-      .limit(1);
-    if ((open ?? []).length > 0) return;
-    const task = candidateReviewTask({
-      code: match.processing_error_code ?? outcome.final_state,
-      message: match.processing_error_message ?? null,
-      candidateName: (match.candidate_profiles as Any)?.full_name ?? null,
-      positionTitle: (match.positions as Any)?.title ?? null,
-    });
-    await s.from("tasks").insert({
-      organization_id: match.organization_id,
-      position_id: match.position_id ?? null,
-      candidate_match_id: outcome.match_id,
-      candidate_profile_id: match.candidate_profile_id ?? null,
-      task_type: "candidate_review",
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      status: "open",
-      metadata: { source: "pipeline", reason: task.reason, final_state: outcome.final_state, trace_id: outcome.trace_id },
-    });
-  } catch (e) {
-    console.error("[pipeline] review task failed", outcome.match_id, (e as Error)?.message);
-  }
 }
 
 async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean } = {}): Promise<PipelineOutcome> {
