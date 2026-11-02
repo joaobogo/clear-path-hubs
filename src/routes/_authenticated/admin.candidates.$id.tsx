@@ -373,7 +373,7 @@ function CandidateWorkspace() {
                       <CandidateHistoryTimeline matchId={id} focusEventId={focusEventId} />
                     </ComponentErrorBoundary>
                     <ComponentErrorBoundary boundary="admin.candidate.history-runs" tone="admin">
-                      <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
+                      <HistoryTab runs={runs} jobs={jobs} decisions={decisions} match={m} />
                     </ComponentErrorBoundary>
                     <div className="pt-8 border-t">
                       <h3 className="text-sm font-medium mb-4">Immutable Audit Trail</h3>

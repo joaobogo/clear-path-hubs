@@ -74,7 +74,7 @@ import { FitHero, WhyThisCandidate, WhatNeedsValidation } from "@/components/cli
 import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
 import { IntroVideoPanel } from "@/components/client/intro-video-panel";
-import { VIDEO_INTRO_BONUS_PTS, scoreVoidedByUnreadableCv, resolvePublishedRun, publishedScore } from "@/lib/scoring/published-score";
+import { VIDEO_INTRO_BONUS_PTS, scoreVoidedByUnreadableCv, resolvePublishedRun, publishedScore, evidenceWithVideoLabel, hasVideoIntro, isReviewedEvidenceDecision } from "@/lib/scoring/published-score";
 
 
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
@@ -1047,11 +1047,15 @@ export function HistoryTab({
   runs,
   jobs,
   decisions,
+  match,
 }: {
   runs: Any[];
   jobs: Any[];
   decisions: Any[];
+  /** The candidate match, for the intro-video bonus on reviewed evidence scores. */
+  match?: Any;
 }) {
+  const hasVideo = hasVideoIntro(match);
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <div className="rounded-lg border bg-card p-4">
@@ -1113,18 +1117,34 @@ export function HistoryTab({
           <p className="mt-2 text-sm text-muted-foreground">No decisions recorded.</p>
         ) : (
           <ul className="mt-2 space-y-1 text-sm">
-            {decisions.map((d) => (
-              <li key={d.id} className="border-b py-1 text-xs last:border-0">
-                <span className="text-muted-foreground">
-                  {formatDateTime(d.created_at)}{" "}
-                </span>
-                · <strong>{d.decision_type}</strong>
-                {d.approved_score != null && (
-                  <span className="tabular-nums"> @ {d.approved_score}</span>
-                )}
-                {d.reason && <> — {d.reason}</>}
-              </li>
-            ))}
+            {decisions.map((d) => {
+              // apply_reviewed_verdicts records an 'override' equal to its run.
+              // That is the reviewed evidence score, not a person overriding
+              // the number: "override @ 67.50" beside a published 73 read as
+              // the video counting for nothing.
+              const reviewed = isReviewedEvidenceDecision(
+                d,
+                runs.find((r) => String(r.id) === String(d.score_run_id)),
+              );
+              return (
+                <li key={d.id} className="border-b py-1 text-xs last:border-0">
+                  <span className="text-muted-foreground">
+                    {formatDateTime(d.created_at)}{" "}
+                  </span>
+                  · <strong>{reviewed ? "Reviewed evidence score" : d.decision_type}</strong>
+                  {d.approved_score != null &&
+                    (reviewed ? (
+                      <span className="tabular-nums">
+                        {" "}
+                        {evidenceWithVideoLabel(d.approved_score, hasVideo)}
+                      </span>
+                    ) : (
+                      <span className="tabular-nums"> @ {d.approved_score}</span>
+                    ))}
+                  {d.reason && <> — {d.reason}</>}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

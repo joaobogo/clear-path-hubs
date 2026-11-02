@@ -26,6 +26,13 @@ import {
   serialiseCalibration,
   type EngineCalibration,
 } from "./engine-calibration";
+import {
+  hasVideoIntro,
+  publishedScore,
+  scoreVoidedByUnreadableCv,
+  videoBonusFor,
+  withVideoIntroBonus,
+} from "./published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -59,6 +66,13 @@ export type HumanAdjustmentOutcome = {
   previous_run_id: string;
   raw_score: number;
   final_score: number;
+  /**
+   * The figure every surface publishes for the new run: final_score plus the
+   * intro-video bonus when the match carries one (runs never store it).
+   */
+  published_score: number | null;
+  /** Points the intro video adds to final_score (0 without a video). */
+  video_bonus: number;
   applied_cap: number | null;
   cap_reason: string | null;
   fit_label: string;
@@ -83,7 +97,7 @@ export async function createHumanAdjustedRun(opts: {
   const { data: match } = await s
     .from("candidate_matches")
     .select(
-      "id,position_id,application_id,candidate_profile_id,organization_id,current_score_run_id",
+      "id,position_id,application_id,candidate_profile_id,organization_id,current_score_run_id,intro_video_url,processing_state,processing_error_code",
     )
     .eq("id", opts.matchId)
     .maybeSingle();
@@ -339,6 +353,16 @@ export async function createHumanAdjustedRun(opts: {
     previous_run_id: base.id,
     raw_score: adj.raw_score,
     final_score: adj.final_score,
+    published_score: scoreVoidedByUnreadableCv(match)
+      ? null
+      : publishedScore(
+          withVideoIntroBonus(
+            { score: adj.final_score, final_score: adj.final_score },
+            hasVideoIntro(match),
+          ),
+        ),
+    video_bonus:
+      hasVideoIntro(match) && !scoreVoidedByUnreadableCv(match) ? videoBonusFor(adj.final_score) : 0,
     applied_cap: adj.applied_cap,
     cap_reason: adj.cap_reason,
     fit_label: adj.fit_label,
