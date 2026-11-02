@@ -122,6 +122,14 @@ const admin = { from: (t: string) => query(t) };
 vi.mock("@/integrations/supabase/client.server", () => ({ supabaseAdmin: admin }));
 const sendTemplateEmail = vi.fn(async (..._args: unknown[]) => ({ sent: true as const }));
 vi.mock("@/lib/email-templates/send-email", () => ({ sendTemplateEmail }));
+// The drain tests import the pipeline runner: its scorer is a spy, so a held
+// rescore can be proven never to reach it (and no score run is ever written).
+const { executeScoring } = vi.hoisted(() => ({
+  executeScoring: vi.fn(async (..._args: unknown[]) => {
+    throw new Error("executeScoring must not run in these tests");
+  }),
+}));
+vi.mock("@/lib/scoring-service.server", () => ({ executeScoring }));
 
 import {
   SCREENING_INVITE_GRACE_MS,
@@ -609,6 +617,8 @@ describe("Adiya answers on the status page", () => {
         entity_id: ADIYA_APP,
         job_type: "parse_and_score",
         status: "queued",
+        // Tagged so the drain re-checks the review state before it runs.
+        trace_id: expect.stringMatching(/^screening_answers:[0-9a-f-]{36}$/),
       }),
     ]);
     // Eligibility is the scorer's job on the rescore; nothing is approved,
@@ -987,6 +997,199 @@ describe("late answers never replace a reviewed or approved score (medium)", () 
     expect(res).toMatchObject({ ok: false });
     expect(db.application_answers).toEqual([]);
     expect(db.processing_jobs).toEqual([]);
+  });
+});
+
+describe("the drain re-checks the review state before a late-answer rescore runs (re-review blocker)", () => {
+  const creds = { reference: ref(ADIYA_APP), email: ADIYA_EMAIL };
+  const answers = [
+    { question_id: Q.picking, value: false }, // a dealbreaker answered "No"
+    { question_id: Q.rota, value: true },
+    { question_id: Q.english, value: true },
+    { question_id: Q.workAuth, value: "Graduate visa; would need sponsorship" },
+  ];
+  const JOB = "job-screening-1";
+  // The drain's backoff reads the wall clock, not the fixture's NOW.
+  const wallMinutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
+
+  /** Answer on an unreviewed match; give the queued job the DB's defaults. */
+  async function answerWhileUnreviewed() {
+    seed([staffEntryApp()]);
+    const res = await answerScreeningByReference({ ...creds, answers });
+    expect(res.ok).toBe(true);
+    expect(db.tasks).toEqual([]);
+    expect(db.processing_jobs).toHaveLength(1);
+    Object.assign(db.processing_jobs[0], {
+      id: JOB,
+      attempts: 0,
+      created_at: wallMinutesAgo(1),
+      started_at: null,
+    });
+  }
+
+  async function drain() {
+    const { drainApplicationJobs } = await import("@/lib/pipeline-runner.server");
+    return drainApplicationJobs({ limit: 5 });
+  }
+
+  beforeEach(() => {
+    executeScoring.mockClear();
+  });
+
+  it("staff adjust the score after the answers arrive: the job is cancelled, no new run, one task", async () => {
+    await answerWhileUnreviewed();
+    // A reviewer applies reviewed verdicts before the next drain picks it up.
+    db.candidate_matches[0].current_score_run_id = HUMAN_RUN;
+    const matchBefore = { ...db.candidate_matches[0] };
+    const runsBefore = db.score_runs.map((r) => ({ ...r }));
+
+    const out = await drain();
+
+    expect(out).toEqual([
+      expect.objectContaining({
+        job_id: JOB,
+        application_id: ADIYA_APP,
+        status: "cancelled",
+        error_code: "reviewed_score_kept",
+      }),
+    ]);
+    expect(db.processing_jobs[0]).toMatchObject({
+      status: "cancelled",
+      error_code: "reviewed_score_kept",
+      error_message: expect.stringMatching(/adjusted by a reviewer.*reviewed score is kept/),
+    });
+    // No machine rescore: the scorer never ran, no run was written, and the
+    // reviewed run is still the current (published) one.
+    expect(executeScoring).not.toHaveBeenCalled();
+    expect(db.score_runs).toEqual(runsBefore);
+    expect(db.candidate_matches[0]).toEqual(matchBefore);
+    expect(db.tasks).toEqual([
+      expect.objectContaining({
+        organization_id: ORG,
+        position_id: POS,
+        candidate_match_id: ADIYA_MATCH,
+        candidate_profile_id: "cp-adiya",
+        task_type: "candidate_review",
+        title: "Screening answers received, re-review",
+        status: "open",
+        priority: "high",
+        metadata: expect.objectContaining({
+          source: "screening_answers",
+          reason: "human_adjusted",
+          held_at: "drain",
+          processing_job_id: JOB,
+          application_id: ADIYA_APP,
+          question_ids: [Q.picking, Q.rota, Q.english, Q.workAuth],
+          dealbreaker_question_ids: [Q.picking],
+        }),
+      }),
+    ]);
+    const task = db.tasks[0] as { description: string };
+    expect(task.description).toMatch(/Adiya Vatsa answered screening questions for Mushroom/);
+    expect(task.description).toMatch(/rescore was cancelled and the published score is unchanged/);
+    expect(task.description).toContain(QUESTIONS[0].question);
+
+    // A second drain finds nothing to do: the job is terminal.
+    expect(await drain()).toEqual([]);
+    expect(db.tasks).toHaveLength(1);
+  });
+
+  it("approval in the window holds it too, and an open re-review task is reused", async () => {
+    await answerWhileUnreviewed();
+    Object.assign(db.candidate_matches[0], {
+      admin_status: "approved",
+      approved_score_run_id: MACHINE_RUN,
+    });
+    db.tasks.push({
+      id: "t-open",
+      candidate_match_id: ADIYA_MATCH,
+      task_type: "candidate_review",
+      status: "open",
+      deleted_at: null,
+      metadata: { source: "screening_answers" },
+    });
+    const out = await drain();
+    expect(out[0]).toMatchObject({ status: "cancelled", error_code: "reviewed_score_kept" });
+    expect(db.processing_jobs[0]).toMatchObject({
+      status: "cancelled",
+      error_message: expect.stringMatching(/approved after the answers arrived/),
+    });
+    expect(executeScoring).not.toHaveBeenCalled();
+    expect(db.tasks).toHaveLength(1);
+  });
+
+  it("a score still unreviewed at drain time goes on to the pipeline, with no task", async () => {
+    await answerWhileUnreviewed();
+    const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const out = await drain();
+    err.mockRestore();
+    // The pipeline ran (the in-memory record has no CV file, so it stops at
+    // manual review); what matters is that the job was not held.
+    expect(out).toEqual([
+      expect.objectContaining({ status: "completed", final_state: "manual_review_required" }),
+    ]);
+    expect(db.processing_jobs[0]).toMatchObject({ status: "completed", error_code: null });
+    expect(
+      db.tasks.filter(
+        (t) => (t.metadata as { source?: string } | undefined)?.source === "screening_answers",
+      ),
+    ).toEqual([]);
+  });
+
+  it("jobs without the prefix (new applications, CV re-reads) are not gated", async () => {
+    seed([staffEntryApp()], [], { current_score_run_id: HUMAN_RUN });
+    db.processing_jobs.push({
+      id: "job-new-application",
+      entity_type: "application",
+      entity_id: ADIYA_APP,
+      job_type: "parse_and_score",
+      status: "queued",
+      attempts: 0,
+      created_at: wallMinutesAgo(1),
+      trace_id: "5d6f3c1e-8f7a-4b1d-9a8e-2f3c4d5e6f70",
+    });
+    const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const out = await drain();
+    err.mockRestore();
+    // Not held: the pipeline ran even though the current run is human_adjusted.
+    expect(out).toEqual([
+      expect.objectContaining({ status: "completed", final_state: "manual_review_required" }),
+    ]);
+    expect(
+      db.tasks.filter(
+        (t) => (t.metadata as { source?: string } | undefined)?.source === "screening_answers",
+      ),
+    ).toEqual([]);
+  });
+
+  it("never rescores blind: an unreadable review state or a failed task insert re-arms the job", async () => {
+    await answerWhileUnreviewed();
+    db.candidate_matches[0].current_score_run_id = HUMAN_RUN;
+    failures["score_runs:select"] = { message: "timeout" };
+    let out = await drain();
+    expect(out[0]).toMatchObject({ status: "skipped", error_code: "worker_error" });
+    expect(db.processing_jobs[0]).toMatchObject({ status: "queued", attempts: 1 });
+    expect(executeScoring).not.toHaveBeenCalled();
+    expect(db.tasks).toEqual([]);
+
+    delete failures["score_runs:select"];
+    failures["tasks:insert"] = { message: "tasks down" };
+    db.processing_jobs[0].started_at = wallMinutesAgo(3); // past the first backoff
+    out = await drain();
+    expect(out[0]).toMatchObject({
+      status: "skipped",
+      error_code: "worker_error",
+      error_message: expect.stringMatching(/re_review_task_failed: tasks down/),
+    });
+    expect(db.processing_jobs[0]).toMatchObject({ status: "queued", attempts: 2 });
+    expect(executeScoring).not.toHaveBeenCalled();
+
+    delete failures["tasks:insert"];
+    db.processing_jobs[0].started_at = wallMinutesAgo(11);
+    out = await drain();
+    expect(out[0]).toMatchObject({ status: "cancelled", error_code: "reviewed_score_kept" });
+    expect(db.tasks).toHaveLength(1);
+    expect(executeScoring).not.toHaveBeenCalled();
   });
 });
 

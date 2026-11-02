@@ -12,7 +12,8 @@
  * what "still has questions to answer" means. Answers never decide anything
  * here: eligibility stays with the dealbreaker rule the scorer applies when the
  * match is rescored, and a score a person reviewed or approved is never
- * rescored by a late answer (lateAnswerRescoreBlock).
+ * rescored by a late answer (lateAnswerRescoreBlock), checked both when the
+ * answers arrive and when the queued rescore runs (isScreeningAnswersJob).
  */
 import { SCREENING_ANSWER_MAX } from "@/lib/screening-limits";
 import { normalizeEvaluationMethod } from "@/lib/scoring/evaluation-method";
@@ -362,6 +363,23 @@ export function lateAnswerRescoreBlock(m: MatchReviewState): "human_adjusted" | 
 
 export type ReReviewTaskReason = "human_adjusted" | "approved" | "rescore_not_queued";
 
+/**
+ * processing_jobs.trace_id prefix of the rescore queued by late answers. The
+ * review state is checked when the answers arrive AND again when the drain
+ * picks the job up: staff may adjust or approve the score in between, and a
+ * forced machine rescore would then replace the reviewed published score.
+ */
+export const SCREENING_ANSWERS_TRACE_PREFIX = "screening_answers:";
+
+export function screeningAnswersTraceId(uuid: string): string {
+  return `${SCREENING_ANSWERS_TRACE_PREFIX}${uuid}`;
+}
+
+/** True for a parse_and_score job queued by late screening answers. */
+export function isScreeningAnswersJob(traceId: unknown): boolean {
+  return String(traceId ?? "").startsWith(SCREENING_ANSWERS_TRACE_PREFIX);
+}
+
 /** Questions whose late answer would trip the dealbreaker rule. */
 export function lateDealbreakerHits(
   questions: readonly ScreeningQuestionRow[],
@@ -392,13 +410,25 @@ export function screeningReReviewTask(i: {
   positionTitle: string | null;
   answeredCount: number;
   dealbreakers: readonly string[];
+  /**
+   * The rescore was queued when the answers arrived (the score was not
+   * reviewed then) and held when the drain picked it up, because the score was
+   * adjusted or approved in between. answeredCount is then the answers on file.
+   */
+  heldAtDrain?: boolean;
 }): { title: string; description: string; priority: "normal" | "high" } {
   const who = i.candidateName?.trim() || "The candidate";
   const role = i.positionTitle?.trim() ? ` for ${i.positionTitle.trim()}` : "";
   const n =
     i.answeredCount === 1 ? "1 screening question" : `${i.answeredCount} screening questions`;
-  const why =
-    i.reason === "human_adjusted"
+  const lead = i.heldAtDrain
+    ? `${who} answered screening questions${role} on the application status page (${n} answered on file).`
+    : `${who} answered ${n}${role} on the application status page.`;
+  const why = i.heldAtDrain
+    ? i.reason === "human_adjusted"
+      ? "A rescore was queued when the answers arrived, but a reviewer adjusted the score before it ran, so the rescore was cancelled and the published score is unchanged."
+      : "A rescore was queued when the answers arrived, but the match was approved before it ran, so the rescore was cancelled and the published score is unchanged."
+    : i.reason === "human_adjusted"
       ? "The current score was adjusted by a reviewer, so it was not rescored automatically and the published score is unchanged."
       : i.reason === "approved"
         ? "The match is approved, so it was not rescored automatically and the published score is unchanged."
@@ -417,7 +447,7 @@ export function screeningReReviewTask(i: {
       i.reason === "rescore_not_queued"
         ? "Screening answers received, rescore not queued"
         : "Screening answers received, re-review",
-    description: `${who} answered ${n}${role} on the application status page. ${why}${dealbreakers} ${next}`,
+    description: `${lead} ${why}${dealbreakers} ${next}`,
     priority: i.dealbreakers.length > 0 ? "high" : "normal",
   };
 }

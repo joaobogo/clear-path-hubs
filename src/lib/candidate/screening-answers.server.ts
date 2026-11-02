@@ -11,7 +11,10 @@
  * What happens next depends on the score:
  *  - unreviewed match: the application is queued for parse_and_score, the
  *    same durable job a new application writes, so the scorer weighs the
- *    answers and applies the dealbreaker rule on the rescore;
+ *    answers and applies the dealbreaker rule on the rescore. The job's
+ *    trace_id carries the 'screening_answers:' prefix, so the drain checks the
+ *    review state again when it runs and holds the rescore if staff adjusted
+ *    or approved the score in the meantime (holdScreeningRescoreIfReviewed);
  *  - current run human-adjusted, or match approved: NO rescore (it would
  *    silently replace the reviewed published score). The answers are stored
  *    and one open 'candidate_review' task asks staff to re-review.
@@ -26,14 +29,14 @@ import {
   lateAnswerRescoreBlock,
   lateDealbreakerHits,
   prepareLateAnswers,
+  screeningAnswersTraceId,
   screeningLinkSource,
-  screeningReReviewTask,
   screeningStillOpen,
   unansweredQuestions,
   type LateAnswerInput,
-  type ReReviewTaskReason,
   type ScreeningQuestionRow,
 } from "./screening-invite";
+import { matchReviewState, openReReviewTask, type ReviewState } from "./screening-rereview.server";
 import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 export interface PublicScreeningQuestion {
@@ -132,103 +135,6 @@ export async function loadScreeningByReference(
   };
 }
 
-type ReviewState = {
-  id: string;
-  organization_id: string | null;
-  position_id: string | null;
-  candidate_profile_id: string | null;
-  admin_status: string | null;
-  current_score_run_id: string | null;
-  approved_score_run_id: string | null;
-  current_run_method: string | null;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Db = any;
-
-/** The match's review state; throws when it cannot be read (fail safe). */
-async function matchReviewState(db: Db, applicationId: string): Promise<ReviewState | null> {
-  const { data: match, error } = await db
-    .from("candidate_matches")
-    .select(
-      "id,organization_id,position_id,candidate_profile_id,admin_status,current_score_run_id,approved_score_run_id",
-    )
-    .eq("application_id", applicationId)
-    .maybeSingle();
-  if (error) throw new Error(error.message ?? "match_lookup_failed");
-  if (!match) return null;
-  let method: string | null = null;
-  if (match.current_score_run_id) {
-    const { data: run, error: runErr } = await db
-      .from("score_runs")
-      .select("evaluation_method")
-      .eq("id", match.current_score_run_id)
-      .maybeSingle();
-    if (runErr) throw new Error(runErr.message ?? "score_run_lookup_failed");
-    method = (run?.evaluation_method as string | null) ?? null;
-  }
-  return { ...(match as Omit<ReviewState, "current_run_method">), current_run_method: method };
-}
-
-/** One open re-review task per match (reused when one is already open). */
-async function openReReviewTask(
-  db: Db,
-  args: {
-    match: ReviewState | null;
-    organizationId: string | null;
-    positionId: string | null;
-    candidateProfileId: string | null;
-    applicationId: string;
-    reason: ReReviewTaskReason;
-    candidateName: string | null;
-    positionTitle: string | null;
-    questionIds: string[];
-    dealbreakers: ScreeningQuestionRow[];
-  },
-): Promise<{ ok: boolean; error: string | null }> {
-  const organizationId = args.match?.organization_id ?? args.organizationId;
-  if (!organizationId) return { ok: false, error: "no_organization" };
-  if (args.match) {
-    const { data: open, error: openErr } = await db
-      .from("tasks")
-      .select("id")
-      .eq("candidate_match_id", args.match.id)
-      .eq("task_type", "candidate_review")
-      .in("status", ["open", "in_progress"])
-      .is("deleted_at", null)
-      .contains("metadata", { source: "screening_answers" })
-      .limit(1);
-    if (!openErr && (open ?? []).length > 0) return { ok: true, error: null };
-  }
-  const task = screeningReReviewTask({
-    reason: args.reason,
-    candidateName: args.candidateName,
-    positionTitle: args.positionTitle,
-    answeredCount: args.questionIds.length,
-    dealbreakers: args.dealbreakers.map((q) => q.question),
-  });
-  const { error } = await db.from("tasks").insert({
-    organization_id: organizationId,
-    position_id: args.match?.position_id ?? args.positionId,
-    candidate_match_id: args.match?.id ?? null,
-    candidate_profile_id: args.match?.candidate_profile_id ?? args.candidateProfileId,
-    task_type: "candidate_review",
-    title: task.title,
-    description: task.description,
-    priority: task.priority,
-    status: "open",
-    metadata: {
-      source: "screening_answers",
-      reason: args.reason,
-      application_id: args.applicationId,
-      question_ids: args.questionIds,
-      dealbreaker_question_ids: args.dealbreakers.map((q) => q.id),
-    },
-  });
-  if (error) return { ok: false, error: error.message ?? "task_insert_failed" };
-  return { ok: true, error: null };
-}
-
 const SAVE_FAILED = "We couldn't save your answers just now. Please try again in a moment.";
 
 export async function answerScreeningByReference(input: {
@@ -302,13 +208,16 @@ export async function answerScreeningByReference(input: {
     followUp = t.ok ? "re_review_task" : "none";
     if (!t.ok) problems.push(`task: ${t.error}`);
   } else {
-    // Same durable enqueue a new application writes; the drain rescores the match.
+    // Same durable enqueue a new application writes; the drain rescores the
+    // match. The trace prefix makes the drain check the review state again
+    // before it runs: staff may adjust or approve the score in between, and
+    // the drain then cancels the job and opens the re-review task instead.
     const { error: jobErr } = await db.from("processing_jobs").insert({
       entity_type: "application",
       entity_id: applicationId,
       job_type: "parse_and_score",
       status: "queued",
-      trace_id: crypto.randomUUID(),
+      trace_id: screeningAnswersTraceId(crypto.randomUUID()),
     });
     if (!jobErr) {
       followUp = "rescore_queued";
