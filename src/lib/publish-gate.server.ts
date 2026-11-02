@@ -11,12 +11,20 @@ import {
 } from "./publish-gate";
 import { isQaFixtureTitle } from "./client/test-record-filter";
 import { storedCriteriaPublishDetail } from "./positions/protected-criteria-guard";
+import { compoundDealbreakerMessage, findCompoundDealbreakers } from "./positions/compound-dealbreaker";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
 
 const SELECT =
   "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location, requirements, preferred_requirements, dealbreakers";
+
+/**
+ * The queue embeds the screening questions the publish action reads
+ * separately, so a bundled dealbreaker (or a question stating a protected
+ * attribute) shows as a blocker on the desk instead of only at activation.
+ */
+export const QUEUE_SELECT = `${SELECT}, organizations(id, name, is_test_record), screening_questions(question,dealbreaker)`;
 
 /** Statuses where publishing is still the next meaningful step. */
 const UNPUBLISHED_STATUSES = ["draft", "submitted", "under_review", "needs_clarification", "approved"];
@@ -69,10 +77,11 @@ export async function assertPositionPublishable(admin: Any, positionId: string):
   if (error) throw new Error(error.message);
   if (!data) throw new Error("position_not_found");
   // Screening questions are read too: a question can ask for a protected
-  // attribute as easily as a requirement can state one.
+  // attribute as easily as a requirement can state one, and a dealbreaker
+  // can bundle two requirements.
   const { data: questions } = await admin
     .from("screening_questions")
-    .select("question")
+    .select("question,dealbreaker")
     .eq("position_id", positionId);
   const row = { ...data, screening_questions: questions ?? [] };
   const blockers = evaluatePublishGate(toGateInput(row)).filter((b) => b !== "not_approved");
@@ -81,7 +90,12 @@ export async function assertPositionPublishable(admin: Any, positionId: string):
     const detail = blockers.includes("protected_criteria")
       ? storedCriteriaPublishDetail({ ...row, title: data.title ?? null })
       : null;
-    throw new Error(publishBlockedMessage(blockers) + (detail ? ` ${detail}` : ""));
+    // Name each bundled dealbreaker and its suggested split.
+    const bundled = blockers.includes("compound_dealbreaker")
+      ? compoundDealbreakerMessage(findCompoundDealbreakers(row.screening_questions))
+      : null;
+    const details = [detail, bundled].filter(Boolean).join(" ");
+    throw new Error(publishBlockedMessage(blockers) + (details ? ` ${details}` : ""));
   }
 }
 
@@ -116,7 +130,7 @@ export async function loadPublishGateQueue(
 
   let q = admin
     .from("positions")
-    .select(`${SELECT}, organizations(id, name, is_test_record)`)
+    .select(QUEUE_SELECT)
     .in("status", UNPUBLISHED_STATUSES)
     .order("created_at", { ascending: true })
     .limit(300);

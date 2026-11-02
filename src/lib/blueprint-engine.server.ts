@@ -20,6 +20,7 @@ import {
   type WeightKey,
 } from "./requisition-schema";
 import { SCREENING_MAX_QUESTIONS, SCREENING_MAX_REQUIRED } from "./screening-limits";
+import { splitGeneratedDealbreakers } from "./positions/compound-dealbreaker";
 
 export const BLUEPRINT_VERSION = "role-blueprint@2026.07.30";
 const MODEL = "google/gemini-2.5-flash";
@@ -243,6 +244,7 @@ Non-negotiables:
 - NEVER invent salary figures, headcount, legal entities, benefits, or start dates that are not stated. Leave numeric compensation null and the note empty if unknown.
 - "field_sources" maps each top-level field name to exactly one of: "job_description", "company_website", "inferred".
 - Screening questions: at most ${SCREENING_MAX_QUESTIONS} in total and at most ${SCREENING_MAX_REQUIRED} marked required. Mark a question "dealbreaker" only for a genuine hard filter (e.g. work authorisation, licence, non-negotiable language).
+- A dealbreaker question tests exactly one requirement. Never join two in one dealbreaker ("X as well as Y", "X and also Y", "both X and Y", "X experience and Y experience"): a candidate with one but not the other could only answer "no" and would be excluded. Ask two questions instead, each naming its own must_have.
 - Scoring weights: use exactly the keys ${WEIGHT_DIMENSIONS.map((d) => d.key).join(", ")}. Integers only, each between ${WEIGHT_MIN} and ${WEIGHT_MAX}, summing to 100, tuned to what this specific role actually needs.
 - "open_questions" are the 3-6 things a recruiter should confirm with the client before sourcing starts.
 - Write in plain, professional English. No marketing language, no filler.
@@ -367,28 +369,33 @@ export function normalizeWeights(raw: unknown): Record<WeightKey, number> {
   return out;
 }
 
-function normalizeScreening(raw: unknown): BlueprintScreeningQuestion[] {
+export function normalizeScreening(raw: unknown): BlueprintScreeningQuestion[] {
   if (!Array.isArray(raw)) return [];
   const allowedTypes = new Set(["text", "boolean", "number", "single_choice", "multi_choice"]);
-  const out: BlueprintScreeningQuestion[] = [];
-  let required = 0;
+  const drafted: BlueprintScreeningQuestion[] = [];
   for (const item of raw) {
     if (!item || typeof item !== "object") continue;
     const q = item as Record<string, unknown>;
     const question = str(q.question, 500);
     if (question.length < 3) continue;
     const type = str(q.answer_type, 40);
-    const wantsRequired = q.required === true;
-    const isRequired = wantsRequired && required < SCREENING_MAX_REQUIRED;
-    if (isRequired) required += 1;
-    out.push({
+    drafted.push({
       question,
       answer_type: (allowedTypes.has(type) ? type : "text") as BlueprintScreeningQuestion["answer_type"],
-      required: isRequired,
+      required: q.required === true,
       dealbreaker: q.dealbreaker === true,
       rationale: str(q.rationale, 300) || undefined,
       must_have: str(q.must_have, 300) || undefined,
     });
+  }
+  // One requirement per dealbreaker: a draft that still bundles two
+  // ("X as well as Y") is asked as two questions, then the caps apply.
+  const out: BlueprintScreeningQuestion[] = [];
+  let required = 0;
+  for (const q of splitGeneratedDealbreakers(drafted)) {
+    const isRequired = q.required && required < SCREENING_MAX_REQUIRED;
+    if (isRequired) required += 1;
+    out.push({ ...q, required: isRequired });
     if (out.length >= SCREENING_MAX_QUESTIONS) break;
   }
   return out;

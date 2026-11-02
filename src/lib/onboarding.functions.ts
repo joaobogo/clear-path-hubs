@@ -30,6 +30,7 @@ import {
 } from "@/lib/requisition-schema";
 import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { isPaymentSatisfied } from "@/lib/publish-gate";
+import { compoundDealbreakerSignOffMessage } from "@/lib/positions/compound-dealbreaker";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -783,6 +784,18 @@ export const confirmOnboardingBlueprint = createServerFn({ method: "POST" })
     if (!["generated", "ready", "confirmed"].includes(status)) {
       return { ok: false as const, reason: status };
     }
+    // The same rule as confirmRoleBlueprint: signing off the blueprint signs
+    // off its screening questions, so a dealbreaker that bundles two
+    // requirements is fixed in the role editor first.
+    const { data: questions } = await supabase
+      .from("screening_questions")
+      .select("id,question,dealbreaker,required,display_order")
+      .eq("position_id", data.position_id)
+      .order("display_order", { ascending: true });
+    const bundled = compoundDealbreakerSignOffMessage(
+      (questions ?? []) as Array<{ id: string; question: string; dealbreaker: boolean; required: boolean }>,
+    );
+    if (bundled) throw new Error(bundled);
     const { error } = await supabase
       .from("positions")
       .update({ blueprint_confirmed_at: new Date().toISOString() })

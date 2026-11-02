@@ -1,4 +1,5 @@
 import { roleProtectedFindings, protectedFindingsMessage } from "@/lib/jobs/protected-content";
+import { assertNoCompoundDealbreakers } from "@/lib/positions/compound-dealbreaker";
 import { pilotEndsAt } from "@/lib/pilot-state";
 // Admin dashboard service — canonical read + mutation server fns for Phase 7.
 // Every mutation validates input, enforces staff, writes an audit event, and returns
@@ -2484,8 +2485,11 @@ export const saveScreeningQuestions = createServerFn({ method: "POST" })
 
     const { data: existing } = await s
       .from("screening_questions")
-      .select("id")
+      .select("id,question,dealbreaker")
       .eq("position_id", data.position_id);
+    // One requirement per dealbreaker: a new or reworded one that bundles two
+    // is refused with its suggested split before anything is written.
+    assertNoCompoundDealbreakers(data.questions, { stored: (existing ?? []) as AnyRow[] });
     const existingIds = new Set(((existing ?? []) as AnyRow[]).map((r) => r.id));
     const keepIds = new Set(
       data.questions.map((q) => q.id).filter((v): v is string => Boolean(v)),
