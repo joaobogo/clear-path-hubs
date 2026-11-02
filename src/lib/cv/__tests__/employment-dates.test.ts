@@ -174,3 +174,115 @@ describe("degrees and school-leaving courses above a detached heading are not ro
     }
   });
 });
+
+describe("the detached-heading read stops at non-work sections (re-review, 2 Nov 2026)", () => {
+  // Reading everything above the label run took in EDUCATION, CERTIFICATIONS,
+  // INTERESTS and LANGUAGES sections, so a CV with no jobs passed the dated
+  // employment check and parse-facts wrote inflated years_experience.
+  it.each([
+    [
+      "a flattened graduate CV",
+      "CANDIDATE Graduate marketer. EDUCATION Leeds Beckett 2012 - 2015 BA Marketing. Dissertation on brand loyalty. " +
+        "VOLUNTEERING Oxfam shop assistant 2016 - 2019. I am now looking for hands-on Experience. Skills Excel",
+    ],
+    [
+      "the same CV with its line breaks",
+      [
+        "CANDIDATE",
+        "Graduate marketer.",
+        "EDUCATION",
+        "BA Marketing",
+        "Leeds Beckett 2012 - 2015",
+        "Dissertation on brand loyalty.",
+        "VOLUNTEERING",
+        "Oxfam shop assistant 2016 - 2019.",
+        "I am now looking for hands-on Experience.",
+        "Skills",
+        "Excel",
+      ].join("\n"),
+    ],
+    [
+      "education and interests above an empty EXPERIENCE",
+      [
+        "EDUCATION",
+        "Sixth Form 2010 - 2012",
+        "INTERESTS",
+        "Volunteer at Oxfam shop 2018 - Present",
+        "EXPERIENCE",
+        "SKILLS",
+      ].join("\n"),
+    ],
+    [
+      "a certificate above an empty WORK EXPERIENCE",
+      ["CERTIFICATIONS", "CIM Certificate 2016 - 2017", "WORK EXPERIENCE", "SKILLS"].join("\n"),
+    ],
+    [
+      "certificates and languages, flattened",
+      "CANDIDATE CERTIFICATIONS CIM Certificate 2016 - 2017 LANGUAGES French course 2014 - 2015 WORK EXPERIENCE SKILLS",
+    ],
+    [
+      "Title Case labels on their own lines",
+      [
+        "CANDIDATE",
+        "Education and Training",
+        "Example Sixth Form 2010 - 2012",
+        "Interests",
+        "Volunteer at Oxfam shop 2018 - Present",
+        "Work Experience",
+        "Skills",
+      ].join("\n"),
+    ],
+  ])("%s has no dated employment", (_layout, cv) => {
+    expect(employmentIntervals(cv, ASSESSED)).toEqual([]);
+    expect(yearsFromEmploymentDates(cv, ASSESSED)).toBeNull();
+  });
+
+  it("a Title Case 'Experience' in a sentence followed by a 'Skills' label is not an empty work heading", () => {
+    const cv =
+      "CANDIDATE Volunteer at Oxfam shop 2016 - 2019. I am now looking for hands-on Experience. Skills Excel";
+    expect(employmentIntervals(cv, ASSESSED)).toEqual([]);
+  });
+
+  it("a non-work label above the roles ends the body: the CV is parked for review, not guessed", () => {
+    const cv =
+      "CANDIDATE SKILLS Herd care, milking HERD MANAGER – EXAMPLE FARM | 07/2025 – 10/2026 ABOUT ME WORK EXPERIENCE EDUCATION AND TRAINING";
+    expect(employmentIntervals(cv, ASSESSED)).toEqual([]);
+  });
+
+  it("a Title Case heading word inside a profile sentence still does not end the body", () => {
+    const role = "HERD MANAGER – EXAMPLE FARM | 07/2025 – 10/2026 • Ran the herd";
+    const labels = "ABOUT ME WORK EXPERIENCE EDUCATION AND TRAINING";
+    const oneRole = [{ start: month(2025, 7), end: month(2026, 10) }];
+    expect(
+      employmentIntervals(
+        `CANDIDATE Communication Skills and teamwork. ${role} ${labels}`,
+        ASSESSED,
+      ),
+    ).toEqual(oneRole);
+    expect(
+      employmentIntervals(
+        [
+          "CANDIDATE",
+          "Communication Skills and teamwork.",
+          role,
+          "ABOUT ME",
+          "WORK EXPERIENCE",
+          "EDUCATION AND TRAINING",
+        ].join("\n"),
+        ASSESSED,
+      ),
+    ).toEqual(oneRole);
+  });
+
+  it.each([
+    ["A-levels", "A-levels in Maths and Biology 2010 - 2012"],
+    ["a-level in lower case", "a-level Biology 2010 – 2012"],
+  ])("%s above a detached heading is study, not a role", (_token, entry) => {
+    expect(
+      employmentIntervals(
+        `CANDIDATE ${entry} ABOUT ME WORK EXPERIENCE EDUCATION AND TRAINING`,
+        ASSESSED,
+      ),
+    ).toEqual([]);
+  });
+});
