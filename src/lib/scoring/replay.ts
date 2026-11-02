@@ -45,6 +45,17 @@ export const ReplaySnapshotSchema = z.object({
   requirements: z.array(ReplayRequirementSchema),
   screening: z.array(ReplayScreeningSchema),
   role_family: z.string().nullable().default(null),
+  /**
+   * The client's names and the role title, whose own words are not evidence
+   * (evidence-sources.ts). Absent on runs written before it was an input.
+   */
+  role_context: z
+    .object({
+      organisation_names: z.array(z.string()).default([]),
+      role_title: z.string().nullable().default(null),
+    })
+    .nullable()
+    .optional(),
 });
 
 export type ReplaySnapshot = z.infer<typeof ReplaySnapshotSchema>;
@@ -63,6 +74,7 @@ export function buildReplaySnapshot(input: {
     must_have?: string | null;
   }>;
   role_family?: string | null;
+  role_context?: { organisation_names: string[]; role_title: string | null } | null;
 }): ReplaySnapshot {
   return {
     cv_text: input.cv_text,
@@ -82,6 +94,15 @@ export function buildReplaySnapshot(input: {
       must_have: s.must_have ?? null,
     })),
     role_family: input.role_family ?? null,
+    // Only when set, so a run scored without one keeps its snapshot shape.
+    ...(input.role_context
+      ? {
+          role_context: {
+            organisation_names: [...input.role_context.organisation_names],
+            role_title: input.role_context.role_title ?? null,
+          },
+        }
+      : {}),
   };
 }
 

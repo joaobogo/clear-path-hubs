@@ -24,7 +24,13 @@ if (!input || !outDir) {
 }
 const raw = JSON.parse(readFileSync(input, "utf8"));
 const doc = raw?.rows?.[0]?.doc ?? raw?.doc ?? raw;
-const ctx: OfflineContext = { position: doc.position, rubric: doc.rubric, role_family: doc.role_family ?? null, reason };
+const ctx: OfflineContext = {
+  position: doc.position,
+  organisation: doc.organisation ?? null,
+  rubric: doc.rubric,
+  role_family: doc.role_family ?? null,
+  reason,
+};
 mkdirSync(outDir, { recursive: true });
 const summary = (doc.matches as OfflineMatch[]).map((m) => {
   const out = offlineRescore(m, ctx);

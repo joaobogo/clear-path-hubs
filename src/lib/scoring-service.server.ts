@@ -39,6 +39,7 @@ import {
   type EngineCalibration,
 } from "./scoring/engine-calibration";
 import { buildReplaySnapshot } from "./scoring/replay";
+import { roleContextOf } from "./scoring/evidence-sources";
 import { classifyScoreBand } from "@/config/scoring-bands";
 import type { Json } from "@/integrations/supabase/types";
 import { randomUUID } from "crypto";
@@ -107,7 +108,7 @@ async function loadInputs(matchId: string) {
     .maybeSingle();
   if (!match) throw new Error("match_not_found");
 
-  const [posRes, profRes, ansRes] = await Promise.all([
+  const [posRes, profRes, ansRes, orgRes] = await Promise.all([
     s.from("positions")
       .select("id,status,requirements,preferred_requirements,title,organization_id")
       .eq("id", match.position_id).maybeSingle(),
@@ -117,6 +118,10 @@ async function loadInputs(matchId: string) {
     s.from("application_answers")
       .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have)")
       .eq("application_id", match.application_id),
+    // The client's own name is not evidence (scoring/evidence-sources.ts).
+    s.from("organizations")
+      .select("name,brand_display_name")
+      .eq("id", match.organization_id).maybeSingle(),
   ]);
 
   const cvFile = profRes.data?.current_cv_file_id
@@ -164,7 +169,21 @@ async function loadInputs(matchId: string) {
     };
   });
 
-  return { match, position: posRes.data, profile: profRes.data, cvFile, requirements, screening };
+  const roleContext = roleContextOf({
+    organisation_name: orgRes.data?.name ?? null,
+    brand_display_name: orgRes.data?.brand_display_name ?? null,
+    role_title: posRes.data?.title ?? null,
+  });
+
+  return {
+    match,
+    position: posRes.data,
+    profile: profRes.data,
+    cvFile,
+    requirements,
+    screening,
+    roleContext,
+  };
 }
 
 /**
@@ -486,6 +505,7 @@ export async function executeScoring(
       requirements: ctx.requirements,
       screening: ctx.screening,
       candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
+      role_context: ctx.roleContext,
       calibration,
     });
 
@@ -530,6 +550,7 @@ export async function executeScoring(
           requirements: ctx.requirements,
           screening: ctx.screening,
           role_family: roleFamily,
+          role_context: ctx.roleContext,
         }),
         evaluation_method: EVALUATION_METHOD,
         applied_caps: rec.applied_caps,
