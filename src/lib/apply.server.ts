@@ -11,6 +11,7 @@ import { normalizeCompletionSeconds } from "./jobs/apply-effort";
 import { logApplicationIncident } from "./incident-logger.server";
 import { assertNoQaContamination } from "@/lib/qa-guard";
 import type { SubmitApplicationResult } from "./apply-types";
+import { mergeReapplyConsent } from "./apply-consent";
 
 export { applySchema };
 
@@ -152,7 +153,7 @@ export async function submitApplicationImpl(
       const { data: existingCp, error: cpFindErr } = await supabaseAdmin
         .from("candidate_profiles")
         .select(
-          "id,current_cv_file_id,user_id,full_name,phone,location,country,region,city,linkedin_url,portfolio_url,website_url",
+          "id,current_cv_file_id,user_id,full_name,phone,location,country,region,city,linkedin_url,portfolio_url,website_url,consent",
         )
         .ilike("email", emailLower)
         .maybeSingle();
@@ -191,13 +192,14 @@ export async function submitApplicationImpl(
         let patch: Record<string, unknown>;
         if (isProfileOwner) {
           // Verified owner: a returning candidate may update their own details.
+          // Consent is merged, not replaced: it also holds the parsed CV facts,
+          // their provenance and the fields a person locked.
           patch = {
             ...proposed,
-            consent: {
-              terms: true,
-              network_opt_in: data.network_opt_in,
-              updated_at: new Date().toISOString(),
-            },
+            consent: mergeReapplyConsent(
+              (existingCp as { consent?: unknown }).consent,
+              data.network_opt_in,
+            ),
           };
         } else {
           // Unverified submitter: fill blanks only, never replace stored values.
