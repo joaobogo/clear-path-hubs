@@ -277,3 +277,39 @@ Checks
   so the pipeline's briefing cannot overwrite it.
 - Five screening questions unanswered (three dealbreakers); eligibility
   rests on the CV until she answers.
+
+## 2 Nov 2026 (later) — Hughes Mushrooms: owner research applied and rescored
+
+- Source: the owner's candidate deep research (PDF, 2 Nov) plus the owner's
+  guidance: realistic, not punitive scores; almost every applicant stays
+  eligible so the client can see them once approved; present each person at
+  their best without overstating.
+- Reviewed verdicts from the research written as authored briefings
+  (engine_version 'owner-research-2026-11-02') for Chiedza, Daim, Adiya,
+  Anna and Vijay; Thaddeus's existing review already matched the research.
+  Mapping: research "unknown" with related evidence -> partial; a rota "yes"
+  or a CV flexibility statement -> flexibility met; student/course mushroom
+  work -> partial at most.
+- Daim scored for the first time (offline rescore on v1.7.4: engine 58).
+  Abdul still cannot be scored: the engine finds no dated roles in the CV
+  (MM/YYYY ranges); fix in progress on branch research-fix/unscored-matches.
+  Chiedza's v1.7.4 offline rescore also reported no dated roles, so it was
+  not run (it would have voided the existing score); she keeps the v1.5.4
+  base run.
+- Recruiter exceptions (migration 0012): Anna and Vijay honestly answered
+  "no" to the bundled dealbreaker ("hands-on picking AS WELL AS
+  supervision") and were capped at 15. eligibility_checks
+  'recruiter_review:7da77185-...' status 'excepted', eligibility 'excepted';
+  apply_reviewed_verdicts no longer carries the disqualifying-answer cap for
+  an excepted match. The "no" still counts as a gap.
+- Reviewed scores (published, with the +5 video for Adiya): Thaddeus 64
+  (unchanged), Daim 64 (new), Adiya 55 + video 5 = 60 (was 67.5 + 5; the
+  student work is now partial, not met), Anna 59 (was 15), Chiedza 58
+  (unchanged), Vijay 51 (was 15). Abdul unscored. Elena Fernandez-Miranda
+  (not in the research; answered "no" to the rota dealbreaker) stays 15.
+- Admin list = current run for every match; nothing approved or published.
+- Not yet applied: the profile text updates, notes and web context drafted
+  for Chiedza, Daim, Adiya and Anna (scratchpad), and the six engine fixes
+  (branches research-fix/*). The bundled screening question split is held
+  until the live engine is updated, because editing screening questions
+  queues a live rescore on the old engine.
