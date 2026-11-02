@@ -5,6 +5,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { bandToFitLabel, SCORE_BAND_KEYS } from "./scoring/bands";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -143,8 +144,10 @@ const SORTS: Record<
   updated_asc: { col: "updated_at", asc: true },
   created_desc: { col: "created_at", asc: false },
   created_asc: { col: "created_at", asc: true },
-  score_desc: { col: "score", asc: false },
-  score_asc: { col: "score", asc: true },
+  // The published figure (video bonus included), so a cross-page score sort
+  // orders by the number every row displays — see migration 0011.
+  score_desc: { col: "published_score", asc: false },
+  score_asc: { col: "published_score", asc: true },
   name_asc: { col: "full_name", asc: true },
 };
 
@@ -203,8 +206,15 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
     if (data.client_visibility) q = q.eq("client_visibility", data.client_visibility);
     if (data.eligibility_status) q = q.eq("eligibility_status", data.eligibility_status);
     if (data.recommendation) q = q.eq("recommendation", data.recommendation);
-    if (data.score_band) q = q.eq("score_band", data.score_band);
-    if (data.fit_label) q = q.eq("fit_label", data.fit_label);
+    // published_band, not score_band: the band a row displays includes the
+    // intro-video bonus, and the filter must find the row under that band.
+    if (data.score_band) q = q.eq("published_band", data.score_band);
+    // The stored fit_label is the engine's, before the intro-video bonus; the
+    // label a person sees is derived from the published band, so filter there.
+    if (data.fit_label) {
+      const bands = SCORE_BAND_KEYS.filter((b) => bandToFitLabel(b) === data.fit_label);
+      q = bands.length ? q.in("published_band", bands) : q.eq("fit_label", data.fit_label);
+    }
     if (data.country) q = q.eq("country", data.country);
     if (data.source) q = q.eq("source_kind", data.source);
     if (data.contact_released === "released") q = q.eq("contact_released", true);
@@ -225,9 +235,11 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
     const { data: rows, count, error } = await q;
     if (error) throw new Error(error.message);
 
-    // The Loom introduction bonus is derived at read time, not stored, so the
-    // index view cannot hold it. Fold it into the page rows here — added when
-    // a link exists, gone when it is removed, awarded once per match.
+    // The introduction-video bonus is derived at read time, not stored: the
+    // view's score/final_score stay pre-bonus (only published_score and
+    // published_band, used above to filter and sort, include it). Fold it into
+    // the page rows here for display — added when a link exists, gone when it
+    // is removed, awarded once per match.
     let pageRows = (rows ?? []) as AnyRow[];
     const matchIds = pageRows.map((r) => r.match_id as string).filter(Boolean);
     if (matchIds.length > 0) {
@@ -242,8 +254,8 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
       pageRows = pageRows.map((r) =>
         withVideoIntroBonus(r, videoByMatch.get(String(r.match_id)) ?? false),
       );
-      // Score sorts ran on the pre-bonus column in the view; re-order the page
-      // on the folded figure so the bonus can never invert a near tie.
+      // The view now sorts on published_score; re-ordering the page on the
+      // folded figure keeps the page order equal to the displayed number.
       if (data.sort === "score_desc" || data.sort === "score_asc") {
         const { publishedScore } = await import("@/lib/scoring/published-score");
         const asc = data.sort === "score_asc";

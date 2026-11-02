@@ -210,15 +210,86 @@ export function scoreVoidedByUnreadableCv(
     ["cv_employment_history_missing", "cv_missing", "cv_file_missing", "cv_unparsed"].includes(match?.processing_error_code ?? "");
 }
 
-/** Recorded decisions override only the same run; they never approve or mutate it. */
+/**
+ * Recorded decisions override only the same run; they never approve or mutate it.
+ *
+ * A decision records the EVIDENCE figure (runs never carry the video bonus,
+ * and apply_reviewed_verdicts writes an 'override' equal to its run for every
+ * reviewed candidate). When the run handed in was already folded by
+ * withVideoIntroBonus, replacing its score with the bare decision dropped the
+ * bonus: the admin header read "68 · Consider" beside a Score tab and list
+ * reading "73 · Strong" for the same candidate. Re-fold so the header agrees.
+ */
 export function withRecordedOverride<T extends { id?: unknown; score?: unknown; final_score?: unknown }>(
   run: T | null | undefined,
-  decisions: readonly { decision_type?: string; score_run_id?: string; approved_score?: number | null }[],
+  decisions: readonly { decision_type?: string; score_run_id?: string; approved_score?: number | string | null }[],
 ): T | null | undefined {
   if (!run) return run;
   const decision = decisions.find((item) => item.decision_type === "override" && item.score_run_id === run.id && item.approved_score != null);
   if (!decision || decision.approved_score == null) return run;
-  return { ...run, score: decision.approved_score, final_score: decision.approved_score };
+  const next = { ...run, score: decision.approved_score, final_score: decision.approved_score };
+  const folded = typeof (run as { video_bonus_awarded?: unknown }).video_bonus_awarded === "number";
+  return folded ? (withVideoIntroBonus(next as PublishedScoreRun, true) as unknown as T) : next;
+}
+
+/**
+ * The evidence figure of a run: what the requirement verdicts scored, before
+ * the intro-video bonus. For a run folded by withVideoIntroBonus this undoes
+ * the fold exactly (the award is sized to the headroom, so nothing was lost to
+ * the cap); for a bare run it is the published column as stored.
+ */
+export function evidenceScoreOf(run: PublishedScoreRun): number | null {
+  if (!run) return null;
+  if (typeof run.video_bonus_awarded === "number" && typeof run.score_uncapped === "number") {
+    return run.score_uncapped - run.video_bonus_awarded;
+  }
+  return num(run.final_score) ?? num(run.score);
+}
+
+// Terms print at the stored precision (numeric(6,2)) so they stay additive
+// near the ceiling; the total is the whole published figure every other
+// surface prints (publishedScoreDisplay, the Score tab line).
+function fmtPoints(value: number): string {
+  return String(Number(value.toFixed(2)));
+}
+
+/**
+ * How a recorded evidence figure reads beside the published one:
+ * "67.5 + video 5 = 72.5" when an intro video adds points, otherwise just
+ * "67.5". Used wherever a surface prints a run's evidence score (the
+ * human-verification toast, the decision history) so it never reads as the
+ * candidate's published total when a video lifts it.
+ */
+export function evidenceWithVideoLabel(
+  evidence: number | string | null | undefined,
+  hasVideo: boolean,
+): string | null {
+  const base = num(evidence);
+  if (base === null) return null;
+  const bonus = hasVideo ? videoBonusFor(base) : 0;
+  if (bonus <= 0) return fmtPoints(base);
+  return `${fmtPoints(base)} + video ${fmtPoints(bonus)} = ${Math.round(clampScore(base + bonus) ?? 0)}`;
+}
+
+/**
+ * True for the 'override' decision apply_reviewed_verdicts records: one whose
+ * amount IS its run's evidence figure. It records the reviewed evidence score,
+ * not a human overriding the number, and must not be printed as
+ * "override @ 67.50" beside a published 73. Legacy overrides whose amount
+ * differs from their run stay what they were.
+ */
+export function isReviewedEvidenceDecision(
+  decision:
+    | { decision_type?: string | null; score_run_id?: unknown; approved_score?: number | string | null }
+    | null
+    | undefined,
+  run: (NonNullable<PublishedScoreRun> & { id?: unknown }) | null | undefined,
+): boolean {
+  if (!decision || !run || decision.decision_type !== "override") return false;
+  if (decision.score_run_id == null || String(decision.score_run_id) !== String(run.id ?? "")) return false;
+  const approved = num(decision.approved_score);
+  const evidence = evidenceScoreOf(run);
+  return approved !== null && evidence !== null && Math.abs(approved - evidence) < 0.005;
 }
 
 /**

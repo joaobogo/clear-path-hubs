@@ -17,6 +17,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { getHumanVerification, submitHumanAdjustment } from "@/lib/scoring-review.functions";
 import { HUMAN_VERDICTS, MIN_REASON_LENGTH, type HumanVerdict } from "@/lib/scoring/human-adjustment";
+import {
+  reviewedAssessmentMessage,
+  type ReviewedAssessmentOutcome,
+} from "@/lib/scoring/reviewed-assessment-message";
 
 const VERDICT_LABEL: Record<HumanVerdict, string> = {
   met: "Met",
@@ -57,9 +61,9 @@ export function HumanVerificationPanel({
     mutationFn: () =>
       submit({ data: { match_id: matchId, reason: reason.trim(), verdicts: pending } }),
     onSuccess: async (res) => {
-      toast.success(
-        `Recorded — new reviewed assessment at ${(res as { final_score: number }).final_score.toFixed(1)}/100`,
-      );
+      // The published figure, not the bare evidence one: with a video the page
+      // refreshes to evidence + bonus, and the toast must say the same.
+      toast.success(reviewedAssessmentMessage(res as ReviewedAssessmentOutcome));
       setDrafts({});
       setReason("");
       await queryClient.invalidateQueries({ queryKey: ["human-verification", matchId] });

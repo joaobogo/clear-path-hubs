@@ -18,9 +18,10 @@
  */
 import { classifyBand, type ScoreBandKey } from "./bands";
 import {
-  VIDEO_INTRO_BONUS_PTS,
+  clampScore,
   hasVideoIntro,
   scoreVoidedByUnreadableCv,
+  videoBonusFor,
 } from "./published-score";
 
 export type ReviewRowScore = {
@@ -57,7 +58,10 @@ export function reviewRowScore(
   const value = Number(base);
   if (!Number.isFinite(value)) return { final_score: null, score_band: null };
 
-  const total = hasVideoIntro(match) ? value + VIDEO_INTRO_BONUS_PTS : value;
+  // The award is sized to the headroom under the 100 ceiling, exactly as
+  // withVideoIntroBonus sizes it: a flat +5 showed 102.5 in the queue where
+  // every other surface showed 100.
+  const total = clampScore(hasVideoIntro(match) ? value + videoBonusFor(value) : value) as number;
 
   // Banded from the total, always. A band stored against the pre-bonus figure
   // is how "Consider" survived beside a 77.

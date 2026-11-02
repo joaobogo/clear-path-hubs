@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { toClientCandidateDTO } from "@/lib/client-kpi.server";
-import { EMPLOYER_VIEW_FIELDS } from "@/lib/candidate/employer-view";
+import {
+  EMPLOYER_VIEW_FIELDS,
+  INTRO_VIDEO_ATTACHED_COPY,
+  candidateIntroVideoValue,
+} from "@/lib/candidate/employer-view";
 
 /**
  * Anti-drift guard for the candidate "What employers see" preview.
@@ -57,5 +61,23 @@ describe("employer view manifest", () => {
 
   it("describes each field exactly once", () => {
     expect(new Set(manifestKeys).size).toBe(manifestKeys.length);
+  });
+});
+
+describe("the candidate's preview of their introduction video", () => {
+  // Adiya's stored link: staff attached a Google Drive video to her match.
+  const withVideo = toClientCandidateDTO({
+    ...sampleRow,
+    intro_video_url: "https://drive.google.com/file/d/1JT1xz67uMWP4B-GoiDlLWeTSDdfEGg7-/view",
+  });
+
+  it("says the video is attached instead of 'Not provided'", () => {
+    expect(withVideo.intro_video).not.toBeNull();
+    expect(candidateIntroVideoValue(withVideo.intro_video)).toBe(INTRO_VIDEO_ATTACHED_COPY);
+    expect(INTRO_VIDEO_ATTACHED_COPY).toBe("Attached — employers can play it on your profile");
+  });
+
+  it("stays empty when no video is attached", () => {
+    expect(candidateIntroVideoValue(toClientCandidateDTO(sampleRow).intro_video)).toBeNull();
   });
 });

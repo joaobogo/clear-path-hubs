@@ -2646,7 +2646,10 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
         [
           "id,updated_at,admin_status,client_visibility,processing_state,processing_error_code",
           "organization_id,position_id,application_id,candidate_profile_id",
-          "current_score_run_id,approved_score_run_id",
+          // The desk shows the published band, which folds the intro-video
+          // bonus; without the link it printed "consider" for a candidate
+          // every other surface shows as Strong.
+          "current_score_run_id,approved_score_run_id,intro_video_url",
           "candidate_profiles(id,full_name,email)",
           "positions(id,title,status,organization_id,approved_at,published_at,payment_status,description,employment_type,work_model,seniority,location,requirements,organizations(id,name))",
           // `evidence` was absent from THIS embed and present on approved_run
@@ -2658,7 +2661,7 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
           // through Approve → Publish with no override when someone finally
           // tried (audit 1 Sep, F17). The fix for TF7-05 changed which RUN is
           // consulted and did not notice the column was never fetched.
-          "current_run:score_runs!candidate_matches_current_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,evidence,position_id,candidate_profile_id,organization_id,application_id)",
+          "current_run:score_runs!candidate_matches_current_score_run_id_fkey(id,status,score,final_score,confidence,fit_label,contradiction_status,must_have_coverage,evidence,position_id,candidate_profile_id,organization_id,application_id)",
           "approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,evidence,raw_score,applied_cap,final_score,position_id,candidate_profile_id,organization_id,application_id)",
         ].join(","),
       )
@@ -2848,7 +2851,14 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
         /** Why it is waiting on a person, as opposed to what is broken. */
         pendingReasons: pendingDecision,
       };
-      const enriched: AnyRow = { ...r, _readiness: readiness, score_runs: approved ?? current };
+      // Display only: the readiness and evidence gates above read the raw runs.
+      // The row's run carries the published figure (intro-video bonus folded)
+      // so the band beside the Publish button is the one the client will see.
+      const enriched: AnyRow = {
+        ...r,
+        _readiness: readiness,
+        score_runs: withVideoIntroBonus(approved ?? current, hasVideoIntro(r)),
+      };
 
       // Blocked means SOMETHING IS WRONG. Waiting for a person is not wrong —
       // it is the desk's whole purpose, and it now lands in needs_review so

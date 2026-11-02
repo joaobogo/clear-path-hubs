@@ -446,15 +446,32 @@ export function ActionRail({
             size="sm"
             disabled={!!busy || override === ""}
             onClick={() =>
-              onRun("override", () =>
-                applyReviewDecision({
-                  data: {
-                    match_id: m.id,
-                    action: "manual_override",
-                    approved_score: Number(override),
-                    reason,
+              onRun(
+                "override",
+                () =>
+                  applyReviewDecision({
+                    data: {
+                      match_id: m.id,
+                      action: "manual_override",
+                      approved_score: Number(override),
+                      reason,
+                    },
+                  }),
+                {
+                  // Overrides are retired: the database refuses one that differs
+                  // from its run. Say why in plain words instead of echoing the
+                  // raw trigger text, which quotes the pre-bonus run figure.
+                  onError: (err) => {
+                    if (!err.message.includes("score_override_retired")) {
+                      toast.error(`Override not saved: ${err.message}`);
+                      return;
+                    }
+                    const failure = explainApproveFailure(err.message);
+                    toast.error(
+                      `${failure.title} — ${failure.detail}${failure.nextStep ? ` ${failure.nextStep}` : ""}`,
+                    );
                   },
-                }),
+                },
               )
             }
           >
@@ -463,6 +480,10 @@ export function ActionRail({
         </div>
         <p className="mt-1 text-[11px] text-muted-foreground">
           Recorded as a decision — the underlying score run stays immutable.
+        </p>
+        <p className="mt-1 text-[11px] text-muted-foreground" data-qa="override-retired-hint">
+          Scores change by adjusting the requirement verdicts in Review, not by typing a number
+          here.
         </p>
       </div>
 

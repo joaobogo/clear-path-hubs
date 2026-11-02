@@ -4,6 +4,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { writeAudit } from "@/lib/admin.functions";
+import {
+  PUBLISHED_SCORE_COLUMNS,
+  hasVideoIntro,
+  publishedScore,
+  scoreVoidedByUnreadableCv,
+  withVideoIntroBonus,
+} from "@/lib/scoring/published-score";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -224,7 +231,7 @@ export const tagSilverMedalist = createServerFn({ method: "POST" })
     const { data: match, error: mErr } = await context.supabase
       .from("candidate_matches")
       .select(
-        "id, organization_id, candidate_profile_id, position_id, approved_score_run_id",
+        "id, organization_id, candidate_profile_id, position_id, approved_score_run_id, intro_video_url, processing_state",
       )
       .eq("id", data.matchId)
       .maybeSingle();
@@ -248,7 +255,7 @@ export const tagSilverMedalist = createServerFn({ method: "POST" })
         (match as AnyRow).approved_score_run_id
           ? context.supabase
               .from("score_runs")
-              .select("final_score")
+              .select(PUBLISHED_SCORE_COLUMNS)
               .eq("id", (match as AnyRow).approved_score_run_id)
               .maybeSingle()
           : Promise.resolve({ data: null }),
@@ -265,7 +272,12 @@ export const tagSilverMedalist = createServerFn({ method: "POST" })
       seniority_snapshot: (position as AnyRow)?.seniority ?? null,
       role_title_snapshot: (position as AnyRow)?.title ?? null,
       skills_snapshot: (profile as AnyRow)?.skills ?? [],
-      score_snapshot: (run as AnyRow)?.final_score ?? null,
+      // The published figure, as the candidate page shows it: intro-video
+      // bonus folded, and no score at all for a CV that proved unreadable.
+      // The bare run figure filed a candidate as Consider beside a Strong profile.
+      score_snapshot: scoreVoidedByUnreadableCv(match as AnyRow)
+        ? null
+        : publishedScore(withVideoIntroBonus((run as AnyRow) ?? null, hasVideoIntro(match as AnyRow))),
       owner_user_id: context.userId,
       consent_status: data.consent_status ?? "pending",
       consent_updated_at: data.consent_status ? new Date().toISOString() : null,

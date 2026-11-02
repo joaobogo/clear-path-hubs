@@ -96,6 +96,16 @@ export function IntroVideoPanel({
           className="absolute inset-0 h-full w-full border-0"
         />
       </div>
+      {/* The host's own page, for a reader whose browser blocks the embedded
+          player (a Drive file only plays in-page when shared by link). */}
+      <a
+        href={video.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block px-4 py-2 text-xs text-primary hover:underline"
+      >
+        Open the video in a new tab ↗
+      </a>
     </section>
   );
 }
