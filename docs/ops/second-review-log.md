@@ -313,3 +313,23 @@ Checks
   (branches research-fix/*). The bundled screening question split is held
   until the live engine is updated, because editing screening questions
   queues a live rescore on the old engine.
+
+### Profiles (2 Nov 2026, same day)
+
+- Profile fixes from the owner research applied to all seven research
+  candidates, with a recruiter_dossier_field_edit audit row per changed
+  field (actor NULL): recruiter-written headline and summary (student and
+  course work described as such, no gendered pronouns, no visa wording),
+  CV corrections (dates, locations, grades, all-caps names), high- and
+  medium-confidence web context on employer/institution entries with source
+  URLs, certifications parsed from the CV, and work authorisation in the
+  recruiter-only field.
+- Certifications are stored as {name, issuer, date} objects: the client DTO
+  drops plain strings, so Daim's and Thaddeus's were invisible to the client
+  before.
+- Internal notes per candidate: recruiter notes, questions to ask,
+  unverified items, and "where they could fit at a grower" (strengths
+  first). Notes written before the owner's eligibility guidance were
+  corrected before they were saved.
+- Scores unchanged by the profile edits (admin list = current run for every
+  match; nothing approved or published).
