@@ -312,8 +312,10 @@ export function ActionRail({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuLabel>Candidate</DropdownMenuLabel>
-              {/* For a CV that reached us by email, an assignment or an import:
-                  the candidate never saw the role's questions. */}
+              {/* For a CV that reached us by email, a staff entry made from one,
+                  or an import of applicants: the candidate never saw the role's
+                  questions. Form applications and staff assignments (people who
+                  never applied) are refused server-side. */}
               <DropdownMenuItem
                 disabled={!!busy}
                 onSelect={(event) => {
@@ -324,10 +326,10 @@ export function ActionRail({
                       object:
                         (m.candidate_profiles?.full_name as string | null) ?? "This candidate",
                       description:
-                        "Emails the candidate a link to answer this role's unanswered screening questions on their status page.",
+                        "Emails the candidate a link to answer this role's unanswered screening questions on their status page. Only for a CV sent to us by email, a staff entry made from one, or an applicant import.",
                       impact: [
                         "One email goes to the address on the candidate's profile",
-                        "Their answers are added to the application and the match is rescored",
+                        "Their answers are added to the application. An unreviewed match is rescored; a reviewed or approved score is kept and a re-review task opens instead",
                         "Nothing is approved, published or shown to the client",
                       ],
                       confirmLabel: "Send email",

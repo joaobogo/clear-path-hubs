@@ -51,7 +51,10 @@ export async function findApplication(reference: string, email: string) {
     .from("applications")
     .select(
       "id,applied_at,updated_at,status,withdrawn_at,candidate_profile_id,position_id," +
-        "positions(title,status,organizations(name))," +
+        // Server-side only (never returned to the page): which way the
+        // application arrived decides whether late screening may be offered.
+        "source,source_channel,consent," +
+        "positions(title,status,organization_id,organizations(name))," +
         "candidate_profiles!inner(full_name,email)," +
         "candidate_matches(stage,client_visibility,updated_at)",
     )

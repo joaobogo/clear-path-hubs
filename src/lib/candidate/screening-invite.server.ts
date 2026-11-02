@@ -3,14 +3,17 @@
  *
  * Two triggers, one delivery path:
  *  - runScreeningInvites — the pipeline drain's sweep. Sends ONCE, only to an
- *    application created after migration 0012 (screening_invite_status still
- *    NULL; every older row reads 'predates_feature'), that arrived without the
- *    apply form, has zero answers while its role has questions, and is open.
+ *    application created after migration 0013 (screening_invite_status still
+ *    NULL; every older row reads 'predates_feature'), from an allowlisted
+ *    source — source_channel 'direct_email' / 'applicant_import', or source
+ *    'staff_entry:…' / 'applicant_import:…' — with zero answers while its role
+ *    has questions, and open. Never a staff assignment (source
+ *    'admin_assignment', channel NULL) and never a form application.
  *    A row is claimed (NULL -> 'sending') before the send, so two overlapping
  *    sweeps cannot both send; the Lovable idempotency key backs that up.
  *  - sendScreeningInviteByStaff — the "Send screening questions" action on the
- *    admin candidate page. Works on any open application with questions left
- *    to answer, including ones that predate the feature.
+ *    admin candidate page. Same allowlisted sources, open applications with
+ *    questions left to answer, including ones that predate the feature.
  *
  * Uses the registered 'screening-questions' template through send-email, so the
  * candidate's reply goes to the direct inbox. Never approves, publishes, or
@@ -19,6 +22,8 @@
 import {
   SCREENING_INVITE_GRACE_MS,
   SCREENING_INVITE_WINDOW_MS,
+  SCREENING_LINK_CHANNELS,
+  SCREENING_LINK_SOURCE_PREFIXES,
   applicationReference,
   decideAutomaticInvite,
   decideStaffInvite,
@@ -154,7 +159,7 @@ async function record(
   status: string,
   reason: string | null,
   only?: { whenStatus: string | null },
-) {
+): Promise<boolean> {
   let q = admin
     .from("applications")
     .update({
@@ -170,6 +175,51 @@ async function record(
         : q.eq("screening_invite_status", only.whenStatus);
   const { error } = await q;
   if (error) console.error("[screening-invite] record failed", applicationId, error.message);
+  return !error;
+}
+
+/** A select that names a column migration 0013 adds, run before the migration. */
+function missingInviteColumns(error: { code?: string; message?: string } | null): boolean {
+  if (!error) return false;
+  return (
+    error.code === "42703" ||
+    error.code === "PGRST204" ||
+    /screening_invite_/i.test(error.message ?? "")
+  );
+}
+
+/**
+ * Undecided rows in the window from the allowlisted sources only. One query
+ * per source rule (an `in` on the channel, a `like` per source prefix), merged
+ * and re-checked in decideAutomaticInvite. Any query error fails closed —
+ * before migration 0013 the marker column does not exist and nothing is sent.
+ */
+async function undecidedAllowlistedApplications(
+  admin: Admin,
+  now: Date,
+  limit: number,
+): Promise<{ rows: AppRow[]; error: string | null }> {
+  const base = () =>
+    admin
+      .from("applications")
+      .select(APP_SELECT)
+      .is("screening_invite_status", null)
+      .eq("is_test_record", false)
+      .gte("created_at", new Date(now.getTime() - SCREENING_INVITE_WINDOW_MS).toISOString())
+      .lte("created_at", new Date(now.getTime() - SCREENING_INVITE_GRACE_MS).toISOString());
+  const queries = [
+    base().in("source_channel", [...SCREENING_LINK_CHANNELS]),
+    ...SCREENING_LINK_SOURCE_PREFIXES.map((prefix) => base().like("source", `${prefix}%`)),
+  ].map((q) => q.order("created_at", { ascending: true }).limit(limit));
+  const results = await Promise.all(queries);
+  const failed = results.find((r: { error: unknown }) => r.error);
+  if (failed) return { rows: [], error: (failed.error as { message?: string }).message ?? "error" };
+  const byId = new Map<string, AppRow>();
+  for (const r of results) for (const row of (r.data ?? []) as AppRow[]) byId.set(row.id, row);
+  const rows = [...byId.values()]
+    .sort((a, b) => a.created_at.localeCompare(b.created_at))
+    .slice(0, limit);
+  return { rows, error: null };
 }
 
 /** Automatic, once-only invitations for new applications that skipped the form. */
@@ -186,24 +236,20 @@ export async function runScreeningInvites(
     skipped: 0,
     waiting: 0,
   };
-  const { data, error } = await admin
-    .from("applications")
-    .select(APP_SELECT)
-    .is("screening_invite_status", null)
-    .eq("is_test_record", false)
-    // Form applications are never candidates; NULL channel is a staff path.
-    .or("source_channel.is.null,source_channel.neq.public_job_board")
-    .gte("created_at", new Date(now.getTime() - SCREENING_INVITE_WINDOW_MS).toISOString())
-    .lte("created_at", new Date(now.getTime() - SCREENING_INVITE_GRACE_MS).toISOString())
-    .order("created_at", { ascending: true })
-    .limit(Math.min(Math.max(opts.limit ?? 10, 1), 25));
+  // Allowlist, not "anything but the form": bulk "Assign to role" rows
+  // (source 'admin_assignment', channel NULL) are never even read here.
+  const { rows, error } = await undecidedAllowlistedApplications(
+    admin,
+    now,
+    Math.min(Math.max(opts.limit ?? 10, 1), 25),
+  );
   if (error) {
-    // Before migration 0012 the column does not exist: fail closed, send nothing.
-    console.error("[screening-invite] sweep query failed", error.message);
+    // Before migration 0013 the column does not exist: fail closed, send nothing.
+    console.error("[screening-invite] sweep query failed", error);
     return result;
   }
 
-  for (const app of (data ?? []) as AppRow[]) {
+  for (const app of rows) {
     result.considered += 1;
     let claimed = false;
     try {
@@ -270,6 +316,16 @@ export async function sendScreeningInviteByStaff(
     .select(APP_SELECT)
     .eq("id", args.applicationId)
     .maybeSingle();
+  if (missingInviteColumns(error)) {
+    // Code deployed before migration 0013: nothing is sent.
+    return {
+      ok: false,
+      status: "not_needed",
+      reason: "migration_pending",
+      message:
+        "Screening invitations need database migration 0013 (screening_invites) first. Nothing was sent.",
+    };
+  }
   if (error || !data) {
     return {
       ok: false,
@@ -300,19 +356,29 @@ export async function sendScreeningInviteByStaff(
     questions.length,
     `screening-invite-${app.id}-staff-${bucket}`,
   );
-  await record(admin, app.id, out.status, out.reason);
-  await admin.from("audit_events").insert({
+  const recorded = await record(admin, app.id, out.status, out.reason);
+  const { error: auditErr } = await admin.from("audit_events").insert({
     actor_user_id: args.actorUserId,
     entity_type: "applications",
     entity_id: app.id,
     action: "screening_invite_sent_by_staff",
     after_state: { status: out.status, reason: out.reason },
   });
-  const message =
+  if (auditErr) {
+    console.error("[screening-invite] audit insert failed", app.id, auditErr.message);
+  }
+  const outcome =
     out.status === "sent"
       ? "Screening questions sent to the candidate."
       : out.status === "suppressed"
         ? `Not emailed (${out.reason ?? "suppressed"}) — the address is blocked, a test record, or email is not configured.`
         : `The email could not be sent (${out.reason ?? "error"}). Try again shortly.`;
+  const unrecorded = [
+    !recorded ? "the outcome could not be saved on the application" : null,
+    auditErr ? `the audit record could not be written (${auditErr.message})` : null,
+  ].filter(Boolean);
+  const message = unrecorded.length
+    ? `${outcome} Note: ${unrecorded.join(" and ")}; tell the platform team.`
+    : outcome;
   return { ok: out.status !== "failed", status: out.status, reason: out.reason, message };
 }

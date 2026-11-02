@@ -8,11 +8,15 @@
  * arrived without the form gets one email with that link.
  *
  * Pure rules only — shared by the candidate flow, the automatic sweep and the
- * staff button so all three agree on what "still has questions to answer"
- * means. Answers never decide anything here: eligibility stays with the
- * dealbreaker rule the scorer applies when the match is rescored.
+ * staff button so all three agree on who may be asked (screeningLinkSource) and
+ * what "still has questions to answer" means. Answers never decide anything
+ * here: eligibility stays with the dealbreaker rule the scorer applies when the
+ * match is rescored, and a score a person reviewed or approved is never
+ * rescored by a late answer (lateAnswerRescoreBlock).
  */
 import { SCREENING_ANSWER_MAX } from "@/lib/screening-limits";
+import { normalizeEvaluationMethod } from "@/lib/scoring/evaluation-method";
+import { isDealbreakerHit } from "@/lib/scoring/screening-eligibility";
 
 /** Staff entering a record get this long to add answers before we email. */
 export const SCREENING_INVITE_GRACE_MS = 15 * 60_000;
@@ -33,6 +37,10 @@ export type ScreeningQuestionRow = {
   required: boolean | null;
   why_asked?: string | null;
   display_order?: number | null;
+  /** Server-side only: never sent to the candidate. */
+  dealbreaker?: boolean | null;
+  /** Server-side only: never sent to the candidate. */
+  preferred_answer?: unknown;
 };
 
 export type InviteApplication = {
@@ -62,6 +70,54 @@ export function cameThroughApplyForm(
     typeof consent === "object" &&
     typeof (consent as Record<string, unknown>).question_version === "number"
   );
+}
+
+/**
+ * Applications that reached us without the form but ARE applications: a CV
+ * sent to the team by email (source_channel 'direct_email'), a record staff
+ * entered from one (source 'staff_entry:…'), or an explicit import of people
+ * who applied elsewhere (source_channel 'applicant_import' or source
+ * 'applicant_import:…' — an importer must stamp one of these; nothing else
+ * counts as an import). An allowlist, not "anything but the form".
+ */
+export const SCREENING_LINK_CHANNELS: readonly string[] = ["direct_email", "applicant_import"];
+export const SCREENING_LINK_SOURCE_PREFIXES: readonly string[] = [
+  "staff_entry:",
+  "applicant_import:",
+];
+/** Staff "Assign to role" (single and bulk) writes this source: never asked. */
+export const ADMIN_ASSIGNMENT_SOURCE = "admin_assignment";
+
+export type ScreeningLinkSource =
+  | { ok: true }
+  | { ok: false; reason: "form_application" | "admin_assignment" | "source_not_allowed" };
+
+/**
+ * Whether this application may be asked the role's questions after the fact —
+ * by the automatic email, the staff button or the status page. Never a form
+ * application (the form asked already), never a staff assignment (the person
+ * never applied for the role), and otherwise only the allowlisted sources.
+ */
+export function screeningLinkSource(
+  app: Pick<InviteApplication, "source" | "source_channel" | "consent">,
+): ScreeningLinkSource {
+  if (cameThroughApplyForm(app)) return { ok: false, reason: "form_application" };
+  const source = (app.source ?? "").trim();
+  const channel = (app.source_channel ?? "").trim();
+  if (
+    source === ADMIN_ASSIGNMENT_SOURCE ||
+    source.startsWith(`${ADMIN_ASSIGNMENT_SOURCE}:`) ||
+    channel === ADMIN_ASSIGNMENT_SOURCE
+  ) {
+    return { ok: false, reason: "admin_assignment" };
+  }
+  if (
+    SCREENING_LINK_CHANNELS.includes(channel) ||
+    SCREENING_LINK_SOURCE_PREFIXES.some((p) => source.startsWith(p))
+  ) {
+    return { ok: true };
+  }
+  return { ok: false, reason: "source_not_allowed" };
 }
 
 export function applicationIsClosed(
@@ -109,6 +165,8 @@ export type AutomaticInviteDecision =
         | "already_decided"
         | "test_record"
         | "form_application"
+        | "admin_assignment"
+        | "source_not_allowed"
         | "application_closed"
         | "outside_window"
         | "no_questions"
@@ -118,8 +176,9 @@ export type AutomaticInviteDecision =
 
 /**
  * The automatic invitation: once, only for an application created after the
- * feature shipped (its marker is still NULL), that arrived without the form,
- * has zero answers while its role has questions, and is still open.
+ * feature shipped (its marker is still NULL), from an allowlisted source
+ * (screeningLinkSource), with zero answers while its role has questions, and
+ * still open.
  */
 export function decideAutomaticInvite(i: {
   app: InviteApplication;
@@ -132,7 +191,8 @@ export function decideAutomaticInvite(i: {
   if (marker === SCREENING_INVITE_PREDATES) return { action: "skip", reason: "predates_feature" };
   if (marker !== null) return { action: "skip", reason: "already_decided" };
   if (i.app.is_test_record) return { action: "skip", reason: "test_record" };
-  if (cameThroughApplyForm(i.app)) return { action: "skip", reason: "form_application" };
+  const source = screeningLinkSource(i.app);
+  if (!source.ok) return { action: "skip", reason: source.reason };
   if (applicationIsClosed(i.app)) return { action: "skip", reason: "application_closed" };
 
   const age = (i.now ?? new Date()).getTime() - new Date(i.app.created_at).getTime();
@@ -147,17 +207,29 @@ export function decideAutomaticInvite(i: {
 
 export type StaffInviteDecision = { ok: true } | { ok: false; message: string };
 
+const SOURCE_REFUSALS: Record<Exclude<ScreeningLinkSource, { ok: true }>["reason"], string> = {
+  form_application:
+    "This candidate applied through the job page, which already asked the role's questions.",
+  admin_assignment:
+    "This candidate was assigned to the role by staff and never applied for it, so they are not emailed.",
+  source_not_allowed:
+    "Screening links go only to applications sent to us by email, entered by staff from one, or imported from people who applied.",
+};
+
 /**
- * The staff button: works on any application, old or new, form or not, as
- * long as the candidate would find questions to answer behind the link.
+ * The staff button: works on old and new applications alike, but only on the
+ * same allowlisted sources as the automatic email, and only when the candidate
+ * would find questions to answer behind the link.
  */
 export function decideStaffInvite(i: {
-  app: Pick<InviteApplication, "status" | "withdrawn_at">;
+  app: Pick<InviteApplication, "status" | "withdrawn_at" | "source" | "source_channel" | "consent">;
   positionStatus: string | null;
   questions: readonly ScreeningQuestionRow[];
   answeredIds: Iterable<string>;
   hasEmail: boolean;
 }): StaffInviteDecision {
+  const source = screeningLinkSource(i.app);
+  if (!source.ok) return { ok: false, message: SOURCE_REFUSALS[source.reason] };
   if (applicationIsClosed(i.app)) {
     return {
       ok: false,
@@ -215,8 +287,11 @@ function normalise(
     const n = typeof v === "number" ? v : Number(String(v).trim());
     return Number.isFinite(n) ? { ok: true, value: n } : { ok: false };
   }
-  if (type === "multi_choice") {
-    const list = (Array.isArray(v) ? v : [v]).map((x) => String(x).trim()).filter(Boolean);
+  if (type === "multi_choice" && Array.isArray(v)) {
+    // Only a real list stays a list. The apply form renders multi_choice as a
+    // text box and stores the string, so a typed answer is stored the same way
+    // below ("Retail, Hospitality"), never wrapped into a one-element array.
+    const list = v.map((x) => String(x).trim()).filter(Boolean);
     if (list.some((x) => x.length > SCREENING_ANSWER_MAX)) return { ok: false };
     return { ok: true, value: list };
   }
@@ -263,6 +338,88 @@ export function prepareLateAnswers(
   if (rows.length === 0)
     return { ok: false, message: "Answer at least one question before sending." };
   return { ok: true, rows };
+}
+
+export type MatchReviewState = {
+  admin_status: string | null;
+  approved_score_run_id: string | null;
+  /** evaluation_method of the match's current score run. */
+  current_run_method: string | null;
+};
+
+/**
+ * Why late answers must NOT trigger a machine rescore, or null when they may.
+ * A forced rescore writes a new machine run and moves the current pointer, so
+ * on a match whose current run a person adjusted, or that has been approved,
+ * it would silently replace the reviewed published score. Those matches keep
+ * their score; staff get a re-review task instead.
+ */
+export function lateAnswerRescoreBlock(m: MatchReviewState): "human_adjusted" | "approved" | null {
+  if (normalizeEvaluationMethod(m.current_run_method) === "human_adjusted") return "human_adjusted";
+  if (m.admin_status === "approved" || m.approved_score_run_id) return "approved";
+  return null;
+}
+
+export type ReReviewTaskReason = "human_adjusted" | "approved" | "rescore_not_queued";
+
+/** Questions whose late answer would trip the dealbreaker rule. */
+export function lateDealbreakerHits(
+  questions: readonly ScreeningQuestionRow[],
+  rows: ReadonlyArray<{ question_id: string; value: unknown }>,
+): ScreeningQuestionRow[] {
+  const byId = new Map(questions.map((q) => [q.id, q]));
+  return rows
+    .map((r) => ({ q: byId.get(r.question_id), value: r.value }))
+    .filter(
+      (x): x is { q: ScreeningQuestionRow; value: unknown } =>
+        !!x.q &&
+        isDealbreakerHit({
+          question_id: x.q.id,
+          question: x.q.question,
+          dealbreaker: x.q.dealbreaker,
+          answer_type: x.q.answer_type,
+          preferred_answer: x.q.preferred_answer,
+          value: x.value,
+        }),
+    )
+    .map((x) => x.q);
+}
+
+/** The admin task opened when late answers are not (or could not be) rescored. */
+export function screeningReReviewTask(i: {
+  reason: ReReviewTaskReason;
+  candidateName: string | null;
+  positionTitle: string | null;
+  answeredCount: number;
+  dealbreakers: readonly string[];
+}): { title: string; description: string; priority: "normal" | "high" } {
+  const who = i.candidateName?.trim() || "The candidate";
+  const role = i.positionTitle?.trim() ? ` for ${i.positionTitle.trim()}` : "";
+  const n =
+    i.answeredCount === 1 ? "1 screening question" : `${i.answeredCount} screening questions`;
+  const why =
+    i.reason === "human_adjusted"
+      ? "The current score was adjusted by a reviewer, so it was not rescored automatically and the published score is unchanged."
+      : i.reason === "approved"
+        ? "The match is approved, so it was not rescored automatically and the published score is unchanged."
+        : "The rescore could not be queued, so the score does not reflect these answers yet.";
+  const next =
+    i.reason === "rescore_not_queued"
+      ? "Queue a rescore from the candidate page once the answers are read."
+      : "Read the answers. If they change the assessment, update the reviewed verdicts and re-apply them so the published score stays one reviewed number.";
+  const dealbreakers = i.dealbreakers.length
+    ? ` Dealbreaker answers that do not match the preferred answer: ${i.dealbreakers
+        .map((q) => `"${q}"`)
+        .join("; ")}. Eligibility was not changed.`
+    : "";
+  return {
+    title:
+      i.reason === "rescore_not_queued"
+        ? "Screening answers received, rescore not queued"
+        : "Screening answers received, re-review",
+    description: `${who} answered ${n}${role} on the application status page. ${why}${dealbreakers} ${next}`,
+    priority: i.dealbreakers.length > 0 ? "high" : "normal",
+  };
 }
 
 /** The 6-character reference the candidate already uses on the status page. */

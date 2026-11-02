@@ -1,10 +1,12 @@
 -- Screening questions for applications that skipped the apply form (2 Nov 2026).
 --
 -- A CV sent to the team by email and entered by staff (source_channel
--- 'direct_email'), an admin assignment or an import never showed the candidate
--- the role's screening questions. The candidate can now answer them on the
--- status page, and the pipeline drain emails the link once. These columns are
--- the once-only marker and the outcome:
+-- 'direct_email', source 'staff_entry:...') or an explicit import of people
+-- who applied (source_channel 'applicant_import' / source 'applicant_import:...')
+-- never showed the candidate the role's screening questions. The candidate can
+-- now answer them on the status page, and the pipeline drain emails the link
+-- once. Staff assignments (source 'admin_assignment') and form applications
+-- are never emailed. These columns are the once-only marker and the outcome:
 --   screening_invite_status      NULL = not decided yet; then sending | sent |
 --                                suppressed | failed | not_needed, or
 --                                predates_feature (below)
@@ -18,6 +20,12 @@
 -- trigger are untouched), while every row inserted afterwards starts NULL. The
 -- sweep only reads NULL rows, so nothing created before this migration is ever
 -- emailed automatically; staff can still send from the candidate page.
+--
+-- Order: deploy the code first, then run this migration. Code without the
+-- column fails closed (the sweep query errors and sends nothing; the staff
+-- button says the migration is pending and sends nothing). Running this first
+-- leaves allowlisted rows created before the deploy at NULL, and the first
+-- sweep after the deploy would email those up to 7 days old.
 -- Rollback: ALTER TABLE public.applications DROP COLUMN screening_invite_status,
 --   DROP COLUMN screening_invite_sent_at, DROP COLUMN screening_invite_error_code;
 ALTER TABLE public.applications
