@@ -43,7 +43,15 @@ const HEADING = new RegExp(
 
 /** Words that make a date range a course of study, not a role. */
 const SCHOOL =
-  /\b(?:university|college|school|academy|institute|campus|faculty|bachelor'?s?|master'?s?|mba|degree|diploma|b\.?\s?sc|m\.?\s?sc|bba|phd|doctorate|doctor\s+of|gcse|a-levels?)\b/i;
+  /\b(?:university|college|school|academy|institute|campus|faculty|bachelor'?s?|master'?s?|mba|degree|diploma|b\.?\s?sc|m\.?\s?sc|bba|phd|doctorate|doctor\s+of|gcse|hons)\b/i;
+/**
+ * Degree abbreviations and A levels, read in capitals so "ba", "ma" or "a
+ * level" in a sentence are not taken for one. "Boston, MA" is a state, not a
+ * degree.
+ */
+const DEGREE =
+  /\b(?:B\.?A|(?<!,\s?)M\.?A|B\.?\s?Eng|M\.?\s?Eng|LL\.?B|LL\.?M|HN[CD]|B\.?\s?Com|M\.?\s?Com|A[\s-]?(?:Levels?|LEVELS?))\b/;
+const isSchool = (s: string) => SCHOOL.test(s) || DEGREE.test(s);
 const BULLET = /[•▪●◦■]/;
 
 /**
@@ -67,24 +75,41 @@ function nearSchool(body: string, start: number, end: number): boolean {
     after = body.slice(lineEnd(end) + 1, lineEnd(lineEnd(end) + 1));
   }
   after = after.slice(0, 60).split(BULLET)[0] ?? "";
-  return SCHOOL.test(before ?? "") || SCHOOL.test(after);
+  return isSchool(before ?? "") || isSchool(after);
 }
 
+const isBlank = (line: string) => !/[\p{L}\p{N}]/u.test(line);
+
 /**
- * A work heading with nothing under it before the next heading. Two-column
- * PDFs (Europass among them) are often extracted with the column of section
- * labels after the body: "… dated roles … ABOUT ME WORK EXPERIENCE EDUCATION
- * AND TRAINING …". The roles are then above their heading, not under it.
+ * The first work heading with nothing under it before the next heading, or
+ * -1. Two-column PDFs (Europass among them) are often extracted with the
+ * column of section labels after the body: "… dated roles … ABOUT ME WORK
+ * EXPERIENCE EDUCATION AND TRAINING …". The roles are then above their
+ * heading, not under it.
  */
-function hasDetachedWorkHeading(lines: string[]): boolean {
-  return lines.some((line, i) => {
+function detachedWorkHeading(lines: string[]): number {
+  return lines.findIndex((line, i) => {
     if (!isHeading(line, WORK_HEADINGS)) return false;
     for (const next of lines.slice(i + 1)) {
       if (isHeading(next, HEADING_WORDS)) return true;
-      if (/[\p{L}\p{N}]/u.test(next)) return false;
+      if (!isBlank(next)) return false;
     }
     return true;
   });
+}
+
+/**
+ * Where the body above a detached work heading ends: the start of the run of
+ * section labels (and blank lines) that holds it. Not the first heading word
+ * anywhere: a Title Case "Skills", "Languages" or "Qualifications" in the
+ * profile is split onto its own line too, and cutting there would leave the
+ * roles below it unread.
+ */
+function labelRunStart(lines: string[], at: number): number {
+  let start = at;
+  const isLabel = (line: string) => isBlank(line) || isHeading(line, HEADING_WORDS);
+  while (start > 0 && isLabel(lines[start - 1] ?? "")) start--;
+  return start;
 }
 
 /** Restrict intervals to employment sections; education dates are not roles. */
@@ -113,13 +138,13 @@ export function employmentIntervals(text: string, asOf = new Date()): Interval[]
     if (!inEmployment) continue;
     for (const m of line.matchAll(pattern)) read(m);
   }
-  // Headings extracted after the body: read the dated entries above the first
-  // heading, leaving out courses of study. Only a CV with an empty work
-  // heading and no dated role under a work heading gets here, so a CV that
-  // already reads is never changed by it.
-  if (intervals.length === 0 && hasDetachedWorkHeading(lines)) {
-    const first = lines.findIndex((line) => isHeading(line, HEADING_WORDS));
-    const body = lines.slice(0, first).join("\n");
+  // Headings extracted after the body: read the dated entries above the run
+  // of section labels, leaving out courses of study. Only a CV with an empty
+  // work heading and no dated role under a work heading gets here, so a CV
+  // that already reads is never changed by it.
+  const detached = intervals.length === 0 ? detachedWorkHeading(lines) : -1;
+  if (detached >= 0) {
+    const body = lines.slice(0, labelRunStart(lines, detached)).join("\n");
     for (const m of body.matchAll(pattern)) {
       const at = m.index ?? 0;
       // Part of a longer number (a phone or reference), not a date.

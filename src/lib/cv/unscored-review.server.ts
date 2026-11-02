@@ -19,9 +19,11 @@ export type UnscoredOutcome = {
 };
 
 /**
- * One open pipeline task per unscored match, saying why and what to do next.
- * Idempotent: an open pipeline task for the match is reused, not duplicated.
- * Never contacts the candidate, and never throws.
+ * One open admin task per unscored match, saying why and what to do next.
+ * Idempotent: any open candidate_review task on the match is reused, whoever
+ * opened it (the pipeline, a second review, an operator backfill), so a
+ * re-parked match never gets a second task for the same cause. Never
+ * contacts the candidate, and never throws.
  */
 export async function ensureUnscoredReviewTask(s: Any, outcome: UnscoredOutcome): Promise<void> {
   try {
@@ -40,7 +42,6 @@ export async function ensureUnscoredReviewTask(s: Any, outcome: UnscoredOutcome)
       .eq("task_type", "candidate_review")
       .in("status", ["open", "in_progress"])
       .is("deleted_at", null)
-      .contains("metadata", { source: "pipeline" })
       .limit(1);
     if ((open ?? []).length > 0) return;
     const task = candidateReviewTask({

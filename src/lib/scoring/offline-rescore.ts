@@ -9,7 +9,9 @@
  * and refuses to write unless:
  *   - the result and snapshot JSON hash to the values computed here, so a
  *     copy error in transit cannot store a different score;
- *   - the CV text in the database is byte-for-byte the text that was scored.
+ *   - the CV text in the database is byte-for-byte the text that was scored;
+ *   - the match's published score is not a human-reviewed (human_adjusted)
+ *     run, which a machine rescore must never replace or clear.
  * The CV text itself is not carried in the SQL: the database reads it from
  * files.extracted_text when it assembles the run's replay snapshot.
  *
@@ -98,6 +100,14 @@ export function jsonbText(value: unknown): string {
 
 const md5 = (s: string) => createHash("md5").update(Buffer.from(s, "utf8")).digest("hex");
 
+/**
+ * One published score per candidate: a reviewer's verdicts live on a
+ * human_adjusted run, and nothing offline replaces or clears it.
+ */
+function humanReviewedGuard(mid: string, matchId: string, why: string): string {
+  return `IF EXISTS (SELECT 1 FROM candidate_matches m JOIN score_runs r ON r.id = m.current_score_run_id WHERE m.id = ${mid} AND r.evaluation_method = 'human_adjusted') THEN RAISE EXCEPTION 'offline rescore ${matchId}: the published score is human-reviewed; ${why}'; END IF;`;
+}
+
 /** A dollar-quoted literal whose tag does not occur in the text. */
 function dollar(text: string, hint: string): string {
   let tag = hint;
@@ -163,7 +173,10 @@ export function offlineRescore(
 
   if (employmentIntervals(cvText).length === 0) {
     // The same open admin task the pipeline leaves for a match it cannot
-    // score, once per match (an open pipeline task is reused).
+    // score, once per match (any open candidate_review task is reused).
+    // Guarded like the scored statement: it refuses when the CV text has
+    // changed since the export (the live pipeline may have re-read and
+    // scored it), and it never clears a human-reviewed published score.
     const task = candidateReviewTask({
       code: "cv_employment_history_missing",
       message:
@@ -181,12 +194,17 @@ export function offlineRescore(
       match_id: m.match_id,
       kind: "no_dated_roles",
       sql: `DO $do$
+DECLARE
+  cv text;
 BEGIN
+  SELECT f.extracted_text INTO cv FROM candidate_matches m JOIN candidate_profiles cp ON cp.id = m.candidate_profile_id JOIN files f ON f.id = cp.current_cv_file_id WHERE m.id = ${mid};
+  IF cv IS NULL OR md5(cv) <> '${md5(cvText)}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: CV text changed since export'; END IF;
+  ${humanReviewedGuard(mid, m.match_id, "an offline refusal never clears it")}
   UPDATE candidate_matches SET current_score_run_id = NULL, processing_state = 'manual_review_required', last_processing_trace_id = '${trace}', processing_error_code = 'cv_employment_history_missing', processing_error_message = 'Manual review required - incomplete document. The CV has no dated employment history.' WHERE id = ${mid};
   INSERT INTO tasks (organization_id, position_id, candidate_match_id, candidate_profile_id, task_type, title, description, priority, status, metadata)
   SELECT m.organization_id, m.position_id, m.id, m.candidate_profile_id, 'candidate_review', ${dollar(task.title, "tt")}, ${dollar(task.description, "td")}, '${task.priority}', 'open', ${dollar(JSON.stringify(meta), "tm")}::jsonb
   FROM candidate_matches m
-  WHERE m.id = ${mid} AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.candidate_match_id = m.id AND t.task_type = 'candidate_review' AND t.status IN ('open', 'in_progress') AND t.deleted_at IS NULL AND t.metadata @> '{"source": "pipeline"}'::jsonb);
+  WHERE m.id = ${mid} AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.candidate_match_id = m.id AND t.task_type = 'candidate_review' AND t.status IN ('open', 'in_progress') AND t.deleted_at IS NULL);
 END $do$;`,
     };
   }
@@ -264,6 +282,7 @@ BEGIN
   IF md5(s::text) <> '${md5(jsonbText(snap))}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: snapshot fingerprint mismatch'; END IF;
   SELECT f.extracted_text INTO cv FROM candidate_matches m JOIN candidate_profiles cp ON cp.id = m.candidate_profile_id JOIN files f ON f.id = cp.current_cv_file_id WHERE m.id = ${mid};
   IF cv IS NULL OR md5(cv) <> '${md5(cvText)}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: CV text changed since export'; END IF;
+  ${humanReviewedGuard(mid, m.match_id, "a machine rescore never replaces it")}
   UPDATE score_runs SET superseded_at = now() WHERE candidate_match_id = ${mid} AND status = 'completed' AND superseded_at IS NULL;
   INSERT INTO score_runs (id, candidate_match_id, position_id, application_id, candidate_profile_id, candidate_submission_id, organization_id,
     blueprint_version, rubric_version_id, raw_score, applied_cap, cap_reason, final_score, evaluation_method, fit_band, engine_version,

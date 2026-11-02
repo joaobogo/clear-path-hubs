@@ -85,6 +85,34 @@ const CV_CODES = new Set([
   "cv_text_thin",
 ]);
 
+const KNOWN: Record<string, { what: string; next: string }> = {
+  missing_usable_cv: {
+    what: "No CV is on file.",
+    next: "Ask the candidate for a CV from the parse-failure desk, or attach one by hand.",
+  },
+  position_inactive: {
+    what: "The role is not active, so the candidate was not scored.",
+    next: "Activate the role to score them, or close the application.",
+  },
+  requirements_missing: {
+    what: "The role has no structured requirements to score against.",
+    next: "Add must-haves in the role editor; the candidate is rescored when they are saved.",
+  },
+  max_attempts_exceeded: {
+    what: "Automatic processing failed repeatedly.",
+    next: "Open the candidate, check the processing log, and retry once the cause is fixed.",
+  },
+  cv_employment_history_missing: {
+    what: "No dated roles could be read from the CV.",
+    next: "Open the CV. If its roles carry dates, rescore the candidate and report the layout the date check missed; if they do not, ask the candidate for the dates of each role. Nothing has been sent to the candidate.",
+  },
+};
+
+/** Codes with their own task wording; any other code gets the general one. */
+export const REVIEW_TASK_CODES: readonly string[] = [...CV_CODES, ...Object.keys(KNOWN)];
+/** Codes whose task is opened at high priority. */
+export const HIGH_PRIORITY_REVIEW_CODES: readonly string[] = ["engine_error", "unknown"];
+
 export function candidateReviewTask(args: {
   code: string | null | undefined;
   message?: string | null;
@@ -107,36 +135,14 @@ export function candidateReviewTask(args: {
       reason: code,
     };
   }
-  const known: Record<string, { what: string; next: string }> = {
-    missing_usable_cv: {
-      what: "No CV is on file.",
-      next: "Ask the candidate for a CV from the parse-failure desk, or attach one by hand.",
-    },
-    position_inactive: {
-      what: "The role is not active, so the candidate was not scored.",
-      next: "Activate the role to score them, or close the application.",
-    },
-    requirements_missing: {
-      what: "The role has no structured requirements to score against.",
-      next: "Add must-haves in the role editor; the candidate is rescored when they are saved.",
-    },
-    max_attempts_exceeded: {
-      what: "Automatic processing failed repeatedly.",
-      next: "Open the candidate, check the processing log, and retry once the cause is fixed.",
-    },
-    cv_employment_history_missing: {
-      what: "No dated roles could be read from the CV.",
-      next: "Open the CV. If its roles carry dates, rescore the candidate and report the layout the date check missed; if they do not, ask the candidate for the dates of each role. Nothing has been sent to the candidate.",
-    },
-  };
-  const k = known[code] ?? {
+  const k = KNOWN[code] ?? {
     what: "The candidate could not be scored automatically.",
     next: "Open the candidate, check the processing log, and retry or score by hand.",
   };
   return {
     title: `${who}${role}: not scored yet`,
     description: `${k.what}${detail} Next: ${k.next}`,
-    priority: code === "engine_error" || code === "unknown" ? "high" : "normal",
+    priority: HIGH_PRIORITY_REVIEW_CODES.includes(code) ? "high" : "normal",
     reason: code,
   };
 }

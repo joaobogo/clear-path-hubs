@@ -1,3 +1,6 @@
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { jsonbText, offlineRescore, type OfflineContext, type OfflineMatch } from "../offline-rescore";
 import { ENGINE_VERSION } from "../engine-version";
@@ -133,14 +136,79 @@ describe("Mushroom Harvesting Manager: the two applicants never scored (owner it
     expect(out.sql).toContain("'candidate_review'");
     expect(out.sql).toContain("Candidate B for Mushroom Harvesting Manager: not scored yet");
     expect(out.sql).toContain("No dated roles could be read from the CV.");
-    // Once per match: an open pipeline task is reused, as the pipeline does.
+    // Once per match: any open candidate_review task is reused, as the
+    // pipeline does, whoever opened it.
     expect(out.sql).toContain(
-      `NOT EXISTS (SELECT 1 FROM tasks t WHERE t.candidate_match_id = m.id AND t.task_type = 'candidate_review' AND t.status IN ('open', 'in_progress') AND t.deleted_at IS NULL AND t.metadata @> '{"source": "pipeline"}'::jsonb)`,
+      `NOT EXISTS (SELECT 1 FROM tasks t WHERE t.candidate_match_id = m.id AND t.task_type = 'candidate_review' AND t.status IN ('open', 'in_progress') AND t.deleted_at IS NULL);`,
     );
+    expect(out.sql).not.toContain('source": "pipeline"}\'::jsonb');
     expect(out.sql).toContain(
       '{"source":"pipeline","reason":"cv_employment_history_missing","final_state":"manual_review_required","trace_id":"sc_test"}',
     );
     // Nothing approves, publishes or changes what the client sees.
     expect(out.sql).not.toMatch(/admin_status|client_visibility|stage\s*=/);
+  });
+});
+
+describe("an offline refusal is guarded like an offline score (review, 2 Nov 2026)", () => {
+  const COVER = "A cover letter about my farming career and my passion for mushrooms and people.";
+  const refusal = () => {
+    const out = offlineRescore(match(COVER), ctx, { trace_id: "sc_test" });
+    if (out.kind !== "no_dated_roles") throw new Error(out.kind);
+    return out.sql;
+  };
+  const before = (sql: string, a: string, b: string) => {
+    expect(sql.indexOf(a)).toBeGreaterThan(0);
+    expect(sql.indexOf(a)).toBeLessThan(sql.indexOf(b));
+  };
+
+  it("refuses when the CV text changed since the export, before it clears anything", () => {
+    // A stale refusal file (Abdul's pre-fix one) applied after the live
+    // pipeline re-read and scored the CV would otherwise undo that score.
+    const sql = refusal();
+    const md5 = createHash("md5").update(Buffer.from(COVER, "utf8")).digest("hex");
+    expect(sql).toMatch(/^DO \$do\$\nDECLARE\n {2}cv text;\nBEGIN\n/);
+    expect(sql).toContain(
+      "SELECT f.extracted_text INTO cv FROM candidate_matches m JOIN candidate_profiles cp ON cp.id = m.candidate_profile_id JOIN files f ON f.id = cp.current_cv_file_id WHERE m.id = 'dd7f35f1-7dae-40ec-870e-a8d2fed5d448';",
+    );
+    expect(sql).toContain(
+      `IF cv IS NULL OR md5(cv) <> '${md5}' THEN RAISE EXCEPTION 'offline rescore dd7f35f1-7dae-40ec-870e-a8d2fed5d448: CV text changed since export'; END IF;`,
+    );
+    before(sql, "md5(cv)", "UPDATE candidate_matches");
+    before(sql, "md5(cv)", "INSERT INTO tasks");
+  });
+
+  it("never clears a human-reviewed published score", () => {
+    const sql = refusal();
+    const guard =
+      "IF EXISTS (SELECT 1 FROM candidate_matches m JOIN score_runs r ON r.id = m.current_score_run_id WHERE m.id = 'dd7f35f1-7dae-40ec-870e-a8d2fed5d448' AND r.evaluation_method = 'human_adjusted') THEN RAISE EXCEPTION";
+    expect(sql).toContain(guard);
+    expect(sql).toContain(
+      "the published score is human-reviewed; an offline refusal never clears it",
+    );
+    before(sql, guard, "current_score_run_id = NULL");
+  });
+
+  it("a machine rescore never replaces a human-reviewed published score either", () => {
+    const out = offlineRescore(match(CV), ctx, {
+      run_id: "11111111-1111-4111-8111-111111111111",
+      trace_id: "sc_test",
+    });
+    if (out.kind !== "scored") throw new Error(out.kind);
+    const guard = "AND r.evaluation_method = 'human_adjusted') THEN RAISE EXCEPTION";
+    expect(out.sql).toContain(guard);
+    expect(out.sql).toContain(
+      "the published score is human-reviewed; a machine rescore never replaces it",
+    );
+    before(out.sql, guard, "UPDATE score_runs SET superseded_at");
+    before(out.sql, guard, "UPDATE candidate_matches SET current_score_run_id");
+  });
+
+  it("the runner keeps refusals apart, to be applied only for a match named explicitly", () => {
+    const runner = readFileSync(join(process.cwd(), "scripts/offline-rescore/run.ts"), "utf8");
+    expect(runner).toMatch(
+      /out\.kind === "no_dated_roles"[\s\S]*join\(outDir, "refusals", `\$\{m\.match_id\}\.sql`\)/,
+    );
+    expect(runner).toMatch(/apply one only for a match you have named explicitly/);
   });
 });

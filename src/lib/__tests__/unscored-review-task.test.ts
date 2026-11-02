@@ -11,28 +11,50 @@ import { ensureUnscoredReviewTask } from "@/lib/cv/unscored-review.server";
 
 type Row = Record<string, unknown>;
 
-/** The few supabase-js calls the helper makes, recorded. */
+/**
+ * The few supabase-js calls the helper makes, recorded. The tasks table
+ * applies the filters the helper sends to the rows it holds, so a test shows
+ * which existing tasks count as "already open".
+ */
 function fakeClient(opts: { match: Row | null; openTasks?: Row[]; failInsert?: boolean }) {
   const inserts: Row[] = [];
   const filters: unknown[][] = [];
-  const query = (result: { data: unknown; error: null }) => {
+  const matches = (row: Row, f: unknown[]) => {
+    const [k, col, val] = f as [string, string, unknown];
+    if (k === "eq") return row[col] === val;
+    if (k === "in") return (val as unknown[]).includes(row[col]);
+    if (k === "is") return (row[col] ?? null) === val;
+    if (k === "contains") {
+      const have = (row[col] ?? {}) as Row;
+      return Object.entries(val as Row).every(([key, v]) => have[key] === v);
+    }
+    return true;
+  };
+  const query = (rows: Row[] | null, single: boolean) => {
+    const own: unknown[][] = [];
     const q: Record<string, unknown> = {};
     for (const k of ["select", "eq", "in", "is", "contains", "limit"]) {
       q[k] = (...args: unknown[]) => {
         filters.push([k, ...args]);
+        own.push([k, ...args]);
         return q;
       };
     }
-    q.maybeSingle = async () => result;
+    const result = () => {
+      if (single) return { data: rows?.[0] ?? null, error: null };
+      const kept = (rows ?? []).filter((r) => own.every((f) => matches(r, f)));
+      return { data: kept.map(({ id }) => ({ id })), error: null };
+    };
+    q.maybeSingle = async () => result();
     q.then = (ok: (v: unknown) => unknown, ko: (e: unknown) => unknown) =>
-      Promise.resolve(result).then(ok, ko);
+      Promise.resolve(result()).then(ok, ko);
     return q;
   };
   const client = {
     from(table: string) {
-      if (table === "candidate_matches") return query({ data: opts.match, error: null });
+      if (table === "candidate_matches") return query(opts.match ? [opts.match] : null, true);
       if (table === "tasks") {
-        const q = query({ data: opts.openTasks ?? [], error: null });
+        const q = query(opts.openTasks ?? [], false);
         q.insert = async (row: Row) => {
           if (opts.failInsert) throw new Error("insert failed");
           inserts.push(row);
@@ -103,15 +125,57 @@ describe("ensureUnscoredReviewTask", () => {
         trace_id: "pl_test",
       },
     });
-    // The duplicate check looks for an open pipeline task on this match.
-    expect(filters).toContainEqual(["contains", "metadata", { source: "pipeline" }]);
+    // The duplicate check looks for any open candidate_review task on this
+    // match, whoever opened it.
+    expect(filters).toContainEqual(["eq", "candidate_match_id", PARKED.id]);
+    expect(filters).toContainEqual(["eq", "task_type", "candidate_review"]);
     expect(filters).toContainEqual(["in", "status", ["open", "in_progress"]]);
+    expect(filters.filter((f) => f[0] === "contains")).toEqual([]);
+  });
+
+  const task = (over: Row): Row => ({
+    id: "t1",
+    candidate_match_id: PARKED.id,
+    task_type: "candidate_review",
+    status: "open",
+    deleted_at: null,
+    metadata: { source: "pipeline" },
+    ...over,
   });
 
   it("reuses an open pipeline task instead of adding another", async () => {
-    const { client, inserts } = fakeClient({ match: PARKED, openTasks: [{ id: "t1" }] });
+    const { client, inserts } = fakeClient({ match: PARKED, openTasks: [task({})] });
     await ensureUnscoredReviewTask(client, OUTCOME);
     expect(inserts).toHaveLength(0);
+  });
+
+  it("reuses an open task from the second review or a backfill: one task per cause (review, 2 Nov 2026)", async () => {
+    // Live: 14 open candidate_review tasks from claude_second_review with
+    // reason unscored_without_task (Daim's fd9e380b among them), none from
+    // the pipeline. Re-parking such a match must not open a second task.
+    for (const metadata of [
+      { source: "claude_second_review", reason: "unscored_without_task" },
+      { source: "unscored_backfill", reason: "cv_employment_history_missing" },
+      {},
+    ]) {
+      const { client, inserts } = fakeClient({ match: PARKED, openTasks: [task({ metadata })] });
+      await ensureUnscoredReviewTask(client, OUTCOME);
+      expect(inserts).toHaveLength(0);
+    }
+  });
+
+  it("a closed, deleted, other-type or other-match task does not count as open", async () => {
+    for (const over of [
+      { status: "done" },
+      { status: "cancelled" },
+      { deleted_at: "2026-11-01T00:00:00Z" },
+      { task_type: "general_follow_up" },
+      { candidate_match_id: "another-match" },
+    ]) {
+      const { client, inserts } = fakeClient({ match: PARKED, openTasks: [task(over)] });
+      await ensureUnscoredReviewTask(client, OUTCOME);
+      expect(inserts).toHaveLength(1);
+    }
   });
 
   it("a match with a current score, or a skipped run, gets no task", async () => {

@@ -98,3 +98,79 @@ describe("a detached heading does not turn other dates into roles", () => {
     ).toEqual([]);
   });
 });
+
+describe("the detached-heading read survives heading words in a sentence (review, 2 Nov 2026)", () => {
+  // Heading words in Title Case are split onto their own line wherever they
+  // stand, so a profile sentence used to end the body before the roles.
+  const ROLE = "HERD MANAGER – EXAMPLE FARM | 07/2025 – 10/2026 • Ran the herd";
+  const LABELS = "ABOUT ME WORK EXPERIENCE EDUCATION AND TRAINING";
+  const ONE_ROLE = [{ start: month(2025, 7), end: month(2026, 10) }];
+
+  it.each([
+    ["Skills", "CANDIDATE Communication Skills and teamwork."],
+    ["Languages", "CANDIDATE Fluent in two Languages and good with people."],
+    ["Qualifications", "CANDIDATE Holds Qualifications in herd care."],
+    ["a Europass sub-label", "CANDIDATE Job-related Skills Communication Skills"],
+    ["Experience", "CANDIDATE Ten years of hands-on Experience with herds."],
+  ])("%s in the profile above the roles", (_word, profile) => {
+    expect(employmentIntervals(`${profile} ${ROLE} ${LABELS}`, ASSESSED)).toEqual(ONE_ROLE);
+  });
+
+  it("and the same CV with its line breaks", () => {
+    const cv = [
+      "CANDIDATE",
+      "Communication Skills and teamwork.",
+      ROLE,
+      "ABOUT ME",
+      "WORK EXPERIENCE",
+      "EDUCATION AND TRAINING",
+    ].join("\n");
+    expect(employmentIntervals(cv, ASSESSED)).toEqual(ONE_ROLE);
+  });
+
+  it("the body ends where the run of section labels begins, so dates below it stay out", () => {
+    const cv = `CANDIDATE ${ROLE} ${LABELS} Driving Licence: B 2019 – 2020 LANGUAGE SKILLS`;
+    expect(employmentIntervals(cv, ASSESSED)).toEqual(ONE_ROLE);
+  });
+});
+
+describe("degrees and school-leaving courses above a detached heading are not roles (review, 2 Nov 2026)", () => {
+  const LABELS = "ABOUT ME WORK EXPERIENCE EDUCATION AND TRAINING";
+
+  it.each([
+    ["BA (Hons)", "BA (Hons) Marketing, Leeds Beckett 2012 – 2015"],
+    ["B.A.", "B.A. English Literature 2012 – 2015"],
+    ["MA", "MA Marketing 2012 – 2013"],
+    ["BEng", "BEng Mechanical Engineering 2010 – 2014"],
+    ["MEng", "MEng Civil Engineering 2010 – 2015"],
+    ["LLB", "LLB Law 2010 – 2013"],
+    ["Hons", "Marketing (Hons), Leeds Beckett 2012 – 2015"],
+    ["HND", "HND Agriculture 2010 – 2012"],
+    ["HNC", "HNC Engineering 2010 – 2011"],
+    ["B.Com", "B.Com Accounting 2009 – 2012"],
+    ["BCom", "BCom Accounting 2009 – 2012"],
+    ["A Levels", "A Levels: Biology, Chemistry 2007 – 2009"],
+    ["A-Levels", "A-Levels: Biology, Chemistry 2007 – 2009"],
+    ["the course after its dates", "2012 – 2015 BA (Hons) Marketing"],
+  ])("%s", (_token, entry) => {
+    expect(employmentIntervals(`CANDIDATE ${entry} ${LABELS}`, ASSESSED)).toEqual([]);
+  });
+
+  it("an education-only CV therefore stays without dated employment", () => {
+    const cv = `CANDIDATE BA (Hons) Marketing 2012 – 2015 A Levels 2010 – 2012 ${LABELS}`;
+    expect(employmentIntervals(cv, ASSESSED)).toEqual([]);
+    expect(yearsFromEmploymentDates(cv, ASSESSED)).toBeNull();
+  });
+
+  it("the same letters in a role are still a role", () => {
+    for (const role of [
+      "Brand Manager, Example Co, Boston, MA 2015 – 2019",
+      "Marketing Manager at a mushroom farm 2015 – 2019",
+      "Picking team leader, a level site 2015 – 2019",
+    ]) {
+      expect(employmentIntervals(`CANDIDATE ${role} ${LABELS}`, ASSESSED)).toEqual([
+        { start: month(2015, 1), end: month(2019, 12) },
+      ]);
+    }
+  });
+});

@@ -3,7 +3,15 @@
  *   npx tsx scripts/offline-rescore/run.ts <export.json> <out-dir> [reason]
  * <export.json> is the document export.sql returns (the bare object, or a
  * query result wrapping it as rows[0].doc). Writes one <match_id>.sql per
- * match plus summary.json; run each .sql against the database.
+ * scored match plus summary.json; run each of those .sql files against the
+ * database.
+ *
+ * A match the engine refuses (no dated roles) gets refusals/<match_id>.sql
+ * instead. It clears the match's score pointer and opens an admin task, so
+ * apply one only for a match you have named explicitly, never as part of
+ * "run every file": the live pipeline may have scored that match since the
+ * export. Both kinds refuse to write if the CV text has changed since the
+ * export, and a refusal never clears a human-reviewed published score.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -20,7 +28,12 @@ const ctx: OfflineContext = { position: doc.position, rubric: doc.rubric, role_f
 mkdirSync(outDir, { recursive: true });
 const summary = (doc.matches as OfflineMatch[]).map((m) => {
   const out = offlineRescore(m, ctx);
-  if ("sql" in out) writeFileSync(join(outDir, `${m.match_id}.sql`), out.sql + "\n");
+  if (out.kind === "no_dated_roles") {
+    mkdirSync(join(outDir, "refusals"), { recursive: true });
+    writeFileSync(join(outDir, "refusals", `${m.match_id}.sql`), out.sql + "\n");
+  } else if ("sql" in out) {
+    writeFileSync(join(outDir, `${m.match_id}.sql`), out.sql + "\n");
+  }
   const { sql: _sql, ...rest } = out as typeof out & { sql?: string };
   void _sql;
   return rest;
