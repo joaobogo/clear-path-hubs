@@ -19,6 +19,13 @@ type Any = any;
 const SELECT =
   "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location, requirements, preferred_requirements, dealbreakers";
 
+/**
+ * The queue embeds the screening questions the publish action reads
+ * separately, so a bundled dealbreaker (or a question stating a protected
+ * attribute) shows as a blocker on the desk instead of only at activation.
+ */
+export const QUEUE_SELECT = `${SELECT}, organizations(id, name, is_test_record), screening_questions(question,dealbreaker)`;
+
 /** Statuses where publishing is still the next meaningful step. */
 const UNPUBLISHED_STATUSES = ["draft", "submitted", "under_review", "needs_clarification", "approved"];
 
@@ -123,7 +130,7 @@ export async function loadPublishGateQueue(
 
   let q = admin
     .from("positions")
-    .select(`${SELECT}, organizations(id, name, is_test_record)`)
+    .select(QUEUE_SELECT)
     .in("status", UNPUBLISHED_STATUSES)
     .order("created_at", { ascending: true })
     .limit(300);

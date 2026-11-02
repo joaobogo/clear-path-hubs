@@ -14,7 +14,11 @@ import { PositionSourceQualityPanel } from "@/components/admin/source-quality-pa
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
 import { PositionOfferTrackingPanel } from "@/components/admin/offer-hire-panel";
 import { CompoundDealbreakerNotice } from "@/components/positions/CompoundDealbreakerNotice";
-import { applyDealbreakerSplit, findCompoundDealbreakers } from "@/lib/positions/compound-dealbreaker";
+import {
+  applyDealbreakerSplit,
+  findCompoundDealbreakers,
+  keepAsOptionalQuestion,
+} from "@/lib/positions/compound-dealbreaker";
 
 import { Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -324,6 +328,7 @@ export function ScreeningEditor({ positionId, questions }: { positionId: string;
           const next = applyDealbreakerSplit(items, f);
           if (next) setItems(next);
         }}
+        onKeepOptional={(f) => setItems(keepAsOptionalQuestion(items, f))}
       />
 
       <ol className="space-y-3">

@@ -6,10 +6,7 @@ import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { assertNoQaContamination } from "@/lib/qa-guard";
-import {
-  compoundDealbreakerErrorMessage,
-  findCompoundDealbreakers,
-} from "@/lib/positions/compound-dealbreaker";
+import { compoundDealbreakerSignOffMessage } from "@/lib/positions/compound-dealbreaker";
 import {
   publishedScore,
   withVideoIntroBonus,
@@ -549,16 +546,16 @@ export const confirmRoleBlueprint = createServerFn({ method: "POST" })
     if (!before) throw new Error("Position not found");
 
     // Signing off the blueprint signs off its screening questions: a
-    // dealbreaker that bundles two requirements is split in the role editor
-    // first (the suggestion is in the message and on the editor).
+    // dealbreaker that bundles two requirements is fixed in the role editor
+    // first. The message names the step that works on this role: the split,
+    // or, at the question limit, keeping it as an optional question.
     const { data: questions } = await context.supabase
       .from("screening_questions")
-      .select("id,question,dealbreaker")
-      .eq("position_id", data.positionId);
-    const bundled = findCompoundDealbreakers((questions ?? []) as AnyRow[]);
-    if (bundled.length > 0) {
-      throw new Error(`${compoundDealbreakerErrorMessage(bundled)} Split it in the role editor, then confirm.`);
-    }
+      .select("id,question,dealbreaker,required,display_order")
+      .eq("position_id", data.positionId)
+      .order("display_order", { ascending: true });
+    const bundled = compoundDealbreakerSignOffMessage((questions ?? []) as AnyRow[]);
+    if (bundled) throw new Error(bundled);
 
     const { data: after, error } = await context.supabase
       .from("positions")

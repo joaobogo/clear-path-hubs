@@ -52,6 +52,7 @@ import { roleFormCriteriaFields } from "@/lib/positions/protected-criteria-field
 import {
   applyDealbreakerSplit,
   findCompoundDealbreakers,
+  keepAsOptionalQuestion,
   type CompoundDealbreakerFinding,
 } from "@/lib/positions/compound-dealbreaker";
 import {
@@ -354,7 +355,7 @@ export function PositionEditWizard({
       }
       if (blockingBundled.length > 0) {
         throw new Error(
-          "A dealbreaker asks for two requirements at once. Use “Split into two questions” above the Save button.",
+          "A dealbreaker asks for two requirements at once. Split it, or keep it as an optional question, using the notice above the Save button.",
         );
       }
       const all = allErrors(state);
@@ -1663,6 +1664,9 @@ export function PositionEditWizard({
               const next = splitDealbreaker(f);
               if (next) set("screening_questions", next);
             }}
+            onKeepOptional={(f) =>
+              set("screening_questions", keepAsOptionalQuestion(state.screening_questions, f))
+            }
           />
 
           <div className="flex flex-wrap items-center justify-between gap-3">

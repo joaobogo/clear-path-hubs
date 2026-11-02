@@ -184,14 +184,23 @@ export function humanizePublishBlockedMessage(message: string): string {
   }
   if (hasPayment) return "Approval blocked: payment or exemption required";
   if (hasRequirements) return "Approval blocked: add at least one must-have requirement";
-  if (inner.includes(PUBLISH_BLOCKER_LABEL.protected_criteria)) {
-    // The detail after the fixed sentence names each criterion and its rewrite.
+  // The detail after the fixed sentence names each criterion and its rewrite,
+  // and each bundled dealbreaker and its split, so the heading names every
+  // blocker the detail covers.
+  const hasProtected = inner.includes(PUBLISH_BLOCKER_LABEL.protected_criteria);
+  const hasBundled = inner.includes(PUBLISH_BLOCKER_LABEL.compound_dealbreaker);
+  if (hasProtected || hasBundled) {
     const tail = message.split("publishing is not bypassable.")[1]?.trim();
-    return `Approval blocked: a hiring criterion states a protected attribute.${tail ? ` ${tail}` : " Open the role editor to see the suggested wording."}`;
-  }
-  if (inner.includes(PUBLISH_BLOCKER_LABEL.compound_dealbreaker)) {
-    const tail = message.split("publishing is not bypassable.")[1]?.trim();
-    return `Approval blocked: a dealbreaker screening question asks for two requirements at once.${tail ? ` ${tail}` : " Open the role editor to split it."}`;
+    const heading =
+      hasProtected && hasBundled
+        ? "Approval blocked: a hiring criterion states a protected attribute, and a dealbreaker screening question asks for two requirements at once."
+        : hasProtected
+          ? "Approval blocked: a hiring criterion states a protected attribute."
+          : "Approval blocked: a dealbreaker screening question asks for two requirements at once.";
+    const fallback = hasProtected
+      ? " Open the role editor to see the suggested wording."
+      : " Open the role editor to split it.";
+    return `${heading}${tail ? ` ${tail}` : fallback}`;
   }
   if (hasApproval) return "Approval blocked: not approved for publishing yet";
 
