@@ -14,6 +14,8 @@
  *    raw rows are never handed to the browser for client-side CSV building.
  */
 
+import { bandToFitLabel, SCORE_BAND_KEYS, type ScoreBandKey } from "./scoring/bands";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
 
@@ -92,6 +94,20 @@ function maskPhone(value: unknown): string {
   return digits.length <= 2 ? "••" : `••••${digits.slice(-2)}`;
 }
 
+/**
+ * The view's score_band and the run's fit_label are stored without the
+ * intro-video bonus, so a candidate shown "73 · strong" exported as consider /
+ * worth_considering. The file writes the published band (migration 0011) and
+ * the fit label derived from it, as every surface lets the score decide.
+ */
+export function withPublishedBand<T extends Record<string, unknown>>(row: T): T {
+  const raw = String(row.published_band ?? "");
+  const band: ScoreBandKey = (SCORE_BAND_KEYS as readonly string[]).includes(raw)
+    ? (raw as ScoreBandKey)
+    : "unscored";
+  return { ...row, score_band: band, fit_label: bandToFitLabel(band) };
+}
+
 function csvCell(value: unknown): string {
   if (value === null || value === undefined) return "";
   const s = String(value);
@@ -104,7 +120,8 @@ function applyFilters(q: Any, f: ExportFilters, scope: { positionIds: string[] }
   if (f.stage) q = q.eq("stage", f.stage);
   if (f.client_visibility) q = q.eq("client_visibility", f.client_visibility);
   if (f.recommendation) q = q.eq("recommendation", f.recommendation);
-  if (f.score_band) q = q.eq("score_band", f.score_band);
+  // The band a row displays includes the intro-video bonus; so does this one.
+  if (f.score_band) q = q.eq("published_band", f.score_band);
   if (f.date_from) q = q.gte("created_at", f.date_from);
   if (f.date_to) q = q.lte("created_at", f.date_to);
   // Test/internal records follow the same global rule as every admin list.
@@ -188,13 +205,15 @@ export async function runExportJob(
     const { loadTestScope } = await import("./admin-test-scope.server");
     const scope = await loadTestScope(s);
 
-    const select = [...BASE_COLUMNS, ...CONTACT_COLUMNS, "contact_released"].join(",");
+    const select = [...BASE_COLUMNS, ...CONTACT_COLUMNS, "contact_released", "published_band"].join(
+      ",",
+    );
     let q = s.from("v_admin_candidate_index").select(select, { count: "exact" });
     q = applyFilters(q, filters, { positionIds: scope.positionIds });
     q = q.order("created_at", { ascending: false }).limit(EXPORT_ROW_CAP);
     const { data: rows, count, error } = await q;
     if (error) throw new Error(error.message);
-    const list = (rows ?? []) as Any[];
+    const list = ((rows ?? []) as Any[]).map(withPublishedBand);
 
     const withheld = list.filter((r) => r.contact_released !== true).length;
     const requested = filters.include_contact === true;

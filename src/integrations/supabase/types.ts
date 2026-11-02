@@ -14532,6 +14532,8 @@ export type Database = {
           position_title: string | null
           processing_state: string | null
           profile_updated_at: string | null
+          published_band: string | null
+          published_score: number | null
           recommendation: string | null
           region: string | null
           score: number | null
