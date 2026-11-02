@@ -33,6 +33,7 @@ import { sanitizeInlineMarkup, stripInlineMarkup } from "@/lib/marketing/inline-
 import { assertRoleFormCriteriaAllowed } from "@/lib/positions/protected-criteria-guard";
 import { assertNoProtectedCriteria } from "@/lib/scoring/protected-attributes";
 import { postingCopyFields } from "@/lib/positions/protected-criteria-fields";
+import { assertNoCompoundDealbreakers } from "@/lib/positions/compound-dealbreaker";
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -198,6 +199,15 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     // one-click "Use suggested wording". Never rewritten here.
     assertRoleFormCriteriaAllowed(data);
 
+    // A dealbreaker asks for one requirement. A new or reworded one that
+    // bundles two ("X as well as Y") is refused with the suggested split; a
+    // dealbreaker already stored with the same wording never blocks the save.
+    const { data: existingSQ } = await s
+      .from("screening_questions")
+      .select(SQ_SNAPSHOT)
+      .eq("position_id", data.id);
+    assertNoCompoundDealbreakers(data.screening_questions, { stored: (existingSQ ?? []) as AnyRow[] });
+
     // Preserve unknown intake_context/compensation/work_authorization fields
     const { data: existing } = await s
       .from("positions")
@@ -266,10 +276,6 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     // Sync screening questions: delete removed, upsert kept/new, keep order
-    const { data: existingSQ } = await s
-      .from("screening_questions")
-      .select(SQ_SNAPSHOT)
-      .eq("position_id", data.id);
     const existingIds = new Set(((existingSQ ?? []) as AnyRow[]).map((r) => r.id));
     const keepIds = new Set(
       data.screening_questions.map((q) => q.id).filter((v): v is string => !!v),

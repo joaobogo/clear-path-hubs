@@ -13,6 +13,8 @@ import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-c
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
 import { RejectionReasonsPanel } from "@/components/admin/rejection-reasons-panel";
 import { PositionOfferTrackingPanel } from "@/components/admin/offer-hire-panel";
+import { CompoundDealbreakerNotice } from "@/components/positions/CompoundDealbreakerNotice";
+import { applyDealbreakerSplit, findCompoundDealbreakers } from "@/lib/positions/compound-dealbreaker";
 
 import { Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -281,6 +283,9 @@ export function ScreeningEditor({ positionId, questions }: { positionId: string;
   const remove = (i: number) => setItems((xs) => xs.filter((_, idx) => idx !== i));
   const patch = (i: number, next: Partial<LocalQ>) =>
     setItems((xs) => xs.map((q, idx) => (idx === i ? { ...q, ...next } : q)));
+  // A dealbreaker that asks for two requirements at once, with its split.
+  // The server refuses a new or reworded one; a saved one is listed here.
+  const bundled = useMemo(() => findCompoundDealbreakers(items), [items]);
 
   return (
     <div className="space-y-3">
@@ -311,6 +316,15 @@ export function ScreeningEditor({ positionId, questions }: { positionId: string;
           No screening questions yet. Add one to gate applications.
         </div>
       )}
+
+      <CompoundDealbreakerNotice
+        findings={bundled}
+        canApply={(f) => applyDealbreakerSplit(items, f) !== null}
+        onApply={(f) => {
+          const next = applyDealbreakerSplit(items, f);
+          if (next) setItems(next);
+        }}
+      />
 
       <ol className="space-y-3">
         {items.map((q, i) => (

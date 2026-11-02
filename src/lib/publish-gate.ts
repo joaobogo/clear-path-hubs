@@ -12,6 +12,7 @@
  */
 import { PAYMENTS_ENABLED } from "@/config/commerce";
 import { storedPositionProtectedCriteria } from "@/lib/positions/protected-criteria-fields";
+import { findCompoundDealbreakers } from "@/lib/positions/compound-dealbreaker";
 
 export type PublishBlocker =
   | "payment_unpaid"
@@ -23,7 +24,8 @@ export type PublishBlocker =
   | "missing_seniority"
   | "missing_location"
   | "missing_requirements"
-  | "protected_criteria";
+  | "protected_criteria"
+  | "compound_dealbreaker";
 
 export const PUBLISH_BLOCKER_LABEL: Record<PublishBlocker, string> = {
   payment_unpaid: "Payment not complete",
@@ -37,6 +39,7 @@ export const PUBLISH_BLOCKER_LABEL: Record<PublishBlocker, string> = {
   missing_requirements: "At least one requirement is needed to score candidates",
   protected_criteria:
     "A requirement, deal-breaker or screening question states a protected attribute (nationality, age, gender…)",
+  compound_dealbreaker: "A dealbreaker screening question asks for two requirements at once",
 };
 
 /** Field on the position edit form that resolves each blocker, when there is one. */
@@ -67,8 +70,8 @@ export type PublishGateInput = {
   requirements?: unknown;
   preferred_requirements?: unknown;
   dealbreakers?: unknown;
-  /** Screening question text, when the caller loaded it. */
-  screening_questions?: ReadonlyArray<{ question?: string | null }> | null;
+  /** Screening question text and dealbreaker flag, when the caller loaded them. */
+  screening_questions?: ReadonlyArray<{ question?: string | null; dealbreaker?: boolean | null }> | null;
 };
 
 /**
@@ -117,6 +120,10 @@ export function evaluatePublishGate(p: PublishGateInput): PublishBlocker[] {
   // A criterion that sets a condition on nationality, age, gender and the
   // like can't go live: the role editor names each one with a rewrite.
   if (storedPositionProtectedCriteria(p).length > 0) blockers.push("protected_criteria");
+
+  // A dealbreaker that bundles two requirements excludes a candidate who has
+  // one of them; it is split before the role goes live.
+  if (findCompoundDealbreakers(p.screening_questions).length > 0) blockers.push("compound_dealbreaker");
 
   // Approval is a workflow gate, not a data gate: only mention it once the
   // role is otherwise ready, so the list surfaces the real work first.
@@ -181,6 +188,10 @@ export function humanizePublishBlockedMessage(message: string): string {
     // The detail after the fixed sentence names each criterion and its rewrite.
     const tail = message.split("publishing is not bypassable.")[1]?.trim();
     return `Approval blocked: a hiring criterion states a protected attribute.${tail ? ` ${tail}` : " Open the role editor to see the suggested wording."}`;
+  }
+  if (inner.includes(PUBLISH_BLOCKER_LABEL.compound_dealbreaker)) {
+    const tail = message.split("publishing is not bypassable.")[1]?.trim();
+    return `Approval blocked: a dealbreaker screening question asks for two requirements at once.${tail ? ` ${tail}` : " Open the role editor to split it."}`;
   }
   if (hasApproval) return "Approval blocked: not approved for publishing yet";
 

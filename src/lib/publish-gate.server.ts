@@ -11,6 +11,7 @@ import {
 } from "./publish-gate";
 import { isQaFixtureTitle } from "./client/test-record-filter";
 import { storedCriteriaPublishDetail } from "./positions/protected-criteria-guard";
+import { compoundDealbreakerMessage, findCompoundDealbreakers } from "./positions/compound-dealbreaker";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -69,10 +70,11 @@ export async function assertPositionPublishable(admin: Any, positionId: string):
   if (error) throw new Error(error.message);
   if (!data) throw new Error("position_not_found");
   // Screening questions are read too: a question can ask for a protected
-  // attribute as easily as a requirement can state one.
+  // attribute as easily as a requirement can state one, and a dealbreaker
+  // can bundle two requirements.
   const { data: questions } = await admin
     .from("screening_questions")
-    .select("question")
+    .select("question,dealbreaker")
     .eq("position_id", positionId);
   const row = { ...data, screening_questions: questions ?? [] };
   const blockers = evaluatePublishGate(toGateInput(row)).filter((b) => b !== "not_approved");
@@ -81,7 +83,12 @@ export async function assertPositionPublishable(admin: Any, positionId: string):
     const detail = blockers.includes("protected_criteria")
       ? storedCriteriaPublishDetail({ ...row, title: data.title ?? null })
       : null;
-    throw new Error(publishBlockedMessage(blockers) + (detail ? ` ${detail}` : ""));
+    // Name each bundled dealbreaker and its suggested split.
+    const bundled = blockers.includes("compound_dealbreaker")
+      ? compoundDealbreakerMessage(findCompoundDealbreakers(row.screening_questions))
+      : null;
+    const details = [detail, bundled].filter(Boolean).join(" ");
+    throw new Error(publishBlockedMessage(blockers) + (details ? ` ${details}` : ""));
   }
 }
 
