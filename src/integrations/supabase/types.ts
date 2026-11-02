@@ -478,6 +478,9 @@ export type Database = {
           portfolio_url: string | null
           position_id: string
           question_version: number
+          screening_invite_error_code: string | null
+          screening_invite_sent_at: string | null
+          screening_invite_status: string | null
           source: string | null
           source_campaign: string | null
           source_channel: string | null
@@ -523,6 +526,9 @@ export type Database = {
           portfolio_url?: string | null
           position_id: string
           question_version?: number
+          screening_invite_error_code?: string | null
+          screening_invite_sent_at?: string | null
+          screening_invite_status?: string | null
           source?: string | null
           source_campaign?: string | null
           source_channel?: string | null
@@ -568,6 +574,9 @@ export type Database = {
           portfolio_url?: string | null
           position_id?: string
           question_version?: number
+          screening_invite_error_code?: string | null
+          screening_invite_sent_at?: string | null
+          screening_invite_status?: string | null
           source?: string | null
           source_campaign?: string | null
           source_channel?: string | null

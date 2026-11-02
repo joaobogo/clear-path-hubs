@@ -42,13 +42,15 @@ async function admin() {
   return supabaseAdmin;
 }
 
-async function findApplication(reference: string, email: string) {
+/** Reference (id prefix) + the email on the application, or null. Shared by
+ *  every reference-verified candidate action, screening answers included. */
+export async function findApplication(reference: string, email: string) {
   const db = await admin();
   const prefix = reference.toLowerCase();
   const { data: rows, error } = await db
     .from("applications")
     .select(
-      "id,applied_at,updated_at,status,withdrawn_at,candidate_profile_id," +
+      "id,applied_at,updated_at,status,withdrawn_at,candidate_profile_id,position_id," +
         "positions(title,status,organizations(name))," +
         "candidate_profiles!inner(full_name,email)," +
         "candidate_matches(stage,client_visibility,updated_at)",

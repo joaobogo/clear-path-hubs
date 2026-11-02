@@ -7,7 +7,8 @@
 //
 // Body:
 //   { match_id: uuid }   → run pipeline for that match
-//   { drain: true }      → drain queued/stuck matches (used by cron)
+//   { drain: true }      → drain queued/stuck matches (used by cron), then send
+//                          due screening-question invitations
 //   { }                  → equivalent to drain: true, limit 5
 
 import { createFileRoute } from "@tanstack/react-router";
@@ -54,7 +55,17 @@ export const Route = createFileRoute("/api/public/pipeline/run")({
           return Response.json({ ok: true, outcome: out });
         }
         const out = await drainQueue({ limit: "limit" in parsed.data ? parsed.data.limit : 5 });
-        return Response.json({ ok: true, ...out });
+        // Applications that skipped the apply form get the screening-question
+        // link once (see candidate/screening-invite.server). Never fails the drain.
+        let screening_invites: unknown = null;
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { runScreeningInvites } = await import("@/lib/candidate/screening-invite.server");
+          screening_invites = await runScreeningInvites(supabaseAdmin);
+        } catch (err) {
+          console.error("[pipeline/run] screening invites failed", (err as Error)?.message);
+        }
+        return Response.json({ ok: true, ...out, screening_invites });
       },
     },
   },
