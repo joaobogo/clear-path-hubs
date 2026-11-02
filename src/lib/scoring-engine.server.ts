@@ -19,6 +19,11 @@ import { expandTerm } from "./scoring/term-synonyms";
 import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
 import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
 import { asBoolean } from "./scoring/eligibility";
+import {
+  exceptedQuestionIds,
+  reviewedQuestionIds,
+  type StoredEligibilityCheck,
+} from "./scoring/recruiter-review";
 import { normaliseLetterSpacing } from "./cv/letter-spacing";
 
 export { ENGINE_VERSION, EVALUATION_METHOD };
@@ -131,6 +136,28 @@ export interface ScoringResult {
     question_id: string;
     question: string;
     normalized_value: string;
+  }>;
+  /**
+   * Dealbreaker answers that would disqualify but a recruiter excepted
+   * (eligibility_checks recruiter_review:* with status 'excepted'). They are
+   * not in disqualifying_answers and do not cap the score; the answer still
+   * counts as a gap.
+   */
+  recruiter_exceptions: Array<{
+    question_id: string;
+    question: string;
+    normalized_value: string;
+  }>;
+  /**
+   * Dealbreakers answered "yes" whose linked must-have(s) the CV gives no
+   * evidence for, judged on the requirement rows before any screening credit.
+   * A flag for recruiter review only: never a gate, never a score change.
+   */
+  unverified_screening_claims: Array<{
+    question_id: string;
+    question: string;
+    /** The linked requirements the CV does not evidence. */
+    requirements: string[];
   }>;
   /**
    * The specific answer/requirement pairs behind a screening_contradicts_cv
@@ -435,10 +462,13 @@ export function computeInputHash(parts: {
   screening: ScreeningAnswer[];
   /** Recorded profile location; it can decide a relocation requirement. */
   candidate_location?: string | null;
+  /** Dealbreaker answers a recruiter excepted; they change the result. */
+  recruiter_exceptions?: string[];
 }): string {
   // Fields added after v1.6 are included only when set, so a run without
   // them keeps the hash it always had.
   const loc = (parts.candidate_location ?? "").trim().toLowerCase();
+  const exceptions = [...new Set(parts.recruiter_exceptions ?? [])].sort();
   const canon = JSON.stringify({
     v: parts.engine_version,
     cal: parts.calibration_version ?? DEFAULT_CALIBRATION.calibration_version,
@@ -455,6 +485,7 @@ export function computeInputHash(parts: {
       }))
       .sort((a, b) => a.q.localeCompare(b.q)),
     ...(loc ? { loc } : {}),
+    ...(exceptions.length ? { x: exceptions } : {}),
   });
   return `${fnv1a(canon)}-${canon.length.toString(16)}`;
 }
@@ -572,6 +603,11 @@ export function scoreCandidate(input: {
   as_of?: Date;
   /** Explicit calibration (tests, replay of a historical run). */
   calibration?: EngineCalibration;
+  /**
+   * The match's stored eligibility_checks rows. Only recruiter decisions
+   * (recruiter_review:*) are read: see scoring/recruiter-review.ts.
+   */
+  eligibility_checks?: StoredEligibilityCheck[] | null;
 }): ScoringResult {
   input = {
     ...input,
@@ -584,6 +620,12 @@ export function scoreCandidate(input: {
   const cv = input.cv_text ?? "";
   const cal = input.calibration ?? resolveCalibration(input.role_family);
   const engine_version = ENGINE_VERSION;
+
+  // A recruiter decision always wins over the answer (recruiter_review:*).
+  // An excepted dealbreaker answer does not disqualify; it is still a gap.
+  const excepted = exceptedQuestionIds(input.eligibility_checks);
+  const dealbreakerHits = input.screening.filter(isDisqualifying);
+  const exceptedAnswers = dealbreakerHits.filter((s) => excepted.has(s.question_id));
   const input_hash = computeInputHash({
     engine_version,
     calibration_version: cal.calibration_version,
@@ -591,6 +633,7 @@ export function scoreCandidate(input: {
     requirements: input.requirements,
     screening: input.screening,
     candidate_location: input.candidate_location ?? null,
+    recruiter_exceptions: exceptedAnswers.map((s) => s.question_id),
   });
   const completed_at = new Date().toISOString();
 
@@ -977,7 +1020,7 @@ export function scoreCandidate(input: {
     aligned: screeningAlignment(s, cv),
   }));
 
-  const disqualifyingAnswers = input.screening.filter(isDisqualifying);
+  const disqualifyingAnswers = dealbreakerHits.filter((s) => !excepted.has(s.question_id));
   const disqualified = disqualifyingAnswers.length > 0;
   const disqualifyingQuestions = disqualifyingAnswers.map(
     (s) => (s.question || "").trim() || `question ${s.question_id}`,
@@ -1007,22 +1050,69 @@ export function scoreCandidate(input: {
   // rule-based "missing" that quotes the CV stays missing and is recorded as
   // a contradiction with the answer.
   const contradiction_rows: ScoringResult["contradiction_rows"] = [];
+  const meaningful = (text: string) =>
+    tokenize(text).filter((t) => t.length >= 4 && !REQUIREMENT_FRAMING.has(t));
+  // A question linked to a must-have speaks for that must-have; an unlinked
+  // one for any requirement it shares two content words with.
+  const linkedRequired = (s: ScreeningAnswer) => {
+    const linkText = (s.must_have ?? "").trim();
+    const qTokens = new Set(meaningful(linkText || s.question || ""));
+    const out: Array<{ a: RequirementAssessment; overlap: Set<string> }> = [];
+    if (qTokens.size === 0) return { linkText, links: out };
+    for (const a of assessment) {
+      if (!a.required) continue;
+      const overlap = new Set(meaningful(a.text).filter((t) => qTokens.has(t)));
+      if (overlap.size >= 2 || (linkText !== "" && sameConcept(linkText, a.text))) {
+        out.push({ a, overlap });
+      }
+    }
+    return { linkText, links: out };
+  };
+  // A rule that read the CV and quoted a clear "no" (a degree in an unrelated
+  // subject) is a conflict with the answer, not a gap it fills.
+  const ruleSaysNo = (a: RequirementAssessment) =>
+    a.status === "missing" &&
+    a.matched_terms.some((t) => t.startsWith("rule:")) &&
+    a.evidence.length > 0;
+
+  // Unverified screening claims. A dealbreaker answered "yes" clears the gate,
+  // but when the CV gives no evidence for the must-have the question covers,
+  // the claim rests on the answer alone and a recruiter should confirm it.
+  // Judged on the rows as the CV left them — before the answer's own credit
+  // below — and only from CV-sourced evidence. A flag, never a gate: it does
+  // not move the score or eligibility. A recruiter decision on the question
+  // (recruiter_review:*) means it has been looked at, so no flag.
+  const reviewed = reviewedQuestionIds(input.eligibility_checks);
+  const unverified_screening_claims: ScoringResult["unverified_screening_claims"] = [];
+  for (const s of input.screening) {
+    if (!s.disqualifying_condition || s.answer_type !== "boolean") continue;
+    if (normalizeScreeningValue(s) !== "yes" || isDisqualifying(s)) continue;
+    if (reviewed.has(s.question_id)) continue;
+    const unbacked = linkedRequired(s)
+      .links.map(({ a }) => a)
+      .filter(
+        (a) =>
+          // Contradictions are recorded separately, as a conflict.
+          a.status !== "contradicted" &&
+          !ruleSaysNo(a) &&
+          !(
+            (a.status === "met" || a.status === "partial") &&
+            a.evidence.some((e) => e.source === "cv")
+          ),
+      );
+    if (unbacked.length === 0) continue;
+    unverified_screening_claims.push({
+      question_id: s.question_id,
+      question: (s.question || "").trim() || `question ${s.question_id}`,
+      requirements: unbacked.map((a) => a.text),
+    });
+  }
+
   if (!disqualified) {
-    const meaningful = (text: string) =>
-      tokenize(text).filter((t) => t.length >= 4 && !REQUIREMENT_FRAMING.has(t));
     for (const s of input.screening) {
       if (s.answer_type !== "boolean" || normalizeScreeningValue(s) !== "yes") continue;
-      // A question linked to a must-have speaks for that must-have; an
-      // unlinked one for any requirement it shares two content words with.
-      const linkText = (s.must_have ?? "").trim();
-      const qTokens = new Set(meaningful(linkText || s.question || ""));
-      if (qTokens.size === 0) continue;
-      for (const a of assessment) {
-        if (!a.required) continue;
-        const overlap = new Set(meaningful(a.text).filter((t) => qTokens.has(t)));
-        const linked =
-          overlap.size >= 2 || (linkText !== "" && sameConcept(linkText, a.text));
-        if (!linked) continue;
+      const { linkText, links } = linkedRequired(s);
+      for (const { a, overlap } of links) {
         const ref: EvidenceRef = {
           requirement_id: a.id,
           requirement_text: a.text,
@@ -1031,13 +1121,7 @@ export function scoreCandidate(input: {
           snippet: `Answered yes to: "${s.question}"`,
           location: `screening:${s.question_id}`,
         };
-        // A rule that read the CV and quoted a clear "no" (a degree in an
-        // unrelated subject) is a conflict with the answer, not a gap it fills.
-        const ruleSaysNo =
-          a.status === "missing" &&
-          a.matched_terms.some((t) => t.startsWith("rule:")) &&
-          a.evidence.length > 0;
-        if (a.status === "contradicted" || ruleSaysNo) {
+        if (a.status === "contradicted" || ruleSaysNo(a)) {
           contradiction_rows.push({
             question_id: s.question_id,
             question: s.question,
@@ -1253,6 +1337,15 @@ export function scoreCandidate(input: {
             ? `Contradicting evidence for required: ${a.text}`
             : `Partly evidenced — worth confirming: ${a.text}`,
     );
+  // Recruiter-review items lead the list, ahead of the requirement rows.
+  concerns.unshift(
+    ...exceptedAnswers.map((s) => {
+      const v = normalizeScreeningValue(s);
+      const answered = v === "no" ? "no" : `"${v}"`;
+      return `Dealbreaker answered ${answered}; recruiter exception recorded: ${(s.question || "").trim() || `question ${s.question_id}`}`;
+    }),
+    ...unverified_screening_claims.map((c) => `Screening claim unverified: ${c.question}`),
+  );
   if (contradiction_status !== "none") {
     // Name the conflicting pair — an unexplained flag cannot be resolved.
     const named = contradiction_rows
@@ -1310,6 +1403,12 @@ export function scoreCandidate(input: {
       question: a.question,
       normalized_value: normalizeScreeningValue(a),
     })),
+    recruiter_exceptions: exceptedAnswers.map((a) => ({
+      question_id: a.question_id,
+      question: a.question,
+      normalized_value: normalizeScreeningValue(a),
+    })),
+    unverified_screening_claims,
     contradiction_rows,
     evidence_substance: substance,
     completed_at,

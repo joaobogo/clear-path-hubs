@@ -44,6 +44,12 @@ import type { Json } from "@/integrations/supabase/types";
 import { randomUUID } from "crypto";
 import { employmentIntervals } from "./cv/employment-dates";
 import { dealbreakerCondition } from "./scoring/eligibility";
+import {
+  ENGINE_CHECK_KEY_PREFIXES,
+  engineCheckRows,
+  resolveScoredEligibility,
+  type StoredEligibilityCheck,
+} from "./scoring/recruiter-review";
 
 
 export const SCORING_BLUEPRINT_VERSION = "taasflow-blueprint-v1.0.0";
@@ -106,7 +112,7 @@ async function loadInputs(matchId: string) {
     .maybeSingle();
   if (!match) throw new Error("match_not_found");
 
-  const [posRes, profRes, ansRes] = await Promise.all([
+  const [posRes, profRes, ansRes, checksRes] = await Promise.all([
     s.from("positions")
       .select("id,status,requirements,preferred_requirements,title,organization_id")
       .eq("id", match.position_id).maybeSingle(),
@@ -116,7 +122,14 @@ async function loadInputs(matchId: string) {
     s.from("application_answers")
       .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have)")
       .eq("application_id", match.application_id),
+    // Recruiter decisions (recruiter_review:*) feed the engine and win over
+    // the answers.
+    s.from("eligibility_checks")
+      .select("qualifier_key,status,evidence")
+      .eq("candidate_match_id", matchId),
   ]);
+  if (checksRes.error) throw new Error(`eligibility_check_read_failed: ${checksRes.error.message}`);
+  const eligibilityChecks = (checksRes.data ?? []) as StoredEligibilityCheck[];
 
   const cvFile = profRes.data?.current_cv_file_id
     ? (await s.from("files")
@@ -163,7 +176,7 @@ async function loadInputs(matchId: string) {
     };
   });
 
-  return { match, position: posRes.data, profile: profRes.data, cvFile, requirements, screening };
+  return { match, position: posRes.data, profile: profRes.data, cvFile, requirements, screening, eligibilityChecks };
 }
 
 /**
@@ -478,6 +491,7 @@ export async function executeScoring(
       screening: ctx.screening,
       candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
       calibration,
+      eligibility_checks: ctx.eligibilityChecks,
     });
 
     // 7) Reconcile caps.
@@ -521,6 +535,7 @@ export async function executeScoring(
           requirements: ctx.requirements,
           screening: ctx.screening,
           role_family: roleFamily,
+          recruiter_exceptions: raw.recruiter_exceptions.map((x) => x.question_id),
         }),
         evaluation_method: EVALUATION_METHOD,
         applied_caps: rec.applied_caps,
@@ -615,20 +630,22 @@ export async function executeScoring(
     // other question is weighed by the scorer, never a gate: reading every
     // misaligned yes/no answer here marked candidates ineligible for a
     // nice-to-have (no Arabic on a role where Arabic is preferred).
-    const disqualifying = raw.disqualifying_answers;
-    const checks = disqualifying.map((d) => ({
+    //
+    // A recruiter decision (recruiter_review:*) always wins: 'failed' is
+    // not_eligible whatever the answers, 'excepted' lifts that dealbreaker
+    // answer. Those rows are read here, never written or deleted. The
+    // engine's own rows are disq:* (a dealbreaker that disqualifies) and
+    // screening_claim_unverified:* (a "yes" the CV does not back: a flag for
+    // review with status 'unknown', never a gate).
+    const decision = resolveScoredEligibility({
+      disqualifying_answers: raw.disqualifying_answers,
+      eligibility_checks: ctx.eligibilityChecks,
+    });
+    const checks = engineCheckRows(raw).map((c) => ({
+      ...c,
       candidate_match_id: matchId,
       organization_id: ctx.match.organization_id,
       position_id: ctx.match.position_id,
-      qualifier_key: `disq:${d.question_id}`,
-      qualifier_label: d.question,
-      qualifier_kind: "disqualifier",
-      // eligibility_checks.status accepts passed / failed / unknown / excepted.
-      // The old "not_eligible" was rejected by that check on every write, and
-      // the error was never read, so no exclusion ever left a record.
-      status: "failed",
-      reason: `Dealbreaker answer: ${d.normalized_value}`,
-      evidence: { question_id: d.question_id, value: d.normalized_value },
       updated_at: new Date().toISOString(),
     }));
     if (checks.length > 0) {
@@ -638,16 +655,19 @@ export async function executeScoring(
       if (checkErr) throw new Error(`eligibility_check_write_failed: ${checkErr.message}`);
     }
     // A dealbreaker answer that no longer disqualifies (the question was
-    // changed, or the answer corrected) must not leave a failed check behind.
-    const eligibilityStatus = disqualifying.length > 0 ? "not_eligible" : "eligible";
+    // changed, the answer corrected, or a recruiter excepted it) and a claim
+    // the CV now backs must not leave their rows behind.
+    const eligibilityStatus = decision.status;
     const keep = checks.map((c) => c.qualifier_key);
-    let stale = s
-      .from("eligibility_checks")
-      .delete()
-      .eq("candidate_match_id", matchId)
-      .like("qualifier_key", "disq:%");
-    if (keep.length > 0) stale = stale.not("qualifier_key", "in", `(${keep.map((k) => `"${k}"`).join(",")})`);
-    await stale;
+    for (const prefix of ENGINE_CHECK_KEY_PREFIXES) {
+      let stale = s
+        .from("eligibility_checks")
+        .delete()
+        .eq("candidate_match_id", matchId)
+        .like("qualifier_key", `${prefix}%`);
+      if (keep.length > 0) stale = stale.not("qualifier_key", "in", `(${keep.map((k) => `"${k}"`).join(",")})`);
+      await stale;
+    }
 
     await s
       .from("candidate_matches")
@@ -666,7 +686,7 @@ export async function executeScoring(
         entity_id: matchId,
         action: "scoring.eligibility_changed",
         before_state: { eligibility_status: (ctx.match as Any).eligibility_status ?? null } as unknown as Json,
-        after_state: { eligibility_status: eligibilityStatus, position_id: ctx.match.position_id, checks: keep } as unknown as Json,
+        after_state: { eligibility_status: eligibilityStatus, position_id: ctx.match.position_id, checks: decision.decided_by } as unknown as Json,
         trace_id,
       });
     }

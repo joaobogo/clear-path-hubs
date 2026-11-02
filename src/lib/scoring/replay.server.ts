@@ -8,6 +8,7 @@
 
 import { scoreCandidate, type RequirementInput, type ScreeningAnswer } from "../scoring-engine.server";
 import { parseCalibration } from "./engine-calibration";
+import { RECRUITER_REVIEW_KEY_PREFIX } from "./recruiter-review";
 import {
   ReplaySnapshotSchema,
   diffReplay,
@@ -83,6 +84,10 @@ export async function replayScoreRun(runId: string): Promise<ReplayOutcome> {
     requirements: snapshot.requirements as RequirementInput[],
     screening: snapshot.screening as unknown as ScreeningAnswer[],
     calibration,
+    eligibility_checks: (snapshot.recruiter_exceptions ?? []).map((question_id) => ({
+      qualifier_key: `${RECRUITER_REVIEW_KEY_PREFIX}${question_id}`,
+      status: "excepted",
+    })),
   });
 
   // Prefer the fingerprint the engine itself recorded; fall back to the

@@ -45,6 +45,11 @@ export const ReplaySnapshotSchema = z.object({
   requirements: z.array(ReplayRequirementSchema),
   screening: z.array(ReplayScreeningSchema),
   role_family: z.string().nullable().default(null),
+  /**
+   * Dealbreaker answers a recruiter excepted (recruiter_review:*). Stored only
+   * when there are some, so older snapshots keep their exact shape.
+   */
+  recruiter_exceptions: z.array(z.string()).optional(),
 });
 
 export type ReplaySnapshot = z.infer<typeof ReplaySnapshotSchema>;
@@ -63,7 +68,9 @@ export function buildReplaySnapshot(input: {
     must_have?: string | null;
   }>;
   role_family?: string | null;
+  recruiter_exceptions?: string[];
 }): ReplaySnapshot {
+  const exceptions = [...new Set(input.recruiter_exceptions ?? [])].sort();
   return {
     cv_text: input.cv_text,
     requirements: input.requirements.map((r) => ({
@@ -82,6 +89,7 @@ export function buildReplaySnapshot(input: {
       must_have: s.must_have ?? null,
     })),
     role_family: input.role_family ?? null,
+    ...(exceptions.length ? { recruiter_exceptions: exceptions } : {}),
   };
 }
 

@@ -16,7 +16,11 @@ select json_build_object(
                     'q', json_build_object('question', q.question, 'answer_type', q.answer_type, 'required', q.required,
                          'dealbreaker', q.dealbreaker, 'preferred_answer', q.preferred_answer, 'must_have', q.must_have))), '[]')
                   from application_answers a left join screening_questions q on q.id = a.question_id
-                  where a.application_id = m.application_id))
+                  where a.application_id = m.application_id),
+      -- Recruiter decisions (recruiter_review:*) among these win over the answers.
+      'eligibility_checks', (select coalesce(json_agg(json_build_object('qualifier_key', ec.qualifier_key, 'status', ec.status,
+                    'evidence', ec.evidence) order by ec.qualifier_key), '[]')
+                  from eligibility_checks ec where ec.candidate_match_id = m.id))
     order by m.created_at)
     from candidate_matches m
     join candidate_profiles cp on cp.id = m.candidate_profile_id

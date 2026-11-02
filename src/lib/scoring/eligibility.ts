@@ -11,6 +11,11 @@
  */
 
 import type { ScreeningAnswer } from "../scoring-engine.server";
+import {
+  DEALBREAKER_KEY_PREFIX,
+  UNVERIFIED_CLAIM_KEY_PREFIX,
+  exceptedQuestionIds,
+} from "./recruiter-review";
 import type {
   EligibilityStatus,
   QualifierCheckStatus,
@@ -88,12 +93,25 @@ export type EligibilityCheckRow = {
   qualifier_key: string;
   qualifier_kind?: string | null;
   status: string | null;
+  evidence?: unknown;
 };
 
 export function resolveEligibilityFromRows(
   rows: EligibilityCheckRow[] | null | undefined,
 ): EligibilityResolution {
-  const checks: EligibilityCheckInput[] = (rows ?? []).map((r) => ({
+  // An unverified screening claim is a flag for review, never a gate; and a
+  // dealbreaker a recruiter excepted (recruiter_review:*) no longer blocks,
+  // even before the rescore that removes its disq: row.
+  const excepted = exceptedQuestionIds(rows);
+  const gates = (rows ?? []).filter(
+    (r) =>
+      !r.qualifier_key.startsWith(UNVERIFIED_CLAIM_KEY_PREFIX) &&
+      !(
+        r.qualifier_key.startsWith(DEALBREAKER_KEY_PREFIX) &&
+        excepted.has(r.qualifier_key.slice(DEALBREAKER_KEY_PREFIX.length))
+      ),
+  );
+  const checks: EligibilityCheckInput[] = gates.map((r) => ({
     qualifier_key: r.qualifier_key,
     qualifier_kind: (r.qualifier_kind === "disqualifier"
       ? "disqualifier"
