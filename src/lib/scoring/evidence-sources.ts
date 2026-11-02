@@ -8,13 +8,17 @@
  *    Mushroom Harvesting Manager role" met "Previous experience as a
  *    Harvesting Manager". `maskNonEvidence` blanks, before any term is
  *    searched:
- *      - the client organisation's name, wherever it appears;
- *      - the role title where the passage is about this application (it names
- *        the client, applying or the vacancy, or calls the title "the role");
- *        the same title held at another employer stays evidence;
- *      - aspirational and intent clauses, from the cue to the end of the
- *        clause: "I want to", "I would like to", "seeking", "looking for",
- *        "interested in", "aspire", "applying for".
+ *      - the client organisation's name, except in a dated work entry (a
+ *        former employee of the client keeps that evidence);
+ *      - the role title where the passage is about this application (it
+ *        names the client, says "apply for/to", "this role", "the advertised
+ *        position", or calls the title "the ... role"), never in a dated work
+ *        entry: the same title held at another employer stays evidence;
+ *      - the aspirational clause itself: "I want to", "I would like to",
+ *        "seeking", "looking for", "interested in", "aspire to", "applying
+ *        for ... role", up to the clause's end (a comma, semicolon, "and" or
+ *        full stop; the target role when it names one) and never past a fact
+ *        ("that I supervised", "my eight years", "15 years").
  *    Masking keeps every offset, so quotes and locations still point at the
  *    original text. Clauses about learning ("I would like to learn X") are
  *    left to the negation cues, which already read them as a denial.
@@ -22,14 +26,18 @@
  * 2. Study and training are not employment. A student member of a college
  *    mushroom centre was scored as hands-on commercial picking and picking-
  *    team supervision. `studyContextOf` marks passages in education, course,
- *    training or qualification sections, sentences that name study
- *    (coursework, modules, a training course, a student role, a dissertation,
- *    a university project), and bullets under an entry whose header line does
- *    or that names a university or college without a job title. For
- *    experience requirements such passages count as partial at most: real
- *    credit for genuine student work, never the same as doing the job. Degree
- *    and qualification requirements are not experience requirements and are
- *    unaffected.
+ *    training or qualification sections (a section ends at the next heading
+ *    of any kind, or at a dated job entry), entries whose header names study
+ *    (a student role, a course or training, a university project, a
+ *    university or college without a job title), and passages with an
+ *    explicit cue of the candidate's own study (coursework, modules, a
+ *    dissertation, "as a student", "completed a ... course"). The bare words
+ *    "training", "course" or "students" never mark a passage, and inside a
+ *    dated job entry only a bullet that opens with study ("Studied",
+ *    "Completed a ... course") is study. For experience requirements such
+ *    passages count as partial at most: real credit for genuine student work,
+ *    never the same as doing the job. Degree and qualification requirements
+ *    are not experience requirements and are unaffected.
  *
  * Pure functions; the engine (scoring-engine.server.ts) applies them, so the
  * live pipeline, offline rescore and replay read evidence the same way.
@@ -138,6 +146,11 @@ const WORK_HEADINGS = new Set([
   "VOLUNTEERING",
   "OVERVIEW",
   "BACKGROUND",
+  "HIGHLIGHTS",
+  "FOOTPRINT",
+  "RECORD",
+  "POSITIONS",
+  "ROLES",
   "EXPERIÊNCIA",
   "EXPERIENCIA",
   "HABILIDADES",
@@ -161,7 +174,12 @@ const HEADING_CONNECTORS = new Set(["&", "/", "-", "–", "AND", "E", "OF"]);
 const JOB_WORD =
   /\b(?:manager|management|technician|assistant|officer|supervisor|worker|lead|leader|head|consultant|engineer|analyst|researcher|scientist|co-?ordinator|executive|director|administrator|advis[eo]r|specialist|lecturer|tutor|teacher|demonstrator|intern|apprentice|associate|operative|operator|picker|packer|grower|harvester|porter|driver|chef|cook|nurse|clerk|receptionist|technologist|agronomist|biologist|chemist|microbiologist|founder|owner|partner|employee|labourer|foreman|attendant|carer|developer|designer|planner|buyer|inspector|auditor|controller|accountant|postdoc|postdoctoral|fellow|volunteer|editor|president|captain)s?\b/i;
 
-type Heading = { start: number; end: number; academic: boolean };
+/**
+ * A section heading. `generic` marks a heading-like line or capitals run that
+ * ends in no recognised heading word ("GEOGRAPHIC FOOTPRINT", "Career
+ * Highlights"): it is read only to end an education or training section.
+ */
+type Heading = { start: number; end: number; academic: boolean; generic: boolean };
 type Unit = { start: number; end: number; bullet: boolean; heading: Heading | null };
 
 const bare = (token: string) => token.replace(/^[^\p{L}]+|[^\p{L}-]+$/gu, "").toUpperCase();
@@ -171,7 +189,33 @@ const endsInHeadingWord = (words: string[]) => {
   const last = words[words.length - 1] ?? "";
   return ACADEMIC_HEADINGS.has(last) || WORK_HEADINGS.has(last) || NEUTRAL_HEADINGS.has(last);
 };
+const endsAcademic = (words: string[]) => ACADEMIC_HEADINGS.has(words[words.length - 1] ?? "");
 const isCapitalsToken = (t: string) => /\p{Lu}.*\p{Lu}/u.test(t) && !/\p{Ll}|\d/u.test(t);
+
+/**
+ * Words that put a capitals run or short line inside an education entry
+ * ("UNIVERSITY OF DELHI", "MBA INSEAD", "BSC BOTANY"): never a generic heading.
+ */
+const INSTITUTION_WORD =
+  /\b(?:university|universidade|universidad|college|school|institute|institut|academy|polytechnic|faculty|campus|mba|bsc|msc|ba|ma|bba|bcom|mcom|beng|meng|llb|llm|phd|dphil|hons|degree|diploma|certificate|bachelor|bachelors|master|masters|gcse|gcses|a-levels?|baccalaureate)\b/i;
+
+/**
+ * A heading-like run or line that names no recognised heading word: two to
+ * five words, none a job noun, an institution or a qualification, at least
+ * one of five letters or more (so "UAE GCC KSA" is not a heading), no commas
+ * or digits.
+ */
+function isGenericHeading(words: string[], textOf: string): boolean {
+  const real = words.filter((w) => /\p{L}{2,}/u.test(w));
+  return (
+    real.length >= 2 &&
+    real.length <= 5 &&
+    real.some((w) => w.replace(/[^\p{L}]/gu, "").length >= 5) &&
+    !/[,\d]/.test(textOf) &&
+    !JOB_WORD.test(textOf) &&
+    !INSTITUTION_WORD.test(textOf)
+  );
+}
 
 /**
  * Section headings: a run of capitals ending in a heading word ("EDUCATION",
@@ -181,8 +225,11 @@ const isCapitalsToken = (t: string) => /\p{Lu}.*\p{Lu}/u.test(t) && !/\p{Ll}|\d/
  * mostly in capitals has no capitalised headings to tell apart, so only its
  * short standalone lines are read as headings there. A job title is never a
  * heading ("HEAD OF TRAINING").
+ *
+ * With `generic`, other heading-like runs and lines are returned too, marked
+ * generic and never academic ("GEOGRAPHIC FOOTPRINT", "Career Highlights").
  */
-function findHeadings(text: string): Heading[] {
+function findHeadings(text: string, generic = false): Heading[] {
   const out: Heading[] = [];
   const letters = text.match(/\p{L}/gu)?.length ?? 0;
   const capitals = text.match(/\p{Lu}/gu)?.length ?? 0;
@@ -206,13 +253,38 @@ function findHeadings(text: string): Heading[] {
         .map((t) => bare(t[0]))
         .filter(Boolean);
       const runText = run.map((t) => t[0]).join(" ");
+      const last = run[run.length - 1]!;
       if (run.length <= 10 && endsInHeadingWord(words) && !JOB_WORD.test(runText)) {
-        const last = run[run.length - 1]!;
         out.push({
           start: run[0]!.index!,
           end: last.index! + last[0].length,
           academic: isAcademicHeading(words),
+          generic: false,
         });
+      } else if (generic && run.length <= 10 && endsInHeadingWord(words) && !endsAcademic(words)) {
+        // "EXECUTIVE SUMMARY": a job noun before a work heading word is not a
+        // job title ("HEAD OF TRAINING" is), so it still ends a section.
+        out.push({
+          start: run[0]!.index!,
+          end: last.index! + last[0].length,
+          academic: false,
+          generic: true,
+        });
+      } else if (generic) {
+        // A generic run never ends on a connector ("SALES &").
+        let g = run.length - 1;
+        while (g > 0 && HEADING_CONNECTORS.has(run[g]![0])) g--;
+        const head = run.slice(0, g + 1);
+        const headText = head.map((t) => t[0]).join(" ");
+        const end = head[g]!;
+        if (head.length <= 6 && isGenericHeading(headText.split(" ").map(bare), headText)) {
+          out.push({
+            start: head[0]!.index!,
+            end: end.index! + end[0].length,
+            academic: false,
+            generic: true,
+          });
+        }
       }
       i = j + 1;
     }
@@ -226,13 +298,26 @@ function findHeadings(text: string): Heading[] {
       words.length > 0 &&
       words.length <= 5 &&
       !/\d/.test(trimmed) &&
-      !JOB_WORD.test(trimmed) &&
       words.every((w) => /^[\p{Lu}&/(–-]/u.test(w) || HEADING_CONNECTORS.has(w.toUpperCase()))
     ) {
       const upperWords = words.map(bare).filter(Boolean);
       const start = at + line.indexOf(trimmed);
-      if (endsInHeadingWord(upperWords) && !out.some((h) => h.start <= start && start < h.end)) {
-        out.push({ start, end: start + trimmed.length, academic: isAcademicHeading(upperWords) });
+      const known = out.some((h) => h.start <= start && start < h.end);
+      if (endsInHeadingWord(upperWords) && !known && !JOB_WORD.test(trimmed)) {
+        out.push({
+          start,
+          end: start + trimmed.length,
+          academic: isAcademicHeading(upperWords),
+          generic: false,
+        });
+      } else if (
+        generic &&
+        !known &&
+        !/[.!?]$/.test(trimmed) &&
+        ((endsInHeadingWord(upperWords) && !endsAcademic(upperWords)) ||
+          isGenericHeading(words, trimmed))
+      ) {
+        out.push({ start, end: start + trimmed.length, academic: false, generic: true });
       }
     }
     at += line.length + 1;
@@ -246,8 +331,8 @@ function findHeadings(text: string): Heading[] {
  * ends on a lower-case word or a comma, or the next line starts in lower
  * case) continues the unit; a blank line, a bullet or a heading ends it.
  */
-function segment(text: string): { units: Unit[]; headings: Heading[] } {
-  const headings = findHeadings(text);
+function segment(text: string, genericHeadings = false): { units: Unit[]; headings: Heading[] } {
+  const headings = findHeadings(text, genericHeadings);
   const cuts = new Set<number>([0]);
   for (const h of headings) {
     cuts.add(h.start);
@@ -298,13 +383,123 @@ function segment(text: string): { units: Unit[]; headings: Heading[] } {
 
 /** Cues that open an aspirational or intent clause. */
 const INTENT_CUE =
-  /\b(?:i\s+(?:really\s+)?(?:want|wanted|would\s+(?:really\s+)?(?:like|love)|wish|hope|aim|intend|plan)\s+to|i['’]d\s+(?:really\s+)?(?:like|love)\s+to|seeking|looking\s+(?:for|to)|interested\s+in|aspir\w*|eager\s+to|keen\s+to|(?:apply|applying|application)\s+(?:for|to)\b(?=[^.;\n]{0,80}\b(?:role|position|post|vacancy|job|opportunit)))\b/gi;
-/** A passage about this application rather than past work. */
+  /\b(?:i\s+(?:really\s+)?(?:want|wanted|would\s+(?:really\s+)?(?:like|love)|wish|hope|aim|intend|plan)\s+to|i['’]d\s+(?:really\s+)?(?:like|love)\s+to|seeking|looking\s+(?:for|to)|interested\s+in|aspir(?:e|es|ing)(?:\s+to)?|aspirations?\s+(?:is\s+|are\s+)?to|eager\s+to|keen\s+to|(?:apply|applying|application)\s+(?:for|to)\b(?=[^.;\n]{0,80}\b(?:role|position|post|vacancy|job|opportunit)))\b/gi;
+/** "Responsible for seeking new suppliers": the gerund is the work, not an aim. */
+const GERUND_AFTER_PREPOSITION =
+  /\b(?:for|of|in|by|while|when|after|before|on|from|about|at|through)\s+$/i;
+/** What an aspirational clause aims at: when it names one, the clause runs to it. */
+const TARGET_NOUN =
+  /\b(?:role|position|post|vacancy|job|opportunit(?:y|ies)|career|challenge|employment|placement|opening)s?\b/i;
+const NUMBER_WORD =
+  "(?:\\d+\\+?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|several|many)";
+/**
+ * Where the candidate's own facts begin: an aspirational clause never runs
+ * past one ("I would like to highlight | that I supervised 30 pickers", "keen
+ * to bring | my eight years", "seeking a senior role | 15 years in FMCG").
+ */
+const FACT_START = new RegExp(
+  "\\b(?:that\\s+)?i\\s+(?:have\\s+|had\\s+|was\\s+|also\\s+)?(?!(?:wanted|needed|hoped|wished|intended|planned|aimed|liked|loved|seemed)\\b)(?:\\w+ed|ran|led|built|grew|oversaw|took|made|won|drove|sold|taught|held|kept|spent|did|set|met|hired)\\b" +
+    `|\\b(?:my|our)\\s+(?:${NUMBER_WORD}|[\\w-]+-year|years?|experience|background|track\\s+record)\\b` +
+    `|\\b${NUMBER_WORD}\\s*(?:years?|yrs|months?)\\b` +
+    "|\\b(?:19|20)\\d{2}\\b",
+  "i",
+);
+/** "Dubai, UAE": a comma before a place or name is not the clause's end. */
+const APPOSITIVE = /^,\s*(?:\p{Lu}[\p{L}.&'’-]*\s*){1,3}(?=[.;,!?)]|$|\n|(?:and|or)\b)/u;
+/** Longest stretch an aspirational clause without a named target may blank. */
+const MAX_INTENT_SPAN = 80;
+/** Longest stretch between a cue and the role it aims at ("seeking to apply ... to the X role"). */
+const MAX_TARGET_REACH = 160;
+
+/**
+ * The end of the aspirational clause that starts at `from` (just after its
+ * cue). It runs to the next comma, semicolon, "and", "but" or full stop, at
+ * most MAX_INTENT_SPAN characters; when the clause names a role or
+ * opportunity it runs to that target and the phrase after it ("the
+ * Mushroom Harvesting Manager role at Hughes Mushrooms"). It never runs past
+ * the start of a fact, a bullet, a "|" field or the end of the unit.
+ */
+function intentClauseEnd(text: string, from: number, limit: number): number {
+  const fact = FACT_START.exec(text.slice(from, limit));
+  const hardEnd = fact ? from + fact.index : limit;
+  /** The first clause boundary at or after `start`, before `max`. */
+  const boundary = (start: number, max: number, clauseWords: boolean): number => {
+    const stop = Math.min(max, hardEnd);
+    for (let i = start; i < stop; i++) {
+      const c = text[i]!;
+      if (c === "\n" || c === "|" || BULLET.test(c)) return i;
+      if (/[;!?]/.test(c)) return i;
+      if (c === "." && (i + 1 >= text.length || /\s/.test(text[i + 1]!))) return i;
+      if (!clauseWords) continue;
+      if (c === "," && !APPOSITIVE.test(text.slice(i, i + 48))) return i;
+      if (/\s/.test(c) && /^\s+(?:and|but)\s/i.test(text.slice(i, i + 6))) return i;
+    }
+    return stop;
+  };
+  const sentenceEnd = boundary(from, from + MAX_TARGET_REACH, false);
+  const target = TARGET_NOUN.exec(text.slice(from, sentenceEnd));
+  if (target) {
+    const after = from + target.index + target[0].length;
+    return boundary(after, after + MAX_INTENT_SPAN, true);
+  }
+  return boundary(from, from + MAX_INTENT_SPAN, true);
+}
+
+/**
+ * A passage about this application rather than past work: applying for or to
+ * a role, "this role", the advertised position, the employer addressed as
+ * "your company".
+ */
 const APPLICATION_CUE =
-  /\b(?:apply|applying|applied|application|vacancy|vacancies|advertised|advert|your|this\s+(?:role|position|post|opportunity|job))\b/i;
+  /\b(?:(?:apply|applying|applied|application)\s+(?:for|to)\b(?=[^.;\n]{0,80}\b(?:role|position|post|vacancy|job|opportunit|you|your))|this\s+(?:role|position|post|vacancy|opportunity|job|opening)\b|(?:the|your)\s+advertised\s+(?:role|position|post|vacancy|job)\b|(?:the|your)\s+(?:vacancy|opening)\b|your\s+(?:company|organi[sz]ation|team|business|farm|advert))/i;
+/** Work authorisation is about this application too ("sponsorship from Hughes Mushrooms"). */
+const WORK_AUTHORISATION =
+  /\b(?:visa|sponsorship|right\s+to\s+work|work\s+permit|work\s+authori[sz]ation)\b/i;
+const aboutApplication = (body: string) =>
+  APPLICATION_CUE.test(body) || WORK_AUTHORISATION.test(body);
+/** "the Mushroom Harvesting Manager role": the title named as the vacancy. */
 const TITLE_AS_VACANCY = /^\s*(?:role|position|post|vacancy|opening|opportunity)\b/i;
-/** Longest stretch one cue may blank: a clause, not the rest of a flat CV. */
-const MAX_INTENT_SPAN = 240;
+/** "my previous Harvesting Manager role": the candidate's own past role, not the vacancy. */
+const OWN_ROLE_BEFORE =
+  /\b(?:my|his|her|our|previous|former|prior|last|current|earlier)\s+(?:[\w-]+\s+)?$/i;
+
+const YEAR = /\b(?:19|20)\d{2}\b/;
+const MONTH = "(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\\.?";
+const DATE_RANGE = new RegExp(
+  `(?:19|20)\\d{2}\\s*(?:-|–|—|to|until|till)\\s*(?:(?:${MONTH}\\s*)?(?:\\d{1,2}\\/)?(?:19|20)?\\d{2}\\b|present|current|now|date|today|ongoing)` +
+    `|\\b${MONTH}\\s*(?:-|–|—|to)\\s*${MONTH}\\s+(?:19|20)\\d{2}`,
+  "i",
+);
+const WORKED = /\b(?:worked|working|employed|joined|served)\b/i;
+/** A dated entry line: a year with a date range, a job noun, "|" fields or "worked". */
+const isDatedEntry = (body: string) =>
+  YEAR.test(body) &&
+  (DATE_RANGE.test(body) || JOB_WORD.test(body) || /\s\|\s/.test(body) || WORKED.test(body));
+
+/**
+ * Which units belong to a dated work entry: a dated entry line (or a line
+ * whose first bullet is its dates, "CEO, FPO • Jul 2021 – Aug 2023 • Led
+ * ...") and the bullets under it.
+ */
+function datedEntryUnits(text: string, units: Unit[]): boolean[] {
+  const out = new Array<boolean>(units.length).fill(false);
+  let open = false;
+  units.forEach((u, k) => {
+    const body = text.slice(u.start, u.end);
+    if (u.heading) {
+      open = false;
+      return;
+    }
+    if (!u.bullet) {
+      open = isDatedEntry(body);
+    } else if (isDatedEntry(body)) {
+      if (!open && k > 0 && !units[k - 1]!.bullet && !units[k - 1]!.heading) out[k - 1] = true;
+      open = true;
+    }
+    out[k] = open;
+  });
+  return out;
+}
 
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const phraseRe = (s: string) =>
@@ -333,7 +528,11 @@ export function maskNonEvidence(text: string, ctx: RoleContext | null | undefine
     for (let i = start; i < end; i++) if (chars[i] !== "\n" && chars[i] !== "\r") chars[i] = " ";
   };
   const { units } = segment(text);
-  const unitAt = (i: number) => units.find((u) => u.start <= i && i < u.end) ?? null;
+  const unitIndexAt = (i: number) => units.findIndex((u) => u.start <= i && i < u.end);
+  const bodyOf = (k: number) => (k >= 0 ? text.slice(units[k]!.start, units[k]!.end) : "");
+  const inEntry = datedEntryUnits(text, units);
+  /** A dated work entry not about this application: its words stay evidence. */
+  const workEntry = (k: number) => k >= 0 && inEntry[k]! && !aboutApplication(bodyOf(k));
 
   const orgSpans: Array<[number, number]> = [];
   for (const name of ctx?.organisation_names ?? []) {
@@ -345,30 +544,36 @@ export function maskNonEvidence(text: string, ctx: RoleContext | null | undefine
       orgSpans.push([m.index!, m.index! + m[0].length]);
     }
   }
-  for (const [s, e] of orgSpans) blank(s, e);
+  // The client's name, except where a former employee lists the client as an
+  // employer: "Harvest Supervisor | Hughes Mushrooms | 2015 – 2022".
+  for (const [s, e] of orgSpans) if (!workEntry(unitIndexAt(s))) blank(s, e);
 
   for (const title of ctx?.role_title ? titleVariants(ctx.role_title) : []) {
     for (const m of text.matchAll(phraseRe(title))) {
       const s = m.index!;
       const e = s + m[0].length;
-      const unit = unitAt(s);
-      const unitText = unit ? text.slice(unit.start, unit.end) : "";
+      const k = unitIndexAt(s);
+      // The same title held at another employer (or at the client, before)
+      // is the strongest evidence there is.
+      if (workEntry(k)) continue;
+      const unit = k >= 0 ? units[k]! : null;
       const namesClient = !!unit && orgSpans.some(([os]) => unit.start <= os && os < unit.end);
-      if (
-        namesClient ||
-        APPLICATION_CUE.test(unitText) ||
-        TITLE_AS_VACANCY.test(text.slice(e, e + 20))
-      )
-        blank(s, e);
+      const asVacancy =
+        TITLE_AS_VACANCY.test(text.slice(e, e + 20)) &&
+        !OWN_ROLE_BEFORE.test(text.slice(Math.max(0, s - 40), s));
+      if (namesClient || aboutApplication(bodyOf(k)) || asVacancy) blank(s, e);
     }
   }
 
   for (const m of text.matchAll(INTENT_CUE)) {
     const s = m.index!;
-    const unit = unitAt(s);
-    let e = Math.min(unit ? unit.end : text.length, s + MAX_INTENT_SPAN);
-    const semi = text.indexOf(";", s);
-    if (semi !== -1 && semi < e) e = semi;
+    if (
+      /^(?:seeking|looking)/i.test(m[0]) &&
+      GERUND_AFTER_PREPOSITION.test(text.slice(Math.max(0, s - 16), s))
+    )
+      continue;
+    const k = unitIndexAt(s);
+    const e = intentClauseEnd(text, s + m[0].length, k >= 0 ? units[k]!.end : text.length);
     // "I would like to learn X" says the candidate lacks X; the negation cues
     // read that, so the clause is left for them.
     if (/\blearn/i.test(text.slice(s, e))) continue;
@@ -381,105 +586,215 @@ export function maskNonEvidence(text: string, ctx: RoleContext | null | undefine
 
 /** Training the candidate gave rather than received. */
 const DELIVERING_BEFORE =
-  /\b(?:deliver\w*|provid\w*|conduct\w*|led|lead\w*|ran|run\w*|gave|giv\w*|organi[sz]\w*|design\w*|develop\w*|facilitat\w*|coordinat\w*|oversaw|oversee\w*|responsible\s+for)\s+(?:[\w-]+\s+){0,3}$/i;
-const DELIVERED_TO_AFTER =
-  /^\s+(?:(?:of|for|to)\s+)?(?:new\s+|junior\s+)?(?:staff|starters|recruits|pickers|team|teams|colleagues|employees|operatives|workers|members|others|people|trainees|students|farmers|growers)\b/i;
-/** Students the candidate taught, supported or supervised. */
-const WORKING_WITH_STUDENTS_BEFORE =
-  /\b(?:support\w*|taught|teach\w*|tutor\w*|mentor\w*|supervis\w*|co-supervis\w*|train\w*|assess\w*|help\w*|assist\w*|with|prepar\w*|instruct\w*|lectur\w*|coach\w*|educat\w*|guid\w*|for|facilitat\w*|engag\w*|recruit\w*|manag\w*|advis\w*|counsel\w*|invigilat\w*|mark\w*)\s+(?:[\w+-]+\s+){0,3}$/i;
+  /\b(?:deliver\w*|provid\w*|conduct\w*|led|lead\w*|ran|run\w*|gave|giv\w*|organi[sz]\w*|design\w*|develop\w*|facilitat\w*|coordinat\w*|oversaw|oversee\w*|launch\w*|responsible\s+for)\s+(?:[\w-]+\s+){0,3}$/i;
+const RECIPIENTS =
+  "(?:staff|starters|recruits|pickers|team|teams|colleagues|employees|operatives|workers|members|others|people|trainees|students|farmers|growers|advisors|advisers|managers|supervisors)";
+const DELIVERED_TO_AFTER = new RegExp(
+  `^\\s+(?:(?:of|for|to)\\s+)?(?:(?:all|the|our|\\d+)\\s+)?(?:new\\s+|junior\\s+)?${RECIPIENTS}\\b`,
+  "i",
+);
 
-const STUDY_CUES: RegExp[] = [
-  /\b(?:course\s*work|dissertation|thesis|capstone)\b/i,
-  /\bfellow\s+students?\b/i,
-  /\bstudent\s+(?:member|ambassador|representative|rep|society|union|council|project|exchange)\b/i,
-  /\bas\s+an?\s+(?:[\p{L}-]+\s+){0,2}student\b/iu,
-  /\b(?:undergraduate|postgraduate|graduate|m\.?sc|b\.?sc|mba|phd|final[- ]year|degree|university|college|academic|student|school)\s+(?:research\s+)?projects?\b/i,
-  /\bacademic\s+(?:training|project|placement|year|study|studies|work|course|module|exercise)s?\b/i,
-  /\b(?:relevant|core|optional|taught|elective|compulsory|course|degree|university|academic)\s+modules?\b/i,
-  /\bmodules?\s*(?::|studied|taken|included|covered|completed)/i,
-  /\bcourse\s+(?:representative|rep)\b/i,
-];
-/** A bullet that opens like this describes study, never a job. */
+const COURSE_NOUN =
+  "(?:course|training|module|certificate|certification|diploma|workshop|bootcamp)s?";
+/**
+ * A course or training the candidate took: "completed a mushroom cultivation
+ * course", "did a full course on ...", "attended HACCP training" — never one
+ * given to others ("completed induction training for 30 new pickers").
+ */
+const OWN_COURSE = `(?:completed|attended|took|undertook|enrolled\\s+(?:in|on)|studying|did|passed)\\s+(?:[\\p{L}\\d'’&/-]+\\s+){0,6}?${COURSE_NOUN}\\b(?!\\s+(?:for|to|of)\\s+(?:(?:all|the|our|\\d+)\\s+)?(?:new\\s+|junior\\s+)?${RECIPIENTS}\\b)`;
+/** A passage that opens with the candidate's own study: "Studied ...", "Completed a ... course". */
+const STUDY_OPENING = new RegExp(`^[\\s\\W]*(?:(?:studied|learnt|learned)\\b|${OWN_COURSE})`, "iu");
+/** "Studied ...": a bullet that opens like this makes a non-job entry study. */
 const STUDY_VERB = /^\W*(?:studied|learnt|learned)\b/i;
 
-function namesStudy(unit: string): boolean {
-  if (STUDY_CUES.some((re) => re.test(unit)) || STUDY_VERB.test(unit)) return true;
+/**
+ * Explicit cues of the candidate's own study. The bare words "training",
+ * "course" and "students" are not among them: "launch tailor made training
+ * for all advisors", "400 online courses" and "a group with 20,000+
+ * students" are work.
+ */
+const STUDY_CUES: RegExp[] = [
+  /\b(?:course\s*work|dissertation|thesis|capstone)\b/gi,
+  /\bfellow\s+students?\b/gi,
+  /\bstudent\s+(?:member|ambassador|representative|rep|society|union|council|project|exchange)\b/gi,
+  /\bas\s+an?\s+(?:[\p{L}-]+\s+){0,2}student\b/giu,
+  /\b(?:undergraduate|postgraduate|graduate|m\.?sc|b\.?sc|mba|phd|final[- ]year|degree|university|college|academic|student|school)\s+(?:research\s+)?projects?\b/gi,
+  /\bacademic\s+(?:training|project|placement|year|study|studies|work|course|module|exercise)s?\b/gi,
+  /\b(?:relevant|core|optional|taught|elective|compulsory|course|degree|university|academic)\s+modules?\b/gi,
+  /\bmodules?\s*(?::|studied|taken|included|covered|completed)/gi,
+  /\bcourse\s+(?:representative|rep)\b/gi,
+  new RegExp(`\\b${OWN_COURSE}`, "giu"),
+];
+
+/** Where in a passage it names the candidate's own study; empty when it does not. */
+function studyCueSpans(unit: string): Array<[number, number]> {
+  const out: Array<[number, number]> = [];
+  for (const re of STUDY_CUES)
+    for (const m of unit.matchAll(re)) out.push([m.index!, m.index! + m[0].length]);
+  const open = STUDY_OPENING.exec(unit);
+  if (open) out.push([0, open[0].length]);
+  const society = /\bsociety\b/i.exec(unit);
   if (
-    /\bsociety\b/i.test(unit) &&
+    society &&
     /\b(?:university|college|school|students?|undergraduate|departmental)\b/i.test(unit)
   )
-    return true;
-  if (/\bprojects?\b/i.test(unit) && /\b(?:university|college)\b/i.test(unit)) return true;
-  for (const m of unit.matchAll(/\btrainings?\b/gi)) {
-    const before = unit.slice(0, m.index!);
-    const after = unit.slice(m.index! + m[0].length);
+    out.push([society.index, society.index + society[0].length]);
+  return out;
+}
+const namesStudy = (unit: string) => studyCueSpans(unit).length > 0;
+
+/** An entry line: it carries a year or "|"-separated fields. */
+const isEntryHeader = (unit: string) => YEAR.test(unit) || /\s\|\s/.test(unit);
+/**
+ * How much of an entry line is its header. In a CV stored as one line the
+ * header runs straight into the job description, whose words ("launch
+ * training for all advisors") do not describe the entry.
+ */
+const HEADER_CHARS = 200;
+/** "Practera Industry Consulting Project | Team Lead": a project, not "Projects Manager". */
+const PROJECT_ENTRY =
+  /\bprojects?\b(?!\s+(?:manager|management|lead|leader|officer|co-?ordinator|director|engineer|analyst|assistant|executive|consultant|administrator|specialist|planner|controller|accountant)s?\b)/i;
+
+/** A company's name ("Lantra Training Ltd"), not a course. */
+const COMPANY_SUFFIX = /\b(?:ltd|limited|plc|inc|llc|llp|gmbh|group|company|services|solutions)\b/i;
+
+/**
+ * A course or training named as the entry itself ("Practical Shiitake
+ * Mushroom Production Training", "Diploma in Mental Health"): the noun is
+ * capitalised, as a course's name is, and is not one the candidate gave. A
+ * lower-case list of duties ("harvesting, grading, training") is not a course.
+ */
+function namesCourse(header: string): boolean {
+  for (const m of header.matchAll(
+    /\b(?:course|training|certificate|certification|diploma|workshop|bootcamp)s?\b/gi,
+  )) {
+    if (!/^\p{Lu}/u.test(m[0])) continue;
+    const before = header.slice(0, m.index!);
+    const after = header.slice(m.index! + m[0].length);
+    if (
+      /^course/i.test(m[0]) &&
+      (/^\s+of\b/i.test(after) || /\b(?:of|golf|race|water|main)\s+$/i.test(before))
+    )
+      continue;
     if (!DELIVERING_BEFORE.test(before) && !DELIVERED_TO_AFTER.test(after)) return true;
-  }
-  for (const m of unit.matchAll(/\bcourses?\b/gi)) {
-    const before = unit.slice(0, m.index!);
-    const after = unit.slice(m.index! + m[0].length);
-    if (!/^\s+of\b/i.test(after) && !/\b(?:of|golf|race|water|main)\s+$/i.test(before)) return true;
-  }
-  for (const m of unit.matchAll(/\bstudents?\b/gi)) {
-    if (!WORKING_WITH_STUDENTS_BEFORE.test(unit.slice(0, m.index!))) return true;
   }
   return false;
 }
 
-/** An entry line: it carries a year or "|"-separated fields. */
-const isEntryHeader = (unit: string) => /\b(?:19|20)\d{2}\b/.test(unit) || /\s\|\s/.test(unit);
+type EntryKind = "study" | "work" | "other";
+/**
+ * Study: the header names a student role, a university project, a course, or
+ * a university or college without a job title ("Mycology, Mushroom
+ * Cultivation Technology | University of Delhi | 2022-2023"). Work: a job
+ * title and a year. Anything else is neither.
+ */
+function entryKind(line: string): EntryKind {
+  const head = line.slice(0, HEADER_CHARS);
+  const job = JOB_WORD.test(head);
+  if (namesStudy(head)) return "study";
+  if (/\b(?:university|college)\b/i.test(head) && (!job || PROJECT_ENTRY.test(head)))
+    return "study";
+  if (!job && namesCourse(head)) return "study";
+  return job && YEAR.test(head) ? "work" : "other";
+}
+
+/** A passage longer than this is a CV stored as one line: a cue marks its own clause only. */
+const LONG_UNIT = 240;
+const CLAUSE_STOP = new RegExp(`[.;!?|\\n${BULLET_CHARS}]`);
 
 /**
  * A predicate telling whether the passage at an offset is study or training:
- * inside an education, course, training or qualification section; in a
- * sentence that names study; or in an entry whose header line names study,
- * names a university or college without a job title ("Mycology, Mushroom
- * Cultivation Technology | University of Delhi | 2022-2023"), or that has a
- * bullet opening "Studied". A training course listed under a real job does
- * not recast the job: bullets inherit from their header, not the reverse.
+ *   - inside an education, course, training or qualification section, which
+ *     ends at the next heading of any kind ("GEOGRAPHIC FOOTPRINT", "Career
+ *     Highlights") or at a dated job entry;
+ *   - in an entry whose header names study (see entryKind), or that has a
+ *     bullet opening "Studied";
+ *   - in a passage with an explicit cue of the candidate's own study
+ *     (studyCueSpans); in a long one-line passage, only the cue's clause.
+ * Inside a dated job entry only a bullet that opens with study ("Completed a
+ * Lantra supervisor training course") is study: training given, students
+ * taught and a course catalogue sold are the job.
  *
- * A section heading is marked too: it labels the passages under it and is
- * not work evidence on its own ("RELEVANT MYCOLOGY, MUSHROOM CULTIVATION AND
- * LABORATORY EXPERIENCE" above a student membership).
+ * A recognised section heading is marked too: it labels the passages under
+ * it and is not work evidence on its own ("RELEVANT MYCOLOGY, MUSHROOM
+ * CULTIVATION AND LABORATORY EXPERIENCE" above a student membership).
  */
 export function studyContextOf(text: string): (at: number) => boolean {
   if (!text) return () => false;
-  const { units } = segment(text);
-  const study = new Array<boolean>(units.length).fill(false);
-  let sectionStudy = false;
-  let entry: number[] = [];
-  let entryStudy = false;
-  const closeEntry = () => {
-    if (entryStudy) for (const k of entry) study[k] = true;
-    entry = [];
-    entryStudy = false;
+  const { units } = segment(text, true);
+  const marks = new Uint8Array(text.length);
+  const mark = (a: number, b: number) => marks.fill(1, a, b);
+  const markCues = (u: Unit, body: string) => {
+    const spans = studyCueSpans(body);
+    if (spans.length === 0) return;
+    if (body.length <= LONG_UNIT) return mark(u.start, u.end);
+    for (const [a, b] of spans) {
+      let from = a;
+      while (from > 0 && a - from < 100 && !CLAUSE_STOP.test(body[from - 1]!)) from--;
+      let to = b;
+      while (to < body.length && to - b < 120 && !CLAUSE_STOP.test(body[to]!)) to++;
+      mark(u.start + from, u.start + to);
+    }
   };
-  units.forEach((u, k) => {
+  let sectionStudy = false;
+  let entry: Unit[] = [];
+  let kind: EntryKind | null = null;
+  const closeEntry = () => {
+    if (kind === "study") for (const u of entry) mark(u.start, u.end);
+    entry = [];
+    kind = null;
+  };
+  /**
+   * A "|" field that names a course or training and no job or company
+   * ("Agricultural Operations | Mushroom Production Training"): that field is
+   * study, whatever the rest of the line is.
+   */
+  const markCourseFields = (u: Unit, body: string) => {
+    if (u.bullet || !/\s\|\s/.test(body)) return;
+    let at = 0;
+    for (const field of body.split("|")) {
+      if (namesCourse(field) && !JOB_WORD.test(field) && !COMPANY_SUFFIX.test(field))
+        mark(u.start + at, u.start + at + field.length);
+      at += field.length + 1;
+    }
+  };
+  for (const u of units) {
     const body = text.slice(u.start, u.end);
+    markCourseFields(u, body);
     if (u.heading) {
       closeEntry();
+      if (u.heading.generic) {
+        // A heading the reader does not recognise still ends the section.
+        sectionStudy = false;
+        continue;
+      }
       sectionStudy = u.heading.academic;
-      study[k] = true;
-      return;
+      mark(u.start, u.end);
+      continue;
     }
-    const own = namesStudy(body);
     if (!u.bullet && isEntryHeader(body)) {
       closeEntry();
-      entry = [k];
-      entryStudy = own || (/\b(?:university|college)\b/i.test(body) && !JOB_WORD.test(body));
-    } else if (u.bullet && entry.length > 0) {
-      entry.push(k);
-      if (STUDY_VERB.test(body)) entryStudy = true;
+      kind = entryKind(body);
+      entry = [u];
+      if (kind === "work") {
+        // A dated job leaves an education section that has no heading after it.
+        if (DATE_RANGE.test(body.slice(0, HEADER_CHARS))) sectionStudy = false;
+        continue;
+      }
+    } else if (u.bullet && kind) {
+      entry.push(u);
+      if (kind === "work") {
+        if (STUDY_OPENING.test(body)) mark(u.start, u.end);
+        continue;
+      }
+      if (STUDY_VERB.test(body)) kind = "study";
     } else if (!u.bullet) {
       closeEntry();
     }
-    study[k] = sectionStudy || own;
-  });
+    if (sectionStudy) mark(u.start, u.end);
+    else markCues(u, body);
+  }
   closeEntry();
-  const marks = new Uint8Array(text.length);
-  units.forEach((u, k) => {
-    if (study[k]) marks.fill(1, u.start, u.end);
-  });
   return (at: number) => at >= 0 && at < marks.length && marks[at] === 1;
 }
 

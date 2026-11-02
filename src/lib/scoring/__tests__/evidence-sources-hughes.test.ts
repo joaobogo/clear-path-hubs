@@ -10,8 +10,10 @@
  *   3. "Student and course work is scored as professional experience."
  *      Adiya Vatsa (match b058712e): a college mushroom centre as a Student
  *      Member, coursework modules and a university consulting project.
- *      Thaddeus Armoh (match 8b3b78e9): a university mushroom-cultivation
- *      course, plus a "yes" to the mushroom dealbreaker.
+ *      Thaddeus Armoh (match 8b3b78e9) is NOT an item-3 case: his stored CV
+ *      never mentions a mushroom course. His rows rest on a dealbreaker "yes"
+ *      and a 2002 cocoa-farm job (owner item 4); the test on his CV records
+ *      today's behaviour as the baseline for that fix.
  *
  * Fixtures are the candidates' own CV text as stored (flattened where the
  * stored text is), with names, contact details and visa lines removed.
@@ -199,13 +201,23 @@ const ADIYA_STUDENT_CV = ADIYA_CV.slice(
 );
 
 /**
- * Thaddeus's stored CV, flattened. His mushroom background is the course his
- * cover letter describes ("I did a full course on mushroom cultivation as an
- * agronomy student"); the engine reads the CV and screening answers, so the
- * sentence sits where a CV states it, under the degree.
+ * SYNTHETIC: a care worker's CV whose only mushroom background is a course
+ * taken as an agronomy student, stated under the degree. No candidate's CV
+ * reads like this; it is the shape of item 3 ("a university mushroom course
+ * plus a yes"), not anyone's record.
+ */
+const COURSE_CV =
+  "Support Worker SEND Learning Support Assistant PROFESSIONAL PROFILE Compassionate and adaptable Support Worker with extensive experience supporting adults and children with learning disabilities, autism, schizophrenia, and complex needs. Brings over 15 years of combined experience across health & social care, education, and community services. KEY SKILLS Operational & Administrative • Team supervision & collaboration • Data collection & reporting • Microsoft Word, Excel, PowerPoint PROFESSIONAL EXPERIENCE Residential Support Worker IBC Healthcare, Mansfield, UK Feb 2024 – Present • Support adults with learning disabilities, autism, and schizophrenia in supported living settings. • Maintain accurate daily records in line with CQC standards. Care Support Worker Portland Community College / Care Stream Home Care, Mansfield, UK Jun 2023 – Jan 2024 • Supported students with learning disabilities and behavioural challenges. Assistant Registration Officer / District Registration Officer National Identification Authority 2020 – 2023 • Registered over 3,500 citizens for national ID programmes. • Supervised teams of up to 367 staff. Teacher (Science & Primary) Various Schools 2003 – 2013 • Delivered lessons, prepared students for exams, and supported learning needs. EDUCATION BSc Agriculture Technology (Agronomy) University for Development Studies, Ghana | 2008 – 2012 • Did a full course on mushroom cultivation as an agronomy student. TRAINING & CERTIFICATIONS (SELECTED) • Self-Harm & Ligature Training (2025) • CPI Safety Intervention Foundation (2024, 2025) • First Aid at Work (2024) • Principles of Management (2023)";
+const COURSE_SCREENING = [answer(Q_MUSHROOM, true), answer(Q_ONSITE, true), answer(Q_FOOD, true)];
+
+/**
+ * Thaddeus Armoh's stored CV (match 8b3b78e9), flattened as stored, with his
+ * name, contact details, visa lines, relocation gap and languages removed.
+ * It never mentions mushrooms.
  */
 const THADDEUS_CV =
-  "Support Worker SEND Learning Support Assistant PROFESSIONAL PROFILE Compassionate and adaptable Support Worker with extensive experience supporting adults and children with learning disabilities, autism, schizophrenia, and complex needs. Brings over 15 years of combined experience across health & social care, education, and community services. KEY SKILLS Operational & Administrative • Team supervision & collaboration • Data collection & reporting • Microsoft Word, Excel, PowerPoint PROFESSIONAL EXPERIENCE Residential Support Worker IBC Healthcare, Mansfield, UK Feb 2024 – Present • Support adults with learning disabilities, autism, and schizophrenia in supported living settings. • Maintain accurate daily records in line with CQC standards. Care Support Worker Portland Community College / Care Stream Home Care, Mansfield, UK Jun 2023 – Jan 2024 • Supported students with learning disabilities and behavioural challenges. Assistant Registration Officer / District Registration Officer National Identification Authority 2020 – 2023 • Registered over 3,500 citizens for national ID programmes. • Supervised teams of up to 367 staff. Teacher (Science & Primary) Various Schools 2003 – 2013 • Delivered lessons, prepared students for exams, and supported learning needs. EDUCATION BSc Agriculture Technology (Agronomy) University for Development Studies, Ghana | 2008 – 2012 • Did a full course on mushroom cultivation as an agronomy student. TRAINING & CERTIFICATIONS (SELECTED) • Self-Harm & Ligature Training (2025) • CPI Safety Intervention Foundation (2024, 2025) • First Aid at Work (2024) • Principles of Management (2023)";
+  "Support Worker SEND Learning Support Assistant PROFESSIONAL PROFILE Compassionate and adaptable Support Worker with extensive experience supporting adults and children with learning disabilities, autism, schizophrenia, and complex needs. Skilled in person-centred care, safeguarding, behaviour management, and crisis intervention. Strong background in SEND support within mainstream and specialist educational settings. Known for building trust, promoting independence, and working collaboratively with multidisciplinary teams. Brings over 15 years of combined experience across health & social care, education, and community services. KEY SKILLS Health & Social Care • Person-centred care for adults & children • Autism, schizophrenia & complex needs support • Medication administration & first aid • Safeguarding adults & children • Crisis intervention, self-harm & ligature awareness • Daily living support, rehabilitation & life-skills coaching • Accurate reporting & CQC-compliant documentation SEND & Education Support • 1:1 and group learning support • Behaviour management & de-escalation • Supporting EHCP outcomes • Differentiated learning strategies • Communication adapted to diverse needs Operational & Administrative • Team supervision & collaboration • Data collection & reporting • Customer service & financial operations • Microsoft Word, Excel, PowerPoint Personal Strengths • Excellent communication & teamwork • Calm under pressure • Attention to detail • Highly adaptable PROFESSIONAL EXPERIENCE Residential Support Worker IBC Healthcare, Mansfield, UK Feb 2024 – Present • Support adults with learning disabilities, autism, and schizophrenia in supported living settings. • Assist with personal care, medication, meal preparation, and community engagement. • Promote independence through budgeting, cooking, and self-care coaching. • Respond to emergencies and challenging behaviours using de-escalation techniques. • Maintain accurate daily records in line with CQC standards. Learning Support Assistant (SEND) Teacher Active, Nottingham, UK Nov 2024 – Jul 2025 • Delivered 1:1 and small-group support for SEND learners across mainstream schools. • Implemented behaviour strategies aligned with EHCP requirements. • Adapted learning materials to support literacy, numeracy, and social development. • Worked collaboratively with teachers, therapists, and parents. • Ensured safeguarding and confidentiality at all times. Residential Support Worker (Sponsor Company) AKOS Care Home Ltd, London, UK Mar 2025 – Present • Provide person-centred support to vulnerable adults in residential settings. • Assist with daily living tasks, emotional support, and community participation. • Uphold safeguarding and professional boundaries. Care Support Worker Portland Community College / Care Stream Home Care, Mansfield, UK Jun 2023 – Jan 2024 • Supported students with learning disabilities and behavioural challenges. • Delivered personalised activities to promote emotional and social development. • Assisted with mobility, hygiene, and nutrition. • Worked with multidisciplinary teams to meet care plan goals. Domiciliary Care Worker Iconia House Ltd, Farncombe, UK May 2023 – Jun 2023 • Provided home-based personal care and companionship. • Assisted with medication reminders and household tasks. • Reported changes in health or behaviour promptly. ADDITIONAL PROFESSIONAL EXPERIENCE (GHANA) (Summarised for UK relevance) Assistant Registration Officer / Registration Officer / District Registration Officer National Identification Authority 2020 – 2023 • Registered over 3,500 citizens for national ID programmes. • Supervised teams of up to 367 staff. • Conducted structured interviews and verified legal documentation. Field Supervisor – Population & Housing Census Ghana Statistical Service Jun 2021 – Jul 2021 • Supervised five enumerators using digital survey tools. Credit Officer / Marketing & Operations Officer / Operations Officer First Allied Savings & Loans Ltd / GN Bank 2014 – 2019 • Managed loan disbursement, collections, and customer accounts. • Ensured compliance and accurate financial reporting. Teacher (Science & Primary) Various Schools 2003 – 2013 • Delivered lessons, prepared students for exams, and supported learning needs. Farm Manager Cocoa Farm, Elubo 2002 – 2002 • Managed crop production and farm operations. EDUCATION BSc Agriculture Technology (Agronomy) University for Development Studies, Ghana | 2008 – 2012 Senior Secondary School Certificate (Agricultural Science) Nkroful Agriculture Secondary School, Ghana | 1999 – 2001 TRAINING & CERTIFICATIONS (SELECTED) • Working with Students with Special Education Needs (2025) • Self-Harm & Ligature Training (2025) • CPI Safety Intervention Foundation (2024, 2025) • Medication Administration (2024) • Safeguarding Adults & Children (2024) • Autism Spectrum Disorder (2024) • First Aid at Work (2024) • Diploma in Mental Health (2023) • Principles of Management (2023) • Healthcare Management (2023) • Administrative Support (2023) INTERESTS • Sustainable agriculture • Community development • Mental health advocacy";
+/** His real answers: yes to the mushroom dealbreaker, onsite and food safety. */
 const THADDEUS_SCREENING = [answer(Q_MUSHROOM, true), answer(Q_ONSITE, true), answer(Q_FOOD, true)];
 
 // ---------- 2. the role's own words ----------
@@ -237,10 +249,11 @@ describe("the role's own words are not evidence (owner item 2)", () => {
       expect(pref0.matched_terms).not.toContain("manager");
       expect(r.evidence.some((e) => /Harvesting Manager role/.test(e.snippet))).toBe(false);
     }
-    // His real mushroom work is still read: marketing an FPO farmer's mushrooms.
-    expect(row(score(VIJAY_CV, VIJAY_SCREENING), "req-0").evidence[0]!.snippet).toMatch(
-      /market opportunities for mushrooms/,
-    );
+    // His real mushroom mentions are still read: partial on the hands-on
+    // must-have, as before this change.
+    const req0 = row(score(VIJAY_CV, VIJAY_SCREENING), "req-0");
+    expect(req0.status).toBe("partial");
+    expect(req0.matched_terms).toContain("mushroom");
   });
 
   it("the same title held at another employer is still evidence", () => {
@@ -353,14 +366,32 @@ describe("study and training count as partial at most for experience requirement
     }
   });
 
-  it("a university mushroom course plus a yes stays partial for hands-on picking (Thaddeus Armoh)", () => {
-    const r = score(THADDEUS_CV, THADDEUS_SCREENING);
+  it("a university mushroom course plus a yes stays partial for hands-on picking (synthetic shape)", () => {
+    const r = score(COURSE_CV, COURSE_SCREENING);
     const req0 = row(r, "req-0");
     expect(req0.matched_terms).toContain("mushroom");
     expect(req0.status).toBe("partial");
     expect(req0.needs_validation).toBe(true);
     // The claim is kept for the recruiter, not used to exclude or to promote.
     expect(req0.evidence.some((e) => e.snippet.startsWith("Answered yes to"))).toBe(true);
+    expect(r.disqualifying_answers).toEqual([]);
+  });
+
+  it("Thaddeus Armoh's real CV: today's behaviour, the baseline for owner item 4", () => {
+    // His CV never mentions mushrooms, so item 3 does not touch him: req-0 is
+    // partial from the dealbreaker "yes" alone, req-1 met from "Farm Manager
+    // Cocoa Farm" (2002) plus that "yes". Item 4 (a yes is a claim, not
+    // evidence) is a separate fix; when it lands, this test changes with it.
+    const r = score(THADDEUS_CV, THADDEUS_SCREENING);
+    const req0 = row(r, "req-0");
+    expect(req0.status).toBe("partial");
+    expect(req0.matched_terms).toEqual([]);
+    expect(req0.evidence.map((e) => e.source)).toEqual(["screening"]);
+    const req1 = row(r, "req-1");
+    expect(req1.status).toBe("met");
+    expect(req1.matched_terms).toEqual(["farm"]);
+    expect(req1.evidence[0]!.snippet).toMatch(/^Farm Manager Cocoa Farm/);
+    for (const id of ["req-0", "req-1"]) expect(row(r, id).rule_note).toBeUndefined();
     expect(r.disqualifying_answers).toEqual([]);
   });
 
@@ -393,6 +424,242 @@ describe("study and training count as partial at most for experience requirement
     expect(isExperienceRequirement("Degree-level education")).toBe(false);
     expect(isExperienceRequirement(MUST[2]!)).toBe(false);
     expect(row(score(ADIYA_CV, []), "pref-4").rule_note).toBeUndefined();
+  });
+});
+
+// ---------- review follow-ups: genuine work is never masked ----------
+
+const GMM_ROLE = roleContextOf({
+  organisation_name: "Stratium Partners",
+  role_title: "Group Marketing Manager",
+});
+/** One requirement, scored on its own. */
+const scoreOne = (
+  cv: string,
+  text: string,
+  role_context: ReturnType<typeof roleContextOf>,
+  screening: ScreeningAnswer[] = [],
+) =>
+  scoreCandidate({
+    cv_text: cv,
+    requirements: [{ id: "r", text, required: true, keywords: [] }],
+    screening,
+    role_context,
+    as_of: AS_OF,
+  }).requirement_assessment[0]!;
+const studied = (text: string, phrase: string) => studyContextOf(text)(text.indexOf(phrase));
+/** A free-text screening answer to a question that names no must-have. */
+const textAnswer = (value: string): ScreeningAnswer => ({
+  question_id: "q-farms",
+  question: "Tell us which farms, what they grew and the team size you led",
+  required: false,
+  answer_type: "text",
+  value,
+  disqualifying_condition: null,
+});
+
+/**
+ * Group Marketing Manager CV 0ad7903e, flattened as stored (headline without
+ * name and contacts, education tail, then the IWC job as one passage with no
+ * full stops).
+ */
+const IWC_CV =
+  "Managing Director Omni-channel Strategy | Brand Growth | Luxury Retail Excellence EDUCATION Master's degree In Strategy And Management Of International Business ESSEC Business School 09/2007 - 06/2009 Paris-Singapore • • • • EXPERIENCE Regional Sales Director IWC Schaffhausen 04/2016 - 04/2018 Middle East, India & Africa Drive Sales growth and maximize partners sell out performance Ensure operational excellence: forecasting, stock allocations, assortments, building sell out KPIs and customer service Engage External boutiques a win-win Retailization journey Develop and drive an effective and profitable Retail Network Launch tailor made training and coaching sessions for all advisors Expand brand presence through high visibility in new territories Build winning team in internal boutiques Open Mall of Emirates boutique Dubai in key location Growing high-end sales by 127% within 2 years Develop local partnerships to foster local communities in key markets";
+/** Group Marketing Manager CV 3e943b1b, flattened as stored, without name and contacts. */
+const EDUCATION_GROUP_CV =
+  "Summary Marketing and commercial leader with 15+ years of progressive experience, including 11 years in brand, trade marketing, shopper marketing, e-commerce and category management. Currently Group Commercial Director of Taaleem, a publicly listed group with 80+ schools and nurseries and 20,000+ students, leading marketing, CRM and digital teams of 50+ and a $4M+ annual media budget. Work Experience Taaleem / Kids First Group UAE & Qatar Group Commercial Director Feb 2026 – Present Publicly listed education group (DFM) with 80+ schools and nurseries across 40+ locations and 20,000+ students; Executive Committee member. • Lead group marketing strategy, brand positioning, annual plans, budgets and KPIs across 40+ locations, driving 4,500+ annual registrations.";
+
+describe("study is read from study cues, not from the words training, course or students", () => {
+  it("a job that runs training for its advisors is work (CV 0ad7903e shape)", () => {
+    expect(studied(IWC_CV, "Launch tailor made training")).toBe(false);
+    expect(studied(IWC_CV, "Regional Sales Director")).toBe(false);
+    const a = scoreOne(IWC_CV, "Experience in luxury retail sales", GMM_ROLE);
+    expect(a.status).toBe("met");
+    expect(a.rule_note).toBeUndefined();
+  });
+
+  it("a job at an education group with 20,000+ students is work (CV 3e943b1b shape)", () => {
+    expect(studied(EDUCATION_GROUP_CV, "20,000+ students, leading")).toBe(false);
+    expect(studied(EDUCATION_GROUP_CV, "Lead group marketing strategy")).toBe(false);
+    const a = scoreOne(EDUCATION_GROUP_CV, "Group marketing leadership experience", GMM_ROLE);
+    expect(a.status).toBe("met");
+    expect(a.rule_note).toBeUndefined();
+  });
+
+  it("a job at a university and a job selling online courses are work", () => {
+    const leeds =
+      "International Marketing Manager | University of Leeds | 2018 – 2022\n• Led student recruitment marketing campaigns across 12 markets.";
+    expect(studied(leeds, "Led student recruitment")).toBe(false);
+    const a = scoreOne(leeds, "International student recruitment marketing experience", GMM_ROLE);
+    expect(a.status).toBe("met");
+    expect(a.rule_note).toBeUndefined();
+    const udemy =
+      "Head of Growth Marketing | Udemy | 2019 – 2023\n• Grew paid enrolments across 400 online courses.";
+    expect(studied(udemy, "Grew paid enrolments")).toBe(false);
+    expect(scoreOne(udemy, "Growth marketing experience", GMM_ROLE).status).toBe("met");
+  });
+
+  it("the candidate's own course is still study, in a job entry only when the bullet opens with it", () => {
+    const cv =
+      "Harvest Supervisor | Glenmore Mushrooms Ltd | 2019 – 2022\n• Ran harvesting for 40 growing rooms; completed a Lantra supervisor training course in 2021.\n• Completed a Lantra supervisor training course.\nPROFILE\nI completed a mushroom cultivation course as an agronomy student.";
+    expect(studied(cv, "Ran harvesting for 40")).toBe(false);
+    expect(studied(cv, "Completed a Lantra")).toBe(true);
+    expect(studied(cv, "I completed a mushroom")).toBe(true);
+    // A lower-case list of duties in an entry line is not a course.
+    const duties =
+      "Monaghan Mushrooms | 2015 – 2022 | harvesting, grading, training\n• Picked and graded to retailer specification.";
+    expect(studied(duties, "harvesting, grading")).toBe(false);
+    expect(studied(duties, "Picked and graded")).toBe(false);
+  });
+
+  it("an education section ends at any heading, and at a dated job", () => {
+    const cv =
+      "EDUCATION\nBSc Agriculture | University of Galway | 2008 – 2011\nCAREER HIGHLIGHTS\nHarvest Supervisor | Monaghan Mushrooms | 2012 – 2022\n• Supervised 40 pickers on a commercial mushroom farm.";
+    expect(studied(cv, "BSc Agriculture")).toBe(true);
+    expect(studied(cv, "Harvest Supervisor")).toBe(false);
+    expect(studied(cv, "Supervised 40 pickers")).toBe(false);
+    const requirement = "Previous supervisory experience on a mushroom farm";
+    const linkedYes: ScreeningAnswer = {
+      ...answer(Q_MUSHROOM, true),
+      disqualifying_condition: null,
+      must_have: requirement,
+    };
+    const a = scoreOne(cv, requirement, ROLE, [linkedYes]);
+    expect(a.status).toBe("met");
+    expect(a.rule_note).toBeUndefined();
+
+    // No heading at all: the dated job itself leaves the section.
+    const unheaded =
+      "EDUCATION\nBSc Agriculture | University of Galway | 2008 – 2011\nHarvest Supervisor | Monaghan Mushrooms | 2012 – 2022\n• Supervised 40 pickers.\n• Graded and packed to retailer specification.";
+    expect(studied(unheaded, "Graded and packed")).toBe(false);
+    // An unfamiliar title-case heading ends it too.
+    const titled =
+      "EDUCATION\nBSc Agriculture, University of Galway, 2008 – 2011\nPositions Held\nRan the night picking shift at Monaghan Mushrooms.";
+    expect(studied(titled, "Ran the night picking")).toBe(false);
+  });
+
+  it("a one-line education run ends at a heading the engine does not know (CV 9ba3745f shape)", () => {
+    const cv =
+      "CORE COMPETENCIES ■ Brand Strategy & Positioning EDUCATION MBA, Marketing Preston University, Karachi — 2003–2004 BSc, Microbiology University of Karachi — 1991–1992 GEOGRAPHIC FOOTPRINT 7-market remit across Africa, the Middle East & CIS 📍 Africa 📍 Middle East 📍 Turkey EXECUTIVE SUMMARY Senior FMCG marketing leader with 20+ years building consumer brands across the Middle East.";
+    expect(studied(cv, "7-market remit")).toBe(false);
+    expect(studied(cv, "Senior FMCG marketing leader")).toBe(false);
+    // Where EDUCATION is read as a heading, the section still ends there.
+    const headed = cv.replace("EDUCATION MBA, Marketing", "EDUCATION Marketing MBA,");
+    expect(studied(headed, "Marketing MBA, Preston")).toBe(true);
+    expect(studied(headed, "7-market remit")).toBe(false);
+    expect(studied(headed, "Senior FMCG marketing leader")).toBe(false);
+  });
+
+  it("a thesis cue in a one-line CV marks its own clause, not the passages around it (CV 9c083d5a shape)", () => {
+    const cv =
+      "Languages French: Mother tongue English: Fluent Computers skills Microsoft Pack office: Excel, Word, PowerPoint, Salesforce, Power BI Education 2010-2011: MBA Digital Marketing- Pole Leonard de Vinci Paris 2006: Master's degree in Marketing- ESG Paris Passion Athletics France Champion of triple jump in 2005 and in 2004 Thesis Africa Ecommerce Market Results-driven Marketing/Brand Manager specializing in data-driven strategies for multiple brands. Demonstrated success in optimizing global offline and online traffic across 20 countries.";
+    expect(studied(cv, "Thesis Africa")).toBe(true);
+    expect(studied(cv, "Microsoft Pack office")).toBe(false);
+    expect(studied(cv, "Demonstrated success")).toBe(false);
+  });
+});
+
+describe("the title and the client's name are masked only where the text is about this application", () => {
+  it("the title held at another employer is evidence beside 'applied' or 'application'", () => {
+    const monaghan =
+      "Mushroom Harvesting Manager, Monaghan Mushrooms (2016 – 2020): applied pick-rate standards across 40 growing rooms in the mushroom industry";
+    expect(maskNonEvidence(monaghan, ROLE)).toBe(monaghan);
+    const a = scoreOne(monaghan, NICE[0]!, ROLE);
+    expect(a.status).toBe("met");
+    expect(a.matched_terms).toEqual(expect.arrayContaining(["harvesting", "manager"]));
+
+    const engineer =
+      "Senior Full-Stack Engineer at Acme 2019 – 2024, building the customer application in React and Node.";
+    const sfe = roleContextOf({
+      organisation_name: "Acme Hiring Co",
+      role_title: "Senior Full-Stack Engineer",
+    });
+    expect(maskNonEvidence(engineer, sfe)).toBe(engineer);
+    expect(
+      scoreOne(engineer, "Previous experience as a Senior Full-Stack Engineer", sfe).status,
+    ).toBe("met");
+  });
+
+  it("a former employee of the client keeps the employer as evidence", () => {
+    const cv = "Harvest Supervisor | Hughes Mushrooms | 2015 – 2022 • Supervised 40 pickers.";
+    expect(maskNonEvidence(cv, ROLE)).toBe(cv);
+    const a = scoreOne(cv, MUST[0]!, ROLE);
+    expect(a.status).toBe("partial");
+    expect(a.matched_terms).toContain("mushroom");
+    expect(maskNonEvidence("I worked for Hughes Mushrooms from 2015 to 2022.", ROLE)).toContain(
+      "Hughes Mushrooms",
+    );
+    // About this application, the name is still not evidence, dated or not.
+    for (const text of [
+      ANNA_AUTH_ANSWER,
+      "I hold a Skilled Worker visa until 2030 and would require sponsorship from Hughes Mushrooms.",
+    ])
+      expect(maskNonEvidence(text, ROLE)).not.toContain("Hughes Mushrooms");
+  });
+
+  it("the title is masked where the passage applies for it, and the facts after it stay", () => {
+    const text =
+      "I am applying for the Mushroom Harvesting Manager role because I ran harvesting at Monaghan Mushrooms.";
+    const masked = maskNonEvidence(text, ROLE);
+    expect(masked).not.toMatch(/Harvesting Manager/);
+    expect(masked).toContain("I ran harvesting at Monaghan Mushrooms.");
+  });
+});
+
+describe("an intent cue masks its own clause, never the facts after it", () => {
+  const requirement = MUST[1]!;
+  it("screening answers that open with an intent keep the experience they state", () => {
+    for (const value of [
+      "I would like to highlight that I supervised 30 mushroom pickers at Monaghan Mushrooms for four years.",
+      "I am keen to bring my eight years of supervising mushroom pickers on commercial mushroom farms",
+    ]) {
+      const masked = maskNonEvidence(value, ROLE);
+      expect(masked).toMatch(/supervis\w+ (?:30 )?mushroom pickers/);
+      const a = scoreOne("Agricultural worker.", requirement, ROLE, [textAnswer(value)]);
+      expect(a.status).toBe("partial");
+      expect(a.evidence.some((e) => e.source === "screening")).toBe(true);
+    }
+  });
+
+  it("marketing vocabulary and the facts after a one-line 'seeking' are kept", () => {
+    const brands =
+      "Repositioned aspirational luxury retail brands across shopping malls in the UAE";
+    expect(maskNonEvidence(brands, GMM_ROLE)).toBe(brands);
+    const flat = "PROFILE seeking a senior role 15 years in FMCG brand marketing across the GCC";
+    const masked = maskNonEvidence(flat, GMM_ROLE);
+    expect(masked).not.toMatch(/seeking|senior role/);
+    expect(masked).toContain("15 years in FMCG brand marketing across the GCC");
+  });
+
+  it("a gerund after a preposition is the work, not an aim", () => {
+    const text = "Responsible for seeking new distribution partners in the UAE and KSA.";
+    expect(maskNonEvidence(text, GMM_ROLE)).toBe(text);
+  });
+});
+
+describe("the recruiter-style rules read the masked CV", () => {
+  const cv =
+    "Marketing Manager | Boots UK | 2015 – 2025\n• Led brand marketing for UK health and beauty.\nSeeking a senior marketing role in Dubai, UAE.";
+
+  it("'seeking a role in Dubai, UAE' is neither UAE marketing experience nor a Dubai location", () => {
+    const market = scoreOne(cv, "GCC and UAE marketing experience", GMM_ROLE);
+    expect(market.matched_terms).toEqual(["rule:market_experience"]);
+    expect(market.status).toBe("missing");
+    const relocation = scoreOne(cv, "If outside the UAE must be willing to relocate", GMM_ROLE);
+    expect(relocation.matched_terms).toEqual(["rule:conditional_relocation"]);
+    expect(relocation.status).not.toBe("met");
+    expect(relocation.evidence.some((e) => /Dubai/.test(e.snippet))).toBe(false);
+  });
+
+  it("a rule's quote shows the CV as written, words the mask blanked included", () => {
+    const text =
+      "Marketing Manager, Boots UK.\n12 years of progressive marketing experience, including campaigns for Stratium Partners clients.";
+    expect(maskNonEvidence(text, GMM_ROLE)).not.toContain("Stratium Partners");
+    const a = scoreOne(text, "10 or more years of progressive marketing experience", GMM_ROLE);
+    expect(a.matched_terms).toEqual(["rule:minimum_years"]);
+    expect(a.evidence[0]!.snippet).toBe(
+      "12 years of progressive marketing experience, including campaigns for Stratium Partners clients.",
+    );
   });
 });
 

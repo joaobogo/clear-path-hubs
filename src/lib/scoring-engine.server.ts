@@ -588,8 +588,10 @@ export function scoreCandidate(input: {
   candidate_location?: string | null;
   /**
    * The client organisation and the role title. Their own words are not
-   * evidence: the client's name, and the title where the text is about this
-   * application, are blanked before terms are searched (evidence-sources.ts).
+   * evidence: the client's name outside a dated work entry, and the title
+   * where the text is about this application, are blanked before terms are
+   * searched and before the recruiter-style rules read the CV
+   * (evidence-sources.ts).
    */
   role_context?: RoleContext | null;
   /** Assessment date for date-range arithmetic. */
@@ -619,13 +621,30 @@ export function scoreCandidate(input: {
   });
   const completed_at = new Date().toISOString();
 
-  // Requirement terms are searched in this copy of the CV (owner, 2 Nov 2026):
-  // same offsets, with the client's name, the role title where the text is
-  // about this application, and aspirational clauses ("seeking", "I would
-  // like to") blanked. Quotes, negation and the recruiter-style rules still
-  // read the CV as written.
+  // Requirement terms and the recruiter-style rules (market, tenure, degree,
+  // relocation) read this copy of the CV (owner, 2 Nov 2026): same offsets,
+  // with the client's name outside a dated work entry, the role title where
+  // the text is about this application, and aspirational clauses ("seeking a
+  // role in Dubai", "I would like to") blanked. Quotes and negation read the
+  // CV as written.
   const roleContext = normaliseRoleContext(input.role_context);
   const evidenceCv = maskNonEvidence(cv, roleContext);
+  /**
+   * A rule's quote, re-read from the CV as written: the rule read the masked
+   * copy, whose offsets are the CV's, so a quoted line shows the words the
+   * mask blanked inside it. A quote that is not a slice of the masked copy
+   * (the profile location) is kept as the rule wrote it.
+   */
+  const unmaskedQuote = (e: { snippet: string; start: number; end: number }): string => {
+    if (e.end <= e.start) return e.snippet;
+    const masked = evidenceCv.slice(e.start, e.end);
+    const original = cv.slice(e.start, e.end);
+    if (e.snippet === masked) return original;
+    const cut = e.snippet.length - 1;
+    if (e.snippet.endsWith("…") && cut > 0 && masked.slice(0, cut) === e.snippet.slice(0, cut))
+      return `${original.slice(0, cut)}…`;
+    return e.snippet;
+  };
   // Passages that are study or training: for an experience requirement they
   // count as partial at most.
   const cvStudyAt = studyContextOf(cv);
@@ -671,16 +690,19 @@ export function scoreCandidate(input: {
   const assessment: RequirementAssessment[] = requirements.map((r) => {
     // Degree field, conditional relocation and minimum years are judged the
     // way a recruiter reads them, not by keyword overlap (v1.6.0).
-    const structured = evaluateStructuredRequirement(r.text, cv, input.as_of ?? new Date(), {
-      profileLocation: input.candidate_location ?? null,
-    });
+    const structured = evaluateStructuredRequirement(
+      r.text,
+      evidenceCv,
+      input.as_of ?? new Date(),
+      { profileLocation: input.candidate_location ?? null },
+    );
     if (structured) {
       const refs: EvidenceRef[] = structured.evidence.map((e) => ({
         requirement_id: r.id,
         requirement_text: r.text,
         source: "cv",
         matched_terms: [`rule:${structured.rule}`],
-        snippet: e.snippet,
+        snippet: unmaskedQuote(e),
         location: `cv:${e.start}-${e.end}`,
       }));
       evidence.push(...refs);
