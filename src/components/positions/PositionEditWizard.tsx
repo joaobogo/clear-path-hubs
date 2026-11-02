@@ -355,7 +355,7 @@ export function PositionEditWizard({
       }
       if (blockingBundled.length > 0) {
         throw new Error(
-          "A dealbreaker asks for two requirements at once. Split it, or keep it as an optional question, using the notice above the Save button.",
+          "A dealbreaker asks for two requirements at once. Split or reword it, or keep it as an optional question, using the notice above the Save button.",
         );
       }
       const all = allErrors(state);

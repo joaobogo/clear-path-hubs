@@ -12,6 +12,11 @@
  * "Keep as an optional question": the question stays, with its answers, and
  * is weighed without excluding anyone. Never a disabled button with nothing
  * else to press.
+ *
+ * When the split cannot be worded reliably (`standsAlone` false: "experience
+ * in retail as well as hospitality" would give "Do you have hospitality?"),
+ * no suggestion is shown and no split is offered: the author rewords it as
+ * separate questions, or keeps it as an optional question.
  */
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,7 +31,7 @@ export function CompoundDealbreakerNotice({
   className,
 }: {
   findings: CompoundDealbreakerFinding[];
-  /** False when the split would take the role over its question limit. */
+  /** False when the split would take the role over its question limit, or cannot be worded. */
   canApply: (finding: CompoundDealbreakerFinding) => boolean;
   onApply: (finding: CompoundDealbreakerFinding) => void;
   /** Turns the bundled question into an optional, non-dealbreaker one. */
@@ -54,17 +59,24 @@ export function CompoundDealbreakerNotice({
       </p>
       <ul className="mt-2 space-y-3">
         {findings.map((f) => {
-          const fits = canApply(f);
+          const splittable = f.standsAlone;
+          const fits = splittable && canApply(f);
           return (
             <li key={`${f.index}:${f.text}`} className="space-y-1">
               <p>
                 <span className="font-medium">{f.label}:</span>{" "}
                 <span className="italic">“{f.text}”</span>
               </p>
-              <p className="text-xs">
-                Suggested: <span className="font-medium">“{f.questions[0]}”</span> and{" "}
-                <span className="font-medium">“{f.questions[1]}”</span>
-              </p>
+              {splittable ? (
+                <p className="text-xs" data-testid="compound-dealbreaker-suggestion">
+                  Suggested: <span className="font-medium">“{f.questions[0]}”</span> and{" "}
+                  <span className="font-medium">“{f.questions[1]}”</span>
+                </p>
+              ) : (
+                <p className="text-xs">
+                  Reword it as separate questions, one requirement each, in your own words.
+                </p>
+              )}
               <div className="flex flex-wrap items-center gap-2">
                 {fits ? (
                   <Button
@@ -88,11 +100,13 @@ export function CompoundDealbreakerNotice({
                   </Button>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  {!fits
-                    ? `No room to split it: this role is at its ${SCREENING_MAX_QUESTIONS}-question limit. Kept as an optional question, it is weighed but excludes nobody, and its answers are kept. To split it instead, remove another question first.`
-                    : f.id
-                      ? "The original stays as an optional question that excludes nobody, so answers already given are kept."
-                      : null}
+                  {!splittable
+                    ? "Or keep it as an optional question: it is weighed but excludes nobody, and its answers are kept."
+                    : !fits
+                      ? `No room to split it: this role is at its ${SCREENING_MAX_QUESTIONS}-question limit. Kept as an optional question, it is weighed but excludes nobody, and its answers are kept. To split it instead, remove another question first.`
+                      : f.id
+                        ? "The original stays as an optional question that excludes nobody, so answers already given are kept."
+                        : null}
                 </p>
               </div>
             </li>

@@ -79,6 +79,7 @@ describe("splitCompoundQuestion", () => {
         "Do you have direct, hands-on mushroom picking experience?",
         "Do you have supervisory experience on a commercial mushroom farm?",
       ],
+      standsAlone: true,
     });
   });
 
@@ -126,12 +127,64 @@ describe("splitCompoundQuestion", () => {
       ],
     ],
     [
-      "Are you able to work weekends as well as nights?",
+      "Are you able to work weekends as well as work nights?",
       "as well as",
       ["Are you able to work weekends?", "Are you able to work nights?"],
     ],
+    [
+      "Have you got a forklift licence as well as a CSCS card?",
+      "as well as",
+      ["Have you got a forklift licence?", "Have you got a CSCS card?"],
+    ],
+    [
+      "Can you drive a forklift as well as a reach truck?",
+      "as well as",
+      ["Can you drive a forklift?", "Can you drive a reach truck?"],
+    ],
   ])("%s", (text, connector, questions) => {
-    expect(splitCompoundQuestion(text)).toEqual({ connector, questions });
+    expect(splitCompoundQuestion(text)).toEqual({ connector, questions, standsAlone: true });
+  });
+
+  // Re-review of this branch: a bundle, but re-attaching only the verb made
+  // the second half nonsense ("Do you have a supervisor?"), and the generator
+  // wrote it onto the role as a required dealbreaker. It is still reported
+  // (a "no" to half of it excludes), but no split is offered or applied.
+  it.each([
+    ["Do you have experience as a picker as well as a supervisor?", "Do you have a supervisor?"],
+    ["Are you willing to travel as well as relocate?", "Are you willing to travel relocate?"],
+    ["Do you have experience in retail as well as hospitality?", "Do you have hospitality?"],
+    ["Do you have experience managing budgets as well as people?", "Do you have people?"],
+    ["Have you worked with Excel as well as SQL?", "Have you worked SQL?"],
+    ["Are you comfortable working nights as well as weekends?", "Are you weekends?"],
+    ["Do you have experience in M&A as well as Private Equity?", "Do you have Private Equity?"],
+    ["Do you have experience dealing with clients along with suppliers?", "Do you have suppliers?"],
+    [
+      "Are you able to lift 25kg as well as stand for long periods?",
+      "Are you able to lift stand for long periods?",
+    ],
+    [
+      "Are you willing to travel as well as work weekends?",
+      "Are you willing to travel work weekends?",
+    ],
+    ["Are you comfortable working nights as well as weekend shifts?", "Are you weekend shifts?"],
+    [
+      "Do you have picking as well as supervisory experience?",
+      "Do you have supervisory experience?",
+    ],
+    [
+      "Have you managed teams as well as skilled agency workers?",
+      "Have you skilled agency workers?",
+    ],
+    // Right, but "nights" alone cannot be told from a verb ("as well as stand"): not offered.
+    ["Are you able to work weekends as well as nights?", "Are you able to work nights?"],
+    ["Please confirm you hold a forklift licence as well as a CSCS card.", "A CSCS card"],
+  ])("a bundle whose halves do not read on their own: %s", (text, unusable) => {
+    const split = splitCompoundQuestion(text)!;
+    expect(split).not.toBeNull();
+    expect(split.questions[1]).toBe(unusable);
+    expect(split.standsAlone).toBe(false);
+    const [finding] = findCompoundDealbreakers([{ question: text, dealbreaker: true }]);
+    expect(finding).toMatchObject({ text, standsAlone: false });
   });
 
   it.each([
@@ -250,6 +303,24 @@ describe("findCompoundDealbreakers on a save", () => {
     expect(qs[0]!.question).toBe(HUGHES_BUNDLED);
   });
 
+  it("never prints a split that does not read on its own", () => {
+    const text = "Do you have experience in retail as well as hospitality?";
+    let message = "";
+    try {
+      assertNoCompoundDealbreakers([{ question: text, dealbreaker: true }]);
+    } catch (e) {
+      message = (e as Error).message;
+    }
+    expect(message).toContain(
+      `Screening question 1 ("${text}") joins two requirements with "as well as".`,
+    );
+    expect(message).not.toContain("Suggested");
+    expect(message).not.toContain("Do you have hospitality");
+    expect(message).toContain(
+      "Reword it as separate dealbreaker questions, one requirement each, or keep it as an optional question that excludes nobody.",
+    );
+  });
+
   it("publish and blueprint sign-off read every stored dealbreaker", () => {
     expect(findCompoundDealbreakers(hughes()).map((f) => f.id)).toEqual([
       "7da77185-54dc-4fd9-89ea-1f960fee0fdb",
@@ -320,13 +391,21 @@ describe("the author applies the split", () => {
       "Direct, hands-on mushroom picking experience",
       "Supervisory experience on a commercial mushroom farm",
     ]);
+    // A must-have still joined by "as well as" is not copied to either half.
+    expect(splitMustHave("Picking as well as supervision", halves)).toEqual([
+      "Direct, hands-on mushroom picking experience",
+      "Supervisory experience on a commercial mushroom farm",
+    ]);
     // Parts written in the other order go to the half they match.
     expect(
       splitMustHave(
         "Supervisory experience on a mushroom farm and hands-on mushroom picking experience",
         halves,
       ),
-    ).toEqual(["Hands-on mushroom picking experience", "Supervisory experience on a mushroom farm"]);
+    ).toEqual([
+      "Hands-on mushroom picking experience",
+      "Supervisory experience on a mushroom farm",
+    ]);
   });
 
   it("the admin editor's shape (no must-have fields) gets none added", () => {
@@ -350,6 +429,24 @@ describe("the author applies the split", () => {
       [true, true],
       [true, false],
     ]);
+  });
+
+  it("never applies a split whose halves do not read on their own, even with room", () => {
+    const qs = [
+      {
+        id: "q1",
+        question: "Do you have experience as a picker as well as a supervisor?",
+        dealbreaker: true,
+        required: true,
+      },
+    ];
+    const [finding] = findCompoundDealbreakers(qs);
+    expect(finding!.standsAlone).toBe(false);
+    expect(applyDealbreakerSplit(qs, finding!)).toBeNull();
+    // Keeping it optional is the path that saves.
+    const kept = keepAsOptionalQuestion(qs, finding!);
+    expect(kept).toEqual([{ ...qs[0]!, dealbreaker: false, required: false }]);
+    expect(findCompoundDealbreakers(kept)).toEqual([]);
   });
 
   it("says no when the role is at its question limit (Hughes has five)", () => {
@@ -389,6 +486,21 @@ describe("blueprint sign-off message", () => {
     expect(message).toBe(
       "Screening question 1 is a dealbreaker asking for two requirements at once. Split it in the role editor, then confirm.",
     );
+  });
+
+  it("when no split can be suggested, names rewording or keeping it optional", () => {
+    const rows = [
+      {
+        question: "Do you have experience in retail as well as hospitality?",
+        dealbreaker: true,
+        required: true,
+      },
+    ];
+    const message = compoundDealbreakerSignOffMessage(rows)!;
+    expect(message).toBe(
+      "Screening question 1 is a dealbreaker asking for two requirements at once. In the role editor, reword it as separate questions or keep it as an optional question, then confirm.",
+    );
+    expect(message.length).toBeLessThan(200);
   });
 
   it("names several, and nothing when no dealbreaker bundles two", () => {
@@ -483,6 +595,73 @@ describe("the role generator drafts one requirement per dealbreaker", () => {
       ],
       ["Have you managed a team of skilled and unskilled workers?", true, true],
     ]);
+  });
+
+  it("splits explicit bundles whose halves stand as requirements on their own", () => {
+    const out = splitGeneratedDealbreakers([
+      {
+        question: "Do you have a forklift licence as well as a valid driving licence?",
+        dealbreaker: true,
+        required: true,
+      },
+      {
+        question: "Do you hold a counterbalance licence as well as a reach truck licence?",
+        dealbreaker: true,
+        required: false,
+      },
+    ]);
+    expect(out.map((q) => [q.question, q.dealbreaker, q.required])).toEqual([
+      ["Do you have a forklift licence?", true, true],
+      ["Do you have a valid driving licence?", true, true],
+      ["Do you hold a counterbalance licence?", true, false],
+      ["Do you hold a reach truck licence?", true, false],
+    ]);
+  });
+
+  // Re-review: these were split into "Do you have a supervisor?", "Are you
+  // willing to travel relocate?" and similar, written to the role as required
+  // dealbreakers with no human step. Each stays one question, weighed, and
+  // excludes nobody.
+  const UNREADABLE_SPLITS = [
+    "Do you have experience as a picker as well as a supervisor?",
+    "Are you willing to travel as well as relocate?",
+    "Do you have experience in retail as well as hospitality?",
+    "Do you have experience managing budgets as well as people?",
+    "Have you worked with Excel as well as SQL?",
+    "Are you comfortable working nights as well as weekends?",
+    "Do you have experience in M&A as well as Private Equity?",
+    "Do you have experience dealing with clients along with suppliers?",
+    "Are you able to lift 25kg as well as stand for long periods?",
+  ];
+
+  it.each(UNREADABLE_SPLITS)("keeps it as one weighed question: %s", (question) => {
+    const out = splitGeneratedDealbreakers([
+      { question, dealbreaker: true, required: true, must_have: "Core requirement" },
+    ]);
+    expect(out).toEqual([
+      { question, dealbreaker: false, required: true, must_have: "Core requirement" },
+    ]);
+  });
+
+  it("normalizeScreening keeps each of them as one weighed question", async () => {
+    const { normalizeScreening } = await import("@/lib/blueprint-engine.server");
+    for (const question of UNREADABLE_SPLITS) {
+      const out = normalizeScreening([
+        { question, answer_type: "boolean", required: true, dealbreaker: true },
+        {
+          question: "Are you fluent in English?",
+          answer_type: "boolean",
+          required: true,
+          dealbreaker: true,
+        },
+      ]);
+      expect(out.map((q) => [q.question, q.dealbreaker])).toEqual([
+        [question, false],
+        ["Are you fluent in English?", true],
+      ]);
+      // Nothing it stores is a dealbreaker that bundles two requirements.
+      expect(findCompoundDealbreakers(out)).toEqual([]);
+    }
   });
 
   it("normalizeScreening applies the split before the question and mandatory caps", async () => {
@@ -649,7 +828,11 @@ describe("publish", () => {
         const rows = () =>
           t !== "positions" || stuckQuery
             ? []
-            : [selected.includes("screening_questions(") ? { ...bare, screening_questions: embedded } : bare];
+            : [
+                selected.includes("screening_questions(")
+                  ? { ...bare, screening_questions: embedded }
+                  : bare,
+              ];
         const q: Record<string, unknown> = {};
         Object.assign(q, {
           select: (cols: string) => ((selected = t === "positions" ? cols : selected), q),

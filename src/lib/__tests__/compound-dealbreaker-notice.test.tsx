@@ -16,11 +16,31 @@ import {
 const BUNDLED =
   "Do you have direct, hands-on mushroom picking experience as well as supervisory experience on a commercial mushroom farm?";
 const hughes = () => [
-  { id: "7da77185-54dc-4fd9-89ea-1f960fee0fdb", question: BUNDLED, dealbreaker: true, required: true },
-  { id: "q2", question: "Are you able to work onsite on a 5-of-7 rota?", dealbreaker: true, required: true },
+  {
+    id: "7da77185-54dc-4fd9-89ea-1f960fee0fdb",
+    question: BUNDLED,
+    dealbreaker: true,
+    required: true,
+  },
+  {
+    id: "q2",
+    question: "Are you able to work onsite on a 5-of-7 rota?",
+    dealbreaker: true,
+    required: true,
+  },
   { id: "q3", question: "Are you fluent in English?", dealbreaker: true, required: true },
-  { id: "q4", question: "What is your current UK work authorization status?", dealbreaker: false, required: true },
-  { id: "q5", question: "Do you hold an Advanced Food Hygiene qualification?", dealbreaker: false, required: false },
+  {
+    id: "q4",
+    question: "What is your current UK work authorization status?",
+    dealbreaker: false,
+    required: true,
+  },
+  {
+    id: "q5",
+    question: "Do you hold an Advanced Food Hygiene qualification?",
+    dealbreaker: false,
+    required: false,
+  },
 ];
 
 function render(questions: ReturnType<typeof hughes>) {
@@ -53,6 +73,31 @@ describe("CompoundDealbreakerNotice", () => {
       /<button(?![^>]* disabled="")[^>]*data-testid="compound-dealbreaker-apply"[^>]*>Split into two questions<\/button>/,
     );
     expect(html).not.toContain("compound-dealbreaker-keep-optional");
+  });
+
+  it("never shows or offers a split that does not read on its own, even with room", () => {
+    const html = render([
+      {
+        id: "q1",
+        question: "Do you have experience in retail as well as hospitality?",
+        dealbreaker: true,
+        required: true,
+      },
+    ]);
+    expect(html).not.toContain("Do you have hospitality");
+    expect(html).not.toContain("compound-dealbreaker-suggestion");
+    expect(html).not.toContain('data-testid="compound-dealbreaker-apply"');
+    expect(html).toContain("Reword it as separate questions, one requirement each");
+    expect(html).toMatch(
+      /<button(?![^>]* disabled="")[^>]*data-testid="compound-dealbreaker-keep-optional"[^>]*>Keep as an optional question<\/button>/,
+    );
+    expect(html).not.toContain("question limit");
+  });
+
+  it("with room and a split that reads on its own, shows the suggestion", () => {
+    const html = render(hughes().slice(0, 3));
+    expect(html).toContain('data-testid="compound-dealbreaker-suggestion"');
+    expect(html).toContain("Do you have supervisory experience on a commercial mushroom farm?");
   });
 
   it("both editors wire the optional-question path", () => {
