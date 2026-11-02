@@ -6,6 +6,7 @@
  * with no way to know WHAT conflicted (audit #3, finding 2). A contradiction
  * either names its pair in plain words or it says nothing at all.
  */
+import { isRecruiterOnlyConcern } from "@/lib/scoring/recruiter-review";
 
 export type ContradictionRow = {
   question?: string | null;
@@ -42,13 +43,16 @@ const STORED_ENUM_CONCERN =
 
 /**
  * Rewrite a stored concern line for display. Returns null when the line is a
- * bare status token with nothing a reader could act on — the caller drops it.
+ * bare status token with nothing a reader could act on — the caller drops it —
+ * or recruiter-only wording (an unverified screening claim, a recorded
+ * recruiter exception), which is internal and never reaches the client.
  */
 export function displayConcern(
   concern: string,
   rows?: ContradictionRow[] | null,
 ): string | null {
   const text = concern.trim();
+  if (isRecruiterOnlyConcern(text)) return null;
   if (!STORED_ENUM_CONCERN.test(text)) return text;
   // Same flag, said properly — using the rows if this run recorded any.
   return (

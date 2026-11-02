@@ -11,6 +11,13 @@ import {
   resolveEligibilityFromRows,
   type EligibilityCheckRow,
 } from "@/lib/scoring/eligibility";
+import {
+  RECRUITER_DECISION_STATUSES,
+  UNVERIFIED_CLAIM_KEY_PREFIX,
+  planRecruiterDecision,
+  type DecidableCheck,
+} from "@/lib/scoring/recruiter-review";
+import { planEligibilityRecompute } from "@/lib/scoring/screening-eligibility";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
@@ -546,7 +553,27 @@ export const recomputeScore = createServerFn({ method: "POST" })
     return res;
   });
 
-/** Resolve an eligibility qualifier by hand, with a reason. Always audited. */
+/**
+ * Record a recruiter's eligibility decision, with a reason. Always audited.
+ *
+ * A decision on one of the engine's rows (disq:<question>, a dealbreaker that
+ * disqualified; screening_claim_unverified:<question>, a "yes" the CV does not
+ * back) is written as a recruiter_review row for that question, never onto
+ * the engine's row: the next rescore rebuilt that row and silently reverted
+ * the decision. Every eligibility writer reads recruiter_review rows and none
+ * overwrites them:
+ *   passed   — the answer is accepted as meeting the bar: it does not
+ *              disqualify (same effect as excepted on that question) and
+ *              clears the unverified-claim flag;
+ *   excepted — an exception: the answer does not disqualify; the match reads
+ *              'excepted';
+ *   failed   — not eligible whatever the answers;
+ *   unknown  — no decision (withdraws one).
+ * The match's eligibility_status follows at once. The score is not rescored
+ * here (a forced rescore would replace a reviewed score); the result says a
+ * recompute is needed for the score to reflect the decision. Never approves,
+ * publishes, or changes stage or client visibility.
+ */
 export const setEligibilityDecision = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
@@ -554,7 +581,7 @@ export const setEligibilityDecision = createServerFn({ method: "POST" })
       .object({
         match_id: z.string().uuid(),
         check_id: z.string().uuid(),
-        status: z.enum(["eligible", "not_eligible", "needs_validation", "excepted"]),
+        status: z.enum(RECRUITER_DECISION_STATUSES),
         reason: z.string().trim().min(8).max(1000),
       })
       .parse(i),
@@ -569,28 +596,149 @@ export const setEligibilityDecision = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!before || before.candidate_match_id !== data.match_id) throw new Error("check_not_found");
 
-    const { data: after, error } = await s
+    const { data: matchChecks, error: listErr } = await s
       .from("eligibility_checks")
-      .update({
-        status: data.status,
-        reason: data.reason,
-        actor_user_id: context.userId,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", data.check_id)
-      .select("*")
-      .single();
-    if (error) throw new Error(error.message);
+      .select("id,qualifier_key,qualifier_label,qualifier_kind,status,evidence")
+      .eq("candidate_match_id", data.match_id);
+    if (listErr) throw new Error(listErr.message);
+
+    const write = planRecruiterDecision({
+      check: before,
+      status: data.status,
+      reason: data.reason,
+      actor_user_id: context.userId,
+      match_checks: (matchChecks ?? []) as DecidableCheck[],
+    });
+    const now = new Date().toISOString();
+    let after: AnyRow;
+    let previous: AnyRow = before;
+    if (write.kind === "update") {
+      previous = ((matchChecks ?? []) as AnyRow[]).find((r) => r.id === write.id) ?? before;
+      const { data: row, error } = await s
+        .from("eligibility_checks")
+        .update({ ...write.patch, updated_at: now })
+        .eq("id", write.id)
+        .select("*")
+        .single();
+      if (error) throw new Error(error.message);
+      after = row;
+    } else {
+      previous = null;
+      const { data: row, error } = await s
+        .from("eligibility_checks")
+        .upsert(
+          {
+            ...write.row,
+            candidate_match_id: data.match_id,
+            organization_id: before.organization_id,
+            position_id: before.position_id,
+            updated_at: now,
+          },
+          { onConflict: "candidate_match_id,qualifier_key" },
+        )
+        .select("*")
+        .single();
+      if (error) throw new Error(error.message);
+      after = row;
+    }
+
+    // A decided claim is no longer unverified: drop the engine's flag now
+    // rather than at the next rescore (which would drop it too).
+    if (data.status !== "unknown" && String(before.qualifier_key).startsWith(UNVERIFIED_CLAIM_KEY_PREFIX)) {
+      await s.from("eligibility_checks").delete().eq("id", before.id);
+    }
+
+    // The match's eligibility follows the decision at once, by the same rule
+    // the recompute tool and the engine apply.
+    const { data: match } = await s
+      .from("candidate_matches")
+      .select("id,application_id,eligibility_status")
+      .eq("id", data.match_id)
+      .maybeSingle();
+    let eligibilityAfter: string | null = match?.eligibility_status ?? null;
+    if (match) {
+      const [{ data: answers, error: aErr }, { data: checksNow, error: cErr }] = await Promise.all([
+        s.from("application_answers")
+          .select("question_id,answer,screening_questions(question,answer_type,dealbreaker,preferred_answer)")
+          .eq("application_id", match.application_id),
+        s.from("eligibility_checks").select("qualifier_key,status,evidence").eq("candidate_match_id", data.match_id),
+      ]);
+      if (aErr) throw new Error(aErr.message);
+      if (cErr) throw new Error(cErr.message);
+      const plan = planEligibilityRecompute({
+        // An 'excepted' status was itself a recruiter decision: recompute it
+        // from the decisions as they now stand.
+        current_status: match.eligibility_status === "excepted" ? null : match.eligibility_status,
+        existing_checks: checksNow ?? [],
+        answers: ((answers ?? []) as AnyRow[]).map((r) => {
+          const sq = Array.isArray(r.screening_questions) ? r.screening_questions[0] : r.screening_questions;
+          return {
+            question_id: r.question_id,
+            question: sq?.question ?? "",
+            dealbreaker: sq?.dealbreaker ?? false,
+            answer_type: sq?.answer_type ?? "text",
+            preferred_answer: sq?.preferred_answer ?? null,
+            value: r.answer,
+          };
+        }),
+      });
+      if (plan.upserts.length) {
+        const { error: uErr } = await s.from("eligibility_checks").upsert(
+          plan.upserts.map((c) => ({
+            ...c,
+            candidate_match_id: data.match_id,
+            position_id: before.position_id,
+            organization_id: before.organization_id,
+          })),
+          { onConflict: "candidate_match_id,qualifier_key" },
+        );
+        if (uErr) throw new Error(uErr.message);
+      }
+      if (plan.stale_keys.length) {
+        const { error: dErr } = await s
+          .from("eligibility_checks")
+          .delete()
+          .eq("candidate_match_id", data.match_id)
+          .in("qualifier_key", plan.stale_keys);
+        if (dErr) throw new Error(dErr.message);
+      }
+      if (plan.next_status && plan.next_status !== match.eligibility_status) {
+        const { error: mErr } = await s
+          .from("candidate_matches")
+          .update({ eligibility_status: plan.next_status, eligibility_updated_at: now })
+          .eq("id", data.match_id);
+        if (mErr) throw new Error(mErr.message);
+        eligibilityAfter = plan.next_status;
+      }
+    }
 
     await audit({
       actor: context.userId,
       action: "eligibility_decided",
       match_id: data.match_id,
       organization_id: after.organization_id,
-      before: { status: before.status, reason: before.reason },
-      after: { status: after.status, reason: after.reason },
+      before: {
+        check: before.qualifier_key,
+        decision_key: write.kind === "update" ? write.qualifier_key : write.row.qualifier_key,
+        status: previous?.status ?? null,
+        reason: previous?.reason ?? null,
+        eligibility_status: match?.eligibility_status ?? null,
+      },
+      after: {
+        check: before.qualifier_key,
+        decision_key: after.qualifier_key,
+        status: after.status,
+        reason: after.reason,
+        eligibility_status: eligibilityAfter,
+      },
     });
-    return { ok: true as const, check: after as AnyRow };
+    return {
+      ok: true as const,
+      check: after as AnyRow,
+      eligibility_status: eligibilityAfter,
+      // The current run was scored before this decision.
+      rescore_needed: true as const,
+    };
   });
 
 /**

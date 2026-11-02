@@ -10,6 +10,7 @@
  */
 
 import type { RequirementRow, RequirementStatus } from "@/lib/client-fit-presentation";
+import { isRecruiterOnlyConcern } from "@/lib/scoring/recruiter-review";
 
 export type ValidationItem = {
   id: string;
@@ -87,7 +88,9 @@ export function buildValidationList(
   );
 
   const runNotes: ValidationItem[] = concerns
-    .filter((c) => c.trim().length > 0 && !isRequirementShapedConcern(c))
+    // Recruiter-only wording (unverified screening claims, recruiter
+    // exceptions) is internal review material, never a client warning.
+    .filter((c) => c.trim().length > 0 && !isRequirementShapedConcern(c) && !isRecruiterOnlyConcern(c))
     .map((c, i) => ({
       id: `note-${i}`,
       label: null,

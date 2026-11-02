@@ -17,6 +17,7 @@ import { useServerFn } from "@tanstack/react-start";
 import React, { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { deriveStrengths } from "@/lib/scoring/strengths";
+import { recruiterReviewNotes } from "@/lib/scoring/recruiter-review";
 import {
   advanceProcessing,
   applyReviewDecision,
@@ -846,6 +847,20 @@ export function ScoreTab({
                 )}
               </ul>
             </div>
+          </div>
+        )}
+
+        {/* Recruiter-only: unverified screening claims and recorded
+            exceptions. Never part of the run's concerns, which the client
+            workspace shows. */}
+        {recruiterReviewNotes(result).length > 0 && (
+          <div className="mt-3 rounded-md border bg-background/50 p-3">
+            <h4 className="text-xs font-semibold uppercase text-muted-foreground">For recruiter review (not shown to the client)</h4>
+            <ul className="mt-1 list-disc space-y-1 pl-4 text-sm">
+              {recruiterReviewNotes(result).map((s: string, i: number) => (
+                <li key={i}>{s}</li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

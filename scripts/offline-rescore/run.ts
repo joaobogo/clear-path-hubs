@@ -12,6 +12,8 @@
  * "run every file": the live pipeline may have scored that match since the
  * export. Both kinds refuse to write if the CV text has changed since the
  * export, and a refusal never clears a human-reviewed published score.
+ * Such a match also gets <match_id>.eligibility.sql: its dealbreaker checks,
+ * unverified-claim flags and eligibility, without clearing the score pointer.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -37,11 +39,13 @@ const summary = (doc.matches as OfflineMatch[]).map((m) => {
   if (out.kind === "no_dated_roles") {
     mkdirSync(join(outDir, "refusals"), { recursive: true });
     writeFileSync(join(outDir, "refusals", `${m.match_id}.sql`), out.sql + "\n");
+    writeFileSync(join(outDir, `${m.match_id}.eligibility.sql`), out.eligibility_sql + "\n");
   } else if ("sql" in out) {
     writeFileSync(join(outDir, `${m.match_id}.sql`), out.sql + "\n");
   }
-  const { sql: _sql, ...rest } = out as typeof out & { sql?: string };
+  const { sql: _sql, eligibility_sql: _el, ...rest } = out as typeof out & { sql?: string; eligibility_sql?: string };
   void _sql;
+  void _el;
   return rest;
 });
 writeFileSync(join(outDir, "summary.json"), JSON.stringify(summary, null, 2));

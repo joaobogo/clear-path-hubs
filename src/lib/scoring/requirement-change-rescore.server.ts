@@ -12,7 +12,8 @@
  *   a rescore job type (see freshness-reconcile.server.ts).
  * - Eligibility: a rescore rewrites eligibility from dealbreaker answers; when
  *   a dealbreaker question itself changed, recompute_screening_eligibility
- *   (migration 0005) is applied at once as well, if it exists.
+ *   (migration 0005; it honours recruiter_review decisions from migration
+ *   0013) is applied at once as well, if it exists.
  * - Never approves, publishes or touches client_visibility.
  * - Idempotent: one notification per save (keyed on the new criteria and the
  *   save's timestamp), and a match already queued is not queued twice.

@@ -45,7 +45,7 @@ export const recomputeScreeningEligibility = createServerFn({ method: "POST" })
         s.from("application_answers")
           .select("question_id,answer,screening_questions(question,answer_type,dealbreaker,preferred_answer)")
           .eq("application_id", m.application_id),
-        s.from("eligibility_checks").select("qualifier_key,status").eq("candidate_match_id", m.id),
+        s.from("eligibility_checks").select("qualifier_key,status,evidence").eq("candidate_match_id", m.id),
       ]);
       if (aErr) throw new Error(aErr.message);
       if (cErr) throw new Error(cErr.message);

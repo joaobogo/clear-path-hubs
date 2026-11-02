@@ -12,6 +12,7 @@ import {
   ReplaySnapshotSchema,
   diffReplay,
   fingerprintOf,
+  replayRecruiterChecks,
   type ReplayFingerprint,
   type ReplaySnapshot,
 } from "./replay";
@@ -84,6 +85,7 @@ export async function replayScoreRun(runId: string): Promise<ReplayOutcome> {
     screening: snapshot.screening as unknown as ScreeningAnswer[],
     role_context: snapshot.role_context ?? null,
     calibration,
+    eligibility_checks: replayRecruiterChecks(snapshot),
   });
 
   // Prefer the fingerprint the engine itself recorded; fall back to the
