@@ -56,6 +56,7 @@ import {
   indexConfirmedHires,
   loadConfirmedHires,
 } from "@/lib/hires/confirmed.server";
+import { orderCertificationsForRole } from "@/lib/client/certification-order";
 
 /**
  * Quoted passages stored per requirement by the scoring run. These are the
@@ -501,6 +502,8 @@ export type ClientCandidateDTO = {
 };
 
 
+/** The candidate profile editor's cap (candidate.functions.ts `profileSchema`). */
+const MAX_CLIENT_CERTIFICATIONS = 50;
 
 function normStr(v: unknown): string | null {
   if (v == null) return null;
@@ -997,16 +1000,22 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const currentCompany = experience[0]?.company ?? null;
 
   // An entry may be a plain string (older profiles, hand-entered JSON): that
-  // string is the certificate's name, not something to drop.
-  const certifications = Array.isArray(cp.certifications)
-    ? (cp.certifications as AnyRow[]).slice(0, 8).map((c) => typeof c === "string"
-      ? { name: c.trim(), issuer: null, date: null }
-      : {
-        name: String(c?.name ?? c?.title ?? ""),
-        issuer: normStr(c?.issuer ?? c?.organization ?? c?.authority),
-        date: normStr(c?.date ?? c?.issued ?? c?.year),
-      }).filter((c) => c.name)
-    : [];
+  // string is the certificate's name, not something to drop. Every entry is
+  // shown, up to the profile editor's own cap of 50 (a cut at 8 hid Anna's
+  // FSSC, ISO 17025 and food-safety courses), with the ones the role asks
+  // about first.
+  const certifications = orderCertificationsForRole(
+    Array.isArray(cp.certifications)
+      ? (cp.certifications as AnyRow[]).slice(0, MAX_CLIENT_CERTIFICATIONS).map((c) => typeof c === "string"
+        ? { name: c.trim(), issuer: null, date: null }
+        : {
+          name: String(c?.name ?? c?.title ?? "").trim(),
+          issuer: normStr(c?.issuer ?? c?.organization ?? c?.authority),
+          date: normStr(c?.date ?? c?.issued ?? c?.year),
+        }).filter((c) => c.name)
+      : [],
+    pos,
+  );
 
   const isHttp = (v: unknown): string | null => {
     if (typeof v !== "string") return null;

@@ -11,7 +11,7 @@ import { parseCvFacts, isGarbageCvText } from "./cv/parse-facts";
 import {
   PROFILE_BACKFILL_COLUMNS,
   planProfileBackfill,
-  type ProfileBackfillPatch,
+  writeProfileBackfill,
 } from "./cv/profile-backfill";
 import { decideStateAfterEnrichment } from "./scoring/enrichment-state-policy";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
@@ -42,27 +42,6 @@ function newTraceId() {
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin as Any;
-}
-
-/**
- * Write a planned profile backfill (see `planProfileBackfill`). Scalar columns
- * are guarded with IS NULL, so a value saved between the read and this write
- * (a candidate editing their profile) is never replaced; the array columns
- * were read as empty moments earlier.
- */
-async function writeProfileBackfill(s: Any, profileId: string, patch: ProfileBackfillPatch) {
-  const { years_experience, linkedin_url, ...arrays } = patch;
-  if (linkedin_url) {
-    await s.from("candidate_profiles").update({ linkedin_url })
-      .eq("id", profileId).is("linkedin_url", null);
-  }
-  if (years_experience != null) {
-    await s.from("candidate_profiles").update({ years_experience })
-      .eq("id", profileId).is("years_experience", null);
-  }
-  if (Object.keys(arrays).length > 0) {
-    await s.from("candidate_profiles").update(arrays).eq("id", profileId);
-  }
 }
 
 async function setState(
@@ -673,11 +652,15 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
     // "LinkedIn Not provided" rendered for a candidate whose CV printed the
     // URL (audit S-20), and certifications hydration parsed stayed in
     // consent.extracted where no client page reads them (Hughes item 5). The
-    // plan never overwrites hydrated, recruiter- or candidate-entered values.
+    // plan never overwrites hydrated, recruiter- or candidate-entered values,
+    // and each write only lands if the field still holds what was read above
+    // (the insights model call sits in between).
     await writeProfileBackfill(
       s,
       ctx.match.candidate_profile_id,
       planProfileBackfill(freshProfile, cvFacts),
+      freshProfile,
+      { source: "auto_pipeline" },
     );
 
     const pos = ctx.position;
@@ -860,11 +843,14 @@ export async function runEnrichmentOnly(
     // Only ever fills a gap. A profile field a human or the candidate has set
     // is never overwritten by the parser. Certifications come from what
     // hydration parsed earlier (consent.extracted), so refreshing evidence
-    // repairs a profile without another model call.
+    // repairs a profile without another model call. Each write only lands if
+    // the field still holds what was read before the insights call.
     await writeProfileBackfill(
       s,
       ctx.match.candidate_profile_id,
       planProfileBackfill(freshProfile, cvFacts),
+      freshProfile,
+      { source: "evidence_refresh" },
     );
 
     await recordJob(s, matchId, "enrich", "completed", trace_id);
