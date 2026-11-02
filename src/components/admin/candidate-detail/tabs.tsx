@@ -871,6 +871,7 @@ export function ScoreTab({
           decisions={decisions ?? []}
           result={result}
           evidence={evidence}
+          hasVideo={hasVideoIntro(match)}
         />
       </div>
     </div>

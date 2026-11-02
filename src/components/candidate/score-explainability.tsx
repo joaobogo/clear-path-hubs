@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, GitCommit, History, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { renderQuote } from "@/lib/evidence/quote-hygiene";
+import { evidenceWithVideoLabel, isReviewedEvidenceDecision } from "@/lib/scoring/published-score";
 
 // Evidence-first score explainability panel.
 //
@@ -21,11 +22,14 @@ export function ScoreExplainability({
   decisions,
   result,
   evidence,
+  hasVideo = false,
 }: {
   runs: Any[];
   decisions: Any[];
   result: Any;
   evidence: Any;
+  /** The match carries an intro video, so a reviewed evidence figure reads with its +bonus total. */
+  hasVideo?: boolean;
 }) {
   const [current, prior] = runs ?? [];
   if (!current) return null;
@@ -210,14 +214,29 @@ export function ScoreExplainability({
             {overrides.map((d) => (
               <li key={d.id} className="rounded-md border bg-background/60 p-3">
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-medium capitalize">
-                    {String(d.decision_type).replace(/_/g, " ")}
-                    {d.approved_score != null && (
+                  {isReviewedEvidenceDecision(
+                    d,
+                    (runs ?? []).find((r: Any) => String(r?.id) === String(d.score_run_id)),
+                  ) ? (
+                    // apply_reviewed_verdicts records the reviewed evidence
+                    // figure as an 'override' equal to its run. It is not a
+                    // number someone typed, and it excludes the video bonus.
+                    <span className="font-medium">
+                      Reviewed evidence score
                       <span className="ml-2 text-xs text-muted-foreground">
-                        set score → {Math.round(d.approved_score)}
+                        {evidenceWithVideoLabel(d.approved_score, hasVideo)}
                       </span>
-                    )}
-                  </span>
+                    </span>
+                  ) : (
+                    <span className="font-medium capitalize">
+                      {String(d.decision_type).replace(/_/g, " ")}
+                      {d.approved_score != null && (
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          set score → {Math.round(d.approved_score)}
+                        </span>
+                      )}
+                    </span>
+                  )}
                   <span className="text-xs text-muted-foreground">
                     {formatDateTime(d.created_at)}
                   </span>

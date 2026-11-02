@@ -160,7 +160,7 @@ describe("Adiya: run 67.5 + Drive video + override 67.5 on the same run", () => 
 
   it("the human-verification toast prints evidence + video = published", () => {
     expect(reviewedAssessmentMessage({ final_score: 67.5, video_bonus: 5 })).toBe(
-      "Recorded — new reviewed assessment: evidence 67.5 + video 5 = 72.5/100",
+      "Recorded — new reviewed assessment: evidence 67.5 + video 5 = 73/100",
     );
   });
 
@@ -170,7 +170,7 @@ describe("Adiya: run 67.5 + Drive video + override 67.5 on the same run", () => 
     expect(evidenceScoreOf(folded)).toBe(67.5);
     expect(isReviewedEvidenceDecision(overrideFor(), folded)).toBe(true);
     expect(evidenceWithVideoLabel(overrideFor().approved_score, hasVideoIntro(m))).toBe(
-      "67.5 + video 5 = 72.5",
+      "67.5 + video 5 = 73",
     );
   });
 });
@@ -196,6 +196,8 @@ describe("the ceiling still holds", () => {
       "Recorded — new reviewed assessment: evidence 97.5 + video 2.5 = 100/100",
     );
     expect(evidenceWithVideoLabel(100, true)).toBe("100");
+    // Terms stay additive at the stored precision near the ceiling.
+    expect(evidenceWithVideoLabel("97.55", true)).toBe("97.55 + video 2.45 = 100");
   });
 });
 

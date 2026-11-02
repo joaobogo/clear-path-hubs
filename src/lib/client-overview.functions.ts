@@ -575,10 +575,10 @@ export const loadClientOverview = createServerFn({ method: "GET" })
         context.supabase
           .from("candidate_matches")
           .select(
-            `id, stage, delivered_at, position_id, candidate_profile_id, intro_video_url,
+            `id, stage, delivered_at, position_id, candidate_profile_id, intro_video_url, processing_state,
              candidate_profiles(id, full_name, headline, location, availability, years_experience, summary),
              positions(id, title),
-             score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,
+             score_runs:approved_score_run_id (score, final_score, fit_label, fit_band, explanation, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,
           )
           .eq("organization_id", data.orgId)
           .eq("client_visibility", "visible"),

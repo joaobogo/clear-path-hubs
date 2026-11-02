@@ -462,6 +462,10 @@ export function ActionRail({
                   // from its run. Say why in plain words instead of echoing the
                   // raw trigger text, which quotes the pre-bonus run figure.
                   onError: (err) => {
+                    if (!err.message.includes("score_override_retired")) {
+                      toast.error(`Override not saved: ${err.message}`);
+                      return;
+                    }
                     const failure = explainApproveFailure(err.message);
                     toast.error(
                       `${failure.title} — ${failure.detail}${failure.nextStep ? ` ${failure.nextStep}` : ""}`,

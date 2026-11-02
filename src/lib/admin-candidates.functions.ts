@@ -5,6 +5,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { bandToFitLabel, SCORE_BAND_KEYS } from "./scoring/bands";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -208,7 +209,12 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
     // published_band, not score_band: the band a row displays includes the
     // intro-video bonus, and the filter must find the row under that band.
     if (data.score_band) q = q.eq("published_band", data.score_band);
-    if (data.fit_label) q = q.eq("fit_label", data.fit_label);
+    // The stored fit_label is the engine's, before the intro-video bonus; the
+    // label a person sees is derived from the published band, so filter there.
+    if (data.fit_label) {
+      const bands = SCORE_BAND_KEYS.filter((b) => bandToFitLabel(b) === data.fit_label);
+      q = bands.length ? q.in("published_band", bands) : q.eq("fit_label", data.fit_label);
+    }
     if (data.country) q = q.eq("country", data.country);
     if (data.source) q = q.eq("source_kind", data.source);
     if (data.contact_released === "released") q = q.eq("contact_released", true);

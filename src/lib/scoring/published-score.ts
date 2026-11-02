@@ -246,9 +246,11 @@ export function evidenceScoreOf(run: PublishedScoreRun): number | null {
   return num(run.final_score) ?? num(run.score);
 }
 
+// Terms print at the stored precision (numeric(6,2)) so they stay additive
+// near the ceiling; the total is the whole published figure every other
+// surface prints (publishedScoreDisplay, the Score tab line).
 function fmtPoints(value: number): string {
-  const rounded = Math.round(value * 10) / 10;
-  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  return String(Number(value.toFixed(2)));
 }
 
 /**
@@ -266,7 +268,7 @@ export function evidenceWithVideoLabel(
   if (base === null) return null;
   const bonus = hasVideo ? videoBonusFor(base) : 0;
   if (bonus <= 0) return fmtPoints(base);
-  return `${fmtPoints(base)} + video ${fmtPoints(bonus)} = ${fmtPoints(base + bonus)}`;
+  return `${fmtPoints(base)} + video ${fmtPoints(bonus)} = ${Math.round(clampScore(base + bonus) ?? 0)}`;
 }
 
 /**

@@ -6,6 +6,7 @@ import {
   MCP_PUBLISHED_RUN_COLUMNS,
   mcpPublishedFit,
 } from "../published-fit";
+import { reconcileExplanationBand } from "../../scoring/explanation-band";
 
 /**
  * One candidate's dossier as released to the client. Never returns raw CV text —
@@ -69,7 +70,7 @@ export default defineTool({
       // The stored sentence quotes the run's pre-bonus figure ("score
       // 67.5/100"); withheld when a video lifts the published score, as the
       // admin Score tab does.
-      screeningSummary: fit.videoBonus > 0 ? null : (run.explanation ?? null),
+      screeningSummary: fit.videoBonus > 0 ? null : (run.explanation ? reconcileExplanationBand(String(run.explanation)) : null),
       requirementCoverage: run.requirement_coverage ?? null,
       evidence: run.evidence ?? null,
     };

@@ -61,7 +61,7 @@ describe("History tab decisions", () => {
   it("labels apply_reviewed_verdicts' decision as the reviewed evidence score with the published total", () => {
     const html = historyTab(match, [reviewed]);
     expect(html).toContain("Reviewed evidence score");
-    expect(html).toContain("67.5 + video 5 = 72.5");
+    expect(html).toContain("67.5 + video 5 = 73");
     expect(html).not.toContain("override");
     expect(html).not.toContain("@ 67.50");
   });
@@ -115,7 +115,7 @@ describe("history timeline", () => {
     expect(event.context).toContainEqual({
       field: "reviewed_evidence_score",
       before: null,
-      after: "67.5 + video 5 = 72.5",
+      after: "67.5 + video 5 = 73",
     });
     expect(event.context?.some((c) => c.field === "approved_score")).toBe(false);
   });
