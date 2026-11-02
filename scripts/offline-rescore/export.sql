@@ -2,7 +2,9 @@
 -- Returns one JSON document; save it and pass it to run.ts.
 with p as (select * from positions where id = '228cd1ec-1ec1-4205-828c-7a92b1be42e1')
 select json_build_object(
-  'position', json_build_object('id', p.id, 'requirements', p.requirements, 'preferred_requirements', p.preferred_requirements),
+  'position', json_build_object('id', p.id, 'title', p.title, 'requirements', p.requirements, 'preferred_requirements', p.preferred_requirements),
+  -- The client's name and the role title are not evidence (src/lib/scoring/evidence-sources.ts).
+  'organisation', (select json_build_object('name', o.name, 'brand_display_name', o.brand_display_name) from organizations o where o.id = p.organization_id),
   'rubric', (select json_build_object('id', rv.id, 'calibration', rv.calibration) from rubric_versions rv
              where rv.position_id = p.id and rv.status in ('approved', 'active') and rv.superseded_at is null
              order by rv.version_number desc limit 1),

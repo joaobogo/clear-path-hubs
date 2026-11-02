@@ -21,6 +21,7 @@ import { ENGINE_VERSION } from "./engine-version";
 import { EVALUATION_METHOD, parseCalibration, serialiseCalibration } from "./engine-calibration";
 import { buildReplaySnapshot } from "./replay";
 import { dealbreakerCondition } from "./eligibility";
+import { roleContextOf } from "./evidence-sources";
 import { employmentIntervals } from "../cv/employment-dates";
 import { SCORING_BLUEPRINT_VERSION, buildExplanation, reconcile } from "../scoring-service.server";
 
@@ -52,7 +53,9 @@ export type OfflineMatch = {
 };
 
 export type OfflineContext = {
-  position: { id: string; requirements: unknown; preferred_requirements: unknown };
+  position: { id: string; requirements: unknown; preferred_requirements: unknown; title?: string | null };
+  /** The client, whose own name is not evidence (evidence-sources.ts). */
+  organisation?: { name?: string | null; brand_display_name?: string | null } | null;
   rubric: { id: string; calibration: unknown };
   role_family: string | null;
   reason: string;
@@ -164,18 +167,31 @@ export function offlineRescore(
   const requirements = requirementsOf(ctx.position);
   const screening = screeningOf(m.answers);
   const calibration = parseCalibration(ctx.rubric.calibration);
+  // The same role context executeScoring's loadInputs builds.
+  const roleContext = roleContextOf({
+    organisation_name: ctx.organisation?.name ?? null,
+    brand_display_name: ctx.organisation?.brand_display_name ?? null,
+    role_title: ctx.position.title ?? null,
+  });
   const raw = scoreCandidate({
     cv_text: cvText,
     requirements,
     screening,
     candidate_location: [m.location, m.city, m.country].filter(Boolean).join(", ") || null,
+    role_context: roleContext,
     calibration,
   });
   const rec = reconcile(raw);
   if (!rec.reconciled) return { match_id: m.match_id, kind: "skipped", why: `reconciliation_failed:${rec.mismatch}` };
 
   const runId = ids.run_id ?? randomUUID();
-  const snapshot = buildReplaySnapshot({ cv_text: cvText, requirements, screening, role_family: ctx.role_family });
+  const snapshot = buildReplaySnapshot({
+    cv_text: cvText,
+    requirements,
+    screening,
+    role_family: ctx.role_family,
+    role_context: roleContext,
+  });
   const { cv_text: _cv, ...snapshotRest } = snapshot as unknown as Record<string, unknown>;
   void _cv;
   const result = JSON.parse(JSON.stringify({
