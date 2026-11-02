@@ -996,12 +996,16 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const currentRole = experience[0]?.title ?? null;
   const currentCompany = experience[0]?.company ?? null;
 
+  // An entry may be a plain string (older profiles, hand-entered JSON): that
+  // string is the certificate's name, not something to drop.
   const certifications = Array.isArray(cp.certifications)
-    ? (cp.certifications as AnyRow[]).slice(0, 8).map((c) => ({
+    ? (cp.certifications as AnyRow[]).slice(0, 8).map((c) => typeof c === "string"
+      ? { name: c.trim(), issuer: null, date: null }
+      : {
         name: String(c?.name ?? c?.title ?? ""),
         issuer: normStr(c?.issuer ?? c?.organization ?? c?.authority),
         date: normStr(c?.date ?? c?.issued ?? c?.year),
-      })).filter((c) => c.name)
+      }).filter((c) => c.name)
     : [];
 
   const isHttp = (v: unknown): string | null => {

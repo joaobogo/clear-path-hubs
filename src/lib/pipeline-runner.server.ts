@@ -8,6 +8,11 @@
 import { extractCvText, isFlattenedCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
 import { parseCvFacts, isGarbageCvText } from "./cv/parse-facts";
+import {
+  PROFILE_BACKFILL_COLUMNS,
+  planProfileBackfill,
+  type ProfileBackfillPatch,
+} from "./cv/profile-backfill";
 import { decideStateAfterEnrichment } from "./scoring/enrichment-state-policy";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
@@ -37,6 +42,27 @@ function newTraceId() {
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin as Any;
+}
+
+/**
+ * Write a planned profile backfill (see `planProfileBackfill`). Scalar columns
+ * are guarded with IS NULL, so a value saved between the read and this write
+ * (a candidate editing their profile) is never replaced; the array columns
+ * were read as empty moments earlier.
+ */
+async function writeProfileBackfill(s: Any, profileId: string, patch: ProfileBackfillPatch) {
+  const { years_experience, linkedin_url, ...arrays } = patch;
+  if (linkedin_url) {
+    await s.from("candidate_profiles").update({ linkedin_url })
+      .eq("id", profileId).is("linkedin_url", null);
+  }
+  if (years_experience != null) {
+    await s.from("candidate_profiles").update({ years_experience })
+      .eq("id", profileId).is("years_experience", null);
+  }
+  if (Object.keys(arrays).length > 0) {
+    await s.from("candidate_profiles").update(arrays).eq("id", profileId);
+  }
 }
 
 async function setState(
@@ -599,7 +625,7 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
     // Reload profile to snapshot post-hydration state.
     const { data: freshProfile } = await s
       .from("candidate_profiles")
-      .select("id,skills,experience,headline,location,consent")
+      .select(`id,experience,headline,location,${PROFILE_BACKFILL_COLUMNS}`)
       .eq("id", ctx.match.candidate_profile_id)
       .maybeSingle();
     const screening = buildScreening(ctx.answers);
@@ -645,22 +671,14 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
 
     // Additive profile backfill: fill ONLY fields the profile does not have.
     // "LinkedIn Not provided" rendered for a candidate whose CV printed the
-    // URL (audit S-20); a deterministic extract closes that without ever
-    // overwriting hydrated or hand-entered values.
-    if (cvFacts.linkedin_url) {
-      await s
-        .from("candidate_profiles")
-        .update({ linkedin_url: cvFacts.linkedin_url })
-        .eq("id", ctx.match.candidate_profile_id)
-        .is("linkedin_url", null);
-    }
-    if (cvFacts.years_experience != null) {
-      await s
-        .from("candidate_profiles")
-        .update({ years_experience: cvFacts.years_experience })
-        .eq("id", ctx.match.candidate_profile_id)
-        .is("years_experience", null);
-    }
+    // URL (audit S-20), and certifications hydration parsed stayed in
+    // consent.extracted where no client page reads them (Hughes item 5). The
+    // plan never overwrites hydrated, recruiter- or candidate-entered values.
+    await writeProfileBackfill(
+      s,
+      ctx.match.candidate_profile_id,
+      planProfileBackfill(freshProfile, cvFacts),
+    );
 
     const pos = ctx.position;
     if (!pos || pos.status !== "active") {
@@ -794,7 +812,7 @@ export async function runEnrichmentOnly(
     }
     const { data: freshProfile } = await s
       .from("candidate_profiles")
-      .select("id,skills,experience,headline,location,consent,languages,years_experience")
+      .select(`id,experience,headline,location,${PROFILE_BACKFILL_COLUMNS}`)
       .eq("id", ctx.match.candidate_profile_id).maybeSingle();
     const screening = buildScreening(ctx.answers);
     const { insights, insights_error } = await resolveInsights(s, matchId, ctx.position, () => buildInsights({
@@ -840,26 +858,14 @@ export async function runEnrichmentOnly(
     // lines below (audit #6, 2.9i).
     //
     // Only ever fills a gap. A profile field a human or the candidate has set
-    // is never overwritten by the parser.
-    const profileBackfill: Record<string, unknown> = {};
-    if (
-      !Array.isArray(freshProfile?.languages) ||
-      (freshProfile?.languages as unknown[]).length === 0
-    ) {
-      if (cvFacts.languages.length > 0) profileBackfill.languages = cvFacts.languages;
-    }
-    if (!Array.isArray(freshProfile?.skills) || (freshProfile?.skills as unknown[]).length === 0) {
-      if (cvFacts.skills.length > 0) profileBackfill.skills = cvFacts.skills;
-    }
-    if (freshProfile?.years_experience == null && cvFacts.years_experience != null) {
-      profileBackfill.years_experience = cvFacts.years_experience;
-    }
-    if (Object.keys(profileBackfill).length > 0) {
-      await s
-        .from("candidate_profiles")
-        .update(profileBackfill)
-        .eq("id", ctx.match.candidate_profile_id);
-    }
+    // is never overwritten by the parser. Certifications come from what
+    // hydration parsed earlier (consent.extracted), so refreshing evidence
+    // repairs a profile without another model call.
+    await writeProfileBackfill(
+      s,
+      ctx.match.candidate_profile_id,
+      planProfileBackfill(freshProfile, cvFacts),
+    );
 
     await recordJob(s, matchId, "enrich", "completed", trace_id);
     const pos = ctx.position;
