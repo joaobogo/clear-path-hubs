@@ -14532,6 +14532,8 @@ export type Database = {
           position_title: string | null
           processing_state: string | null
           profile_updated_at: string | null
+          published_band: string | null
+          published_score: number | null
           recommendation: string | null
           region: string | null
           score: number | null
@@ -15321,6 +15323,20 @@ export type Database = {
         }
         Returns: Json
       }
+      apply_reviewed_verdicts: {
+        Args: { p_apply?: boolean; p_position_id: string }
+        Returns: {
+          after_score: number
+          before_score: number
+          from_run: string
+          full_name: string
+          match_id: string
+          note: string
+          quotes_added: number
+          rows_changed: number
+          to_run: string
+        }[]
+      }
       apply_subscription_event: {
         Args: {
           _cancel_at_period_end: boolean
@@ -15556,6 +15572,7 @@ export type Database = {
           suite: string
         }[]
       }
+      requirement_text_key: { Args: { t: string }; Returns: string }
       resolve_talent_person: {
         Args: {
           _auth_user_id?: string
