@@ -57,6 +57,12 @@ import {
   loadConfirmedHires,
 } from "@/lib/hires/confirmed.server";
 
+/** A run whose requirement verdicts a person reviewed (apply_reviewed_verdicts / human verification). */
+export function isHumanReviewedRun(run: unknown): boolean {
+  return (run as { evaluation_method?: unknown } | null)?.evaluation_method === "human_adjusted";
+}
+
+
 /**
  * Quoted passages stored per requirement by the scoring run. These are the
  * verbatim CV / screening snippets behind each verdict; they are reshaped into
@@ -1216,10 +1222,17 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         scored_engine_version: run?.engine_version ?? null,
         scored_calibration_version:
           (run?.result as AnyRow | null)?.calibration_version ?? null,
-        current_engine_version: run?.engine_version ? ENGINE_VERSION : null,
-        current_calibration_version: (run?.result as AnyRow | null)?.calibration_version
-          ? CALIBRATION_VERSION
-          : null,
+        // A reviewed run's verdicts were checked by a person, so a newer engine
+        // or calibration release does not make it stale: the client was told
+        // "Being re-checked" for every reviewed candidate whose base run came
+        // from an earlier engine (2 Nov 2026). Recorded invalidations (a new
+        // CV, changed criteria) still mark it stale below.
+        current_engine_version:
+          run?.engine_version && !isHumanReviewedRun(run) ? ENGINE_VERSION : null,
+        current_calibration_version:
+          (run?.result as AnyRow | null)?.calibration_version && !isHumanReviewedRun(run)
+            ? CALIBRATION_VERSION
+            : null,
         profile_updated_at: cp.updated_at ?? null,
         brief_updated_at: pos?.updated_at ?? null,
         criteria_updated_at: (row as AnyRow).criteria_updated_at ?? null,
