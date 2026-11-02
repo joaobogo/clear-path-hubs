@@ -43,6 +43,7 @@ import { classifyScoreBand } from "@/config/scoring-bands";
 import type { Json } from "@/integrations/supabase/types";
 import { randomUUID } from "crypto";
 import { employmentIntervals } from "./cv/employment-dates";
+import { ensureUnscoredReviewTask } from "./cv/unscored-review.server";
 import { dealbreakerCondition } from "./scoring/eligibility";
 
 
@@ -446,6 +447,14 @@ export async function executeScoring(
       await releaseLock(s, matchId, "manual_review_required", trace_id, {
         code: "cv_employment_history_missing",
         message: "Manual review required - incomplete document. The CV has no dated employment history.",
+      });
+      // Parked here, not only in the pipeline: a rescore from the review
+      // center or a bulk recompute must leave the same admin task.
+      await ensureUnscoredReviewTask(s, {
+        match_id: matchId,
+        trace_id,
+        final_state: "manual_review_required",
+        steps: [{ step: "score", ok: false }],
       });
       return { ok: false, match_id: matchId, trace_id, final_state: "manual_review_required",
         blockers: ["cv_employment_history_missing"], code: "cv_employment_history_missing",

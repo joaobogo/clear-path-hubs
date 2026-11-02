@@ -124,6 +124,10 @@ export function candidateReviewTask(args: {
       what: "Automatic processing failed repeatedly.",
       next: "Open the candidate, check the processing log, and retry once the cause is fixed.",
     },
+    cv_employment_history_missing: {
+      what: "No dated roles could be read from the CV.",
+      next: "Open the CV. If its roles carry dates, rescore the candidate and report the layout the date check missed; if they do not, ask the candidate for the dates of each role. Nothing has been sent to the candidate.",
+    },
   };
   const k = known[code] ?? {
     what: "The candidate could not be scored automatically.",

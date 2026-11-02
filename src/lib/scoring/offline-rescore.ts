@@ -22,6 +22,7 @@ import { EVALUATION_METHOD, parseCalibration, serialiseCalibration } from "./eng
 import { buildReplaySnapshot } from "./replay";
 import { dealbreakerCondition } from "./eligibility";
 import { employmentIntervals } from "../cv/employment-dates";
+import { candidateReviewTask } from "../cv/unscored-review";
 import { SCORING_BLUEPRINT_VERSION, buildExplanation, reconcile } from "../scoring-service.server";
 
 export type OfflineAnswer = {
@@ -49,10 +50,17 @@ export type OfflineMatch = {
   city: string | null;
   country: string | null;
   answers: OfflineAnswer[];
+  /** Names the admin task when the match cannot be scored. */
+  candidate_name?: string | null;
 };
 
 export type OfflineContext = {
-  position: { id: string; requirements: unknown; preferred_requirements: unknown };
+  position: {
+    id: string;
+    requirements: unknown;
+    preferred_requirements: unknown;
+    title?: string | null;
+  };
   rubric: { id: string; calibration: unknown };
   role_family: string | null;
   reason: string;
@@ -154,10 +162,32 @@ export function offlineRescore(
   const trace = ids.trace_id ?? `sc_off_${randomUUID().slice(0, 8)}${Date.now().toString(36)}`;
 
   if (employmentIntervals(cvText).length === 0) {
+    // The same open admin task the pipeline leaves for a match it cannot
+    // score, once per match (an open pipeline task is reused).
+    const task = candidateReviewTask({
+      code: "cv_employment_history_missing",
+      message:
+        "Manual review required - incomplete document. The CV has no dated employment history.",
+      candidateName: m.candidate_name ?? null,
+      positionTitle: ctx.position.title ?? null,
+    });
+    const meta = {
+      source: "pipeline",
+      reason: task.reason,
+      final_state: "manual_review_required",
+      trace_id: trace,
+    };
     return {
       match_id: m.match_id,
       kind: "no_dated_roles",
-      sql: `UPDATE candidate_matches SET current_score_run_id = NULL, processing_state = 'manual_review_required', last_processing_trace_id = '${trace}', processing_error_code = 'cv_employment_history_missing', processing_error_message = 'Manual review required - incomplete document. The CV has no dated employment history.' WHERE id = ${mid};`,
+      sql: `DO $do$
+BEGIN
+  UPDATE candidate_matches SET current_score_run_id = NULL, processing_state = 'manual_review_required', last_processing_trace_id = '${trace}', processing_error_code = 'cv_employment_history_missing', processing_error_message = 'Manual review required - incomplete document. The CV has no dated employment history.' WHERE id = ${mid};
+  INSERT INTO tasks (organization_id, position_id, candidate_match_id, candidate_profile_id, task_type, title, description, priority, status, metadata)
+  SELECT m.organization_id, m.position_id, m.id, m.candidate_profile_id, 'candidate_review', ${dollar(task.title, "tt")}, ${dollar(task.description, "td")}, '${task.priority}', 'open', ${dollar(JSON.stringify(meta), "tm")}::jsonb
+  FROM candidate_matches m
+  WHERE m.id = ${mid} AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.candidate_match_id = m.id AND t.task_type = 'candidate_review' AND t.status IN ('open', 'in_progress') AND t.deleted_at IS NULL AND t.metadata @> '{"source": "pipeline"}'::jsonb);
+END $do$;`,
     };
   }
 

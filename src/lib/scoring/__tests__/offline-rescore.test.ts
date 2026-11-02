@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { jsonbText, offlineRescore, type OfflineContext, type OfflineMatch } from "../offline-rescore";
 import { ENGINE_VERSION } from "../engine-version";
+import { CAREER_OVERVIEW_CV, DETACHED_HEADINGS_CV } from "@tests/fixtures/cv/hughes-unscored";
 
 const ctx: OfflineContext = {
   position: {
@@ -73,5 +74,73 @@ describe("offlineRescore", () => {
   it("sends a CV with no dated roles to manual review and a missing CV is skipped", () => {
     expect(offlineRescore(match("A cover letter about my marketing career and my passion for brands and retail."), ctx).kind).toBe("no_dated_roles");
     expect(offlineRescore(match(""), ctx)).toMatchObject({ kind: "skipped", why: "cv_unparsed" });
+  });
+});
+
+describe("Mushroom Harvesting Manager: the two applicants never scored (owner item 6a)", () => {
+  const hughes: OfflineContext = {
+    position: {
+      id: "9466d8ac-0b74-4b14-94e9-0e9d56021fa2",
+      title: "Mushroom Harvesting Manager",
+      requirements: [
+        { label: "Hands-on mushroom picking experience" },
+        { label: "Previous supervisory experience on a mushroom farm" },
+        { label: "Strong people management and communication skills, written and verbal" },
+        { label: "Excellent organisational and interpersonal skills" },
+        { label: "Good basic IT and numerical skills" },
+        { label: "Flexible approach to working hours, including weekends and peak overtime" },
+      ],
+      preferred_requirements: [
+        { label: "Previous experience as a Harvesting Manager in the mushroom industry" },
+        { label: "Experience managing pick rates, manning plans and agency labour" },
+        { label: "Food safety team experience (HACCP, TACCP, VACCP, BRC)" },
+        { label: "Advanced Food Hygiene qualification" },
+        { label: "Degree-level education" },
+      ],
+    },
+    rubric: { id: "05267eed-5042-41b1-aa25-e8fd165b7ea2", calibration: {} },
+    role_family: "people",
+    reason: "test",
+  };
+  const applicant = (cv: string): OfflineMatch => ({
+    ...match(cv),
+    position_id: hughes.position.id,
+    location: null,
+    city: null,
+    country: null,
+    answers: [],
+    candidate_name: "Candidate B",
+  });
+
+  it("both CVs are scored instead of refused", () => {
+    for (const cv of [CAREER_OVERVIEW_CV, DETACHED_HEADINGS_CV]) {
+      expect(offlineRescore(applicant(cv), hughes).kind).toBe("scored");
+    }
+  });
+
+  it("a CV it still cannot read leaves one open admin task naming the cause", () => {
+    const out = offlineRescore(
+      applicant("A cover letter about my farming career and my passion for mushrooms and people."),
+      hughes,
+      { trace_id: "sc_test" },
+    );
+    expect(out.kind).toBe("no_dated_roles");
+    if (out.kind !== "no_dated_roles") return;
+    expect(out.sql).toMatch(/^DO \$do\$/);
+    expect(out.sql).toContain("current_score_run_id = NULL");
+    expect(out.sql).toContain("processing_error_code = 'cv_employment_history_missing'");
+    expect(out.sql).toContain("INSERT INTO tasks");
+    expect(out.sql).toContain("'candidate_review'");
+    expect(out.sql).toContain("Candidate B for Mushroom Harvesting Manager: not scored yet");
+    expect(out.sql).toContain("No dated roles could be read from the CV.");
+    // Once per match: an open pipeline task is reused, as the pipeline does.
+    expect(out.sql).toContain(
+      `NOT EXISTS (SELECT 1 FROM tasks t WHERE t.candidate_match_id = m.id AND t.task_type = 'candidate_review' AND t.status IN ('open', 'in_progress') AND t.deleted_at IS NULL AND t.metadata @> '{"source": "pipeline"}'::jsonb)`,
+    );
+    expect(out.sql).toContain(
+      '{"source":"pipeline","reason":"cv_employment_history_missing","final_state":"manual_review_required","trace_id":"sc_test"}',
+    );
+    // Nothing approves, publishes or changes what the client sees.
+    expect(out.sql).not.toMatch(/admin_status|client_visibility|stage\s*=/);
   });
 });

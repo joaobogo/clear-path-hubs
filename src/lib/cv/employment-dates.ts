@@ -41,6 +41,52 @@ const HEADING = new RegExp(
   "g",
 );
 
+/** Words that make a date range a course of study, not a role. */
+const SCHOOL =
+  /\b(?:university|college|school|academy|institute|campus|faculty|bachelor'?s?|master'?s?|mba|degree|diploma|b\.?\s?sc|m\.?\s?sc|bba|phd|doctorate|doctor\s+of|gcse|a-levels?)\b/i;
+const BULLET = /[•▪●◦■]/;
+
+/**
+ * A range whose own words name a school or degree: up to 60 characters either
+ * side, within its line and not past a bullet (a bullet starts another
+ * entry's description). A range alone on its line is read with the line
+ * below, where a layout that puts dates first prints the degree.
+ */
+function nearSchool(body: string, start: number, end: number): boolean {
+  const lineStart = body.lastIndexOf("\n", start - 1) + 1;
+  const lineEnd = (from: number) => {
+    const nl = body.indexOf("\n", from);
+    return nl < 0 ? body.length : nl;
+  };
+  const before = body
+    .slice(Math.max(lineStart, start - 60), start)
+    .split(BULLET)
+    .pop();
+  let after = body.slice(end, lineEnd(end));
+  if (!/\p{L}/u.test(after) && lineEnd(end) < body.length) {
+    after = body.slice(lineEnd(end) + 1, lineEnd(lineEnd(end) + 1));
+  }
+  after = after.slice(0, 60).split(BULLET)[0] ?? "";
+  return SCHOOL.test(before ?? "") || SCHOOL.test(after);
+}
+
+/**
+ * A work heading with nothing under it before the next heading. Two-column
+ * PDFs (Europass among them) are often extracted with the column of section
+ * labels after the body: "… dated roles … ABOUT ME WORK EXPERIENCE EDUCATION
+ * AND TRAINING …". The roles are then above their heading, not under it.
+ */
+function hasDetachedWorkHeading(lines: string[]): boolean {
+  return lines.some((line, i) => {
+    if (!isHeading(line, WORK_HEADINGS)) return false;
+    for (const next of lines.slice(i + 1)) {
+      if (isHeading(next, HEADING_WORDS)) return true;
+      if (/[\p{L}\p{N}]/u.test(next)) return false;
+    }
+    return true;
+  });
+}
+
 /** Restrict intervals to employment sections; education dates are not roles. */
 export function employmentIntervals(text: string, asOf = new Date()): Interval[] {
   const intervals: Interval[] = [];
@@ -54,14 +100,32 @@ export function employmentIntervals(text: string, asOf = new Date()): Interval[]
   const lines = sections.split(/\r?\n/);
   let inEmployment = false;
   const now = asOf.getUTCFullYear() * 12 + asOf.getUTCMonth();
+  const read = (m: RegExpMatchArray) => {
+    const start = monthIndex(m[1] ?? "", asOf, false);
+    const end = monthIndex(m[2] ?? "", asOf, true);
+    if (start !== null && end !== null && start <= now && end <= now && end >= start) {
+      intervals.push({ start, end });
+    }
+  };
   for (const line of lines) {
     if (isHeading(line, WORK_HEADINGS)) inEmployment = true;
     if (isHeading(line, OTHER_HEADINGS)) inEmployment = false;
     if (!inEmployment) continue;
-    for (const m of line.matchAll(pattern)) {
-      const start = monthIndex(m[1] ?? "", asOf, false);
-      const end = monthIndex(m[2] ?? "", asOf, true);
-      if (start !== null && end !== null && start <= now && end <= now && end >= start) intervals.push({ start, end });
+    for (const m of line.matchAll(pattern)) read(m);
+  }
+  // Headings extracted after the body: read the dated entries above the first
+  // heading, leaving out courses of study. Only a CV with an empty work
+  // heading and no dated role under a work heading gets here, so a CV that
+  // already reads is never changed by it.
+  if (intervals.length === 0 && hasDetachedWorkHeading(lines)) {
+    const first = lines.findIndex((line) => isHeading(line, HEADING_WORDS));
+    const body = lines.slice(0, first).join("\n");
+    for (const m of body.matchAll(pattern)) {
+      const at = m.index ?? 0;
+      // Part of a longer number (a phone or reference), not a date.
+      if (/[\d/.]/.test(body[at - 1] ?? "") || /\d/.test(body[at + m[0].length] ?? "")) continue;
+      if (nearSchool(body, at, at + m[0].length)) continue;
+      read(m);
     }
   }
   return intervals;
