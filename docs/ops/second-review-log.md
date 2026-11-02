@@ -333,3 +333,18 @@ Checks
   corrected before they were saved.
 - Scores unchanged by the profile edits (admin list = current run for every
   match; nothing approved or published).
+
+### Publishing (2 Nov 2026, owner instructions)
+
+- Evidence-gate justifications recorded for the two mushroom must-haves on
+  each scored Hughes candidate (requirement stays "not evidenced" for the
+  client; the score already reflects it).
+- Approved and published via approve_candidate_match on the owner's
+  instruction: Daim 64, Thaddeus 64, Anna 59, Chiedza 58, Vijay 51, and
+  Adiya (published 60 with the video bonus at the time).
+- Adiya's introduction video and its +5 removed on the owner's instruction;
+  published score now 55 everywhere (bonus is read-time only).
+- Not published: Elena Fernandez-Miranda (dealbreaker "no" on the onsite
+  rota; run not publishable) and Abdul Rehman (not scored yet).
+- Client page no longer labels reviewed scores "Being re-checked" after an
+  engine release (commit "Client page: a reviewed score is not ...").
