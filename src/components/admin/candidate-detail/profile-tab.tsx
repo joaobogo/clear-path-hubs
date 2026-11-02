@@ -98,7 +98,13 @@ function ProfileTab({
           unreadable={scoreVoidedByUnreadableCv(m)}
         />
       )}
-      <IntroVideoCard matchId={m.id} currentUrl={m.intro_video_url ?? null} />
+      {/* Keyed on the stored link so the draft re-syncs after a save, a refetch
+          or a move to another candidate on the same route. */}
+      <IntroVideoCard
+        key={`${m.id}:${m.intro_video_url ?? ""}`}
+        matchId={m.id}
+        currentUrl={m.intro_video_url ?? null}
+      />
       <div className="grid gap-4 lg:grid-cols-2">
 
       <div className="rounded-lg border bg-card p-5">

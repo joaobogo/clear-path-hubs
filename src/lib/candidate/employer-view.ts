@@ -278,3 +278,15 @@ export function contactStateCopy(released: boolean): { label: string; detail: st
 export function fieldsForGroup(group: EmployerViewGroup): EmployerViewField[] {
   return EMPLOYER_VIEW_FIELDS.filter((f) => f.group === group && !f.hidden);
 }
+
+/**
+ * What the candidate's preview says about their introduction video. The player
+ * itself stays with the employer, but a candidate whose video is attached was
+ * told "Not provided" because the preview blanked the field; they are now told
+ * the truth. No video stays `null`, which the preview reads as "Not provided".
+ */
+export const INTRO_VIDEO_ATTACHED_COPY = "Attached — employers can play it on your profile";
+
+export function candidateIntroVideoValue(video: unknown): string | null {
+  return video ? INTRO_VIDEO_ATTACHED_COPY : null;
+}
