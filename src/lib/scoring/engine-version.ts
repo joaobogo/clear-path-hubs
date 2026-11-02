@@ -202,4 +202,16 @@
  * seven CVs that ran paid media on TikTok had been credited with marketing a
  * Chinese brand.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.4";
+/**
+ * v1.7.5 — owner research on the Hughes Mushrooms role (2 Nov 2026). The
+ * role's own words are not evidence: the client's name outside a dated work
+ * entry, the role title where the text is about this application, and
+ * aspirational clauses are masked before terms and rules are read. Study and
+ * training count as partial at most for experience requirements, and a
+ * screening "yes" never lifts a study-only row. A recruiter decision
+ * (eligibility_checks recruiter_review:*) wins over the answers: excepted or
+ * passed lifts that dealbreaker's disqualification, failed makes the match
+ * not eligible. A dealbreaker "yes" the CV does not support is recorded as an
+ * unverified screening claim for recruiters; the candidate stays eligible.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.5";
