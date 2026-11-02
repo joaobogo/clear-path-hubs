@@ -64,8 +64,6 @@ describe("Industry pictures", () => {
     expect(examples).not.toContain("<ProcessStrip");
     expect(examples).not.toContain("No quote is published");
     expect(examples).toContain('aria-label="Example industries"');
-    const rail = readFileSync("src/components/layout/chapter-rail.tsx", "utf8");
-    expect(rail).toContain("overflow-x-auto");
   });
   it("provides a distinct picture and description for every industry", () => {
     const images = INDUSTRY_ENTRIES.map((entry) => getIndustryHeroImage(entry.slug));
@@ -92,13 +90,11 @@ describe("Industry pictures", () => {
     expect(css).toContain("pointer-events: none");
   });
 
-  it("balances the chapter rail with equal space on the right", () => {
+  it("keeps the homepage chapters in one centred column without a chapter rail", () => {
     const chapters = readFileSync("src/components/home/run-chapters.tsx", "utf8");
-    const rail = readFileSync("src/components/layout/chapter-rail.tsx", "utf8");
-    expect(chapters).toContain("xl:grid-cols-[160px_minmax(0,1fr)_160px]");
     expect(chapters).toContain("mx-auto w-full min-w-0 max-w-[var(--max)]");
-    expect(rail).toContain("xl:block");
-    expect(rail).toContain("xl:hidden");
+    expect(chapters).not.toContain("ChapterRail");
+    expect(chapters).not.toContain("grid-cols-[160px");
   });
 
   it("puts sector photographs before diagram-led hero copy", () => {

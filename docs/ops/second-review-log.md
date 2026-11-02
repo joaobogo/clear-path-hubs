@@ -348,3 +348,30 @@ Checks
   rota; run not publishable) and Abdul Rehman (not scored yet).
 - Client page no longer labels reviewed scores "Being re-checked" after an
   engine release (commit "Client page: a reviewed score is not ...").
+
+## 2 Nov 2026 — Stratium Partners · Group Marketing Manager: new applicants and top-20 delivery
+
+- 11 new applicants (28 Oct – 2 Nov) reviewed against the current requirements;
+  authored briefings ("Claude second review (2 Nov 2026)") written to the latest
+  evidence row, one internal note and audit rows each. Every cv_quote checked
+  as an exact substring of the CV text.
+- Reviewed verdicts applied with apply_reviewed_verdicts (dry run first: every
+  previously reviewed candidate unchanged). Engine → reviewed: Maya Halabi 90 → 100,
+  Nada Nechadi 100 → 95 (China role was one year of agency project work: partial),
+  Sandrine Broocks 85.5 → 90.5, Sara Kobayaa 90 → 90, Karen Cordeiro 80.5 → 88,
+  Ghita Ouzzi 89 → 87.5 (China time was a student volunteer project: partial),
+  Falak Jalil 70 → 84, Duncan Elliott 83 → 83, Mohannad Hussein 85 → 80,
+  Arindam Saha 73 → 78 (duplicate application; both matches briefed, the
+  28 Oct one approved), Ahmed Fahmy 15 (stays not eligible: degree answer "No"
+  is accurate per the CV).
+- Owner instruction: deliver the top 20. Approved and published via
+  approve_candidate_match: Hany Badr (already approved), Nour Moussa, Umair Iqbal,
+  Tarek Sheiha, Shailesh Bhadra, Maya Halabi, Nada Nechadi, Sandrine Broocks,
+  Sara Kobayaa. Client now sees 20 candidates.
+- Approved but kept hidden (outside the top 20): Karen Cordeiro, Ghita Ouzzi,
+  Falak Jalil, Duncan Elliott, Mohannad Hussein, Arindam Saha. Melissa Wingfield
+  and Marios Tirkides stay hidden (hidden by the owner on 30 Oct).
+- Not scorable, not delivered: Boral Al Tarifi (cover letter only), Alvito Tereza
+  (CV has no text layer), Naren Vish and George Schempers (no dated roles the
+  scorer can read).
+- Name capitalisation corrected on two client-visible profiles (audited).
