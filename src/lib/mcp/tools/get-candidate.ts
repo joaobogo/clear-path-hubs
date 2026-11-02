@@ -1,6 +1,11 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { supabaseForUser } from "../supabase";
+import {
+  MCP_PUBLISHED_MATCH_COLUMNS,
+  MCP_PUBLISHED_RUN_COLUMNS,
+  mcpPublishedFit,
+} from "../published-fit";
 
 /**
  * One candidate's dossier as released to the client. Never returns raw CV text —
@@ -21,10 +26,10 @@ export default defineTool({
     const { data, error } = await supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at, client_visibility,
+        `id, stage, delivered_at, client_visibility, ${MCP_PUBLISHED_MATCH_COLUMNS},
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, skills, languages, work_authorization, certifications),
          positions(id, title),
-         score_runs:approved_score_run_id (fit_label, explanation, requirement_coverage, evidence)`,
+         score_runs:approved_score_run_id (${MCP_PUBLISHED_RUN_COLUMNS}, explanation, requirement_coverage, evidence)`,
       )
       .eq("id", matchId)
       .maybeSingle();
@@ -41,6 +46,8 @@ export default defineTool({
     const profile = (row.candidate_profiles ?? {}) as Record<string, unknown>;
     const position = (row.positions ?? {}) as Record<string, unknown>;
     const run = (row.score_runs ?? {}) as Record<string, unknown>;
+    // The published score and fit headline, as the client workspace shows them.
+    const fit = mcpPublishedFit(row, run);
     const dossier = {
       matchId: row.id,
       role: position.title ?? null,
@@ -57,8 +64,12 @@ export default defineTool({
       languages: profile.languages ?? null,
       workAuthorization: profile.work_authorization ?? null,
       certifications: profile.certifications ?? null,
-      fitLabel: run.fit_label ?? null,
-      screeningSummary: run.explanation ?? null,
+      score: fit.score,
+      fitLabel: fit.fitLabel,
+      // The stored sentence quotes the run's pre-bonus figure ("score
+      // 67.5/100"); withheld when a video lifts the published score, as the
+      // admin Score tab does.
+      screeningSummary: fit.videoBonus > 0 ? null : (run.explanation ?? null),
       requirementCoverage: run.requirement_coverage ?? null,
       evidence: run.evidence ?? null,
     };

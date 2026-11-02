@@ -4,7 +4,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
-import { classifyBand } from "@/lib/scoring/bands";
+import {
+  hasVideoIntro,
+  publishedBand,
+  publishedScoreDisplay,
+  scoreVoidedByUnreadableCv,
+  withVideoIntroBonus,
+} from "@/lib/scoring/published-score";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -148,7 +154,7 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
     const { data: match } = await supabase
       .from("candidate_matches")
       .select(
-        "id, stage, admin_status, client_visibility, processing_state, delivered_at, created_at, updated_at, processing_updated_at, current_score_run_id",
+        "id, stage, admin_status, client_visibility, processing_state, delivered_at, created_at, updated_at, processing_updated_at, current_score_run_id, intro_video_url",
       )
       .eq("application_id", applicationId!)
       .maybeSingle();
@@ -252,13 +258,20 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
 
     // Ranked — every completed score run
     for (const r of (runs ?? []) as Any[]) {
+      // A score built on text that proved unreadable is not a score, here too.
+      if (scoreVoidedByUnreadableCv(match)) {
+        push("ranked", r.completed_at, "No score — CV unreadable");
+        continue;
+      }
       // Band from the run's own score, so the timeline can't caption a number
-      // with a band written under different cut-offs.
-      const band =
-        r.final_score != null ? classifyBand(Number(r.final_score)) : (r.fit_band ?? null);
+      // with a band written under different cut-offs. The figure is the
+      // published one (intro-video bonus folded, whole number) so the journey
+      // reads the same "73 · strong" as the header, not a raw "67.50 · consider".
+      const pub = withVideoIntroBonus(r, hasVideoIntro(match));
+      const band = r.final_score != null ? publishedBand(pub) : (r.fit_band ?? null);
       const label =
         r.final_score != null
-          ? `Score ${r.final_score}${band ? ` · ${String(band).replace(/_/g, " ")}` : ""}`
+          ? `Score ${publishedScoreDisplay(pub)}${band ? ` · ${String(band).replace(/_/g, " ")}` : ""}`
           : band != null
             ? String(band).replace(/_/g, " ")
             : null;

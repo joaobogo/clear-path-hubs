@@ -20,6 +20,11 @@ import {
   type HistoryEvent,
   type HistoryFieldChange,
 } from "./candidate-history";
+import {
+  evidenceWithVideoLabel,
+  hasVideoIntro,
+  isReviewedEvidenceDecision,
+} from "./scoring/published-score";
 
 type Admin = SupabaseClient<never, never, never>;
 type Row = Record<string, unknown>;
@@ -98,7 +103,7 @@ export async function loadCandidateHistory(
 
   const matchRes = await a
     .from("candidate_matches")
-    .select("id, candidate_profile_id, candidate_profiles(full_name)")
+    .select("id, candidate_profile_id, intro_video_url, candidate_profiles(full_name)")
     .eq("id", args.matchId)
     .maybeSingle();
   fail([matchRes]);
@@ -159,6 +164,25 @@ export async function loadCandidateHistory(
   const scoreRows = (scoreRes.data ?? []) as Row[];
   const overrideRows = (overrideRes.data ?? []) as Row[];
   const clientRows = (clientRes.data ?? []) as Row[];
+
+  // The runs the score decisions point at, so a decision that merely records
+  // its run's reviewed evidence score (apply_reviewed_verdicts) is labelled as
+  // such instead of as a bare override amount.
+  const decisionRunIds = Array.from(
+    new Set(
+      scoreRows
+        .map((r) => r["score_run_id"])
+        .filter((v): v is string => typeof v === "string" && v.length > 0),
+    ),
+  );
+  const decisionRunsRes = decisionRunIds.length
+    ? await a.from("score_runs").select("id, score, final_score").in("id", decisionRunIds)
+    : { data: [], error: null };
+  fail([decisionRunsRes]);
+  const decisionRuns = new Map(
+    ((decisionRunsRes.data ?? []) as Row[]).map((r) => [String(r["id"]), r]),
+  );
+  const matchHasVideo = hasVideoIntro(match as { intro_video_url?: unknown });
 
   const truncated = [auditRows, stageRows, scoreRows, overrideRows, clientRows].some(
     (rows) => rows.length >= HISTORY_SOURCE_LIMIT,
@@ -255,18 +279,34 @@ export async function loadCandidateHistory(
 
   for (const r of scoreRows) {
     const action = String(r["decision_type"] ?? "decision");
+    const reviewed = isReviewedEvidenceDecision(
+      r as { decision_type?: string; score_run_id?: unknown; approved_score?: number | string | null },
+      (decisionRuns.get(String(r["score_run_id"] ?? "")) ?? null) as { id?: unknown } | null,
+    );
     events.push({
       id: `score_decision:${String(r["id"])}`,
       source: "score_decision",
       at: String(r["created_at"]),
-      action,
-      action_label: humanize(action),
+      // Its own action, so the filter lists it apart from legacy overrides.
+      action: reviewed ? "reviewed_evidence_score" : action,
+      action_label: reviewed ? "Reviewed evidence score" : humanize(action),
       ...nameOf(r["actor_user_id"]),
       actor_role: null,
       reason: str(r["reason"]),
       changes: [],
       trace_id: null,
-      context: contextFrom(r, ["approved_score", "score_run_id"]),
+      // "approved_score: 67.50" beside a published 73 read as a person
+      // overriding the candidate down and the video counting for nothing.
+      context: reviewed
+        ? [
+            {
+              field: "reviewed_evidence_score",
+              before: null,
+              after: evidenceWithVideoLabel(r["approved_score"] as number | string | null, matchHasVideo),
+            },
+            ...contextFrom(r, ["score_run_id"]),
+          ]
+        : contextFrom(r, ["approved_score", "score_run_id"]),
     });
   }
 

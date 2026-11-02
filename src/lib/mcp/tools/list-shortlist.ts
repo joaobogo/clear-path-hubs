@@ -1,6 +1,11 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { supabaseForUser } from "../supabase";
+import {
+  MCP_PUBLISHED_MATCH_COLUMNS,
+  MCP_PUBLISHED_RUN_COLUMNS,
+  mcpPublishedFit,
+} from "../published-fit";
 
 /**
  * Shortlist for a role. Only rows released to the client
@@ -24,9 +29,9 @@ export default defineTool({
     const { data, error } = await supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at,
+        `id, stage, delivered_at, ${MCP_PUBLISHED_MATCH_COLUMNS},
          candidate_profiles(id, full_name, headline, location, availability, years_experience),
-         score_runs:approved_score_run_id (fit_label)`,
+         score_runs:approved_score_run_id (${MCP_PUBLISHED_RUN_COLUMNS})`,
       )
       .eq("position_id", positionId)
       .eq("client_visibility", "visible")
@@ -37,6 +42,8 @@ export default defineTool({
     const shortlist = rows.map((r) => {
       const profile = (r.candidate_profiles ?? {}) as Record<string, unknown>;
       const run = (r.score_runs ?? {}) as Record<string, unknown>;
+      // The published score and fit headline, as the client workspace shows them.
+      const fit = mcpPublishedFit(r, run);
       return {
         matchId: r.id,
         name: profile.full_name ?? "Candidate",
@@ -45,7 +52,8 @@ export default defineTool({
         availability: profile.availability ?? null,
         yearsExperience: profile.years_experience ?? null,
         stage: r.stage ?? null,
-        fitLabel: run.fit_label ?? null,
+        score: fit.score,
+        fitLabel: fit.fitLabel,
         deliveredAt: r.delivered_at ?? null,
       };
     });
@@ -57,7 +65,7 @@ export default defineTool({
             ? shortlist
                 .map(
                   (c) =>
-                    `• ${c.name}${c.headline ? ` — ${c.headline}` : ""} · stage: ${c.stage ?? "n/a"}${c.fitLabel ? ` · fit: ${c.fitLabel}` : ""} (match id: ${c.matchId})`,
+                    `• ${c.name}${c.headline ? ` — ${c.headline}` : ""} · stage: ${c.stage ?? "n/a"}${c.fitLabel ? ` · fit: ${c.fitLabel}${c.score != null ? ` (${c.score})` : ""}` : ""} (match id: ${c.matchId})`,
                 )
                 .join("\n")
             : "No candidates have been shared with you for this role yet.",

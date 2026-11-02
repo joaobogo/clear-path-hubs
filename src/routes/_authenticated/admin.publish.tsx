@@ -1,5 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { classifyBand } from "@/lib/scoring/bands";
+import { publishedBand, scoreVoidedByUnreadableCv } from "@/lib/scoring/published-score";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -309,7 +309,9 @@ function PublishDesk() {
             </thead>
             <tbody className="divide-y" {...kb.listProps}>
               {rows.map((r, index) => {
-                const run = r.score_runs;
+                // No score at all for a CV that proved unreadable, as on every
+                // other surface; the blocker column already says why.
+                const run = scoreVoidedByUnreadableCv(r) ? null : r.score_runs;
                 const rd = readinessOf(r);
                 const orgId = r.positions?.organizations?.id as string | undefined;
                 const previewHref = orgId
@@ -347,7 +349,7 @@ function PublishDesk() {
                       ) : (
                         <>
                           <div className="capitalize">
-                            {classifyBand(Number(run.score)).replace(/_/g, " ")}
+                            {(publishedBand(run) ?? "unscored").replace(/_/g, " ")}
                           </div>
                           <div className="text-[10px] text-muted-foreground">
                             {run.confidence == null
