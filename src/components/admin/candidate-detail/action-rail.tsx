@@ -31,6 +31,7 @@ import {
   retryEnrichment,
 } from "@/lib/processing.functions";
 import { setMatchClientVisibility } from "@/lib/admin.functions";
+import { sendScreeningQuestions } from "@/lib/candidate/screening-invite.functions";
 import {
   approvePreflightBlock,
   explainApproveFailure,
@@ -308,6 +309,40 @@ export function ActionRail({
                 data-qa-action="overflow-hold"
               >
                 Hold
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Candidate</DropdownMenuLabel>
+              {/* For a CV that reached us by email, a staff entry made from one,
+                  or an import of applicants: the candidate never saw the role's
+                  questions. Form applications and staff assignments (people who
+                  never applied) are refused server-side. */}
+              <DropdownMenuItem
+                disabled={!!busy}
+                onSelect={(event) => {
+                  event.preventDefault();
+                  void (async () => {
+                    const c = await confirm({
+                      title: "Send screening questions",
+                      object:
+                        (m.candidate_profiles?.full_name as string | null) ?? "This candidate",
+                      description:
+                        "Emails the candidate a link to answer this role's unanswered screening questions on their status page. Only for a CV sent to us by email, a staff entry made from one, or an applicant import.",
+                      impact: [
+                        "One email goes to the address on the candidate's profile",
+                        "Their answers are added to the application. An unreviewed match is rescored; a reviewed or approved score is kept and a re-review task opens instead",
+                        "Nothing is approved, published or shown to the client",
+                      ],
+                      confirmLabel: "Send email",
+                    });
+                    if (!c.confirmed) return;
+                    await onRun("send screening questions", () =>
+                      sendScreeningQuestions({ data: { match_id: m.id } }),
+                    );
+                  })();
+                }}
+                data-qa-action="overflow-send-screening-questions"
+              >
+                Send screening questions
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {/* Destructive actions sit in their own group, visually separated

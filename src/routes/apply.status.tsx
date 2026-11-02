@@ -9,10 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
+  getMyScreeningQuestions,
   lookupApplicationStatus,
   respondToInfoRequest,
   statusLookupSchema,
+  submitMyScreeningAnswers,
   withdrawMyApplication,
+  type MyScreeningQuestions,
   type PublicApplicationStatus,
 } from "@/lib/apply-status.functions";
 import {
@@ -23,6 +26,7 @@ import {
   type CandidateEditableDetails,
 } from "@/lib/candidate-self-service.functions";
 import { ManageApplication } from "@/components/candidate/manage-application";
+import { ScreeningAnswersForm } from "@/components/candidate/screening-answers-form";
 import { CandidateStatePanel } from "@/components/candidate/candidate-state-panel";
 import { PrivacySummaryNote } from "@/components/candidate/candidate-notes";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
@@ -65,6 +69,7 @@ function StatusPage() {
   const [notFound, setNotFound] = useState(false);
   const [result, setResult] = useState<PublicApplicationStatus | null>(null);
   const [details, setDetails] = useState<CandidateEditableDetails | null>(null);
+  const [screening, setScreening] = useState<MyScreeningQuestions | null>(null);
   const [verified, setVerified] = useState<{ reference: string; email: string } | null>(null);
   const [replies, setReplies] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -135,6 +140,10 @@ function StatusPage() {
       if (data) {
         setVerified(parsed.data);
         setDetails(await getMyApplicationDetails({ data: parsed.data }));
+        // Questions the apply form would have asked; open only when the
+        // application reached us another way (a CV sent by email) or the
+        // role gained questions it has not answered.
+        setScreening(await getMyScreeningQuestions({ data: parsed.data }).catch(() => null));
       }
     } catch {
       setNotFound(true);
@@ -345,6 +354,16 @@ function StatusPage() {
             </p>
           )}
         </div>
+      )}
+
+      {result && verified && screening?.open && screening.questions.length > 0 && (
+        <ScreeningAnswersForm
+          key={verified.reference}
+          credentials={verified}
+          questions={screening.questions}
+          submitFn={submitMyScreeningAnswers}
+          onAnswered={() => refresh(verified)}
+        />
       )}
 
       {result && verified && details && (

@@ -8,8 +8,13 @@ import {
   withdrawByReference,
 } from "./candidate/apply-status.server";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
+import { answerSchema } from "./apply-schema";
 
 export type { PublicApplicationStatus, PublicInfoRequest } from "./candidate/apply-status.server";
+export type {
+  MyScreeningQuestions,
+  PublicScreeningQuestion,
+} from "./candidate/screening-answers.server";
 
 export const statusLookupSchema = z.object({
   reference: z
@@ -44,4 +49,26 @@ export const respondToInfoRequest = createServerFn({ method: "POST" })
   .handler(({ data }) => {
     throttlePublicFn("candidate_write");
     return answerInfoRequestByReference(data);
+  });
+
+export const screeningAnswersSchema = statusLookupSchema.extend({
+  answers: z.array(answerSchema).max(50),
+});
+
+// The role's screening questions for an application that never saw the apply
+// form (a CV sent by email, a staff entry, an import). Reference + email.
+export const getMyScreeningQuestions = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => statusLookupSchema.parse(input))
+  .handler(async ({ data }) => {
+    throttlePublicFn("apply_lookup");
+    const { loadScreeningByReference } = await import("./candidate/screening-answers.server");
+    return loadScreeningByReference(data.reference, data.email);
+  });
+
+export const submitMyScreeningAnswers = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => screeningAnswersSchema.parse(input))
+  .handler(async ({ data }) => {
+    throttlePublicFn("candidate_write");
+    const { answerScreeningByReference } = await import("./candidate/screening-answers.server");
+    return answerScreeningByReference(data);
   });

@@ -24,6 +24,7 @@ import {
   storedTextNeedsReread,
 } from "./cv/unscored-review";
 import { ensureUnscoredReviewTask } from "./cv/unscored-review.server";
+import { isScreeningAnswersJob } from "./candidate/screening-invite";
 import type { Json } from "@/integrations/supabase/types";
 
 type State =
@@ -1068,6 +1069,34 @@ export async function drainApplicationJobs(
           error_code: "match_missing",
         });
         continue;
+      }
+
+      // A rescore queued by late screening answers runs only if the score is
+      // still unreviewed NOW: staff may have adjusted or approved it since the
+      // answers arrived, and a forced machine run would supersede the reviewed
+      // run and silently replace the published score. Held jobs are cancelled
+      // and staff get the re-review task; a failed check throws (retry), so a
+      // blind rescore never happens. Other parse_and_score jobs are unchanged.
+      if (isScreeningAnswersJob(row.trace_id)) {
+        const { holdScreeningRescoreIfReviewed } =
+          await import("./candidate/screening-rereview.server");
+        const held = await holdScreeningRescoreIfReviewed(s, {
+          applicationId: row.entity_id as string,
+          jobId: row.id as string,
+        });
+        if (held) {
+          await finishJob(s, row.id, "cancelled", {
+            code: "reviewed_score_kept",
+            message: held.message,
+          });
+          out.push({
+            ...base,
+            status: "cancelled",
+            error_code: "reviewed_score_kept",
+            error_message: held.message,
+          });
+          continue;
+        }
       }
 
       const outcome = await runPipelineForMatch(match.id as string, {
