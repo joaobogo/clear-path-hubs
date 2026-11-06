@@ -36,3 +36,6 @@ test-results/
 playwright-report/
 
 .claude/settings.local.json
+
+# Local git worktrees created by Claude Code helper agents
+.claude/worktrees/
