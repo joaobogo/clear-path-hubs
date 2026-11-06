@@ -32,6 +32,7 @@ import {
   type CandidateStatus,
 } from "@/lib/candidate/status-vocabulary";
 import { toCandidateStatusDTO } from "@/lib/candidate/status-projection";
+import { candidateFacingEmployerName } from "@/lib/org/candidate-facing-employer";
 
 // ─── Candidate-safe status vocabulary ───────────────────────────────────────
 // One vocabulary, defined in @/lib/candidate/status-vocabulary and shared with
@@ -161,7 +162,7 @@ export const listMyApplications = createServerFn({ method: "GET" })
       .from("applications")
       .select(
         `id, position_id, status, applied_at, updated_at, withdrawn_at, cv_file_id,
-         positions:position_id ( id, title, status, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
+         positions:position_id ( id, title, status, organization_id, employment_type, work_model, location, posting_confidentiality:intake_context->posting->>confidentiality, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at )`,
       )
       .eq("candidate_profile_id", cpId)
@@ -189,7 +190,7 @@ export const listMyApplications = createServerFn({ method: "GET" })
         id: a.id,
         position_id: pos.id,
         role_title: pos.title ?? "Role",
-        company: org.name ?? null,
+        company: candidateFacingEmployerName(org.name, pos.posting_confidentiality),
         employment_type: pos.employment_type ?? null,
         work_model: pos.work_model ?? null,
         location: pos.location ?? null,
@@ -219,7 +220,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
       .select(
         `id, position_id, status, applied_at, updated_at, withdrawn_at, candidate_profile_id,
          cover_letter, portfolio_url, cv_file_id,
-         positions:position_id ( id, title, description, status, closure_reason, closed_at, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
+         positions:position_id ( id, title, description, status, closure_reason, closed_at, organization_id, employment_type, work_model, location, posting_confidentiality:intake_context->posting->>confidentiality, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
            interviews ( status, scheduled_at, meeting_url, timezone ) )`,
       )
@@ -316,7 +317,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
       id: a.id,
       role_title: pos.title ?? "Role",
       role_description: pos.description ?? "",
-      company: org.name ?? null,
+      company: candidateFacingEmployerName(org.name, pos.posting_confidentiality),
       employment_type: pos.employment_type ?? null,
       work_model: pos.work_model ?? null,
       location: pos.location ?? null,
@@ -1054,7 +1055,7 @@ export const listMyCvApplications = createServerFn({ method: "GET" })
       .from("applications")
       .select(
         `id, status, applied_at, withdrawn_at, cv_file_id,
-         positions:position_id ( title, status, organizations:organization_id ( name ) ),
+         positions:position_id ( title, status, posting_confidentiality:intake_context->posting->>confidentiality, organizations:organization_id ( name ) ),
          candidate_matches ( stage ),
          files:cv_file_id ( id, filename )`,
       )
@@ -1075,7 +1076,7 @@ export const listMyCvApplications = createServerFn({ method: "GET" })
         return {
           id: a.id,
           role_title: pos.title ?? "Role",
-          company: pos.organizations?.name ?? null,
+          company: candidateFacingEmployerName(pos.organizations?.name, pos.posting_confidentiality),
           applied_at: a.applied_at,
           cv_file_id: a.cv_file_id ?? null,
           cv_filename: (file?.filename as string | undefined) ?? null,

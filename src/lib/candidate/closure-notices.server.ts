@@ -6,6 +6,7 @@
  * reversed decision never produces a rejection email, and `closure_notified_at`
  * guarantees the notice is only ever sent once per application.
  */
+import { candidateFacingEmployerName } from "@/lib/org/candidate-facing-employer";
 
 /** How long a decline must have stood before the candidate is told. */
 export const CLOSURE_GRACE_MS = 60 * 60 * 1000; // 1 hour
@@ -26,7 +27,7 @@ export async function runClosureNotices(limit = 100): Promise<ClosureNoticeResul
   const { data: matches, error } = await supabaseAdmin
     .from("candidate_matches")
     .select(
-      "id,application_id,stage,updated_at,positions(title,organizations(name)),applications!inner(id,consent,closure_notified_at,withdrawn_at),candidate_profiles(full_name,email)",
+      "id,application_id,stage,updated_at,positions(title,posting_confidentiality:intake_context->posting->>confidentiality,organizations(name)),applications!inner(id,consent,closure_notified_at,withdrawn_at),candidate_profiles(full_name,email)",
     )
     .eq("stage", "not_moving_forward")
     .lt("updated_at", cutoff)
@@ -52,6 +53,7 @@ export async function runClosureNotices(limit = 100): Promise<ClosureNoticeResul
     } | null;
     const pos = m.positions as unknown as {
       title?: string | null;
+      posting_confidentiality?: string | null;
       organizations?: { name?: string | null } | null;
     } | null;
 
@@ -68,7 +70,11 @@ export async function runClosureNotices(limit = 100): Promise<ClosureNoticeResul
         templateData: {
           candidateFirstName: (cp.full_name ?? "").trim().split(" ")[0] || null,
           positionTitle: pos?.title ?? null,
-          organizationName: pos?.organizations?.name ?? null,
+          // A confidential role never names its client to the candidate.
+          organizationName: candidateFacingEmployerName(
+            pos?.organizations?.name,
+            pos?.posting_confidentiality,
+          ),
           reference,
           jobsUrl: "https://taasflow.com/jobs",
           inTalentNetwork: Boolean(
