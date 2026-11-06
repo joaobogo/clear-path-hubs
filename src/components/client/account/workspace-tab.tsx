@@ -33,7 +33,7 @@ import {
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
 import { BannerAmber, SectionCard, Field } from "@/components/client/account/shared";
-import { PasswordChangeForm } from "@/components/account/password-change-card";
+import { PasswordChangeButton } from "@/components/account/password-change-card";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -505,7 +505,15 @@ function SecuritySection({ email }: { email: string }) {
       title="Security"
       description="Change the password you sign in with. It takes effect straight away."
     >
-      <PasswordChangeForm email={email} />
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <div className="text-sm font-medium">Password</div>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Opens a short form: your current password, then the new one.
+          </p>
+        </div>
+        <PasswordChangeButton email={email} size="sm" />
+      </div>
     </SectionCard>
   );
 }
