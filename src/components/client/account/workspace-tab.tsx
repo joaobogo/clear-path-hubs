@@ -33,6 +33,7 @@ import {
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
 import { BannerAmber, SectionCard, Field } from "@/components/client/account/shared";
+import { PasswordChangeForm } from "@/components/account/password-change-card";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -498,42 +499,15 @@ function TimezoneSection({
 /* ─────────────────────── SECURITY ─────────────────────── */
 
 function SecuritySection({ email }: { email: string }) {
- const [sending, setSending] = useState(false);
- const sendReset = async () => {
- if (!email || sending) return;
- setSending(true);
- try {
- const { error } = await supabase.auth.resetPasswordForEmail(email, {
- redirectTo: `${window.location.origin}/auth`,
- });
- if (error) throw error;
- toast.success("Password reset email sent — check your inbox.");
-  } catch (e) {
-    toastError(e, { fallback: "Could not send password reset", tone: "client" });
-  } finally {
- setSending(false);
- }
- };
-
- return (
- <SectionCard
- icon={<ShieldCheck className="h-5 w-5" />}
- title="Security"
- description="Manage sign-in credentials for your TaaSFlow account."
- >
- <div className="flex items-start justify-between gap-4">
- <div className="min-w-0">
- <div className="text-sm font-medium">Password</div>
- <p className="mt-0.5 text-xs text-muted-foreground">
- We'll email you a secure link to set a new password.
- </p>
- </div>
- <Button variant="outline" size="sm" onClick={sendReset} disabled={!email || sending}>
- {sending ? "Sending…" : "Send reset email"}
- </Button>
- </div>
- </SectionCard>
- );
+  return (
+    <SectionCard
+      icon={<ShieldCheck className="h-5 w-5" />}
+      title="Security"
+      description="Change the password you sign in with. It takes effect straight away."
+    >
+      <PasswordChangeForm email={email} />
+    </SectionCard>
+  );
 }
 
 /* ─────────────────────── ACCOUNT ─────────────────────── */
