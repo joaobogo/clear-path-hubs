@@ -9,6 +9,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { candidateIntroVideoValue } from "@/lib/candidate/employer-view";
+import { candidateFacingEmployerName } from "@/lib/org/candidate-facing-employer";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -34,7 +35,7 @@ export const listMyEmployerPreviews = createServerFn({ method: "GET" })
       .from("candidate_matches")
       .select(
         `id, stage, delivered_at, contact_released_at, contact_released_by, contact_release_reason,
-         positions:position_id ( title, organizations:organization_id ( name ) )`,
+         positions:position_id ( title, posting_confidentiality:intake_context->posting->>confidentiality, organizations:organization_id ( name ) )`,
       )
       .in("candidate_profile_id", cpIds)
       .eq("client_visibility", "visible")
@@ -46,7 +47,10 @@ export const listMyEmployerPreviews = createServerFn({ method: "GET" })
       shared: ((data as AnyRow[]) ?? []).map((m) => ({
         match_id: String(m.id),
         role_title: (m.positions?.title as string | undefined) ?? "Role",
-        company: (m.positions?.organizations?.name as string | undefined) ?? null,
+        company: candidateFacingEmployerName(
+          m.positions?.organizations?.name as string | undefined,
+          m.positions?.posting_confidentiality,
+        ),
         shared_at: (m.delivered_at as string | null) ?? null,
         contact_released: Boolean(m.contact_released_at),
       })),

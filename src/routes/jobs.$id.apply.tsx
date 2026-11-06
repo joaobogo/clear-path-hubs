@@ -18,6 +18,8 @@ import {
 } from "@/lib/jobs/apply-effort";
 import { phonePlaceholder } from "@/lib/phone-placeholder";
 import { validateLoomLink, LOOM_LINK_HINT } from "@/lib/media/loom-link";
+import { videoFieldOptionalNote } from "@/lib/jobs/video-prompt";
+import { VideoPromptQuote } from "@/components/candidate/video-prompt-quote";
 
 
 
@@ -572,6 +574,10 @@ function ApplyPage() {
   const questionCount = pos?.questions.length ?? 0;
   const paginateQuestions = isMobile && step === 3 && questionCount > 1;
   const qCursor = Math.min(Math.max(1, qIndex), Math.max(1, questionCount));
+
+  // The role's optional question for the intro video (already trimmed and
+  // vetted server-side). Without one, the video field reads as it always has.
+  const videoPrompt = pos?.video_prompt ?? null;
 
   const goNext = () => {
     if (paginateQuestions && qCursor < questionCount) {
@@ -1639,12 +1645,24 @@ function ApplyPage() {
                 <div className="rounded-lg border border-border bg-muted/40 p-4">
                   <Label htmlFor="loom_url">
                     Introduce yourself on video{" "}
-                    <span className="font-normal text-muted-foreground">(optional)</span>
+                    <span className="font-normal text-muted-foreground">
+                      {videoFieldOptionalNote(videoPrompt)}
+                    </span>
                   </Label>
+                  {/* The role's own question, when the hiring team set one. It
+                      stays optional: no validation reads it. */}
+                  {videoPrompt && (
+                    <div className="mt-2">
+                      <VideoPromptQuote id="loom_url-prompt" prompt={videoPrompt} />
+                    </div>
+                  )}
                   {/* Copy agreed with Fabiana and Chris: shortened, and no longer
                       explains the scoring model. "(optional)" already sits in the
                       label, so the old "skip it if you'd rather" line was cut. */}
-                  <p id="loom_url-help" className="mt-1 text-xs text-muted-foreground">
+                  <p
+                    id="loom_url-help"
+                    className={`${videoPrompt ? "mt-2" : "mt-1"} text-xs text-muted-foreground`}
+                  >
                     Record a 1–5 minute video in English introducing yourself and what you do
                     best, then paste the Loom or Google Drive link below (set Drive sharing to
                     &quot;Anyone with the link&quot;). A video adds up to{" "}
@@ -1656,7 +1674,7 @@ function ApplyPage() {
                     inputMode="url"
                     data-field="loom_url"
                     {...fieldAria("loom_url")}
-                    aria-describedby="loom_url-help"
+                    aria-describedby={videoPrompt ? "loom_url-prompt loom_url-help" : "loom_url-help"}
                     placeholder="https://www.loom.com/share/… or a Google Drive link"
                     className="mt-2"
                     value={form.loom_url}

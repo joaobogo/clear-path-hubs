@@ -6,6 +6,7 @@ import {
   isSandboxRecipient,
   readEmailConfig,
 } from "./notification-email.server";
+import { candidateFacingEmployerName } from "./org/candidate-facing-employer";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Admin = any;
@@ -27,7 +28,12 @@ type ApplicationRow = {
 };
 
 type CandidateRow = { full_name: string | null; email: string | null };
-type PositionRow = { title: string | null; organization_id: string | null };
+type PositionRow = {
+  title: string | null;
+  organization_id: string | null;
+  /** posting.confidentiality only, never the rest of intake_context. */
+  posting_confidentiality?: string | null;
+};
 type OrganizationRow = { name: string | null };
 
 function ref6(id: string): string {
@@ -106,7 +112,9 @@ export async function sendApplicationConfirmationEmail(
       .maybeSingle(),
     admin
       .from("positions")
-      .select("title,organization_id")
+      .select(
+        "title,organization_id,posting_confidentiality:intake_context->posting->>confidentiality",
+      )
       .eq("id", application.position_id)
       .maybeSingle(),
   ]);
@@ -159,7 +167,11 @@ export async function sendApplicationConfirmationEmail(
       templateData: {
         candidateFirstName: firstName(candidate?.full_name),
         positionTitle: position?.title ?? null,
-        organizationName: ((org ?? null) as OrganizationRow | null)?.name ?? null,
+        // A confidential role never names its client to the candidate.
+        organizationName: candidateFacingEmployerName(
+          ((org ?? null) as OrganizationRow | null)?.name,
+          position?.posting_confidentiality,
+        ),
         reference: ref6(application.id),
         statusUrl: `https://taasflow.com/apply/status?ref=${ref6(application.id)}`,
       },

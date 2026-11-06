@@ -29,7 +29,7 @@ import {
   decideStaffInvite,
   type ScreeningQuestionRow,
 } from "./screening-invite";
-import { publicOrgName } from "@/lib/org/public-org-name";
+import { candidateFacingEmployerName } from "@/lib/org/candidate-facing-employer";
 import { canonicalUrl } from "@/lib/canonical-origin";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,7 +56,7 @@ export type ScreeningInviteSweep = {
 const APP_SELECT =
   "id,created_at,status,withdrawn_at,is_test_record,source,source_channel,consent,position_id,screening_invite_status," +
   "candidate_profiles(full_name,email)," +
-  "positions(title,status,organization_id,organizations(name))";
+  "positions(title,status,organization_id,posting_confidentiality:intake_context->posting->>confidentiality,organizations(name))";
 
 type AppRow = {
   id: string;
@@ -74,6 +74,8 @@ type AppRow = {
     title?: string | null;
     status?: string | null;
     organization_id?: string | null;
+    /** posting.confidentiality only, never the rest of intake_context. */
+    posting_confidentiality?: string | null;
     organizations?: { name?: string | null } | null;
   } | null;
 };
@@ -136,7 +138,11 @@ async function deliver(
         candidateFirstName:
           (one(app.candidate_profiles)?.full_name ?? "").trim().split(/\s+/)[0] || null,
         positionTitle: pos?.title ?? null,
-        organizationName: publicOrgName(one(pos?.organizations ?? null)?.name) || null,
+        // A confidential role never names its client to the candidate.
+        organizationName: candidateFacingEmployerName(
+          one(pos?.organizations ?? null)?.name,
+          pos?.posting_confidentiality,
+        ),
         reference,
         questionCount,
         statusUrl: canonicalUrl(`/apply/status?ref=${reference}`),

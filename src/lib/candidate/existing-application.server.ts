@@ -8,6 +8,7 @@
 import { resolveCandidateState, type StatusInputs } from "./apply-status-model";
 import { toCandidateStatusDTO } from "./status-projection";
 import { CANDIDATE_STATES, type CandidateStateKey } from "./candidate-transparency";
+import { candidateFacingEmployerName } from "@/lib/org/candidate-facing-employer";
 
 export interface ExistingApplicationSummary {
   application_id: string;
@@ -39,7 +40,7 @@ export async function loadExistingApplicationSummary(
     .from("applications")
     .select(
       "id,applied_at,created_at,status,withdrawn_at,cv_file_id," +
-        "positions(title,status,organizations(name))," +
+        "positions(title,status,posting_confidentiality:intake_context->posting->>confidentiality,organizations(name))," +
         "candidate_matches(stage,client_visibility)",
     )
     .eq("id", applicationId)
@@ -51,6 +52,7 @@ export async function loadExistingApplicationSummary(
   const pos = app.positions as unknown as {
     title?: string | null;
     status?: string | null;
+    posting_confidentiality?: string | null;
     organizations?: { name?: string | null } | null;
   } | null;
   const matchesRaw = app.candidate_matches as unknown;
@@ -107,7 +109,10 @@ export async function loadExistingApplicationSummary(
     status_meaning: projection.meaning,
     status_happening: copy.happening,
     position_title: pos?.title ?? null,
-    organization_name: pos?.organizations?.name ?? null,
+    organization_name: candidateFacingEmployerName(
+      pos?.organizations?.name,
+      pos?.posting_confidentiality,
+    ),
     cv_filename: cvFilename,
     can_replace_cv:
       state !== "decision_made" && state !== "withdrawn" && state !== "role_closed",

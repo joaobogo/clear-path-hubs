@@ -7,7 +7,7 @@ import { applySchema, type ApplyInput } from "./apply-schema";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 import { greetingName } from "@/lib/candidate/display-name";
 import type { SubmitApplicationResult } from "./apply-types";
-import { publicOrgName } from "@/lib/org/public-org-name";
+import { candidateFacingEmployerName } from "@/lib/org/candidate-facing-employer";
 import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 export type { SubmitApplicationResult };
@@ -54,13 +54,14 @@ export const getApplicationReceipt = createServerFn({ method: "GET" })
     const { data: app, error } = await supabaseAdmin
       .from("applications")
       .select(
-        "id,applied_at,positions(title,organizations(name)),candidate_profiles(full_name)",
+        "id,applied_at,positions(title,posting_confidentiality:intake_context->posting->>confidentiality,organizations(name)),candidate_profiles(full_name)",
       )
       .eq("id", data.id)
       .maybeSingle();
     if (error || !app) return null;
     const pos = app.positions as unknown as {
       title: string;
+      posting_confidentiality?: string | null;
       organizations: { name: string } | null;
     } | null;
     const cp = app.candidate_profiles as unknown as {
@@ -71,7 +72,10 @@ export const getApplicationReceipt = createServerFn({ method: "GET" })
       reference: ref6(app.id),
       applied_at: app.applied_at,
       position_title: pos?.title ?? null,
-      organization_name: publicOrgName(pos?.organizations?.name) || null,
+      organization_name: candidateFacingEmployerName(
+        pos?.organizations?.name,
+        pos?.posting_confidentiality,
+      ),
       candidate_first_name: greetingName(cp?.full_name),
     };
   });

@@ -545,6 +545,29 @@ describe("the staff button", () => {
     ]);
   });
 
+  it("never names the client of a confidential role", async () => {
+    seed([
+      staffEntryApp({
+        positions: {
+          title: "Mushroom Harvesting Manager",
+          status: "active",
+          organization_id: ORG,
+          posting_confidentiality: "confidential",
+          organizations: { name: "Hughes Mushrooms" },
+        },
+      }),
+    ]);
+    const out = await sendScreeningInviteByStaff(admin, {
+      applicationId: ADIYA_APP,
+      actorUserId: "staff-1",
+      now: NOW,
+    });
+    expect(out).toMatchObject({ ok: true, status: "sent" });
+    const opts = (sendTemplateEmail.mock.calls[0] as [string, string, Row])[2];
+    expect(opts.templateData).toMatchObject({ organizationName: "Confidential employer" });
+    expect(JSON.stringify(opts)).not.toContain("Hughes");
+  });
+
   it("refuses with a reason when there is nothing to answer", async () => {
     seed(
       [staffEntryApp()],
