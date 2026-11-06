@@ -375,3 +375,26 @@ Checks
   (CV has no text layer), Naren Vish and George Schempers (no dated roles the
   scorer can read).
 - Name capitalisation corrected on two client-visible profiles (audited).
+
+## 6 Nov 2026 — New client: Lucosky Brookman LLP · Legal Billing Manager
+
+- Account: Julia Mabin (Director of HR and Recruiting) created through the intake
+  page's own account step (`/api/public/intake-account`, confirmed, no email sent).
+- Workspace: organization (prospect), profile and active `client_admin` membership,
+  an express-intake record and `intake.submitted` audit row, as the intake writes them.
+- Role REQ-2026-001 (position a2334fa1…): confidential posting (job board shows
+  "Confidential employer"), hybrid Woodbridge NJ 3+ days, $110–135k shown publicly,
+  six must-haves and six nice-to-haves from the JD and the 6 Nov meeting, recruiter-
+  authored role spec (law firm billing first, medical billing excluded).
+- Screening: two dealbreakers (3 days in the Woodbridge office; 5+ years of law firm or
+  professional services billing), team management (required), salary expectation
+  (required, number, not a dealbreaker) and an optional written answer on getting
+  attorneys to finish time entry and bill review. All passed the protected-attribute
+  and bundled-dealbreaker checks before saving.
+- Loom: the role's video prompt ("How do you make sure attorneys log their time and
+  get their bills reviewed on schedule?") shows on the apply form and job page
+  (new per-role `posting.video_prompt`); the video stays optional.
+- Payment: exempt (flat USD 699 for the two-week search, invoiced at the end).
+  Approved and activated the same day for weekend traffic. No automated emails sent.
+- Code: confidential roles no longer name the client in candidate emails, the
+  candidate portal or the status pages (`candidateFacingEmployerName`).
