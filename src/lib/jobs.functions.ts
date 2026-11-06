@@ -15,6 +15,8 @@ import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
 import { jobDescriptionSummary } from "@/lib/marketing/job-description";
 import { QA_E2E_COOKIE, qaEndpointsEnabled } from "@/lib/public-api/qa-endpoint-gate";
 import { publicOrgNameOr, hasInternalOrgMarker } from "@/lib/org/public-org-name";
+import { CONFIDENTIAL_EMPLOYER_NAME, isConfidentialPosting } from "@/lib/org/candidate-facing-employer";
+import { normalizeVideoPrompt } from "@/lib/jobs/video-prompt";
 
 
 
@@ -321,7 +323,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
     const deadline = str(posting.application_deadline);
     const deadlinePassed = deadline ? new Date(`${deadline}T23:59:59`) < new Date() : false;
-    const confidential = str(posting.confidentiality) === "confidential";
+    const confidential = isConfidentialPosting(posting.confidentiality);
     const p = pos as Record<string, unknown>;
     const comp = resolveCompensation(
       pos.compensation,
@@ -364,7 +366,25 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       applyEffort = EFFORT_DEFAULT;
     }
 
-
+    // The hiring team's optional intro-video question. anon has no grant on
+    // intake_context and the public_position_posting whitelist does not carry
+    // this key, so it is read here, server-side and only after every public
+    // gate above has passed, as one JSON path: nothing else of intake_context
+    // is fetched or returned. A failed read means no prompt, never a broken page.
+    let videoPrompt: string | null = null;
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: promptRow } = await supabaseAdmin
+        .from("positions")
+        .select("video_prompt:intake_context->posting->>video_prompt")
+        .eq("id", pos.id)
+        .maybeSingle();
+      videoPrompt = normalizeVideoPrompt(
+        (promptRow as { video_prompt?: unknown } | null)?.video_prompt,
+      );
+    } catch {
+      videoPrompt = null;
+    }
 
     return {
       // B1: never syndicated (JSON-LD, boards) while any role text fails the detector.
@@ -401,6 +421,8 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       work_authorization_note: str(posting.work_authorization_note),
       accessibility_note: str(posting.accessibility_note),
       eeo_statement: str(posting.eeo_statement),
+      /** Optional question the hiring team would like the intro video to answer. */
+      video_prompt: videoPrompt,
       application_deadline: deadline || null,
       deadline_passed: deadlinePassed,
       confidential,
@@ -419,7 +441,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         return /^https:\/\//i.test(trimmed) ? trimmed : null;
       })(),
       organization_name: confidential
-        ? "Confidential employer"
+        ? CONFIDENTIAL_EMPLOYER_NAME
         : publicOrgNameOr(employer?.name, "Hiring Organization"),
       questions: (questions ?? []).map((q) => ({
         id: q.id,

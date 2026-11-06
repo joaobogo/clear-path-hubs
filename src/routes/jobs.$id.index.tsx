@@ -12,6 +12,7 @@ import { buildJobSlug, extractJobUuid } from "@/lib/marketing/job-slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/marketing/site-shell";
+import { VideoPromptQuote } from "@/components/candidate/video-prompt-quote";
 import { parseJobDescription, jobDescriptionSummary, isMetaHeaderLine } from "@/lib/marketing/job-description";
 import { InlineFormattedText } from "@/components/ui/inline-formatted-text";
 import {
@@ -658,6 +659,19 @@ function JobDetail() {
               <p className="mt-3 text-xs text-muted-foreground">
                 PDF CV, {applyEffortTimeClause(effort)}. You'll get a reference you can track.
               </p>
+              {pos.video_prompt && pos.accepting_applications ? (
+                <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3">
+                  <p className="text-sm font-medium text-foreground">
+                    Stand out with a short video
+                  </p>
+                  <div className="mt-1">
+                    <VideoPromptQuote prompt={pos.video_prompt} lead="note" />
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Optional: add a Loom or Google Drive link when you apply.
+                  </p>
+                </div>
+              ) : null}
             </div>
           </aside>
         </div>

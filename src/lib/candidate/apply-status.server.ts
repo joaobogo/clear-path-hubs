@@ -11,6 +11,7 @@ import {
 } from "./apply-status-model";
 import type { CandidateStateKey } from "./candidate-transparency";
 import { greetingName } from "./display-name";
+import { candidateFacingEmployerName } from "@/lib/org/candidate-facing-employer";
 
 export interface PublicInfoRequest {
   id: string;
@@ -54,7 +55,7 @@ export async function findApplication(reference: string, email: string) {
         // Server-side only (never returned to the page): which way the
         // application arrived decides whether late screening may be offered.
         "source,source_channel,consent," +
-        "positions(title,status,organization_id,organizations(name))," +
+        "positions(title,status,organization_id,posting_confidentiality:intake_context->posting->>confidentiality,organizations(name))," +
         "candidate_profiles!inner(full_name,email)," +
         "candidate_matches(stage,client_visibility,updated_at)",
     )
@@ -82,6 +83,7 @@ export async function loadPublicStatus(
   const pos = app.positions as unknown as {
     title?: string | null;
     status?: string | null;
+    posting_confidentiality?: string | null;
     organizations?: { name?: string | null } | null;
   } | null;
   const cp = app.candidate_profiles as unknown as { full_name?: string | null } | null;
@@ -145,7 +147,10 @@ export async function loadPublicStatus(
     applied_at: app.applied_at as string,
     last_update: lastUpdate,
     position_title: pos?.title ?? null,
-    organization_name: pos?.organizations?.name ?? null,
+    organization_name: candidateFacingEmployerName(
+      pos?.organizations?.name,
+      pos?.posting_confidentiality,
+    ),
     candidate_first_name: greetingName(cp?.full_name as string | null),
     state,
     steps: buildJourney(state, inputs),
