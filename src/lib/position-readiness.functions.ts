@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { roleGaps, type RoleGap } from "@/lib/position-readiness";
+import { readinessFromPositionRow, roleGaps, type RoleGap } from "@/lib/position-readiness";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { excludeTestRecords, isQaFixtureTitle } from "@/lib/client/test-record-filter";
 
@@ -58,22 +58,10 @@ export const listRolesNeedingDetails = createServerFn({ method: "POST" })
       const status = String(raw.status ?? "");
       if (closed.has(status)) continue;
       if (isQaFixtureTitle(raw.title)) continue;
-      const comp = (raw.compensation ?? {}) as AnyRow;
-      const ctx = (raw.intake_context ?? {}) as AnyRow;
-      const gaps = roleGaps({
-        title: raw.title,
-        description: raw.description,
-        location: raw.location,
-        work_model: raw.work_model,
-        employment_type: raw.employment_type,
-        seniority: raw.seniority,
-        must_have_skills: Array.isArray(raw.requirements) ? raw.requirements : [],
-        experience: typeof ctx.experience === "string" ? ctx.experience : "",
-        responsibilities: typeof ctx.responsibilities === "string" ? ctx.responsibilities : "",
-        budget_min: comp.budget_min ?? null,
-        budget_max: comp.budget_max ?? null,
-        currency: comp.currency ?? null,
-      });
+      // One reader for every readiness check, so this banner and the role
+      // editor agree on what is filled in (the salary range is stored as
+      // compensation.min/max by intake and the editor).
+      const gaps = roleGaps(readinessFromPositionRow(raw));
       if (gaps.length === 0) continue;
       roles.push({
         positionId: raw.id as string,

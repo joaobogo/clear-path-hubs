@@ -39,6 +39,14 @@ function listLength(v: unknown): number {
   return Array.isArray(v) ? v.filter(Boolean).length : 0;
 }
 
+/** The first value that is a positive number (or numeric string), else null. */
+function firstSet(...values: unknown[]): number | string | null {
+  for (const v of values) {
+    if (hasNumber(v)) return v as number | string;
+  }
+  return null;
+}
+
 function hasNumber(v: unknown): boolean {
   if (v === null || v === undefined || v === "") return false;
   const n = typeof v === "number" ? v : Number(v);
@@ -94,8 +102,10 @@ export function readinessFromPositionRow(raw: Record<string, unknown> | null | u
     must_have_skills: Array.isArray(raw.requirements) ? raw.requirements : [],
     experience: typeof ctx.experience === "string" ? ctx.experience : "",
     responsibilities: typeof ctx.responsibilities === "string" ? ctx.responsibilities : "",
-    budget_min: (comp.budget_min as number | string | null) ?? null,
-    budget_max: (comp.budget_max as number | string | null) ?? null,
-    currency: (comp.currency as string) ?? null,
+    // Intake and the role editor store the range as compensation.min/max;
+    // older rows used budget_min/budget_max. Either one is a set salary.
+    budget_min: firstSet(comp.budget_min, comp.min, ctx.budget_min),
+    budget_max: firstSet(comp.budget_max, comp.max, ctx.budget_max),
+    currency: (comp.currency as string) ?? (ctx.currency as string) ?? null,
   };
 }
