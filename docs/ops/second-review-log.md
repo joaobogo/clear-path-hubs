@@ -412,3 +412,27 @@ Checks
 - Veronica Losso was auto-rejected on the old law-firm question; her CV shows about 2.5 years of
   law firm billing (2016–2018) plus 3 years of invoicing and collections (2013–2016). Left for
   the owner to decide whether to grant a recruiter exception.
+
+## 10 Nov 2026 (evening) — Billing Manager (Law Firm): rescore, engine v1.7.6, reviewed scores
+
+- Owner: Veronica Losso reopened (recruiter exception on the old law-firm question; still
+  hidden, `admin_status` pending). All four matches rescored on the reworded role.
+- The rescore dropped every delivered candidate (William 95 → 74.3, Ronny 91.7 → 81.4,
+  Alexa 88.3 → 79.3). Two causes were engine bugs, fixed in v1.7.6 (commit 0e08f7ad6,
+  merged to main, deployed): full US dates ("10/18/21 – 9/12/2022") were not read for years
+  of experience (William: 4.2 of 10.2 years counted), and a screening question whose
+  must-have names the requirement word for word did not link to it. The rest came from the
+  old wording's keyword overlap ("legal billing") lifting rows to met.
+- Owner rule for this review (10 Nov): fair, never harsher than the engine. The engine
+  verdict is the floor; a verdict is raised only with a direct CV quote. The AI briefings'
+  harsher reads (William and Ronny marked "reject") were not used; reviewed briefings
+  replace them so admin shows the same story as the score.
+- Reviewed scores (`apply_reviewed_verdicts`, human-adjusted runs): Alexa 97.1, Veronica
+  94.6, Ronny 92.1, William 85.0. Alexa, Ronny and William re-approved on the reviewed runs
+  (already visible), so the client, the admin list and the admin record show one number.
+  Veronica left hidden for the owner's decision.
+- Check: `apply_reviewed_verdicts(position, false)` returns `unchanged`; admin index =
+  approved run = current run for the three delivered candidates.
+- Screening points recorded in the briefings: William (owning the pre-bill cycle, timekeeper
+  follow-up), Ronny (direct reports), Alexa (QuickBooks/Caret, Excel), Veronica (billing
+  ended 2018; total billing years).
