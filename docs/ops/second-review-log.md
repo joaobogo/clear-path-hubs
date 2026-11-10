@@ -436,3 +436,8 @@ Checks
 - Screening points recorded in the briefings: William (owning the pre-bill cycle, timekeeper
   follow-up), Ronny (direct reports), Alexa (QuickBooks/Caret, Excel), Veronica (billing
   ended 2018; total billing years).
+- Owner (10 Nov, later): Veronica "is good but shouldn't be that high". The 5-year billing
+  must-have moved to partial: the engine counted her whole career (including 2002–2011
+  hospitality) as billing; the CV shows about 2.5 years of law-firm billing plus about 3 years
+  of invoicing in an administrative role, and she answered no. Reviewed score 94.6 → 89.6.
+  Still hidden, pending the owner's decision.
