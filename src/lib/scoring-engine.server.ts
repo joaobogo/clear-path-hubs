@@ -578,6 +578,17 @@ function sameConcept(a: string, b: string): boolean {
   return LINK_CONCEPTS.some((re) => re.test(a) && re.test(b));
 }
 
+/** The same requirement text, ignoring case, spacing and punctuation. */
+function sameRequirementText(a: string, b: string): boolean {
+  const norm = (t: string) =>
+    t
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}+]+/gu, " ")
+      .trim();
+  const x = norm(a);
+  return x !== "" && x === norm(b);
+}
+
 function isDisqualifying(a: ScreeningAnswer): boolean {
   const cond = a.disqualifying_condition;
   if (!cond) return false;
@@ -1207,14 +1218,23 @@ export function scoreCandidate(input: {
   // flagged an English answer as unverified for want of management evidence.
   // The screening credit below keeps the original link: changing it would
   // move scores under the same engine version.
+  //
+  // v1.7.6: a must-have that names the requirement word for word links to it
+  // whatever the wording. "5+ years of billing experience" shares only one
+  // content word with itself ("years" and "experience" are framing), so the
+  // question written for that must-have had stopped speaking for it.
   const linkedRequired = (s: ScreeningAnswer, opts: { concept?: boolean } = {}) => {
     const linkText = (s.must_have ?? "").trim();
     const qTokens = new Set(meaningful(linkText || s.question || ""));
     const out: Array<{ a: RequirementAssessment; overlap: Set<string> }> = [];
-    if (qTokens.size === 0) return { linkText, links: out };
     for (const a of assessment) {
       if (!a.required) continue;
       const overlap = new Set(meaningful(a.text).filter((t) => qTokens.has(t)));
+      if (linkText !== "" && sameRequirementText(linkText, a.text)) {
+        out.push({ a, overlap });
+        continue;
+      }
+      if (qTokens.size === 0) continue;
       const subject = opts.concept ? [...overlap].some((t) => !LINK_MODALITY_WORDS.has(t)) : true;
       if ((overlap.size >= 2 && subject) || (linkText !== "" && sameConcept(linkText, a.text))) {
         out.push({ a, overlap });

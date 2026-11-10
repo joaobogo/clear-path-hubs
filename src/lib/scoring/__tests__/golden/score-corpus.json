@@ -1,6 +1,6 @@
 {
   "policy": {
-    "engine_version": "taasflow-scoring-v1.7.5",
+    "engine_version": "taasflow-scoring-v1.7.6",
     "calibration_version": "taasflow-calibration-v1.3.0",
     "bands": [
       {
@@ -112,7 +112,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "83676a30-274"
+      "input_hash": "e8f04a87-274"
     },
     {
       "name": "'no downtime' does not negate a nearby unrelated skill",
@@ -126,7 +126,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "85e65934-279"
+      "input_hash": "6e73f579-279"
     },
     {
       "name": "'not familiar with HIPAA' is contradicted",
@@ -140,7 +140,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "8a4f1952-277"
+      "input_hash": "ff622aff-277"
     },
     {
       "name": "aws satisfies an Amazon Web Services requirement",
@@ -154,7 +154,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
-      "input_hash": "c651c73d-276"
+      "input_hash": "373e5082-276"
     },
     {
       "name": "bare 'no Postgres' is contradicted",
@@ -168,7 +168,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "31efea9f-283"
+      "input_hash": "cb69dfae-283"
     },
     {
       "name": "c# requirement does not match the letter c in prose",
@@ -182,7 +182,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "5eef293d-275"
+      "input_hash": "f1890168-275"
     },
     {
       "name": "continuous integration satisfies a CI/CD requirement",
@@ -196,7 +196,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "32ddc1b1-277"
+      "input_hash": "3ece9b0c-277"
     },
     {
       "name": "emr satisfies an EHR requirement",
@@ -210,7 +210,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "30b779fe-27f"
+      "input_hash": "e8563177-27f"
     },
     {
       "name": "go requirement does not match google",
@@ -224,7 +224,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "c8393413-26c"
+      "input_hash": "e9399894-26c"
     },
     {
       "name": "google sheets satisfies an Excel requirement",
@@ -238,7 +238,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "cb3627fe-27b"
+      "input_hash": "301cb2cf-27b"
     },
     {
       "name": "java requirement does not match javascript",
@@ -252,7 +252,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "d143cb70-26f"
+      "input_hash": "3be920a9-26f"
     },
     {
       "name": "javascript requirement does not match java",
@@ -266,7 +266,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "364abaa3-27c"
+      "input_hash": "34125fcc-27c"
     },
     {
       "name": "k8s in CV satisfies a Kubernetes requirement",
@@ -280,7 +280,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "fceba1dc-280"
+      "input_hash": "6105e46f-280"
     },
     {
       "name": "know your customer satisfies a KYC requirement",
@@ -294,7 +294,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.33,
       "evaluation_method": "deterministic",
-      "input_hash": "b6081a62-277"
+      "input_hash": "4e115ed3-277"
     },
     {
       "name": "Kubernetes in CV satisfies a k8s requirement",
@@ -308,7 +308,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "e5f90dd2-284"
+      "input_hash": "66356fa9-284"
     },
     {
       "name": "multi-keyword requirement fully evidenced is met",
@@ -322,7 +322,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.33,
       "evaluation_method": "deterministic",
-      "input_hash": "b3a42c1b-292"
+      "input_hash": "55d0a3b0-292"
     },
     {
       "name": "multi-keyword requirement half evidenced is partial",
@@ -336,7 +336,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "53dc4f4a-2ac"
+      "input_hash": "e7f70641-2ac"
     },
     {
       "name": "negation in a prior sentence does not poison a later positive mention",
@@ -350,7 +350,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "081ea6c3-27b"
+      "input_hash": "e347622a-27b"
     },
     {
       "name": "negation of one term leaves another requirement intact",
@@ -364,7 +364,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "f2e0eb3f-278"
+      "input_hash": "143d3d7c-278"
     },
     {
       "name": "never used Terraform is contradicted",
@@ -378,7 +378,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.33,
       "evaluation_method": "deterministic",
-      "input_hash": "6d5cbda4-280"
+      "input_hash": "8eab8243-280"
     },
     {
       "name": "no experience with Kubernetes is contradicted",
@@ -392,7 +392,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "9bc7aab6-282"
+      "input_hash": "f7d31649-282"
     },
     {
       "name": "nodejs satisfies a Node.js requirement",
@@ -406,7 +406,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "cf74bd81-277"
+      "input_hash": "0d5f0bc0-277"
     },
     {
       "name": "postgres satisfies a PostgreSQL requirement",
@@ -420,7 +420,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "0c388ee0-283"
+      "input_hash": "8a5fb101-283"
     },
     {
       "name": "preferred requirement is assessed the same way as a must-have",
@@ -434,7 +434,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "b5c7a388-276"
+      "input_hash": "6995539f-276"
     },
     {
       "name": "punctuated term still matches inside prose",
@@ -448,7 +448,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "4691bf13-277"
+      "input_hash": "8958395e-277"
     },
     {
       "name": "r requirement does not match random words",
@@ -462,7 +462,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "e9fb2334-272"
+      "input_hash": "6ccf8677-272"
     },
     {
       "name": "reach truck satisfies a forklift requirement",
@@ -476,7 +476,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "cdadf20e-286"
+      "input_hash": "c25fa589-286"
     },
     {
       "name": "react requirement does not match preact only",
@@ -490,7 +490,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "14734754-278"
+      "input_hash": "75172e5f-278"
     },
     {
       "name": "rn requirement does not match the word learn",
@@ -504,7 +504,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "82a08419-286"
+      "input_hash": "232806ee-286"
     },
     {
       "name": "sentence requirement: a genuinely absent capability is still missing",
@@ -518,7 +518,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "77d589e5-2ca"
+      "input_hash": "6eb1dc4e-2ca"
     },
     {
       "name": "sentence requirement: framing words do not drag a real match to partial",
@@ -532,7 +532,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.33,
       "evaluation_method": "deterministic",
-      "input_hash": "dc5a8b07-2ed"
+      "input_hash": "c7d2c86e-2ed"
     },
     {
       "name": "sentence requirement: one real capability, stated once, is met not partial",
@@ -546,7 +546,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "79b28602-2b8"
+      "input_hash": "c02a1e0d-2b8"
     },
     {
       "name": "sentence requirement: the capability stated plainly is met",
@@ -560,7 +560,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
-      "input_hash": "177ac509-2e4"
+      "input_hash": "e2a5f0d6-2e4"
     },
     {
       "name": "sql requirement does not match nosql-only prose",
@@ -574,7 +574,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "5b3bbdec-270"
+      "input_hash": "73904bbf-270"
     },
     {
       "name": "synonyms do not bridge java and javascript",
@@ -588,7 +588,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "566b6511-26a"
+      "input_hash": "a2ec5266-26a"
     },
     {
       "name": "ts satisfies a TypeScript requirement",
@@ -602,7 +602,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "a9e7e3b1-282"
+      "input_hash": "77945572-282"
     },
     {
       "name": "unfamiliar with Salesforce is contradicted",
@@ -616,7 +616,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "9365106f-27f"
+      "input_hash": "b24d32b2-27f"
     },
     {
       "name": "without any AWS exposure is contradicted",
@@ -630,7 +630,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "ca0e2675-26f"
+      "input_hash": "4b4945bc-26f"
     }
   ]
 }

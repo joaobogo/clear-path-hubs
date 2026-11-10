@@ -508,9 +508,35 @@ const MONTHS: Record<string, number> = {
 
 const MONTH_NAME =
   "(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)";
-const POINT = `(?:${MONTH_NAME}\\.?\\s+)?((?:19|20)\\d{2})|(\\d{1,2})\\/((?:19|20)\\d{2})`;
+// A point in time: "Mar 2021", "2021", "3/2021", or a full date "10/18/21" or
+// "10/18/2021" (US month/day/year, as many US CVs date every role). A full
+// date's day is read and dropped; a two-digit year is resolved by
+// fullDateYear. The full-date form comes before "3/2021" so "9/12/2022" is
+// read as September 2022, not December 2022.
+const POINT = `(?:${MONTH_NAME}\\.?\\s+)?((?:19|20)\\d{2})|(\\d{1,2})\\/(\\d{1,2})\\/((?:19|20)?\\d{2})(?!\\d)|(\\d{1,2})\\/((?:19|20)\\d{2})`;
 const END = `(present|current|now|today|ongoing|to\\s+date|date)|${POINT}`;
 const RANGE_RE = new RegExp(`(?:${POINT})\\s*(?:-|–|—|to|until|till)\\s*(?:${END})`, "gi");
+
+/**
+ * The year of a full date ("10/18/21"): four digits as written; two digits are
+ * this century unless that would be in the future, then the last one.
+ */
+function fullDateYear(raw: string, today: Date): number {
+  if (raw.length === 4) return Number(raw);
+  const yy = Number(raw);
+  const century = Math.floor(today.getUTCFullYear() / 100) * 100;
+  return century + yy > today.getUTCFullYear() ? century - 100 + yy : century + yy;
+}
+
+/**
+ * The month of a full date: US month/day order, unless the first number cannot
+ * be a month ("18/10/21"), then day/month.
+ */
+function fullDateMonth(first: string, second: string): number {
+  const a = Number(first);
+  const b = Number(second);
+  return (a >= 1 && a <= 12 ? a : b) - 1;
+}
 
 /** The same pattern without the global flag, for a yes/no test. */
 const DATE_RANGE = new RegExp(RANGE_RE.source, "i");
@@ -530,26 +556,31 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
     RANGE_RE.lastIndex = 0;
     let m: RegExpExecArray | null;
     while ((m = RANGE_RE.exec(l.text)) !== null) {
-      // Groups: 1 month name, 2 year, 3 numeric month, 4 numeric year (start);
-      // 5 open end word; 6 month name, 7 year, 8 numeric month, 9 year (end).
-      const startYear = Number(m[2] ?? m[4]);
+      // Groups (start): 1 month name, 2 year; 3 month, 4 day, 5 year of a
+      // full date; 6 numeric month, 7 numeric year. 8 open end word. End:
+      // 9 month name, 10 year; 11-13 full date; 14 numeric month, 15 year.
+      const startYear = m[5] ? fullDateYear(m[5], today) : Number(m[2] ?? m[7]);
       const startMonth = m[1]
         ? (MONTHS[m[1].slice(0, 3).toLowerCase()] ?? 0)
         : m[3]
-          ? Number(m[3]) - 1
-          : 0;
+          ? fullDateMonth(m[3], m[4])
+          : m[6]
+            ? Number(m[6]) - 1
+            : 0;
       let to: number;
-      if (m[5]) to = now;
+      if (m[8]) to = now;
       else {
-        const endYear = Number(m[7] ?? m[9]);
+        const endYear = m[13] ? fullDateYear(m[13], today) : Number(m[10] ?? m[15]);
         // A year-only end means "some time that year"; count to December, but
         // never past today.
-        const endMonth = m[6]
-          ? (MONTHS[m[6].slice(0, 3).toLowerCase()] ?? 11)
-          : m[8]
-            ? Number(m[8]) - 1
-            : 11;
-        to = Math.min(monthIndex(endYear, endMonth), now);
+        const endMonth = m[9]
+          ? (MONTHS[m[9].slice(0, 3).toLowerCase()] ?? 11)
+          : m[11]
+            ? fullDateMonth(m[11], m[12])
+            : m[14]
+              ? Number(m[14]) - 1
+              : 11;
+        to = Math.min(monthIndex(endYear, Math.min(Math.max(endMonth, 0), 11)), now);
       }
       const from = monthIndex(startYear, Math.min(Math.max(startMonth, 0), 11));
       if (to >= from && startYear >= 1960) out.push({ from, to, line: l, at: m.index });
