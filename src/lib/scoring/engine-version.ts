@@ -214,4 +214,13 @@
  * not eligible. A dealbreaker "yes" the CV does not support is recorded as an
  * unverified screening claim for recruiters; the candidate stays eligible.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.5";
+/**
+ * v1.7.6 — two fixes found rescoring the Billing Manager (Law Firm) role
+ * (10 Nov 2026). Roles dated with full US dates ("10/18/21 – 9/12/2022",
+ * "2/1/16-11/9/17") are read for years of experience; they were skipped, so
+ * a CV dated that way showed 4.2 of its 10.8 years. A screening question whose
+ * must-have names the requirement word for word links to it whatever the
+ * wording; "5+ years of billing experience" shares one content word with
+ * itself, so a "yes" to its own question had stopped counting.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.6";

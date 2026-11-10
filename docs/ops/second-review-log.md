@@ -398,3 +398,17 @@ Checks
   Approved and activated the same day for weekend traffic. No automated emails sent.
 - Code: confidential roles no longer name the client in candidate emails, the
   candidate portal or the status pages (`candidateFacingEmployerName`).
+
+## 10 Nov 2026 — Lucosky Brookman role retitled "Billing Manager (Law Firm)"
+
+- Owner instruction: law firm experience is a plus, not a requirement. Title, description,
+  must-haves, dealbreakers, two screening questions, the Loom prompt, the role spec and the
+  intake record now say so. The 5-year dealbreaker asks for "at least 5 years of billing
+  experience" (no longer "at a law firm or professional services firm"); law firm or
+  professional services billing moved to the first nice-to-have. Checked with the protected-
+  attribute and bundled-dealbreaker detectors before saving.
+- The platform queued every match on the role for a rescore (requirements and screening changed).
+- Old job links redirect to the new slug.
+- Veronica Losso was auto-rejected on the old law-firm question; her CV shows about 2.5 years of
+  law firm billing (2016–2018) plus 3 years of invoicing and collections (2013–2016). Left for
+  the owner to decide whether to grant a recruiter exception.
