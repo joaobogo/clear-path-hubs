@@ -32,14 +32,29 @@
 import { placesIn, regionsOf, REGION_TERMS, type Place, type Region } from "./geography";
 import { brandOriginsIn } from "./brand-origins";
 
+import { parseYearsSubject, type YearsSubject } from "./years-subject";
+import { homeStateOf, usStatesIn } from "./us-states";
+import { HEADING_LINE } from "./non-evidence-lines";
+
 export type StructuredStatus = "met" | "partial" | "missing" | "unknown";
 
 export type StructuredEvidence = { snippet: string; start: number; end: number };
 
 export type StructuredVerdict = {
-  rule: "degree_field" | "conditional_relocation" | "minimum_years" | "market_experience";
+  rule:
+    | "degree_field"
+    | "conditional_relocation"
+    | "minimum_years"
+    | "market_experience"
+    | "onsite_attendance";
   status: StructuredStatus;
   needs_validation: boolean;
+  /**
+   * For a years verdict: what the count rests on. "described" means the roles
+   * themselves show the subject; "titles" means job titles only; "stated" is
+   * the CV's own "10+ years"; "none" means no role shows it.
+   */
+  years_basis?: "described" | "titles" | "stated" | "none";
   /** One sentence a reviewer can read: what was found and why it decided this. */
   note: string;
   evidence: StructuredEvidence[];
@@ -542,7 +557,19 @@ function fullDateMonth(first: string, second: string): number {
 const DATE_RANGE = new RegExp(RANGE_RE.source, "i");
 
 /** A dated range: months covered, its line, and where in the line it sits. */
-type Span = { from: number; to: number; line: Line; at: number };
+type Span = {
+  from: number;
+  to: number;
+  line: Line;
+  at: number;
+  /** The range as written ("2002 – 2007", "July 2013 – October 2025"). */
+  raw: string;
+  /** Start or end written as a year alone, with no month. */
+  yearOnlyFrom: boolean;
+  yearOnlyTo: boolean;
+  /** Open end ("Present"). */
+  open: boolean;
+};
 
 /** Month index since year 0, for arithmetic. */
 function monthIndex(year: number, month: number): number {
@@ -560,6 +587,10 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
       // full date; 6 numeric month, 7 numeric year. 8 open end word. End:
       // 9 month name, 10 year; 11-13 full date; 14 numeric month, 15 year.
       const startYear = m[5] ? fullDateYear(m[5], today) : Number(m[2] ?? m[7]);
+      // A year alone ("2002 – 2007") is read January to December here, as it
+      // always was. The roles a subject is counted from read it mid-year to
+      // mid-year instead (midYear, v1.7.7).
+      const yearOnlyFrom = !m[1] && !m[3] && !m[6];
       const startMonth = m[1]
         ? (MONTHS[m[1].slice(0, 3).toLowerCase()] ?? 0)
         : m[3]
@@ -568,11 +599,11 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
             ? Number(m[6]) - 1
             : 0;
       let to: number;
+      let yearOnlyTo = false;
       if (m[8]) to = now;
       else {
         const endYear = m[13] ? fullDateYear(m[13], today) : Number(m[10] ?? m[15]);
-        // A year-only end means "some time that year"; count to December, but
-        // never past today.
+        yearOnlyTo = !m[9] && !m[11] && !m[14];
         const endMonth = m[9]
           ? (MONTHS[m[9].slice(0, 3).toLowerCase()] ?? 11)
           : m[11]
@@ -583,10 +614,45 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
         to = Math.min(monthIndex(endYear, Math.min(Math.max(endMonth, 0), 11)), now);
       }
       const from = monthIndex(startYear, Math.min(Math.max(startMonth, 0), 11));
-      if (to >= from && startYear >= 1960) out.push({ from, to, line: l, at: m.index });
+      if (to >= from && startYear >= 1960)
+        out.push({
+          from,
+          to,
+          line: l,
+          at: m.index,
+          raw: m[0],
+          yearOnlyFrom,
+          yearOnlyTo,
+          open: Boolean(m[8]),
+        });
     }
   }
   return out;
+}
+
+/**
+ * A year written alone means "some time that year". Counted from mid-year to
+ * mid-year, "2002 – 2007" is five years; January to December makes it six, a
+ * year more than the person wrote. Used where a subject's years are counted
+ * (v1.7.7): "5+ years of billing" from one role dated 2002 – 2007 is five
+ * years, close to the minimum. Requirements with no subject keep the reading
+ * their accepted scores were made with.
+ */
+function midYear(s: Span, today: Date): Span {
+  if (!s.yearOnlyFrom && !s.yearOnlyTo) return s;
+  const now = monthIndex(today.getUTCFullYear(), today.getUTCMonth());
+  const startYear = Math.floor(s.from / 12);
+  const endYear = Math.floor(s.to / 12);
+  let from = s.yearOnlyFrom ? monthIndex(startYear, 6) : s.from;
+  let to = s.yearOnlyTo && !s.open ? Math.min(monthIndex(endYear, 5), now) : s.to;
+  // "2020 – 2020": part of one year, counted as half of it.
+  if (s.yearOnlyFrom && s.yearOnlyTo && startYear === endYear) {
+    from = monthIndex(startYear, 0);
+    to = Math.min(monthIndex(startYear, 5), now);
+  }
+  // "2026 – Present" read early in 2026: started this year.
+  if (from > to) from = monthIndex(startYear, 0);
+  return { ...s, from, to };
 }
 
 /** Total months covered by the spans, overlaps counted once. */
@@ -642,6 +708,152 @@ function titleContext(cv: string, span: Span): string {
     .filter(Boolean)
     .map((l) => l!.text)
     .join(" | ");
+}
+
+/** A dated role with the lines that belong to it. */
+export type RoleBlock = {
+  span: Span;
+  /** Title and employer: the dated line and the short lines around it. */
+  header: string;
+  /** What the person did there: the lines under the role, up to the next one. */
+  body: string;
+  /** Offsets of the body lines, for quoting. */
+  bodyLines: Line[];
+};
+
+const BULLET_START = /^[•▪●■◦·\-*–—]/;
+
+/** A short line with no sentence in it: a title, an employer, a place. */
+function headerLike(l: Line | undefined): boolean {
+  if (!l) return false;
+  const t = l.text.replace(/[·•]\s*$/, "").trim();
+  if (!t || t.length > 90 || BULLET_START.test(t)) return false;
+  // A section heading or a page mark belongs to no role.
+  if (HEADING_LINE.test(t) || /^page\s+\d+(?:\s+of\s+\d+)?$/i.test(t)) return false;
+  if (/[.;:,]$/.test(t)) return false;
+  return t.split(/\s+/).length <= 12;
+}
+
+/**
+ * The CV's dated roles as blocks (v1.7.7). The header is the dated line, up
+ * to two short lines above it and one below; the body is every line from
+ * there to the next role's header. Education dates are not roles.
+ */
+export function roleBlocks(cv: string, today: Date = new Date()): RoleBlock[] {
+  const ls = lines(cv);
+  const indexOf = new Map(ls.map((l, i) => [l.start, i] as const));
+  const dated = findDatedRanges(cv, today)
+    .filter((sp) => !isEducationSpan(sp))
+    .map((sp) => ({ sp: midYear(sp, today), i: indexOf.get(sp.line.start) ?? -1 }))
+    .filter((x) => x.i >= 0)
+    .sort((a, b) => a.i - b.i || a.sp.at - b.sp.at);
+  // A promotion chain under a role: "Billing Analyst (May 2016 – Sep 2017) →
+  // Collections Analyst (Sep 2017 – Jul 2018) → …", two or more periods inside
+  // the role's own, on the lines right under it with nothing between them.
+  // They are that role's header, not new roles: the bullets below describe
+  // the whole period.
+  const spans: typeof dated = [];
+  const chainEnd = new Map<number, number>();
+  for (let k = 0; k < dated.length; k++) {
+    const parent = dated[k]!;
+    spans.push(parent);
+    let last = parent.i;
+    let n = k + 1;
+    let run = 0;
+    while (n < dated.length) {
+      const c = dated[n]!;
+      const gap = c.i - last;
+      const inside = c.sp.from >= parent.sp.from - 1 && c.sp.to <= parent.sp.to + 1;
+      if (!inside || (run === 0 ? gap < 1 || gap > 3 : gap > 1)) break;
+      last = c.i;
+      run++;
+      n++;
+    }
+    if (run >= 2) {
+      chainEnd.set(spans.length - 1, last);
+      k = n - 1;
+    }
+  }
+  const out: RoleBlock[] = [];
+  // Where each role's header starts and its body starts.
+  const bounds: { top: number; bodyFrom: number }[] = [];
+  spans.forEach(({ i }, k) => {
+    // A line the role above already took as its title is not this role's:
+    // "COMPANY | dates" with the title underneath, and no bullets between.
+    const prev = k > 0 ? Math.max(spans[k - 1]!.i, bounds[k - 1]!.bodyFrom - 1) : -1;
+    let top = i;
+    for (let up = 1; up <= 2 && i - up > prev; up++) {
+      if (!headerLike(ls[i - up])) break;
+      top = i - up;
+    }
+    const dateLineWords = ls[i]!.text.replace(DATE_RANGE, " ")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean).length;
+    const next = k + 1 < spans.length ? spans[k + 1]!.i : ls.length;
+    // "COMPANY | 7/2024 – PRESENT" with the title on the next line.
+    const below =
+      i + 1 < next && headerLike(ls[i + 1]) && dateLineWords <= 6 && top === i ? i + 1 : i;
+    bounds.push({ top, bodyFrom: Math.max(below, chainEnd.get(k) ?? -1) + 1 });
+  });
+  spans.forEach(({ sp, i }, k) => {
+    if (k > 0 && spans[k - 1]!.i === i) {
+      // A second range on the same line shares the line's text.
+      out.push({ span: sp, header: ls[i]!.text, body: "", bodyLines: [] });
+      return;
+    }
+    const b = bounds[k]!;
+    let end = ls.length;
+    for (let n = k + 1; n < spans.length; n++) {
+      if (spans[n]!.i !== i) {
+        end = bounds[n]!.top;
+        break;
+      }
+    }
+    // The role ends where the next section starts: the last role on a CV
+    // does not own the education and skills listed under it.
+    for (let n = b.bodyFrom; n < end; n++) {
+      const t = ls[n]!.text.trim();
+      if (t.length <= 60 && HEADING_LINE.test(t)) {
+        end = n;
+        break;
+      }
+    }
+    const headerLines = ls.slice(b.top, b.bodyFrom);
+    const bodyLines = ls.slice(b.bodyFrom, Math.max(b.bodyFrom, end));
+    out.push({
+      span: sp,
+      header: headerLines.map((l) => l.text).join(" | "),
+      // A wrapped line continues its bullet; a new bullet starts a new line.
+      body: bodyLines
+        .map((l, n) =>
+          n === 0 ? l.text : /^[^A-Za-z0-9("'\s]/.test(l.text) ? `\n${l.text}` : ` ${l.text}`,
+        )
+        .join(""),
+      bodyLines,
+    });
+  });
+  return out;
+}
+
+/** "Center for Cancer and Blood Disorders 2002–2007": the role, named for a note. */
+function roleLabel(b: RoleBlock): string {
+  const name = b.header
+    .replace(new RegExp(RANGE_RE.source, "gi"), " ")
+    .split("|")
+    .map((x) => x.replace(/^[\s·•\-–—]+|[\s·•\-–—,]+$/g, "").trim())
+    .filter(Boolean)
+    .sort(
+      (a, c) =>
+        Number(/\d{5}|^[A-Z][a-z]+,\s*[A-Z]{2}$/.test(a)) -
+        Number(/\d{5}|^[A-Z][a-z]+,\s*[A-Z]{2}$/.test(c)),
+    )
+    .slice(0, 2)
+    .join(", ");
+  const period = b.span.raw
+    .replace(/\s*(?:[-–—]|\bto\b|\buntil\b|\btill\b)\s*/i, "–")
+    .replace(/\s+/g, " ");
+  return `${name ? name.slice(0, 90) : "a role dated"} ${period}`.trim();
 }
 
 export function parseYearsRequirement(
@@ -721,27 +933,38 @@ export function evaluateYearsRequirement(
   const req = parseYearsRequirement(text);
   if (!req) return null;
   const marketingOnly = /\bmarketing\b/i.test(text);
+  // What the years are of (v1.7.7): a team managed, or the requirement's own
+  // subject ("billing"). Marketing and leadership-level shapes keep their
+  // title rules.
+  const parsed = parseYearsSubject(text);
+  const subject =
+    parsed && (parsed.kind === "team" || (req.kind === "any" && !marketingOnly)) ? parsed : null;
 
   // The CV's own statement of career length, for this kind of experience.
   const claim = findYearsClaims(cv)
     .filter((c) =>
-      req.kind === "senior"
-        ? c.kind === "senior"
-        : req.kind === "leadership"
-          ? c.kind !== "any"
-          : !marketingOnly || c.marketing,
+      subject
+        ? subject.strong.test(c.line.text)
+        : req.kind === "senior"
+          ? c.kind === "senior"
+          : req.kind === "leadership"
+            ? c.kind !== "any"
+            : !marketingOnly || c.marketing,
     )
     .sort((a, b) => b.years - a.years)[0];
 
-  const dated = evaluateDatedYears(req, marketingOnly, cv, today);
+  const dated = subject
+    ? evaluateSubjectYears(req, subject, cv, today)
+    : evaluateDatedYears(req, marketingOnly, cv, today);
   if (claim && claim.years >= req.min && dated.verdict.status !== "met") {
     // A stated career length counts when the dated roles do not contradict
     // it: no dates to check against, or dates that come close. When the dated
     // roles show far less ("11+ years" against roles dated from 2021), a
     // recruiter believes the dates: the claim lifts the row to partial at most.
-    const datesAgree = dated.years === 0 || dated.years >= req.min * 0.75;
-    const level =
-      req.kind === "senior"
+    const datesAgree = (dated.years === 0 && !dated.hasRoles) || dated.years >= req.min * 0.75;
+    const level = subject
+      ? ` of ${subject.label}`
+      : req.kind === "senior"
         ? " in senior leadership"
         : req.kind === "leadership"
           ? " in leadership"
@@ -750,6 +973,7 @@ export function evaluateYearsRequirement(
       rule: "minimum_years",
       status: datesAgree ? "met" : "partial",
       needs_validation: true,
+      years_basis: "stated",
       note: datesAgree
         ? `The CV states ${claim.years}+ years${level}, against ${req.min} required${
             dated.years > 0 ? `; dated roles on the CV show ${dated.years}` : ""
@@ -763,13 +987,118 @@ export function evaluateYearsRequirement(
 
 type Requirement = { min: number; kind: "any" | "leadership" | "senior" };
 
+const oneDecimal = (months: number) => Math.round((months / 12) * 10) / 10;
+
+/**
+ * Years from the roles that show the requirement's subject (v1.7.7).
+ *
+ * A role counts in full when its own lines describe the subject (a team
+ * managed, billing done). A title alone ("Manager", "Billing Analyst") is
+ * weak: it can make the row partial, never met. The roles used are named in
+ * the note so an admin can check the sum.
+ */
+function evaluateSubjectYears(
+  req: Requirement,
+  subject: YearsSubject,
+  cv: string,
+  today: Date,
+): { years: number; hasRoles: boolean; verdict: StructuredVerdict } {
+  const blocks = roleBlocks(cv, today);
+  if (blocks.length === 0) {
+    return {
+      years: 0,
+      hasRoles: false,
+      verdict: {
+        rule: "minimum_years",
+        status: "unknown",
+        needs_validation: true,
+        note: "No dated roles could be read from the CV. Confirm the years at screening.",
+        evidence: [],
+      },
+    };
+  }
+  const strong = blocks.filter((b) => subject.strong.test(b.body));
+  const weak = blocks.filter((b) => !strong.includes(b) && subject.weak.test(b.header));
+  const what = subject.kind === "team" ? "managing a team" : subject.label;
+  if (strong.length === 0 && weak.length === 0) {
+    return {
+      years: 0,
+      hasRoles: true,
+      verdict: {
+        rule: "minimum_years",
+        status: "missing",
+        needs_validation: true,
+        years_basis: "none",
+        note:
+          blocks.length === 1
+            ? `The one dated role on the CV does not show ${what}, against ${req.min} years required.`
+            : `None of the ${blocks.length} dated roles on the CV shows ${what}, against ${req.min} years required.`,
+        evidence: [],
+      },
+    };
+  }
+  const strongYears = oneDecimal(unionMonths(strong.map((b) => b.span)));
+  const allYears = oneDecimal(unionMonths([...strong, ...weak].map((b) => b.span)));
+  const byRecency = (a: RoleBlock, b: RoleBlock) => b.span.to - a.span.to;
+  const named = (bs: RoleBlock[]) => {
+    const sorted = [...bs].sort(byRecency);
+    const shown = sorted.slice(0, 4).map(roleLabel).join("; ");
+    return sorted.length > 4 ? `${shown}; and ${sorted.length - 4} more` : shown;
+  };
+  // Quote the line that shows the subject, most recent role first.
+  const evidence: StructuredEvidence[] = [...strong]
+    .sort(byRecency)
+    .slice(0, 3)
+    .map((b) => quote(b.bodyLines.find((l) => subject.strong.test(l.text)) ?? b.span.line, 200));
+  for (const b of [...weak].sort(byRecency)) {
+    if (evidence.length >= 3) break;
+    evidence.push(quote(b.span.line, 160));
+  }
+
+  let status: StructuredStatus;
+  let needs_validation: boolean;
+  let years_basis: "described" | "titles";
+  let note: string;
+  if (strongYears >= req.min) {
+    status = "met";
+    years_basis = "described";
+    // Half a year or less above the line: a recruiter confirms it.
+    needs_validation = strongYears - req.min < 0.5;
+    note = `${strongYears} yrs from: ${named(strong)}. Against ${req.min} required${
+      needs_validation ? "; close to the minimum, confirm at screening" : ""
+    }.`;
+  } else if (allYears >= req.min * 0.75) {
+    status = "partial";
+    years_basis = "titles";
+    needs_validation = true;
+    note =
+      strong.length > 0
+        ? `${strongYears} yrs with ${what} described, from: ${named(strong)}.${
+            weak.length > 0
+              ? ` ${oneDecimal(unionMonths([...strong, ...weak].map((b) => b.span)) - unionMonths(strong.map((b) => b.span)))} more from a title alone (${named(weak)}).`
+              : ""
+          } Against ${req.min} required; confirm at screening.`
+        : `${allYears} yrs from a title alone, with no ${subject.kind === "team" ? "team" : what} described: ${named(weak)}. Against ${req.min} required; confirm at screening.`;
+  } else {
+    status = "missing";
+    years_basis = "titles";
+    needs_validation = false;
+    note = `${allYears} yrs from: ${named([...strong, ...weak])}. Against ${req.min} required.`;
+  }
+  return {
+    years: status === "met" ? strongYears : allYears,
+    hasRoles: true,
+    verdict: { rule: "minimum_years", status, needs_validation, years_basis, note, evidence },
+  };
+}
+
 /** Years from the dated roles on the CV, with the verdict those years give on their own. */
 function evaluateDatedYears(
   req: Requirement,
   marketingOnly: boolean,
   cv: string,
   today: Date,
-): { years: number; verdict: StructuredVerdict } {
+): { years: number; hasRoles: boolean; verdict: StructuredVerdict } {
   const roles = findDatedRanges(cv, today).filter((s) => !isEducationSpan(s));
   let counted = roles;
   if (req.kind === "senior") counted = roles.filter((s) => SENIOR_TITLE.test(titleContext(cv, s)));
@@ -785,6 +1114,7 @@ function evaluateDatedYears(
   if (counted.length === 0) {
     return {
       years: 0,
+      hasRoles: false,
       verdict: {
         rule: "minimum_years",
         status: "unknown",
@@ -813,6 +1143,7 @@ function evaluateDatedYears(
         : "";
   return {
     years,
+    hasRoles: true,
     verdict: {
       rule: "minimum_years",
       status,
@@ -848,7 +1179,8 @@ const WEAK_ALWAYS =
   /\b(training|trained|course|workshop|seminar|conference|trip|exchange|studied|study\s+tour|university|college|school|degree|sourcing|sourced|suppliers?|supplier\s+negotiations?|import(?:ed|s)?\s+from|benchmark(?:ed|ing)?|knowledge\s+of|negotiat\w*|trading|traded)\b/i;
 /** The brand is where the ads ran or the goods were listed, not what was marketed. */
 const CHANNEL_BEFORE = /\b(on|via|through|across|using|platforms?|channels?)\b[^.;:]{0,40}$/i;
-const CHANNEL_AFTER = /^['’]?s?\s*(ads?|advertising|shop|store|marketplace|app|platform|listings?)\b/i;
+const CHANNEL_AFTER =
+  /^['’]?s?\s*(ads?|advertising|shop|store|marketplace|app|platform|listings?)\b/i;
 /**
  * Marketing aimed at the market's own consumers ("campaigns targeting Chinese
  * source markets", "roadshows for Japanese travellers") is marketing into
@@ -877,12 +1209,16 @@ const NOT_MARKET_EXPERIENCE =
  * in Dubai") is left to the relocation rule and the keyword matcher.
  */
 export function parseMarketRequirement(text: string): { markets: Market[] } | null {
-  if (!/\b(experience|experienced|worked|working|exposure|background|markets?)\b/i.test(text)) return null;
+  if (!/\b(experience|experienced|worked|working|exposure|background|markets?)\b/i.test(text))
+    return null;
   const markets = placesIn(text);
   const countries = markets.filter((m) => m.region !== null);
   if (countries.length >= 2) {
     // "Eligible to work in the UK or the US" is authorisation, not experience.
-    if (NOT_MARKET_EXPERIENCE.test(text) && !/\b(experience|exposure|background|markets?)\b/i.test(text))
+    if (
+      NOT_MARKET_EXPERIENCE.test(text) &&
+      !/\b(experience|exposure|background|markets?)\b/i.test(text)
+    )
       return null;
     return { markets };
   }
@@ -982,7 +1318,18 @@ export function evaluateMarketRequirement(
       rule: "market_experience",
       status: "partial",
       needs_validation: true,
-      note: `Mentions ${[...new Set([...names(all), ...brandedWeak.flatMap((l) => brandOriginsIn(l.text).filter((b) => wanted.has(b.country)).map((b) => b.country))])].join(", ")}, but as training, sourcing or indirect exposure rather than marketing for the market. Confirm at screening.`,
+      note: `Mentions ${[
+        ...new Set([
+          ...names(all),
+          ...brandedWeak.flatMap((l) =>
+            brandOriginsIn(l.text)
+              .filter((b) => wanted.has(b.country))
+              .map((b) => b.country),
+          ),
+        ]),
+      ].join(
+        ", ",
+      )}, but as training, sourcing or indirect exposure rather than marketing for the market. Confirm at screening.`,
       evidence: all.slice(0, 2).map((l) => quote(l)),
     };
   }
@@ -1020,6 +1367,90 @@ export function evaluateMarketRequirement(
 
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// 5. On-site attendance: "Able to work from the Woodbridge, New Jersey office
+//    at least 3 days a week" (v1.7.7)
+// ---------------------------------------------------------------------------
+
+const ONSITE_REQUIREMENT =
+  /\b(?:able|willing|available|required|expected|prepared|happy)\s+to\s+(?:work|commute|be|attend|travel)\b[^.]{0,80}\b(?:office|on[-\s]?site|onsite|in[-\s]person|premises)\b|\bwork\s+(?:from|at|in)\s+(?:the|our)\s+[^.]{2,60}\boffice\b|\b(?:on[-\s]?site|in[-\s]office|in\s+the\s+office|office[-\s]based)\b[^.]{0,60}\b\d\s*\+?\s*days?\s+(?:a|per|each)\s+week\b|\b\d\s*\+?\s*days?\s+(?:a|per|each)\s+week\b[^.]{0,60}\b(?:on[-\s]?site|in\s+the\s+office|in[-\s]office|at\s+(?:the|our)\s+[^.]{0,40}office)\b/i;
+
+/**
+ * Attendance at a named office is a question of where the person lives, not
+ * of CV wording: "new", "office" and "days" were matched against Microsoft
+ * Office and New York. Home inside the office's state is met; a home
+ * elsewhere, or none stated, is for the recruiter to confirm, and the
+ * candidate's own yes then makes it partial in the engine's answer step.
+ * Only a requirement that names a US state is read here.
+ */
+export function evaluateOnsiteRequirement(
+  text: string,
+  cv: string,
+  profileLocation?: string | null,
+): StructuredVerdict | null {
+  if (!ONSITE_REQUIREMENT.test(text)) return null;
+  const office = usStatesIn(text)[0];
+  if (!office) return null;
+  // Home: the profile's location, else the contact block at the top of the CV.
+  const contact = lines(cv)
+    .slice(0, 8)
+    .find((l) => homeStateOf(l.text) !== null && !DATE_RANGE.test(l.text));
+  // "Scotch Plains, NJ, USA, Scotch Plains, USA": the profile's fields joined.
+  const profile = [
+    ...new Map(
+      (profileLocation ?? "")
+        .split(",")
+        .map((x) => x.trim())
+        .filter(Boolean)
+        .map((x) => [x.toLowerCase(), x] as const),
+    ).values(),
+  ].join(", ");
+  // The line quoted is the one the state was read from: a profile that says
+  // "Newark, US" leaves the state to the CV's own contact line.
+  const fromProfile = profile
+    ? {
+        text: `Profile location: ${profile}`,
+        state: homeStateOf(profileLocation),
+        start: 0,
+        end: 0,
+      }
+    : null;
+  const fromCv = contact
+    ? {
+        text: contact.text,
+        state: homeStateOf(contact.text),
+        start: contact.start,
+        end: contact.end,
+      }
+    : null;
+  const home = fromProfile?.state ? fromProfile : fromCv?.state ? fromCv : (fromProfile ?? fromCv);
+  const homeState = home?.state ?? null;
+  if (home && homeState && homeState.code === office.code) {
+    return {
+      rule: "onsite_attendance",
+      status: "met",
+      needs_validation: false,
+      note: `Home is in ${office.name}, the same state as the office.`,
+      evidence: [
+        {
+          snippet: home.text.length > 200 ? `${home.text.slice(0, 199)}…` : home.text,
+          start: home.start,
+          end: home.end,
+        },
+      ],
+    };
+  }
+  return {
+    rule: "onsite_attendance",
+    status: "unknown",
+    needs_validation: true,
+    note: homeState
+      ? `Home is in ${homeState.name}; the office is in ${office.name}. Confirm the commute at screening.`
+      : "Home location is not stated. Confirm the commute at screening.",
+    evidence: [],
+  };
+}
+
 /** The first rule that recognises the requirement decides it; null means "not one of these shapes". */
 export function evaluateStructuredRequirement(
   text: string,
@@ -1029,6 +1460,7 @@ export function evaluateStructuredRequirement(
 ): StructuredVerdict | null {
   return (
     evaluateRelocationRequirement(text, cv, opts.profileLocation) ??
+    evaluateOnsiteRequirement(text, cv, opts.profileLocation) ??
     evaluateMarketRequirement(text, cv, today) ??
     evaluateDegreeRequirement(text, cv) ??
     evaluateYearsRequirement(text, cv, today)

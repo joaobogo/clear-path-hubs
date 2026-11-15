@@ -223,4 +223,20 @@
  * wording; "5+ years of billing experience" shares one content word with
  * itself, so a "yes" to its own question had stopped counting.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.6";
+/**
+ * v1.7.7 — recruiter research on the Billing Manager role (14 Nov 2026).
+ * Years are counted for what the requirement asks: "5+ years of billing"
+ * counts the roles whose own lines show billing, and "2+ years managing a
+ * team" counts roles that describe people managed (a manager title alone is
+ * partial). Before this every dated role counted, so an accountant with one
+ * billing job read as 28.8 years of both. A screening "no" to the linked
+ * question keeps a years row from reading met. Section headings, objective
+ * statements, addresses and club memberships are not evidence, and a word in
+ * an unrelated compound ("Employee Engagement group" for engagement terms) no
+ * longer matches. On-site requirements are decided by the answer plus the
+ * home location: same state is met, anything else needs validation. A written
+ * screening answer that describes what the candidate did counts as evidence.
+ * Year-only ranges count mid-year to mid-year. The parser fallback reads work
+ * history and education from the CV and never takes an address as a headline.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.7";

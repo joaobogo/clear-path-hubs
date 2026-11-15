@@ -16,6 +16,9 @@ import { bandToFitLabel, classifyBand } from "./scoring/bands";
 import { deriveStrengths } from "./scoring/strengths";
 import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
+import { maskNonQuotableLines } from "./scoring/non-evidence-lines";
+import { isUnrelatedCompound } from "./scoring/ambiguous-terms";
+import { judgeBehaviouralAnswer } from "./scoring/behavioural-answer";
 import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
 import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
 import { asBoolean } from "./scoring/eligibility";
@@ -246,7 +249,7 @@ const REQUIREMENT_FRAMING = new Set([
   // quantity / qualification
   "years", "year", "minimum", "least", "plus", "ideally", "preferably",
   "bonus", "nice", "desirable", "required", "requirement", "essential",
-  "another", "similar", "equivalent", "relevant", "appropriate", "various",
+  "another", "similar", "equivalent", "relevant", "appropriate", "various", "general",
   "multiple", "several", "strongly", "highly", "well", "very",
   // sentence scaffolding the stopword list does not cover
   "including", "include", "includes", "etc", "such", "able", "willing",
@@ -258,7 +261,7 @@ const REQUIREMENT_FRAMING = new Set([
   // Portuguese CV with identical substance could not match them. A
   // requirement written ENTIRELY in these words still matches via the
   // zero-keyword fallback below.
-  "professional", "skills", "skill", "speaking", "communication",
+  "professional", "professionals", "skills", "skill", "speaking", "communication",
   "principles", "fundamentals", "practices", "best", "part", "technical",
   "independently", "effectively", "efficiently",
 ]);
@@ -698,6 +701,21 @@ export function scoreCandidate(input: {
   // CV as written.
   const roleContext = normaliseRoleContext(input.role_context);
   const evidenceCv = maskNonEvidence(cv, roleContext);
+  // The keyword search also skips headings, contact lines, objective
+  // statements and club lines (v1.7.7): same offsets again. The rules keep
+  // `evidenceCv`, whose headings tell work dates from education dates.
+  const keywordCv = maskNonQuotableLines(evidenceCv);
+  /**
+   * Where a term is found, without the hits that sit inside a set phrase of
+   * another meaning ("Microsoft Office" for the office, "full-time" for time
+   * entry).
+   */
+  const termHits = (text: string, key: string, form: string, limit: number, requirementText: string) =>
+    findTermMatches(text, form, limit).filter(
+      (at) => !isUnrelatedCompound(key, form, text, at, requirementText),
+    );
+  /** What each years verdict rests on, for the answer step below. */
+  const yearsBasis = new Map<string, string>();
   /**
    * A rule's quote, re-read from the CV as written: the rule read the masked
    * copy, whose offsets are the CV's, so a quoted line shows the words the
@@ -775,6 +793,7 @@ export function scoreCandidate(input: {
         location: `cv:${e.start}-${e.end}`,
       }));
       evidence.push(...refs);
+      if (structured.years_basis) yearsBasis.set(r.id, structured.years_basis);
       // No quote, no claim — the same rule the keyword path follows below.
       const status =
         refs.length === 0 && (structured.status === "met" || structured.status === "partial")
@@ -830,7 +849,7 @@ export function scoreCandidate(input: {
       let hits: number[] = [];
       let matchedForm = k;
       for (const form of surfaceForms) {
-        const formHits = findTermMatches(evidenceCv, form, cal.max_term_hits);
+        const formHits = termHits(keywordCv, k, form, cal.max_term_hits, r.text);
         if (formHits.length > 0) {
           hits = formHits;
           matchedForm = form;
@@ -852,7 +871,7 @@ export function scoreCandidate(input: {
         let found = false;
         for (const sc of screeningCorpus) {
           for (const form of surfaceForms) {
-            const scHits = findTermMatches(sc.searchText, form, cal.max_term_hits);
+            const scHits = termHits(sc.searchText, k, form, cal.max_term_hits, r.text);
             if (scHits.length === 0) continue;
             const affirmativeInAnswer = scHits.filter(
               (at) => !isNegatedMention(sc.text, at, cal),
@@ -911,7 +930,7 @@ export function scoreCandidate(input: {
       if (experienceReq) {
         let work: { at: number; form: string } | null = null;
         for (const form of surfaceForms) {
-          const at = findTermMatches(evidenceCv, form, Number.MAX_SAFE_INTEGER).find(
+          const at = termHits(keywordCv, k, form, Number.MAX_SAFE_INTEGER, r.text).find(
             (idx) => !cvStudyAt(idx) && !isNegatedMention(cv, idx, cal),
           );
           if (at !== undefined) {
@@ -1300,6 +1319,78 @@ export function scoreCandidate(input: {
     recruiter_exceptions: exceptedAnswers.map((s) => s.question_id),
     reviewed_claims: reviewed_screening_claims,
   });
+
+  // v1.7.7: a count of dates never overrides the candidate's own "no". Asked
+  // "Have you managed a team for at least 2 years?" and answering no, a
+  // candidate is not credited with it because the CV has dated roles. Where
+  // the roles themselves describe it, the row is partial for a recruiter to
+  // confirm; otherwise it is not met.
+  for (const s of input.screening) {
+    if (s.answer_type !== "boolean" || normalizeScreeningValue(s) !== "no") continue;
+    for (const { a } of linkedRequired(s).links) {
+      if (!a.matched_terms.includes("rule:minimum_years")) continue;
+      if (a.status !== "met" && a.status !== "partial") continue;
+      const described = a.status === "met" && yearsBasis.get(a.id) === "described";
+      a.status = described ? "partial" : "missing";
+      a.needs_validation = true;
+      a.rule_note = [
+        `The candidate answered no to "${(s.question || "").trim()}".`,
+        described ? "The CV describes it; confirm at screening." : "",
+        a.rule_note ?? "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      if (!described) a.evidence = [];
+    }
+  }
+
+  // v1.7.7: a written answer to the question asked for a requirement is
+  // evidence for it. A concrete account of what the candidate did meets the
+  // requirement; a general answer is partial at most. Rows a rule decides
+  // (years, degree, location) and study-only rows are left alone.
+  if (!disqualified) {
+    for (const s of input.screening) {
+      if (s.answer_type === "boolean" || s.answer_type === "number") continue;
+      const linkText = (s.must_have ?? "").trim();
+      if (!linkText || typeof s.value !== "string") continue;
+      const verdict = judgeBehaviouralAnswer(s.value);
+      if (verdict === "none") continue;
+      for (const a of assessment) {
+        if (!sameRequirementText(linkText, a.text)) continue;
+        if (a.matched_terms.some((t) => t.startsWith("rule:"))) continue;
+        if (a.status === "contradicted" || studyLimited.has(a.id)) continue;
+        const ref: EvidenceRef = {
+          requirement_id: a.id,
+          requirement_text: a.text,
+          source: "screening",
+          matched_terms: [`must_have:${linkText.slice(0, 60)}`],
+          snippet: cleanQuote(s.value) || s.value.slice(0, 200),
+          location: `screening:${s.question_id}`,
+        };
+        const already = a.evidence.some((e) => e.location === ref.location);
+        if (verdict === "concrete") {
+          a.status = "met";
+          a.needs_validation = false;
+          a.rule_note = "The screening answer describes what the candidate did.";
+          // The answer is the evidence a reader should see first.
+          a.evidence = [ref, ...a.evidence.filter((e) => e.location !== ref.location)].slice(
+            0,
+            cal.max_evidence_per_requirement,
+          );
+          if (!already) evidence.push(ref);
+        } else if (a.status === "missing" || a.status === "unknown") {
+          a.status = "partial";
+          a.needs_validation = true;
+          a.rule_note =
+            "The screening answer describes an approach, not an occasion; confirm at screening.";
+          if (!already) {
+            a.evidence.push(ref);
+            evidence.push(ref);
+          }
+        }
+      }
+    }
+  }
 
   if (!disqualified) {
     for (const s of input.screening) {

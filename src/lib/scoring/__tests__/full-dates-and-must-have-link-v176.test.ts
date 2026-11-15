@@ -78,9 +78,20 @@ describe("full dates in dated roles", () => {
   });
 
   it("counts every dated role towards years of experience", () => {
-    const v = evaluateYearsRequirement("5+ years of billing experience", FULL_DATES_CV, TODAY);
+    // v1.7.7: a requirement that names a subject ("billing") counts the roles
+    // that show it; one that names none still counts them all.
+    const v = evaluateYearsRequirement("5+ years of experience", FULL_DATES_CV, TODAY);
     expect(v?.status).toBe("met");
     expect(v?.note).toBe("10.2 years from dated roles on the CV, against 5 required.");
+  });
+
+  it("full dates are read for a subject too", () => {
+    const v = evaluateYearsRequirement("2+ years managing a team", FULL_DATES_CV, TODAY);
+    // 2/1/16 to 11/9/17 is the one role that describes a team.
+    expect(v?.note).toContain("1.8 yrs with managing a team described");
+    expect(v?.note).toContain(
+      "SELECTIVE INSURANCE, Supervisor of Credit & Collections 2/1/16–11/9/17",
+    );
   });
 });
 

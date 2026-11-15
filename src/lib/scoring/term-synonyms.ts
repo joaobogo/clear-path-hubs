@@ -87,14 +87,28 @@ const SYNONYM_GROUPS: Record<string, string[]> = {
   // and resolved…"), not by writing the requirement's verb. These are
   // explicit realisations, not stemming.
   troubleshoot: [
-    "troubleshooting", "diagnose", "diagnosed", "diagnosing", "debug",
-    "debugging", "debugged", "root cause", "root-cause",
+    "troubleshooting",
+    "diagnose",
+    "diagnosed",
+    "diagnosing",
+    "debug",
+    "debugging",
+    "debugged",
+    "root cause",
+    "root-cause",
   ],
   solve: ["solved", "solving", "resolve", "resolved", "resolving", "resolution"],
   problems: ["problem", "issue", "issues", "incident", "incidents"],
   ai: [
-    "ia", "artificial intelligence", "inteligência artificial",
-    "inteligencia artificial", "llm", "llms", "chatgpt", "copilot", "claude",
+    "ia",
+    "artificial intelligence",
+    "inteligência artificial",
+    "inteligencia artificial",
+    "llm",
+    "llms",
+    "chatgpt",
+    "copilot",
+    "claude",
   ],
   tools: ["tool", "tooling", "ferramentas", "ferramenta"],
   workflow: ["workflows", "fluxo de trabalho", "fluxos de trabalho"],
@@ -106,8 +120,12 @@ const SYNONYM_GROUPS: Record<string, string[]> = {
   // PT CV is structurally under-scored (live audit finding S-05).
   english: ["inglês", "ingles"],
   security: [
-    "segurança", "seguranca", "cybersecurity", "cyber security",
-    "cibernética", "cibernetica",
+    "segurança",
+    "seguranca",
+    "cybersecurity",
+    "cyber security",
+    "cibernética",
+    "cibernetica",
   ],
   development: ["desenvolvimento"],
   developer: ["desenvolvedor", "desenvolvedora"],
@@ -117,6 +135,118 @@ const SYNONYM_GROUPS: Record<string, string[]> = {
   responsive: ["responsivo", "responsiva", "responsivos", "responsivas"],
   management: ["gestão", "gestao", "gerenciamento"],
   communication: ["comunicação", "comunicacao"],
+};
+
+/**
+ * Requirement term -> how a CV shows it, one way only (v1.7.7).
+ *
+ * Unlike the groups above these are not equivalents: "reconciliations" is
+ * evidence of accounting, but a requirement that asks for reconciliations is
+ * not met by the word "accounting". Billing and accounting first, because a
+ * billing CV says "amended invoices to contract terms" where the requirement
+ * says "adjustments" and "engagement terms".
+ */
+const REALISATIONS: Record<string, string[]> = {
+  accounting: [
+    "general ledger",
+    "gl accounts",
+    "gl codes",
+    "journal entries",
+    "journal entry",
+    "reconciliation",
+    "reconciliations",
+    "reconciling",
+    "reconciled",
+    "month-end close",
+    "month end close",
+    "month-end closings",
+    "month end closings",
+    "month-end",
+    "cash application",
+    "accruals",
+    "daily deposit",
+    "daily deposits",
+  ],
+  billing: ["invoicing", "e-billing", "pre-bill", "pre-bills"],
+  invoice: ["invoicing", "pre-bill", "pre-bills", "prebill", "proforma", "pro forma"],
+  adjustments: [
+    "adjust invoices",
+    "adjusting invoices",
+    "adjusted invoices",
+    "adjusting prices",
+    "amend invoices",
+    "amending invoices",
+    "amended invoices",
+    "correcting invoices",
+    "corrected invoices",
+    "correcting pricing",
+    "credit memo",
+    "credit memos",
+    "issuing credits",
+    "issued credits",
+    "write-off",
+    "write-offs",
+    "write offs",
+    "written off",
+    "payment plans",
+  ],
+  discounts: [
+    "discount",
+    "discounted",
+    "issuing credits",
+    "issued credits",
+    "credit memos",
+    "write-offs",
+  ],
+  revisions: [
+    "amend invoices",
+    "amending invoices",
+    "amended invoices",
+    "adjust invoices",
+    "corrected invoices",
+    "correcting invoices",
+    "revised invoices",
+    "invoice corrections",
+    "rebill",
+    "re-bill",
+    "rebilled",
+  ],
+  "write-downs": [
+    "write-down",
+    "written down",
+    "write-off",
+    "write-offs",
+    "write offs",
+    "written off",
+  ],
+  "write-ups": ["write-up", "written up"],
+  terms: [
+    "contract terms",
+    "contract details",
+    "payment terms",
+    "fee schedule",
+    "fee schedules",
+    "fee agreements",
+    "financial agreements",
+    "engagement letter",
+    "engagement letters",
+  ],
+  structures: ["fee schedule", "fee schedules", "rate tables", "billing tables", "rate cards"],
+  software: [
+    "netsuite",
+    "sage intacct",
+    "intacct",
+    "ariba",
+    "coupa",
+    "tungsten",
+    "taulia",
+    "e-billing",
+    "bill4time",
+    "aderant",
+    "clio",
+    "timeslips",
+    "pclaw",
+  ],
 };
 
 /** alias -> the terms it is evidence for. Built once from SYNONYM_GROUPS. */
@@ -146,8 +276,9 @@ export function expandTerm(term: string): string[] {
   const t = term.trim().toLowerCase();
   if (!t) return [];
   const extras = EXPANSION.get(t);
-  if (!extras) return [t];
-  return [t, ...[...extras].sort()];
+  const out = extras ? [t, ...[...extras].sort()] : [t];
+  for (const r of REALISATIONS[t] ?? []) if (!out.includes(r)) out.push(r);
+  return out;
 }
 
 /** True when the two terms are declared equivalent (used by tests and review UI). */
