@@ -9,6 +9,8 @@
 //
 // This module never throws to the caller — a failure returns { ok:false, reason }.
 
+import { isHeadlineLine, outlineCv } from "@/lib/cv/cv-outline";
+
 export type Provenance =
   | "candidate_provided"
   | "cv_parsed"
@@ -152,9 +154,11 @@ export async function structureCv(cvText: string): Promise<StructureResult> {
 // A pragmatic regex/section parser used when the LLM gateway is unavailable
 // (credit limit reached, rate-limited, transient 5xx, missing key). Confidence
 // is intentionally modest so admin-corrected values always win.
-function heuristicStructure(cvText: string): StructuredCv {
+export function heuristicStructure(cvText: string): StructuredCv {
   const text = cvText.replace(/\r\n/g, "\n");
   const out: StructuredCv = {};
+  // The CV's own structure, read the way the scorer reads it (v1.7.7).
+  const outline = outlineCv(text);
 
   const emailMatch = text.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i);
   if (emailMatch) out.email = { value: emailMatch[0], confidence: 0.9, source_snippet: emailMatch[0] };
@@ -164,7 +168,13 @@ function heuristicStructure(cvText: string): StructuredCv {
 
   // Full name: first non-empty line that looks like a name (2-4 capitalized words, no digits/@).
   const firstLines = text.split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 10);
-  for (const line of firstLines) {
+  // The outline's reading comes first: it takes a name written in capitals
+  // ("RENEE C. CODY") and stops at the first line that is one, where the loop
+  // below could take an employer further down for a name.
+  if (outline.full_name) {
+    out.full_name = { value: outline.full_name, confidence: 0.7, source_snippet: outline.full_name };
+  }
+  for (const line of out.full_name ? [] : firstLines) {
     if (line.length > 60 || /[@\d]/.test(line)) continue;
     const words = line.split(/\s+/);
     if (words.length < 2 || words.length > 5) continue;
@@ -188,16 +198,22 @@ function heuristicStructure(cvText: string): StructuredCv {
     out.linkedin_url = { value: linkedInMatch[0].trim(), confidence: 0.9, source_snippet: linkedInMatch[0] };
   }
 
-  // Headline: line just after name, short and non-contact.
-  if (out.full_name) {
-    const idx = firstLines.indexOf(out.full_name.value as string);
-    for (let i = idx + 1; i < Math.min(idx + 4, firstLines.length); i++) {
-      const l = firstLines[i];
-      if (!l || l.length > 90 || /[@]/.test(l) || /\d{4}/.test(l)) continue;
-      out.headline = { value: l, confidence: 0.6, source_snippet: l };
-      break;
-    }
+  // Headline: a line under the name that describes the work, never a postal
+  // address or a contact line; otherwise the most recent job title.
+  if (outline.headline && isHeadlineLine(outline.headline)) {
+    out.headline = { value: outline.headline, confidence: 0.6, source_snippet: outline.headline };
   }
+
+  // Work history and education from the CV's dated roles and its education
+  // section, copied as written.
+  if (outline.experience.length > 0) {
+    out.experience = { value: outline.experience, confidence: 0.6 };
+    const employers = [...new Set(outline.experience.map((r) => r.company).filter(Boolean))];
+    if (employers.length > 0) out.employers = { value: employers, confidence: 0.6 };
+    const current = outline.experience[0];
+    if (current?.title) out.current_role = { value: current.title, confidence: 0.6 };
+  }
+  if (outline.education.length > 0) out.education = { value: outline.education, confidence: 0.6 };
 
   // Skills: look for a "Skills" section and collect comma/bullet separated tokens.
   const skillsSection = text.match(/(?:^|\n)\s*(?:skills|competências|competencies|technical skills)\s*[:\n]([\s\S]{0,1200}?)(?:\n\s*\n|\n[A-Z][A-Z ]{3,}\n|$)/i);
@@ -219,9 +235,11 @@ function heuristicStructure(cvText: string): StructuredCv {
     }
   }
 
-  // Summary: first paragraph of 120-600 chars.
+  // Summary: the CV's own summary section, else the first paragraph of 120-600 chars.
+  if (outline.summary) out.summary = { value: outline.summary, confidence: 0.6 };
   const paragraphs = text.split(/\n\s*\n/).map((p) => p.trim());
   for (const p of paragraphs) {
+    if (out.summary) break;
     if (p.length >= 120 && p.length <= 600 && !/@/.test(p) && p.split(/\s+/).length > 15) {
       out.summary = { value: p.slice(0, 600), confidence: 0.55 };
       break;
