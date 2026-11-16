@@ -41,6 +41,9 @@ const DEGREE =
   /\b(bachelor(?:'s|s)?|master(?:'s|s)?|associate(?:'s|s)?|doctor(?:ate)?|ph\.?\s?d|mba|m\.?b\.?a|b\.?sc?|b\.?a|m\.?sc?|m\.?a|llb|llm|j\.?d|diploma|postgraduate|graduate\s+certificate|degree|bacharel(?:ado)?|licenciatura|mestrado|tecn[oó]logo)\b/i;
 const MONTH =
   /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b\.?/gi;
+/** A degree written out, as opposed to an abbreviation that is also a word or a product. */
+const LONG_DEGREE =
+  /\b(bachelor(?:'s|’s|s)?|master(?:'s|’s|s)?|associate(?:'s|’s|s)?|doctor(?:ate)?|ph\.?\s?d|mba|diploma|postgraduate|graduate\s+certificate|degree|bacharel(?:ado)?|licenciatura|mestrado|tecn[oó]logo|llb|llm)\b/i;
 const SCHOOL =
   /\b(university|universidade|universidad|college|institute|instituto|school|academy|faculdade|polytechnic|puc|fgv|senac|usp)\b/i;
 
@@ -86,7 +89,9 @@ export function isHeadlineLine(line: string): boolean {
 }
 
 function splitPeriod(raw: string): { start: string; end: string } {
-  const m = raw.trim().match(/^(.+?)\s*(?:[-–—]|\bto\b|\buntil\b|\btill\b)\s*(.+)$/i);
+  const m = raw
+    .trim()
+    .match(/^(.+?)\s*(?:[-–—]\s*(?:to\b|until\b|till\b)?|\bto\b|\buntil\b|\btill\b)\s*(.+)$/i);
   return m ? { start: m[1]!.trim(), end: m[2]!.trim() } : { start: raw.trim(), end: "" };
 }
 
@@ -139,8 +144,18 @@ function parseEducation(all: string[]): OutlineEducation[] {
   const out: OutlineEducation[] = [];
   const ls = sectionLines(all, /^education(?:\s*(?:&|and)\s*certifications)?\s*:?$/i);
   for (let i = 0; i < ls.length && out.length < 6; i++) {
-    const line = ls[i]!.replace(/^[•▪●■◦·\-*–—]\s*/, "");
+    let line = ls[i]!.replace(/^[•▪●■◦·\-*–—]\s*/, "");
+    // Certificates listed under a degree are not degrees: "Certifications by
+    // Brainbench: … MS Word 2007" was stored as a degree called MS.
+    if (/^(?:certifications?|certificates?|courses?|training|licen[cs]es?)\b/i.test(line)) break;
     if (!DEGREE.test(line) || /^professional development\b/i.test(line)) continue;
+    // A bare abbreviation (MS, BA, MA) is a degree only beside a school.
+    const schoolNear = SCHOOL.test(line) || SCHOOL.test(ls[i + 1] ?? "");
+    if (!LONG_DEGREE.test(line) && !schoolNear) continue;
+    // A line that breaks mid-phrase continues on the next one.
+    if (/\b(?:and|of|in|&)\s*$/i.test(line) && ls[i + 1] && !DEGREE.test(ls[i + 1]!)) {
+      line = `${line} ${ls[i + 1]!}`;
+    }
     // "MBA, Business Intelligence 2023" with the school on the next line.
     const next = ls[i + 1] && !DEGREE.test(ls[i + 1]!) && SCHOOL.test(ls[i + 1]!) ? ls[i + 1]! : "";
     const year = (line.match(/\b(?:19|20)\d{2}\b(?!.*\b(?:19|20)\d{2}\b)/) ?? [""])[0];
@@ -151,12 +166,16 @@ function parseEducation(all: string[]): OutlineEducation[] {
       .map(clean)
       .filter(Boolean);
     const schoolPiece = pieces.find((p) => SCHOOL.test(p) && !DEGREE.test(p)) ?? "";
-    const degreePiece = pieces.find((p) => DEGREE.test(p)) ?? "";
+    // The degree starts at its own word: "LT in bachelor's degree in business
+    // administration" is a bachelor's degree, not a degree called LT.
+    const rawDegree = pieces.find((p) => DEGREE.test(p)) ?? "";
+    const at = rawDegree.search(LONG_DEGREE);
+    const degreePiece = at > 0 ? rawDegree.slice(at) : rawDegree;
     const m = degreePiece.match(/^(.*?)\s+in\s+(.+)$/i);
     const degree = m ? clean(m[1]!) : degreePiece;
     const field = m
       ? clean(m[2]!)
-      : (pieces.find((p) => p !== degreePiece && p !== schoolPiece) ?? "");
+      : (pieces.find((p) => p !== rawDegree && p !== schoolPiece) ?? "");
     const nextSchool =
       next
         .split(/\s*[,|]\s*|\s+[–—-]\s+/)
@@ -192,7 +211,9 @@ export function outlineCv(cvText: string, today: Date = new Date()): CvOutline {
     if (/\b(?:19|20)\d{2}\b/.test(`${title} ${employer}`) || HEADING_LINE.test(title)) continue;
     if (SCHOOL.test(b.header) && DEGREE.test(b.header) && !TITLE_WORD.test(b.header)) continue;
     // A wrapped bullet above the role is not its employer.
-    const company = /^[A-ZÀ-Ý0-9]/.test(employer) ? employer : "";
+    // Nor is the candidate's own name, repeated in a page header or footer.
+    const own = found ? employer.toLowerCase().startsWith(found.name.toLowerCase()) : false;
+    const company = /^[A-ZÀ-Ý0-9]/.test(employer) && !own ? employer : "";
     const { start, end } = splitPeriod(b.span.raw);
     const summary = b.body
       .split("\n")

@@ -2,8 +2,8 @@ import { normaliseLetterSpacing } from "./letter-spacing";
 
 type Interval = { start: number; end: number };
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-// "Mar 2019", "Sept. 2019", "03/2019", "2019".
-const DATE = "(?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\.?\\s+|(?:0?[1-9]|1[0-2])[/.])?(?:19|20)\\d{2}";
+// "Mar 2019", "Sept. 2019", "April 29, 2025", "03/2019", "2019".
+const DATE = "(?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\.?\\s+(?:\\d{1,2}(?:st|nd|rd|th)?,?\\s+)?|(?:0?[1-9]|1[0-2])[/.])?(?:19|20)\\d{2}";
 // "–", "to", "till", "until", and "- Till" as some CVs write it.
 const SEPARATOR = "(?:[–—-]\\s*(?:till|until|to)?|to|till|until)";
 const OPEN_END = "present|current|now|ongoing|(?:till\\s+|to\\s+)?date";
@@ -15,7 +15,10 @@ function monthIndex(value: string, asOf: Date, isEnd: boolean): number | null {
     const mm = Number(numeric[1]) - 1;
     return mm >= 0 && mm <= 11 ? Number(numeric[2]) * 12 + mm : null;
   }
-  const m = value.trim().match(/^(?:([A-Za-z]{3,9})\.?\s+)?((?:19|20)\d{2})$/);
+  // The day of "April 29, 2025" is read and dropped.
+  const m = value
+    .trim()
+    .match(/^(?:([A-Za-z]{3,9})\.?\s+(?:\d{1,2}(?:st|nd|rd|th)?,?\s+)?)?((?:19|20)\d{2})$/);
   if (!m) return null;
   const month = m[1] ? MONTHS.indexOf(m[1].slice(0, 3).toLowerCase()) : (isEnd ? 11 : 0);
   if (month < 0) return null;
@@ -89,11 +92,29 @@ const isBlank = (line: string) => !/[\p{L}\p{N}]/u.test(line);
  */
 type Line = { text: string; leads: boolean };
 
+/**
+ * A closing heading word inside a name is not a heading: "Hackensack Board
+ * of Education", "Department of Education", "School of Languages". Splitting
+ * there ended the work history at the employer's name, and every role under
+ * it went unread. Only a Title Case word after a joining word is kept in its
+ * line; "EDUCATION" in capitals, or "Education" at the start of a line, is
+ * still a heading.
+ */
+const NAME_JOIN = /(?:\b(?:of|for|in|on|and)|&)\s+$/i;
+const keepNames =
+  (source: string) =>
+  (match: string, word: string, offset: number): string =>
+    word !== word.toUpperCase() &&
+    isHeading(word, OTHER_HEADINGS) &&
+    NAME_JOIN.test(source.slice(0, offset))
+      ? match
+      : `\n${word}\n`;
+
 function splitAtHeadings(text: string): Line[] {
   const lines: Line[] = [];
   for (const source of text.split(/\r?\n/)) {
     let leads = true;
-    for (const piece of source.replace(HEADING, "\n$1\n").split("\n")) {
+    for (const piece of source.replace(HEADING, keepNames(source)).split("\n")) {
       lines.push({ text: piece, leads });
       if (!isBlank(piece)) leads = false;
     }

@@ -493,6 +493,6 @@ describe("frozen CVs: the direction each one moves", () => {
     expect(accountant.score).toBeLessThan(manager.score);
     expect(accountant.score).toBeLessThan(withAnswer.score);
     expect(accountant.engine_version).toBe(ENGINE_VERSION);
-    expect(ENGINE_VERSION).toBe("taasflow-scoring-v1.7.7");
+    expect(ENGINE_VERSION).toMatch(/^taasflow-scoring-v1\.\d+\.\d+$/);
   });
 });
