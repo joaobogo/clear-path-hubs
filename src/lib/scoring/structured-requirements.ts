@@ -528,9 +528,15 @@ const MONTH_NAME =
 // date's day is read and dropped; a two-digit year is resolved by
 // fullDateYear. The full-date form comes before "3/2021" so "9/12/2022" is
 // read as September 2022, not December 2022.
-const POINT = `(?:${MONTH_NAME}\\.?\\s+)?((?:19|20)\\d{2})|(\\d{1,2})\\/(\\d{1,2})\\/((?:19|20)?\\d{2})(?!\\d)|(\\d{1,2})\\/((?:19|20)\\d{2})`;
+// A month may carry its day ("April 29, 2025"); the day is read and dropped
+// (v1.7.8). The separator may be a dash followed by "to" ("03/2026 – to
+// present"). Both forms used to leave the role unread.
+const POINT = `(?:${MONTH_NAME}\\.?\\s+(?:\\d{1,2}(?:st|nd|rd|th)?,?\\s+)?)?((?:19|20)\\d{2})|(\\d{1,2})\\/(\\d{1,2})\\/((?:19|20)?\\d{2})(?!\\d)|(\\d{1,2})\\/((?:19|20)\\d{2})`;
 const END = `(present|current|now|today|ongoing|to\\s+date|date)|${POINT}`;
-const RANGE_RE = new RegExp(`(?:${POINT})\\s*(?:-|–|—|to|until|till)\\s*(?:${END})`, "gi");
+const RANGE_RE = new RegExp(
+  `(?:${POINT})\\s*(?:[-–—]\\s*(?:to|until|till)?|to|until|till)\\s*(?:${END})`,
+  "gi",
+);
 
 /**
  * The year of a full date ("10/18/21"): four digits as written; two digits are
@@ -729,7 +735,8 @@ function headerLike(l: Line | undefined): boolean {
   const t = l.text.replace(/[·•]\s*$/, "").trim();
   if (!t || t.length > 90 || BULLET_START.test(t)) return false;
   // A section heading or a page mark belongs to no role.
-  if (HEADING_LINE.test(t) || /^page\s+\d+(?:\s+of\s+\d+)?$/i.test(t)) return false;
+  // "Page 2", "Devon Inman – Curriculum Vitae Page 1 of 2": a page footer.
+  if (HEADING_LINE.test(t) || /(?:^|\s)page\s+\d+(?:\s+of\s+\d+)?$/i.test(t)) return false;
   if (/[.;:,]$/.test(t)) return false;
   return t.split(/\s+/).length <= 12;
 }
@@ -851,7 +858,7 @@ function roleLabel(b: RoleBlock): string {
     .slice(0, 2)
     .join(", ");
   const period = b.span.raw
-    .replace(/\s*(?:[-–—]|\bto\b|\buntil\b|\btill\b)\s*/i, "–")
+    .replace(/\s*(?:[-–—]\s*(?:to\b|until\b|till\b)?|\bto\b|\buntil\b|\btill\b)\s*/i, "–")
     .replace(/\s+/g, " ");
   return `${name ? name.slice(0, 90) : "a role dated"} ${period}`.trim();
 }

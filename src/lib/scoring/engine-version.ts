@@ -239,4 +239,14 @@
  * Year-only ranges count mid-year to mid-year. The parser fallback reads work
  * history and education from the CV and never takes an address as a headline.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.7";
+/**
+ * v1.7.8 — three applicants on the Billing Manager role (16 Nov 2026). A CV
+ * with dated roles was parked as having no employment history: an employer
+ * named "Hackensack Board of Education" was read as the Education heading
+ * and ended the work history, and a role dated "July 2024 – April 29, 2025"
+ * was not read at all. A closing heading word inside a name is no longer a
+ * heading, a month may carry its day, and "03/2026 – to present" is a range.
+ * The parser fallback no longer stores a certificate ("MS Word 2007") as a
+ * degree or a page footer as an employer.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.8";
