@@ -234,7 +234,11 @@ export async function createHumanAdjustedRun(opts: {
       score: adj.final_score,
       confidence: base.confidence,
       evidence_confidence: base.evidence_confidence,
-      status: "completed",
+      // Written as running and completed below, once the machine run is
+      // retired: the database keeps one current completed run per application
+      // (score_runs_one_current_per_submission), so a second completed run
+      // beside the one it replaces is refused.
+      status: "running",
       explanation,
       evidence: base.evidence,
       requirement_coverage: {
@@ -245,7 +249,7 @@ export async function createHumanAdjustedRun(opts: {
         requirement_assessment: adjusted,
       },
       started_at: now,
-      completed_at: now,
+      completed_at: null,
       trace_id: opts.traceId ?? `human-adj-${opts.matchId.slice(0, 8)}-${Date.now()}`,
       result: enrichedResult,
       fit_label: adj.fit_label,
@@ -258,8 +262,9 @@ export async function createHumanAdjustedRun(opts: {
     .single();
   if (insErr || !run) throw new Error(insErr?.message ?? "human_adjusted_insert_failed");
 
-  // The machine run stays readable, but it is no longer the active one. A
-  // failure here is not fatal to the adjustment, but it must not stay silent.
+  // The machine run stays readable, but it is no longer the active one. It is
+  // retired first; only then can the adjusted run be completed. If retiring
+  // fails the adjusted run is cancelled and nothing has changed.
   const { error: supErr } = await s
     .from("score_runs")
     .update({
@@ -271,12 +276,16 @@ export async function createHumanAdjustedRun(opts: {
     .is("superseded_at", null);
   if (supErr) {
     console.error("[human-adjusted-run] could not supersede base run", base.id, supErr.message);
+    await s.from("score_runs").update({ status: "cancelled" }).eq("id", run.id);
+    throw new Error(`human_adjusted_supersede_failed:${supErr.message}`);
   }
+  const { error: doneErr } = await s
+    .from("score_runs")
+    .update({ status: "completed", completed_at: now })
+    .eq("id", run.id);
+  if (doneErr) throw new Error(`human_adjusted_complete_failed:${doneErr.message}`);
 
-  await s
-    .from("candidate_matches")
-    .update({ current_score_run_id: run.id })
-    .eq("id", opts.matchId);
+  await s.from("candidate_matches").update({ current_score_run_id: run.id }).eq("id", opts.matchId);
 
   // Append-only override history, and mark the matching evidence item as
   // reviewed. The machine `result` on the item is never rewritten here.
@@ -362,7 +371,9 @@ export async function createHumanAdjustedRun(opts: {
           ),
         ),
     video_bonus:
-      hasVideoIntro(match) && !scoreVoidedByUnreadableCv(match) ? videoBonusFor(adj.final_score) : 0,
+      hasVideoIntro(match) && !scoreVoidedByUnreadableCv(match)
+        ? videoBonusFor(adj.final_score)
+        : 0,
     applied_cap: adj.applied_cap,
     cap_reason: adj.cap_reason,
     fit_label: adj.fit_label,

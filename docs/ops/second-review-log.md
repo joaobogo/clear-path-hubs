@@ -441,3 +441,45 @@ Checks
   hospitality) as billing; the CV shows about 2.5 years of law-firm billing plus about 3 years
   of invoicing in an administrative role, and she answered no. Reviewed score 94.6 → 89.6.
   Still hidden, pending the owner's decision.
+
+## 16 Nov 2026 — Billing Manager (Law Firm): recruiter evidence review, engine v1.7.7, all nine published
+
+- Source: the recruiter handoff of 14 Nov 2026 (six candidates, Parts A to C). Owner
+  instruction on top of it (15 Nov): publish every candidate on the role once the work is done.
+- Engine v1.7.7 (commit aa6b38999, merged to main, deployed): years are counted from the roles
+  that show the requirement's subject (billing; people managed), a screening "no" keeps a years
+  row from met, headings, objectives, addresses and club lines are not evidence, on-site
+  attendance is the answer plus the home state, accounting work shows general accounting, a
+  written screening answer that describes what the candidate did is evidence, and the parser
+  fallback reads work history from the CV. Dry run on Group Marketing Manager (64) and Mushroom
+  Harvesting Manager (11): no score or status changes.
+- Rescored on v1.7.7 (engine only): Matthew Guthlein 74.7 → 77.6, Renee Cody 65.4 → 60.4,
+  Tania Rodriguez 71.6 → 76.6, Vitoria Silva Luz 72.7 → 74.1, Tygira Harmon 75.0 → 75.0.
+  Alexa Blew, Ronny Suleiman and William Coshburn were not rescored (97.1, 92.1, 85.0, same
+  approved runs).
+- Recruiter verdicts recorded as human-adjusted runs with `evidence_overrides` rows (reason
+  "Recruiter web research 14 Nov 2026: …", actor John Kasprzak): Matthew six criteria to met
+  (77.6 → 92.1), Renee team not met and Woodbridge met (60.4), Tania three criteria confirmed
+  met (76.6), Vitoria team confirmed met (74.1). Tygira: none.
+- Not representable as a verdict, kept as admin notes: Renee "5+ years of billing: borderline"
+  (the engine now reads it as met, close to the minimum, confirm at screening) and Vitoria
+  "billing mechanics: partial, closer to met".
+- Veronica Losso: her current run had drifted to an engine run (75.3) after she edited her
+  profile on 12 Nov; the published score stayed the reviewed 89.6. Not sent through the engine
+  again; `apply_reviewed_verdicts` restored the reviewed verdicts as the current run (89.6).
+  Law-firm billing was already met on that run.
+- Profile corrections (audit `recruiter_dossier_field_edit`): LinkedIn URLs for Matthew, Renee,
+  Tania and Tygira; headline and summary for Matthew and Renee. Vitoria's truncated LinkedIn
+  URL left as is, with a note to ask her.
+- 61 admin notes (internal, not client-shareable). The schema has no `recruiter_research` note
+  type: red flags are filed as Risk, the rest as Screening, each keeping the handoff's label.
+- Published: Matthew and Renee (new), and Tania, Vitoria, Tygira and Veronica re-approved on
+  their current runs. Renee carries one evidence-gate override (team management not met, her
+  own answer). All nine: visible, approved, admin index = approved run = current run.
+- Found on the way: the per-criterion override action inserted the adjusted run as completed
+  beside the run it replaces, which `score_runs_one_current_per_submission` refuses. A fix that
+  retires the machine run first is on the branch (test `human-adjusted-run-order.test.ts`); it
+  is not deployed and waits for the owner's go-ahead.
+- Open: the AI gateway still returns 402 (no credits) as of 16 Nov; 33 profiles on four roles
+  have no parsed work history. Re-running hydration for them rescored them on v1.7.7, so it
+  waits for the owner's approval.
