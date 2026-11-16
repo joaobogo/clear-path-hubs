@@ -1009,9 +1009,16 @@ export function scoreCandidate(input: {
     // mid-sentence in the requirement text (Lovable, Cloudflare, Supabase).
     // Sentence-initial words are excluded — they are capitalised by grammar.
     // Capitalised MID-SENTENCE: grammar cannot explain it, so it names a thing.
+    // The name is found whatever capitals it carries inside (v1.7.9):
+    // "QuickBooks", "NetSuite" and "JavaScript" were looked for as
+    // "Quickbooks", "Netsuite" and "Javascript", never found, and so never
+    // counted as named. With "Caret" and "Excel" named beside it, a CV that
+    // listed QuickBooks and no Excel was then refused as naming none of the
+    // products. A word written all in capitals (HACCP, BRC, AWS) stays as it
+    // was: an abbreviation, not treated as a product name by this gate.
     const midSentenceProducts = r.keywords.filter((kw) => {
-      const capitalised = kw[0]!.toUpperCase() + kw.slice(1);
-      return new RegExp(`[^.!?]\\s${escapeRe(capitalised)}\\b`).test(r.text);
+      const m = new RegExp(`[^.!?]\\s(${escapeRe(kw)})\\b`, "i").exec(r.text);
+      return m !== null && /^\p{Lu}/u.test(m[1]!) && /\p{Ll}/u.test(m[1]!);
     });
 
     // Capitalised only because it starts the sentence. `^` was added to the

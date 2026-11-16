@@ -249,4 +249,12 @@
  * The parser fallback no longer stores a certificate ("MS Word 2007") as a
  * degree or a page footer as an employer.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.8";
+/**
+ * v1.7.9 — a product named with capitals inside it is a named product.
+ * "Hands-on with QuickBooks and Caret or comparable billing software, plus
+ * strong Excel" named three products, but QuickBooks was looked for as
+ * "Quickbooks" and not counted, so a CV listing QuickBooks and no Excel was
+ * marked missing for naming none of them. Abbreviations in capitals (HACCP,
+ * BRC) are read as before.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.9";
