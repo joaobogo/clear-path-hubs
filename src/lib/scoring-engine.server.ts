@@ -13,6 +13,14 @@ import { ENGINE_VERSION } from "./scoring/engine-version";
 import { evaluateStructuredRequirement } from "./scoring/structured-requirements";
 import { cleanQuote } from "./evidence/quote-hygiene";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
+import {
+  RELOCATION_VOLUME_MODE,
+  RELOCATION_VOLUME_VERSION,
+  RELOCATION_WEIGHTS,
+  scoreRelocationVolume,
+  type RelocationBreakdown,
+  type RelocationDimension,
+} from "./scoring/relocation-volume";
 import { deriveStrengths } from "./scoring/strengths";
 import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
@@ -58,6 +66,10 @@ export interface ScreeningAnswer {
    * which requirement a "yes" is evidence for.
    */
   must_have?: string | null;
+  /** relocation_volume mode only: which scored dimension this answer feeds. */
+  scoring_dimension?: string | null;
+  /** relocation_volume mode only: the question's ordered options. */
+  options?: unknown;
 }
 
 export interface EvidenceRef {
@@ -197,6 +209,9 @@ export interface ScoringResult {
   evidence_substance: SubstanceMeasure;
   completed_at: string;
   input_hash: string;
+  /** Present only on relocation_volume runs: the four scored dimensions. */
+  relocation_breakdown?: RelocationBreakdown;
+  scoring_mode?: string;
 }
 
 // ---------- helpers ----------
@@ -672,6 +687,8 @@ export function scoreCandidate(input: {
    * (recruiter_review:*) are read: see scoring/recruiter-review.ts.
    */
   eligibility_checks?: StoredEligibilityCheck[] | null;
+  /** positions.scoring_mode. Anything but 'relocation_volume' scores as standard. */
+  scoring_mode?: string | null;
 }): ScoringResult {
   input = {
     ...input,
@@ -1667,7 +1684,7 @@ export function scoreCandidate(input: {
     );
   }
 
-  return {
+  const result: ScoringResult = {
     engine_version,
     calibration_version: cal.calibration_version,
     evaluation_method: EVALUATION_METHOD,
@@ -1708,5 +1725,97 @@ export function scoreCandidate(input: {
     evidence_substance: substance,
     completed_at,
     input_hash,
+  };
+  return input.scoring_mode === RELOCATION_VOLUME_MODE
+    ? applyRelocationVolume(result, input.cv_text, input.screening, cal.disqualified_cap)
+    : result;
+}
+
+const DIMENSION_NAMES: Record<RelocationDimension, string> = {
+  commitment: "commitment to moving",
+  start: "start date",
+  flexibility: "shift flexibility",
+  experience: "warehouse experience",
+};
+
+/**
+ * Replace the CV-led composite with the relocation-first one. Only the
+ * dealbreaker cap survives: thin-CV, keyword, must-have and unparsed-CV caps
+ * do not apply, and requirement rows stay recorded but carry no weight. The
+ * category fields still reconcile: must_have = commitment/start/flexibility
+ * (80%), preferred = experience bonus (20%).
+ */
+function applyRelocationVolume(
+  base: ScoringResult,
+  cvText: string,
+  screening: ScreeningAnswer[],
+  disqualifiedCap: number,
+): ScoringResult {
+  const rv = scoreRelocationVolume({
+    cv_text: cvText,
+    screening: screening.map((sa) => ({
+      question_id: sa.question_id,
+      answer_type: sa.answer_type,
+      value: sa.value,
+      scoring_dimension: sa.scoring_dimension ?? null,
+      options: sa.options,
+      dealbreaker: !!sa.disqualifying_condition,
+    })),
+  });
+  const d = rv.dimensions;
+  const core =
+    (d.commitment.score * RELOCATION_WEIGHTS.commitment +
+      d.start.score * RELOCATION_WEIGHTS.start +
+      d.flexibility.score * RELOCATION_WEIGHTS.flexibility) /
+    (RELOCATION_WEIGHTS.commitment + RELOCATION_WEIGHTS.start + RELOCATION_WEIGHTS.flexibility);
+  const r4 = (n: number) => Math.round(n * 10000) / 10000;
+  const category_breakdown = {
+    must_have: r4(core),
+    preferred: r4(d.experience.score),
+    screening_alignment: base.category_breakdown.screening_alignment,
+  };
+  const category_weights = { must_have: 0.8, preferred: 0.2, screening_alignment: 0 };
+  const raw01 = combineCategories(category_breakdown, category_weights);
+  const applied_caps: ScoringResult["applied_caps"] = [];
+  let score01 = raw01;
+  const dq = base.applied_caps.find((c) => c.reason.startsWith("disqualifying_answer"));
+  if (base.disqualifying_answers.length > 0 && score01 > disqualifiedCap) {
+    applied_caps.push({
+      reason: dq?.reason ?? "disqualifying_answer: dealbreaker",
+      cap: disqualifiedCap,
+      before: Math.round(score01 * 10000) / 10000,
+    });
+    score01 = disqualifiedCap;
+  }
+  const score = Math.round(score01 * 1000) / 10;
+  const fit_label: ScoringResult["fit_label"] =
+    base.disqualifying_answers.length > 0 ? "not_a_fit" : bandToFitLabel(classifyBand(score));
+  const unanswered = (Object.keys(d) as RelocationDimension[])
+    .filter((k) => k !== "experience" && d[k].answered === 0)
+    .map((k) => DIMENSION_NAMES[k]);
+  const concerns = unanswered.length ? [`Not answered yet — confirm on a call: ${unanswered.join(", ")}.`] : [];
+  const strengths = (Object.keys(d) as RelocationDimension[])
+    .filter((k) => d[k].answered > 0 && d[k].score >= 0.85)
+    .map((k) => `Strong ${DIMENSION_NAMES[k]}.`);
+  const sig = screening
+    .filter((sa) => sa.scoring_dimension)
+    .map((sa) => `${sa.question_id}:${sa.scoring_dimension}`)
+    .sort()
+    .join(",");
+  return {
+    ...base,
+    scoring_mode: RELOCATION_VOLUME_MODE,
+    raw_score: Math.round(raw01 * 1000) / 10,
+    applied_caps,
+    score,
+    fit_label,
+    must_have_coverage: category_breakdown.must_have,
+    preferred_coverage: category_breakdown.preferred,
+    category_breakdown,
+    category_weights,
+    strengths,
+    concerns,
+    relocation_breakdown: rv,
+    input_hash: `${base.input_hash}-${RELOCATION_VOLUME_VERSION}-${fnv1a(sig)}`,
   };
 }

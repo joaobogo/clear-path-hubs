@@ -9322,6 +9322,7 @@ export type Database = {
           rescore_requested_at: string | null
           rescore_state: string
           restart_expected_on: string | null
+          scoring_mode: string
           scoring_signature: string | null
           search_live_at: string | null
           search_live_email_at: string | null
@@ -9413,6 +9414,7 @@ export type Database = {
           rescore_requested_at?: string | null
           rescore_state?: string
           restart_expected_on?: string | null
+          scoring_mode?: string
           scoring_signature?: string | null
           search_live_at?: string | null
           search_live_email_at?: string | null
@@ -9504,6 +9506,7 @@ export type Database = {
           rescore_requested_at?: string | null
           rescore_state?: string
           restart_expected_on?: string | null
+          scoring_mode?: string
           scoring_signature?: string | null
           search_live_at?: string | null
           search_live_email_at?: string | null
@@ -11287,6 +11290,7 @@ export type Database = {
           preferred_answer: Json | null
           question: string
           required: boolean
+          scoring_dimension: string | null
           scoring_weight: number
           updated_at: string
           why_asked: string | null
@@ -11312,6 +11316,7 @@ export type Database = {
           preferred_answer?: Json | null
           question: string
           required?: boolean
+          scoring_dimension?: string | null
           scoring_weight?: number
           updated_at?: string
           why_asked?: string | null
@@ -11337,6 +11342,7 @@ export type Database = {
           preferred_answer?: Json | null
           question?: string
           required?: boolean
+          scoring_dimension?: string | null
           scoring_weight?: number
           updated_at?: string
           why_asked?: string | null

@@ -116,13 +116,13 @@ async function loadInputs(matchId: string) {
 
   const [posRes, profRes, ansRes, orgRes, checksRes] = await Promise.all([
     s.from("positions")
-      .select("id,status,requirements,preferred_requirements,title,organization_id")
+      .select("id,status,requirements,preferred_requirements,title,organization_id,scoring_mode")
       .eq("id", match.position_id).maybeSingle(),
     s.from("candidate_profiles")
       .select("id,current_cv_file_id,location,city,country")
       .eq("id", match.candidate_profile_id).maybeSingle(),
     s.from("application_answers")
-      .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have)")
+      .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have,scoring_dimension,options)")
       .eq("application_id", match.application_id),
     // The client's own name is not evidence (scoring/evidence-sources.ts).
     s.from("organizations")
@@ -179,6 +179,7 @@ async function loadInputs(matchId: string) {
       value,
       disqualifying_condition: dealbreakerCondition(q),
       must_have: q?.must_have ?? null,
+      ...(q?.scoring_dimension ? { scoring_dimension: q.scoring_dimension, options: q?.options ?? null } : {}),
     };
   });
 
@@ -560,7 +561,10 @@ export async function executeScoring(
 
     const cvText: string = ctx.cvFile.extracted_text ?? "";
     if (cvText.length < 60) throw new Error("cv_unparsed");
-    if (employmentIntervals(cvText).length === 0) {
+    const scoringMode = ((ctx.position as Any).scoring_mode as string | null) ?? "standard";
+    // Relocation-first roles score from the screening answers, so a CV with
+    // no dated jobs is still assessed (positions.scoring_mode).
+    if (scoringMode !== "relocation_volume" && employmentIntervals(cvText).length === 0) {
       // No score run without dated roles, but the screening answers and the
       // recruiter's decisions still decide eligibility, and a dealbreaker
       // "yes" the CV gives no evidence for is still flagged for the
@@ -632,6 +636,7 @@ export async function executeScoring(
       role_context: ctx.roleContext,
       calibration,
       eligibility_checks: ctx.eligibilityChecks,
+      scoring_mode: scoringMode,
     });
 
     // 7) Reconcile caps.
@@ -678,6 +683,7 @@ export async function executeScoring(
           role_context: ctx.roleContext,
           recruiter_exceptions: raw.recruiter_exceptions.map((x) => x.question_id),
           reviewed_claims: raw.reviewed_screening_claims,
+          scoring_mode: scoringMode,
         }),
         evaluation_method: EVALUATION_METHOD,
         applied_caps: rec.applied_caps,

@@ -38,6 +38,9 @@ export const ReplayScreeningSchema = z.object({
     .optional(),
   /** The must-have the question was written for (engine v1.7.0+). */
   must_have: z.string().nullable().optional(),
+  /** relocation_volume runs only. */
+  scoring_dimension: z.string().nullable().optional(),
+  options: z.unknown().optional(),
 });
 
 export const ReplaySnapshotSchema = z.object({
@@ -66,6 +69,8 @@ export const ReplaySnapshotSchema = z.object({
    * decision suppressed. Stored only when there are some.
    */
   reviewed_claims: z.array(z.string()).optional(),
+  /** positions.scoring_mode; stored only when not standard. */
+  scoring_mode: z.string().optional(),
 });
 
 export type ReplaySnapshot = z.infer<typeof ReplaySnapshotSchema>;
@@ -82,11 +87,14 @@ export function buildReplaySnapshot(input: {
     value: unknown;
     disqualifying_condition?: { operator: "equals" | "min" | "max" | "not_in"; value: unknown } | null;
     must_have?: string | null;
+    scoring_dimension?: string | null;
+    options?: unknown;
   }>;
   role_family?: string | null;
   role_context?: { organisation_names: string[]; role_title: string | null } | null;
   recruiter_exceptions?: string[];
   reviewed_claims?: string[];
+  scoring_mode?: string | null;
 }): ReplaySnapshot {
   const exceptions = [...new Set(input.recruiter_exceptions ?? [])].sort();
   const reviewed = [...new Set(input.reviewed_claims ?? [])].sort();
@@ -106,6 +114,7 @@ export function buildReplaySnapshot(input: {
       value: (s.value ?? null) as never,
       disqualifying_condition: s.disqualifying_condition ?? null,
       must_have: s.must_have ?? null,
+      ...(s.scoring_dimension ? { scoring_dimension: s.scoring_dimension, options: s.options ?? null } : {}),
     })),
     role_family: input.role_family ?? null,
     // Only when set, so a run scored without one keeps its snapshot shape.
@@ -119,6 +128,7 @@ export function buildReplaySnapshot(input: {
       : {}),
     ...(exceptions.length ? { recruiter_exceptions: exceptions } : {}),
     ...(reviewed.length ? { reviewed_claims: reviewed } : {}),
+    ...(input.scoring_mode && input.scoring_mode !== "standard" ? { scoring_mode: input.scoring_mode } : {}),
   };
 }
 

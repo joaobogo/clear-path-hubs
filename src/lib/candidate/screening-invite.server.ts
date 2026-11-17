@@ -56,7 +56,7 @@ export type ScreeningInviteSweep = {
 const APP_SELECT =
   "id,created_at,status,withdrawn_at,is_test_record,source,source_channel,consent,position_id,screening_invite_status," +
   "candidate_profiles(full_name,email)," +
-  "positions(title,status,organization_id,posting_confidentiality:intake_context->posting->>confidentiality,organizations(name))";
+  "positions(title,status,organization_id,scoring_mode,posting_confidentiality:intake_context->posting->>confidentiality,organizations(name))";
 
 type AppRow = {
   id: string;
@@ -74,6 +74,7 @@ type AppRow = {
     title?: string | null;
     status?: string | null;
     organization_id?: string | null;
+    scoring_mode?: string | null;
     /** posting.confidentiality only, never the rest of intake_context. */
     posting_confidentiality?: string | null;
     organizations?: { name?: string | null } | null;
@@ -120,6 +121,8 @@ async function deliver(
   } = await import("../notification-email.server");
   const pos = one(app.positions);
   if (app.is_test_record) return { status: "suppressed", reason: "test_record" };
+  // Relocation-first roles: no answers-request email (recruiters confirm by call).
+  if (pos?.scoring_mode === "relocation_volume") return { status: "suppressed", reason: "relocation_volume_role" };
   if (
     await isSandboxRecipient(admin, { orgId: pos?.organization_id ?? null, address: recipient })
   ) {
