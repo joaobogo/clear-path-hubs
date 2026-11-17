@@ -483,3 +483,27 @@ Checks
 - Open: the AI gateway still returns 402 (no credits) as of 16 Nov; 33 profiles on four roles
   have no parsed work history. Re-running hydration for them rescored them on v1.7.7, so it
   waits for the owner's approval.
+
+## 16 Nov 2026 (later) — Billing Manager (Law Firm): four new applicants, engine v1.7.8 and v1.7.9
+
+- Recruiter evidence reviews for Devon Inman, Riley Schykerynec, Ingrida Baubonis and Krupa
+  Patel. Owner rule for these (16 Nov): the reviews are information and a way to raise a score
+  where the evidence supports it; nobody is marked down from them.
+- Profile corrections and admin notes were entered through Lovable from each review's prompt.
+  The criterion suggestions sit in `evidence_overrides` as pending records; none was applied
+  to a score.
+- v1.7.8 (main daf128372): Devon's CV, six dated roles, had been parked as "no dated
+  employment history". An employer named "Hackensack Board of Education" was read as the
+  Education heading, and "July 2024 – April 29, 2025" was not read as a date. Fixed; also
+  "03/2026 – to present", and the parser fallback no longer stores "MS Word 2007" as a degree
+  or a page footer as an employer. Devon scored 72.3.
+- v1.7.9 (main 55382c045): Ingrida's "QuickBooks and Caret or comparable billing software"
+  row read missing although QuickBooks is on her CV in four roles; a product name with
+  capitals inside it was not recognised as named. Fixed (abbreviations in capitals unchanged).
+- Replays on 84 candidates of three roles: v1.7.9 changes nothing; v1.7.8 would lift two Group
+  Marketing Manager candidates whose roles dated "– till present" were unread. Not rescored.
+- Riley Schykerynec uploaded a cover letter only. She cannot be scored or published until she
+  sends a CV; the admin task and a note asking for it are open.
+- Published by the owner on 16 Nov on their engine runs: Devon 72.3, Ingrida 72.9, Krupa 69.4.
+  Ingrida was then rescored on v1.7.9 (software row missing → partial, 72.9 → 74.3) and the
+  new run approved, so admin and client show 74.3. Devon's "not scored yet" task closed.
