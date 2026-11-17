@@ -69,6 +69,22 @@ const SYNONYM_GROUPS: Record<string, string[]> = {
   ota: ["online travel agency", "booking.com", "expedia"],
   haccp: ["hazard analysis critical control"],
   forklift: ["fork lift", "reach truck"],
+  // Warehouse work in Portuguese and English (v1.8.0): a role written in
+  // Portuguese is matched against CVs written in either language.
+  empilhadeira: ["forklift", "fork lift", "empilhadeirista", "empilhadeiras", "reach truck"],
+  armazém: ["warehouse", "warehousing", "armazem", "almoxarifado"],
+  estoque: ["inventory", "stock", "stockroom", "estoquista"],
+  logística: ["logistics", "logistic"],
+  distribuição: ["distribution"],
+  selecionadora: ["order picker", "selecionador"],
+  separação: ["picking", "order picking", "picker", "separador", "separadora"],
+  recebimento: ["receiving", "goods receipt", "conferente"],
+  embalagem: ["packing", "packaging", "packer", "embalador", "embaladora"],
+  mercadorias: ["goods", "merchandise", "mercadoria", "cargo", "carga"],
+  barras: ["barcode", "bar code", "barcodes"],
+  scanner: ["scanners", "leitor", "coletor", "coletor de dados", "rf scanner", "handheld scanner"],
+  turnos: ["shifts", "shift", "turno"],
+  noturno: ["night shift", "night shifts", "nights", "noite"],
   wms: ["warehouse management system"],
   cdl: ["commercial driver's license", "commercial drivers license"],
   osha: ["occupational safety and health"],
@@ -272,12 +288,22 @@ const EXPANSION: Map<string, Set<string>> = (() => {
  * Every surface form a requirement term should be matched against, the term
  * itself first. Order is stable so evidence trails stay reproducible.
  */
+/** "logística" -> "logistica": the same word written without accents. */
+function withoutAccents(s: string): string {
+  return s.normalize("NFD").replace(/\p{M}+/gu, "").normalize("NFC");
+}
+
 export function expandTerm(term: string): string[] {
   const t = term.trim().toLowerCase();
   if (!t) return [];
   const extras = EXPANSION.get(t);
   const out = extras ? [t, ...[...extras].sort()] : [t];
   for (const r of REALISATIONS[t] ?? []) if (!out.includes(r)) out.push(r);
+  // A CV often drops the accents ("PRONTO EXPRESS LOGISTICA"), v1.8.0.
+  for (const form of [...out]) {
+    const plain = withoutAccents(form);
+    if (plain !== form && !out.includes(plain)) out.push(plain);
+  }
   return out;
 }
 

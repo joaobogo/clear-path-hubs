@@ -257,4 +257,14 @@
  * marked missing for naming none of them. Abbreviations in capitals (HACCP,
  * BRC) are read as before.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.9";
+/**
+ * v1.8.0 — availability requirements are decided by the candidate's answer
+ * (Respekt warehouse roles, 17 Nov 2026). "Disponibilidade para se mudar
+ * para a Polônia", "Disponibilidade para turnos de 12 horas", "willing to
+ * relocate": a CV cannot show what someone will do, so a linked yes is met,
+ * a no is not met, and an availability row nobody asked about is unknown
+ * rather than missing. Such a yes is not flagged as an unverified claim.
+ * Rule-decided rows (on-site attendance, conditional relocation) and
+ * experience requirements are unchanged.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.8.0";

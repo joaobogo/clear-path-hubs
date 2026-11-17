@@ -19,6 +19,8 @@ import { expandTerm } from "./scoring/term-synonyms";
 import { maskNonQuotableLines } from "./scoring/non-evidence-lines";
 import { isUnrelatedCompound } from "./scoring/ambiguous-terms";
 import { judgeBehaviouralAnswer } from "./scoring/behavioural-answer";
+import { isAvailabilityRequirement } from "./scoring/availability";
+import { alternativeItems, anyItemMet } from "./scoring/alternatives";
 import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
 import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
 import { asBoolean } from "./scoring/eligibility";
@@ -206,10 +208,20 @@ const STOP = new Set([
   "is","are","be","been","being","was","were","have","has","had","as","this","that",
   "you","your","we","our","their","it","its","not","but","if","then","so","than",
   "will","can","may","must","should","would","using","use","used","across","into",
+  // Portuguese and Spanish connectives (v1.8.0). "de" was a keyword on every
+  // Portuguese requirement and matched any CV with a Portuguese phrase in it.
+  "de","da","do","das","dos","para","em","no","na","nos","nas","com","ou","um","uma",
+  "uns","umas","por","que","ao","aos","à","às","até","sem","pelo","pela","pelos","pelas",
+  "num","numa","del","los","las","el","en","con","y","e","o",
 ]);
 
+/**
+ * Words of two characters or more, read in any alphabet (v1.8.0). The ASCII
+ * pattern cut "armazém" to "armaz" and "logística" to "log" and "stica", so a
+ * requirement written in Portuguese searched the CV for word fragments.
+ */
 export function tokenize(text: string): string[] {
-  return (text.toLowerCase().match(/[a-z0-9+.#-]{2,}/g) ?? []).filter((t) => !STOP.has(t));
+  return (text.toLowerCase().match(/[\p{L}\p{N}+.#-]{2,}/gu) ?? []).filter((t) => !STOP.has(t));
 }
 
 /**
@@ -264,6 +276,12 @@ const REQUIREMENT_FRAMING = new Set([
   "professional", "professionals", "skills", "skill", "speaking", "communication",
   "principles", "fundamentals", "practices", "best", "part", "technical",
   "independently", "effectively", "efficiently",
+  // The same framing in Portuguese and Spanish (v1.8.0).
+  "experiência", "experiências", "experiencia", "experiencias", "vivência",
+  "disponibilidade", "disposição", "disponível", "disponibilidad", "disposición",
+  "conhecimento", "conhecimentos", "conocimiento", "conocimientos", "capacidade",
+  "habilidade", "habilidades", "anos", "ano", "años", "mínimo", "desejável",
+  "deseable", "trabalho", "trabalhar", "trabajo", "trabajar",
 ]);
 
 function extractKeywordsFromRequirement(text: string, cap: number): string[] {
@@ -331,7 +349,9 @@ export function findTermMatches(
 ): number[] {
   const t = term.trim().toLowerCase();
   if (!t) return [];
-  const re = new RegExp(`(^|[^a-z0-9])${escapeRe(t)}([^a-z0-9]|$)`, "gi");
+  // Letters in any alphabet bound a word (v1.8.0): "log" is not found inside
+  // "logística", and "armazém" is found before "s" or a space only.
+  const re = new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRe(t)}([^\\p{L}\\p{N}]|$)`, "giu");
   const out: number[] = [];
   let m: RegExpExecArray | null;
   const lower = cv.toLowerCase();
@@ -998,6 +1018,9 @@ export function scoreCandidate(input: {
     // formula below would demand all three, which no candidate can pass and no
     // client intended. Restricted to capitalised alternatives so "React or a
     // similar frontend framework" keeps its normal threshold.
+    // A plain list of alternatives ("empilhadeira ou selecionadora de
+    // pedidos"): one item found in full is the requirement met (v1.8.0).
+    const plainAlternatives = alternativeItems(r.text, REQUIREMENT_FRAMING);
     const isAlternativesList =
       r.keywords.length >= 2 &&
       /\b(or|ou)\b/i.test(r.text) &&
@@ -1070,7 +1093,11 @@ export function scoreCandidate(input: {
       } else {
         status = "missing";
       }
-    } else if (isAlternativesList || matched.length >= metThreshold) {
+    } else if (
+      isAlternativesList ||
+      matched.length >= metThreshold ||
+      anyItemMet(plainAlternatives, matched)
+    ) {
       status = "met";
     } else {
       status = "partial";
@@ -1127,7 +1154,7 @@ export function scoreCandidate(input: {
         (namedProducts.length > 0
           ? namedProducts.some((p) => work.some((kw) => kw.toLowerCase() === p.toLowerCase())) &&
             (namedProducts.length === 1 || isAlternativesList || work.length >= metThreshold)
-          : isAlternativesList || work.length >= metThreshold);
+          : isAlternativesList || work.length >= metThreshold || anyItemMet(plainAlternatives, work));
       const capped = status === "met" && !workMet;
       if (capped) {
         status = "partial";
@@ -1268,6 +1295,13 @@ export function scoreCandidate(input: {
     }
     return { linkText, links: out };
   };
+  // v1.8.0: a requirement about what the candidate will do (relocate, work
+  // the shifts, start after the visto) that no rule decides. Rule-decided
+  // rows (on-site attendance, conditional relocation) keep their rules.
+  const availabilityRow = (a: RequirementAssessment) =>
+    isAvailabilityRequirement(a.text) && !a.matched_terms.some((t) => t.startsWith("rule:"));
+  const availabilityDecided = new Set<string>();
+
   // A rule that read the CV and quoted a clear "no" (a degree in an unrelated
   // subject) is a conflict with the answer, not a gap it fills.
   const ruleSaysNo = (a: RequirementAssessment) =>
@@ -1293,6 +1327,9 @@ export function scoreCandidate(input: {
       .links.map(({ a }) => a)
       .filter(
         (a) =>
+          // An availability row is decided by the answer itself (v1.8.0):
+          // there is no CV line to back it, so it is not an unbacked claim.
+          !availabilityRow(a) &&
           // Contradictions are recorded separately, as a conflict.
           a.status !== "contradicted" &&
           !ruleSaysNo(a) &&
@@ -1351,6 +1388,47 @@ export function scoreCandidate(input: {
     }
   }
 
+  // v1.8.0: availability is the candidate's own commitment. The answer to
+  // the question asked for it decides the row: yes is met, no is not met.
+  // A CV cannot say whether someone will relocate or work nights, so the
+  // keyword search never had anything to find. Applied whether or not
+  // another answer disqualified the candidate, so the rows say what the
+  // candidate answered.
+  for (const s of input.screening) {
+    if (s.answer_type !== "boolean") continue;
+    const said = normalizeScreeningValue(s);
+    if (said !== "yes" && said !== "no") continue;
+    for (const { a } of linkedRequired(s).links) {
+      if (!availabilityRow(a) || a.status === "contradicted") continue;
+      if (availabilityDecided.has(a.id) && said === "yes") continue;
+      const ref: EvidenceRef = {
+        requirement_id: a.id,
+        requirement_text: a.text,
+        source: "screening",
+        matched_terms: [`must_have:${(s.must_have ?? a.text).slice(0, 60)}`],
+        snippet: `Answered ${said} to: "${(s.question || "").trim()}"`,
+        location: `screening:${s.question_id}`,
+      };
+      availabilityDecided.add(a.id);
+      a.needs_validation = false;
+      if (said === "yes") {
+        a.status = "met";
+        a.rule_note = "The candidate answered yes. Availability is the candidate's own commitment, so the answer is the evidence.";
+        a.evidence = [ref, ...a.evidence.filter((e) => e.location !== ref.location)].slice(
+          0,
+          cal.max_evidence_per_requirement,
+        );
+      } else {
+        a.status = "missing";
+        a.rule_note = `The candidate answered no to "${(s.question || "").trim()}".`;
+        a.evidence = [ref];
+      }
+      if (!evidence.some((e) => e.location === ref.location && e.requirement_id === a.id)) {
+        evidence.push(ref);
+      }
+    }
+  }
+
   // v1.7.7: a written answer to the question asked for a requirement is
   // evidence for it. A concrete account of what the candidate did meets the
   // requirement; a general answer is partial at most. Rows a rule decides
@@ -1404,6 +1482,7 @@ export function scoreCandidate(input: {
       if (s.answer_type !== "boolean" || normalizeScreeningValue(s) !== "yes") continue;
       const { linkText, links } = linkedRequired(s);
       for (const { a, overlap } of links) {
+        if (availabilityDecided.has(a.id)) continue;
         const ref: EvidenceRef = {
           requirement_id: a.id,
           requirement_text: a.text,
@@ -1440,6 +1519,17 @@ export function scoreCandidate(input: {
       }
     }
   }
+  // v1.8.0: an availability row nobody asked about is not answered by the
+  // CV either way. Unknown (confirm at screening), never missing for want
+  // of a CV line.
+  for (const a of assessment) {
+    if (availabilityDecided.has(a.id) || !availabilityRow(a)) continue;
+    if (a.status !== "missing" || a.evidence.length > 0) continue;
+    a.status = "unknown";
+    a.needs_validation = true;
+    a.rule_note = "Availability is not something a CV shows, and no question asked it. Confirm with the candidate.";
+  }
+
   let contradiction_status: ScoringResult["contradiction_status"] = "none";
   if (disqualified) contradiction_status = "disqualifying_answer";
   else if (contradiction_rows.length > 0) contradiction_status = "screening_contradicts_cv";
