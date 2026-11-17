@@ -60,6 +60,11 @@ function unwrap(v: unknown): unknown {
   return v;
 }
 
+/** A choice question's option labels, in order. Shared with the apply form. */
+export function choiceOptions(options: unknown): string[] {
+  return optionList(options);
+}
+
 function optionList(options: unknown): string[] {
   const raw = unwrap(options);
   if (!Array.isArray(raw)) return [];

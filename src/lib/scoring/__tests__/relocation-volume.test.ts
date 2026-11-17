@@ -84,3 +84,30 @@ describe("relocation_volume scoring (Respekt roles)", () => {
     expect(standard.category_weights).not.toEqual({ must_have: 0.8, preferred: 0.2, screening_alignment: 0 });
   });
 });
+
+describe("live Respekt question set (8 questions)", () => {
+  const db = (id: string, question: string, value: boolean, dim?: string): ScreeningAnswer => ({
+    question_id: id, question, required: true, answer_type: "boolean", value,
+    disqualifying_condition: { operator: "equals", value: false }, ...(dim ? { scoring_dimension: dim } : {}),
+  });
+  const live = (start: string): ScreeningAnswer[] => [
+    db("relocate", "Você tem disponibilidade para se mudar para a Polônia nos próximos 3 meses?", true),
+    db("flight", "Você consegue pagar a sua passagem aérea até a Polônia?", true),
+    db("shifts", "Você aceita trabalhar no turno da noite (das 18h às 4h45) durante um mês a cada três meses?", true, "flexibility"),
+    { question_id: "stay", question: "Por quanto tempo você pretende trabalhar na Polônia?", required: true, answer_type: "text", value: "Pretendo ficar um bom tempo", scoring_dimension: "commitment" },
+    { question_id: "costs", question: "Você entende que a moradia e o transporte são descontados do salário?", required: false, answer_type: "boolean", value: true },
+    db("passport", "Você tem passaporte válido ou consegue tirar um antes da viagem?", true),
+    db("visa", "Você pode começar a trabalhar depois do processo de visto, que leva cerca de 6 semanas?", true),
+    { question_id: "start", question: "Quando você pode começar, depois que o visto sair?", required: true, answer_type: "single_choice", value: start, options: START_OPTS, scoring_dimension: "start" },
+  ];
+  it("no experience, passes everything, ordinary answers: 75 or higher", () => {
+    const r = run(live(START_OPTS[1]!));
+    expect(r.score).toBeGreaterThanOrEqual(75);
+    expect(r.disqualifying_answers).toEqual([]);
+    expect(reconcile(r).reconciled).toBe(true);
+  });
+  it("a 'no' on the passport question disqualifies", () => {
+    const r = run(live(START_OPTS[1]!).map((a) => (a.question_id === "passport" ? { ...a, value: false } : a)));
+    expect(r.fit_label).toBe("not_a_fit");
+  });
+});
