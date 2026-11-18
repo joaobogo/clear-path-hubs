@@ -120,6 +120,8 @@ export const PUBLIC_BODY_LIMITS = {
   crm_submission: 131_072,
   blueprint_run: 4_096,
   pipeline_run: 4_096,
+  // One CV as base64 (MAX_CV_BYTES * 4/3) plus the candidate's details.
+  emailed_cv: 14_000_000,
   qa_seed: 65_536,
   webhook: 262_144,
 } as const;
