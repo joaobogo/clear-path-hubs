@@ -5,7 +5,7 @@
 //
 // Body: { position_id, actor_user_id, full_name, email, phone?, city?,
 //         region?, country?, linkedin_url?, received_at?,
-//         cv: { filename, mime, base64 } }
+//         hold_screening_invite?, cv: { filename, mime, base64 } }
 // The pipeline parses and scores the CV as for any applicant; nothing here
 // approves, publishes or answers a screening question.
 
@@ -33,6 +33,7 @@ const schema = z.object({
   country: z.string().trim().max(120).nullish(),
   linkedin_url: z.string().trim().url().max(500).nullish(),
   received_at: z.string().datetime().nullish(),
+  hold_screening_invite: z.boolean().nullish(),
   cv: z.object({
     filename: z.string().min(1).max(200),
     mime: z.string().min(1).max(120),

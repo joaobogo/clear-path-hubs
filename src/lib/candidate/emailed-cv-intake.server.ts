@@ -12,6 +12,8 @@
  *
  * It never approves, publishes, answers a screening question or writes a
  * score: parsing and scoring are the pipeline's, as for every applicant.
+ * With hold_screening_invite the automatic questions email is not sent; staff
+ * send it later with "Send screening questions", which ignores the hold.
  * Called only from the secret-gated internal route
  * /api/public/candidate/emailed-cv.
  */
@@ -33,6 +35,8 @@ export type EmailedCvInput = {
   linkedin_url?: string | null;
   /** When the email with the CV arrived, if known (ISO). */
   received_at?: string | null;
+  /** Do not email the screening questions automatically; staff send them. */
+  hold_screening_invite?: boolean | null;
   cv: { filename: string; mime: string; base64: string };
 };
 
@@ -239,6 +243,11 @@ export async function enterEmailedCv(s: Admin, input: EmailedCvInput): Promise<E
         entered_by: input.actor_user_id,
         received_at: receivedAt,
       },
+      // The sweep emails only rows whose marker is still NULL; the staff
+      // button does not read the marker, so a held invitation can still go.
+      ...(input.hold_screening_invite
+        ? { screening_invite_status: "not_needed", screening_invite_error_code: "held_by_staff" }
+        : {}),
     })
     .select("id")
     .single();
@@ -282,6 +291,7 @@ export async function enterEmailedCv(s: Admin, input: EmailedCvInput): Promise<E
       file_id: fileId,
       source_channel: "direct_email",
       profile_existed: !!existing,
+      screening_invite_held: !!input.hold_screening_invite,
     },
     trace_id,
   });
