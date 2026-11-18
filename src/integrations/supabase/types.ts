@@ -15444,6 +15444,10 @@ export type Database = {
         Args: { _actor_user_id: string; _position_id: string; _reason?: string }
         Returns: Json
       }
+      has_capped_publication_exception: {
+        Args: { _match_id: string; _run_id: string }
+        Returns: boolean
+      }
       has_client_permission: {
         Args: {
           _org: string

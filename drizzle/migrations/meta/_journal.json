@@ -120,6 +120,13 @@
       "when": 1794908727236,
       "tag": "0016_relocation_volume_question_limit",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794972256580,
+      "tag": "0017_capped_dealbreaker_publication_exceptions",
+      "breakpoints": true
     }
   ]
 }

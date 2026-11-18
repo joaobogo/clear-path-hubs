@@ -33,12 +33,14 @@ type BoardRow = {
   hire_confirmed: boolean | null;
   candidate_profiles: Record<string, unknown>;
   score_runs: Record<string, unknown>;
+  dealbreaker_warnings: ClientCandidateDTO["dealbreaker_warnings"];
   position: { title: string } | null;
 };
 
 function toBoardRow(c: ClientCandidateDTO): BoardRow {
   return {
     id: c.match_id,
+    dealbreaker_warnings: c.dealbreaker_warnings,
     stage: c.stage,
     // laneFor needs this to keep an unconfirmed hire out of the Hired
     // column — the same class of omission, one lane along.

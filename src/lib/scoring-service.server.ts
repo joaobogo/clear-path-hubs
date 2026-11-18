@@ -874,7 +874,10 @@ export async function assertPublishGate(matchId: string, runId: string): Promise
   // Evidence array may be empty when extraction returned nothing structured;
   // admin is exercising manual judgement here, so we don't block on it.
   void run.evidence;
-  if (run.contradiction_status === "disqualifying_answer") return { ok: false, reason: "disqualifying_contradiction" };
+  if (run.contradiction_status === "disqualifying_answer") {
+    const { data: excepted, error } = await s.rpc("has_capped_publication_exception", { _match_id: matchId, _run_id: runId });
+    if (error || excepted !== true) return { ok: false, reason: "disqualifying_contradiction" };
+  }
   return { ok: true };
 }
 
