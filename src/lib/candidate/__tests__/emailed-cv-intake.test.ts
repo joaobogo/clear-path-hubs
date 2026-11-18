@@ -181,6 +181,40 @@ describe("enterEmailedCv", () => {
     expect(screeningLinkSource(db.applications![0] as never)).toEqual({ ok: true });
   });
 
+  it("a held invitation is skipped by the sweep but still sendable by staff", async () => {
+    const { decideAutomaticInvite, decideStaffInvite } =
+      await import("@/lib/candidate/screening-invite");
+    const { enterEmailedCv } = await import("@/lib/candidate/emailed-cv-intake.server");
+    await enterEmailedCv(admin, { ...input, hold_screening_invite: true });
+    const app = db.applications![0]!;
+    expect(app).toMatchObject({
+      screening_invite_status: "not_needed",
+      screening_invite_error_code: "held_by_staff",
+    });
+    const created_at = new Date(Date.now() - 60 * 60_000).toISOString();
+    expect(
+      decideAutomaticInvite({
+        app: { ...(app as never), created_at, withdrawn_at: null },
+        questionCount: 4,
+        answerCount: 0,
+        hasEmail: true,
+      }),
+    ).toEqual({ action: "skip", reason: "already_decided" });
+    expect(
+      decideStaffInvite({
+        app: { ...(app as never), withdrawn_at: null },
+        positionStatus: "active",
+        questions: [{ id: "q1", question: "Q", answer_type: "yes_no", required: true }],
+        answeredIds: [],
+        hasEmail: true,
+      }),
+    ).toEqual({ ok: true });
+
+    // Without the hold the marker stays NULL, so the sweep decides as usual.
+    await enterEmailedCv(admin, { ...input, email: "other@example.com" });
+    expect(db.applications![1]!.screening_invite_status).toBeUndefined();
+  });
+
   it("an existing profile keeps its details; only blanks are filled", async () => {
     db.candidate_profiles = [
       {
