@@ -36,9 +36,22 @@ const TEAM_NOUN = String.raw`(?:teams?|staff|employees|direct\s+reports?|assista
  * ("managing three employees", "supervised 14 staff"). "Managed a large
  * portfolio of accounts for the Public Sector teams" is not a team managed.
  */
+/**
+ * A participle describing a noun, not a verb with a subject: "support to
+ * corporate and managed hotel teams" names hotels run under management
+ * contracts, and "the managed services team" names a team; neither says the
+ * person managed anyone. An -ed word right after a preposition or determiner,
+ * alone or coordinated with another modifier ("owned and managed",
+ * "corporate and managed"), is read that way. "Hired and managed a team",
+ * "I managed 5 staff" and "responsible for managing billers" still count.
+ */
+const ADJECTIVE_CONTEXT = String.raw`(?:the|a|an|our|its|their|his|her|all|each|every|to|for|of|across|with|at|by|within|from|into|on|in|under|between|among|including)`;
+const COORDINATED_MODIFIER = String.raw`(?:\w+ed|corporate|independent|internal|external|public|private|domestic|international|regional|local|remote|offshore|franchise)`;
+const NOT_ADJECTIVAL_PARTICIPLE = String.raw`(?:(?<!\b${ADJECTIVE_CONTEXT}\s+(?:${COORDINATED_MODIFIER}\s*,?\s+(?:and|or|&)\s+)?)(?=\w+ed\b)|(?!\w+ed\b))`;
+
 const TEAM_STRONG = new RegExp(
   [
-    String.raw`\b(?:manag\w*|supervis\w*|led|lead|leads|leading|oversaw|oversee\w*|direct(?:ed|ing|s)?|mentor\w*|coach\w*|train(?:ed|ing|s)?|recruit\w*|hir(?:ed|ing)|develop(?:ed|ing|s)?)(?:[\s,/&-]+[\w'+]+){0,4}[\s,/&-]+${TEAM_NOUN}\b`,
+    String.raw`\b${NOT_ADJECTIVAL_PARTICIPLE}(?:manag\w*|supervis\w*|led|lead|leads|leading|oversaw|oversee\w*|direct(?:ed|ing|s)?|mentor\w*|coach\w*|train(?:ed|ing|s)?|recruit\w*|hir(?:ed|ing)|develop(?:ed|ing|s)?)(?:[\s,/&-]+[\w'+]+){0,4}[\s,/&-]+${TEAM_NOUN}\b`,
     // a team / staff / department of 7
     String.raw`\b(?:team|staff|department|group|crew|unit)\s+of\s+(?:up\s+to\s+|over\s+|about\s+|approximately\s+)?(?:\d+|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b`,
     // 14 staff, 58 employees, 3 direct reports, a 20+ person team

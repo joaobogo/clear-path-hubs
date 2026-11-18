@@ -512,6 +512,7 @@ export function humanizeSource(source: string | null | undefined): string {
     github: "GitHub Registry",
     interview_note: "Interview Record",
     screening_call: "Screening Assessment",
+    manual: "Reviewer verified",
   };
   return map[source.toLowerCase()] || source;
 }

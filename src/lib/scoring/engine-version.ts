@@ -257,4 +257,11 @@
  * marked missing for naming none of them. Abbreviations in capitals (HACCP,
  * BRC) are read as before.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.9";
+/**
+ * v1.7.10 — "managed" describing a noun is not managing people. "Provide
+ * financial and customer support to corporate and managed hotel teams" was
+ * read as a team managed, because "managed" sat within four words of "teams".
+ * An -ed word after a preposition or determiner, alone or coordinated with
+ * another modifier, no longer counts as the verb.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.10";

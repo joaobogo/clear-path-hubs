@@ -7,7 +7,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { loadCompleteness } from "./completeness.server";
-import { GATE_OVERRIDE_ACTION } from "./completeness";
+import {
+  EVIDENCE_ITEM_SOURCE_KINDS,
+  GATE_OVERRIDE_ACTION,
+  MANUAL_EVIDENCE_SNAPSHOT,
+} from "./completeness";
 
 export const getEvidenceCompleteness = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -20,7 +24,7 @@ const addInput = z.object({
   criterionLabel: z.string().trim().min(1).max(200),
   passage: z.string().trim().min(10).max(4000),
   result: z.enum(["strong", "partial", "weak", "contradictory", "needs_validation"]),
-  sourceKind: z.enum(["cv", "application_answer", "interview", "manual"]).default("manual"),
+  sourceKind: z.enum(EVIDENCE_ITEM_SOURCE_KINDS).default("manual"),
   note: z.string().trim().max(1000).optional(),
 });
 
@@ -39,7 +43,7 @@ export const addManualEvidence = createServerFn({ method: "POST" })
 
     // Manual evidence hangs off a dedicated snapshot row so it never mutates
     // an engine-produced extraction.
-    const engineVersion = "manual-review";
+    const engineVersion = MANUAL_EVIDENCE_SNAPSHOT;
     const { data: existing } = await context.supabase
       .from("candidate_evidence")
       .select("id")
@@ -85,7 +89,9 @@ export const addManualEvidence = createServerFn({ method: "POST" })
         // rubric_criterion_key, which carries the label.)
         normalized_meaning: data.note?.trim() || "",
         result: data.result,
-        source_kind: data.sourceKind === "manual" ? "Reviewer verified" : data.sourceKind,
+        source_kind: data.sourceKind,
+        // source_kind is stored in the database vocabulary (EVIDENCE_ITEM_SOURCE_KINDS);
+        // the admin shows "manual" as "Reviewer verified".
         reviewer_status: "accepted",
         reviewer_note: data.note ?? null,
         reviewed_by: context.userId,
@@ -108,7 +114,7 @@ export const addManualEvidence = createServerFn({ method: "POST" })
         criterion_key: data.criterionKey,
         criterion_label: data.criterionLabel,
         result: data.result,
-        source_kind: data.sourceKind === "manual" ? "Reviewer verified" : data.sourceKind,
+        source_kind: data.sourceKind,
       },
     });
 
