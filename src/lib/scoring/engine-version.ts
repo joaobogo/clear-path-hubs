@@ -264,4 +264,8 @@
  * An -ed word after a preposition or determiner, alone or coordinated with
  * another modifier, no longer counts as the verb.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.10";
+/**
+ * v1.7.11 — month + apostrophe + two-digit employment years are read by
+ * both the employment gate and subject-specific years rules.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.11";

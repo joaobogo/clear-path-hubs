@@ -531,10 +531,10 @@ const MONTH_NAME =
 // A month may carry its day ("April 29, 2025"); the day is read and dropped
 // (v1.7.8). The separator may be a dash followed by "to" ("03/2026 – to
 // present"). Both forms used to leave the role unread.
-const POINT = `(?:${MONTH_NAME}\\.?\\s+(?:\\d{1,2}(?:st|nd|rd|th)?,?\\s+)?)?((?:19|20)\\d{2})|(\\d{1,2})\\/(\\d{1,2})\\/((?:19|20)?\\d{2})(?!\\d)|(\\d{1,2})\\/((?:19|20)\\d{2})`;
+const POINT = `(?:${MONTH_NAME}\\.?\\s+(?:\\d{1,2}(?:st|nd|rd|th)?,?\\s+)?['‘’]?)?((?:19|20)\\d{2}|(?<=[a-z]\\.?\\s+['‘’])\\d{2})(?!\\d)|(\\d{1,2})\\/(\\d{1,2})\\/((?:19|20)?\\d{2})(?!\\d)|(\\d{1,2})\\/((?:19|20)\\d{2})`;
 const END = `(present|current|now|today|ongoing|to\\s+date|date)|${POINT}`;
 const RANGE_RE = new RegExp(
-  `(?:${POINT})\\s*(?:[-–—]\\s*(?:to|until|till)?|to|until|till)\\s*(?:${END})`,
+  `(?<!['‘’\\d])(?:${POINT})\\s*(?:[-–—]\\s*(?:to|until|till)?|to|until|till)\\s*(?:${END})`,
   "gi",
 );
 
@@ -592,7 +592,7 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
       // Groups (start): 1 month name, 2 year; 3 month, 4 day, 5 year of a
       // full date; 6 numeric month, 7 numeric year. 8 open end word. End:
       // 9 month name, 10 year; 11-13 full date; 14 numeric month, 15 year.
-      const startYear = m[5] ? fullDateYear(m[5], today) : Number(m[2] ?? m[7]);
+      const startYear = fullDateYear(m[5] ?? m[2] ?? m[7] ?? "", today);
       // A year alone ("2002 – 2007") is read January to December here, as it
       // always was. The roles a subject is counted from read it mid-year to
       // mid-year instead (midYear, v1.7.7).
@@ -608,7 +608,7 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
       let yearOnlyTo = false;
       if (m[8]) to = now;
       else {
-        const endYear = m[13] ? fullDateYear(m[13], today) : Number(m[10] ?? m[15]);
+        const endYear = fullDateYear(m[13] ?? m[10] ?? m[15] ?? "", today);
         yearOnlyTo = !m[9] && !m[11] && !m[14];
         const endMonth = m[9]
           ? (MONTHS[m[9].slice(0, 3).toLowerCase()] ?? 11)
