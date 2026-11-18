@@ -200,6 +200,7 @@ import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/a
 import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/api/public/booking/calendly-webhook'
 import { Route as ApiPublicBookingRemindersRouteImport } from './routes/api/public/booking.reminders'
 import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/api/public/candidate/closure-notices'
+import { Route as ApiPublicCandidateEmailedCvRouteImport } from './routes/api/public/candidate/emailed-cv'
 import { Route as ApiPublicCandidateInterviewRemindersRouteImport } from './routes/api/public/candidate/interview-reminders'
 import { Route as ApiPublicCandidateProfileNudgesRouteImport } from './routes/api/public/candidate/profile-nudges'
 import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
@@ -1255,6 +1256,12 @@ const ApiPublicCandidateClosureNoticesRoute =
     path: '/api/public/candidate/closure-notices',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCandidateEmailedCvRoute =
+  ApiPublicCandidateEmailedCvRouteImport.update({
+    id: '/api/public/candidate/emailed-cv',
+    path: '/api/public/candidate/emailed-cv',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCandidateInterviewRemindersRoute =
   ApiPublicCandidateInterviewRemindersRouteImport.update({
     id: '/api/public/candidate/interview-reminders',
@@ -1548,6 +1555,7 @@ export interface FileRoutesByFullPath {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
+  '/api/public/candidate/emailed-cv': typeof ApiPublicCandidateEmailedCvRoute
   '/api/public/candidate/interview-reminders': typeof ApiPublicCandidateInterviewRemindersRoute
   '/api/public/candidate/profile-nudges': typeof ApiPublicCandidateProfileNudgesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
@@ -1749,6 +1757,7 @@ export interface FileRoutesByTo {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
+  '/api/public/candidate/emailed-cv': typeof ApiPublicCandidateEmailedCvRoute
   '/api/public/candidate/interview-reminders': typeof ApiPublicCandidateInterviewRemindersRoute
   '/api/public/candidate/profile-nudges': typeof ApiPublicCandidateProfileNudgesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
@@ -1962,6 +1971,7 @@ export interface FileRoutesById {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
+  '/api/public/candidate/emailed-cv': typeof ApiPublicCandidateEmailedCvRoute
   '/api/public/candidate/interview-reminders': typeof ApiPublicCandidateInterviewRemindersRoute
   '/api/public/candidate/profile-nudges': typeof ApiPublicCandidateProfileNudgesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
@@ -2175,6 +2185,7 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
+    | '/api/public/candidate/emailed-cv'
     | '/api/public/candidate/interview-reminders'
     | '/api/public/candidate/profile-nudges'
     | '/api/public/digest/weekly'
@@ -2376,6 +2387,7 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
+    | '/api/public/candidate/emailed-cv'
     | '/api/public/candidate/interview-reminders'
     | '/api/public/candidate/profile-nudges'
     | '/api/public/digest/weekly'
@@ -2588,6 +2600,7 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
+    | '/api/public/candidate/emailed-cv'
     | '/api/public/candidate/interview-reminders'
     | '/api/public/candidate/profile-nudges'
     | '/api/public/digest/weekly'
@@ -2718,6 +2731,7 @@ export interface RootRouteChildren {
   ApiPublicBookingCalendlyWebhookRoute: typeof ApiPublicBookingCalendlyWebhookRoute
   ApiPublicBookingRemindersRoute: typeof ApiPublicBookingRemindersRoute
   ApiPublicCandidateClosureNoticesRoute: typeof ApiPublicCandidateClosureNoticesRoute
+  ApiPublicCandidateEmailedCvRoute: typeof ApiPublicCandidateEmailedCvRoute
   ApiPublicCandidateInterviewRemindersRoute: typeof ApiPublicCandidateInterviewRemindersRoute
   ApiPublicCandidateProfileNudgesRoute: typeof ApiPublicCandidateProfileNudgesRoute
   ApiPublicDigestWeeklyRoute: typeof ApiPublicDigestWeeklyRoute
@@ -4070,6 +4084,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCandidateClosureNoticesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/candidate/emailed-cv': {
+      id: '/api/public/candidate/emailed-cv'
+      path: '/api/public/candidate/emailed-cv'
+      fullPath: '/api/public/candidate/emailed-cv'
+      preLoaderRoute: typeof ApiPublicCandidateEmailedCvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/candidate/interview-reminders': {
       id: '/api/public/candidate/interview-reminders'
       path: '/api/public/candidate/interview-reminders'
@@ -4651,6 +4672,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBookingCalendlyWebhookRoute: ApiPublicBookingCalendlyWebhookRoute,
   ApiPublicBookingRemindersRoute: ApiPublicBookingRemindersRoute,
   ApiPublicCandidateClosureNoticesRoute: ApiPublicCandidateClosureNoticesRoute,
+  ApiPublicCandidateEmailedCvRoute: ApiPublicCandidateEmailedCvRoute,
   ApiPublicCandidateInterviewRemindersRoute:
     ApiPublicCandidateInterviewRemindersRoute,
   ApiPublicCandidateProfileNudgesRoute: ApiPublicCandidateProfileNudgesRoute,
