@@ -1,3 +1,4 @@
+import type { StaffActionContext } from "@/lib/staff-action-context";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -65,10 +66,12 @@ export const retryBlueprintAnalysis = createServerFn({ method: "POST" })
  * running after a response is dropped. The page does not wait for the answer —
  * it polls the role and shows "Analysing your role…" meanwhile.
  */
-export const ensureRoleAnalysis = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((raw: unknown) => input.parse(raw))
-  .handler(async ({ data, context }) => {
+export const ensureRoleAnalysisValidate = (raw: unknown) => input.parse(raw);
+
+export async function ensureRoleAnalysisHandler({ data, context }: {
+  data: ReturnType<typeof ensureRoleAnalysisValidate>;
+  context: StaffActionContext;
+}) {
     // Read access is enough: the analysis is the system's own setup work on
     // a brand-new role, not an edit by the viewer, and it is idempotent and
     // capped. What a viewer cannot do is start it on a role that is already
@@ -89,7 +92,12 @@ export const ensureRoleAnalysis = createServerFn({ method: "POST" })
       state: decision.state,
       reason: res.reason ?? null,
     };
-  });
+  }
+
+export const ensureRoleAnalysis = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(ensureRoleAnalysisValidate)
+  .handler(ensureRoleAnalysisHandler);
 
 /**
  * Staff-only backfill: drain blueprint jobs that are queued/failed, or

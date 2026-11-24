@@ -1,3 +1,4 @@
+import type { StaffActionContext } from "@/lib/staff-action-context";
 import { roleProtectedFindings, protectedFindingsMessage } from "@/lib/jobs/protected-content";
 // Shared wizard-based position editor. Auth: platform staff OR client_editor
 // on the position's organization. Mirrors the public intake wizard 1:1 so
@@ -112,10 +113,12 @@ const traceId = () =>
 // written (role-form-roundtrip.test.ts).
 export type { ScreeningInput, PositionEditInitial } from "@/lib/positions/role-form";
 
-export const getPositionForEdit = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
-  .handler(async ({ data, context }) => {
+export const getPositionForEditValidate = (i: unknown) => z.object({ id: z.string().uuid() }).parse(i);
+
+export async function getPositionForEditHandler({ data, context }: {
+  data: ReturnType<typeof getPositionForEditValidate>;
+  context: StaffActionContext;
+}) {
     await assertCanView(context.userId, data.id);
     const s = await getAdmin();
     const [posRes, screeningRes] = await Promise.all([
@@ -133,7 +136,12 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
     const p = posRes.data as AnyRow;
     if (!p) throw new Error("position_not_found");
     return positionToEditForm(p, (screeningRes.data ?? []) as AnyRow[]);
-  });
+  }
+
+export const getPositionForEdit = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(getPositionForEditValidate)
+  .handler(getPositionForEditHandler);
 
 /**
  * Field rules are not restated here: every position field's type, limits and
@@ -177,10 +185,12 @@ const saveInput = z.object({
     .default([]),
 });
 
-export const savePositionEdit = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => saveInput.parse(i) as unknown as SaveInputData)
-  .handler(async ({ data, context }) => {
+export const savePositionEditValidate = (i: unknown) => saveInput.parse(i) as unknown as SaveInputData;
+
+export async function savePositionEditHandler({ data, context }: {
+  data: ReturnType<typeof savePositionEditValidate>;
+  context: StaffActionContext;
+}) {
     const before = await assertCanEdit(context.userId, data.id);
     const trace_id = traceId();
     const s = await getAdmin();
@@ -350,7 +360,12 @@ export const savePositionEdit = createServerFn({ method: "POST" })
     }
 
     return { ok: true as const, trace_id, position: after, analysis, brief_missing: required.missing, rescore };
-  });
+  }
+
+export const savePositionEdit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(savePositionEditValidate)
+  .handler(savePositionEditHandler);
 
 const publishInput = z.object({
   id: z.string().uuid(),
@@ -368,10 +383,12 @@ const publishInput = z.object({
 });
 
 /** Save job-post copy and optionally publish the role in one action. */
-export const publishPosition = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => publishInput.parse(i))
-  .handler(async ({ data, context }) => {
+export const publishPositionValidate = (i: unknown) => publishInput.parse(i);
+
+export async function publishPositionHandler({ data, context }: {
+  data: ReturnType<typeof publishPositionValidate>;
+  context: StaffActionContext;
+}) {
     const before = await assertCanEdit(context.userId, data.id);
     const trace_id = traceId();
     const s = await getAdmin();
@@ -437,4 +454,9 @@ export const publishPosition = createServerFn({ method: "POST" })
     });
 
     return { ok: true as const, trace_id, position: after };
-  });
+  }
+
+export const publishPosition = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(publishPositionValidate)
+  .handler(publishPositionHandler);

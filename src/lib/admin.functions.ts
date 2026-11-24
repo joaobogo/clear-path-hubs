@@ -1,3 +1,4 @@
+import type { StaffActionContext } from "@/lib/staff-action-context";
 import { roleProtectedFindings, protectedFindingsMessage } from "@/lib/jobs/protected-content";
 import { assertNoCompoundDealbreakers } from "@/lib/positions/compound-dealbreaker";
 import { pilotEndsAt } from "@/lib/pilot-state";
@@ -1338,17 +1339,23 @@ export const setPositionStatus = createServerFn({ method: "POST" })
 // open a role on a client's behalf (phone/email intake) without asking the
 // client to fill the wizard. It creates a DRAFT only — the same publish gate
 // applies before it can reach the job board.
-export const createPositionForClient = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) =>
+export const createPositionForClientValidate = (i: unknown) =>
     z
       .object({
         organization_id: z.string().uuid(),
         title: z.string().trim().min(2).max(200),
       })
-      .parse(i),
-  )
-  .handler(async ({ data, context }) => {
+      .parse(i);
+
+export const createPositionForClient = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(createPositionForClientValidate)
+  .handler(createPositionForClientHandler);
+
+export async function createPositionForClientHandler({ data, context }: {
+  data: ReturnType<typeof createPositionForClientValidate>;
+  context: StaffActionContext;
+}) {
     await requireStaff(context.userId);
     const trace_id = traceId();
     const s = await getAdmin();
@@ -1394,7 +1401,8 @@ export const createPositionForClient = createServerFn({ method: "POST" })
       console.error("[createPositionForClient] activity emit failed", trace_id, e);
     }
     return { ok: true as const, trace_id, position: created };
-  });
+  }
+
 
 const visibilityInput = z.object({
   id: z.string().uuid(),

@@ -1,3 +1,4 @@
+import type { StaffActionContext } from "@/lib/staff-action-context";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -309,10 +310,12 @@ const createClientInput = z.object({
   notes: z.string().max(2000).optional().nullable(),
 });
 
-export const createClientWorkspace = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((raw) => createClientInput.parse(raw))
-  .handler(async ({ data, context }) => {
+export const createClientWorkspaceValidate = (raw: unknown) => createClientInput.parse(raw);
+
+export async function createClientWorkspaceHandler({ data, context }: {
+  data: ReturnType<typeof createClientWorkspaceValidate>;
+  context: StaffActionContext;
+}) {
     const { supabase, userId } = context;
     await assertPlatformAdmin(supabase, userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -462,7 +465,12 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
     };
 
     return { organization_id: orgId!, primary_user: userResult };
-  });
+  }
+
+export const createClientWorkspace = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(createClientWorkspaceValidate)
+  .handler(createClientWorkspaceHandler);
 
 // ─────────────────────────────────────────────────────────────
 // Team management — list, edit role, reset password, deactivate, remove.

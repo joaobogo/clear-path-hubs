@@ -196,6 +196,7 @@ import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_au
 import { Route as AuthenticatedClientPositionsNewRouteImport } from './routes/_authenticated/client.positions.new'
 import { Route as AuthenticatedMeApplicationsIndexRouteImport } from './routes/_authenticated/me.applications.index'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
+import { Route as ApiPublicAdminStaffActionRouteImport } from './routes/api/public/admin/staff-action'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/api/public/booking/calendly-webhook'
 import { Route as ApiPublicBookingRemindersRouteImport } from './routes/api/public/booking.reminders'
@@ -1232,6 +1233,12 @@ const AuthenticatedMeApplicationsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedMeApplicationsRoute,
   } as any)
+const ApiPublicAdminStaffActionRoute =
+  ApiPublicAdminStaffActionRouteImport.update({
+    id: '/api/public/admin/staff-action',
+    path: '/api/public/admin/staff-action',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicBlueprintStatusIntakeIdRoute =
   ApiPublicBlueprintStatusIntakeIdRouteImport.update({
     id: '/api/public/blueprint-status/$intakeId',
@@ -1551,6 +1558,7 @@ export interface FileRoutesByFullPath {
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/admin/staff-action': typeof ApiPublicAdminStaffActionRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
@@ -1753,6 +1761,7 @@ export interface FileRoutesByTo {
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/admin/staff-action': typeof ApiPublicAdminStaffActionRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
@@ -1967,6 +1976,7 @@ export interface FileRoutesById {
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/admin/staff-action': typeof ApiPublicAdminStaffActionRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
@@ -2181,6 +2191,7 @@ export interface FileRouteTypes {
     | '/client/positions/$id'
     | '/client/positions/new'
     | '/me/applications/$id'
+    | '/api/public/admin/staff-action'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
@@ -2383,6 +2394,7 @@ export interface FileRouteTypes {
     | '/client/positions/$id'
     | '/client/positions/new'
     | '/me/applications/$id'
+    | '/api/public/admin/staff-action'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
@@ -2596,6 +2608,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/client/positions/new'
     | '/_authenticated/me/applications/$id'
+    | '/api/public/admin/staff-action'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
@@ -2727,6 +2740,7 @@ export interface RootRouteChildren {
   IndustriesSlugBriefingRoute: typeof IndustriesSlugBriefingRoute
   JobsIdApplyRoute: typeof JobsIdApplyRoute
   JobsIdIndexRoute: typeof JobsIdIndexRoute
+  ApiPublicAdminStaffActionRoute: typeof ApiPublicAdminStaffActionRoute
   ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
   ApiPublicBookingCalendlyWebhookRoute: typeof ApiPublicBookingCalendlyWebhookRoute
   ApiPublicBookingRemindersRoute: typeof ApiPublicBookingRemindersRoute
@@ -4056,6 +4070,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeApplicationsIdRouteImport
       parentRoute: typeof AuthenticatedMeApplicationsRoute
     }
+    '/api/public/admin/staff-action': {
+      id: '/api/public/admin/staff-action'
+      path: '/api/public/admin/staff-action'
+      fullPath: '/api/public/admin/staff-action'
+      preLoaderRoute: typeof ApiPublicAdminStaffActionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/blueprint-status/$intakeId': {
       id: '/api/public/blueprint-status/$intakeId'
       path: '/api/public/blueprint-status/$intakeId'
@@ -4668,6 +4689,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndustriesSlugBriefingRoute: IndustriesSlugBriefingRoute,
   JobsIdApplyRoute: JobsIdApplyRoute,
   JobsIdIndexRoute: JobsIdIndexRoute,
+  ApiPublicAdminStaffActionRoute: ApiPublicAdminStaffActionRoute,
   ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
   ApiPublicBookingCalendlyWebhookRoute: ApiPublicBookingCalendlyWebhookRoute,
   ApiPublicBookingRemindersRoute: ApiPublicBookingRemindersRoute,
