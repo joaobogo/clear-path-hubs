@@ -125,6 +125,26 @@ export function normalizeTravelExpectation(raw: unknown): "" | (typeof TRAVEL_EX
   return "";
 }
 
+/** Values that say nothing was decided; a candidate is never shown them. */
+const TRAVEL_PLACEHOLDERS = new Set(["unknown", "n/a", "na", "tbd", "tbc", "not specified", "-"]);
+
+/**
+ * The travel line as a person reads it. The posting's travel text is free
+ * text, but it starts from the stored option, so a bare option value
+ * ("frequent") can reach the job page. A bare option is shown in the option's
+ * own words, without the editor's percentage band, which nobody stated for
+ * this role; a placeholder is not shown at all. Any other text is the author's
+ * own sentence and is returned as written.
+ */
+export function travelText(raw: unknown): string {
+  const text = typeof raw === "string" ? raw.trim() : "";
+  if (!text) return "";
+  const key = text.toLowerCase();
+  if (TRAVEL_PLACEHOLDERS.has(key)) return "";
+  const option = TRAVEL_EXPECTATIONS.find((t) => t.value === key);
+  return option ? option.label.replace(/\s*\(.*\)$/, "") : text;
+}
+
 /**
  * Timezone fields are machine-read for overlap checks, so only an IANA zone or
  * a UTC offset is kept. Prose such as "Not specified, but likely Brazil time

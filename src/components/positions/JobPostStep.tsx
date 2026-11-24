@@ -1,6 +1,7 @@
 // Step 6 of the position wizard: employer-brand personalisation of the public
 // job post, plus a live desktop/mobile preview of what candidates will see.
 import { useState } from "react";
+import { travelText } from "@/lib/requisition-schema";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -290,7 +291,7 @@ export function JobPostStep({
             )}
 
             <PreviewSection title="Languages" body={value.languages} />
-            <PreviewSection title="Travel" body={value.travel} />
+            <PreviewSection title="Travel" body={travelText(value.travel)} />
             <PreviewSection title="Work authorisation" body={value.work_authorization_note} />
             <PreviewSection title="Benefits" body={value.benefits} />
             <PreviewSection title="Accessibility" body={value.accessibility_note} />
