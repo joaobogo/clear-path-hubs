@@ -54,7 +54,11 @@ import {
 import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import { normalizeSeniority } from "@/lib/position-seniority";
 import { positionField } from "@/lib/positions/field-registry";
-import { normalizeCountryCode, type RequisitionLocation } from "@/lib/requisition-schema";
+import {
+  normalizeCountryCode,
+  travelText,
+  type RequisitionLocation,
+} from "@/lib/requisition-schema";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -544,7 +548,11 @@ export function positionToEditForm(p: AnyRow, screeningRows: AnyRow[] = []): Pos
     company_intro: asStr(posting.company_intro),
     benefits: asStr(posting.benefits),
     languages: asStr(posting.languages),
-    travel: asStr(posting.travel) || asStr(p.travel_expectation) || asStr(brief.travelExpectation),
+    // A stored option value is shown in words, as the job page shows it.
+    travel:
+      travelText(posting.travel) ||
+      travelText(p.travel_expectation) ||
+      travelText(brief.travelExpectation),
     work_authorization_note: asStr(posting.work_authorization_note),
     accessibility_note: asStr(posting.accessibility_note),
     eeo_statement: asStr(posting.eeo_statement),

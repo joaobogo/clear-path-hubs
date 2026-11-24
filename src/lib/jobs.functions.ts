@@ -11,7 +11,8 @@ import {
   resolveCompensation,
   resolvePublicSalary,
 } from "@/lib/jobs/public-facts";
-import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
+import { applyEffortDefault, resolveApplyEffort } from "@/lib/jobs/apply-effort";
+import { travelText } from "@/lib/requisition-schema";
 import { jobDescriptionSummary } from "@/lib/marketing/job-description";
 import { QA_E2E_COOKIE, qaEndpointsEnabled } from "@/lib/public-api/qa-endpoint-gate";
 import { publicOrgNameOr, hasInternalOrgMarker } from "@/lib/org/public-org-name";
@@ -350,10 +351,11 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       description: desc,
     });
 
-    // How long applying really takes, from this posting's own completed
-    // submissions. A failed read falls back to the platform default rather
-    // than blocking the page or printing a broken figure.
-    let applyEffort = EFFORT_DEFAULT;
+    // How long applying takes: this posting's own completed submissions once
+    // there are enough of them, and until then (or on a failed read) the
+    // estimate for this form's questions.
+    const effortDefault = applyEffortDefault(questions ?? []);
+    let applyEffort = effortDefault;
     try {
       const { data: effortRow } = await (
         supabase.rpc as unknown as (
@@ -361,9 +363,9 @@ export const getPublicPosition = createServerFn({ method: "GET" })
           args: Record<string, unknown>,
         ) => Promise<{ data: unknown; error: unknown }>
       )("public_application_effort", { _position_id: data.id });
-      applyEffort = resolveApplyEffort(effortRow);
+      applyEffort = resolveApplyEffort(effortRow, effortDefault);
     } catch {
-      applyEffort = EFFORT_DEFAULT;
+      applyEffort = effortDefault;
     }
 
     // The hiring team's optional intro-video question. anon has no grant on
@@ -417,7 +419,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       responsibilities: str(posting.responsibilities),
       benefits: str(posting.benefits),
       languages: str(posting.languages),
-      travel: str(posting.travel),
+      travel: travelText(posting.travel),
       work_authorization_note: str(posting.work_authorization_note),
       accessibility_note: str(posting.accessibility_note),
       eeo_statement: str(posting.eeo_statement),
