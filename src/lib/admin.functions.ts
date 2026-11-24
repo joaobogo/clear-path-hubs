@@ -1145,10 +1145,17 @@ const STATUS_MAP: Record<string, string> = {
 };
 
 
+export const setPositionStatusValidate = (i: unknown) => statusTransition.parse(i);
+
 export const setPositionStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => statusTransition.parse(i))
-  .handler(async ({ data, context }) => {
+  .inputValidator(setPositionStatusValidate)
+  .handler(setPositionStatusHandler);
+
+export async function setPositionStatusHandler({ data, context }: {
+  data: ReturnType<typeof setPositionStatusValidate>;
+  context: StaffActionContext;
+}) {
     await requireStaff(context.userId);
     // A clarification request the client can see must carry the question.
     if (data.action === "request_clarification" && !(data.reason ?? "").trim()) {
@@ -1333,7 +1340,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
     }
     return { ok: true as const, trace_id, position: after };
 
-  });
+  }
 
 // Staff-created role. Intake is still the primary path; this exists so ops can
 // open a role on a client's behalf (phone/email intake) without asking the

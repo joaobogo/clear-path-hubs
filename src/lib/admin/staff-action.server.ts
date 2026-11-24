@@ -4,13 +4,16 @@
  *
  * The handlers are the ones the screens call through requireSupabaseAuth; they
  * check access by the caller's user id and write with the privileged client,
- * so the records, audit events and notifications match the screen's. Only
- * setup work is on the list: creating a client and a draft role, saving the
- * role editor, its screening questions and its posting copy, and reading the
- * readiness checks. Nothing
- * here approves, activates or makes a role public.
+ * so the records, audit events and notifications match the screen's. The list
+ * is fixed: creating a client and a draft role, saving the role editor, its
+ * screening questions and its posting copy, reading the readiness checks, and
+ * taking a finished role live the way the admin does (waive payment with a
+ * written reason, submit, approve, activate, publish). Each of those runs the
+ * platform's own gates: the lifecycle order, the payment gate and the publish
+ * gate are enforced by the handlers and the database, not here. Nothing else
+ * (pause, close, archive, delete) is on the list.
  */
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 import type { StaffActionContext } from "@/lib/staff-action-context";
 
 export const STAFF_ACTION_OPS = [
@@ -20,6 +23,9 @@ export const STAFF_ACTION_OPS = [
   "save_position_edit",
   "save_screening_questions",
   "save_posting",
+  "grant_payment_exemption",
+  "set_position_status",
+  "publish_position",
   "ensure_role_analysis",
   "get_position_for_edit",
   "get_requisition_quality",
@@ -33,6 +39,20 @@ export type StaffActionResult =
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Admin = any;
+
+/** The status steps that take a role live; no other transition runs here. */
+export const GO_LIVE_ACTIONS = ["submit", "approve", "activate"] as const;
+const goLiveStatusInput = z.object({
+  id: z.string().uuid(),
+  action: z.enum(GO_LIVE_ACTIONS),
+  reason: z.string().max(500).optional(),
+});
+const exemptionInput = z.object({
+  positionId: z.string().uuid(),
+  reason: z.string().trim().min(10).max(500),
+});
+/** A role is published to the job board only; "private" belongs to the editor. */
+const publishInput = z.object({ visibility: z.enum(["public", "confidential"]) }).passthrough();
 
 /** The actor must be active platform staff, as requireStaff and the screens require. */
 async function actorIsStaff(s: Admin, actor: string): Promise<boolean> {
@@ -90,6 +110,26 @@ export async function runStaffAction(
         if ((data as { visibility?: unknown }).visibility) {
           return { ok: false, op, status: 400, error: "visibility_not_allowed" };
         }
+        return { ok: true, op, result: await m.publishPositionHandler({ data, context }) };
+      }
+      case "grant_payment_exemption": {
+        const m = await import("@/lib/admin-payments.functions");
+        const data = m.grantPositionPaymentExemptionValidate(exemptionInput.parse(req.input));
+        return {
+          ok: true,
+          op,
+          result: await m.grantPositionPaymentExemptionHandler({ data, context }),
+        };
+      }
+      case "set_position_status": {
+        const m = await import("@/lib/admin.functions");
+        const data = m.setPositionStatusValidate(goLiveStatusInput.parse(req.input));
+        return { ok: true, op, result: await m.setPositionStatusHandler({ data, context }) };
+      }
+      case "publish_position": {
+        const m = await import("@/lib/position-edit.functions");
+        publishInput.parse(req.input);
+        const data = m.publishPositionValidate(req.input);
         return { ok: true, op, result: await m.publishPositionHandler({ data, context }) };
       }
       case "ensure_role_analysis": {

@@ -8,8 +8,9 @@
 //
 // Each op is the exact handler the admin screen calls, with its own input
 // validation, run with the actor as the caller, so records, audit events and
-// notifications are the ones the screen produces. Only setup work is allowed:
-// nothing here approves, activates or makes a role public.
+// notifications are the ones the screen produces. The list of ops is fixed
+// (staff-action.server.ts): setting a role up and taking it live through the
+// platform's own lifecycle, payment and publish gates.
 
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
