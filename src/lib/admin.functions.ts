@@ -2473,10 +2473,17 @@ const saveScreeningInput = z.object({
   questions: z.array(screeningItem).max(30),
 });
 
+export const saveScreeningQuestionsValidate = (i: unknown) => saveScreeningInput.parse(i);
+
 export const saveScreeningQuestions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => saveScreeningInput.parse(i))
-  .handler(async ({ data, context }) => {
+  .inputValidator(saveScreeningQuestionsValidate)
+  .handler(saveScreeningQuestionsHandler);
+
+export async function saveScreeningQuestionsHandler({ data, context }: {
+  data: ReturnType<typeof saveScreeningQuestionsValidate>;
+  context: StaffActionContext;
+}) {
     await requireStaff(context.userId);
     {
       const findings = roleProtectedFindings({ screening_questions: data.questions });
@@ -2546,7 +2553,7 @@ export const saveScreeningQuestions = createServerFn({ method: "POST" })
       trace_id,
     });
     return { ok: true as const, trace_id, count: data.questions.length };
-  });
+  }
 
 export const getPositionActivity = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

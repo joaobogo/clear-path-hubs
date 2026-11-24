@@ -6,7 +6,8 @@
  * check access by the caller's user id and write with the privileged client,
  * so the records, audit events and notifications match the screen's. Only
  * setup work is on the list: creating a client and a draft role, saving the
- * role editor and its posting copy, and reading the readiness checks. Nothing
+ * role editor, its screening questions and its posting copy, and reading the
+ * readiness checks. Nothing
  * here approves, activates or makes a role public.
  */
 import { ZodError } from "zod";
@@ -17,6 +18,7 @@ export const STAFF_ACTION_OPS = [
   "create_position_for_client",
   "save_requisition_meta",
   "save_position_edit",
+  "save_screening_questions",
   "save_posting",
   "ensure_role_analysis",
   "get_position_for_edit",
@@ -75,6 +77,11 @@ export async function runStaffAction(
         const m = await import("@/lib/position-edit.functions");
         const data = m.savePositionEditValidate(req.input);
         return { ok: true, op, result: await m.savePositionEditHandler({ data, context }) };
+      }
+      case "save_screening_questions": {
+        const m = await import("@/lib/admin.functions");
+        const data = m.saveScreeningQuestionsValidate(req.input);
+        return { ok: true, op, result: await m.saveScreeningQuestionsHandler({ data, context }) };
       }
       case "save_posting": {
         const m = await import("@/lib/position-edit.functions");
