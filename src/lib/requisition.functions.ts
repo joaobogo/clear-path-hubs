@@ -1,6 +1,7 @@
 // Phase 8 — requisition (job) structured layer: multi-location, evaluation
 // priorities, ownership, compensation permissioning, versioning + rescore.
 // Auth: platform staff OR client_editor on the position's organization.
+import type { StaffActionContext } from "@/lib/staff-action-context";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -203,10 +204,12 @@ export const checkRequisitionDuplicate = createServerFn({ method: "POST" })
     };
   });
 
-export const saveRequisitionMeta = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => requisitionMetaSchema.parse(i))
-  .handler(async ({ data, context }) => {
+export const saveRequisitionMetaValidate = (i: unknown) => requisitionMetaSchema.parse(i);
+
+export async function saveRequisitionMetaHandler({ data, context }: {
+  data: ReturnType<typeof saveRequisitionMetaValidate>;
+  context: StaffActionContext;
+}) {
     const { pos, isStaff } = await assertCanEdit(context.userId, data.position_id);
     const s = await admin();
     const trace_id = traceId();
@@ -358,7 +361,12 @@ export const saveRequisitionMeta = createServerFn({ method: "POST" })
       content_version: (after?.content_version ?? 1) as number,
       rescore_required: (after?.rescore_state ?? "current") !== "current",
     };
-  });
+  }
+
+export const saveRequisitionMeta = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(saveRequisitionMetaValidate)
+  .handler(saveRequisitionMetaHandler);
 
 /** Acknowledge a pending rescore: creates a controlled rescore event. */
 export const requestRequisitionRescore = createServerFn({ method: "POST" })
@@ -405,10 +413,12 @@ export const requestRequisitionRescore = createServerFn({ method: "POST" })
   });
 
 /** Server-side quality read used by list views and the job detail page. */
-export const getRequisitionQuality = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
-  .handler(async ({ data, context }) => {
+export const getRequisitionQualityValidate = (i: unknown) => z.object({ id: z.string().uuid() }).parse(i);
+
+export async function getRequisitionQualityHandler({ data, context }: {
+  data: ReturnType<typeof getRequisitionQualityValidate>;
+  context: StaffActionContext;
+}) {
     await assertCanEdit(context.userId, data.id);
     const s = await admin();
     const [posRes, locRes, sqRes] = await Promise.all([
@@ -463,4 +473,9 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
     // The assessed input travels back so live editors (the role wizard) can
     // re-run the same pure assessment against unsaved draft values.
     return { ...assessJobQuality(input), input };
-  });
+  }
+
+export const getRequisitionQuality = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(getRequisitionQualityValidate)
+  .handler(getRequisitionQualityHandler);
