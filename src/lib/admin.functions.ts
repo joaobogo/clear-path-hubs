@@ -1249,60 +1249,30 @@ export async function setPositionStatusHandler({ data, context }: {
       after: { ...(after ?? {}), reason: data.reason ?? null },
       trace_id,
     });
-    // One source event per meaningful change.
+    // One event per status change, each side linked to its own page
+    // (status-change-event.ts). It used to be raised twice.
     try {
-      const { emitEventFromServer } = await import("./notifications.functions");
-      const EVENT_MAP: Record<string, EventType> = {
-        submit: "intake_submitted",
-        approve: "position_approved",
-        activate: "position_activated",
-        reopen: "position_reopened",
-        pause: "position_paused",
-        mark_filled: "position_filled",
-        close: "position_closed",
-        request_clarification: "clarification_requested",
-      };
-      const event = EVENT_MAP[data.action];
-      if (event) {
-        await emitEventFromServer({
-          event,
-          scope: `${data.id}:${data.action}:${new Date().getTime()}`,
-          organization_id: before.organization_id,
-          position_id: data.id,
-          actor_user_id: context.userId,
-          link_path: `/admin/positions/${data.id}`,
-          payload: { reason: data.reason ?? null, note: data.reason ?? null },
-        });
-      }
-    } catch (e) {
-      console.error("[setPositionStatus] activity emit failed", trace_id, e);
-    }
-    // Emit lifecycle events so Client + Admin dashboards refresh in real time.
-    const eventMap: Record<string, string> = {
-      activate: "position_activated",
-      reopen: "position_reopened",
-      approve: "position_approved",
-      close: "position_closed",
-      mark_filled: "position_filled",
-      pause: "position_paused",
-      request_clarification: "clarification_requested",
-    };
-    if (eventMap[data.action]) {
-      try {
+      const { statusChangeEvent } = await import("@/lib/positions/status-change-event");
+      const change = statusChangeEvent({
+        positionId: data.id,
+        action: data.action,
+        beforeStatus: (before.status as string | null) ?? null,
+        nextStatus: next,
+        title: (before.title as string | null) ?? null,
+        reason: data.reason ?? null,
+      });
+      if (change) {
         const { emitEventFromServer } = await import("./notifications.functions");
         await emitEventFromServer({
-          event: eventMap[data.action] as EventType,
-          scope: `${data.id}:${data.action}`,
+          ...change,
           organization_id: before.organization_id,
           position_id: data.id,
           // Actor is server-derived from the authenticated session, never from the request payload.
           actor_user_id: context.userId,
-          link_path: `/client/positions/${data.id}`,
-          payload: { title: before.title ?? null, note: data.reason ?? null },
         });
-      } catch (e) {
-        console.error("[setPositionStatus] emit failed", trace_id, e);
       }
+    } catch (e) {
+      console.error("[setPositionStatus] activity emit failed", trace_id, e);
     }
     // Start the 14-day pilot clock at activation — never at signup.
     if (data.action === "activate" || data.action === "reopen") {
