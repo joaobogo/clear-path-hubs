@@ -575,7 +575,27 @@ type Span = {
   yearOnlyTo: boolean;
   /** Open end ("Present"). */
   open: boolean;
+  /**
+   * A current role whose start year lost a digit ("April 202 – Present"). It
+   * is a dated role with nothing to count: from and to are both today.
+   */
+  startUnreadable?: boolean;
+  /** The end of a range cut by the line end: the next line and how much of it. */
+  cont?: { lineStart: number; len: number };
 };
+
+/** A start with its dash at the end of a line: "… Medi-Corp Inc. (2015–". */
+const RANGE_START_AT_EOL = new RegExp(`(?<!['‘’\\d])(?:${POINT})\\s*[-–—]\\s*$`, "i");
+/** The end that opens the next line: "2019)Assistant Store Manager …". */
+const RANGE_END_AT_BOL = new RegExp(`^(?:${END})`, "i");
+/**
+ * "April 202 – Present": a month, a year one digit short, and an open end.
+ * Read as a current role whose start cannot be read, never as a guessed year.
+ */
+const TYPO_START_OPEN = new RegExp(
+  `\\b${MONTH_NAME}\\.?\\s+(?:19|20)\\d(?!\\d)\\s*(?:[-–—]\\s*(?:to|until|till)?|to|until|till)\\s*(?:present|current|now|today|ongoing|to\\s+date)\\b`,
+  "gi",
+);
 
 /** Month index since year 0, for arithmetic. */
 function monthIndex(year: number, month: number): number {
@@ -585,54 +605,89 @@ function monthIndex(year: number, month: number): number {
 export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
   const now = monthIndex(today.getUTCFullYear(), today.getUTCMonth());
   const out: Span[] = [];
-  for (const l of lines(cv)) {
+  const ls = lines(cv);
+  const read = (m: RegExpExecArray, l: Line, at: number) => {
+    // Groups (start): 1 month name, 2 year; 3 month, 4 day, 5 year of a
+    // full date; 6 numeric month, 7 numeric year. 8 open end word. End:
+    // 9 month name, 10 year; 11-13 full date; 14 numeric month, 15 year.
+    const startYear = fullDateYear(m[5] ?? m[2] ?? m[7] ?? "", today);
+    // A year alone ("2002 – 2007") is read January to December here, as it
+    // always was. The roles a subject is counted from read it mid-year to
+    // mid-year instead (midYear, v1.7.7).
+    const yearOnlyFrom = !m[1] && !m[3] && !m[6];
+    const startMonth = m[1]
+      ? (MONTHS[m[1].slice(0, 3).toLowerCase()] ?? 0)
+      : m[3]
+        ? fullDateMonth(m[3], m[4])
+        : m[6]
+          ? Number(m[6]) - 1
+          : 0;
+    let to: number;
+    let yearOnlyTo = false;
+    if (m[8]) to = now;
+    else {
+      const endYear = fullDateYear(m[13] ?? m[10] ?? m[15] ?? "", today);
+      yearOnlyTo = !m[9] && !m[11] && !m[14];
+      const endMonth = m[9]
+        ? (MONTHS[m[9].slice(0, 3).toLowerCase()] ?? 11)
+        : m[11]
+          ? fullDateMonth(m[11], m[12])
+          : m[14]
+            ? Number(m[14]) - 1
+            : 11;
+      to = Math.min(monthIndex(endYear, Math.min(Math.max(endMonth, 0), 11)), now);
+    }
+    const from = monthIndex(startYear, Math.min(Math.max(startMonth, 0), 11));
+    if (to >= from && startYear >= 1960)
+      out.push({
+        from,
+        to,
+        line: l,
+        at,
+        raw: m[0],
+        yearOnlyFrom,
+        yearOnlyTo,
+        open: Boolean(m[8]),
+      });
+  };
+  ls.forEach((l, n) => {
     RANGE_RE.lastIndex = 0;
     let m: RegExpExecArray | null;
-    while ((m = RANGE_RE.exec(l.text)) !== null) {
-      // Groups (start): 1 month name, 2 year; 3 month, 4 day, 5 year of a
-      // full date; 6 numeric month, 7 numeric year. 8 open end word. End:
-      // 9 month name, 10 year; 11-13 full date; 14 numeric month, 15 year.
-      const startYear = fullDateYear(m[5] ?? m[2] ?? m[7] ?? "", today);
-      // A year alone ("2002 – 2007") is read January to December here, as it
-      // always was. The roles a subject is counted from read it mid-year to
-      // mid-year instead (midYear, v1.7.7).
-      const yearOnlyFrom = !m[1] && !m[3] && !m[6];
-      const startMonth = m[1]
-        ? (MONTHS[m[1].slice(0, 3).toLowerCase()] ?? 0)
-        : m[3]
-          ? fullDateMonth(m[3], m[4])
-          : m[6]
-            ? Number(m[6]) - 1
-            : 0;
-      let to: number;
-      let yearOnlyTo = false;
-      if (m[8]) to = now;
-      else {
-        const endYear = fullDateYear(m[13] ?? m[10] ?? m[15] ?? "", today);
-        yearOnlyTo = !m[9] && !m[11] && !m[14];
-        const endMonth = m[9]
-          ? (MONTHS[m[9].slice(0, 3).toLowerCase()] ?? 11)
-          : m[11]
-            ? fullDateMonth(m[11], m[12])
-            : m[14]
-              ? Number(m[14]) - 1
-              : 11;
-        to = Math.min(monthIndex(endYear, Math.min(Math.max(endMonth, 0), 11)), now);
+    while ((m = RANGE_RE.exec(l.text)) !== null) read(m, l, m.index);
+    // A range cut by the end of the line (v1.7.12): "(2015–" then "2019)" on
+    // the next line is one period. A next line that opens with a whole range
+    // of its own is left alone.
+    const tail = RANGE_START_AT_EOL.exec(l.text);
+    const next = ls[n + 1];
+    const head = tail && next ? RANGE_END_AT_BOL.exec(next.text) : null;
+    if (tail && next && head && DATE_RANGE.exec(next.text)?.index !== 0) {
+      const joined = DATE_RANGE.exec(tail[0] + head[0]);
+      if (joined && joined.index === 0) {
+        const before = out.length;
+        read(joined, l, tail.index);
+        if (out.length > before)
+          out[out.length - 1]!.cont = { lineStart: next.start, len: head[0].length };
       }
-      const from = monthIndex(startYear, Math.min(Math.max(startMonth, 0), 11));
-      if (to >= from && startYear >= 1960)
-        out.push({
-          from,
-          to,
-          line: l,
-          at: m.index,
-          raw: m[0],
-          yearOnlyFrom,
-          yearOnlyTo,
-          open: Boolean(m[8]),
-        });
     }
-  }
+    // A current role whose start year lost a digit (v1.7.12).
+    TYPO_START_OPEN.lastIndex = 0;
+    while ((m = TYPO_START_OPEN.exec(l.text)) !== null) {
+      const at = m.index;
+      if (out.some((s) => s.line === l && at < s.at + s.raw.length && s.at < at + m![0].length))
+        continue;
+      out.push({
+        from: now,
+        to: now,
+        line: l,
+        at,
+        raw: m[0],
+        yearOnlyFrom: false,
+        yearOnlyTo: false,
+        open: true,
+        startUnreadable: true,
+      });
+    }
+  });
   return out;
 }
 
@@ -803,10 +858,37 @@ export function roleBlocks(cv: string, today: Date = new Date()): RoleBlock[] {
       i + 1 < next && headerLike(ls[i + 1]) && dateLineWords <= 6 && top === i ? i + 1 : i;
     bounds.push({ top, bodyFrom: Math.max(below, chainEnd.get(k) ?? -1) + 1 });
   });
+  // Two jobs written on one line (v1.7.12): "Medical Biller — Foot & Ankle
+  // Center (2019–2020)Medical Biller — Medi-Corp Inc. (2015–2019)". Each
+  // period owns the words between the period before it and itself, so a title
+  // counts for its own years only. Periods with no words between them
+  // ("2010–2012, 2014–2016") still share the whole line.
+  const onLineEnd = (x: { sp: Span; i: number }) =>
+    Math.min(x.sp.at + x.sp.raw.length, ls[x.i]!.text.length);
+  // "2019)Assistant Store Manager …": the "2019)" closes the period cut on the
+  // line above. It is blanked (not removed, so positions hold) in headers.
+  const contLen = new Map<number, number>();
+  for (const { sp } of spans) if (sp.cont) contLen.set(sp.cont.lineStart, sp.cont.len);
+  const textOf = (l: Line): string => {
+    const n = contLen.get(l.start);
+    if (!n) return l.text;
+    const rest = l.text.slice(n);
+    const close = /^[\s)\]]+/.exec(rest)?.[0].length ?? 0;
+    return " ".repeat(n + close) + rest.slice(close);
+  };
+  const ownWords = (k: number): boolean =>
+    k > 0 &&
+    spans[k - 1]!.i === spans[k]!.i &&
+    /[A-Za-z]{3,}/.test(ls[spans[k]!.i]!.text.slice(onLineEnd(spans[k - 1]!), spans[k]!.sp.at));
   spans.forEach(({ sp, i }, k) => {
     if (k > 0 && spans[k - 1]!.i === i) {
-      // A second range on the same line shares the line's text.
-      out.push({ span: sp, header: ls[i]!.text, body: "", bodyLines: [] });
+      // A second range on the same line: its own words, or the line's text.
+      const header = ownWords(k)
+        ? textOf(ls[i]!)
+            .slice(onLineEnd(spans[k - 1]!), onLineEnd(spans[k]!))
+            .replace(/^[\s)\]|,;:·•→>–—-]+/, "")
+        : textOf(ls[i]!);
+      out.push({ span: sp, header, body: "", bodyLines: [] });
       return;
     }
     const b = bounds[k]!;
@@ -830,7 +912,14 @@ export function roleBlocks(cv: string, today: Date = new Date()): RoleBlock[] {
     const bodyLines = ls.slice(b.bodyFrom, Math.max(b.bodyFrom, end));
     out.push({
       span: sp,
-      header: headerLines.map((l) => l.text).join(" | "),
+      // The next job on the same line keeps its own words.
+      header: headerLines
+        .map((l) =>
+          l === ls[i] && k + 1 < spans.length && spans[k + 1]!.i === i && ownWords(k + 1)
+            ? textOf(l).slice(0, onLineEnd(spans[k]!))
+            : textOf(l),
+        )
+        .join(" | "),
       // A wrapped line continues its bullet; a new bullet starts a new line.
       body: bodyLines
         .map((l, n) =>
@@ -847,6 +936,9 @@ export function roleBlocks(cv: string, today: Date = new Date()): RoleBlock[] {
 function roleLabel(b: RoleBlock): string {
   const name = b.header
     .replace(new RegExp(RANGE_RE.source, "gi"), " ")
+    .replace(new RegExp(TYPO_START_OPEN.source, "gi"), " ")
+    // A period removed from its brackets leaves "( )" or a lone bracket.
+    .replace(/\(\s*\)|\(\s*(?:\d{4}\s*[-–—]\s*)?$|\(\s*(?=\|)/g, " ")
     .split("|")
     .map((x) => x.replace(/^[\s·•\-–—]+|[\s·•\-–—,]+$/g, "").trim())
     .filter(Boolean)
@@ -1092,6 +1184,25 @@ function evaluateSubjectYears(
     needs_validation = false;
     note = `${allYears} yrs from: ${named([...strong, ...weak])}. Against ${req.min} required.`;
   }
+  // The subject described in a current role whose start year lost a digit
+  // (v1.7.12): evidence with no length to count. At least partial, and a
+  // recruiter confirms the dates.
+  const unread = strong.find((b) => b.span.startUnreadable);
+  if (unread && status !== "met") {
+    status = "partial";
+    needs_validation = true;
+    const counted = strong.filter((b) => !b.span.startUnreadable);
+    const subjectName = what.charAt(0).toUpperCase() + what.slice(1);
+    note =
+      `${subjectName} is described in a current role whose start date cannot be read on the CV: ${roleLabel(unread)}.` +
+      (counted.length > 0
+        ? ` ${oneDecimal(unionMonths(counted.map((b) => b.span)))} yrs more described, from: ${named(counted)}.`
+        : "") +
+      (weak.length > 0
+        ? ` ${oneDecimal(unionMonths(weak.map((b) => b.span)))} yrs from a title alone (${named(weak)}).`
+        : "") +
+      ` Against ${req.min} required; confirm the dates at screening.`;
+  }
   return {
     years: status === "met" ? strongYears : allYears,
     hasRoles: true,
@@ -1154,8 +1265,12 @@ function evaluateDatedYears(
     verdict: {
       rule: "minimum_years",
       status,
-      needs_validation: status !== "met",
-      note: `${years} years${level} from dated roles on the CV, against ${req.min} required.`,
+      needs_validation: status !== "met" || counted.some((s) => s.startUnreadable),
+      note: `${years} years${level} from dated roles on the CV, against ${req.min} required.${
+        counted.some((s) => s.startUnreadable)
+          ? " The start date of a current role cannot be read on the CV; confirm it at screening."
+          : ""
+      }`,
       evidence,
     },
   };

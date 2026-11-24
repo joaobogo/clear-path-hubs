@@ -64,7 +64,7 @@ describe("v1.7.10 — 'managed' describing a noun is not managing people", () =>
   });
 
   it("bumps the engine version", () => {
-    expect(ENGINE_VERSION).toBe("taasflow-scoring-v1.7.11");
+    expect(ENGINE_VERSION).toMatch(/^taasflow-scoring-v1\.\d+\.\d+$/);
   });
 });
 

@@ -268,4 +268,14 @@
  * v1.7.11 — month + apostrophe + two-digit employment years are read by
  * both the employment gate and subject-specific years rules.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.11";
+/**
+ * v1.7.12 — two jobs on one line, and a start year one digit short. A CV that
+ * wrote "Medical Biller — Foot & Ankle Center (2019–2020)Medical Biller —
+ * Medi-Corp Inc. (2015–" and "2019)" on the next line was read as one year of
+ * billing: the period cut by the line end was lost. A period may now continue
+ * on the next line, and each period on a shared line owns the words before it.
+ * A current role dated "April 202 – Present" is read as a role whose start
+ * cannot be read: what it describes counts as evidence, its length does not,
+ * and the dates are confirmed at screening.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.7.12";
