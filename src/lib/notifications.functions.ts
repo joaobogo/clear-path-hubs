@@ -32,6 +32,11 @@ export async function emitEventFromServer(args: {
   recipients?: Array<{ user_id: string; audience: Audience; link_path?: string }>;
   link_path?: string;
   /**
+   * A link per side, for an event both the client and staff are told about:
+   * each opens their own page. Falls back to link_path.
+   */
+  link_path_by_audience?: Partial<Record<Audience, string>>;
+  /**
    * Names the record this notification is about, for the STAFF feed only.
    *
    * Three "CV parsing failed — A CV could not be parsed and needs attention"
@@ -131,7 +136,7 @@ export async function emitEventFromServer(args: {
       const k = `${user_id}:${audience}`;
       if (seen.has(k)) return;
       seen.add(k);
-      buckets.push({ user_id, audience, link_path: args.link_path });
+      buckets.push({ user_id, audience, link_path: args.link_path_by_audience?.[audience] ?? args.link_path });
     };
 
     if (args.organization_id) {
