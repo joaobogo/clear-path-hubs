@@ -1,3 +1,4 @@
+import type { StaffActionContext } from "@/lib/staff-action-context";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -76,15 +77,22 @@ export const listAdminPayments = createServerFn({ method: "POST" })
  * Admin-only payment exemption — the honest way to run a free pilot role
  * without faking a payment. Requires a written reason and is audited.
  */
-export const grantPositionPaymentExemption = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: { positionId: string; reason: string }) => {
+export const grantPositionPaymentExemptionValidate = (data: { positionId: string; reason: string }) => {
     if (data.reason.trim().length < 10) {
       throw new Error("Give a written reason of at least 10 characters.");
     }
     return data;
-  })
-  .handler(async ({ data, context }) => {
+  };
+
+export const grantPositionPaymentExemption = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(grantPositionPaymentExemptionValidate)
+  .handler(grantPositionPaymentExemptionHandler);
+
+export async function grantPositionPaymentExemptionHandler({ data, context }: {
+  data: ReturnType<typeof grantPositionPaymentExemptionValidate>;
+  context: StaffActionContext;
+}) {
     const { supabase, userId } = context;
     await assertStaff(supabase, userId);
 
@@ -110,4 +118,4 @@ export const grantPositionPaymentExemption = createServerFn({ method: "POST" })
       console.error("[grantPositionPaymentExemption] activity emit failed", e);
     }
     return { ok: true as const };
-  });
+  }
