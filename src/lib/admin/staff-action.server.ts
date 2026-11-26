@@ -12,6 +12,10 @@
  * platform's own gates: the lifecycle order, the payment gate and the publish
  * gate are enforced by the handlers and the database, not here. Nothing else
  * (pause, close, archive, delete) is on the list.
+ *
+ * Two scoring-review actions are on it too: recording a reviewer's verdicts
+ * on a candidate's requirements, and recomputing a candidate's score. Neither
+ * approves, publishes or changes who can see a candidate.
  */
 import { ZodError, z } from "zod";
 import type { StaffActionContext } from "@/lib/staff-action-context";
@@ -30,6 +34,8 @@ export const STAFF_ACTION_OPS = [
   "get_position_for_edit",
   "get_requisition_quality",
   "check_publishable",
+  "record_review",
+  "recompute_score",
 ] as const;
 export type StaffActionOp = (typeof STAFF_ACTION_OPS)[number];
 
@@ -146,6 +152,16 @@ export async function runStaffAction(
         const m = await import("@/lib/requisition.functions");
         const data = m.getRequisitionQualityValidate(req.input);
         return { ok: true, op, result: await m.getRequisitionQualityHandler({ data, context }) };
+      }
+      case "record_review": {
+        const m = await import("@/lib/scoring-review.functions");
+        const data = m.submitHumanAdjustmentValidate(req.input);
+        return { ok: true, op, result: await m.submitHumanAdjustmentHandler({ data, context }) };
+      }
+      case "recompute_score": {
+        const m = await import("@/lib/scoring-review.functions");
+        const data = m.recomputeScoreValidate(req.input);
+        return { ok: true, op, result: await m.recomputeScoreHandler({ data, context }) };
       }
       case "check_publishable": {
         const id = String((req.input as { id?: unknown } | null)?.id ?? "");

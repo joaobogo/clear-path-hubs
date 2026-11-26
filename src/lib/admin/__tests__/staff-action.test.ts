@@ -39,6 +39,36 @@ vi.mock("@/lib/admin-payments.functions", () => ({
   },
 }));
 
+const reviews: unknown[] = [];
+const recomputes: unknown[] = [];
+vi.mock("@/lib/scoring-review.functions", () => ({
+  submitHumanAdjustmentValidate: (i: unknown) =>
+    z
+      .object({
+        match_id: z.string().uuid(),
+        reason: z.string().min(8),
+        verdicts: z
+          .array(
+            z.object({
+              requirement_id: z.string(),
+              verdict: z.enum(["met", "partial", "not_met", "not_applicable"]),
+              reason: z.string().min(8),
+            }),
+          )
+          .min(1),
+      })
+      .parse(i),
+  submitHumanAdjustmentHandler: async (a: { data: unknown; context: { userId: string } }) => {
+    reviews.push({ data: a.data, by: a.context.userId });
+    return { ok: true, final_score: 81.7 };
+  },
+  recomputeScoreValidate: (i: unknown) => z.object({ match_id: z.string().uuid() }).parse(i),
+  recomputeScoreHandler: async (a: { data: unknown; context: { userId: string } }) => {
+    recomputes.push({ data: a.data, by: a.context.userId });
+    return { ok: true, reused: false };
+  },
+}));
+
 const STAFF = "11111111-1111-4111-8111-111111111111";
 const ORG = "22222222-2222-4222-8222-222222222222";
 const admin = (staff: boolean) => ({ rpc: async () => ({ data: staff, error: null }) });
@@ -141,6 +171,52 @@ describe("runStaffAction", () => {
     );
     expect(out.ok).toBe(true);
     expect(published).toEqual([{ id: ORG, visibility: "public" }]);
+  });
+
+  it("records a reviewer's verdicts, Partial included, as the named staff member", async () => {
+    const { runStaffAction } = await import("@/lib/admin/staff-action.server");
+    const input = {
+      match_id: ORG,
+      reason: "Recruiter call recorded",
+      verdicts: [
+        { requirement_id: "req-3", verdict: "partial", reason: "Adjacent experience only" },
+      ],
+    };
+    const out = await runStaffAction(
+      { actor_user_id: STAFF, op: "record_review", input },
+      { admin: admin(true) },
+    );
+    expect(out).toMatchObject({ ok: true, result: { final_score: 81.7 } });
+    expect(reviews).toEqual([{ data: input, by: STAFF }]);
+    const bad = await runStaffAction(
+      {
+        actor_user_id: STAFF,
+        op: "record_review",
+        input: {
+          ...input,
+          verdicts: [{ requirement_id: "req-3", verdict: "maybe", reason: "No such verdict" }],
+        },
+      },
+      { admin: admin(true) },
+    );
+    expect(bad).toMatchObject({ ok: false, status: 400, error: "invalid_input" });
+    expect(reviews).toHaveLength(1);
+  });
+
+  it("recomputes a score through the review screen's own action", async () => {
+    const { runStaffAction } = await import("@/lib/admin/staff-action.server");
+    const out = await runStaffAction(
+      { actor_user_id: STAFF, op: "recompute_score", input: { match_id: ORG } },
+      { admin: admin(true) },
+    );
+    expect(out).toMatchObject({ ok: true, result: { reused: false } });
+    expect(recomputes).toEqual([{ data: { match_id: ORG }, by: STAFF }]);
+    const refused = await runStaffAction(
+      { actor_user_id: STAFF, op: "recompute_score", input: { match_id: ORG } },
+      { admin: admin(false) },
+    );
+    expect(refused).toMatchObject({ ok: false, status: 403, error: "actor_not_staff" });
+    expect(recomputes).toHaveLength(1);
   });
 
   it("never makes a role public from the posting save", async () => {

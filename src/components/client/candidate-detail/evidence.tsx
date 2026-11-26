@@ -26,7 +26,11 @@ import type {
 import { SectionCard } from "./shared";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 import { getEvidenceCounts, type EvidenceCounts } from "@/lib/client/evidence-counts";
-import { requirementStatusLabel, resolveRequirementStatus } from "@/lib/client/requirement-status";
+import {
+  recruiterVerifiedLabel,
+  requirementStatusLabel,
+  resolveRequirementStatus,
+} from "@/lib/client/requirement-status";
 
 
 export function statusBadge(status: RequirementStatus) {
@@ -417,6 +421,8 @@ export const RequirementRowView = memo(function RequirementRowView({
   // never as work in progress.
   const status = resolveRequirementStatus(row);
   const badge = statusBadge(status);
+  // A requirement a recruiter decided says so: "Partly met (recruiter verified)".
+  const verifiedLabel = recruiterVerifiedLabel({ status, recruiter_verified: row.recruiter_verified });
   // Presentation hygiene: identical and near-identical snippets collapse to
   // one, nothing repeats the summary line above, and a quote that survives as
   // a broken fragment is not shown at all.
@@ -465,10 +471,10 @@ export const RequirementRowView = memo(function RequirementRowView({
             "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
             badge.className,
           )}
-          aria-label={badge.aria}
+          aria-label={verifiedLabel ?? badge.aria}
         >
           {badge.icon}
-          {badge.label}
+          {verifiedLabel ?? badge.label}
         </span>
       </div>
       {safeClaim && !saysTheSame(safeClaim, shownExplanation) && (
