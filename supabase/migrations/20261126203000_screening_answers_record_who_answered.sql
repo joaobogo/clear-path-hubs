@@ -42,7 +42,7 @@ END $$;
 COMMENT ON COLUMN public.application_answers.answered_by IS
   'candidate: the candidate''s own answer. recruiter_on_behalf: entered by staff from another channel, pending the candidate''s confirmation.';
 COMMENT ON COLUMN public.application_answers.source_note IS
-  'Where a recruiter-entered answer came from. Staff only; never shown to a client or a candidate.';
+  'Where a recruiter-entered answer came from. The app shows it to staff only; a client never reads it.';
 COMMENT ON COLUMN public.application_answers.candidate_confirmed_at IS
   'When the candidate answered a question a recruiter had answered for them.';
 

@@ -360,7 +360,12 @@ export async function acknowledgeRecruiterAnswers(
       message: "There are no recruiter-entered answers waiting for this candidate's confirmation.",
     };
   }
-  const now = new Date().toISOString();
+  // The database compares this stamp with the time of the latest entry, and
+  // the two clocks can differ by a moment. The stamp is never earlier than the
+  // entries the recruiter was shown, so what they acknowledged is covered and
+  // anything entered afterwards is not.
+  const latestMs = state.latest_pending_at ? new Date(state.latest_pending_at).getTime() : 0;
+  const now = new Date(Math.max(Date.now(), latestMs + 1000)).toISOString();
   const { data: before } = await db
     .from("candidate_matches")
     .select("organization_id")
