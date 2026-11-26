@@ -1841,7 +1841,11 @@ function ApplyPage() {
                   </li>
                   <li>
                     <span className="text-foreground">Who sees it:</span> the TaaSFlow review team,
-                    and the hiring team at {pos.organization_name} for this role. Nobody else.
+                    and{" "}
+                    {pos.confidential
+                      ? "the employer's hiring team"
+                      : `the hiring team at ${pos.organization_name}`}{" "}
+                    for this role. Nobody else.
                   </li>
                   <li>
                     <span className="text-foreground">How long:</span> 12 months after this role
@@ -1920,8 +1924,14 @@ function ApplyPage() {
                 <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Review &amp; submit</h2>
                 <p className="text-sm text-muted-foreground">
                   Check your email address carefully — every update about{" "}
-                  <span className="font-medium">{pos.title}</span> at{" "}
-                  <span className="font-medium">{pos.organization_name}</span> goes there.
+                  <span className="font-medium">{pos.title}</span>
+                  {pos.confidential ? null : (
+                    <>
+                      {" "}
+                      at <span className="font-medium">{pos.organization_name}</span>
+                    </>
+                  )}{" "}
+                  goes there.
                 </p>
               </div>
 

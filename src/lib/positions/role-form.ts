@@ -59,6 +59,11 @@ import {
   travelText,
   type RequisitionLocation,
 } from "@/lib/requisition-schema";
+import {
+  RESPONSE_TIMES_HIDDEN,
+  responseTimesHidden,
+  wordingText,
+} from "@/lib/jobs/public-wording";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -307,6 +312,14 @@ export type PositionEditInitial = RoleIntakeAnswers & {
   brand_tone: string;
   application_deadline: string;
   confidentiality: string;
+
+  // The role's own wording for its public page (jobs/public-wording.ts).
+  // Edited on the job-post screen; the role editor leaves them as stored.
+  headline: string;
+  work_arrangement: string;
+  location_line: string;
+  employer_label: string;
+  response_times: string;
 };
 
 /** Zod shape for the intake answers, spread into the save validator. */
@@ -559,6 +572,11 @@ export function positionToEditForm(p: AnyRow, screeningRows: AnyRow[] = []): Pos
     brand_tone: asStr(posting.brand_tone),
     application_deadline: asStr(posting.application_deadline),
     confidentiality: asStr(posting.confidentiality) || "public",
+    headline: wordingText(posting.headline),
+    work_arrangement: wordingText(posting.work_arrangement),
+    location_line: wordingText(posting.location_line),
+    employer_label: wordingText(posting.employer_label),
+    response_times: responseTimesHidden(posting.response_times) ? RESPONSE_TIMES_HIDDEN : "",
     screening_questions: (screeningRows ?? []).map((r) => ({
       id: r.id,
       question: r.question,

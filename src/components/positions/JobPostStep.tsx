@@ -40,6 +40,11 @@ export type JobPostFields = {
   brand_tone: string;
   application_deadline: string;
   confidentiality: string;
+  headline: string;
+  work_arrangement: string;
+  location_line: string;
+  employer_label: string;
+  response_times: string;
   screening_questions: { question: string; required: boolean; answer_type: string }[];
 };
 
@@ -165,6 +170,82 @@ export function JobPostStep({
         </Block>
       </div>
 
+      {/* The role's own wording for its public page. Each is optional; left
+          empty, the page prints the line it works out from the role's fields. */}
+      <div className="space-y-4 rounded-lg border bg-muted/20 p-4">
+        <div>
+          <h3 className="text-sm font-semibold">Wording on the job page</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Optional. Leave a field empty to keep the line the page works out for itself.
+          </p>
+        </div>
+        <Block
+          label="First line under the title"
+          hint="One or two sentences a candidate reads before anything else."
+        >
+          <Textarea
+            rows={2}
+            maxLength={240}
+            data-field="headline"
+            value={value.headline}
+            onChange={(e) => onChange("headline", e.target.value)}
+          />
+        </Block>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Block
+            label="Work arrangement"
+            hint="Replaces Remote / Hybrid / On-site on the page, e.g. Field-based in London. Up to 50% travel."
+          >
+            <Input
+              maxLength={200}
+              data-field="work_arrangement"
+              value={value.work_arrangement}
+              onChange={(e) => onChange("work_arrangement", e.target.value)}
+            />
+          </Block>
+          <Block
+            label="Location line"
+            hint="Replaces the location fact, e.g. London, UK (field-based). Territory: UK & Ireland."
+          >
+            <Input
+              maxLength={200}
+              data-field="location_line"
+              value={value.location_line}
+              onChange={(e) => onChange("location_line", e.target.value)}
+            />
+          </Block>
+          <Block
+            label="Employer wording (confidential posts)"
+            hint="Shown instead of Confidential employer, e.g. An AI-first engineering firm (name shared after screening)."
+          >
+            <Input
+              maxLength={120}
+              data-field="employer_label"
+              disabled={(value.confidentiality || "public") !== "confidential"}
+              value={value.employer_label}
+              onChange={(e) => onChange("employer_label", e.target.value)}
+            />
+          </Block>
+          <Block
+            label="Response times on the page"
+            hint="The standard page promises a decision within five business days."
+          >
+            <Select
+              value={value.response_times === "hidden" ? "hidden" : "standard"}
+              onValueChange={(v) => onChange("response_times", v === "hidden" ? "hidden" : "")}
+            >
+              <SelectTrigger data-field="response_times">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="standard">Standard — show the response times</SelectItem>
+                <SelectItem value="hidden">Leave response times off this page</SelectItem>
+              </SelectContent>
+            </Select>
+          </Block>
+        </div>
+      </div>
+
       <Block label="Company introduction" hint="Two or three lines candidates read first.">
         <Textarea
           rows={3}
@@ -242,12 +323,15 @@ export function JobPostStep({
           >
             <header className="space-y-1">
               <h1 className="text-lg font-semibold">{value.title || "Untitled role"}</h1>
+              {value.headline.trim() ? <p className="text-sm">{value.headline.trim()}</p> : null}
               <p className="text-sm text-muted-foreground">
                 {[
-                  value.confidentiality === "confidential" ? "Confidential employer" : null,
+                  value.confidentiality === "confidential"
+                    ? value.employer_label.trim() || "Confidential employer"
+                    : null,
                   value.department,
-                  value.location,
-                  value.work_model,
+                  value.location_line.trim() || value.location,
+                  value.work_arrangement.trim() || value.work_model,
                   value.employment_type?.replace("_", " "),
                   value.seniority,
                 ]

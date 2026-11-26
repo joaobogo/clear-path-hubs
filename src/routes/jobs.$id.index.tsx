@@ -100,9 +100,11 @@ export const Route = createFileRoute("/jobs/$id/")({
     }
     const pos = loaderData.position;
     if (!pos) return { meta: [{ title: "TaaSFlow job board" }] };
-    const employer = pos.organization_name;
+    // Titles and link previews name the employer in short; the role's own
+    // first line, when it has one, is the summary people see with the link.
+    const employer = pos.organization_title_name;
     const title = `${pos.title} — ${employer} · TaaSFlow`;
-    const desc = jobDescriptionSummary(pos.description, 155);
+    const desc = pos.headline || jobDescriptionSummary(pos.description, 155);
     const canonical = `https://taasflow.com/jobs/${buildJobSlug(pos)}`;
     const image = pos.organization_logo_url;
     return {
@@ -131,7 +133,12 @@ export const Route = createFileRoute("/jobs/$id/")({
           : [
               {
                 type: "application/ld+json",
-                children: JSON.stringify(buildJobPostingJsonLd(pos, canonical)),
+                children: JSON.stringify(
+                  buildJobPostingJsonLd(
+                    { ...pos, organization_name: pos.organization_title_name },
+                    canonical,
+                  ),
+                ),
               },
             ],
     };
@@ -383,7 +390,20 @@ function JobDetail() {
   // heading, at the top. The page already prints both, so those duplicates are
   // dropped from the first two blocks.
   const norm = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-  const blocks = parseJobDescription(pos.description).filter((b, i) => {
+  const introParagraphs = new Set(
+    (pos.company_intro ?? "")
+      .split(/\n\s*\n/)
+      .map(norm)
+      .filter((t) => t.length >= 40),
+  );
+  const isIntroCopy = (text: string) => {
+    const t = norm(text);
+    return (
+      introParagraphs.has(t) ||
+      (t.startsWith("about the company ") && introParagraphs.has(t.slice(18)))
+    );
+  };
+  const blocks = parseJobDescription(pos.description).filter((b, i, all) => {
     if (
       b.kind === "heading" &&
       (norm(b.text) === "about the role" || (i < 2 && norm(b.text) === norm(pos.title)))
@@ -394,9 +414,32 @@ function JobDetail() {
     // page itself. A pasted banner restating them differently is dropped so the
     // listing never contradicts itself.
     if (b.kind !== "list" && i < 4 && isMetaHeaderLine(b.text)) return false;
+    // The company introduction has its own section above. A description that
+    // carries the same paragraphs again would print them twice.
+    if (b.kind !== "list" && introParagraphs.size > 0) {
+      if (isIntroCopy(b.text)) return false;
+      // Its heading goes with it, when the next block is the copy.
+      const next = all[i + 1];
+      if (
+        norm(b.text) === "about the company" &&
+        next &&
+        next.kind !== "list" &&
+        isIntroCopy(next.text)
+      ) {
+        return false;
+      }
+    }
     return true;
   });
-  const workModel = labelWorkModel(pos.work_model);
+  // The role's own arrangement wording replaces the work-model tag: its short
+  // form when it has one, no tag when it is a full sentence.
+  const workModel =
+    pos.work_arrangement_label === null
+      ? labelWorkModel(pos.work_model)
+      : pos.work_arrangement_label || null;
+  // In a sentence, a confidential employer is "the employer", whatever label
+  // the page shows for it under the title.
+  const employerInSentence = pos.confidential ? "the employer" : pos.organization_name;
   const employment = labelEmployment(pos.employment_type);
 
   const effort = pos.apply_effort ?? EFFORT_DEFAULT;
@@ -436,6 +479,11 @@ function JobDetail() {
               <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance md:text-4xl">
                 {pos.title}
               </h1>
+              {pos.headline ? (
+                <p className="mt-3 max-w-3xl text-base leading-relaxed text-foreground/90">
+                  {pos.headline}
+                </p>
+              ) : null}
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {workModel && <Badge variant="secondary">{workModel}</Badge>}
                 {employment && <Badge variant="outline">{employment}</Badge>}
@@ -560,7 +608,9 @@ function JobDetail() {
                       : "."
                   }`,
                   "TaaSFlow reviewers verify your fit against the role's requirements and preferred qualifications.",
-                  `Shortlisted candidates are introduced to ${pos.organization_name} within a few business days.`,
+                  pos.hide_response_times
+                    ? `Shortlisted candidates are introduced to ${employerInSentence}.`
+                    : `Shortlisted candidates are introduced to ${employerInSentence} within a few business days.`,
                 ].map((step, i) => (
                   <li key={i} className="flex gap-4">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
@@ -580,8 +630,9 @@ function JobDetail() {
                     When you hear from us
                   </dt>
                   <dd className="mt-1 text-[0.95rem] text-foreground/90">
-                    A confirmation straight away, and a real decision on your application
-                    within five business days.
+                    {pos.hide_response_times
+                      ? "A confirmation straight away."
+                      : "A confirmation straight away, and a real decision on your application within five business days."}
                   </dd>
                 </div>
                 <div>
@@ -597,8 +648,9 @@ function JobDetail() {
                     Who sees your application
                   </dt>
                   <dd className="mt-1 text-[0.95rem] text-foreground/90">
-                    TaaSFlow reviewers first. {pos.organization_name} sees it only if you are
-                    shortlisted for this role.
+                    TaaSFlow reviewers first.{" "}
+                    {pos.confidential ? "The employer" : pos.organization_name} sees it only if
+                    you are shortlisted for this role.
                   </dd>
                 </div>
                 <div>
@@ -648,7 +700,11 @@ function JobDetail() {
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Badge variant="secondary" className="font-normal">
                       {pos.location}
-                      {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}` : ""}
+                      {pos.work_arrangement_label
+                        ? ` · ${pos.work_arrangement_label}`
+                        : pos.work_arrangement_label === null && pos.work_model
+                          ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}`
+                          : ""}
                       {pos.openings && pos.openings > 1 ? ` · ${pos.openings} openings` : " · 1 opening"}
                     </Badge>
                   </div>

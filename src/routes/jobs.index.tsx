@@ -424,9 +424,13 @@ function JobsPage() {
                         <h2 className="mt-0.5 text-lg font-semibold truncate">{p.title}</h2>
                       </div>
                       <div className="flex flex-wrap gap-1.5 shrink-0">
-                        {labelWorkModel(p.work_model) && (
+                        {/* The role's own arrangement wording replaces the
+                            work-model tag (see work_arrangement_label). */}
+                        {p.work_arrangement_label ? (
+                          <Badge variant="secondary">{p.work_arrangement_label}</Badge>
+                        ) : p.work_arrangement_label === null && labelWorkModel(p.work_model) ? (
                           <Badge variant="secondary">{labelWorkModel(p.work_model)}</Badge>
-                        )}
+                        ) : null}
                         {labelEmployment(p.employment_type) && (
                           <Badge variant="outline">{labelEmployment(p.employment_type)}</Badge>
                         )}

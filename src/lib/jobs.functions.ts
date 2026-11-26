@@ -13,6 +13,12 @@ import {
 } from "@/lib/jobs/public-facts";
 import { applyEffortDefault, resolveApplyEffort } from "@/lib/jobs/apply-effort";
 import { travelText } from "@/lib/requisition-schema";
+import {
+  arrangementLabel,
+  employerLabelForTitle,
+  responseTimesHidden,
+  wordingText,
+} from "@/lib/jobs/public-wording";
 import { jobDescriptionSummary } from "@/lib/marketing/job-description";
 import { QA_E2E_COOKIE, qaEndpointsEnabled } from "@/lib/public-api/qa-endpoint-gate";
 import { publicOrgNameOr, hasInternalOrgMarker } from "@/lib/org/public-org-name";
@@ -75,6 +81,13 @@ export type PublicPositionSummary = {
     | null;
   seniority: string | null;
   organization_name: string;
+  /**
+   * The tag a card shows for how the work is arranged: the role's own
+   * statement in short ("Field-based in London") when it set one, else null
+   * and the card falls back to the work model. `false` means the role states
+   * its arrangement in a sentence too long for a tag, so no tag is shown.
+   */
+  work_arrangement_label: string | false | null;
   compensation_display: string | null;
   /** Always non-empty: the range, "Range shared on the first call", or "Not specified". */
   compensation_line: string;
@@ -138,6 +151,57 @@ async function publishableIds(
   return out;
 }
 
+type PostingWording = {
+  headline: string;
+  work_arrangement: string;
+  location_line: string;
+  /** Set only for a confidential posting. */
+  employer_label: string;
+  response_times: string;
+};
+
+/**
+ * The role's own wording for its public page (see public-wording.ts). anon
+ * has no grant on intake_context, so these are read server-side as single
+ * JSON paths, for roles that have already passed every public gate; nothing
+ * else of intake_context is fetched. A failed read returns nothing, and each
+ * page falls back to its derived lines.
+ */
+async function readPostingWording(ids: string[]): Promise<Map<string, PostingWording>> {
+  const out = new Map<string, PostingWording>();
+  if (ids.length === 0) return out;
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
+      .from("positions")
+      .select(
+        "id," +
+          "headline:intake_context->posting->>headline," +
+          "work_arrangement:intake_context->posting->>work_arrangement," +
+          "location_line:intake_context->posting->>location_line," +
+          "employer_label:intake_context->posting->>employer_label," +
+          "response_times:intake_context->posting->>response_times," +
+          "confidentiality:intake_context->posting->>confidentiality",
+      )
+      .in("id", ids);
+    for (const row of (data ?? []) as unknown as Array<Record<string, unknown>>) {
+      if (typeof row?.id !== "string") continue;
+      out.set(row.id, {
+        headline: wordingText(row.headline),
+        work_arrangement: wordingText(row.work_arrangement),
+        location_line: wordingText(row.location_line),
+        employer_label: isConfidentialPosting(row.confidentiality)
+          ? wordingText(row.employer_label)
+          : "",
+        response_times: wordingText(row.response_times),
+      });
+    }
+  } catch {
+    out.clear();
+  }
+  return out;
+}
+
 export const listPublicPositions = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicPositionSummary[]> => {
     const supabase = publicClient();
@@ -190,6 +254,8 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
       }
     }
 
+    const wording = await readPostingWording(ids);
+
     return (data ?? [])
       .filter((p) => {
         const desc = (p.description ?? "").trim();
@@ -206,6 +272,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           (p as { compensation_visibility?: string | null }).compensation_visibility,
         );
         const desc = (p.description ?? "").trim();
+        const own = wording.get(p.id);
         return {
           id: p.id,
           title: p.title,
@@ -213,14 +280,19 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           work_model: p.work_model,
           employment_type: p.employment_type,
           seniority: p.seniority,
-          organization_name: publicOrgNameOr(employerNames.get(p.id), "Hiring Organization"),
+          organization_name:
+            own?.employer_label ||
+            publicOrgNameOr(employerNames.get(p.id), "Hiring Organization"),
+          work_arrangement_label: own?.work_arrangement
+            ? arrangementLabel(own.work_arrangement) || false
+            : null,
           compensation_display: comp.display,
           compensation_line: comp.line,
 
           published_at: p.published_at,
           // Markdown marks and headings never reach a card: the preview is the
           // first real sentence of prose.
-          description_preview: jobDescriptionSummary(desc, 220),
+          description_preview: own?.headline || jobDescriptionSummary(desc, 220),
           openings: (p as { openings?: number }).openings ?? 1,
           facts: { posted: buildPublicJobFacts({ ...p, employment_type: p.employment_type as any, published_at: p.published_at, description: desc }).posted },
         };
@@ -334,6 +406,12 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     // used for placeholders (e.g. the phone input's country prefix).
     const primaryLoc = (locs ?? []).find((l) => l.is_primary) ?? (locs ?? [])[0];
 
+    // The role's own wording for this page; each is empty when not set.
+    const own = (await readPostingWording([pos.id])).get(pos.id);
+    const headline = own?.headline ?? "";
+    const ownArrangement = own?.work_arrangement ?? "";
+    const employerLabel = confidential ? (own?.employer_label ?? "") : "";
+
     // The seven deciding facts are resolved server-side so the board card, the
     // detail page and the JSON-LD can never drift apart.
     const facts = buildPublicJobFacts({
@@ -349,6 +427,8 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       employment_type: pos.employment_type,
       published_at: pos.published_at,
       description: desc,
+      work_arrangement_statement: ownArrangement || null,
+      location_line: own?.location_line || null,
     });
 
     // How long applying takes: this posting's own completed submissions once
@@ -443,8 +523,20 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         return /^https:\/\//i.test(trimmed) ? trimmed : null;
       })(),
       organization_name: confidential
-        ? CONFIDENTIAL_EMPLOYER_NAME
+        ? employerLabel || CONFIDENTIAL_EMPLOYER_NAME
         : publicOrgNameOr(employer?.name, "Hiring Organization"),
+      /** The employer as a page title or link preview names it. */
+      organization_title_name: confidential
+        ? employerLabelForTitle(employerLabel) || CONFIDENTIAL_EMPLOYER_NAME
+        : publicOrgNameOr(employer?.name, "Hiring Organization"),
+      /** The role's first line, shown under the title; empty when not set. */
+      headline,
+      /** See PublicPositionSummary.work_arrangement_label. */
+      work_arrangement_label: ownArrangement
+        ? arrangementLabel(ownArrangement) || (false as const)
+        : null,
+      /** True when the role leaves response-time promises off its page. */
+      hide_response_times: responseTimesHidden(own?.response_times),
       questions: (questions ?? []).map((q) => ({
         id: q.id,
         question: q.question,
