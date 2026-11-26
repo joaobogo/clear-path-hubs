@@ -38,6 +38,8 @@ export const STAFF_ACTION_OPS = [
   "recompute_score",
   "record_answers_on_behalf",
   "acknowledge_recruiter_answers",
+  "preview_role_rescore",
+  "edit_profile_narrative",
 ] as const;
 export type StaffActionOp = (typeof STAFF_ACTION_OPS)[number];
 
@@ -178,6 +180,16 @@ export async function runStaffAction(
           op,
           result: await m.acknowledgeRecruiterAnswersHandler({ data, context }),
         };
+      }
+      case "preview_role_rescore": {
+        const m = await import("@/lib/scoring/rescore-preview.functions");
+        const data = m.previewRoleRescoreValidate(req.input);
+        return { ok: true, op, result: await m.previewRoleRescoreHandler({ data, context }) };
+      }
+      case "edit_profile_narrative": {
+        const m = await import("@/lib/admin/profile-narrative.functions");
+        const data = m.editProfileNarrativeValidate(req.input);
+        return { ok: true, op, result: await m.editProfileNarrativeHandler({ data, context }) };
       }
       case "check_publishable": {
         const id = String((req.input as { id?: unknown } | null)?.id ?? "");

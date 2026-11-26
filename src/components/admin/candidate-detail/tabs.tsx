@@ -38,7 +38,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber, runApprovalLabel } from "@/components/admin/admin-score-number";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
-import { renderQuote } from "@/lib/evidence/quote-hygiene";
+import { humanizeSource, renderQuote } from "@/lib/evidence/quote-hygiene";
 import { isNearDuplicate } from "@/lib/evidence/evidence-presentation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -583,11 +583,7 @@ export function EvidenceTab({
                     return (
                       <li key={j}>
                         "{safe}"{" "}
-                        <code className="opacity-60">
-                          {typeof e.location === 'string'
-                            ? e.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2')
-                            : (e.source ?? "")}
-                        </code>
+                        <code className="opacity-60">{evidenceWhere(e)}</code>
                       </li>
                     );
                   })}
@@ -915,6 +911,17 @@ function Bar({ label, value }: { label: string; value?: number | null }) {
 }
 
 // ── Screening ──────────────────────────────────────────────────────────────
+/**
+ * Where a quote was read, for staff: the source when it is not the CV file
+ * (the profile, a recruiter's entry, a screening answer) and the place in it.
+ */
+function evidenceWhere(e: Any): string {
+  const where = typeof e?.location === "string" ? humanizeSource(e.location) : "";
+  const source =
+    typeof e?.source === "string" && e.source && e.source !== "cv" ? humanizeSource(e.source) : "";
+  return [source, where].filter(Boolean).join(" · ") || (e?.source ?? "");
+}
+
 export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any }) {
   const items = (result?.screening_evidence ?? []) as Any[];
   const llmAnalysis: Any[] = Array.isArray(evidence?.extracted?.insights?.screening_analysis)
@@ -939,8 +946,19 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
     );
   }
 
+  const recruiterEntered = Number(result?.screening_source?.recruiter_on_behalf ?? 0);
+
   return (
     <div className="space-y-4">
+      {recruiterEntered > 0 && (
+        <div className="rounded-lg border border-amber-300/60 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-950/30 dark:text-amber-200">
+          {recruiterEntered === 1
+            ? "1 of these answers was entered by a recruiter"
+            : `${recruiterEntered} of these answers were entered by a recruiter`}{" "}
+          on the candidate's behalf and counted in this score, pending the candidate's
+          confirmation.
+        </div>
+      )}
       {items.length > 0 && (
         <ul className="space-y-2">
           {items.map((s, i) => {

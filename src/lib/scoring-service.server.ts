@@ -519,6 +519,127 @@ async function auditEligibilityChange(
   });
 }
 
+
+export type ScoringPreview =
+  | { ok: false; match_id: string; reason: string }
+  | {
+      ok: true;
+      match_id: string;
+      engine_version: string;
+      /** True when a completed run already has exactly these inputs under this rubric. */
+      inputs_unchanged: boolean;
+      machine: { score: number; fit_label: string; statuses: Record<string, string> };
+      /** Present when a recruiter's review is on record: what the match would show. */
+      reviewed: { score: number; statuses: Record<string, string>; kept: number; followed_machine: number } | null;
+      /** The score every list would show after a re-score. */
+      shown_score: number;
+      eligibility: string;
+    };
+
+/**
+ * What a re-score would say today, without writing anything.
+ *
+ * The same inputs executeScoring loads, the same engine call and the same
+ * reconciliation, under the rubric version that governs the role now; then the
+ * recruiter's review on record, put back by the same plan a real re-score
+ * uses. No run, lock, check, audit row or rubric version is written, so a
+ * whole role can be previewed before anyone decides to re-score it.
+ */
+export async function previewScoring(matchId: string): Promise<ScoringPreview> {
+  const s = await getAdmin();
+  let ctx: Awaited<ReturnType<typeof loadInputs>>;
+  try {
+    ctx = await loadInputs(matchId);
+  } catch (e) {
+    return { ok: false, match_id: matchId, reason: (e as Error)?.message ?? "inputs_unreadable" };
+  }
+  if (!ctx.position) return { ok: false, match_id: matchId, reason: "position_not_found" };
+  if (!ctx.cvFile) return { ok: false, match_id: matchId, reason: "cv_file_missing" };
+  if (ctx.requirements.length === 0) return { ok: false, match_id: matchId, reason: "requirements_missing" };
+  const cvText: string = ctx.cvFile.extracted_text ?? "";
+  if (cvText.length < 60) return { ok: false, match_id: matchId, reason: "cv_unparsed" };
+  const scoringMode = ((ctx.position as Any).scoring_mode as string | null) ?? "standard";
+  if (scoringMode !== "relocation_volume" && employmentIntervals(cvText).length === 0) {
+    return { ok: false, match_id: matchId, reason: "cv_employment_history_missing" };
+  }
+
+  const roleFamily = await resolveRoleFamily(s, ctx.position.title ?? null);
+  // Read-only: the governing version as it stands, or the defaults a first
+  // score would mint. Nothing is minted here.
+  const governing = await findGoverningRubric(s, ctx.match.position_id);
+  const calibration = governing?.calibration ?? resolveCalibration(roleFamily);
+  const raw = scoreCandidate({
+    cv_text: cvText,
+    requirements: ctx.requirements,
+    screening: ctx.screening,
+    candidate_location:
+      [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") ||
+      null,
+    role_context: ctx.roleContext,
+    calibration,
+    eligibility_checks: ctx.eligibilityChecks,
+    scoring_mode: scoringMode,
+    profile_text: ctx.profileText,
+  });
+  const rec = reconcile(raw);
+  if (!rec.reconciled) {
+    return { ok: false, match_id: matchId, reason: `reconciliation_failed:${rec.mismatch}` };
+  }
+
+  let inputsUnchanged = false;
+  if (governing?.id) {
+    const { data: same } = await s
+      .from("score_runs")
+      .select("id")
+      .eq("candidate_match_id", matchId)
+      .eq("input_hash", raw.input_hash)
+      .eq("rubric_version_id", governing.id)
+      .eq("status", "completed")
+      .limit(1)
+      .maybeSingle();
+    inputsUnchanged = Boolean(same?.id);
+  }
+
+  const statusesOf = (rows: ReadonlyArray<{ id: string; status: string }>) =>
+    Object.fromEntries(rows.map((r) => [r.id, r.status]));
+  const { previewReviewOnResult } = await import("./scoring/human-adjusted-run.server");
+  const review = await previewReviewOnResult({
+    matchId,
+    result: {
+      ...raw,
+      calibration: serialiseCalibration(calibration),
+      applied_caps: rec.applied_caps,
+    },
+    fitLabel: raw.fit_label,
+    db: s,
+  });
+  const decision = resolveScoredEligibility({
+    disqualifying_answers: raw.disqualifying_answers,
+    eligibility_checks: ctx.eligibilityChecks,
+  });
+  return {
+    ok: true,
+    match_id: matchId,
+    engine_version: raw.engine_version,
+    inputs_unchanged: inputsUnchanged,
+    machine: {
+      score: raw.score,
+      fit_label: raw.fit_label,
+      statuses: statusesOf(raw.requirement_assessment),
+    },
+    reviewed: review.reviewed
+      ? {
+          score: review.final_score,
+          statuses: statusesOf(review.assessment),
+          kept: review.kept,
+          followed_machine: review.followed_machine,
+        }
+      : null,
+    shown_score: review.reviewed ? review.final_score : raw.score,
+    eligibility: decision.status,
+  };
+}
+
 /**
  * Canonical scoring entry point.
  *

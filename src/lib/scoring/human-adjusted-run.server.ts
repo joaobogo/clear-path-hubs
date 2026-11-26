@@ -602,6 +602,50 @@ export type ReapplyOutcome =
  * current reviewed run already sits on this machine run and says the same.
  * Throws on failure; the caller keeps the previous reviewed run current.
  */
+/**
+ * What putting the review back on a machine result would give, without
+ * writing anything. Used by the re-score preview: the same plan and the same
+ * arithmetic as reapplyHumanReview, on a result that was never stored.
+ */
+export async function previewReviewOnResult(opts: {
+  matchId: string;
+  /** The machine result as a run would store it. */
+  result: Any;
+  fitLabel: string | null;
+  db?: Any;
+}): Promise<
+  | { reviewed: false }
+  | {
+      reviewed: true;
+      final_score: number;
+      assessment: AssessmentRow[];
+      kept: number;
+      followed_machine: number;
+      dropped: number;
+    }
+> {
+  const s = opts.db ?? (await getAdmin());
+  const stored = await latestVerdictsForMatch(opts.matchId, s);
+  if (stored.length === 0) return { reviewed: false };
+  const base = { result: opts.result, fit_label: opts.fitLabel };
+  const assessment = assessmentOf(base);
+  if (assessment.length === 0) return { reviewed: false };
+  const plan = planReapply(
+    assessment,
+    stored.map((v) => ({ ...v, reapplied: true })),
+  );
+  if (plan.apply.length === 0 && plan.carried_forward.length === 0) return { reviewed: false };
+  const built = buildReviewRun(base, plan);
+  return {
+    reviewed: true,
+    final_score: built.adj.final_score,
+    assessment: built.adjusted,
+    kept: plan.apply.length,
+    followed_machine: plan.carried_forward.length,
+    dropped: plan.dropped.length,
+  };
+}
+
 export async function reapplyHumanReview(opts: {
   matchId: string;
   /** The machine run just completed; defaults to the latest one. */
