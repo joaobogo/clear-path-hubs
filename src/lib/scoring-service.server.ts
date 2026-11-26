@@ -806,11 +806,18 @@ export async function executeScoring(
     // reviewed run stays current and the match is flagged for staff; the
     // machine score is never the silent fallback.
     let currentRunId: string | null = runId;
+    // The score the match now shows: the reviewed run's when a review is on
+    // record, the machine's otherwise. Callers quote this number back to
+    // staff, so it has to be the one every list and card reads.
+    let currentScore: number = raw.score;
     let reapplyError: string | null = null;
     try {
       const { reapplyHumanReview } = await import("./scoring/human-adjusted-run.server");
       const review = await reapplyHumanReview({ matchId, machineRunId: runId, traceId: trace_id, db: s });
-      if (review.status !== "none") currentRunId = review.run_id;
+      if (review.status !== "none") {
+        currentRunId = review.run_id;
+        currentScore = review.final_score;
+      }
     } catch (e) {
       reapplyError = (e as Error)?.message ?? "human_reapply_failed";
       currentRunId = null;
@@ -883,7 +890,7 @@ export async function executeScoring(
 
     return {
       ok: true, run_id: currentRunId ?? runId, match_id: matchId, trace_id,
-      final_state: finalState, reused, score: raw.score,
+      final_state: finalState, reused, score: currentScore,
     };
   } catch (err) {
     const msg = (err as Error).message ?? "engine_error";
