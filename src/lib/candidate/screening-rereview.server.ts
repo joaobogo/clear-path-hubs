@@ -16,6 +16,7 @@
 import {
   lateAnswerRescoreBlock,
   lateDealbreakerHits,
+  recruiterAnswerChangedTask,
   screeningReReviewTask,
   type ReReviewTaskReason,
   type ScreeningQuestionRow,
@@ -121,6 +122,65 @@ export async function openReReviewTask(
       question_ids: args.questionIds,
       dealbreaker_question_ids: args.dealbreakers.map((q) => q.id),
       ...(args.heldAtDrain ? { held_at: "drain", processing_job_id: args.heldAtDrain.jobId } : {}),
+    },
+  });
+  if (error) return { ok: false, error: error.message ?? "task_insert_failed" };
+  return { ok: true, error: null, reused: false };
+}
+
+/**
+ * One open task per match saying the candidate's own answers differ from what
+ * a recruiter had entered for them (reused when one is already open).
+ */
+export async function openChangedAnswersTask(
+  db: Db,
+  args: {
+    match: ReviewState | null;
+    organizationId: string | null;
+    positionId: string | null;
+    candidateProfileId: string | null;
+    applicationId: string;
+    candidateName: string | null;
+    positionTitle: string | null;
+    changed: ScreeningQuestionRow[];
+    dealbreakers: ScreeningQuestionRow[];
+  },
+): Promise<{ ok: boolean; error: string | null; reused?: boolean }> {
+  const organizationId = args.match?.organization_id ?? args.organizationId;
+  if (!organizationId) return { ok: false, error: "no_organization" };
+  if (args.match) {
+    const { data: open, error: openErr } = await db
+      .from("tasks")
+      .select("id")
+      .eq("candidate_match_id", args.match.id)
+      .eq("task_type", "candidate_review")
+      .in("status", ["open", "in_progress"])
+      .is("deleted_at", null)
+      .contains("metadata", { source: "recruiter_answers_changed" })
+      .limit(1);
+    if (!openErr && (open ?? []).length > 0) return { ok: true, error: null, reused: true };
+  }
+  const task = recruiterAnswerChangedTask({
+    candidateName: args.candidateName,
+    positionTitle: args.positionTitle,
+    changedQuestions: args.changed.map((q) => q.question),
+    dealbreakers: args.dealbreakers.map((q) => q.question),
+  });
+  const { error } = await db.from("tasks").insert({
+    organization_id: organizationId,
+    position_id: args.match?.position_id ?? args.positionId,
+    candidate_match_id: args.match?.id ?? null,
+    candidate_profile_id: args.match?.candidate_profile_id ?? args.candidateProfileId,
+    task_type: "candidate_review",
+    title: task.title,
+    description: task.description,
+    priority: task.priority,
+    status: "open",
+    metadata: {
+      source: "recruiter_answers_changed",
+      application_id: args.applicationId,
+      changed_question_ids: args.changed.map((q) => q.id),
+      dealbreaker_question_ids: args.dealbreakers.map((q) => q.id),
     },
   });
   if (error) return { ok: false, error: error.message ?? "task_insert_failed" };

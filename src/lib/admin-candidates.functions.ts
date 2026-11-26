@@ -246,7 +246,7 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
       const { hasVideoIntro, withVideoIntroBonus } = await import("@/lib/scoring/published-score");
       const { data: videoRows } = await s
         .from("candidate_matches")
-        .select("id, intro_video_url")
+        .select("id, intro_video_url, position_id, application_id")
         .in("id", matchIds);
       const videoByMatch = new Map(
         ((videoRows ?? []) as AnyRow[]).map((v) => [String(v.id), hasVideoIntro(v)]),
@@ -254,6 +254,31 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
       pageRows = pageRows.map((r) =>
         withVideoIntroBonus(r, videoByMatch.get(String(r.match_id)) ?? false),
       );
+      // A score built from the CV alone says so in the list (scoring/cv-only.ts).
+      const { loadScreeningFacts, screeningFactsFor } = await import(
+        "@/lib/scoring/cv-only.server"
+      );
+      const { isCvOnlyScore } = await import("@/lib/scoring/cv-only");
+      const { publishedScore: scoreOf } = await import("@/lib/scoring/published-score");
+      const matchRows = (videoRows ?? []) as AnyRow[];
+      const facts = await loadScreeningFacts(
+        matchRows.map((v) => v.position_id),
+        matchRows.map((v) => v.application_id),
+      );
+      const factsByMatch = new Map(
+        matchRows.map((v) => [String(v.id), screeningFactsFor(facts, v)]),
+      );
+      pageRows = pageRows.map((r) => {
+        const f = factsByMatch.get(String(r.match_id));
+        return {
+          ...r,
+          cv_only: isCvOnlyScore({
+            scored: scoreOf(r) != null,
+            roleHasQuestions: f?.role_has_questions === true,
+            hasAnswers: f?.has_answers === true,
+          }),
+        };
+      });
       // The view now sorts on published_score; re-ordering the page on the
       // folded figure keeps the page order equal to the displayed number.
       if (data.sort === "score_desc" || data.sort === "score_asc") {
@@ -538,7 +563,7 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
           .maybeSingle(),
         s
           .from("application_answers")
-          .select("id,question_id,answer,created_at,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)")
+          .select("id,question_id,answer,created_at,updated_at,answered_by,source_note,entered_by_user_id,candidate_confirmed_at,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)")
           .eq("application_id", m.application_id)
           .order("created_at", { ascending: true }),
 
@@ -596,11 +621,27 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
       }
     }
 
+    // The role's questions, so a recruiter can enter answers gathered from
+    // another channel; and whether publishing waits on their acknowledgement.
+    const { data: screeningQuestions } = m.application_id
+      ? await s
+          .from("screening_questions")
+          .select("id,question,answer_type,required,dealbreaker,options,display_order")
+          .eq("position_id", m.position_id)
+          .order("display_order", { ascending: true })
+      : { data: [] as AnyRow[] };
+    const { recruiterAnswerPublishState } = await import(
+      "@/lib/candidate/answers-on-behalf.server"
+    );
+    const recruiterAnswers = await recruiterAnswerPublishState(s, data.match_id);
+
     return {
       match: m as AnyRow,
       profile,
       application: (appRes.data ?? null) as AnyRow,
       answers: (answersRes.data ?? []) as AnyRow[],
+      screening_questions: (screeningQuestions ?? []) as AnyRow[],
+      recruiter_answers: recruiterAnswers,
       notes: (notesRes.data ?? []) as AnyRow[],
       audit: (auditRes.data ?? []) as AnyRow[],
       interviews: (interviewsRes.data ?? []) as AnyRow[],

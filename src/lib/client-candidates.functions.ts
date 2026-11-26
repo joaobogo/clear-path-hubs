@@ -172,8 +172,12 @@ export const getClientCandidates = createServerFn({ method: "GET" })
       await loadConfirmedHires(context.supabase, data.orgId),
     );
 
+    // Which of these scores rest on the CV alone (scoring/cv-only.ts).
+    const { withScreeningFacts } = await import("@/lib/scoring/cv-only.server");
+    const rowsWithFacts = await withScreeningFacts(((rows as AnyRow[]) ?? []) as AnyRow[]);
+
     // Map to sanitized client-safe DTOs first — filters below operate on those.
-    let dtos = ((rows as AnyRow[]) ?? []).map((r) =>
+    let dtos = (rowsWithFacts as AnyRow[]).map((r) =>
       toClientCandidateDTO({
         ...r,
         client_decided: decidedMatches.has(r.id as string),
@@ -256,7 +260,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
       applicationId
         ? context.supabase
             .from("application_answers")
-            .select("id, answer, screening_questions(question, display_order)")
+            .select("id, answer, answered_by, candidate_confirmed_at, screening_questions(question, display_order)")
             .eq("application_id", applicationId)
         : Promise.resolve({ data: [] as AnyRow[] }),
       auditIds.length > 0
@@ -322,8 +326,11 @@ export const getClientCandidate = createServerFn({ method: "GET" })
       audit_events: ((auditRes as AnyRow).data as AnyRow[]) ?? [],
     };
 
+    const { withScreeningFacts: detailFacts } = await import("@/lib/scoring/cv-only.server");
+    const [matchWithFacts] = await detailFacts([matchWithAnswers as AnyRow]);
+
     return {
-      candidate: toClientCandidateDTO(matchWithAnswers),
+      candidate: toClientCandidateDTO(matchWithFacts),
       // One entry per real decision: a decision recorded more than once never
       // shows up as a repeating history.
       decisions: dedupeDecisions(((decisions as AnyRow[]) ?? []) as AnyRow[]),

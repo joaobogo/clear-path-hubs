@@ -47,6 +47,18 @@ export function explainApproveFailure(message: string): ApproveFailure {
     };
   }
 
+  if (raw.includes("recruiter_answers_unconfirmed")) {
+    return {
+      raw,
+      title: "Recruiter-entered answers need your confirmation",
+      detail:
+        "Some of this candidate's screening answers were entered by a recruiter and the candidate has not confirmed them. Publishing them is a decision someone makes on purpose, so it needs a confirmation first.",
+      retryable: false,
+      nextStep:
+        "Open the candidate's Screening answers, choose \"Confirm: publish with recruiter-entered answers\", then publish again. The client will see those answers labelled as recruiter-entered.",
+    };
+  }
+
   if (raw === "forbidden") {
     return {
       raw,

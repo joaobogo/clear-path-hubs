@@ -1554,7 +1554,7 @@ export const getClientPreview = createServerFn({ method: "GET" })
       applicationId
         ? supabaseAdmin
             .from("application_answers")
-            .select("id, answer, screening_questions(question, display_order)")
+            .select("id, answer, answered_by, candidate_confirmed_at, screening_questions(question, display_order)")
             .eq("application_id", applicationId)
         : Promise.resolve({ data: [] as AnyRow[] }),
       import("./client-kpi.server").then((m) =>
@@ -1576,8 +1576,10 @@ export const getClientPreview = createServerFn({ method: "GET" })
     };
 
     const { toClientCandidateDTO } = await import("@/lib/client-kpi.server");
+    const { withScreeningFacts } = await import("@/lib/scoring/cv-only.server");
+    const [matchWithFacts] = await withScreeningFacts([matchWithAnswers as AnyRow]);
     return {
-      candidate: toClientCandidateDTO(matchWithAnswers as AnyRow),
+      candidate: toClientCandidateDTO(matchWithFacts as AnyRow),
       decisions: (decisionsRes.data as AnyRow[]) ?? [],
       /** True when the score shown is not yet approved, so this is a forecast. */
       usingUnapprovedRun,

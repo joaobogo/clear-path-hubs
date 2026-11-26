@@ -581,6 +581,9 @@ function CandidateDetailPage() {
 {a.question}
 </dt>
 <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
+{a.source_label && (
+<dd className="mt-0.5 text-xs text-muted-foreground">{a.source_label}</dd>
+)}
 </div>
 ))}
 </dl>

@@ -5,8 +5,14 @@
  * applications and staff assignments never get the form here.
  *
  * Verified by reference + the email on the application on every call, exactly
- * like the rest of the status page (findApplication). Only unanswered
- * questions are offered and stored; a stored answer is never overwritten.
+ * like the rest of the status page (findApplication). Only questions the
+ * candidate has not answered themselves are offered and stored; an answer the
+ * candidate gave is never overwritten.
+ *
+ * A question a recruiter answered for the candidate (answer-source.ts) is
+ * still the candidate's to answer. When they do, their answer replaces the
+ * recruiter's, the recruiter's entry is kept as history, the answer is marked
+ * as confirmed by the candidate, and staff are told which answers differ.
  *
  * What happens next depends on the score:
  *  - unreviewed match: the application is queued for parse_and_score, the
@@ -36,7 +42,13 @@ import {
   type LateAnswerInput,
   type ScreeningQuestionRow,
 } from "./screening-invite";
-import { matchReviewState, openReReviewTask, type ReviewState } from "./screening-rereview.server";
+import {
+  matchReviewState,
+  openChangedAnswersTask,
+  openReReviewTask,
+  type ReviewState,
+} from "./screening-rereview.server";
+import { answerChanged, candidateAnsweredIds, pendingCandidateConfirmation } from "./answer-source";
 import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 
 export interface PublicScreeningQuestion {
@@ -63,6 +75,18 @@ async function admin() {
 
 type Found = NonNullable<Awaited<ReturnType<typeof findApplication>>>;
 
+type StoredAnswerRow = {
+  id: string;
+  question_id: string;
+  answer: unknown;
+  answered_by: string | null;
+  source_note: string | null;
+  entered_by_user_id: string | null;
+  candidate_confirmed_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
 async function screeningContext(app: Found) {
   const db = await admin();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,12 +101,20 @@ async function screeningContext(app: Found) {
       .order("display_order", { ascending: true }),
     db
       .from("application_answers")
-      .select("question_id")
+      .select(
+        "id,question_id,answer,answered_by,source_note,entered_by_user_id,candidate_confirmed_at,created_at,updated_at",
+      )
       .eq("application_id", row.id as string),
   ]);
   if (qErr || aErr) throw new Error((qErr ?? aErr)?.message ?? "screening_lookup_failed");
   const all = (questions ?? []) as ScreeningQuestionRow[];
-  const answeredIds = ((answers ?? []) as Array<{ question_id: string }>).map((a) => a.question_id);
+  const stored = (answers ?? []) as StoredAnswerRow[];
+  // A recruiter's entry does not close a question: only the candidate's own
+  // answer does.
+  const answeredIds = candidateAnsweredIds(stored);
+  const recruiterEntries = new Map(
+    stored.filter((a) => pendingCandidateConfirmation(a)).map((a) => [a.question_id, a]),
+  );
   const pos = row.positions as { status?: string | null } | null;
   const positionOpen = SCREENING_OPEN_POSITION_STATUSES.includes(pos?.status ?? "");
   const closed = applicationIsClosed({
@@ -99,6 +131,7 @@ async function screeningContext(app: Found) {
   const pending = sourceOk && screeningStillOpen(all, answeredIds);
   return {
     all,
+    recruiterEntries,
     unanswered: unansweredQuestions(all, answeredIds),
     pending,
     open: pending && positionOpen && !closed,
@@ -178,12 +211,56 @@ export async function answerScreeningByReference(input: {
     question_id: r.question_id,
     answer: { value: r.value },
   }));
-  // ignoreDuplicates: a row that appeared since the form loaded (a second tab,
-  // staff entry) wins — a stored answer is never replaced from here.
-  const { error } = await db
-    .from("application_answers")
-    .upsert(rows, { onConflict: "application_id,question_id", ignoreDuplicates: true });
-  if (error) return { ok: false, message: SAVE_FAILED };
+  // Questions a recruiter answered for the candidate: the candidate's answer
+  // replaces the entry, and the entry is kept as history first.
+  const replacing = rows.filter((r) => ctx.recruiterEntries.has(r.question_id));
+  const fresh = rows.filter((r) => !ctx.recruiterEntries.has(r.question_id));
+  const confirmedAt = new Date().toISOString();
+  const replacedIds: string[] = [];
+  const changedIds: string[] = [];
+  for (const r of replacing) {
+    const entry = ctx.recruiterEntries.get(r.question_id)!;
+    const changed = answerChanged(entry.answer, r.answer);
+    const { error: histErr } = await db.from("application_answer_history").insert({
+      application_id: applicationId,
+      question_id: r.question_id,
+      question: ctx.all.find((q) => q.id === r.question_id)?.question ?? null,
+      answer: entry.answer as never,
+      answered_by: "recruiter_on_behalf",
+      source_note: entry.source_note,
+      entered_by_user_id: entry.entered_by_user_id,
+      answered_at: entry.updated_at ?? entry.created_at,
+      replaced_by: "candidate",
+      answer_changed: changed,
+    });
+    if (histErr) return { ok: false, message: SAVE_FAILED };
+    const { data: updated, error: updErr } = await db
+      .from("application_answers")
+      .update({
+        answer: r.answer,
+        answered_by: "candidate",
+        source_note: null,
+        entered_by_user_id: null,
+        candidate_confirmed_at: confirmedAt,
+      })
+      .eq("id", entry.id)
+      // Only a recruiter's entry is replaced; the candidate's own answer never is.
+      .eq("answered_by", "recruiter_on_behalf")
+      .select("id");
+    if (updErr) return { ok: false, message: SAVE_FAILED };
+    if ((updated ?? []).length > 0) {
+      replacedIds.push(r.question_id);
+      if (changed) changedIds.push(r.question_id);
+    }
+  }
+  if (fresh.length > 0) {
+    // ignoreDuplicates: a row that appeared since the form loaded (a second
+    // tab, staff entry) wins — a stored answer is never replaced from here.
+    const { error } = await db
+      .from("application_answers")
+      .upsert(fresh, { onConflict: "application_id,question_id", ignoreDuplicates: true });
+    if (error) return { ok: false, message: SAVE_FAILED };
+  }
 
   const questionIds = rows.map((r) => r.question_id);
   const pos = row.positions as { title?: string | null; organization_id?: string | null } | null;
@@ -228,6 +305,22 @@ export async function answerScreeningByReference(input: {
       if (!t.ok) problems.push(`task: ${t.error}`);
     }
   }
+  // The candidate's answer differs from the recruiter's entry: say which.
+  if (changedIds.length > 0) {
+    const changed = ctx.all.filter((q) => changedIds.includes(q.id));
+    const t = await openChangedAnswersTask(db, {
+      match: review,
+      organizationId: taskArgs.organizationId,
+      positionId: taskArgs.positionId,
+      candidateProfileId: taskArgs.candidateProfileId,
+      applicationId,
+      candidateName: taskArgs.candidateName,
+      positionTitle: taskArgs.positionTitle,
+      changed,
+      dealbreakers: taskArgs.dealbreakers.filter((q) => changedIds.includes(q.id)),
+    });
+    if (!t.ok) problems.push(`changed-answers task: ${t.error}`);
+  }
   if (problems.length) {
     console.error("[screening-answers] follow-up failed", applicationId, problems.join("; "));
   }
@@ -240,6 +333,12 @@ export async function answerScreeningByReference(input: {
       question_ids: questionIds,
       follow_up: followUp,
       rescore_blocked_by: block,
+      ...(replacedIds.length
+        ? {
+            replaced_recruiter_answer_question_ids: replacedIds,
+            changed_from_recruiter_question_ids: changedIds,
+          }
+        : {}),
       ...(problems.length ? { problems } : {}),
     },
   });

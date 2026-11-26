@@ -41,6 +41,28 @@ vi.mock("@/lib/admin-payments.functions", () => ({
 
 const reviews: unknown[] = [];
 const recomputes: unknown[] = [];
+const onBehalf: unknown[] = [];
+const acknowledgements: unknown[] = [];
+vi.mock("@/lib/candidate/answers-on-behalf.functions", () => ({
+  recordAnswersOnBehalfValidate: (i: unknown) =>
+    z
+      .object({
+        match_id: z.string().uuid(),
+        source_note: z.string(),
+        answers: z.array(z.object({ question_id: z.string().uuid(), value: z.unknown() })).min(1),
+      })
+      .parse(i),
+  recordAnswersOnBehalfHandler: async (a: { data: unknown; context: { userId: string } }) => {
+    onBehalf.push({ data: a.data, by: a.context.userId });
+    return { ok: true, saved: 1, corrected: 0 };
+  },
+  acknowledgeRecruiterAnswersValidate: (i: unknown) =>
+    z.object({ match_id: z.string().uuid() }).parse(i),
+  acknowledgeRecruiterAnswersHandler: async (a: { data: unknown; context: { userId: string } }) => {
+    acknowledgements.push({ data: a.data, by: a.context.userId });
+    return { ok: true, pending: 1 };
+  },
+}));
 vi.mock("@/lib/scoring-review.functions", () => ({
   submitHumanAdjustmentValidate: (i: unknown) =>
     z
@@ -217,6 +239,41 @@ describe("runStaffAction", () => {
     );
     expect(refused).toMatchObject({ ok: false, status: 403, error: "actor_not_staff" });
     expect(recomputes).toHaveLength(1);
+  });
+
+  it("enters answers on a candidate's behalf and acknowledges them as the named staff member", async () => {
+    const { runStaffAction } = await import("@/lib/admin/staff-action.server");
+    const input = {
+      match_id: ORG,
+      source_note: "Phone call with the candidate, 26 Nov",
+      answers: [{ question_id: ORG, value: "yes" }],
+    };
+    const out = await runStaffAction(
+      { actor_user_id: STAFF, op: "record_answers_on_behalf", input },
+      { admin: admin(true) },
+    );
+    expect(out).toMatchObject({ ok: true, result: { saved: 1 } });
+    expect(onBehalf).toEqual([{ data: input, by: STAFF }]);
+
+    const ack = await runStaffAction(
+      { actor_user_id: STAFF, op: "acknowledge_recruiter_answers", input: { match_id: ORG } },
+      { admin: admin(true) },
+    );
+    expect(ack).toMatchObject({ ok: true, result: { pending: 1 } });
+    expect(acknowledgements).toEqual([{ data: { match_id: ORG }, by: STAFF }]);
+
+    // A non-staff actor, or an entry with no answers, stores nothing.
+    const refused = await runStaffAction(
+      { actor_user_id: STAFF, op: "record_answers_on_behalf", input },
+      { admin: admin(false) },
+    );
+    expect(refused).toMatchObject({ ok: false, status: 403, error: "actor_not_staff" });
+    const bad = await runStaffAction(
+      { actor_user_id: STAFF, op: "record_answers_on_behalf", input: { ...input, answers: [] } },
+      { admin: admin(true) },
+    );
+    expect(bad).toMatchObject({ ok: false, status: 400, error: "invalid_input" });
+    expect(onBehalf).toHaveLength(1);
   });
 
   it("never makes a role public from the posting save", async () => {

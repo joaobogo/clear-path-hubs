@@ -87,7 +87,7 @@ export const getMyEmployerPreview = createServerFn({ method: "GET" })
       row.application_id
         ? supabaseAdmin
             .from("application_answers")
-            .select("id, answer, screening_questions(question, display_order)")
+            .select("id, answer, answered_by, candidate_confirmed_at, screening_questions(question, display_order)")
             .eq("application_id", row.application_id)
         : Promise.resolve({ data: [] as AnyRow[] }),
       supabaseAdmin
@@ -105,8 +105,14 @@ export const getMyEmployerPreview = createServerFn({ method: "GET" })
         (a.screening_questions?.display_order ?? 0) - (b.screening_questions?.display_order ?? 0),
     );
 
+    const { loadScreeningFacts, screeningFactsFor } = await import("@/lib/scoring/cv-only.server");
+    const screeningFacts = screeningFactsFor(
+      await loadScreeningFacts([row.position_id], [row.application_id]),
+      row,
+    );
     const dto = toClientCandidateDTO({
       ...row,
+      screening_facts: screeningFacts,
       evidence_items: evidenceByMatch.get(data.match_id) ?? [],
       application_answers: answers,
       audit_events: ((auditRes as AnyRow).data as AnyRow[]) ?? [],

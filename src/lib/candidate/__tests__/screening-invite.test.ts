@@ -44,6 +44,7 @@ function query(table: string) {
     | { kind: "insert"; rows: Row[] }
     | { kind: "upsert"; rows: Row[]; conflict: string[]; ignore: boolean } = { kind: "select" };
   let single = false;
+  let selected = false;
   let limit = Infinity;
   const rows = () => (db[table] ??= []);
   const run = () => {
@@ -55,12 +56,17 @@ function query(table: string) {
     }
     if (op.kind === "upsert") {
       const { conflict, ignore } = op;
+      const inserted: Row[] = [];
       for (const r of op.rows) {
         const hit = rows().find((x) => conflict.every((k) => x[k] === r[k]));
         if (hit && !ignore) Object.assign(hit, r);
-        if (!hit) rows().push({ ...r });
+        if (!hit) {
+          rows().push({ ...r });
+          inserted.push(r);
+        }
       }
-      return { data: null, error: null };
+      // With ignoreDuplicates PostgREST returns only the rows it inserted.
+      return { data: selected ? inserted : null, error: null };
     }
     const hit = rows()
       .filter((r) => filters.every((f) => f(r)))
@@ -70,7 +76,7 @@ function query(table: string) {
     return { data: hit, error: null };
   };
   const api: Record<string, unknown> = {
-    select: () => api,
+    select: () => ((selected = true), api),
     update: (patch: Row) => ((op = { kind: "update", patch }), api),
     insert: (r: Row | Row[]) => ((op = { kind: "insert", rows: Array.isArray(r) ? r : [r] }), api),
     upsert: (r: Row[], o: { onConflict: string; ignoreDuplicates?: boolean }) => (
@@ -144,6 +150,20 @@ import {
 } from "../screening-invite";
 import { runScreeningInvites, sendScreeningInviteByStaff } from "../screening-invite.server";
 import { answerScreeningByReference, loadScreeningByReference } from "../screening-answers.server";
+import {
+  acknowledgeRecruiterAnswers,
+  recordAnswersOnBehalf,
+  recruiterAnswerPublishState,
+} from "../answers-on-behalf.server";
+import {
+  RECRUITER_ANSWER_CLIENT_LABEL,
+  answerChanged,
+  candidateAnsweredIds,
+  pendingCandidateConfirmation,
+  publishNeedsAcknowledgement,
+  sourceNoteProblem,
+} from "../answer-source";
+import { buildShortlistRationale } from "@/lib/client-rationale";
 import { TEMPLATES } from "@/lib/email-templates/registry";
 
 // ---- Hughes Mushrooms fixture (questions as stored for the live role) -------
@@ -1363,6 +1383,418 @@ describe("before migration 0013 (low: operator note)", () => {
     err.mockRestore();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Scoring fix spec, 26 Nov 2026, Fix 6: record who gave each screening answer.
+// Daniel Miles's five answers were typed in by a recruiter through the public
+// status page, so they were stored exactly like his own.
+describe("a recruiter enters answers on the candidate's behalf", () => {
+  const STAFF = "e60fd0fc-0000-4000-8000-000000000001";
+  const NOTE = "Phone call with the candidate, 26 Nov";
+  const scored = (score: number) =>
+    executeScoring.mockImplementationOnce(async () => ({
+      ok: true,
+      run_id: MACHINE_RUN,
+      match_id: ADIYA_MATCH,
+      trace_id: "t",
+      final_state: "scored",
+      reused: false,
+      score,
+    }) as never);
+
+  beforeEach(() => {
+    executeScoring.mockClear();
+  });
+
+  it("needs a note of where the answers came from, and stores nothing without one", async () => {
+    seed([staffEntryApp()]);
+    const res = await recordAnswersOnBehalf(admin, {
+      matchId: ADIYA_MATCH,
+      actorUserId: STAFF,
+      sourceNote: "call",
+      answers: [{ question_id: Q.rota, value: "yes" }],
+    });
+    expect(res.ok).toBe(false);
+    expect(db.application_answers).toHaveLength(0);
+    expect(executeScoring).not.toHaveBeenCalled();
+  });
+
+  it("stores them as recruiter-entered with the note and who typed them, then rescores", async () => {
+    seed([staffEntryApp()]);
+    scored(71.2);
+    const res = await recordAnswersOnBehalf(admin, {
+      matchId: ADIYA_MATCH,
+      actorUserId: STAFF,
+      sourceNote: `  ${NOTE}  `,
+      answers: [
+        { question_id: Q.rota, value: "yes" },
+        { question_id: Q.workAuth, value: "Graduate visa" },
+        { question_id: Q.haccp, value: "" },
+      ],
+    });
+    expect(res).toMatchObject({ ok: true, saved: 2, corrected: 0, rescored: true, score: 71.2 });
+    expect(db.application_answers).toEqual([
+      {
+        application_id: ADIYA_APP,
+        question_id: Q.rota,
+        answer: { value: true },
+        answered_by: "recruiter_on_behalf",
+        source_note: NOTE,
+        entered_by_user_id: STAFF,
+      },
+      {
+        application_id: ADIYA_APP,
+        question_id: Q.workAuth,
+        answer: { value: "Graduate visa" },
+        answered_by: "recruiter_on_behalf",
+        source_note: NOTE,
+        entered_by_user_id: STAFF,
+      },
+    ]);
+    expect(db.audit_events).toEqual([
+      expect.objectContaining({
+        actor_user_id: STAFF,
+        action: "recruiter_screening_answers_on_behalf",
+        entity_id: ADIYA_MATCH,
+        after_state: expect.objectContaining({
+          source_note: NOTE,
+          saved_question_ids: [Q.rota, Q.workAuth],
+        }),
+      }),
+    ]);
+    // Nothing is approved, published or moved.
+    expect(db.candidate_matches[0]).toMatchObject({
+      admin_status: "pending",
+      client_visibility: "hidden",
+      stage: "new",
+    });
+    expect(sendTemplateEmail).not.toHaveBeenCalled();
+  });
+
+  it("never touches an answer the candidate gave personally", async () => {
+    seed(
+      [staffEntryApp()],
+      [{ id: "a-1", application_id: ADIYA_APP, question_id: Q.picking, answer: { value: false } }],
+    );
+    scored(60);
+    const res = await recordAnswersOnBehalf(admin, {
+      matchId: ADIYA_MATCH,
+      actorUserId: STAFF,
+      sourceNote: NOTE,
+      answers: [
+        { question_id: Q.picking, value: "yes" },
+        { question_id: Q.rota, value: "yes" },
+      ],
+    });
+    expect(res).toMatchObject({ ok: true, saved: 1, kept_candidate_answers: 1 });
+    expect(db.application_answers[0]).toEqual({
+      id: "a-1",
+      application_id: ADIYA_APP,
+      question_id: Q.picking,
+      answer: { value: false },
+    });
+  });
+
+  it("keeps the earlier entry as history when the recruiter corrects one", async () => {
+    seed(
+      [staffEntryApp()],
+      [
+        {
+          id: "a-2",
+          application_id: ADIYA_APP,
+          question_id: Q.workAuth,
+          answer: { value: "Graduate visa" },
+          answered_by: "recruiter_on_behalf",
+          source_note: "LinkedIn message, 25 Nov",
+          entered_by_user_id: STAFF,
+          candidate_confirmed_at: null,
+          created_at: "2026-11-25T10:00:00.000Z",
+        },
+      ],
+    );
+    scored(64);
+    const res = await recordAnswersOnBehalf(admin, {
+      matchId: ADIYA_MATCH,
+      actorUserId: STAFF,
+      sourceNote: NOTE,
+      answers: [{ question_id: Q.workAuth, value: "Skilled Worker visa" }],
+    });
+    expect(res).toMatchObject({ ok: true, saved: 0, corrected: 1 });
+    expect(db.application_answers[0]).toMatchObject({
+      answer: { value: "Skilled Worker visa" },
+      answered_by: "recruiter_on_behalf",
+      source_note: NOTE,
+    });
+    expect(db.application_answer_history).toEqual([
+      expect.objectContaining({
+        application_id: ADIYA_APP,
+        question_id: Q.workAuth,
+        answer: { value: "Graduate visa" },
+        answered_by: "recruiter_on_behalf",
+        source_note: "LinkedIn message, 25 Nov",
+        replaced_by: "recruiter_on_behalf",
+        answer_changed: true,
+      }),
+    ]);
+  });
+
+  it("does not recalculate an approved score", async () => {
+    seed([staffEntryApp()], [], { admin_status: "approved", approved_score_run_id: MACHINE_RUN });
+    const res = await recordAnswersOnBehalf(admin, {
+      matchId: ADIYA_MATCH,
+      actorUserId: STAFF,
+      sourceNote: NOTE,
+      answers: [{ question_id: Q.rota, value: "yes" }],
+    });
+    expect(res).toMatchObject({ ok: true, saved: 1, rescored: false, score: null });
+    expect(executeScoring).not.toHaveBeenCalled();
+  });
+});
+
+describe("the candidate answers for themselves after a recruiter did", () => {
+  const creds = { reference: ref(ADIYA_APP), email: ADIYA_EMAIL };
+  const recruiterRow = (question_id: string, value: unknown, id: string): Row => ({
+    id,
+    application_id: ADIYA_APP,
+    question_id,
+    answer: { value },
+    answered_by: "recruiter_on_behalf",
+    source_note: "Phone call with the candidate, 26 Nov",
+    entered_by_user_id: "staff-1",
+    candidate_confirmed_at: null,
+    created_at: "2026-11-26T16:28:31.000Z",
+    updated_at: "2026-11-26T16:28:31.000Z",
+  });
+  const allFive = () => [
+    recruiterRow(Q.picking, true, "r-1"),
+    recruiterRow(Q.rota, true, "r-2"),
+    recruiterRow(Q.english, true, "r-3"),
+    recruiterRow(Q.workAuth, "British citizen", "r-4"),
+    recruiterRow(Q.haccp, true, "r-5"),
+  ];
+
+  it("a recruiter's entry does not close the question: all five are still theirs to answer", async () => {
+    seed([staffEntryApp({ screening_invite_status: "sent" })], allFive());
+    const open = await loadScreeningByReference(creds.reference, creds.email);
+    expect(open?.open).toBe(true);
+    expect(open?.questions.map((q) => q.id)).toEqual([
+      Q.picking,
+      Q.rota,
+      Q.english,
+      Q.workAuth,
+      Q.haccp,
+    ]);
+    expect(candidateAnsweredIds(db.application_answers as never)).toEqual([]);
+  });
+
+  it("their answers replace the recruiter's, the entries are kept as history, and differences are flagged", async () => {
+    seed([staffEntryApp({ screening_invite_status: "sent" })], allFive());
+    const res = await answerScreeningByReference({
+      ...creds,
+      answers: [
+        { question_id: Q.picking, value: true },
+        // Differs from the recruiter's "yes" on a dealbreaker.
+        { question_id: Q.rota, value: false },
+        { question_id: Q.english, value: true },
+        // Same words, different case: not a difference.
+        { question_id: Q.workAuth, value: "british citizen" },
+        { question_id: Q.haccp, value: null },
+      ],
+    });
+    expect(res.ok).toBe(true);
+
+    const byQ = new Map(db.application_answers.map((a) => [a.question_id, a]));
+    for (const q of [Q.picking, Q.rota, Q.english, Q.workAuth]) {
+      expect(byQ.get(q)).toMatchObject({
+        answered_by: "candidate",
+        source_note: null,
+        entered_by_user_id: null,
+      });
+      expect(byQ.get(q)!.candidate_confirmed_at).toEqual(expect.any(String));
+    }
+    expect(byQ.get(Q.rota)!.answer).toEqual({ value: false });
+    // The optional question the candidate skipped keeps the recruiter's entry, still labelled.
+    expect(pendingCandidateConfirmation(byQ.get(Q.haccp) as never)).toBe(true);
+    expect(db.application_answers).toHaveLength(5);
+
+    expect(db.application_answer_history).toHaveLength(4);
+    expect(db.application_answer_history.map((h) => [h.question_id, h.answer_changed])).toEqual([
+      [Q.picking, false],
+      [Q.rota, true],
+      [Q.english, false],
+      [Q.workAuth, false],
+    ]);
+    expect(db.application_answer_history[1]).toMatchObject({
+      answer: { value: true },
+      answered_by: "recruiter_on_behalf",
+      source_note: "Phone call with the candidate, 26 Nov",
+      replaced_by: "candidate",
+    });
+
+    // Rescored through the same durable job as any late answer.
+    expect(db.processing_jobs).toHaveLength(1);
+    // One task names the answer that differs; it is a dealbreaker, so it is high priority.
+    const flagged = db.tasks.filter(
+      (t) => (t.metadata as Row).source === "recruiter_answers_changed",
+    );
+    expect(flagged).toHaveLength(1);
+    expect(flagged[0]).toMatchObject({
+      title: "Candidate's answers differ from the recruiter's entry",
+      priority: "high",
+      candidate_match_id: ADIYA_MATCH,
+    });
+    expect(String(flagged[0].description)).toContain("1 answer differs");
+    expect((flagged[0].metadata as Row).changed_question_ids).toEqual([Q.rota]);
+    expect(db.audit_events[0]).toMatchObject({
+      after_state: expect.objectContaining({
+        replaced_recruiter_answer_question_ids: [Q.picking, Q.rota, Q.english, Q.workAuth],
+        changed_from_recruiter_question_ids: [Q.rota],
+      }),
+    });
+    // Nothing is approved, published or emailed by answering.
+    expect(db.candidate_matches[0]).toMatchObject({
+      admin_status: "pending",
+      client_visibility: "hidden",
+    });
+    expect(sendTemplateEmail).not.toHaveBeenCalled();
+  });
+
+  it("answers that agree with the recruiter's raise no flag", async () => {
+    seed([staffEntryApp({ screening_invite_status: "sent" })], allFive());
+    await answerScreeningByReference({
+      ...creds,
+      answers: [
+        { question_id: Q.picking, value: true },
+        { question_id: Q.rota, value: true },
+        { question_id: Q.english, value: true },
+        { question_id: Q.workAuth, value: "British citizen" },
+      ],
+    });
+    expect(db.tasks).toHaveLength(0);
+    expect(db.application_answer_history.every((h) => h.answer_changed === false)).toBe(true);
+  });
+
+  it("the automatic link still goes to a candidate whose only answers are a recruiter's", async () => {
+    seed([staffEntryApp()], [recruiterRow(Q.picking, true, "r-1")]);
+    const sweep = await runScreeningInvites(admin, { now: NOW });
+    expect(sweep).toMatchObject({ sent: 1 });
+  });
+});
+
+describe("publishing with recruiter-entered answers is acknowledged first", () => {
+  const STAFF = "e60fd0fc-0000-4000-8000-000000000001";
+  const row = (updated_at: string): Row => ({
+    id: "r-1",
+    application_id: ADIYA_APP,
+    question_id: Q.rota,
+    answer: { value: true },
+    answered_by: "recruiter_on_behalf",
+    source_note: "Phone call with the candidate, 26 Nov",
+    candidate_confirmed_at: null,
+    created_at: updated_at,
+    updated_at,
+  });
+
+  it("is needed while an entry is unconfirmed, and again after a newer entry", async () => {
+    seed([staffEntryApp()], [row("2026-11-26T16:28:31.000Z")]);
+    expect(await recruiterAnswerPublishState(admin, ADIYA_MATCH)).toMatchObject({
+      pending: 1,
+      needs_acknowledgement: true,
+    });
+
+    const ack = await acknowledgeRecruiterAnswers(admin, { matchId: ADIYA_MATCH, actorUserId: STAFF });
+    expect(ack).toMatchObject({ ok: true, pending: 1 });
+    expect(db.candidate_matches[0]).toMatchObject({
+      recruiter_answers_confirmed_by: STAFF,
+      // Acknowledging is not publishing.
+      client_visibility: "hidden",
+      admin_status: "pending",
+    });
+    expect(db.audit_events.at(-1)).toMatchObject({
+      action: "recruiter_answers_publish_acknowledged",
+      actor_user_id: STAFF,
+    });
+    expect((await recruiterAnswerPublishState(admin, ADIYA_MATCH)).needs_acknowledgement).toBe(false);
+
+    // A recruiter enters another answer afterwards: the earlier acknowledgement no longer covers it.
+    db.application_answers.push({ ...row("2099-01-01T00:00:00.000Z"), id: "r-2", question_id: Q.english });
+    expect((await recruiterAnswerPublishState(admin, ADIYA_MATCH)).needs_acknowledgement).toBe(true);
+  });
+
+  it("is not needed, and cannot be given, when the candidate answered everything personally", async () => {
+    seed(
+      [staffEntryApp()],
+      [{ id: "a-1", application_id: ADIYA_APP, question_id: Q.rota, answer: { value: true } }],
+    );
+    expect(await recruiterAnswerPublishState(admin, ADIYA_MATCH)).toMatchObject({
+      pending: 0,
+      needs_acknowledgement: false,
+    });
+    const ack = await acknowledgeRecruiterAnswers(admin, { matchId: ADIYA_MATCH, actorUserId: STAFF });
+    expect(ack.ok).toBe(false);
+    expect(db.candidate_matches[0].recruiter_answers_confirmed_by).toBeUndefined();
+  });
+
+  it("the rule, the wording check and the database gate agree", () => {
+    expect(publishNeedsAcknowledgement({ pending: 0, latestPendingAnswerAt: null, acknowledgedAt: null })).toBe(false);
+    expect(publishNeedsAcknowledgement({ pending: 2, latestPendingAnswerAt: null, acknowledgedAt: null })).toBe(true);
+    expect(
+      publishNeedsAcknowledgement({
+        pending: 1,
+        latestPendingAnswerAt: "2026-11-26T17:00:00Z",
+        acknowledgedAt: "2026-11-26T16:00:00Z",
+      }),
+    ).toBe(true);
+    expect(sourceNoteProblem("call")).toMatch(/where these answers came from/i);
+    expect(sourceNoteProblem("Phone call, 26 Nov")).toBeNull();
+    expect(answerChanged({ value: true }, { value: "Yes" })).toBe(false);
+    expect(answerChanged({ value: 3000000 }, { value: 2500000 })).toBe(true);
+    expect(answerChanged({ value: " British  Citizen " }, { value: "british citizen" })).toBe(false);
+
+    const read = (p: string) => readFileSync(resolve(__dirname, "../../../..", p), "utf8");
+    const sql = read("supabase/migrations/20261126203000_screening_answers_record_who_answered.sql");
+    expect(sql).toMatch(/answered_by text NOT NULL DEFAULT 'candidate'/);
+    expect(sql).toMatch(/CHECK \(answered_by IN \('candidate', 'recruiter_on_behalf'\)\)/);
+    expect(sql).toMatch(/source_note text/);
+    expect(sql).toMatch(/entered_by_user_id uuid/);
+    expect(sql).toMatch(/candidate_confirmed_at timestamptz/);
+    // The gate sits on the write that makes a match visible, so every publish route passes it.
+    expect(sql).toMatch(/BEFORE UPDATE OF client_visibility ON public\.candidate_matches/);
+    expect(sql).toMatch(/RAISE EXCEPTION 'recruiter_answers_unconfirmed'/);
+    // The backfill labels who answered and never writes the answer itself.
+    const backfill = sql.slice(sql.indexOf("UPDATE public.application_answers"));
+    expect(backfill).toMatch(/answered_by = 'recruiter_on_behalf'/);
+    expect(backfill).toMatch(/Entered by John from LinkedIn and a separate channel, 26 Nov 2026/);
+    expect(backfill).not.toMatch(/\banswer\s*=/);
+  });
+
+  it("a client reads a recruiter's entry as the recruiter's note, never as the candidate's application answer", () => {
+    const rationale = buildShortlistRationale({
+      requirement_rows: [
+        {
+          id: "req-0",
+          label: "London",
+          importance: "must_have",
+          status: "partial",
+          evidence: [],
+          explanation: "",
+        } as never,
+      ],
+      screening_answers: [
+        {
+          question: "Are you based in or within commuting distance of London?",
+          answer: "Yes",
+          source_label: RECRUITER_ANSWER_CLIENT_LABEL,
+        },
+      ],
+      evidence: [],
+    });
+    const line = rationale.lines.find((l) => l.id === "req-0");
+    expect(line?.sources).toEqual(["Recruiter notes"]);
+    expect(RECRUITER_ANSWER_CLIENT_LABEL).toBe("Recruiter-entered, pending candidate confirmation");
+  });
+});
+
 
 describe("migration 0014_screening_invites", () => {
   const read = (p: string) => readFileSync(resolve(__dirname, "../../../..", p), "utf8");

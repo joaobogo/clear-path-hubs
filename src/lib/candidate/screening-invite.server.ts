@@ -29,6 +29,7 @@ import {
   decideStaffInvite,
   type ScreeningQuestionRow,
 } from "./screening-invite";
+import { candidateAnsweredIds } from "./answer-source";
 import { candidateFacingEmployerName } from "@/lib/org/candidate-facing-employer";
 import { canonicalUrl } from "@/lib/canonical-origin";
 
@@ -96,12 +97,23 @@ async function questionsAndAnswers(admin: Admin, app: AppRow) {
       .from("screening_questions")
       .select("id,question,answer_type,required,display_order")
       .eq("position_id", app.position_id),
-    admin.from("application_answers").select("question_id").eq("application_id", app.id),
+    admin
+      .from("application_answers")
+      .select("question_id,answered_by,candidate_confirmed_at")
+      .eq("application_id", app.id),
   ]);
   if (qErr || aErr) throw new Error((qErr ?? aErr)?.message ?? "screening_lookup_failed");
   return {
     questions: (questions ?? []) as ScreeningQuestionRow[],
-    answeredIds: ((answers ?? []) as Array<{ question_id: string }>).map((a) => a.question_id),
+    // Only the candidate's own answers close a question. One a recruiter
+    // entered for them is still theirs to answer, so the link can still go.
+    answeredIds: candidateAnsweredIds(
+      (answers ?? []) as Array<{
+        question_id: string;
+        answered_by: string | null;
+        candidate_confirmed_at: string | null;
+      }>,
+    ),
   };
 }
 

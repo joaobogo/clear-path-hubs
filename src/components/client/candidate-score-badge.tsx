@@ -15,6 +15,7 @@
  */
 import { toFitPresentation, type FitPresentation } from "@/lib/client-fit-presentation";
 import { getEvidenceCounts } from "@/lib/client/evidence-counts";
+import { CV_ONLY_EXPLANATION, CV_ONLY_LABEL } from "@/lib/scoring/cv-only";
 
 type Props = {
   /** Fit score, 0-100. Optional: the evidenced ring carries the figure now. */
@@ -45,6 +46,11 @@ type Props = {
    * print a supported-count that we cannot back with snippets.
    */
   evidencePending?: boolean;
+  /**
+   * The role asks screening questions and this candidate has answered none:
+   * the assessment rests on the CV alone, and says so beside the band.
+   */
+  cvOnly?: boolean;
   /**
    * Kept for call-site compatibility. Standout candidates are communicated by
    * the fit band alone — no internal "unicorn" label reaches a client.
@@ -81,6 +87,7 @@ export function CandidateScoreBadge({
   rechecking = false,
   humanReviewed = false,
   evidencePending = false,
+  cvOnly = false,
   className = "",
   hideEvidenceChip = false,
   hideScore = false,
@@ -154,6 +161,14 @@ export function CandidateScoreBadge({
       {support && !rechecking && !evidencePending && !fit && (
         <span className="text-[11px] text-muted-foreground" title={support}>
           {support}
+        </span>
+      )}
+      {cvOnly && (
+        <span
+          className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+          title={CV_ONLY_EXPLANATION}
+        >
+          {CV_ONLY_LABEL}
         </span>
       )}
       {humanReviewed && (

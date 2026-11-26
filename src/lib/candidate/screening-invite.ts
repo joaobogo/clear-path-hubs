@@ -456,6 +456,35 @@ export function screeningReReviewTask(i: {
   };
 }
 
+/**
+ * The admin task opened when the candidate's own answer differs from the one
+ * a recruiter had entered for them. The candidate's answer is the one on file
+ * and in the score; the task says which questions to read again.
+ */
+export function recruiterAnswerChangedTask(i: {
+  candidateName: string | null;
+  positionTitle: string | null;
+  changedQuestions: readonly string[];
+  dealbreakers: readonly string[];
+}): { title: string; description: string; priority: "normal" | "high" } {
+  const who = i.candidateName?.trim() || "The candidate";
+  const role = i.positionTitle?.trim() ? ` for ${i.positionTitle.trim()}` : "";
+  const n = i.changedQuestions.length;
+  const list = i.changedQuestions.map((q) => `"${q}"`).join("; ");
+  const dealbreakers = i.dealbreakers.length
+    ? ` Dealbreaker answers that do not match the preferred answer: ${i.dealbreakers
+        .map((q) => `"${q}"`)
+        .join("; ")}. Eligibility follows the candidate's answer.`
+    : "";
+  return {
+    title: "Candidate's answers differ from the recruiter's entry",
+    description: `${who} answered the screening questions${role} personally, and ${
+      n === 1 ? "1 answer differs" : `${n} answers differ`
+    } from what a recruiter had entered for them: ${list}. The candidate's answers are now the ones on file and the recruiter's entries are kept as history.${dealbreakers} Read the answers again, and check the reviewed verdicts still hold.`,
+    priority: i.dealbreakers.length > 0 ? "high" : "normal",
+  };
+}
+
 /** The 6-character reference the candidate already uses on the status page. */
 export function applicationReference(applicationId: string): string {
   return applicationId.replace(/-/g, "").slice(0, 6).toUpperCase();

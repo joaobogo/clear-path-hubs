@@ -36,6 +36,8 @@ export const STAFF_ACTION_OPS = [
   "check_publishable",
   "record_review",
   "recompute_score",
+  "record_answers_on_behalf",
+  "acknowledge_recruiter_answers",
 ] as const;
 export type StaffActionOp = (typeof STAFF_ACTION_OPS)[number];
 
@@ -162,6 +164,20 @@ export async function runStaffAction(
         const m = await import("@/lib/scoring-review.functions");
         const data = m.recomputeScoreValidate(req.input);
         return { ok: true, op, result: await m.recomputeScoreHandler({ data, context }) };
+      }
+      case "record_answers_on_behalf": {
+        const m = await import("@/lib/candidate/answers-on-behalf.functions");
+        const data = m.recordAnswersOnBehalfValidate(req.input);
+        return { ok: true, op, result: await m.recordAnswersOnBehalfHandler({ data, context }) };
+      }
+      case "acknowledge_recruiter_answers": {
+        const m = await import("@/lib/candidate/answers-on-behalf.functions");
+        const data = m.acknowledgeRecruiterAnswersValidate(req.input);
+        return {
+          ok: true,
+          op,
+          result: await m.acknowledgeRecruiterAnswersHandler({ data, context }),
+        };
       }
       case "check_publishable": {
         const id = String((req.input as { id?: unknown } | null)?.id ?? "");

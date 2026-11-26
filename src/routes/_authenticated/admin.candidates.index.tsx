@@ -25,6 +25,7 @@ import { REJECTION_REASONS } from "@/lib/client-decision-reasons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { CV_ONLY_EXPLANATION, CV_ONLY_LABEL } from "@/lib/scoring/cv-only";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BulkOpsBar } from "@/components/admin/BulkOpsBar";
 import {
@@ -937,6 +938,15 @@ function CandidatesPage() {
                   <td className="px-3 py-2 text-right tabular-nums">
                     <span className="inline-flex items-center justify-end gap-1">
                       {score == null ? "—" : Math.round(Number(score))}
+                      {score != null && m.cv_only && (
+                        <Badge
+                          variant="outline"
+                          className="whitespace-nowrap text-[10px] font-normal"
+                          title={CV_ONLY_EXPLANATION}
+                        >
+                          {CV_ONLY_LABEL}
+                        </Badge>
+                      )}
                       {score != null && (
                         <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />
                       )}

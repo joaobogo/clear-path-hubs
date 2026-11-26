@@ -118,6 +118,7 @@ export function CompactList({
                     fitLabel={c.fit_label}
                     evidence={c.evidence_support}
                     unicorn={c.unicorn}
+                    cvOnly={c.cv_only}
                     hideEvidenceChip
                   />
                   <DealbreakerWarnings warnings={c.dealbreaker_warnings} score={c.score} />

@@ -97,8 +97,8 @@ function toVerdict(status: RequirementStatus): RationaleVerdict {
 /** Screening answers that mention the requirement, used as a secondary source. */
 function screeningClaim(
   requirement: string,
-  answers: Array<{ question: string; answer: string }>,
-): string | null {
+  answers: Array<{ question: string; answer: string; source_label?: string }>,
+): { text: string; recruiterEntered: boolean } | null {
   const needle = clean(requirement).toLowerCase();
   if (needle.length < 3) return null;
   const hit = answers.find(
@@ -107,7 +107,9 @@ function screeningClaim(
       (clean(a.question).toLowerCase().includes(needle) ||
         clean(a.answer).toLowerCase().includes(needle)),
   );
-  return hit ? clean(hit.answer) : null;
+  // An answer a recruiter entered for the candidate is the recruiter's note,
+  // not the candidate's application answer.
+  return hit ? { text: clean(hit.answer), recruiterEntered: Boolean(hit.source_label) } : null;
 }
 
 /**
@@ -152,8 +154,8 @@ export function buildShortlistRationale(
 
     const fromScreening = screeningClaim(r.label, answers);
     if (fromScreening) {
-      sources.add("Application answers");
-      if (!claim) claim = fromScreening;
+      sources.add(fromScreening.recruiterEntered ? "Recruiter notes" : "Application answers");
+      if (!claim) claim = fromScreening.text;
     }
 
     if (!claim && clean(r.explanation)) {

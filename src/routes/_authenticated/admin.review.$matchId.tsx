@@ -1,6 +1,10 @@
 import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { formatAnswerValue } from "@/lib/human-labels";
+import {
+  RECRUITER_ANSWER_STAFF_LABEL,
+  pendingCandidateConfirmation,
+} from "@/lib/candidate/answer-source";
 
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -128,6 +132,8 @@ function ReviewScreen() {
       question: a.screening_questions?.question ?? "Question",
       dealbreaker: Boolean(a.screening_questions?.dealbreaker),
       answer: a.answer,
+      recruiterEntered: pendingCandidateConfirmation(a),
+      sourceNote: (a.source_note as string | null) ?? null,
     }));
 
   }, [data]);
@@ -441,6 +447,12 @@ function ReviewScreen() {
                     <div className="text-xs text-muted-foreground break-words">
                       {formatAnswerValue(a.answer) ?? "—"}
                     </div>
+                    {a.recruiterEntered && (
+                      <div className="text-[11px] font-medium text-amber-700 dark:text-amber-400">
+                        {RECRUITER_ANSWER_STAFF_LABEL}
+                        {a.sourceNote ? `. Source: ${a.sourceNote}` : ""}
+                      </div>
+                    )}
 
                   </li>
                 ))}
