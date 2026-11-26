@@ -47,7 +47,8 @@ describe("position field registry", () => {
     expect(PUBLIC_FIELD_NAMES).not.toContain("include_keywords");
     expect(PUBLIC_FIELD_NAMES).not.toContain("exclude_keywords");
     expect(PUBLIC_FIELD_NAMES).not.toContain("disqualifier_tags");
-    expect(publicHeading("must_have_skills")).toBe("What we need");
+    expect(publicHeading("must_have_skills")).toBe("Must-haves");
+    expect(publicHeading("nice_to_have_skills")).toBe("Nice to have (not required)");
   });
 
   it("client editors never render staff-only sourcing fields", () => {

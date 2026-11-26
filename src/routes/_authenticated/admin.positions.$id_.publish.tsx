@@ -60,6 +60,11 @@ function PublishPage() {
     brand_tone: initial.brand_tone,
     application_deadline: initial.application_deadline,
     confidentiality: initial.confidentiality,
+    headline: initial.headline,
+    work_arrangement: initial.work_arrangement,
+    location_line: initial.location_line,
+    employer_label: initial.employer_label,
+    response_times: initial.response_times,
     screening_questions: initial.screening_questions.map((q) => ({
       question: q.question,
       required: q.required,
@@ -89,6 +94,11 @@ function PublishPage() {
           brand_tone: fields.brand_tone,
           application_deadline: fields.application_deadline,
           confidentiality: fields.confidentiality || "public",
+          headline: fields.headline,
+          work_arrangement: fields.work_arrangement,
+          location_line: fields.location_line,
+          employer_label: fields.employer_label,
+          response_times: fields.response_times === "hidden" ? "hidden" : "",
           visibility,
         },
       });

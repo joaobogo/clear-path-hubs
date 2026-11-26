@@ -117,9 +117,19 @@ describe("where the prompt comes from and where it shows", () => {
     expect(jobs).toContain('.select("video_prompt:intake_context->posting->>video_prompt")');
     expect(jobs).toContain("normalizeVideoPrompt(");
     expect(jobs).toMatch(/video_prompt:\s*videoPrompt/);
-    // No other read of intake_context in the public job module.
+    // The public job module reads intake_context only as single JSON paths
+    // under posting: the role's own page wording, whether the posting is
+    // confidential, and this prompt. Nothing else of intake_context.
     const mentions = jobs.match(/intake_context[^\s,)"`]*/g) ?? [];
-    expect(mentions).toEqual(["intake_context->posting->>video_prompt"]);
+    expect(mentions).toEqual([
+      "intake_context->posting->>headline",
+      "intake_context->posting->>work_arrangement",
+      "intake_context->posting->>location_line",
+      "intake_context->posting->>employer_label",
+      "intake_context->posting->>response_times",
+      "intake_context->posting->>confidentiality",
+      "intake_context->posting->>video_prompt",
+    ]);
   });
 
   it("the apply form shows the prompt above the link and keeps the field optional", () => {

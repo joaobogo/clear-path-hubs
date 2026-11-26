@@ -77,6 +77,10 @@ export type PostingCopyInput = {
   benefits?: string | null;
   travel?: string | null;
   work_authorization_note?: string | null;
+  headline?: string | null;
+  work_arrangement?: string | null;
+  location_line?: string | null;
+  employer_label?: string | null;
 };
 
 const POSTING_LABELS: Array<[keyof PostingCopyInput, string]> = [
@@ -85,6 +89,10 @@ const POSTING_LABELS: Array<[keyof PostingCopyInput, string]> = [
   ["benefits", "Benefits"],
   ["travel", "Travel"],
   ["work_authorization_note", "Work authorisation note"],
+  ["headline", "First line under the title"],
+  ["work_arrangement", "Work arrangement"],
+  ["location_line", "Location line"],
+  ["employer_label", "Employer wording"],
 ];
 
 export function postingCopyFields(data: PostingCopyInput): CriteriaField[] {

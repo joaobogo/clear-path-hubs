@@ -307,7 +307,7 @@ export const POSITION_FIELDS: readonly PositionField[] = [
     clientEditable: true,
     adminEditable: true,
     publicListing: true,
-    publicLabel: "What we need",
+    publicLabel: "Must-haves",
   },
   {
     name: "nice_to_have_skills",
@@ -319,7 +319,7 @@ export const POSITION_FIELDS: readonly PositionField[] = [
     clientEditable: true,
     adminEditable: true,
     publicListing: true,
-    publicLabel: "Nice to have",
+    publicLabel: "Nice to have (not required)",
   },
   {
     name: "certifications_list",

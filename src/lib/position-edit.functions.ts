@@ -34,6 +34,12 @@ import { sanitizeInlineMarkup, stripInlineMarkup } from "@/lib/marketing/inline-
 import { assertRoleFormCriteriaAllowed } from "@/lib/positions/protected-criteria-guard";
 import { assertNoProtectedCriteria } from "@/lib/scoring/protected-attributes";
 import { postingCopyFields } from "@/lib/positions/protected-criteria-fields";
+import {
+  PUBLIC_WORDING_KEYS,
+  PUBLIC_WORDING_MAX,
+  RESPONSE_TIMES_HIDDEN,
+  wordingText,
+} from "@/lib/jobs/public-wording";
 import { assertNoCompoundDealbreakers } from "@/lib/positions/compound-dealbreaker";
 
 async function getAdmin() {
@@ -379,6 +385,13 @@ const publishInput = z.object({
   brand_tone: z.string().max(60).default(""),
   application_deadline: z.string().max(40).default(""),
   confidentiality: z.enum(["public", "confidential", ""]).default("public"),
+  // The role's own wording for its public page. Optional: a caller that does
+  // not send one leaves the stored value as it is.
+  headline: z.string().max(PUBLIC_WORDING_MAX.headline).optional(),
+  work_arrangement: z.string().max(PUBLIC_WORDING_MAX.work_arrangement).optional(),
+  location_line: z.string().max(PUBLIC_WORDING_MAX.location_line).optional(),
+  employer_label: z.string().max(PUBLIC_WORDING_MAX.employer_label).optional(),
+  response_times: z.enum(["", RESPONSE_TIMES_HIDDEN]).optional(),
   visibility: z.enum(["public", "private", "confidential"]).optional(),
 });
 
@@ -420,6 +433,12 @@ export async function publishPositionHandler({ data, context }: {
           brand_tone: data.brand_tone || "",
           application_deadline: data.application_deadline || "",
           confidentiality: data.confidentiality || "public",
+          ...Object.fromEntries(
+            PUBLIC_WORDING_KEYS.filter((k) => data[k] !== undefined).map((k) => [
+              k,
+              wordingText(data[k]),
+            ]),
+          ),
         },
       },
       travel_expectation: normalizeTravelExpectation(data.travel) || null,

@@ -2,6 +2,7 @@ import { extractOnsiteDays } from "./onsite-days";
 import { formatMoneyMajor } from "@/lib/money";
 import { canonicalLocation } from "./location-format";
 import { zoneDisplay } from "@/lib/time/zone-label";
+import { wordingText } from "./public-wording";
 
 /**
  * The deciding facts on a public job page, derived once and shared by the
@@ -9,7 +10,8 @@ import { zoneDisplay } from "@/lib/time/zone-label";
  *
  * Two rules run through every resolver here:
  *  1. Never invent a number. If the employer did not give us pay, we say so —
- *     no estimate, no "competitive".
+ *     no estimate, and no "competitive" of our own. The employer's own line
+ *     about how pay is made up is theirs to state, and is shown as written.
  *  2. Never return an empty string. Every resolver returns either a real value
  *     or an explicit not-specified line, so the UI can render a fixed set of
  *     rows without ever emitting a blank one.
@@ -51,6 +53,19 @@ function formatAmount(value: number, currency: string): string {
 }
 
 /**
+ * How pay is made up, in the employer's words ("Base salary + uncapped
+ * commission"), for a role with no stored range. Returned only when the line
+ * carries no figure, so a withheld number can never reach the page through
+ * it; null when there is a range, no line, or a line with a digit in it.
+ */
+function payStructureLine(c: CompensationJson): string | null {
+  const hasRange = [c.budget_min, c.budget_max, c.min, c.max].some((v) => num(v) !== null);
+  if (hasRange) return null;
+  const line = str(c.summary) || str((c as { note?: unknown }).note);
+  return line && !/\d/.test(line) ? line : null;
+}
+
+/**
  * `compensation_visibility` decides whether a range may be published at all.
  * Anything other than an explicit `public` is treated as withheld — a missing
  * or unrecognised value must never leak a number.
@@ -72,7 +87,12 @@ export function resolveCompensation(
   //
   // Unproven in live data, and it stays unprovable now: no combination of
   // inputs returns a number unless visibility is exactly "public".
-  if (!isPublic) return { display: null, line: RANGE_ON_CALL };
+  if (!isPublic) {
+    // "Range shared on the first call" promises a range. When none was ever
+    // given, the employer's own line about how pay is made up is the fact.
+    const structure = payStructureLine(c);
+    return { display: null, line: structure ?? RANGE_ON_CALL };
+  }
 
   // Legacy explicit-approval shape still wins when present — within a role
   // whose compensation is public.
@@ -116,7 +136,11 @@ export function resolveWorkArrangement(
   workModel: string | null | undefined,
   onsiteDays: unknown,
   description?: string | null,
+  /** The role's own statement (posting.work_arrangement); wins when set. */
+  statement?: string | null,
 ): string {
+  const own = wordingText(statement);
+  if (own) return own;
   const days =
     (typeof onsiteDays === "number" && Number.isFinite(onsiteDays))
       ? onsiteDays
@@ -143,7 +167,11 @@ export function resolveLocation(
   location: string | null | undefined,
   primaryTimezone: string | null | undefined,
   overlapHours: unknown,
+  /** The role's own location line (posting.location_line); wins when set. */
+  line?: string | null,
 ): string {
+  const own = wordingText(line);
+  if (own) return own;
   const place = canonicalLocation(str(location), null);
   const tz = str(primaryTimezone);
   const overlap = num(overlapHours);
@@ -163,6 +191,7 @@ type WorkAuthJson = {
   required?: unknown;
   countries?: unknown;
   note?: unknown;
+  rule?: unknown;
 };
 
 /**
@@ -175,6 +204,12 @@ export function resolveWorkAuthorisation(
   note: string | null | undefined,
 ): string {
   const wa = (workAuthorization ?? {}) as WorkAuthJson;
+  // A contractor is not sponsored or employed, so the sponsorship sentence
+  // does not apply: the role's own line says what is needed.
+  if (str(wa.rule) === "contractor") {
+    const own = str(note) || str(wa.note);
+    if (own) return own;
+  }
   const explicit = [wa.sponsorship_available, wa.sponsorship, wa.sponsors].find(
     (v) => typeof v === "boolean",
   );
@@ -261,6 +296,9 @@ export function buildPublicJobFacts(input: {
   employment_type: string | null | undefined;
   published_at: string | null | undefined;
   description?: string | null;
+  /** posting.work_arrangement and posting.location_line, when the role sets them. */
+  work_arrangement_statement?: string | null;
+  location_line?: string | null;
 }): PublicJobFacts {
   return {
     compensation: resolveCompensation(input.compensation, input.compensation_visibility).line,
@@ -268,11 +306,13 @@ export function buildPublicJobFacts(input: {
       input.work_model,
       input.onsite_days,
       input.description,
+      input.work_arrangement_statement,
     ),
     location: resolveLocation(
       input.location,
       input.primary_timezone,
       input.timezone_overlap_hours,
+      input.location_line,
     ),
     workAuthorisation: resolveWorkAuthorisation(
       input.work_authorization,
