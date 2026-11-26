@@ -11,12 +11,12 @@
  * staff button so all three agree on who may be asked (screeningLinkSource) and
  * what "still has questions to answer" means. Answers never decide anything
  * here: eligibility stays with the dealbreaker rule the scorer applies when the
- * match is rescored, and a score a person reviewed or approved is never
- * rescored by a late answer (lateAnswerRescoreBlock), checked both when the
- * answers arrive and when the queued rescore runs (isScreeningAnswersJob).
+ * match is rescored, and an approved score is never rescored by a late answer
+ * (lateAnswerRescoreBlock), checked both when the answers arrive and when the
+ * queued rescore runs (isScreeningAnswersJob). A reviewed score that is not
+ * approved is rescored with the recruiter's review kept on top.
  */
 import { SCREENING_ANSWER_MAX } from "@/lib/screening-limits";
-import { normalizeEvaluationMethod } from "@/lib/scoring/evaluation-method";
 import { isDealbreakerHit } from "@/lib/scoring/screening-eligibility";
 
 /** Staff entering a record get this long to add answers before we email. */
@@ -350,13 +350,17 @@ export type MatchReviewState = {
 
 /**
  * Why late answers must NOT trigger a machine rescore, or null when they may.
- * A forced rescore writes a new machine run and moves the current pointer, so
- * on a match whose current run a person adjusted, or that has been approved,
- * it would silently replace the reviewed published score. Those matches keep
- * their score; staff get a re-review task instead.
+ *
+ * An approved score is the one the client was shown: late answers never
+ * replace it, and staff get a re-review task instead.
+ *
+ * A score a person reviewed but has not approved is rescored: the recruiter's
+ * verdicts go back on top of the new machine run in the same job
+ * (reapplyHumanReview), so the answers count and the review is kept. Until
+ * 26 Nov 2026 this case was held too, because a rescore then dropped the
+ * review; that is no longer how a rescore works.
  */
 export function lateAnswerRescoreBlock(m: MatchReviewState): "human_adjusted" | "approved" | null {
-  if (normalizeEvaluationMethod(m.current_run_method) === "human_adjusted") return "human_adjusted";
   if (m.admin_status === "approved" || m.approved_score_run_id) return "approved";
   return null;
 }

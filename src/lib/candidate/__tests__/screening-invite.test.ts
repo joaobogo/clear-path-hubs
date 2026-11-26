@@ -916,12 +916,17 @@ describe("late answers never replace a reviewed or approved score (medium)", () 
     const m = { admin_status: "pending", approved_score_run_id: null };
     expect(lateAnswerRescoreBlock({ ...m, current_run_method: "deterministic" })).toBeNull();
     expect(lateAnswerRescoreBlock({ ...m, current_run_method: null })).toBeNull();
-    expect(lateAnswerRescoreBlock({ ...m, current_run_method: "human_adjusted" })).toBe(
-      "human_adjusted",
-    );
-    expect(lateAnswerRescoreBlock({ ...m, current_run_method: "human_verified" })).toBe(
-      "human_adjusted",
-    );
+    // A reviewed score that is not approved is rescored: the scorer puts the
+    // recruiter's review back on the new machine run (26 Nov 2026).
+    expect(lateAnswerRescoreBlock({ ...m, current_run_method: "human_adjusted" })).toBeNull();
+    expect(lateAnswerRescoreBlock({ ...m, current_run_method: "human_verified" })).toBeNull();
+    expect(
+      lateAnswerRescoreBlock({
+        ...m,
+        admin_status: "approved",
+        current_run_method: "human_adjusted",
+      }),
+    ).toBe("approved");
     expect(
       lateAnswerRescoreBlock({
         ...m,
@@ -965,7 +970,7 @@ describe("late answers never replace a reviewed or approved score (medium)", () 
         priority: "high",
         metadata: expect.objectContaining({
           source: "screening_answers",
-          reason: "human_adjusted",
+          reason: "approved",
           application_id: ADIYA_APP,
           question_ids: [Q.picking, Q.rota, Q.english, Q.workAuth],
           dealbreaker_question_ids: [Q.picking],
@@ -981,7 +986,27 @@ describe("late answers never replace a reviewed or approved score (medium)", () 
         action: "candidate_screening_answers_public",
         after_state: expect.objectContaining({
           follow_up: "re_review_task",
-          rescore_blocked_by: "human_adjusted",
+          rescore_blocked_by: "approved",
+        }),
+      }),
+    ]);
+  });
+
+  it("a reviewed match that is not approved is rescored: the review goes back on by the scorer", async () => {
+    seed([staffEntryApp()], [], { current_score_run_id: HUMAN_RUN });
+    const res = await answerScreeningByReference({ ...creds, answers });
+    expect(res).toEqual({ ok: true, message: "Thanks — your answers are with the review team." });
+    expect(db.application_answers).toHaveLength(4);
+    expect(db.processing_jobs).toEqual([
+      expect.objectContaining({ job_type: "parse_and_score", status: "queued" }),
+    ]);
+    expect(db.tasks).toEqual([]);
+    expect(db.audit_events).toEqual([
+      expect.objectContaining({
+        action: "candidate_screening_answers_public",
+        after_state: expect.objectContaining({
+          follow_up: "rescore_queued",
+          rescore_blocked_by: null,
         }),
       }),
     ]);
@@ -1059,62 +1084,26 @@ describe("the drain re-checks the review state before a late-answer rescore runs
     executeScoring.mockClear();
   });
 
-  it("staff adjust the score after the answers arrive: the job is cancelled, no new run, one task", async () => {
+  it("staff adjust the score after the answers arrive: the rescore still runs, and no task is opened", async () => {
     await answerWhileUnreviewed();
     // A reviewer applies reviewed verdicts before the next drain picks it up.
+    // The rescore goes ahead: the scorer puts that review back on the new
+    // machine run in the same job, so nothing reviewed is lost.
     db.candidate_matches[0].current_score_run_id = HUMAN_RUN;
-    const matchBefore = { ...db.candidate_matches[0] };
-    const runsBefore = db.score_runs.map((r) => ({ ...r }));
-
+    const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
     const out = await drain();
-
+    err.mockRestore();
+    // The pipeline ran (the in-memory record has no CV file, so it stops at
+    // manual review); what matters is that the job was not held.
     expect(out).toEqual([
-      expect.objectContaining({
-        job_id: JOB,
-        application_id: ADIYA_APP,
-        status: "cancelled",
-        error_code: "reviewed_score_kept",
-      }),
+      expect.objectContaining({ status: "completed", final_state: "manual_review_required" }),
     ]);
-    expect(db.processing_jobs[0]).toMatchObject({
-      status: "cancelled",
-      error_code: "reviewed_score_kept",
-      error_message: expect.stringMatching(/adjusted by a reviewer.*reviewed score is kept/),
-    });
-    // No machine rescore: the scorer never ran, no run was written, and the
-    // reviewed run is still the current (published) one.
-    expect(executeScoring).not.toHaveBeenCalled();
-    expect(db.score_runs).toEqual(runsBefore);
-    expect(db.candidate_matches[0]).toEqual(matchBefore);
-    expect(db.tasks).toEqual([
-      expect.objectContaining({
-        organization_id: ORG,
-        position_id: POS,
-        candidate_match_id: ADIYA_MATCH,
-        candidate_profile_id: "cp-adiya",
-        task_type: "candidate_review",
-        title: "Screening answers received, re-review",
-        status: "open",
-        priority: "high",
-        metadata: expect.objectContaining({
-          source: "screening_answers",
-          reason: "human_adjusted",
-          held_at: "drain",
-          processing_job_id: JOB,
-          application_id: ADIYA_APP,
-          question_ids: [Q.picking, Q.rota, Q.english, Q.workAuth],
-          dealbreaker_question_ids: [Q.picking],
-        }),
-      }),
-    ]);
-    const task = db.tasks[0] as { description: string };
-    expect(task.description).toMatch(/Adiya Vatsa answered screening questions for Mushroom/);
-    expect(task.description).toMatch(/rescore was cancelled and the published score is unchanged/);
-    expect(task.description).toContain(QUESTIONS[0].question);
-
-    // A second drain finds nothing to do: the job is terminal.
-    expect(await drain()).toEqual([]);
-    expect(db.tasks).toHaveLength(1);
+    expect(db.processing_jobs[0]).toMatchObject({ status: "completed", error_code: null });
+    expect(
+      db.tasks.filter(
+        (t) => (t.metadata as { source?: string } | undefined)?.source === "screening_answers",
+      ),
+    ).toEqual([]);
   });
 
   it("approval in the window holds it too, and an open re-review task is reused", async () => {
@@ -1187,7 +1176,11 @@ describe("the drain re-checks the review state before a late-answer rescore runs
 
   it("never rescores blind: an unreadable review state or a failed task insert re-arms the job", async () => {
     await answerWhileUnreviewed();
-    db.candidate_matches[0].current_score_run_id = HUMAN_RUN;
+    Object.assign(db.candidate_matches[0], {
+      admin_status: "approved",
+      current_score_run_id: HUMAN_RUN,
+      approved_score_run_id: HUMAN_RUN,
+    });
     failures["score_runs:select"] = { message: "timeout" };
     let out = await drain();
     expect(out[0]).toMatchObject({ status: "skipped", error_code: "worker_error" });

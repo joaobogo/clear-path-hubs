@@ -6,6 +6,7 @@
 // then recomputed by the engine. `recomputeScore` appends a new immutable run
 // rather than mutating existing history.
 
+import type { StaffActionContext } from "@/lib/staff-action-context";
 import { createServerFn } from "@tanstack/react-start";
 import {
   resolveEligibilityFromRows,
@@ -538,20 +539,31 @@ export const correctEvidenceItem = createServerFn({ method: "POST" })
   });
 
 /** Recompute the score for a match, appending a new immutable run. */
+export const recomputeScoreValidate = (i: unknown) =>
+  z.object({ match_id: z.string().uuid() }).parse(i);
+
 export const recomputeScore = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ match_id: z.string().uuid() }).parse(i))
-  .handler(async ({ data, context }) => {
-    await requireStaff(context.userId);
-    const { executeScoring } = await import("./scoring-service.server");
-    const res = await executeScoring(data.match_id, {
-      force: true,
-      reason: "Manual recompute from review center",
-      actor_user_id: context.userId,
-    });
-    if (!res.ok) throw new Error(res.message);
-    return res;
+  .inputValidator(recomputeScoreValidate)
+  .handler(recomputeScoreHandler);
+
+export async function recomputeScoreHandler({
+  data,
+  context,
+}: {
+  data: ReturnType<typeof recomputeScoreValidate>;
+  context: StaffActionContext;
+}) {
+  await requireStaff(context.userId);
+  const { executeScoring } = await import("./scoring-service.server");
+  const res = await executeScoring(data.match_id, {
+    force: true,
+    reason: "Manual recompute from review center",
+    actor_user_id: context.userId,
   });
+  if (!res.ok) throw new Error(res.message);
+  return res;
+}
 
 /**
  * Record a recruiter's eligibility decision, with a reason. Always audited.
@@ -816,7 +828,7 @@ const verdictInput = z.object({
     .array(
       z.object({
         requirement_id: z.string().min(1).max(200),
-        verdict: z.enum(["met", "not_met", "not_applicable"]),
+        verdict: z.enum(["met", "partial", "not_met", "not_applicable"]),
         reason: z.string().trim().min(8).max(1000),
       }),
     )
@@ -829,19 +841,29 @@ const verdictInput = z.object({
  * `evaluation_method = 'human_adjusted'` with the overriding user and reason
  * recorded — a completed run is never mutated.
  */
+export const submitHumanAdjustmentValidate = (i: unknown) => verdictInput.parse(i);
+
 export const submitHumanAdjustment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => verdictInput.parse(i))
-  .handler(async ({ data, context }) => {
-    await requireStaff(context.userId);
-    const { createHumanAdjustedRun } = await import("./scoring/human-adjusted-run.server");
-    return createHumanAdjustedRun({
-      matchId: data.match_id,
-      verdicts: data.verdicts,
-      reason: data.reason,
-      actorUserId: context.userId,
-    });
+  .inputValidator(submitHumanAdjustmentValidate)
+  .handler(submitHumanAdjustmentHandler);
+
+export async function submitHumanAdjustmentHandler({
+  data,
+  context,
+}: {
+  data: ReturnType<typeof submitHumanAdjustmentValidate>;
+  context: StaffActionContext;
+}) {
+  await requireStaff(context.userId);
+  const { createHumanAdjustedRun } = await import("./scoring/human-adjusted-run.server");
+  return createHumanAdjustedRun({
+    matchId: data.match_id,
+    verdicts: data.verdicts,
+    reason: data.reason,
+    actorUserId: context.userId,
   });
+}
 
 /** Machine-derived vs human-verified criteria for the current run. */
 export const getHumanVerification = createServerFn({ method: "POST" })

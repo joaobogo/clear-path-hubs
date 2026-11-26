@@ -3,9 +3,11 @@
  *
  * Shows, per criterion, whether the machine decided it or a person did, how
  * much of the score rests on human-verified evidence, and lets a reviewer mark
- * a requirement met, not met or not applicable with a mandatory written reason.
- * Submitting produces a new human-adjusted score run; nothing is edited in
- * place.
+ * a requirement met, partly met, not met or not applicable with a mandatory
+ * written reason. Submitting produces a new human-adjusted score run; nothing
+ * is edited in place. A verdict that differs from the machine is kept through
+ * every later re-score; when the machine's result has since changed, the row
+ * says so and offers the machine's value in one click.
  */
 import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -16,7 +18,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { getHumanVerification, submitHumanAdjustment } from "@/lib/scoring-review.functions";
-import { HUMAN_VERDICTS, MIN_REASON_LENGTH, type HumanVerdict } from "@/lib/scoring/human-adjustment";
+import {
+  HUMAN_VERDICTS,
+  MIN_REASON_LENGTH,
+  type HumanVerdict,
+} from "@/lib/scoring/human-adjustment";
 import {
   reviewedAssessmentMessage,
   type ReviewedAssessmentOutcome,
@@ -24,9 +30,21 @@ import {
 
 const VERDICT_LABEL: Record<HumanVerdict, string> = {
   met: "Met",
+  partial: "Partial",
   not_met: "Not met",
   not_applicable: "Not applicable",
 };
+
+/** The verdict that records a machine status as the reviewer's own call. */
+function verdictForMachineStatus(status: string): HumanVerdict | null {
+  return status === "met"
+    ? "met"
+    : status === "partial"
+      ? "partial"
+      : status === "missing"
+        ? "not_met"
+        : null;
+}
 
 type Draft = { verdict: HumanVerdict; reason: string };
 
@@ -53,7 +71,11 @@ export function HumanVerificationPanel({
     () =>
       Object.entries(drafts)
         .filter(([, d]) => d.reason.trim().length >= MIN_REASON_LENGTH)
-        .map(([requirement_id, d]) => ({ requirement_id, verdict: d.verdict, reason: d.reason.trim() })),
+        .map(([requirement_id, d]) => ({
+          requirement_id,
+          verdict: d.verdict,
+          reason: d.reason.trim(),
+        })),
     [drafts],
   );
 
@@ -127,12 +149,46 @@ export function HumanVerificationPanel({
                     {row.not_applicable ? "not applicable" : row.status.replace(/_/g, " ")}
                   </span>
                   {row.required ? <Badge variant="secondary">must-have</Badge> : null}
-                  {row.machine_status && row.source === "human" ? (
+                  {row.machine_status && row.source === "human" && !row.machine_changed ? (
                     <span className="text-[11px] text-muted-foreground">
-                      machine said {row.machine_status.replace(/_/g, " ")}
+                      machine says {row.machine_status.replace(/_/g, " ")}
                     </span>
                   ) : null}
+                  {row.reapplied && row.source === "human" ? (
+                    <span className="text-[11px] text-muted-foreground">kept after a re-score</span>
+                  ) : null}
                 </div>
+                {row.machine_changed && row.machine_status ? (
+                  <div className="mt-2 flex flex-wrap items-center gap-2 rounded-md border border-amber-500/40 bg-amber-500/5 px-2.5 py-1.5 text-xs">
+                    <span>
+                      Machine now says {row.machine_status.replace(/_/g, " ")}
+                      {row.decided_machine_status
+                        ? ` (it said ${row.decided_machine_status.replace(/_/g, " ")} when this was reviewed)`
+                        : ""}
+                      . The reviewer's verdict is kept.
+                    </span>
+                    {verdictForMachineStatus(row.machine_status) ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const v = verdictForMachineStatus(row.machine_status as string);
+                          if (!v) return;
+                          setDrafts((prev) => ({
+                            ...prev,
+                            [row.id]: {
+                              verdict: v,
+                              reason: `Accepted the machine's current value (${(row.machine_status as string).replace(/_/g, " ")}).`,
+                            },
+                          }));
+                        }}
+                      >
+                        Accept machine value
+                      </Button>
+                    ) : null}
+                  </div>
+                ) : null}
                 <p className="mt-1.5 text-sm">{row.text}</p>
                 {row.source === "human" && row.reason ? (
                   <p className="mt-1 text-xs text-muted-foreground">

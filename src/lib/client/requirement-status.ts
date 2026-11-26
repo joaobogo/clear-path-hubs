@@ -66,10 +66,16 @@ export function resolveRequirementStatus(
   row: Pick<RequirementRow, "status" | "evidence" | "contradictions"> & {
     context?: RequirementRow["context"];
     label?: string | null;
+    recruiter_verified?: boolean;
   },
 ): RequirementStatus {
   if (row.status === "contradicted") return "contradicted";
   if (row.status === "not_applicable") return "not_applicable";
+  // A recruiter's verdict stands on its own: it is the recruiter's call, shown
+  // as such (recruiterVerifiedLabel), not a claim that the CV quotes it.
+  if (row.recruiter_verified === true && (row.status === "met" || row.status === "partial")) {
+    return row.status;
+  }
   // A verdict without a quoted passage is not evidence. Related-only matches
   // stay "not evidenced" here and are reported separately as possible signals,
   // so no surface can count a requirement with no source as evidenced.
@@ -95,4 +101,18 @@ export const REQUIREMENT_STATUS_LABEL: Record<RequirementStatus, string> = {
 
 export function requirementStatusLabel(status: RequirementStatus): string {
   return REQUIREMENT_STATUS_LABEL[status] ?? "Not evidenced";
+}
+
+/**
+ * The wording for a requirement a recruiter decided: "Met (recruiter
+ * verified)" or "Partly met (recruiter verified)". Null for any other row.
+ */
+export function recruiterVerifiedLabel(row: {
+  status: RequirementStatus;
+  recruiter_verified?: boolean;
+}): string | null {
+  if (row.recruiter_verified !== true) return null;
+  if (row.status === "met") return "Met (recruiter verified)";
+  if (row.status === "partial") return "Partly met (recruiter verified)";
+  return null;
 }

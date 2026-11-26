@@ -648,7 +648,7 @@ export async function executeScoring(
     // 8) Reuse: identical inputs AND the same governing rubric version means the
     //    answer cannot differ, so we point at the existing run instead of
     //    inserting a duplicate.
-    const { data: dup } = await s.from("score_runs")
+    const { data: activeDup } = await s.from("score_runs")
       .select("id,score,fit_label")
       .eq("candidate_match_id", matchId)
       .eq("input_hash", raw.input_hash)
@@ -658,6 +658,31 @@ export async function executeScoring(
       // Earliest wins, so the reused run stays stable across repeat calls.
       .order("completed_at", { ascending: true })
       .limit(1).maybeSingle();
+    // The machine run under the current reviewed run counts too: a recruiter's
+    // review superseded it, not a change of inputs. Without this, every
+    // re-score of a reviewed candidate would write a new pair of runs.
+    let dup = activeDup as { id: string } | null;
+    if (!dup?.id && (ctx.match as Any).current_score_run_id) {
+      const { data: currentRun } = await s.from("score_runs")
+        .select("id,evaluation_method,result")
+        .eq("id", (ctx.match as Any).current_score_run_id)
+        .maybeSingle();
+      const underReview =
+        currentRun?.evaluation_method === "human_adjusted"
+          ? ((currentRun.result as Any)?.human_adjustment?.derived_from_run_id as string | undefined)
+          : undefined;
+      if (underReview) {
+        const { data: machineUnder } = await s.from("score_runs")
+          .select("id")
+          .eq("id", underReview)
+          .eq("candidate_match_id", matchId)
+          .eq("input_hash", raw.input_hash)
+          .eq("rubric_version_id", rubricVersionId)
+          .eq("status", "completed")
+          .maybeSingle();
+        if (machineUnder?.id) dup = machineUnder as { id: string };
+      }
+    }
 
     let runId: string;
     let reused = false;
@@ -774,19 +799,52 @@ export async function executeScoring(
     }
 
 
+    // A recruiter's review survives the re-score. The stored verdicts go back
+    // on top of this machine run here, in the same job, and the match is only
+    // ever pointed at the reviewed run: no surface shows the bare machine
+    // score in between. If putting the review back fails, the previous
+    // reviewed run stays current and the match is flagged for staff; the
+    // machine score is never the silent fallback.
+    let currentRunId: string | null = runId;
+    let reapplyError: string | null = null;
+    try {
+      const { reapplyHumanReview } = await import("./scoring/human-adjusted-run.server");
+      const review = await reapplyHumanReview({ matchId, machineRunId: runId, traceId: trace_id, db: s });
+      if (review.status !== "none") currentRunId = review.run_id;
+    } catch (e) {
+      reapplyError = (e as Error)?.message ?? "human_reapply_failed";
+      currentRunId = null;
+      console.error("[scoring] review re-apply failed", matchId, reapplyError);
+    }
+
     // F-008: eligibility comes from dealbreaker answers and recruiter
     // decisions only (writeEngineChecks).
     const decision = await writeEngineChecks(s, matchId, ctx, raw);
     await s
       .from("candidate_matches")
       .update({
-        current_score_run_id: runId,
+        ...(currentRunId ? { current_score_run_id: currentRunId } : {}),
         eligibility_status: decision.status,
         eligibility_updated_at: new Date().toISOString(),
         ...(reused ? {} : { evidence_confidence: raw.evidence_confidence }),
       })
       .eq("id", matchId);
     await auditEligibilityChange(s, matchId, ctx, decision, trace_id);
+
+    if (reapplyError) {
+      await releaseLock(s, matchId, "manual_review_required", trace_id, {
+        code: "human_reapply_failed",
+        message: `The recruiter's review could not be put back after a re-score (${reapplyError}). The previous reviewed score is still shown.`,
+      });
+      await recordJob(s, matchId, "failed", trace_id, 1, {
+        code: "human_reapply_failed", message: reapplyError,
+      });
+      return {
+        ok: false, match_id: matchId, trace_id,
+        final_state: "manual_review_required", blockers: ["human_reapply_failed"],
+        code: "human_reapply_failed", message: reapplyError,
+      };
+    }
 
     if ((ctx.match as Any).score_stale) {
       await notifyRescoreBatchIfDone(s, ctx.match.position_id, ctx.match.organization_id, matchId).catch((e) =>
@@ -824,7 +882,7 @@ export async function executeScoring(
     await clearScoreStaleness(matchId);
 
     return {
-      ok: true, run_id: runId, match_id: matchId, trace_id,
+      ok: true, run_id: currentRunId ?? runId, match_id: matchId, trace_id,
       final_state: finalState, reused, score: raw.score,
     };
   } catch (err) {

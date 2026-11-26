@@ -36,6 +36,7 @@ const DICTIONARY: Record<string, string> = {
   empty_text_layer: "The CV has no readable text",
   text_layer_missing: "The CV has no text layer — it is a scan",
   engine_error: "The scoring engine failed to finish",
+  human_reapply_failed: "The recruiter's review could not be put back after a re-score",
   cv_unreadable: "The CV could not be read",
   cv_parse: "Parsing CV",
   cv_hydrate: "Hydrating data",
@@ -186,6 +187,8 @@ const REASON_SENTENCES: Record<string, string> = {
   missing_usable_cv: "There is no usable CV on file for this candidate.",
   provider_error: "An upstream service refused the request, so nothing was recorded.",
   engine_error: "The scoring engine stopped before it finished.",
+  human_reapply_failed:
+    "The recruiter's review could not be put back after a re-score. The previous reviewed score is still shown; open the review and record it again.",
   sandbox_workspace:
     "This is a demo workspace, so the message was recorded rather than sent.",
   screening_contradicts_cv: "A screening answer and the CV disagree.",

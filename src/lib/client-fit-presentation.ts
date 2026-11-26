@@ -211,6 +211,12 @@ export type RequirementRow = {
   interpretation: string | null;
   contradictions: Array<{ label: string; snippet: string; source: string | null; location?: EvidenceLocation }>;
   context: Array<{ label: string; snippet: string; source: string | null; location?: EvidenceLocation }>;
+  /**
+   * A recruiter decided this requirement (met or partly met). It reads as the
+   * recruiter decided it on every surface, with or without a quote, and is
+   * labelled as recruiter-verified. The reviewer's note is never sent.
+   */
+  recruiter_verified?: boolean;
 };
 
 /** "5+ years building web apps" -> "5-years-building-web-apps" */
@@ -442,12 +448,28 @@ export function evidenceSupport(
   else if (isMet) rawStatus = "met";
   else if (isPartial) rawStatus = "partial";
 
+  // A recruiter's met or partly-met verdict is the status, quote or no quote:
+  // the score already counts it, and the client must see the same thing.
+  const recruiterVerified =
+    declared?.human_verified === true &&
+    declared?.not_applicable !== true &&
+    !isContradicted &&
+    (declared?.status === "met" || declared?.status === "partial");
+  if (recruiterVerified) rawStatus = declared.status;
+
   // One canonical status per requirement, derived from the evidence that exists.
-  const status = resolveRequirementStatus({ status: rawStatus, evidence: supporting, contradictions, label: r.label });
+  const status = resolveRequirementStatus({
+    status: rawStatus,
+    evidence: supporting,
+    contradictions,
+    label: r.label,
+    recruiter_verified: recruiterVerified,
+  });
 
 
   return {
     status,
+    ...(recruiterVerified ? { recruiter_verified: true } : {}),
     evidence: supporting,
     explanation: (r.explanation as string) || null,
     interpretation: null,
