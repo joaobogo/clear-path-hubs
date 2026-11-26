@@ -29,6 +29,19 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/dat
  * Read-only: it never writes scores, weights or records.
  */
 
+/**
+ * Where a quote was read, in words. The engine's labels for profile text and
+ * for answers a recruiter entered are spelled out; any other source kind is
+ * shown as it is stored.
+ */
+const SOURCE_KIND_LABEL: Record<string, string> = {
+  profile: "Profile",
+  profile_recruiter_edited: "Profile (recruiter verified)",
+  screening_candidate: "Screening answer",
+  screening_recruiter: "Screening answer (recruiter-entered)",
+};
+const sourceKindLabel = (kind: string) => SOURCE_KIND_LABEL[kind] ?? kind;
+
 const STATE_TONE: Record<EvidenceState, string> = {
   verified: "border-success/40 bg-success/10 text-success",
   missing: "border-muted-foreground/30 bg-muted text-muted-foreground",
@@ -259,12 +272,12 @@ export function EvidenceGraph({
                     {active.sources.map((s, i) => (
                       <li key={i} className="rounded-md border bg-background/60 p-3">
                         <div className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-                          {s.kind === "screening" ? (
+                          {s.kind.startsWith("screening") ? (
                             <FileText className="h-3 w-3" aria-hidden="true" />
                           ) : (
                             <Quote className="h-3 w-3" aria-hidden="true" />
                           )}
-                          <span>{s.kind}</span>
+                          <span>{sourceKindLabel(s.kind)}</span>
                           {s.location && (
                             <span className="font-mono normal-case">{s.location}</span>
                           )}

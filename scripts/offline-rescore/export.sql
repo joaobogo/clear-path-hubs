@@ -14,7 +14,12 @@ select json_build_object(
       'position_id', m.position_id, 'organization_id', m.organization_id,
       'eligibility_status', m.eligibility_status, 'cv_text', f.extracted_text,
       'location', cp.location, 'city', cp.city, 'country', cp.country, 'candidate_name', cp.full_name,
+      -- Profile text a person wrote is read beside the CV (src/lib/scoring/profile-text.ts);
+      -- consent carries the record of who wrote each field.
+      'headline', cp.headline, 'summary', cp.summary, 'experience', cp.experience,
+      'consent', json_build_object('provenance', cp.consent->'provenance'),
       'answers', (select coalesce(json_agg(json_build_object('question_id', a.question_id, 'answer', a.answer,
+                    'answered_by', a.answered_by,
                     'q', json_build_object('question', q.question, 'answer_type', q.answer_type, 'required', q.required,
                          'dealbreaker', q.dealbreaker, 'preferred_answer', q.preferred_answer, 'must_have', q.must_have))), '[]')
                   from application_answers a left join screening_questions q on q.id = a.question_id

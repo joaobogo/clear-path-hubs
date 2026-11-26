@@ -39,6 +39,7 @@ import {
   type EngineCalibration,
 } from "./scoring/engine-calibration";
 import { buildReplaySnapshot } from "./scoring/replay";
+import { buildProfileText, type ProfileTextInput } from "./scoring/profile-text";
 import { roleContextOf } from "./scoring/evidence-sources";
 import { classifyScoreBand } from "@/config/scoring-bands";
 import type { Json } from "@/integrations/supabase/types";
@@ -104,6 +105,25 @@ export async function checkScoringReadiness(matchId: string) {
   };
 }
 
+const ANSWER_QUESTION_COLUMNS =
+  "screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have,scoring_dimension,options)";
+
+/**
+ * The application's screening answers with who gave each one
+ * (application_answers.answered_by). A database that does not have the column
+ * yet is read without it, and every answer is then the candidate's: the
+ * answers themselves are never dropped for want of the label.
+ */
+async function loadAnswers(s: Any, applicationId: string): Promise<{ data: Any[] | null }> {
+  const withSource = await s.from("application_answers")
+    .select(`question_id,answer,answered_by,${ANSWER_QUESTION_COLUMNS}`)
+    .eq("application_id", applicationId);
+  if (!withSource?.error) return withSource;
+  return s.from("application_answers")
+    .select(`question_id,answer,${ANSWER_QUESTION_COLUMNS}`)
+    .eq("application_id", applicationId);
+}
+
 /** Build engine inputs strictly from the match's own position + application. */
 async function loadInputs(matchId: string) {
   const s = await getAdmin();
@@ -118,12 +138,12 @@ async function loadInputs(matchId: string) {
     s.from("positions")
       .select("id,status,requirements,preferred_requirements,title,organization_id,scoring_mode")
       .eq("id", match.position_id).maybeSingle(),
+    // headline, summary, experience and consent: the profile text a person
+    // wrote is read beside the CV (scoring/profile-text.ts).
     s.from("candidate_profiles")
-      .select("id,current_cv_file_id,location,city,country")
+      .select("id,current_cv_file_id,location,city,country,headline,summary,experience,consent")
       .eq("id", match.candidate_profile_id).maybeSingle(),
-    s.from("application_answers")
-      .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have,scoring_dimension,options)")
-      .eq("application_id", match.application_id),
+    loadAnswers(s, match.application_id),
     // The client's own name is not evidence (scoring/evidence-sources.ts).
     s.from("organizations")
       .select("name,brand_display_name")
@@ -180,6 +200,9 @@ async function loadInputs(matchId: string) {
       disqualifying_condition: dealbreakerCondition(q),
       must_have: q?.must_have ?? null,
       ...(q?.scoring_dimension ? { scoring_dimension: q.scoring_dimension, options: q?.options ?? null } : {}),
+      // Only when a recruiter entered it, so the candidate's own answers keep
+      // the shape (and the input hash) they always had.
+      ...(r.answered_by === "recruiter_on_behalf" ? { answered_by: "recruiter_on_behalf" as const } : {}),
     };
   });
 
@@ -188,6 +211,14 @@ async function loadInputs(matchId: string) {
     brand_display_name: orgRes.data?.brand_display_name ?? null,
     role_title: posRes.data?.title ?? null,
   });
+
+  // What a person wrote on the profile, beside the CV: a recruiter's rewrite
+  // and corrected dates, or the candidate's own entries. The parser's copy of
+  // the CV is left out (scoring/profile-text.ts).
+  const profileText = buildProfileText(
+    profRes.data as ProfileTextInput | null,
+    (cvFile?.extracted_text as string | null) ?? "",
+  );
 
   return {
     match,
@@ -198,6 +229,7 @@ async function loadInputs(matchId: string) {
     screening,
     roleContext,
     eligibilityChecks,
+    profileText,
   };
 }
 
@@ -579,6 +611,7 @@ export async function executeScoring(
           candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
           calibration: governing?.calibration ?? resolveCalibration(roleFamily),
           eligibility_checks: ctx.eligibilityChecks,
+          profile_text: ctx.profileText,
         });
         const decision = await writeEngineChecks(s, matchId, ctx, flagsOnly);
         await s
@@ -637,6 +670,7 @@ export async function executeScoring(
       calibration,
       eligibility_checks: ctx.eligibilityChecks,
       scoring_mode: scoringMode,
+      profile_text: ctx.profileText,
     });
 
     // 7) Reconcile caps.
@@ -709,6 +743,8 @@ export async function executeScoring(
           recruiter_exceptions: raw.recruiter_exceptions.map((x) => x.question_id),
           reviewed_claims: raw.reviewed_screening_claims,
           scoring_mode: scoringMode,
+          profile_text: ctx.profileText,
+          candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
         }),
         evaluation_method: EVALUATION_METHOD,
         applied_caps: rec.applied_caps,
@@ -903,6 +939,13 @@ export async function executeScoring(
   }
 }
 
+/**
+ * What a run's explanation says when a recruiter entered screening answers
+ * for the candidate. The answers count; the candidate has not confirmed them.
+ */
+export const SCREENING_BY_RECRUITER_NOTE =
+  "screening answered by recruiter, pending candidate confirmation";
+
 export function buildExplanation(r: ScoringResult, caps: Array<{ reason: string; cap: number }>): string {
   // The engine's fit_label uses its own vocabulary (strong_fit /
   // worth_considering / not_a_fit) while every surface bands the NUMBER
@@ -921,6 +964,11 @@ export function buildExplanation(r: ScoringResult, caps: Array<{ reason: string;
   if (caps.length) parts.push(`caps: ${caps.map((c) => `${c.reason}→${(c.cap * 100).toFixed(0)}`).join(", ")}`);
   if (r.strengths[0]) parts.push(`+ ${r.strengths[0]}`);
   if (r.concerns[0]) parts.push(`− ${r.concerns[0]}`);
+  // Who gave the answers, and whose dates were used (v1.8.0).
+  if ((r.screening_source?.recruiter_on_behalf ?? 0) > 0) {
+    parts.push(SCREENING_BY_RECRUITER_NOTE);
+  }
+  if (r.profile_evidence?.note) parts.push(r.profile_evidence.note);
   return parts.join(" · ");
 }
 

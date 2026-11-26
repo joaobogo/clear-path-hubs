@@ -377,7 +377,7 @@ describe("a written screening answer is evidence for its requirement", () => {
     const general = score(PROMOTION_CHAIN_CV, [...base, timeEntry(GENERAL)], home);
     expect(row(none, "req-4").status).toBe("missing");
     expect(row(concrete, "req-4").status).toBe("met");
-    expect(row(concrete, "req-4").evidence[0]!.source).toBe("screening");
+    expect(row(concrete, "req-4").evidence[0]!.source).toBe("screening_candidate");
     expect(row(general, "req-4").status).toBe("partial");
     expect(row(general, "req-4").needs_validation).toBe(true);
     expect(concrete.score).toBeGreaterThan(general.score);

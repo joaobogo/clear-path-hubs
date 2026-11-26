@@ -113,6 +113,26 @@ function preferredTakeaway(c: { met: number; partial: number; related: number; t
 }
 
 
+/**
+ * Where a quote was read, as the end of "quoted from …". The engine's own
+ * labels for profile text and for answers a recruiter entered are spelled
+ * out; any other source reads as it always did.
+ */
+export function sourcePhrase(source: string | null | undefined): string {
+  switch ((source ?? "").toLowerCase()) {
+    case "profile_recruiter_edited":
+      return "the profile (recruiter verified)";
+    case "profile":
+      return "the profile";
+    case "screening_recruiter":
+      return "screening answers a recruiter entered, pending the candidate's confirmation";
+    case "screening_candidate":
+      return "the screening answers";
+    default:
+      return source ?? "the application";
+  }
+}
+
 /** Comparable form of a requirement label: lowercase words only. */
 function normalizeLabel(label: string): string {
   return label
@@ -215,9 +235,9 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
         id,
         requirementKey: requirementKey(r),
         tone: "positive",
-        text: `Meets the must-have "${r.label}", quoted from ${
-          r.evidence?.[0]?.source ?? "the application"
-        }.`,
+        text: `Meets the must-have "${r.label}", quoted from ${sourcePhrase(
+          r.evidence?.[0]?.source,
+        )}.`,
       });
     });
 

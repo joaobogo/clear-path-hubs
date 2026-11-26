@@ -362,7 +362,7 @@ describe("study and training count as partial at most for experience requirement
       expect(a.status).toBe("partial");
       expect(a.needs_validation).toBe(true);
       expect(a.rule_note).toMatch(/study or training/);
-      if (screening.length) expect(a.evidence.some((e) => e.source === "screening")).toBe(true);
+      if (screening.length) expect(a.evidence.some((e) => e.source === "screening_candidate")).toBe(true);
     }
   });
 
@@ -386,7 +386,7 @@ describe("study and training count as partial at most for experience requirement
     const req0 = row(r, "req-0");
     expect(req0.status).toBe("partial");
     expect(req0.matched_terms).toEqual([]);
-    expect(req0.evidence.map((e) => e.source)).toEqual(["screening"]);
+    expect(req0.evidence.map((e) => e.source)).toEqual(["screening_candidate"]);
     const req1 = row(r, "req-1");
     expect(req1.status).toBe("met");
     expect(req1.matched_terms).toEqual(["farm"]);
@@ -617,7 +617,7 @@ describe("an intent cue masks its own clause, never the facts after it", () => {
       expect(masked).toMatch(/supervis\w+ (?:30 )?mushroom pickers/);
       const a = scoreOne("Agricultural worker.", requirement, ROLE, [textAnswer(value)]);
       expect(a.status).toBe("partial");
-      expect(a.evidence.some((e) => e.source === "screening")).toBe(true);
+      expect(a.evidence.some((e) => e.source === "screening_candidate")).toBe(true);
     }
   });
 

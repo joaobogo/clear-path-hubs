@@ -125,7 +125,7 @@ describe("v1.7.12 — a current role whose start year lost a digit", () => {
     expect(findDatedRanges(cv, TODAY).some((s) => s.startUnreadable)).toBe(false);
   });
 
-  it("bumps the engine version", () => {
-    expect(ENGINE_VERSION).toBe("taasflow-scoring-v1.7.12");
+  it("carries a v1 engine version", () => {
+    expect(ENGINE_VERSION).toMatch(/^taasflow-scoring-v1\.\d+\.\d+$/);
   });
 });

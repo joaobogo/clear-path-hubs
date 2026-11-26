@@ -1,6 +1,6 @@
 {
   "policy": {
-    "engine_version": "taasflow-scoring-v1.7.12",
+    "engine_version": "taasflow-scoring-v1.8.0",
     "calibration_version": "taasflow-calibration-v1.3.0",
     "bands": [
       {
@@ -112,7 +112,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "67e432cc-275"
+      "input_hash": "bb678c26-274"
     },
     {
       "name": "'no downtime' does not negate a nearby unrelated skill",
@@ -126,7 +126,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "6a6a05d0-27a"
+      "input_hash": "5a769766-279"
     },
     {
       "name": "'not familiar with HIPAA' is contradicted",
@@ -140,7 +140,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "0e51cb36-278"
+      "input_hash": "8a992950-277"
     },
     {
       "name": "aws satisfies an Amazon Web Services requirement",
@@ -154,7 +154,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
-      "input_hash": "2be09731-277"
+      "input_hash": "605323cf-276"
     },
     {
       "name": "bare 'no Postgres' is contradicted",
@@ -168,7 +168,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "aa269613-284"
+      "input_hash": "1402dce5-283"
     },
     {
       "name": "c# requirement does not match the letter c in prose",
@@ -182,7 +182,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "27c7f731-276"
+      "input_hash": "36762433-275"
     },
     {
       "name": "continuous integration satisfies a CI/CD requirement",
@@ -196,7 +196,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "de03a4ad-278"
+      "input_hash": "10488357-277"
     },
     {
       "name": "emr satisfies an EHR requirement",
@@ -210,7 +210,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "ccf8c3ea-280"
+      "input_hash": "89907380-27f"
     },
     {
       "name": "go requirement does not match google",
@@ -224,7 +224,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "36919867-26d"
+      "input_hash": "e98a77e9-26c"
     },
     {
       "name": "google sheets satisfies an Excel requirement",
@@ -238,7 +238,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "53282f52-27c"
+      "input_hash": "68cf66cc-27b"
     },
     {
       "name": "java requirement does not match javascript",
@@ -252,7 +252,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "00b39af4-270"
+      "input_hash": "749fe3c6-26f"
     },
     {
       "name": "javascript requirement does not match java",
@@ -266,7 +266,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "e469adff-27d"
+      "input_hash": "5279a181-27c"
     },
     {
       "name": "k8s in CV satisfies a Kubernetes requirement",
@@ -280,7 +280,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "c5d63750-281"
+      "input_hash": "a283f7f2-280"
     },
     {
       "name": "know your customer satisfies a KYC requirement",
@@ -294,7 +294,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.33,
       "evaluation_method": "deterministic",
-      "input_hash": "88223346-278"
+      "input_hash": "acb9ceec-277"
     },
     {
       "name": "Kubernetes in CV satisfies a k8s requirement",
@@ -308,7 +308,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "8f72cf66-285"
+      "input_hash": "b79d8de0-284"
     },
     {
       "name": "multi-keyword requirement fully evidenced is met",
@@ -322,7 +322,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.33,
       "evaluation_method": "deterministic",
-      "input_hash": "29ac74af-293"
+      "input_hash": "e80b5d91-292"
     },
     {
       "name": "multi-keyword requirement half evidenced is partial",
@@ -336,7 +336,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "870342ae-2ad"
+      "input_hash": "c53814a4-2ac"
     },
     {
       "name": "negation in a prior sentence does not poison a later positive mention",
@@ -350,7 +350,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "10729dcf-27c"
+      "input_hash": "f9be0579-27b"
     },
     {
       "name": "negation of one term leaves another requirement intact",
@@ -364,7 +364,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "dee93753-279"
+      "input_hash": "af097ae9-278"
     },
     {
       "name": "never used Terraform is contradicted",
@@ -378,7 +378,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.33,
       "evaluation_method": "deterministic",
-      "input_hash": "1c77b350-281"
+      "input_hash": "330c4c86-280"
     },
     {
       "name": "no experience with Kubernetes is contradicted",
@@ -392,7 +392,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "8eec0cba-283"
+      "input_hash": "952b6040-282"
     },
     {
       "name": "nodejs satisfies a Node.js requirement",
@@ -406,7 +406,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "fb849f5d-278"
+      "input_hash": "2ac71fdf-277"
     },
     {
       "name": "postgres satisfies a PostgreSQL requirement",
@@ -420,7 +420,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "74bd5684-284"
+      "input_hash": "15f5ef62-283"
     },
     {
       "name": "preferred requirement is assessed the same way as a must-have",
@@ -434,7 +434,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "5f3eeb2c-277"
+      "input_hash": "6ed072aa-276"
     },
     {
       "name": "punctuated term still matches inside prose",
@@ -448,7 +448,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "ef0f000f-278"
+      "input_hash": "464b7041-277"
     },
     {
       "name": "r requirement does not match random words",
@@ -462,7 +462,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "07156d68-273"
+      "input_hash": "43d2683a-272"
     },
     {
       "name": "reach truck satisfies a forklift requirement",
@@ -476,7 +476,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "33507752-287"
+      "input_hash": "d574445c-286"
     },
     {
       "name": "react requirement does not match preact only",
@@ -490,7 +490,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "a4096770-279"
+      "input_hash": "06f1c9b2-278"
     },
     {
       "name": "rn requirement does not match the word learn",
@@ -504,7 +504,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "2ed9db35-287"
+      "input_hash": "e1a46c2b-286"
     },
     {
       "name": "sentence requirement: a genuinely absent capability is still missing",
@@ -518,7 +518,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "e1155d49-2cb"
+      "input_hash": "a53140ff-2ca"
     },
     {
       "name": "sentence requirement: framing words do not drag a real match to partial",
@@ -532,7 +532,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.33,
       "evaluation_method": "deterministic",
-      "input_hash": "4f02390b-2ee"
+      "input_hash": "aae3c9cd-2ed"
     },
     {
       "name": "sentence requirement: one real capability, stated once, is met not partial",
@@ -546,7 +546,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "a0fc3e66-2b9"
+      "input_hash": "5eab65d4-2b8"
     },
     {
       "name": "sentence requirement: the capability stated plainly is met",
@@ -560,7 +560,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
-      "input_hash": "ac52fcd5-2e5"
+      "input_hash": "b837d0db-2e4"
     },
     {
       "name": "sql requirement does not match nosql-only prose",
@@ -574,7 +574,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "9dc13848-271"
+      "input_hash": "aa7fc656-270"
     },
     {
       "name": "synonyms do not bridge java and javascript",
@@ -588,7 +588,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.27,
       "evaluation_method": "deterministic",
-      "input_hash": "91a63bc5-26b"
+      "input_hash": "035cdac7-26a"
     },
     {
       "name": "ts satisfies a TypeScript requirement",
@@ -602,7 +602,7 @@
       "evidence_confidence": 100,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "38122a55-283"
+      "input_hash": "3f0abf27-282"
     },
     {
       "name": "unfamiliar with Salesforce is contradicted",
@@ -616,7 +616,7 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.32,
       "evaluation_method": "deterministic",
-      "input_hash": "7df84f63-280"
+      "input_hash": "a81dc2fd-27f"
     },
     {
       "name": "without any AWS exposure is contradicted",
@@ -630,7 +630,203 @@
       "evidence_confidence": 0,
       "overall_confidence": 0.34,
       "evaluation_method": "deterministic",
-      "input_hash": "1e7d3e49-270"
+      "input_hash": "ea89923b-26f"
+    },
+    {
+      "name": "wording pair, original: a formal qualification method is MEDDPICC or MEDDICC",
+      "status": "met",
+      "raw_score": 100,
+      "score": 100,
+      "band": "exceptional",
+      "fit_label": "worth_considering",
+      "applied_caps": [],
+      "must_have_coverage": 0,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.58,
+      "evaluation_method": "deterministic",
+      "input_hash": "223b18ba-f5c"
+    },
+    {
+      "name": "wording pair, original: cloud and IT operations selling is not Snowflake or Databricks",
+      "status": "missing",
+      "raw_score": 0,
+      "score": 0,
+      "band": "not_recommended",
+      "fit_label": "not_a_fit",
+      "applied_caps": [],
+      "must_have_coverage": 0,
+      "evidence_confidence": 0,
+      "overall_confidence": 0.56,
+      "evaluation_method": "deterministic",
+      "input_hash": "81e0f1cc-f73"
+    },
+    {
+      "name": "wording pair, original: commutable to London from a Home County, travel unconfirmed",
+      "status": "partial",
+      "raw_score": 50,
+      "score": 50,
+      "band": "consider",
+      "fit_label": "worth_considering",
+      "applied_caps": [],
+      "must_have_coverage": 0.5,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.53,
+      "evaluation_method": "deterministic",
+      "input_hash": "7b85daef-f58"
+    },
+    {
+      "name": "wording pair, original: met or exceeded bookings targets is % of quota or of sales target",
+      "status": "met",
+      "raw_score": 100,
+      "score": 100,
+      "band": "exceptional",
+      "fit_label": "strong_fit",
+      "applied_caps": [],
+      "must_have_coverage": 1,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.72,
+      "evaluation_method": "deterministic",
+      "input_hash": "5963c5b1-f62"
+    },
+    {
+      "name": "wording pair, original: new-logo sales (hunting) is new-logo or net-new customer acquisition",
+      "status": "met",
+      "raw_score": 100,
+      "score": 100,
+      "band": "exceptional",
+      "fit_label": "strong_fit",
+      "applied_caps": [],
+      "must_have_coverage": 1,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.7,
+      "evaluation_method": "deterministic",
+      "input_hash": "97251258-f62"
+    },
+    {
+      "name": "wording pair, original: senior buyers by title: read, not hard-missing for the word Head",
+      "status": "partial",
+      "raw_score": 50,
+      "score": 50,
+      "band": "consider",
+      "fit_label": "worth_considering",
+      "applied_caps": [],
+      "must_have_coverage": 0.5,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.72,
+      "evaluation_method": "deterministic",
+      "input_hash": "33583f09-f79"
+    },
+    {
+      "name": "wording pair, original: total contract value is ACV or annual contract value",
+      "status": "met",
+      "raw_score": 100,
+      "score": 100,
+      "band": "exceptional",
+      "fit_label": "strong_fit",
+      "applied_caps": [],
+      "must_have_coverage": 1,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.72,
+      "evaluation_method": "deterministic",
+      "input_hash": "9d7053f6-f60"
+    },
+    {
+      "name": "wording pair, reworded: a formal qualification method is MEDDPICC or MEDDICC",
+      "status": "met",
+      "raw_score": 100,
+      "score": 100,
+      "band": "exceptional",
+      "fit_label": "worth_considering",
+      "applied_caps": [],
+      "must_have_coverage": 0,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.58,
+      "evaluation_method": "deterministic",
+      "input_hash": "bbd54625-102d"
+    },
+    {
+      "name": "wording pair, reworded: cloud and IT operations selling is not Snowflake or Databricks",
+      "status": "missing",
+      "raw_score": 0,
+      "score": 0,
+      "band": "not_recommended",
+      "fit_label": "not_a_fit",
+      "applied_caps": [],
+      "must_have_coverage": 0,
+      "evidence_confidence": 0,
+      "overall_confidence": 0.56,
+      "evaluation_method": "deterministic",
+      "input_hash": "644a7c89-1044"
+    },
+    {
+      "name": "wording pair, reworded: commutable to London from a Home County, travel unconfirmed",
+      "status": "partial",
+      "raw_score": 50,
+      "score": 50,
+      "band": "consider",
+      "fit_label": "worth_considering",
+      "applied_caps": [],
+      "must_have_coverage": 0.5,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.53,
+      "evaluation_method": "deterministic",
+      "input_hash": "382609ec-1029"
+    },
+    {
+      "name": "wording pair, reworded: met or exceeded bookings targets is % of quota or of sales target",
+      "status": "met",
+      "raw_score": 100,
+      "score": 100,
+      "band": "exceptional",
+      "fit_label": "strong_fit",
+      "applied_caps": [],
+      "must_have_coverage": 1,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.72,
+      "evaluation_method": "deterministic",
+      "input_hash": "b9a197f6-1033"
+    },
+    {
+      "name": "wording pair, reworded: new-logo sales (hunting) is new-logo or net-new customer acquisition",
+      "status": "met",
+      "raw_score": 100,
+      "score": 100,
+      "band": "exceptional",
+      "fit_label": "strong_fit",
+      "applied_caps": [],
+      "must_have_coverage": 1,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.7,
+      "evaluation_method": "deterministic",
+      "input_hash": "8d1f6d77-1033"
+    },
+    {
+      "name": "wording pair, reworded: senior buyers by title: read, not hard-missing for the word Head",
+      "status": "partial",
+      "raw_score": 50,
+      "score": 50,
+      "band": "consider",
+      "fit_label": "worth_considering",
+      "applied_caps": [],
+      "must_have_coverage": 0.5,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.72,
+      "evaluation_method": "deterministic",
+      "input_hash": "775af6bc-104a"
+    },
+    {
+      "name": "wording pair, reworded: total contract value is ACV or annual contract value",
+      "status": "met",
+      "raw_score": 100,
+      "score": 100,
+      "band": "exceptional",
+      "fit_label": "strong_fit",
+      "applied_caps": [],
+      "must_have_coverage": 1,
+      "evidence_confidence": 100,
+      "overall_confidence": 0.72,
+      "evaluation_method": "deterministic",
+      "input_hash": "e563f4e1-1031"
     }
   ]
 }

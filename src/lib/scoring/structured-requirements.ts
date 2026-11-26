@@ -35,6 +35,8 @@ import { brandOriginsIn } from "./brand-origins";
 import { parseYearsSubject, type YearsSubject } from "./years-subject";
 import { homeStateOf, usStatesIn } from "./us-states";
 import { HEADING_LINE } from "./non-evidence-lines";
+import { commutablePlaceIn, homeWithinCommute } from "./wording-equivalence";
+import { PROFILE_LABEL_LINE } from "./profile-text";
 
 export type StructuredStatus = "met" | "partial" | "missing" | "unknown";
 
@@ -46,7 +48,8 @@ export type StructuredVerdict = {
     | "conditional_relocation"
     | "minimum_years"
     | "market_experience"
-    | "onsite_attendance";
+    | "onsite_attendance"
+    | "home_location";
   status: StructuredStatus;
   needs_validation: boolean;
   /**
@@ -582,6 +585,10 @@ type Span = {
   startUnreadable?: boolean;
   /** The end of a range cut by the line end: the next line and how much of it. */
   cont?: { lineStart: number; len: number };
+  /** The dates counted, when a recruiter's profile corrected the CV's (v1.8.0). */
+  shown?: string;
+  /** A profile entry whose dates were put on its CV role: the same role, said twice. */
+  restatesCvRole?: boolean;
 };
 
 /** A start with its dash at the end of a line: "… Medi-Corp Inc. (2015–". */
@@ -688,7 +695,140 @@ export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
       });
     }
   });
-  return out;
+  return ACTIVE_PROFILE_DATES ? correctWithProfile(out, ls, ACTIVE_PROFILE_DATES).spans : out;
+}
+
+// ---------------------------------------------------------------------------
+// Dates a recruiter corrected on the profile (v1.8.0)
+// ---------------------------------------------------------------------------
+
+/**
+ * Where the recruiter's experience entries sit in the text the rules read
+ * (the CV with the profile block after it): each entry is a header line
+ * "Title | Company Mon YYYY – Mon YYYY" with its sentences under it.
+ */
+export type ProfileRoleDates = { start: number; end: number };
+
+/** A CV role whose dates the recruiter's profile corrects. */
+export type ProfileDateCorrection = { role: string; cv: string; profile: string };
+
+/**
+ * Set while one requirement is evaluated (evaluateStructuredRequirement), so
+ * every rule that reads dated ranges reads the corrected ones. Synchronous
+ * and restored in a finally: never visible outside one evaluation.
+ */
+let ACTIVE_PROFILE_DATES: ProfileRoleDates | null = null;
+
+const COMPANY_NOISE = /\s*\([^)]*\)\s*|[\s,]+(?:ltd\.?|limited|plc|inc\.?|llc|llp|gmbh)$/gi;
+
+/** The employer names a profile entry's header gives: "OpsRamp / HPE" is two. */
+function entryCompanies(header: string): string[] {
+  const company = header.includes("|") ? header.slice(header.lastIndexOf("|") + 1) : header;
+  return company
+    .trim()
+    .replace(COMPANY_NOISE, " ")
+    .split(/\s+\/\s+/)
+    .map((n) => n.replace(/[\s,;:–—-]+$/g, "").trim())
+    .filter((n) => n.length >= 2);
+}
+
+function namesCompany(text: string, name: string): boolean {
+  const pattern = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
+  // A short name ("EE") is matched as written; a longer one in any case.
+  return new RegExp(`(^|[^A-Za-z0-9])${pattern}([^A-Za-z0-9]|$)`, name.length <= 3 ? "" : "i").test(
+    text,
+  );
+}
+
+/**
+ * Where the CV and the recruiter's profile disagree on a role's dates, the
+ * profile wins: it is the version a recruiter checked. A CV role is matched
+ * to a profile entry by the employer's name on the role's own line, else the
+ * line above it, else the line below. One CV line that covers two profile
+ * entries ("OpsRamp / Hewlett Packard Enterprise") takes the whole period
+ * they cover. Roles the profile does not name keep the CV's dates.
+ */
+function correctWithProfile(
+  spans: Span[],
+  ls: Line[],
+  profile: ProfileRoleDates,
+): { spans: Span[]; corrections: ProfileDateCorrection[] } {
+  const inProfile = (s: Span) => s.line.start >= profile.start && s.line.start < profile.end;
+  const entries = spans
+    .filter(inProfile)
+    .map((s) => ({ s, names: entryCompanies(s.line.text.slice(0, s.at)) }))
+    .filter((e) => e.names.length > 0);
+  if (entries.length === 0) return { spans, corrections: [] };
+  const indexOf = new Map(ls.map((l, i) => [l.start, i] as const));
+  const corrections: ProfileDateCorrection[] = [];
+  const matchOf = (s: Span): typeof entries => {
+    if (inProfile(s) || isEducationSpan(s)) return [];
+    const i = indexOf.get(s.line.start);
+    if (i === undefined) return [];
+    // The role's own line without its dates, then the line above, then below.
+    const own = s.line.text.slice(0, s.at) + s.line.text.slice(s.at + s.raw.length);
+    for (const place of [own, ls[i - 1]?.text ?? "", ls[i + 1]?.text ?? ""]) {
+      if (!place.trim()) continue;
+      const found = entries.filter((e) => e.names.some((n) => namesCompany(place, n)));
+      if (found.length > 0) return found;
+    }
+    return [];
+  };
+  const matches = spans.map(matchOf);
+  // Two CV roles at one employer (two stints, a promotion) cannot be told
+  // apart by the employer's name: both keep the CV's dates.
+  const claimed = new Map<Span, number>();
+  for (const found of matches) for (const e of found) claimed.set(e.s, (claimed.get(e.s) ?? 0) + 1);
+  const restated = new Set<Span>();
+  const out = spans.map((s, k) => {
+    const matched = matches[k]!;
+    if (matched.length === 0 || matched.some((e) => (claimed.get(e.s) ?? 0) > 1)) return s;
+    // The profile names this CV role: its entry is the same role again.
+    if (matched.length === 1) restated.add(matched[0]!.s);
+    const from = Math.min(...matched.map((e) => e.s.from));
+    const to = Math.max(...matched.map((e) => e.s.to));
+    if (from === s.from && to === s.to && !s.startUnreadable) return s;
+    const profileDates = matched.map((e) => e.s.raw.trim()).join("; ");
+    corrections.push({
+      role: [...new Set(matched.flatMap((e) => e.names))].join(" / "),
+      cv: s.raw.trim(),
+      profile: profileDates,
+    });
+    return {
+      ...s,
+      from,
+      to,
+      yearOnlyFrom: false,
+      yearOnlyTo: false,
+      open: matched.some((e) => e.s.open),
+      startUnreadable: false,
+      ...(matched.length === 1 ? { shown: profileDates } : {}),
+    };
+  });
+  return {
+    spans: out.map((s) => (restated.has(s) ? { ...s, restatesCvRole: true } : s)),
+    corrections,
+  };
+}
+
+/**
+ * The CV roles whose dates the recruiter's profile corrects, for the note a
+ * run keeps in its evidence. Empty when the profile holds no recruiter
+ * experience entries or agrees with the CV.
+ */
+export function profileDateCorrections(
+  cv: string,
+  profile: ProfileRoleDates | null | undefined,
+  today: Date = new Date(),
+): ProfileDateCorrection[] {
+  if (!profile) return [];
+  const before = ACTIVE_PROFILE_DATES;
+  ACTIVE_PROFILE_DATES = null;
+  try {
+    return correctWithProfile(findDatedRanges(cv, today), lines(cv), profile).corrections;
+  } finally {
+    ACTIVE_PROFILE_DATES = before;
+  }
 }
 
 /**
@@ -792,6 +932,8 @@ function headerLike(l: Line | undefined): boolean {
   // A section heading or a page mark belongs to no role.
   // "Page 2", "Devon Inman – Curriculum Vitae Page 1 of 2": a page footer.
   if (HEADING_LINE.test(t) || /(?:^|\s)page\s+\d+(?:\s+of\s+\d+)?$/i.test(t)) return false;
+  // Nor does a label line of the profile block ("PROFILE EXPERIENCE (R)").
+  if (PROFILE_LABEL_LINE.test(t)) return false;
   if (/[.;:,]$/.test(t)) return false;
   return t.split(/\s+/).length <= 12;
 }
@@ -949,7 +1091,8 @@ function roleLabel(b: RoleBlock): string {
     )
     .slice(0, 2)
     .join(", ");
-  const period = b.span.raw
+  // The dates counted: the recruiter's where they corrected the CV's.
+  const period = (b.span.shown ?? b.span.raw)
     .replace(/\s*(?:[-–—]\s*(?:to\b|until\b|till\b)?|\bto\b|\buntil\b|\btill\b)\s*/i, "–")
     .replace(/\s+/g, " ");
   return `${name ? name.slice(0, 90) : "a role dated"} ${period}`.trim();
@@ -1140,7 +1283,10 @@ function evaluateSubjectYears(
   const allYears = oneDecimal(unionMonths([...strong, ...weak].map((b) => b.span)));
   const byRecency = (a: RoleBlock, b: RoleBlock) => b.span.to - a.span.to;
   const named = (bs: RoleBlock[]) => {
-    const sorted = [...bs].sort(byRecency);
+    // A profile entry whose dates were put on its CV role is that role again:
+    // it is counted (the same months) and named once.
+    const once = bs.filter((b) => !b.span.restatesCvRole);
+    const sorted = [...(once.length > 0 ? once : bs)].sort(byRecency);
     const shown = sorted.slice(0, 4).map(roleLabel).join("; ");
     return sorted.length > 4 ? `${shown}; and ${sorted.length - 4} more` : shown;
   };
@@ -1573,18 +1719,134 @@ export function evaluateOnsiteRequirement(
   };
 }
 
+// ---------------------------------------------------------------------------
+// 6. Home within commuting distance: "Based in or commutable to London, and
+//    able to travel up to 50%" (v1.8.0)
+// ---------------------------------------------------------------------------
+
+const HOME_REQUIREMENT =
+  /\b(?:based|located|living|resident|residing)\s+(?:in|within|near|around)\b|\blives?\s+(?:in|within|near)\b|\bcommut\w*\b|\bwithin\s+(?:commuting|travell?ing|reach)\b/i;
+/** A second condition the home cannot show: willingness to travel. */
+const TRAVEL_CLAUSE =
+  /\b(?:able|willing|prepared|happy|free|open)\s+to\s+travel\b|\btravel\s+(?:up\s+to|of|around|across)\b|\b\d{1,3}\s*%\s+(?:of\s+)?travel\b|\btravel\b[^.;]{0,30}\b\d{1,3}\s*%/i;
+
+/**
+ * Where someone lives is not CV wording. "Based in or commutable to London"
+ * was read by counting words, and the words are never in a CV: a home in
+ * Hertfordshire or a London borough says none of "based", "commutable" or
+ * "London", and the contact line is not searched at all. The home is read
+ * from the profile's location, else the CV's own location line, and compared
+ * with the places the wording table lists as the city or its commuter belt
+ * (wording-equivalence.json).
+ *
+ * A home there meets a requirement that asks only for that. Where the
+ * requirement also asks for travel, the home shows half of it: partial, and
+ * the candidate's own yes to the linked question makes it met in the
+ * engine's answer step. A home elsewhere, or none stated, is for the
+ * recruiter to confirm: unknown, never a zero and never a contradiction of
+ * the candidate's answer. A sales territory ("UK & Ireland", "EMEA") is not
+ * a home and proves nothing here.
+ */
+export function evaluateHomeLocationRequirement(
+  text: string,
+  cv: string,
+  profileLocation?: string | null,
+): StructuredVerdict | null {
+  if (!HOME_REQUIREMENT.test(text)) return null;
+  // "Based in London or willing to relocate" is satisfied by willingness too:
+  // it stays with the relocation rule and the keyword matcher.
+  if (/\breloca\w*/i.test(text)) return null;
+  const place = commutablePlaceIn(text);
+  if (!place) return null;
+  const alsoTravel = TRAVEL_CLAUSE.test(text);
+
+  // "Sutton, United Kingdom, Sutton, United Kingdom": the profile's fields joined.
+  const profile = [
+    ...new Map(
+      (profileLocation ?? "")
+        .split(",")
+        .map((x) => x.trim())
+        .filter(Boolean)
+        .map((x) => [x.toLowerCase(), x] as const),
+    ).values(),
+  ].join(", ");
+  const fromProfile = profile && homeWithinCommute(place, profile) ? profile : null;
+  // The CV's own location: a labelled line, the header, or the contact block.
+  const homeNames = new RegExp(
+    `\\b(?:${[...place.home_is]
+      .sort((a, b) => b.length - a.length)
+      .map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"))
+      .join("|")})\\b`,
+    "i",
+  );
+  const cvLine = fromProfile ? null : candidateLocationLine(cv, homeNames);
+  // The line the place was read from carries the country beside it.
+  const cvHome =
+    cvLine &&
+    homeWithinCommute(
+      place,
+      lines(cv).find((l) => l.start <= cvLine.start && cvLine.end <= l.end)?.text ?? cvLine.text,
+    )
+      ? cvLine
+      : null;
+
+  if (fromProfile || cvHome) {
+    const evidence: StructuredEvidence = fromProfile
+      ? { snippet: `Profile location: ${fromProfile}`, start: 0, end: 0 }
+      : quote(cvHome!);
+    const where = fromProfile ?? cvHome!.text;
+    return {
+      rule: "home_location",
+      status: alsoTravel ? "partial" : "met",
+      needs_validation: alsoTravel,
+      note: alsoTravel
+        ? `Home is ${where}, in or within commuting distance of ${place.place}. Travel is the candidate's own answer: confirm at screening.`
+        : `Home is ${where}, in or within commuting distance of ${place.place}.`,
+      evidence: [evidence],
+    };
+  }
+  const stated = profile || null;
+  return {
+    rule: "home_location",
+    status: "unknown",
+    needs_validation: true,
+    note: stated
+      ? `Home is given as ${stated}, which does not show ${place.place} or its commuter belt. Confirm at screening.`
+      : `Home location is not stated. Confirm the commute to ${place.place} at screening.`,
+    evidence: [],
+  };
+}
+
 /** The first rule that recognises the requirement decides it; null means "not one of these shapes". */
 export function evaluateStructuredRequirement(
   text: string,
   cv: string,
   today: Date = new Date(),
-  opts: { profileLocation?: string | null } = {},
+  opts: {
+    profileLocation?: string | null;
+    /** The recruiter's experience entries, whose dates win over the CV's (v1.8.0). */
+    profileDates?: ProfileRoleDates | null;
+  } = {},
 ): StructuredVerdict | null {
-  return (
-    evaluateRelocationRequirement(text, cv, opts.profileLocation) ??
-    evaluateOnsiteRequirement(text, cv, opts.profileLocation) ??
-    evaluateMarketRequirement(text, cv, today) ??
-    evaluateDegreeRequirement(text, cv) ??
-    evaluateYearsRequirement(text, cv, today)
-  );
+  const before = ACTIVE_PROFILE_DATES;
+  ACTIVE_PROFILE_DATES = opts.profileDates ?? null;
+  try {
+    const verdict =
+      evaluateRelocationRequirement(text, cv, opts.profileLocation) ??
+      evaluateOnsiteRequirement(text, cv, opts.profileLocation) ??
+      evaluateHomeLocationRequirement(text, cv, opts.profileLocation) ??
+      evaluateMarketRequirement(text, cv, today) ??
+      evaluateDegreeRequirement(text, cv) ??
+      evaluateYearsRequirement(text, cv, today);
+    if (
+      verdict?.rule === "minimum_years" &&
+      opts.profileDates &&
+      profileDateCorrections(cv, opts.profileDates, today).length > 0
+    ) {
+      return { ...verdict, note: `${verdict.note} Dates as the recruiter corrected them on the profile.` };
+    }
+    return verdict;
+  } finally {
+    ACTIVE_PROFILE_DATES = before;
+  }
 }

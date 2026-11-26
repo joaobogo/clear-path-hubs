@@ -129,7 +129,7 @@ describe("a must-have that names the requirement links its question", () => {
     const a = r.requirement_assessment[0]!;
     expect(a.status).toBe("met");
     expect(
-      a.evidence.some((e) => e.source === "screening" && e.snippet.startsWith("Answered yes to")),
+      a.evidence.some((e) => e.source === "screening_candidate" && e.snippet.startsWith("Answered yes to")),
     ).toBe(true);
     expect(r.engine_version).toBe(ENGINE_VERSION);
   });

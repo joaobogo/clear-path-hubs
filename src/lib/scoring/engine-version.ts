@@ -278,4 +278,34 @@
  * cannot be read: what it describes counts as evidence, its length does not,
  * and the dates are confirmed at screening.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.7.12";
+/**
+ * v1.8.0 — the same facts in different words score the same, and the profile
+ * a person wrote is read beside the CV (scoring fix spec, 26 Nov 2026, the
+ * Enterprise Sales Director roles).
+ *
+ * Wording. A requirement asked for "total contract value", "new-logo sales
+ * (hunting)", "bookings targets" and "a formal qualification method"; the CV
+ * said "ACV", "new-logo acquisition", "quota" and "MEDDPICC", and each row
+ * came out partial for want of the requirement's own words. The wordings
+ * that are one thing are listed in wording-equivalence.json and applied to a
+ * requirement only where it uses the phrase. A title in a requirement ("Head
+ * of Data") is wording, not a product the CV must name, and its word "Head"
+ * is not evidenced by the candidate's own "Head of Sales". "Based in or
+ * commutable to London" is decided by the home location: London, a borough
+ * or a Home County, never a sales territory. A thing a sentence sets aside
+ * ("rather than Snowflake") is not evidence of it. The table maps wording
+ * only: selling cloud migration is still not Snowflake experience.
+ *
+ * Profile. Headline, summary and experience entries count where the profile
+ * records that a person wrote them: a recruiter's are labelled recruiter
+ * edited and their dates win over the CV's, with the correction noted on the
+ * run; the candidate's are labelled profile. The parser's copy of the CV is
+ * not read, and a sentence the CV already has is not read twice. Every
+ * evidence item says where it was read: cv, profile, profile_recruiter_edited,
+ * screening_candidate or screening_recruiter. An answer a recruiter entered
+ * for the candidate counts like any other, and the run says so.
+ *
+ * Replay on 84 candidates of three other roles: no score, status, note or
+ * quote changes; only the source labels are new.
+ */
+export const ENGINE_VERSION = "taasflow-scoring-v1.8.0";

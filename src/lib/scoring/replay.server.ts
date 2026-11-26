@@ -87,6 +87,8 @@ export async function replayScoreRun(runId: string): Promise<ReplayOutcome> {
     calibration,
     eligibility_checks: replayRecruiterChecks(snapshot),
     scoring_mode: snapshot.scoring_mode ?? null,
+    profile_text: snapshot.profile_text ?? null,
+    candidate_location: snapshot.candidate_location ?? null,
   });
 
   // Prefer the fingerprint the engine itself recorded; fall back to the

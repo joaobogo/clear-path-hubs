@@ -7,9 +7,12 @@ import type { RequirementRow, RequirementStatus } from "@/lib/client-fit-present
  */
 export type ClaimSource =
   | "CV"
+  | "Profile"
+  | "Profile (recruiter verified)"
   | "Screening call"
   | "Verified reference"
   | "Application answers"
+  | "Screening answers (recruiter-entered, pending candidate confirmation)"
   | "Recruiter notes";
 
 export type RationaleVerdict = "met" | "partial" | "gap" | "not_applicable";
@@ -70,6 +73,14 @@ function isClaimEcho(requirement: string, claim: string): boolean {
 export function normaliseSource(raw: string | null | undefined): ClaimSource {
   const s = clean(raw).toLowerCase();
   if (!s) return "Recruiter notes";
+  // The engine's own source labels (v1.8.0) say exactly where a quote was
+  // read: profile text a recruiter wrote counts and is shown as recruiter
+  // verified; an answer a recruiter entered for the candidate says so.
+  if (s === "profile_recruiter_edited") return "Profile (recruiter verified)";
+  if (s === "profile") return "Profile";
+  if (s === "screening_recruiter")
+    return "Screening answers (recruiter-entered, pending candidate confirmation)";
+  if (s === "screening_candidate") return "Application answers";
   if (/(reference|referee|backchannel|verified by)/.test(s)) return "Verified reference";
   if (/(screen|call|interview|conversation|phone)/.test(s)) return "Screening call";
   if (/(applica|questionnaire|form|answer)/.test(s)) return "Application answers";

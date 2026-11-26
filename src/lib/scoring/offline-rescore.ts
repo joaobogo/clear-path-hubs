@@ -27,6 +27,7 @@ import { scoreCandidate, type RequirementInput, type ScoringResult, type Screeni
 import { ENGINE_VERSION } from "./engine-version";
 import { EVALUATION_METHOD, parseCalibration, serialiseCalibration } from "./engine-calibration";
 import { buildReplaySnapshot } from "./replay";
+import { buildProfileText } from "./profile-text";
 import { dealbreakerCondition } from "./eligibility";
 import { roleContextOf } from "./evidence-sources";
 import {
@@ -44,6 +45,8 @@ import { SCORING_BLUEPRINT_VERSION, buildExplanation, reconcile } from "../scori
 export type OfflineAnswer = {
   question_id: string;
   answer: unknown;
+  /** application_answers.answered_by; absent means the candidate. */
+  answered_by?: string | null;
   q: {
     question?: string | null;
     answer_type?: string | null;
@@ -65,6 +68,17 @@ export type OfflineMatch = {
   location: string | null;
   city: string | null;
   country: string | null;
+  /**
+   * The profile fields a person may have written, and the record of who did
+   * (consent.provenance): read beside the CV exactly as the live path reads
+   * them (profile-text.ts). An export taken before these were exported
+   * scores the CV alone, and the write is then refused unless the profile is
+   * empty too.
+   */
+  headline?: string | null;
+  summary?: string | null;
+  experience?: unknown;
+  consent?: unknown;
   answers: OfflineAnswer[];
   /** Names the admin task when the match cannot be scored. */
   candidate_name?: string | null;
@@ -215,8 +229,36 @@ function screeningOf(answers: OfflineAnswer[]): ScreeningAnswer[] {
       value,
       disqualifying_condition: dealbreakerCondition(q as Parameters<typeof dealbreakerCondition>[0]),
       must_have: q?.must_have ?? null,
+      ...(r.answered_by === "recruiter_on_behalf" ? { answered_by: "recruiter_on_behalf" } : {}),
     } as ScreeningAnswer;
   });
+}
+
+/** The profile's provenance record, or null. */
+function provenanceOf(consent: unknown): unknown {
+  return consent && typeof consent === "object" && !Array.isArray(consent)
+    ? ((consent as Record<string, unknown>).provenance ?? null)
+    : null;
+}
+
+/**
+ * The profile fields the engine may read, as one text the generated SQL
+ * rebuilds from the table: headline, summary, experience and the provenance
+ * record, joined by "|". A profile edited after the export stops the write.
+ */
+export function profileFingerprintText(m: Pick<OfflineMatch, "headline" | "summary" | "experience" | "consent">): string {
+  const prov = provenanceOf(m.consent);
+  return [
+    m.headline ?? "",
+    m.summary ?? "",
+    m.experience === null || m.experience === undefined ? "" : jsonbText(m.experience),
+    prov === null || prov === undefined ? "" : jsonbText(prov),
+  ].join("|");
+}
+
+/** Refuse the write when the profile the score was computed from has changed. */
+function profileGuardSql(m: OfflineMatch, mid: string): string {
+  return `  IF (SELECT md5(coalesce(cp.headline, '') || '|' || coalesce(cp.summary, '') || '|' || coalesce(cp.experience::text, '') || '|' || coalesce((cp.consent->'provenance')::text, '')) FROM candidate_matches m JOIN candidate_profiles cp ON cp.id = m.candidate_profile_id WHERE m.id = ${mid}) <> '${md5(profileFingerprintText(m))}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: profile changed since export'; END IF;`;
 }
 
 const num = (n: number | null | undefined) => (n == null ? "NULL" : String(n));
@@ -283,14 +325,21 @@ export function offlineRescore(
     brand_display_name: ctx.organisation?.brand_display_name ?? null,
     role_title: ctx.position.title ?? null,
   });
+  // The same profile text and location executeScoring's loadInputs builds.
+  const profileText = buildProfileText(
+    { headline: m.headline, summary: m.summary, experience: m.experience, consent: m.consent },
+    cvText,
+  );
+  const candidateLocation = [m.location, m.city, m.country].filter(Boolean).join(", ") || null;
   const raw = scoreCandidate({
     cv_text: cvText,
     requirements,
     screening,
-    candidate_location: [m.location, m.city, m.country].filter(Boolean).join(", ") || null,
+    candidate_location: candidateLocation,
     role_context: roleContext,
     calibration,
     eligibility_checks: m.eligibility_checks ?? [],
+    profile_text: profileText,
   });
 
   if (employmentIntervals(cvText).length === 0) {
@@ -332,6 +381,7 @@ DECLARE
   cv text;
 BEGIN
 ${cvGuardSql(m, mid, cvText)}
+${profileGuardSql(m, mid)}
 ${recruiterGuardSql(m, mid)}
 ${engineChecksSql(m, mid, raw)}
   UPDATE candidate_matches SET eligibility_status = '${decision.status}', eligibility_updated_at = now() WHERE id = ${mid};
@@ -361,6 +411,8 @@ ${refusalSql}`,
     role_context: roleContext,
     recruiter_exceptions: raw.recruiter_exceptions.map((x) => x.question_id),
     reviewed_claims: raw.reviewed_screening_claims,
+    profile_text: profileText,
+    candidate_location: candidateLocation,
   });
   const { cv_text: _cv, ...snapshotRest } = snapshot as unknown as Record<string, unknown>;
   void _cv;
@@ -415,6 +467,7 @@ BEGIN
   IF md5(r::text) <> '${md5(jsonbText(result))}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: result fingerprint mismatch'; END IF;
   IF md5(s::text) <> '${md5(jsonbText(snap))}' THEN RAISE EXCEPTION 'offline rescore ${m.match_id}: snapshot fingerprint mismatch'; END IF;
 ${cvGuardSql(m, mid, cvText)}
+${profileGuardSql(m, mid)}
 ${recruiterGuardSql(m, mid)}
   ${humanReviewedGuard(mid, m.match_id, "a machine rescore never replaces it")}
   UPDATE score_runs SET superseded_at = now() WHERE candidate_match_id = ${mid} AND status = 'completed' AND superseded_at IS NULL;

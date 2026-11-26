@@ -41,6 +41,8 @@ export const ReplayScreeningSchema = z.object({
   /** relocation_volume runs only. */
   scoring_dimension: z.string().nullable().optional(),
   options: z.unknown().optional(),
+  /** Who gave the answer (engine v1.8.0+); stored only when a recruiter entered it. */
+  answered_by: z.enum(["candidate", "recruiter_on_behalf"]).nullable().optional(),
 });
 
 export const ReplaySnapshotSchema = z.object({
@@ -71,6 +73,16 @@ export const ReplaySnapshotSchema = z.object({
   reviewed_claims: z.array(z.string()).optional(),
   /** positions.scoring_mode; stored only when not standard. */
   scoring_mode: z.string().optional(),
+  /**
+   * The profile text read beside the CV (engine v1.8.0+, profile-text.ts).
+   * Stored only when there was some, so a CV-only run keeps its shape.
+   */
+  profile_text: z.string().optional(),
+  /**
+   * The profile's recorded location, which decides location requirements.
+   * Stored from engine v1.8.0; absent on earlier runs.
+   */
+  candidate_location: z.string().optional(),
 });
 
 export type ReplaySnapshot = z.infer<typeof ReplaySnapshotSchema>;
@@ -89,12 +101,15 @@ export function buildReplaySnapshot(input: {
     must_have?: string | null;
     scoring_dimension?: string | null;
     options?: unknown;
+    answered_by?: "candidate" | "recruiter_on_behalf" | null;
   }>;
   role_family?: string | null;
   role_context?: { organisation_names: string[]; role_title: string | null } | null;
   recruiter_exceptions?: string[];
   reviewed_claims?: string[];
   scoring_mode?: string | null;
+  profile_text?: string | null;
+  candidate_location?: string | null;
 }): ReplaySnapshot {
   const exceptions = [...new Set(input.recruiter_exceptions ?? [])].sort();
   const reviewed = [...new Set(input.reviewed_claims ?? [])].sort();
@@ -115,6 +130,7 @@ export function buildReplaySnapshot(input: {
       disqualifying_condition: s.disqualifying_condition ?? null,
       must_have: s.must_have ?? null,
       ...(s.scoring_dimension ? { scoring_dimension: s.scoring_dimension, options: s.options ?? null } : {}),
+      ...(s.answered_by === "recruiter_on_behalf" ? { answered_by: "recruiter_on_behalf" as const } : {}),
     })),
     role_family: input.role_family ?? null,
     // Only when set, so a run scored without one keeps its snapshot shape.
@@ -129,6 +145,10 @@ export function buildReplaySnapshot(input: {
     ...(exceptions.length ? { recruiter_exceptions: exceptions } : {}),
     ...(reviewed.length ? { reviewed_claims: reviewed } : {}),
     ...(input.scoring_mode && input.scoring_mode !== "standard" ? { scoring_mode: input.scoring_mode } : {}),
+    ...((input.profile_text ?? "").trim() ? { profile_text: (input.profile_text ?? "").trim() } : {}),
+    ...((input.candidate_location ?? "").trim()
+      ? { candidate_location: (input.candidate_location ?? "").trim() }
+      : {}),
   };
 }
 
