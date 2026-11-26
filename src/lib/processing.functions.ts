@@ -1205,7 +1205,7 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       m.application_id
         ? supabase
             .from("application_answers")
-            .select("id,answer,created_at,screening_questions(question,answer_type,dealbreaker,display_order)")
+            .select("id,answer,created_at,answered_by,source_note,candidate_confirmed_at,screening_questions(question,answer_type,dealbreaker,display_order)")
             .eq("application_id", m.application_id)
         : Promise.resolve({ data: [] as AnyRow[] }),
     ]);

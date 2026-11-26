@@ -157,7 +157,29 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
 
   // practicalities
   { key: "work_authorization", group: "practicalities", label: "Work authorisation as you described it" },
-  { key: "screening_answers", group: "practicalities", label: "Your answers to the role's screening questions" },
+  {
+    key: "screening_answers",
+    group: "practicalities",
+    label: "Your answers to the role's screening questions",
+    note: "An answer a recruiter entered for you from a call or a message is shown to the employer as recruiter-entered until you answer the question yourself.",
+  },
+  {
+    key: "cv_only",
+    group: "role_fit",
+    label: "Whether the assessment rests on your CV alone",
+    note: "Shown when the role asks screening questions and none is answered yet, so the employer does not read it as a full assessment.",
+  },
+  {
+    key: "dealbreaker_warnings",
+    group: "role_fit",
+    label: "A warning when a screening answer did not meet one of the role's must-haves",
+    note: "Shown only when you were shared with the employer despite that answer; the employer sees which requirement it concerns.",
+  },
+  {
+    key: "client_notes",
+    group: "process",
+    label: "Notes our team wrote for the employer about your application",
+  },
   {
     key: "compensation_alignment",
     group: "practicalities",

@@ -315,7 +315,7 @@ export const getReviewRecord = createServerFn({ method: "POST" })
       s
         .from("application_answers")
         .select(
-          "id,answer,created_at,screening_questions(question,answer_type,dealbreaker,preferred_answer)",
+          "id,answer,created_at,answered_by,source_note,candidate_confirmed_at,screening_questions(question,answer_type,dealbreaker,preferred_answer)",
         )
         .eq("application_id", m.application_id)
         .order("created_at", { ascending: true }),

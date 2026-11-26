@@ -29,6 +29,11 @@ import {
 import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
 import { contradictionSentence, displayConcern } from "@/lib/client/contradiction-copy";
 import { formatAnswerValue } from "@/lib/human-labels";
+import { isCvOnlyScore } from "@/lib/scoring/cv-only";
+import {
+  RECRUITER_ANSWER_CLIENT_LABEL,
+  pendingCandidateConfirmation,
+} from "@/lib/candidate/answer-source";
 import {
   clientMethodLabel,
   normalizeEvaluationMethod,
@@ -461,7 +466,17 @@ export type ClientCandidateDTO = {
   languages: Array<{ name: string; level: string | null }>;
   certifications: Array<{ name: string; issuer: string | null; date: string | null }>;
   work_authorization: string | null;
-  screening_answers: Array<{ question: string; answer: string }>;
+  /**
+   * The role asks screening questions and this candidate has answered none, so
+   * the score is built from the CV alone (scoring/cv-only.ts). False whenever
+   * the loader did not supply the screening facts.
+   */
+  cv_only: boolean;
+  /**
+   * `source_label` is set on an answer a recruiter entered for the candidate
+   * and the candidate has not confirmed; it is the wording a client reads.
+   */
+  screening_answers: Array<{ question: string; answer: string; source_label?: string }>;
   compensation_alignment: {
     role_range: string | null;
     candidate_expectation: string | null;
@@ -901,7 +916,11 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
     // JSON.stringify, which can only ever print machine output at a client.
     const ans = a?.answer;
     const text = ans == null || ans === "" ? "" : formatAnswerValue(ans);
-    return { question: String(q), answer: text === "—" ? "" : text };
+    return {
+      question: String(q),
+      answer: text === "—" ? "" : text,
+      ...(pendingCandidateConfirmation(a) ? { source_label: RECRUITER_ANSWER_CLIENT_LABEL } : {}),
+    };
   }).filter((a) => a.question);
 }
 
@@ -1315,6 +1334,11 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     languages: normLanguages(cp.languages),
     certifications,
     work_authorization: workAuth,
+    cv_only: isCvOnlyScore({
+      scored: publishedScore(run) != null,
+      roleHasQuestions: (row as AnyRow).screening_facts?.role_has_questions === true,
+      hasAnswers: (row as AnyRow).screening_facts?.has_answers === true,
+    }),
     screening_answers: normScreeningAnswers(row.application_answers),
     compensation_alignment: {
       role_range: roleComp.role_range,

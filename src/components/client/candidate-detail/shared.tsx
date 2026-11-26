@@ -66,6 +66,7 @@ export function CandidateHeader({
               total: candidate.coverage.total,
               rows: candidate.requirement_rows 
             } as any}
+            cvOnly={candidate.cv_only}
             rechecking={candidate.freshness?.state === "stale"}
             humanReviewed={candidate.human_review?.reviewed === true}
             evidencePending={false}

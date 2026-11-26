@@ -91,6 +91,7 @@ export function CandidateCard({
           fitLabel={c.fit_label}
           evidence={c.evidence_support}
           unicorn={c.unicorn}
+          cvOnly={c.cv_only}
         />
         <span className="text-xs text-muted-foreground">{clientStageLabel(c.stage)}</span>
       </div>

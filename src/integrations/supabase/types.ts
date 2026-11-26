@@ -366,11 +366,67 @@ export type Database = {
         }
         Relationships: []
       }
+      application_answer_history: {
+        Row: {
+          answer: Json | null
+          answer_changed: boolean
+          answered_at: string | null
+          answered_by: string
+          application_id: string
+          entered_by_user_id: string | null
+          id: string
+          question: string | null
+          question_id: string
+          replaced_at: string
+          replaced_by: string
+          source_note: string | null
+        }
+        Insert: {
+          answer?: Json | null
+          answer_changed?: boolean
+          answered_at?: string | null
+          answered_by: string
+          application_id: string
+          entered_by_user_id?: string | null
+          id?: string
+          question?: string | null
+          question_id: string
+          replaced_at?: string
+          replaced_by: string
+          source_note?: string | null
+        }
+        Update: {
+          answer?: Json | null
+          answer_changed?: boolean
+          answered_at?: string | null
+          answered_by?: string
+          application_id?: string
+          entered_by_user_id?: string | null
+          id?: string
+          question?: string | null
+          question_id?: string
+          replaced_at?: string
+          replaced_by?: string
+          source_note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_answer_history_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       application_answers: {
         Row: {
           answer: Json
+          answered_by: string
           application_id: string
+          candidate_confirmed_at: string | null
           created_at: string
+          entered_by_user_id: string | null
           id: string
           legacy_source_id: string | null
           legacy_source_system: string | null
@@ -382,12 +438,16 @@ export type Database = {
             | null
           migration_version: string | null
           question_id: string
+          source_note: string | null
           updated_at: string
         }
         Insert: {
           answer: Json
+          answered_by?: string
           application_id: string
+          candidate_confirmed_at?: string | null
           created_at?: string
+          entered_by_user_id?: string | null
           id?: string
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -399,12 +459,16 @@ export type Database = {
             | null
           migration_version?: string | null
           question_id: string
+          source_note?: string | null
           updated_at?: string
         }
         Update: {
           answer?: Json
+          answered_by?: string
           application_id?: string
+          candidate_confirmed_at?: string | null
           created_at?: string
+          entered_by_user_id?: string | null
           id?: string
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -416,6 +480,7 @@ export type Database = {
             | null
           migration_version?: string | null
           question_id?: string
+          source_note?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1856,6 +1921,8 @@ export type Database = {
           recommendation: Database["public"]["Enums"]["recommendation_status"]
           recommendation_reason: string | null
           recommendation_updated_at: string | null
+          recruiter_answers_confirmed_at: string | null
+          recruiter_answers_confirmed_by: string | null
           rescore_queued_at: string | null
           score_stale: boolean
           score_stale_at: string | null
@@ -1910,6 +1977,8 @@ export type Database = {
           recommendation?: Database["public"]["Enums"]["recommendation_status"]
           recommendation_reason?: string | null
           recommendation_updated_at?: string | null
+          recruiter_answers_confirmed_at?: string | null
+          recruiter_answers_confirmed_by?: string | null
           rescore_queued_at?: string | null
           score_stale?: boolean
           score_stale_at?: string | null
@@ -1964,6 +2033,8 @@ export type Database = {
           recommendation?: Database["public"]["Enums"]["recommendation_status"]
           recommendation_reason?: string | null
           recommendation_updated_at?: string | null
+          recruiter_answers_confirmed_at?: string | null
+          recruiter_answers_confirmed_by?: string | null
           rescore_queued_at?: string | null
           score_stale?: boolean
           score_stale_at?: string | null

@@ -62,6 +62,10 @@ import {
 } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime, pluralize } from "@/lib/format/datetime";
 import { formatAnswerValue } from "@/lib/human-labels";
+import {
+  RECRUITER_ANSWER_STAFF_LABEL,
+  pendingCandidateConfirmation,
+} from "@/lib/candidate/answer-source";
 import { cn } from "@/lib/utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -230,6 +234,8 @@ function ReviewWorkspace() {
         question: a.screening_questions?.question ?? "Question",
         dealbreaker: Boolean(a.screening_questions?.dealbreaker),
         answer: formatAnswerValue(a.answer),
+        recruiterEntered: pendingCandidateConfirmation(a),
+        sourceNote: (a.source_note as string | null) ?? null,
       })),
     [answers],
   );
@@ -788,6 +794,12 @@ function ReviewWorkspace() {
                       {a.question} {a.dealbreaker ? "· dealbreaker" : ""}
                     </p>
                     <p>{a.answer}</p>
+                    {a.recruiterEntered && (
+                      <p className="text-xs font-medium text-amber-700 dark:text-amber-400">
+                        {RECRUITER_ANSWER_STAFF_LABEL}
+                        {a.sourceNote ? `. Source: ${a.sourceNote}` : ""}
+                      </p>
+                    )}
                   </li>
                 ))}
               </ul>

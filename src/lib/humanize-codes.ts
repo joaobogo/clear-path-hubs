@@ -37,6 +37,7 @@ const DICTIONARY: Record<string, string> = {
   text_layer_missing: "The CV has no text layer — it is a scan",
   engine_error: "The scoring engine failed to finish",
   human_reapply_failed: "The recruiter's review could not be put back after a re-score",
+  recruiter_answers_unconfirmed: "Recruiter-entered answers need confirmation before publishing",
   cv_unreadable: "The CV could not be read",
   cv_parse: "Parsing CV",
   cv_hydrate: "Hydrating data",
@@ -189,6 +190,8 @@ const REASON_SENTENCES: Record<string, string> = {
   engine_error: "The scoring engine stopped before it finished.",
   human_reapply_failed:
     "The recruiter's review could not be put back after a re-score. The previous reviewed score is still shown; open the review and record it again.",
+  recruiter_answers_unconfirmed:
+    "Some screening answers were entered by a recruiter and the candidate has not confirmed them. Confirm publishing with recruiter-entered answers on the candidate's Screening answers, then publish again.",
   sandbox_workspace:
     "This is a demo workspace, so the message was recorded rather than sent.",
   screening_contradicts_cv: "A screening answer and the CV disagree.",

@@ -329,6 +329,7 @@ function CandidateCard({
             fitLabel={c.fit_label}
             evidence={c.evidence_support}
             unicorn={c.unicorn}
+            cvOnly={c.cv_only}
             className="justify-end"
           />
           <div className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">

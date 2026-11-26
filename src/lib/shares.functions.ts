@@ -325,7 +325,7 @@ export const getShortlistShareByToken = createServerFn({ method: "GET" })
     if (appIds.length > 0) {
       const { data: answers } = await supabaseAdmin
         .from("application_answers")
-        .select("application_id, id, answer, screening_questions(question, display_order)")
+        .select("application_id, id, answer, answered_by, candidate_confirmed_at, screening_questions(question, display_order)")
         .in("application_id", appIds);
       for (const a of (answers as AnyRow[]) ?? []) {
         const list = answersByApp.get(a.application_id) ?? [];
@@ -333,6 +333,12 @@ export const getShortlistShareByToken = createServerFn({ method: "GET" })
         answersByApp.set(a.application_id, list);
       }
     }
+
+    const { loadScreeningFacts, screeningFactsFor } = await import("@/lib/scoring/cv-only.server");
+    const screeningFacts = await loadScreeningFacts(
+      ((matches as AnyRow[]) ?? []).map((m) => m.position_id),
+      appIds,
+    );
 
     const candidates: ClientCandidateDTO[] = matchIds
       .map((id) => rowsById.get(id))
@@ -346,6 +352,7 @@ export const getShortlistShareByToken = createServerFn({ method: "GET" })
         );
         return toClientCandidateDTO({
           ...row,
+          screening_facts: screeningFactsFor(screeningFacts, row),
           application_answers: answers,
           audit_events: [],
         });

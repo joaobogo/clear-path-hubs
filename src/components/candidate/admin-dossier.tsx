@@ -30,6 +30,14 @@ import { Lock, Unlock, Trash2, Users, AlertTriangle } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { formatAnswerValue } from "@/lib/human-labels";
+import {
+  AnswersOnBehalfPanel,
+  type RecruiterAnswerState,
+} from "@/components/admin/answers-on-behalf-panel";
+import {
+  RECRUITER_ANSWER_STAFF_LABEL,
+  pendingCandidateConfirmation,
+} from "@/lib/candidate/answer-source";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -118,6 +126,8 @@ export function AdminDossier({ matchId }: { matchId: string }) {
 
   const { match, profile, application, answers, notes, audit, interviews, documents, duplicates } =
     data as Any;
+  const screeningQuestions = ((data as Any).screening_questions ?? []) as Any[];
+  const recruiterAnswers = ((data as Any).recruiter_answers ?? null) as RecruiterAnswerState | null;
 
   const internalNotes = (notes as Any[]).filter((n) => n.visibility === "internal");
   const clientNotes = (notes as Any[]).filter((n) => n.visibility === "client_visible");
@@ -270,8 +280,8 @@ export function AdminDossier({ matchId }: { matchId: string }) {
 
       {/* Intake answers */}
       <Section
-        title="Candidate intake answers"
-        hint="Exactly as submitted by the candidate. Never edited."
+        title="Screening answers"
+        hint="The candidate's own answers are shown exactly as submitted and are never edited. An answer a recruiter entered for them is labelled."
       >
         {(answers as Any[]).length === 0 ? (
           <p className="text-sm text-muted-foreground">No screening answers on file.</p>
@@ -292,6 +302,17 @@ export function AdminDossier({ matchId }: { matchId: string }) {
                   <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
                     {formatAnswerValue(a.answer)}
                   </p>
+                  {pendingCandidateConfirmation(a) && (
+                    <p className="mt-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+                      {RECRUITER_ANSWER_STAFF_LABEL}
+                      {a.source_note ? `. Source: ${a.source_note}` : ""}
+                    </p>
+                  )}
+                  {a.candidate_confirmed_at && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      The candidate's own answer, given after a recruiter had entered one for them.
+                    </p>
+                  )}
 
                   {q?.preferred_answer != null && (
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -304,6 +325,17 @@ export function AdminDossier({ matchId }: { matchId: string }) {
             })}
           </ul>
         )}
+        <AnswersOnBehalfPanel
+          matchId={matchId}
+          questions={screeningQuestions}
+          answers={answers as Any[]}
+          state={recruiterAnswers}
+          hasApplication={Boolean(match.application_id)}
+          onChanged={() => {
+            qc.invalidateQueries({ queryKey: key });
+            qc.invalidateQueries({ queryKey: ["admin-candidate", matchId] });
+          }}
+        />
         {application?.cover_letter && (
           <div className="mt-3 rounded-md border p-3">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
