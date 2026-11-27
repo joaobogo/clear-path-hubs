@@ -12,6 +12,7 @@ import {
   resolvePublicSalary,
 } from "@/lib/jobs/public-facts";
 import { applyEffortDefault, resolveApplyEffort } from "@/lib/jobs/apply-effort";
+import { STRUCTURED_CONSENT_TEXT } from "@/lib/screening/structured";
 import { travelText } from "@/lib/requisition-schema";
 import {
   arrangementLabel,
@@ -33,6 +34,51 @@ import { normalizeVideoPrompt } from "@/lib/jobs/video-prompt";
  * honoured by the local dev server — in any deployed build the opt-in is dead
  * code, so a fixture can never be reachable by a real visitor.
  */
+/**
+ * Structured screening pilot testing: a hidden test copy of a job (a test
+ * record, never on the board) can be opened with a one-off secret token held
+ * in this cookie and stored on that copy only
+ * (positions.structured_screening_preview_token). Real jobs are never opened
+ * this way: the token is only honoured on a test record.
+ */
+export const PILOT_PREVIEW_COOKIE = "taasflow_pilot_preview";
+
+function pilotPreviewToken(): string | null {
+  let cookie = "";
+  try {
+    cookie = getRequestHeader("cookie") ?? "";
+  } catch {
+    return null;
+  }
+  const match = new RegExp(`(?:^|;\\s*)${PILOT_PREVIEW_COOKIE}=([^;]+)`).exec(cookie);
+  const value = match ? decodeURIComponent(match[1]).trim() : "";
+  return value.length >= 32 ? value : null;
+}
+
+async function pilotPreviewAllowed(positionId: string): Promise<boolean> {
+  const token = pilotPreviewToken();
+  if (!token) return false;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await (supabaseAdmin as unknown as {
+    from: (t: string) => {
+      select: (c: string) => {
+        eq: (k: string, v: unknown) => {
+          eq: (k: string, v: unknown) => {
+            eq: (k: string, v: unknown) => { maybeSingle: () => Promise<{ data: unknown }> };
+          };
+        };
+      };
+    };
+  })
+    .from("positions")
+    .select("id")
+    .eq("id", positionId)
+    .eq("is_test_record", true)
+    .eq("structured_screening_preview_token", token)
+    .maybeSingle();
+  return Boolean(data);
+}
+
 function testRecordsVisible(): boolean {
   if (!qaEndpointsEnabled()) return false;
   let cookie = "";
@@ -340,7 +386,8 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       .eq("id", data.id)
       .in("status", ["active", "paused"])
       .eq("visibility", "public");
-    if (!testRecordsVisible()) {
+    const previewAllowed = await pilotPreviewAllowed(data.id);
+    if (!testRecordsVisible() && !previewAllowed) {
       detail = detail.or("is_test_record.is.null,is_test_record.eq.false");
     }
     const { data: pos, error } = await detail.maybeSingle();
@@ -348,8 +395,10 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     if (!pos) return null;
 
     // Organization-level gate: a test/QA/demo org's role is not public.
-    const allowed = await publishableIds(supabase, [pos.id]);
-    if (!allowed.has(pos.id)) return null;
+    if (!previewAllowed) {
+      const allowed = await publishableIds(supabase, [pos.id]);
+      if (!allowed.has(pos.id)) return null;
+    }
 
     const desc = (pos.description ?? "").trim();
     const reqs = toReqStrings(pos.requirements);
@@ -434,9 +483,16 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     // How long applying takes: this posting's own completed submissions once
     // there are enough of them, and until then (or on a failed read) the
     // estimate for this form's questions.
-    const effortDefault = applyEffortDefault(questions ?? []);
+    // Structured screening pilot: the job's own short questions replace the
+    // standard ones on the form while its switch is on (screening/structured.ts).
+    const { loadStructuredScreening } = await import("@/lib/screening/structured.server");
+    const structured = await loadStructuredScreening(data.id);
+    // One-line answers are quick: a pilot job's form is quoted at the default.
+    const effortDefault = applyEffortDefault(structured.enabled ? [] : (questions ?? []));
     let applyEffort = effortDefault;
-    try {
+    // The measured median comes from the standard form; a pilot job keeps the
+    // estimate for its own form until it has completions of its own.
+    if (!structured.enabled) try {
       const { data: effortRow } = await (
         supabase.rpc as unknown as (
           fn: string,
@@ -537,13 +593,35 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         : null,
       /** True when the role leaves response-time promises off its page. */
       hide_response_times: responseTimesHidden(own?.response_times),
-      questions: (questions ?? []).map((q) => ({
-        id: q.id,
-        question: q.question,
-        answer_type: q.answer_type,
-        required: q.required,
-        options: q.options as string[] | null,
-        why_asked: (q.why_asked as string | null) ?? null,
-      })),
+      // A pilot job asks its structured questions instead: the standard list
+      // is empty on the form while the switch is on.
+      questions: structured.enabled
+        ? []
+        : (questions ?? []).map((q) => ({
+            id: q.id,
+            question: q.question,
+            answer_type: q.answer_type,
+            required: q.required,
+            options: q.options as string[] | null,
+            why_asked: (q.why_asked as string | null) ?? null,
+          })),
+      /** Structured screening pilot; null on every other job. Pass rules stay on the server. */
+      structured_screening: structured.enabled
+        ? {
+            consent_text: STRUCTURED_CONSENT_TEXT,
+            questions: structured.questions.map((q) => ({
+              key: q.key,
+              label: q.label,
+              type: q.type,
+              options: q.options,
+              required: q.required,
+              section: q.section,
+              sort_order: q.sort_order,
+              help: q.help,
+              unit: q.unit,
+              show_when: q.show_when,
+            })),
+          }
+        : null,
     };
   });

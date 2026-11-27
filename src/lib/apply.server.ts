@@ -82,12 +82,40 @@ export async function submitApplicationImpl(
         };
       }
 
+      // 1b. Structured screening pilot (screening/structured.ts): a job with
+      // its switch on asks its own structured questions instead of the
+      // standard ones. Every other job reads nothing here and is unchanged.
+      const { loadStructuredScreening, storeApplicationAnswers } = await import(
+        "./screening/structured.server"
+      );
+      const structured = await loadStructuredScreening(data.position_id, supabaseAdmin);
+      let structuredAnswers: Array<{ key: string; value: import("./screening/structured").StructuredValue }> = [];
+      if (structured.enabled) {
+        const { validateAnswers } = await import("./screening/structured");
+        if (!data.linkedin_url || !/^https?:\/\/\S+\.\S+/.test(data.linkedin_url)) {
+          return {
+            ok: false,
+            trace_id,
+            code: "answer_required",
+            message: "Please add your LinkedIn profile link, starting with https://",
+          };
+        }
+        const checked = validateAnswers(structured.questions, data.structured_answers ?? []);
+        if (!checked.ok) {
+          return { ok: false, trace_id, code: "answer_required", message: checked.message };
+        }
+        structuredAnswers = checked.answers;
+      }
+
       // 2. Validate screening answers reference this position's questions and cover all required.
-      const { data: questions, error: qErr } = await supabaseAdmin
+      // A pilot job does not show its standard questions, so none is checked
+      // or stored, and no standard dealbreaker can reject the application.
+      const { data: standardQuestions, error: qErr } = await supabaseAdmin
         .from("screening_questions")
         .select("id,question,required,answer_type,dealbreaker,preferred_answer,updated_at")
         .eq("position_id", data.position_id);
       if (qErr) throw qErr;
+      const questions = structured.enabled ? [] : standardQuestions;
 
       // Stamp which revision of the question set the candidate actually answered.
       const questionVersion = Math.max(
@@ -586,6 +614,18 @@ export async function submitApplicationImpl(
         if (aaErr) throw aaErr;
       }
 
+      // 8b. Structured screening pilot answers, beside the application.
+      if (structured.enabled) {
+        await storeApplicationAnswers(supabaseAdmin, {
+          applicationId: appRow.id,
+          positionId: data.position_id,
+          answers: structuredAnswers,
+          linkedinUrl: data.linkedin_url ?? null,
+          basedIn: composeLocation({ city: data.city, country: data.country }) || null,
+          questions: structured.questions,
+        });
+      }
+
       // 9. Create candidate_match (unique on application_id).
       // A Loom link in the application becomes the match's intro video. The
       // schema already rejected non-Loom input; canonicalise before storing so
@@ -712,6 +752,29 @@ export async function submitApplicationImpl(
           facts: [
             { label: "Role", value: pos.title },
             { label: "Reference", value: ref6(appRow.id) },
+            // Structured screening pilot: the answers in one line, with any
+            // flags, so the reviewer sees them before opening the candidate.
+            ...(structured.enabled
+              ? [
+                  {
+                    label: "Screening",
+                    value: await (async () => {
+                      const m = await import("./screening/structured");
+                      const stored = structuredAnswers.map((a) => ({
+                        key: a.key,
+                        value: a.value,
+                        status: "answered" as const,
+                        source: "candidate" as const,
+                      }));
+                      return m.summaryLine(
+                        structured.questions,
+                        stored,
+                        m.answerFlags(structured.questions, stored),
+                      );
+                    })(),
+                  },
+                ]
+              : []),
           ],
           recordTable: "applications",
           recordId: appRow.id,

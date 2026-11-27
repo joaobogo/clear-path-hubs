@@ -88,6 +88,15 @@ export interface ScreeningAnswer {
    * candidate.
    */
   answered_by?: "candidate" | "recruiter_on_behalf" | null;
+  /**
+   * Structured screening pilot only (screening/structured.ts): a yes that
+   * means the answer met its must-have's pass rule. It gives the linked
+   * must-have full credit, where an ordinary yes needs the CV to back it up.
+   * No other job's answers carry it, so their scores are unchanged.
+   */
+  decides?: true;
+  /** Structured screening pilot only: the answer as the quote shows it. */
+  answer_label?: string;
 }
 
 /**
@@ -654,6 +663,8 @@ export function computeInputHash(parts: {
         // Only when a recruiter entered it, so the candidate's own answers
         // hash as they always did.
         ...(s.answered_by === "recruiter_on_behalf" ? { by: "recruiter" } : {}),
+        // Only on pilot answers, so every other answer hashes as it always did.
+        ...(s.decides ? { x: 1 } : {}),
       }))
       .sort((a, b) => a.q.localeCompare(b.q)),
     ...(profile ? { p: profile } : {}),
@@ -1643,9 +1654,20 @@ export function scoreCandidate(input: {
           requirement_text: a.text,
           source: "screening",
           matched_terms: overlap.size ? [...overlap] : [`must_have:${linkText.slice(0, 60)}`],
-          snippet: `Answered yes to: "${s.question}"`,
+          snippet: s.answer_label ? `Answered: ${s.answer_label}` : `Answered yes to: "${s.question}"`,
           location: `screening:${s.question_id}`,
         };
+        if (s.decides && a.status !== "contradicted" && !ruleSaysNo(a) && !studyLimited.has(a.id)) {
+          // Structured screening pilot: the answer met the must-have's pass
+          // rule, which counts in full. Where the CV does not already show it,
+          // the reviewer verifies it before shortlisting.
+          const shownByCv = a.status === "met";
+          a.status = "met";
+          if (!shownByCv) a.needs_validation = true;
+          a.evidence.push(ref);
+          evidence.push(ref);
+          continue;
+        }
         if (a.status === "contradicted" || ruleSaysNo(a)) {
           contradiction_rows.push({
             question_id: s.question_id,

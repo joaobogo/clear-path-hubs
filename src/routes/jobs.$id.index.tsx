@@ -601,7 +601,9 @@ function JobDetail() {
               <ol className="mt-4 space-y-4">
                 {[
                   `Apply in ${applyEffortTimeClause(effort)} — share your details, upload your CV${
-                    pos.questions.length > 0
+                    pos.structured_screening
+                      ? ", and answer about 10 quick questions."
+                      : pos.questions.length > 0
                       ? `, and answer ${pos.questions.length} short screening ${
                           pos.questions.length === 1 ? "question" : "questions"
                         }.`

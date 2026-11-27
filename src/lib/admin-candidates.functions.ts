@@ -538,7 +538,7 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
     const { data: m } = await s
       .from("candidate_matches")
       .select(
-        "id,application_id,candidate_profile_id,organization_id,position_id,stage,contact_released_at,contact_released_by,contact_release_reason,client_visibility,eligibility_status,recommendation,recommendation_reason,integrity_status,evidence_confidence,canonical_state",
+        "id,application_id,candidate_profile_id,organization_id,position_id,current_score_run_id,stage,contact_released_at,contact_released_by,contact_release_reason,client_visibility,eligibility_status,recommendation,recommendation_reason,integrity_status,evidence_confidence,canonical_state",
       )
       .eq("id", data.match_id)
       .maybeSingle();
@@ -634,8 +634,22 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
       "@/lib/candidate/answers-on-behalf.server"
     );
     const recruiterAnswers = await recruiterAnswerPublishState(s, data.match_id);
+    // Structured screening pilot: answers and flags at the top of the page.
+    const { loadStructuredReview } = await import("@/lib/screening/structured.server");
+    const structuredReview = await loadStructuredReview(
+      {
+        applicationId: (m.application_id as string | null) ?? null,
+        positionId: m.position_id as string,
+        currentRunId: (m.current_score_run_id as string | null) ?? null,
+      },
+      s,
+    ).catch((e: Error) => {
+      console.error("[dossier] structured screening read failed", data.match_id, e?.message);
+      return null;
+    });
 
     return {
+      structured_review: structuredReview,
       match: m as AnyRow,
       profile,
       application: (appRes.data ?? null) as AnyRow,
