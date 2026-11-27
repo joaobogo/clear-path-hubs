@@ -41,6 +41,22 @@ vi.mock("@/lib/admin-payments.functions", () => ({
 
 const reviews: unknown[] = [];
 const recomputes: unknown[] = [];
+const decisions: unknown[] = [];
+vi.mock("@/lib/processing.functions", () => ({
+  applyReviewDecisionValidate: (i: unknown) =>
+    z
+      .object({
+        match_id: z.string().uuid(),
+        action: z.enum(["approve_for_client", "hold", "archive", "manual_override"]),
+        reason: z.string().max(1000).optional(),
+        publish: z.boolean().optional(),
+      })
+      .parse(i),
+  applyReviewDecisionHandler: async (a: { data: unknown; context: { userId: string } }) => {
+    decisions.push({ data: a.data, by: a.context.userId });
+    return { ok: true, action: "approve_for_client", published: true };
+  },
+}));
 const onBehalf: unknown[] = [];
 const acknowledgements: unknown[] = [];
 vi.mock("@/lib/candidate/answers-on-behalf.functions", () => ({
@@ -274,6 +290,42 @@ describe("runStaffAction", () => {
     );
     expect(bad).toMatchObject({ ok: false, status: 400, error: "invalid_input" });
     expect(onBehalf).toHaveLength(1);
+  });
+
+  it("approves and publishes one candidate through the review screen's own decision, and no other decision", async () => {
+    const { runStaffAction } = await import("@/lib/admin/staff-action.server");
+    const out = await runStaffAction(
+      {
+        actor_user_id: STAFF,
+        op: "approve_for_client",
+        // An attempt to smuggle another decision through is ignored.
+        input: { match_id: ORG, reason: "Owner approved publishing", action: "archive", publish: false },
+      },
+      { admin: admin(true) },
+    );
+    expect(out).toMatchObject({ ok: true, result: { published: true } });
+    expect(decisions).toEqual([
+      {
+        data: {
+          match_id: ORG,
+          action: "approve_for_client",
+          reason: "Owner approved publishing",
+          publish: true,
+        },
+        by: STAFF,
+      },
+    ]);
+    const refused = await runStaffAction(
+      { actor_user_id: STAFF, op: "approve_for_client", input: { match_id: ORG } },
+      { admin: admin(false) },
+    );
+    expect(refused).toMatchObject({ ok: false, status: 403, error: "actor_not_staff" });
+    const bad = await runStaffAction(
+      { actor_user_id: STAFF, op: "approve_for_client", input: { match_id: "nope" } },
+      { admin: admin(true) },
+    );
+    expect(bad).toMatchObject({ ok: false, status: 400, error: "invalid_input" });
+    expect(decisions).toHaveLength(1);
   });
 
   it("never makes a role public from the posting save", async () => {

@@ -40,6 +40,7 @@ export const STAFF_ACTION_OPS = [
   "acknowledge_recruiter_answers",
   "preview_role_rescore",
   "edit_profile_narrative",
+  "approve_for_client",
 ] as const;
 export type StaffActionOp = (typeof STAFF_ACTION_OPS)[number];
 
@@ -190,6 +191,21 @@ export async function runStaffAction(
         const m = await import("@/lib/admin/profile-narrative.functions");
         const data = m.editProfileNarrativeValidate(req.input);
         return { ok: true, op, result: await m.editProfileNarrativeHandler({ data, context }) };
+      }
+      case "approve_for_client": {
+        // Approve and publish one candidate, through the review screen's own
+        // decision handler: its publish gate, its evidence gate, the database
+        // gates, its audit rows and its notices. No other decision (hold,
+        // archive, override) is reachable from here.
+        const input = (req.input ?? {}) as { match_id?: unknown; reason?: unknown };
+        const m = await import("@/lib/processing.functions");
+        const data = m.applyReviewDecisionValidate({
+          match_id: input.match_id,
+          action: "approve_for_client",
+          ...(typeof input.reason === "string" ? { reason: input.reason } : {}),
+          publish: true,
+        });
+        return { ok: true, op, result: await m.applyReviewDecisionHandler({ data, context }) };
       }
       case "check_publishable": {
         const id = String((req.input as { id?: unknown } | null)?.id ?? "");
