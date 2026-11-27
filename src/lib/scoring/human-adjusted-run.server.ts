@@ -42,6 +42,7 @@ import {
   videoBonusFor,
   withVideoIntroBonus,
 } from "./published-score";
+import { SCREENING_BY_RECRUITER_NOTE } from "../candidate/answer-source";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -222,6 +223,22 @@ function buildReviewRun(base: Any, plan: ReapplyPlan): ReviewRunBuilt {
   };
 }
 
+/**
+ * What the machine run said about its inputs, carried onto the reviewed run:
+ * the reviewed run is the one every surface reads, and a review of the
+ * verdicts does not change whose screening answers were scored or which dates
+ * a recruiter corrected.
+ */
+export function inputNotes(machineResult: Any): string[] {
+  const notes: string[] = [];
+  if (Number(machineResult?.screening_source?.recruiter_on_behalf ?? 0) > 0) {
+    notes.push(SCREENING_BY_RECRUITER_NOTE);
+  }
+  const dates = machineResult?.profile_evidence?.note;
+  if (typeof dates === "string" && dates.trim()) notes.push(dates.trim());
+  return notes;
+}
+
 /** What a reviewed run says, row by row, to tell two runs apart. */
 function reviewSignature(rows: readonly AssessmentRow[]): string {
   return rows
@@ -301,6 +318,7 @@ async function persistReviewRun(
     `must-have coverage ${(adj.must_have_coverage * 100).toFixed(0)}%`,
     `${verified.human_verified} of ${verified.total} criteria human-verified`,
     ...(adj.cap_reason ? [`caps: ${adj.cap_reason}`] : []),
+    ...inputNotes(result),
   ].join(" · ");
 
   // A human-adjusted run has the same machine inputs but a different verdict

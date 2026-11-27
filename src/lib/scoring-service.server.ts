@@ -40,6 +40,7 @@ import {
 } from "./scoring/engine-calibration";
 import { buildReplaySnapshot } from "./scoring/replay";
 import { buildProfileText, type ProfileTextInput } from "./scoring/profile-text";
+import { SCREENING_BY_RECRUITER_NOTE } from "./candidate/answer-source";
 import { roleContextOf } from "./scoring/evidence-sources";
 import { classifyScoreBand } from "@/config/scoring-bands";
 import type { Json } from "@/integrations/supabase/types";
@@ -1060,12 +1061,7 @@ export async function executeScoring(
   }
 }
 
-/**
- * What a run's explanation says when a recruiter entered screening answers
- * for the candidate. The answers count; the candidate has not confirmed them.
- */
-export const SCREENING_BY_RECRUITER_NOTE =
-  "screening answered by recruiter, pending candidate confirmation";
+export { SCREENING_BY_RECRUITER_NOTE };
 
 export function buildExplanation(r: ScoringResult, caps: Array<{ reason: string; cap: number }>): string {
   // The engine's fit_label uses its own vocabulary (strong_fit /

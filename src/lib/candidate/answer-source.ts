@@ -23,6 +23,14 @@ export const RECRUITER_ANSWER_CLIENT_LABEL = "Recruiter-entered, pending candida
 export const RECRUITER_ANSWER_STAFF_LABEL =
   "Entered by a recruiter on the candidate's behalf, pending candidate confirmation";
 
+/**
+ * What a score run's explanation says when a recruiter entered screening
+ * answers for the candidate. The answers count; the candidate has not
+ * confirmed them.
+ */
+export const SCREENING_BY_RECRUITER_NOTE =
+  "screening answered by recruiter, pending candidate confirmation";
+
 /** A source note has to say something a colleague can follow up. */
 export const SOURCE_NOTE_MIN = 8;
 export const SOURCE_NOTE_MAX = 500;
