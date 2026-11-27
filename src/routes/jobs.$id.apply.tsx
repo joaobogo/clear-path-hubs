@@ -40,6 +40,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { COVER_NOTE_MAX } from "@/lib/screening-limits";
 import { SCREENING_ANSWER_MAX } from "@/lib/screening-limits";
+import { choiceOptions } from "@/lib/scoring/relocation-volume";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -1761,6 +1762,21 @@ function ApplyPage() {
                             <label className="flex min-h-11 items-center gap-2 text-sm">
                               <RadioGroupItem value="no" id={`${q.id}-n`} /> No
                             </label>
+                          </RadioGroup>
+                        ) : q.answer_type === "single_choice" &&
+                          choiceOptions((q as { options?: unknown }).options).length > 0 ? (
+                          <RadioGroup
+                            id={q.id}
+                            aria-describedby={reason ? `${q.id}-why` : undefined}
+                            value={typeof val === "string" ? val : ""}
+                            onValueChange={(v) => setAnswer(q.id, v)}
+                            className="mt-1 grid gap-1"
+                          >
+                            {choiceOptions((q as { options?: unknown }).options).map((opt, i) => (
+                              <label key={opt} className="flex min-h-11 items-center gap-2 text-sm">
+                                <RadioGroupItem value={opt} id={`${q.id}-o${i}`} /> {opt}
+                              </label>
+                            ))}
                           </RadioGroup>
                         ) : q.answer_type === "number" ? (
                           <Input

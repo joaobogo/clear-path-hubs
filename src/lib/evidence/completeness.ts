@@ -163,7 +163,11 @@ function isUsablePassage(snippet: string | null | undefined, label: string): boo
   const s = (snippet ?? "").trim();
   if (s.length < MIN_PASSAGE_CHARS) return false;
   // The requirement's own text restated is not evidence of it.
-  const norm = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const norm = (v: string) =>
+    v
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
   if (norm(s) === norm(label)) return false;
   // A bare figure or verdict word ("100%", "correct", "yes").
   if (/^[\d\s%.,·-]+$/.test(s)) return false;
@@ -179,8 +183,7 @@ function statusFor(sources: EvidenceSourceView[], label = ""): CriterionStatus {
     if (s.reviewerStatus === "rejected" || s.integrityOk === false) continue;
     // "Fully evidenced" requires a passage a human can read and check. A
     // strong verdict with an unusable passage is thin, never supported.
-    const effective =
-      rank >= 2 && !isUsablePassage(s.snippet, label) ? 1 : rank === 0 ? 1 : rank;
+    const effective = rank >= 2 && !isUsablePassage(s.snippet, label) ? 1 : rank === 0 ? 1 : rank;
     best = Math.max(best, effective);
   }
   if (best >= 2) return "supported";
@@ -288,3 +291,25 @@ export function buildCompletenessReport(input: {
 }
 
 export const GATE_OVERRIDE_ACTION = "evidence_gate_override";
+
+/**
+ * Reviewer-entered evidence hangs off its own candidate_evidence snapshot with
+ * this engine_version. It holds no briefing, so readers that show "the latest
+ * evidence row" skip it; otherwise adding one quote blanked the candidate's
+ * insights on the admin page until the next rescore.
+ */
+export const MANUAL_EVIDENCE_SNAPSHOT = "manual-review";
+
+/**
+ * candidate_evidence_items.source_kind is checked against this list in the
+ * database. The form's choices are stored as they are; "manual" is shown as
+ * "Reviewer verified" (humanizeSource). Storing the label itself broke every
+ * manual entry on the check constraint.
+ */
+export const EVIDENCE_ITEM_SOURCE_KINDS = [
+  "cv",
+  "application_answer",
+  "interview",
+  "manual",
+] as const;
+export type EvidenceItemSourceKind = (typeof EVIDENCE_ITEM_SOURCE_KINDS)[number];

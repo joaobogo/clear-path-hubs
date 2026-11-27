@@ -35,6 +35,8 @@ import { brandOriginsIn } from "./brand-origins";
 import { parseYearsSubject, type YearsSubject } from "./years-subject";
 import { homeStateOf, usStatesIn } from "./us-states";
 import { HEADING_LINE } from "./non-evidence-lines";
+import { commutablePlaceIn, homeWithinCommute } from "./wording-equivalence";
+import { PROFILE_LABEL_LINE } from "./profile-text";
 
 export type StructuredStatus = "met" | "partial" | "missing" | "unknown";
 
@@ -46,7 +48,8 @@ export type StructuredVerdict = {
     | "conditional_relocation"
     | "minimum_years"
     | "market_experience"
-    | "onsite_attendance";
+    | "onsite_attendance"
+    | "home_location";
   status: StructuredStatus;
   needs_validation: boolean;
   /**
@@ -531,10 +534,10 @@ const MONTH_NAME =
 // A month may carry its day ("April 29, 2025"); the day is read and dropped
 // (v1.7.8). The separator may be a dash followed by "to" ("03/2026 – to
 // present"). Both forms used to leave the role unread.
-const POINT = `(?:${MONTH_NAME}\\.?\\s+(?:\\d{1,2}(?:st|nd|rd|th)?,?\\s+)?)?((?:19|20)\\d{2})|(\\d{1,2})\\/(\\d{1,2})\\/((?:19|20)?\\d{2})(?!\\d)|(\\d{1,2})\\/((?:19|20)\\d{2})`;
+const POINT = `(?:${MONTH_NAME}\\.?\\s+(?:\\d{1,2}(?:st|nd|rd|th)?,?\\s+)?['‘’]?)?((?:19|20)\\d{2}|(?<=[a-z]\\.?\\s+['‘’])\\d{2})(?!\\d)|(\\d{1,2})\\/(\\d{1,2})\\/((?:19|20)?\\d{2})(?!\\d)|(\\d{1,2})\\/((?:19|20)\\d{2})`;
 const END = `(present|current|now|today|ongoing|to\\s+date|date)|${POINT}`;
 const RANGE_RE = new RegExp(
-  `(?:${POINT})\\s*(?:[-–—]\\s*(?:to|until|till)?|to|until|till)\\s*(?:${END})`,
+  `(?<!['‘’\\d])(?:${POINT})\\s*(?:[-–—]\\s*(?:to|until|till)?|to|until|till)\\s*(?:${END})`,
   "gi",
 );
 
@@ -575,7 +578,31 @@ type Span = {
   yearOnlyTo: boolean;
   /** Open end ("Present"). */
   open: boolean;
+  /**
+   * A current role whose start year lost a digit ("April 202 – Present"). It
+   * is a dated role with nothing to count: from and to are both today.
+   */
+  startUnreadable?: boolean;
+  /** The end of a range cut by the line end: the next line and how much of it. */
+  cont?: { lineStart: number; len: number };
+  /** The dates counted, when a recruiter's profile corrected the CV's (v1.8.0). */
+  shown?: string;
+  /** A profile entry whose dates were put on its CV role: the same role, said twice. */
+  restatesCvRole?: boolean;
 };
+
+/** A start with its dash at the end of a line: "… Medi-Corp Inc. (2015–". */
+const RANGE_START_AT_EOL = new RegExp(`(?<!['‘’\\d])(?:${POINT})\\s*[-–—]\\s*$`, "i");
+/** The end that opens the next line: "2019)Assistant Store Manager …". */
+const RANGE_END_AT_BOL = new RegExp(`^(?:${END})`, "i");
+/**
+ * "April 202 – Present": a month, a year one digit short, and an open end.
+ * Read as a current role whose start cannot be read, never as a guessed year.
+ */
+const TYPO_START_OPEN = new RegExp(
+  `\\b${MONTH_NAME}\\.?\\s+(?:19|20)\\d(?!\\d)\\s*(?:[-–—]\\s*(?:to|until|till)?|to|until|till)\\s*(?:present|current|now|today|ongoing|to\\s+date)\\b`,
+  "gi",
+);
 
 /** Month index since year 0, for arithmetic. */
 function monthIndex(year: number, month: number): number {
@@ -585,55 +612,223 @@ function monthIndex(year: number, month: number): number {
 export function findDatedRanges(cv: string, today: Date = new Date()): Span[] {
   const now = monthIndex(today.getUTCFullYear(), today.getUTCMonth());
   const out: Span[] = [];
-  for (const l of lines(cv)) {
+  const ls = lines(cv);
+  const read = (m: RegExpExecArray, l: Line, at: number) => {
+    // Groups (start): 1 month name, 2 year; 3 month, 4 day, 5 year of a
+    // full date; 6 numeric month, 7 numeric year. 8 open end word. End:
+    // 9 month name, 10 year; 11-13 full date; 14 numeric month, 15 year.
+    const startYear = fullDateYear(m[5] ?? m[2] ?? m[7] ?? "", today);
+    // A year alone ("2002 – 2007") is read January to December here, as it
+    // always was. The roles a subject is counted from read it mid-year to
+    // mid-year instead (midYear, v1.7.7).
+    const yearOnlyFrom = !m[1] && !m[3] && !m[6];
+    const startMonth = m[1]
+      ? (MONTHS[m[1].slice(0, 3).toLowerCase()] ?? 0)
+      : m[3]
+        ? fullDateMonth(m[3], m[4])
+        : m[6]
+          ? Number(m[6]) - 1
+          : 0;
+    let to: number;
+    let yearOnlyTo = false;
+    if (m[8]) to = now;
+    else {
+      const endYear = fullDateYear(m[13] ?? m[10] ?? m[15] ?? "", today);
+      yearOnlyTo = !m[9] && !m[11] && !m[14];
+      const endMonth = m[9]
+        ? (MONTHS[m[9].slice(0, 3).toLowerCase()] ?? 11)
+        : m[11]
+          ? fullDateMonth(m[11], m[12])
+          : m[14]
+            ? Number(m[14]) - 1
+            : 11;
+      to = Math.min(monthIndex(endYear, Math.min(Math.max(endMonth, 0), 11)), now);
+    }
+    const from = monthIndex(startYear, Math.min(Math.max(startMonth, 0), 11));
+    if (to >= from && startYear >= 1960)
+      out.push({
+        from,
+        to,
+        line: l,
+        at,
+        raw: m[0],
+        yearOnlyFrom,
+        yearOnlyTo,
+        open: Boolean(m[8]),
+      });
+  };
+  ls.forEach((l, n) => {
     RANGE_RE.lastIndex = 0;
     let m: RegExpExecArray | null;
-    while ((m = RANGE_RE.exec(l.text)) !== null) {
-      // Groups (start): 1 month name, 2 year; 3 month, 4 day, 5 year of a
-      // full date; 6 numeric month, 7 numeric year. 8 open end word. End:
-      // 9 month name, 10 year; 11-13 full date; 14 numeric month, 15 year.
-      const startYear = m[5] ? fullDateYear(m[5], today) : Number(m[2] ?? m[7]);
-      // A year alone ("2002 – 2007") is read January to December here, as it
-      // always was. The roles a subject is counted from read it mid-year to
-      // mid-year instead (midYear, v1.7.7).
-      const yearOnlyFrom = !m[1] && !m[3] && !m[6];
-      const startMonth = m[1]
-        ? (MONTHS[m[1].slice(0, 3).toLowerCase()] ?? 0)
-        : m[3]
-          ? fullDateMonth(m[3], m[4])
-          : m[6]
-            ? Number(m[6]) - 1
-            : 0;
-      let to: number;
-      let yearOnlyTo = false;
-      if (m[8]) to = now;
-      else {
-        const endYear = m[13] ? fullDateYear(m[13], today) : Number(m[10] ?? m[15]);
-        yearOnlyTo = !m[9] && !m[11] && !m[14];
-        const endMonth = m[9]
-          ? (MONTHS[m[9].slice(0, 3).toLowerCase()] ?? 11)
-          : m[11]
-            ? fullDateMonth(m[11], m[12])
-            : m[14]
-              ? Number(m[14]) - 1
-              : 11;
-        to = Math.min(monthIndex(endYear, Math.min(Math.max(endMonth, 0), 11)), now);
+    while ((m = RANGE_RE.exec(l.text)) !== null) read(m, l, m.index);
+    // A range cut by the end of the line (v1.7.12): "(2015–" then "2019)" on
+    // the next line is one period. A next line that opens with a whole range
+    // of its own is left alone.
+    const tail = RANGE_START_AT_EOL.exec(l.text);
+    const next = ls[n + 1];
+    const head = tail && next ? RANGE_END_AT_BOL.exec(next.text) : null;
+    if (tail && next && head && DATE_RANGE.exec(next.text)?.index !== 0) {
+      const joined = DATE_RANGE.exec(tail[0] + head[0]);
+      if (joined && joined.index === 0) {
+        const before = out.length;
+        read(joined, l, tail.index);
+        if (out.length > before)
+          out[out.length - 1]!.cont = { lineStart: next.start, len: head[0].length };
       }
-      const from = monthIndex(startYear, Math.min(Math.max(startMonth, 0), 11));
-      if (to >= from && startYear >= 1960)
-        out.push({
-          from,
-          to,
-          line: l,
-          at: m.index,
-          raw: m[0],
-          yearOnlyFrom,
-          yearOnlyTo,
-          open: Boolean(m[8]),
-        });
     }
+    // A current role whose start year lost a digit (v1.7.12).
+    TYPO_START_OPEN.lastIndex = 0;
+    while ((m = TYPO_START_OPEN.exec(l.text)) !== null) {
+      const at = m.index;
+      if (out.some((s) => s.line === l && at < s.at + s.raw.length && s.at < at + m![0].length))
+        continue;
+      out.push({
+        from: now,
+        to: now,
+        line: l,
+        at,
+        raw: m[0],
+        yearOnlyFrom: false,
+        yearOnlyTo: false,
+        open: true,
+        startUnreadable: true,
+      });
+    }
+  });
+  return ACTIVE_PROFILE_DATES ? correctWithProfile(out, ls, ACTIVE_PROFILE_DATES).spans : out;
+}
+
+// ---------------------------------------------------------------------------
+// Dates a recruiter corrected on the profile (v1.8.0)
+// ---------------------------------------------------------------------------
+
+/**
+ * Where the recruiter's experience entries sit in the text the rules read
+ * (the CV with the profile block after it): each entry is a header line
+ * "Title | Company Mon YYYY – Mon YYYY" with its sentences under it.
+ */
+export type ProfileRoleDates = { start: number; end: number };
+
+/** A CV role whose dates the recruiter's profile corrects. */
+export type ProfileDateCorrection = { role: string; cv: string; profile: string };
+
+/**
+ * Set while one requirement is evaluated (evaluateStructuredRequirement), so
+ * every rule that reads dated ranges reads the corrected ones. Synchronous
+ * and restored in a finally: never visible outside one evaluation.
+ */
+let ACTIVE_PROFILE_DATES: ProfileRoleDates | null = null;
+
+const COMPANY_NOISE = /\s*\([^)]*\)\s*|[\s,]+(?:ltd\.?|limited|plc|inc\.?|llc|llp|gmbh)$/gi;
+
+/** The employer names a profile entry's header gives: "OpsRamp / HPE" is two. */
+function entryCompanies(header: string): string[] {
+  const company = header.includes("|") ? header.slice(header.lastIndexOf("|") + 1) : header;
+  return company
+    .trim()
+    .replace(COMPANY_NOISE, " ")
+    .split(/\s+\/\s+/)
+    .map((n) => n.replace(/[\s,;:–—-]+$/g, "").trim())
+    .filter((n) => n.length >= 2);
+}
+
+function namesCompany(text: string, name: string): boolean {
+  const pattern = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
+  // A short name ("EE") is matched as written; a longer one in any case.
+  return new RegExp(`(^|[^A-Za-z0-9])${pattern}([^A-Za-z0-9]|$)`, name.length <= 3 ? "" : "i").test(
+    text,
+  );
+}
+
+/**
+ * Where the CV and the recruiter's profile disagree on a role's dates, the
+ * profile wins: it is the version a recruiter checked. A CV role is matched
+ * to a profile entry by the employer's name on the role's own line, else the
+ * line above it, else the line below. One CV line that covers two profile
+ * entries ("OpsRamp / Hewlett Packard Enterprise") takes the whole period
+ * they cover. Roles the profile does not name keep the CV's dates.
+ */
+function correctWithProfile(
+  spans: Span[],
+  ls: Line[],
+  profile: ProfileRoleDates,
+): { spans: Span[]; corrections: ProfileDateCorrection[] } {
+  const inProfile = (s: Span) => s.line.start >= profile.start && s.line.start < profile.end;
+  const entries = spans
+    .filter(inProfile)
+    .map((s) => ({ s, names: entryCompanies(s.line.text.slice(0, s.at)) }))
+    .filter((e) => e.names.length > 0);
+  if (entries.length === 0) return { spans, corrections: [] };
+  const indexOf = new Map(ls.map((l, i) => [l.start, i] as const));
+  const corrections: ProfileDateCorrection[] = [];
+  const matchOf = (s: Span): typeof entries => {
+    if (inProfile(s) || isEducationSpan(s)) return [];
+    const i = indexOf.get(s.line.start);
+    if (i === undefined) return [];
+    // The role's own line without its dates, then the line above, then below.
+    const own = s.line.text.slice(0, s.at) + s.line.text.slice(s.at + s.raw.length);
+    for (const place of [own, ls[i - 1]?.text ?? "", ls[i + 1]?.text ?? ""]) {
+      if (!place.trim()) continue;
+      const found = entries.filter((e) => e.names.some((n) => namesCompany(place, n)));
+      if (found.length > 0) return found;
+    }
+    return [];
+  };
+  const matches = spans.map(matchOf);
+  // Two CV roles at one employer (two stints, a promotion) cannot be told
+  // apart by the employer's name: both keep the CV's dates.
+  const claimed = new Map<Span, number>();
+  for (const found of matches) for (const e of found) claimed.set(e.s, (claimed.get(e.s) ?? 0) + 1);
+  const restated = new Set<Span>();
+  const out = spans.map((s, k) => {
+    const matched = matches[k]!;
+    if (matched.length === 0 || matched.some((e) => (claimed.get(e.s) ?? 0) > 1)) return s;
+    // The profile names this CV role: its entry is the same role again.
+    if (matched.length === 1) restated.add(matched[0]!.s);
+    const from = Math.min(...matched.map((e) => e.s.from));
+    const to = Math.max(...matched.map((e) => e.s.to));
+    if (from === s.from && to === s.to && !s.startUnreadable) return s;
+    const profileDates = matched.map((e) => e.s.raw.trim()).join("; ");
+    corrections.push({
+      role: [...new Set(matched.flatMap((e) => e.names))].join(" / "),
+      cv: s.raw.trim(),
+      profile: profileDates,
+    });
+    return {
+      ...s,
+      from,
+      to,
+      yearOnlyFrom: false,
+      yearOnlyTo: false,
+      open: matched.some((e) => e.s.open),
+      startUnreadable: false,
+      ...(matched.length === 1 ? { shown: profileDates } : {}),
+    };
+  });
+  return {
+    spans: out.map((s) => (restated.has(s) ? { ...s, restatesCvRole: true } : s)),
+    corrections,
+  };
+}
+
+/**
+ * The CV roles whose dates the recruiter's profile corrects, for the note a
+ * run keeps in its evidence. Empty when the profile holds no recruiter
+ * experience entries or agrees with the CV.
+ */
+export function profileDateCorrections(
+  cv: string,
+  profile: ProfileRoleDates | null | undefined,
+  today: Date = new Date(),
+): ProfileDateCorrection[] {
+  if (!profile) return [];
+  const before = ACTIVE_PROFILE_DATES;
+  ACTIVE_PROFILE_DATES = null;
+  try {
+    return correctWithProfile(findDatedRanges(cv, today), lines(cv), profile).corrections;
+  } finally {
+    ACTIVE_PROFILE_DATES = before;
   }
-  return out;
 }
 
 /**
@@ -737,6 +932,8 @@ function headerLike(l: Line | undefined): boolean {
   // A section heading or a page mark belongs to no role.
   // "Page 2", "Devon Inman – Curriculum Vitae Page 1 of 2": a page footer.
   if (HEADING_LINE.test(t) || /(?:^|\s)page\s+\d+(?:\s+of\s+\d+)?$/i.test(t)) return false;
+  // Nor does a label line of the profile block ("PROFILE EXPERIENCE (R)").
+  if (PROFILE_LABEL_LINE.test(t)) return false;
   if (/[.;:,]$/.test(t)) return false;
   return t.split(/\s+/).length <= 12;
 }
@@ -803,10 +1000,37 @@ export function roleBlocks(cv: string, today: Date = new Date()): RoleBlock[] {
       i + 1 < next && headerLike(ls[i + 1]) && dateLineWords <= 6 && top === i ? i + 1 : i;
     bounds.push({ top, bodyFrom: Math.max(below, chainEnd.get(k) ?? -1) + 1 });
   });
+  // Two jobs written on one line (v1.7.12): "Medical Biller — Foot & Ankle
+  // Center (2019–2020)Medical Biller — Medi-Corp Inc. (2015–2019)". Each
+  // period owns the words between the period before it and itself, so a title
+  // counts for its own years only. Periods with no words between them
+  // ("2010–2012, 2014–2016") still share the whole line.
+  const onLineEnd = (x: { sp: Span; i: number }) =>
+    Math.min(x.sp.at + x.sp.raw.length, ls[x.i]!.text.length);
+  // "2019)Assistant Store Manager …": the "2019)" closes the period cut on the
+  // line above. It is blanked (not removed, so positions hold) in headers.
+  const contLen = new Map<number, number>();
+  for (const { sp } of spans) if (sp.cont) contLen.set(sp.cont.lineStart, sp.cont.len);
+  const textOf = (l: Line): string => {
+    const n = contLen.get(l.start);
+    if (!n) return l.text;
+    const rest = l.text.slice(n);
+    const close = /^[\s)\]]+/.exec(rest)?.[0].length ?? 0;
+    return " ".repeat(n + close) + rest.slice(close);
+  };
+  const ownWords = (k: number): boolean =>
+    k > 0 &&
+    spans[k - 1]!.i === spans[k]!.i &&
+    /[A-Za-z]{3,}/.test(ls[spans[k]!.i]!.text.slice(onLineEnd(spans[k - 1]!), spans[k]!.sp.at));
   spans.forEach(({ sp, i }, k) => {
     if (k > 0 && spans[k - 1]!.i === i) {
-      // A second range on the same line shares the line's text.
-      out.push({ span: sp, header: ls[i]!.text, body: "", bodyLines: [] });
+      // A second range on the same line: its own words, or the line's text.
+      const header = ownWords(k)
+        ? textOf(ls[i]!)
+            .slice(onLineEnd(spans[k - 1]!), onLineEnd(spans[k]!))
+            .replace(/^[\s)\]|,;:·•→>–—-]+/, "")
+        : textOf(ls[i]!);
+      out.push({ span: sp, header, body: "", bodyLines: [] });
       return;
     }
     const b = bounds[k]!;
@@ -830,7 +1054,14 @@ export function roleBlocks(cv: string, today: Date = new Date()): RoleBlock[] {
     const bodyLines = ls.slice(b.bodyFrom, Math.max(b.bodyFrom, end));
     out.push({
       span: sp,
-      header: headerLines.map((l) => l.text).join(" | "),
+      // The next job on the same line keeps its own words.
+      header: headerLines
+        .map((l) =>
+          l === ls[i] && k + 1 < spans.length && spans[k + 1]!.i === i && ownWords(k + 1)
+            ? textOf(l).slice(0, onLineEnd(spans[k]!))
+            : textOf(l),
+        )
+        .join(" | "),
       // A wrapped line continues its bullet; a new bullet starts a new line.
       body: bodyLines
         .map((l, n) =>
@@ -847,6 +1078,9 @@ export function roleBlocks(cv: string, today: Date = new Date()): RoleBlock[] {
 function roleLabel(b: RoleBlock): string {
   const name = b.header
     .replace(new RegExp(RANGE_RE.source, "gi"), " ")
+    .replace(new RegExp(TYPO_START_OPEN.source, "gi"), " ")
+    // A period removed from its brackets leaves "( )" or a lone bracket.
+    .replace(/\(\s*\)|\(\s*(?:\d{4}\s*[-–—]\s*)?$|\(\s*(?=\|)/g, " ")
     .split("|")
     .map((x) => x.replace(/^[\s·•\-–—]+|[\s·•\-–—,]+$/g, "").trim())
     .filter(Boolean)
@@ -857,7 +1091,8 @@ function roleLabel(b: RoleBlock): string {
     )
     .slice(0, 2)
     .join(", ");
-  const period = b.span.raw
+  // The dates counted: the recruiter's where they corrected the CV's.
+  const period = (b.span.shown ?? b.span.raw)
     .replace(/\s*(?:[-–—]\s*(?:to\b|until\b|till\b)?|\bto\b|\buntil\b|\btill\b)\s*/i, "–")
     .replace(/\s+/g, " ");
   return `${name ? name.slice(0, 90) : "a role dated"} ${period}`.trim();
@@ -1048,7 +1283,10 @@ function evaluateSubjectYears(
   const allYears = oneDecimal(unionMonths([...strong, ...weak].map((b) => b.span)));
   const byRecency = (a: RoleBlock, b: RoleBlock) => b.span.to - a.span.to;
   const named = (bs: RoleBlock[]) => {
-    const sorted = [...bs].sort(byRecency);
+    // A profile entry whose dates were put on its CV role is that role again:
+    // it is counted (the same months) and named once.
+    const once = bs.filter((b) => !b.span.restatesCvRole);
+    const sorted = [...(once.length > 0 ? once : bs)].sort(byRecency);
     const shown = sorted.slice(0, 4).map(roleLabel).join("; ");
     return sorted.length > 4 ? `${shown}; and ${sorted.length - 4} more` : shown;
   };
@@ -1091,6 +1329,25 @@ function evaluateSubjectYears(
     years_basis = "titles";
     needs_validation = false;
     note = `${allYears} yrs from: ${named([...strong, ...weak])}. Against ${req.min} required.`;
+  }
+  // The subject described in a current role whose start year lost a digit
+  // (v1.7.12): evidence with no length to count. At least partial, and a
+  // recruiter confirms the dates.
+  const unread = strong.find((b) => b.span.startUnreadable);
+  if (unread && status !== "met") {
+    status = "partial";
+    needs_validation = true;
+    const counted = strong.filter((b) => !b.span.startUnreadable);
+    const subjectName = what.charAt(0).toUpperCase() + what.slice(1);
+    note =
+      `${subjectName} is described in a current role whose start date cannot be read on the CV: ${roleLabel(unread)}.` +
+      (counted.length > 0
+        ? ` ${oneDecimal(unionMonths(counted.map((b) => b.span)))} yrs more described, from: ${named(counted)}.`
+        : "") +
+      (weak.length > 0
+        ? ` ${oneDecimal(unionMonths(weak.map((b) => b.span)))} yrs from a title alone (${named(weak)}).`
+        : "") +
+      ` Against ${req.min} required; confirm the dates at screening.`;
   }
   return {
     years: status === "met" ? strongYears : allYears,
@@ -1154,8 +1411,12 @@ function evaluateDatedYears(
     verdict: {
       rule: "minimum_years",
       status,
-      needs_validation: status !== "met",
-      note: `${years} years${level} from dated roles on the CV, against ${req.min} required.`,
+      needs_validation: status !== "met" || counted.some((s) => s.startUnreadable),
+      note: `${years} years${level} from dated roles on the CV, against ${req.min} required.${
+        counted.some((s) => s.startUnreadable)
+          ? " The start date of a current role cannot be read on the CV; confirm it at screening."
+          : ""
+      }`,
       evidence,
     },
   };
@@ -1458,18 +1719,134 @@ export function evaluateOnsiteRequirement(
   };
 }
 
+// ---------------------------------------------------------------------------
+// 6. Home within commuting distance: "Based in or commutable to London, and
+//    able to travel up to 50%" (v1.8.0)
+// ---------------------------------------------------------------------------
+
+const HOME_REQUIREMENT =
+  /\b(?:based|located|living|resident|residing)\s+(?:in|within|near|around)\b|\blives?\s+(?:in|within|near)\b|\bcommut\w*\b|\bwithin\s+(?:commuting|travell?ing|reach)\b/i;
+/** A second condition the home cannot show: willingness to travel. */
+const TRAVEL_CLAUSE =
+  /\b(?:able|willing|prepared|happy|free|open)\s+to\s+travel\b|\btravel\s+(?:up\s+to|of|around|across)\b|\b\d{1,3}\s*%\s+(?:of\s+)?travel\b|\btravel\b[^.;]{0,30}\b\d{1,3}\s*%/i;
+
+/**
+ * Where someone lives is not CV wording. "Based in or commutable to London"
+ * was read by counting words, and the words are never in a CV: a home in
+ * Hertfordshire or a London borough says none of "based", "commutable" or
+ * "London", and the contact line is not searched at all. The home is read
+ * from the profile's location, else the CV's own location line, and compared
+ * with the places the wording table lists as the city or its commuter belt
+ * (wording-equivalence.json).
+ *
+ * A home there meets a requirement that asks only for that. Where the
+ * requirement also asks for travel, the home shows half of it: partial, and
+ * the candidate's own yes to the linked question makes it met in the
+ * engine's answer step. A home elsewhere, or none stated, is for the
+ * recruiter to confirm: unknown, never a zero and never a contradiction of
+ * the candidate's answer. A sales territory ("UK & Ireland", "EMEA") is not
+ * a home and proves nothing here.
+ */
+export function evaluateHomeLocationRequirement(
+  text: string,
+  cv: string,
+  profileLocation?: string | null,
+): StructuredVerdict | null {
+  if (!HOME_REQUIREMENT.test(text)) return null;
+  // "Based in London or willing to relocate" is satisfied by willingness too:
+  // it stays with the relocation rule and the keyword matcher.
+  if (/\breloca\w*/i.test(text)) return null;
+  const place = commutablePlaceIn(text);
+  if (!place) return null;
+  const alsoTravel = TRAVEL_CLAUSE.test(text);
+
+  // "Sutton, United Kingdom, Sutton, United Kingdom": the profile's fields joined.
+  const profile = [
+    ...new Map(
+      (profileLocation ?? "")
+        .split(",")
+        .map((x) => x.trim())
+        .filter(Boolean)
+        .map((x) => [x.toLowerCase(), x] as const),
+    ).values(),
+  ].join(", ");
+  const fromProfile = profile && homeWithinCommute(place, profile) ? profile : null;
+  // The CV's own location: a labelled line, the header, or the contact block.
+  const homeNames = new RegExp(
+    `\\b(?:${[...place.home_is]
+      .sort((a, b) => b.length - a.length)
+      .map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"))
+      .join("|")})\\b`,
+    "i",
+  );
+  const cvLine = fromProfile ? null : candidateLocationLine(cv, homeNames);
+  // The line the place was read from carries the country beside it.
+  const cvHome =
+    cvLine &&
+    homeWithinCommute(
+      place,
+      lines(cv).find((l) => l.start <= cvLine.start && cvLine.end <= l.end)?.text ?? cvLine.text,
+    )
+      ? cvLine
+      : null;
+
+  if (fromProfile || cvHome) {
+    const evidence: StructuredEvidence = fromProfile
+      ? { snippet: `Profile location: ${fromProfile}`, start: 0, end: 0 }
+      : quote(cvHome!);
+    const where = fromProfile ?? cvHome!.text;
+    return {
+      rule: "home_location",
+      status: alsoTravel ? "partial" : "met",
+      needs_validation: alsoTravel,
+      note: alsoTravel
+        ? `Home is ${where}, in or within commuting distance of ${place.place}. Travel is the candidate's own answer: confirm at screening.`
+        : `Home is ${where}, in or within commuting distance of ${place.place}.`,
+      evidence: [evidence],
+    };
+  }
+  const stated = profile || null;
+  return {
+    rule: "home_location",
+    status: "unknown",
+    needs_validation: true,
+    note: stated
+      ? `Home is given as ${stated}, which does not show ${place.place} or its commuter belt. Confirm at screening.`
+      : `Home location is not stated. Confirm the commute to ${place.place} at screening.`,
+    evidence: [],
+  };
+}
+
 /** The first rule that recognises the requirement decides it; null means "not one of these shapes". */
 export function evaluateStructuredRequirement(
   text: string,
   cv: string,
   today: Date = new Date(),
-  opts: { profileLocation?: string | null } = {},
+  opts: {
+    profileLocation?: string | null;
+    /** The recruiter's experience entries, whose dates win over the CV's (v1.8.0). */
+    profileDates?: ProfileRoleDates | null;
+  } = {},
 ): StructuredVerdict | null {
-  return (
-    evaluateRelocationRequirement(text, cv, opts.profileLocation) ??
-    evaluateOnsiteRequirement(text, cv, opts.profileLocation) ??
-    evaluateMarketRequirement(text, cv, today) ??
-    evaluateDegreeRequirement(text, cv) ??
-    evaluateYearsRequirement(text, cv, today)
-  );
+  const before = ACTIVE_PROFILE_DATES;
+  ACTIVE_PROFILE_DATES = opts.profileDates ?? null;
+  try {
+    const verdict =
+      evaluateRelocationRequirement(text, cv, opts.profileLocation) ??
+      evaluateOnsiteRequirement(text, cv, opts.profileLocation) ??
+      evaluateHomeLocationRequirement(text, cv, opts.profileLocation) ??
+      evaluateMarketRequirement(text, cv, today) ??
+      evaluateDegreeRequirement(text, cv) ??
+      evaluateYearsRequirement(text, cv, today);
+    if (
+      verdict?.rule === "minimum_years" &&
+      opts.profileDates &&
+      profileDateCorrections(cv, opts.profileDates, today).length > 0
+    ) {
+      return { ...verdict, note: `${verdict.note} Dates as the recruiter corrected them on the profile.` };
+    }
+    return verdict;
+  } finally {
+    ACTIVE_PROFILE_DATES = before;
+  }
 }

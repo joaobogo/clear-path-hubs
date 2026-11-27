@@ -5,6 +5,7 @@
  * answered or scored here.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { InviteApplication } from "@/lib/candidate/screening-invite";
 
 vi.mock("@/lib/cv-validation", () => ({
   validateCv: async () => ({
@@ -194,7 +195,7 @@ describe("enterEmailedCv", () => {
     const created_at = new Date(Date.now() - 60 * 60_000).toISOString();
     expect(
       decideAutomaticInvite({
-        app: { ...(app as never), created_at, withdrawn_at: null },
+        app: { ...app, created_at, withdrawn_at: null } as InviteApplication,
         questionCount: 4,
         answerCount: 0,
         hasEmail: true,
@@ -202,7 +203,7 @@ describe("enterEmailedCv", () => {
     ).toEqual({ action: "skip", reason: "already_decided" });
     expect(
       decideStaffInvite({
-        app: { ...(app as never), withdrawn_at: null },
+        app: { ...app, withdrawn_at: null } as InviteApplication,
         positionStatus: "active",
         questions: [{ id: "q1", question: "Q", answer_type: "yes_no", required: true }],
         answeredIds: [],

@@ -504,14 +504,26 @@ export function humanizeSource(source: string | null | undefined): string {
   if (cvMatch) {
     return `CV · characters ${cvMatch[1]}–${cvMatch[2]}`;
   }
+  // Profile text read beside the CV (engine v1.8.0).
+  const profileMatch = source.match(/^profile:(\d+)-(\d+)$/i);
+  if (profileMatch) {
+    return `Profile · characters ${profileMatch[1]}–${profileMatch[2]}`;
+  }
+  if (/^profile:location$/i.test(source)) return "Profile · location";
 
   const map: Record<string, string> = {
     resume: "Curriculum Vitae",
     cv: "Curriculum Vitae",
+    // Where the engine read a quote (scoring-engine EvidenceSource).
+    profile: "Profile",
+    profile_recruiter_edited: "Profile (recruiter verified)",
+    screening_candidate: "Screening answer",
+    screening_recruiter: "Screening answer (recruiter-entered, pending candidate confirmation)",
     linkedin: "LinkedIn Profile",
     github: "GitHub Registry",
     interview_note: "Interview Record",
     screening_call: "Screening Assessment",
+    manual: "Reviewer verified",
   };
   return map[source.toLowerCase()] || source;
 }

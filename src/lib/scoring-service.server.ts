@@ -39,6 +39,8 @@ import {
   type EngineCalibration,
 } from "./scoring/engine-calibration";
 import { buildReplaySnapshot } from "./scoring/replay";
+import { buildProfileText, type ProfileTextInput } from "./scoring/profile-text";
+import { SCREENING_BY_RECRUITER_NOTE } from "./candidate/answer-source";
 import { roleContextOf } from "./scoring/evidence-sources";
 import { classifyScoreBand } from "@/config/scoring-bands";
 import type { Json } from "@/integrations/supabase/types";
@@ -104,6 +106,25 @@ export async function checkScoringReadiness(matchId: string) {
   };
 }
 
+const ANSWER_QUESTION_COLUMNS =
+  "screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have,scoring_dimension,options)";
+
+/**
+ * The application's screening answers with who gave each one
+ * (application_answers.answered_by). A database that does not have the column
+ * yet is read without it, and every answer is then the candidate's: the
+ * answers themselves are never dropped for want of the label.
+ */
+async function loadAnswers(s: Any, applicationId: string): Promise<{ data: Any[] | null }> {
+  const withSource = await s.from("application_answers")
+    .select(`question_id,answer,answered_by,${ANSWER_QUESTION_COLUMNS}`)
+    .eq("application_id", applicationId);
+  if (!withSource?.error) return withSource;
+  return s.from("application_answers")
+    .select(`question_id,answer,${ANSWER_QUESTION_COLUMNS}`)
+    .eq("application_id", applicationId);
+}
+
 /** Build engine inputs strictly from the match's own position + application. */
 async function loadInputs(matchId: string) {
   const s = await getAdmin();
@@ -116,14 +137,14 @@ async function loadInputs(matchId: string) {
 
   const [posRes, profRes, ansRes, orgRes, checksRes] = await Promise.all([
     s.from("positions")
-      .select("id,status,requirements,preferred_requirements,title,organization_id")
+      .select("id,status,requirements,preferred_requirements,title,organization_id,scoring_mode")
       .eq("id", match.position_id).maybeSingle(),
+    // headline, summary, experience and consent: the profile text a person
+    // wrote is read beside the CV (scoring/profile-text.ts).
     s.from("candidate_profiles")
-      .select("id,current_cv_file_id,location,city,country")
+      .select("id,current_cv_file_id,location,city,country,headline,summary,experience,consent")
       .eq("id", match.candidate_profile_id).maybeSingle(),
-    s.from("application_answers")
-      .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer,must_have)")
-      .eq("application_id", match.application_id),
+    loadAnswers(s, match.application_id),
     // The client's own name is not evidence (scoring/evidence-sources.ts).
     s.from("organizations")
       .select("name,brand_display_name")
@@ -179,6 +200,10 @@ async function loadInputs(matchId: string) {
       value,
       disqualifying_condition: dealbreakerCondition(q),
       must_have: q?.must_have ?? null,
+      ...(q?.scoring_dimension ? { scoring_dimension: q.scoring_dimension, options: q?.options ?? null } : {}),
+      // Only when a recruiter entered it, so the candidate's own answers keep
+      // the shape (and the input hash) they always had.
+      ...(r.answered_by === "recruiter_on_behalf" ? { answered_by: "recruiter_on_behalf" as const } : {}),
     };
   });
 
@@ -187,6 +212,14 @@ async function loadInputs(matchId: string) {
     brand_display_name: orgRes.data?.brand_display_name ?? null,
     role_title: posRes.data?.title ?? null,
   });
+
+  // What a person wrote on the profile, beside the CV: a recruiter's rewrite
+  // and corrected dates, or the candidate's own entries. The parser's copy of
+  // the CV is left out (scoring/profile-text.ts).
+  const profileText = buildProfileText(
+    profRes.data as ProfileTextInput | null,
+    (cvFile?.extracted_text as string | null) ?? "",
+  );
 
   return {
     match,
@@ -197,6 +230,7 @@ async function loadInputs(matchId: string) {
     screening,
     roleContext,
     eligibilityChecks,
+    profileText,
   };
 }
 
@@ -486,6 +520,127 @@ async function auditEligibilityChange(
   });
 }
 
+
+export type ScoringPreview =
+  | { ok: false; match_id: string; reason: string }
+  | {
+      ok: true;
+      match_id: string;
+      engine_version: string;
+      /** True when a completed run already has exactly these inputs under this rubric. */
+      inputs_unchanged: boolean;
+      machine: { score: number; fit_label: string; statuses: Record<string, string> };
+      /** Present when a recruiter's review is on record: what the match would show. */
+      reviewed: { score: number; statuses: Record<string, string>; kept: number; followed_machine: number } | null;
+      /** The score every list would show after a re-score. */
+      shown_score: number;
+      eligibility: string;
+    };
+
+/**
+ * What a re-score would say today, without writing anything.
+ *
+ * The same inputs executeScoring loads, the same engine call and the same
+ * reconciliation, under the rubric version that governs the role now; then the
+ * recruiter's review on record, put back by the same plan a real re-score
+ * uses. No run, lock, check, audit row or rubric version is written, so a
+ * whole role can be previewed before anyone decides to re-score it.
+ */
+export async function previewScoring(matchId: string): Promise<ScoringPreview> {
+  const s = await getAdmin();
+  let ctx: Awaited<ReturnType<typeof loadInputs>>;
+  try {
+    ctx = await loadInputs(matchId);
+  } catch (e) {
+    return { ok: false, match_id: matchId, reason: (e as Error)?.message ?? "inputs_unreadable" };
+  }
+  if (!ctx.position) return { ok: false, match_id: matchId, reason: "position_not_found" };
+  if (!ctx.cvFile) return { ok: false, match_id: matchId, reason: "cv_file_missing" };
+  if (ctx.requirements.length === 0) return { ok: false, match_id: matchId, reason: "requirements_missing" };
+  const cvText: string = ctx.cvFile.extracted_text ?? "";
+  if (cvText.length < 60) return { ok: false, match_id: matchId, reason: "cv_unparsed" };
+  const scoringMode = ((ctx.position as Any).scoring_mode as string | null) ?? "standard";
+  if (scoringMode !== "relocation_volume" && employmentIntervals(cvText).length === 0) {
+    return { ok: false, match_id: matchId, reason: "cv_employment_history_missing" };
+  }
+
+  const roleFamily = await resolveRoleFamily(s, ctx.position.title ?? null);
+  // Read-only: the governing version as it stands, or the defaults a first
+  // score would mint. Nothing is minted here.
+  const governing = await findGoverningRubric(s, ctx.match.position_id);
+  const calibration = governing?.calibration ?? resolveCalibration(roleFamily);
+  const raw = scoreCandidate({
+    cv_text: cvText,
+    requirements: ctx.requirements,
+    screening: ctx.screening,
+    candidate_location:
+      [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") ||
+      null,
+    role_context: ctx.roleContext,
+    calibration,
+    eligibility_checks: ctx.eligibilityChecks,
+    scoring_mode: scoringMode,
+    profile_text: ctx.profileText,
+  });
+  const rec = reconcile(raw);
+  if (!rec.reconciled) {
+    return { ok: false, match_id: matchId, reason: `reconciliation_failed:${rec.mismatch}` };
+  }
+
+  let inputsUnchanged = false;
+  if (governing?.id) {
+    const { data: same } = await s
+      .from("score_runs")
+      .select("id")
+      .eq("candidate_match_id", matchId)
+      .eq("input_hash", raw.input_hash)
+      .eq("rubric_version_id", governing.id)
+      .eq("status", "completed")
+      .limit(1)
+      .maybeSingle();
+    inputsUnchanged = Boolean(same?.id);
+  }
+
+  const statusesOf = (rows: ReadonlyArray<{ id: string; status: string }>) =>
+    Object.fromEntries(rows.map((r) => [r.id, r.status]));
+  const { previewReviewOnResult } = await import("./scoring/human-adjusted-run.server");
+  const review = await previewReviewOnResult({
+    matchId,
+    result: {
+      ...raw,
+      calibration: serialiseCalibration(calibration),
+      applied_caps: rec.applied_caps,
+    },
+    fitLabel: raw.fit_label,
+    db: s,
+  });
+  const decision = resolveScoredEligibility({
+    disqualifying_answers: raw.disqualifying_answers,
+    eligibility_checks: ctx.eligibilityChecks,
+  });
+  return {
+    ok: true,
+    match_id: matchId,
+    engine_version: raw.engine_version,
+    inputs_unchanged: inputsUnchanged,
+    machine: {
+      score: raw.score,
+      fit_label: raw.fit_label,
+      statuses: statusesOf(raw.requirement_assessment),
+    },
+    reviewed: review.reviewed
+      ? {
+          score: review.final_score,
+          statuses: statusesOf(review.assessment),
+          kept: review.kept,
+          followed_machine: review.followed_machine,
+        }
+      : null,
+    shown_score: review.reviewed ? review.final_score : raw.score,
+    eligibility: decision.status,
+  };
+}
+
 /**
  * Canonical scoring entry point.
  *
@@ -560,7 +715,10 @@ export async function executeScoring(
 
     const cvText: string = ctx.cvFile.extracted_text ?? "";
     if (cvText.length < 60) throw new Error("cv_unparsed");
-    if (employmentIntervals(cvText).length === 0) {
+    const scoringMode = ((ctx.position as Any).scoring_mode as string | null) ?? "standard";
+    // Relocation-first roles score from the screening answers, so a CV with
+    // no dated jobs is still assessed (positions.scoring_mode).
+    if (scoringMode !== "relocation_volume" && employmentIntervals(cvText).length === 0) {
       // No score run without dated roles, but the screening answers and the
       // recruiter's decisions still decide eligibility, and a dealbreaker
       // "yes" the CV gives no evidence for is still flagged for the
@@ -575,6 +733,7 @@ export async function executeScoring(
           candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
           calibration: governing?.calibration ?? resolveCalibration(roleFamily),
           eligibility_checks: ctx.eligibilityChecks,
+          profile_text: ctx.profileText,
         });
         const decision = await writeEngineChecks(s, matchId, ctx, flagsOnly);
         await s
@@ -632,6 +791,8 @@ export async function executeScoring(
       role_context: ctx.roleContext,
       calibration,
       eligibility_checks: ctx.eligibilityChecks,
+      scoring_mode: scoringMode,
+      profile_text: ctx.profileText,
     });
 
     // 7) Reconcile caps.
@@ -703,6 +864,9 @@ export async function executeScoring(
           role_context: ctx.roleContext,
           recruiter_exceptions: raw.recruiter_exceptions.map((x) => x.question_id),
           reviewed_claims: raw.reviewed_screening_claims,
+          scoring_mode: scoringMode,
+          profile_text: ctx.profileText,
+          candidate_location: [ctx.profile?.location, ctx.profile?.city, ctx.profile?.country].filter(Boolean).join(", ") || null,
         }),
         evaluation_method: EVALUATION_METHOD,
         applied_caps: rec.applied_caps,
@@ -897,6 +1061,8 @@ export async function executeScoring(
   }
 }
 
+export { SCREENING_BY_RECRUITER_NOTE };
+
 export function buildExplanation(r: ScoringResult, caps: Array<{ reason: string; cap: number }>): string {
   // The engine's fit_label uses its own vocabulary (strong_fit /
   // worth_considering / not_a_fit) while every surface bands the NUMBER
@@ -915,6 +1081,11 @@ export function buildExplanation(r: ScoringResult, caps: Array<{ reason: string;
   if (caps.length) parts.push(`caps: ${caps.map((c) => `${c.reason}→${(c.cap * 100).toFixed(0)}`).join(", ")}`);
   if (r.strengths[0]) parts.push(`+ ${r.strengths[0]}`);
   if (r.concerns[0]) parts.push(`− ${r.concerns[0]}`);
+  // Who gave the answers, and whose dates were used (v1.8.0).
+  if ((r.screening_source?.recruiter_on_behalf ?? 0) > 0) {
+    parts.push(SCREENING_BY_RECRUITER_NOTE);
+  }
+  if (r.profile_evidence?.note) parts.push(r.profile_evidence.note);
   return parts.join(" · ");
 }
 
@@ -933,7 +1104,10 @@ export async function assertPublishGate(matchId: string, runId: string): Promise
   // Evidence array may be empty when extraction returned nothing structured;
   // admin is exercising manual judgement here, so we don't block on it.
   void run.evidence;
-  if (run.contradiction_status === "disqualifying_answer") return { ok: false, reason: "disqualifying_contradiction" };
+  if (run.contradiction_status === "disqualifying_answer") {
+    const { data: excepted, error } = await s.rpc("has_capped_publication_exception", { _match_id: matchId, _run_id: runId });
+    if (error || excepted !== true) return { ok: false, reason: "disqualifying_contradiction" };
+  }
   return { ok: true };
 }
 

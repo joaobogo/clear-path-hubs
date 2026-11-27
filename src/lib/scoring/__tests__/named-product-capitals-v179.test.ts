@@ -76,7 +76,7 @@ describe("a product named with capitals inside it", () => {
     expect(a.status).toBe("partial");
   });
 
-  it("carries an engine version", () => {
+  it("is a v1 engine", () => {
     expect(ENGINE_VERSION).toMatch(/^taasflow-scoring-v1\.\d+\.\d+$/);
   });
 });

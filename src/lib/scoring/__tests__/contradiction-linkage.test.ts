@@ -47,7 +47,7 @@ describe("screening linkage (v1.5.0)", () => {
     const row = result.requirement_assessment[0]!;
     expect(row.status).toBe("partial");
     expect(row.needs_validation).toBe(true);
-    expect(row.evidence.some((e) => e.source === "screening")).toBe(true);
+    expect(row.evidence.some((e) => e.source === "screening_candidate")).toBe(true);
     // No contradiction: the CV is silent, not conflicting.
     expect(result.contradiction_status).toBe("none");
   });
@@ -117,6 +117,6 @@ describe("screening linkage (v1.5.0)", () => {
     });
     const row = result.requirement_assessment[0]!;
     expect(["partial", "met"]).toContain(row.status);
-    expect(row.evidence.some((e) => e.source === "screening")).toBe(true);
+    expect(row.evidence.some((e) => e.source === "screening_candidate")).toBe(true);
   });
 });

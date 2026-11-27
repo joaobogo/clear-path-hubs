@@ -9393,6 +9393,7 @@ export type Database = {
           rescore_requested_at: string | null
           rescore_state: string
           restart_expected_on: string | null
+          scoring_mode: string
           scoring_signature: string | null
           search_live_at: string | null
           search_live_email_at: string | null
@@ -9484,6 +9485,7 @@ export type Database = {
           rescore_requested_at?: string | null
           rescore_state?: string
           restart_expected_on?: string | null
+          scoring_mode?: string
           scoring_signature?: string | null
           search_live_at?: string | null
           search_live_email_at?: string | null
@@ -9575,6 +9577,7 @@ export type Database = {
           rescore_requested_at?: string | null
           rescore_state?: string
           restart_expected_on?: string | null
+          scoring_mode?: string
           scoring_signature?: string | null
           search_live_at?: string | null
           search_live_email_at?: string | null
@@ -11358,6 +11361,7 @@ export type Database = {
           preferred_answer: Json | null
           question: string
           required: boolean
+          scoring_dimension: string | null
           scoring_weight: number
           updated_at: string
           why_asked: string | null
@@ -11383,6 +11387,7 @@ export type Database = {
           preferred_answer?: Json | null
           question: string
           required?: boolean
+          scoring_dimension?: string | null
           scoring_weight?: number
           updated_at?: string
           why_asked?: string | null
@@ -11408,6 +11413,7 @@ export type Database = {
           preferred_answer?: Json | null
           question?: string
           required?: boolean
+          scoring_dimension?: string | null
           scoring_weight?: number
           updated_at?: string
           why_asked?: string | null
@@ -15508,6 +15514,10 @@ export type Database = {
       hard_delete_position: {
         Args: { _actor_user_id: string; _position_id: string; _reason?: string }
         Returns: Json
+      }
+      has_capped_publication_exception: {
+        Args: { _match_id: string; _run_id: string }
+        Returns: boolean
       }
       has_client_permission: {
         Args: {

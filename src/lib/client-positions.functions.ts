@@ -221,13 +221,19 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .select(
         `id, stage, admin_status, delivered_at, approved_score_run_id, candidate_profile_id, intro_video_url,
          candidate_profiles(id, full_name, headline, location),
-         score_runs:approved_score_run_id (score, final_score, fit_label, fit_band, explanation, requirement_coverage)`,
+         eligibility_checks(qualifier_key,status,evidence,eligibility_exceptions(revoked_at,expires_at)),
+         score_runs:approved_score_run_id (score, final_score, raw_score, fit_label, fit_band, explanation, requirement_coverage)`,
       )
       .eq("organization_id", data.orgId)
       .eq("position_id", data.positionId)
       .eq("client_visibility", "visible")
       .order("delivered_at", { ascending: false });
     const matches = await hydrateClientCandidateProfiles(rawMatches as AnyRow[]);
+    const { clientDealbreakerWarnings } = await import("@/lib/client/dealbreaker-publication");
+    for (const match of matches) {
+      match.dealbreaker_warnings = clientDealbreakerWarnings(match);
+      delete match.eligibility_checks;
+    }
 
     // Recent activity — sanitized safe audit trail for this position.
     // Filter out internal admin_note / scoring_weight / score_run.* actions.

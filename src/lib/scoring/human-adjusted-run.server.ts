@@ -42,6 +42,7 @@ import {
   videoBonusFor,
   withVideoIntroBonus,
 } from "./published-score";
+import { SCREENING_BY_RECRUITER_NOTE } from "../candidate/answer-source";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -222,6 +223,22 @@ function buildReviewRun(base: Any, plan: ReapplyPlan): ReviewRunBuilt {
   };
 }
 
+/**
+ * What the machine run said about its inputs, carried onto the reviewed run:
+ * the reviewed run is the one every surface reads, and a review of the
+ * verdicts does not change whose screening answers were scored or which dates
+ * a recruiter corrected.
+ */
+export function inputNotes(machineResult: Any): string[] {
+  const notes: string[] = [];
+  if (Number(machineResult?.screening_source?.recruiter_on_behalf ?? 0) > 0) {
+    notes.push(SCREENING_BY_RECRUITER_NOTE);
+  }
+  const dates = machineResult?.profile_evidence?.note;
+  if (typeof dates === "string" && dates.trim()) notes.push(dates.trim());
+  return notes;
+}
+
 /** What a reviewed run says, row by row, to tell two runs apart. */
 function reviewSignature(rows: readonly AssessmentRow[]): string {
   return rows
@@ -301,6 +318,7 @@ async function persistReviewRun(
     `must-have coverage ${(adj.must_have_coverage * 100).toFixed(0)}%`,
     `${verified.human_verified} of ${verified.total} criteria human-verified`,
     ...(adj.cap_reason ? [`caps: ${adj.cap_reason}`] : []),
+    ...inputNotes(result),
   ].join(" · ");
 
   // A human-adjusted run has the same machine inputs but a different verdict
@@ -602,6 +620,50 @@ export type ReapplyOutcome =
  * current reviewed run already sits on this machine run and says the same.
  * Throws on failure; the caller keeps the previous reviewed run current.
  */
+/**
+ * What putting the review back on a machine result would give, without
+ * writing anything. Used by the re-score preview: the same plan and the same
+ * arithmetic as reapplyHumanReview, on a result that was never stored.
+ */
+export async function previewReviewOnResult(opts: {
+  matchId: string;
+  /** The machine result as a run would store it. */
+  result: Any;
+  fitLabel: string | null;
+  db?: Any;
+}): Promise<
+  | { reviewed: false }
+  | {
+      reviewed: true;
+      final_score: number;
+      assessment: AssessmentRow[];
+      kept: number;
+      followed_machine: number;
+      dropped: number;
+    }
+> {
+  const s = opts.db ?? (await getAdmin());
+  const stored = await latestVerdictsForMatch(opts.matchId, s);
+  if (stored.length === 0) return { reviewed: false };
+  const base = { result: opts.result, fit_label: opts.fitLabel };
+  const assessment = assessmentOf(base);
+  if (assessment.length === 0) return { reviewed: false };
+  const plan = planReapply(
+    assessment,
+    stored.map((v) => ({ ...v, reapplied: true })),
+  );
+  if (plan.apply.length === 0 && plan.carried_forward.length === 0) return { reviewed: false };
+  const built = buildReviewRun(base, plan);
+  return {
+    reviewed: true,
+    final_score: built.adj.final_score,
+    assessment: built.adjusted,
+    kept: plan.apply.length,
+    followed_machine: plan.carried_forward.length,
+    dropped: plan.dropped.length,
+  };
+}
+
 export async function reapplyHumanReview(opts: {
   matchId: string;
   /** The machine run just completed; defaults to the latest one. */

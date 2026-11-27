@@ -11,6 +11,11 @@
  * default or the band table always prints a diff for the same corpus.
  */
 import type { RequirementInput } from "@/lib/scoring-engine.server";
+import {
+  ENTERPRISE_SALES_CV_ORIGINAL,
+  ENTERPRISE_SALES_CV_REWORDED,
+  ENTERPRISE_SALES_REQUIREMENTS,
+} from "./__tests__/fixtures/enterprise-sales-wording-v180";
 
 
 export const filler = [
@@ -297,4 +302,28 @@ export const FIXTURES: Fixture[] = [
     requirement: reqFromText("Proven hands-on experience with Docker"),
     expected: "met",
   },
+  // ---- the wording pair (v1.8.0) ------------------------------------------
+  // One applicant's CV for the Enterprise Sales Director role and a copy that
+  // states the same facts in other words (fixtures/enterprise-sales-wording-
+  // v180.ts). Each requirement must read the same on both: the wording table
+  // decides nothing but wording.
+  ...wordingPair("new-logo sales (hunting) is new-logo or net-new customer acquisition", 0, "met"),
+  ...wordingPair("total contract value is ACV or annual contract value", 1, "met"),
+  ...wordingPair("met or exceeded bookings targets is % of quota or of sales target", 2, "met"),
+  // Adjacent experience is not the thing: cloud and IT operations selling
+  // names no data platform, in either wording.
+  ...wordingPair("cloud and IT operations selling is not Snowflake or Databricks", 3, "missing"),
+  // Titles are wording, not products: the row is read, and stays partial.
+  ...wordingPair("senior buyers by title: read, not hard-missing for the word Head", 4, "partial"),
+  // The home is in a Home County; travel is the candidate's answer to give.
+  ...wordingPair("commutable to London from a Home County, travel unconfirmed", 5, "partial"),
+  ...wordingPair("a formal qualification method is MEDDPICC or MEDDICC", 9, "met"),
 ];
+
+function wordingPair(name: string, index: number, expected: Fixture["expected"]): Fixture[] {
+  const requirement = ENTERPRISE_SALES_REQUIREMENTS[index]!;
+  return [
+    { name: `wording pair, original: ${name}`, cv: ENTERPRISE_SALES_CV_ORIGINAL, requirement, expected },
+    { name: `wording pair, reworded: ${name}`, cv: ENTERPRISE_SALES_CV_REWORDED, requirement, expected },
+  ];
+}

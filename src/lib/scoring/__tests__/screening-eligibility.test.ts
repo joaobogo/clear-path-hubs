@@ -123,7 +123,7 @@ describe("a yes counts for the must-have its question was written for", () => {
     const row = r.requirement_assessment.find((a) => a.id === "req-4")!;
     expect(row.status).toBe("partial");
     expect(row.needs_validation).toBe(true);
-    const ev = row.evidence.find((e) => e.source === "screening");
+    const ev = row.evidence.find((e) => e.source === "screening_candidate");
     expect(ev?.location).toBe("screening:q-dubai");
     expect(ev?.snippet).toMatch(/Answered yes/);
   });
@@ -147,7 +147,7 @@ describe("a yes counts for the must-have its question was written for", () => {
       ],
     });
     expect(withYes.requirement_assessment[0]!.status).toBe("met");
-    expect(withYes.requirement_assessment[0]!.evidence.map((e) => e.source)).toContain("screening");
+    expect(withYes.requirement_assessment[0]!.evidence.map((e) => e.source)).toContain("screening_candidate");
   });
 
   it("a yes does not overrule a CV that clearly says otherwise; it is recorded as a contradiction", () => {

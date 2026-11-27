@@ -14,6 +14,7 @@ import { DownloadCvButton } from "@/components/download-cv-button";
 import { CvPreviewDialog } from "@/components/cv-preview-dialog";
 import { zoneDisplay } from "@/lib/time/zone-label";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { DealbreakerWarnings } from "@/components/client/dealbreaker-warning";
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
@@ -101,6 +102,8 @@ export function CandidateHeader({
             {c.headline}
           </p>
         )}
+        <div className="mt-2"><DealbreakerWarnings warnings={candidate.dealbreaker_warnings} score={candidate.score} /></div>
+        {candidate.client_notes?.map((note) => <p key={note} className="mt-2 text-sm text-foreground">{note}</p>)}
         {candidate.human_review?.statement && (
           <p className="mt-1 text-sm text-primary">{candidate.human_review.statement}</p>
         )}

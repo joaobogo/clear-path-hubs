@@ -10,17 +10,34 @@ import {
 } from "./scoring/engine-calibration";
 
 import { ENGINE_VERSION } from "./scoring/engine-version";
-import { evaluateStructuredRequirement } from "./scoring/structured-requirements";
+import {
+  evaluateStructuredRequirement,
+  profileDateCorrections,
+  type ProfileDateCorrection,
+  type ProfileRoleDates,
+} from "./scoring/structured-requirements";
 import { cleanQuote } from "./evidence/quote-hygiene";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
+import {
+  RELOCATION_VOLUME_MODE,
+  RELOCATION_VOLUME_VERSION,
+  RELOCATION_WEIGHTS,
+  scoreRelocationVolume,
+  type RelocationBreakdown,
+  type RelocationDimension,
+} from "./scoring/relocation-volume";
 import { deriveStrengths } from "./scoring/strengths";
 import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
+import {
+  equivalentForms,
+  isEquivalenceWording,
+  isTitleWordOnly,
+} from "./scoring/wording-equivalence";
+import { PROFILE_SEPARATOR, profileSections } from "./scoring/profile-text";
 import { maskNonQuotableLines } from "./scoring/non-evidence-lines";
 import { isUnrelatedCompound } from "./scoring/ambiguous-terms";
 import { judgeBehaviouralAnswer } from "./scoring/behavioural-answer";
-import { isAvailabilityRequirement } from "./scoring/availability";
-import { alternativeItems, anyItemMet } from "./scoring/alternatives";
 import { measureSubstance, type SubstanceMeasure } from "./scoring/evidence-substance";
 import { isProtectedAttributeText, removeProtectedSentences } from "./scoring/protected-attributes";
 import { asBoolean } from "./scoring/eligibility";
@@ -60,15 +77,48 @@ export interface ScreeningAnswer {
    * which requirement a "yes" is evidence for.
    */
   must_have?: string | null;
+  /** relocation_volume mode only: which scored dimension this answer feeds. */
+  scoring_dimension?: string | null;
+  /** relocation_volume mode only: the question's ordered options. */
+  options?: unknown;
+  /**
+   * Who gave the answer (application_answers.answered_by, v1.8.0). A
+   * recruiter may enter answers on a candidate's behalf; they count exactly
+   * as the candidate's own, and the run says who gave them. Absent means the
+   * candidate.
+   */
+  answered_by?: "candidate" | "recruiter_on_behalf" | null;
 }
+
+/**
+ * Where a piece of evidence was read (v1.8.0):
+ *   cv                        the CV file
+ *   profile_recruiter_edited  profile text a recruiter wrote or corrected
+ *   profile                   profile text the candidate wrote
+ *   screening_candidate       a screening answer the candidate gave
+ *   screening_recruiter       a screening answer a recruiter entered for them
+ * "screening" is what runs before v1.8.0 stored for any answer.
+ */
+export type EvidenceSource =
+  | "cv"
+  | "profile"
+  | "profile_recruiter_edited"
+  | "screening"
+  | "screening_candidate"
+  | "screening_recruiter";
 
 export interface EvidenceRef {
   requirement_id: string;
   requirement_text: string;
-  source: "cv" | "screening";
+  source: EvidenceSource;
   matched_terms: string[];
   snippet: string;
-  location: string; // e.g. "cv:1200-1280" or "screening:<qid>"
+  location: string; // "cv:1200-1280", "profile:40-190" or "screening:<qid>"
+}
+
+/** True for evidence read from a document about the candidate: the CV or the profile. */
+export function isDocumentSource(source: string | null | undefined): boolean {
+  return source === "cv" || source === "profile" || source === "profile_recruiter_edited";
 }
 
 export interface RequirementAssessment {
@@ -199,6 +249,28 @@ export interface ScoringResult {
   evidence_substance: SubstanceMeasure;
   completed_at: string;
   input_hash: string;
+  /** Present only on relocation_volume runs: the four scored dimensions. */
+  relocation_breakdown?: RelocationBreakdown;
+  scoring_mode?: string;
+  /**
+   * Who gave the screening answers this run counted (v1.8.0). Present only
+   * when a recruiter entered at least one of them. Recruiter-entered answers
+   * count like any other; the explanation says they await the candidate's
+   * confirmation.
+   */
+  screening_source?: { candidate: number; recruiter_on_behalf: number };
+  /**
+   * The profile text read beside the CV (v1.8.0). Present only when a
+   * profile block was scored.
+   */
+  profile_evidence?: {
+    /** A recruiter wrote or corrected part of it. */
+    recruiter_edited: boolean;
+    /** Roles whose dates the recruiter's profile corrects; the profile's dates were used. */
+    date_corrections: ProfileDateCorrection[];
+    /** One sentence for the run's evidence: which dates were corrected. */
+    note: string | null;
+  };
 }
 
 // ---------- helpers ----------
@@ -208,20 +280,10 @@ const STOP = new Set([
   "is","are","be","been","being","was","were","have","has","had","as","this","that",
   "you","your","we","our","their","it","its","not","but","if","then","so","than",
   "will","can","may","must","should","would","using","use","used","across","into",
-  // Portuguese and Spanish connectives (v1.8.0). "de" was a keyword on every
-  // Portuguese requirement and matched any CV with a Portuguese phrase in it.
-  "de","da","do","das","dos","para","em","no","na","nos","nas","com","ou","um","uma",
-  "uns","umas","por","que","ao","aos","à","às","até","sem","pelo","pela","pelos","pelas",
-  "num","numa","del","los","las","el","en","con","y","e","o",
 ]);
 
-/**
- * Words of two characters or more, read in any alphabet (v1.8.0). The ASCII
- * pattern cut "armazém" to "armaz" and "logística" to "log" and "stica", so a
- * requirement written in Portuguese searched the CV for word fragments.
- */
 export function tokenize(text: string): string[] {
-  return (text.toLowerCase().match(/[\p{L}\p{N}+.#-]{2,}/gu) ?? []).filter((t) => !STOP.has(t));
+  return (text.toLowerCase().match(/[a-z0-9+.#-]{2,}/g) ?? []).filter((t) => !STOP.has(t));
 }
 
 /**
@@ -276,12 +338,6 @@ const REQUIREMENT_FRAMING = new Set([
   "professional", "professionals", "skills", "skill", "speaking", "communication",
   "principles", "fundamentals", "practices", "best", "part", "technical",
   "independently", "effectively", "efficiently",
-  // The same framing in Portuguese and Spanish (v1.8.0).
-  "experiência", "experiências", "experiencia", "experiencias", "vivência",
-  "disponibilidade", "disposição", "disponível", "disponibilidad", "disposición",
-  "conhecimento", "conhecimentos", "conocimiento", "conocimientos", "capacidade",
-  "habilidade", "habilidades", "anos", "ano", "años", "mínimo", "desejável",
-  "deseable", "trabalho", "trabalhar", "trabajo", "trabajar",
 ]);
 
 function extractKeywordsFromRequirement(text: string, cap: number): string[] {
@@ -349,9 +405,10 @@ export function findTermMatches(
 ): number[] {
   const t = term.trim().toLowerCase();
   if (!t) return [];
-  // Letters in any alphabet bound a word (v1.8.0): "log" is not found inside
-  // "logística", and "armazém" is found before "s" or a space only.
-  const re = new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRe(t)}([^\\p{L}\\p{N}]|$)`, "giu");
+  // A phrase may wrap onto the next line of the CV ("annual contract\nvalue"):
+  // the space between its words is any run of white space (v1.8.0).
+  const body = escapeRe(t).replace(/\s+/g, "\\s+");
+  const re = new RegExp(`(^|[^a-z0-9])${body}([^a-z0-9]|$)`, "gi");
   const out: number[] = [];
   let m: RegExpExecArray | null;
   const lower = cv.toLowerCase();
@@ -445,6 +502,47 @@ export function isNegatedMention(
   );
 }
 
+/**
+ * Cues that name what something is NOT: "cloud infrastructure rather than
+ * data platforms such as Snowflake", "built on Azure instead of AWS".
+ */
+const CONTRAST_CUES = ["rather than", "instead of", "as opposed to", "in place of"];
+
+/**
+ * True when the mention at `idx` is the thing a sentence sets aside: it
+ * follows "rather than", "instead of" or the like in the same sentence
+ * (v1.8.0). Such a mention is not evidence of the thing, and it is not the
+ * candidate denying it either, so it is neither matched nor counted as a
+ * negation: it is simply not read.
+ */
+export function isContrastedMention(
+  text: string,
+  idx: number,
+  cal: EngineCalibration = DEFAULT_CALIBRATION,
+): boolean {
+  const lower = text.toLowerCase();
+  // The sentence the mention sits in. A line break ends it unless the line
+  // wraps: the next line then starts in lower case. A bullet starts a new one.
+  let sentenceStart = Math.max(idx - cal.negation_sentence_window, 0);
+  for (let i = idx - 1; i >= sentenceStart; i--) {
+    const c = text[i]!;
+    if (c === "." || c === ";" || c === "!" || c === "?" || /[•▪●■◦]/.test(c)) {
+      sentenceStart = i + 1;
+      break;
+    }
+    if (c === "\n" && !/^\s*\p{Ll}/u.test(text.slice(i + 1, i + 12))) {
+      sentenceStart = i + 1;
+      break;
+    }
+  }
+  let window = lower.slice(sentenceStart, idx).replace(/\s+/g, " ");
+  for (const pivot of [" but ", " however", " although", " whereas", " though "]) {
+    const at = window.lastIndexOf(pivot);
+    if (at !== -1) window = window.slice(at + pivot.length);
+  }
+  return CONTRAST_CUES.some((cue) => window.includes(cue));
+}
+
 const isWordChar = (c: string | undefined): boolean => !!c && /[A-Za-z0-9]/.test(c);
 
 /**
@@ -472,11 +570,32 @@ function findSnippet(
   term: string,
   at: number | undefined,
   radius: number,
+  /**
+   * The part of the text the quote may come from: the CV, or one profile
+   * section. `sentence` asks for the whole sentence around the mention
+   * (profile prose has no line structure for a fixed window to land on).
+   */
+  within?: (at: number) => { lo: number; hi: number; sentence: boolean },
 ): { snippet: string; location: string } | null {
   const idx = at ?? cv.toLowerCase().indexOf(term.toLowerCase());
   if (idx === -1) return null;
-  const rawStart = Math.max(0, idx - radius);
-  const rawEnd = Math.min(cv.length, idx + term.length + radius);
+  const { lo, hi, sentence } = within ? within(idx) : { lo: 0, hi: cv.length, sentence: false };
+  if (sentence) {
+    // Back to where the sentence opens: the section start, a new line, or
+    // the space after a full stop or a bullet.
+    const opens = (i: number) =>
+      i <= lo ||
+      cv[i - 1] === "\n" ||
+      (/\s/.test(cv[i - 1] ?? "") && /[.!?•]/.test(cv[i - 2] ?? ""));
+    let from = idx;
+    while (!opens(from)) from--;
+    let to = idx + term.length;
+    while (to < hi && !/[.!?]/.test(cv[to - 1] ?? "") && cv[to] !== "\n") to++;
+    const whole = cleanQuote(cv.slice(from, to));
+    if (whole && to - from <= 320) return { snippet: whole, location: `cv:${from}-${to}` };
+  }
+  const rawStart = Math.max(lo, idx - radius);
+  const rawEnd = Math.min(hi, idx + term.length + radius);
   const [start, end] = snapToWordBounds(cv, rawStart, rawEnd, idx + term.length, idx);
   const snippet = cleanQuote(cv.slice(start, end));
   if (!snippet) return null;
@@ -508,6 +627,8 @@ export function computeInputHash(parts: {
   recruiter_exceptions?: string[];
   /** Unverified-claim flags a recruiter decision suppressed; they change the result. */
   reviewed_claims?: string[];
+  /** The profile block read beside the CV (profile-text.ts); an edit is a new input. */
+  profile_text?: string | null;
 }): string {
   // Fields added after v1.6 are included only when set, so a run without
   // them keeps the hash it always had.
@@ -515,6 +636,8 @@ export function computeInputHash(parts: {
   const rc = normaliseRoleContext(parts.role_context);
   const exceptions = [...new Set(parts.recruiter_exceptions ?? [])].sort();
   const reviewed = [...new Set(parts.reviewed_claims ?? [])].sort();
+  // Case is kept: the block's label lines say who wrote each section.
+  const profile = (parts.profile_text ?? "").trim();
   const canon = JSON.stringify({
     v: parts.engine_version,
     cal: parts.calibration_version ?? DEFAULT_CALIBRATION.calibration_version,
@@ -528,8 +651,12 @@ export function computeInputHash(parts: {
         v: s.value,
         ...(s.must_have ? { m: s.must_have.trim().toLowerCase() } : {}),
         ...(s.disqualifying_condition ? { d: s.disqualifying_condition } : {}),
+        // Only when a recruiter entered it, so the candidate's own answers
+        // hash as they always did.
+        ...(s.answered_by === "recruiter_on_behalf" ? { by: "recruiter" } : {}),
       }))
       .sort((a, b) => a.q.localeCompare(b.q)),
+    ...(profile ? { p: profile } : {}),
     ...(loc ? { loc } : {}),
     ...(rc
       ? {
@@ -692,16 +819,48 @@ export function scoreCandidate(input: {
    * (recruiter_review:*) are read: see scoring/recruiter-review.ts.
    */
   eligibility_checks?: StoredEligibilityCheck[] | null;
+  /** positions.scoring_mode. Anything but 'relocation_volume' scores as standard. */
+  scoring_mode?: string | null;
+  /**
+   * The profile text a person wrote, read beside the CV (v1.8.0): the block
+   * buildProfileText makes from the profile's headline, summary and
+   * experience. Empty or absent scores the CV alone.
+   */
+  profile_text?: string | null;
 }): ScoringResult {
   input = {
     ...input,
     // Letter-spaced PDF capitals ("A U G 2 0 2 3") are rebuilt so dates and
     // titles can be read; other text is unchanged.
     cv_text: removeProtectedSentences(normaliseLetterSpacing(input.cv_text ?? "")),
+    profile_text: removeProtectedSentences((input.profile_text ?? "").trim()),
     requirements: input.requirements.filter((r) => !isProtectedAttributeText(r.text)),
     screening: input.screening.filter((s) => !isProtectedAttributeText(s.question)),
   };
-  const cv = input.cv_text ?? "";
+  /** The CV file's own text: what "thin" and "unreadable" are judged on. */
+  const cvFile = input.cv_text ?? "";
+  // The document the engine reads is the CV with the profile block after it.
+  // Offsets below `profileStart` are the CV's, so every CV quote keeps the
+  // location it always had; evidence found at or after it is relabelled as
+  // profile evidence once the rows are decided.
+  const profileBlock = input.profile_text ?? "";
+  const cv = profileBlock ? `${cvFile}${PROFILE_SEPARATOR}${profileBlock}` : cvFile;
+  const profileStart = profileBlock ? cvFile.length + PROFILE_SEPARATOR.length : -1;
+  const profileParts = profileBlock ? profileSections(profileBlock) : [];
+  /** The profile section an offset of the document falls in, or null for the CV. */
+  const profileSectionAt = (at: number) => {
+    if (profileStart < 0 || at < profileStart) return null;
+    const rel = at - profileStart;
+    return (
+      [...profileParts].reverse().find((sec) => rel >= sec.labelStart) ?? profileParts[0] ?? null
+    );
+  };
+  /** A quote never runs from the CV into the profile, or from one profile section into the next. */
+  const quoteBounds = (at: number) => {
+    const sec = profileSectionAt(at);
+    if (sec) return { lo: profileStart + sec.start, hi: profileStart + sec.end, sentence: true };
+    return { lo: 0, hi: profileStart < 0 ? cv.length : cvFile.length, sentence: false };
+  };
   const cal = input.calibration ?? resolveCalibration(input.role_family);
   const engine_version = ENGINE_VERSION;
 
@@ -724,15 +883,36 @@ export function scoreCandidate(input: {
   // The keyword search also skips headings, contact lines, objective
   // statements and club lines (v1.7.7): same offsets again. The rules keep
   // `evidenceCv`, whose headings tell work dates from education dates.
-  const keywordCv = maskNonQuotableLines(evidenceCv);
+  const keywordCv = (() => {
+    const masked = maskNonQuotableLines(evidenceCv);
+    if (profileStart < 0) return masked;
+    // The profile block's label lines say who wrote a section; they are not
+    // the candidate's words and are never searched.
+    const chars = masked.split("");
+    for (const sec of profileParts) {
+      for (let i = profileStart + sec.labelStart; i < profileStart + sec.labelEnd; i++) chars[i] = " ";
+    }
+    return chars.join("");
+  })();
+  // A recruiter's experience entries carry the dates they checked: where the
+  // CV disagrees, the rules below read the profile's (structured-requirements).
+  const recruiterRoles = profileParts.find(
+    (sec) => sec.field === "experience" && sec.origin === "recruiter",
+  );
+  const profileDates: ProfileRoleDates | null = recruiterRoles
+    ? { start: profileStart + recruiterRoles.start, end: profileStart + recruiterRoles.end }
+    : null;
   /**
    * Where a term is found, without the hits that sit inside a set phrase of
    * another meaning ("Microsoft Office" for the office, "full-time" for time
-   * entry).
+   * entry), and without the hits a sentence sets aside ("rather than
+   * Snowflake").
    */
   const termHits = (text: string, key: string, form: string, limit: number, requirementText: string) =>
     findTermMatches(text, form, limit).filter(
-      (at) => !isUnrelatedCompound(key, form, text, at, requirementText),
+      (at) =>
+        !isUnrelatedCompound(key, form, text, at, requirementText) &&
+        !isContrastedMention(text, at, cal),
     );
   /** What each years verdict rests on, for the answer step below. */
   const yearsBasis = new Map<string, string>();
@@ -761,10 +941,10 @@ export function scoreCandidate(input: {
     keywords: r.keywords?.length ? r.keywords : extractKeywordsFromRequirement(r.text, cal.keyword_cap),
   }));
 
-  const cvTokens = new Set(tokenize(cv));
+  const cvTokens = new Set(tokenize(cvFile));
   // "Insufficient parse" signal — CV is too short/garbled to draw negative conclusions.
   // Missing keywords in this regime map to `unknown` (validate), never irrational zero.
-  const cvIsThin = cv.trim().length < cal.thin_cv_chars || cvTokens.size < cal.thin_cv_tokens;
+  const cvIsThin = cvFile.trim().length < cal.thin_cv_chars || cvTokens.size < cal.thin_cv_tokens;
 
   // Screening answers are part of the evidence corpus (v1.5.0). The Score tab
   // has always promised evidence "from the CV or screening answers" — the
@@ -801,7 +981,7 @@ export function scoreCandidate(input: {
       r.text,
       evidenceCv,
       input.as_of ?? new Date(),
-      { profileLocation: input.candidate_location ?? null },
+      { profileLocation: input.candidate_location ?? null, profileDates },
     );
     if (structured) {
       const refs: EvidenceRef[] = structured.evidence.map((e) => ({
@@ -856,7 +1036,15 @@ export function scoreCandidate(input: {
       const surfaceForms = (() => {
         const out: string[] = [];
         const seen = new Set<string>();
-        for (const base of expandTerm(k)) {
+        // Then the wordings this requirement's own phrase is known by
+        // ("total contract value" is also "ACV", "new-logo" is also
+        // "net-new"): wording-equivalence.ts.
+        // A title word ("Head" in "Head of Data") is read only as the title:
+        // the bare word elsewhere in the CV is not evidence for it.
+        const bases = isTitleWordOnly(r.text, k)
+          ? equivalentForms(r.text, k)
+          : [...expandTerm(k), ...equivalentForms(r.text, k)];
+        for (const base of bases) {
           for (const form of [base, ...inflectionVariants(base)]) {
             if (!seen.has(form)) {
               seen.add(form);
@@ -929,7 +1117,7 @@ export function scoreCandidate(input: {
       if (affirmative.length === 0) {
         // Every mention is inside a negating clause ("no experience with X").
         negated.push(kw);
-        const sn = findSnippet(cv, matchedForm, hits[0], cal.snippet_radius_chars);
+        const sn = findSnippet(cv, matchedForm, hits[0], cal.snippet_radius_chars, quoteBounds);
         if (sn) {
           localEvidence.push({
             requirement_id: r.id,
@@ -1001,7 +1189,27 @@ export function scoreCandidate(input: {
         }
         if (qualifiedHere) break;
       }
-      const sn = findSnippet(cv, matchedForm, quoteAt, cal.snippet_radius_chars);
+      let sn = findSnippet(cv, matchedForm, quoteAt, cal.snippet_radius_chars, quoteBounds);
+      // Two words of one requirement can be evidenced by the same passage
+      // ("met" and "exceeded" both by "Exceeded KPIs"). The passage is quoted
+      // once: this word quotes another passage where the CV has one, else none.
+      if (sn && localEvidence.some((e) => e.location === sn!.location)) {
+        const taken = new Set(localEvidence.map((e) => e.location));
+        let other: { snippet: string; location: string } | null = null;
+        for (const form of surfaceForms) {
+          for (const hitAt of termHits(keywordCv, k, form, cal.max_term_hits, r.text)) {
+            if (isNegatedMention(cv, hitAt, cal)) continue;
+            if (experienceReq && !studyOnly.has(kw) && cvStudyAt(hitAt)) continue;
+            const alt = findSnippet(cv, form, hitAt, cal.snippet_radius_chars, quoteBounds);
+            if (alt && !taken.has(alt.location)) {
+              other = alt;
+              break;
+            }
+          }
+          if (other) break;
+        }
+        sn = other;
+      }
       if (sn) {
         localEvidence.push({
           requirement_id: r.id,
@@ -1018,9 +1226,6 @@ export function scoreCandidate(input: {
     // formula below would demand all three, which no candidate can pass and no
     // client intended. Restricted to capitalised alternatives so "React or a
     // similar frontend framework" keeps its normal threshold.
-    // A plain list of alternatives ("empilhadeira ou selecionadora de
-    // pedidos"): one item found in full is the requirement met (v1.8.0).
-    const plainAlternatives = alternativeItems(r.text, REQUIREMENT_FRAMING);
     const isAlternativesList =
       r.keywords.length >= 2 &&
       /\b(or|ou)\b/i.test(r.text) &&
@@ -1039,7 +1244,12 @@ export function scoreCandidate(input: {
     // listed QuickBooks and no Excel was then refused as naming none of the
     // products. A word written all in capitals (HACCP, BRC, AWS) stays as it
     // was: an abbreviation, not treated as a product name by this gate.
+    // A capitalised word that is part of a wording the equivalence table
+    // knows is a way of saying something, not a product (v1.8.0): "Head" in
+    // "senior buyers (CIO, CDO, Head of Data)" made a CV that never wrote the
+    // word "Head" hard-missing for the whole row.
     const midSentenceProducts = r.keywords.filter((kw) => {
+      if (isEquivalenceWording(r.text, kw)) return false;
       const m = new RegExp(`[^.!?]\\s(${escapeRe(kw)})\\b`, "i").exec(r.text);
       return m !== null && /^\p{Lu}/u.test(m[1]!) && /\p{Ll}/u.test(m[1]!);
     });
@@ -1093,11 +1303,7 @@ export function scoreCandidate(input: {
       } else {
         status = "missing";
       }
-    } else if (
-      isAlternativesList ||
-      matched.length >= metThreshold ||
-      anyItemMet(plainAlternatives, matched)
-    ) {
+    } else if (isAlternativesList || matched.length >= metThreshold) {
       status = "met";
     } else {
       status = "partial";
@@ -1154,7 +1360,7 @@ export function scoreCandidate(input: {
         (namedProducts.length > 0
           ? namedProducts.some((p) => work.some((kw) => kw.toLowerCase() === p.toLowerCase())) &&
             (namedProducts.length === 1 || isAlternativesList || work.length >= metThreshold)
-          : isAlternativesList || work.length >= metThreshold || anyItemMet(plainAlternatives, work));
+          : isAlternativesList || work.length >= metThreshold);
       const capped = status === "met" && !workMet;
       if (capped) {
         status = "partial";
@@ -1295,13 +1501,6 @@ export function scoreCandidate(input: {
     }
     return { linkText, links: out };
   };
-  // v1.8.0: a requirement about what the candidate will do (relocate, work
-  // the shifts, start after the visto) that no rule decides. Rule-decided
-  // rows (on-site attendance, conditional relocation) keep their rules.
-  const availabilityRow = (a: RequirementAssessment) =>
-    isAvailabilityRequirement(a.text) && !a.matched_terms.some((t) => t.startsWith("rule:"));
-  const availabilityDecided = new Set<string>();
-
   // A rule that read the CV and quoted a clear "no" (a degree in an unrelated
   // subject) is a conflict with the answer, not a gap it fills.
   const ruleSaysNo = (a: RequirementAssessment) =>
@@ -1327,9 +1526,6 @@ export function scoreCandidate(input: {
       .links.map(({ a }) => a)
       .filter(
         (a) =>
-          // An availability row is decided by the answer itself (v1.8.0):
-          // there is no CV line to back it, so it is not an unbacked claim.
-          !availabilityRow(a) &&
           // Contradictions are recorded separately, as a conflict.
           a.status !== "contradicted" &&
           !ruleSaysNo(a) &&
@@ -1362,6 +1558,7 @@ export function scoreCandidate(input: {
     role_context: input.role_context ?? null,
     recruiter_exceptions: exceptedAnswers.map((s) => s.question_id),
     reviewed_claims: reviewed_screening_claims,
+    profile_text: profileBlock,
   });
 
   // v1.7.7: a count of dates never overrides the candidate's own "no". Asked
@@ -1385,47 +1582,6 @@ export function scoreCandidate(input: {
         .filter(Boolean)
         .join(" ");
       if (!described) a.evidence = [];
-    }
-  }
-
-  // v1.8.0: availability is the candidate's own commitment. The answer to
-  // the question asked for it decides the row: yes is met, no is not met.
-  // A CV cannot say whether someone will relocate or work nights, so the
-  // keyword search never had anything to find. Applied whether or not
-  // another answer disqualified the candidate, so the rows say what the
-  // candidate answered.
-  for (const s of input.screening) {
-    if (s.answer_type !== "boolean") continue;
-    const said = normalizeScreeningValue(s);
-    if (said !== "yes" && said !== "no") continue;
-    for (const { a } of linkedRequired(s).links) {
-      if (!availabilityRow(a) || a.status === "contradicted") continue;
-      if (availabilityDecided.has(a.id) && said === "yes") continue;
-      const ref: EvidenceRef = {
-        requirement_id: a.id,
-        requirement_text: a.text,
-        source: "screening",
-        matched_terms: [`must_have:${(s.must_have ?? a.text).slice(0, 60)}`],
-        snippet: `Answered ${said} to: "${(s.question || "").trim()}"`,
-        location: `screening:${s.question_id}`,
-      };
-      availabilityDecided.add(a.id);
-      a.needs_validation = false;
-      if (said === "yes") {
-        a.status = "met";
-        a.rule_note = "The candidate answered yes. Availability is the candidate's own commitment, so the answer is the evidence.";
-        a.evidence = [ref, ...a.evidence.filter((e) => e.location !== ref.location)].slice(
-          0,
-          cal.max_evidence_per_requirement,
-        );
-      } else {
-        a.status = "missing";
-        a.rule_note = `The candidate answered no to "${(s.question || "").trim()}".`;
-        a.evidence = [ref];
-      }
-      if (!evidence.some((e) => e.location === ref.location && e.requirement_id === a.id)) {
-        evidence.push(ref);
-      }
     }
   }
 
@@ -1482,7 +1638,6 @@ export function scoreCandidate(input: {
       if (s.answer_type !== "boolean" || normalizeScreeningValue(s) !== "yes") continue;
       const { linkText, links } = linkedRequired(s);
       for (const { a, overlap } of links) {
-        if (availabilityDecided.has(a.id)) continue;
         const ref: EvidenceRef = {
           requirement_id: a.id,
           requirement_text: a.text,
@@ -1515,21 +1670,16 @@ export function scoreCandidate(input: {
           a.status = "met";
           a.evidence.push(ref);
           evidence.push(ref);
+          // A home in the commuter belt, and the candidate's yes to the rest
+          // (travel): nothing left to confirm.
+          if (a.matched_terms.includes("rule:home_location")) {
+            a.needs_validation = false;
+            a.rule_note = `${(a.rule_note ?? "").replace(/\s*Travel is the candidate's own answer: confirm at screening\.$/, "")} The candidate answered yes to "${(s.question || "").trim()}".`.trim();
+          }
         }
       }
     }
   }
-  // v1.8.0: an availability row nobody asked about is not answered by the
-  // CV either way. Unknown (confirm at screening), never missing for want
-  // of a CV line.
-  for (const a of assessment) {
-    if (availabilityDecided.has(a.id) || !availabilityRow(a)) continue;
-    if (a.status !== "missing" || a.evidence.length > 0) continue;
-    a.status = "unknown";
-    a.needs_validation = true;
-    a.rule_note = "Availability is not something a CV shows, and no question asked it. Confirm with the candidate.";
-  }
-
   let contradiction_status: ScoringResult["contradiction_status"] = "none";
   if (disqualified) contradiction_status = "disqualifying_answer";
   else if (contradiction_rows.length > 0) contradiction_status = "screening_contradicts_cv";
@@ -1615,7 +1765,7 @@ export function scoreCandidate(input: {
     applyCap(`disqualifying_answer: ${names}`, cal.disqualified_cap);
   }
   // 2) An unparsed CV. We assessed no document, so no confident composite.
-  if (cv.trim().length < cal.unreadable_cv_chars) {
+  if (cvFile.trim().length < cal.unreadable_cv_chars) {
     applyCap(
       `unparsed_cv: CV text under ${cal.unreadable_cv_chars} characters could not be extracted`,
       cal.unparsed_cv_cap,
@@ -1705,7 +1855,7 @@ export function scoreCandidate(input: {
   const canonicalBand = classifyBand(score);
   const fit_label: ScoringResult["fit_label"] = disqualified
     ? "not_a_fit"
-    : cv.trim().length < cal.unreadable_cv_chars
+    : cvFile.trim().length < cal.unreadable_cv_chars
       ? "unknown"
       : bandToFitLabel(canonicalBand) === "strong_fit" &&
           must_have_coverage < cal.strong_fit.min_must_have_coverage
@@ -1746,7 +1896,7 @@ export function scoreCandidate(input: {
         : "A screening answer and the CV disagree. Confirm which is current before deciding.",
     );
   }
-  if (cv.trim().length < cal.unreadable_cv_chars) {
+  if (cvFile.trim().length < cal.unreadable_cv_chars) {
     concerns.push("CV text could not be extracted with confidence.");
   }
   if (substance.reason) {
@@ -1757,7 +1907,65 @@ export function scoreCandidate(input: {
     );
   }
 
-  return {
+  // Every evidence item says where it was read (v1.8.0). The rows were decided
+  // on one document, the CV with the profile after it; now that they are, an
+  // item found in the profile block is labelled as profile evidence, with who
+  // wrote that section, and a screening item says who gave the answer.
+  const answerSource = new Map(
+    input.screening.map(
+      (s) =>
+        [
+          s.question_id,
+          s.answered_by === "recruiter_on_behalf" ? "screening_recruiter" : "screening_candidate",
+        ] as const,
+    ),
+  );
+  const relabelled = new Set<EvidenceRef>();
+  const relabel = (e: EvidenceRef) => {
+    if (relabelled.has(e)) return;
+    relabelled.add(e);
+    if (e.source === "screening") {
+      const qid = e.location.startsWith("screening:") ? e.location.slice("screening:".length) : "";
+      e.source = answerSource.get(qid) ?? "screening_candidate";
+      return;
+    }
+    if (e.source !== "cv") return;
+    // The profile's location field, quoted by a location rule.
+    if (e.location === "cv:0-0" && e.snippet.startsWith("Profile location:")) {
+      e.source = "profile";
+      e.location = "profile:location";
+      return;
+    }
+    const m = /^cv:(\d+)-(\d+)$/.exec(e.location);
+    if (!m || profileStart < 0) return;
+    const start = Number(m[1]);
+    const end = Number(m[2]);
+    const sec = profileSectionAt(start);
+    if (!sec) return;
+    e.source = sec.origin === "recruiter" ? "profile_recruiter_edited" : "profile";
+    e.location = `profile:${start - profileStart}-${end - profileStart}`;
+  };
+  for (const a of assessment) a.evidence.forEach(relabel);
+  evidence.forEach(relabel);
+
+  const recruiterAnswers = input.screening.filter((s) => s.answered_by === "recruiter_on_behalf").length;
+  const dateCorrections = profileDates
+    ? profileDateCorrections(evidenceCv, profileDates, input.as_of ?? new Date())
+    : [];
+  const profile_evidence: ScoringResult["profile_evidence"] = profileBlock
+    ? {
+        recruiter_edited: profileParts.some((sec) => sec.origin === "recruiter"),
+        date_corrections: dateCorrections,
+        note:
+          dateCorrections.length > 0
+            ? `Dates corrected by recruiter: ${dateCorrections
+                .map((c) => `${c.role} ${c.profile} (CV: ${c.cv})`)
+                .join("; ")}.`
+            : null,
+      }
+    : undefined;
+
+  const result: ScoringResult = {
     engine_version,
     calibration_version: cal.calibration_version,
     evaluation_method: EVALUATION_METHOD,
@@ -1798,5 +2006,107 @@ export function scoreCandidate(input: {
     evidence_substance: substance,
     completed_at,
     input_hash,
+    // Only when they apply, so a run with neither keeps the shape it had.
+    ...(recruiterAnswers > 0
+      ? {
+          screening_source: {
+            candidate: input.screening.length - recruiterAnswers,
+            recruiter_on_behalf: recruiterAnswers,
+          },
+        }
+      : {}),
+    ...(profile_evidence ? { profile_evidence } : {}),
+  };
+  return input.scoring_mode === RELOCATION_VOLUME_MODE
+    ? applyRelocationVolume(result, input.cv_text, input.screening, cal.disqualified_cap)
+    : result;
+}
+
+const DIMENSION_NAMES: Record<RelocationDimension, string> = {
+  commitment: "commitment to moving",
+  start: "start date",
+  flexibility: "shift flexibility",
+  experience: "warehouse experience",
+};
+
+/**
+ * Replace the CV-led composite with the relocation-first one. Only the
+ * dealbreaker cap survives: thin-CV, keyword, must-have and unparsed-CV caps
+ * do not apply, and requirement rows stay recorded but carry no weight. The
+ * category fields still reconcile: must_have = commitment/start/flexibility
+ * (80%), preferred = experience bonus (20%).
+ */
+function applyRelocationVolume(
+  base: ScoringResult,
+  cvText: string,
+  screening: ScreeningAnswer[],
+  disqualifiedCap: number,
+): ScoringResult {
+  const rv = scoreRelocationVolume({
+    cv_text: cvText,
+    screening: screening.map((sa) => ({
+      question_id: sa.question_id,
+      answer_type: sa.answer_type,
+      value: sa.value,
+      scoring_dimension: sa.scoring_dimension ?? null,
+      options: sa.options,
+      dealbreaker: !!sa.disqualifying_condition,
+    })),
+  });
+  const d = rv.dimensions;
+  const core =
+    (d.commitment.score * RELOCATION_WEIGHTS.commitment +
+      d.start.score * RELOCATION_WEIGHTS.start +
+      d.flexibility.score * RELOCATION_WEIGHTS.flexibility) /
+    (RELOCATION_WEIGHTS.commitment + RELOCATION_WEIGHTS.start + RELOCATION_WEIGHTS.flexibility);
+  const r4 = (n: number) => Math.round(n * 10000) / 10000;
+  const category_breakdown = {
+    must_have: r4(core),
+    preferred: r4(d.experience.score),
+    screening_alignment: base.category_breakdown.screening_alignment,
+  };
+  const category_weights = { must_have: 0.8, preferred: 0.2, screening_alignment: 0 };
+  const raw01 = combineCategories(category_breakdown, category_weights);
+  const applied_caps: ScoringResult["applied_caps"] = [];
+  let score01 = raw01;
+  const dq = base.applied_caps.find((c) => c.reason.startsWith("disqualifying_answer"));
+  if (base.disqualifying_answers.length > 0 && score01 > disqualifiedCap) {
+    applied_caps.push({
+      reason: dq?.reason ?? "disqualifying_answer: dealbreaker",
+      cap: disqualifiedCap,
+      before: Math.round(score01 * 10000) / 10000,
+    });
+    score01 = disqualifiedCap;
+  }
+  const score = Math.round(score01 * 1000) / 10;
+  const fit_label: ScoringResult["fit_label"] =
+    base.disqualifying_answers.length > 0 ? "not_a_fit" : bandToFitLabel(classifyBand(score));
+  const unanswered = (Object.keys(d) as RelocationDimension[])
+    .filter((k) => k !== "experience" && d[k].answered === 0)
+    .map((k) => DIMENSION_NAMES[k]);
+  const concerns = unanswered.length ? [`Not answered yet — confirm on a call: ${unanswered.join(", ")}.`] : [];
+  const strengths = (Object.keys(d) as RelocationDimension[])
+    .filter((k) => d[k].answered > 0 && d[k].score >= 0.85)
+    .map((k) => `Strong ${DIMENSION_NAMES[k]}.`);
+  const sig = screening
+    .filter((sa) => sa.scoring_dimension)
+    .map((sa) => `${sa.question_id}:${sa.scoring_dimension}`)
+    .sort()
+    .join(",");
+  return {
+    ...base,
+    scoring_mode: RELOCATION_VOLUME_MODE,
+    raw_score: Math.round(raw01 * 1000) / 10,
+    applied_caps,
+    score,
+    fit_label,
+    must_have_coverage: category_breakdown.must_have,
+    preferred_coverage: category_breakdown.preferred,
+    category_breakdown,
+    category_weights,
+    strengths,
+    concerns,
+    relocation_breakdown: rv,
+    input_hash: `${base.input_hash}-${RELOCATION_VOLUME_VERSION}-${fnv1a(sig)}`,
   };
 }

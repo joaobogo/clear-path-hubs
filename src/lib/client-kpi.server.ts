@@ -5,6 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { APP_LOCALE } from "@/lib/format/datetime";
+import { clientDealbreakerWarnings, CLIENT_PUBLICATION_EXCEPTION_SELECT, type DealbreakerWarning } from "@/lib/client/dealbreaker-publication";
 import { formatMoneyMajor } from "@/lib/money";
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
 import { parseLoomLink } from "@/lib/media/loom-link";
@@ -366,6 +367,8 @@ export function computeKpis(
  */
 export type ClientCandidateDTO = {
   match_id: string;
+  dealbreaker_warnings?: DealbreakerWarning[];
+  client_notes?: string[];
   stage: MatchStage;
   delivered_at: string | null;
   /**
@@ -949,13 +952,14 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
  * check will show it.
  */
 export const CLIENT_CANDIDATE_SELECT = `id, stage, client_visibility, admin_status, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by,
+         approved_score_run_id, ${CLIENT_PUBLICATION_EXCEPTION_SELECT}, candidate_notes(body,visibility),
          intro_video_url,
          canonical_state, processing_state, processing_updated_at, submitted_to_client_at,
          score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
          candidate_profiles(id, full_name, email, phone, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
-         score_runs:approved_score_run_id (score, final_score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
+         score_runs:approved_score_run_id (score, final_score, raw_score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
 
 
 /** Lowest score inside the strongest configured band. Single source of truth. */
@@ -1199,6 +1203,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
 
   return {
     match_id: row.id,
+    dealbreaker_warnings: clientDealbreakerWarnings(row),
+    client_notes: (row.candidate_notes ?? []).filter((n: AnyRow) => n.visibility === "client_visible" && typeof n.body === "string").map((n: AnyRow) => n.body),
     stage: row.stage,
     intro_video,
     delivered_at: row.delivered_at ?? null,

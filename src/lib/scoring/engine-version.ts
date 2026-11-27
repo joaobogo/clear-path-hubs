@@ -258,13 +258,54 @@
  * BRC) are read as before.
  */
 /**
- * v1.8.0 — availability requirements are decided by the candidate's answer
- * (Respekt warehouse roles, 17 Nov 2026). "Disponibilidade para se mudar
- * para a Polônia", "Disponibilidade para turnos de 12 horas", "willing to
- * relocate": a CV cannot show what someone will do, so a linked yes is met,
- * a no is not met, and an availability row nobody asked about is unknown
- * rather than missing. Such a yes is not flagged as an unverified claim.
- * Rule-decided rows (on-site attendance, conditional relocation) and
- * experience requirements are unchanged.
+ * v1.7.10 — "managed" describing a noun is not managing people. "Provide
+ * financial and customer support to corporate and managed hotel teams" was
+ * read as a team managed, because "managed" sat within four words of "teams".
+ * An -ed word after a preposition or determiner, alone or coordinated with
+ * another modifier, no longer counts as the verb.
+ */
+/**
+ * v1.7.11 — month + apostrophe + two-digit employment years are read by
+ * both the employment gate and subject-specific years rules.
+ */
+/**
+ * v1.7.12 — two jobs on one line, and a start year one digit short. A CV that
+ * wrote "Medical Biller — Foot & Ankle Center (2019–2020)Medical Biller —
+ * Medi-Corp Inc. (2015–" and "2019)" on the next line was read as one year of
+ * billing: the period cut by the line end was lost. A period may now continue
+ * on the next line, and each period on a shared line owns the words before it.
+ * A current role dated "April 202 – Present" is read as a role whose start
+ * cannot be read: what it describes counts as evidence, its length does not,
+ * and the dates are confirmed at screening.
+ */
+/**
+ * v1.8.0 — the same facts in different words score the same, and the profile
+ * a person wrote is read beside the CV (scoring fix spec, 26 Nov 2026, the
+ * Enterprise Sales Director roles).
+ *
+ * Wording. A requirement asked for "total contract value", "new-logo sales
+ * (hunting)", "bookings targets" and "a formal qualification method"; the CV
+ * said "ACV", "new-logo acquisition", "quota" and "MEDDPICC", and each row
+ * came out partial for want of the requirement's own words. The wordings
+ * that are one thing are listed in wording-equivalence.json and applied to a
+ * requirement only where it uses the phrase. A title in a requirement ("Head
+ * of Data") is wording, not a product the CV must name, and its word "Head"
+ * is not evidenced by the candidate's own "Head of Sales". "Based in or
+ * commutable to London" is decided by the home location: London, a borough
+ * or a Home County, never a sales territory. A thing a sentence sets aside
+ * ("rather than Snowflake") is not evidence of it. The table maps wording
+ * only: selling cloud migration is still not Snowflake experience.
+ *
+ * Profile. Headline, summary and experience entries count where the profile
+ * records that a person wrote them: a recruiter's are labelled recruiter
+ * edited and their dates win over the CV's, with the correction noted on the
+ * run; the candidate's are labelled profile. The parser's copy of the CV is
+ * not read, and a sentence the CV already has is not read twice. Every
+ * evidence item says where it was read: cv, profile, profile_recruiter_edited,
+ * screening_candidate or screening_recruiter. An answer a recruiter entered
+ * for the candidate counts like any other, and the run says so.
+ *
+ * Replay on 84 candidates of three other roles: no score, status, note or
+ * quote changes; only the source labels are new.
  */
 export const ENGINE_VERSION = "taasflow-scoring-v1.8.0";

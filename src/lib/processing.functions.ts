@@ -11,6 +11,7 @@
 //   - never rewrites completed score runs (they are immutable)
 
 import { isGarbageCvText } from "@/lib/cv/parse-facts";
+import { MANUAL_EVIDENCE_SNAPSHOT } from "@/lib/evidence/completeness";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -1180,6 +1181,7 @@ export const getAdminMatch = createServerFn({ method: "GET" })
             : "id,engine_version,extracted,screening_normalized,created_at",
         )
         .eq("candidate_match_id", data.id)
+        .neq("engine_version", MANUAL_EVIDENCE_SNAPSHOT)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle(),
@@ -1290,6 +1292,7 @@ export const getMatchHeavyDetail = createServerFn({ method: "GET" })
         .from("candidate_evidence")
         .select("id,engine_version,extracted,screening_normalized,raw_text_sample,created_at")
         .eq("candidate_match_id", data.id)
+        .neq("engine_version", MANUAL_EVIDENCE_SNAPSHOT)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle(),

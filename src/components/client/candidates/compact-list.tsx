@@ -1,6 +1,7 @@
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "@tanstack/react-router";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { DealbreakerWarnings } from "@/components/client/dealbreaker-warning";
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { CandidatePrimaryAction } from "@/components/client/candidate-primary-action";
@@ -120,6 +121,7 @@ export function CompactList({
                     cvOnly={c.cv_only}
                     hideEvidenceChip
                   />
+                  <DealbreakerWarnings warnings={c.dealbreaker_warnings} score={c.score} />
                 </td>
                 <td data-label="Stage" className="py-3 px-3 text-muted-foreground align-middle whitespace-nowrap">
                   {clientStageLabel(c.stage)}

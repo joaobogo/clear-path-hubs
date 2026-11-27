@@ -221,7 +221,13 @@ export function buildEvidenceChain(input: {
       if (!quote) continue;
       
       const rawLoc = asText(e?.location) || null;
-      const location = rawLoc ? rawLoc.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : null;
+      const location = rawLoc
+        ? rawLoc
+            .replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2')
+            // Profile text read beside the CV (engine v1.8.0).
+            .replace(/^profile:(\d+)-(\d+)$/, 'Profile · characters $1–$2')
+            .replace(/^profile:location$/, 'Profile · location')
+        : null;
 
       sources.push({
         kind: asText(e?.source) || "cv",

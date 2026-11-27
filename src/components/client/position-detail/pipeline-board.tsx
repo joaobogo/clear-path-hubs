@@ -10,6 +10,7 @@ import {
 import { Users } from "lucide-react";
 import { plural } from "@/lib/format/plural";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { DealbreakerWarnings } from "@/components/client/dealbreaker-warning";
 import { UnicornMarker } from "@/components/unicorn-marker";
 import { isUnicornMatch } from "@/lib/scoring/bands";
 import {
@@ -182,6 +183,7 @@ export function PipelineBoard({
                         />
                       </div>
 
+                      <DealbreakerWarnings warnings={m.dealbreaker_warnings} score={publishedScoreDisplay(m.score_runs)} />
                       {canEdit && allowed.length > 0 && (
                         <div className="mt-2">
                           <DropdownMenu>

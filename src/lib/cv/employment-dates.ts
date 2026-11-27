@@ -3,13 +3,18 @@ import { normaliseLetterSpacing } from "./letter-spacing";
 type Interval = { start: number; end: number };
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 // "Mar 2019", "Sept. 2019", "April 29, 2025", "03/2019", "2019".
-const DATE = "(?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\.?\\s+(?:\\d{1,2}(?:st|nd|rd|th)?,?\\s+)?|(?:0?[1-9]|1[0-2])[/.])?(?:19|20)\\d{2}";
+const DATE = "(?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\.?\\s+(?:\\d{1,2}(?:st|nd|rd|th)?,?\\s+)?['‘’]?|(?:0?[1-9]|1[0-2])[/.])?(?:(?:19|20)\\d{2}|(?<=[a-z]\\.?\\s+['‘’])\\d{2})(?!\\d)";
 // "–", "to", "till", "until", and "- Till" as some CVs write it.
 const SEPARATOR = "(?:[–—-]\\s*(?:till|until|to)?|to|till|until)";
 const OPEN_END = "present|current|now|ongoing|(?:till\\s+|to\\s+)?date";
 
 function monthIndex(value: string, asOf: Date, isEnd: boolean): number | null {
   if (/^(present|current|now|ongoing|(?:till\s+|to\s+)?date)$/i.test(value.trim())) return asOf.getUTCFullYear() * 12 + asOf.getUTCMonth();
+  value = value.replace(/^([A-Za-z]{3,9}\.?\s+)['‘’](\d{2})$/, (_, month: string, raw: string) => {
+    const century = Math.floor(asOf.getUTCFullYear() / 100) * 100;
+    const year = century + Number(raw);
+    return `${month}${year > asOf.getUTCFullYear() ? year - 100 : year}`;
+  });
   const numeric = value.trim().match(/^(\d{1,2})[/.]((?:19|20)\d{2})$/);
   if (numeric) {
     const mm = Number(numeric[1]) - 1;
@@ -181,7 +186,7 @@ function detachedBodyEnd(lines: Line[], detached: number): number {
 /** Restrict intervals to employment sections; education dates are not roles. */
 export function employmentIntervals(text: string, asOf = new Date()): Interval[] {
   const intervals: Interval[] = [];
-  const pattern = new RegExp(`(${DATE})\\s*${SEPARATOR}\\s*(${DATE}|${OPEN_END})`, "gi");
+  const pattern = new RegExp(`(?<!['‘’\\d])(${DATE})\\s*${SEPARATOR}\\s*(${DATE}|${OPEN_END})`, "gi");
   const compact = normaliseLetterSpacing(text).replace(/\b(?:[A-Z]\s+){3,}[A-Z]\b/g, (heading) => heading.replace(/\s/g, ""))
     .replace(/(PROFESSIONAL|WORK|CAREER|EMPLOYMENT)(EXPERIENCE|HISTORY)/g, "$1 $2");
   // Headings are written in capitals or title case. Matching the words in any
