@@ -41,6 +41,7 @@ export const STAFF_ACTION_OPS = [
   "preview_role_rescore",
   "edit_profile_narrative",
   "approve_for_client",
+  "set_eligibility_decision",
 ] as const;
 export type StaffActionOp = (typeof STAFF_ACTION_OPS)[number];
 
@@ -162,6 +163,11 @@ export async function runStaffAction(
         const m = await import("@/lib/scoring-review.functions");
         const data = m.submitHumanAdjustmentValidate(req.input);
         return { ok: true, op, result: await m.submitHumanAdjustmentHandler({ data, context }) };
+      }
+      case "set_eligibility_decision": {
+        const m = await import("@/lib/scoring-review.functions");
+        const data = m.setEligibilityDecisionValidate(req.input);
+        return { ok: true, op, result: await m.setEligibilityDecisionHandler({ data, context }) };
       }
       case "recompute_score": {
         const m = await import("@/lib/scoring-review.functions");
