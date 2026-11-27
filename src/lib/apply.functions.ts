@@ -29,7 +29,12 @@ export const submitApplication = createServerFn({ method: "POST" })
     // The check sits in the wrapper, not in submitApplicationImpl: the demo
     // seeder calls the impl directly to create its own fixture applications.
     const { isPubliclyApplyable } = await import("@/lib/jobs/public-applyable.server");
-    if (!(await isPubliclyApplyable(data.position_id))) {
+    // A hidden test copy opened with its pilot testing token (test records only).
+    const { pilotPreviewAllowed } = await import("@/lib/screening/pilot-preview.server");
+    if (
+      !(await isPubliclyApplyable(data.position_id)) &&
+      !(await pilotPreviewAllowed(data.position_id))
+    ) {
       return {
         ok: false,
         trace_id: `ap_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`,

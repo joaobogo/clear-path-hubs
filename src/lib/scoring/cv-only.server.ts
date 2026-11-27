@@ -44,6 +44,21 @@ export async function loadScreeningFacts(
   for (const r of (q.data ?? []) as Any[]) facts.rolesWithQuestions.add(String(r.position_id));
   for (const r of (a.data ?? []) as Any[])
     facts.applicationsWithAnswers.add(String(r.application_id));
+  // Structured screening pilot: a job with pilot questions asks those, and an
+  // answer to them is an answer (screening/structured.ts).
+  const [sq, sa] = await Promise.all([
+    s.from("structured_screening_questions").select("position_id").in("position_id", positions),
+    applications.length > 0
+      ? s
+          .from("structured_screening_answers")
+          .select("application_id")
+          .eq("status", "answered")
+          .in("application_id", applications)
+      : Promise.resolve({ data: [] as Any[], error: null }),
+  ]);
+  if (!sq.error) for (const r of (sq.data ?? []) as Any[]) facts.rolesWithQuestions.add(String(r.position_id));
+  if (!sa.error)
+    for (const r of (sa.data ?? []) as Any[]) facts.applicationsWithAnswers.add(String(r.application_id));
   return facts;
 }
 

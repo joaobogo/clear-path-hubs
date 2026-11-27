@@ -207,6 +207,22 @@ async function loadInputs(matchId: string) {
     };
   });
 
+  // Structured screening pilot (screening/structured.ts): answers given on a
+  // pilot job's form, one yes or no per must-have they check. Read whatever
+  // the job's switch says now, so answers already given keep counting after
+  // it is turned off. Only pilot applications have any.
+  if (match.application_id) {
+    const { loadStructuredAnswers, loadStructuredQuestions } = await import(
+      "./screening/structured.server"
+    );
+    const structuredAnswers = await loadStructuredAnswers(match.application_id, s);
+    if (structuredAnswers.some((a) => a.status === "answered")) {
+      const { toEngineAnswers } = await import("./screening/structured");
+      const structuredQuestions = await loadStructuredQuestions(match.position_id, s);
+      screening.push(...toEngineAnswers(structuredQuestions, structuredAnswers));
+    }
+  }
+
   const roleContext = roleContextOf({
     organisation_name: orgRes.data?.name ?? null,
     brand_display_name: orgRes.data?.brand_display_name ?? null,

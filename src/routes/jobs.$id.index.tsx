@@ -601,7 +601,9 @@ function JobDetail() {
               <ol className="mt-4 space-y-4">
                 {[
                   `Apply in ${applyEffortTimeClause(effort)} — share your details, upload your CV${
-                    pos.questions.length > 0
+                    pos.structured_screening
+                      ? ", and answer about 10 quick questions."
+                      : pos.questions.length > 0
                       ? `, and answer ${pos.questions.length} short screening ${
                           pos.questions.length === 1 ? "question" : "questions"
                         }.`
@@ -703,7 +705,7 @@ function JobDetail() {
                       {pos.work_arrangement_label
                         ? ` · ${pos.work_arrangement_label}`
                         : pos.work_arrangement_label === null && pos.work_model
-                          ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}`
+                          ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description, pos.work_arrangement_statement)}`
                           : ""}
                       {pos.openings && pos.openings > 1 ? ` · ${pos.openings} openings` : " · 1 opening"}
                     </Badge>

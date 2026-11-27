@@ -53,6 +53,25 @@ export const applySchema = z.object({
     .refine((v) => !v || isLoomLink(v), `That is not a Loom or Google Drive video link. ${LOOM_LINK_HINT}`),
   accommodation_request: z.string().trim().max(2000).optional().or(z.literal("")),
   answers: z.array(answerSchema).max(50).default([]),
+  // Structured screening pilot only (screening/structured.ts): answers keyed
+  // by the job's own question keys. Validated against the job's questions on
+  // the server; ignored for every job without the switch on.
+  structured_answers: z
+    .array(
+      z.object({
+        key: z.string().min(1).max(64),
+        value: z
+          .union([
+            z.string().max(400),
+            z.boolean(),
+            z.array(z.string().max(80)).max(20),
+            z.object({ min: z.number().nullable().optional(), max: z.number().nullable().optional() }),
+          ])
+          .nullable(),
+      }),
+    )
+    .max(40)
+    .default([]),
   consent_terms: z.literal(true, {
     errorMap: () => ({ message: "You must accept the terms" }),
   }),

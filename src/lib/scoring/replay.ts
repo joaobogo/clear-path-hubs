@@ -43,6 +43,9 @@ export const ReplayScreeningSchema = z.object({
   options: z.unknown().optional(),
   /** Who gave the answer (engine v1.8.0+); stored only when a recruiter entered it. */
   answered_by: z.enum(["candidate", "recruiter_on_behalf"]).nullable().optional(),
+  /** Structured screening pilot answers only (screening/structured.ts). */
+  decides: z.literal(true).optional(),
+  answer_label: z.string().optional(),
 });
 
 export const ReplaySnapshotSchema = z.object({
@@ -102,6 +105,8 @@ export function buildReplaySnapshot(input: {
     scoring_dimension?: string | null;
     options?: unknown;
     answered_by?: "candidate" | "recruiter_on_behalf" | null;
+    decides?: true;
+    answer_label?: string;
   }>;
   role_family?: string | null;
   role_context?: { organisation_names: string[]; role_title: string | null } | null;
@@ -131,6 +136,8 @@ export function buildReplaySnapshot(input: {
       must_have: s.must_have ?? null,
       ...(s.scoring_dimension ? { scoring_dimension: s.scoring_dimension, options: s.options ?? null } : {}),
       ...(s.answered_by === "recruiter_on_behalf" ? { answered_by: "recruiter_on_behalf" as const } : {}),
+      // Pilot answers only, so every other snapshot keeps its shape.
+      ...(s.decides ? { decides: true as const, answer_label: s.answer_label ?? "" } : {}),
     })),
     role_family: input.role_family ?? null,
     // Only when set, so a run scored without one keeps its snapshot shape.

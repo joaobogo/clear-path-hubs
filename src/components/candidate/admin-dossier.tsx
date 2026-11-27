@@ -30,6 +30,8 @@ import { Lock, Unlock, Trash2, Users, AlertTriangle } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { formatAnswerValue } from "@/lib/human-labels";
+import { StructuredScreeningPanel } from "@/components/admin/structured-screening-panel";
+import type { StructuredReview } from "@/lib/screening/structured.server";
 import {
   AnswersOnBehalfPanel,
   type RecruiterAnswerState,
@@ -135,9 +137,13 @@ export function AdminDossier({ matchId }: { matchId: string }) {
   const published = match.client_visibility === "visible";
   const candidateLabel = (profile?.full_name as string | null) ?? "This candidate";
 
+  const structuredReview = ((data as Any).structured_review ?? null) as StructuredReview | null;
+
   return (
     <div className="space-y-4">
       {confirmDialog}
+      {/* Structured screening pilot: answers and flags first. */}
+      {structuredReview && <StructuredScreeningPanel review={structuredReview} />}
       {/* Identity & contact */}
       <Section
         title="Identity and contact"

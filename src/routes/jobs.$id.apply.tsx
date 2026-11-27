@@ -62,6 +62,14 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/dat
 import { VIDEO_INTRO_BONUS_PTS } from "@/lib/scoring/published-score";
 import { DIRECT_CONTACT_EMAIL } from "@/config/direct-contact";
 import { EmailText, DirectContactLine } from "@/components/marketing/direct-contact";
+import { StructuredScreeningFields } from "@/components/apply/structured-screening-fields";
+import {
+  structuredAnswersPayload,
+  structuredIssues,
+  structuredProgress,
+  type StructuredFormValue,
+  type StructuredFormValues,
+} from "@/components/apply/structured-screening-state";
 
 
 const EMPTY_FORM = {
@@ -146,6 +154,14 @@ function ApplyPage() {
     queryKey: ["public-position", id],
     queryFn: () => getPublicPosition({ data: { id } }),
   });
+
+  // Structured screening pilot: one scrolling page instead of the steps.
+  // Null for every other job, which keeps the step-by-step form unchanged.
+  const structured = pos?.structured_screening ?? null;
+  const pilot = structured !== null;
+  const [sqValues, setSqValues] = useState<StructuredFormValues>({});
+  const setSqValue = (key: string, v: StructuredFormValue) =>
+    setSqValues((prev) => ({ ...prev, [key]: v }));
 
   const draftKey = APPLY_DRAFT_KEY(id);
   const idemKey = APPLY_IDEMPOTENCY_KEY(id);
@@ -266,9 +282,11 @@ function ApplyPage() {
       if (d.form) setForm(d.form);
       if (d.answers) setAnswers(d.answers);
       if (typeof d.network === "boolean") setNetwork(d.network);
+      if (d.structured && typeof d.structured === "object") setSqValues(d.structured);
       const hasContent =
         Object.values(d.form ?? {}).some((v) => typeof v === "string" && v.trim() !== "") ||
-        Object.keys(d.answers ?? {}).length > 0;
+        Object.keys(d.answers ?? {}).length > 0 ||
+        Object.keys(d.structured ?? {}).length > 0;
       if (hasContent) {
         setResume({
           step: typeof d.step === "number" ? Math.min(APPLY_STEPS, Math.max(1, d.step)) : 1,
@@ -325,7 +343,14 @@ function ApplyPage() {
     try {
       localStorage.setItem(
         draftKey,
-        JSON.stringify({ form, answers, network, step, savedAt }),
+        JSON.stringify({
+          form,
+          answers,
+          network,
+          step,
+          savedAt,
+          ...(pilot ? { structured: sqValues } : {}),
+        }),
       );
       setDraftError(false);
       if (firstSaveSkipped.current) setDraftSavedAt(savedAt);
@@ -335,7 +360,7 @@ function ApplyPage() {
       setDraftError(true);
       setDraftSavedAt(null);
     }
-  }, [draftKey, form, answers, network, step]);
+  }, [draftKey, form, answers, network, step, pilot, sqValues]);
 
 
   /**
@@ -546,6 +571,9 @@ function ApplyPage() {
       if (form.phone.trim().length < 6) errs.phone = "Enter a phone number we can reach you on";
       if (form.country.trim().length < 2) errs.country = "Enter your country";
       if (!form.city.trim()) errs.city = "Enter your city";
+      // On the pilot's one page LinkedIn sits under "About you" and is required.
+      if (pilot && !/^https:\/\/\S+\.\S+/.test(form.linkedin_url.trim()))
+        errs.linkedin_url = "Enter your LinkedIn profile as a full link starting with https://";
       if (signedIn === false && wantsAccount) {
         if (password.length < MIN_PASSWORD_LENGTH)
           errs.password = `Use at least ${MIN_PASSWORD_LENGTH} characters`;
@@ -628,7 +656,7 @@ function ApplyPage() {
   // needs something rather than showing a review of nothing.
   const clampedRef = useRef(false);
   useEffect(() => {
-    if (signedIn === null || step === 1) return;
+    if (pilot || signedIn === null || step === 1) return;
     // No step past the CV step is reachable without a valid PDF attached —
     // checked on every step change and whenever the file is removed.
     if (step > 2 && (!cvFile || cvError)) {
@@ -743,9 +771,23 @@ function ApplyPage() {
     // One in flight at a time, and never a stray event carried over from the
     // click that landed on Review: sending is only ever a deliberate act.
     if (submittingRef.current) return;
-    if (step !== 5) return;
-    if (Date.now() - reviewEnteredAtRef.current < 400) return;
+    // The pilot's one page has no Review step: its Submit is the only button.
+    if (!pilot && step !== 5) return;
+    if (!pilot && Date.now() - reviewEnteredAtRef.current < 400) return;
     setServerError(null);
+
+    if (pilot) {
+      // Everything on the page at once, errors shown beside each field and
+      // focus sent to the first one. Consent is part of it, so nothing is
+      // sent without it.
+      const pilotErrs = {
+        ...stepIssues(1),
+        ...stepIssues(2),
+        ...stepIssues(4),
+        ...structuredIssues(structured.questions, sqValues),
+      };
+      if (Object.keys(pilotErrs).length > 0) return failValidation(pilotErrs);
+    }
 
     // Hard gate: never submit (or record) a consent the candidate did not give.
     if (!consent) {
@@ -816,6 +858,9 @@ function ApplyPage() {
           question_id: q.id,
           value: answers[q.id] ?? null,
         })),
+        ...(pilot
+          ? { structured_answers: structuredAnswersPayload(structured.questions, sqValues) }
+          : {}),
         consent_terms: consent,
         network_opt_in: network === true,
         idempotency_key: getOrCreateIdempotencyKey(),
@@ -954,16 +999,48 @@ function ApplyPage() {
   // The same figure the job page quoted, so the cost does not change between
   // deciding to apply and starting.
   const effort = pos.apply_effort ?? EFFORT_DEFAULT;
+  // The pilot's one page counts answers, not steps.
+  const pilotProgress = structured
+    ? structuredProgress(structured.questions, sqValues, form)
+    : null;
 
+
+  // The LinkedIn field. Optional among the extras on the steps; required
+  // under "About you" on the pilot's one page.
+  const linkedinField = (
+                  <div>
+                    <Label htmlFor="linkedin_url">LinkedIn{pilot && " *"}</Label>
+                    <Input
+                      id="linkedin_url"
+                      inputMode="url"
+                      data-field="linkedin_url"
+                      {...fieldAria("linkedin_url")}
+                      placeholder="https://linkedin.com/in/…"
+                      value={form.linkedin_url}
+                      onChange={(e) => setForm({ ...form, linkedin_url: e.target.value })}
+                    />
+                    {fieldErrors.linkedin_url && (
+                      <p id="linkedin_url-error" className="mt-1 text-xs text-destructive">{fieldErrors.linkedin_url}</p>
+                    )}
+                  </div>
+  );
 
   return (
     <FormShell
       exitTo={`/jobs/${id}`}
       exitLabel="← Role details"
       progress={{
-        step,
-        total: STEP_LABELS.length,
-        label: `Step ${step} of ${STEP_LABELS.length}`,
+        ...(pilotProgress
+          ? {
+              step: pilotProgress.answered,
+              total: Math.max(1, pilotProgress.total),
+              label: `${pilotProgress.answered} of ${pilotProgress.total} answered`,
+            }
+          : {
+              step,
+              total: STEP_LABELS.length,
+              label: `Step ${step} of ${STEP_LABELS.length}`,
+            }),
         note: draftError ? (
           <span
             className="shrink-0 rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-medium text-destructive"
@@ -993,7 +1070,9 @@ function ApplyPage() {
           {/* The measured cost, repeated from the job page. Never a figure we
               invented — see applyEffortLine. */}
           <span title={applyEffortProvenance(effort)}>
-            {applyEffortLine(effort, STEP_LABELS.length)}
+            {pilot
+              ? `One page, ${applyEffortTimeClause(effort)}. You'll need your CV as a PDF. Your answers are saved as you go.`
+              : applyEffortLine(effort, STEP_LABELS.length)}
           </span>
 
           {/* The visible marker lives in the sticky header; this keeps the
@@ -1005,6 +1084,7 @@ function ApplyPage() {
 
 
         {/* Progress bar */}
+        {!pilot && (
         <div className="mt-6">
           <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
             <div
@@ -1048,6 +1128,7 @@ function ApplyPage() {
             })}
           </ol>
         </div>
+        )}
 
         {serverError && (
           <Alert variant="destructive" className="mt-6" data-testid="apply-server-error">
@@ -1096,7 +1177,9 @@ function ApplyPage() {
             ref={errorSummaryRef}
             tabIndex={-1}
           >
-            <AlertTitle>This step needs a little more</AlertTitle>
+            <AlertTitle>
+              {pilot ? "A few answers need a little more" : "This step needs a little more"}
+            </AlertTitle>
             <AlertDescription>
               {/* "Check the highlighted fields below" was the only instruction,
                   and highlighting is a visual cue. The list names each field
@@ -1147,8 +1230,12 @@ function ApplyPage() {
                 {resume.savedAt
                   ? ` — saved on this device ${formatDateTime(resume.savedAt)}`
                   : ""}
+                {pilot ? "." : (
+                  <>
                 . You reached step {resume.step} of {APPLY_STEPS},{" "}
                 {STEP_LABELS[Math.min(resume.step, STEP_LABELS.length) - 1]}.
+                  </>
+                )}
               </span>
               <span className="mt-1 block">
                 Your answers are restored. Your CV is not — files are never kept on this device,
@@ -1161,6 +1248,8 @@ function ApplyPage() {
                   onClick={() => {
                     const target = resume.step;
                     setResume(null);
+                    // The pilot's one page has no steps to return to.
+                    if (pilot) return;
                     // The CV is gone, so never drop someone past the upload step.
                     goTo({ step: Math.min(target, 2), q: 1 });
                   }}
@@ -1177,6 +1266,7 @@ function ApplyPage() {
                     } catch { /* ignore */ }
                     setForm(EMPTY_FORM);
                     setAnswers({});
+                    if (pilot) setSqValues({});
                     setNetwork(false);
                     setDraftSavedAt(null);
                     setResume(null);
@@ -1197,10 +1287,12 @@ function ApplyPage() {
             submitting ? "pointer-events-none select-none opacity-60" : ""
           }`}
         >
-          {step === 1 && (
+          {(pilot || step === 1) && (() => {
+            const details = (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
               {/* State the cost of applying before it is paid, so nobody
                   starts on a phone without the one file they will need. */}
+              {!pilot && (
               <section
                 className="rounded-lg border bg-muted/30 p-4"
                 aria-labelledby="apply-before-you-start"
@@ -1228,14 +1320,21 @@ function ApplyPage() {
                   </li>
                 </ul>
               </section>
+              )}
 
 
+              {pilot ? (
+                <p className="text-sm text-muted-foreground">
+                  We'll use this to reach out about the role.
+                </p>
+              ) : (
               <div>
                 <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Your details</h2>
                 <p className="text-sm text-muted-foreground">
                   We'll use this to reach out about the role.
                 </p>
               </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -1328,6 +1427,7 @@ function ApplyPage() {
                     <p id="city-error" className="mt-1 text-xs text-destructive">{fieldErrors.city}</p>
                   )}
                 </div>
+                {pilot && <div className="md:col-span-2">{linkedinField}</div>}
               </div>
 
               {signedIn === false && (
@@ -1393,11 +1493,22 @@ function ApplyPage() {
                 </div>
               )}
             </div>
+            );
+            return pilot && structured ? (
+              <StructuredScreeningFields
+                questions={structured.questions}
+                values={sqValues}
+                onChange={setSqValue}
+                errors={fieldErrors}
+                formFields={form}
+                aboutYou={details}
+              />
+            ) : (
+              details
+            );
+          })()}
 
-
-          )}
-
-          {step === 2 && (
+          {(pilot || step === 2) && (
             <div className="space-y-5">
               <div>
                 <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Upload your CV</h2>
@@ -1413,7 +1524,7 @@ function ApplyPage() {
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Badge variant="secondary" className="font-normal bg-background/50">
                       {pos.location}
-                      {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}` : ""}
+                      {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description, pos.work_arrangement_statement)}` : ""}
                       {pos.openings && pos.openings > 1 ? ` · ${pos.openings} openings` : " · 1 opening"}
                     </Badge>
                   </div>
@@ -1596,21 +1707,7 @@ function ApplyPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="linkedin_url">LinkedIn</Label>
-                    <Input
-                      id="linkedin_url"
-                      inputMode="url"
-                      data-field="linkedin_url"
-                      {...fieldAria("linkedin_url")}
-                      placeholder="https://linkedin.com/in/…"
-                      value={form.linkedin_url}
-                      onChange={(e) => setForm({ ...form, linkedin_url: e.target.value })}
-                    />
-                    {fieldErrors.linkedin_url && (
-                      <p id="linkedin_url-error" className="mt-1 text-xs text-destructive">{fieldErrors.linkedin_url}</p>
-                    )}
-                  </div>
+                  {!pilot && linkedinField}
                   <div>
                     <Label htmlFor="portfolio_url">Portfolio link</Label>
                     <Input
@@ -1691,7 +1788,7 @@ function ApplyPage() {
             </div>
           )}
 
-          {step === 3 && (
+          {!pilot && step === 3 && (
             <div className="space-y-5">
               <div>
                 <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Screening questions</h2>
@@ -1838,12 +1935,14 @@ function ApplyPage() {
             </div>
           )}
 
-          {step === 4 && (
+          {(pilot || step === 4) && (
             <div className="space-y-5">
               <div>
                 <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Consent &amp; privacy</h2>
                 <p className="text-sm text-muted-foreground">
-                  Two consents, then a full review of everything you entered.
+                  {pilot
+                    ? "Two consents, then send your application."
+                    : "Two consents, then a full review of everything you entered."}
                 </p>
               </div>
 
@@ -1895,7 +1994,9 @@ function ApplyPage() {
                     I agree that TaaSFlow may share my CV and answers with the hiring team for
                     this role, keep them to review this application, and contact me about it.
                     Nothing is shared with any other employer without my say-so, and I can ask
-                    for my data to be deleted at any time. *
+                    for my data to be deleted at any time.{structured ? (
+                      <span className="mt-2 block">{structured.consent_text} *</span>
+                    ) : " *"}
                   </span>
                 </label>
                 {fieldErrors.consent_terms && (
@@ -1934,7 +2035,7 @@ function ApplyPage() {
             </div>
           )}
 
-          {step === 5 && (
+          {!pilot && step === 5 && (
             <div className="space-y-5">
               <div>
                 <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Review &amp; submit</h2>
@@ -2040,11 +2141,12 @@ function ApplyPage() {
 
           <div
             className={`mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between ${
-              step === 5
+              step === 5 || pilot
                 ? "sticky bottom-0 -mx-4 border-t bg-background/95 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-lg sm:px-0"
                 : ""
             }`}
           >
+            {!pilot && (
             <Button
               type="button"
               variant="ghost"
@@ -2054,6 +2156,7 @@ function ApplyPage() {
             >
               ← Back
             </Button>
+            )}
             {phase !== "idle" ? (
               <ProcessState
                 compact
@@ -2069,7 +2172,7 @@ function ApplyPage() {
                 }}
               />
             ) : null}
-            {step < 5 ? (
+            {step < 5 && !pilot ? (
               (() => {
                 const gateReason =
                   step === 4 && !consent
@@ -2112,8 +2215,10 @@ function ApplyPage() {
                 type="button"
                 size="lg"
                 onClick={onSubmit}
-                disabled={submitting || !consent}
-                aria-disabled={submitting || !consent}
+                // On the pilot page Submit stays pressable so it can point
+                // at whatever is missing, consent included.
+                disabled={submitting || (!pilot && !consent)}
+                aria-disabled={submitting || (!pilot && !consent)}
                 aria-busy={submitting}
                 data-testid="apply-submit"
                 className="w-full sm:w-auto"
