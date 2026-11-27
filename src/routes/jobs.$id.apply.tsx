@@ -1524,7 +1524,7 @@ function ApplyPage() {
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Badge variant="secondary" className="font-normal bg-background/50">
                       {pos.location}
-                      {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}` : ""}
+                      {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description, pos.work_arrangement_statement)}` : ""}
                       {pos.openings && pos.openings > 1 ? ` · ${pos.openings} openings` : " · 1 opening"}
                     </Badge>
                   </div>

@@ -543,6 +543,8 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         : publicOrgNameOr(employer?.name, "Hiring Organization"),
       /** The role's first line, shown under the title; empty when not set. */
       headline,
+      /** The role's own work-arrangement statement; null when not set. */
+      work_arrangement_statement: ownArrangement || null,
       /** See PublicPositionSummary.work_arrangement_label. */
       work_arrangement_label: ownArrangement
         ? arrangementLabel(ownArrangement) || (false as const)
