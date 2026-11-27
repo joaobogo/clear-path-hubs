@@ -13,6 +13,7 @@
 import { isGarbageCvText } from "@/lib/cv/parse-facts";
 import { MANUAL_EVIDENCE_SNAPSHOT } from "@/lib/evidence/completeness";
 import { createServerFn } from "@tanstack/react-start";
+import type { StaffActionContext } from "@/lib/staff-action-context";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import {
@@ -763,10 +764,25 @@ const decisionInput = z
     }
   });
 
+export const applyReviewDecisionValidate = (input: unknown) => decisionInput.parse(input);
+
 export const applyReviewDecision = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => decisionInput.parse(input))
-  .handler(async ({ data, context }) => {
+  .inputValidator(applyReviewDecisionValidate)
+  .handler(applyReviewDecisionHandler);
+
+/**
+ * The review decision as the admin screens record it. Exported so the
+ * internal staff-action route runs this same handler for a named member of
+ * staff: the same gates, the same audit rows, the same notices.
+ */
+export async function applyReviewDecisionHandler({
+  data,
+  context,
+}: {
+  data: ReturnType<typeof applyReviewDecisionValidate>;
+  context: StaffActionContext;
+}) {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
     const supabase = (await getAdmin()) as AnyRow;
     // One trace id per decision attempt — echoed in audit_events and to the UI.
@@ -1021,7 +1037,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       reason: data.reason ?? null,
     });
     return { ok: true as const, action: data.action, trace_id: decisionTrace };
-  });
+}
 
 // Permanently purge a candidate match. Works regardless of score state — admins can
 // remove a candidate and its dependent application/profile/scoring data from the database.
