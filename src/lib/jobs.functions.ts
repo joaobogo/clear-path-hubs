@@ -13,6 +13,7 @@ import {
 } from "@/lib/jobs/public-facts";
 import { applyEffortDefault, resolveApplyEffort } from "@/lib/jobs/apply-effort";
 import { STRUCTURED_CONSENT_TEXT } from "@/lib/screening/structured";
+import { pilotPreviewAllowed } from "@/lib/screening/pilot-preview.server";
 import { travelText } from "@/lib/requisition-schema";
 import {
   arrangementLabel,
@@ -34,51 +35,6 @@ import { normalizeVideoPrompt } from "@/lib/jobs/video-prompt";
  * honoured by the local dev server — in any deployed build the opt-in is dead
  * code, so a fixture can never be reachable by a real visitor.
  */
-/**
- * Structured screening pilot testing: a hidden test copy of a job (a test
- * record, never on the board) can be opened with a one-off secret token held
- * in this cookie and stored on that copy only
- * (positions.structured_screening_preview_token). Real jobs are never opened
- * this way: the token is only honoured on a test record.
- */
-export const PILOT_PREVIEW_COOKIE = "taasflow_pilot_preview";
-
-function pilotPreviewToken(): string | null {
-  let cookie = "";
-  try {
-    cookie = getRequestHeader("cookie") ?? "";
-  } catch {
-    return null;
-  }
-  const match = new RegExp(`(?:^|;\\s*)${PILOT_PREVIEW_COOKIE}=([^;]+)`).exec(cookie);
-  const value = match ? decodeURIComponent(match[1]).trim() : "";
-  return value.length >= 32 ? value : null;
-}
-
-async function pilotPreviewAllowed(positionId: string): Promise<boolean> {
-  const token = pilotPreviewToken();
-  if (!token) return false;
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data } = await (supabaseAdmin as unknown as {
-    from: (t: string) => {
-      select: (c: string) => {
-        eq: (k: string, v: unknown) => {
-          eq: (k: string, v: unknown) => {
-            eq: (k: string, v: unknown) => { maybeSingle: () => Promise<{ data: unknown }> };
-          };
-        };
-      };
-    };
-  })
-    .from("positions")
-    .select("id")
-    .eq("id", positionId)
-    .eq("is_test_record", true)
-    .eq("structured_screening_preview_token", token)
-    .maybeSingle();
-  return Boolean(data);
-}
-
 function testRecordsVisible(): boolean {
   if (!qaEndpointsEnabled()) return false;
   let cookie = "";
